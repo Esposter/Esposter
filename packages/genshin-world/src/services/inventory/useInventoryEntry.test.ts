@@ -49,6 +49,7 @@ describe(useInventoryEntry, () => {
       },
     ],
     nextId: 2,
+    quickSwapItemIds: [],
   });
   const createContext = (
     dishUseMap: ReadonlyMap<number, DishUse>,
@@ -101,6 +102,7 @@ describe(useInventoryEntry, () => {
         },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     const use = useInventoryEntry(
       inventory,
@@ -153,12 +155,12 @@ describe(useInventoryEntry, () => {
 
     expect(
       useInventoryEntry(
-        { items: [fragileResinItem], nextId: 2 },
+        { items: [fragileResinItem], nextId: 2, quickSwapItemIds: [] },
         ENTRY_ID,
         createContext(new Map(), createParty([EATER_ID]), wallet),
       ),
     ).toStrictEqual({
-      inventory: { items: [{ ...fragileResinItem, quantity: 1 }], nextId: 2 },
+      inventory: { items: [{ ...fragileResinItem, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
       wallet: { ...wallet, [Currency.OriginalResin]: 100 + FRAGILE_RESIN_RESTORE },
     });
   });

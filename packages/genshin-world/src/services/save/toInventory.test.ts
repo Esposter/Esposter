@@ -53,6 +53,7 @@ describe(toInventory, () => {
         },
       ],
       nextId: 1,
+      quickSwapItemIds: [],
     };
 
     expect(

@@ -81,6 +81,7 @@ const createBag = (openEntry: Weapon): Inventory => ({
     toWeaponEntry(copyWeapon, COPY_ENTRY_ID),
   ],
   nextId: NEXT_ENTRY_ID,
+  quickSwapItemIds: [],
 });
 const bag = createBag(openWeapon);
 
@@ -110,6 +111,7 @@ const ascendInventory: Inventory = {
     })),
   ],
   nextId: atCapBag.nextId + (nextPhase?.costItems.length ?? 0),
+  quickSwapItemIds: [],
 };
 
 export const variants = {

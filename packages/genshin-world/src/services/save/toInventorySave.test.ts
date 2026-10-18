@@ -21,6 +21,7 @@ describe(toInventorySave, () => {
         { definition: materialDefinition, id: 1, quantity: 3 },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
 
     expect(toInventorySave(inventory)).toStrictEqual({
@@ -38,13 +39,18 @@ describe(toInventorySave, () => {
         { id: 1, itemId: 2, kind: InventoryItemKind.Stack, quantity: 3 },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     });
   });
 
   test("refuses a weapon whose state is missing", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: weaponDefinition, id: 0, level: 1, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: weaponDefinition, id: 0, level: 1, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
 
     expect(() => toInventorySave(inventory)).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: toInventorySave, weapon 0 without its state]`,
@@ -75,11 +81,13 @@ describe(toInventorySave, () => {
     const inventory: Inventory = {
       items: [{ artifact, definition: artifactDefinition, id: 2, quantity: 1 }],
       nextId: 3,
+      quickSwapItemIds: [],
     };
 
     expect(toInventorySave(inventory)).toStrictEqual({
       items: [{ artifact, id: 2, itemId: 60_110, kind: InventoryItemKind.Artifact, quantity: 1 }],
       nextId: 3,
+      quickSwapItemIds: [],
     });
   });
 
@@ -94,7 +102,11 @@ describe(toInventorySave, () => {
       rarity: 1,
       stackLimit: 1,
     };
-    const inventory: Inventory = { items: [{ definition: artifactDefinition, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: artifactDefinition, id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
 
     expect(() => toInventorySave(inventory)).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: toInventorySave, artifact 0 without its artifact]`,

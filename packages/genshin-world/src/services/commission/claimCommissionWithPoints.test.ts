@@ -175,6 +175,7 @@ describe(claimCommissionWithPoints, () => {
     const fullInventory: Inventory = {
       items: [{ definition: getItemDefinition(ITEM_ID, names, materialDataMap), id: 0, quantity: 5 }],
       nextId: 1,
+      quickSwapItemIds: [],
     };
 
     expect(

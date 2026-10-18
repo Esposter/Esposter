@@ -260,6 +260,7 @@ describe(buyShopGood, () => {
         quantity: 1,
       })),
       nextId: INVENTORY_KIND_LIMIT,
+      quickSwapItemIds: [],
     };
 
     expect(
@@ -281,7 +282,7 @@ describe(buyShopGood, () => {
   test("a good priced in a fish is paid from the bag and gives its item", () => {
     expect.hasAssertions();
 
-    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 2 }], nextId: 1 };
+    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] };
     const result = buyShopGood(
       EMPTY_WALLET,
       inventory,
@@ -300,7 +301,7 @@ describe(buyShopGood, () => {
   test("a good priced in a fish the bag lacks is refused", () => {
     expect.hasAssertions();
 
-    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] };
 
     expect(
       buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
@@ -337,6 +338,7 @@ describe(buyShopGood, () => {
     const inventory = {
       items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 3 }],
       nextId: 1,
+      quickSwapItemIds: [],
     };
     const result = buyShopGood(
       EMPTY_WALLET,
@@ -360,6 +362,7 @@ describe(buyShopGood, () => {
     const inventory = {
       items: [{ definition: getCardShopItemDefinition(LUCKY_COIN_ITEM_ID), id: 0, quantity: 1 }],
       nextId: 1,
+      quickSwapItemIds: [],
     };
 
     expect(

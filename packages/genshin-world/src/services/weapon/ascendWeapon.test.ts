@@ -52,11 +52,11 @@ describe(ascendWeapon, () => {
     expect(
       ascendWeapon(weapon, WEAPON_DATA, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toStrictEqual({
-      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
       wallet: EMPTY_WALLET,
       weapon: { ascension: 1, experience: 0, id: 1, level: 20, refinement: 1 },
     });
@@ -68,10 +68,20 @@ describe(ascendWeapon, () => {
     expect(
       ascendWeapon(weapon, WEAPON_DATA, {
         adventureRank: 15,
-        inventory: { equippedGadgetItemId: 9, items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: {
+          equippedGadgetItemId: 9,
+          items: [{ definition: MATERIAL, id: 0, quantity: 5 }],
+          nextId: 1,
+          quickSwapItemIds: [],
+        },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }).inventory,
-    ).toStrictEqual({ equippedGadgetItemId: 9, items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 });
+    ).toStrictEqual({
+      equippedGadgetItemId: 9,
+      items: [{ definition: MATERIAL, id: 0, quantity: 2 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    });
   });
 
   test("refuses an Adventure Rank below the phase's requirement", () => {
@@ -80,7 +90,7 @@ describe(ascendWeapon, () => {
     expect(() =>
       ascendWeapon(weapon, WEAPON_DATA, {
         adventureRank: 14,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -94,7 +104,7 @@ describe(ascendWeapon, () => {
     expect(() =>
       ascendWeapon(weapon, WEAPON_DATA, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(

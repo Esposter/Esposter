@@ -50,6 +50,7 @@ describe(autoCookRecipe, () => {
   const createInventory = (ingredientCount: number) => ({
     items: [{ definition: createDefinition(INGREDIENT_ID), id: 1, quantity: ingredientCount }],
     nextId: 2,
+    quickSwapItemIds: [],
   });
   const provenProgress = { learnedRecipeIds: [], proficiencies: { 1001: 2 } };
 

@@ -1,7 +1,7 @@
 import type { MailSave } from "#src/models/mail/MailSave";
 
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(deliverBirthdayMail, () => {

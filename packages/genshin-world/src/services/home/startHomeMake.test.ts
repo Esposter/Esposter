@@ -38,9 +38,10 @@ describe(startHomeMake, () => {
     realmCurrency: 0,
     trustExp: 0,
   };
-  const bag = (quantity: number): { items: InventoryItem[]; nextId: number } => ({
+  const bag = (quantity: number): { items: InventoryItem[]; nextId: number; quickSwapItemIds: number[] } => ({
     items: [{ definition, id: 1, quantity }],
     nextId: 2,
+    quickSwapItemIds: [],
   });
 
   test("should take the materials and queue the furnishing from now", () => {

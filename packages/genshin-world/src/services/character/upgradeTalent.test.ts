@@ -39,12 +39,12 @@ describe(upgradeTalent, () => {
     expect.hasAssertions();
     expect(
       upgradeTalent(CHARACTER, CombatTalent.NormalAttack, UPGRADES, {
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toStrictEqual({
       character: { ...CHARACTER, talentLevels: { ...CHARACTER.talentLevels, [CombatTalent.NormalAttack]: 2 } },
-      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
       wallet: EMPTY_WALLET,
     });
   });
@@ -53,7 +53,7 @@ describe(upgradeTalent, () => {
     expect.hasAssertions();
     expect(() =>
       upgradeTalent({ ...CHARACTER, ascension: 1 }, CombatTalent.NormalAttack, UPGRADES, {
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -65,7 +65,7 @@ describe(upgradeTalent, () => {
     expect.hasAssertions();
     expect(() =>
       upgradeTalent(CHARACTER, CombatTalent.NormalAttack, [], {
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -77,7 +77,7 @@ describe(upgradeTalent, () => {
     expect.hasAssertions();
     expect(() =>
       upgradeTalent(CHARACTER, CombatTalent.NormalAttack, UPGRADES, {
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 499 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -89,7 +89,7 @@ describe(upgradeTalent, () => {
     expect.hasAssertions();
     expect(() =>
       upgradeTalent(CHARACTER, CombatTalent.NormalAttack, UPGRADES, {
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(

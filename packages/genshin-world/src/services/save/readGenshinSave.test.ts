@@ -208,6 +208,7 @@ describe(readGenshinSave, () => {
         },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     },
     offerings: { frostbearingTree: FROSTBEARING_TREE_PROGRESS },
     openedChests: [CHEST_ID],
@@ -226,7 +227,7 @@ describe(readGenshinSave, () => {
   // A save as the player comes back to the realm: written, then read again
   const visit = (save: GenshinSave) =>
     readGenshinSave(
-      toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map())),
+      toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map())),
       NAMES,
       WEAPON_DATA_MAP,
       new Map(),
@@ -244,7 +245,7 @@ describe(readGenshinSave, () => {
     expect.hasAssertions();
     const save = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   // The Traveler's birthday and the mails held come back as they were saved
@@ -257,7 +258,7 @@ describe(readGenshinSave, () => {
       travelerBirthday: { day: 13, month: 10 },
     };
 
-    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 
   test("the tips shown return after a visit", () => {
@@ -436,6 +437,7 @@ describe(readGenshinSave, () => {
         },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     });
   });
 

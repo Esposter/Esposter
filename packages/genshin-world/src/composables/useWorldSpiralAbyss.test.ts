@@ -15,7 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
-import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
+import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";

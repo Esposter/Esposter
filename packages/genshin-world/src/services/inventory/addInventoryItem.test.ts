@@ -23,7 +23,7 @@ const createDefinition = (category: ItemCategory, id: number, stackLimit = 1): I
 });
 
 describe(addInventoryItem, () => {
-  const emptyInventory: Inventory = { items: [], nextId: 0 };
+  const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
   const QUICK_SWAP_ITEM_ID = 9;
   const material = createDefinition(ItemCategory.Material, 0, 2);
 
@@ -41,7 +41,7 @@ describe(addInventoryItem, () => {
     const { inventory } = addInventoryItem(emptyInventory, material, 1);
 
     expect(addInventoryItem(inventory, material, 2)).toStrictEqual({
-      inventory: { items: [{ definition: material, id: 0, quantity: 2 }], nextId: 1 },
+      inventory: { items: [{ definition: material, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
       overflow: 1,
     });
   });
@@ -74,6 +74,7 @@ describe(addInventoryItem, () => {
           },
         ],
         nextId: 2,
+        quickSwapItemIds: [],
       },
       overflow: 0,
     });
@@ -111,7 +112,7 @@ describe(addInventoryItem, () => {
       id: index,
       quantity: 1,
     }));
-    const inventory: Inventory = { items, nextId: INVENTORY_KIND_LIMIT };
+    const inventory: Inventory = { items, nextId: INVENTORY_KIND_LIMIT, quickSwapItemIds: [] };
 
     expect(addInventoryItem(inventory, createDefinition(ItemCategory.Material, INVENTORY_KIND_LIMIT), 1)).toStrictEqual(
       { inventory, overflow: 1 },

@@ -41,7 +41,7 @@ describe(payOfferingLevels, () => {
       },
     ],
   ]);
-  const emptyInventory: Inventory = { items: [], nextId: 0 };
+  const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
   test("every region's level pays Adventure EXP, Primogems and Sigils", () => {
     expect.hasAssertions();
@@ -62,6 +62,7 @@ describe(payOfferingLevels, () => {
       inventory: {
         items: [{ definition: getItemDefinition(SIGIL_ITEM_ID, names, materialDataMap), id: 0, quantity: SIGIL_COUNT }],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       overflowItems: [],
       wallet: { ...EMPTY_WALLET, [Currency.Primogem]: PRIMOGEM_COUNT },
@@ -83,6 +84,7 @@ describe(payOfferingLevels, () => {
       inventory: {
         items: [{ definition: getItemDefinition(STONE_ITEM_ID, names, materialDataMap), id: 0, quantity: 1 }],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       overflowItems: [],
       wallet: EMPTY_WALLET,

@@ -44,7 +44,7 @@ describe(destroyInventoryItems, () => {
 
     expect(
       destroyInventoryItems(
-        { items: [weapon], nextId: 1 },
+        { items: [weapon], nextId: 1, quickSwapItemIds: [] },
         EMPTY_WALLET,
         [weapon.id],
         englishNameText,
@@ -54,6 +54,7 @@ describe(destroyInventoryItems, () => {
       inventory: {
         items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
         nextId: 2,
+        quickSwapItemIds: [],
       },
       wallet: EMPTY_WALLET,
     });
@@ -66,7 +67,7 @@ describe(destroyInventoryItems, () => {
 
     expect(
       destroyInventoryItems(
-        { items: [weapon], nextId: 1 },
+        { items: [weapon], nextId: 1, quickSwapItemIds: [] },
         EMPTY_WALLET,
         [weapon.id, weapon.id],
         englishNameText,
@@ -76,6 +77,7 @@ describe(destroyInventoryItems, () => {
       inventory: {
         items: [{ definition: getItemDefinition(ORE_ID, englishNameText, materialDataMap), id: 1, quantity: 3 }],
         nextId: 2,
+        quickSwapItemIds: [],
       },
       wallet: EMPTY_WALLET,
     });
@@ -112,13 +114,16 @@ describe(destroyInventoryItems, () => {
 
     expect(
       destroyInventoryItems(
-        { items: [artifact], nextId: 1 },
+        { items: [artifact], nextId: 1, quickSwapItemIds: [] },
         EMPTY_WALLET,
         [artifact.id],
         englishNameText,
         materialDataMap,
       ),
-    ).toStrictEqual({ inventory: { items: [], nextId: 1 }, wallet: { ...EMPTY_WALLET, [Currency.Mora]: 420 } });
+    ).toStrictEqual({
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+      wallet: { ...EMPTY_WALLET, [Currency.Mora]: 420 },
+    });
   });
 
   test("refuses the whole destruction when a chosen weapon is 4-star, which its rule never destroys", () => {
@@ -129,7 +134,7 @@ describe(destroyInventoryItems, () => {
 
     expect(() =>
       destroyInventoryItems(
-        { items: [weapon, fourStarWeapon], nextId: 2 },
+        { items: [weapon, fourStarWeapon], nextId: 2, quickSwapItemIds: [] },
         EMPTY_WALLET,
         [weapon.id, fourStarWeapon.id],
         englishNameText,
@@ -149,7 +154,7 @@ describe(destroyInventoryItems, () => {
       id: 1,
       quantity: ORE_STACK_LIMIT,
     };
-    const inventory = { items: [weapon, fullOreStack], nextId: 2 };
+    const inventory = { items: [weapon, fullOreStack], nextId: 2, quickSwapItemIds: [] };
 
     expect(
       destroyInventoryItems(inventory, EMPTY_WALLET, [weapon.id], englishNameText, materialDataMap),

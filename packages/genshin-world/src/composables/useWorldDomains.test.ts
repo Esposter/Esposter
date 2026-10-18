@@ -75,7 +75,7 @@ const createDomains = () => {
     events,
     gameDataBaseUrl: "",
     getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),
-    inventory: ref<Inventory>({ items: [], nextId: 0 }),
+    inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpTo: vi.fn<() => void>(),
     materialDataMap: new Map(),
     nameText: {},

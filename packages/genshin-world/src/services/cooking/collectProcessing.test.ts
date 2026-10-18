@@ -30,7 +30,7 @@ describe(collectProcessing, () => {
     rankLevel: 1,
     result: { count: 1, id: RESULT_ID },
   };
-  const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
+  const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };
 
   test("should take in the units done by now and leave the rest queued from where they stopped", () => {
     expect.hasAssertions();
@@ -83,7 +83,11 @@ describe(collectProcessing, () => {
   test("should hold a done unit in the queue where the bag has no room for its result", () => {
     expect.hasAssertions();
 
-    const fullInventory = { items: [{ definition: createDefinition(RESULT_ID, 1), id: 1, quantity: 1 }], nextId: 2 };
+    const fullInventory = {
+      items: [{ definition: createDefinition(RESULT_ID, 1), id: 1, quantity: 1 }],
+      nextId: 2,
+      quickSwapItemIds: [],
+    };
     const job = { count: 1, startedAt: EPOCH };
     const result = collectProcessing(recipe, job, {
       inventory: fullInventory,
@@ -102,7 +106,7 @@ describe(collectProcessing, () => {
       recipe,
       { count: 3, startedAt: EPOCH },
       {
-        inventory: { items: [{ definition, id: 1, quantity: 1 }], nextId: 2 },
+        inventory: { items: [{ definition, id: 1, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
         now: EPOCH.add({ seconds: 3 * UNIT_SECONDS }),
         resultDefinition: definition,
       },

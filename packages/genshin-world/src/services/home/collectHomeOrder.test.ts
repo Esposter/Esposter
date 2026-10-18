@@ -40,7 +40,7 @@ describe(collectHomeOrder, () => {
     realmCurrency: 0,
     trustExp: 0,
   };
-  const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
+  const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };
 
   test("should keep the furnishing queued until its seconds have passed", () => {
     expect.hasAssertions();

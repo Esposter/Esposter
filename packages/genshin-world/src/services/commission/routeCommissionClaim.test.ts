@@ -117,6 +117,7 @@ describe(routeCommissionClaim, () => {
     const fullInventory: Inventory = {
       items: [{ definition: ITEM_DEFINITION, id: 0, quantity: ITEM_DEFINITION.stackLimit }],
       nextId: 1,
+      quickSwapItemIds: [],
     };
     const claim = claimOf([
       { count: MORA_COUNT, id: MORA_ITEM_ID },

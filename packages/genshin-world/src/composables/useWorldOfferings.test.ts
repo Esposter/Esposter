@@ -30,7 +30,7 @@ describe(useWorldOfferings, () => {
     const offeringItem = offeringLevel.items[0];
     assert.exists(offeringItem);
     const definition = getItemDefinition(offeringItem.itemId, englishNameText, materialDataMap);
-    const inventory = ref<Inventory>({ items: [], nextId: 0 });
+    const inventory = ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] });
     const wallet = ref(EMPTY_WALLET);
     const frostbearingTreeProgress = shallowRef<OfferingProgressSave>({ heldCounts: {}, level: 1 });
     const gainedAdventureExps: number[] = [];

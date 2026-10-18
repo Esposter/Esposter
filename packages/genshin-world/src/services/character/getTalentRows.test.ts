@@ -40,7 +40,7 @@ describe(getTalentRows, () => {
   };
   const UPGRADES = [{ coinCost: 500, costItems: [{ count: 3, id: MATERIAL.id }], level: 2, phase: 2 }];
   const TALENT_UPGRADE_MAP = { 1: UPGRADES };
-  const INVENTORY = { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 };
+  const INVENTORY = { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] };
   const WALLET = { ...EMPTY_WALLET, [Currency.Mora]: 500 };
 
   test("a talent row shows its next level's phase and cost", () => {

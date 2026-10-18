@@ -36,9 +36,16 @@ describe(liftCharacterLevel, () => {
     expect.hasAssertions();
     expect(
       liftCharacterLevel(CHARACTER, {
-        inventory: { items: [{ definition: MASTERLESS_STELLA_FORTUNA, id: 0, quantity: 1 }], nextId: 1 },
+        inventory: {
+          items: [{ definition: MASTERLESS_STELLA_FORTUNA, id: 0, quantity: 1 }],
+          nextId: 1,
+          quickSwapItemIds: [],
+        },
       }),
-    ).toStrictEqual({ character: { ...CHARACTER, level: 95 }, inventory: { items: [], nextId: 1 } });
+    ).toStrictEqual({
+      character: { ...CHARACTER, level: 95 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+    });
   });
 
   test("masterless stella fortuna lifts a character from level 95 to 100", () => {
@@ -46,8 +53,15 @@ describe(liftCharacterLevel, () => {
     const character = { ...CHARACTER, level: 95 };
     expect(
       liftCharacterLevel(character, {
-        inventory: { items: [{ definition: MASTERLESS_STELLA_FORTUNA, id: 0, quantity: 2 }], nextId: 1 },
+        inventory: {
+          items: [{ definition: MASTERLESS_STELLA_FORTUNA, id: 0, quantity: 2 }],
+          nextId: 1,
+          quickSwapItemIds: [],
+        },
       }),
-    ).toStrictEqual({ character: { ...character, level: 100 }, inventory: { items: [], nextId: 1 } });
+    ).toStrictEqual({
+      character: { ...character, level: 100 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+    });
   });
 });

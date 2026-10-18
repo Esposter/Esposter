@@ -25,7 +25,7 @@ describe(computeBlossomClaimPrompt, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.OriginalResin]: leyLinePrice * 2 };
-    const inventory = { items: [material(CONDENSED_RESIN_ITEM_ID, 1, 1)], nextId: 2 };
+    const inventory = { items: [material(CONDENSED_RESIN_ITEM_ID, 1, 1)], nextId: 2, quickSwapItemIds: [] };
 
     // The Original Resin covers one claim and two, and the held Condensed Resin the three-claim offer, with no restore
     expect(computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, wallet, inventory, epoch)).toStrictEqual({
@@ -42,7 +42,7 @@ describe(computeBlossomClaimPrompt, () => {
     expect.hasAssertions();
 
     const wallet = { ...EMPTY_WALLET, [Currency.OriginalResin]: 0 };
-    const inventory = { items: [material(FRAGILE_RESIN_ITEM_ID, 1, 1)], nextId: 2 };
+    const inventory = { items: [material(FRAGILE_RESIN_ITEM_ID, 1, 1)], nextId: 2, quickSwapItemIds: [] };
 
     expect(computeBlossomClaimPrompt(BlossomKind.LeyLine, 0, wallet, inventory, epoch)).toStrictEqual({
       canRestore: true,

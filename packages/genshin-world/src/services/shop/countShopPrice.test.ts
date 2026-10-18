@@ -22,6 +22,7 @@ describe(countShopPrice, () => {
   const inventoryWithFish: Inventory = {
     items: [{ definition: fishDefinition, id: 0, quantity: FISH_HELD }],
     nextId: 1,
+    quickSwapItemIds: [],
   };
 
   test("counts a currency price from the wallet", () => {

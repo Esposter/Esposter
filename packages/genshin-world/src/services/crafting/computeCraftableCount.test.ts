@@ -51,6 +51,7 @@ describe(computeCraftableCount, () => {
         { definition: crystalCoreDefinition, id: 1, quantity: 1 },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
 
     expect(computeCraftableCount(recipe, { inventory, wallet: EMPTY_WALLET }, EPOCH)).toBe(1);
@@ -78,6 +79,7 @@ describe(computeCraftableCount, () => {
         { definition: createDefinition(CATALYST_ID), id: 1, quantity: 7 },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
 
     expect(computeCraftableCount(conversion, { inventory, wallet: EMPTY_WALLET }, EPOCH)).toBe(2);
@@ -94,7 +96,11 @@ describe(computeCraftableCount, () => {
       ],
       mora: 100,
     };
-    const inventory: Inventory = { items: [{ definition: crystalCoreDefinition, id: 0, quantity: 9 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: crystalCoreDefinition, id: 0, quantity: 9 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 250, [Currency.OriginalResin]: 0 };
     const now = EPOCH.add({ minutes: ORIGINAL_RESIN_REGEN_MINUTES * 120 });
 

@@ -128,7 +128,7 @@ describe(claimResinReward, () => {
       claimResinReward(
         adventureRankTables,
         wallet,
-        { items: [condensedResinItem], nextId: 1 },
+        { items: [condensedResinItem], nextId: 1, quickSwapItemIds: [] },
         { condensedResinCount: 1, resin: 0 },
         [{ count: MORA_COUNT, id: MORA_ITEM_ID }],
         0,
@@ -170,7 +170,7 @@ describe(claimResinReward, () => {
       claimResinReward(
         adventureRankTables,
         wallet,
-        { items: [condensedResinItem], nextId: 1 },
+        { items: [condensedResinItem], nextId: 1, quickSwapItemIds: [] },
         { condensedResinCount: 2, resin: 0 },
         [{ count: MORA_COUNT, id: MORA_ITEM_ID }],
         0,

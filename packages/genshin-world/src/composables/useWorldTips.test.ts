@@ -36,6 +36,7 @@ const inventoryOf = (itemIds: number[]): Inventory => ({
     quantity: 1,
   })),
   nextId: itemIds.length,
+  quickSwapItemIds: [],
 });
 const createWorldTips = (tips: Tip[], shown: ReadonlySet<number> = new Set()) => {
   const events = createWorldEvents();

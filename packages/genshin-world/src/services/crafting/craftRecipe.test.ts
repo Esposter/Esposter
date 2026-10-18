@@ -72,7 +72,11 @@ describe(craftRecipe, () => {
   test("a craft spends its materials and mora", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 6 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: materialDefinition, id: 0, quantity: 6 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 200 };
     const result = craftRecipe(tierRecipe, 2, resultDefinition, {
       ...craftingState(inventory, wallet, { learnedRecipeIds: [] }),
@@ -81,6 +85,7 @@ describe(craftRecipe, () => {
     expect(result?.inventory).toStrictEqual({
       items: [{ definition: resultDefinition, id: 1, quantity: 2 }],
       nextId: 2,
+      quickSwapItemIds: [],
     });
     expect(result?.wallet[Currency.Mora]).toBe(100);
   });
@@ -107,6 +112,7 @@ describe(craftRecipe, () => {
         { definition: catalystDefinition, id: 1, quantity: 7 },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     const result = craftRecipe(
       conversionRecipe,
@@ -121,13 +127,18 @@ describe(craftRecipe, () => {
         { definition: resultDefinition, id: 2, quantity: 2 },
       ],
       nextId: 3,
+      quickSwapItemIds: [],
     });
   });
 
   test("should refuse a batch the Mora does not pay for, spending nothing", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 9 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: materialDefinition, id: 0, quantity: 9 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 100 };
 
     expect(craftRecipe(tierRecipe, 3, resultDefinition, craftingState(inventory, wallet))).toBeUndefined();
@@ -136,7 +147,11 @@ describe(craftRecipe, () => {
   test("should refuse a batch whose materials name one item twice the bag holds too few of in sum", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 5 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: materialDefinition, id: 0, quantity: 5 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 200 };
     const recipe = {
       ...tierRecipe,
@@ -154,7 +169,11 @@ describe(craftRecipe, () => {
   test("should refuse a count that is not whole", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 9 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: materialDefinition, id: 0, quantity: 9 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 300 };
 
     expect(craftRecipe(tierRecipe, 1.5, resultDefinition, craftingState(inventory, wallet))).toBeUndefined();
@@ -169,6 +188,7 @@ describe(craftRecipe, () => {
         { definition: condensedResinDefinition, id: 1, quantity: CONDENSED_RESIN_STACK_LIMIT },
       ],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 1000 };
 
@@ -180,7 +200,11 @@ describe(craftRecipe, () => {
   test("crafting Condensed Resin draws its resin from the Original Resin wallet", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: crystalCore, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: crystalCore, id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 1000, [Currency.OriginalResin]: 200 };
     const result = craftRecipe(condensedResinRecipe, 1, condensedResinDefinition, craftingState(inventory, wallet));
 
@@ -192,7 +216,11 @@ describe(craftRecipe, () => {
   test("should refuse a recipe an instruction opens while it is not learned", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: crystalCore, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: crystalCore, id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 1000 };
 
     expect(

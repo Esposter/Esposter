@@ -49,13 +49,13 @@ describe(ascendCharacter, () => {
     expect(
       ascendCharacter(CHARACTER, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         phases: PHASES,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
       }),
     ).toStrictEqual({
       character: { ...CHARACTER, ascension: 1 },
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: 0 },
     });
   });
@@ -65,7 +65,7 @@ describe(ascendCharacter, () => {
     expect(
       ascendCharacter(CHARACTER, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         phases: [
           { attributeLines: [], maxLevel: 20 },
           { attributeLines: [], maxLevel: 40 },
@@ -80,7 +80,7 @@ describe(ascendCharacter, () => {
     expect(
       ascendCharacter(CHARACTER, {
         adventureRank: 14,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         phases: PHASES,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
       }),
@@ -92,7 +92,7 @@ describe(ascendCharacter, () => {
     expect(
       ascendCharacter(CHARACTER, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         phases: PHASES,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 19_999 },
       }),
@@ -104,7 +104,7 @@ describe(ascendCharacter, () => {
     expect(
       ascendCharacter(CHARACTER, {
         adventureRank: 15,
-        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+        inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
         phases: PHASES,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
       }),
@@ -118,7 +118,7 @@ describe(ascendCharacter, () => {
         { ...CHARACTER, level: 19 },
         {
           adventureRank: 15,
-          inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1 },
+          inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
           phases: PHASES,
           wallet: { ...EMPTY_WALLET, [Currency.Mora]: 20_000 },
         },

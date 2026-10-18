@@ -44,7 +44,16 @@ describe(addFishingCatch, () => {
     expect.hasAssertions();
 
     expect(
-      addFishingCatch({ items: [], nextId: 0 }, { rewardId: SHARED_REWARD_ID }, rewards, names, materialDataMap),
-    ).toStrictEqual({ inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1 }, overflow: 0 });
+      addFishingCatch(
+        { items: [], nextId: 0, quickSwapItemIds: [] },
+        { rewardId: SHARED_REWARD_ID },
+        rewards,
+        names,
+        materialDataMap,
+      ),
+    ).toStrictEqual({
+      inventory: { items: [{ definition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] },
+      overflow: 0,
+    });
   });
 });

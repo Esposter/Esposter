@@ -28,7 +28,11 @@ describe(getAscensionMaterials, () => {
   test("each material lists the count the phase takes and the count the player holds", () => {
     expect.hasAssertions();
     expect(
-      getAscensionMaterials(PHASE, { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 }),
+      getAscensionMaterials(PHASE, {
+        items: [{ definition: MATERIAL, id: 0, quantity: 2 }],
+        nextId: 1,
+        quickSwapItemIds: [],
+      }),
     ).toStrictEqual([
       { count: 3, held: 2, id: 112_044 },
       { count: 1, held: 0, id: 104_161 },
@@ -37,6 +41,8 @@ describe(getAscensionMaterials, () => {
 
   test("a phase whose cost is not in the table yet lists no materials", () => {
     expect.hasAssertions();
-    expect(getAscensionMaterials({ attributeLines: [], maxLevel: 40 }, { items: [], nextId: 1 })).toStrictEqual([]);
+    expect(
+      getAscensionMaterials({ attributeLines: [], maxLevel: 40 }, { items: [], nextId: 1, quickSwapItemIds: [] }),
+    ).toStrictEqual([]);
   });
 });

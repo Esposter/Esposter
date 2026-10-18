@@ -50,6 +50,7 @@ describe(cookRecipeByHand, () => {
   const createInventory = (ingredientCount: number) => ({
     items: [{ definition: createDefinition(INGREDIENT_ID), id: 1, quantity: ingredientCount }],
     nextId: 2,
+    quickSwapItemIds: [],
   });
   const cook = (recipe: CookingRecipe, stopPosition: number, avatarId = AVATAR_ID, ingredientCount = 1) =>
     cookRecipeByHand(recipe, {

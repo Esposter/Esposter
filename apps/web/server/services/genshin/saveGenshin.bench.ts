@@ -28,6 +28,7 @@ const createSave = (bagEntryCount: number): GenshinSave => ({
       quantity: 1,
     })),
     nextId: bagEntryCount,
+    quickSwapItemIds: [],
   },
 });
 // Azure acknowledges every write with an ETag, and the next write of the session is conditioned on it

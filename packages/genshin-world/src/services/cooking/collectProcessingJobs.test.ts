@@ -31,7 +31,7 @@ describe(collectProcessingJobs, () => {
     rankLevel: 1,
     result: { count: 1, id: RESULT_ID },
   };
-  const emptyInventory = { items: [] as InventoryItem[], nextId: 1 };
+  const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };
 
   test("queues with no unit done are returned as the same jobs", () => {
     expect.hasAssertions();
@@ -66,7 +66,11 @@ describe(collectProcessingJobs, () => {
   test("a unit with no room in the bag waits in the queue", () => {
     expect.hasAssertions();
 
-    const fullInventory = { items: [{ definition: createDefinition(RESULT_ID, 1), id: 1, quantity: 1 }], nextId: 2 };
+    const fullInventory = {
+      items: [{ definition: createDefinition(RESULT_ID, 1), id: 1, quantity: 1 }],
+      nextId: 2,
+      quickSwapItemIds: [],
+    };
     const job = { count: 1, startedAt: EPOCH };
 
     const result = collectProcessingJobs(

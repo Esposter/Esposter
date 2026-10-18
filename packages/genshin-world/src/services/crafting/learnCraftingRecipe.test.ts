@@ -37,10 +37,14 @@ describe(learnCraftingRecipe, () => {
   test("should take the instruction from the bag and record the recipe as learned", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: instruction, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: instruction, id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
 
     expect(learnCraftingRecipe(recipe, INSTRUCTION_ID, { inventory, progress: emptyProgress })).toStrictEqual({
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       progress: { learnedRecipeIds: [recipe.id] },
     });
   });
@@ -51,6 +55,7 @@ describe(learnCraftingRecipe, () => {
     const inventory: Inventory = {
       items: [{ definition: createDefinition(OTHER_INSTRUCTION_ID), id: 0, quantity: 1 }],
       nextId: 1,
+      quickSwapItemIds: [],
     };
 
     expect(learnCraftingRecipe(recipe, OTHER_INSTRUCTION_ID, { inventory, progress: emptyProgress })).toBeUndefined();
@@ -59,7 +64,7 @@ describe(learnCraftingRecipe, () => {
   test("should refuse an instruction the bag does not hold", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [], nextId: 0 };
+    const inventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
     expect(learnCraftingRecipe(recipe, INSTRUCTION_ID, { inventory, progress: emptyProgress })).toBeUndefined();
   });
@@ -67,7 +72,11 @@ describe(learnCraftingRecipe, () => {
   test("should refuse a recipe already learned, keeping its instruction", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [{ definition: instruction, id: 0, quantity: 1 }], nextId: 1 };
+    const inventory: Inventory = {
+      items: [{ definition: instruction, id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
 
     expect(
       learnCraftingRecipe(recipe, INSTRUCTION_ID, { inventory, progress: { learnedRecipeIds: [recipe.id] } }),

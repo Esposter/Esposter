@@ -37,7 +37,7 @@ describe(upgradeCharacterTalent, () => {
     stackLimit: 99,
   };
   const UPGRADES: TalentUpgrade[] = [{ coinCost: 500, costItems: [{ count: 3, id: MATERIAL.id }], level: 2, phase: 2 }];
-  const INVENTORY = { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1 };
+  const INVENTORY = { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] };
   const WALLET = { ...EMPTY_WALLET, [Currency.Mora]: 500 };
 
   test("pressing Upgrade raises a talent by one and takes its Mora and materials", () => {
@@ -53,7 +53,7 @@ describe(upgradeCharacterTalent, () => {
         OTHER_CHARACTER,
         { ...CHARACTER, talentLevels: { ...CHARACTER.talentLevels, [CombatTalent.NormalAttack]: 2 } },
       ],
-      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1 },
+      inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] },
       wallet: EMPTY_WALLET,
     });
   });

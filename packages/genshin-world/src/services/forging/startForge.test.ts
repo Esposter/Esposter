@@ -50,6 +50,7 @@ describe(startForge, () => {
   const createInventory = (ingredientCount: number) => ({
     items: [{ definition: createDefinition(INGREDIENT_ID), id: 1, quantity: ingredientCount }],
     nextId: 2,
+    quickSwapItemIds: [],
   });
   const definitions = new Map([[INGREDIENT_ID, createDefinition(INGREDIENT_ID)]]);
   const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 100 };
@@ -160,6 +161,7 @@ describe(startForge, () => {
     const chunkInventory = {
       items: [{ definition: createDefinition(MAGICAL_CRYSTAL_CHUNK_ITEM_ID), id: 1, quantity: 3 }],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     const chunkArguments = { ...startArguments, definitions: chunkDefinitions, inventory: chunkInventory };
 
@@ -193,6 +195,7 @@ describe(startForge, () => {
     const weaponInventory = {
       items: [{ definition: createDefinition(INGREDIENT_ID), id: 1, quantity: 100 }],
       nextId: 2,
+      quickSwapItemIds: [],
     };
     const weaponArguments = {
       ...startArguments,

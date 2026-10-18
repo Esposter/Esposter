@@ -37,7 +37,7 @@ describe(offerBagItems, () => {
 
     expect(
       offerBagItems(
-        { items, nextId: 1 },
+        { items, nextId: 1, quickSwapItemIds: [] },
         EMPTY_WALLET,
         { heldCounts: {}, level: 1, levels },
         englishNameText,
@@ -45,7 +45,7 @@ describe(offerBagItems, () => {
       ),
     ).toStrictEqual({
       adventureExp: 1,
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       overflowItems: [],
       progress: { heldCounts: { [offeringItemId]: 1 }, level: 3, levels },
       wallet: { ...EMPTY_WALLET, [Currency.AcquaintFate]: 1, [Currency.Mora]: 1 },
@@ -69,7 +69,7 @@ describe(offerBagItems, () => {
 
     expect(
       offerBagItems(
-        { items: [{ definition, id: 0, quantity: 1 }, fullStack], nextId: 2 },
+        { items: [{ definition, id: 0, quantity: 1 }, fullStack], nextId: 2, quickSwapItemIds: [] },
         EMPTY_WALLET,
         { heldCounts: {}, level: 1, levels: rewardLevels },
         englishNameText,
@@ -85,7 +85,7 @@ describe(offerBagItems, () => {
 
     expect(
       offerBagItems(
-        { items, nextId: 1 },
+        { items, nextId: 1, quickSwapItemIds: [] },
         EMPTY_WALLET,
         { heldCounts: {}, level: 3, levels },
         englishNameText,
@@ -93,7 +93,7 @@ describe(offerBagItems, () => {
       ),
     ).toStrictEqual({
       adventureExp: 0,
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       overflowItems: [],
       progress: { heldCounts: { [offeringItemId]: 3 }, level: 3, levels },
       wallet: EMPTY_WALLET,

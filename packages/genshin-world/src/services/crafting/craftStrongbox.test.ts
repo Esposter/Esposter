@@ -95,7 +95,11 @@ describe(craftStrongbox, () => {
   test("three unlocked five-star artifacts become one strongbox artifact in the bag", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [createBagItem(0), createBagItem(1), createBagItem(2)], nextId: 3 };
+    const inventory: Inventory = {
+      items: [createBagItem(0), createBagItem(1), createBagItem(2)],
+      nextId: 3,
+      quickSwapItemIds: [],
+    };
     const expected = rollStrongboxArtifact(STRONGBOX, RANDOM, TABLES);
 
     expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())).toStrictEqual({
@@ -109,6 +113,7 @@ describe(craftStrongbox, () => {
           },
         ],
         nextId: 4,
+        quickSwapItemIds: [],
       },
       overflow: 0,
       wallet: EMPTY_WALLET,
@@ -118,7 +123,11 @@ describe(craftStrongbox, () => {
   test("a locked artifact is not offered", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [createBagItem(0), createBagItem(1), createBagItem(2, true)], nextId: 3 };
+    const inventory: Inventory = {
+      items: [createBagItem(0), createBagItem(1), createBagItem(2, true)],
+      nextId: 3,
+      quickSwapItemIds: [],
+    };
 
     expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1, 2], createCraftTables())).toBeUndefined();
   });
@@ -126,7 +135,11 @@ describe(craftStrongbox, () => {
   test("a choice of other than three artifacts is refused", () => {
     expect.hasAssertions();
 
-    const inventory: Inventory = { items: [createBagItem(0), createBagItem(1), createBagItem(2)], nextId: 3 };
+    const inventory: Inventory = {
+      items: [createBagItem(0), createBagItem(1), createBagItem(2)],
+      nextId: 3,
+      quickSwapItemIds: [],
+    };
 
     expect(craftStrongbox(inventory, EMPTY_WALLET, STRONGBOX, [0, 1], createCraftTables())).toBeUndefined();
   });

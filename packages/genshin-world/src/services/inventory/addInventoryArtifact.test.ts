@@ -29,7 +29,7 @@ const artifact: Artifact = {
 };
 
 describe(addInventoryArtifact, () => {
-  const emptyInventory: Inventory = { items: [], nextId: 0 };
+  const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
   test("takes each artifact in as an entry of its own holding the artifact it was rolled as", () => {
     expect.hasAssertions();
@@ -44,6 +44,7 @@ describe(addInventoryArtifact, () => {
           { artifact: otherArtifact, definition, id: 1, quantity: 1 },
         ],
         nextId: 2,
+        quickSwapItemIds: [],
       },
       overflow: 0,
     });
@@ -56,8 +57,8 @@ describe(addInventoryArtifact, () => {
     assert.exists(room);
     const items = Array.from({ length: room }, (_value, index) => ({ artifact, definition, id: index, quantity: 1 }));
 
-    expect(addInventoryArtifact({ items, nextId: room }, definition, artifact)).toStrictEqual({
-      inventory: { items, nextId: room },
+    expect(addInventoryArtifact({ items, nextId: room, quickSwapItemIds: [] }, definition, artifact)).toStrictEqual({
+      inventory: { items, nextId: room, quickSwapItemIds: [] },
       overflow: 1,
     });
   });

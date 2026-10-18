@@ -33,6 +33,7 @@ describe(startProcessing, () => {
   const createInventory = (ingredientCount: number) => ({
     items: [{ definition: createDefinition(INGREDIENT_ID), id: 1, quantity: ingredientCount }],
     nextId: 2,
+    quickSwapItemIds: [],
   });
 
   test("should take every unit's ingredients at once and start an idle queue from now", () => {

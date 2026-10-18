@@ -26,8 +26,14 @@ describe(refillOriginalResinWithFragileResin, () => {
   test("using Fragile Resin restores sixty Original Resin", () => {
     expect.hasAssertions();
 
-    expect(refillOriginalResinWithFragileResin({ items: [fragileResinItem], nextId: 2 }, wallet, epoch)).toStrictEqual({
-      inventory: { items: [{ ...fragileResinItem, quantity: 1 }], nextId: 2 },
+    expect(
+      refillOriginalResinWithFragileResin(
+        { items: [fragileResinItem], nextId: 2, quickSwapItemIds: [] },
+        wallet,
+        epoch,
+      ),
+    ).toStrictEqual({
+      inventory: { items: [{ ...fragileResinItem, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
       wallet: { ...wallet, [Currency.OriginalResin]: 100 + FRAGILE_RESIN_RESTORE },
     });
   });

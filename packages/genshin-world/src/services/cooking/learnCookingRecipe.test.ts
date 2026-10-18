@@ -38,7 +38,11 @@ describe(learnCookingRecipe, () => {
     unlockItemIds: [INSTRUCTION_ID],
   };
   const progress = { learnedRecipeIds: [], proficiencies: {} };
-  const inventory = { items: [{ definition: createDefinition(INSTRUCTION_ID), id: 1, quantity: 1 }], nextId: 2 };
+  const inventory = {
+    items: [{ definition: createDefinition(INSTRUCTION_ID), id: 1, quantity: 1 }],
+    nextId: 2,
+    quickSwapItemIds: [],
+  };
 
   test("should take the instruction from the bag and record the dish as learned", () => {
     expect.hasAssertions();
@@ -54,7 +58,11 @@ describe(learnCookingRecipe, () => {
 
     expect(
       learnCookingRecipe(recipe, OTHER_ITEM_ID, {
-        inventory: { items: [{ definition: createDefinition(OTHER_ITEM_ID), id: 1, quantity: 1 }], nextId: 2 },
+        inventory: {
+          items: [{ definition: createDefinition(OTHER_ITEM_ID), id: 1, quantity: 1 }],
+          nextId: 2,
+          quickSwapItemIds: [],
+        },
         progress,
       }),
     ).toBeUndefined();

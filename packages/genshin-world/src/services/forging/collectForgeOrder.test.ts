@@ -136,7 +136,7 @@ describe(collectForgeOrder, () => {
     const result = collectForgeOrder(recipe, order(3), {
       ...collectArguments,
       definitions: new Map([[RESULT_ID, fullDefinition]]),
-      inventory: { items: [{ definition: fullDefinition, id: 1, quantity: 1 }], nextId: 2 },
+      inventory: { items: [{ definition: fullDefinition, id: 1, quantity: 1 }], nextId: 2, quickSwapItemIds: [] },
       now: EPOCH.add({ seconds: 3 * UNIT_SECONDS }),
     });
 

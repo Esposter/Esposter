@@ -54,6 +54,7 @@ describe(pickUpMaterialSource, () => {
         },
       ],
       nextId: 1,
+      quickSwapItemIds: [],
     };
 
     expect(pickUp.inventory).toStrictEqual(expectedInventory);

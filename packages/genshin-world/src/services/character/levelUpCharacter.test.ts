@@ -39,13 +39,17 @@ describe(levelUpCharacter, () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {
-        inventory: { items: [{ definition: ADVENTURERS_EXPERIENCE, id: 0, quantity: 1 }], nextId: 1 },
+        inventory: {
+          items: [{ definition: ADVENTURERS_EXPERIENCE, id: 0, quantity: 1 }],
+          nextId: 1,
+          quickSwapItemIds: [],
+        },
         maxLevel: 20,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 1000 },
       }),
     ).toStrictEqual({
       character: { ...CHARACTER, level: 8 },
-      inventory: { items: [], nextId: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: 0 },
     });
   });
@@ -55,7 +59,7 @@ describe(levelUpCharacter, () => {
     expect.hasAssertions();
     expect(
       levelUpCharacter(CHARACTER, {
-        inventory: { items: [{ definition: WANDERERS_ADVICE, id: 0, quantity: 3 }], nextId: 1 },
+        inventory: { items: [{ definition: WANDERERS_ADVICE, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] },
         maxLevel: 20,
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 1000 },
       }),

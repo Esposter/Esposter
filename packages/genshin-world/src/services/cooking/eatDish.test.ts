@@ -25,6 +25,7 @@ describe(eatDish, () => {
       },
     ],
     nextId: 2,
+    quickSwapItemIds: [],
   });
 
   test("using a recovery dish heals the selected character", () => {
