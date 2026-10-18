@@ -13,6 +13,20 @@ describe(grantPartyMemberBondOfLife, () => {
     expect(getPartyMember(party, 1).bondOfLifeShare).toBe(0.25);
   });
 
+  test("a grant over an empty Bond of Life restarts the share the bond has cleared", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const partyMember = getPartyMember(party, 1);
+    partyMember.bondOfLifeClearedShare = 0.5;
+    grantPartyMemberBondOfLife(party, 1, 0.25);
+
+    expect({
+      bondOfLifeClearedShare: partyMember.bondOfLifeClearedShare,
+      bondOfLifeShare: partyMember.bondOfLifeShare,
+    }).toStrictEqual({ bondOfLifeClearedShare: 0, bondOfLifeShare: 0.25 });
+  });
+
   test("a grant adds to the Bond of Life a member already carries", () => {
     expect.hasAssertions();
 
