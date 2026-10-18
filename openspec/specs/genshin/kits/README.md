@@ -424,7 +424,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 | [Ganyu](ganyu/design.md)                   | Frostflake Arrow, Ice Lotus and Celestial Shower                                                              |
 | [Gorou](gorou/design.md)                   | General's War Banner and Crystal Collapse                                                                     |
 | [Heizou](heizou/design.md)                 | Heartstopper Strike, Vacuum Slugger and Windmuster Iris                                                       |
-| [Hu Tao](hu-tao/design.md)                 | Her string, charged attack and Guide to Afterlife's Paramita stance                                           |
+| [Hu Tao](hu-tao/design.md)                 | Her string, charged attack, Guide to Afterlife's Paramita stance and Spirit Soother's heal                    |
 | [Iansan](iansan/design.md)                 | Three strikes, the charged attack and Thunderbolt Rush                                                        |
 | [Ifa](ifa/design.md)                       | Three strikes, the charged attack and her plunges                                                             |
 | [Illuga](illuga/design.md)                 | Four strikes, the charged attack, the plunges, Press and the burst's two hits; his Hold not built             |

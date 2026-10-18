@@ -50,19 +50,31 @@ A character's passive SHALL take effect once the character reaches the ascension
 
 ### Requirement: Spirit Soother Heal
 
-Hu Tao's Spirit Soother SHALL heal the character it targets when that character's HP is under half.
+Hu Tao's Spirit Soother SHALL heal Hu Tao once for each enemy its hit strikes, up to five times a cast, by a share of her Max HP that is larger while her HP is at or under half.
 
-#### Scenario: Spirit Soother heals a character under half HP
+#### Scenario: the Spirit Soother heals Hu Tao above half HP
 
-- **GIVEN** a character whose HP is under half of its maximum
-- **WHEN** Hu Tao's Spirit Soother takes effect on that character
-- **THEN** the character is healed
+- **GIVEN** Hu Tao's HP is above half of her maximum
+- **WHEN** Spirit Soother's hit strikes an enemy
+- **THEN** Hu Tao is healed by her base share of Max HP
 
-#### Scenario: Spirit Soother does not heal a character at or above half HP
+#### Scenario: the Spirit Soother heals Hu Tao more at or below half HP
 
-- **GIVEN** a character whose HP is at least half of its maximum
-- **WHEN** Hu Tao's Spirit Soother takes effect on that character
-- **THEN** the character is not healed
+- **GIVEN** Hu Tao's HP is at or under half of her maximum
+- **WHEN** Spirit Soother's hit strikes an enemy
+- **THEN** Hu Tao is healed by the larger share of Max HP
+
+#### Scenario: the Spirit Soother heals at most five times a cast
+
+- **GIVEN** Spirit Soother has healed Hu Tao five times in its cast
+- **WHEN** its hit strikes a further enemy
+- **THEN** Hu Tao is not healed
+
+#### Scenario: a new cast of the Spirit Soother starts its heals again
+
+- **GIVEN** Spirit Soother has healed Hu Tao five times in a cast
+- **WHEN** Spirit Soother is cast again and its hit strikes an enemy
+- **THEN** Hu Tao is healed
 
 ### Requirement: Swap Ends Field Effect
 

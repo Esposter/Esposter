@@ -13,7 +13,7 @@
 
 ## 4. Heals and swaps
 
-- [ ] 4.1 Heal under half HP for Hu Tao's Spirit Soother, with her Constellations 4 and 6 and Blood Blossom, once a kit's actions can read party HP. Verify: tests named after the scenarios 'Spirit Soother heals a character under half HP' and 'Spirit Soother does not heal a character at or above half HP', seen failing first.
+- [ ] 4.1 Heal under half HP for Hu Tao's Spirit Soother, with her Constellations 4 and 6 and Blood Blossom, once a kit's actions can read party HP. Verify: tests named after the scenarios 'the Spirit Soother heals Hu Tao above half HP' and 'the Spirit Soother heals Hu Tao more at or below half HP', seen failing first. The heal is not gated on half HP: the spec's earlier scenario that Hu Tao is not healed at or above half HP contradicted the in-game text and was corrected.
 - [x] 4.2 End Klee's, Xiao's, Ningguang's and Razor's field effects when their character is swapped off the field. Verify: tests named after the scenarios 'Klee's Sparks 'n' Splash ends when Klee is swapped off the field' and 'a field effect continues while its character stays on the field', seen failing first.
 - [ ] 4.3 Move Xingqiu's Raincutter onto the kit events once gcsim gives each character's attack its delay (design.md). Verify: a requirement and scenarios for it are added to the spec, with a test named after each, seen failing first, when the delay is read.
 

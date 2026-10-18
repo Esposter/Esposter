@@ -1,8 +1,10 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitStance } from "#src/models/kit/KitStance";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -177,5 +179,64 @@ describe("sanguine Rouge", () => {
     const combatant = { ...createHuTaoCombatant(), ascension: 3 };
 
     expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([]);
+  });
+});
+
+// Hu Tao's share of her Max HP in the context's party
+const getHealthShare = (context: KitContext) => getPartyMember(context.party, HU_TAO_CHARACTER_ID).healthShare;
+// A context with Hu Tao on the field at the given share of her HP
+const createSpiritSooterContext = (healthShare: number) =>
+  createKitTestContext(createHuTaoCombatant(), { party: createHuTaoParty(healthShare) });
+// One enemy struck by the given hit of Spirit Soother
+const strikeEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => {
+  if (!hit?.onStrike) throw new Error("Spirit Soother's hit has no strike to land");
+  hit.onStrike(context, { body: context.body, combatant: context.activeCombatant, hit });
+};
+// Spirit Soother's heal shares of Max HP at her first level, as gcsim v2.47.2 (MIT) hutao's proud skill group 4639 gives
+// The share above half of her HP, and the larger one at or under it
+const SPIRIT_SOOTHER_REGEN_SHARE = 0.062625;
+const SPIRIT_SOOTHER_LOW_REGEN_SHARE = 0.0835;
+
+describe("spirit Soother", () => {
+  test("the Spirit Soother heals Hu Tao above half HP", () => {
+    expect.hasAssertions();
+    const context = createSpiritSooterContext(0.6);
+
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+
+    expect(getHealthShare(context)).toBeCloseTo(0.6 + SPIRIT_SOOTHER_REGEN_SHARE);
+  });
+
+  test("the Spirit Soother heals Hu Tao more at or below half HP", () => {
+    expect.hasAssertions();
+    const context = createSpiritSooterContext(0.5);
+
+    HU_TAO_KIT.elementalBurstVariant?.action.onStart?.(context);
+    strikeEnemy(context, HU_TAO_KIT.elementalBurstVariant?.action.hits[0]);
+
+    expect(getHealthShare(context)).toBeCloseTo(0.5 + SPIRIT_SOOTHER_LOW_REGEN_SHARE);
+  });
+
+  test("the Spirit Soother heals at most five times a cast", () => {
+    expect.hasAssertions();
+    const context = createSpiritSooterContext(0.1);
+
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    for (let index = 0; index < 6; index++) strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+
+    expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE);
+  });
+
+  test("a new cast of the Spirit Soother starts its heals again", () => {
+    expect.hasAssertions();
+    const context = createSpiritSooterContext(0.1);
+
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    for (let index = 0; index < 5; index++) strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+
+    expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
   });
 });

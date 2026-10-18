@@ -1,7 +1,9 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
@@ -10,6 +12,8 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { healKitPerStrike } from "#src/services/kit/healKitPerStrike";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -33,17 +37,28 @@ const GUIDE_MINIMUM_HP = 1;
 // Paramita's charged attack gives each enemy it hits, from gcsim's hutao/charge.go
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/skill.go
 const BLOOD_BLOSSOM_STATUS_ID = "hu-tao-blood-blossom";
+// Spirit Soother heals Hu Tao a share of her Max HP for each enemy its hit strikes, up to five a cast, from the wiki.
+// The variant's larger share is taken at or under half HP, as gcsim v2.47.2 (MIT) hutao/burst.go has it.
+// The count of heals is a kit resource, which a cast's start clears.
+const SPIRIT_SOOTHER_HEAL_RESOURCE = "hu-tao-spirit-soother-heals";
+const SPIRIT_SOOTHER_MAXIMUM_HEALS = 5;
 
 export const HU_TAO_CHARACTER_ID = 10_000_046;
 
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
-// Under. Flutter By and Sanguine Rouge are built; Spirit Soother's heal and her constellations are not
+// Under. Spirit Soother heals her on each enemy its hit strikes. Flutter By and Sanguine Rouge are built; her
+// Constellations are not
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
     : [{ amount: SANGUINE_ROUGE_PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }];
+
+// A cast of Spirit Soother starts its count of heals again
+const resetSpiritSootherHeals = ({ activeCombatant, kitEffectState }: KitContext) => {
+  spendKitResource(kitEffectState, activeCombatant.characterId, SPIRIT_SOOTHER_HEAL_RESOURCE);
+};
 
 export const createHuTaoKitBehaviour = ({
   readHit,
@@ -52,6 +67,8 @@ export const createHuTaoKitBehaviour = ({
   readStance,
 }: KitRecordReader): KitBehaviour => {
   const lowHealthShare = readParameter("spiritSootherLowHealthShare");
+  const regenShare = readParameter("spiritSootherRegen");
+  const lowRegenShare = readParameter("spiritSootherLowRegen");
   const guideToAfterlifeHealthShare = readParameter("guideToAfterlifeHealthCost");
   const paramitaSeconds = readParameter("paramitaSeconds");
   const paramitaMaxHealthAttackShare = readParameter("paramitaMaxHealthAttackShare");
@@ -72,10 +89,23 @@ export const createHuTaoKitBehaviour = ({
   // Its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
   // Hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
   const paramita = readStance("paramita", { chargedAttack: { hits: [{ enemyStatus: createBloodBlossomStatus }] } });
+  // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it strikes
+  const healOnSpiritSootherStrike = (context: KitContext, strike: KitStrike) => {
+    const { attributes, characterId } = strike.combatant;
+    const { healthShare } = getPartyMember(context.party, characterId);
+    healKitPerStrike(context, strike, {
+      health: (healthShare <= lowHealthShare ? lowRegenShare : regenShare) * attributes.maxHealth,
+      maximumHeals: SPIRIT_SOOTHER_MAXIMUM_HEALS,
+      resourceId: SPIRIT_SOOTHER_HEAL_RESOURCE,
+    });
+  };
   return {
+    burst: { hits: [{ onStrike: healOnSpiritSootherStrike }], onStart: resetSpiritSootherHeals },
     burstVariant: {
       checkIsActive: ({ activeCombatant: combatant, party }) =>
         getPartyMember(party, combatant.characterId).healthShare <= lowHealthShare,
+      hits: [{ onStrike: healOnSpiritSootherStrike }],
+      onStart: resetSpiritSootherHeals,
     },
     getPassiveBonuses,
     // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
