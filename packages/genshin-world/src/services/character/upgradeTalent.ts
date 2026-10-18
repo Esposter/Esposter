@@ -6,6 +6,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
 import { Currency } from "#src/models/inventory/Currency";
+import { getTalentUpgrade } from "#src/services/character/getTalentUpgrade";
 import { getTalentUpgradeRefusal } from "#src/services/character/getTalentUpgradeRefusal";
 import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -19,8 +20,7 @@ export const upgradeTalent = (
   upgrades: readonly TalentUpgrade[],
   { inventory, wallet }: { inventory: Inventory; wallet: Wallet },
 ): { character: Character; inventory: Inventory; wallet: Wallet } => {
-  const level = character.talentLevels[talent] + 1;
-  const upgrade = upgrades.find((candidate) => candidate.level === level);
+  const upgrade = getTalentUpgrade(character, talent, upgrades);
   if (!upgrade) throw new InvalidOperationError(Operation.Update, upgradeTalent.name, `${talent} at its last level`);
   const refusal = getTalentUpgradeRefusal(character, talent, upgrades, { inventory, wallet });
   if (refusal === TalentUpgradeRefusal.Phase)
@@ -34,7 +34,7 @@ export const upgradeTalent = (
     inventory.items,
   );
   return {
-    character: { ...character, talentLevels: { ...character.talentLevels, [talent]: level } },
+    character: { ...character, talentLevels: { ...character.talentLevels, [talent]: upgrade.level } },
     inventory: { items, nextId: inventory.nextId },
     wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] - upgrade.coinCost },
   };

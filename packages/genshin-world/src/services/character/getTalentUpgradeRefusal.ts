@@ -6,6 +6,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { TalentUpgradeRefusal } from "#src/models/character/TalentUpgradeRefusal";
 import { Currency } from "#src/models/inventory/Currency";
+import { getTalentUpgrade } from "#src/services/character/getTalentUpgrade";
 import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 
 // Why a combat talent cannot rise one level now, as the game refuses it, or undefined when every requirement is met: the
@@ -17,8 +18,7 @@ export const getTalentUpgradeRefusal = (
   upgrades: readonly TalentUpgrade[],
   { inventory, wallet }: { inventory: Inventory; wallet: Wallet },
 ): TalentUpgradeRefusal | undefined => {
-  const level = character.talentLevels[talent] + 1;
-  const upgrade = upgrades.find((candidate) => candidate.level === level);
+  const upgrade = getTalentUpgrade(character, talent, upgrades);
   if (!upgrade) return TalentUpgradeRefusal.LastLevel;
   else if (character.ascension < upgrade.phase) return TalentUpgradeRefusal.Phase;
   else if (wallet[Currency.Mora] < upgrade.coinCost) return TalentUpgradeRefusal.Mora;
