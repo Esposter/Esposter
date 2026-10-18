@@ -7,6 +7,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -37,9 +38,14 @@ const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatan
 });
 
 // Strikes one enemy with a hit, aimed at it through the target, and returns the kinds of the events the team's kits saw
-const strikeWithHit = (hit: KitHit, enemy: ReturnType<typeof createEnemy>, combatant: Combatant) => {
+const strikeWithHit = (
+  hit: KitHit,
+  enemy: ReturnType<typeof createEnemy>,
+  combatant: Combatant,
+  attackTag?: AttackTag,
+) => {
   const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
-  const strikes: KitStrike[] = [{ body: context.body, combatant, hit, target: enemy }];
+  const strikes: KitStrike[] = [{ attackTag, body: context.body, combatant, hit, target: enemy }];
   strikeKitEnemies(strikes, context);
 };
 
@@ -59,22 +65,22 @@ describe(strikeKitEnemies, () => {
     });
   });
 
-  test("sends the team's kits a reaction that carries the attack tag of the hit that triggered it", () => {
+  test("sends the team's kits a reaction that carries the attack tag of the strike that triggered it", () => {
     expect.hasAssertions();
 
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const combatant = createCombatant(onKitEvent);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     enemy.elementalState.auras.set(AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false });
-    strikeWithHit(
-      { ...KIT_HIT, attackTag: AttackTag.ElementalBurst, element: Element.Pyro, gauge: 1 },
-      enemy,
-      combatant,
-    );
+    strikeWithHit({ ...KIT_HIT, element: Element.Pyro, gauge: 1 }, enemy, combatant, AttackTag.ElementalBurst);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual(
-      expect.objectContaining({ attackTag: AttackTag.ElementalBurst, kind: KitEventKind.ReactionTriggered }),
-    );
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      attackTag: AttackTag.ElementalBurst,
+      enemy,
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
+      striker: combatant,
+    });
   });
 
   test("sends the team's kits no elemental hit for a hit with no element", () => {
