@@ -8,6 +8,7 @@ export enum GameDataset {
   ArchiveText = "archiveText",
   BookBody = "bookBody",
   Catalogue = "catalogue",
+  CharacterTrials = "characterTrials",
   Chests = "chests",
   Commissions = "commissions",
   Cooking = "cooking",

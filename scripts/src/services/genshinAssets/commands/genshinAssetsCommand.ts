@@ -1,6 +1,7 @@
 import type { CommandDef } from "citty";
 
 import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
+import { characterTrialsCommand } from "#src/services/genshinAssets/commands/characterTrialsCommand";
 import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
 import { assetIndexCommand } from "#src/services/genshinAssets/commands/assetIndexCommand";
 import { avatarCommand } from "#src/services/genshinAssets/commands/avatarCommand";
@@ -142,6 +143,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     reputation: reputationCommand,
     expeditions: expeditionsCommand,
     commissions: commissionsCommand,
+    "character-trials": characterTrialsCommand,
     "spiral-abyss": spiralAbyssCommand,
     imaginarium: imaginariumCommand,
   },
