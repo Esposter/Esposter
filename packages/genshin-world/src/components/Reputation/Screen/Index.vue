@@ -5,6 +5,7 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationLevelCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { ReputationFunctionGameTextKeyMap } from "#src/services/reputation/ReputationFunctionGameTextKeyMap";
 import { takeOne } from "@esposter/shared";
@@ -18,6 +19,8 @@ interface Props {
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
+  // The bounty the keeper offers ahead of her request: its claim once its target is defeated, or one to take
+  bountyOffer?: ReputationBountyOffer;
   // The request the keeper offers, its title in the reader's language, or none where she offers none
   offerTitle?: string;
   // The nation's Reputation the player holds: its level, and the EXP toward the next
@@ -26,7 +29,7 @@ interface Props {
   reputation: ReputationCity;
 }
 
-const { gameText, materialDataMap, nameText, offerTitle, progress, reputation } = defineProps<Props>();
+const { bountyOffer, gameText, materialDataMap, nameText, offerTitle, progress, reputation } = defineProps<Props>();
 const emit = defineEmits<{ accept: []; close: [] }>();
 const level = defineModel<number>("level", { required: true });
 // A level is achieved once the nation's Reputation has reached it, and its unlock line is the feature it opens in the
@@ -45,6 +48,14 @@ const levels = computed<ReputationLevelCell[]>(() =>
       .join(" "),
   })),
 );
+// The offer the keeper shows, its bounty's title and button's words in the game's, else her request's in the reader's
+const offer = computed(() => {
+  if (bountyOffer === ReputationBountyOffer.Claim)
+    return { acceptLabel: gameText[GameTextKey.BountyClaim], title: gameText[GameTextKey.BountyCompleted] };
+  if (bountyOffer === ReputationBountyOffer.Offer)
+    return { acceptLabel: gameText[GameTextKey.BountyAccept], title: gameText[GameTextKey.BountyOffer] };
+  return offerTitle ? { acceptLabel: gameText[GameTextKey.ReputationRequestAccept], title: offerTitle } : undefined;
+});
 </script>
 
 <template>
@@ -60,9 +71,7 @@ const levels = computed<ReputationLevelCell[]>(() =>
       :level-label="gameText[GameTextKey.LevelShort]"
       :levels
       :not-achieved-label="gameText[GameTextKey.ReputationNotAchieved]"
-      :offer="
-        offerTitle ? { acceptLabel: gameText[GameTextKey.ReputationRequestAccept], title: offerTitle } : undefined
-      "
+      :offer
       :requirement="[]"
       :title="fillGameTextValues(gameText[GameTextKey.ReputationReward], gameText[GameTextKey.Mondstadt])"
       @accept="emit('accept')"

@@ -95,6 +95,7 @@ import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
 import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
+import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
 import { useWorldTips } from "#src/composables/useWorldTips";
@@ -105,6 +106,7 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { BossMovesMap } from "#src/services/bosses/BossMovesMap";
@@ -168,6 +170,7 @@ import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRat
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
+import { REPUTATION_OFFER_FIRST_LEVEL } from "#src/services/reputation/constants";
 import { offerReputationRequest } from "#src/services/reputation/offerReputationRequest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
@@ -872,6 +875,8 @@ const drawReputationOffer = () => {
 };
 // Accepting the offer starts its quest, which the world then runs as any other
 const acceptReputationOffer = () => {
+  if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
+  if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
   if (!reputationOffer.value) return;
   acceptQuest(String(reputationOffer.value.questId));
   reputationOffer.value = undefined;
@@ -928,6 +933,7 @@ const {
   jumpPose,
   jumpTo,
   lockedJumpLandmarks,
+  payReputationReward,
   unlockedLandmarkIds,
   unlockedLandmarks,
 } = useWorldMap({
@@ -947,6 +953,22 @@ const {
   setWallet,
   unlockedLandmarkIds: savedState.unlockedLandmarkIds,
   wallet,
+});
+// The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
+// Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
+const { bountyCamps, bountyHunt, claimBounty, takeBounty } = useWorldReputationBounty({
+  events,
+  payReputationReward,
+  random: () => kitContext.random(),
+  reputation,
+  reputationCity,
+  worldLevel,
+});
+const reputationBountyOffer = computed(() => {
+  if (bountyHunt.value) return bountyHunt.value.isTargetDefeated ? ReputationBountyOffer.Claim : undefined;
+  return reputation.value.level >= REPUTATION_OFFER_FIRST_LEVEL && (reputationCity.value?.bounties.length ?? 0) > 0
+    ? ReputationBountyOffer.Offer
+    : undefined;
 });
 watch(unlockedLandmarkIds, (landmarkIds) => {
   resonatedRegionIds.value = getResonatedRegionIds(landmarkIds);
@@ -1157,8 +1179,13 @@ const {
   weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
-// The enemies in the world are the ley line outcrops' fighting camps and the domain challenge's camp
-const fightingCamps = computed(() => [...outcropCamps.value, ...domainCamps.value, ...abyssCamps.value]);
+// The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
+const fightingCamps = computed(() => [
+  ...outcropCamps.value,
+  ...domainCamps.value,
+  ...abyssCamps.value,
+  ...bountyCamps.value,
+]);
 // The arena's leave prompt, and the Petrified Tree's prompt once a clear has raised it, both beside the arena's centre
 const domainArenaInteractables = computed<Interactable[]>(() => {
   if (!domainArena.value) return [];
@@ -2100,6 +2127,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :material-data-map
       :name-text
+      :bounty-offer="reputationBountyOffer"
       :offer-title="reputationOfferTitle"
       :progress="reputation"
       :reputation="reputationCity"
