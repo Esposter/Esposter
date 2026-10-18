@@ -11,6 +11,9 @@ export const YUNJIN_CHARACTER_ID = 10_000_064;
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
 // Cliffbreaker's Banner's DEF-scaled DMG Increase on each of the party's normal attacks, which the kit prices from the
 // Striker's stats alone, is not built, nor her passives or constellations
+// Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
+// Constellation 2 needs the Cliffbreaker's Banner's Normal Attack DMG bonus for the party, not built
+// Constellation 6 needs a Normal Attack SPD bonus, which no attribute carries
 export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader): KitBehaviour => {
   const shieldShare = readParameter("shieldShare");
   const shieldFlat = readParameter("shieldFlatHealth");
