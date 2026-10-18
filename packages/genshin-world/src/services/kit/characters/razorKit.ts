@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -166,7 +167,8 @@ export const createRazorKitBehaviour = ({
           const isLightningFangLive = kitEffectState.effects.some((effect) =>
             checkIsRazorBuff(effect, combatant.characterId, LIGHTNING_FANG_SOURCE),
           );
-          if (isLightningFangLive) castKitSummon(kitEffectState, body, combatant, [soulCompanionHit]);
+          if (isLightningFangLive)
+            castKitSummon(kitEffectState, body, combatant, [soulCompanionHit], { attackTag: AttackTag.ElementalBurst });
           if (
             combatant.constellationCount < LUPUS_FULGURIS_CONSTELLATION ||
             checkIsLupusFulgurisCharging(combatant.characterId, kitEffectState.effects)

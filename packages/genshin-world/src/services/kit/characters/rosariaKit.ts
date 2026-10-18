@@ -5,6 +5,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -73,7 +74,9 @@ export const createRosariaKitBehaviour = ({ kit, readHit, readParameter }: KitRe
           id: RITES_FIELD_ID,
           nextTickSeconds: ritesLanceHit.hitmarkSeconds + RITES_TICK_INTERVAL_SECONDS,
           onTick: ({ kitEffectState: tickEffectState }) =>
-            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [ritesTickHit]),
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [ritesTickHit], {
+              attackTag: AttackTag.ElementalBurst,
+            }),
           radius: ritesTickHit.hitArea.radius,
           secondsRemaining:
             ritesFieldSeconds +
