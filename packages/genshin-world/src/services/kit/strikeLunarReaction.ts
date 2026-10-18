@@ -6,15 +6,10 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
-import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { LunarReactionElementMap } from "#src/services/combat/damage/LunarReactionElementMap";
 import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContributions";
-import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
-import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
-import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { priceReactionContributors } from "#src/services/kit/priceReactionContributors";
+import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { takeOne } from "@esposter/shared";
 
@@ -31,43 +26,23 @@ export const strikeLunarReaction = (
   owner: Combatant | undefined,
   context: KitContext,
 ): boolean => {
-  const { characterIdCombatantMap, enemyTables, kitEffectState, party, random } = context;
+  const { characterIdCombatantMap, kitEffectState, party } = context;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
-  const damages = getDeployedCharacterIds(party).flatMap((characterId) => {
-    const combatant = characterIdCombatantMap.get(characterId);
-    if (!combatant || !contributorIds.has(characterId)) return [];
-    const { attributes, level } = getBuffedCombatant(
-      combatant,
-      kitEffectState.effects,
-      party,
-      characterIdCombatantMap,
-      context.body.position,
-    );
-    const { attributeTotalMap } = attributes;
-    const damage = getLunarDamage(
+  const damages = priceReactionContributors(contributorIds, context, (level, attributeTotalMap) =>
+    getLunarDamage(
       lunarReactionType,
       takeOne(CharacterLevelMultiplierMap, level),
       attributeTotalMap[Attribute.ElementalMastery],
       moonsign.baseDamageBonusMap[lunarReactionType] ?? 0,
       moonsign.reactionBonus,
-    );
-    return [
-      random() < attributeTotalMap[Attribute.CriticalRate]
-        ? damage * (1 + attributeTotalMap[Attribute.CriticalDamage])
-        : damage,
-    ];
-  });
-  if (damages.length === 0) return false;
-  const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
-  const resistance = getEnemyResistance(kind, enemy, LunarReactionElementMap[lunarReactionType]);
-  collectKitEnergyDrops(
-    damageKitEnemy(
-      enemy,
-      { damage: sumLunarContributions(damages) * getResistanceMultiplier(resistance), poiseDamage: 0 },
-      owner,
-      context,
     ),
-    owner?.element,
+  );
+  if (damages.length === 0) return false;
+  strikeReactionDamage(
+    enemy,
+    LunarReactionElementMap[lunarReactionType],
+    sumLunarContributions(damages),
+    owner,
     context,
   );
   return true;

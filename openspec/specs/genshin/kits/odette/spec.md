@@ -67,7 +67,7 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 
 ### Requirement: A Stellar Vortex on a Stellar Swirl
 
-While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled. A further Stellar Swirl while it stands SHALL add a stack without renewing its 181 frames, and the sixth stack SHALL explode it at once.
+While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled. A further Stellar Swirl while it stands SHALL add a stack without renewing its 181 frames, and the sixth stack SHALL explode it at once. A Stellar Swirl also SHALL deal its Anemo instance at a coefficient of 0.75 to its target. A vortex that runs out SHALL explode for Cryo damage to each enemy within its radius, which is 6, or 8 from its third stack, at a coefficient of 2 for its first two stacks and 3 from the third.
 
 #### Scenario: Stellar Swirl places a Stellar Vortex
 
@@ -88,6 +88,11 @@ While Odette is deployed, a Stellar Swirl triggered by any party member SHALL le
 
 - **WHEN** three Stellar Swirls are triggered after the vortex has three stacks
 - **THEN** the vortex explodes at once, and no vortex stands
+
+#### Scenario: a vortex that runs out explodes
+
+- **WHEN** a Stellar Vortex runs out with stacks standing
+- **THEN** it explodes for Cryo damage at the coefficient of its stacks, over the radius they set
 
 ### Requirement: A Stellar Jubilee enables both Stellar reactions
 

@@ -49,3 +49,5 @@ export const STELLAR_CONDUCT_ELEMENTAL_DMG_BONUS_PER_HIT = 0.01;
 export const STELLAR_VORTEX_LEVEL_TWO_STACKS = 3;
 export const STELLAR_VORTEX_LEVEL_ONE_COEFFICIENT = 2;
 export const STELLAR_VORTEX_LEVEL_TWO_COEFFICIENT = 3;
+// The Base Reaction Coefficient of a Stellar Swirl's Anemo instance, the wiki's Damage page for the indirect Stellar Glimmer
+export const STELLAR_SWIRL_ANEMO_COEFFICIENT = 0.75;

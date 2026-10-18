@@ -89,3 +89,6 @@ export const POLESTAR_SHRED_STATUS_ID = "polestar-shred";
 export const POLESTAR_BUFF_SOURCE = "polestar";
 // Stellar Swirls a vortex takes before it explodes at once: three after its level-up (gcsim sswMaxStacks)
 export const STELLAR_VORTEX_MAX_STACKS = 6;
+// A Stellar Vortex's explosion radius at Lv. 1 and at Lv. 2 (gcsim sswStackRadius)
+export const STELLAR_VORTEX_LEVEL_ONE_RADIUS = 6;
+export const STELLAR_VORTEX_LEVEL_TWO_RADIUS = 8;
