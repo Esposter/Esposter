@@ -9,6 +9,7 @@ Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehav
 - **Riptide Blast lands 0.8 seconds after its hit**, the wiki's delay, clearing Riptide as the hit lands, and a Riptide Slash's interval holds it off, as gcsim checks. gcsim queues the blast one frame on, so its 48 frames are the wiki's delay, which no candidate reads, and the overlay holds them `Unsourced`.
 - **Hydrospout ticks on each enemy's own schedule**, every 3.9 seconds as gcsim measures the game's 4, from the first Riptide on that enemy; gcsim keeps one schedule, for the enemy last given Riptide.
 - **Tartaglia's gauges and poise are the wiki's**, Riptide Burst's 1U where gcsim gives 2U among them, his Melee Stance strikes count under their own Foul Legacy internal cooldown and Riptide Flash under its own Riptide one (`InternalCooldownTag`). His arrows are priced round his body, and his plunges are provisional.
+- **His fully charged aimed shot is one arrow, and Flash of Havoc is a summon at the target.** The aimed shot is one arrow (`aimed.go:81`), where `charge.go:17` gives his melee charge two hits, so his charged attack's length is 1 and not 2. Flash of Havoc is cast at the target's position with its own 6 metres of reach, where gcsim's circle on the primary target (`burst.go:58`, `burst.go:80`) reads the targeting radius plus 6, so its area is 6 and not that reach. His burst holds no hits of its own, as its one hit is Flash of Havoc, a named hit.
 
 ## Key files
 
