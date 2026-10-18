@@ -1,6 +1,5 @@
-import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
+import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
 
-import { SceneGroupSource } from "#src/models/sceneGroup/SceneGroupSource";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { CRAFTING_BENCH_INTERACTABLE_ID } from "#src/services/crafting/constants";
 import { computeInteractionPrompts } from "#src/services/interaction/computeInteractionPrompts";
@@ -13,7 +12,7 @@ describe(computeCraftingBenchInteractables, () => {
   const getGroundHeight = () => GROUND_HEIGHT;
   const NAME = "Crafting";
   const NO_SELECTION = { selectedId: "", windowStart: 0 };
-  const place: SceneGroupPlace = { position: { x: 1, z: 2 }, source: SceneGroupSource.NpcBirths };
+  const place: CraftingBenchPlace = { position: { x: 1, z: 2 }, rotation: 0 };
   const interactables = computeCraftingBenchInteractables(place, NAME, getGroundHeight);
   const bench = {
     id: CRAFTING_BENCH_INTERACTABLE_ID,
