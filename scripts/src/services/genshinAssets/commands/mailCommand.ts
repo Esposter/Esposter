@@ -6,7 +6,7 @@ import { buildMailPublication } from "#src/services/genshinAssets/mail/buildMail
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
-export const mailCommand: CommandDef = defineCommand({
+export const mailCommand: CommandDef<typeof dryRunArgs> = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
