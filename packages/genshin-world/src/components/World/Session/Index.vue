@@ -154,6 +154,7 @@ const {
   craftingRecipes,
   createTerrainWorker,
   enemyTables,
+  frostbearingTreeLevels,
   frostbearingTreePlaces,
   gameDataBaseUrl,
   gameText,
@@ -977,7 +978,10 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind = getTalkScreenKind(interactable.id, getResidents());
               shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               // A Souvenir Shop stays closed until its region's offering is at its last level, and its talk is a dialogue until then
-              if (screenKind === ScreenKind.Shop && !checkIsVendorShopOpen(shopId, frostbearingTreeProgress))
+              if (
+                screenKind === ScreenKind.Shop &&
+                !checkIsVendorShopOpen(shopId, frostbearingTreeProgress.level, frostbearingTreeLevels)
+              )
                 screenKind = ScreenKind.Dialogue;
               reputationLevel = reputation.level;
             }

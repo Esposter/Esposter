@@ -10,12 +10,12 @@ describe(checkIsVendorShopOpen, () => {
 
   test("a Souvenir Shop of Mondstadt stays closed until the Frostbearing Tree is at its last level", () => {
     expect.hasAssertions();
-    expect(checkIsVendorShopOpen(MONDSTADT_SOUVENIR_SHOP_ID, { heldCount: 0, level: 1, levels })).toBe(false);
-    expect(checkIsVendorShopOpen(MONDSTADT_SOUVENIR_SHOP_ID, { heldCount: 0, level: 2, levels })).toBe(true);
+    expect(checkIsVendorShopOpen(MONDSTADT_SOUVENIR_SHOP_ID, 1, levels)).toBe(false);
+    expect(checkIsVendorShopOpen(MONDSTADT_SOUVENIR_SHOP_ID, 2, levels)).toBe(true);
   });
 
   test("a vendor's shop other than a Souvenir Shop is open whatever its region's offering", () => {
     expect.hasAssertions();
-    expect(checkIsVendorShopOpen(OTHER_SHOP_ID, { heldCount: 0, level: 0, levels: [] })).toBe(true);
+    expect(checkIsVendorShopOpen(OTHER_SHOP_ID, 0, [])).toBe(true);
   });
 });

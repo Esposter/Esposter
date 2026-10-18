@@ -16,6 +16,7 @@ import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
+import { readFrostbearingTreeLevels } from "#src/services/offering/readFrostbearingTreeLevels";
 import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/readMondstadtFrostbearingTreePlaces";
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
@@ -63,6 +64,7 @@ getResultAsync(() =>
       measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
       measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
       measureLoadStep("paimons-bargains-rotation", readPaimonsBargainsRotation(props.gameDataBaseUrl)),
+      measureLoadStep("frostbearing-tree-levels", readFrostbearingTreeLevels(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -83,8 +85,9 @@ getResultAsync(() =>
     craftingBenchPlace,
     puzzlePlaces,
     wishSchedule,
-    paimonsBargainsRotation,
     shopIdShopGoodMap,
+    paimonsBargainsRotation,
+    frostbearingTreeLevels,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -93,6 +96,7 @@ getResultAsync(() =>
       craftingBenchPlace,
       craftingRecipes,
       enemyTables,
+      frostbearingTreeLevels,
       frostbearingTreePlaces,
       hudInterfaceRects,
       materialDataMap,
