@@ -1,3 +1,4 @@
+import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
@@ -21,20 +22,20 @@ const cause = (provenance: KitValueSource) => ("cause" in provenance ? provenanc
 describe(getGcsimNamedHitCandidates, () => {
   const BURST_PROUD_SKILL_GROUP_ID = 2139;
 
+  // Typed as an attack, so the copies below spread a whole attack, where an index into the array reads as possibly absent
+  const burstAttack: GcsimAttack = {
+    attackTag: "attacks.AttackTagElementalBurst",
+    element: "attributes.Pyro",
+    fieldLineMap: { Element: 11 },
+    file: "burst.go",
+    internalCooldownTag: "attacks.ICDTagNone",
+    line: 10,
+    siteLine: 10,
+    talentVariable: "burst",
+  };
   const gcsim: GcsimCharacter = {
     animationFrameNameMap: new Map(),
-    attacks: [
-      {
-        attackTag: "attacks.AttackTagElementalBurst",
-        element: "attributes.Pyro",
-        fieldLineMap: { Element: 11 },
-        file: "burst.go",
-        internalCooldownTag: "attacks.ICDTagNone",
-        line: 10,
-        siteLine: 10,
-        talentVariable: "burst",
-      },
-    ],
+    attacks: [burstAttack],
     config: {
       abilityHitboxesMap: new Map(),
       names: [],
@@ -74,7 +75,7 @@ describe(getGcsimNamedHitCandidates, () => {
     getNamedHitKitCandidates(
       multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
       getGcsimNamedHitCandidates(
-        { ...gcsim, attacks: [{ ...gcsim.attacks[0], attackTag, fieldLineMap: { AttackTag: 9, Element: 11 } }] },
+        { ...gcsim, attacks: [{ ...burstAttack, attackTag, fieldLineMap: { AttackTag: 9, Element: 11 } }] },
         tables,
       ),
     ).get("hits.fieryRainArrows.0.lunarReactionType");
@@ -102,13 +103,13 @@ describe(getGcsimNamedHitCandidates, () => {
     expect.hasAssertions();
 
     // Gcsim reassigns a literal's Mult in a closure, a second attack at the literal's own declaration, not a second literal
-    const reassigned = { ...gcsim.attacks[0], line: 14 };
+    const reassigned = { ...burstAttack, line: 14 };
     const reassignedJoined = getNamedHitKitCandidates(
       multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
       getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, reassigned] }, tables),
     );
     // A second literal of the variable, declared at its own line, is two literals, so the named hit takes none of them
-    const secondLiteral = { ...gcsim.attacks[0], line: 20, siteLine: 20 };
+    const secondLiteral = { ...burstAttack, line: 20, siteLine: 20 };
     const twoLiteralsJoined = getNamedHitKitCandidates(
       multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
       getGcsimNamedHitCandidates({ ...gcsim, attacks: [...gcsim.attacks, secondLiteral] }, tables),
