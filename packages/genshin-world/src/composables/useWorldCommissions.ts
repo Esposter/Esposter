@@ -7,13 +7,15 @@ import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ComputedRef, Ref } from "vue";
 
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { advanceCommissionForQuest } from "#src/services/commission/advanceCommissionForQuest";
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
 import { computeEncounterPointOverflow } from "#src/services/commission/computeEncounterPointOverflow";
 import { computeEncounterPointStorage } from "#src/services/commission/computeEncounterPointStorage";
-import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
+import { LONG_TERM_MAJOR_VERSION, OCULUS_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { earnEncounterPoints } from "#src/services/commission/earnEncounterPoints";
 import { earnLongTermEncounterPoints } from "#src/services/commission/earnLongTermEncounterPoints";
+import { getCollectedEncounterHalfPoints } from "#src/services/commission/getCollectedEncounterHalfPoints";
 import { getQuestEncounterHalfPoints } from "#src/services/commission/getQuestEncounterHalfPoints";
 import { joinCommissionPool } from "#src/services/commission/joinCommissionPool";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
@@ -84,25 +86,36 @@ export const useWorldCommissions = ({
       console.error(error);
     },
   );
-  // A quest's completion advances its commission task and earns the Encounter Points its kind gives, held up to the storage the
-  // Day's finished commissions leave, which is read after the advance so a commission finished by this quest counts
+  // Earns half points, held up to the storage the day's finished commissions leave, which is read here so a commission finished by
+  // The same event counts, and the points past the storage are kept as Long-Term Encounter Points in the major version the game is in now
+  const earnEncounterHalfPoints = (halfPoints: number) => {
+    const points = readEncounterPoints(encounterPoints.value, getWorldNow());
+    const storage = computeEncounterPointStorage(commissionDay.value, commissionSlice.value);
+    encounterPoints.value = earnEncounterPoints(points, halfPoints, storage);
+    const overflow = computeEncounterPointOverflow(points, halfPoints, storage);
+    if (overflow > 0)
+      longTermEncounterPoints.value = earnLongTermEncounterPoints(
+        longTermEncounterPoints.value,
+        overflow,
+        LONG_TERM_MAJOR_VERSION,
+      );
+  };
+  // A quest's completion advances its commission task and earns the Encounter Points its kind gives
   events.on("finishQuest", (quest) => {
     if (commissionSlice.value)
       commissionDay.value = advanceCommissionForQuest(commissionDay.value, commissionSlice.value, quest.id);
     const halfPoints = getQuestEncounterHalfPoints(quest.kind);
-    if (halfPoints > 0) {
-      const points = readEncounterPoints(encounterPoints.value, getWorldNow());
-      const storage = computeEncounterPointStorage(commissionDay.value, commissionSlice.value);
-      encounterPoints.value = earnEncounterPoints(points, halfPoints, storage);
-      // The points past the storage are kept as Long-Term Encounter Points, in the major version the game is in now
-      const overflow = computeEncounterPointOverflow(points, halfPoints, storage);
-      if (overflow > 0)
-        longTermEncounterPoints.value = earnLongTermEncounterPoints(
-          longTermEncounterPoints.value,
-          overflow,
-          LONG_TERM_MAJOR_VERSION,
-        );
-    }
+    if (halfPoints > 0) earnEncounterHalfPoints(halfPoints);
+  });
+  // An item collected in the world earns the half point the wiki gives it, and none where the wiki gives none
+  events.on("questEvent", ({ kind, targetId }) => {
+    if (kind !== QuestObjectiveKind.Collect) return;
+    const halfPoints = getCollectedEncounterHalfPoints(targetId);
+    if (halfPoints > 0) earnEncounterHalfPoints(halfPoints);
+  });
+  // An Oculus found for the first time earns its half point
+  events.on("oculusFound", () => {
+    earnEncounterHalfPoints(OCULUS_ENCOUNTER_HALF_POINTS);
   });
   // The day's four as the Adventurer Handbook's Commissions tab lists them, none while no region's tasks are read
   const handbookDayCommissions = computed(() =>
