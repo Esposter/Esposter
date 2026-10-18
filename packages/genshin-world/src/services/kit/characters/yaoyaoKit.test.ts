@@ -290,8 +290,7 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(findJumpingYuegui(context)).toHaveLength(3);
     stepFrames(context, 138);
     expect(findJumpingYuegui(context)).toHaveLength(3);
-    // The burst's 360th frame leaves each Yuegui's seconds a float residual above zero, so the expiry check removes it a step later
-    stepFrames(context, 2);
+    stepFrames(context, 1);
     expect(findJumpingYuegui(context)).toHaveLength(0);
   });
 
