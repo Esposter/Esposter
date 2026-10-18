@@ -1,6 +1,7 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { AbyssChallenge } from "#src/models/spiralAbyss/AbyssChallenge";
 import type { AbyssChamber } from "#src/models/spiralAbyss/AbyssChamber";
+import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { GroundPoint } from "genshin-engine";
 
 // A chamber fought in the arena beside the Abyss's entrance: its challenge, and the camp of the half in play, which spawns
@@ -12,6 +13,7 @@ export interface AbyssArena {
   challenge: AbyssChallenge;
   chamber: AbyssChamber;
   defeatsInHalf: number;
+  floor: AbyssFloor;
   enemyKindIds: Readonly<Record<string, number>>;
   startedAt: number;
 }

@@ -42,6 +42,7 @@ export const createAbyssArena = (
     chamber,
     defeatsInHalf: 0,
     enemyKindIds,
+    floor,
     startedAt,
   };
 };
