@@ -3,9 +3,10 @@ import { checkIsNearlyEqual } from "#src/services/checkIsNearlyEqual";
 import { checkIsSmaller } from "#src/services/checkIsSmaller";
 import { computeExtreme } from "#src/services/computeExtreme";
 
-// The norm of a vector for a power: its largest magnitude for an infinite power and its smallest for minus infinity, each
-// Folded from the first magnitude as mathjs's max and min fold, else the power of the sum of the magnitudes' powers. A
-// Power nearly zero is an infinite norm, as mathjs reads it
+// The norm of a vector for a power: its largest magnitude for an infinite power and its smallest for minus infinity.
+// Each is folded from the first magnitude as mathjs's max and min fold.
+// Otherwise it is the power of the sum of the magnitudes' powers.
+// A power nearly zero is an infinite norm, as mathjs reads it
 export const computeVectorNorm = (values: readonly number[], power: number): null | number => {
   if (Number.isNaN(power)) return null;
 

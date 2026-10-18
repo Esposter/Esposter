@@ -7,9 +7,8 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 // The bitwise operations whose right side is skipped when the left side decides them, as the compiler skips it
 const LAZY_BINARY_NAMES: ReadonlySet<string> = new Set(["bitAnd", "bitOr"]);
-
-// Walks a node in the order the formula evaluates it. Bound holds the names every path to this point has assigned,
-// And free collects the names read before one of those paths assigned them, in reading order
+// Walks a node in the order the formula evaluates it. Bound holds the names every path to this point has assigned.
+// Free collects the names read before one of those paths assigned them, in reading order
 const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string>): void => {
   switch (node.type) {
     case MathExpressionNodeType.Assignment:
@@ -59,9 +58,8 @@ const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string
       return exhaustiveGuard(node);
   }
 };
-
-// The column names a formula reads before it assigns them, which the edit form checks are columns before saving
-// A name the formula only assigns is not one, and neither is a constant of Mathjs's
+// The column names a formula reads before it assigns them, which the edit form checks are columns before saving.
+// A name the formula only assigns is not one, and neither is a constant of mathjs's
 export const getMathExpressionNames = (node: MathExpressionNode): string[] => {
   const bound = new Set<string>();
   const free = new Set<string>();

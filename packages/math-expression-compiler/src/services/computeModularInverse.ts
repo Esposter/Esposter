@@ -1,5 +1,6 @@
-// The inverse of a value modulo `modulus`, read off the extended Euclidean algorithm the way mathjs runs it, so a negative
-// Modulus gives mathjs's answer too. Not integers, or not invertible, is NaN
+// The inverse of a value modulo `modulus`, read off the extended Euclidean algorithm the way mathjs runs it.
+// A negative modulus gives mathjs's answer too. A value or modulus that is not an integer, or a zero modulus, is null.
+// A pair with no inverse is NaN
 export const computeModularInverse = (value: number, modulus: number): null | number => {
   if (!Number.isInteger(value) || !Number.isInteger(modulus) || modulus === 0) return null;
 

@@ -3,8 +3,8 @@ import type { MathExpressionParserState } from "#src/models/MathExpressionParser
 import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
 import { failMathExpression } from "#src/services/failMathExpression";
 
-// Read as mathjs reads them: the symbols of three, two and one character, longest first, and the words that are
-// Operators rather than names
+// Read as mathjs reads them: the symbols of three, two and one character, longest first.
+// The words that are operators rather than names are delimiters too
 const DELIMITERS_OF_THREE: ReadonlySet<string> = new Set([">>>"]);
 const DELIMITERS_OF_TWO: ReadonlySet<string> = new Set([
   "!=",
@@ -62,7 +62,6 @@ const skipSpaces = (state: MathExpressionParserState): void => {
     else break;
   }
 };
-
 // Takes the characters, from the current one, that the pattern matches, and yields them
 const takeMatching = (state: MathExpressionParserState, pattern: RegExp): string => {
   let taken = "";
@@ -72,9 +71,9 @@ const takeMatching = (state: MathExpressionParserState, pattern: RegExp): string
   }
   return taken;
 };
-
-// A binary, octal or hexadecimal literal takes only the digits its radix has, as mathjs does, with a radix point and a word
-// Size after them. A prefix with no digit after it is a zero, and the letter that follows is a name, so 0x with x = 3 is 0
+// A binary, octal or hexadecimal literal takes only the digits its radix has, as mathjs does.
+// It takes a radix point and a word size after them. A prefix with no digit after it is a zero.
+// The letter that follows is a name, so 0x with x = 3 is 0
 const readRadixNumber = (state: MathExpressionParserState, prefix: string, baseDigits: RegExp): void => {
   state.index += 2;
   let digits = takeMatching(state, baseDigits);
@@ -84,7 +83,6 @@ const readRadixNumber = (state: MathExpressionParserState, prefix: string, baseD
     state.tokenType = MathExpressionTokenType.Number;
     return;
   }
-
   // Mathjs takes a radix point after the digits even when no digit follows it, so 0x1. is 1
   if (getCharacter(state, 0) === ".") {
     state.index++;
@@ -98,17 +96,14 @@ const readRadixNumber = (state: MathExpressionParserState, prefix: string, baseD
   state.token = `0${prefix}${digits}${wordSize}`;
   state.tokenType = MathExpressionTokenType.Number;
 };
-
 // A decimal mark that mathjs reads as a dot of its own, unless a division, product or power follows it
 const checkIsDecimalMark = (character: string, nextCharacter: string): boolean =>
   character === "." && !DECIMAL_MARK_OPERATOR_FOLLOWERS.has(nextCharacter);
-
 // Reports a decimal mark where an exponent's digits must be, at the number's start, as mathjs does
 const failExponent = (state: MathExpressionParserState, text: string): void => {
   state.token = text;
   failMathExpression(state, `Digit expected, got "${getCharacter(state, 0)}"`);
 };
-
 // Takes the exponent after a number's digits, if it has one, and yields the number's text with it
 const takeExponent = (state: MathExpressionParserState, text: string): string => {
   const exponentMarker = getCharacter(state, 0);
@@ -183,9 +178,9 @@ const readDelimiter = (state: MathExpressionParserState): boolean => {
   if (state.token === ")" || state.token === "]") state.nestingLevel--;
   return true;
 };
-
-// Reads the next token into the state, leaving it empty at the end of the formula. A token that starts with a digit,
-// Or a dot before one, is a number; a word is a name or, when it is one of the named operators, a delimiter
+// Reads the next token into the state, leaving it empty at the end of the formula.
+// A token that starts with a digit, or a dot before one, is a number.
+// A word is a name, or a delimiter when it is one of the named operators
 export const getMathExpressionToken = (state: MathExpressionParserState): void => {
   state.token = "";
   state.tokenType = MathExpressionTokenType.Null;

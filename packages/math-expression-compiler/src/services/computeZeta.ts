@@ -1,7 +1,7 @@
 import { computeGamma } from "#src/services/computeGamma";
 
-// The Riemann zeta function. Above zero it is the Euler-Maclaurin sum, whose Bernoulli terms make it exact to machine
-// Precision here. Below zero the functional equation turns it into that sum at one minus the argument
+// The Riemann zeta function. Above zero it is the Euler-Maclaurin sum, whose Bernoulli terms make it exact to machine precision.
+// Below zero the functional equation turns it into that sum at one minus the argument
 const EULER_MACLAURIN_COEFFICIENTS: readonly number[] = [
   1 / 12,
   -1 / 720,
