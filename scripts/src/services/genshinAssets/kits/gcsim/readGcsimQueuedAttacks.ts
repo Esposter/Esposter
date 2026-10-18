@@ -339,7 +339,13 @@ export const readGcsimQueuedAttacks = (
       const ownHitbox =
         hitboxValueStart === undefined
           ? undefined
-          : readGoHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file);
+          : readGoHitbox(
+              tokens,
+              hitboxValueStart,
+              (name) => scope.resolveName(name, position),
+              file,
+              (name) => scope.resolveAssignment(name, position),
+            );
       // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy in it
       const queryHitbox = enemyQueryLoops.findLast(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,

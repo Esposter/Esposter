@@ -31,10 +31,12 @@ const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewCircleHitOnTargetFanAngle", { fanAngle: true, onTarget: true, shape: GcsimHitboxShape.Circle }],
 ]);
 
-// The centre a source or target argument names, the player or the primary target by its getter, else none
+// The centre a source or target argument names, the player or the primary target by its getter or its position, else none
 const CENTER_GETTERS: [string, GcsimHitboxCenter][] = [
   ["Combat.Player()", GcsimHitboxCenter.Player],
+  ["Combat.Player().Pos()", GcsimHitboxCenter.Player],
   ["Combat.PrimaryTarget()", GcsimHitboxCenter.PrimaryTarget],
+  ["Combat.PrimaryTarget().Pos()", GcsimHitboxCenter.PrimaryTarget],
 ];
 
 const readArgumentText = (tokens: readonly GoToken[], start: number): string => {
@@ -90,6 +92,7 @@ export const readGoHitbox = (
   start: number,
   resolveName: (name: string) => GoValue | undefined,
   file: string,
+  resolveAssignment: (name: string) => number | undefined = () => undefined,
 ): GcsimHitbox | undefined => {
   let position = start;
   while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
@@ -119,10 +122,16 @@ export const readGoHitbox = (
   if (argumentStarts.length !== fanIndex + (hasFanAngle ? 1 : 0)) return undefined;
   const [sourceStart, centerStart] = argumentStarts;
   if (sourceStart === undefined) return undefined;
-  const sourceCenter = readCenter(readArgumentText(tokens, sourceStart));
+  // A bare local centres on what its assignment names, as `qPos := c.Core.Combat.Player().Pos()` does
+  const readCentreAt = (argumentStart: number): GcsimHitboxCenter | undefined => {
+    const text = readArgumentText(tokens, argumentStart);
+    const assignedStart = /^\w+$/u.test(text) ? resolveAssignment(text) : undefined;
+    return readCenter(assignedStart === undefined ? text : readArgumentText(tokens, assignedStart));
+  };
+  const sourceCenter = readCentreAt(sourceStart);
   // A source-centred constructor is centred on its source, unless its centre argument names a centre of its own
   const centerText = onTarget || centerStart === undefined ? "nil" : readArgumentText(tokens, centerStart);
-  const center = centerText === "nil" ? sourceCenter : readCenter(centerText);
+  const center = centerText === "nil" ? sourceCenter : readCentreAt(centerStart);
   const offsetStart = argumentStarts[offsetIndex];
   const offset = offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName);
   if (center === undefined || offset === undefined) return undefined;

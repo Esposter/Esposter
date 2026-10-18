@@ -1020,4 +1020,41 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ]);
   });
+
+  test("reads a queue call's circle on a local the player's position is assigned to as a circle on the player", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package lyney",
+          "",
+          "func (c *char) explosiveFirework() {",
+          "\tqPos := c.Core.Combat.Player().Pos()",
+          "\tc.Core.QueueAttack(explodeAI, combat.NewCircleHitOnTarget(qPos, nil, 6), 6, 6)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: undefined,
+        attackName: "explodeAI",
+        delay: 6,
+        delayLine: 5,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.Player,
+          file: "burst.go",
+          line: 5,
+          name: "NewCircleHitOnTarget",
+          radius: 6,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 5,
+      },
+    ]);
+  });
 });
