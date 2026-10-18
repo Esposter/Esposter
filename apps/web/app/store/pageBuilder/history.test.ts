@@ -1,20 +1,20 @@
 // @vitest-environment nuxt
+import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument } from "headless-block-editor";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, JsonPatchOperationType, Operation } from "@esposter/shared";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
 import { describe, expect, test, vi } from "vitest";
 
-const createButton = (id: string) => ({
-  props: { href: TEST_URL, id, label: TEST_LABEL },
-  type: WebpageNodeType.Button,
-});
+const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
+  { op: JsonPatchOperationType.Add, path: "/content/1", value: createButton(id) },
+];
 
 describe(usePageBuilderHistoryStore, () => {
   const TEST_DOCUMENT: BlockDocument = {
@@ -68,6 +68,29 @@ describe(usePageBuilderHistoryStore, () => {
     expect(undoLabelBeforeUndo).toBe(TEST_LABEL_LABEL);
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
     expect(getUndoLabel(resourceId)).toBe("");
+  });
+
+  test("two inserts at one index in one interaction are two undo entries", async () => {
+    expect.hasAssertions();
+
+    const resourceId = await setupDocument();
+    const interactionId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, undo } = pageBuilderHistoryStore;
+    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
+    applyEdit(resourceId, insertAtFirstIndex("d"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({
+      content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    });
+
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
   });
 
   test("undo stops at the oldest kept entry", async () => {
