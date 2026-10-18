@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 300 },
   "chargedAttack.hits.0.area": {
     "cause": "Unsourced",
@@ -16,8 +16,8 @@
   "frames.paintedDome": { "cause": "Unsourced", "value": 720 },
   "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Grass" },
   "plungeCollision.gauge": { "source": "Wiki" },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
+  "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 75 },
   "stances.paintedDome.normalAttacks.length": { "cause": "Unsourced", "value": 4 },
   "stances.paintedDome.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 44 },
   "stances.paintedDome.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
