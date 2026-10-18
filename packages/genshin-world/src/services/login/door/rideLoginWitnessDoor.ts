@@ -3,29 +3,25 @@ import type { Object3D } from "three";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Matrix4 } from "three";
 
-const fromRest = new Matrix4();
 // The game's own door, drawn by the exports in place of ours, rising as ours does: a copy of each piece of its part,
-// Sharing its geometry and materials, stands in our piece its bone names, where the part's placement stands it seen from
-// Our door at rest, so the lift carrying ours carries it alike. Like ours, never culled and casting no shadow. Returns
-// The copies
-export const rideLoginWitnessDoor = (
-  part: Object3D,
-  doorPieces: readonly Object3D[],
-  doorRest: Matrix4,
-): Object3D[] => {
-  part.updateMatrix();
-  fromRest.copy(doorRest).invert().multiply(part.matrix);
-  return part.children.map((piece) => {
-    const doorPiece = doorPieces[Number(piece.name)];
-    if (!doorPiece)
-      throw new InvalidOperationError(Operation.Read, `${part.name} piece ${piece.name}`, "rides no piece of ours");
-    const copy = piece.clone();
-    copy.applyMatrix4(fromRest);
-    copy.traverse((object) => {
-      object.castShadow = false;
-      object.frustumCulled = false;
+// Sharing its geometry and materials, stands in our piece its bone names. Each copy holds its placement within the
+// Family, which followLoginWitnessDoor carries to our door's axes every frame, so the lift carrying ours carries it
+// Alike. Like ours, never culled and casting no shadow. Returns the copies
+export const rideLoginWitnessDoor = (family: Object3D, doorPieces: readonly Object3D[]): Object3D[] =>
+  family.children.flatMap((part) => {
+    part.updateMatrix();
+    return part.children.map((piece) => {
+      const doorPiece = doorPieces[Number(piece.name)];
+      if (!doorPiece)
+        throw new InvalidOperationError(Operation.Read, `${part.name} piece ${piece.name}`, "rides no piece of ours");
+      piece.updateMatrix();
+      const copy = piece.clone();
+      copy.userData.inFamily = new Matrix4().multiplyMatrices(part.matrix, piece.matrix);
+      copy.traverse((object) => {
+        object.castShadow = false;
+        object.frustumCulled = false;
+      });
+      doorPiece.add(copy);
+      return copy;
     });
-    doorPiece.add(copy);
-    return copy;
   });
-};
