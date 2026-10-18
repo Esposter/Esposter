@@ -322,7 +322,7 @@
   "parameters.ushiHealthShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5732 } },
   "parameters.ushiSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5732 } },
   "parameters.royalDescentDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5739 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "plunges.high.hits.0.convertedArea": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
