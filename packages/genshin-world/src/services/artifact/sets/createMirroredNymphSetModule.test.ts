@@ -84,7 +84,7 @@ describe(createMirroredNymphSetModule, () => {
     expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: expect.closeTo(0.25), hydro: expect.closeTo(0.15) });
   });
 
-  test("each stack runs its own eight seconds, so a later one outlives an earlier one", () => {
+  test("a later hit of a kind refreshes its stack's eight seconds, and two hits of one kind count as one stack", () => {
     expect.hasAssertions();
 
     const wearer = createWearer();
@@ -94,11 +94,27 @@ describe(createMirroredNymphSetModule, () => {
     hitEnemy(wearer, AttackTag.NormalAttack, context);
     stepKitSeconds(context, 4);
     hitEnemy(wearer, AttackTag.NormalAttack, context);
+    expect(getBonuses(wearer, kitEffectState).attack).toBeCloseTo(0.07);
+
     stepKitSeconds(context, 4.1);
     expect(getBonuses(wearer, kitEffectState).attack).toBeCloseTo(0.07);
 
     stepKitSeconds(context, 4);
     expect(getBonuses(wearer, kitEffectState).attack).toBe(0);
+  });
+
+  test("a hit the wearer strikes while another character stands on the field adds no stack", () => {
+    expect.hasAssertions();
+
+    const wearer = createWearer();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(wearer, {
+      kitEffectState,
+      party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+    });
+
+    hitEnemy(wearer, AttackTag.NormalAttack, context);
+    expect(getBonuses(wearer, kitEffectState)).toEqual({ attack: 0, hydro: 0 });
   });
 
   test("a hit another character strikes adds no stack", () => {
