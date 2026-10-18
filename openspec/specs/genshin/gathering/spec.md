@@ -90,9 +90,15 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 #### Scenario: Claymore attacks, plunges and Geo damage strike blunt
 
-- **GIVEN** a claymore's normal attack, a sword's or polearm's plunge, or a Geo hit lands on an ore
+- **GIVEN** a claymore's normal attack, a sword's or polearm's plunge, or a hit that deals Geo damage lands on an ore
 - **WHEN** the hit is dealt
 - **THEN** the ore takes its poise as a blunt hit, against the blunt requirement
+
+#### Scenario: A Geo character's physical normal attack and a listed exception do not strike blunt
+
+- **GIVEN** a Geo character's normal attack, which deals no element, lands on an ore, or Ningguang's plunge lands on it
+- **WHEN** the hit is dealt
+- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it
 
 #### Scenario: Converted poise from an infusion does not reach an ore
 
