@@ -6,6 +6,7 @@ import {
   CRYO_ELEMENTAL_INFUSION_ROUNDS,
   cryoElementalInfusion,
 } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
@@ -25,7 +26,7 @@ export const kamisatoArtSenho: GcgCardModule = {
   onSwitch: ({ characterIndex, duel, sideIndex }, zoneCard) => {
     const side = takeOne(duel.sides, sideIndex);
     if (characterIndex === undefined || characterIndex !== side.activeIndex) return;
-    if (side.usedCardIds.filter((cardId) => cardId === SENHO_STATUS_ID).length >= SENHO_TRIGGERS_PER_ROUND) return;
+    if (countGcgCardUses(side, SENHO_STATUS_ID) >= SENHO_TRIGGERS_PER_ROUND) return;
     side.usedCardIds.push(SENHO_STATUS_ID);
     zoneCard.usages = 1;
     const character = takeOne(side.characters, characterIndex);

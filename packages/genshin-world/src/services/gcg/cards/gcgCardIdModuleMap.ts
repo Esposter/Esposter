@@ -1,5 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
+import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { aurousBlaze } from "#src/services/gcg/cards/aurousBlaze";
 import { blessingOfTheDivineRelicsInstallation } from "#src/services/gcg/cards/blessingOfTheDivineRelicsInstallation";
@@ -68,6 +70,7 @@ import { oceanicMimicRaptor } from "#src/services/gcg/cards/oceanicMimicRaptor";
 import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirrel";
 import { oz } from "#src/services/gcg/cards/oz";
 import { paimon } from "#src/services/gcg/cards/paimon";
+import { parametricTransformer } from "#src/services/gcg/cards/parametricTransformer";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
 import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { quickKnit } from "#src/services/gcg/cards/quickKnit";
@@ -161,6 +164,8 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [311_401, whiteTassel],
   [311_501, travelersHandySword],
   [311_502, sacrificialSword],
+  [311_503, aquilaFavonia],
+  [312_001, adventurersBandana],
   [312_002, luckyDogsSilverCirclet],
   [312_004, gamblersEarrings],
   [312_005, instructorsCap],
@@ -188,6 +193,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_009, changTheNinth],
   [322_010, ellin],
   [322011, ironTongueTian],
+  [323_001, parametricTransformer],
   [331_101, elementalResonanceWovenIce],
   [331_301, elementalResonanceWovenFlames],
   [331_401, elementalResonanceWovenThunder],

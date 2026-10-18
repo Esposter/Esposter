@@ -10,7 +10,10 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { adventurersBandana, ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/adventurersBandana";
+import { aquilaFavonia, AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/aquilaFavonia";
 import { CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { parametricTransformer, PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/parametricTransformer";
 import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { kamisatoArtSenho, SENHO_STATUS_ID } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
@@ -238,5 +241,116 @@ describe("the skills whose damage is parsed from the dump's effect", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, FIREWORK_FLARE_UP);
 
     expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: GcgAura.None, hp: 8 });
+  });
+});
+
+describe("adventurer's Bandana", () => {
+  test("after its character uses a Normal Attack, it heals that character 1 HP, up to three times per Round", () => {
+    expect.hasAssertions();
+    const bandanaed = {
+      ...createCharacterState(1105),
+      equipments: [createGcgZoneCard(ADVENTURERS_BANDANA_ID, adventurersBandana)],
+      hp: 5,
+    };
+    const duel = createDuel([createSideState([bandanaed]), createSideState([createCharacterState(1202)])]);
+
+    for (let use = 0; use < 4; use++) runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(8);
+  });
+
+  test("a skill that is not a Normal Attack does not heal", () => {
+    expect.hasAssertions();
+    const bandanaed = {
+      ...createCharacterState(1105),
+      equipments: [createGcgZoneCard(ADVENTURERS_BANDANA_ID, adventurersBandana)],
+      hp: 5,
+    };
+    const duel = createDuel([createSideState([bandanaed]), createSideState([createCharacterState(1202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(5);
+  });
+});
+
+describe("aquila Favonia", () => {
+  test("the character it is attached to deals 1 more DMG", () => {
+    expect.hasAssertions();
+    const weaponed = {
+      ...createCharacterState(1105),
+      equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
+    };
+    const duel = createDuel([createSideState([weaponed]), createSideState([createCharacterState(1202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(7);
+  });
+
+  test("after the opposing character uses a Skill while this character is active, it heals 1 HP, up to twice per Round", () => {
+    expect.hasAssertions();
+    const weaponed = {
+      ...createCharacterState(1105),
+      equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
+    };
+    const duel = createDuel([createSideState([weaponed]), createSideState([createCharacterState(1202)])]);
+    duel.actingSideIndex = 1;
+
+    for (let use = 0; use < 3; use++) runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+
+    // Each Hyouka deals 3 Cryo DMG, and the first two are each followed by a heal of 1 HP, the third by none
+    expect(takeOne(duel.sides, 0).characters[0]?.hp).toBe(3);
+  });
+
+  test("it does not heal while its character is on standby", () => {
+    expect.hasAssertions();
+    const weaponed = {
+      ...createCharacterState(1105),
+      equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
+      hp: 5,
+    };
+    const duel = createDuel([
+      createSideState([createCharacterState(1202), weaponed]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    duel.actingSideIndex = 1;
+
+    runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 0).characters[1]?.hp).toBe(5);
+  });
+});
+
+describe("parametric Transformer", () => {
+  test("it gains 1 Qualitative Progress when either side's Skill deals Elemental DMG, and not for Physical DMG", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(1105)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    duel.sides[0].supports.push(createGcgZoneCard(PARAMETRIC_TRANSFORMER_ID, parametricTransformer));
+    duel.actingSideIndex = 1;
+
+    runGcgSkillUse({ duel, sideIndex: 1 }, FIREWORK_FLARE_UP);
+    expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(0);
+
+    runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+    expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(1);
+  });
+
+  test("at three Qualitative Progress it is discarded, and creates three different Basic Elemental Dice", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(1105)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+    duel.sides[0].supports.push(createGcgZoneCard(PARAMETRIC_TRANSFORMER_ID, parametricTransformer));
+    duel.actingSideIndex = 1;
+
+    for (let use = 0; use < 3; use++) runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 0).supports).toStrictEqual([]);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Pyro, Element.Hydro, Element.Anemo]);
   });
 });
