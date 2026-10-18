@@ -1,6 +1,6 @@
 # Companionship
 
-Every character but the Traveler keeps a total of Companionship EXP, and its Friendship Level is the count of the game's levels that total has reached. Only the total is stored, so the level cannot disagree with it. The Original Resin claims are the first source that gives the EXP. The stories and voice-overs a level opens are on the [character profile](../character-profile/design.md), a character at level 10 holds its namecard, shown on the profile by its name, and the Serenitea Pot dialogue and the namecard's art and description are not drawn yet; the commissions and random events that also give EXP have no page built.
+Every character but the Traveler keeps a total of Companionship EXP, and its Friendship Level is the count of the game's levels that total has reached. Only the total is stored, so the level cannot disagree with it. The ley line claim is the first source that gives the EXP in play, through the outcrops' composable. The domain and boss claims, the realm's bounty and the commission claim route to the grant in their services, and give it once a screen calls them. The stories and voice-overs a level opens are on the [character profile](../character-profile/design.md), a character at level 10 holds its namecard, shown on the profile by its name, and the Serenitea Pot dialogue and the namecard's art and description are not drawn yet; the commissions and random events that also give EXP have no page built.
 
 ## How it works
 
@@ -24,26 +24,27 @@ flowchart LR
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short.
 - **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
 - **A namecard is held by its level.** A namecard is in the held list once its character's total EXP reaches level 10, read from the same levels, so no save keeps it. Its art is the game's texture and is never served, so the profile sets its name on a plate of its own, and its description is the [proposal](../../../changes/genshin-companionship/design.md)'s.
-- **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](../../../changes/genshin-companionship/design.md) keeps; the stories and voice-overs are on the [character profile](../character-profile/design.md). The claim is a rule with no claim screen calling it yet.
+- **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](../../../changes/genshin-companionship/design.md) keeps; the stories and voice-overs are on the [character profile](../character-profile/design.md). The ley line claim calls it from the outcrops' composable, and the domain and boss claims have no screen calling theirs yet.
 
 ## Key files
 
-| File                                                                              | Role                                                                                        |
-| :-------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`          | The grant to the characters named but the Traveler, capped at the top level                 |
-| `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels                            |
-| `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The levels, fetched by their key from the friendship record and checked against their shape |
-| `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The namecards, fetched by their key from the same record and checked against their shape    |
-| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                                          |
-| `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                                             |
-| `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema                           |
-| `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the hosted `nameText` record, to the profile panel         |
-| `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                                       |
-| `packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts` | Each blossom kind's Companionship EXP per claim, provisional                                |
-| `scripts/src/services/genshinText/buildNames.ts`                                  | Collects every name id, the namecards' among them, and publishes `nameText` per language    |
-| `scripts/src/services/genshinAssets/friendship/buildFriendship.ts`                | Builds the friendship record from the dump's tables, for publishing                         |
-| `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts`          | Joins each level 10 card to its reward's namecard item and its name                         |
-| `scripts/src/services/genshinAssets/friendship/toFriendshipLevels.ts`             | Sums each level's rows into its total                                                       |
+| File                                                                              | Role                                                                                                   |
+| :-------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/friendship/gainCompanionshipExp.ts`          | The grant to the characters named but the Traveler, capped at the top level                            |
+| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                      | A ley line claim's Companionship EXP, given to the deployed team once the Friendship Levels are loaded |
+| `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels                                       |
+| `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The levels, fetched by their key from the friendship record and checked against their shape            |
+| `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The namecards, fetched by their key from the same record and checked against their shape               |
+| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                                                     |
+| `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                                                        |
+| `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema                                      |
+| `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the hosted `nameText` record, to the profile panel                    |
+| `packages/genshin-world/src/models/character/Character.ts`                        | Carries the total Companionship EXP of each character                                                  |
+| `packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts` | Each blossom kind's Companionship EXP per claim, provisional                                           |
+| `scripts/src/services/genshinText/buildNames.ts`                                  | Collects every name id, the namecards' among them, and publishes `nameText` per language               |
+| `scripts/src/services/genshinAssets/friendship/buildFriendship.ts`                | Builds the friendship record from the dump's tables, for publishing                                    |
+| `scripts/src/services/genshinAssets/friendship/toFriendshipNamecards.ts`          | Joins each level 10 card to its reward's namecard item and its name                                    |
+| `scripts/src/services/genshinAssets/friendship/toFriendshipLevels.ts`             | Sums each level's rows into its total                                                                  |
 
 ## Sources
 

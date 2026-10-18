@@ -2,7 +2,7 @@
 
 ## Why
 
-The Friendship Level, the EXP that raises it and the namecard a level 10 holds are built. What is still open is the Serenitea Pot dialogue that levels 4 and 7 open, and the Companionship EXP that commissions and random events give, which has no route into the friendship grant yet. Until those land, a companion in the pot never speaks at 4 or 7 and a commission's Companionship EXP is never granted.
+The Friendship Level, the EXP that raises it and the namecard a level 10 holds are built. What is still open is the Serenitea Pot dialogue that levels 4 and 7 open, and the Companionship EXP that commissions and random events give. The routes into the friendship grant are built for the commissions, the realm's bounty and the ley line claims, and no screen calls the commission and realm routes yet; random events have no page. Until those land, a companion in the pot never speaks at 4 or 7 and a commission's Companionship EXP is never granted.
 
 ## What Changes
 
@@ -19,7 +19,7 @@ Friendship levels 4 and 7 open dialogue with a companion in the Serenitea Pot, a
 ## Waiting on
 
 - `openspec/changes/genshin-serenitea-pot/`: the pot's companions, which the dialogue at 4 and 7 is said of.
-- `openspec/changes/genshin-commissions/`: the commissions' routing step, which hands the claim's Companionship EXP to the grant.
+- `openspec/changes/genshin-commissions/`: the commission claim screen, which calls `routeCommissionClaim` to hand the claim's Companionship EXP to the grant. The route is built.
 - Random events, which have no page yet and so no Companionship EXP source.
 - Game exports, which the dialogue and NPC tables are read from.
 

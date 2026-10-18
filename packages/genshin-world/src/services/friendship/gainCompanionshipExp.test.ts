@@ -58,18 +58,22 @@ describe(gainCompanionshipExp, () => {
     ]);
   });
 
-  test("should stop each character at the top level's EXP, and leave one already there at it", () => {
+  test("should stop a character short of the top level's EXP at it", () => {
     expect.hasAssertions();
 
-    const characters = [
-      { ...CHARACTER, friendshipExp: TOP_EXP - 2 },
-      { ...CHARACTER, friendshipExp: TOP_EXP, id: SECOND_CHARACTER_ID },
-    ];
+    const characters = [{ ...CHARACTER, friendshipExp: TOP_EXP - 2 }];
 
-    expect(
-      gainCompanionshipExp(characters, [FIRST_CHARACTER_ID, SECOND_CHARACTER_ID], GAIN_EXP, FRIENDSHIP_LEVELS),
-    ).toStrictEqual([
+    expect(gainCompanionshipExp(characters, [FIRST_CHARACTER_ID], GAIN_EXP, FRIENDSHIP_LEVELS)).toStrictEqual([
       { ...CHARACTER, friendshipExp: TOP_EXP },
+    ]);
+  });
+
+  test("a character at Friendship Level 10 gains no Companionship EXP", () => {
+    expect.hasAssertions();
+
+    const characters = [{ ...CHARACTER, friendshipExp: TOP_EXP, id: SECOND_CHARACTER_ID }];
+
+    expect(gainCompanionshipExp(characters, [SECOND_CHARACTER_ID], GAIN_EXP, FRIENDSHIP_LEVELS)).toStrictEqual([
       { ...CHARACTER, friendshipExp: TOP_EXP, id: SECOND_CHARACTER_ID },
     ]);
   });
