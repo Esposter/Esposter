@@ -53,6 +53,8 @@ export const GANYU_CHARACTER_ID = 10_000_037;
 // 1, and the arrow gives her Undivided Heart's CRIT Rate from Ascension 1. Ice Lotus casts its taunt where she stands,
 // Exploding as its seconds from the flower's hit run out. Celestial Shower casts its field, whose ticks each strike from
 // Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG Bonus from Ascension 4
+// Constellation 4 needs the increased DMG taken within Celestial Shower, which no enemy stack carries yet
+// Constellation 6 needs the next fully charged Frostflake Arrow within 30 seconds to skip charging, not built
 export const createGanyuKitBehaviour = ({
   kit,
   readHit,
