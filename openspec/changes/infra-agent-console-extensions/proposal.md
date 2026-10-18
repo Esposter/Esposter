@@ -20,7 +20,7 @@ Tools and first-party panels can appear in the console through two tiers, and a 
 
 ## Waiting on
 
-- The installed Agent SDK's public query interface has no method for an app's tool calls. Resume when it arrives, or when the host's transport boundary changes.
+- The Agent SDK's control protocol can run an MCP tool through the session's connection, but its public query interface exposes no method for it, in the installed release or the latest published one. Resume when a public method arrives, or when the host's transport boundary changes.
 
 ## Impact
 
