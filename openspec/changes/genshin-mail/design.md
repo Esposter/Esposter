@@ -69,7 +69,7 @@ scripts/src/models/genshinAssets/mail/ExcelMailRow.ts         ← the mail table
 packages/genshin-world/src/models/mail/Mail.ts                ← a mail's text ids, expiry and items
 packages/genshin-world/src/models/mail/MailSave.ts            ← a mail as the save holds it: when delivered, claimed, read
 packages/genshin-world/src/models/save/TravelerBirthdaySave.ts ← the Traveler's birthday the profile sets once
-packages/genshin-world/src/services/mail/constants.ts         ← the mailbox's capacity
+packages/genshin-world/src/services/mail/constants.ts         ← the mailbox's capacity, and the hours in a day a mail's expiry counts in
 packages/genshin-world/src/models/mail/MailboxState.ts        ← the bag, the wallet and the held mails a claim changes together
 packages/genshin-world/src/services/mail/claimMail.ts        ← one held mail's items into the bag and wallet, once
 packages/genshin-world/src/services/mail/claimAllMails.ts    ← every held mail claimed in order, the ones the bag cannot take left unclaimed
@@ -86,6 +86,7 @@ packages/genshin-world/src/models/mail/BirthdayMailRow.ts ← a row of the birth
 packages/genshin-world/src/composables/useWorldMail.ts ← the mailbox read as the world starts, the birthday due, the claims applied
 packages/genshin-world/src/services/mail/readMailText.ts ← one language's mail text, read by its key
 packages/genshin-world/src/services/mail/readMailRows.ts ← the held mails' rows by id, the ones the mail table no longer names left out
+packages/genshin-world/src/services/mail/getMailExpiresAt.ts ← the instant a mail expires, which getMailExpiry and removeExpiredMails both read
 packages/genshin-world/src/services/mail/getMailExpiry.ts ← a mail's time left in its largest unit
 packages/genshin-world/src/services/mail/MailExpiryGameTextKeyMap.ts ← each expiry unit's line
 packages/genshin-world/src/services/mail/sortMails.ts  ← the held mails, pinned first then newest first
