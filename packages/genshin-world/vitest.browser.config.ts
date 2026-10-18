@@ -1,5 +1,10 @@
 import { gameDataMirrorPlugin } from "#scripts/gameData/mirror/gameDataMirrorPlugin";
-import { getVitestBrowserConfiguration, getVuePlugins, SOURCE_CONDITION } from "@esposter/configuration";
+import {
+  dynamicJsonImportPlugin,
+  getVitestBrowserConfiguration,
+  getVuePlugins,
+  SOURCE_CONDITION,
+} from "@esposter/configuration";
 import { templateCompilerOptions } from "@tresjs/core";
 import { defaultClientConditions } from "vite";
 import { defineConfig } from "vitest/config";
@@ -8,7 +13,7 @@ import { defineConfig } from "vitest/config";
 // Drawn in the machine's own Edge at 720 pixels high, each image kept beside its component as a test is, and the tests
 // Of what only a browser runs
 export default defineConfig({
-  plugins: [...getVuePlugins(templateCompilerOptions), gameDataMirrorPlugin],
+  plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin],
   // Its siblings from their source, as the page reads them
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   test: {
