@@ -27,6 +27,6 @@
 
 ## 7. Decisions
 
-- [ ] 7.1 Decide Amber's Fiery Rain arrow area: options are radius 2 as the record reads it now, radius 4 as her kit page prices it, or 5.2 as widened by 30%; decides nothing here. Verify: the chosen radius is written into the design before the record is republished.
+- [x] 7.1 Decide Amber's Fiery Rain arrow area: options are radius 2 as the record reads it now, radius 4 as her kit page prices it, or 5.2 as widened by 30%; decides nothing here. Verify: the chosen radius is written into the design before the record is republished.
 - [ ] 7.2 Decide whether each periodic discharge record holds every spawn's list or a shared helper builds the lists again, across the seven kits that build them inline; options are the two named, decides nothing here. Verify: the choice is written into the design before any module changes.
 - [ ] 7.3 Decide the value model for Go's float division in the kit reader: options are a float flag carried through parsed literals, conversions and the value type, or leaving the constant evaluator as it is; decides nothing here. Verify: the choice is written into the design before the reader changes.

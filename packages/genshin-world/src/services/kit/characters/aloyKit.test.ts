@@ -9,6 +9,8 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ALOY_CHARACTER_ID, createAloyKitBehaviour } from "#src/services/kit/characters/aloyKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -86,5 +88,59 @@ describe(createAloyKitBehaviour, () => {
     const effectsInRushingIce = [...kitEffectState.effects];
     strike();
     expect(kitEffectState.effects).toStrictEqual(effectsInRushingIce);
+  });
+
+  // Four coil stacks, the fourth from the second Chillwater Bomblet, start Rushing Ice on a combatant of the given ascension
+  const startRushingIce = (ascension: number) => {
+    const combatant: Combatant = { ...createAloyCombatant(), ascension };
+    const context = createKitTestContext(combatant);
+    const bomblet = takeOne(bombletHits());
+    for (let index = 0; index < 4; index++) bomblet.onStrike?.(context, { body: kitBody, combatant, hit: bomblet });
+    return { combatant, context };
+  };
+  const getBuffedAttributeTotal = (
+    combatant: Combatant,
+    { context }: ReturnType<typeof startRushingIce>,
+    attribute: Attribute,
+  ) =>
+    getBuffedCombatant(combatant, context.kitEffectState.effects, context.party).attributes.attributeTotalMap[
+      attribute
+    ];
+
+  describe("the Ascension 1 passive, which raises ATK while Rushing Ice holds", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const started = startRushingIce(1);
+
+      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0.16);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const started = startRushingIce(0);
+
+      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.AttackPercent)).toBe(0);
+    });
+  });
+
+  describe("the Ascension 4 passive, which raises Cryo DMG Bonus a step each second of Rushing Ice", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const started = startRushingIce(4);
+      const { context } = started;
+
+      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.035);
+      stepKitEffects(9, context);
+
+      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBeCloseTo(0.35);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const started = startRushingIce(3);
+      stepKitEffects(9, started.context);
+
+      expect(getBuffedAttributeTotal(started.combatant, started, Attribute.CryoDamageBonus)).toBe(0);
+    });
   });
 });
