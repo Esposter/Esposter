@@ -633,6 +633,8 @@ export enum GameTextKey {
   WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
   WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
   ZaytunPeach = "492153948",
+  // The map's zoom slider, named by the game's own word for Zoom
+  Zoom = "UI_BUTTON_ZOOM",
 }
 
 export const GameTextKeys: readonly GameTextKey[] = Object.values(GameTextKey);
