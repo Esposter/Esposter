@@ -32,6 +32,9 @@ export interface GcgCardModule {
   onAnySkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   onEndPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | undefined;
+  // A character of the opposing side is defeated, for a card on this side's field: the context names the character the card is
+  // Attached to, for the hooks that act on it
+  onOpposingDefeated?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // The hits the skill landed, its own damage and its standby piercing alike, with the reactions they triggered
   onSkillUsed?: (

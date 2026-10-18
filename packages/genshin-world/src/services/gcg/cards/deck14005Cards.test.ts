@@ -9,7 +9,9 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
+import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { liben } from "#src/services/gcg/cards/liben";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -24,6 +26,7 @@ const FULL_HP = 10;
 const COLLEI_ID = 1701;
 const LIBEN_ID = 322_008;
 const KEQING_ID = 1403;
+const OTHER_CHARACTER_ID = 1401;
 const OPPOSING_CHARACTER_ID = 1203;
 const CUILEIN_ANBAR_ID = 117_011;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -127,6 +130,46 @@ describe("floral Brush", () => {
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
+  });
+});
+
+describe("gambler's Earrings", () => {
+  const createEquippedCollei = (): GcgCharacterState => ({
+    ...createCharacterState(COLLEI_ID),
+    equipments: [createGcgZoneCard(312_004, gamblersEarrings)],
+  });
+
+  test("after an opposing character is defeated while the equipped character is active, two Omni dice are created", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createEquippedCollei()]),
+      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 3 }, createCharacterState(KEQING_ID)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni]);
+  });
+
+  test("a defeat while the equipped character is not active creates no die", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(OTHER_CHARACTER_ID), createEquippedCollei()]),
+      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 3 }, createCharacterState(KEQING_ID)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
+  });
+
+  test("it creates dice at most three times in a match", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createEquippedCollei()]),
+      createSideState(Array.from({ length: 5 }, () => ({ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: 1 }))),
+    ]);
+    for (let defeated = 0; defeated < 4; defeated++) {
+      takeOne(duel.sides, 1).activeIndex = defeated;
+      applyGcgDamage(duel, 0, { damageType: Element.Dendro, value: 1 }, TEST_RULE);
+    }
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual(Array.from({ length: 6 }, () => GcgDieFace.Omni));
   });
 });
 
