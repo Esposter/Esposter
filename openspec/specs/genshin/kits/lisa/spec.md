@@ -1,6 +1,6 @@
 ## Purpose
 
-Lisa's kit as built: four strikes, a charged attack, Violet Arc's press and its hold, released by itself at 4 seconds, Lightning Rose's thirty discharges, and Constellation 6's Conductive when she takes the field, with the Lightning Rose activation dealing no damage and Constellations 1, 2 and 4 not built.
+Lisa's kit as built: four strikes, a charged attack, Violet Arc's press and its hold, released by itself at 4 seconds, Lightning Rose's thirty discharges, Constellation 1's Energy from the hold, and Constellation 6's Conductive when she takes the field, with the Lightning Rose activation dealing no damage and Constellations 2 and 4 not built.
 
 ## Requirements
 
@@ -117,12 +117,34 @@ From Constellation 6, when Lisa takes the field, each opponent within 5 metres o
 - **WHEN** the swap happens
 - **THEN** no stacks are added
 
+### Requirement: Constellation 1 Energy from Violet Arc's hold
+
+From Constellation 1, each opponent Violet Arc's hold strikes SHALL regenerate 2 Energy for Lisa, and one hold SHALL regenerate no more than 10 Energy in all.
+
+#### Scenario: Each opponent a hold strikes regenerates Energy
+
+- **GIVEN** Lisa has Constellation 1
+- **WHEN** a Violet Arc hold strikes three opponents
+- **THEN** Lisa regenerates 6 Energy
+
+#### Scenario: One hold regenerates at most 10 Energy
+
+- **GIVEN** Lisa has Constellation 1
+- **WHEN** a Violet Arc hold strikes six opponents
+- **THEN** Lisa regenerates 10 Energy
+
+#### Scenario: Below Constellation 1 a hold regenerates no Energy
+
+- **GIVEN** Lisa has Constellation 0
+- **WHEN** a Violet Arc hold strikes an opponent
+- **THEN** Lisa regenerates no Energy
+
 ### Requirement: Unbuilt Lisa effects
 
-Lisa's Constellations 1, 2 and 4 SHALL NOT take effect.
+Lisa's Constellations 2 and 4 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lisa has Constellation 1, 2 or 4
+- **GIVEN** Lisa has Constellation 2 or 4
 - **WHEN** the player fights with Lisa
 - **THEN** that effect has no effect

@@ -1,6 +1,6 @@
 ## Purpose
 
-Noelle's kit as built: four strikes, a charged attack, Breastplate's press with its shield and heal, and Sweeping Time's slashes with its Geo infusion and ATK bonus, with her constellations I Got Your Back, Combat Maid and To Be Cleaned built.
+Noelle's kit as built: four strikes, a charged attack, Breastplate's press with its shield and heal, and Sweeping Time's slashes with its Geo infusion and ATK bonus, with her constellations I Got Your Back, Combat Maid, To Be Cleaned and Must Be Spotless built.
 
 ## Requirements
 
@@ -66,9 +66,31 @@ From Constellation 1, Sweeping Time's Geo infusion SHALL make the heal roll cert
 - **WHEN** Breastplate's shield ends
 - **THEN** the shield explodes for 400% of Noelle's ATK as Geo damage on the character on the field
 
+### Requirement: Constellation 6 Sweeping Time's extra ATK and seconds
+
+From Constellation 6, Sweeping Time's ATK bonus SHALL take an additional 50% of Noelle's DEF, and each enemy she defeats during it SHALL add one second to its duration, up to 10 seconds in all.
+
+#### Scenario: Constellation 6 adds half her DEF to the ATK bonus
+
+- **GIVEN** Noelle has Constellation 6
+- **WHEN** she uses Sweeping Time
+- **THEN** its ATK bonus takes an additional 50% of her DEF
+
+#### Scenario: Each enemy she defeats adds a second, up to 10 seconds
+
+- **GIVEN** Noelle has Constellation 6 and Sweeping Time is standing
+- **WHEN** she defeats enemies during it
+- **THEN** each defeat adds one second, and its duration stops at 10 seconds in all
+
+#### Scenario: Another character's defeat, or a lower constellation, adds nothing
+
+- **GIVEN** Noelle has Constellation 5, or another character defeats the enemy
+- **WHEN** the enemy is defeated during Sweeping Time
+- **THEN** its duration is not extended
+
 ### Requirement: Constellation 2 Charged Attack stamina and DMG
 
-From Constellation 2, Noelle's Charged Attacks SHALL cost 20% less stamina and each of their hits SHALL deal 15% more DMG. Constellation 6's extra seconds for Sweeping Time SHALL NOT take effect.
+From Constellation 2, Noelle's Charged Attacks SHALL cost 20% less stamina and each of their hits SHALL deal 15% more DMG.
 
 #### Scenario: Constellation 2 changes her Charged Attacks
 

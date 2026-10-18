@@ -22,4 +22,4 @@ Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lisa), MIT: the kit's hitmarks, cancel frames and areas, Lightning Rose's discharges, and the values its talent file gives, which its multipliers match.
 - [gcsim v2.47.2 skill file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/skill.go), MIT: the Conductive stack each press applies, up to three.
 - [gcsim v2.47.2 ascension file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/asc.go), MIT: the Conductive stack a charged attack applies from Ascension 1.
-- [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/cons.go), MIT: Constellation 6's three Conductive stacks.
+- [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/cons.go), MIT: Constellation 1's Energy and Constellation 6's three Conductive stacks.

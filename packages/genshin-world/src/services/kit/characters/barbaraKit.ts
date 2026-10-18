@@ -18,6 +18,7 @@ import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { regeneratePartyMemberEnergy } from "#src/services/party/regeneratePartyMemberEnergy";
 
 // The Melody Loop's regeneration on the character on the field as it starts and every 5 seconds after, the four heals the
 // Wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
@@ -43,6 +44,19 @@ const DEDICATING_EVERYTHING_TO_YOU_CONSTELLATION = 6;
 const DEDICATING_EVERYTHING_TO_YOU_COOLDOWN_SECONDS = 15 * 60;
 const DEDICATING_EVERYTHING_TO_YOU_HEALTH_SHARE = 1;
 const DEDICATING_EVERYTHING_TO_YOU_STATUS_ID = "barbara-dedicating-everything-to-you";
+// Gleeful Songs, from Constellation 1: she regenerates 1 Energy every 10 seconds while she stands in the party. A clock of
+// 10 seconds on her status is armed on each step she is in the team, and its expiry gives the Energy, as gcsim v2.47.2
+// (MIT) barbara/cons.go gives it on a task
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/cons.go
+const GLEEFUL_SONGS_CONSTELLATION = 1;
+const GLEEFUL_SONGS_ENERGY = 1;
+const GLEEFUL_SONGS_SECONDS = 10;
+const GLEEFUL_SONGS_STATUS_ID = "barbara-gleeful-songs";
+// Attentiveness Be My Power, from Constellation 4: each opponent her charged attack strikes regenerates 1 Energy for her,
+// Five at most per charged attack, as the wiki's constellation page gives it
+const ATTENTIVENESS_CONSTELLATION = 4;
+const ATTENTIVENESS_ENERGY = 1;
+const ATTENTIVENESS_MAX_ENERGY = 5;
 
 // The Melody Loop the striker cast that stands on the team: a field it cast that ticks on the loop's interval, which its
 // Burst's single heal does not
@@ -82,10 +96,8 @@ export const BARBARA_CHARACTER_ID = 10_000_014;
 // Both where she stands and priced by her as she stood then, and Shining Miracle♪, which deals no damage, heals the
 // Character on the field at its hitmark. From two constellations, Vitality Burst cuts the skill's cooldown, and the
 // Loop's first tick gives the rest of the team its Hydro DMG Bonus, and from six constellations a fallen member is revived.
-// Constellations 1 and 4 are not built: 1's energy every ten seconds waits on energy regeneration, which no kit event reports,
-// And on a clock that runs while she stands in the party, which no hook gives; 4's energy per enemy her charged attack
-// Strikes, at most five per attack, waits on the charged attack landed and on energy regeneration, since a hit's hook holds
-// No count across one attack
+// Constellations 1 and 4 are built: 1's energy every ten seconds runs on a clock her kit arms on each step she is in the
+// Team, and 4's energy per enemy her charged attack strikes is counted across the one attack
 export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const regenerationHealthShare = readParameter("regenerationHealthShare");
   const regenerationFlatHeal = readParameter("regenerationFlatHeal");
@@ -102,6 +114,8 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
     healPartyChance: (striker, effects) => (checkIsMelodyLoopLive(striker, effects) ? 1 : 0),
   };
   const strikeBehaviour = { hits: [melodyLoopHealBehaviour] };
+  // Attentiveness counts the Energy one charged attack has regenerated, which its start clears
+  let attentivenessEnergy = 0;
   return {
     // Shining Miracle♪'s heal is a task run at its hitmark, priced by her as she stood at the cast
     burst: {
@@ -112,13 +126,51 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
         );
       },
     },
-    chargedAttack: strikeBehaviour,
+    // Constellation 4: each opponent her charged attack strikes regenerates Energy for her, up to five per attack
+    chargedAttack: {
+      hits: [
+        {
+          ...melodyLoopHealBehaviour,
+          onStrike: ({ party }, { combatant }) => {
+            if (
+              combatant.constellationCount < ATTENTIVENESS_CONSTELLATION ||
+              attentivenessEnergy >= ATTENTIVENESS_MAX_ENERGY
+            )
+              return;
+            regeneratePartyMemberEnergy(party, combatant, ATTENTIVENESS_ENERGY);
+            attentivenessEnergy += ATTENTIVENESS_ENERGY;
+          },
+        },
+      ],
+      onStart: () => {
+        attentivenessEnergy = 0;
+      },
+    },
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= VITALITY_BURST_CONSTELLATION ? VITALITY_BURST_COOLDOWN_MULTIPLIER : 1,
     normalAttacks: [strikeBehaviour, strikeBehaviour, strikeBehaviour, strikeBehaviour],
+    // Gleeful Songs' clock arms on each step she is in the team, and its expiry gives the Energy
+    onStep: ({ kitEffectState }, combatant) => {
+      if (
+        combatant.constellationCount < GLEEFUL_SONGS_CONSTELLATION ||
+        findKitStatus(kitEffectState.effects, combatant.characterId, GLEEFUL_SONGS_STATUS_ID)
+      )
+        return;
+      addKitStatus(kitEffectState, combatant.characterId, {
+        id: GLEEFUL_SONGS_STATUS_ID,
+        secondsRemaining: GLEEFUL_SONGS_SECONDS,
+      });
+    },
     // Encore lengthens the Melody Loop as particles are collected, up to its maximum extension
     // Dedicating Everything to You revives a downed member once every fifteen minutes while Barbara is off the field
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
+      if (
+        event.kind === KitEventKind.EffectExpired &&
+        event.effect.kind === "status" &&
+        event.effect.id === GLEEFUL_SONGS_STATUS_ID &&
+        event.effect.characterId === combatant.characterId
+      )
+        regeneratePartyMemberEnergy(party, combatant, GLEEFUL_SONGS_ENERGY);
       if (event.kind === KitEventKind.EnergyParticleCollected && combatant.ascension >= ASCENSION_4) {
         const melodyLoop = findLiveMelodyLoop(combatant, kitEffectState.effects);
         const encore = findKitStatus(kitEffectState.effects, combatant.characterId, ENCORE_STATUS_ID);

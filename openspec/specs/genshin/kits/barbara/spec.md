@@ -1,6 +1,6 @@
 ## Purpose
 
-Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, with the burst's heal on off-field members, the loop's Wet, her Ascension 4 Encore and Constellation 6's revive built, and her other passives and Constellations 1 and 4 left unbuilt.
+Barbara's kit as built: her strikes, charged attack and plunges, Let the Show Begin's droplets, the Melody Loop and Shining Miracle's heal, with the burst's heal on off-field members, the loop's Wet, her Ascension 4 Encore and Constellation 6's revive built, and her other passives and Constellations 1 and 4 built.
 
 ## Requirements
 
@@ -77,6 +77,38 @@ Shining Miracle SHALL heal only the active character, once at its first tick, ra
 - **GIVEN** Barbara casts Shining Miracle
 - **WHEN** the first tick occurs
 - **THEN** only the active character is healed
+
+### Requirement: Gleeful Songs gives Energy every ten seconds from Constellation 1
+
+From Constellation 1, Barbara SHALL regenerate 1 Energy every 10 seconds while she stands in the party.
+
+#### Scenario: Constellation 1 regenerates Energy while she stands in the party
+
+- **GIVEN** Barbara has Constellation 1 and stands in the party
+- **WHEN** 10 seconds pass
+- **THEN** she regenerates 1 Energy
+
+#### Scenario: Below Constellation 1 she regenerates no Energy
+
+- **GIVEN** Barbara has Constellation 0
+- **WHEN** 25 seconds pass
+- **THEN** she regenerates no Energy
+
+### Requirement: Attentiveness Be My Power gives Energy per opponent a charged attack strikes
+
+From Constellation 4, each opponent Barbara's charged attack strikes SHALL regenerate 1 Energy for her, up to 5 Energy per charged attack.
+
+#### Scenario: Each opponent struck regenerates Energy, five at most
+
+- **GIVEN** Barbara has Constellation 4
+- **WHEN** her charged attack strikes seven opponents
+- **THEN** she regenerates 5 Energy
+
+#### Scenario: Below Constellation 4 the charged attack regenerates no Energy
+
+- **GIVEN** Barbara has Constellation 3
+- **WHEN** her charged attack strikes seven opponents
+- **THEN** she regenerates no Energy
 
 ### Requirement: Vitality Burst gives the party a Hydro bonus from two constellations
 

@@ -1,5 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitInfusion } from "#src/models/kit/KitInfusion";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -22,6 +25,19 @@ import { describe, expect, test } from "vitest";
 
 const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+const getSweepingTimeBuff = (context: KitContext): KitBuff =>
+  takeOne(context.kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff"));
+const getSweepingTimeInfusion = (context: KitContext): KitInfusion =>
+  takeOne(context.kitEffectState.effects.filter((effect): effect is KitInfusion => effect.kind === "infusion"));
+
+// An enemy a striker's team defeats with a strike, as Noelle's kit hears it
+const defeatEnemy = (combatant: Combatant, context: KitContext, striker: Combatant = combatant) =>
+  NOELLE_KIT.onKitEvent?.(
+    { enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), kind: KitEventKind.EnemyDefeated, striker },
+    context,
+    combatant,
+  );
 
 describe("noelle kit", () => {
   const DEFENSE = 800;
@@ -85,6 +101,7 @@ describe("noelle kit", () => {
         characterId: NOELLE_CHARACTER_ID,
         kind: "buff",
         secondsRemaining: 15 + 80 / 60,
+        source: "noelle-sweeping-time",
       },
       {
         characterId: NOELLE_CHARACTER_ID,
@@ -280,5 +297,66 @@ describe("noelle kit", () => {
 
     expect(NOELLE_KIT.getChargedAttackStaminaMultiplier?.(context)).toBe(1);
     expect(getChargedAttackDamageBonus(1)).toBe(0);
+  });
+
+  const OTHER_CHARACTER_ID = 10_000_999;
+
+  test("constellation 6 adds half her DEF again to the ATK Sweeping Time gives her", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createNoelleCombatant(), constellationCount: 6 };
+    const context = createKitTestContext(combatant);
+
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+
+    expect(getSweepingTimeBuff(context).amount).toBeCloseTo((0.4 + 0.5) * combatant.attributes.defense);
+  });
+
+  test("constellation 6 adds a second to Sweeping Time for each enemy Noelle defeats during it, 10 seconds in all", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createNoelleCombatant(), constellationCount: 6 };
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+    const startSeconds = getSweepingTimeBuff(context).secondsRemaining;
+
+    for (let defeat = 0; defeat < 12; defeat++) defeatEnemy(combatant, context);
+
+    expect(getSweepingTimeBuff(context).secondsRemaining).toBeCloseTo(startSeconds + 10);
+    expect(getSweepingTimeInfusion(context).secondsRemaining).toBeCloseTo(startSeconds + 10);
+  });
+
+  test("constellation 6 adds nothing for an enemy another character defeats", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createNoelleCombatant(), constellationCount: 6 };
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+    const startSeconds = getSweepingTimeBuff(context).secondsRemaining;
+
+    defeatEnemy(combatant, context, { ...combatant, characterId: OTHER_CHARACTER_ID });
+
+    expect(getSweepingTimeBuff(context).secondsRemaining).toBe(startSeconds);
+  });
+
+  test("constellation 5 adds nothing for an enemy Noelle defeats during Sweeping Time", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createNoelleCombatant(), constellationCount: 5 };
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+    const startSeconds = getSweepingTimeBuff(context).secondsRemaining;
+
+    defeatEnemy(combatant, context);
+
+    expect(getSweepingTimeBuff(context).secondsRemaining).toBe(startSeconds);
+  });
+
+  test("constellation 6 adds nothing once Sweeping Time has ended", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createNoelleCombatant(), constellationCount: 6 };
+    const context = createKitTestContext(combatant);
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+    stepKitTestEffects(20, context);
+
+    defeatEnemy(combatant, context);
+
+    expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
 });

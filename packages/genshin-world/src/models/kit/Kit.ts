@@ -84,6 +84,9 @@ export interface Kit {
   onKitEvent?: (event: KitEvent, context: KitContext, combatant: Combatant) => void;
   // Run on each step the character on the field sprints, to spend the sprint's seconds from the kit's state
   onSprint?: (context: KitContext, kitState: KitState) => void;
+  // Run on each step while the character is in the deployed team, on the field or off it, given its own Combatant and
+  // The step's seconds, for a clock a constellation keeps while its character stands in the team
+  onStep?: (context: KitContext, combatant: Combatant, stepSeconds: number) => void;
   plungeCollision: KitHit;
   skillCooldownSeconds: number;
   // The icons its skill and burst buttons carry, read with the kit from the hosted index by the character's own id, none

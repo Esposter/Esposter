@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, and Constellations 1 and 4, with Frostgnaw's damage against Water, the activation knockback, and Constellations 2 and 6 not built.
+Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, Constellations 1, 2 and 4, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6 not built.
 
 ## Requirements
 
@@ -102,12 +102,34 @@ From Constellation 4, a drain that takes Kaeya under 20% HP SHALL shield him for
 - **WHEN** the drain lands
 - **THEN** no shield is made
 
+### Requirement: Constellation 2 extends Glacial Waltz
+
+From Constellation 2, each enemy defeated during Glacial Waltz SHALL extend it by 2.5 seconds, its whole lifetime from the cast held to 15 seconds.
+
+#### Scenario: Each defeat extends Glacial Waltz
+
+- **GIVEN** Kaeya has Constellation 2 and Glacial Waltz is standing
+- **WHEN** an enemy is defeated during it
+- **THEN** Glacial Waltz lasts 2.5 seconds longer
+
+#### Scenario: Glacial Waltz lasts fifteen seconds at most
+
+- **GIVEN** Kaeya has Constellation 2 and Glacial Waltz already lasts fifteen seconds in all
+- **WHEN** another enemy is defeated during it
+- **THEN** Glacial Waltz is not extended
+
+#### Scenario: Below Constellation 2, or after Glacial Waltz ends, nothing changes
+
+- **GIVEN** Kaeya has Constellation 1, or Glacial Waltz has ended
+- **WHEN** an enemy is defeated
+- **THEN** Glacial Waltz is not extended
+
 ### Requirement: Unbuilt Kaeya effects
 
-Kaeya's Constellations 2 and 6 SHALL NOT take effect.
+Kaeya's Constellation 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Kaeya has Constellation 2 or 6
+- **GIVEN** Kaeya has Constellation 6
 - **WHEN** the player fights with Kaeya
 - **THEN** that effect has no effect

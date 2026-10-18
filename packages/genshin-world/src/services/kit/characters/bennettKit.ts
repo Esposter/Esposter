@@ -74,8 +74,9 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
 // Any HP above zero and adds 20% to. From Fire Ventures With Me, that bonus also gives the character on the field a 15%
 // Pyro DMG Bonus, and Pyro on its weapon if it wields a sword, claymore or polearm. Under his own field at Ascension 4,
 // The Level 2 hold plays without the launch, and Passion Overload's cooldown is cut from Ascension 1 and halved there
-// Constellation 4 waits on the shared extra hit a passive owns, not yet held, for a follow-up attack on Passion Overload's
-// Second attack, and on the Level 1 hold's release state, which the kit does not carry
+// Constellation 4 is not built: getNormalAttackExtraHit is handed only the hit a normal attack lands, not its place in the
+// Chain, so the second attack of Passion Overload's Level 1 cannot be told from the others, and the Level 1 hold's release
+// State is not carried by the kit
 export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const fieldFlatHeal = readParameter("fantasticVoyageFlatHeal");
   const fieldMaxHealthHealShare = readParameter("fantasticVoyageMaxHealthHealShare");

@@ -10,7 +10,7 @@ Kaeya's kit is its record and one behaviour module, `createKaeyaKitBehaviour`, o
 
 ## Not built
 
-- **Constellations 2 and 6 are not built.** Constellation 2 needs each enemy defeated during Glacial Waltz, which waits on the enemy-defeated event no kit reports yet. Constellation 6 needs the extra icicle, whose timing the record's icicle hits do not give, and its 15 Energy, which waits on energy regeneration.
+- **Constellation 6 is not built.** It needs one more icicle, whose timing the record's icicle hits do not give. Constellation 2 is built: each enemy defeated during Glacial Waltz extends it by 2.5 seconds, up to 15 seconds in all, as the kit hears `EnemyDefeated`.
 - **Glacial Waltz's activation knockback is not built.** Its 400 poise has no damage and gcsim gives no area for it, so the icicles alone are built.
 
 ## Key files
@@ -24,4 +24,4 @@ Kaeya's kit is its record and one behaviour module, `createKaeyaKitBehaviour`, o
 - [Ceremonial Bladework](https://genshin-impact.fandom.com/wiki/Ceremonial_Bladework), [Frostgnaw](https://genshin-impact.fandom.com/wiki/Frostgnaw) and [Glacial Waltz](https://genshin-impact.fandom.com/wiki/Glacial_Waltz), Genshin Impact Wiki: Kaeya's strikes', charged attack's and plunges' poise, Frostgnaw's gauge and poise, and Glacial Waltz's icicle damage, gauge and poise.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kaeya), MIT: the kit's hitmarks, cancel frames and areas, the icicles' ticks, and the values its talent file gives, which its multipliers match.
 - [gcsim v2.47.2 skill file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/skill.go), MIT: Frostgnaw's A1, the heal of 15% of Kaeya's ATK from each enemy it strikes.
-- [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/cons.go), MIT: Constellations 1 and 4.
+- [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/cons.go), MIT: Constellations 1, 2 and 4.

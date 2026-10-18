@@ -1,6 +1,6 @@
 ## Purpose
 
-Amber's kit as built: her five arrows, fully charged aimed shot, Explosive Puppet's Baron Bunny and Fiery Rain, with Ascension 1 built and Ascension 4 and the unlit Aimed Shot left out.
+Amber's kit as built: her five arrows, fully charged aimed shot, Explosive Puppet's Baron Bunny and Fiery Rain, with Ascension 1 built, Constellations 1, 4 and 6 built, and Ascension 4, Constellation 2 and the unlit Aimed Shot left out.
 
 ## Requirements
 
@@ -55,3 +55,35 @@ At Ascension 1 Amber SHALL gain ten percent Crit Rate, and Fiery Rain's area SHA
 - **GIVEN** Amber is at Ascension 1
 - **WHEN** Fiery Rain is cast
 - **THEN** its area is thirty percent wider than at base
+
+### Requirement: Constellation 1 second arrow
+
+From Constellation 1, each aimed shot SHALL fire a second arrow dealing 20% of the first arrow's DMG, once per shot.
+
+#### Scenario: Constellation 1 fires a second arrow per aimed shot
+
+- **GIVEN** Amber has Constellation 1
+- **WHEN** she fires an aimed shot that strikes opponents
+- **THEN** one second arrow of 20% of the first arrow's DMG lands
+
+#### Scenario: Below Constellation 1 no second arrow lands
+
+- **GIVEN** Amber has Constellation 0
+- **WHEN** she fires an aimed shot
+- **THEN** no second arrow lands
+
+### Requirement: Constellation 6 Movement SPD and ATK during Fiery Rain
+
+From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movement SPD and 15% ATK for 10 seconds.
+
+#### Scenario: Constellation 6 raises each party member's Movement SPD and ATK
+
+- **GIVEN** Amber has Constellation 6
+- **WHEN** Fiery Rain is cast
+- **THEN** each deployed member has 15% Movement SPD and 15% ATK for 10 seconds
+
+#### Scenario: Below Constellation 6 no party member gains the buff
+
+- **GIVEN** Amber has Constellation 5
+- **WHEN** Fiery Rain is cast
+- **THEN** no party member gains Movement SPD or ATK

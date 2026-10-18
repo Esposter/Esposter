@@ -48,6 +48,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     normalAttacks = [],
     onKitEvent,
     onSprint,
+    onStep,
     plungeCollision = {},
     plunges = {},
     skill,
@@ -64,6 +65,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
   if (onSprint) kit.onSprint = onSprint;
+  if (onStep) kit.onStep = onStep;
   if (moonsignBenediction?.getBaseDamageBonus) {
     if (!kit.moonsignBenediction)
       throw new InvalidOperationError(Operation.Update, "moonsignBenediction", "its record holds none");
