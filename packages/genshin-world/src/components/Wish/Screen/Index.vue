@@ -6,6 +6,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { WishItem } from "#src/models/wish/WishItem";
 import type { WishPity } from "#src/models/wish/WishPity";
 import type { WishResult } from "#src/models/wish/WishResult";
+import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { WishResultCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
@@ -27,6 +28,7 @@ import {
 } from "#src/services/wish/constants";
 import { createBanners } from "#src/services/wish/createBanners";
 import { getNewCharacters } from "#src/services/wish/getNewCharacters";
+import { getOpenEventBanners } from "#src/services/wish/getOpenEventBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
@@ -39,10 +41,14 @@ interface Props {
   gameText: GameText;
   // The names the stat tables cite by text id, in the reader's language
   nameText: Readonly<Record<string, string>>;
+  // The server's clock offset from this machine's, which the event banners are offered at the game's time by
+  serverClockOffsetMs: number;
   // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
   stellaFortunaNameTextIdMap: ReadonlyMap<number, string>;
   // The game's stat tables, which the banners' pools are read from
   statTables: StatTables;
+  // The wish schedule's event banners, each offered only inside its window
+  wishSchedule: WishScheduleEvent[];
 }
 
 // The copies of each character the player holds, the bag a drawn weapon goes into, each kind's counters and the wallet
@@ -53,10 +59,21 @@ const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, nameText, stellaFortunaNameTextIdMap, statTables } = defineProps<Props>();
+const { gameText, nameText, serverClockOffsetMs, stellaFortunaNameTextIdMap, statTables, wishSchedule } =
+  defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
-// The banners the world offers, their pools read from the stat tables and named in the reader's language
-const banners = computed(() => createBanners(statTables, nameText));
+// The banners the world offers now, their pools read from the stat tables and named in the reader's language: the
+// Permanent ones and each event banner the schedule has open at the game's time
+const banners = computed(() =>
+  createBanners(
+    statTables,
+    nameText,
+    getOpenEventBanners(
+      wishSchedule,
+      Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs }).epochMilliseconds,
+    ),
+  ),
+);
 // The banners on offer in the game's order, the beginners' wish gone once its wishes are made
 const bannerKinds = computed(() =>
   BannerKinds.filter(

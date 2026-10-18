@@ -12,6 +12,7 @@ import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
+import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 import type { Catalogue } from "#src/models/world/Catalogue";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
@@ -51,4 +52,6 @@ export interface WorldTables {
   wildlifePlaces: WildlifePlace[];
   // Windrise's records and the regions' grounds, which the world's one ground and everything drawn on it are built from
   windriseData: WindriseData;
+  // The wish schedule's event banners, each offered by the wish screen only inside its window
+  wishSchedule: WishScheduleEvent[];
 }

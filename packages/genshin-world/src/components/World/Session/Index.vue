@@ -135,6 +135,7 @@ const {
   talentUpgradeMap,
   wildlifePlaces,
   windriseData,
+  wishSchedule,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
@@ -968,6 +969,8 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :name-text
           :stat-tables
+          :server-clock-offset-ms
+          :wish-schedule
           :stella-fortuna-name-text-id-map="stellaFortunaNameTextIdMap"
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
