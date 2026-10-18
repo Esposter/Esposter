@@ -41,7 +41,7 @@ describe(claimCommissionReward, () => {
     preferredRegion: "mondstadt",
     questId: "",
     rewardTier: REWARD_TIER,
-    titleTextId: 1,
+    nameTextId: "1",
   });
   const slice: CommissionSlice = {
     bonuses: bonusBands,

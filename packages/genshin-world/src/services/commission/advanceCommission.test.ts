@@ -21,7 +21,7 @@ describe(advanceCommission, () => {
     preferredRegion: "mondstadt",
     questId: "",
     rewardTier: 2,
-    titleTextId: 1,
+    nameTextId: "1",
   };
 
   test("should count the doings up to the finish count and hold there", () => {

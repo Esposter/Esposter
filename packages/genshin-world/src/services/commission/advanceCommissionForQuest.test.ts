@@ -26,7 +26,7 @@ describe(advanceCommissionForQuest, () => {
     preferredRegion: "mondstadt",
     questId: QUEST_ID,
     rewardTier: 2,
-    titleTextId: 1,
+    nameTextId: "1",
   };
   const slice: CommissionSlice = { bonuses: [], rewardTiers: [], tasks: [questTask] };
   const day: CommissionDay = {
