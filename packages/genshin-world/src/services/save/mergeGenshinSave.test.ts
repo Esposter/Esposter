@@ -111,12 +111,12 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
   });
 
-  test("a rank claimed on either copy stays claimed after a merge", () => {
+  test("a rank reward claimed only in the guest's copy is claimed again on the account, its reward paid into the guest's bag", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2] };
     const guest = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
 
-    expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
+    expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2]);
   });
 
   test("a mail pinned on either copy stays pinned after a merge", () => {
