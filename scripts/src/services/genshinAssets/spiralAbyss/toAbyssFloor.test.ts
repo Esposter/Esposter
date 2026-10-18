@@ -7,6 +7,7 @@ import { describe, expect, test } from "vitest";
 describe(toAbyssFloor, () => {
   const FLOOR_ID = 1001;
   const LEVEL_GROUP_ID = 1;
+  const MONSTER_LEVEL = 24;
   const TEAM_COUNT = 2;
   const floorRow: ExcelTowerFloorRow = {
     floorId: FLOOR_ID,
@@ -26,6 +27,7 @@ describe(toAbyssFloor, () => {
     levelGroupId: LEVEL_GROUP_ID,
     levelId,
     levelIndex,
+    monsterLevel: MONSTER_LEVEL,
     secondMonsterList,
     towerBuffConfigStrList: [],
   });
@@ -36,7 +38,13 @@ describe(toAbyssFloor, () => {
     expect(
       toAbyssFloor(floorRow, [levelRow(11, 1, [21], [22]), levelRow(12, 2, [23], [24]), levelRow(13, 3, [25], [26])])
         .chambers[0],
-    ).toStrictEqual({ conditions: [], halfMonsterDescribeIds: [[21], [22]], id: 11, index: 1 });
+    ).toStrictEqual({
+      conditions: [],
+      halfMonsterDescribeIds: [[21], [22]],
+      id: 11,
+      index: 1,
+      monsterLevel: MONSTER_LEVEL,
+    });
   });
 
   test("a chamber the dump lists no monsters for has no halves", () => {
@@ -44,7 +52,7 @@ describe(toAbyssFloor, () => {
 
     expect(
       toAbyssFloor(floorRow, [levelRow(11, 1, [], []), levelRow(12, 2, [], []), levelRow(13, 3, [], [])]).chambers[0],
-    ).toStrictEqual({ conditions: [], halfMonsterDescribeIds: [], id: 11, index: 1 });
+    ).toStrictEqual({ conditions: [], halfMonsterDescribeIds: [], id: 11, index: 1, monsterLevel: MONSTER_LEVEL });
   });
 
   test("a chamber with fewer monster lists than its floor has teams is refused", () => {
