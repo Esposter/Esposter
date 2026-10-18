@@ -55,7 +55,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 - Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
 - The World Level adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload. The EXP is read back through the save sync, so a gain moves the rank, the World Level and the bar at once.
-- The rank's rewards are not read yet. Katheryne, who hands them out, is not yet placed in Mondstadt's region data.
+- Katheryne hands out each reached rank's reward once, and the ranks given are kept with the save.
 
 ## Decisions
 

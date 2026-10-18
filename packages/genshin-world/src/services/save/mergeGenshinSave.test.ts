@@ -92,6 +92,14 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).unlockedLandmarks).toStrictEqual([LANDMARK_ID, OTHER_LANDMARK_ID]);
   });
 
+  test("a rank claimed on either copy stays claimed after a merge", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
+
+    expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
+  });
+
   test("unions the Archive's opened entries by section and keeps the larger defeat count of each Living Being", () => {
     expect.hasAssertions();
     const account = {

@@ -177,6 +177,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
+    adventureRankRewardsClaimed: [
+      ...new Set([...account.adventureRankRewardsClaimed, ...guest.adventureRankRewardsClaimed]),
+    ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
     characters: mergeCharacters(account.characters, guest.characters),
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)

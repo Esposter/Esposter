@@ -20,6 +20,7 @@ import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
+import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import {
   MAX_CHARACTER_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
@@ -36,6 +37,9 @@ export const genshinSaveSchema = z
   .object({
     achievements: achievementProgressSaveSchema,
     adventureExp: adventureExpSaveSchema,
+    adventureRankRewardsClaimed: createUniqueArraySchema(z.int().min(2).max(MAX_ADVENTURE_RANK)).max(
+      MAX_ADVENTURE_RANK - 1,
+    ),
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
     // The characters the player holds, each once by its id, with the copies a wish has granted it

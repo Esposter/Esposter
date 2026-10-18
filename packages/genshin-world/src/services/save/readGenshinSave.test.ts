@@ -207,6 +207,13 @@ describe(readGenshinSave, () => {
     );
   });
 
+  test("a claimed rank reward stays claimed after a reload", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, adventureRankRewardsClaimed: [2, 3] };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
+  });
+
   test("the deployed team and member on field return after a visit", () => {
     expect.hasAssertions();
     const { party } = visit({ ...EMPTY_GENSHIN_SAVE, party: PARTY_SAVE });

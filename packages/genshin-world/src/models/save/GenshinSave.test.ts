@@ -7,6 +7,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
+import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
@@ -73,6 +74,7 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
+      adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
           Array.from({ length: MAX_ARCHIVE_KILL_COUNT }, (_value, index) => [

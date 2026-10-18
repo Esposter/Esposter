@@ -5,9 +5,10 @@ The [Adventure Rank](../../specs/genshin/adventure-rank/design.md) page holds th
 ## Decisions
 
 - **Every source states its own EXP.** Quests, chests, Teleport Waypoints and statues unlocked, Oculi, commissions and the handbook's Experience chapters each give Adventure EXP their own page or table sets, and spending Original Resin gives five for each one spent ([original resin](../genshin-original-resin/design.md)). Each source's page adds it through `gainAdventureExp`, which takes the completed main quests and returns the Mora a gain past rank 60 pays.
-- **A rank's reward is claimed from Katheryne.** Each rank's reward is its `rewardId` in `RewardExcelConfigData`, claimed by talking to Katheryne at any branch of the Adventurers' Guild, as the game hands it out.
+- **A rank's reward is claimed from Katheryne.** Each rank's reward is its `rewardId` in `PlayerLevelExcelConfigData`, joined to the reward row it names in `RewardExcelConfigData` and published with the level table. Talking to Katheryne at any branch of the Adventurers' Guild gives every reached rank's reward not yet claimed, once, as the game hands it out. Provisional: one talk paying all of them at once is the reading here, since the game's own talk is not read.
 - **What a rank opens is stated by its system.** Each page names the rank its system opens at, from the wiki's table of unlocks, since the game's own open-state table names each system only by a number. The Paimon menu's entry for a system not yet open stays disabled, as it already is for one not built.
 - **A claimed reward is kept with the player's progress.** The ranks' rewards claimed are kept in the save beside the EXP and the quests' progress ([save data](../../specs/genshin/save-data/design.md)), since the world is the person's own.
+- **The claimed ranks are a required save field.** `adventureRankRewardsClaimed` lists the ranks claimed, from rank 2, with no default. A save written before it parses only once the backfill adds it as an empty list, the `backfills` skill's rule.
 - **Bosses and ley line outcrops stand at the World Level.** Their enemies and rewards follow the World Level as the wiki gives them, on the pages that build them.
 
 ## How it works
@@ -26,12 +27,11 @@ flowchart TD
 **Left to build, in order:**
 
 1. **The other Adventure EXP sources, as their pages land.** Each calls `gainWorldAdventureExp`; the quests carried by the [quests](../genshin-quests/design.md) page feed the holds as they complete.
-2. **Katheryne's rewards.** Waits on Katheryne standing among Mondstadt's residents in region data, which the [resident schedules](../genshin-resident-schedules/design.md) build: none of her name's text ids is a resident's yet.
-3. **The Paimon menu's rank gates**, as the systems' pages open.
+2. **The Paimon menu's rank gates**, as the systems' pages open.
 
 ## Data and measures
 
-- **Read from the game's tables:** the ranks' rows of `RewardExcelConfigData`, read when Katheryne lands.
+- **Read from the game's tables:** each rank's `rewardId` in `PlayerLevelExcelConfigData`, and the reward row it names in `RewardExcelConfigData`, published with the level table.
 - **Read from the wiki:** which rank opens each system.
 
 ## Key files
