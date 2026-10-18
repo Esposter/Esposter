@@ -12,6 +12,8 @@ import {
   CHARGED_ATTACK_HOLD_SECONDS,
   ON_FOOT_LOCOMOTION_STATES,
 } from "#src/services/kit/constants";
+import { checkIsKitSkillChargeComplete } from "#src/services/kit/effects/checkIsKitSkillChargeComplete";
+import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getKitFieldCooldownMultiplier } from "#src/services/kit/effects/getKitFieldCooldownMultiplier";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { startKitAction } from "#src/services/kit/startKitAction";
@@ -69,9 +71,12 @@ export const startNextKitAction = (
     }
     // The hold a release's seconds reach, if the skill has holds, and the cooldown its level or the skill adds to the
     // Seconds until every charge is back
+    const { activeCombatant, kitEffectState } = context;
+    const isChargeComplete = checkIsKitSkillChargeComplete(kitEffectState, activeCombatant.characterId);
     const hold = kit.elementalSkillHolds?.findLast(
-      ({ minimumHeldSeconds }) => kitState.skillReleasedSeconds >= minimumHeldSeconds,
+      ({ minimumHeldSeconds }) => isChargeComplete || kitState.skillReleasedSeconds >= minimumHeldSeconds,
     );
+    clearKitSkillCharge(kitEffectState, activeCombatant.characterId);
     const cooldownSeconds = hold?.cooldownSeconds ?? kit.skillCooldownSeconds;
     partyMember.skillCooldownSeconds +=
       cooldownSeconds *

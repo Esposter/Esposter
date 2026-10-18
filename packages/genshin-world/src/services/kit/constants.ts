@@ -68,6 +68,8 @@ export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
 ]);
 // The status a Natlan character carries while it is in its Nightsoul's Blessing, for the seconds the blessing lasts
 export const NIGHTSOUL_BLESSING_STATUS_ID = "nightsoul-blessing";
+// The status a kit completes a held skill's charge with, which its release reads as the highest hold level
+export const KIT_SKILL_CHARGE_ID = "kit-skill-charge";
 // The resource a Natlan character holds its Nightsoul points as, which it holds only while its blessing lasts
 export const NIGHTSOUL_POINTS_ID = "nightsoul-points";
 
