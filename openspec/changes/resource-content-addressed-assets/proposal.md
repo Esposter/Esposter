@@ -29,5 +29,3 @@ Assets are stored under the hash of their bytes, so a published version shares i
 - Version storage, which scans each version it writes for asset addresses and records them in a reference table.
 - The deletion sweep, which drops a collected version's references and deletes only unreferenced assets.
 - The database schema gains the version-to-asset reference table.
-
-Size kept as the source page's own: splitting it is a later decision.

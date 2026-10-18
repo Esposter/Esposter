@@ -25,5 +25,3 @@ None.
 ## Impact
 
 Natlan's lava, steam and eruptions, the building kit's tribe variants, its landmarks and palette, and the area names the world shows. The kit is fitted per tribe against the game's own exports.
-
-Size kept as the source page's own: splitting it is a later decision.

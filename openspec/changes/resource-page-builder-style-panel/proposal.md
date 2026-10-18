@@ -34,5 +34,3 @@ None.
 - The theme's tokens, which the panel offers as swatches.
 - The shared UI library, which gains a colour field with token swatches.
 - The email editor, whose style fields reuse the same field components.
-
-Size kept as the source page's own: splitting it is a later decision.

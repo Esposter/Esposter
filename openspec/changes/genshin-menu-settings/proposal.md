@@ -25,5 +25,3 @@ The Settings screen opens from the Paimon menu's side bar, and each row the worl
 ## Impact
 
 The Settings entry of the Paimon menu, the Settings screen and its tabs, the renderer's quality tiers, the music and sound effect levels, the game's labels in its fifteen languages, and the settings the browser keeps on each device.
-
-Size kept as the source page's own: splitting it is a later decision.

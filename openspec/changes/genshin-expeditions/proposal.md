@@ -28,5 +28,3 @@ Talking to Katheryne opens the expedition screen, and the places, bonus and tale
 ## Impact
 
 The interface gains the expedition screen, and the world gains its screen, its places and Katheryne's talk. Each send, claim and recall goes through the expedition service. The bonus chance is read from the game's bonus table, and the bonus's payload is not yet settled.
-
-Size kept as the source page's own: splitting it is a later decision.

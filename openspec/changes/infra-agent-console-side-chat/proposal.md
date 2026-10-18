@@ -28,5 +28,3 @@ None.
 - The Code tab gains a drawer beside the conversation, opened by Ctrl+;.
 - The fork that starts a session gains a way to leave no saved session behind.
 - The sessions list leaves an open side chat out.
-
-Size kept as the source page's own: splitting it is a later decision.

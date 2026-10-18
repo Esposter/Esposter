@@ -28,5 +28,3 @@ Party Setup opens as a screen of its own, the player chooses the next member aft
 ## Impact
 
 The L screen and the Paimon menu's Party Setup, the deployed team shown on the HUD, the party kept in the save between visits, the choice of the next member and the revive after a fall, and the afflictions, particles and shields of the Resonance effects.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -28,5 +28,3 @@ None.
 - The spoken-line pipeline gains a second sink, the viewer, beside the stock player.
 - The plugin's hooks gain a notification and a stop reaction, each behind the same file check.
 - The reader gains a verb that sets up the viewer and removes it again.
-
-Size kept as the source page's own: splitting it is a later decision.

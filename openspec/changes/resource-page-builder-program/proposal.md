@@ -31,5 +31,3 @@ None.
 - The server's publish path for webpages and emails, and its email compile.
 - Every existing webpage and email, which the cutover deletes, and the Blueprints that capture them.
 - The security configuration, the dependency list, the skills and the ledgers, and the specs that describe the editors.
-
-Size kept as the source page's own: splitting it is a later decision.

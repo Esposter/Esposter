@@ -31,5 +31,3 @@ The player can enter the Abyss's chambers, fight their two halves, claim the rew
 ## Impact
 
 The rewards record gains its items, and the claim takes the bag beside the wallet. The world session gains entry to the Abyss's chambers and the return from them. The enemy camps and the party's health and energy are carried between chambers. The blessings and the wormhole are added as their sources and scenes are read.
-
-Size kept as the source page's own: splitting it is a later decision.

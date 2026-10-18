@@ -23,5 +23,3 @@ None.
 ## Impact
 
 The world save gains a characters slice with its read, write and merge. The combat roster starts from the saved roster, the Traveler alone when it is empty, and the session's copy counts start from the saved counts. The save sync writes both back.
-
-Size kept as the source page's own: splitting it is a later decision.

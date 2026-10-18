@@ -25,5 +25,3 @@ The player raises a combat talent from the Talents tab, and a talent that cannot
 ## Impact
 
 The character screen's Talents tab gains its upgrade press, and the screen takes the bag and the wallet as the wish screen does. The refusal of an upgrade is one answer that both the tab and the upgrade read. The character's talent levels are saved with the world.
-
-Size kept as the source page's own: splitting it is a later decision.

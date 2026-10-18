@@ -30,5 +30,3 @@ An email is built from email node types, edited on a design canvas, and checked 
 - The email node types and their default looks, which a server test holds equal to the installed email engine's defaults.
 - The server, which compiles the email on publish and for preview, and refuses invalid markup.
 - The personalised export, which reads the compiled email instead of a live editor, and the merge field substitution it runs.
-
-Size kept as the source page's own: splitting it is a later decision.

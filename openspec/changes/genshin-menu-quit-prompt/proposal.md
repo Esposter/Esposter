@@ -22,5 +22,3 @@ None.
 ## Impact
 
 The Quit Game entry of the Paimon menu, the exit prompt and its three buttons, and the parity reference that holds the prompt's frame. A re-measure from a longer clip is a later check and does not hold the build.
-
-Size kept as the source page's own: splitting it is a later decision.

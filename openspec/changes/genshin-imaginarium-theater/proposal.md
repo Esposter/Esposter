@@ -31,5 +31,3 @@ Build the Imaginarium Theater's play on the season's rules: the cast, the stages
 ## Impact
 
 The Theater's cast, its stages, its acts and events, and its Lobby in the open world. The party's four performers on each stage and each character's stats as fixed for a run. The season's cast read from the game's avatar config table, and the data run that writes it.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -28,5 +28,3 @@ Teleport Waypoints and domain entrances unlock by reaching them, pay their first
 ## Impact
 
 The HUD's navigation pointer and its screen, the map's jump landmarks, the waypoints and domain entrances in the open world, and the first-unlock rewards paid to the player.
-
-Size kept as the source page's own: splitting it is a later decision.

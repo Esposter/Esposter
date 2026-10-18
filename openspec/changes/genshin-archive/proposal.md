@@ -28,5 +28,3 @@ Archive entries open and count from the doings the world does.
 
 - The Archive's sections in the Paimon menu, the viewpoints in the open world, and the enemies' defeats.
 - The save, which keeps the opened entries and the defeat counts.
-
-Size kept as the source page's own: splitting it is a later decision.

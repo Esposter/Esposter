@@ -28,5 +28,3 @@ Tools and first-party panels can appear in the console through two tiers, and a 
 - The permission card that answers the agent's own calls also answers an app's calls.
 - The console's views gain a registry, with the first first-party view added with its own change.
 - Tools outside Esposter gain the console with no console-specific code.
-
-Size kept as the source page's own: splitting it is a later decision.

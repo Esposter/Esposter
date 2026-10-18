@@ -23,5 +23,3 @@ None.
 ## Impact
 
 The world's map gains waypoints as a kind of jump, and the minimap and the jump list list them with no change of their own. The region data gains each waypoint, and the arrival of each landmark replaces the provisional stand-off in the jump's pose. The fit that pairs waypoints with transport points is read from the scene's transport points and the official map.
-
-Size kept as the source page's own: splitting it is a later decision.

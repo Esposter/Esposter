@@ -27,5 +27,3 @@ Finish the Inazuma region: its storm as an area setting, each island's palette, 
 ## Impact
 
 Inazuma's storm and island looks in the open world. The capital's torii and its landmarks, the Grand Narukami Shrine and Tenshukaku. Enkanomiya's entrance, its light and its ruins. The noise each island's biome tunes.
-
-Size kept as the source page's own: splitting it is a later decision.

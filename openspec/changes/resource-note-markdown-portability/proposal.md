@@ -29,5 +29,3 @@ None.
 - The note's import preview, which opens from the menu through its own dialog store and is mounted by the note's dialogs.
 - The note's content save, so an import keeps the replaced content in history.
 - A new Markdown converter dependency, admitted through dependency admission and pinned to an exact version.
-
-Size kept as the source page's own: splitting it is a later decision.

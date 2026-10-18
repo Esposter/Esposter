@@ -30,5 +30,3 @@ This change is the program that sets the rules the console's follow-on changes b
 - The side chat, effort level, session titles and Anthropic-hosted sessions are separate changes that follow this one in order.
 - The Genshin theme, its wish banner, element ambience and spatial chat follow the theme change.
 - Worktree sessions, remote sessions, split sessions, cross-session messages, the session archive and the rest of the Code tab are deferred or rejected and are not part of this change.
-
-Size kept as the source page's own: splitting it is a later decision.

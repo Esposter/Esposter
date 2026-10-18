@@ -30,5 +30,3 @@ Gadgets become bag items that a player equips and uses, with detectors that poin
 ## Impact
 
 The bag gains the gadgets as widget material items, the quick-use slot and the HUD gain the equipped gadget and its cooldown, and the input binding for Z takes the quick swap's hold. The detectors read the spawned places, and the config's gadget kinds read from the game's data. The gadget's effect where its kind leaves it open is measured from a recording.
-
-Size kept as the source page's own: splitting it is a later decision.

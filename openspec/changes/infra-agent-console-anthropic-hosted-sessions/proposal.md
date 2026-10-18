@@ -28,5 +28,3 @@ None.
 - The account settings store one encrypted API key per reader, shown only as its last four characters.
 - Usage of hosted sessions is billed to the reader's own key, never to Esposter.
 - The console's connection list and session events are reused as they are for the hosted connection.
-
-Size kept as the source page's own: splitting it is a later decision.

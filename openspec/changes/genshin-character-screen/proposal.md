@@ -31,5 +31,3 @@ The character screen shows the chosen character as the game does and lets the pl
 
 - The character screen in the Genshin world and the interface frame behind it, the Profile tab, and the character's level and ascension.
 - The parity tooling that fits and scores the screen's look against the game.
-
-Size kept as the source page's own: splitting it is a later decision.

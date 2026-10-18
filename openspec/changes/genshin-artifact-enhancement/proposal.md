@@ -23,5 +23,3 @@ Adventurer's four-piece bonus takes effect as a chest opens in the world.
 ## Impact
 
 - The artifact sets' conditional bonuses in the Genshin world, and the combat's reaction to a chest opened in the world.
-
-Size kept as the source page's own: splitting it is a later decision.

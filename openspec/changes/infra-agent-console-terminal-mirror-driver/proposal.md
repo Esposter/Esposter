@@ -27,5 +27,3 @@ The console attaches to a session a terminal runs, reads it from its transcript,
 - The console's sessions can be held by a second kind of driver, with the page unchanged for it.
 - A mirrored session shows some controls greyed out and says why.
 - The console's own history reading is reused for the transcript, so both drivers show the same turns.
-
-Size kept as the source page's own: splitting it is a later decision.

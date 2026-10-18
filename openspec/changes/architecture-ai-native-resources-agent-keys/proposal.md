@@ -28,5 +28,3 @@ Keys made before scopes keep working for the follow-ups, and the operations noth
 - The tool list served to agent keys: human-only procedures are left out of it.
 - Resource purge and the survey response procedures on the owner's side, marked human-only.
 - A CI check over every resource type's own procedures.
-
-Kept at the source page's own size: splitting it is a later decision.

@@ -29,5 +29,3 @@ A reply's spoken language is read from its text, and a multilingual engine speak
 - The voice's engine, its precision choices and its voice likeness are re-measured against the new engine.
 - Replies in Japanese, Korean and Chinese are spoken instead of dropped.
 - Spoken playback starts earlier in long sentences.
-
-Size kept as the source page's own: splitting it is a later decision.

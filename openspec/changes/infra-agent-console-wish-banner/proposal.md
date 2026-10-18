@@ -26,5 +26,3 @@ A session drawn by lore opens as a wish in the Genshin theme, and the characters
 
 - The lore draw's state reads the characters met in recent sessions, so the terminal's welcome may pick differently from before.
 - The Genshin theme gains a session opening animation and a rates panel once the console is mounted again.
-
-Size kept as the source page's own: splitting it is a later decision.

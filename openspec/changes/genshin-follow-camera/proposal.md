@@ -28,5 +28,3 @@ The camera's wheel, ease, reset, pitch and settings follow the game's measured v
 ## Impact
 
 The engine's follow camera gains the measured notch, ease and reset, and the world's character camera reads the settings. The Settings screen supplies the sensitivity, distance and slope pitch, and photo mode's camera takes the solved range. Combat's cameras, the boat's camera, the cameras of cutscenes and photo mode's own screen are not part of this change.
-
-Size kept as the source page's own: splitting it is a later decision.

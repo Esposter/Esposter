@@ -38,5 +38,3 @@ The page builder's phases one to three, which this change swaps in:
 - Blueprints: the captured entries of the two types lose their content through a backfill, run on dev and then prod.
 - The security configuration loses the editor's third-party origins, and the dependency list loses the old editor and its plugins while the server gains the email markup compiler.
 - The grapesjs skill and ledger are replaced, and the specs that name the old editor are rewritten.
-
-Size kept as the source page's own: splitting it is a later decision.

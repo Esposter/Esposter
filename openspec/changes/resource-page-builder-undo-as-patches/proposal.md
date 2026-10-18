@@ -32,5 +32,3 @@ None.
 - The command bar's undo and redo labels.
 - The sheet's history, which takes the same primitive once both consumers share it.
 - The content save, which is unchanged and still stores the whole document.
-
-Size kept as the source page's own: splitting it is a later decision.

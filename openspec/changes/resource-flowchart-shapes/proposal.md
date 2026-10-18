@@ -32,5 +32,3 @@ None.
 - The flowchart canvas, which gains the four connection points per shape, the loose connection mode and snap to grid.
 - Saved flowcharts that name the old rectangle no longer load.
 - The published flowchart view, which draws the same shapes with no change of its own.
-
-Size kept as the source page's own: splitting it is a later decision.

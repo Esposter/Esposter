@@ -25,5 +25,3 @@ Mondstadt is drawn as the game draws it, from the wind over its meadows to its l
 ## Impact
 
 Mondstadt's ground, vegetation and wind, its windmills and city landmarks, its snow weather on Dragonspine, and the area names the world shows. Each scene is rebuilt in the recreation passes.
-
-Size kept as the source page's own: splitting it is a later decision.

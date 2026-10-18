@@ -27,5 +27,3 @@ Build Liyue region by region on the shared engine: its karst and stone-forest ro
 ## Impact
 
 Liyue's areas in the open world, its rock meshes and sea of clouds, its harbour and its Chasm layer, and Chenyu Vale. The region's generators under the Liyue services of the world package, and the noise the karst meshes' strata use in the engine.
-
-Size kept as the source page's own: splitting it is a later decision.

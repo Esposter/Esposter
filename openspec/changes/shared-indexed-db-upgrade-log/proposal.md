@@ -23,5 +23,3 @@ None.
 ## Impact
 
 The IndexedDB upgrade logging in the shared package, and the indexed-db design's `done` bullet, which changes in the same commit as the code.
-
-Size kept as the source page's own: splitting it is a later decision.

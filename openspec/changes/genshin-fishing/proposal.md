@@ -29,5 +29,3 @@ A player casts at a fishing point, waits for a fish to nibble and bite, strikes,
 ## Impact
 
 The world gains a fishing service, a bite and a reel model, and a fishing view. The interaction prompts offer fishing at a point in reach, the input bindings take the cast, strike and reel, and the bag takes each fish caught. The fish, pool, stock and rod tables are read from the game's data, and the skill, bait and proficiency tables are read once the reel's zone is.
-
-Size kept as the source page's own: splitting it is a later decision.

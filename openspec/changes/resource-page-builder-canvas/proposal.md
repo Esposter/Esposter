@@ -34,5 +34,3 @@ The webpage is drawn on a canvas that renders as the published page does, and ev
 - The command registry, which lists every pointer and keyboard action in the shortcuts dialog.
 - Text editing inside a node, which moves to the rich text editor mounted inside the frame.
 - The clipboard, which carries a node between webpages.
-
-Size kept as the source page's own: splitting it is a later decision.

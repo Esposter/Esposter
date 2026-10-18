@@ -26,5 +26,3 @@ Characters move as the game's characters do, stand at the game's scale, and show
 
 - The character model in the Genshin world, its locomotion under the character controller, and the party screens that choose a character.
 - The asset tooling that exports the clips and the Traveler's model.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -31,5 +31,3 @@ The player can buy what the game's shops sell for Mora, Sigils and Starglitter, 
 ## Impact
 
 The shop purchase path takes the bag beside the wallet, so a good can add an item to the bag. The item definitions for the grocery's ingredients are published from the game's material table. The shop, Paimon's Bargains and Souvenir Shop screens, the city residents who run shops, and the Reputation discount are touched. Fates for Primogems stay with the inventory proposal.
-
-Size kept as the source page's own: splitting it is a later decision.

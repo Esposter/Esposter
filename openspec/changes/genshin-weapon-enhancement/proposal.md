@@ -24,5 +24,3 @@ Each weapon shows its passive at every refinement rank, and the passive takes ef
 ## Impact
 
 The weapons record gains each weapon's passive: its name, each rank's description and each rank's numbers, all as text ids and numbers rather than words. The passives' words come through the game text once keyed. The weapon data the game reads is republished from the stats table.
-
-Size kept as the source page's own: splitting it is a later decision.

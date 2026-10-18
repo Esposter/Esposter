@@ -29,5 +29,3 @@ None.
 - The visual renderer, now the one used by both the editor and the published page.
 - The editor's content, which passes each tile its whole visual rather than only its id and type. The saved dashboard content keeps its shape.
 - The stock tile icons and their preview component, which are removed.
-
-Size kept as the source page's own: splitting it is a later decision.

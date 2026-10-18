@@ -23,5 +23,3 @@ Every offering in the game follows the one rule the Frostbearing Tree uses, with
 ## Impact
 
 Every region's offerings in the world: the offering prompt in reach, the bag the offered items come from, and the offering's landmark in the world. The Frostbearing Tree's own landmark waits on the world's drawing and is not changed here.
-
-Size kept as the source page's own: splitting it is a later decision.

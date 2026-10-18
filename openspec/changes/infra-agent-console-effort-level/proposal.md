@@ -28,5 +28,3 @@ None.
 - The session's model information carries the effort levels the model supports.
 - The host gains a command that sets the level for one session.
 - The sessions' settings event reports the effort level back to the page.
-
-Size kept as the source page's own: splitting it is a later decision.

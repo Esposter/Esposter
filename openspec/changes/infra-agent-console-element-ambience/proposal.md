@@ -27,5 +27,3 @@ Behind the console's other views, a slow field in the character's element swells
 - The voice gains a loudness envelope sent with each line.
 - The console gains a backdrop view drawn behind every other view in the Genshin theme.
 - The fluid simulator already used for Hydro's calm state is reused as it stands.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -23,5 +23,3 @@ The carried quests' go-to steps get places in the world, navigation points to th
 ## Impact
 
 The quest screen's chapter list, navigation's beam to a go-to place, the places the carried quests name in the region data, and the order in which a series' quests are offered.
-
-Size kept as the source page's own: splitting it is a later decision.

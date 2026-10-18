@@ -24,5 +24,3 @@ Nod-Krai's sky, isles, settlements and statues are drawn as its own, with its mo
 ## Impact
 
 Nod-Krai's night sky, the isle outlines on the world map, its two building kits, its statues as waypoints in exploring, and its area names.
-
-Size kept as the source page's own: splitting it is a later decision.

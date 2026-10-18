@@ -27,5 +27,3 @@ The player gets a realm to furnish and live in, entered from the Serenitea Pot o
 ## Impact
 
 The world session enters and leaves the realm's scene. The realm's progress holds its companions, its placements and its Realm Currency. The wallet gains Realm Currency, whose game text name is keyed by the game text tooling. The furnishing editor, the Realm Depot screen and the companions' Trust Rank counts are new surfaces.
-
-Size kept as the source page's own: splitting it is a later decision.

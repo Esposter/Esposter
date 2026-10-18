@@ -30,5 +30,3 @@ Opening a chest gives its full reward, and the locked, buried and sealed chests 
 
 - The chests in the Genshin world: opening, the drops they pour out, the wallet and the bag, the locks, the digging and seals, and the save's opened chests.
 - The achievements and the exploration progress that count an opened chest.
-
-Size kept as the source page's own: splitting it is a later decision.

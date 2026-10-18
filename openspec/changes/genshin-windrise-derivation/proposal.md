@@ -23,5 +23,3 @@ Windrise's open world stands on every object the game streams, each judged again
 ## Impact
 
 The component map that names each component's roots, spawns and landmarks gains Windrise's streamed objects, and the fit map gives each component its fit. The parity loss table orders the stand-ins for rebuild. The login scene comes first among the scenes run through this method.
-
-Size kept as the source page's own: splitting it is a later decision.

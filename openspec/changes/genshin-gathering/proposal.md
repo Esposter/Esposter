@@ -24,5 +24,3 @@ From Adventure Rank 30 each region's mining outcrops come daily, and investigati
 ## Impact
 
 The world gains each region's daily outcrop places and the investigation spots, each drawn beside the ley line places. The saved progress keeps the day's investigation count from the 04:00 reset. The outcrops' item rows and the ores' categories are read from the game's tables, and the investigation rewards come from the wiki.
-
-Size kept as the source page's own: splitting it is a later decision.

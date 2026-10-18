@@ -30,5 +30,3 @@ Touching an outcrop fights it, and its blossom pays its reward by the reader's W
 ## Impact
 
 The open world's outcrops and their enemies, spawned on a touch. The blossoms and their claims, paid by World Level. The region data that holds each region's outcrop places, and the daily reset the outcrops share with the enemies.
-
-Size kept as the source page's own: splitting it is a later decision.

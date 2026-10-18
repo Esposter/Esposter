@@ -29,5 +29,3 @@ Mondstadt's keeper stands in the world and gives the player ways to earn Reputat
 ## Impact
 
 The keeper in Mondstadt, the Reputation screen, the world quests that requests run as, bounty targets and their trails, exploration's Reputation thresholds, shop discounts, and Natlan's supply notices.
-
-Size kept as the source page's own: splitting it is a later decision.

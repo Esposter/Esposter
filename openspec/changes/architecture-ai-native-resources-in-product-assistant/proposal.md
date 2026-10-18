@@ -29,5 +29,3 @@ An editor gets an Ask Claude command that hands the person's line to their own s
 - The agent console's connection, which carries the prompt and the new-session request unchanged.
 - The new-session panel's folder choice, shared with the command.
 - The follow-ups plugin's MCP server entry, which a session reaches Esposter through, unchanged.
-
-Size kept as the source page's own: splitting it is a later decision.

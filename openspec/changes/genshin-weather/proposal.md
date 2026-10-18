@@ -26,5 +26,3 @@ Each open-world area's weather turns through the game's own chain of weathers, a
 ## Impact
 
 The weather catalogue and the turn through each area's weathers are touched, and the provisional change interval stays until a recording measures it. The weather templates table joins the game text dump's fetched tables.
-
-Size kept as the source page's own: splitting it is a later decision.

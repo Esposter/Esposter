@@ -29,5 +29,3 @@ Finish Genius Invokation TCG beyond its tutorial: every card's effect, seated op
 ## Impact
 
 The card game's rules and its cards, each card's module and the decks it plays. The duel screen opened from a resident's talk. The Player Level, its games, the rewards and the Card Shop. The hosted game data the card game's tables are published into, and the talks of the two seated challengers.
-
-Size kept as the source page's own: splitting it is a later decision.

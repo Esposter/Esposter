@@ -27,5 +27,3 @@ The world's animals give what the game gives them, and react to the player as th
 ## Impact
 
 The session's combat gains the animals beside the enemies, so the strike loop tests them as it tests an enemy. The animals' drops, their stepping when struck, and the material sources' pick up are touched, and the pets and boars come after.
-
-Size kept as the source page's own: splitting it is a later decision.

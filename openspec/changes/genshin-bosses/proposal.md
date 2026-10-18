@@ -28,5 +28,3 @@ Bosses fight by their own moves and leave a claimable reward in place of the dro
 ## Impact
 
 - The enemies' respawn for bosses, the Original Resin claim, the trounce domains, and the handbook's quick challenge and first-clear rewards.
-
-Size kept as the source page's own: splitting it is a later decision.

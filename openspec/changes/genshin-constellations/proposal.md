@@ -26,5 +26,3 @@ Constellations can be activated from the character screen, and each active const
 ## Impact
 
 - The Constellation tab on the character screen, the wish screen's results, the character's kit modules, and the Traveler's element set.
-
-Size kept as the source page's own: splitting it is a later decision.

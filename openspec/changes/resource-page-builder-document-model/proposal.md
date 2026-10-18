@@ -34,5 +34,3 @@ None.
 - The Note's text schema, which is shared as the rich text inside a text node.
 - The resource link registry, which indexes a survey invite's survey.
 - The export of a webpage as an HTML file.
-
-Size kept as the source page's own: splitting it is a later decision.

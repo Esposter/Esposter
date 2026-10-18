@@ -22,5 +22,3 @@ Re-measure the HUD's composite against a recording that already shows the open w
 ## Impact
 
 The HUD drawn in the open world, in particular the quest tracker's place among the other pieces. The parity measurement tooling that scores the HUD against its recordings.
-
-Size kept as the source page's own: splitting it is a later decision.

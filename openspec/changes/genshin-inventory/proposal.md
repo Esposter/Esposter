@@ -24,5 +24,3 @@ Using a food takes one from the bag and applies its heal to its target, never pa
 ## Impact
 
 The bag's screen in the open world, which gains using a food. The party's health, which using a food raises.
-
-Size kept as the source page's own: splitting it is a later decision.

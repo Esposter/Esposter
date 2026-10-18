@@ -30,5 +30,3 @@ A commission acts in the world once dealt, and the day's four are kept until the
 
 - The commissions in the Genshin world: the scene swap, the quest tasks, the kept day, the handbook's Commissions tab and the claims' routing.
 - The save, which keeps the day's four, their counts and the instant they were dealt.
-
-Size kept as the source page's own: splitting it is a later decision.

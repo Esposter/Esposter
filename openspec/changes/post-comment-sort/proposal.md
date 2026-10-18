@@ -29,5 +29,3 @@ None.
 - The comment state holds the chosen sort and clears the loaded replies on a change.
 - The composable that reads comments passes the chosen sort to each branch's read.
 - The feed's Sort by control is unchanged.
-
-Size kept as the source page's own: splitting it is a later decision.

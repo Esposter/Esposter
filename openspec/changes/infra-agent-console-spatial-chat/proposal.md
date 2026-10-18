@@ -26,5 +26,3 @@ The Genshin theme can show a reply in the scene instead of the list, with the ch
 - The Genshin theme gains a scene view of the conversation, with a toggle back to the list.
 - Spoken lines are shown as bubbles over the character.
 - Answers are shown as panels in the scene, which the reader can select, copy and scroll.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -29,5 +29,3 @@ A line typed on a local chat page reaches the running Claude Code session, and t
 - The chat page is a local page on the loopback, and it shows the reply under each line.
 - The page half of this change is superseded by the agent console program, where a line typed at the character becomes a prompt in the console and the channel remains the input of the terminal-mirror driver (`openspec/changes/infra-agent-console-program/`).
 - Launching a session with the channel flag asks for a confirmation on every launch during the research preview.
-
-Size kept as the source page's own: splitting it is a later decision.

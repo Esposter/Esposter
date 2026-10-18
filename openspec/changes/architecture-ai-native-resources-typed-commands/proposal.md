@@ -30,5 +30,3 @@ A small set of typed commands serves the acts a patch fits badly, running the ed
 - The sheet router, which gains a command procedure running inside the generic update service.
 - The todo list router beside the follow-ups, which gains a tick procedure, and the shared recurring-item roll every tick uses, unchanged.
 - The note router, which gains a Markdown write procedure.
-
-Size kept as the source page's own: splitting it is a later decision.

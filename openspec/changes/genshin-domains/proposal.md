@@ -30,5 +30,3 @@ Make each domain entrance a place the player can open and enter, run its challen
 ## Impact
 
 The world gains domain entrance landmarks and their waypoint jumps, a domain screen, the fade into and out of a domain's scene, and the challenge's waves and time limit. The landmark kinds, the jump list and the enemy camps of a domain's waves are extended. The scene points, the domain entries and the daily dungeon table are read from the game's tables, and the wiki supplies each domain's rolled drops and its weekday schedule.
-
-Size kept as the source page's own: splitting it is a later decision.

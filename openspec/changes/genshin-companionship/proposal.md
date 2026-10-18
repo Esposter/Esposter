@@ -26,5 +26,3 @@ Friendship levels 4 and 7 open dialogue with a companion in the Serenitea Pot, a
 ## Impact
 
 - The Friendship Level in the Genshin world: the Serenitea Pot's companion dialogues, the friendship grant, and the Profile tab's opened levels.
-
-Size kept as the source page's own: splitting it is a later decision.

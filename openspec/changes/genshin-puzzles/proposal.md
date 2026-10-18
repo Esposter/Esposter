@@ -30,5 +30,3 @@ Constants the map and the wiki leave open, such as a monument's time lit and a S
 ## Impact
 
 The puzzle places in Mondstadt, the Seelies and their courts, the monuments struck by character attacks, Time Trial markers, Shrines of Depths and their keys, and the chests they open.
-
-Size kept as the source page's own: splitting it is a later decision.

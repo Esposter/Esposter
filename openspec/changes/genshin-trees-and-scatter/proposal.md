@@ -26,5 +26,3 @@ Every plant the game places stands in the world as its species, drawn in batches
 ## Impact
 
 The layout pass's placed plants, the tree and its impostor, the grass and scatter drawing, and the engine's per-instance culling as its first consumer are touched. The distance at which a tree turns impostor and the flowers' look are deferred to measured recordings.
-
-Size kept as the source page's own: splitting it is a later decision.

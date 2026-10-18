@@ -25,5 +25,3 @@ While Elemental Sight is on, a white ground trail leads the character toward eac
 ## Impact
 
 The world's sight service gains a trail computation, and the sight's lit scene draws each trail as a ribbon. The Windrise and session components hand the trails their ends. The trail's step, width and fade are provisional constants until the owed recording measures them.
-
-Size kept as the source page's own: splitting it is a later decision.

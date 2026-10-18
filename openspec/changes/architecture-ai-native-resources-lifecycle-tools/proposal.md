@@ -30,5 +30,3 @@ None.
 - A new dispatching router, merged after the base router, which sends publish, unpublish and file operations to the resource type's own procedure.
 - The capability check that decides whether a type publishes or takes files.
 - Blueprint, Program, Survey and Dataset procedures opted in to agent keys.
-
-Size kept as the source page's own: splitting it is a later decision.

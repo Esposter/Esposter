@@ -27,5 +27,3 @@ None.
 - The heads-up display and each row of the sessions tab accept a rename in place.
 - The host saves a title into a session's transcript, or holds it until the first prompt.
 - Every connected page redraws a renamed open session.
-
-Size kept as the source page's own: splitting it is a later decision.

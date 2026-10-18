@@ -23,5 +23,3 @@ The Stellar Glimmer reactions take effect once a kit places the gadget they star
 ## Impact
 
 - The reactions in the Genshin world's combat, the transformative damage formula, and the gadgets a kit places in the open world.
-
-Size kept as the source page's own: splitting it is a later decision.

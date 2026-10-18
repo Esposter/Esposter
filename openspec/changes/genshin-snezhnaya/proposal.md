@@ -26,5 +26,3 @@ Snezhnaya's region looks and reads as the cold, torch-lit nation it is, with its
 ## Impact
 
 The region's terrain, vegetation, water and weather are built on the other passes, and this change adds Snezhnaya's cold, torches, birches and areas on top of them. The world map's area list and the torch landmarks are touched. Its palette is sampled from references once the surface pass reaches it.
-
-Size kept as the source page's own: splitting it is a later decision.

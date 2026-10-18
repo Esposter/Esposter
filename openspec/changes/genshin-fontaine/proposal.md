@@ -29,5 +29,3 @@ Fontaine is built into the world in build order, from the Court of Fontaine to t
 ## Impact
 
 The world gains Fontaine's terrain, its underwater layer, its building kit and its landmark meshes, and the region's generators for aqueducts, clock towers and machinery in the Fontaine services. The noise that shapes the plate and the seabed is read from the engine. The map gains Fontaine's areas as the game names them, and the Sea of Bygone Eras as its own layer.
-
-Size kept as the source page's own: splitting it is a later decision.

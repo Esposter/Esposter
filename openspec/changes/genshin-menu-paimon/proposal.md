@@ -28,5 +28,3 @@ Paimon floats beside the menu once an official model is held, and the profile ca
 ## Impact
 
 The Paimon menu in the open world, its layout and its icons, Paimon beside it, and the profile card's fields. The menu's block in the derived assets and the parity reference map, which lists each screen's recordings.
-
-Left at the length of the page it came from; a split is for later.

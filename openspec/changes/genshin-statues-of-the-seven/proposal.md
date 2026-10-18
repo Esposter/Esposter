@@ -31,5 +31,3 @@ The player finds a region's Oculi, levels its statues with them, resonates with 
 ## Impact
 
 The save gains the statues' state, with its read, write and merge. The world gains the Oculi, their touch, their minimap mark and the statues' resonance. The Statue's Blessing is a new screen, and the stamina maximum takes the saved levels.
-
-Size kept as the source page's own: splitting it is a later decision.

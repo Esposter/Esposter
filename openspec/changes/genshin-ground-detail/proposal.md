@@ -25,5 +25,3 @@ Each surface's detail is drawn at its own texture's scale, and the ground draws 
 ## Impact
 
 The surfaces' detail in the engine and their fit against the game's exports. The splat layers' textures and their repeats in the world data. The terrain material and how a ground point is coloured from its layers. The ground reference the surface pass scores against.
-
-Size kept as the source page's own: splitting it is a later decision.

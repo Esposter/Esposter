@@ -27,5 +27,3 @@ None.
 - The theme interface gains a voice part and a scene part, each added with the first theme that sets it.
 - The console's Genshin theme speaks replies through the resident voice.
 - Each session resolves its own theme and palette.
-
-Size kept as the source page's own: splitting it is a later decision.

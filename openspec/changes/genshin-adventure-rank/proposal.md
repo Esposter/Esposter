@@ -29,5 +29,3 @@ The rank's sources, rewards and gates take effect as the pages that hold them la
 
 - The Adventure EXP grant, the profile and the Paimon menu's entries.
 - The save, which keeps the claimed rank rewards beside the EXP and the quests' progress.
-
-Size kept as the source page's own: splitting it is a later decision.

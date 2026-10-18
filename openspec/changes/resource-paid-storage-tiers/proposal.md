@@ -31,5 +31,3 @@ Let a user buy a larger storage allowance through a merchant-of-record subscript
 - A signed, idempotent provider event route on the server, which writes the subscription and the tier in one transaction.
 - The storage meter in the explorer header: the upgrade affordance and the over-quota error state.
 - The provider's signing secret in infrastructure, held with the other keys rather than as an ordinary environment variable.
-
-Size kept as the source page's own: splitting it is a later decision.

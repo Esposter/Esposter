@@ -28,5 +28,3 @@ None.
 - The visual renderer, which hands the two new kinds to their own components and keeps their loading, error and row-cap states.
 - The visual edit dialog, which hides the chart type and chart settings for the two kinds and shows the Card's label.
 - The demo data an unbound Card and Table show.
-
-Size kept as the source page's own: splitting it is a later decision.

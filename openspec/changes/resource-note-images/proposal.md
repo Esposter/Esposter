@@ -30,5 +30,3 @@ None.
 - The shared sanitiser's allowance, which stays out of the message composer.
 - The rich-text typography, which caps an image at the column width.
 - The storage quota, which already charges an uploaded file, and unpublishing, which already sweeps a publication's asset copies. Neither changes.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -28,5 +28,3 @@ Chronicled Wish is out of scope and gets its own page when its turn comes.
 ## Impact
 
 A new schedule record of event banners is built from the wiki and published through the game data tooling, and read by key beside the stat tables. The wish screen gains a second character banner and the history. The banner model gains each banner's own id.
-
-Size kept as the source page's own: splitting it is a later decision.

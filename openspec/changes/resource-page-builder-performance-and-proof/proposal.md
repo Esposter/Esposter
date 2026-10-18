@@ -31,5 +31,3 @@ The editors and their output meet measured targets, and every type's output and 
 - The browser suite, which the app does not have yet and takes on the shared browser configuration the Genshin packages use.
 - The per-type output tests and the sanitiser vector tests.
 - The cutover's production build, which is measured before the cutover merges.
-
-Size kept as the source page's own: splitting it is a later decision.

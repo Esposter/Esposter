@@ -25,5 +25,3 @@ Pressing F at a cleared challenge's blossom offers its claims, and choosing one 
 ## Impact
 
 The F prompt at a blossom in reach, the list of offers, the spending of resin and the rewards that go into the bag and the wallet, and Fragile Resin's use from the bag.
-
-Size kept as the source page's own: splitting it is a later decision.

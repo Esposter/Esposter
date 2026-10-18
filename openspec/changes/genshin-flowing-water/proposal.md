@@ -23,5 +23,3 @@ The capitals' waterfalls are drawn where the game places them, and the rivers fo
 ## Impact
 
 The world gains a waterfall component, mounted where the water is, and each region's data gains its waterfall sheets and river courses. The fit reads the game's witness exports for the capitals' falls. The mist and foam pools at the foot of a fall are particles judged by a recording, and are not part of this change.
-
-Size kept as the source page's own: splitting it is a later decision.

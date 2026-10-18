@@ -24,5 +24,3 @@ None.
 ## Impact
 
 The world gains the bench and its prompt, and the crafting screen opens from it with the party's crafter picked. The bag, the wallet and the Original Resin wallet are spent from. The keeper stays a resident placed on his own page, and the essential oils and the Xiao Lantern stay with the quests.
-
-Size kept as the source page's own: splitting it is a later decision.

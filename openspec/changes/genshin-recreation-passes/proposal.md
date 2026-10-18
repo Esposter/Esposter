@@ -26,5 +26,3 @@ None.
 ## Impact
 
 The parity tooling's pass runs and their gates, the login scene's look through its bloom and clouds, the engine's post pipeline that draws the bloom, and the compute queue's items for each pass.
-
-Size kept as the source page's own: splitting it is a later decision.

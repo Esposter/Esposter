@@ -25,5 +25,3 @@ Each region holds the places the servers spawn, fitted from the official map, wi
 ## Impact
 
 The map point fit and its region placement, the Oculi slices, the enemy camps of each region, and the ground a place stands on are touched. The gathering points are placed by the gathering page, and the camps' levels are estimates marked provisional.
-
-Size kept as the source page's own: splitting it is a later decision.

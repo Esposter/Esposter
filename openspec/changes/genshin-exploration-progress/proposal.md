@@ -29,5 +29,3 @@ The map shows each area's exploration percentage and counts each doing toward it
 ## Impact
 
 The world's exploration services and the map's area labels gain the count and the threshold payments. The wallet and Reputation state gain each reward, and the saved progress keeps each doing once. The area totals, the exploration events and the nations' thresholds are read from the game's tables, and each kind's weight is re-measured from a recording before the table's weight is replaced.
-
-Size kept as the source page's own: splitting it is a later decision.

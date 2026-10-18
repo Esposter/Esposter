@@ -25,5 +25,3 @@ Add the city stove, the cooking screen, what an eaten dish does, the passives th
 ## Impact
 
 The world's cooking services and models gain the stove, the talents and the passives. The interface gains a cooking screen, and the world's screen list gains it. The recipe and material tables are read for each recipe's food type and each dish's use, and the scene group record supplies the stove's place. Eating goes through the inventory's using.
-
-Size kept as the source page's own: splitting it is a later decision.

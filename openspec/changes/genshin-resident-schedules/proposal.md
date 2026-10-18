@@ -27,5 +27,3 @@ Residents keep the game's hours, moving between their day and night spots as the
 ## Impact
 
 Where residents stand through the day and night, the effect of the Time screen on them, Nod-Krai's residents in the world, and the vendors' sales in their hours.
-
-Size kept as the source page's own: splitting it is a later decision.

@@ -24,5 +24,3 @@ None.
 ## Impact
 
 The Time entry of the Paimon menu, the world's clock and the hour it shows, and the game's labels for the Time screen. The screen is laid out from a public clip until the player's own recording lands; its comparison is a later check.
-
-Size kept as the source page's own: splitting it is a later decision.

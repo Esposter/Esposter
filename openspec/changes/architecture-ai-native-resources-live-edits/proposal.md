@@ -31,5 +31,3 @@ None.
 - The sheet's undo history, which clears on adoption.
 - The save stream, which carries the version and the writing device rather than the content.
 - The todo list, which loses its own streamed-list adoption and its own subscription.
-
-Size kept as the source page's own: splitting it is a later decision.

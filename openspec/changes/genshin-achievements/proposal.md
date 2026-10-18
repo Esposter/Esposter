@@ -28,5 +28,3 @@ Achievements for exploring, server-fired triggers and the namecard grant start c
 
 - The Genshin world's achievement counting, the quest advance that hands it doings, and the profile's namecards.
 - The Achievements screen's counts once the triggers record.
-
-Size kept as the source page's own: splitting it is a later decision.
