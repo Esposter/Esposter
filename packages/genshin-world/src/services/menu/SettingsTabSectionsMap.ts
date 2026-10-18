@@ -11,17 +11,15 @@ import { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import { CAMERA_DISTANCE_RANGE, CAMERA_SENSITIVITY_RANGE, VOLUME_RANGE } from "#src/services/menu/constants";
 import { fillGameTextValues, GameLanguage, GameTextKey, getLanguageDisplayName } from "genshin-text";
 
-const getChoice = (labelKey: GameTextKey, valueKey: GameTextKey): SettingsRow => ({
-  getValue: (gameText: GameText) => gameText[valueKey],
+const getChoiceRow = (labelKey: GameTextKey, getValue: (gameText: GameText) => string): SettingsRow => ({
+  getValue,
   kind: SettingsRowKind.Choice,
   labelKey,
 });
+const getChoice = (labelKey: GameTextKey, valueKey: GameTextKey): SettingsRow =>
+  getChoiceRow(labelKey, (gameText) => gameText[valueKey]);
 // A key the world does not rebind, drawn as its key cap
-const getKey = (labelKey: GameTextKey, key: string): SettingsRow => ({
-  getValue: () => key,
-  kind: SettingsRowKind.Choice,
-  labelKey,
-});
+const getKey = (labelKey: GameTextKey, key: string): SettingsRow => getChoiceRow(labelKey, () => key);
 const getRange = (labelKey: GameTextKey, setting: RangeSetting, range: SettingRange): SettingsRow => ({
   kind: SettingsRowKind.Range,
   labelKey,
