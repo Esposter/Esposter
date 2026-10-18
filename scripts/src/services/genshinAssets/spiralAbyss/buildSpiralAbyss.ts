@@ -1,3 +1,4 @@
+import type { ExcelTowerBuffRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerBuffRow";
 import type { ExcelTowerFloorRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerFloorRow";
 import type { ExcelTowerLevelRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerLevelRow";
 import type { ExcelTowerRewardRow } from "#src/models/genshinAssets/spiralAbyss/ExcelTowerRewardRow";
@@ -5,6 +6,7 @@ import type { ExcelTowerScheduleRow } from "#src/models/genshinAssets/spiralAbys
 
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import {
+  TOWER_BUFF_TABLE_NAME,
   TOWER_FLOOR_TABLE_NAME,
   TOWER_LEVEL_TABLE_NAME,
   TOWER_REWARD_TABLE_NAME,
@@ -23,7 +25,7 @@ import { GameDataset } from "genshin-world";
 // Eight and each period's four among them. The rewards record holds every floor's rewards in every reward group, and the items
 // Each reward id they name pays, keyed by the reward id, so a claim gives items without reading the reward table. A period
 // Carries its blessing and the moment it closes, and the Benediction choices record holds the three lists of each chamber's
-// Level row, keyed by its level id
+// Level row, each choice joined to its description's text hash, keyed by its level id
 export const buildSpiralAbyss = (): Record<string, unknown> => {
   const levelRows = readExcelTable<ExcelTowerLevelRow>(TOWER_LEVEL_TABLE_NAME);
   const floors = readExcelTable<ExcelTowerFloorRow>(TOWER_FLOOR_TABLE_NAME)
@@ -52,10 +54,15 @@ export const buildSpiralAbyss = (): Record<string, unknown> => {
   const periods = readExcelTable<ExcelTowerScheduleRow>(TOWER_SCHEDULE_TABLE_NAME)
     .map((row) => toAbyssPeriod(row))
     .toSorted((firstPeriod, secondPeriod) => firstPeriod.id - secondPeriod.id);
+  const descriptionTextHashes = new Map(
+    readExcelTable<ExcelTowerBuffRow>(TOWER_BUFF_TABLE_NAME).map(
+      ({ descTextMapHash, towerBuffId }): [number, number] => [towerBuffId, descTextMapHash],
+    ),
+  );
   const benedictionChoices = Object.fromEntries(
     levelRows.map(({ levelId, towerBuffConfigStrList }) => [
       levelId,
-      toAbyssBenedictionChoices(levelId, towerBuffConfigStrList),
+      toAbyssBenedictionChoices(levelId, towerBuffConfigStrList, descriptionTextHashes),
     ]),
   );
   return {

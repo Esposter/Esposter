@@ -1,4 +1,5 @@
-// The tower's four tables in the dump, read by their names
+// The tower's five tables in the dump, read by their names
+export const TOWER_BUFF_TABLE_NAME = "TowerBuffExcelConfigData";
 export const TOWER_FLOOR_TABLE_NAME = "TowerFloorExcelConfigData";
 export const TOWER_LEVEL_TABLE_NAME = "TowerLevelExcelConfigData";
 export const TOWER_REWARD_TABLE_NAME = "TowerRewardExcelConfigData";

@@ -1,6 +1,7 @@
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { collectNameTextIds } from "#src/services/genshinText/collectNameTextIds";
 import { PUBLISHED_READ_BATCH_SIZE, TEXT_GAME_DATASETS } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { chunk, takeOne } from "@esposter/shared";
@@ -15,18 +16,6 @@ const walkJsonFiles = (directory: string): string[] =>
     return entry.name.endsWith(".json") ? [path] : [];
   });
 
-// Adds the `nameTextId` of every row at any depth, so a nested one is found the same as a top-level one
-const collectNameTextIds = (value: unknown, textIds: Set<string>): void => {
-  if (Array.isArray(value)) {
-    for (const item of value) collectNameTextIds(item, textIds);
-    return;
-  }
-  if (!value || typeof value !== "object") return;
-  for (const [key, child] of Object.entries(value))
-    if (key === "nameTextId") textIds.add(String(child));
-    else collectNameTextIds(child, textIds);
-};
-
 // The data file's key in the lock: its path under the data folder, with '/' separators and without `.json`
 const toDataFileKey = (path: string): string =>
   relative(WORLD_DATA_DIRECTORY, path)
@@ -34,7 +23,7 @@ const toDataFileKey = (path: string): string =>
     .join("/")
     .replace(/\.json$/u, "");
 
-// The text id of every name the world's data cites: every published record outside the text datasets, and every data file
+// The text id of every name and description the world's data cites: every published record outside the text datasets, and every data file
 // The lock does not name, which the package still keeps. A new source needs no edit here
 export const readNameTextIds = async (): Promise<string[]> => {
   const { objects } = await readGameDataLock();

@@ -171,3 +171,7 @@ export const DUMP_FETCH_BATCH_SIZE = 8;
 // How long one dump file may take to download: a language's text map is tens of megabytes, which the default bound cuts
 // Off before its body is read
 export const DUMP_FILE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+
+// The keys a published record or data file holds a name's or a description's text hash under: a `nameTextId` the item and
+// Character tables cite, and the `nameTextHash` and `descriptionTextHash` the Spiral Abyss's blessings and Benedictions hold
+export const NAME_TEXT_ID_KEYS: readonly string[] = ["descriptionTextHash", "nameTextHash", "nameTextId"];
