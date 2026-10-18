@@ -18,21 +18,25 @@ const WishEventKindFeaturedParametersMap: Record<WishEventKind, { fiveStar: stri
   [WishEventKind.WeaponEvent]: { fiveStar: "weapon_5_F", fourStar: "weapon_4_F" },
 };
 
-// Every `name = value` parameter of the template, each name and value trimmed as the wiki writes them
-const readParameters = (template: string): Map<string, string> => {
-  const parameters = new Map<string, string>();
+// Every value the template writes for each `name = value` parameter, in the order the page writes them, trimmed
+const readParameters = (template: string): Map<string, string[]> => {
+  const parameters = new Map<string, string[]>();
   for (const parameter of template.split("\n|").slice(1)) {
     const separator = parameter.indexOf("=");
     if (separator === -1) continue;
 
-    parameters.set(parameter.slice(0, separator).trim(), parameter.slice(separator + 1).trim());
+    const name = parameter.slice(0, separator).trim();
+    parameters.set(name, [...(parameters.get(name) ?? []), parameter.slice(separator + 1).trim()]);
   }
   return parameters;
 };
 
+// The value a parameter reads as, its last one where the page writes it more than once
+const readValue = (parameters: Map<string, string[]>, name: string): string | undefined => parameters.get(name)?.at(-1);
+
 // A parameter a banner page must write, since a banner without it has no window, no kind or no featured items to read
-const readParameter = (parameters: Map<string, string>, name: string): string => {
-  const value = parameters.get(name);
+const readParameter = (parameters: Map<string, string[]>, name: string): string => {
+  const value = readValue(parameters, name);
   if (value === undefined) throw new InvalidOperationError(Operation.Read, name, "is not on the page");
 
   return value;
@@ -58,21 +62,51 @@ const readFeaturedNames = (value: string): string[] =>
     .map((name) => name.trim())
     .filter((name) => name !== "");
 
+// Whether an Item Pool holds the featured five-stars of a kind of banner, which is what settles a page's type
+const holdsFeaturedFiveStars = (poolParameters: Map<string, string[]>, kind: WishEventKind): boolean =>
+  readFeaturedNames(readValue(poolParameters, WishEventKindFeaturedParametersMap[kind].fiveStar) ?? "").length > 0;
+
+// The kind of a page's banner. A page naming its type once is read as that type, and a page naming it more than once as
+// The one type its Item Pool holds the featured five-stars of, refused when its pool holds neither of them or both
+const readKind = (
+  title: string,
+  parameters: Map<string, string[]>,
+  poolParameters: Map<string, string[]>,
+): undefined | WishEventKind => {
+  const types = parameters.get("type") ?? [];
+  if (types.length < 2) return WikiTypeWishEventKindMap[readParameter(parameters, "type")];
+
+  const matchingKinds = new Set(
+    types.flatMap((type) => {
+      const kind = WikiTypeWishEventKindMap[type];
+      return kind !== undefined && holdsFeaturedFiveStars(poolParameters, kind) ? [kind] : [];
+    }),
+  );
+  if (matchingKinds.size !== 1)
+    throw new InvalidOperationError(
+      Operation.Read,
+      title,
+      "names its type more than once, and its Item Pool does not match exactly one of them",
+    );
+
+  return [...matchingKinds][0];
+};
+
 // An event banner page read into its kind, its window and the names of its featured items, as its Item Pool names them
 // For its kind. A page of another kind is not read and reads as undefined, while an event banner missing a field throws
 // Rather than reading as a banner without it
-export const parseWishPage = (wikitext: string): undefined | WishEventPage => {
+export const parseWishPage = (title: string, wikitext: string): undefined | WishEventPage => {
   const template = sliceWikiTemplate(wikitext, TEMPLATE_START);
   if (template === "") throw new InvalidOperationError(Operation.Read, TEMPLATE_START, "is not on the page");
 
   const parameters = readParameters(template);
-  const kind = WikiTypeWishEventKindMap[readParameter(parameters, "type")];
+  const poolParameters = readParameters(sliceWikiTemplate(wikitext, POOL_TEMPLATE_START));
+  const kind = readKind(title, parameters, poolParameters);
   if (kind === undefined) return undefined;
 
-  const poolParameters = readParameters(sliceWikiTemplate(wikitext, POOL_TEMPLATE_START));
   const featuredParameters = WishEventKindFeaturedParametersMap[kind];
   // A page naming no offset, as the older banner pages do, is read at the Asia server's GMT+8
-  const timeZone = readTimeZone(parameters.get("time_start_offset") ?? "GMT+8");
+  const timeZone = readTimeZone(readValue(parameters, "time_start_offset") ?? "GMT+8");
   return {
     endTime: readEpochMilliseconds(readParameter(parameters, "time_end"), timeZone),
     fiveStarNames: readFeaturedNames(readParameter(poolParameters, featuredParameters.fiveStar)),
