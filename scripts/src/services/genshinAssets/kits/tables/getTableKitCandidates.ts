@@ -26,7 +26,25 @@ const FULLY_CHARGED_AIMED_SHOT_LABELS: ReadonlySet<string> = new Set([
 // Index: the normal attack's labels, `3-Hit DMG` each hit of the third strike in turn, the charged attack's, a spin's
 // And its final blow's or a bow's fully charged shot's among them, its stamina's and the plunges', the skill's cooldown
 // And its hold's, and the burst's cooldown and energy cost
-export const getTableKitCandidates = ({ labelMap, talentGroupIdMap }: KitTables): Map<string, KitCandidate[]> => {
+// The skill labels a character names parameters by beyond the ones every kit reads: each one's text, the parameter name it
+// Is written under, and the position in the label's indexes that name reads, as a bubble's healing reads its share of Max HP
+// And its flat amount in order
+const SKILL_PARAMETER_LABELS_BY_CHARACTER_ID: Partial<
+  Record<number, { label: string; name: string; position: number }[]>
+> = {
+  // Sigewinne's avatar id, as her kit module names it
+  10_000_095: [
+    { label: "Bolstering Bubblebalm Healing", name: "bolsteringBubblebalmHealingShare", position: 0 },
+    { label: "Bolstering Bubblebalm Healing", name: "bolsteringBubblebalmHealingFlat", position: 1 },
+    { label: "Final Bounce Healing", name: "finalBounceHealingShare", position: 0 },
+  ],
+};
+
+export const getTableKitCandidates = ({
+  characterId,
+  labelMap,
+  talentGroupIdMap,
+}: KitTables): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   const addLabel = (path: string, combatTalent: CombatTalent, { indexes, label }: KitTableLabel, position = 0) => {
     const proudSkillGroupId = talentGroupIdMap[combatTalent];
@@ -72,5 +90,10 @@ export const getTableKitCandidates = ({ labelMap, talentGroupIdMap }: KitTables)
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? [])
     if (tableLabel.label === "CD") addLabel("burstCooldownSeconds", CombatTalent.ElementalBurst, tableLabel);
     else if (tableLabel.label === "Energy Cost") addLabel("burstEnergyCost", CombatTalent.ElementalBurst, tableLabel);
+  const skillLabels = labelMap.get(talentGroupIdMap[CombatTalent.ElementalSkill]) ?? [];
+  for (const { label, name, position } of SKILL_PARAMETER_LABELS_BY_CHARACTER_ID[characterId] ?? []) {
+    const tableLabel = skillLabels.find((skillLabel) => skillLabel.label === label);
+    if (tableLabel !== undefined) addLabel(`parameters.${name}`, CombatTalent.ElementalSkill, tableLabel, position);
+  }
   return candidateMap;
 };
