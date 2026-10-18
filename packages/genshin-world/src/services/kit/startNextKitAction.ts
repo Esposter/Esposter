@@ -15,6 +15,7 @@ import {
 import { checkIsKitSkillChargeComplete } from "#src/services/kit/effects/checkIsKitSkillChargeComplete";
 import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getKitFieldCooldownMultiplier } from "#src/services/kit/effects/getKitFieldCooldownMultiplier";
+import { spendKitChargeSkip } from "#src/services/kit/effects/spendKitChargeSkip";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { startKitAction } from "#src/services/kit/startKitAction";
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
@@ -42,7 +43,13 @@ export const startNextKitAction = (
     if (stamina.checkCanSpend(chargedAttackStamina)) {
       // A charged attack that costs none spends nothing, so the pool's refill is not held back by it
       if (chargedAttackStamina > 0) stamina.spend(chargedAttackStamina);
-      return startKitAction(kitState, kit.chargedAttack, landedHits);
+      // A charge skip the kit holds starts the shot past its charge, and is spent by it
+      const { chargeSeconds } = kit.chargedAttack;
+      const startSeconds =
+        chargeSeconds !== undefined && spendKitChargeSkip(context.kitEffectState, context.activeCombatant.characterId)
+          ? chargeSeconds
+          : 0;
+      return startKitAction(kitState, kit.chargedAttack, landedHits, startSeconds);
     }
   }
 
