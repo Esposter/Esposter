@@ -113,7 +113,7 @@ const emit = defineEmits<{
   // The party entering combat once an enemy is aggravated on it, and leaving it once none has been for the grace period
   enterCombat: [];
   leaveCombat: [];
-  // An enemy whose poise a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
+  // An enemy whose shield a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
   shieldBreak: [enemy: Enemy];
   // A boss comes back at its spawn, so the blossom it left is gone
   respawn: [spawnKey: string];
@@ -191,13 +191,6 @@ watchImmediate(
 const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
   let isAnyDefeated = false;
   for (const enemy of enemyMap.values()) {
-    // A shield standing again after its stagger ends can break again, so a shield the step sees broken that it did not
-    // See broken before is a break
-    if (enemy.shield?.health !== 0) brokenShieldEnemies.delete(enemy);
-    else if (!brokenShieldEnemies.has(enemy)) {
-      brokenShieldEnemies.add(enemy);
-      emit("shieldBreak", enemy);
-    }
     // The reactions its elements bring on their own as they age wait on it for the kit on the field to price
     advanceElementalState(enemy.elementalState, ENEMY_STEP_SECONDS, enemy.elementalReactions);
     const taunt = selectEnemyTaunt(enemy, kitEffectState.effects);
@@ -207,6 +200,14 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       ENEMY_STEP_SECONDS,
       BossMovesMap[enemy.enemyKindId],
     );
+    // A shield stands again as its stagger ends or the enemy arrives home, and can break again, so a shield the step sees
+    // Broken that it did not see broken before is a break. It is read after the step, where a shield stands again, so a
+    // Break after that stand is seen as a new one
+    if (enemy.shield?.health !== 0) brokenShieldEnemies.delete(enemy);
+    else if (!brokenShieldEnemies.has(enemy)) {
+      brokenShieldEnemies.add(enemy);
+      emit("shieldBreak", enemy);
+    }
     if (enemyEvent === EnemyEvent.Strike) emit("strike", enemy, taunt);
     else if (enemyEvent === EnemyEvent.Defeated) {
       isAnyDefeated = true;
