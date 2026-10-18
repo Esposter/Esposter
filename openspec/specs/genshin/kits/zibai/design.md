@@ -4,7 +4,7 @@ Zibai's kit is its record and one behaviour module, `createZibaiKitBehaviour`, a
 
 ## Decisions
 
-- **Zibai borrows Keqing's hitmarks and areas, provisional.** Her strikes and burst take Keqing's, a sword user of the same family.
+- **Zibai borrows Keqing's and Bennett's hitmarks and areas, provisional.** Her strikes, burst and charged attack take Keqing's, a sword user of the same family. Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.
 - **Zibai's burst reads its "Skill 1-Hit DMG" and "Skill 2-Hit DMG" labels, one hit each.**
 
 ## Not built

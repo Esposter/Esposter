@@ -14,11 +14,15 @@ import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candi
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
+import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/getDonorKitCandidates";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
+import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
+import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { getResult } from "@esposter/shared";
 
 // The overlay a kit's published record needs for its sources to reproduce it, each entry classified: every value the
@@ -32,10 +36,12 @@ export const compareKitRecord = (
   mainCandidateMap: ReadonlyMap<string, KitCandidate[]>,
   isTagPredated: boolean,
   committedOverlay: KitOverlay,
+  donorRecordMap: ReadonlyMap<number, unknown>,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
+  const committedDonorCandidateMap = getDonorKitCandidates(committedOverlay, donorRecordMap);
   const overlay: KitOverlay = {};
   const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
     // A multiplier joined to its talent row names the row by its own value, so the overlay keeps the value with the
@@ -65,6 +71,16 @@ export const compareKitRecord = (
       overlay[path] = committedEntry;
       return;
     }
+    // A value the committed overlay borrows keeps its donor while the donor's record still gives the published value
+    if (
+      committedEntry !== undefined &&
+      "cause" in committedEntry &&
+      committedEntry.cause === KitProvisionalCause.BorrowedFromDonor &&
+      checkIsKitValueEqual(committedDonorCandidateMap.get(path)?.[0]?.value, value)
+    ) {
+      overlay[path] = committedEntry;
+      return;
+    }
     // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value, so the
     // Published one a rule gave is replaced rather than pinned
     const donor = candidateMap.get(path)?.[0]?.provenance;
@@ -77,27 +93,53 @@ export const compareKitRecord = (
         committedEntry.cause === KitProvisionalCause.Unclassified);
     if (isUnreasonedDonorValue) return;
     const entry = keepCommittedKitCause(
-      classifyKitValue(value, candidateMap.get(path) ?? [], mainCandidateMap.get(path) ?? [], isTagPredated),
+      classifyKitValue(
+        value,
+        candidateMap.get(path) ?? [],
+        mainCandidateMap.get(path) ?? [],
+        isTagPredated,
+        tables.talentMultiplierMap,
+      ),
       committedEntry,
       value,
+      tables.talentMultiplierMap,
     );
     // A source choice names its value where the path's first candidate of that source is another value
     const sourceChoice =
       entry !== undefined && "source" in entry
         ? sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source)
         : undefined;
-    const isValueNeeded = entry !== undefined && "source" in entry && !checkIsKitValueEqual(sourceChoice?.value, value);
+    const isValueNeeded =
+      entry !== undefined &&
+      "source" in entry &&
+      !checkIsKitValueResolvedEqual(sourceChoice?.value, value, tables.talentMultiplierMap);
     if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
   };
   const candidateMap = mergeKitCandidateSources({
     namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
-    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),
-    ruleCandidateMap: getRuleKitCandidates(publishedValueMap),
+    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, tables.talentGroupIdMap),
+    ruleCandidateMap: getRuleKitCandidates(publishedValueMap, tables.element),
     sourceCandidateMap,
   });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap)).match(
-    (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
+  const resolved = resolveKitValues(
+    sourceCandidateMap,
+    overlay,
+    getDonorKitCandidates(overlay, donorRecordMap),
+    namedHitCandidateMap,
+    tables,
+    !isTagPredated,
+  );
+  for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
+    if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
+  return getResult(() =>
+    buildKitRecord(sourceCandidateMap, overlay, donorRecordMap, namedHitCandidateMap, tables, !isTagPredated),
+  ).match(
+    (built): KitComparison => ({
+      built,
+      failures: getMismatchedKitPaths(built.record, publishedRecord, tables.talentMultiplierMap),
+      overlay,
+    }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );
 };

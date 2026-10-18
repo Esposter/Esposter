@@ -2,9 +2,9 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 // Whether an effect restarts an earlier one: a buff, an infusion, a status or a stance of the same kind on the same
-// Character, and for a buff the same attribute from the same source, for an infusion the same element, and for a status
-// The same id, and an anti-cold is restarted by the next, as the team holds one. A field, a bubble and a summon are
-// Never restarted, as each one is its own
+// Character, and for a buff the same attribute from the same source, for an infusion the same element, for a status the same id,
+// and for an element's CRIT DMG the same character, element and source. An anti-cold is restarted by the next, as the team holds one.
+// A field, a bubble and a summon are never restarted, as each one is its own
 const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
   if (earlier.kind === "buff" && effect.kind === "buff")
     return (
@@ -18,6 +18,12 @@ const checkIsRestartedBy = (earlier: KitEffect, effect: KitEffect): boolean => {
     return earlier.characterId === effect.characterId && earlier.id === effect.id;
   if (earlier.kind === "stance" && effect.kind === "stance") return earlier.characterId === effect.characterId;
   if (earlier.kind === "antiCold" && effect.kind === "antiCold") return true;
+  if (earlier.kind === "elementCriticalDamage" && effect.kind === "elementCriticalDamage")
+    return (
+      earlier.characterId === effect.characterId &&
+      earlier.element === effect.element &&
+      earlier.source === effect.source
+    );
   return false;
 };
 

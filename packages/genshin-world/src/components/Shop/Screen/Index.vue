@@ -13,6 +13,7 @@ import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { computeNextShopRefreshTime } from "#src/services/shop/computeNextShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
+import { computeShopTabs } from "#src/services/shop/computeShopTabs";
 import { countShopPrice } from "#src/services/shop/countShopPrice";
 import { discountShopGood } from "#src/services/shop/discountShopGood";
 import { formatShopRefreshCountdown } from "#src/services/shop/formatShopRefreshCountdown";
@@ -45,12 +46,19 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 const count = ref(1);
 const goodId = ref(0);
+// The tab the goods are shown on, by its id, where the shop has tabs: the first until the player picks another
+const tabId = ref(0);
+const tabs = computed(() => computeShopTabs(goods, gameText));
+const pickedTabId = computed(() => tabs.value.find(({ id }) => id === tabId.value)?.id ?? tabs.value[0]?.id);
 const now = computed(() => Temporal.Now.instant());
-// The goods on offer to this rank now, priced at the reputation the player has. A good is paid in a currency, or in an
-// Item the bag holds, as a fish is
+// The goods on offer to this rank now, on the picked tab where the shop has tabs, priced at the reputation the player has. A
+// Good is paid in a currency, or in an Item the bag holds, as a fish is
 const offeredGoods = computed(() =>
   goods.flatMap((good) =>
-    checkIsShopGoodOffered(good, adventureRank, now.value) ? [discountShopGood(good, reputationLevel)] : [],
+    checkIsShopGoodOffered(good, adventureRank, now.value) &&
+    (pickedTabId.value === undefined || good.tabId === pickedTabId.value)
+      ? [discountShopGood(good, reputationLevel)]
+      : [],
   ),
 );
 const pickedGood = computed(() => offeredGoods.value.find((good) => good.goodsId === goodId.value));
@@ -138,7 +146,8 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
       :count-label="gameText[GameTextKey.CraftingAmount]"
       :count-maximum
       :goods="goodCells"
-      :tabs="[]"
+      v-model:tab-id="tabId"
+      :tabs
       :title="gameText[GameTextKey.Shop]"
       @buy="(good, count) => buy(good, count)"
       @close="emit('close')"

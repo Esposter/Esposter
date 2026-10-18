@@ -5,7 +5,7 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
-import { KitPlunge, KitTargeting } from "genshin-world";
+import { Element, KitPlunge, KitTargeting } from "genshin-world";
 
 // The values the builder's rules give a kit's record, by their paths, over the actions and hits its sources and overlay
 // Already give it: each action's targeting zone by its slot, a hit's poise where no source gives one, no hold, a hold's
@@ -16,7 +16,10 @@ const STANCE_NORMAL_ATTACKS_LENGTH_REGEX = /^(?<actionsPath>stances\.[^.]+\.norm
 // The stance a path names, read from the path's first two segments
 const STANCE_PATH_REGEX = /^(?<stance>stances\.[^.]+)\./u;
 
-export const getRuleKitCandidates = (valueMap: ReadonlyMap<string, unknown>): Map<string, KitCandidate[]> => {
+export const getRuleKitCandidates = (
+  valueMap: ReadonlyMap<string, unknown>,
+  element: Element | undefined,
+): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   const add = (path: string, value: unknown, rule: KitRule, cause?: KitProvisionalCause) =>
     addKitCandidate(candidateMap, path, {
@@ -69,6 +72,8 @@ export const getRuleKitCandidates = (valueMap: ReadonlyMap<string, unknown>): Ma
   add("plungeCollision.poiseDamage", 0, KitRule.NoPoiseSource, KitProvisionalCause.NoPoiseSource);
   add(`skillHolds.${KIT_LENGTH_KEY}`, 0, KitRule.NoHold);
   add("plungeCollision.hitmarkFrames", 0, KitRule.CollisionHitmark);
+  if (readLength("burst.hits") > 0 && element !== undefined)
+    add("burst.hits.0.element", element, KitRule.EnergyElement);
   for (let holdIndex = 0; holdIndex < readLength("skillHolds"); holdIndex++)
     add(
       `skillHolds.${holdIndex}.minimumHeldSeconds`,

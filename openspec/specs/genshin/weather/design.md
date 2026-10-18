@@ -48,6 +48,7 @@ flowchart TD
 | Rain         | raised       | raised       | none      | full    | rain streaks and splashes         | none          |
 | Thunderstorm | full         | raised       | none      | full    | rain streaks and splashes, denser | 27.6 a minute |
 | Snow         | raised       | raised       | none      | none    | snowflakes, drifting and swaying  | none          |
+| Snowstorm    | raised       | raised       | none      | none    | snowflakes, drifting and swaying  | none          |
 | Sandstorm    | raised       | raised       | sand      | none    | sand streaks along the wind       | none          |
 
 The values are starting points, not the game's: each is marked provisional where it stands, and fitted as the [weather](../../../changes/genshin-weather/design.md) proposal lists.

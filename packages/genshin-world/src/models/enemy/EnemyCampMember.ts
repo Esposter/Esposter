@@ -7,7 +7,7 @@ import { z } from "zod";
 // One enemy of a camp: its kind and level, where it spawns, and the points it walks between while idle, none for one
 // That stands at its spawn
 export interface EnemyCampMember {
-  enemyKindId: number;
+  enemyKindId: EnemyKindId;
   id: string;
   level: number;
   patrol: GroundPoint[];

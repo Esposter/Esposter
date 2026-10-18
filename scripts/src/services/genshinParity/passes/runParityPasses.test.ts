@@ -23,7 +23,7 @@ describe(runParityPasses, () => {
   const held: ParityPassMeasure = { notes: [], readings: [{ gate: 1, name: "", unit: "", value: 1 }] };
   const failed: ParityPassMeasure = { notes: [], readings: [{ gate: 0, name: "", unit: "", value: 1 }] };
 
-  test("stops at the first pass that fails its gate", async () => {
+  test("a frame outside its gate is not accepted", async () => {
     expect.hasAssertions();
 
     measureInventory.mockResolvedValueOnce(held);
@@ -35,6 +35,46 @@ describe(runParityPasses, () => {
       { isHeld: false, measure: failed, pass: ParityPass.Layout },
     ]);
     expect(measureCamera).not.toHaveBeenCalled();
+  });
+
+  test("a pass is accepted when its frame scores within its gate", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(held);
+    measureCamera.mockResolvedValueOnce(failed);
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Layout },
+      { isHeld: false, measure: failed, pass: ParityPass.Camera },
+    ]);
+  });
+
+  test("a pass within its gate on every reference is frozen", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce({
+      notes: [],
+      readings: [
+        { gate: 1, name: "a", unit: "", value: 0 },
+        { gate: 1, name: "b", unit: "", value: 1 },
+      ],
+    });
+    measureLayout.mockResolvedValueOnce({
+      notes: [],
+      readings: [
+        { gate: 1, name: "a", unit: "", value: 0 },
+        { gate: 0, name: "b", unit: "", value: 1 },
+      ],
+    });
+    const results = await runParityPasses(DerivedAssetComponent.Login);
+
+    expect(results.map(({ isHeld, pass }) => ({ isHeld, pass }))).toStrictEqual([
+      { isHeld: true, pass: ParityPass.Inventory },
+      { isHeld: false, pass: ParityPass.Layout },
+    ]);
   });
 
   test("prints a pass the scene is not owed and runs on past it", async () => {
@@ -87,5 +127,34 @@ describe(runParityPasses, () => {
       measure: { notes: ["no measure yet"], readings: [] },
       pass: ParityPass.Shape,
     });
+  });
+
+  test("refuses a pass taken up while an earlier pass is open, and names that pass", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(failed);
+    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: false, measure: failed, pass: ParityPass.Layout },
+    ]);
+    expect(measureCamera).not.toHaveBeenCalled();
+  });
+
+  test("measures a pass taken up alone once every pass before it holds, and stops there", async () => {
+    expect.hasAssertions();
+
+    measureInventory.mockResolvedValueOnce(held);
+    measureLayout.mockResolvedValueOnce(held);
+    measureCamera.mockResolvedValueOnce(held);
+    const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
+
+    expect(results).toStrictEqual([
+      { isHeld: true, measure: held, pass: ParityPass.Inventory },
+      { isHeld: true, measure: held, pass: ParityPass.Layout },
+      { isHeld: true, measure: held, pass: ParityPass.Camera },
+    ]);
   });
 });

@@ -9,6 +9,7 @@ import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/Trial
 import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
 
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
+import { takeOne } from "@esposter/shared";
 import { ArtifactSlot, Attribute } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
@@ -43,12 +44,18 @@ const templateRows: ExcelTrialAvatarTemplateRow[] = [
 const reliquaryRows: ExcelTrialReliquaryRow[] = [
   {
     AppendPropList: [AFFIX_ID],
-    Id: RELIQUARY_IDS[0],
+    Id: takeOne(RELIQUARY_IDS),
     Level: 5,
     MainPropId: MAIN_PROP_ID,
     ReliquaryId: SET_RELIQUARY_ID,
   },
-  { AppendPropList: [], Id: RELIQUARY_IDS[1], Level: 1, MainPropId: MAIN_PROP_ID, ReliquaryId: NO_SET_RELIQUARY_ID },
+  {
+    AppendPropList: [],
+    Id: takeOne(RELIQUARY_IDS, 1),
+    Level: 1,
+    MainPropId: MAIN_PROP_ID,
+    ReliquaryId: NO_SET_RELIQUARY_ID,
+  },
 ];
 const pieceMap = new Map<number, TrialReliquaryPiece>([
   [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
@@ -98,8 +105,8 @@ describe(buildTrials, () => {
         [CHARACTER_ID]: { characterId: CHARACTER_ID, constellation: 0, refinement: 1, weaponId: WEAPON_ID },
       },
       "characterTrials/reliquaries": {
-        [RELIQUARY_IDS[0]]: {
-          id: RELIQUARY_IDS[0],
+        [takeOne(RELIQUARY_IDS)]: {
+          id: takeOne(RELIQUARY_IDS),
           level: 4,
           mainAffix: Attribute.AttackPercent,
           minorAffixes: [{ attribute: Attribute.Attack, value: 4.67 }],

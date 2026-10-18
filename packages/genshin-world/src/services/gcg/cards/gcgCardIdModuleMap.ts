@@ -1,5 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
+import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
 import { aurousBlaze } from "#src/services/gcg/cards/aurousBlaze";
 import { blessingOfTheDivineRelicsInstallation } from "#src/services/gcg/cards/blessingOfTheDivineRelicsInstallation";
@@ -12,6 +14,7 @@ import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
 import { crossfire } from "#src/services/gcg/cards/crossfire";
+import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { dendroCore } from "#src/services/gcg/cards/dendroCore";
@@ -23,6 +26,11 @@ import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalRes
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
 import { ellin } from "#src/services/gcg/cards/ellin";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
+import { fullPlate } from "#src/services/gcg/cards/fullPlate";
+import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
 import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { guardiansOath } from "#src/services/gcg/cards/guardiansOath";
@@ -32,14 +40,18 @@ import { icicle } from "#src/services/gcg/cards/icicle";
 import { iHaventLostYet } from "#src/services/gcg/cards/iHaventLostYet";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
+import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
+import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
+import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
+import { liben } from "#src/services/gcg/cards/liben";
 import { lightningStiletto } from "#src/services/gcg/cards/lightningStiletto";
 import { liyueHarborWharf } from "#src/services/gcg/cards/liyueHarborWharf";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
@@ -59,9 +71,12 @@ import { oceanicMimicRaptor } from "#src/services/gcg/cards/oceanicMimicRaptor";
 import { oceanicMimicSquirrel } from "#src/services/gcg/cards/oceanicMimicSquirrel";
 import { oz } from "#src/services/gcg/cards/oz";
 import { paimon } from "#src/services/gcg/cards/paimon";
+import { parametricTransformer } from "#src/services/gcg/cards/parametricTransformer";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
 import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { quickKnit } from "#src/services/gcg/cards/quickKnit";
+import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
+import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
 import { sacredCryoPearl } from "#src/services/gcg/cards/sacredCryoPearl";
@@ -72,8 +87,11 @@ import { sendOff } from "#src/services/gcg/cards/sendOff";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
 import { starsigns } from "#src/services/gcg/cards/starsigns";
+import { stoneForce } from "#src/services/gcg/cards/stoneForce";
+import { stonehide } from "#src/services/gcg/cards/stonehide";
 import { strategize } from "#src/services/gcg/cards/strategize";
 import { streamingSurge } from "#src/services/gcg/cards/streamingSurge";
+import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { sweetMadame } from "#src/services/gcg/cards/sweetMadame";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { theBestestTravelCompanion } from "#src/services/gcg/cards/theBestestTravelCompanion";
@@ -86,6 +104,7 @@ import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutom
 import { travelersHandySword } from "#src/services/gcg/cards/travelersHandySword";
 import { tubby } from "#src/services/gcg/cards/tubby";
 import { viridescentVenerersDiadem } from "#src/services/gcg/cards/viridescentVenerersDiadem";
+import { wagner } from "#src/services/gcg/cards/wagner";
 import { wangshuInn } from "#src/services/gcg/cards/wangshuInn";
 import { whenTheCraneReturned } from "#src/services/gcg/cards/whenTheCraneReturned";
 import { whiteIronGreatsword } from "#src/services/gcg/cards/whiteIronGreatsword";
@@ -101,6 +120,11 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
+  [11_054, kamisatoArtSenho],
+  [111_051, frostflakeSekiNoTo],
+  [111_052, cryoElementalInfusion],
+  [112_021, rainSword],
+  [112_022, rainbowBladework],
   [112_031, reflection],
   [112_032, illusoryBubble],
   [113_011, pyroInfusion],
@@ -116,13 +140,19 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
   [116_011, jadeScreen],
+  [116_021, fullPlate],
+  [116_022, sweepingTime],
+  [117_011, cuileinAnbar],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
   [125011, shadowswordLoneGale],
   [125012, shadowswordGallopingFrost],
+  [126_011, stonehide],
+  [126_012, stoneForce],
   [133_021, flowfireEdge],
   [134_061, elementalLifeformElectro],
+  [211_051, kantenSenmyouBlessing],
   [213_011, flowingFlame],
   [213_021, crossfire],
   [213051, naganoharaMeteorSwarm],
@@ -137,7 +167,11 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [311_401, whiteTassel],
   [311_501, travelersHandySword],
   [311_502, sacrificialSword],
+  [311_503, aquilaFavonia],
+  [312_001, adventurersBandana],
   [312_002, luckyDogsSilverCirclet],
+  [312_004, gamblersEarrings],
+  [312_005, instructorsCap],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],
@@ -148,6 +182,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_601, maskOfSolitudeBasalt],
   [312_701, laurelCoronet],
   [321001, liyueHarborWharf],
+  [321_002, knightsOfFavoniusLibrary],
   [321_003, jadeChamber],
   [321_004, dawnWinery],
   [321005, wangshuInn],
@@ -155,11 +190,14 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_001, paimon],
   [322002, katheryne],
   [322_003, timaeus],
+  [322_004, wagner],
   [322_006, tubby],
   [322_007, timmie],
+  [322_008, liben],
   [322_009, changTheNinth],
   [322_010, ellin],
   [322011, ironTongueTian],
+  [323_001, parametricTransformer],
   [331_101, elementalResonanceWovenIce],
   [331_301, elementalResonanceWovenFlames],
   [331_401, elementalResonanceWovenThunder],

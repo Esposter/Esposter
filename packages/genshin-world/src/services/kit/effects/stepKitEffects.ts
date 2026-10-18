@@ -8,6 +8,8 @@ import { stepKitField } from "#src/services/kit/effects/stepKitField";
 import { stepKitShield } from "#src/services/kit/effects/stepKitShield";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { stepKitTaunt } from "#src/services/kit/effects/stepKitTaunt";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { runDownSeconds } from "#src/services/runDownSeconds";
 
 // The strike an effect lands as it ends, if it lands one: a taunt's, a bubble's or a shield's explosion, a shield's from
 // The body on the field
@@ -32,7 +34,7 @@ export const stepKitEffects = (stepSeconds: number, context: KitContext): void =
   strikes.length = 0;
   expiredEffects.length = 0;
   for (const effect of kitEffectState.effects) {
-    effect.secondsRemaining -= stepSeconds;
+    effect.secondsRemaining = runDownSeconds(effect.secondsRemaining, stepSeconds);
     if (effect.kind === "stance") effect.elapsedSeconds += stepSeconds;
   }
   for (const effect of kitEffectState.effects) if (effect.kind === "field") stepKitField(effect, stepSeconds, context);
@@ -50,5 +52,5 @@ export const stepKitEffects = (stepSeconds: number, context: KitContext): void =
     else expiredEffects.push(effect);
   }
   effects.length = keptCount;
-  stepKitNightsoul(stepSeconds, kitEffectState);
+  for (const event of stepKitNightsoul(stepSeconds, kitEffectState)) emitKitEvent(event, context);
 };

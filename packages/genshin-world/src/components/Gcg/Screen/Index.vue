@@ -35,7 +35,7 @@ interface Props {
 const { duel, gameText, playerSideIndex, textMap } = defineProps<Props>();
 const emit = defineEmits<{
   declareRoundEnd: [];
-  leave: [];
+  leave: [won: boolean];
   playCard: [handIndex: number, targetIndex: number | undefined, dieIndices: number[], choice?: GcgPlayChoice];
   prepare: [switchedHandIndices: number[], activeIndex: number];
   replaceCharacter: [characterIndex: number];
@@ -249,7 +249,12 @@ const playRerollChoice = () => {
     >
       {{ gameText[GameTextKey.GcgElementalTuning] }}
     </button>
-    <button class="concede" :aria-label="gameText[GameTextKey.GcgConcede]" type="button" @click="emit('leave')" />
+    <button
+      class="concede"
+      :aria-label="gameText[GameTextKey.GcgConcede]"
+      type="button"
+      @click="emit('leave', false)"
+    />
     <div v-if="duel.phase === GcgPhase.Preparation" class="confirm">
       <button type="button" @click="emit('prepare', switchedHandIndices, preparedActiveIndex)">
         {{ gameText[GameTextKey.GcgConfirm] }}
@@ -259,7 +264,9 @@ const playRerollChoice = () => {
       <button type="button" @click="reroll()">{{ gameText[GameTextKey.GcgReroll] }}</button>
     </div>
     <div v-else-if="duel.phase === GcgPhase.Ended" class="confirm">
-      <button type="button" @click="emit('leave')">{{ gameText[GameTextKey.GcgConfirm] }}</button>
+      <button type="button" @click="emit('leave', duel.winnerSideIndex === playerSideIndex)">
+        {{ gameText[GameTextKey.GcgConfirm] }}
+      </button>
     </div>
     <div v-else-if="isChoosingReroll" class="confirm">
       <button type="button" @click="addRerollGroup()">{{ gameText[GameTextKey.GcgReroll] }}</button>

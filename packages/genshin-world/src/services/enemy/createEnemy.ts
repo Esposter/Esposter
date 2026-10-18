@@ -29,6 +29,7 @@ export const createEnemy = (
   const { maxHealth } = computeEnemyStats(enemyLevelCurves, enemyKind, spawnLevel);
   const traits = getEnemyKindTraits(enemyKindMap, enemyKindId);
   const { length } = PoiseTypeSettingsMap[traits.poiseType];
+  const { shieldHealthFraction } = traits;
   return {
     attackCooldownSeconds: 0,
     campId,
@@ -53,6 +54,10 @@ export const createEnemy = (
     poise: length,
     poiseBrokenSeconds: 0,
     position: { ...position },
+    shield:
+      shieldHealthFraction === undefined
+        ? undefined
+        : { health: maxHealth * shieldHealthFraction, maxHealth: maxHealth * shieldHealthFraction },
     state: EnemyState.Idle,
     stateSeconds: 0,
     statuses: [],

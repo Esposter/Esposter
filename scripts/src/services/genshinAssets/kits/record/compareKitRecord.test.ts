@@ -6,7 +6,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { describe, expect, test } from "vitest";
 
-const talentGroupIdMap = {} as unknown as KitTables["talentGroupIdMap"];
+const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
 
 describe(compareKitRecord, () => {
   test("leaves no entry for a path only the source gives, so the publish adds it rather than removing it", () => {
@@ -24,7 +24,8 @@ describe(compareKitRecord, () => {
       false,
       {},
       new Map(),
-      talentGroupIdMap,
+      new Map(),
+      tables,
     );
 
     expect(overlay).toStrictEqual({});

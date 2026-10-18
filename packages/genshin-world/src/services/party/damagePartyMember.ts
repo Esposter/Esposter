@@ -19,6 +19,7 @@ export const damagePartyMember = (
   const previousHealthShare = partyMember.healthShare;
   partyMember.healthShare = Math.max(0, previousHealthShare - lostHealthShare);
   party.healthChanges.push({
+    bondOfLifeShare: 0,
     characterId,
     healthShare: partyMember.healthShare - previousHealthShare,
     overflowHealthShare: 0,

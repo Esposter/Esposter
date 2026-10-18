@@ -121,6 +121,7 @@ export const replayScriptedMinute = ({
     party,
     placeWildlifeDrops: noop,
     random: createSeededRandom(WORLD_RANDOM_SEED),
+    reactionTriggers: [],
     strikes: [],
     wildlifeList: [],
   };

@@ -34,6 +34,7 @@ export const props = {
     { label: "2-Star Weapons", rarity: 2 },
     { label: "3-Star Weapons", rarity: 3 },
   ],
+  lockLabel: "Lock",
   quickUseLabel: "Quick-Use Gadget",
   selectedId: "0",
   sort: InventorySort.Level,
@@ -50,6 +51,7 @@ export const props = {
     [ItemCategory.Weapon]: "Weapons",
   },
   title: "Inventory",
+  unlockLabel: "Unlock",
   useLabel: "Use",
 };
 // The two weapons chosen for a destroy, the first one ticked, with the count the game's own line fills

@@ -8,6 +8,7 @@ describe(dismissHomeCompanion, () => {
   const OTHER_CHARACTER_ID = 10_000_002;
   const progress: HomeProgress = {
     accruedAt: Temporal.Instant.fromEpochMilliseconds(0),
+    claimedRewardIds: [],
     companionIds: [CHARACTER_ID, OTHER_CHARACTER_ID],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],

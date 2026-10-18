@@ -13,6 +13,7 @@ import type { Party } from "#src/models/party/Party";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
@@ -86,7 +87,7 @@ interface DomainChallengeRun {
   defeats: number;
   defeatsInWave: number;
   elapsedMilliseconds: number;
-  // The poise breaks the arena's enemy took since the last step, which Stormterror's fight counts as shield breaks
+  // The shield breaks the arena's enemy took since the last step, which Stormterror's fight counts
   pendingShieldBreaks: number;
   // Stormterror's fight, held only by a run whose arena holds Stormterror
   stormterrorFight?: StormterrorFight;
@@ -119,6 +120,7 @@ export const useWorldDomains = ({
   setInventory,
   setWallet,
   unlockedLandmarks,
+  weaponDataMap,
   wallet,
 }: {
   adventureExp: Ref<number>;
@@ -143,6 +145,7 @@ export const useWorldDomains = ({
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
 }) => {
   const unlockedDomainEntrances = computed(() =>
@@ -222,9 +225,8 @@ export const useWorldDomains = ({
       waveIndex,
     };
   });
-  // A poise break on the arena's enemy counts toward Stormterror's shield breaks, which the next step takes in. The break
-  // Stands in for the shield, a non-elemental pool the hit does not yet carry an element to count against (PROVISIONAL)
-  events.on("poiseBreak", (enemy) => {
+  // A shield break on the arena's enemy counts toward Stormterror's shield breaks, which the next step takes in
+  events.on("shieldBreak", (enemy) => {
     const challenge = domainChallenge.value;
     if (!challenge?.stormterrorFight || enemy.campId !== challenge.camp.id) return;
     domainChallenge.value = { ...challenge, pendingShieldBreaks: challenge.pendingShieldBreaks + 1 };
@@ -436,7 +438,7 @@ export const useWorldDomains = ({
         addDroppedItem(
           bag,
           dropped,
-          getDroppedItemDefinition(dropped.itemId, nameText, materialDataMap, reliquaryPieceEntryMap),
+          getDroppedItemDefinition(dropped.itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
         ).inventory,
       claim.inventory,
     );

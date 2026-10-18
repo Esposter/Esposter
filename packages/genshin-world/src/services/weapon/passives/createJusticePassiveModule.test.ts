@@ -54,13 +54,15 @@ describe(createJusticePassiveModule, () => {
 
     const { party } = createKitTestContext(wielder);
 
-    expect(justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party)).toBeCloseTo(
-      0.2,
-    );
     expect(
-      justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party),
+      justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBeCloseTo(0.2);
-    expect(justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party)).toBe(0);
+    expect(
+      justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
+    ).toBeCloseTo(0.2);
+    expect(justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(
+      0,
+    );
   });
 
   test("a critical normal attack restores the wielder the rank's share of its ATK as HP", () => {

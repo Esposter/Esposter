@@ -33,10 +33,12 @@ export const useWorldGadgets = ({
   );
   const cooldownGroupReadyAtMap = shallowRef<CooldownGroupReadyAtMap>(new Map());
   const equippedGadget = computed(() => gadgetRows.value.find(({ id }) => id === inventory.value.equippedGadgetItemId));
-  // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used
-  const quickUseEquippedGadget = (now: Temporal.Instant) => {
-    if (equippedGadget.value)
-      cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, equippedGadget.value, now);
+  // Z uses the equipped gadget at `now`, which starts its group's cooldown when it is used. The gadget used is returned,
+  // None when no gadget is equipped
+  const quickUseEquippedGadget = (now: Temporal.Instant): GadgetRow | undefined => {
+    const gadget = equippedGadget.value;
+    if (gadget) cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, gadget, now);
+    return gadget;
   };
   // The seconds left of the equipped gadget's cooldown at `now`, none when no gadget is equipped
   const getEquippedGadgetCooldown = (now: Temporal.Instant) =>
@@ -55,12 +57,14 @@ export const useWorldGadgets = ({
     isHeld: boolean;
     now: Temporal.Instant;
     seconds: number;
-  }) => {
+  }): GadgetRow | undefined => {
     const previousHeldSeconds = quickUseHeldSeconds;
     quickUseHeldSeconds = isActive ? stepQuickUseHeldSeconds(previousHeldSeconds, isHeld, seconds) : 0;
+    let usedGadget: GadgetRow | undefined;
     if (isActive && !isHeld && previousHeldSeconds > 0 && !checkIsQuickSwapOpen(previousHeldSeconds))
-      quickUseEquippedGadget(now);
+      usedGadget = quickUseEquippedGadget(now);
     isQuickSwapOpen.value = checkIsQuickSwapOpen(quickUseHeldSeconds);
+    return usedGadget;
   };
   return { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse };
 };

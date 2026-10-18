@@ -10,8 +10,8 @@ import { OAK_BARK_PART, OAK_LEAF_PART } from "#src/services/windrise/constants";
 import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColor";
 import { createTreeImpostor } from "#src/services/world/createTreeImpostor";
 import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
-import { createTreeGeometry, IMPOSTOR_CROSSFADE_SHARE, IMPOSTOR_SWITCH_HEIGHTS, setObjectFade } from "genshin-engine";
-import { Group, MathUtils, Mesh, Vector3 } from "three";
+import { computeImpostorFade, createTreeGeometry, setObjectFade } from "genshin-engine";
+import { Group, Mesh, Vector3 } from "three";
 
 interface Props {
   // The bark and the leaves every tree draws in, each mesh masked by its own fade
@@ -85,13 +85,7 @@ onBeforeRender(() => {
     treeGroup.add(impostorMesh);
   }
   treeGroup.getWorldPosition(treePosition);
-  const switchDistance = impostorHeight * IMPOSTOR_SWITCH_HEIGHTS;
-  const halfBand = (switchDistance * IMPOSTOR_CROSSFADE_SHARE) / 2;
-  const fade = MathUtils.smoothstep(
-    activeCamera.position.distanceTo(treePosition),
-    switchDistance - halfBand,
-    switchDistance + halfBand,
-  );
+  const fade = computeImpostorFade(activeCamera.position.distanceTo(treePosition), impostorHeight);
   for (const mesh of [branchMesh, leafMesh, impostorMesh]) setObjectFade(mesh, fade);
   branchMesh.visible = leafMesh.visible = fade < 1;
   impostorMesh.visible = fade > 0;
