@@ -2,6 +2,9 @@
 // `NoPoiseSource`, `TargetCentred` and `UnmeasuredHold` are the index's shared causes, which the builder applies by rule,
 // So a kit's overlay names only the ones that are its own
 export enum KitProvisionalCause {
+  // A character gcsim has no folder for borrows its donors' frames, hits and areas, which its module names, until a source
+  // Gives its own
+  BorrowedFromDonor = "BorrowedFromDonor",
   // A box is priced as the circle to its farthest corner, until an area holds a box
   BoxAsCircle = "BoxAsCircle",
   // A source gives another value, and the kit keeps its own until a commit settles it
