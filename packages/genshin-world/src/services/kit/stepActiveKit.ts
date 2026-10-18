@@ -21,6 +21,7 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { gainKitAttackEnergy } from "#src/services/kit/gainKitAttackEnergy";
 import { getKitSkillActions } from "#src/services/kit/getKitSkillActions";
+import { infuseKitStrikes } from "#src/services/kit/infuseKitStrikes";
 import { pickUpCrystallizeShards } from "#src/services/kit/pickUpCrystallizeShards";
 import { pickUpKitPickUps } from "#src/services/kit/pickUpKitPickUps";
 import { queueKitHits } from "#src/services/kit/queueKitHits";
@@ -91,15 +92,14 @@ export const stepActiveKit = (
   if (context.primaryTarget && !checkIsEnemyStanding(enemyMap, context.primaryTarget))
     context.primaryTarget = undefined;
   const characterId = getActiveCharacterId(party);
-  const fieldCombatant = characterIdCombatantMap.get(characterId);
-  if (!fieldCombatant) return;
-  const combatant = findKitStance(kitEffectState.effects, characterId)?.combatant ?? fieldCombatant;
-  const { kit } = combatant;
+  // The combatant the field plays as, its stance's when it holds one, read before a swap can end that stance
+  const combatant =
+    findKitStance(kitEffectState.effects, characterId)?.combatant ?? characterIdCombatantMap.get(characterId);
   const { position } = characterController;
   body.facing = characterController.facing;
   body.height = input.height;
   body.position = position;
-  context.activeCombatant = combatant;
+  if (combatant) context.activeCombatant = combatant;
   const { fieldCharacterId } = kitEffectState;
   kitEffectState.fieldCharacterId = characterId;
   if (fieldCharacterId !== characterId) {
@@ -113,11 +113,26 @@ export const stepActiveKit = (
       // has to land are queued on the world's clock from where it was played, priced by the combatant that played it
       if (outgoingCombatant && kitState.action)
         queueKitHits(kitState.action, kitState, { ...context, activeCombatant: outgoingCombatant });
+      // The character brought on starts its kit over, with no action playing
+      Object.assign(kitState, createKitState(), { action: undefined, queuedMovementAction: undefined });
     }
-    // The character brought on starts its kit over, with no action playing
-    Object.assign(kitState, createKitState(), { action: undefined, queuedMovementAction: undefined });
     emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId: fieldCharacterId }, context);
   }
+  // With no combatant on the field nothing plays, but the team's effects keep their clocks, so the hits an outgoing
+  // Action has queued land on schedule
+  if (!combatant) {
+    sendKitOutbox(context);
+    stepKitEffects(stepSeconds, context);
+    for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+    infuseKitStrikes(strikes, kitEffectState.effects);
+    if (strikes.length > 0) {
+      strikeKitEnemies(strikes, context);
+      gainKitAttackEnergy(kitState, strikes, party, random);
+    }
+    sendKitOutbox(context);
+    return;
+  }
+  const { kit } = combatant;
   sendKitOutbox(context);
   stepKitEffects(stepSeconds, context);
   for (const effect of expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
@@ -193,10 +208,7 @@ export const stepActiveKit = (
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with
-  for (const strike of strikes) {
-    const strikeInfusion = getKitInfusion(kitEffectState.effects, strike.combatant.characterId);
-    if (strikeInfusion !== undefined) strike.hit = infuseKitHit(strike.hit, strikeInfusion);
-  }
+  infuseKitStrikes(strikes, kitEffectState.effects);
   for (const hit of landedHits)
     strikes.push({
       attackTag: hit.attackTag,
