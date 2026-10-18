@@ -14,7 +14,7 @@
 
 ## 4. Levelling and ascension
 
-- [ ] 4.1 Spend Character EXP materials on Level Up. Verify: tests named after the scenarios 'Level Up spends Character EXP materials' and 'Level Up is refused without enough Character EXP materials', seen failing first.
+- [x] 4.1 Spend Character EXP materials on Level Up. Verify: tests named after the scenarios 'Level Up spends Character EXP materials' and 'Level Up is refused without enough Character EXP materials', seen failing first.
 - [ ] 4.2 Ascend at a phase's cap once the Adventure Rank allows it. Verify: tests named after the scenarios 'Ascend spends the phase's materials and Mora at its cap' and 'Ascend is refused below the phase's Adventure Rank', seen failing first.
 - [x] 4.3 Lift a character past level 90 with Masterless Stella Fortuna to 95 and 100. Verify: tests named after the scenarios 'Masterless Stella Fortuna lifts a character from level 90 to 95' and 'Masterless Stella Fortuna lifts a character from level 95 to 100', seen failing first.
 

@@ -19,12 +19,22 @@ interface Props {
   name: string;
   // The game's tables the character's level cap and attributes are read from
   statTables: StatTables;
+  // Whether the character can be raised a level with its Character EXP materials now
+  isLevelUpable?: boolean;
   // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
   isLiftable?: boolean;
 }
 
-const { character, gameText, isLiftable = false, maxStamina, name, statTables } = defineProps<Props>();
-const emit = defineEmits<{ lift: [] }>();
+const {
+  character,
+  gameText,
+  isLevelUpable = false,
+  isLiftable = false,
+  maxStamina,
+  name,
+  statTables,
+} = defineProps<Props>();
+const emit = defineEmits<{ levelUp: []; lift: [] }>();
 const levelText = computed(() =>
   fillGameTextValues(
     gameText[GameTextKey.LevelFormat],
@@ -67,10 +77,13 @@ const detailGroups = computed(() =>
         <dd class="value">{{ value }}</dd>
       </div>
     </dl>
+    <button type="button" class="details" :disabled="!isLevelUpable" @click="emit('levelUp')">
+      {{ gameText[GameTextKey.LevelUp] }}
+    </button>
     <button type="button" class="details" @click="isDetailsOpen = !isDetailsOpen">
       {{ gameText[GameTextKey.CharacterDetails] }}
     </button>
-    <button v-if="isLiftable" type="button" class="details" @click="emit('lift')">
+    <button type="button" class="details" :disabled="!isLiftable" @click="emit('lift')">
       {{ gameText[GameTextKey.AscensionLimit] }}
     </button>
     <section v-for="{ rows: groupRows, title } of detailGroups" :key="title">
