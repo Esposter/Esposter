@@ -1,7 +1,7 @@
 ## 1. Data
 
 - [ ] 1.1 Read each offering's levels, thresholds and rewards from its level table or the wiki's page, into the published data. Verify: a test named after the scenario 'Offering the items for a level raises the offering', written first and seen failing.
-- [ ] 1.2 Publish each region's offering points beside the Frostbearing Tree's places, from the official map's points. Verify: a test named after the scenario 'An offering appears at its map point'.
+- [x] 1.2 Publish each region's offering points beside the Frostbearing Tree's places, from the official map's points. Verify: a test named after the scenario 'An offering appears at its map point'.
 
 ## 2. Items
 
