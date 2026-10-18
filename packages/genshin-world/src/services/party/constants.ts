@@ -86,6 +86,9 @@ export const ASCENDANT_GLEAM_STATUS_ID = "ascendantGleam";
 // 146 frames of that, as gcsim (MIT) pkg/core/player/verdantdew.go counts them
 // Https://github.com/genshinsim/gcsim/blob/main/pkg/core/player/verdantdew.go
 export const VERDANT_DEW_MAXIMUM_COUNT = 3;
+// The Moonridge Dew a party holds at most, the same most as Verdant Dew, as gcsim's AddMoonridgeDew caps it at MaxVerdantDew
+// (verdantdew.go lines 104-110)
+export const MOONRIDGE_DEW_MAXIMUM_COUNT = 3;
 export const VERDANT_DEW_GATHERING_SECONDS = 149 / 60;
 export const VERDANT_DEW_GATHER_SECONDS = 146 / 60;
 // A Lunar-Charged forms the party's cloud for 5.5 seconds, or keeps the one standing for 5.5 seconds again. A new cloud

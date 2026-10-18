@@ -25,7 +25,10 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -97,6 +100,39 @@ const ELEMENT_REACTION_TYPES: [Element, LunarReactionType][] = [
 // The burst's window, the 1.2 seconds its Lunar damage bonus holds, in which a Lunar reaction gives Constellation 6's buffs
 const BURST_WINDOW_ID = "columbina-burst-window";
 const BURST_WINDOW_SECONDS = 1.2;
+// Measured: gcsim (MIT) columbina/asc.go, Ascension 4's Moonridge Dew: a Lunar-Bloom in her burst's window gives one, at
+// Most three each eighteen seconds from the first, three frames apart (lines 120-145)
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/asc.go
+const ASCENSION_4 = 4;
+const MOONRIDGE_DEW_ICD_ID = "columbina-moonridge-dew-icd";
+const MOONRIDGE_DEW_ICD_SECONDS = toKitSeconds(3);
+const MOONRIDGE_DEW_WINDOW_ID = "columbina-moonridge-dew-window";
+const MOONRIDGE_DEW_WINDOW_SECONDS = toKitSeconds(18 * 60);
+const MOONRIDGE_DEW_GAINS_PER_WINDOW = 3;
+
+// Gains the party a Moonridge Dew for a Lunar-Bloom in the burst's window, as gcsim's a4OnLunarBloom does. The window
+// Counts the gains it has taken and runs from the first, and the gains come no faster than the cooldown lets them
+const gainMoonridgeDew = (context: KitContext): void => {
+  const { kitEffectState, party } = context;
+  const { effects } = kitEffectState;
+  if (!checkIsKitStatusActive(effects, COLUMBINA_CHARACTER_ID, BURST_WINDOW_ID)) return;
+  if (checkIsKitStatusActive(effects, COLUMBINA_CHARACTER_ID, MOONRIDGE_DEW_ICD_ID)) return;
+  const dewWindow = findKitStatus(effects, COLUMBINA_CHARACTER_ID, MOONRIDGE_DEW_WINDOW_ID);
+  const gains = dewWindow?.stacks ?? 0;
+  if (gains >= MOONRIDGE_DEW_GAINS_PER_WINDOW) return;
+  // A gain re-adds the window with the seconds it has left, so only the first gain starts its eighteen seconds
+  addKitStatus(kitEffectState, COLUMBINA_CHARACTER_ID, {
+    id: MOONRIDGE_DEW_WINDOW_ID,
+    secondsRemaining: dewWindow?.secondsRemaining ?? MOONRIDGE_DEW_WINDOW_SECONDS,
+    stacks: gains + 1,
+  });
+  addKitStatus(kitEffectState, COLUMBINA_CHARACTER_ID, {
+    id: MOONRIDGE_DEW_ICD_ID,
+    secondsRemaining: MOONRIDGE_DEW_ICD_SECONDS,
+  });
+  // Like gcsim, the window counts the gain even while the party holds its most
+  party.moonridgeDew = Math.min(party.moonridgeDew + 1, MOONRIDGE_DEW_MAXIMUM_COUNT);
+};
 const CONSTELLATION_6 = 6;
 // Constellation 6's CRIT DMG for each buff a Lunar reaction gives every party member, on the elements the buff covers
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.8;
@@ -259,7 +295,8 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 // Lunacy and constellation effects without the hit. Constellation 4 needs the ripple's hits, its energy for each and its flat DMG
 // Constellation 6's CRIT DMG on strikes is built on the burst's window, but its CRIT DMG on the Lunar reaction's own damage
 // Needs the reaction's element, which KitReaction does not carry. The window's Lunar damage bonus itself is not built
-// Ascension 4 needs the Lunar reactions hook, as the team's Lunar reactions are not read yet
+// Ascension 4's Moonridge Dew is built on the Lunar-Bloom reaction, while its extra hits on Lunar-Charged and Lunar-Crystallize
+// Need the Lunar reactions hook, as the team's Lunar reactions are not read yet
 export const createColumbinaKitBehaviour = ({
   kit,
   readHit,
@@ -327,7 +364,13 @@ export const createColumbinaKitBehaviour = ({
       getBaseDamageBonus: ({ attributes }) => getBenedictionBaseDamageBonus(attributes.maxHealth),
     },
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || combatant.constellationCount < CONSTELLATION_6) return;
+      if (event.kind !== KitEventKind.ReactionTriggered) return;
+      if (
+        combatant.ascension >= ASCENSION_4 &&
+        event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarBloom)
+      )
+        gainMoonridgeDew(context);
+      if (combatant.constellationCount < CONSTELLATION_6) return;
       // The buffs need a Lunar reaction in the burst's window, which gcsim's Lunar damage bonus holds for its 1.2 seconds
       if (!checkIsKitStatusActive(context.kitEffectState.effects, COLUMBINA_CHARACTER_ID, BURST_WINDOW_ID)) return;
       for (const { reactionType } of event.reactions) {

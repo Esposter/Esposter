@@ -495,4 +495,70 @@ describe(createColumbinaKitBehaviour, () => {
 
     expect(readOwnCriticalDamage(context, columbina, Element.Electro)).toBe(0.8);
   });
+
+  describe("ascension 4's Moonridge Dew", () => {
+    test("a Lunar-Bloom in the burst's window gives the party a Moonridge Dew at Ascension 4", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
+
+      expect(context.party.moonridgeDew).toBe(1);
+    });
+
+    test("below Ascension 4, a Lunar-Bloom gives no Moonridge Dew", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      triggerLunarReaction(context, { ...columbina, ascension: 3 }, other, LunarReactionType.LunarBloom);
+
+      expect(context.party.moonridgeDew).toBe(0);
+    });
+
+    test("a Lunar-Charged reaction gives no Moonridge Dew, only a Lunar-Bloom does", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarCharged);
+
+      expect(context.party.moonridgeDew).toBe(0);
+    });
+
+    test("a Lunar-Bloom after the burst's window gives none", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      stepKitTestEffects(2, context);
+      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
+
+      expect(context.party.moonridgeDew).toBe(0);
+    });
+
+    test("two Lunar-Blooms at the same instant gain one Moonridge Dew, as gcsim's three-frame cooldown gives", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      const ascended = { ...columbina, ascension: 4 };
+      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+
+      expect(context.party.moonridgeDew).toBe(1);
+    });
+
+    test("three gains is the most in an eighteen-second window, and a burst after the window runs out gains again", () => {
+      expect.hasAssertions();
+      const { columbina, context, other } = createBurstContext(0);
+      const ascended = { ...columbina, ascension: 4 };
+      for (let index = 0; index < 4; index++) {
+        triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+        stepKitTestEffects(0.1, context);
+      }
+      // The three gains fill the party's Moonridge Dew, and the fourth gives none within the window
+      expect(context.party.moonridgeDew).toBe(3);
+
+      context.party.moonridgeDew = 0;
+      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+      expect(context.party.moonridgeDew).toBe(0);
+
+      stepKitTestEffects(19, context);
+      COLUMBINA_KIT.elementalBurst?.onStart?.(context);
+      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+      expect(context.party.moonridgeDew).toBe(1);
+    });
+  });
 });
