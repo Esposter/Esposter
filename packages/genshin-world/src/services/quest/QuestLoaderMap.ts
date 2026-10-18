@@ -10,6 +10,7 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
   [QuestIdValues.BirdsEyeView]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/352", z.unknown()),
   [QuestIdValues.CandidatureAnalysis]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11019", z.unknown()),
   [QuestIdValues.ForegoneConclusion]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/11026", z.unknown()),
+  [QuestIdValues.GeniusInvokationTcg]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/70665", z.unknown()),
   [QuestIdValues.InazumaOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/7280801", z.unknown()),
   [QuestIdValues.LiyueOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/2211102", z.unknown()),
   [QuestIdValues.NewHorizonsOfAdventure]: (gameDataBaseUrl) =>

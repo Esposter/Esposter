@@ -85,7 +85,7 @@ export const readQuestSteps = (
       const { kind, targetIndex } = questContentObjective;
       const targetId = String(parameters[targetIndex] ?? "");
       if (kind === QuestObjectiveKind.TalkTo && !checkTalkIsPlayable(targetId)) return [];
-      const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat].includes(kind);
+      const isCounted = [QuestObjectiveKind.Collect, QuestObjectiveKind.Defeat, QuestObjectiveKind.Win].includes(kind);
       return [{ count: isCounted ? Math.max(Number(parameters[1] ?? 0), 1) : 1, kind, targetIds: [targetId] }];
     });
     if (objectives.length === 0) {

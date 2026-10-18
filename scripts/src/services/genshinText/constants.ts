@@ -35,7 +35,7 @@ export const CITY_TABLE_NAME = "CityConfigData";
 export const MATERIAL_TABLE_NAME = "MaterialExcelConfigData";
 // The series the world carries whole, by the chapter table's id: the first whose first quest a placed resident offers.
 // Of every chapter's first quest in the dump, scanned on 2026-10-18, only 2029's is offered by a resident the region data places
-export const CARRIED_CHAPTER_IDS: readonly number[] = [2029];
+export const CARRIED_CHAPTER_IDS: readonly number[] = [2029, 10106];
 // The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
 // Numbered parts
 export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";

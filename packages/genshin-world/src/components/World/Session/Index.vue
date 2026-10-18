@@ -2349,6 +2349,8 @@ defineExpose({ jumpTo, readCameraPosition });
       @leave="
         (won) => {
           payCardGameReward(gcgGameId, won);
+          if (won && gcgGameId !== undefined)
+            events.emit('questEvent', { kind: QuestObjectiveKind.Win, targetId: String(gcgGameId) });
           gcgGameId = undefined;
           screenKind = ScreenKind.World;
         }

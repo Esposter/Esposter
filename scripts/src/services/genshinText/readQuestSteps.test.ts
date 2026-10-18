@@ -250,4 +250,24 @@ describe(readQuestSteps, () => {
       ],
     });
   });
+
+  test("a card game win counts the wins its condition names", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [{ B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_GCG_LEVEL_WIN", G: [30_111, 2] }] }],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: [],
+      offerTalkIds: [],
+      steps: [
+        {
+          id: "100",
+          objectives: [{ count: 2, kind: QuestObjectiveKind.Win, targetIds: ["30111"] }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
 });
