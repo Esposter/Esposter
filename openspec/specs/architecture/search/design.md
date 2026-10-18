@@ -19,7 +19,7 @@ flowchart TD
 
 `app/composables/useAutoSearch.ts` owns everything reactive about search-as-you-type, exactly once:
 
-- **1s throttle** on the query ref (`useThrottle` + `Temporal.Duration`) so typing doesn't fire a request per keystroke.
+- **1s throttle** on the search call itself (`useThrottleFn`), so typing doesn't fire a request per keystroke. It sits on the call rather than on a throttled copy of the query, because a copy would keep a stale value when the box is emptied and retyped within one window, and the watcher would never fire.
 - **In-flight abort** — each new search aborts the previous request via `AbortController`; the `AbortSignal` is passed to the `search` callback to forward to tRPC as `{ signal }`.
 - **Normalized change detection** — queries run through `normalizeString`, and a throttled value that normalizes to the same string as before does not re-query.
 - **Reset on empty** — when the query empties out, the in-flight request aborts and the consumer's `reset` callback drops stale results (skipped with `isIncludeEmptySearchQuery`, for pickers where an empty query should list everything).
@@ -93,19 +93,18 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 
 ## Key files
 
-| File                                                        | Role                                                                                         |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                      |
-| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                            |
-| `app/services/search/searchItems.ts`                        | A MiniSearch index over a small in-memory list, ranked                                       |
-| `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                           |
-| `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                         |
-| `app/components/Message/Model/Room/Searcher.vue`            | The room list's scope: cursor-paginated rooms, read on at the waypoint                       |
-| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger                |
-| `app/components/Message/Model/Room/Searcher.vue`            | The rooms' scope: cursor-paginated results (`useRoomSearchStore`)                            |
-| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                                |
-| `app/composables/resource/search/useResourceSearchItems.ts` | The resources' scope — `useAutoSearch` for the Resources group, client-side groups around it |
-| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the rooms' scope                                     |
+| File                                                        | Role                                                                                            |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `app/composables/useAutoSearch.ts`                          | Shared core — throttle, abort, normalized change detection, `isPending`                         |
+| `app/composables/useCursorSearcher.ts`                      | Cursor-paginated search on top of `useAutoSearch`                                               |
+| `app/services/search/searchItems.ts`                        | A MiniSearch index over a small in-memory list, ranked                                          |
+| `app/components/App/CommandPalette.vue`                     | The one Ctrl+K palette, app-wide or in the current surface's scope                              |
+| `app/composables/ui/useCommandScope.ts`                     | Hands a surface's search to the palette for as long as it is mounted                            |
+| `app/components/Message/Model/Room/Searcher.vue`            | The room list's scope: cursor-paginated rooms via `useRoomSearchStore`, read on at the waypoint |
+| `app/services/message/emoji/searchEmojis.ts`                | Client-index emoji search shared by the picker and the composer's `:` trigger                   |
+| `app/components/Message/Friends/Search.vue`                 | Inline (non-palette) `useAutoSearch` consumer                                                   |
+| `app/composables/resource/search/useResourceSearchItems.ts` | The resources' scope — `useAutoSearch` for the Resources group, client-side groups around it    |
+| `app/store/message/room/search.ts`                          | Store returning `useCursorSearcher` for the rooms' scope                                        |
 
 ## Notes
 

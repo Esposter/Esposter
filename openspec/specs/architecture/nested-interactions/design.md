@@ -43,15 +43,15 @@ flowchart TD
 
 ## Key files
 
-| File                                                            | Role                                                          |
-| :-------------------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/shared/src/util/dom/checkIsNestedInteraction.ts`      | Whether a click belongs to something inside its container     |
-| `apps/web/app/services/ui/constants.ts`                         | The guard's selector, and the context menu's browser selector |
-| `apps/web/app/components/Ui/DataTable.vue`                      | A row that opens on a click, through the guard                |
-| `apps/web/app/composables/onClickExceptDrag.ts`                 | A click that was not a drag's end, through the guard          |
-| `apps/web/app/composables/ui/useContextMenu.ts`                 | Leaves a link and a field to the browser's own menu           |
-| `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts` | Writes the new tab and the fixed `rel` onto every link        |
-| `packages/configuration/eslint/restrictedEventSyntaxes.js`      | Bans the bare `@click.stop` wall                              |
+| File                                                        | Role                                                                                        |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `packages/shared/src/util/dom/checkIsNestedInteraction.ts`  | Whether a click belongs to something inside its container, by `NESTED_INTERACTION_SELECTOR` |
+| `apps/web/app/services/ui/constants.ts`                     | The context menu's browser selector and the drag-ignore selector                            |
+| `apps/web/app/components/Ui/DataTable.vue`                  | A row that opens on a click, through the guard                                              |
+| `apps/web/app/composables/onClickExceptDrag.ts`             | A click that was not a drag's end, through the guard                                        |
+| `apps/web/app/composables/ui/useContextMenu.ts`             | Leaves a link and a field to the browser's own menu                                         |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts` | Writes the new tab and the fixed `rel` onto every link (`transformLink`)                    |
+| `packages/configuration/eslint/restrictedEventSyntaxes.js`  | Bans the bare `@click.stop` wall                                                            |
 
 ## Sources
 

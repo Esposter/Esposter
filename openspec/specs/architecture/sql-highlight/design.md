@@ -27,15 +27,15 @@ flowchart TD
 
 The colour map, `HighlightStyleMap` in the db constants, is the one place the colours live, and the suite reads its colours from it, so a test asserts which kind a token is and never which colour that kind has. The palette is chosen to read on a dark terminal's default colours rather than to match the app's editors: plain blue is too dark there, so a quoted name, a table or a column, is green as the log showed it before, a function call bright blue, a string cyan, keywords magenta, numbers and parameters yellow, and comments a grey italic. Only the named ANSI colours `styleText` accepts are used, so the terminal's theme still chooses the shades.
 
-| Token kind                  | Style                         |
-| :-------------------------- | :---------------------------- |
-| keyword                     | magenta                       |
-| string                      | green                         |
-| number and `$1` parameter   | yellow                        |
-| double-quoted identifier    | blue, as names are in the app |
-| function call               | blue                          |
-| comment                     | gray, dim and italic          |
-| brackets, operators, spaces | plain                         |
+| Token kind                  | Style                |
+| :-------------------------- | :------------------- |
+| keyword                     | magenta              |
+| string                      | green                |
+| number and `$1` parameter   | yellow               |
+| double-quoted identifier    | green                |
+| function call               | blue                 |
+| comment                     | gray, dim and italic |
+| brackets, operators, spaces | plain                |
 
 `styleText` colours only when stdout is a terminal and `NO_COLOR` is unset, so a log written to a file or a pipe is plain text.
 
