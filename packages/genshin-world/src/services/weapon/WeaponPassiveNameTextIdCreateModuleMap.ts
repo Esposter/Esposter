@@ -85,6 +85,7 @@ import { createUnbendingPassiveModule } from "#src/services/weapon/passives/crea
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
+import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
@@ -335,4 +336,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3573861603": createGoldenMajestyPassiveModule,
   // Gokadaiou Otogibanashi (Redhorn Stonethresher)
   "372854075": createGokadaiouOtogibanashiPassiveModule,
+  // Whitemoon Bristle (Light of Foliar Incision)
+  "2646627715": createWhitemoonBristlePassiveModule,
 };
