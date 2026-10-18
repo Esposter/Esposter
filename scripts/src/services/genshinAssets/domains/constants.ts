@@ -26,9 +26,11 @@ export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> 
   DUNGEN_ENTRY_TYPE_RELIQUARY: DomainKind.Blessing,
   DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE: DomainKind.Forgery,
 };
-// The dungeon table in the dump, read by its name, and the reward preview table a level's clear names its rewards in
+// The dungeon level entity table in the dump, read by its name
 export const DUNGEON_LEVEL_ENTITY_TABLE_NAME = "DungeonLevelEntityConfigData";
+// The dungeon table in the dump, read by its name
 export const DUNGEON_TABLE_NAME = "DungeonExcelConfigData";
+// The reward preview table a level's clear names its rewards in
 export const REWARD_PREVIEW_TABLE_NAME = "RewardPreviewExcelConfigData";
 // The type a challenge domain's level is named by in the dungeon table
 export const DOMAIN_LEVEL_TYPE = "DUNGEON_DAILY_FIGHT";
