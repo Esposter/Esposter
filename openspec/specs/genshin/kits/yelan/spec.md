@@ -1,6 +1,6 @@
 ## Purpose
 
-Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and her passives and constellations.
+Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and her passives and Constellations 2, 4 and 6, with Constellation 1's charge built.
 
 ## Requirements
 
@@ -48,9 +48,25 @@ Yelan's burst SHALL start a field that waves an Exquisite Throw each second and 
 - **WHEN** a wave is waved
 - **THEN** its throws land 20, 26 and 32 frames after it
 
+### Requirement: Constellation 1 charge
+
+From Constellation 1, Lingering Lifeline SHALL have one more charge than its base.
+
+#### Scenario: Constellation 1 adds a charge
+
+- **GIVEN** Yelan has Constellation 1
+- **WHEN** her skill's charges are read
+- **THEN** it has one more charge than the base
+
+#### Scenario: Constellation 0 adds nothing
+
+- **GIVEN** Yelan has no constellation
+- **WHEN** her skill's charges are read
+- **THEN** no charge is added
+
 ### Requirement: Breakthrough Barb and passives not built
 
-Breakthrough Barb, Yelan's passives and her constellations SHALL have no effect yet.
+Breakthrough Barb, Yelan's passives and her Constellations 2, 4 and 6 SHALL have no effect yet.
 
 #### Scenario: Lifeline hits without Barb
 

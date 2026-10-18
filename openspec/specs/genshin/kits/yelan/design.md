@@ -5,6 +5,7 @@ Yelan's kit is its record and one behaviour module, `createYelanKitBehaviour`, o
 ## Decisions
 
 - **Depth-Clarion Dice's first wave comes a second after the initial hit, and its throws land 20, 26 and 32 frames after their wave.** `yelanKit.ts` starts the wave a second after the hit, as gcsim's ticker does.
+- **Constellation 1's extra charge is a skill charge.** Lingering Lifeline's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
 
 ## Key files
 
