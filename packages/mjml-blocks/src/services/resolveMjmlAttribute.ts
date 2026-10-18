@@ -3,8 +3,7 @@ import type { MjmlRootProps } from "#src/models/MjmlRootProps";
 import type { BlockNode } from "headless-block-editor";
 
 import { ALL_ATTRIBUTES_KEY } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
-import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
+import { getMjmlAttributeSchema } from "#src/services/getMjmlAttributeSchema";
 
 // The root's value for all components applies to this type only where the type takes the attribute and its grammar accepts the value
 const checkIsApplicableToType = (
@@ -12,11 +11,8 @@ const checkIsApplicableToType = (
   attributeName: string,
   value: string,
 ): boolean => {
-  const grammar = definition.allowedAttributes[attributeName];
-  return (
-    grammar !== undefined &&
-    createMjmlAttributeSchema(parseMjmlAttributeType(grammar), attributeName).safeParse(value).success
-  );
+  const schema = getMjmlAttributeSchema(definition.allowedAttributes, attributeName);
+  return schema !== undefined && schema.safeParse(value).success;
 };
 
 // The node's own value, then the root's for its type, then the root's for all, then MJML's default: each undefined where none sets it
