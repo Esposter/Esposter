@@ -51,7 +51,7 @@ describe("weaponScreen", () => {
     await expect.element(page.getByText(gameText[GameTextKey.WeaponEnhance], { exact: true }).first()).toBeVisible();
   });
 
-  // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is written back
+  // Enhance with an ore picked while the wallet holds no Mora to pay its EXP: nothing is spent, and the bag is not written back
   test("enhance is refused when the wallet is short of Mora", async () => {
     expect.hasAssertions();
 

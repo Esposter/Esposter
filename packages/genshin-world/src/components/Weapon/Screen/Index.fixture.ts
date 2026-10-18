@@ -50,7 +50,6 @@ export const atCapWeapon: Weapon = {
   ...openWeapon,
   level: weaponData.ascensionPhases[0]?.maxLevel ?? openWeapon.level,
 };
-const copyWeapon: Weapon = atCapWeapon;
 const fodderWeapon: Weapon = { ascension: 0, experience: 0, id: fodderWeaponData.id, level: 3, refinement: 1 };
 
 // A weapon in the bag as its entry holds it, named in English
@@ -78,7 +77,7 @@ const createBag = (openEntry: Weapon): Inventory => ({
     toWeaponEntry(openEntry, OPEN_ENTRY_ID),
     ...oreItems,
     toWeaponEntry(fodderWeapon, FODDER_ENTRY_ID),
-    toWeaponEntry(copyWeapon, COPY_ENTRY_ID),
+    toWeaponEntry(atCapWeapon, COPY_ENTRY_ID),
   ],
   nextId: NEXT_ENTRY_ID,
 });
