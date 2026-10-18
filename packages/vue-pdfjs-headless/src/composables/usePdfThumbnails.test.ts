@@ -39,9 +39,8 @@ describe(usePdfThumbnails, () => {
     vi.unstubAllGlobals();
   });
 
-  test("the thumbnail sidebar marks the current page", async () => {
-    expect.hasAssertions();
-
+  // Mounts a sidebar of one row per page, each row's canvas attached, and returns the render the rows share
+  const mountSidebar = async () => {
     const render = vi.fn<PDFPageProxy["render"]>(
       () => ({ cancel: () => {}, promise: Promise.resolve() }) as unknown as RenderTask,
     );
@@ -60,10 +59,24 @@ describe(usePdfThumbnails, () => {
     for (const row of thumbnails.value) row.canvas.value = window.document.createElement("canvas");
     await flushPromises();
 
+    return { currentPageNumber, render, scope, thumbnails };
+  };
+
+  test("the thumbnail sidebar marks the current page", async () => {
+    expect.hasAssertions();
+
+    const { currentPageNumber, scope, thumbnails } = await mountSidebar();
     currentPageNumber.value = SECOND_PAGE;
     await nextTick();
 
     expect(thumbnails.value.map(({ isCurrent }) => isCurrent.value)).toStrictEqual([false, true, false]);
+    scope.stop();
+  });
+
+  test("only a thumbnail in view of the sidebar is drawn", async () => {
+    expect.hasAssertions();
+
+    const { render, scope, thumbnails } = await mountSidebar();
     // Only the second row is in view, so only its page is drawn
     const secondCanvas = thumbnails.value[SECOND_PAGE - 1]?.canvas.value;
     const thirdCanvas = thumbnails.value[PAGE_COUNT - 1]?.canvas.value;
