@@ -99,6 +99,27 @@ describe(getTableKitCandidates, () => {
     });
   });
 
+  test("reads the count of Etched Into Bone and Soul's hits as the named list's length, the count its label repeats", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates(
+      createTables(
+        new Map([[LOHEN_SKILL_GROUP_ID, [{ indexes: [16, 16, 16, 16], label: "Etched Into Bone and Soul DMG" }]]]),
+        { burstGroupId: LOHEN_BURST_GROUP_ID, skillGroupId: LOHEN_SKILL_GROUP_ID },
+      ),
+    );
+    expect(candidates.get("hits.etchedIntoBoneAndSoul.length")).toStrictEqual([
+      {
+        provenance: {
+          index: 16,
+          label: "Etched Into Bone and Soul DMG",
+          proudSkillGroupId: LOHEN_SKILL_GROUP_ID,
+          source: KitSource.Tables,
+        },
+        value: 4,
+      },
+    ]);
+  });
+
   test("reads Linnea's healing as the heal's parameters, each at its index in the burst group", () => {
     expect.hasAssertions();
     const candidates = getTableKitCandidates(

@@ -30,6 +30,10 @@ const SKILL_HIT_PATHS: ReadonlyMap<string, readonly string[]> = new Map([
   ["Lumi Million Ton Crush DMG", ["skillChain.followUps.0.hits.0"]],
   ["Lumi Pound-Pound Pummeler DMG", ["skill.hits.0", "skill.hits.1"]],
 ]);
+// The length of a named list of hits a skill's label gives, which is the count its label repeats
+const NAMED_HIT_LIST_LENGTH_PATHS: ReadonlyMap<string, string> = new Map([
+  ["Etched Into Bone and Soul DMG", "hits.etchedIntoBoneAndSoul.length"],
+]);
 // The parameters a skill's labels read, by each value's position in its label, the way the kit reads them
 const SKILL_PARAMETER_NAMES: ReadonlyMap<string, readonly string[]> = new Map([
   ["DMG Increase From Will to Win", ["etchedWillToWinDamagePerPoint"]],
@@ -81,6 +85,14 @@ export const getTableKitCandidates = ({
     for (const position of tableLabel.indexes.keys())
       addLabel(`${path}.hits.${position}.multiplier`, combatTalent, tableLabel, position);
   };
+  const addLength = (path: string, combatTalent: CombatTalent, { indexes, label }: KitTableLabel) => {
+    const index = indexes[0];
+    if (index !== undefined)
+      addKitCandidate(candidateMap, path, {
+        provenance: { index, label, proudSkillGroupId: talentGroupIdMap[combatTalent], source: KitSource.Tables },
+        value: indexes.length,
+      });
+  };
   const addHitLabel = (hitPaths: readonly string[], combatTalent: CombatTalent, tableLabel: KitTableLabel) => {
     for (const [position, hitPath] of hitPaths.entries())
       if (position < tableLabel.indexes.length) addLabel(`${hitPath}.multiplier`, combatTalent, tableLabel, position);
@@ -118,8 +130,11 @@ export const getTableKitCandidates = ({
       addLabel("skillCooldownSeconds", CombatTalent.ElementalSkill, tableLabel);
     else if (tableLabel.label === HOLD_COOLDOWN_LABEL)
       addLabel("skillHolds.0.cooldownSeconds", CombatTalent.ElementalSkill, tableLabel);
-    else if (hitPaths !== undefined) addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
-    else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
+    else if (hitPaths !== undefined) {
+      addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
+      const listLengthPath = NAMED_HIT_LIST_LENGTH_PATHS.get(tableLabel.label);
+      if (listLengthPath !== undefined) addLength(listLengthPath, CombatTalent.ElementalSkill, tableLabel);
+    } else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
   }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? []) {
     const parameterNames = BURST_PARAMETER_NAMES.get(tableLabel.label);
