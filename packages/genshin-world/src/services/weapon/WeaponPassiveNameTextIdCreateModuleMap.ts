@@ -43,6 +43,7 @@ import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passive
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
+import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
@@ -261,4 +262,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2803637475": createTipOfTheSpearPassiveModule,
   // Fall Into Place (Master Key)
   "706623635": createFallIntoPlacePassiveModule,
+  // Phantom Flash (Snare Hook)
+  "3123029499": createPhantomFlashPassiveModule,
 };

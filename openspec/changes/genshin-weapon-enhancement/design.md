@@ -49,6 +49,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **White Cruising Wave (Tidal Shadow, provisional reading).** After the wielder is healed, ATK rises by the rank's 24% for 8 s, through createHealBuffPassiveModule. A heal is a change of HP with a positive share; the text's 'even when not on the field' is read as the kit's events reaching every member, which the engine delivers.
 - **Tip of the Spear (Rightful Reward, provisional reading).** After the wielder is healed, it restores 8 Energy, at most once every 10 s, whether or not the wielder is on the field. The cooldown is a status on the wielder, held as Heritage holds its cooldown.
 - **Fall Into Place (Master Key, provisional reading).** After the wielder causes a reaction, its Elemental Mastery rises by the rank's 60 for 12 s, and by 60 more while the deployed team is Ascendant Gleam, read when the reaction lands, through createReactionMasteryPassiveModule. The reaction counts whether or not the wielder is on the field.
+- **Phantom Flash (Snare Hook, provisional reading).** The same reaction buff as Fall Into Place: Elemental Mastery rises by the rank's 60 for 12 s after the wielder's reaction, and by 60 more under Ascendant Gleam, through createReactionMasteryPassiveModule.
 - **Benthic Pulse (Song of Stillness, provisional reading).** After the wielder is healed, all DMG rises by the rank's 16% for 8 s, through the same heal-buff helper as Tidal Shadow, with the all-DMG attribute in place of ATK.
 
 ## How it works
