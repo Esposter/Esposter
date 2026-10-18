@@ -1,6 +1,6 @@
-import { downloadUrl } from "@/services/app/downloadUrl";
+import { downloadUrl } from "#src/util/dom/downloadUrl";
 
-export const downloadFile = (filename: string, blobPart: BlobPart, type: string) => {
+export const downloadFile = (filename: string, blobPart: BlobPart, type: string): void => {
   const url = URL.createObjectURL(new Blob([blobPart], { type }));
   downloadUrl(url, filename);
   // Defer revocation so the anchor click has a chance to start the download first —

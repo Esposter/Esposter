@@ -3,7 +3,6 @@ import type { FlowchartExportRequest } from "@/models/resource/FlowchartExportRe
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
-import { downloadFile } from "@/services/app/downloadFile";
 import { DEFAULT_EDGE_OPTIONS } from "@/services/flowchartEditor/constants";
 import { edgeTypes } from "@/services/flowchartEditor/EdgeTypeMap";
 import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
@@ -11,7 +10,7 @@ import { captureFlowchart } from "@/services/resource/flowchart/captureFlowchart
 import { useAlertStore } from "@/store/alert";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { downloadFile, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { useVueFlow, VueFlow } from "@vue-flow/core";
 
 interface Props {

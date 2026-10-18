@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { downloadUrl } from "@/services/app/downloadUrl";
+import { downloadUrl } from "@esposter/shared";
 
 interface Props {
   filename: string;

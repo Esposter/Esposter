@@ -8,7 +8,6 @@ import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInvit
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { downloadFile } from "@/services/app/downloadFile";
 import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
@@ -23,7 +22,7 @@ import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { getResultAsync, RoutePath } from "@esposter/shared";
+import { downloadFile, getResultAsync, RoutePath } from "@esposter/shared";
 
 const { currentRoute } = useRouter();
 const { $trpc } = useNuxtApp();

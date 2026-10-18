@@ -1,4 +1,4 @@
-import { downloadFile } from "@/services/app/downloadFile";
+import { downloadFile } from "@esposter/shared";
 import { strToU8, zipSync } from "fflate";
 
 // The zip core both personalized exports share: each entry is one file's name and its finished html, so the email

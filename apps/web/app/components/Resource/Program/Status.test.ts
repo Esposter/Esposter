@@ -6,20 +6,22 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
-import { downloadFile } from "@/services/app/downloadFile";
 import { useSession } from "@/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("@/services/app/downloadFile"), () => ({ downloadFile: vi.fn<typeof downloadFile>() }));
+vi.mock(import("@esposter/shared"), async (importOriginal) => ({
+  ...(await importOriginal()),
+  downloadFile: vi.fn<typeof downloadFile>(),
+}));
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 // The blade renders inside the shell's Suspense boundary, which is what shows a skeleton while it resolves —

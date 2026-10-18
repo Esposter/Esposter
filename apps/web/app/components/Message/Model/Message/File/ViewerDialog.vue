@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { downloadUrl } from "@/services/app/downloadUrl";
+import { downloadUrl } from "@esposter/shared";
 import { MAX_ZOOM_SCALE, MIN_ZOOM_SCALE, ZOOM_SCALE_PER_WHEEL_STEP } from "@/services/message/file/constants";
 import { useFileStore } from "@/store/message/file";
 import { useFileDialogStore } from "@/store/message/file/dialog";
