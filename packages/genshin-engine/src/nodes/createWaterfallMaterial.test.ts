@@ -17,7 +17,7 @@ describe(createWaterfallMaterial, () => {
   test("streaks move across the fall, since its opacity is built from the clock", () => {
     expect.hasAssertions();
 
-    const waterfallMaterial = createWaterfallMaterial(createWaterUniforms());
-    expect(collectNodes(waterfallMaterial.opacityNode ?? time).has(time)).toBe(true);
+    const { opacityNode } = createWaterfallMaterial(createWaterUniforms());
+    expect(opacityNode && collectNodes(opacityNode).has(time)).toBe(true);
   });
 });
