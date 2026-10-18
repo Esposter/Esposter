@@ -2,7 +2,7 @@ import { moveItem } from "@/services/dashboard/grid/moveItem";
 import { describe, expect, test } from "vitest";
 
 describe(moveItem, () => {
-  test("Dropping a visual onto another pushes the other below it", () => {
+  test("dropping a visual onto another pushes the other below it", () => {
     expect.hasAssertions();
 
     expect(

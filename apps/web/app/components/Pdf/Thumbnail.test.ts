@@ -8,7 +8,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("@/services/pdf/loadPdfDocument", () => ({ loadPdfDocument: vi.fn() }));
+vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn() }));
 
 // The thumbnail draws the first page at the width its row gives it, so the observer's report stands in for a row
 // Changing width, and the mocked page answers with the viewport a page of this size has at each scale
@@ -40,7 +40,7 @@ describe("pdfThumbnail", () => {
     class {
       constructor(callback: ResizeObserverCallback) {
         reportWidth = (width) => {
-          callback([{ contentRect: { width } }] as unknown as ResizeObserverEntry[], this as unknown as ResizeObserver);
+          callback([{ contentRect: { width } }] as unknown as ResizeObserverEntry[], this);
         };
       }
 
@@ -59,9 +59,7 @@ describe("pdfThumbnail", () => {
   });
 
   const loadPage = () => {
-    vi.mocked(loadPdfDocument).mockResolvedValue(
-      createTask(Promise.resolve({ getPage: async () => page }) as Promise<unknown>),
-    );
+    vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve({ getPage: async () => page })));
   };
 
   // A row whose width changes draws its page again at the new width, rather than keeping the first one
@@ -89,11 +87,11 @@ describe("pdfThumbnail", () => {
     reportWidth?.(FIRST_WIDTH);
     reportWidth?.(SECOND_WIDTH);
 
-    expect(renders[0]?.cancel).toHaveBeenCalledOnce();
+    expect(renders[0]?.cancel).toHaveBeenCalledTimes(1);
   });
 
   // The page is drawn no larger than the largest canvas the device draws, rather than blank
-  test("A page larger than the device can draw", async () => {
+  test("a page larger than the device can draw", async () => {
     expect.hasAssertions();
 
     loadPage();
@@ -131,7 +129,7 @@ describe("pdfThumbnail", () => {
     expect(loadPdfDocument).not.toHaveBeenCalled();
   });
 
-  test("The file cannot be fetched", async () => {
+  test("the file cannot be fetched", async () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -143,8 +141,8 @@ describe("pdfThumbnail", () => {
   });
 
   // A row scrolled out while its document is still being imported has no task yet, so the document that arrives
-  // after the unmount is destroyed on arrival rather than kept for the rest of the session
-  test("Unmounting before the document arrives destroys it", async () => {
+  // After the unmount is destroyed on arrival rather than kept for the rest of the session
+  test("unmounting before the document arrives destroys it", async () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
@@ -155,12 +153,12 @@ describe("pdfThumbnail", () => {
     resolve(task);
     await flushPromises();
 
-    expect(task.destroy).toHaveBeenCalledOnce();
+    expect(task.destroy).toHaveBeenCalledTimes(1);
   });
 
   // The first url's load is torn down by the change, and its rejection lands after the newer load has reset the failure,
-  // so the rejection must not show the failure over the document that did load
-  test("A load a url change tears down does not fail the newer one", async () => {
+  // So the rejection must not show the failure over the document that did load
+  test("a load a url change tears down does not fail the newer one", async () => {
     expect.hasAssertions();
 
     const firstLoad = Promise.withResolvers<unknown>();

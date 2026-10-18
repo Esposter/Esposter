@@ -11,11 +11,11 @@ const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly:
 const rawProps = computed(() => mapStateToJsonFormsRendererProps(props.form.state, props));
 // The renderer whose tester ranks this node highest draws it, and a node no renderer ranks draws nothing
 const component = computed(() => {
-  const { config, renderers = [], rootSchema, schema, uischema } = rawProps.value;
+  const { config, renderers = [], rootSchema, schema } = rawProps.value;
   let rankedComponent: Component | undefined;
   let highestRank = NOT_APPLICABLE;
   for (const { renderer: rendererComponent, tester } of renderers) {
-    const rank = tester(uischema, schema, { config, rootSchema });
+    const rank = tester(props.uischema, schema, { config, rootSchema });
     if (rank <= highestRank) continue;
     highestRank = rank;
     rankedComponent = rendererComponent;

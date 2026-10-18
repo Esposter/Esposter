@@ -9,7 +9,7 @@ interface Props extends UiSchemaFormRendererProps<Layout> {}
 // Would read as false
 const props = withDefaults(defineProps<Props>(), { enabled: undefined, readonly: undefined });
 const layout = computed(() => mapStateToLayoutProps(props.form.state, props));
-const isGroup = computed(() => layout.value.uischema.type === "Group");
+const isGroup = computed(() => props.uischema.type === "Group");
 const labelId = useId();
 </script>
 
@@ -26,7 +26,7 @@ const labelId = useId();
   >
     <span v-if="isGroup && layout.label" :id="labelId" text-heading-color>{{ layout.label }}</span>
     <UiSchemaFormDispatch
-      v-for="(element, index) of layout.uischema.elements"
+      v-for="(element, index) of props.uischema.elements"
       :key="index"
       :cells="layout.cells"
       :enabled="layout.enabled"

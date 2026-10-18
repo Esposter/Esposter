@@ -39,10 +39,7 @@ const drawPage = () => {
   });
   canvas.value.width = viewport.width;
   canvas.value.height = viewport.height;
-  const canvasContext = canvas.value.getContext("2d");
-  if (!canvasContext) return;
-
-  const task = firstPage.render({ canvasContext, viewport });
+  const task = firstPage.render({ canvas: canvas.value, viewport });
   renderTask = task;
   awaitRender(task);
 };

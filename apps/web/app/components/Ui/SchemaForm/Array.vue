@@ -23,7 +23,7 @@ const isMaxItems = computed(() => items.value.length >= (control.value.arraySche
 const isMinItems = computed(() => items.value.length <= (control.value.arraySchema.minItems ?? 0));
 const childUiSchema = computed(() =>
   findUISchema(
-    control.value.uischemas,
+    control.value.uischemas ?? [],
     control.value.schema,
     control.value.uischema.scope,
     control.value.path,

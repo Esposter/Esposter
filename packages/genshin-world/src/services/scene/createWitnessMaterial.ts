@@ -52,7 +52,7 @@ export const createWitnessMaterial = (
     const mappedNormal = normalMap(texture(normal));
     // Three turns a double-sided face's whole tangent frame round on its back, so a card's mapped normal is turned
     // Back to the crown's, as the stand-in's card reads it
-    material.normalNode = isLeafCard ? mappedNormal.mul(faceDirection) : mappedNormal;
+    material.normalNode = isLeafCard ? faceDirection.mul(mappedNormal) : mappedNormal;
   }
   const mask = getTexture(WitnessProperty.DetailMask);
   if (mask && floats[WitnessProperty.EmissionType]) {

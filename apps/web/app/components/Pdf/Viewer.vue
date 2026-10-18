@@ -72,8 +72,7 @@ const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: numbe
   const canvas = document.createElement("canvas");
   canvas.width = viewport.width;
   canvas.height = viewport.height;
-  const canvasContext = canvas.getContext("2d");
-  if (canvasContext) await page.render({ canvasContext, viewport }).promise;
+  await page.render({ canvas, viewport }).promise;
 
   const image = document.createElement("img");
   image.src = canvas.toDataURL("image/png");
@@ -132,7 +131,8 @@ const downloadDocument = getSynchronizedFunction(async () => {
   await getResultAsync(async () => {
     // The original bytes, under the attachment's name: a blob URL from another origin would ignore the name
     const data = await downloaded.getData();
-    downloadFile(filename, data, MimeType.Pdf);
+    // The bytes may sit on a shared buffer, which a Blob does not take, so the download is a copy
+    downloadFile(filename, new Uint8Array(data), MimeType.Pdf);
   }).match(noop, console.error);
 });
 const printDocument = getSynchronizedFunction(async () => {
@@ -220,7 +220,7 @@ onMounted(
         return;
       }
       loadingTask = task;
-      // pdf.js asks again with the reason when a password is wrong, so the prompt says so rather than starting over
+      // The renderer asks again with the reason when a password is wrong, so the prompt says so rather than starting over
       task.onPassword = (updatePassword: (password: string) => void, reason: number) => {
         submitPasswordCallback = updatePassword;
         isPasswordWrong.value = reason === PasswordResponses.INCORRECT_PASSWORD;

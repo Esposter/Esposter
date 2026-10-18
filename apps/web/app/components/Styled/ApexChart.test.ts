@@ -15,7 +15,7 @@ describe(StyledApexChart, () => {
   test("#45 emits load once the chart has rendered, and hands out its instance from then on", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue();
+    vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue(this);
     const component = await mountSuspended(StyledApexChart, { props: { series: [] } });
     await flushPromises();
 
@@ -26,9 +26,9 @@ describe(StyledApexChart, () => {
   test("#129 rebuilds the chart when its options change the chart type", async () => {
     expect.hasAssertions();
 
-    const render = vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue();
+    const render = vi.spyOn(ApexCharts.prototype, "render").mockResolvedValue(this);
     const destroy = vi.spyOn(ApexCharts.prototype, "destroy").mockReturnValue();
-    const updateOptions = vi.spyOn(ApexCharts.prototype, "updateOptions").mockResolvedValue();
+    const updateOptions = vi.spyOn(ApexCharts.prototype, "updateOptions").mockResolvedValue(this);
     const component = await mountSuspended(StyledApexChart, {
       props: { options: { chart: { type: "bar" } }, series: [] },
     });
@@ -36,7 +36,7 @@ describe(StyledApexChart, () => {
     await component.setProps({ options: { chart: { type: "line" } } });
     await flushPromises();
 
-    expect(destroy).toHaveBeenCalledOnce();
+    expect(destroy).toHaveBeenCalledTimes(1);
     expect(render).toHaveBeenCalledTimes(2);
     expect(updateOptions).not.toHaveBeenCalled();
   });

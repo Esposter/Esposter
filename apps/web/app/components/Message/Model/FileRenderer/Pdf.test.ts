@@ -8,10 +8,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Neither the thumbnail nor the viewer draws in this file, which asserts the shell around them and when the dialog
 // Exists. The source never answers, so each component stays at its loading state
-vi.mock("@/services/pdf/loadPdfViewer", () => ({ loadPdfViewer: vi.fn(() => new Promise(() => {})) }));
-vi.mock("@/services/pdf/loadPdfDocument", () => ({
-  loadPdfDocument: vi.fn(() => new Promise(() => {})),
-}));
+vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({ loadPdfViewer: vi.fn(() => new Promise(() => {})) }));
+vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn(() => new Promise(() => {})) }));
 
 describe("messageModelFileRendererPdf", () => {
   const filename = "filename";
@@ -32,7 +30,7 @@ describe("messageModelFileRendererPdf", () => {
 
   // A preview is a thumbnail inside a message row — clicking it opens the message, not a viewer, so the dialog
   // Must not exist to be opened at all
-  test("A preview opens nothing", async () => {
+  test("a preview opens nothing", async () => {
     expect.hasAssertions();
 
     await mountPdf(true);
@@ -42,7 +40,7 @@ describe("messageModelFileRendererPdf", () => {
 
   // The viewer is the whole body, so the dialog is action-less — it has nothing to confirm and nothing to cancel, and
   // Its title bar still gives it a title and a way out that is not clicking the backdrop
-  test("Opening the viewer", async () => {
+  test("opening the viewer", async () => {
     expect.hasAssertions();
 
     const component = await mountPdf(false);

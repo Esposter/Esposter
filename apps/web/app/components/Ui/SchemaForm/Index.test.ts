@@ -3,7 +3,7 @@ import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { noop } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -73,7 +73,7 @@ describe("uiSchemaForm", () => {
         props: { modelValue: { items: [{ name: "" }, { name: "" }] }, schema: arraySchema },
       });
       await flushPromises();
-      const [, secondItemInput] = component.findAll("input");
+      const secondItemInput = takeOne(component.findAll("input"), 1);
       await secondItemInput.setValue("a");
       await flushPromises();
 

@@ -50,7 +50,7 @@ describe("messageModelFileRendererCode", () => {
     vi.unstubAllGlobals();
   });
 
-  test("Opening a code attachment", async () => {
+  test("opening a code attachment", async () => {
     expect.hasAssertions();
 
     await mountCode();
@@ -61,7 +61,7 @@ describe("messageModelFileRendererCode", () => {
     expect(view.state.doc.toString()).toBe(text);
   });
 
-  test("Failed fetch of the file's text", async () => {
+  test("failed fetch of the file's text", async () => {
     expect.hasAssertions();
 
     vi.stubGlobal(
@@ -78,7 +78,7 @@ describe("messageModelFileRendererCode", () => {
     );
   });
 
-  test("Previewed code attachment is capped", async () => {
+  test("previewed code attachment is capped", async () => {
     expect.hasAssertions();
 
     await mountCode({ isPreview: true });
@@ -116,7 +116,7 @@ describe("messageModelFileRendererCode", () => {
     expect(document.body.querySelector(".cm-editor")).toBeNull();
   });
 
-  test("The attachment is removed", async () => {
+  test("the attachment is removed", async () => {
     expect.hasAssertions();
 
     const destroy = vi.spyOn(EditorView.prototype, "destroy");
@@ -126,7 +126,7 @@ describe("messageModelFileRendererCode", () => {
     expect(destroy).toHaveBeenCalledExactlyOnceWith();
   });
 
-  test("The grammar arrives after the text", async () => {
+  test("the grammar arrives after the text", async () => {
     expect.hasAssertions();
 
     const grammarLoad = Promise.withResolvers<Extension[]>();
@@ -136,7 +136,7 @@ describe("messageModelFileRendererCode", () => {
         return null;
       },
     });
-    vi.mocked(getLanguageExtension).mockImplementationOnce(() => grammarLoad.promise);
+    vi.mocked(getLanguageExtension).mockReturnValueOnce(grammarLoad.promise);
     await mountCode();
     const view = findView();
 

@@ -11,7 +11,7 @@ const control = computed(() => ({ ...props, ...mapStateToControlWithDetailProps(
 // An object's fields laid out as a group under its label, or stacked bare where the object is the form itself
 const detailUiSchema = computed(() =>
   findUISchema(
-    control.value.uischemas,
+    control.value.uischemas ?? [],
     control.value.schema,
     control.value.uischema.scope,
     control.value.path,

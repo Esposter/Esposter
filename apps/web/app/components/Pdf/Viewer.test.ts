@@ -53,8 +53,8 @@ const pdfjsStubs = vi.hoisted(() => {
   return { EventBusStub, FindControllerStub, FindState, LinkServiceStub, PdfJsViewerStub };
 });
 
-vi.mock("@/services/pdf/loadPdfDocument", () => ({ loadPdfDocument: vi.fn() }));
-vi.mock("@/services/pdf/loadPdfViewer", () => ({
+vi.mock(import("@/services/pdf/loadPdfDocument"), () => ({ loadPdfDocument: vi.fn() }));
+vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
   loadPdfViewer: async () => ({
     EventBus: pdfjsStubs.EventBusStub,
     FindState: pdfjsStubs.FindState,
@@ -64,10 +64,7 @@ vi.mock("@/services/pdf/loadPdfViewer", () => ({
     PDFViewer: pdfjsStubs.PdfJsViewerStub,
   }),
 }));
-vi.mock(
-  import("pdfjs-dist"),
-  () => ({ PasswordResponses: { INCORRECT_PASSWORD: 2, NEED_PASSWORD: 1 } }) as unknown as typeof import("pdfjs-dist"),
-);
+vi.mock(import("pdfjs-dist"), () => ({ PasswordResponses: { INCORRECT_PASSWORD: 2, NEED_PASSWORD: 1 } }));
 
 describe("pdfViewer", () => {
   const filename = "document.pdf";
@@ -115,12 +112,12 @@ describe("pdfViewer", () => {
     task.onPassword(() => {}, NEED_PASSWORD);
     component.unmount();
 
-    expect(destroy).toHaveBeenCalledOnce();
+    expect(destroy).toHaveBeenCalledTimes(1);
   });
 
   // Closing the dialog while the renderer is still being imported leaves no task to destroy yet, so the one that
-  // arrives afterwards is destroyed on arrival
-  test("Closing the viewer before its document arrives destroys it", async () => {
+  // Arrives afterwards is destroyed on arrival
+  test("closing the viewer before its document arrives destroys it", async () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
@@ -132,11 +129,11 @@ describe("pdfViewer", () => {
     resolve(task);
     await flushPromises();
 
-    expect(destroy).toHaveBeenCalledOnce();
+    expect(destroy).toHaveBeenCalledTimes(1);
   });
 
   // Closing the viewer destroys a load still in flight, and the rejection that destruction causes is no failure to show
-  test("Closing the viewer while its document loads reports no error", async () => {
+  test("closing the viewer while its document loads reports no error", async () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -151,7 +148,7 @@ describe("pdfViewer", () => {
     expect(console.error).not.toHaveBeenCalled();
   });
 
-  test("A protected PDF asks for its password", async () => {
+  test("a protected PDF asks for its password", async () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
@@ -164,7 +161,7 @@ describe("pdfViewer", () => {
     expect(component.find('input[type="password"]').exists()).toBe(true);
   });
 
-  test("The right password", async () => {
+  test("the right password", async () => {
     expect.hasAssertions();
 
     const { promise, resolve } = Promise.withResolvers<unknown>();
@@ -185,7 +182,7 @@ describe("pdfViewer", () => {
     expect(component.find('input[type="password"]').exists()).toBe(false);
   });
 
-  test("A wrong password", async () => {
+  test("a wrong password", async () => {
     expect.hasAssertions();
 
     const task = createTask(new Promise(() => {}));
@@ -199,7 +196,7 @@ describe("pdfViewer", () => {
     expect(component.find('input[type="password"]').exists()).toBe(true);
   });
 
-  test("A PDF that fails to load says so in place of its pages", async () => {
+  test("a PDF that fails to load says so in place of its pages", async () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(() => {});
@@ -210,11 +207,11 @@ describe("pdfViewer", () => {
     expect(component.text()).toContain("could not be loaded");
   });
 
-  test("Opening a long document", async () => {
+  test("opening a long document", async () => {
     expect.hasAssertions();
 
     // The viewer draws only the pages in view, which is the renderer's own work and runs against its real canvas, so
-    // this checks what the viewer hands over: the whole document, and the count it shows
+    // This checks what the viewer hands over: the whole document, and the count it shows
     const longDocument = { ...pdfDocument, numPages: LONG_PAGES_COUNT };
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(longDocument)));
     const component = await mountViewer();
@@ -224,7 +221,7 @@ describe("pdfViewer", () => {
     expect(component.text()).toContain(`of ${LONG_PAGES_COUNT}`);
   });
 
-  test("Going to a page", async () => {
+  test("going to a page", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -236,7 +233,7 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.currentPageNumber).toBe(PAGE_NUMBER);
   });
 
-  test("Zooming past the largest scale", async () => {
+  test("zooming past the largest scale", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -250,7 +247,7 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.increaseScale).not.toHaveBeenCalled();
   });
 
-  test("Searching for a word", async () => {
+  test("searching for a word", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -269,7 +266,7 @@ describe("pdfViewer", () => {
     expect(component.text()).toContain(`${CURRENT_MATCH} of ${TOTAL_MATCHES}`);
   });
 
-  test("Searching for a word the PDF does not hold", async () => {
+  test("searching for a word the PDF does not hold", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -285,7 +282,7 @@ describe("pdfViewer", () => {
     expect(component.text()).toContain("No matches");
   });
 
-  test("Fit width, fit page and actual size set the scale", async () => {
+  test("fit width, fit page and actual size set the scale", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -302,7 +299,7 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.currentScaleValue).toBe("page-actual");
   });
 
-  test("Rotating turns the pages a step", async () => {
+  test("rotating turns the pages a step", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -313,7 +310,7 @@ describe("pdfViewer", () => {
     expect(pdfjsStubs.PdfJsViewerStub.last?.pagesRotation).toBe(PDF_ROTATION_STEP);
   });
 
-  test("Downloading", async () => {
+  test("downloading", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -330,12 +327,12 @@ describe("pdfViewer", () => {
     await findButton(component, "Download")?.trigger("click");
     await flushPromises();
 
-    expect(URL.createObjectURL).toHaveBeenCalledOnce();
-    expect(click).toHaveBeenCalledOnce();
+    expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledTimes(1);
     expect(savedFilename).toBe(filename);
   });
 
-  test("Printing", async () => {
+  test("printing", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -349,11 +346,11 @@ describe("pdfViewer", () => {
     await flushPromises();
 
     expect(pdfDocument.getPage).toHaveBeenCalledTimes(PAGES_COUNT);
-    expect(print).toHaveBeenCalledOnce();
+    expect(print).toHaveBeenCalledTimes(1);
   });
 
-  // iOS Safari draws a canvas above its area blank, so a page past the cap is printed at the scale that keeps it under
-  test("A page larger than the canvas cap prints at the capped scale", async () => {
+  // Safari on iOS draws a canvas above its area blank, so a page past the cap is printed at the scale that keeps it under
+  test("a page larger than the canvas cap prints at the capped scale", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
@@ -374,7 +371,7 @@ describe("pdfViewer", () => {
   });
 
   // Closing the viewer while its pages still render leaves no dialog to print from, so the sheet is never appended
-  test("Closing the viewer while a print renders prints nothing", async () => {
+  test("closing the viewer while a print renders prints nothing", async () => {
     expect.hasAssertions();
 
     vi.mocked(loadPdfDocument).mockResolvedValue(createTask(Promise.resolve(pdfDocument)));
