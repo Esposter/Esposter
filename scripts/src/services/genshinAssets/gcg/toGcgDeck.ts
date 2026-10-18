@@ -44,11 +44,10 @@ const toCharacter = (
   skillRows: ExcelGcgSkillRow[],
   costTypes: Set<string>,
 ): GcgDeckSliceCharacter => {
-  const elementTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_ELEMENT_"));
-  const element = elementTag ? toElement(`GCG_COST_DICE_${elementTag.slice("GCG_TAG_ELEMENT_".length)}`) : undefined;
+  const elementSuffix = findTagSuffix(characterRow.tagList, "GCG_TAG_ELEMENT_");
+  const element = elementSuffix === undefined ? undefined : toElement(`GCG_COST_DICE_${elementSuffix}`);
   if (!element) throw invalidRead(`character ${characterRow.id} names no element`);
-  const weaponTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
-  const nationTag = characterRow.tagList.find((tag) => tag.startsWith("GCG_TAG_NATION_"));
+  const nation = findTagSuffix(characterRow.tagList, "GCG_TAG_NATION_");
   return {
     descriptionTextId: characterRow.descTextMapHash,
     element,
@@ -56,9 +55,9 @@ const toCharacter = (
     id: characterRow.id,
     maxEnergy: characterRow.maxEnergy,
     nameTextId: characterRow.nameTextMapHash,
-    ...(nationTag ? { nation: nationTag.slice("GCG_TAG_NATION_".length) } : {}),
+    ...(nation === undefined ? {} : { nation }),
     skills: characterRow.skillList.map((skillId) => toSkill(findRow(skillRows, skillId, "skill"), costTypes)),
-    weapon: weaponTag ? weaponTag.slice("GCG_TAG_WEAPON_".length) : "",
+    weapon: findTagSuffix(characterRow.tagList, "GCG_TAG_WEAPON_") ?? "",
   };
 };
 
@@ -87,8 +86,8 @@ const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTyp
 
 // A weapon card names its weapon kind, the tag's suffix as a character's weapon is named, and any other card names none
 const toCardWeapon = ({ tagList }: ExcelGcgCardRow): { weapon?: string } => {
-  const weaponTag = tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
-  return weaponTag ? { weapon: weaponTag.slice("GCG_TAG_WEAPON_".length) } : {};
+  const weapon = findTagSuffix(tagList, "GCG_TAG_WEAPON_");
+  return weapon === undefined ? {} : { weapon };
 };
 
 // A companion support card carries the ally tag the dump marks the Companion Support Cards with, and any other card carries no mark
@@ -149,6 +148,10 @@ const EquipmentTagKindMap: [string, GcgCardKind][] = [
   ["GCG_TAG_WEAPON", GcgCardKind.Weapon],
   ["GCG_TAG_ARTIFACT", GcgCardKind.Artifact],
 ];
+
+// The suffix of the first tag under a prefix, or undefined where no tag holds that prefix
+const findTagSuffix = (tagList: string[], prefix: string): string | undefined =>
+  tagList.find((tag) => tag.startsWith(prefix))?.slice(prefix.length);
 
 const findRow = <TRow extends { id: number }>(rows: TRow[], id: number, name: string): TRow => {
   const row = rows.find((candidate) => candidate.id === id);
