@@ -9,7 +9,8 @@ import { parseLeftAssociative } from "#src/services/parser/parseLeftAssociative"
 export const parseNullish: MathExpressionRuleParser = (state, parse): MathExpressionNode =>
   parseLeftAssociative(
     state,
+    parse,
     MathExpressionOperatorMap[MathExpressionGrammarRule.Nullish],
-    () => parse(state, MathExpressionGrammarRule.LeftHand),
+    MathExpressionGrammarRule.LeftHand,
     createLogicalNode,
   );

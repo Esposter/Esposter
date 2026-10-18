@@ -9,7 +9,8 @@ import { parseLeftAssociative } from "#src/services/parser/parseLeftAssociative"
 export const parseMultiplicative: MathExpressionRuleParser = (state, parse): MathExpressionNode =>
   parseLeftAssociative(
     state,
+    parse,
     MathExpressionOperatorMap[MathExpressionGrammarRule.Multiplicative],
-    () => parse(state, MathExpressionGrammarRule.ImplicitProduct),
+    MathExpressionGrammarRule.ImplicitProduct,
     createBinaryNode,
   );

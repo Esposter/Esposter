@@ -9,7 +9,8 @@ import { parseLeftAssociative } from "#src/services/parser/parseLeftAssociative"
 export const parseBitwiseXor: MathExpressionRuleParser = (state, parse): MathExpressionNode =>
   parseLeftAssociative(
     state,
+    parse,
     MathExpressionOperatorMap[MathExpressionGrammarRule.BitwiseXor],
-    () => parse(state, MathExpressionGrammarRule.BitwiseAnd),
+    MathExpressionGrammarRule.BitwiseAnd,
     createBinaryNode,
   );
