@@ -1,38 +1,11 @@
-import type { GrassRing } from "#src/models/vegetation/GrassRing";
-import type { GroundCapture } from "#src/models/vegetation/GroundCapture";
-import type { WaterUniforms } from "#src/models/water/WaterUniforms";
-import type { Vector2 } from "three";
-import type { Node, UniformNode } from "three/webgpu";
+import type { GrassCell } from "#src/models/vegetation/GrassCell";
+import type { GrassCellOptions } from "#src/models/vegetation/GrassCellOptions";
 
 import { sampleGroundCapture } from "#src/nodes/sampleGroundCapture";
-import { float, hash, step, smoothstep, vec2 } from "three/tsl";
+import { float, hash, smoothstep, step, vec2 } from "three/tsl";
 
 // How green a ground colour must be, its green over its red and blue, for grass to grow on it rather than rock or sand
 const MIN_GREENNESS = 0.05;
-
-export interface GrassCellOptions {
-  // The camera's position across the ground, which the ring is centred on and fades by
-  cameraGround: UniformNode<"vec2", Vector2>;
-  // The share of blades grown, which a quality tier lowers first
-  density: UniformNode<"float", number>;
-  groundCapture: GroundCapture;
-  // The cell's index in the ring's grid, row by row
-  index: Node<"float">;
-  ring: GrassRing;
-  waterUniforms: Pick<WaterUniforms, "level">;
-}
-
-export interface GrassCell {
-  // The blade's turn about the vertical
-  angle: Node<"float">;
-  // The ground's colour and height under the cell
-  captured: Node<"vec4">;
-  // The cell's ground point, in world coordinates
-  ground: Node<"vec2">;
-  // The blade's size, zero where the cell grows none: outside the ring's fade, off green ground, under water or not
-  // grown by the density
-  size: Node<"float">;
-}
 
 // A cell of a grass ring: its place in the grid centred on the camera, moving in whole cells so blades stay put in the
 // world, a hash of the cell jittering it, turning it, sizing it and deciding whether the tier grows it. It grows only on
