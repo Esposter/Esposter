@@ -1,6 +1,6 @@
 ## Purpose
 
-Beidou's kit as built: her strikes, charged attack and plunges, Tidecaller's press and shield, and Stormbreaker with the Thunderbeast's Targe and its discharges, with Tidecaller's hold and her other constellations and passives left unbuilt.
+Beidou's kit as built: her strikes, charged attack and plunges, Tidecaller's press and shield, and Stormbreaker with the Thunderbeast's Targe and its discharges, with Tidecaller's hold, Constellations 1, 2 and 4 and her passives left unbuilt.
 
 ## Requirements
 
