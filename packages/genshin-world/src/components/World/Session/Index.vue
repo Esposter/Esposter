@@ -414,7 +414,7 @@ const { chestInteractables, digChestById, openChestById } = useWorldChests({
   waterLevel: windriseData.water.level,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedGadget } = useWorldGadgets({
+const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, stepQuickUse } = useWorldGadgets({
   gameDataBaseUrl,
   inventory,
 });
@@ -856,8 +856,14 @@ defineExpose({ jumpTo, readCameraPosition });
               seconds: context.delta,
             });
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
-          if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.QuickUseGadget))
-            quickUseEquippedGadget(getWorldNow());
+          stepQuickUse({
+            isActive: !isPaused && screenKind === ScreenKind.World,
+            isHeld:
+              inputState.heldActions.has(InputAction.QuickUseGadget) ||
+              inputState.pressedActions.has(InputAction.QuickUseGadget),
+            now: getWorldNow(),
+            seconds: context.delta,
+          });
           hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
