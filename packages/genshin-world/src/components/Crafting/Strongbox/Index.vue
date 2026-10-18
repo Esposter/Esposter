@@ -13,7 +13,7 @@ import { computeMysticOfferingText } from "#src/services/crafting/computeMysticO
 import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
 import { getStrongboxCandidates } from "#src/services/crafting/getStrongboxCandidates";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { GameTextKey, splitGameTextColors } from "genshin-text";
 import { computed, ref } from "vue";
 
 interface Props {
@@ -49,6 +49,12 @@ const candidates = computed(() =>
 );
 const isReady = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length === pickedStrongbox.value.needCount,
+);
+// The confirm is the game's own words, in the colours their tags give the counts and the strongbox's name
+const confirmSegments = computed(() =>
+  splitGameTextColors(
+    computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox.value, names),
+  ),
 );
 
 const pickStrongbox = (id: number) => {
@@ -107,7 +113,7 @@ const create = () => {
     </GameButton>
     <template v-if="isConfirming">
       <p>
-        {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox, names) }}
+        <span v-for="({ color, text }, index) of confirmSegments" :key="index" :style="{ color }">{{ text }}</span>
       </p>
       <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
