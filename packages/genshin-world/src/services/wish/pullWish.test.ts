@@ -92,4 +92,18 @@ describe(pullWish, () => {
       ).result.item,
     ).toBe(featuredFourStar);
   });
+
+  test("noelle is drawn only on the eighth beginners' wish", () => {
+    expect.hasAssertions();
+
+    // A four-star roll on every wish, the first seven drawing the four-stars the beginners' pool holds and not Noelle
+    let currentPity = pity;
+    for (let wish = 1; wish < BEGINNERS_GUARANTEED_WISH; wish++) {
+      const { pity: nextPity, result } = pullWish(createBanner(BannerKind.Beginners), currentPity, () => 0.03);
+      expect(result.item).toBe(fourStar);
+      currentPity = nextPity;
+    }
+
+    expect(pullWish(createBanner(BannerKind.Beginners), currentPity, () => 0.03).result.item).toBe(featuredFourStar);
+  });
 });
