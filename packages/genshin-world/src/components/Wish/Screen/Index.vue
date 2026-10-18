@@ -34,6 +34,7 @@ import { getOpenEventBanners } from "#src/services/wish/getOpenEventBanners";
 import { getWishCost } from "#src/services/wish/getWishCost";
 import { makeWishes } from "#src/services/wish/makeWishes";
 import { sortWishResults } from "#src/services/wish/sortWishResults";
+import { toWishHistoryCells } from "#src/services/wish/toWishHistoryCells";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BannerKind, BannerKinds, GameScreen, WishScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey, splitGameTextColors } from "genshin-text";
@@ -68,6 +69,21 @@ const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTe
 const emit = defineEmits<{ close: [] }>();
 // The banners the world offers now, their pools read from the stat tables and named in the reader's language: the
 // Permanent ones and each event banner the schedule has open at the game's time
+// The draws the History popup lists, each named from the stat tables and its banner labelled in the reader's language
+const historyCells = computed(() =>
+  toWishHistoryCells(
+    wishHistory.value,
+    (itemId) => {
+      const data = statTables.characterDataMap.get(itemId) ?? statTables.weaponDataMap.get(itemId);
+      return data ? { name: nameText[data.nameTextId], rarity: data.rarity } : { name: "", rarity: 0 };
+    },
+    (bannerKind) =>
+      splitGameTextColors(gameText[BannerKindGameTextKeyMap[bannerKind]])
+        .map(({ text }) => text)
+        .join(""),
+    Temporal.Now.timeZoneId(),
+  ),
+);
 const banners = computed(() =>
   createBanners(
     statTables,
@@ -256,6 +272,7 @@ const wish = (count: number) => {
       :currencies
       :details-label="gameText[GameTextKey.WishDetails]"
       :fate-points
+      :history="historyCells"
       :history-label="gameText[GameTextKey.WishHistory]"
       :path-label="isWeaponWish ? gameText[GameTextKey.WishEpitomizedPath] : ''"
       :pool
