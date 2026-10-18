@@ -18,8 +18,14 @@ export const domainLevelSchema = z.object({
   treeRewards: z.array(rewardItemSchema),
 });
 
-// A challenge domain's kind and its levels, read by its entrance's entry id
-export const domainScheduleSchema = z.object({ kind: z.enum(DomainKind), levels: z.array(domainLevelSchema) });
+// A challenge domain's kind, the artifact sets a Domain of Blessing's claim draws its artifacts among (none for the other
+// Kinds, and none yet for the Blessing domains, whose sets the dump's text does not name), and its levels, read by its
+// Entrance's entry id
+export const domainScheduleSchema = z.object({
+  artifactSetIds: z.array(z.int().positive()),
+  kind: z.enum(DomainKind),
+  levels: z.array(domainLevelSchema),
+});
 
 export type DomainLevel = z.infer<typeof domainLevelSchema>;
 export type DomainSchedule = z.infer<typeof domainScheduleSchema>;

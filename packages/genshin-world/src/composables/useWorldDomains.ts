@@ -1,10 +1,15 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
+import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
+import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
+import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
@@ -28,7 +33,10 @@ import { computeDomainScenePose } from "#src/services/domains/computeDomainScene
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
+import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
+import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
+import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getResultAsync } from "@esposter/shared";
@@ -43,7 +51,9 @@ interface DomainArena {
   entryId: number;
   // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
   startedAt: number;
+  artifactSetIds: readonly number[];
   level: DomainChallengeLevel;
+  treeArtifacts: TreeArtifact[];
   treeRewards: RewardItem[];
 }
 
@@ -62,6 +72,8 @@ interface DomainChallengeRun {
 export const useWorldDomains = ({
   adventureExp,
   adventureRankTables,
+  artifactMainAffixPools,
+  artifactRarityDataMap,
   completedMainQuestIds,
   events,
   gameDataBaseUrl,
@@ -72,6 +84,8 @@ export const useWorldDomains = ({
   nameText,
   random,
   rank,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   setInventory,
   setWallet,
   unlockedLandmarks,
@@ -79,6 +93,8 @@ export const useWorldDomains = ({
 }: {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
+  artifactMainAffixPools: ArtifactMainAffixPool[];
+  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   events: WorldEvents;
   gameDataBaseUrl: string;
@@ -89,6 +105,8 @@ export const useWorldDomains = ({
   nameText: Readonly<Record<string, string>>;
   random: () => number;
   rank: Ref<number>;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
+  reliquarySets: readonly ReliquarySetData[];
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
@@ -183,6 +201,8 @@ export const useWorldDomains = ({
       entryId: entrance.entryId,
       level,
       startedAt: now,
+      artifactSetIds: schedule.artifactSetIds,
+      treeArtifacts: scheduledLevel.treeArtifacts,
       treeRewards: scheduledLevel.treeRewards,
     };
     domainArena.value = arena;
@@ -262,6 +282,14 @@ export const useWorldDomains = ({
     const arena = domainArena.value;
     if (!arena || !isDomainTreeRaised.value) return;
     domainClaimOffers.value = undefined;
+    // Each claim draws its artifacts apart from the domain's sets before the resin is spent, so a domain with none to draw
+    // From is refused with the resin still held
+    const artifacts = Array.from({ length: offer.claimCount }, () =>
+      drawDomainArtifacts(arena.treeArtifacts, arena.artifactSetIds, reliquarySets, random, {
+        artifactMainAffixPools,
+        artifactRarityDataMap,
+      }),
+    ).flat();
     const claim = claimPetrifiedTree(
       adventureRankTables,
       wallet.value,
@@ -276,8 +304,18 @@ export const useWorldDomains = ({
       materialDataMap,
     );
     if (!claim) return;
+    // Each artifact goes into the bag as an entry of its own with the stats it rolled, so each one keeps its own
+    const nextInventory = artifacts.reduce(
+      (bag, dropped) =>
+        addDroppedItem(
+          bag,
+          dropped,
+          getDroppedItemDefinition(dropped.itemId, nameText, materialDataMap, reliquaryPieceEntryMap),
+        ).inventory,
+      claim.inventory,
+    );
     setWallet(claim.wallet);
-    setInventory(claim.inventory);
+    setInventory(nextInventory);
     adventureExp.value = claim.adventureExp;
     isDomainTreeRaised.value = false;
   };

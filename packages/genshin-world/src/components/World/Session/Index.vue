@@ -871,6 +871,8 @@ const {
 } = useWorldDomains({
   adventureExp,
   adventureRankTables,
+  artifactMainAffixPools,
+  artifactRarityDataMap,
   completedMainQuestIds,
   events,
   gameDataBaseUrl,
@@ -881,6 +883,8 @@ const {
   nameText,
   random: () => kitContext.random(),
   rank,
+  reliquaryPieceEntryMap,
+  reliquarySets,
   setInventory,
   setWallet,
   unlockedLandmarks,
