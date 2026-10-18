@@ -35,15 +35,13 @@ const createYoimiyaCombatant = (ascension = 0): Combatant => ({
 });
 
 // The damage an enemy took from a hit a combatant dealt as a kind of attack, if it was dealt as one
-const createDamageTakenEvent = (enemy: Enemy, hit: KitHit, striker: Combatant, attackTag?: AttackTag): KitEvent => ({
-  attackTag,
-  enemy,
-  hit,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker,
-});
+const createDamageTakenEvent = (
+  enemy: Enemy,
+  hit: KitHit,
+  striker: Combatant,
+  attackTag?: AttackTag,
+  isDefeated = false,
+): KitEvent => ({ attackTag, enemy, hit, isCritical: false, isDefeated, kind: KitEventKind.DamageTaken, striker });
 
 describe(createYoimiyaKitBehaviour, () => {
   const OTHER_CHARACTER_ID = 10_000_003;
@@ -162,5 +160,83 @@ describe(createYoimiyaKitBehaviour, () => {
     YOIMIYA_KIT.onKitEvent?.(arrow, context, combatant);
 
     expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
+  });
+
+  test("a Constellation 1 switch lengthens the Aurous Blaze it marks by 4 seconds", () => {
+    expect.hasAssertions();
+    const combatant = { ...createYoimiyaCombatant(), constellationCount: 1 };
+    const context = createKitTestContext(combatant);
+    const marked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    YOIMIYA_KIT.elementalBurst.onStart?.(context);
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(marked, takeOne(YOIMIYA_KIT.elementalBurst.hits), combatant, AttackTag.ElementalBurst),
+      context,
+      combatant,
+    );
+
+    expect(marked.statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining])).toStrictEqual([
+      ["yoimiya-aurous-blaze", 14],
+    ]);
+  });
+
+  test("a Constellation 1 switch raises her ATK by 20% for 20 seconds when a marked enemy is defeated", () => {
+    expect.hasAssertions();
+    const combatant = { ...createYoimiyaCombatant(), constellationCount: 1 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const marked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    YOIMIYA_KIT.elementalBurst.onStart?.(context);
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(marked, takeOne(YOIMIYA_KIT.elementalBurst.hits), combatant, AttackTag.ElementalBurst),
+      context,
+      combatant,
+    );
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(
+        marked,
+        takeOne(takeOne(YOIMIYA_KIT.normalAttacks).hits),
+        combatant,
+        AttackTag.NormalAttack,
+        true,
+      ),
+      context,
+      combatant,
+    );
+
+    expect(
+      kitEffectState.effects.flatMap((effect) =>
+        effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
+      ),
+    ).toStrictEqual([[Attribute.AttackPercent, 0.2, 20]]);
+  });
+
+  test("a Constellation 0 switch leaves the Aurous Blaze at 10 seconds and raises no ATK on a defeat", () => {
+    expect.hasAssertions();
+    const combatant = createYoimiyaCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const marked = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    YOIMIYA_KIT.elementalBurst.onStart?.(context);
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(marked, takeOne(YOIMIYA_KIT.elementalBurst.hits), combatant, AttackTag.ElementalBurst),
+      context,
+      combatant,
+    );
+    YOIMIYA_KIT.onKitEvent?.(
+      createDamageTakenEvent(
+        marked,
+        takeOne(takeOne(YOIMIYA_KIT.normalAttacks).hits),
+        combatant,
+        AttackTag.NormalAttack,
+        true,
+      ),
+      context,
+      combatant,
+    );
+
+    expect([
+      marked.statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining]),
+      kitEffectState.effects.filter((effect) => effect.kind === "buff"),
+    ]).toStrictEqual([[["yoimiya-aurous-blaze", 10]], []]);
   });
 });
