@@ -423,6 +423,7 @@ const {
   serverClockOffsetMs,
   setInventory,
   setWallet,
+  weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
 // The Elemental Monuments of Mondstadt, the Seelies and the Time Trial Challenges, each lit, led or started by the player,
@@ -468,6 +469,7 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   reliquarySets,
   setInventory,
   setWallet,
+  weaponDataMap: statTables.weaponDataMap,
   wallet,
   waterLevel: windriseData.water.level,
 });
