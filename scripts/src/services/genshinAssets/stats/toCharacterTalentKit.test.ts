@@ -26,15 +26,18 @@ describe(toCharacterTalentKit, () => {
   ]);
   // An own form's set that names no Elemental Skill or burst, as the Traveler's does
   const OWN_DEPOT: ExcelSkillDepotRow = {
+    energySkill: 0,
     id: 1,
     LLEFDMDOMGG: [{ DHIEHDPAFGI: 1, proudSkillGroupId: 21 }],
     skills: [NORMAL_ATTACK_ID, 0, 0, 0],
+    talents: [],
   };
   const ELEMENT_DEPOT: ExcelSkillDepotRow = {
     energySkill: BURST_ID,
     id: 2,
     LLEFDMDOMGG: [{ DHIEHDPAFGI: 4, proudSkillGroupId: 22 }],
     skills: [NORMAL_ATTACK_ID, SKILL_ID, 0, 0],
+    talents: [],
   };
 
   test("takes the talents and passives of the first set that names all three", () => {

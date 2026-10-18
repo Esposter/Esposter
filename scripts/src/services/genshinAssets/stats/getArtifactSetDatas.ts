@@ -13,12 +13,12 @@ export const getArtifactSetDatas = (notes: string[]): ArtifactSetData[] => {
   const affixIdRowsMap = Map.groupBy(readExcelTable<ExcelEquipAffixRow>("EquipAffixExcelConfigData"), ({ id }) => id);
   return readExcelTable<ExcelReliquarySetRow>("ReliquarySetExcelConfigData").flatMap(
     ({ equipAffixId, setId, setNeedNum }) => {
-      const affixRows = equipAffixId === undefined ? undefined : affixIdRowsMap.get(equipAffixId);
+      const affixRows = equipAffixId === 0 ? undefined : affixIdRowsMap.get(equipAffixId);
       if (!affixRows) return [];
       return [
         artifactSetDataSchema.parse({
           bonuses: setNeedNum.map((pieceCount, index) => {
-            const affixRow = affixRows.find(({ level = 0 }) => level === index);
+            const affixRow = affixRows.find(({ level }) => level === index);
             const paramList = affixRow?.paramList ?? [];
             return {
               attributeLines: toAttributeLines(affixRow?.addProps ?? [], notes),

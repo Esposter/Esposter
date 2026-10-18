@@ -1,6 +1,6 @@
 import { GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { ArtifactSlot, Element } from "genshin-world";
+import { ArtifactSlot, DestroyRule, Element } from "genshin-world";
 import { join } from "node:path";
 
 // The world package's generated folder, which holds the committed loader maps
@@ -27,8 +27,10 @@ export const AssociationRegionIdMap: Readonly<Record<string, string>> = {
 };
 // The character table's playable characters, apart from its test and retired rows
 export const PLAYABLE_AVATAR_USE_TYPE = "AVATAR_FORMAL";
-// The property a table writes in a slot holding nothing
+// The property a table leaves out, its first value, in a slot holding nothing
 export const EMPTY_PROPERTY_TYPE = "FIGHT_PROP_NONE";
+// The destroy rule a weapon the table leaves out holds, the first of its enum
+export const DEFAULT_DESTROY_RULE: DestroyRule = DestroyRule.None;
 // The item id a slot holding nothing names: an unused cost slot of a phase, and a weapon refined by a copy alone
 export const EMPTY_ITEM_ID = 0;
 // The Traveler's two avatars, and the element their form is by default until a statue gives them another

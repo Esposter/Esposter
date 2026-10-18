@@ -17,7 +17,7 @@ export const getCharacterSkillDepotRows = (
     return depotRow === undefined ? [] : [depotRow];
   });
   if (!TRAVELER_AVATAR_IDS.has(id)) return depotRows;
-  const checkIsFormDepot = ({ energySkill = 0 }: ExcelSkillDepotRow) =>
+  const checkIsFormDepot = ({ energySkill }: ExcelSkillDepotRow) =>
     skillMap.get(energySkill)?.costElemType === TRAVELER_DEFAULT_ELEMENT;
   return depotRows.toSorted(
     (firstRow, secondRow) => Number(checkIsFormDepot(secondRow)) - Number(checkIsFormDepot(firstRow)),

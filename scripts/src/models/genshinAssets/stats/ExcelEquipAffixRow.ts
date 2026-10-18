@@ -6,7 +6,7 @@ export interface ExcelEquipAffixRow {
   addProps: ExcelProperty[];
   descTextMapHash: number;
   id: number;
-  level?: number;
+  level: number;
   nameTextMapHash: number;
   paramList: number[];
 }

@@ -8,7 +8,7 @@ import { artifactExpMaterialSchema } from "genshin-world";
 
 // Every item the game takes into an artifact as EXP, with how much EXP one of it adds before the enhancement's bonus
 export const getArtifactExpMaterials = (): ArtifactExpMaterial[] =>
-  readExcelTable<ExcelMaterialRow>("MaterialExcelConfigData").flatMap(({ id, itemUse = [] }) => {
+  readExcelTable<ExcelMaterialRow>("MaterialExcelConfigData").flatMap(({ id, itemUse }) => {
     const expUse = itemUse.find(({ useOp }) => useOp === ARTIFACT_EXP_ITEM_USE);
     return expUse ? [artifactExpMaterialSchema.parse({ experience: Number(takeOne(expUse.useParam, 0)), id })] : [];
   });

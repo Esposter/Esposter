@@ -32,7 +32,7 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
   const getText = (hash: number): string => englishText.get(String(hash)) ?? "";
 
   const toConstellationDepot = (depotRow: ExcelSkillDepotRow): ConstellationDepot | undefined => {
-    const talentRows = (depotRow.talents ?? []).flatMap((talentId) => {
+    const talentRows = depotRow.talents.flatMap((talentId) => {
       const talentRow = talentMap.get(talentId);
       return talentRow === undefined ? [] : [talentRow];
     });
@@ -40,7 +40,7 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
     const [normalAttackSkillId, elementalSkillId] = depotRow.skills;
     const normalAttack = skillMap.get(normalAttackSkillId ?? 0);
     const elementalSkill = skillMap.get(elementalSkillId ?? 0);
-    const elementalBurst = skillMap.get(depotRow.energySkill ?? 0);
+    const elementalBurst = skillMap.get(depotRow.energySkill);
     if (
       talentRows.length !== CONSTELLATION_COUNT ||
       normalAttack === undefined ||
@@ -54,9 +54,9 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
       );
 
     const proudSkillGroupIds = {
-      [CombatTalent.ElementalBurst]: elementalBurst.proudSkillGroupId ?? 0,
-      [CombatTalent.ElementalSkill]: elementalSkill.proudSkillGroupId ?? 0,
-      [CombatTalent.NormalAttack]: normalAttack.proudSkillGroupId ?? 0,
+      [CombatTalent.ElementalBurst]: elementalBurst.proudSkillGroupId,
+      [CombatTalent.ElementalSkill]: elementalSkill.proudSkillGroupId,
+      [CombatTalent.NormalAttack]: normalAttack.proudSkillGroupId,
     };
     const skillNames = {
       [CombatTalent.ElementalBurst]: getText(elementalBurst.nameTextMapHash),
@@ -73,7 +73,7 @@ export const getCharacterConstellationKits = (notes: string[]): CharacterConstel
 
     const constellations: Constellation[] = [];
     for (const [position, talentRow] of talentRows.entries()) {
-      const actions = actionMap.get(talentRow.openConfig);
+      const actions = actionMap.get(talentRow.openConfig ?? "");
       if (actions === undefined) {
         notes.push(`talent ${talentRow.talentId} has no config in the dump, so depot ${depotRow.id} is left out`);
         return undefined;

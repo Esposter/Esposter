@@ -7,5 +7,5 @@ export interface ExcelSkillRow {
   id: number;
   maxChargeNum: number;
   nameTextMapHash: number;
-  proudSkillGroupId?: number;
+  proudSkillGroupId: number;
 }

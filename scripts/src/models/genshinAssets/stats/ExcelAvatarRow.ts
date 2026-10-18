@@ -1,4 +1,4 @@
-// One row of the game's character table, of the fields the roster needs
+// One row of the game's character table, of the fields the roster needs, its use type left out for a test character
 export interface ExcelAvatarRow {
   attackBase: number;
   avatarPromoteId: number;
@@ -15,6 +15,6 @@ export interface ExcelAvatarRow {
   propGrowCurves: { growCurve: string; type: string }[];
   qualityType: string;
   skillDepotId: number;
-  useType: string;
+  useType?: string;
   weaponType: string;
 }
