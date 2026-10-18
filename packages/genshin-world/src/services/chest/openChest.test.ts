@@ -44,6 +44,32 @@ describe(openChest, () => {
     expect(opening.wallet[Currency.AnemoSigil]).toBe(1);
   });
 
+  test("a Luxurious chest pays its Primogems and Adventure EXP, and no Mora", () => {
+    expect.hasAssertions();
+
+    const luxuriousChest = { ...commonChest, kind: ChestKind.Luxurious };
+    expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, false)).toStrictEqual({
+      adventureExp: 30,
+      bagDrops: [],
+      drops: [{ count: 3, itemId: 104_003 }],
+      openedChestIds: new Set([CHEST_ID]),
+      wallet: { ...EMPTY_WALLET, [Currency.Primogem]: 10 },
+    });
+  });
+
+  test("a Remarkable chest pays its Primogems and Adventure EXP, and pours nothing", () => {
+    expect.hasAssertions();
+
+    const remarkableChest = { ...commonChest, kind: ChestKind.Remarkable };
+    expect(openChest(remarkableChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0.999, false)).toStrictEqual({
+      adventureExp: 30,
+      bagDrops: [],
+      drops: [],
+      openedChestIds: new Set([CHEST_ID]),
+      wallet: { ...EMPTY_WALLET, [Currency.Primogem]: 5 },
+    });
+  });
+
   test("an opened chest pours its drops out on open ground", () => {
     expect.hasAssertions();
 

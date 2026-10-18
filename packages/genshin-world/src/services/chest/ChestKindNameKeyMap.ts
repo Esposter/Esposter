@@ -6,5 +6,7 @@ import { GameTextKey } from "genshin-text";
 export const ChestKindNameKeyMap: Partial<Record<ChestKind, GameTextKey>> = {
   [ChestKind.Common]: GameTextKey.CommonChest,
   [ChestKind.Exquisite]: GameTextKey.ExquisiteChest,
+  [ChestKind.Luxurious]: GameTextKey.LuxuriousChest,
   [ChestKind.Precious]: GameTextKey.PreciousChest,
+  [ChestKind.Remarkable]: GameTextKey.RemarkableChest,
 };
