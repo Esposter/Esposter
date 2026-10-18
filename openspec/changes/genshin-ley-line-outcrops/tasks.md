@@ -4,7 +4,7 @@
 
 ## 2. The reset and the outcrop's states
 
-- [ ] 2.1 Move an outcrop through waiting, fighting and cleared, and on each claim to the next place in its group, with the daily reset drawing new places. Verify: tests named after the scenarios "A cleared outcrop stays in place until the reset", "Claiming moves the outcrop to its group's next place" and "The daily reset draws new places for open outcrops", written first and seen failing.
+- [x] 2.1 Move an outcrop through waiting, fighting and cleared, and on each claim to the next place in its group, with the daily reset drawing new places. Verify: tests named after the scenarios "A cleared outcrop stays in place until the reset", "Claiming moves the outcrop to its group's next place" and "The daily reset draws new places for open outcrops", written first and seen failing.
 
 ## 3. The challenge and the blossom
 
