@@ -21,6 +21,17 @@ describe(stepPartyCooldowns, () => {
     ]);
   });
 
+  test("the team's Nightsoul burst cooldown runs off with the team's particle cooldowns, on the step its seconds do", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    party.nightsoulBurstCooldownSeconds = 1;
+    stepPartyCooldowns(party, 0.75);
+    expect(party.nightsoulBurstCooldownSeconds).toBeCloseTo(0.25);
+    stepPartyCooldowns(party, 0.75);
+    expect(party.nightsoulBurstCooldownSeconds).toBe(0);
+  });
+
   test("a burst and a particle cooldown run out on the step their seconds do, not one step late", () => {
     expect.hasAssertions();
 

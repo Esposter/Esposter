@@ -1,9 +1,9 @@
 import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { takeOne } from "@esposter/shared";
 
-const NATLAN_REGION_ID = "natlan";
 // The counted members the passive's Elemental Mastery needs, as its text gives them
 const MEMBERS_FOR_ELEMENTAL_MASTERY = 3;
 

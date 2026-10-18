@@ -21,11 +21,11 @@ import { InternalCooldownTagGroupMap } from "#src/services/combat/internalCooldo
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
 import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
-import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { checkIsBluntHit } from "#src/services/kit/checkIsBluntHit";
+import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
@@ -37,7 +37,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
 // And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it with its
-// Reactions' own poise through damageEnemy, against the enemy's RES as its statuses leave it, and a launching hit that
+// Reactions' own poise through the one damage point, against the enemy's RES as its statuses leave it, and a launching hit that
 // Staggers it leaves it launched. Its element reacts as the
 // Party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's
 // Bonuses instead. It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and
@@ -157,10 +157,13 @@ export const strikeEnemy = (
           stat: attack,
           talentMultiplier,
         });
-  const energyDrops = damageEnemy(enemy, {
-    damage: damage + transformativeDamage,
-    poiseDamage: poiseDamage + reactionPoiseDamage,
-  });
+  const energyDrops = dealKitEnemyDamage(
+    enemy,
+    { damage: damage + transformativeDamage, poiseDamage: poiseDamage + reactionPoiseDamage },
+    element !== undefined,
+    combatant,
+    context,
+  );
   // A launching hit that staggers the enemy throws it airborne for as long as the stagger holds it, as the wiki's Air
   // Stagger level does an enemy whose poise is broken
   if (kitHit.isLaunching && enemy.state === EnemyState.Stagger)

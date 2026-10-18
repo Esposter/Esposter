@@ -1,11 +1,17 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
@@ -18,23 +24,71 @@ export const KINICH_CHARACTER_ID = 10_000_101;
 // The Nightsoul points his blessing holds at most, and the frames it lasts, ten seconds and ten frames, as gcsim (MIT)
 // Kinich/kinich.go and skill.go set them
 const NIGHTSOUL_MAXIMUM = 20;
-const NIGHTSOUL_BLESSING_FRAMES = 10 * 60 + 10;
+const NIGHTSOUL_BLESSING_SECONDS = toKitSeconds(10 * 60 + 10);
 // One point every thirty frames while the blessing lasts, two a second, as gcsim skill.go timePassGenerateNSPoints does
 const NIGHTSOUL_POINTS_PER_SECOND = 2;
+// Each Loop Shot gains three points as it starts, as gcsim (MIT) kinich/skill.go loopShotGenerateNSPoints does (line 176)
+const LOOP_SHOT_POINTS = 3;
+// The blind spot appears thirty frames after the press, as gcsim kinich/skill.go blindSpotAppearanceDelays does (line 32),
+// and Kinich standing in it gives four points, as attack.go does (line 153). Its window is thirty-five degrees either side
+// Of its centre, as attack.go's blindSpotBoundary has it (line 38)
+const BLIND_SPOT_APPEARANCE_FRAMES = 30;
+const BLIND_SPOT_POINTS = 4;
+const BLIND_SPOT_HALF_ANGLE = (35 * Math.PI) / 180;
+
+// The blind spot lies a quarter turn either side of Kinich's bearing from the enemy his press turns to, on the side the
+// Random source draws, as gcsim's createBlindSpot does, at the distance he stands from it. Its circle is the chord of its
+// Window, which Kinich's body must stand within on the frame the blind spot is due, or any frame after it until it is filled
+const castBlindSpot = (context: KitContext, target: Enemy) => {
+  const {
+    activeCombatant: { characterId },
+    body,
+    kitEffectState,
+    random,
+  } = context;
+  const { x, z } = target.position;
+  const distance = Math.hypot(body.position.x - x, body.position.z - z);
+  const bearing = Math.atan2(body.position.x - x, body.position.z - z);
+  const side = Math.floor(random() * 2) * 2 - 1;
+  const centreAngle = bearing + (side * Math.PI) / 2;
+  const blindSpot = castKitField(
+    kitEffectState,
+    characterId,
+    { x: x + distance * Math.sin(centreAngle), z: z + distance * Math.cos(centreAngle) },
+    {
+      nextTickSeconds: toKitSeconds(BLIND_SPOT_APPEARANCE_FRAMES),
+      onTick: (tickContext) => {
+        // A field no longer on the team gives nothing, and neither does a body that is not Kinich's standing in it
+        if (
+          !tickContext.kitEffectState.effects.includes(blindSpot) ||
+          tickContext.activeCombatant.characterId !== characterId
+        )
+          return;
+        generateKitNightsoulPoints(tickContext, BLIND_SPOT_POINTS, NIGHTSOUL_MAXIMUM, characterId);
+        removeKitEffects(tickContext.kitEffectState, (effect) => effect === blindSpot);
+      },
+      radius: 2 * distance * Math.sin(BLIND_SPOT_HALF_ANGLE / 2),
+      secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
+      tickIntervalSeconds: toKitSeconds(1),
+    },
+  );
+};
 
 // Kinich's behaviour: the burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn from
 // The world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted in
 // Frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a second up
-// To twenty while it lasts. Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and
-// Deals the blessing's hits, and the Loop Shots that add to the points, all of which wait on the Nightsoul hook
-// Constellation 1 needs Movement SPD after a mid-air swing, which no attribute carries, and Cannon CRIT DMG
-// Constellation 2 needs the Dendro RES cut on his skill's hits, and the first Scalespiker shot after the blessing
-// Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's energy, which wait on it
-// Constellation 6 needs its bounce hit, which the kit does not build
+// To twenty while it lasts, and his Loop Shots replace his normal attacks in it, each gaining three points as it starts.
+// The press also places the blind spot on the enemy it turns to, which Kinich standing in gives four points to.
+// Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and deals the blessing's hits,
+// And waits on the cooldown bypass and the points gate. Constellation 1 needs Movement SPD after a mid-air swing, which no
+// Attribute carries, and Cannon CRIT DMG. Constellation 2 needs the Dendro RES cut on his skill's hits, and the first
+// Scalespiker shot after the blessing. Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's
+// Energy, which wait on it. Constellation 6 needs its bounce hit, which the kit does not build
 export const createKinichKitBehaviour = ({
   readFrames,
   readFramesList,
   readHitFields,
+  readStance,
 }: KitRecordReader): KitBehaviour => {
   const dragonBreathFields = readHitFields("dragonBreath", []);
   const dragonBreathFirstHitmarkFrames = readFrames("dragonBreathFirstHitmark");
@@ -51,6 +105,13 @@ export const createKinichKitBehaviour = ({
       return { ...dragonBreathFields, hitmarkSeconds: toKitSeconds(hitmarkFrames) };
     });
   };
+  const gainLoopShotPoints = (context: KitContext) => {
+    generateKitNightsoulPoints(context, LOOP_SHOT_POINTS, NIGHTSOUL_MAXIMUM);
+  };
+  // The blessing's two Loop Shots, which take the place of his normal attacks while it lasts
+  const blessingStance = readStance("blessing", {
+    normalAttacks: [{ onStart: gainLoopShotPoints }, { onStart: gainLoopShotPoints }],
+  });
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) =>
@@ -60,13 +121,16 @@ export const createKinichKitBehaviour = ({
     },
     skill: {
       // In the blessing the press is the Scalespiker Cannon, not built, so it does nothing there
-      onStart: ({ activeCombatant: { characterId }, kitEffectState }) => {
-        if (!hasKitNightsoulBlessing(kitEffectState.effects, characterId))
-          enterKitNightsoulBlessing(kitEffectState, characterId, {
-            nightsoulRate: { maximum: NIGHTSOUL_MAXIMUM, perSecond: NIGHTSOUL_POINTS_PER_SECOND },
-            points: 0,
-            secondsRemaining: toKitSeconds(NIGHTSOUL_BLESSING_FRAMES),
-          });
+      onStart: (context, target) => {
+        const { activeCombatant: combatant, kitEffectState } = context;
+        if (hasKitNightsoulBlessing(kitEffectState.effects, combatant.characterId)) return;
+        enterKitNightsoulBlessing(kitEffectState, combatant.characterId, {
+          nightsoulRate: { maximum: NIGHTSOUL_MAXIMUM, perSecond: NIGHTSOUL_POINTS_PER_SECOND },
+          points: 0,
+          secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
+        });
+        enterKitStance(kitEffectState, combatant, blessingStance, NIGHTSOUL_BLESSING_SECONDS, { isEndedOnSwap: true });
+        if (target) castBlindSpot(context, target);
       },
     },
   };

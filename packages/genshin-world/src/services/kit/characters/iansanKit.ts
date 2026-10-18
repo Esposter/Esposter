@@ -1,15 +1,18 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -18,6 +21,8 @@ import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 export const IANSAN_CHARACTER_ID = 10_000_110;
+// The status a Nightsoul burst by a nearby party member gives Iansan at Ascension 4, which her restore's heal reads
+export const IANSAN_WARMING_UP_ID = "iansan-warming-up";
 
 // Her Nightsoul points are set to 54 as her blessing is entered, which lasts 16 seconds, as gcsim (MIT) iansan/skill.go and
 // Iansan.go set them, and her blessing drains 0.6 points every six frames, six a second (nightsoulPointReduceTask)
@@ -57,6 +62,32 @@ const PRECISE_MOVEMENT_ARMED_POINTS = 4;
 const PRECISE_MOVEMENT_ARMING_COOLDOWN_ID = "iansan-precise-movement-arming-cooldown";
 const PRECISE_MOVEMENT_ARMING_COOLDOWN_SECONDS = 2.8;
 
+// Ascension 4's Warming Up, as gcsim (MIT) iansan/asc.go gives it: a Nightsoul burst gives Iansan the status for 10 seconds,
+// And while it lasts a restore of at least one point heals the active character for 60% of her ATK, once every 2.8 seconds.
+// Her ATK is her current one, with her buffs in it
+const ASCENSION_4 = 4;
+const WARMING_UP_SECONDS = 10;
+const WARMING_UP_HEAL_ATTACK_PERCENT = 0.6;
+const WARMING_UP_ICD_ID = "iansan-warming-up-icd";
+const WARMING_UP_ICD_SECONDS = 2.8;
+
+// The heal a restore of points gives the active character, as gcsim's a4Heal gives it, once the status is up and its cooldown
+// Is not, which the cooldown then starts
+const healWarmingUp = (context: KitContext, characterId: number): void => {
+  const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
+  const { effects } = kitEffectState;
+  if (
+    !checkIsKitStatusActive(effects, characterId, IANSAN_WARMING_UP_ID) ||
+    checkIsKitStatusActive(effects, characterId, WARMING_UP_ICD_ID)
+  )
+    return;
+  const iansan = characterIdCombatantMap.get(characterId);
+  if (!iansan) return;
+  const { attack } = getBuffedCombatant(iansan, effects, party, characterIdCombatantMap).attributes;
+  changeKitMemberHealth(context, iansan, activeCombatant.characterId, attack * WARMING_UP_HEAL_ATTACK_PERCENT);
+  addKitStatus(kitEffectState, characterId, { id: WARMING_UP_ICD_ID, secondsRemaining: WARMING_UP_ICD_SECONDS });
+};
+
 // The points a second's restore gives her, as gcsim's a1Points reads them: the armed four once, else one a second
 const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterId: number): number => {
   if (!checkIsKitStatusActive(kitEffectState.effects, characterId, PRECISE_MOVEMENT_ID)) return 0;
@@ -75,10 +106,11 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
 // A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and a second after it lands her restore
 // Starts, running for the burst's 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
 // Burst's Party ATK bonus and its conversion of the points into ATK, the restore's share of the movement of the other
-// Members on the field, which no kit event carries, the Ascension 4 heal of the restore, and the points her constellations
-// Add. Her strikes and plunges are her record's alone
+// Members on the field, which no kit event carries, so Warming Up does not heal on those points, and the points her
+// Constellations add. Her strikes and plunges are her record's alone
 // Constellation 1's energy from each 6 Nightsoul points consumed is built
 // Ascension 1's Precise Movement is built on the Stormflight's strikes, and gives its points on the burst's restore
+// Ascension 4's Warming Up is built: a nearby Nightsoul burst gives it, and the restore's points heal the active character on it
 // Constellation 2 needs Precise Movement on the burst, which the kit does not build
 // Constellation 4 needs the Surging Force stacks after another character's burst, which the kit does not read
 // Constellation 6 needs the Kinetic Energy Scale's extra 3 seconds and Extreme Force on overflow, not built
@@ -105,6 +137,9 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
       : [],
   onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
     const { characterId, constellationCount } = combatant;
+    // Warming Up is given by a Nightsoul burst that goes off anywhere in the team, on the field or off it, as gcsim subscribes
+    if (event.kind === KitEventKind.NightsoulBurst && combatant.ascension >= ASCENSION_4)
+      addKitStatus(kitEffectState, characterId, { id: IANSAN_WARMING_UP_ID, secondsRemaining: WARMING_UP_SECONDS });
     // Ascension 1 arms its four points on a gain or consumption of her points while she is on the field, as gcsim's
     // Nightsoul generate and consume callbacks do, and holds the arming for 2.8 seconds once it has
     if (
@@ -172,7 +207,9 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
           // The restore stops once the blessing it lands in ends, as gcsim's does when the blessing exits
           if (!hasKitNightsoulBlessing(context.kitEffectState.effects, characterId)) return;
           const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
-          if (points > 0) generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
+          if (points <= 0) return;
+          generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
+          healWarmingUp(context, characterId);
         },
       );
     },
