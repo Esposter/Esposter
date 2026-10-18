@@ -66,6 +66,48 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads a circle on the primary target with a forward offset, the offset its constructor gives", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package varesa",
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.QueueAttack(",
+          "\t\tinfo.AttackInfo{AttackTag: attacks.AttackTagElementalBurst},",
+          "\t\tcombat.NewCircleHit(c.Core.Combat.Player(), c.Core.Combat.PrimaryTarget(), info.Point{Y: 1}, 7.5),",
+          "\t\t0,",
+          "\t\t30,",
+          "\t)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+      {
+        attackLine: 5,
+        attackName: undefined,
+        delay: 30,
+        delayLine: 8,
+        file: "burst.go",
+        hitbox: {
+          center: GcsimHitboxCenter.PrimaryTarget,
+          file: "burst.go",
+          line: 6,
+          name: "NewCircleHit",
+          offset: [0, 1],
+          radius: 7.5,
+          shape: GcsimHitboxShape.Circle,
+        },
+        line: 4,
+      },
+    ]);
+  });
+
   test("reads a queue call's single-target hit as a circle of no radius on its primary target", () => {
     expect.hasAssertions();
 
