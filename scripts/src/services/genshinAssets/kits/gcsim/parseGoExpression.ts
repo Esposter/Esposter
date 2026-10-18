@@ -103,9 +103,11 @@ export const parseGoExpression = (
     for (;;)
       if (checkIsPunctuation("(")) {
         position++;
+        const parameterStarts: number[] = [];
         const parameters: GoExpression[] = [];
         skipNewlines();
         while (peek() !== undefined && !checkIsPunctuation(")")) {
+          parameterStarts.push(position);
           parameters.push(readBinary(0));
           skipNewlines();
           if (checkIsPunctuation(",")) position++;
@@ -114,7 +116,7 @@ export const parseGoExpression = (
         position++;
         expression =
           expression.kind === GoExpressionKind.Identifier
-            ? { callee: expression.name, kind: GoExpressionKind.Call, parameters }
+            ? { callee: expression.name, kind: GoExpressionKind.Call, parameterStarts, parameters }
             : UNKNOWN_EXPRESSION;
       } else if (checkIsPunctuation("[")) {
         const indexStart = position;

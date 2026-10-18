@@ -10,7 +10,6 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readArgumentStarts } from "#src/services/genshinAssets/kits/gcsim/readArgumentStarts";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { readGoNumberToken } from "#src/services/genshinAssets/kits/gcsim/readGoNumberToken";
@@ -191,8 +190,9 @@ export const readGcsimQueuedAttacks = (
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
-      if (!checkIsGoPunctuation(tokens[position + 1], "(")) continue;
-      const argumentStarts = readArgumentStarts(tokens, position + 1);
+      const call = parseGoExpression(tokens, position).expression;
+      if (call.kind !== GoExpressionKind.Call) continue;
+      const argumentStarts = call.parameterStarts;
       const [attackStart, delayStart] = [argumentStarts[0], argumentStarts[DELAY_ARGUMENT_INDEX]];
       if (attackStart === undefined) continue;
       const inlineAttackPosition = findInlineAttackPosition(tokens, attackStart);
