@@ -59,4 +59,16 @@ export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";
 // The Sigils a region's Souvenir Shop is paid in, by their item ids in the game's tables: Anemo for Mondstadt and Geo for
 // Liyue. A Souvenir good is one priced in one of them, which is how the builder finds the shops, whose table numbers the
 // Dump's names do not match
-export const SOUVENIR_SIGIL_ITEM_IDS = { liyue: 307, mondstadt: 305 } as const;
+// Each region's Sigil, which its Souvenir Shop takes: the eight Elemental Sigils, named by the region whose Souvenir Shop
+// Each one's shop is. Pyro, Hydro, Electro and Dendro are the four the wiki's Elemental Sigils page places in Natlan,
+// Fontaine, Inazuma and Sumeru; Luna's Nod-Krai follows the element, which no page here names
+export const SOUVENIR_SIGIL_ITEM_IDS = {
+  fontaine: 302,
+  inazuma: 304,
+  liyue: 307,
+  mondstadt: 305,
+  natlan: 301,
+  nodKrai: 308,
+  snezhnaya: 306,
+  sumeru: 303,
+} as const;

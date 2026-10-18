@@ -11,12 +11,14 @@ export const SHOP_NEVER_REFRESHED_AT = Temporal.Instant.fromEpochMilliseconds(0)
 // How many pairs of characters Paimon's Bargains' rotation holds, and the offset that puts January on the fourth of them
 export const PAIMON_BARGAINS_PAIR_COUNT = 6;
 export const PAIMON_BARGAINS_PAIR_OFFSET = 2;
+// Marjorie's shop, the Mondstadt Souvenir Shop, which the Frostbearing Tree's last level opens
+export const MONDSTADT_SOUVENIR_SHOP_ID = 1002;
 // The shop Paimon's Bargains sells its Fates from, by the shop's id, which its screen reads the Fates of
 export const PAIMON_BARGAINS_SHOP_ID = 1001;
 // The shops a city vendor sells from, by the shop's id, each with the key of the shops dataset its goods are published in
 export const SHOP_GOODS_KEYS: readonly (readonly [number, Extract<GameDataKey, `shops/${string}`>])[] = [
   [PAIMON_BARGAINS_SHOP_ID, "shops/paimonsBargains"],
-  [1002, "shops/souvenirMondstadt"],
+  [MONDSTADT_SOUVENIR_SHOP_ID, "shops/souvenirMondstadt"],
   [1004, "shops/mondstadtGeneralGoods"],
   [1011, "shops/mondstadtFlora"],
   [1012, "shops/mondstadtCharles"],
