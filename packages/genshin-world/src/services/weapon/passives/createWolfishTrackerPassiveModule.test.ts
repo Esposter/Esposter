@@ -42,12 +42,10 @@ const createNormalAttackDamageTaken = (target: Enemy): KitEvent => ({
 });
 
 describe(createWolfishTrackerPassiveModule, () => {
-  test("the rank's ATK share is a passive bonus on the wielder", () => {
+  test("the rank's ATK share is the table's line, so the passive adds no ATK bonus", () => {
     expect.hasAssertions();
 
-    expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.AttackPercent },
-    ]);
+    expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [], []) ?? []).toStrictEqual([]);
   });
 
   test("a hit on an enemy under thirty per cent of its HP raises the team's ATK", () => {

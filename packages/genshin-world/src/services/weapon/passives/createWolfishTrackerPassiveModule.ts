@@ -12,14 +12,12 @@ const WOLFISH_TRACKER_COOLDOWN_SECONDS = 30;
 const WOLFISH_TRACKER_HEALTH_SHARE = 0.3;
 const WOLFISH_TRACKER_SECONDS = 12;
 
-// Wolf's Gravestone's Wolfish Tracker at its rank: its wielder's ATK is raised by the rank's percentage.
+// Wolf's Gravestone's Wolfish Tracker at its rank: the rank's ATK is the table's line, which the passive does not repeat.
 // A hit the wielder deals on an enemy under thirty per cent of its HP raises the deployed team's ATK by the rank's second
 // Percentage for twelve seconds, once every thirty seconds. The seconds and the thirty per cent are the text's, not the parameter list's
 export const createWolfishTrackerPassiveModule = (params: number[]): WeaponPassiveModule => {
-  const attackPercent = takeOne(params, 0);
   const teamAttackPercent = takeOne(params, 1);
   return {
-    getPassiveBonuses: () => [{ amount: attackPercent, attribute: Attribute.AttackPercent }],
     onKitEvent: (event, context, combatant) => {
       if (
         event.kind !== KitEventKind.DamageTaken ||
