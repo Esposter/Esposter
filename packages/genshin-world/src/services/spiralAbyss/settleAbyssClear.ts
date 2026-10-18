@@ -10,7 +10,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PartyMember } from "#src/models/party/PartyMember";
 
-import { claimAbyssRewards } from "#src/services/spiralAbyss/claimAbyssRewards";
+import { claimAbyssRewards } from "#src/services/reward/claimAbyssRewards";
 import { recordAbyssChamberClear } from "#src/services/spiralAbyss/recordAbyssChamberClear";
 
 // A clear settled: the cycle's progress after it, the party's carry into the next chamber, and the bag and wallet its rewards paid
