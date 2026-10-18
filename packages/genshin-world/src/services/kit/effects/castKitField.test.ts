@@ -15,7 +15,7 @@ const castNamedField = (
   x: number,
   id: string,
   secondsRemaining: number,
-): void =>
+): KitField =>
   castKitField(
     kitEffectState,
     characterId,
@@ -52,7 +52,7 @@ describe(castKitField, () => {
   test("a field with no name stands beside the one it is cast beside", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
-    const unnamed = (x: number): void =>
+    const unnamed = (x: number): KitField =>
       castKitField(
         kitEffectState,
         1,
