@@ -16,7 +16,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -66,5 +66,12 @@ describe(createDesertPavilionChronicleSetModule, () => {
     expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, kitEffectState.effects)).toBe(
       0,
     );
+
+    stepKitSeconds(context, 14.5);
+    expect(
+      getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects),
+    ).toBeCloseTo(0.4);
+    stepKitSeconds(context, 1);
+    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects)).toBe(0);
   });
 });

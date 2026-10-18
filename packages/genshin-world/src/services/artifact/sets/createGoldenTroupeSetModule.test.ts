@@ -16,7 +16,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -72,5 +72,15 @@ describe(createGoldenTroupeSetModule, () => {
     expect(
       getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, onField, kitEffectState.effects),
     ).toBeCloseTo(0.5);
+
+    stepKitSeconds(context, 1.5);
+    expect(
+      getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, onField, kitEffectState.effects),
+    ).toBeCloseTo(0.5);
+
+    stepKitSeconds(context, 1);
+    expect(
+      getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, onField, kitEffectState.effects),
+    ).toBeCloseTo(0.25);
   });
 });

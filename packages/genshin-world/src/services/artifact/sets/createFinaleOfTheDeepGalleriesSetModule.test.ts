@@ -16,7 +16,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -77,6 +77,15 @@ describe(createFinaleOfTheDeepGalleriesSetModule, () => {
     );
     expect(
       getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, kitEffectState.effects),
+    ).toBeCloseTo(0.6);
+
+    stepKitSeconds(context, 5.5);
+    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, kitEffectState.effects)).toBe(
+      0,
+    );
+    stepKitSeconds(context, 1);
+    expect(
+      getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, kitEffectState.effects),
     ).toBeCloseTo(0.6);
 
     onKitEvent?.(damageDealtBy(AttackTag.ElementalBurst), context, wearer);
