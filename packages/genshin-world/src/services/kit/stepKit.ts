@@ -40,11 +40,17 @@ const getEnteredMovementAction = (
   return undefined;
 };
 
+// Whether a queued dash or jump may start in the state the body is in as its action ends: on foot, or in a state
+// A movement continues in, which a glide is not
+const checkIsQueuedMovementStartState = (state: LocomotionState): boolean =>
+  [...ON_FOOT_LOCOMOTION_STATES, ...MOVEMENT_LOCOMOTION_STATES].includes(state);
+
 // One fixed step of a character's kit, written in place. A plunge strikes its collision every interval it falls and
-// Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster by
-// The Normal ATK SPD its character's infusion raises, and ends where the body leaves the states it allows or at its
-// Seconds, which queues the hits whose hitmarks fall past them, and once none is playing the presses start the next. It
-// Returns the action this step started, which the caller aims on, and pushes the hits that land this step into landedHits
+// Lands its low or high plunge by the drop. Otherwise the action playing moves on its hitmarks, a normal attack faster
+// By the Normal ATK SPD its character's infusion raises, and ends where the body leaves the states it allows or at its
+// Seconds, which queues the hits whose hitmarks fall past them, and once none is playing a queued dash or jump starts
+// If the body can, else the presses start the next. It returns the action this step started, which the caller aims on,
+// And pushes the hits that land this step into landedHits
 export const stepKit = (
   kitState: KitState,
   kit: Kit,
@@ -167,8 +173,10 @@ export const stepKit = (
 
   kitState.comboSeconds += stepSeconds;
   if (kitState.comboSeconds >= NORMAL_ATTACK_RESET_SECONDS) kitState.comboIndex = 0;
-  const movementAction = enteredMovementAction ?? kitState.queuedMovementAction;
+  const { queuedMovementAction } = kitState;
   kitState.queuedMovementAction = undefined;
+  const movementAction =
+    enteredMovementAction ?? (checkIsQueuedMovementStartState(locomotionState) ? queuedMovementAction : undefined);
   if (movementAction && checkCanStartKitAction(movementAction, context))
     return startKitAction(kitState, movementAction, landedHits, context);
   return startNextKitAction(kitState, kit, input, partyMember, stamina, isStrikeEnded, landedHits, context);
