@@ -46,8 +46,8 @@ const listHeldBinaryFiles = async (): Promise<DumpFile[]> => {
       entry.isFile() ? [relative(GAME_TEXT_DIRECTORY, join(entry.parentPath, entry.name)).split(sep).join("/")] : [],
     ),
   );
-  const directories = new Set([...heldPaths].map((path) => path.slice(0, path.lastIndexOf("/"))));
-  const listings = await Promise.all([...directories].map((directory) => listRemoteDirectory(directory)));
+  const directories = new Set(Array.from(heldPaths, (path) => path.slice(0, path.lastIndexOf("/"))));
+  const listings = await Promise.all(Array.from(directories, (directory) => listRemoteDirectory(directory)));
   return listings.flat().filter(({ path }) => heldPaths.has(path));
 };
 
