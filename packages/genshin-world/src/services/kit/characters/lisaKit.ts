@@ -8,7 +8,7 @@ import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { regeneratePartyMemberEnergy } from "#src/services/party/regeneratePartyMemberEnergy";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // Measured: gcsim v2.47.2 (MIT) lisa/skill.go, each press applies a stack of Conductive to the enemy it hits, up to 3,
 // And the stacks have no duration in gcsim. Lisa's charged attacks apply one too from her A1 (lisa/asc.go), and the hold
@@ -97,7 +97,7 @@ export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReade
             onStrike: ({ party }, { combatant }) => {
               if (combatant.constellationCount < CONSTELLATION_1 || holdRegeneratedEnergy >= CONSTELLATION_1_MAX_ENERGY)
                 return;
-              regeneratePartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
+              gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
               holdRegeneratedEnergy += CONSTELLATION_1_ENERGY;
             },
             stackedHitStatusId: CONDUCTIVE_STATUS_ID,

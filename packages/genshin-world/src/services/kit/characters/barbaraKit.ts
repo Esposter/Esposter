@@ -17,9 +17,9 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { regeneratePartyMemberEnergy } from "#src/services/party/regeneratePartyMemberEnergy";
 
 // The Melody Loop's regeneration on the character on the field as it starts and every 5 seconds after, the four heals the
 // Wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
@@ -140,7 +140,7 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
               attentivenessEnergy >= ATTENTIVENESS_MAX_ENERGY
             )
               return;
-            regeneratePartyMemberEnergy(party, combatant, ATTENTIVENESS_ENERGY);
+            gainPartyMemberEnergy(party, combatant, ATTENTIVENESS_ENERGY);
             attentivenessEnergy += ATTENTIVENESS_ENERGY;
           },
         },
@@ -173,7 +173,7 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
         event.effect.id === GLEEFUL_SONGS_STATUS_ID &&
         event.effect.characterId === combatant.characterId
       )
-        regeneratePartyMemberEnergy(party, combatant, GLEEFUL_SONGS_ENERGY);
+        gainPartyMemberEnergy(party, combatant, GLEEFUL_SONGS_ENERGY);
       if (event.kind === KitEventKind.EnergyParticleCollected && combatant.ascension >= ASCENSION_4) {
         const melodyLoop = findLiveMelodyLoop(combatant, kitEffectState.effects);
         const encore = findKitStatus(kitEffectState.effects, combatant.characterId, ENCORE_STATUS_ID);

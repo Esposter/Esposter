@@ -101,7 +101,7 @@ describe(createBarbaraKitBehaviour, () => {
     ascension: 0,
     attributes: computeCharacterAttributes([
       { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-      { attribute: Attribute.EnergyRecharge, value: 1 },
+      { attribute: Attribute.EnergyRecharge, value: 2 },
     ]),
     characterId: BARBARA_CHARACTER_ID,
     constellationCount,
