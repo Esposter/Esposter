@@ -8,7 +8,15 @@ const { TABLES } = vi.hoisted(() => ({
       10_000_022: { characterId: 10_000_022, constellation: 0, refinement: 1, weaponId: 11_301 },
     },
     "characterTrials/reliquaries": {
-      91: { appendPropIds: [201_053], id: 91, level: 5, mainPropId: 15_004, reliquaryId: 60_211 },
+      91: {
+        id: 91,
+        level: 4,
+        mainAffix: "FIGHT_PROP_ATTACK_PERCENT",
+        minorAffixes: [{ attribute: "FIGHT_PROP_ATTACK", value: 4.67 }],
+        rarity: 5,
+        setId: 15_021,
+        slot: "EQUIP_BRACER",
+      },
     },
     "characterTrials/rewards": { 480_001: [{ count: 5, itemId: 201 }] },
     "characterTrials/stages": {
