@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change architecture-pdf-viewer. Update Purpose after archive.
+Any PDF the app opens is drawn by its own viewer in the app's tokens: pages drawn as they come into view, moved through, zoomed, searched, downloaded and printed, and a protected one unlocked with its password.
 
 ## Requirements
 

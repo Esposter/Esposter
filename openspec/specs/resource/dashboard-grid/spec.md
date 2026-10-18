@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change resource-dashboard-grid. Update Purpose after archive.
+A dashboard's visuals sit on a grid the app draws itself: each is placed at its saved cell, dragged and resized in the editor, and reflowed by width on a published dashboard.
 
 ## Requirements
 
