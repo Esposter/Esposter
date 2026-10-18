@@ -2,11 +2,10 @@ import type { RegionGround } from "#src/models/world/RegionGround";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { regionGroundSchema } from "#src/models/world/RegionGround";
+import { gameDataLockKeys } from "#src/services/data/gameDataLockKeys";
 import { readGameData } from "#src/services/data/readGameData";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
-import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
-import { gameDataLock } from "#src/services/data/gameDataLock";
 import { selectLaidGroundKeys } from "#src/services/world/selectLaidGroundKeys";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { createTerrainShapeHeight, TerrainFeatureKind } from "genshin-engine";
@@ -14,9 +13,7 @@ import { describe, expect, test } from "vitest";
 
 const { baseGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
-  selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key))).map((key) =>
-    readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema),
-  ),
+  selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
 );
 // Four made-up quarters of a disc split at the origin, each with its own base, a hill or two and a feature, one cliff
 // Crossing the seam at x = 0. Their heights must read the same from either side of each seam

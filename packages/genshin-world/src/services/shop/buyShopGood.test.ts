@@ -18,15 +18,6 @@ const getNoItemDefinition = (itemId: number): ItemDefinition => {
   throw new Error(`no definition asked for item ${itemId}`);
 };
 
-const getFishDefinition = (itemId: number): ItemDefinition => ({
-  category: ItemCategory.Material,
-  id: itemId,
-  name: "Fish",
-  rank: 1,
-  rarity: 1,
-  stackLimit: 99,
-});
-
 describe(buyShopGood, () => {
   const ADVENTURE_RANK = 4;
   const STARGLITTER_PRICE = 5;
@@ -273,21 +264,25 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
   });
   const FISH_ITEM_ID = 9001;
-  const fishDefinition: ItemDefinition = {
+  const getFishDefinition = (itemId: number): ItemDefinition => ({
     category: ItemCategory.Material,
-    id: FISH_ITEM_ID,
+    id: itemId,
     name: "Fish",
     rank: 1,
     rarity: 1,
     stackLimit: 99,
-  };
+  });
   // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
   const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, costs: [{ count: 2, itemId: FISH_ITEM_ID }] };
 
   test("a good priced in a fish is paid from the bag and gives its item", () => {
     expect.hasAssertions();
 
-    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] };
+    const inventory = {
+      items: [{ definition: getFishDefinition(FISH_ITEM_ID), id: 0, quantity: 2 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
     const result = buyShopGood(
       EMPTY_WALLET,
       inventory,
@@ -306,7 +301,11 @@ describe(buyShopGood, () => {
   test("a good priced in a fish the bag lacks is refused", () => {
     expect.hasAssertions();
 
-    const inventory = { items: [{ definition: fishDefinition, id: 0, quantity: 1 }], nextId: 1, quickSwapItemIds: [] };
+    const inventory = {
+      items: [{ definition: getFishDefinition(FISH_ITEM_ID), id: 0, quantity: 1 }],
+      nextId: 1,
+      quickSwapItemIds: [],
+    };
 
     expect(
       buyShopGood(EMPTY_WALLET, inventory, getGroceryItemDefinition, [], fishPricedGood, ADVENTURE_RANK, NOW),
@@ -318,20 +317,14 @@ describe(buyShopGood, () => {
   const THIRD_FISH_ITEM_ID = 9003;
   const FOURTH_FISH_ITEM_ID = 9004;
   const multiFishGood: ShopGood = {
-    beginTime: EPOCH.toString(),
-    buyLimit: 0,
+    ...groceryGood,
+    goodsId: 3003,
     costs: [
       { count: 2, itemId: FISH_ITEM_ID },
       { count: 1, itemId: SECOND_FISH_ITEM_ID },
       { count: 1, itemId: THIRD_FISH_ITEM_ID },
       { count: 1, itemId: FOURTH_FISH_ITEM_ID },
     ],
-    endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
-    goodsId: 3003,
-    itemCount: 1,
-    itemId: GROCERY_ITEM_ID,
-    minPlayerLevel: ADVENTURE_RANK,
-    refresh: ShopRefresh.None,
   };
 
   test("a good priced in several fish is paid from the bag only when the bag holds every fish", () => {

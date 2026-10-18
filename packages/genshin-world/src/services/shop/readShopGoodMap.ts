@@ -6,7 +6,7 @@ import { SHOP_GOODS_KEYS } from "#src/services/shop/constants";
 import { z } from "zod";
 
 // The goods of each city vendor's shop, by the shop's id, read from the shops datasets its keys name and checked against
-// Its shape as it arrives. A shop whose goods are split across keys has them read in the keys' order, as one list
+// Its shape as it arrives
 export const readShopGoodMap = async (gameDataBaseUrl: string): Promise<Map<number, ShopGood[]>> => {
   const entries = await Promise.all(
     SHOP_GOODS_KEYS.map(async ([shopId, keys]) => {

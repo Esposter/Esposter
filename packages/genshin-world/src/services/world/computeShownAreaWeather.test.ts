@@ -14,7 +14,9 @@ describe(computeShownAreaWeather, () => {
     expect.hasAssertions();
 
     expect(TURNS).toContain(WeatherKind.Rain);
-    expect(TURNS.map((turned) => computeShownAreaWeather(turned, true))).not.toContain(WeatherKind.Rain);
+    expect(TURNS.map((turned) => computeShownAreaWeather(turned, true))).toStrictEqual(
+      TURNS.map(() => WeatherKind.Clear),
+    );
   });
 
   test("a weather outside a city shows as it turned", () => {

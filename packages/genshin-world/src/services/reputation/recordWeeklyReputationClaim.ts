@@ -1,4 +1,5 @@
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
+import { computeLastWeeklyReset } from "#src/services/time/computeLastWeeklyReset";
 import { checkIsWeeklyClaimed } from "#src/services/weekly/checkIsWeeklyClaimed";
 
 // The week's claims of one kind with one more made at the instant: those from before the week's reset dropped, the new
@@ -8,7 +9,9 @@ import { checkIsWeeklyClaimed } from "#src/services/weekly/checkIsWeeklyClaimed"
 export const recordWeeklyReputationClaim = (
   claimedAts: readonly Temporal.Instant[],
   now: Temporal.Instant,
-): Temporal.Instant[] =>
-  [...claimedAts.filter((claimedAt) => checkIsWeeklyClaimed(claimedAt, now)), now].slice(
+): Temporal.Instant[] => {
+  const weeklyReset = computeLastWeeklyReset(now);
+  return [...claimedAts.filter((claimedAt) => checkIsWeeklyClaimed(claimedAt, weeklyReset, now)), now].slice(
     -REPUTATION_WEEKLY_CLAIM_LIMIT,
   );
+};

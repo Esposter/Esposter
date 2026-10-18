@@ -7,3 +7,5 @@ export const MONDSTADT_GROUND_REGION = "mondstadt";
 // The regions whose ground the world does not lay over Windrise's: Windrise's own base, read whole, and Mondstadt's
 // Plateau, measured to overlap the base
 export const UNLAID_GROUND_REGIONS: readonly string[] = [WINDRISE_GROUND_REGION, MONDSTADT_GROUND_REGION];
+// Inazuma, whose permanent thunderstorm is lifted in its areas unless the player has restored it
+export const INAZUMA_REGION_ID = "inazuma";

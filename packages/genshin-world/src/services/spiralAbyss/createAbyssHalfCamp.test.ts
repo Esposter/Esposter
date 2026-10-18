@@ -1,5 +1,5 @@
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
-import { ABYSS_ARENA_SPREAD } from "#src/services/spiralAbyss/constants";
+import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
 import { createAbyssHalfCamp } from "#src/services/spiralAbyss/createAbyssHalfCamp";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +23,7 @@ describe(createAbyssHalfCamp, () => {
           id: "0",
           level: MONSTER_LEVEL,
           patrol: [],
-          position: { x: ABYSS_ARENA_SPREAD, z: 0 },
+          position: { x: DOMAIN_ARENA_SPREAD, z: 0 },
         },
       ],
     });

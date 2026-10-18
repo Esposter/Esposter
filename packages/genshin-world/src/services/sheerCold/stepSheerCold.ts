@@ -13,16 +13,16 @@ import {
   SHEER_COLD_SWIM_MODIFIER,
 } from "#src/services/sheerCold/constants";
 
-// One step of the gauge over its seconds. Heat near the character drains it wherever it stands; otherwise the subzero
-// Climate fills it, faster while swimming or in a snowstorm and less under an anti-cold, which stops it at none, and outside the
-// Climate it
-// Drains at the rate of leaving an area. Full at the step's end, it deals its share of max HP and the flat amount for each
-// Interval it has stayed full, the time short of the next carried over, and anything else clears that time
+// One step of the gauge over its seconds, written into `sheerCold` in place so a quiet step allocates nothing, and
+// Returning the damage it deals. Heat near the character drains it wherever it stands; otherwise the subzero Climate
+// Fills it, faster while swimming or in a snowstorm and less under an anti-cold, which stops it at none, and outside
+// The Climate it drains at the rate of leaving an area. Full at the step's end, it deals its share of max HP and the
+// Flat amount for each Interval it has stayed full, carrying the time short of the next over and clearing it otherwise
 export const stepSheerCold = (
   sheerCold: SheerCold,
   { antiColdRatio, isHeated, isInCold, isSnowstorm, isSwimming, maxHealth }: SheerColdStep,
   stepSeconds: number,
-): { damage: number; sheerCold: SheerCold } => {
+): number => {
   let rate = -SHEER_COLD_LEAVE_DRAIN_PER_SECOND;
   if (isHeated) rate = -SHEER_COLD_HEAT_DRAIN_PER_SECOND;
   else if (isInCold)
@@ -35,12 +35,13 @@ export const stepSheerCold = (
           (isSnowstorm ? SHEER_COLD_SNOWSTORM_MODIFIER : 0) +
           antiColdRatio,
       );
-  const value = Math.min(SHEER_COLD_MAXIMUM, Math.max(0, sheerCold.value + rate * stepSeconds));
-  if (value < SHEER_COLD_MAXIMUM) return { damage: 0, sheerCold: { damageSeconds: 0, value } };
+  sheerCold.value = Math.min(SHEER_COLD_MAXIMUM, Math.max(0, sheerCold.value + rate * stepSeconds));
+  if (sheerCold.value < SHEER_COLD_MAXIMUM) {
+    sheerCold.damageSeconds = 0;
+    return 0;
+  }
   const seconds = sheerCold.damageSeconds + stepSeconds;
   const intervals = Math.floor(seconds / SHEER_COLD_DAMAGE_INTERVAL_SECONDS);
-  return {
-    damage: intervals * (SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT),
-    sheerCold: { damageSeconds: seconds - intervals * SHEER_COLD_DAMAGE_INTERVAL_SECONDS, value },
-  };
+  sheerCold.damageSeconds = seconds - intervals * SHEER_COLD_DAMAGE_INTERVAL_SECONDS;
+  return intervals * (SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT);
 };

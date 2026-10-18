@@ -32,7 +32,7 @@ export const useSheerCold = (
 ) => {
   const { onBeforeRender } = useLoop();
   const value = shallowRef(0);
-  let sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
+  const sheerCold: SheerCold = { damageSeconds: 0, value: 0 };
   let checkedX = Infinity;
   let checkedZ = Infinity;
   let isInCold = false;
@@ -51,7 +51,7 @@ export const useSheerCold = (
       isInCold = checkIsSheerColdArea(findAreaAt(catalogue, x, z));
     }
     const isSwimming = phase.state === LocomotionState.Swim || phase.state === LocomotionState.SwimDash;
-    const step = stepSheerCold(
+    const damage = stepSheerCold(
       sheerCold,
       {
         antiColdRatio: getAntiColdRatio(),
@@ -63,8 +63,7 @@ export const useSheerCold = (
       },
       delta,
     );
-    sheerCold = step.sheerCold;
-    if (step.damage > 0) onDamage(step.damage);
+    if (damage > 0) onDamage(damage);
     value.value = sheerCold.value;
   });
 

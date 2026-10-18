@@ -14,9 +14,9 @@ describe(composePlantPlaceMatrix, () => {
       scale: [1.5, 2, 0.5],
     };
     const matrix = composePlantPlaceMatrix(new Matrix4(), place, () => 4, new Vector3(0.5, 1, 2));
+    const turned = new Vector3(1, 0, 0).transformDirection(matrix);
 
     expect(new Vector3().setFromMatrixPosition(matrix).toArray()).toStrictEqual([3, 4, -2]);
-    const turned = new Vector3(1, 0, 0).transformDirection(matrix);
     expect(turned.x).toBeCloseTo(0);
     expect(turned.z).toBeCloseTo(-1);
     expect(new Vector3().setFromMatrixColumn(matrix, 0).length()).toBeCloseTo(0.75);
