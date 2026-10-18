@@ -32,7 +32,7 @@ Each built task names the test it was written first in, and each test is a scena
       and the Enhance and Equip actions. Waits on the artifact slot and set-bonus game text keys, which the main session
       writes, and on a fixture and parity case for the panel.
 - [ ] 5.2 The bag's artifact entry holds a rolled, individual piece with a unique instance id. Waits on the
-      character-screen agent's change (`agent/w6-character-screen`), which the coordinator cherry-picks; this change builds
+      character-screen agent's change (`agent/w6-character-screen`), which lands first; this change builds
       against the `Artifact` type that change uses.
 - [ ] 5.3 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 5.2.
 - [ ] 5.4 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.

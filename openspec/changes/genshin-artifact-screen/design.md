@@ -40,7 +40,7 @@ What works today and what this change adds:
   Each needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
   (`InventoryItemSave`), so a piece cannot leave the bag equipped or enter it as fodder. The character-screen agent's
   change (`agent/w6-character-screen`) makes each bag artifact an individual, rolled at its drop and saved with a unique
-  instance id, and the coordinator cherry-picks it.
+  instance id, and that branch lands before this change does.
 
 ## Decisions
 
