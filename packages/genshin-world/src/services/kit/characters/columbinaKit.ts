@@ -17,6 +17,10 @@ const COLUMBINA_SKILL_FIELD_ID = "columbina-gravity-interference";
 // Hit for the table's duration, which a press while it runs restarts. gcsim's DoT reaches further from Moonsign level 2,
 // Which waits on the Moonsign hook, and the burst's field, whose buff reads the Lunar reactions, waits on that hook
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
+// Constellation 1 needs Eternal Tides' Gravity Interference effect, which the skill's field does not carry
+// Constellation 2 needs Gravity Ripple, which the skill does not summon yet
+// Constellation 4 needs Gravity Ripple's hits on Gravity Interference, which are not built
+// Constellation 6 needs the Lunar Domain's buff, which waits on the Lunar reactions hook
 export const createColumbinaKitBehaviour = ({
   kit,
   readHit,

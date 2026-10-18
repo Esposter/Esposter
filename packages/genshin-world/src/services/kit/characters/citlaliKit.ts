@@ -8,4 +8,8 @@ export const CITLALI_CHARACTER_ID = 10_000_107;
 // Frames after Ice Storm's hit, which the burst's start could draw, but the start reads no enemies but its target. Her
 // Passives wait on the Nightsoul hook
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
+// Constellation 1 needs Dawnfrost Darkstar's Opalstar Vestments, which waits on Itzpapa's field, not built
+// Constellation 2 needs the Opal Shield and Itzpapa's following, which are not built, for their Elemental Mastery
+// Constellation 4 needs Itzpapa's Frostfall Storm hits, which are not built, to summon the Obsidian Spiritvein
+// Constellation 6 needs Itzpapa's Opal Fire state and the Nightsoul points, which wait on the Nightsoul hook
 export const createCitlaliKitBehaviour = (): KitBehaviour => ({});
