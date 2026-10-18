@@ -442,7 +442,7 @@ const { chestInteractables, digChestById, openChestById } = useWorldChests({
   waterLevel: windriseData.water.level,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, stepQuickUse } = useWorldGadgets({
+const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets({
   gameDataBaseUrl,
   inventory,
 });
@@ -1131,6 +1131,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :quest-mark
       :quest-progress="trackerQuest && questProgressMap.get(trackerQuest.id)"
       :quest-text-map
+      :quick-swap-open="isQuickSwapOpen"
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
       @map="screenKind = ScreenKind.Map"
