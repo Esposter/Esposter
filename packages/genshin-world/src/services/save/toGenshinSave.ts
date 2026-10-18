@@ -94,9 +94,7 @@ export const toGenshinSave = ({
   puzzles: { settledSeelieIds: [...settledSeelieIds], solvedPuzzleIds: [...solvedPuzzleIds] },
   quests: Object.fromEntries(quests),
   reputation,
-  ...(reputationBountyClaimedAts.length > 0 && {
-    reputationBountyClaimedAts: reputationBountyClaimedAts.map((claimedAt) => claimedAt.toString()),
-  }),
+  reputationBountyClaimedAts: reputationBountyClaimedAts.map((claimedAt) => claimedAt.toString()),
   ...(reputationBountyHunt && { reputationBountyHunt }),
   shopPurchases: toShopPurchaseSaves(shopPurchases),
   spiralAbyss: toSpiralAbyssSave(spiralAbyssProgressMap),

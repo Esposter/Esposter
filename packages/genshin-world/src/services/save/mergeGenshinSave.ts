@@ -220,8 +220,8 @@ const mergeReputationBountyClaimedAts = (account: string[], guest: string[]): st
 
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const reputationBountyClaimedAts = mergeReputationBountyClaimedAts(
-    account.reputationBountyClaimedAts ?? [],
-    guest.reputationBountyClaimedAts ?? [],
+    account.reputationBountyClaimedAts,
+    guest.reputationBountyClaimedAts,
   );
   const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
@@ -313,7 +313,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
-    ...(reputationBountyClaimedAts.length > 0 && { reputationBountyClaimedAts }),
+    reputationBountyClaimedAts,
     ...(reputationBountyHunt && { reputationBountyHunt }),
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),

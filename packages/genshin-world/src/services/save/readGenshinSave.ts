@@ -46,7 +46,7 @@ export const readGenshinSave = (
     puzzles,
     quests,
     reputation,
-    reputationBountyClaimedAts = [],
+    reputationBountyClaimedAts,
     reputationBountyHunt,
     shopPurchases,
     spiralAbyss,

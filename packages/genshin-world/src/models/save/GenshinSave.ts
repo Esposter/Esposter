@@ -92,11 +92,10 @@ export const genshinSaveSchema = z
     puzzles: puzzleProgressSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
-    // The moments the bounty claims were made, the ones before the week's reset no longer counted, absent while none is held
+    // The moments the bounty claims were made, the ones before the week's reset no longer counted
     reputationBountyClaimedAts: z
       .array(z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH))
-      .max(REPUTATION_WEEKLY_CLAIM_LIMIT)
-      .optional(),
+      .max(REPUTATION_WEEKLY_CLAIM_LIMIT),
     // The Mondstadt bounty the player has taken and not yet claimed, absent while none is taken
     reputationBountyHunt: reputationBountyHuntSaveSchema.optional(),
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
