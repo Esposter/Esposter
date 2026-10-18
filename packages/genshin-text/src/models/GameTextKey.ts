@@ -70,6 +70,8 @@ export enum GameTextKey {
   AttributePyroDamageBonus = "FIGHT_PROP_FIRE_ADD_HURT",
   AttributePyroResistance = "FIGHT_PROP_FIRE_SUB_HURT",
   AttributeShieldStrength = "FIGHT_PROP_SHIELD_COST_MINUS_RATIO",
+  // A level above the player's Adventure Rank, the rank the game asks for in its place
+  AvailableAtAdventureRank = "QUEST_DIALOG_DETAIL_PLAYER_LEVEL_NEED",
   // A screen's way back to the world
   Back = "VIDEO_RETREAT",
   BagFull = "UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL",
@@ -111,6 +113,8 @@ export enum GameTextKey {
   // The City Reputation the Paimon menu names, and the Reputation Reward its screen titles over its nation
   CityReputation = "81370119",
   ClearwaterJade = "2720928108",
+  // A domain closed on the day, named as a closed hall or event names it
+  Closed = "UI_BEYOND_HALL_LIST_HALL_LEFTTIME_CLOSE",
   // The crafting bench's recipe tabs, one per combine type, by the names the manual text map files each under
   CombineTypeBait = "COMBINE_TYPE_NAME10",
   CombineTypeCharacterAscension = "COMBINE_TYPE_NAME5",
@@ -164,7 +168,13 @@ export enum GameTextKey {
   Dig = "102754774",
   // A domain's entrance, as its map pin and its entry screen title it
   DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
+  // The button that goes into an open domain from its entry screen
+  DomainEnter = "UI_DUNGEON_ENTRY_47",
+  // The title of a domain's entry screen
+  DomainTitle = "4043227537",
   Dracolite = "2859410932",
+  // The enemies' level on a domain's entry screen, filled with the level
+  EnemyLevel = "669745132",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
   ElectroSigil = "1061302548",
@@ -465,6 +475,8 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
+  // A domain level's recommended Adventure Rank, filled with the rank
+  RecommendedLevel = "UI_QUEST_RECOMMEND_LEVEL",
   RedBerryshroom = "1096616044",
   // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
   RemarkableChest = "26276094",

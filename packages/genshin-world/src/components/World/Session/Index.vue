@@ -31,6 +31,7 @@ import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
+import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
@@ -67,6 +68,7 @@ import { useWorldCooking } from "#src/composables/useWorldCooking";
 import { useWorldDishes } from "#src/composables/useWorldDishes";
 import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
+import { useWorldDomains } from "#src/composables/useWorldDomains";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
@@ -97,6 +99,7 @@ import { computeFishingInteractables } from "#src/services/fishing/computeFishin
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
@@ -822,6 +825,12 @@ const {
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, each locked jump landmark, a domain entrance among them, which it
 // Resonates with, and the Crafting bench, named by its title. Each stands on the ground beneath its point
+const { domainEntrance, domainLevelRows, openDomain, unlockedDomainEntrances } = useWorldDomains({
+  gameDataBaseUrl,
+  getWorldNow,
+  rank,
+  unlockedLandmarks,
+});
 const interactables = computed<Interactable[]>(() => {
   // Each Frostbearing Tree is named by its game text and offered to on the key, so its row is an activation like a statue's
   const frostbearingTrees = frostbearingTreePlaces.map(({ id, position: { x, z } }) => ({
@@ -847,6 +856,8 @@ const interactables = computed<Interactable[]>(() => {
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
     ),
+    // An unlocked domain entrance is entered on the key, its screen opened with its levels
+    ...unlockedDomainEntrances.value.map((landmark) => toLandmarkInteractable(landmark, GameTextKey.DomainEnter)),
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
     ...computeCookingStoveInteractables(
       cookingStovePlace.value,
@@ -864,6 +875,12 @@ const { interactionPrompts, readInteraction, selectInteractable } = useInteracti
 const pressInteractable = (id: string) => {
   selectInteractable(id);
   tapActionKey(input, InputAction.Interact);
+};
+// A level entered from a domain's screen fades into its stand-in arena beside the entrance, the jump's own fade
+const enterDomain = () => {
+  if (!domainEntrance.value) return;
+  screenKind.value = ScreenKind.World;
+  jumpTo(computeDomainScenePose(domainEntrance.value.arrival));
 };
 // A quest's talk chosen on a standing talk's opening line runs in its place, and offers no duel of its own
 const beginTalk = (talkId: string) => {
@@ -1052,6 +1069,7 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
+            const domainEntranceLandmark = unlockedDomainEntrances.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp && materialSource)
               pickUpMaterialSourcePlace(materialSource.id);
@@ -1076,6 +1094,9 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
+            } else if (interactable?.kind === InteractionKind.Activate && domainEntranceLandmark) {
+              openDomain(domainEntranceLandmark);
+              screenKind = ScreenKind.Domain;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
               resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
@@ -1551,6 +1572,13 @@ defineExpose({ jumpTo, readCameraPosition });
       @update:inventory="(nextInventory) => setInventory(nextInventory)"
     />
     <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
+    <DomainScreen
+      v-if="screenKind === ScreenKind.Domain"
+      :game-text
+      :levels="domainLevelRows"
+      @close="screenKind = ScreenKind.World"
+      @enter="enterDomain"
+    />
     <CraftingScreen
       v-if="screenKind === ScreenKind.Crafting"
       v-model:crafted-count-map="craftedCountMap"
