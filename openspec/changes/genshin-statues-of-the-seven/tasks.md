@@ -14,4 +14,4 @@
 ## 3. Statue's Blessing
 
 - [ ] 3.1 Open the Statue's Blessing with F on a resonated statue. Verify: a test named after 'F on a resonated statue opens the Blessing screen', built from the public clip named in the design.
-- [ ] 3.2 Revive and heal the party by auto-recover after two seconds near a statue. Verify: tests named after 'Standing by a statue for two seconds revives the fallen', 'Members under the threshold are healed when the pool holds enough' and 'A pool short of the threshold heals the first slots first'.
+- [x] 3.2 Revive and heal the party by auto-recover after two seconds near a statue. Verify: tests named after 'Standing by a statue for two seconds revives the fallen', 'Members under the threshold are healed when the pool holds enough' and 'A pool short of the threshold heals the first slots first'.
