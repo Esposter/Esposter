@@ -14,6 +14,7 @@ import {
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { describe, expect, test } from "vitest";
 
 const createCombatant = (constellationCount: number): Combatant =>
@@ -78,6 +79,9 @@ describe(createXianyunKitBehaviour, () => {
     behaviour.skill?.onStart?.(context);
 
     expect(countKitResource(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_CONSTELLATION_6_ID)).toBe(7);
+    expect(
+      findKitStatus(context.kitEffectState.effects, XIANYUN_CHARACTER_ID, XIANYUN_CONSTELLATION_6_ID)?.secondsRemaining,
+    ).toBe(16);
   });
 
   test("a Constellation 6 press starts whatever its cooldown while its presses last", () => {

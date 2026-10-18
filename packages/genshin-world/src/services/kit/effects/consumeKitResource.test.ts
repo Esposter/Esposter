@@ -1,4 +1,6 @@
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { describe, expect, test } from "vitest";
@@ -36,5 +38,17 @@ describe(consumeKitResource, () => {
     expect(consumeKitResource(kitEffectState, CHARACTER_ID, RESOURCE_ID, 1)).toBe(true);
     expect(countKitResource(kitEffectState.effects, CHARACTER_ID, RESOURCE_ID)).toBe(0);
     expect(kitEffectState.effects).toHaveLength(0);
+  });
+
+  test("keeps the seconds a timed resource runs for when a stack is spent", () => {
+    expect.hasAssertions();
+
+    const kitEffectState = { effects: [] };
+    addKitStatus(kitEffectState, CHARACTER_ID, { id: RESOURCE_ID, secondsRemaining: 16, stacks: 8 });
+
+    expect(consumeKitResource(kitEffectState, CHARACTER_ID, RESOURCE_ID, 1)).toBe(true);
+    const status = findKitStatus(kitEffectState.effects, CHARACTER_ID, RESOURCE_ID);
+    expect(status?.secondsRemaining).toBe(16);
+    expect(status?.stacks).toBe(7);
   });
 });
