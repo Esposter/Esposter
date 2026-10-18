@@ -25,11 +25,18 @@ describe(openChest, () => {
     expect(highest.wallet).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: 996, [Currency.Primogem]: 2 });
   });
 
+  test("opening a chest adds its Adventure EXP", () => {
+    expect.hasAssertions();
+
+    expect(openChest(commonChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0).adventureExp).toBe(30);
+  });
+
   test("opens a chest only once", () => {
     expect.hasAssertions();
 
     const opened = new Set([CHEST_ID]);
     expect(openChest(commonChest, opened, EMPTY_WALLET, () => 0)).toStrictEqual({
+      adventureExp: 0,
       drops: [],
       openedChestIds: opened,
       wallet: EMPTY_WALLET,
@@ -41,6 +48,7 @@ describe(openChest, () => {
 
     const luxuriousChest = { ...commonChest, kind: ChestKind.Luxurious };
     expect(openChest(luxuriousChest, NO_OPENED_CHESTS, EMPTY_WALLET, () => 0)).toStrictEqual({
+      adventureExp: 0,
       drops: [],
       openedChestIds: NO_OPENED_CHESTS,
       wallet: EMPTY_WALLET,
