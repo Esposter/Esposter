@@ -808,6 +808,7 @@ describe(getGcsimKitCandidates, () => {
             path: [index],
             reference: { label: `Blade Roller ${index + 1}-Hit DMG`, selector: 0, type: GcsimTalentType.Attack },
           })),
+          line: 10,
           name: "attackE",
         },
       ],
@@ -864,6 +865,7 @@ describe(getGcsimKitCandidates, () => {
           leaves: [
             { path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst } },
           ],
+          line: 5,
           name: "burstSoulseeker",
         },
         {
@@ -873,6 +875,7 @@ describe(getGcsimKitCandidates, () => {
               reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst },
             },
           ],
+          line: 6,
           name: "burstRadiant",
         },
       ],
@@ -937,6 +940,7 @@ describe(getGcsimKitCandidates, () => {
           leaves: [
             { path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: GcsimTalentType.Skill } },
           ],
+          line: 3,
           name: "cloudDMG",
         },
       ],
@@ -999,6 +1003,7 @@ describe(getGcsimKitCandidates, () => {
           leaves: [
             { path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: GcsimTalentType.Skill } },
           ],
+          line: 3,
           name: "fieryRush",
         },
         {
@@ -1008,6 +1013,7 @@ describe(getGcsimKitCandidates, () => {
               reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: GcsimTalentType.Burst },
             },
           ],
+          line: 4,
           name: "fieryKick",
         },
       ],
