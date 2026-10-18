@@ -3,6 +3,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -365,7 +366,7 @@ describe(createShenheKitBehaviour, () => {
     addKitStatus(kitEffectState, member.characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining: 10, stacks: 5 });
     const context = createQuillContext(kitEffectState, shenhe, member);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const hit = (attackTag: AttackTag) => ({
+    const hit = (attackTag: AttackTag): KitEnemyHitEvent => ({
       attackTag,
       element: Element.Cryo,
       enemy,
