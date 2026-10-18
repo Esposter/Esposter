@@ -19,7 +19,7 @@ Venti's kit is its record and one behaviour module, `createVentiKitBehaviour`, o
 ## Not built
 
 - **Elemental Absorption is not built.** The Stormeye absorbs the element of what it touches, as gcsim's absorb check finds an aura within its box, and then deals the burst group's Additional Elemental DMG as that element. A summon's step reads no enemy, a hit's callbacks see no aura, and the strike loop that sees a Swirl's element is the character component's, so nothing tells the Stormeye what it touched. The Stormeye passive's energy for the party members of the absorbed element and Storm of Defiance's cut to that element's RES wait on it.
-- **Venti's other passives, his other constellations and his Hexerei kit are not built.** Embrace of Winds' upcurrent and Windrider's gliding stamina are the controller's movement, not combat. Hurricane of Freedom waits on a particle pickup reaching the team's effects, as Razor's Wolf's Instinct does, and Ode to Thousand Winds and Concerto dal Cielo raise talent levels, which the [talents](../../../../changes/genshin-talents/design.md) page holds. His Hexerei kit, its Windsunder Arrows and the Hexerei halves of his constellations, are not built.
+- **Venti's other passives, his other constellations and his Hexerei kit are not built.** Embrace of Winds' upcurrent and Windrider's gliding stamina are the controller's movement, not combat. Hurricane of Freedom waits on a particle pickup reaching the team's effects, as Razor's Wolf's Instinct does, and Ode to Thousand Winds and Concerto dal Cielo raise talent levels, which the [talents](../../talents/design.md) page holds. His Hexerei kit, its Windsunder Arrows and the Hexerei halves of his constellations, are not built.
 
 ## Key files
 
