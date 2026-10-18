@@ -9,44 +9,44 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T11:20:34.297Z
-- Commit: 4f5db46bea
+- Date: 2026-10-18T23:13:21.727Z
+- Commit: 01fa9b639c
 - Node: v26.12.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## compileMathExpression > compile the column formula
 
 | task              | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----------------- | ------- | --------- | ------- | -------- | ------- |
-| compile           | 1.00×   | 0.0178    | ±20.13% | 0.0285   | 10      |
-| parse and compile | 0.33×   | 0.0540    | ±20.51% | 0.0913   | 10      |
+| compile           | 1.00×   | 0.0207    | ±32.48% | 0.0433   | 10      |
+| parse and compile | 0.28×   | 0.0742    | ±20.72% | 0.1203   | 10      |
 
 ## compileMathExpression > compile a sum of 1000 numbers
 
-| task              | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ----------------- | ------- | --------- | ------- | -------- | ------- |
-| compile           | 1.00×   | 1.1507    | ±84.06% | 4.6261   | 10      |
-| parse and compile | 0.21×   | 5.4433    | ±13.60% | 7.0098   | 10      |
+| task              | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
+| ----------------- | ------- | --------- | -------- | -------- | ------- |
+| compile           | 1.00×   | 1.3812    | ±103.41% | 6.4993   | 10      |
+| parse and compile | 0.38×   | 3.6008    | ±14.28%  | 5.1363   | 10      |
 
 ## compileMathExpression > compile a sum of 100000 numbers
 
-| task              | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ----------------- | ------- | --------- | ------ | -------- | ------- |
-| compile           | 1.00×   | 58.9728   | ±7.74% | 73.0913  | 10      |
-| parse and compile | 0.12×   | 488.2354  | ±1.06% | 496.0419 | 10      |
+| task              | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----------------- | ------- | --------- | ------- | -------- | ------- |
+| compile           | 1.00×   | 96.3820   | ±16.17% | 116.6744 | 10      |
+| parse and compile | 0.21×   | 454.8301  | ±12.25% | 559.3047 | 10      |
 
 ## compileMathExpression > evaluate the column formula over 10000 rows
 
-| task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------- | ------- | --------- | ------- | -------- | ------- |
-| native   | 1.00×   | 0.7192    | ±11.65% | 0.9766   | 10      |
-| compiled | 0.065×  | 11.0988   | ±9.28%  | 14.2438  | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------- | ------- | --------- | ------ | -------- | ------- |
+| native   | 1.00×   | 0.5030    | ±7.81% | 0.6168   | 10      |
+| compiled | 0.021×  | 24.1373   | ±1.15% | 24.7849  | 10      |
 
 ## compileMathExpression > evaluate a formula whose subtree folds over 10000 rows
 
-| task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------- | ------- | --------- | ------- | -------- | ------- |
-| folded   | 1.00×   | 0.2580    | ±3.57%  | 0.2882   | 10      |
-| unfolded | 0.22×   | 1.1572    | ±11.07% | 1.5420   | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------- | ------- | --------- | ------ | -------- | ------- |
+| folded   | 1.00×   | 0.5922    | ±2.29% | 0.6282   | 10      |
+| unfolded | 0.3×    | 1.9967    | ±5.79% | 2.4075   | 10      |

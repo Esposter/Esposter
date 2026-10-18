@@ -1,7 +1,8 @@
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 
 import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
-import { DIGIT_REGEX, WORD_START_REGEX } from "#src/services/parser/token/constants";
+import { checkIsDigitCharacter } from "#src/services/parser/token/checkIsDigitCharacter";
+import { checkIsWordStartCharacter } from "#src/services/parser/token/checkIsWordStartCharacter";
 import { getMathExpressionCharacter } from "#src/services/parser/token/getMathExpressionCharacter";
 import { readMathExpressionDelimiter } from "#src/services/parser/token/readMathExpressionDelimiter";
 import { readMathExpressionNumber } from "#src/services/parser/token/readMathExpressionNumber";
@@ -19,8 +20,9 @@ export const getMathExpressionToken = (state: MathExpressionParserState): void =
 
   const character = getMathExpressionCharacter(state, 0);
   const next = getMathExpressionCharacter(state, 1);
-  if (DIGIT_REGEX.test(character) || (character === "." && DIGIT_REGEX.test(next))) readMathExpressionNumber(state);
-  else if (WORD_START_REGEX.test(character)) readMathExpressionWord(state);
+  if (checkIsDigitCharacter(character) || (character === "." && checkIsDigitCharacter(next)))
+    readMathExpressionNumber(state);
+  else if (checkIsWordStartCharacter(character)) readMathExpressionWord(state);
   else if (readMathExpressionDelimiter(state) === 0) {
     state.token = character;
     state.index++;

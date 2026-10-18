@@ -9,46 +9,46 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-18T11:08:02.249Z
-- Commit: 7a4bad44ed
+- Date: 2026-10-18T23:13:21.727Z
+- Commit: 01fa9b639c
 - Node: v26.12.0
-- OS: win32 10.0.19045 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 31.9 GiB
+- OS: win32 10.0.26300 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## parseMathExpression > the column formula
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| literals | 1.00×   | 0.0772    | ±21.24% | 0.1205   | 10      |
-| columns  | 0.81×   | 0.0949    | ±14.35% | 0.1243   | 10      |
+| literals | 1.00×   | 0.0780    | ±20.27% | 0.1134   | 10      |
+| columns  | 0.79×   | 0.0988    | ±11.40% | 0.1171   | 10      |
 
 ## parseMathExpression > a sum of 1000 numbers
 
 | task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | --------- | ------- | --------- | ------- | -------- | ------- |
-| operators | 1.00×   | 3.6603    | ±11.25% | 4.5009   | 10      |
-| arguments | 0.56×   | 6.5100    | ±5.82%  | 7.2831   | 10      |
+| operators | 1.00×   | 2.1689    | ±11.60% | 2.9520   | 10      |
+| arguments | 0.76×   | 2.8650    | ±8.73%  | 3.5572   | 10      |
 
 ## parseMathExpression > a sum of 100000 numbers
 
-| task      | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| --------- | ------- | --------- | ------ | -------- | ------- |
-| operators | 1.00×   | 318.8148  | ±4.39% | 351.1403 | 10      |
-| arguments | 0.56×   | 571.5551  | ±2.73% | 607.3734 | 10      |
+| task      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| --------- | ------- | --------- | ------- | -------- | ------- |
+| arguments | 1.00×   | 350.8872  | ±11.69% | 425.3974 | 10      |
+| operators | 0.79×   | 442.6726  | ±13.43% | 576.9139 | 10      |
 
 ## parseMathExpression > parse ten nested groups
 
-| task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| -------- | ------- | --------- | ------- | -------- | ------- |
-| plain    | 1.00×   | 0.0925    | ±15.50% | 0.1331   | 10      |
-| percent  | 0.85×   | 0.1090    | ±17.77% | 0.1594   | 10      |
-| division | 0.46×   | 0.2020    | ±60.74% | 0.6426   | 10      |
+| task     | vs base | mean (ms) | ±rme     | p99 (ms) | samples |
+| -------- | ------- | --------- | -------- | -------- | ------- |
+| plain    | 1.00×   | 0.1108    | ±35.62%  | 0.2433   | 10      |
+| division | 0.52×   | 0.2130    | ±24.26%  | 0.3303   | 10      |
+| percent  | 0.25×   | 0.4487    | ±150.03% | 2.8643   | 10      |
 
 ## parseMathExpression > parse forty nested groups
 
 | task     | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------- | ------- | --------- | ------- | -------- | ------- |
-| plain    | 1.00×   | 0.2699    | ±7.72%  | 0.3075   | 10      |
-| division | 0.61×   | 0.4411    | ±13.19% | 0.6399   | 10      |
-| percent  | 0.49×   | 0.5540    | ±27.05% | 0.9783   | 10      |
+| plain    | 1.00×   | 0.1513    | ±6.37%  | 0.1665   | 10      |
+| division | 0.51×   | 0.2963    | ±13.35% | 0.3526   | 10      |
+| percent  | 0.48×   | 0.3179    | ±25.09% | 0.5095   | 10      |

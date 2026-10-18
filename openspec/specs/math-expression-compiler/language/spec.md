@@ -32,6 +32,16 @@ The evaluator SHALL give every formula mathjs evaluated to a finite number, over
 - **WHEN** the evaluator evaluates `100 + 3%`
 - **THEN** the value is `103`
 
+#### Scenario: A modulo of a large dividend keeps its exact residue
+
+- **WHEN** the evaluator evaluates `mod(1e18, 7)`
+- **THEN** the value is `1`, where mathjs gives `0`
+
+#### Scenario: A negative zeta past the gamma's overflow is finite
+
+- **WHEN** the evaluator evaluates `zeta(-200.5)`
+- **THEN** the value is finite and negative, where mathjs gives negative infinity
+
 #### Scenario: A name beside a number multiplies it
 
 - **GIVEN** the variable `col0` is `3`

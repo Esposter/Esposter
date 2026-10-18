@@ -6,13 +6,17 @@ The [language design](../../specs/math-expression-compiler/language/design.md) h
 
 The package's built output against mathjs at the version the parity record was taken from, each formula parsed and compiled once and evaluated once:
 
-| Formula                                              | Against mathjs                                                                                                             |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Groups nested tens deep, plain or behind a division  | Level, both well under a millisecond                                                                                       |
-| Groups nested behind a percent sign                  | Ahead: under a millisecond at any depth, where mathjs doubles per level and takes a large part of a second by sixteen deep |
-| `sum` or `hypot` of a few hundred thousand arguments | Ahead: mathjs overflows its stack and gives no answer                                                                      |
-| `count` or `max` of a few hundred thousand arguments | About a fifth slower, each a few tenths of a second                                                                        |
-| The parse alone, of a few hundred thousand arguments | About a tenth slower                                                                                                       |
+| Formula                                           | Before the change (ms) |       After (ms) | mathjs (ms) | Against mathjs                                                                      |
+| ------------------------------------------------- | ---------------------: | ---------------: | ----------: | ----------------------------------------------------------------------------------- |
+| Groups nested ten deep, plain                     |                  0.088 |            0.053 |       0.053 | Level                                                                               |
+| Groups nested ten deep, behind a division         |                  0.108 |            0.099 |       0.100 | Level                                                                               |
+| Groups nested sixteen deep, behind a percent sign |                  0.107 |            0.096 |         220 | Ahead: mathjs doubles per level, and takes a large part of a second by sixteen deep |
+| Groups nested sixteen deep, plain                 |                  0.068 |            0.030 |       0.018 | Behind, by about twelve microseconds: both well under a millisecond                 |
+| Sum or hypot of 300000 arguments                  |              366 / 281 |        253 / 260 |    overflow | Ahead: mathjs overflows its stack and gives no answer                               |
+| Count or max of 300000 arguments                  |              about 230 | about 210 to 300 |         467 | Ahead, within the noise of the run: mathjs overflows on `max`                       |
+| The parse alone, of a sum of 300000 arguments     |                    197 |              157 |         404 | Ahead                                                                               |
+
+The table is the package's built `dist` against mathjs 15.2, each formula parsed, compiled and evaluated once, the median of nine runs after three warm-ups, in plain node. The before column is the commit before this change, built the same way. Those are the numbers of the comparison this change ships with, and they do not reproduce the gap the rows above first claimed: count, max and the long parse were already ahead of mathjs on this host. The gap does show under vitest, which runs the package's own bench: there the same 300000-argument parse took 1.46 s before the change and 0.69 s after, against mathjs's 0.49 s, so the bench report is the record of what this change buys, and the table is the record against mathjs.
 
 A sheet formula is rarely long, so no reader waits on the gap today. It is closed because the package was written to shed mathjs's costs, and this is the one row where it carries more than mathjs does.
 

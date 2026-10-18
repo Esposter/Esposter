@@ -1,7 +1,7 @@
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 
 import { checkIsDecimalMark } from "#src/services/parser/token/checkIsDecimalMark";
-import { DIGIT_REGEX } from "#src/services/parser/token/constants";
+import { checkIsDigitCharacter } from "#src/services/parser/token/checkIsDigitCharacter";
 import { failExponent } from "#src/services/parser/token/failExponent";
 import { getMathExpressionCharacter } from "#src/services/parser/token/getMathExpressionCharacter";
 import { takeMathExpressionMatching } from "#src/services/parser/token/takeMathExpressionMatching";
@@ -17,7 +17,7 @@ export const takeExponent = (state: MathExpressionParserState, text: string): st
     failExponent(state, text);
     return text;
   }
-  if (!DIGIT_REGEX.test(afterMarker) && !["+", "-"].includes(afterMarker)) return text;
+  if (!checkIsDigitCharacter(afterMarker) && !["+", "-"].includes(afterMarker)) return text;
 
   state.index++;
   let exponent = "e";
@@ -25,13 +25,13 @@ export const takeExponent = (state: MathExpressionParserState, text: string): st
     exponent += afterMarker;
     state.index++;
   }
-  if (!DIGIT_REGEX.test(getMathExpressionCharacter(state, 0))) {
+  if (!checkIsDigitCharacter(getMathExpressionCharacter(state, 0))) {
     const partial = text + exponent;
     failExponent(state, partial);
     return partial;
   }
 
-  const taken = text + exponent + takeMathExpressionMatching(state, DIGIT_REGEX);
+  const taken = text + exponent + takeMathExpressionMatching(state, checkIsDigitCharacter);
   if (checkIsDecimalMark(getMathExpressionCharacter(state, 0), getMathExpressionCharacter(state, 1)))
     failExponent(state, taken);
   return taken;

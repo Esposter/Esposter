@@ -1,6 +1,6 @@
 ## Why
 
-The package replaces mathjs, and it is level with mathjs or ahead of it everywhere but one place: a formula with hundreds of thousands of arguments. There a parse is about a tenth slower than mathjs's, and a parse and compile of a count or a maximum about a fifth slower. The cause is the parser's shape rather than any one slow line. Every operand walks the whole precedence chain, about twenty rule dispatches deep, and ten of those rules are binary levels that each look the next token up in their own operator map and find nothing. The tokenizer adds a regular expression test for every character of a number or a name.
+The package replaces mathjs, and it is level with mathjs or ahead of it everywhere but one place: a formula with hundreds of thousands of arguments. There, under the package's own bench, which runs the package under vitest, a parse of a sum of 300000 arguments is about three times mathjs's, and so is a count of them. Built and run in plain node on the same host, the package was already level with or ahead of mathjs there, so the design records both measures. The cause is the parser's shape rather than any one slow line. Every operand walks the whole precedence chain, about twenty rule dispatches deep, and ten of those rules are binary levels that each look the next token up in their own operator map and find nothing. The tokenizer adds a regular expression test for every character of a number or a name.
 
 ## What Changes
 

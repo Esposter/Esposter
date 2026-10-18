@@ -7,6 +7,7 @@ import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeTyp
 import { checkIsOperatorOperand } from "#src/services/parser/checkIsOperatorOperand";
 import { checkIsToken } from "#src/services/parser/checkIsToken";
 import { createBinaryNode } from "#src/services/parser/createBinaryNode";
+import { MathExpressionBinaryOperatorMap } from "#src/services/parser/MathExpressionBinaryOperatorMap";
 
 // Operands written side by side multiply, unless a constant or an operator stands before a number
 export const parseImplicitProduct: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
@@ -22,7 +23,7 @@ export const parseImplicitProduct: MathExpressionRuleParser = (state, parse): Ma
     if (!isFactorStart) break;
 
     last = parse(state, MathExpressionGrammarRule.DivisionBeforeProduct);
-    node = createBinaryNode(node, "multiply", last);
+    node = createBinaryNode(node, MathExpressionBinaryOperatorMap["*"].name, last);
   }
   return node;
 };
