@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [infra]
 x-model: claude-opus-5-5
-x-waiting: "infra/viewer-stage, which supplies the channel's permission relay"
+x-waiting: "infra-channel-chat's permission relay, which channel.ts does not declare yet; the bubble that shows it waits on infra/viewer-stage"
