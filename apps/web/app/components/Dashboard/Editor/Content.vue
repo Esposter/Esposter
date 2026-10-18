@@ -29,7 +29,7 @@ const { updateVisual } = visualStore;
           size-full
           ui-frame
           cursor-pointer
-          active="[background-image:var(--ui-pressed-overlay)]"
+          active="not-focus-within:[background-image:var(--ui-pressed-overlay)]"
           :id="visual.id"
           :type="visual.type"
         />

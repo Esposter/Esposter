@@ -6,6 +6,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { GridGestureType } from "@/models/dashboard/GridGestureType";
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
+import { checkIsSameCell } from "@/services/dashboard/grid/checkIsSameCell";
 import { compactLayout } from "@/services/dashboard/grid/compactLayout";
 import { fitLayout } from "@/services/dashboard/grid/fitLayout";
 import { getCellPosition } from "@/services/dashboard/grid/getCellPosition";
@@ -117,12 +118,7 @@ useEventListener(grid, "pointermove", (event: PointerEvent) => {
     origin: activeGesture.origin,
     rowPitch: rowPitch.value,
   });
-  const isCellChanged =
-    !activeGesture.cell ||
-    cell.x !== activeGesture.cell.x ||
-    cell.y !== activeGesture.cell.y ||
-    cell.w !== activeGesture.cell.w ||
-    cell.h !== activeGesture.cell.h;
+  const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
   gesture.value = { ...activeGesture, cell, isStarted: true, offset };
   if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell));
 });
@@ -131,10 +127,7 @@ useEventListener(grid, "pointerup", (event: PointerEvent) => {
   if (event.pointerId !== gesture.value?.pointerId) return;
 
   const changes = (preview.value ?? [])
-    .filter(
-      (tile) =>
-        tile.h !== tile.visual.h || tile.w !== tile.visual.w || tile.x !== tile.visual.x || tile.y !== tile.visual.y,
-    )
+    .filter((tile) => !checkIsSameCell(tile, tile.visual))
     .map(({ h, id, w, x, y }) => ({ h, id, w, x, y }));
   resetGesture();
   if (changes.length > 0) emit("commit", changes);
