@@ -63,6 +63,11 @@ export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
   { phase: 5, shieldLimit: Number.POSITIVE_INFINITY, timeLimitSeconds: Number.POSITIVE_INFINITY },
 ];
 
+// Dvalin's shield, which each phase's breaks count against: non-elemental and a fifth of his max HP, from the same page. Once it
+// Breaks he is paralysed on the platform for a long period the wiki does not time, which ends early when the player falls out of
+// Bounds (PROVISIONAL)
+export const STORMTERROR_SHIELD_HP_FRACTION = 0.2;
+
 // The arena's wind currents from the same page: Anemograna's updrafts, which a character rides to dodge Dvalin's attacks or to
 // Crossing between platforms. Their positions are the scene export's and not read here, so each is named and not placed (PROVISIONAL)
 export const STORMTERROR_WIND_CURRENTS = [{ name: "Anemograna's updraft", source: "Anemograna" }] as const;
