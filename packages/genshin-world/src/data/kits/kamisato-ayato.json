@@ -1,9 +1,5 @@
 {
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.hits.0.area": {
-    "cause": "TargetCentred",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.8 }
-  },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.boundlessOriginHitmarks.length": { "cause": "Unclassified", "value": 2 },
   "frames.boundlessOriginHitmarks.0": { "cause": "Unsourced", "value": 20 },

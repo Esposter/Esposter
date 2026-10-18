@@ -112,8 +112,23 @@
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.nightVigil.normalAttacks.length": { "cause": "Unsourced", "value": 3 },
-  "stances.nightVigil.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 18 },
-  "stances.nightVigil.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 17 },
-  "stances.nightVigil.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 20 },
+  "stances.nightVigil.normalAttacks.0.animationFrames": {
+    "file": "attack.go",
+    "line": 58,
+    "source": "Gcsim",
+    "value": 18
+  },
+  "stances.nightVigil.normalAttacks.1.animationFrames": {
+    "file": "attack.go",
+    "line": 62,
+    "source": "Gcsim",
+    "value": 17
+  },
+  "stances.nightVigil.normalAttacks.2.animationFrames": {
+    "file": "attack.go",
+    "line": 66,
+    "source": "Gcsim",
+    "value": 20
+  },
   "stances.nightVigil.skill.animationFrames": { "file": "skill.go", "line": 39, "source": "Gcsim", "value": 43 }
 }

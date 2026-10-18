@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Windfall at its first rank: a 60% chance, and its cooldown in seconds
-const critEnergyPassiveModule = createCritEnergyPassiveModule([0.6, 12]);
+// Windfall with synthetic params: a 50% chance, and its cooldown in seconds
+const critEnergyPassiveModule = createCritEnergyPassiveModule([0.5, 3]);
 const createDamageTaken = (isCritical: boolean) => ({
   attackTag: undefined,
   enemy,

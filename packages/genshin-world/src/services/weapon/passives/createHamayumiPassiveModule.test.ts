@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Hamayumi at its first rank, with its normal and charged attack DMG bonuses and the increase a full Energy adds to them
-const hamayumiPassiveModule = createHamayumiPassiveModule([0.16, 0.12, 1]);
+// Hamayumi with synthetic params: its normal and charged attack DMG bonuses, and the full Energy increase of each
+const hamayumiPassiveModule = createHamayumiPassiveModule([0.1, 0.2, 0.5]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -38,28 +38,28 @@ describe(createHamayumiPassiveModule, () => {
     expect.hasAssertions();
 
     expect(hamayumiPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.16, attribute: Attribute.NormalAttackDamageBonus },
-      { amount: 0.12, attribute: Attribute.ChargedAttackDamageBonus },
+      { amount: 0.1, attribute: Attribute.NormalAttackDamageBonus },
+      { amount: 0.2, attribute: Attribute.ChargedAttackDamageBonus },
     ]);
   });
 
-  test("a normal attack's hit gains the normal attack bonus again at full Energy", () => {
+  test("a normal attack's hit gains half the normal attack bonus again at full Energy", () => {
     expect.hasAssertions();
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
     expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
-      0.16,
+      0.05,
     );
   });
 
-  test("a charged attack's hit gains the charged attack bonus again at full Energy", () => {
+  test("a charged attack's hit gains half the charged attack bonus again at full Energy", () => {
     expect.hasAssertions();
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
     expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, [])).toBe(
-      0.12,
+      0.1,
     );
   });
 

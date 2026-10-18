@@ -21,8 +21,9 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createGokadaiouOtogibanashiPassiveModule, () => {
-  // Redhorn Stonethresher at its first rank: its DEF line is the table's, and Normal and Charged Attack hits deal 40% of DEF more as base damage
-  const gokadaiouOtogibanashiPassiveModule = createGokadaiouOtogibanashiPassiveModule([0.28, 0.4]);
+  // Redhorn Stonethresher with synthetic params: its first, a DEF line the module does not read, is passed as 0, and
+  // Normal and Charged Attack hits deal 30% of DEF more as base damage
+  const gokadaiouOtogibanashiPassiveModule = createGokadaiouOtogibanashiPassiveModule([0, 0.3]);
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseDefense, value: 1000 }]);
   const createStrike = (attackTag: AttackTag): KitStrike => ({
     attackTag,
@@ -45,7 +46,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
           context.characterIdCombatantMap,
         ),
       ),
-    ).toStrictEqual([0.4 * wielder.attributes.defense, 0.4 * wielder.attributes.defense]);
+    ).toStrictEqual([0.3 * wielder.attributes.defense, 0.3 * wielder.attributes.defense]);
   });
 
   test("the share is the wielder's DEF with its buffs on", () => {
@@ -78,7 +79,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toStrictEqual(0.4 * buffedDefense);
+    ).toStrictEqual(0.3 * buffedDefense);
   });
 
   test("an elemental skill's strike gains no base damage", () => {

@@ -1,38 +1,22 @@
+import type { KitSlotLabels } from "#src/models/genshinAssets/kits/tables/KitSlotLabels";
+
 import { CombatTalent } from "genshin-world";
 
 const BURST = CombatTalent.ElementalBurst;
 const NORMAL_ATTACK = CombatTalent.NormalAttack;
 const SKILL = CombatTalent.ElementalSkill;
 
-// The hit slot of a folder-less character's record a path names, the talent its labels sit in, and the labels its hits
-// Read their multipliers from, in hit order. A label spanning several hits gives one to each of its parameters
-interface KitSlotHitLabels {
-  combatTalent: CombatTalent;
-  labels: readonly string[];
-}
-
-// The value of a folder-less character's record a path names, the talent and label it reads, and the position in the
-// Label's parameters that names it, the first where none is given
-interface KitSlotValueLabel {
-  combatTalent: CombatTalent;
-  label: string;
-  position?: number;
-}
-
-// The labels a folder-less character's record reads from its tables, by each slot's path in the record: the hit slots
-// And the other values, such as a stance's stamina or a duration
-interface KitSlotLabels {
-  hits?: Record<string, KitSlotHitLabels>;
-  values?: Record<string, KitSlotValueLabel>;
-}
-
-// The labels of each folder-less character, keyed by its avatar id. Nefer's Phantasm Performance replaces her charged
-// Attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her strikes, charged attack and Spirit Steed's
-// Stride while it holds, each stance read from its skill's labels. Illuga's Hold is his skill's hold, read from its Hold
-// DMG label. Vesna's skill tag is the wiki's, so her skill reads its label here like her burst
-export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
-  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
-  // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
+// The labels a character's record slots read from its talent tables, keyed by avatar id. Its entries are folder-less
+// Characters, and Clorinde and Flins, who have gcsim folders and read these slots from the tables all the same. Nefer's
+// Phantasm Performance replaces her charged attack while Shadow Dance holds, and Zibai's Lunar Phase Shift replaces her
+// Strikes, charged attack and Spirit Steed's Stride while it holds, each stance read from its skill's labels. Illuga's
+// Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
+// Here like her burst
+export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and
+  // Each of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do. Her skill rows read
+  // Onto the parameters her module names, a row's values in order, so Impale the Night Healing's low and full heals are
+  // Its first and second
   [
     10_000_098,
     {
@@ -43,6 +27,19 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         "hits.swiftHuntPiercingShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
         "hits.swiftHuntPiercingShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
         "hits.swiftHuntPiercingShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "parameters.bondOfLifeConversionHealing": { combatTalent: SKILL, label: "Bond of Life Conversion" },
+        "parameters.impaleTheNightLowBondOfLifeHealing": {
+          combatTalent: SKILL,
+          label: "Impale the Night Healing",
+          position: 0,
+        },
+        "parameters.impaleTheNightFullBondOfLifeHealing": {
+          combatTalent: SKILL,
+          label: "Impale the Night Healing",
+          position: 1,
+        },
+        "parameters.nightVigilSeconds": { combatTalent: SKILL, label: "Night Vigil Duration" },
+        "parameters.swiftHuntBondOfLifeGain": { combatTalent: SKILL, label: "Swift Hunt Bond of Life Gain" },
       },
     },
   ],

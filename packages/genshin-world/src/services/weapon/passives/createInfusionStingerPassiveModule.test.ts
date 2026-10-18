@@ -16,8 +16,8 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Infusion Stinger at its first rank: its All DMG Bonus per stack, its maximum stacks and its seconds
-const infusionStingerPassiveModule = createInfusionStingerPassiveModule([0.06, 2, 6]);
+// Infusion Stinger with synthetic params: its All DMG Bonus per stack, its maximum stacks and its seconds
+const infusionStingerPassiveModule = createInfusionStingerPassiveModule([0.05, 3, 5]);
 const createEnemyHit = (element: Element | undefined) => ({
   element,
   enemy,
@@ -40,10 +40,10 @@ describe(createInfusionStingerPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.05);
   });
 
-  test("stacks hold at the rank's maximum of two, one each second", () => {
+  test("stacks hold at the rank's maximum of three, one each second", () => {
     expect.hasAssertions();
 
     const kitEffectState: KitEffectState = { effects: [] };
@@ -53,7 +53,9 @@ describe(createInfusionStingerPassiveModule, () => {
     infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
     stepKitSeconds(context, 1.05);
     infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
+    stepKitSeconds(context, 1.05);
+    infusionStingerPassiveModule.onKitEvent?.(createEnemyHit(Element.Pyro), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(kitEffectState, Attribute.AllDamageBonus)?.amount).toBeCloseTo(0.15);
   });
 });

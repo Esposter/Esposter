@@ -16,9 +16,9 @@ const wielder: Combatant = createWielderCombatant([
   { attribute: Attribute.BaseAttack, value: 1250 },
   { attribute: Attribute.BaseHealth, value: 10_000 },
 ]);
-// Falcon's Defiance at its first rank: the ATK share it adds is a static line, so its params carry a heal of 100% of ATK,
-// A hit of 200% of ATK and a cooldown of fifteen seconds
-const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0.2, 1, 2, 15]);
+// Falcon's Defiance with synthetic params: the first, a static ATK line the module does not read, is passed as 0.
+// Then a heal of 50% of ATK, a hit of 150% of ATK and a cooldown of three seconds
+const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0, 0.5, 1.5, 3]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
@@ -40,22 +40,22 @@ describe(createFalconsDefiancePassiveModule, () => {
       {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
-        healthShare: wielder.attributes.attack / wielder.attributes.maxHealth,
+        healthShare: (0.5 * wielder.attributes.attack) / wielder.attributes.maxHealth,
         isFallRefused: false,
         overflowHealthShare: 0,
         sourceCharacterId: TRAVELER_CHARACTER_ID,
       },
     ]);
-    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([2]);
+    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([1.5]);
   });
 
-  test("taking DMG inside the fifteen-second cooldown heals and queues nothing", () => {
+  test("taking DMG inside the three-second cooldown heals and queues nothing", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare = 0.5;
     aquilaFavoniaPassiveModule.onKitEvent?.(createEnemyStrikeLoss(), context, wielder);
-    stepKitSeconds(context, 10);
+    stepKitSeconds(context, 2.5);
     aquilaFavoniaPassiveModule.onKitEvent?.(createEnemyStrikeLoss(), context, wielder);
 
     expect(context.party.healthChanges).toHaveLength(1);
@@ -79,7 +79,8 @@ describe(createFalconsDefiancePassiveModule, () => {
       {
         bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
-        healthShare: (wielder.attributes.attack * (1 + ATTACK_BUFF)) / wielder.attributes.maxHealth,
+        healthShare: (0.5 * wielder.attributes.attack * (1 + ATTACK_BUFF)) / wielder.attributes.maxHealth,
+        isFallRefused: false,
         overflowHealthShare: 0,
         sourceCharacterId: TRAVELER_CHARACTER_ID,
       },

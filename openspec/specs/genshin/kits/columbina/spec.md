@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew, Constellation 4 and her Ascension 4 left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction, her Dew and her Moondew Cleanse built, and her Lunar reactions, Constellation 4 and her Ascension 4's Lunar-Charged and Lunar-Crystallize hits left waiting on their hooks.
 
 ## Requirements
 
@@ -18,6 +18,7 @@ Columbina's normal attacks SHALL be three strikes, a charged attack, a collision
 #### Scenario: Charged attack costs 50 stamina
 
 - **GIVEN** Columbina has 50 stamina
+- **AND** the party holds no Dew
 - **WHEN** the player holds the attack button to charge
 - **THEN** the charged attack spends 50 stamina
 
@@ -186,13 +187,20 @@ From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL 
 
 ### Requirement: Moondew Cleanse replaces her charged attack while Dew is there to spend
 
-While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF.
+While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, costs no stamina, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF.
 
 #### Scenario: A charged attack with Dew plays Moondew Cleanse and spends one Dew
 
 - **GIVEN** the party holds a Moonridge or Verdant Dew
 - **WHEN** the player presses a charged attack
 - **THEN** Moondew Cleanse plays, and one Dew is spent, the verdant first
+
+#### Scenario: Moondew Cleanse spends no stamina
+
+- **GIVEN** the party holds a Moonridge or Verdant Dew
+- **AND** Columbina has 50 stamina
+- **WHEN** the player presses a charged attack
+- **THEN** Moondew Cleanse plays and spends no stamina
 
 #### Scenario: A charged attack with no Dew is her normal charged attack
 

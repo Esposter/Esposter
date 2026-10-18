@@ -2,6 +2,8 @@ import type { DumpedChapter } from "#src/models/genshinText/DumpedChapter";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 
+import { getOrCreate } from "@esposter/shared";
+
 // Each quest's title and each chapter's title in the English text, to the world quest it names: a quest's title names that
 // Quest, and a chapter's title names the quest its end quest is in. A title two quests share names both
 export const readTitleQuestIds = (
@@ -14,7 +16,7 @@ export const readTitleQuestIds = (
   const addTitle = (titleTextMapHash: number, questId: number | undefined) => {
     const title = textMap.get(String(titleTextMapHash));
     if (title === undefined || questId === undefined) return;
-    titleQuestIds.set(title, [...(titleQuestIds.get(title) ?? []), questId]);
+    getOrCreate(titleQuestIds, title, () => []).push(questId);
   };
   for (const { id, titleTextMapHash } of mainQuests) addTitle(titleTextMapHash, id);
   for (const { chapterTitleTextMapHash, endQuestId } of chapters)

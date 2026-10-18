@@ -49,4 +49,29 @@ describe(readGcsimHoldCooldowns, () => {
     expect(readGcsimHoldCooldowns([{ path: "skill.go", source: literalSource }], constantMap)).toStrictEqual([]);
     expect(readGcsimHoldCooldowns([{ path: "skill.go", source: unsetSource }], constantMap)).toStrictEqual([]);
   });
+
+  test("gives none where the switch that sets the local sits in an earlier function than the cooldown call", () => {
+    expect.hasAssertions();
+
+    const constantMap = new Map<string, GoConstant>();
+    const source = [
+      "package bennett",
+      "",
+      "func (c *char) a() {",
+      "	switch l {",
+      "	case 1:",
+      "		cd = 1",
+      "	case 2:",
+      "		cd = 2",
+      "	}",
+      "}",
+      "",
+      "func (c *char) b() {",
+      "	cd := 3",
+      "	c.SetCD(action.ActionBurst, cd)",
+      "}",
+    ].join("\n");
+
+    expect(readGcsimHoldCooldowns([{ path: "skill.go", source }], constantMap)).toStrictEqual([]);
+  });
 });

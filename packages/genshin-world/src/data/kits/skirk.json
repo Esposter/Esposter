@@ -1,12 +1,12 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 6 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 6 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.4.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 11439 } },
   "burst.hits.5.area": {
-    "cause": "Unclassified",
+    "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.899494936611665 }
   },
   "burst.hits.5.element": { "cause": "Unsourced", "value": "Ice" },
@@ -16,8 +16,8 @@
   "burstEnergyCost": { "cause": "Unsourced", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
-  "frames.sevenPhaseFlash": { "cause": "Unsourced", "value": 754 },
-  "frames.sevenPhaseFlashDelay": { "cause": "Unsourced", "value": 19 },
+  "frames.sevenPhaseFlash": { "file": "skill.go", "line": 25, "source": "Gcsim", "value": 754 },
+  "frames.sevenPhaseFlashDelay": { "file": "skill.go", "line": 24, "source": "Gcsim", "value": 19 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 13 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 57 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 7 },
@@ -32,7 +32,7 @@
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 86.7 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "skillCooldownSeconds": { "cause": "Unsourced", "value": 20.883333333333333 },
-  "skillHolds.length": { "cause": "Unclassified", "value": 0 },
+  "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.sevenPhaseFlash.burst.animationFrames": { "cause": "Unsourced", "value": 41 },
   "stances.sevenPhaseFlash.burst.hits.length": { "cause": "Unsourced", "value": 0 },
   "stances.sevenPhaseFlash.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
@@ -44,7 +44,12 @@
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "stances.sevenPhaseFlash.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 28 },
+  "stances.sevenPhaseFlash.chargedAttack.hits.0.hitmarkFrames": {
+    "file": "charge.go",
+    "line": 19,
+    "source": "Gcsim",
+    "value": 28
+  },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
@@ -56,7 +61,12 @@
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
-  "stances.sevenPhaseFlash.chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
+  "stances.sevenPhaseFlash.chargedAttack.hits.1.hitmarkFrames": {
+    "file": "charge.go",
+    "line": 19,
+    "source": "Gcsim",
+    "value": 37
+  },
   "stances.sevenPhaseFlash.chargedAttack.hits.1.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
@@ -68,7 +78,12 @@
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.2.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.2.gauge": { "cause": "Unsourced", "value": 1 },
-  "stances.sevenPhaseFlash.chargedAttack.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 46 },
+  "stances.sevenPhaseFlash.chargedAttack.hits.2.hitmarkFrames": {
+    "file": "charge.go",
+    "line": 19,
+    "source": "Gcsim",
+    "value": 46
+  },
   "stances.sevenPhaseFlash.chargedAttack.hits.2.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
@@ -84,7 +99,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 12
+  },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 11432 }
@@ -99,7 +119,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 11
+  },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 11432 }
@@ -114,7 +139,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 11
+  },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 11432 }
@@ -126,7 +156,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 23 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 23
+  },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11432 }
@@ -141,7 +176,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 11
+  },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 11432 }
@@ -153,7 +193,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 27 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 27
+  },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 11432 }
@@ -168,7 +213,12 @@
   },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 25 },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": {
+    "file": "attack.go",
+    "line": 27,
+    "source": "Gcsim",
+    "value": 25
+  },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 11432 }

@@ -1,5 +1,6 @@
 import type { Object3D } from "three";
 
+import { IN_FAMILY_KEY } from "#src/services/scene/constants";
 import { Matrix4 } from "three";
 
 const inverseRest = new Matrix4();
@@ -14,8 +15,8 @@ export const followLoginWitnessDoor = (family: Object3D, doorPieces: readonly Ob
   toFamily.multiplyMatrices(inverseRest, family.matrix);
   for (const doorPiece of doorPieces)
     for (const copy of doorPiece.children) {
-      const inFamily = copy.userData.inFamily as Matrix4 | undefined;
-      if (!inFamily) continue;
+      const inFamily: unknown = copy.userData[IN_FAMILY_KEY];
+      if (!(inFamily instanceof Matrix4)) continue;
       local.multiplyMatrices(toFamily, inFamily).decompose(copy.position, copy.quaternion, copy.scale);
     }
 };

@@ -19,9 +19,10 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createDaylightsAuguryPassiveModule, () => {
-  // Daylight's Augury at its first rank: 12% Elemental Skill and Burst DMG, a stack for each hit of a normal, charged,
-  // Elemental Skill or Elemental Burst attack for twelve seconds, and 10%, 20%, 30% and 48% ATK for one to four stacks
-  const daylightsAuguryPassiveModule = createDaylightsAuguryPassiveModule([0.12, 12, 0.1, 0.2, 0.3, 0.48]);
+  // Daylight's Augury with synthetic params: 15% Elemental Skill and Burst DMG, a stack for each hit of a normal,
+  // Charged, Elemental Skill or Elemental Burst attack for three seconds, and 5%, 10%, 15% and 20% ATK for one to four
+  // Stacks
+  const daylightsAuguryPassiveModule = createDaylightsAuguryPassiveModule([0.15, 3, 0.05, 0.1, 0.15, 0.2]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   const createDamageTaken = (attackTag: AttackTag) => ({
@@ -47,10 +48,10 @@ describe(createDaylightsAuguryPassiveModule, () => {
 
     expect(
       daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
-    ).toBe(0.12);
+    ).toBe(0.15);
     expect(
       daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, []),
-    ).toBe(0.12);
+    ).toBe(0.15);
     expect(
       daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
@@ -70,16 +71,16 @@ describe(createDaylightsAuguryPassiveModule, () => {
 
     expect(
       daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
-    ).toStrictEqual([{ amount: 0.48, attribute: Attribute.AttackPercent }]);
+    ).toStrictEqual([{ amount: 0.2, attribute: Attribute.AttackPercent }]);
 
     daylightsAuguryPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(
       daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
-    ).toStrictEqual([{ amount: 0.48, attribute: Attribute.AttackPercent }]);
+    ).toStrictEqual([{ amount: 0.2, attribute: Attribute.AttackPercent }]);
   });
 
-  test("a stack lasts twelve seconds", () => {
+  test("a stack lasts three seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -87,9 +88,9 @@ describe(createDaylightsAuguryPassiveModule, () => {
 
     expect(
       daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
-    ).toStrictEqual([{ amount: 0.1, attribute: Attribute.AttackPercent }]);
+    ).toStrictEqual([{ amount: 0.05, attribute: Attribute.AttackPercent }]);
 
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 3.1);
 
     expect(
       daylightsAuguryPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),

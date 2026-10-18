@@ -1,11 +1,10 @@
-import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ADVENTURE_EXP_ITEM_ID } from "#src/services/forging/constants";
-import { CurrencyItemIdMap, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
 import { describe, expect, test } from "vitest";
@@ -41,7 +40,6 @@ describe(payOfferingLevels, () => {
       },
     ],
   ]);
-  const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
   test("every region's level pays Adventure EXP, Primogems and Sigils", () => {
     expect.hasAssertions();
@@ -57,7 +55,7 @@ describe(payOfferingLevels, () => {
       },
     ];
 
-    expect(payOfferingLevels(gainedLevels, emptyInventory, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
+    expect(payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
       adventureExp: ADVENTURE_EXP_COUNT,
       inventory: {
         items: [{ definition: getItemDefinition(SIGIL_ITEM_ID, names, materialDataMap), id: 0, quantity: SIGIL_COUNT }],
@@ -79,7 +77,7 @@ describe(payOfferingLevels, () => {
       },
     ];
 
-    expect(payOfferingLevels(gainedLevels, emptyInventory, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
+    expect(payOfferingLevels(gainedLevels, EMPTY_INVENTORY, EMPTY_WALLET, names, materialDataMap)).toStrictEqual({
       adventureExp: 0,
       inventory: {
         items: [{ definition: getItemDefinition(STONE_ITEM_ID, names, materialDataMap), id: 0, quantity: 1 }],

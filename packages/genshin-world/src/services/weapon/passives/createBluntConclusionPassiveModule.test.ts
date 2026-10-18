@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Blunt Conclusion at its first rank: the multiplier, the seconds it lasts after a skill and its cooldown
-const bluntConclusionPassiveModule = createBluntConclusionPassiveModule([0.6, 15, 3]);
+// Blunt Conclusion with synthetic params: the multiplier, the seconds it lasts after a skill and its cooldown
+const bluntConclusionPassiveModule = createBluntConclusionPassiveModule([0.5, 2, 3]);
 const createNormalAttackHit = () => ({
   attackTag: AttackTag.NormalAttack,
   enemy,
@@ -42,7 +42,7 @@ describe(createBluntConclusionPassiveModule, () => {
     bluntConclusionPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.6);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.5);
   });
 
   test("a normal attack with no skill before it queues nothing", () => {

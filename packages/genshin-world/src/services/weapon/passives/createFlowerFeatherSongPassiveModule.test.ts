@@ -30,8 +30,9 @@ const createMember = (characterId: number, element: Element, regionId?: string):
   );
 
 describe(createFlowerFeatherSongPassiveModule, () => {
-  // Flower-Feather Song at its first rank: 4.8% ATK for each counted member, and 24 Elemental Mastery with three of them
-  const flowerFeatherSongPassiveModule = createFlowerFeatherSongPassiveModule([0.048, 24, 0]);
+  // Flower-Feather Song with synthetic params: 5% ATK for each counted member, and 20 Elemental Mastery with
+  // Three of them
+  const flowerFeatherSongPassiveModule = createFlowerFeatherSongPassiveModule([0.05, 20, 0]);
   const wielder: Combatant = createMember(TRAVELER_CHARACTER_ID, Element.Pyro);
 
   test("each other party member from Natlan or of another element adds the rank's ATK, and a member of the wielder's element outside Natlan does not", () => {
@@ -45,7 +46,7 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     ];
 
     expect(flowerFeatherSongPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
-      { amount: 0.048 * 2, attribute: Attribute.AttackPercent },
+      { amount: 0.05 * 2, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.ElementalMastery },
     ]);
   });
@@ -61,8 +62,8 @@ describe(createFlowerFeatherSongPassiveModule, () => {
     ];
 
     expect(flowerFeatherSongPassiveModule.getPassiveBonuses?.(wielder, 1, deployedCombatants, [])).toStrictEqual([
-      { amount: 0.048 * 3, attribute: Attribute.AttackPercent },
-      { amount: 24, attribute: Attribute.ElementalMastery },
+      { amount: 0.05 * 3, attribute: Attribute.AttackPercent },
+      { amount: 20, attribute: Attribute.ElementalMastery },
     ]);
   });
 

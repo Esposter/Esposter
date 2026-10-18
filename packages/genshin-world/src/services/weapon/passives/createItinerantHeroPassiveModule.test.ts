@@ -10,8 +10,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
-// Itinerant Hero at its first rank: twelve per cent DMG, disabled for five seconds by taking DMG
-const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.12]);
+// Itinerant Hero with synthetic params: 15% DMG, disabled for five seconds by taking DMG
+const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.15]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
@@ -26,7 +26,7 @@ describe(createItinerantHeroPassiveModule, () => {
     expect.hasAssertions();
 
     expect(itinerantHeroPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.12, attribute: Attribute.AllDamageBonus },
+      { amount: 0.15, attribute: Attribute.AllDamageBonus },
     ]);
   });
 
@@ -41,7 +41,7 @@ describe(createItinerantHeroPassiveModule, () => {
       context.kitEffectState.effects
         .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
-    ).toStrictEqual([{ amount: -0.12, attribute: Attribute.AllDamageBonus, secondsRemaining: 5 }]);
+    ).toStrictEqual([{ amount: -0.15, attribute: Attribute.AllDamageBonus, secondsRemaining: 5 }]);
   });
 
   test("a loss another character caused takes nothing off", () => {

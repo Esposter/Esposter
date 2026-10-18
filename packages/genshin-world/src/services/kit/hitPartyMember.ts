@@ -22,12 +22,8 @@ export const hitPartyMember = (
   const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
   const { maxHealth } = buffedCombatant.attributes;
   const overflow = absorbKitShield(kitEffectState.effects, buffedCombatant, damage, element);
-  damagePartyMember(
-    party,
-    combatant.characterId,
-    overflow / maxHealth,
-    undefined,
-    createKitFallRefusal(combatant, kitEffectState, maxHealth),
+  damagePartyMember(party, combatant.characterId, overflow / maxHealth, {
     element,
-  );
+    fallRefusal: createKitFallRefusal(combatant, kitEffectState, maxHealth),
+  });
 };

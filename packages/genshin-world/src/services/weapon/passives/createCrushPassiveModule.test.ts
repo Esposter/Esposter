@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Crush at its first rank: a chance of an extra hit at the rank's multiplier, once every fifteen seconds
-const crushPassiveModule = createCrushPassiveModule([0.5, 2.4]);
+// Crush with synthetic params: a chance of an extra hit at the rank's multiplier, once every fifteen seconds
+const crushPassiveModule = createCrushPassiveModule([0.25, 1.5]);
 const createDamageTaken = (attackTag: AttackTag) => ({
   attackTag,
   enemy,
@@ -37,7 +37,7 @@ describe(createCrushPassiveModule, () => {
     crushPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(2.4);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.5);
   });
 
   test("a roll above the rank's chance queues no extra hit", () => {

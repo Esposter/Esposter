@@ -51,7 +51,7 @@ describe(damagePartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    damagePartyMember(party, 1, 1, undefined, { healthShare: 0.1, refuses: () => true });
+    damagePartyMember(party, 1, 1, { fallRefusal: { healthShare: 0.1, refuses: () => true } });
 
     expect({ healthChanges: party.healthChanges, partyMember: getPartyMember(party, 1) }).toStrictEqual({
       healthChanges: [
@@ -66,7 +66,7 @@ describe(damagePartyMember, () => {
 
     const party = createParty([1]);
     const refuses = vi.fn(() => true);
-    damagePartyMember(party, 1, 0.25, undefined, { healthShare: 0.1, refuses });
+    damagePartyMember(party, 1, 0.25, { fallRefusal: { healthShare: 0.1, refuses } });
 
     expect(refuses).not.toHaveBeenCalled();
   });

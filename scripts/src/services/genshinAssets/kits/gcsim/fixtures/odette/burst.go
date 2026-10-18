@@ -32,16 +32,6 @@ func init() {
 	burstFrames[action.ActionSwap] = 106    // Q -> Swap
 }
 
-// With quick, lively dance steps, Odette deals multiple instances of AoE Cryo DMG, and summons her
-// Solo Dance Double. She also gains Snow Swan's Dream, which increases the Stellar Glimmer reaction
-// DMG Odette deals.
-//
-// Additionally, for 6s after unleashing the Elemental Burst Presto: Bluebird Finale, Odette's
-// Elemental Skill Adagio: Phantom Night Dancers will be replaced with the special Elemental Skill
-// Adagio: Coda at Dawn's Tolling instead.
-//
-// If there is a Solo Dance Double summoned by Odette on the field, it will be summoned to her side
-// with its duration refreshed.
 func (c *char) Burst(p map[string]int) (action.Info, error) {
 	ai := info.AttackInfo{
 		ActorIndex: c.Index(),

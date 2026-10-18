@@ -54,4 +54,28 @@ describe(compareKitRecord, () => {
       committedOverlay["burstVariant.hits.0.poiseDamage"],
     );
   });
+
+  test("reports a borrowed path its donor lacks as this kit's failure, not a throw", () => {
+    expect.hasAssertions();
+
+    const committedOverlay = {
+      "burstVariant.hits.0.poiseDamage": {
+        cause: KitProvisionalCause.BorrowedFromDonor,
+        donor: { characterId: 1, path: "burstVariant.hits.0.poiseDamage" },
+      },
+    };
+
+    expect(
+      compareKitRecord(
+        {} as KitRecord,
+        new Map(),
+        new Map(),
+        false,
+        committedOverlay,
+        new Map([[1, {}]]),
+        new Map(),
+        tables,
+      ),
+    ).toStrictEqual({ failures: [expect.stringContaining("which character 1 lacks")], overlay: {} });
+  });
 });

@@ -26,9 +26,9 @@ const wielder: Combatant = createWielderCombatant([
   { attribute: Attribute.BaseAttack, value: 250 },
   { attribute: Attribute.Health, value: 1000 },
 ]);
-// Justice at its first rank: twenty per cent DMG for normal and charged attacks, sixty per cent of ATK as HP on a critical
-// Hit, and a cooldown of five seconds
-const justicePassiveModule = createJusticePassiveModule([0.2, 0.6, 5]);
+// Justice with synthetic params: 15% DMG for normal and charged attacks, 50% of ATK as HP on a critical hit, and a
+// Cooldown of four seconds
+const justicePassiveModule = createJusticePassiveModule([0.15, 0.5, 4]);
 const createStrike = (attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
@@ -53,10 +53,10 @@ describe(createJusticePassiveModule, () => {
 
     expect(
       justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
-    ).toBeCloseTo(0.2);
+    ).toBeCloseTo(0.15);
     expect(
       justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
-    ).toBeCloseTo(0.2);
+    ).toBeCloseTo(0.15);
     expect(justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(
       0,
     );
@@ -70,7 +70,7 @@ describe(createJusticePassiveModule, () => {
     justicePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack, true), context, wielder);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(
-      0.5 + (wielder.attributes.attack * 0.6) / wielder.attributes.maxHealth,
+      0.5 + (wielder.attributes.attack * 0.5) / wielder.attributes.maxHealth,
     );
   });
 
@@ -88,7 +88,7 @@ describe(createJusticePassiveModule, () => {
     justicePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack, true), context, wielder);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(
-      0.5 + (wielder.attributes.attack * (1 + ATTACK_BUFF) * 0.6) / wielder.attributes.maxHealth,
+      0.5 + (wielder.attributes.attack * (1 + ATTACK_BUFF) * 0.5) / wielder.attributes.maxHealth,
     );
   });
 
@@ -102,7 +102,7 @@ describe(createJusticePassiveModule, () => {
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(0.5);
   });
 
-  test("a second critical hit inside the rank's five seconds restores the wielder nothing more", () => {
+  test("a second critical hit inside the rank's four seconds restores the wielder nothing more", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);

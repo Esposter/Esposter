@@ -5,7 +5,7 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { readVoiceLineFetters } from "#src/services/genshinText/readVoiceLineFetters";
 import { writeGameText } from "#src/services/genshinText/writeGameText";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
-import { GameLanguage } from "genshin-text";
+import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -41,8 +41,12 @@ describe(writeGameText, () => {
 
     const notes = writeGameText({ isDryRun: true });
 
-    expect(notes.at(-1)).toMatch(/^dry run: /u);
-    expect(readTextMap).toHaveBeenCalledWith(GameLanguage.English);
+    const languagesRead = vi.mocked(readTextMap).mock.calls.map(([language]) => language);
+
+    expect(languagesRead.toSorted()).toStrictEqual(GameLanguages.toSorted());
+    expect(notes).toStrictEqual([
+      `dry run: ${GameTextKeys.length} strings in ${GameLanguages.length} languages read, and nothing written`,
+    ]);
     expect(writeJsonFile).not.toHaveBeenCalled();
     expect(rmSync).not.toHaveBeenCalled();
     expect(mkdirSync).not.toHaveBeenCalled();

@@ -1,10 +1,10 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
+import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
-import type { ConstantLoop } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -49,11 +49,8 @@ const readFunctionName = (tokens: readonly GoToken[], position: number): string 
     : undefined;
 };
 
-// The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
-// Element by their gcsim names, its durability and poise evaluated through the package's constants, and
-// The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. A field the code
-// Sets after the literal is not read, but a `Mult` it sets after the literal is an attack of its own under that variable
-// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by a constant
+// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by
+// A constant
 const readGoStringConstants = (tokens: readonly GoToken[]): Map<string, string> => {
   const stringMap = new Map<string, string>();
   for (const [position, token] of tokens.entries()) {
@@ -81,6 +78,13 @@ const readCopySource = (tokens: readonly GoToken[], position: number): string | 
     (tokens[position + 3] === undefined || tokens[position + 3]?.kind === GoTokenKind.Newline);
   return isCopy ? source.text : undefined;
 };
+
+// Whether the field at the position is set on a variable, `ai.Mult = ...`: a `.` before the field, an `=` after it, and
+// An identifier two tokens back
+const checkIsFieldSet = (tokens: readonly GoToken[], position: number): boolean =>
+  checkIsGoPunctuation(tokens[position - 1], ".") &&
+  checkIsGoPunctuation(tokens[position + 1], "=") &&
+  tokens[position - 2]?.kind === GoTokenKind.Identifier;
 
 // The field an if on a constant loop's variable may set on a copy, by its gcsim name: the poise its hit deals in that
 // Iteration. Other fields an if sets are not read
@@ -187,11 +191,20 @@ export const readGcsimAttacks = (
       return placed;
     };
     const attacks: GcsimAttack[] = [];
-    // A variant is only in its loop iteration, so the copies and sets after it take the variable's own attack instead
-    const readVariableAttack = (variableName: string, line: number) =>
+    // The variable's own attack as of the line, the one no loop iteration holds
+    const readOwnAttack = (variableName: string, line: number) =>
       attacks.findLast(
         (attack) => attack.variableName === variableName && attack.line < line && attack.iteration === undefined,
       );
+    // A variant is only in its loop iteration, so a copy or set after it takes the variable's own attack instead, and
+    // Only a variable with none takes the variants its loop literal left, one attack per iteration
+    const readVariableAttacks = (variableName: string, line: number): GcsimAttack[] => {
+      const ownAttack = readOwnAttack(variableName, line);
+      if (ownAttack !== undefined) return [ownAttack];
+      const priorAttacks = attacks.filter((attack) => attack.variableName === variableName && attack.line < line);
+      const literalLine = priorAttacks.at(-1)?.line;
+      return priorAttacks.filter((attack) => attack.line === literalLine);
+    };
     for (const [position, token] of tokens.entries()) {
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
         // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
@@ -254,38 +267,29 @@ export const readGcsimAttacks = (
                 position,
               ),
             );
-      } else if (
-        token.text === "Mult" &&
-        checkIsGoPunctuation(tokens[position - 1], ".") &&
-        checkIsGoPunctuation(tokens[position + 1], "=") &&
-        tokens[position - 2]?.kind === GoTokenKind.Identifier
-      ) {
-        const literalAttack = readVariableAttack(tokens[position - 2]?.text ?? "", token.line);
+      } else if (token.text === "Mult" && checkIsFieldSet(tokens, position)) {
+        const literalAttacks = readVariableAttacks(tokens[position - 2]?.text ?? "", token.line);
         const talentVariable = resolveGoAlias(
           aliasMap,
           getGoRootName(parseGoExpression(tokens, position + 2).expression),
           position,
         );
-        if (literalAttack === undefined || talentVariable === undefined) continue;
-        attacks.push(
-          withBranch(
-            {
-              ...literalAttack,
-              fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
-              line: token.line,
-              talentVariable,
-            },
-            position,
-          ),
-        );
-      } else if (
-        token.text === ITERATION_POISE_FIELD &&
-        checkIsGoPunctuation(tokens[position - 1], ".") &&
-        checkIsGoPunctuation(tokens[position + 1], "=") &&
-        tokens[position - 2]?.kind === GoTokenKind.Identifier
-      ) {
+        if (literalAttacks.length === 0 || talentVariable === undefined) continue;
+        for (const literalAttack of literalAttacks)
+          attacks.push(
+            withBranch(
+              {
+                ...literalAttack,
+                fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
+                line: token.line,
+                talentVariable,
+              },
+              position,
+            ),
+          );
+      } else if (token.text === ITERATION_POISE_FIELD && checkIsFieldSet(tokens, position)) {
         const iteration = readIterationAt(tokens, position, loops);
-        const copyAttack = readVariableAttack(tokens[position - 2]?.text ?? "", token.line);
+        const copyAttack = readOwnAttack(tokens[position - 2]?.text ?? "", token.line);
         const poiseDamage = readGoNumber(
           evaluateGoExpression(parseGoExpression(tokens, position + 2).expression, resolveName),
         );
@@ -305,11 +309,11 @@ export const readGcsimAttacks = (
         );
       } else {
         const copySource = readCopySource(tokens, position);
-        const sourceAttack = copySource === undefined ? undefined : readVariableAttack(copySource, token.line);
-        if (sourceAttack === undefined) continue;
-        attacks.push(
-          withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
-        );
+        const sourceAttacks = copySource === undefined ? [] : readVariableAttacks(copySource, token.line);
+        for (const sourceAttack of sourceAttacks)
+          attacks.push(
+            withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
+          );
       }
     }
     return attacks;

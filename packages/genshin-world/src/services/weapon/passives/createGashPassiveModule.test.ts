@@ -17,8 +17,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Gash at its first rank: a fifty per cent chance, the rank's multiplier and its cooldown
-const gashPassiveModule = createGashPassiveModule([0.5, 2.4, 15]);
+// Gash with synthetic params: a 40% chance, a 200% multiplier and a ten-second cooldown
+const gashPassiveModule = createGashPassiveModule([0.4, 2, 10]);
 const createDamageTaken = (attackTag?: AttackTag) => ({
   attackTag,
   enemy,
@@ -38,7 +38,7 @@ describe(createGashPassiveModule, () => {
 
     expect(context.strikes).toHaveLength(1);
     expect(context.strikes[0]?.target).toBe(enemy);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(2.4);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(2);
   });
 
   test("a hit inside the rank's cooldown queues no second extra hit", () => {

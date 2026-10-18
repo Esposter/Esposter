@@ -9,18 +9,18 @@ export const joinGcsimTalentArray = (
   talentMultiplierMap: TalentMultiplierMap,
   talentGroupIds: readonly number[],
 ): { index: number; proudSkillGroupId: number } | undefined => {
-  const matchMap = new Map<string, { index: number; proudSkillGroupId: number }>();
-  for (const row of rows)
-    for (const proudSkillGroupId of new Set(talentGroupIds)) {
-      const multipliers = talentMultiplierMap[proudSkillGroupId] ?? [];
-      const paramCount = Math.max(0, ...multipliers.map(({ paramList }) => paramList.length));
-      for (let index = 0; index < paramCount; index++) {
-        const isMatch = row.every((value, levelIndex) => {
-          const multiplier = multipliers.find(({ level }) => level === levelIndex + 1);
-          return multiplier !== undefined && (multiplier.paramList[index] ?? 0) === value;
-        });
-        if (isMatch) matchMap.set(`${proudSkillGroupId}|${index}`, { index, proudSkillGroupId });
-      }
-    }
-  return matchMap.size === 1 ? [...matchMap.values()][0] : undefined;
+  const parameters = [...new Set(talentGroupIds)].flatMap((proudSkillGroupId) => {
+    const multipliers = talentMultiplierMap[proudSkillGroupId] ?? [];
+    const paramCount = Math.max(0, ...multipliers.map(({ paramList }) => paramList.length));
+    return Array.from({ length: paramCount }, (_, index) => ({ index, proudSkillGroupId }));
+  });
+  const matches = parameters.filter(({ index, proudSkillGroupId }) =>
+    rows.every((row) =>
+      row.every((value, levelIndex) => {
+        const multiplier = talentMultiplierMap[proudSkillGroupId]?.find(({ level }) => level === levelIndex + 1);
+        return multiplier !== undefined && (multiplier.paramList[index] ?? 0) === value;
+      }),
+    ),
+  );
+  return rows.length > 0 && matches.length === 1 ? matches[0] : undefined;
 };

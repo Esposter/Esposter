@@ -21,8 +21,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Primordial Jade Winged-Spear at its first rank: 3.2% ATK a stack, and 12% DMG dealt at the maximum of seven stacks
-const eagleSpearOfJusticePassiveModule = createEagleSpearOfJusticePassiveModule([0.032, 0.12, 0, 0]);
+// Primordial Jade Winged-Spear with synthetic params: 5% ATK a stack, and 15% DMG dealt at the maximum of seven stacks
+const eagleSpearOfJusticePassiveModule = createEagleSpearOfJusticePassiveModule([0.05, 0.15]);
 const EAGLE_SPEAR_ID = "eagleSpear";
 const createHit = (striker: Combatant): KitEvent => ({
   attackTag: AttackTag.NormalAttack,
@@ -53,7 +53,7 @@ describe(createEagleSpearOfJusticePassiveModule, () => {
       (effect) => effect.kind === "buff" && effect.source === EAGLE_SPEAR_ID,
     );
     expect(attackBuff).toStrictEqual({
-      amount: 0.032,
+      amount: 0.05,
       attribute: Attribute.AttackPercent,
       characterId: TRAVELER_CHARACTER_ID,
       kind: "buff",
@@ -91,7 +91,7 @@ describe(createEagleSpearOfJusticePassiveModule, () => {
     eagleSpearOfJusticePassiveModule.onKitEvent?.(createHit(wielder), context, wielder);
     expect(getMaximumBuffs(context.kitEffectState.effects)).toStrictEqual([
       {
-        amount: 0.12,
+        amount: 0.15,
         attribute: Attribute.AllDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",

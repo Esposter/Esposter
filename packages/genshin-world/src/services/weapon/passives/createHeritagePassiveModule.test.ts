@@ -12,8 +12,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 10_000_066;
 const wielder: Combatant = createWielderCombatant();
-// Heritage at its first rank: the ATK percentage, its seconds and the cooldown on its wielder
-const heritagePassiveModule = createHeritagePassiveModule([0.24, 10, 20]);
+// Heritage with synthetic params: the ATK percentage, its seconds and the cooldown on its wielder
+const heritagePassiveModule = createHeritagePassiveModule([0.2, 8, 15]);
 const createCharacterSwapped = () => ({
   characterId: OTHER_CHARACTER_ID,
   kind: KitEventKind.CharacterSwapped as const,
@@ -38,7 +38,7 @@ describe(createHeritagePassiveModule, () => {
         characterId,
         secondsRemaining,
       })),
-    ).toStrictEqual([{ amount: 0.24, characterId: OTHER_CHARACTER_ID, secondsRemaining: 10 }]);
+    ).toStrictEqual([{ amount: 0.2, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 }]);
   });
 
   test("a second swap inside the rank's cooldown gains nothing", () => {

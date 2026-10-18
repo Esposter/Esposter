@@ -97,7 +97,11 @@ describe(stepTimeTrialChallenge, () => {
 
     const challenge = { ...createChallenge(), limitSeconds: 5 };
     startTimeTrialChallenge(challenge);
-    for (let step = 0; step < 300; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
+    for (let step = 0; step < 299; step++) stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
+
+    expect(challenge.state).toBe(TimeTrialChallengeState.Running);
+
+    stepTimeTrialChallenge(challenge, FIXED_STEP_SECONDS);
 
     expect(challenge.state).toBe(TimeTrialChallengeState.Failed);
   });

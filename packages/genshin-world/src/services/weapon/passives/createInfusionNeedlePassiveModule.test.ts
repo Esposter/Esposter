@@ -13,8 +13,8 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const wielder: Combatant = createWielderCombatant();
-// Infusion Needle at its first rank, which reads its extra hit's share of ATK from the affix row's first number
-const infusionNeedlePassiveModule = createInfusionNeedlePassiveModule([0.2]);
+// Infusion Needle with synthetic params, which reads its extra hit's share of ATK from the first number
+const infusionNeedlePassiveModule = createInfusionNeedlePassiveModule([0.3]);
 const createParticleCollected = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   count: 1,
@@ -44,7 +44,7 @@ describe(createInfusionNeedlePassiveModule, () => {
     infusionNeedlePassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.2);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(0.3);
 
     stepKitSeconds(context, 5.1);
     infusionNeedlePassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);

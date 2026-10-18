@@ -1,16 +1,7 @@
-import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
-
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
+import { HUNT } from "#src/services/reputation/constants.test";
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { describe, expect, test } from "vitest";
-
-const HUNT: ReputationBountyHunt = {
-  bountyId: 3,
-  isTargetDefeated: false,
-  regionId: 7,
-  spawn: [100, 0, 200],
-  targetEnemyKindId: EnemyKindId.HilichurlFighter,
-};
 
 describe(createReputationBountyCamp, () => {
   test("a taken bounty's target stands at the hunt's spawn point, in the region it names", () => {

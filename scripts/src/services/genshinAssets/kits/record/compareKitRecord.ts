@@ -39,94 +39,97 @@ export const compareKitRecord = (
   tables: KitTables,
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
-  const committedDonorCandidateMap = getDonorKitCandidates(committedOverlay, donorRecordMap);
   const overlay: KitOverlay = {};
-  const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
-    // A multiplier joined to its talent row names the row by its own value, so the overlay keeps the value with the
-    // Source it joins to, where no source of the path gives the value itself
-    const isJoinedMultiplier =
-      path.endsWith(".multiplier") &&
-      (candidateMap.get(path) ?? []).some(
-        (candidate) => candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
-      ) &&
-      !(sourceCandidateMap.get(path) ?? []).some(
-        (candidate) => candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
-      );
-    if (isJoinedMultiplier) {
-      overlay[path] = { source: KitSource.Gcsim, value };
-      return;
-    }
-    const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
-    // A cited value whose line still gives it keeps its citation as it is
-    if (
-      committedEntry !== undefined &&
-      "file" in committedEntry &&
-      (candidateMap.get(path) ?? []).some(
-        (candidate) =>
-          checkIsCitedBy(candidate.provenance, committedEntry) && checkIsKitValueEqual(candidate.value, value),
-      )
-    ) {
-      overlay[path] = committedEntry;
-      return;
-    }
-    // A value the committed overlay borrows keeps its donor while the donor's record still gives the published value
-    if (
-      committedEntry !== undefined &&
-      "cause" in committedEntry &&
-      committedEntry.cause === KitProvisionalCause.BorrowedFromDonor &&
-      checkIsKitValueEqual(committedDonorCandidateMap.get(path)?.[0]?.value, value)
-    ) {
-      overlay[path] = committedEntry;
-      return;
-    }
-    // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value, so the
-    // Published one a rule gave is replaced rather than pinned
-    const donor = candidateMap.get(path)?.[0]?.provenance;
-    const isUnreasonedDonorValue =
-      donor?.source === KitSource.Gcsim &&
-      "cause" in donor &&
-      donor.cause === KitProvisionalCause.NoActionFile &&
-      (committedEntry === undefined ||
-        !("cause" in committedEntry) ||
-        committedEntry.cause === KitProvisionalCause.Unclassified);
-    if (isUnreasonedDonorValue) return;
-    const entry = keepCommittedKitCause(
-      classifyKitValue(
+  // A committed borrow whose donor lacks its path fails only this kit, as the build reports it, so the run goes on
+  return getResult(() => {
+    const committedDonorCandidateMap = getDonorKitCandidates(committedOverlay, donorRecordMap);
+    const classify = (path: string, value: unknown, candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
+      // A multiplier joined to its talent row names the row by its own value, so the overlay keeps the value with the
+      // Source it joins to, where no source of the path gives the value itself
+      const isJoinedMultiplier =
+        path.endsWith(".multiplier") &&
+        (candidateMap.get(path) ?? []).some(
+          (candidate) =>
+            candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
+        ) &&
+        !(sourceCandidateMap.get(path) ?? []).some(
+          (candidate) =>
+            candidate.provenance.source === KitSource.Gcsim && checkIsKitValueEqual(candidate.value, value),
+        );
+      if (isJoinedMultiplier) {
+        overlay[path] = { source: KitSource.Gcsim, value };
+        return;
+      }
+      const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
+      // A cited value whose line still gives it keeps its citation as it is
+      if (
+        committedEntry !== undefined &&
+        "file" in committedEntry &&
+        (candidateMap.get(path) ?? []).some(
+          (candidate) =>
+            checkIsCitedBy(candidate.provenance, committedEntry) && checkIsKitValueEqual(candidate.value, value),
+        )
+      ) {
+        overlay[path] = committedEntry;
+        return;
+      }
+      // A value the committed overlay borrows keeps its donor while the donor's record still gives the published value
+      if (
+        committedEntry !== undefined &&
+        "cause" in committedEntry &&
+        committedEntry.cause === KitProvisionalCause.BorrowedFromDonor &&
+        checkIsKitValueEqual(committedDonorCandidateMap.get(path)?.[0]?.value, value)
+      ) {
+        overlay[path] = committedEntry;
+        return;
+      }
+      // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value,
+      // So the published one a rule gave is replaced rather than pinned
+      const donor = candidateMap.get(path)?.[0]?.provenance;
+      const isUnreasonedDonorValue =
+        donor?.source === KitSource.Gcsim &&
+        "cause" in donor &&
+        donor.cause === KitProvisionalCause.NoActionFile &&
+        (committedEntry === undefined ||
+          !("cause" in committedEntry) ||
+          committedEntry.cause === KitProvisionalCause.Unclassified);
+      if (isUnreasonedDonorValue) return;
+      const entry = keepCommittedKitCause(
+        classifyKitValue(
+          value,
+          candidateMap.get(path) ?? [],
+          mainCandidateMap.get(path) ?? [],
+          isTagPredated,
+          tables.talentMultiplierMap,
+        ),
+        committedEntry,
         value,
-        candidateMap.get(path) ?? [],
-        mainCandidateMap.get(path) ?? [],
-        isTagPredated,
         tables.talentMultiplierMap,
-      ),
-      committedEntry,
-      value,
-      tables.talentMultiplierMap,
-    );
-    // A source choice names its value where the path's first candidate of that source is another value
-    const sourceChoice =
-      entry !== undefined && "source" in entry
-        ? sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source)
-        : undefined;
-    const isValueNeeded =
-      entry !== undefined &&
-      "source" in entry &&
-      !checkIsKitValueResolvedEqual(sourceChoice?.value, value, tables.talentMultiplierMap);
-    if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
-  };
-  const candidateMap = mergeKitCandidateSources({
-    namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
-    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, tables.talentGroupIdMap),
-    ruleCandidateMap: getRuleKitCandidates(publishedValueMap, tables.element),
-    sourceCandidateMap,
-  });
-  for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  // A committed entry for a path the published record lacks and the classification never reached is a hand-written value the
-  // Build still reads, so it stays in the overlay the build and the report hold
-  for (const [path, entry] of Object.entries(committedOverlay))
-    if (!publishedValueMap.has(path) && !(path in overlay)) overlay[path] = entry;
-  return getResult(() =>
-    buildKitRecord(sourceCandidateMap, overlay, donorRecordMap, namedHitCandidateMap, tables, !isTagPredated),
-  ).match(
+      );
+      // A source choice names its value where the path's first candidate of that source is another value
+      const sourceChoice =
+        entry !== undefined && "source" in entry
+          ? sourceCandidateMap.get(path)?.find(({ provenance }) => provenance.source === entry.source)
+          : undefined;
+      const isValueNeeded =
+        entry !== undefined &&
+        "source" in entry &&
+        !checkIsKitValueResolvedEqual(sourceChoice?.value, value, tables.talentMultiplierMap);
+      if (entry !== undefined) overlay[path] = isValueNeeded ? { ...entry, value } : entry;
+    };
+    const candidateMap = mergeKitCandidateSources({
+      namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
+      namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, tables.talentGroupIdMap),
+      ruleCandidateMap: getRuleKitCandidates(publishedValueMap, tables.element),
+      sourceCandidateMap,
+    });
+    for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
+    // A committed entry for a path the published record lacks and the classification never reached is a hand-written
+    // Value the build still reads, so it stays in the overlay the build and the report hold
+    for (const [path, entry] of Object.entries(committedOverlay))
+      if (!publishedValueMap.has(path) && !(path in overlay)) overlay[path] = entry;
+    return buildKitRecord(sourceCandidateMap, overlay, donorRecordMap, namedHitCandidateMap, tables, !isTagPredated);
+  }).match(
     (built): KitComparison => ({
       built,
       failures: getMismatchedKitPaths(built.record, publishedRecord, tables.talentMultiplierMap),

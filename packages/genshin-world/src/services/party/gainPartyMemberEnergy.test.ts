@@ -15,7 +15,7 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 
 const createCombatant = (): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 1.5 }]),
+  attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: 0.1 }]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   element: Element.Anemo,

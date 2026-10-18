@@ -11,8 +11,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 10_000_066;
 const wielder: Combatant = createWielderCombatant();
-// Determination at its first rank: its percentage and its seconds
-const determinationPassiveModule = createDeterminationPassiveModule([0.12, 15]);
+// Determination with synthetic params: its percentage and its seconds
+const determinationPassiveModule = createDeterminationPassiveModule([0.2, 3]);
 describe(createDeterminationPassiveModule, () => {
   test("a burst the wielder uses raises its ATK and Movement SPD by the rank's percentage for its seconds", () => {
     expect.hasAssertions();
@@ -25,8 +25,8 @@ describe(createDeterminationPassiveModule, () => {
       wielder,
     );
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.12);
-    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.2);
+    expect(getBuff(kitEffectState, Attribute.MovementSpeed)?.amount).toBeCloseTo(0.2);
   });
 
   test("a burst another character uses raises nothing", () => {

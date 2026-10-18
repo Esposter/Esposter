@@ -13,10 +13,10 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
-// Flowing Purity at its first rank: eight per cent All Elemental DMG Bonus for fifteen seconds after an Elemental Skill, with a
-// Bond of Life worth a quarter of Max HP once every ten seconds, and two per cent All Elemental DMG Bonus for every 1,000 HP
-// The bond cleared, at most twelve per cent, for fifteen seconds
-const flowingPurityPassiveModule = createFlowingPurityPassiveModule([0.08, 15, 0.24, 0.02, 0.12, 15, 10]);
+// Flowing Purity with synthetic params: 10% All Elemental DMG Bonus for twelve seconds after an Elemental Skill, and a
+// Bond of Life worth a fifth of Max HP once every six seconds, and 3% All Elemental DMG Bonus for every 1,000 HP
+// The bond cleared, at most 9%, for eight seconds
+const flowingPurityPassiveModule = createFlowingPurityPassiveModule([0.1, 12, 0.2, 0.03, 0.09, 8, 6]);
 const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const getBuffs = (effects: readonly KitEffect[], source: string) =>
   effects.filter((effect): effect is KitBuff => effect.kind === "buff" && effect.source === source);
@@ -40,25 +40,25 @@ describe(createFlowingPurityPassiveModule, () => {
     expect(
       buffs.map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
     ).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.08, attribute, secondsRemaining: 15 })),
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute, secondsRemaining: 12 })),
     );
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.24);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.2);
   });
 
-  test("a clear raises every element's DMG Bonus by two per cent for each 1,000 HP it cleared, for fifteen seconds", () => {
+  test("a clear raises every element's DMG Bonus by 3% for each 1,000 HP it cleared, for eight seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     const partyMember = getPartyMember(context.party, TRAVELER_CHARACTER_ID);
     partyMember.healthShare = 0.5;
-    partyMember.bondOfLifeClearedShare = 0.5;
-    flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.5), context, wielder);
+    partyMember.bondOfLifeClearedShare = 0.25;
+    flowingPurityPassiveModule.onKitEvent?.(clearHealth(0.25), context, wielder);
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
     expect(
       buffs.map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
     ).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.1, attribute, secondsRemaining: 15 })),
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.06, attribute, secondsRemaining: 8 })),
     );
   });
 
@@ -73,7 +73,7 @@ describe(createFlowingPurityPassiveModule, () => {
 
     const buffs = getBuffs(context.kitEffectState.effects, "flowingPurityCleared");
     expect(buffs.map(({ amount, attribute }) => ({ amount, attribute }))).toStrictEqual(
-      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
+      ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.09, attribute })),
     );
   });
 });
