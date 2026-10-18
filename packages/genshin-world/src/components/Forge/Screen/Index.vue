@@ -210,8 +210,8 @@ const obtain = (queueId: number) => {
       :title="gameText[GameTextKey.ForgeTitle]"
       :total-time-label="fillGameTextValues(gameText[GameTextKey.ForgeTotalTime], formatForgeTime(totalSeconds))"
       @close="emit('close')"
-      @obtain="(...args) => obtain(...args)"
-      @start="(...args) => start(...args)"
+      @obtain="(queueId) => obtain(queueId)"
+      @start="start()"
     />
   </GameScreen>
 </template>
