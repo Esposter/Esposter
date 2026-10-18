@@ -6,8 +6,8 @@
 ## 2. The stages and the acts
 
 - [ ] 2.1 Fight a stage at the lowest difficulty with the character kits. Verify: a test named after the scenario "A stage is fought by four performers with Vigor", written first and seen failing.
-- [ ] 2.2 Add the acts and the Battle Events. Verify: a test named after the scenario "A Battle Event offers a choice of two Alternate Cast members", written first and seen failing.
-- [ ] 2.3 Add the paid events, with the Mystery Cache's Vigor. Verify: tests named after the scenarios "A Companion event costs Fantasia Flowers", "A paid event is refused without enough Fantasia Flowers" and "A Mystery Cache's option restores a character's Vigor".
+- [x] 2.2 Add the acts and the Battle Events. Verify: a test named after the scenario "A Battle Event offers a choice of two Alternate Cast members", written first and seen failing.
+- [x] 2.3 Add the paid events, with the Mystery Cache's Vigor. Verify: tests named after the scenarios "A Companion event costs Fantasia Flowers", "A paid event is refused without enough Fantasia Flowers" and "A Mystery Cache's option restores a character's Vigor".
 
 ## 3. The rewind, the star challenges and the other difficulties
 
