@@ -7,6 +7,7 @@ const createScore = (packageName: string, verdict: string, total: number, shimCo
   bundleBytes: 0,
   bundleSkipReason: "",
   dependencyLines: 0,
+  entryBytes: 0,
   formatPoints: 0,
   importerCount: 0,
   installBytes: 0,

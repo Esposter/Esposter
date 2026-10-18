@@ -3,6 +3,7 @@ export interface DependencyScore {
   bundleBytes: number;
   bundleSkipReason: string;
   dependencyLines: number;
+  entryBytes: number;
   formatPoints: number;
   importerCount: number;
   installBytes: number;

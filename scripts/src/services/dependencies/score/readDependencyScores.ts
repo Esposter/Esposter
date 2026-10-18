@@ -109,11 +109,13 @@ export const readDependencyScores = async (sort: ScoreSort): Promise<DependencyS
     const stabilityPoints = packument === undefined ? 0 : getStabilityPoints(releaseCount);
     const importers = packageNameImportersMap.get(packageName);
     const installCost = packageNameInstallCostMap.get(packageName);
+    const bundleBytes = packageNameBundleBytesMap.get(packageName);
 
     scores.push({
-      bundleBytes: packageNameBundleBytesMap.get(packageName) ?? 0,
-      bundleSkipReason: packageNameBundleBytesMap.has(packageName) ? "" : NOT_IN_CLIENT_SKIP_REASON,
+      bundleBytes: bundleBytes?.bytes ?? 0,
+      bundleSkipReason: bundleBytes ? "" : NOT_IN_CLIENT_SKIP_REASON,
       dependencyLines: installed === undefined ? 0 : countDependencyLines(packageName, installed),
+      entryBytes: bundleBytes?.entryBytes ?? 0,
       formatPoints,
       importerCount: importers?.size ?? 0,
       installBytes: installCost?.bytes ?? 0,
