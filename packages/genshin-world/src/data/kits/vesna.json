@@ -111,6 +111,5 @@
   "skill.hits.0.hitmarkFrames": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000003, "path": "skill.hits.0.hitmarkFrames" }
-  },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 14332 } }
+  }
 }
