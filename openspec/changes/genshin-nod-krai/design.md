@@ -42,7 +42,7 @@ Nasha Town's port and main street, a Statue of the New Moon, the Frostmoon Encla
 | :-------------------------------------------------------- | :---------------------------------------- |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts` | The detail noise each isle's ground tunes |
 
-The kits' fitted values are not yet: the second step below reads them from the passes.
+The kits' fitted values are not yet: the step below reads them from the passes.
 
 **Still to build, in order:**
 
