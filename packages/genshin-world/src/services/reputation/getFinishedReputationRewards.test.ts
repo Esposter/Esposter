@@ -32,6 +32,20 @@ describe(getFinishedReputationRewards, () => {
     expect(getFinishedReputationRewards(quest, progress, nextProgress, BINDINGS)).toStrictEqual([REWARD]);
   });
 
+  test("a finished reputation quest pays once", () => {
+    expect.hasAssertions();
+
+    const quest = createQuest(QuestObjectiveKind.Collect, 1);
+    const event = { kind: QuestObjectiveKind.Collect, targetId: TARGET_ID };
+    const progress = { objectiveCounts: [0], stepIndex: 0 };
+    const finished = advanceQuest(quest, progress, event);
+
+    expect(getFinishedReputationRewards(quest, progress, finished, BINDINGS)).toStrictEqual([REWARD]);
+    expect(getFinishedReputationRewards(quest, finished, advanceQuest(quest, finished, event), BINDINGS)).toStrictEqual(
+      [],
+    );
+  });
+
   test("a camp request pays once its camp is cleared", () => {
     expect.hasAssertions();
 
