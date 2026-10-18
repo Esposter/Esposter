@@ -34,6 +34,7 @@ const getPassiveBonuses = (ascension: number) =>
     },
     1,
     [],
+    [],
   );
 
 describe(createFlinsKitBehaviour, () => {
@@ -114,7 +115,7 @@ describe(createFlinsKitBehaviour, () => {
   test("an active constellation's switch changes its character's kit", () => {
     expect.hasAssertions();
 
-    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(4), 1)).toStrictEqual([
+    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(4), 1, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.AttackPercent },
     ]);
   });
@@ -122,6 +123,6 @@ describe(createFlinsKitBehaviour, () => {
   test("an inactive constellation changes nothing", () => {
     expect.hasAssertions();
 
-    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(3), 1)).toStrictEqual([]);
+    expect(FLINS_KIT.getPassiveBonuses?.(createFlinsCombatant(3), 1, [], [])).toStrictEqual([]);
   });
 });

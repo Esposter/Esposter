@@ -6,6 +6,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { STORMTERROR_INTRO_QUEST_IDS } from "#src/services/bosses/constants";
 import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
+import { takeOne } from "@esposter/shared";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
@@ -38,12 +39,14 @@ describe(toHandbookDomains, () => {
   test("a locked weekly boss is quick challenged from Adventure Rank 40", () => {
     expect.hasAssertions();
 
-    const [row] = toHandbookDomains([weeklyEntrance], {
-      adventureRank: 40,
-      clearedDomainIds: none,
-      completedMainQuestIds: none,
-      unlockedLandmarkIds: none,
-    });
+    const row = takeOne(
+      toHandbookDomains([weeklyEntrance], {
+        adventureRank: 40,
+        clearedDomainIds: none,
+        completedMainQuestIds: none,
+        unlockedLandmarkIds: none,
+      }),
+    );
 
     expect(flags(row)).toStrictEqual({ isFirstClearClaimable: false, isLocked: true, isQuickChallengeable: true });
   });
@@ -51,12 +54,14 @@ describe(toHandbookDomains, () => {
   test("a locked weekly boss cannot be quick challenged below Adventure Rank 40", () => {
     expect.hasAssertions();
 
-    const [row] = toHandbookDomains([weeklyEntrance], {
-      adventureRank: 39,
-      clearedDomainIds: none,
-      completedMainQuestIds: none,
-      unlockedLandmarkIds: none,
-    });
+    const row = takeOne(
+      toHandbookDomains([weeklyEntrance], {
+        adventureRank: 39,
+        clearedDomainIds: none,
+        completedMainQuestIds: none,
+        unlockedLandmarkIds: none,
+      }),
+    );
 
     expect(flags(row)).toStrictEqual({ isFirstClearClaimable: false, isLocked: true, isQuickChallengeable: false });
   });
@@ -64,12 +69,14 @@ describe(toHandbookDomains, () => {
   test("a weekly boss whose introducing quests are done is open, so there is nothing to quick challenge", () => {
     expect.hasAssertions();
 
-    const [row] = toHandbookDomains([weeklyEntrance], {
-      adventureRank: 40,
-      clearedDomainIds: none,
-      completedMainQuestIds: introDone,
-      unlockedLandmarkIds: none,
-    });
+    const row = takeOne(
+      toHandbookDomains([weeklyEntrance], {
+        adventureRank: 40,
+        clearedDomainIds: none,
+        completedMainQuestIds: introDone,
+        unlockedLandmarkIds: none,
+      }),
+    );
 
     expect(flags(row)).toStrictEqual({ isFirstClearClaimable: false, isLocked: false, isQuickChallengeable: false });
   });
@@ -77,12 +84,14 @@ describe(toHandbookDomains, () => {
   test("a weekly boss whose highest difficulty is cleared shows its first clear to claim", () => {
     expect.hasAssertions();
 
-    const [row] = toHandbookDomains([weeklyEntrance], {
-      adventureRank: 40,
-      clearedDomainIds: markWeeklyBossTopClear(none, WEEKLY_ENTRY_ID),
-      completedMainQuestIds: introDone,
-      unlockedLandmarkIds: none,
-    });
+    const row = takeOne(
+      toHandbookDomains([weeklyEntrance], {
+        adventureRank: 40,
+        clearedDomainIds: markWeeklyBossTopClear(none, WEEKLY_ENTRY_ID),
+        completedMainQuestIds: introDone,
+        unlockedLandmarkIds: none,
+      }),
+    );
 
     expect(flags(row)).toStrictEqual({ isFirstClearClaimable: true, isLocked: false, isQuickChallengeable: false });
   });
@@ -91,12 +100,14 @@ describe(toHandbookDomains, () => {
     expect.hasAssertions();
 
     const blessing = entrance({});
-    const [locked, unlocked] = toHandbookDomains([blessing, entrance({ id: "fixture-open" })], {
+    const domains = toHandbookDomains([blessing, entrance({ id: "fixture-open" })], {
       adventureRank: 40,
       clearedDomainIds: markWeeklyBossTopClear(none, 7),
       completedMainQuestIds: none,
       unlockedLandmarkIds: new Set(["fixture-open"]),
     });
+    const locked = takeOne(domains, 0);
+    const unlocked = takeOne(domains, 1);
 
     expect(flags(locked)).toStrictEqual({ isFirstClearClaimable: false, isLocked: true, isQuickChallengeable: false });
     expect(flags(unlocked)).toStrictEqual({

@@ -3,7 +3,7 @@ import type { ExcelReliquaryDecomposeRow } from "#src/models/genshinAssets/craft
 import type { ExcelReliquaryOfferPurchaseRow } from "#src/models/genshinAssets/crafting/ExcelReliquaryOfferPurchaseRow";
 import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
-import type { CraftingStrongbox } from "genshin-world";
+import type { CraftingStrongboxData } from "genshin-world";
 
 import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 
@@ -29,7 +29,7 @@ export const toCraftingStrongboxes = ({
   offerRows,
   previewRows,
   reliquaryRows,
-}: StrongboxTables): CraftingStrongbox[] => {
+}: StrongboxTables): CraftingStrongboxData[] => {
   const previewMap = new Map(previewRows.map((row) => [row.id, row]));
   const displayItemMap = new Map(
     displayItemRows.filter((row) => row.displayType === RELIQUARY_SMELT_DISPLAY_TYPE).map((row) => [row.id, row]),

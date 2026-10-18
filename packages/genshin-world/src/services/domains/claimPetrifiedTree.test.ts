@@ -75,6 +75,7 @@ describe(claimPetrifiedTree, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       wallet: { ...wallet, [Currency.Mora]: MORA_COUNT, [Currency.OriginalResin]: 100 - DOMAIN_RESIN },
     });
@@ -118,6 +119,7 @@ describe(claimPetrifiedTree, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       wallet: { ...wallet, [Currency.Mora]: 2 * MORA_COUNT, [Currency.OriginalResin]: 100 - 2 * DOMAIN_RESIN },
     });

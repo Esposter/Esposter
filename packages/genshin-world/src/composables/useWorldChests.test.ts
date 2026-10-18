@@ -61,6 +61,7 @@ describe("useWorldChests", () => {
           unfollowedSeconds: 0,
         },
       ],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
     const { chestInteractables } = createChests(puzzleChestPlaces);
@@ -85,6 +86,7 @@ describe("useWorldChests", () => {
           unfollowedSeconds: 0,
         },
       ],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
     const { chestInteractables, openChestById, openedChestIds } = createChests(puzzleChestPlaces);

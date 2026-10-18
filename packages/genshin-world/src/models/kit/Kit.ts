@@ -45,11 +45,12 @@ export interface Kit {
   // The Normal ATK SPD a normal attack of the kit's own plays faster by, on top of its infusion's, if a passive or a
   // Constellation raises it, given the kit's effects as they stand
   getNormalAttackSpeedBonus?: (context: KitContext) => number;
-  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands and
-  // Its HP as a share of its Max HP, which a bonus at low or high HP reads, its current HP being that share of its Max HP
+  // The attributes a passive adds to the character's pricing, as a hit reads them, given the character as it stands, its HP
+  // As a share of its Max HP, which a bonus at low or high HP reads, and the effects and the deployed team as they stand
   getPassiveBonuses?: (
     combatant: Combatant,
     healthShare: number,
+    effects: readonly KitEffect[],
     deployedCombatants: readonly Combatant[],
   ) => { amount: number; attribute: Attribute }[];
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
@@ -57,9 +58,6 @@ export interface Kit {
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
-  // The CRIT Rate a strike of the kit's own adds as its CRIT roll is made against an enemy, if a constellation raises it
-  // Against some enemies only, given the enemy as it stands
-  getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands and the deployed team
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
@@ -71,7 +69,7 @@ export interface Kit {
     party: Party,
     effects: readonly KitEffect[],
   ) => number;
-  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive raises it on the strike,
+  // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a constellation or a passive raises it,
   // Given the enemy as it stands, the deployed team and the effects on it
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   highPlunge: KitAction;

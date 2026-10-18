@@ -34,6 +34,6 @@ describe(createBerserkerSetModule, () => {
   ])("prices its wearer's hits with %s", (_description, healthShare, bonuses) => {
     expect.hasAssertions();
 
-    expect(berserkerSetModule.getPassiveBonuses?.(wearer, healthShare, [])).toStrictEqual(bonuses);
+    expect(berserkerSetModule.getPassiveBonuses?.(wearer, healthShare, [], [])).toStrictEqual(bonuses);
   });
 });

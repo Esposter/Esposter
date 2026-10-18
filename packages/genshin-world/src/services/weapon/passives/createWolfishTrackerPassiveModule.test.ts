@@ -45,7 +45,7 @@ describe(createWolfishTrackerPassiveModule, () => {
   test("the rank's ATK share is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 
-    expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(wolfishTrackerPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.AttackPercent },
     ]);
   });

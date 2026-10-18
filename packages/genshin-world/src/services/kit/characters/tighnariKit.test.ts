@@ -141,6 +141,8 @@ describe(createTighnariKitBehaviour, () => {
           hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
         },
         strikeEnemy,
+        createParty([TIGHNARI_CHARACTER_ID]),
+        [],
       ) ?? 0;
 
     test("a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {

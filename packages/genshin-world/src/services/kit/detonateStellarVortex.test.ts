@@ -51,7 +51,7 @@ describe(detonateStellarVortex, () => {
   const getExpectedDamage = (coefficient: number, enemy: ReturnType<typeof explode>) =>
     takeOne(CharacterLevelMultiplierMap, LEVEL) *
     coefficient *
-    LUNAR_CONTRIBUTION_WEIGHTS[0] *
+    takeOne(LUNAR_CONTRIBUTION_WEIGHTS, 0) *
     getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Cryo));
 
   test("a Stellar Vortex explodes at a coefficient of 2 for its first two stacks", () => {

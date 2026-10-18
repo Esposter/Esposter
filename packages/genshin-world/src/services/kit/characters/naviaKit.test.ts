@@ -211,7 +211,7 @@ describe("undisclosed Distribution Channels", () => {
     expect.hasAssertions();
     const navia = { ...createNaviaCombatant(), ascension: 4 };
     const bonusesOf = (elements: Element[]) =>
-      NAVIA_KIT.getPassiveBonuses?.(navia, 1, elements.map(createNaviaTeamMember));
+      NAVIA_KIT.getPassiveBonuses?.(navia, 1, [], elements.map(createNaviaTeamMember));
     expect(bonusesOf([Element.Pyro, Element.Anemo])).toStrictEqual([
       { amount: 0.2, attribute: Attribute.AttackPercent },
     ]);
@@ -220,7 +220,7 @@ describe("undisclosed Distribution Channels", () => {
     ]);
     expect(bonusesOf([Element.Anemo, Element.Geo])).toStrictEqual([]);
     expect(
-      NAVIA_KIT.getPassiveBonuses?.(createNaviaCombatant(), 1, [createNaviaTeamMember(Element.Pyro)]),
+      NAVIA_KIT.getPassiveBonuses?.(createNaviaCombatant(), 1, [], [createNaviaTeamMember(Element.Pyro)]),
     ).toStrictEqual([]);
   });
 });

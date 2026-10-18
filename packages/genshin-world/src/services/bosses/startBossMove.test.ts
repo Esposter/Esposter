@@ -1,8 +1,10 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
 import type { Enemy } from "#src/models/enemy/Enemy";
 
+import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { PoiseType } from "#src/models/enemy/PoiseType";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { createElementalState } from "#src/services/combat/aura/createElementalState";
 import { describe, expect, test } from "vitest";
@@ -18,8 +20,10 @@ const createBoss = (state: EnemyState): Enemy => ({
   attackCooldownSeconds: 3,
   campId: "boss-camp",
   droppedThresholdCount: 0,
+  elementalNodePulsesLeft: 0,
   elementalReactions: [],
   elementalState: createElementalState(),
+  enemyFamily: EnemyFamily.EnemiesOfNote,
   enemyKindId: EnemyKindId.StormterrorDvalin,
   heading: 0,
   health: 1,
@@ -39,6 +43,7 @@ const createBoss = (state: EnemyState): Enemy => ({
   state,
   stateSeconds: 0,
   statuses: [],
+  traits: { energyDrops: [], poiseType: PoiseType.Boss },
 });
 
 describe("startBossMove", () => {

@@ -92,9 +92,10 @@ describe("archaic Petra", () => {
     const duel = createDuel([]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const subject = createTalentSubject([{ count: 2, element: Element.Geo, kind: GcgCostKind.Dice }]);
-    expect(archaicPetra.reduceCost?.(context, subject)).toStrictEqual({ count: 1, element: Element.Geo });
-    archaicPetra.onCostPaid?.(context, subject, createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra));
-    expect(archaicPetra.reduceCost?.(context, subject)).toBeUndefined();
+    const zoneCard = createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra);
+    expect(archaicPetra.reduceCost?.(context, subject, zoneCard)).toStrictEqual({ count: 1, element: Element.Geo });
+    archaicPetra.onCostPaid?.(context, subject, zoneCard);
+    expect(archaicPetra.reduceCost?.(context, subject, zoneCard)).toBeUndefined();
   });
 
   test("a cost of another element is not reduced", () => {
@@ -102,6 +103,8 @@ describe("archaic Petra", () => {
     const duel = createDuel([]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     const subject = createTalentSubject([{ count: 2, element: Element.Pyro, kind: GcgCostKind.Dice }]);
-    expect(archaicPetra.reduceCost?.(context, subject)).toBeUndefined();
+    expect(
+      archaicPetra.reduceCost?.(context, subject, createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra)),
+    ).toBeUndefined();
   });
 });

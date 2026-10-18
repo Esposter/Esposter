@@ -51,7 +51,7 @@ const playTossUp = (side: GcgSideState, random: () => number, choice?: GcgPlayCh
   tossUp.play?.(context, undefined, choice);
 };
 
-describe(tossUp, () => {
+describe("tossUp", () => {
   test("should reroll the dice of each selection in turn, through the duel's random source", () => {
     expect.hasAssertions();
     const side = createSide([Element.Hydro, Element.Pyro, Element.Cryo]);
