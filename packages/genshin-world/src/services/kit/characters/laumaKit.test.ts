@@ -22,6 +22,7 @@ import {
   LAUMA_PALE_HYMN_BURST_ID,
   LAUMA_PALE_HYMN_MOON_SONG_ID,
 } from "#src/services/kit/characters/laumaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
@@ -169,7 +170,7 @@ const readSkillDamageBonus = (ascension: number, elementalMastery: number): numb
     LAUMA_KIT.getStrikeDamageBonus?.(
       {
         attackTag: AttackTag.ElementalSkill,
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+        body: createKitBody({ x: 0, z: 0 }),
         combatant,
         hit: takeOne(LAUMA_KIT.elementalSkill.hits),
       },

@@ -19,6 +19,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createQiqiKitBehaviour, QIQI_CHARACTER_ID } from "#src/services/kit/characters/qiqiKit";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -247,12 +248,7 @@ describe(createQiqiKitBehaviour, () => {
     const party = createParty([QIQI_CHARACTER_ID]);
     const getDamageBonus = (attackTag: AttackTag): number | undefined =>
       QIQI_KIT.getStrikeDamageBonus?.(
-        {
-          attackTag,
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-          combatant,
-          hit: QIQI_KIT.plungeCollision,
-        },
+        { attackTag, body: createKitBody({ x: 0, z: 0 }), combatant, hit: QIQI_KIT.plungeCollision },
         enemy,
         party,
         [],

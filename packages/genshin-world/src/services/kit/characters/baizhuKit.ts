@@ -55,8 +55,9 @@ const CONSTELLATION_4_SOURCE = "baizhu-ancient-art-of-perception";
 // His Dendro hits deal more DMG while the character on the field is at half their HP or more. Not built yet: Constellation
 // 2's heal, 20% of the Gossamer Sprite's normal healing, which the kit does not price; Constellation 6, which needs the
 // Sprite's and the Splice's hits to make a Seamless Shield; Gossamer Sprite's bounces and healing; the Seamless Shield's
-// Heals and its removal's heal; Ascension 1's Healing Bonus, which no heal of his reads and no passive hook reads the
-// Field's HP for; and Ascension 4, which rides the Seamless Shield's heals
+// Heals and its removal's heal; Ascension 1's Healing Bonus, which no heal of his reads yet, and which a passive bonus
+// Cannot price from the Field's HP, since a passive is given only its wearer's HP share; and Ascension 4, which rides
+// The Seamless Shield's heals
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/baizhu
 // The Splice is queued at the enemy it strikes, so it lands in the step it is raised: gcsim gives it the skill's first
 // Hitmark as a placeholder, a TODO in its source, which a passive's hit does not price
@@ -117,8 +118,8 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         });
       },
     },
-    // Constellation 2: a hit the active member takes queues a Splice at its enemy, once the cooldown is off. The cooldown
-    // Starts as the Splice is queued, so the Splice's own hit cannot queue another
+    // Constellation 2: a hit the active member lands on an enemy queues a Splice at that enemy, once the cooldown
+    // Is off. The cooldown starts as the Splice is queued, so the Splice's own hit cannot queue another
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken || combatant.constellationCount < CONSTELLATION_2) return;
       if (event.striker.characterId !== context.activeCombatant.characterId) return;

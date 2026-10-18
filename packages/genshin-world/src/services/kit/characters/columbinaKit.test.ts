@@ -23,6 +23,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -45,7 +46,7 @@ const createColumbinaCombatant = (): Combatant => ({
 });
 
 const OTHER_CHARACTER_ID = 10_000_052;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const kitBody = createKitBody({ x: 0, z: 0 });
 const c6Enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 // Columbina and another member at the given constellation, with her burst's window just started
 const createBurstContext = (constellationCount: number) => {
@@ -388,6 +389,18 @@ describe(createColumbinaKitBehaviour, () => {
       expect(shield?.health).toBeCloseTo(0.12 * pressed.attributes.maxHealth);
     });
 
+    test("constellation 1's Lunar-Crystallize shield is 12% of her max HP as her constellation 2 buff raises it", () => {
+      expect.hasAssertions();
+
+      const kitEffectState: KitEffectState = { effects: [] };
+      const { context, field, pressed } = pressSkill(kitEffectState, 2);
+      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
+
+      const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+      expect(shield?.health).toBeCloseTo(0.12 * 1.4 * pressed.attributes.maxHealth);
+    });
+
     test("constellation 2 gives her 40% max HP for eight seconds with each Gravity Ripple", () => {
       expect.hasAssertions();
 
@@ -424,7 +437,7 @@ describe(createColumbinaKitBehaviour, () => {
       const [attack] = readTeamBuffs(kitEffectState);
       expect(attack?.attribute).toBe(Attribute.Attack);
       expect(attack?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-      expect(attack?.amount).toBeCloseTo(0.01 * pressed.attributes.maxHealth);
+      expect(attack?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
 
       for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
         feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);

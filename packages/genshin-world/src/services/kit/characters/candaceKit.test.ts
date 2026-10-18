@@ -259,18 +259,10 @@ describe(createCandaceKitBehaviour, () => {
     stepKit(kitState, CANDACE_KIT, hold, partyMember, stamina, STEP_SECONDS, [], context);
     return stepKit(kitState, CANDACE_KIT, IDLE_INPUT, partyMember, stamina, STEP_SECONDS, [], context);
   };
-  // An enemy's strike that takes a share of Candace's HP, and the same strike on another member of the team
-  const strikeOnCandace = (): KitEvent => ({
+  // An enemy's strike that takes a share of a member's HP
+  const strikeOn = (characterId: number): KitEvent => ({
     bondOfLifeShare: 0,
-    characterId: CANDACE_CHARACTER_ID,
-    healthShare: -0.1,
-    isFallRefused: false,
-    kind: KitEventKind.HealthChanged,
-    overflowHealthShare: 0,
-  });
-  const strikeOnKuki = (): KitEvent => ({
-    bondOfLifeShare: 0,
-    characterId: KUKI_CHARACTER_ID,
+    characterId,
     healthShare: -0.1,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
@@ -281,13 +273,13 @@ describe(createCandaceKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(CHARGED_ACTION).toBeDefined();
-    expect(releaseHeldSkill(1, strikeOnCandace)).toBe(CHARGED_ACTION);
+    expect(releaseHeldSkill(1, () => strikeOn(CANDACE_CHARACTER_ID))).toBe(CHARGED_ACTION);
   });
 
   test("the Ascension 1 passive, Aegis of Crossed Arrows, does not take effect below its ascension phase", () => {
     expect.hasAssertions();
 
-    const action = releaseHeldSkill(0, strikeOnCandace);
+    const action = releaseHeldSkill(0, () => strikeOn(CANDACE_CHARACTER_ID));
     expect(action).toBeDefined();
     expect(action).not.toBe(CHARGED_ACTION);
   });
@@ -295,7 +287,7 @@ describe(createCandaceKitBehaviour, () => {
   test("a strike on another member of the team does not complete Candace's charge", () => {
     expect.hasAssertions();
 
-    const action = releaseHeldSkill(1, strikeOnKuki);
+    const action = releaseHeldSkill(1, () => strikeOn(KUKI_CHARACTER_ID));
     expect(action).toBeDefined();
     expect(action).not.toBe(CHARGED_ACTION);
   });

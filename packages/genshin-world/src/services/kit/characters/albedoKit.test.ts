@@ -17,6 +17,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { ALBEDO_CHARACTER_ID, createAlbedoKitBehaviour } from "#src/services/kit/characters/albedoKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -28,6 +29,7 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ALBEDO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALBEDO_CHARACTER_ID);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createAlbedoCombatant = (ascension = 0, constellationCount = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),
@@ -304,15 +306,26 @@ describe(createAlbedoKitBehaviour, () => {
   // Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced. The
   // Solar Isotoma is cast from the origin and stands from its spawn, 0.42 seconds in, and gcsim checks its field every
   // 0.3 seconds from that hitmark
-  const createConstellation4Fixture = (constellationCount = 4, characterIds = [ALBEDO_CHARACTER_ID]) => {
+  // The Albedo who casts the field, and the member on the field, which is that Albedo too unless a teammate is given
+  const createConstellation4Fixture = (constellationCount = 4, teammate?: Combatant) => {
     const combatant = createAlbedoCombatant(0, constellationCount);
+    const activeCombatant = teammate ?? combatant;
     const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty(characterIds);
-    const characterIdCombatantMap = new Map([[ALBEDO_CHARACTER_ID, combatant]]);
-    // The active member stands at the given x, the cast being made from the origin
-    const stand = (x: number) =>
-      createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x, z: 0 } }, kitEffectState, party });
-    const cast = () => ALBEDO_KIT.elementalSkill.onStart?.(stand(0));
+    const party = createParty(teammate ? [ALBEDO_CHARACTER_ID, teammate.characterId] : [ALBEDO_CHARACTER_ID]);
+    const characterIdCombatantMap = new Map<number, Combatant>([
+      [ALBEDO_CHARACTER_ID, combatant],
+      [activeCombatant.characterId, activeCombatant],
+    ]);
+    // The member stands at the given x, the cast being made from the origin
+    const createContext = (member: Combatant, x: number) =>
+      createKitTestContext(member, {
+        body: createKitBody({ x, z: 0 }),
+        characterIdCombatantMap,
+        kitEffectState,
+        party,
+      });
+    const stand = (x: number) => createContext(activeCombatant, x);
+    const cast = () => ALBEDO_KIT.elementalSkill.onStart?.(createContext(combatant, 0));
     // Steps the seconds with the active member standing at the given x, each step running the effects and the kit's clock
     const hold = (x: number, seconds: number) => {
       for (let index = 0; index < Math.round(seconds * 60); index++) {
@@ -387,15 +400,13 @@ describe(createAlbedoKitBehaviour, () => {
     expect(getPlungingBonus()).toBe(0);
   });
 
-  test("constellation 4 raises the active member's plunging attacks alone, not a teammate's", () => {
+  test("constellation 4 raises the active member's plunging attacks alone, not the Albedo who cast the field", () => {
     expect.hasAssertions();
-    const { cast, getPlungingBuffs, hold } = createConstellation4Fixture(4, [
-      ALBEDO_CHARACTER_ID,
-      TRAVELER_CHARACTER_ID,
-    ]);
+    const teammate: Combatant = { ...createAlbedoCombatant(), characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
+    const { cast, getPlungingBuffs, hold } = createConstellation4Fixture(4, teammate);
     cast();
     hold(0, 1);
-    expect(getPlungingBuffs().map((buff) => buff.characterId)).toStrictEqual([ALBEDO_CHARACTER_ID]);
+    expect(getPlungingBuffs().map((buff) => buff.characterId)).toStrictEqual([TRAVELER_CHARACTER_ID]);
   });
 
   test("constellation 4 raises nothing before its constellation", () => {

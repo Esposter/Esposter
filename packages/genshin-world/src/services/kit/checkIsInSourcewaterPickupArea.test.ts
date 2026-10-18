@@ -1,4 +1,5 @@
 import { checkIsInSourcewaterPickupArea } from "#src/services/kit/checkIsInSourcewaterPickupArea";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsInSourcewaterPickupArea, () => {
@@ -6,7 +7,7 @@ describe(checkIsInSourcewaterPickupArea, () => {
     expect.hasAssertions();
 
     // Ahead of a body facing zero lies at negative z
-    const body = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+    const body = createKitBody({ x: 0, z: 0 });
     const isIn = (x: number, z: number) => checkIsInSourcewaterPickupArea(body, { x, z });
     expect([
       isIn(0, -10),

@@ -169,11 +169,11 @@ export const useWorldTrials = ({
   const stepTrial = ({
     deltaMilliseconds,
     isPlaying,
-    partyDown,
+    isPartyDown,
   }: {
     deltaMilliseconds: number;
     isPlaying: boolean;
-    partyDown: boolean;
+    isPartyDown: boolean;
   }): WorldJumpPose | undefined => {
     const arena = trialArena.value;
     if (!arena) return undefined;
@@ -185,7 +185,7 @@ export const useWorldTrials = ({
         elapsedMilliseconds,
         timeLimitMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
       },
-      { partyDown },
+      { isPartyDown },
     );
     if (outcome === DomainChallengeOutcome.Running) {
       trialArena.value = { ...arena, elapsedMilliseconds };

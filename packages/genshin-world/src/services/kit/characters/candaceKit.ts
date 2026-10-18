@@ -63,10 +63,11 @@ const ASCENSION_1 = 1;
 // Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
 // Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
 // Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1
-// And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's instant finish of a charge on a hit taken is built, see its design note. Not built: Ascension 4's DMG and the Prayer's 20% DMG Bonus on the
-// Team's normal attacks, as no hook reads another member's normal attack's DMG; Constellation 2's Max HP buff, as
-// No hook starts it on Heron's Sanctum's hit on an opponent; Constellation 4's shorter hold cooldown, as a hold's
-// Cooldown is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
+// And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's Aegis of Crossed Arrows,
+// Which completes a charge on a hit taken, is built, see its design note. Not built: Ascension 4's DMG and the Prayer's
+// DMG Bonus of 20% on the Team's normal attacks, as no hook reads another member's normal attack DMG; Constellation 2's
+// Max HP buff, as No hook starts it on Heron's Sanctum's hit on an enemy; Constellation 4's shorter hold cooldown, as
+// A hold's Cooldown is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
 export const createCandaceKitBehaviour = ({
   kit,
   readHit,

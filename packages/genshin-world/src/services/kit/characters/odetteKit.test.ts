@@ -23,6 +23,7 @@ import {
   STELLAR_VORTEX_ID,
 } from "#src/services/kit/characters/odetteKit";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -84,7 +85,7 @@ describe(createOdetteKitBehaviour, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // Triggers the reactions on the enemy with Odette on the field, the body standing at the point given
   const triggerReactions = (reactions: Reaction[], bodyPosition = { x: 3, z: 4 }) => {
-    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: bodyPosition } });
+    const context = createKitTestContext(combatant, { body: createKitBody(bodyPosition) });
     kit.onKitEvent?.(
       { enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant },
       context,
@@ -124,7 +125,7 @@ describe(createOdetteKitBehaviour, () => {
 
   test("a standing vortex takes each further Stellar Swirl as a stack, and the third levels it up", () => {
     expect.hasAssertions();
-    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x: 3, z: 4 } } });
+    const context = createKitTestContext(combatant, { body: createKitBody({ x: 3, z: 4 }) });
 
     for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
 
@@ -135,7 +136,7 @@ describe(createOdetteKitBehaviour, () => {
     expect.hasAssertions();
     const struckEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, "");
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
+      body: createKitBody({ x: 3, z: 4 }),
       enemyMap: new Map([[struckEnemy.id, struckEnemy]]),
       enemyTables,
     });
@@ -155,7 +156,7 @@ describe(createOdetteKitBehaviour, () => {
     expect.hasAssertions();
     const struckEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, "");
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
+      body: createKitBody({ x: 3, z: 4 }),
       enemyMap: new Map([[struckEnemy.id, struckEnemy]]),
       enemyTables,
     });

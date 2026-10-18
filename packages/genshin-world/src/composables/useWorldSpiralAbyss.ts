@@ -286,15 +286,15 @@ export const useWorldSpiralAbyss = ({
   const stepAbyss = ({
     deltaMilliseconds,
     isPlaying,
-    partyDown,
+    isPartyDown,
   }: {
     deltaMilliseconds: number;
     isPlaying: boolean;
-    partyDown: boolean;
+    isPartyDown: boolean;
   }) => {
     const arena = abyssArena.value;
     if (!arena) return;
-    if (partyDown) {
+    if (isPartyDown) {
       endAbyssChamber(arena);
       return;
     }

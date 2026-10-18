@@ -16,6 +16,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
@@ -108,7 +109,7 @@ describe(createNaviaKitBehaviour, () => {
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
     );
 
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
   const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
   const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
   const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";

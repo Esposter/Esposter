@@ -12,6 +12,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createXingqiuKitBehaviour, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -126,7 +127,7 @@ describe(createXingqiuKitBehaviour, () => {
     XINGQIU_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const strikes = stepKitTestEffects(
       15,
-      createKitTestContext(combatant, { body: { facing: 0, height: 0, position: movedBody }, kitEffectState }),
+      createKitTestContext(combatant, { body: createKitBody(movedBody), kitEffectState }),
     );
 
     expect(strikes.map(({ body: { position }, hit }) => [position, hit.element, hit.talentMultiplier])).toStrictEqual([

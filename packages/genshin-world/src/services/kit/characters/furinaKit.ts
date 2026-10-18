@@ -16,6 +16,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { DAMAGE_BONUS_ATTRIBUTES } from "#src/services/combat/damage/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -293,11 +294,7 @@ export const createFurinaKitBehaviour = ({
     { attack, drainedMaxHealthShare, multiplier }: SalonMember,
     centre: GroundPoint,
   ): void => {
-    const target = selectAttackTarget(
-      kit.elementalSkill.targetingArea,
-      { facing: 0, height: 0, position: centre },
-      tick.enemyMap.values(),
-    );
+    const target = selectAttackTarget(kit.elementalSkill.targetingArea, createKitBody(centre), tick.enemyMap.values());
     if (!target) return;
     let drainedCount = 0;
     for (const memberId of getDeployedCharacterIds(tick.party)) {
@@ -326,7 +323,7 @@ export const createFurinaKitBehaviour = ({
       damageBonus: getSalonDamageBonus(combatant, combatantMaxHealth),
       onStrike: (context, strike) => gainConstellation4Energy(context, strike.combatant),
     };
-    castKitSummon(tick.kitEffectState, { facing: 0, height: 0, position: target.position }, combatant, [hit], {
+    castKitSummon(tick.kitEffectState, createKitBody(target.position), combatant, [hit], {
       attackTag: AttackTag.ElementalSkill,
       id: SALON_ATTACK_SUMMON_ID,
     });

@@ -9,7 +9,6 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
@@ -21,6 +20,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { countDew } from "#src/services/party/countDew";
 import { spendDew } from "#src/services/party/spendDew";
@@ -173,8 +173,7 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   const shredBehaviour: KitHitBehaviour = { enemyStatus: createShredStatus };
   // The Frostgrove Sanctuary's ticks, each a Dendro hit of the sanctuary's ATK share and its Elemental Mastery
   const sanctuaryTicks = readHits("frostgroveSanctuaryTicks", {
-    additiveBaseDamageBonus: (striker) =>
-      striker.attributes.attributeTotalMap[Attribute.ElementalMastery] * sanctuaryTickElementalMasteryShare,
+    additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, sanctuaryTickElementalMasteryShare),
     enemyStatus: createShredStatus,
   });
   // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
@@ -224,14 +223,12 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
         ? 0
         : Math.min(
             CLEANSING_MAXIMUM_DAMAGE_BONUS,
-            CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY *
-              combatant.attributes.attributeTotalMap[Attribute.ElementalMastery],
+            elementalMasteryMultiplier(combatant, CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY),
           ),
     moonsignBenediction: {
       getBaseDamageBonus: (combatant) =>
         Math.min(
-          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] *
-            BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY,
+          elementalMasteryMultiplier(combatant, BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY),
           BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
         ),
     },
@@ -246,7 +243,7 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
       const increase =
         (isLunar ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease) +
         readConstellationPaleHymnIncrease(member.constellationCount, isLunar);
-      return { additiveBaseDamageBonus: member.attributes.attributeTotalMap[Attribute.ElementalMastery] * increase };
+      return { additiveBaseDamageBonus: elementalMasteryMultiplier(member, increase) };
     },
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [

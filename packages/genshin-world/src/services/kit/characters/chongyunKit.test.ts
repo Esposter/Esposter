@@ -18,6 +18,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CHONGYUN_CHARACTER_ID, createChongyunKitBehaviour } from "#src/services/kit/characters/chongyunKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -65,7 +66,7 @@ const endFieldOf = (combatant: Combatant): KitEffect[] => {
 };
 
 describe(createChongyunKitBehaviour, () => {
-  const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const kitBody = createKitBody({ x: 0, z: 0 });
   // The effects an action's start adds, as the kit's effects hold them
   const castEffects = (action: KitAction, combatant = createChongyunCombatant()): KitEffect[] => {
     const context = createKitTestContext(combatant);

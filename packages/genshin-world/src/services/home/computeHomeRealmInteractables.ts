@@ -1,8 +1,8 @@
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { GameText } from "genshin-text";
 
+import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
 import {
-  HOME_POT_GADGET_ID,
   HOME_REALM_EXIT_POINT,
   HOME_REALM_GROUND_HEIGHT,
   HOME_REALM_STEWARD_POINT,
@@ -20,10 +20,5 @@ export const computeHomeRealmInteractables = (gameText: GameText): Interactable[
     name: gameText[GameTextKey.Tubby],
     position: { x: HOME_REALM_STEWARD_POINT.x, y: HOME_REALM_GROUND_HEIGHT, z: HOME_REALM_STEWARD_POINT.z },
   },
-  {
-    id: String(HOME_POT_GADGET_ID),
-    kind: InteractionKind.Activate,
-    name: gameText[GameTextKey.SereniteaPot],
-    position: { x: HOME_REALM_EXIT_POINT.x, y: HOME_REALM_GROUND_HEIGHT, z: HOME_REALM_EXIT_POINT.z },
-  },
+  computeHomePotInteractable(gameText, HOME_REALM_EXIT_POINT, () => HOME_REALM_GROUND_HEIGHT),
 ];

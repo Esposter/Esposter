@@ -2,7 +2,6 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -11,6 +10,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -128,8 +128,7 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
         context,
         combatant,
         activeCombatant.characterId,
-        ASCENSION_1_HEAL_FLAT +
-          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE,
+        ASCENSION_1_HEAL_FLAT + elementalMasteryMultiplier(combatant, ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE),
       );
     },
   };

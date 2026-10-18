@@ -14,7 +14,7 @@ describe(resolveDomainChallenge, () => {
   test("clearing a domain raises its petrified tree", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge({ ...progress, defeats: 10 }, { partyDown: false })).toStrictEqual(
+    expect(resolveDomainChallenge({ ...progress, defeats: 10 }, { isPartyDown: false })).toStrictEqual(
       DomainChallengeOutcome.Cleared,
     );
   });
@@ -23,19 +23,19 @@ describe(resolveDomainChallenge, () => {
     expect.hasAssertions();
 
     expect(
-      resolveDomainChallenge({ ...progress, elapsedMilliseconds: TIME_LIMIT_MILLISECONDS }, { partyDown: false }),
+      resolveDomainChallenge({ ...progress, elapsedMilliseconds: TIME_LIMIT_MILLISECONDS }, { isPartyDown: false }),
     ).toStrictEqual(DomainChallengeOutcome.TimedOut);
   });
 
   test("every member down returns the player to the entrance", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge(progress, { partyDown: true })).toStrictEqual(DomainChallengeOutcome.Wiped);
+    expect(resolveDomainChallenge(progress, { isPartyDown: true })).toStrictEqual(DomainChallengeOutcome.Wiped);
   });
 
   test("a challenge with time and members left keeps running", () => {
     expect.hasAssertions();
 
-    expect(resolveDomainChallenge(progress, { partyDown: false })).toStrictEqual(DomainChallengeOutcome.Running);
+    expect(resolveDomainChallenge(progress, { isPartyDown: false })).toStrictEqual(DomainChallengeOutcome.Running);
   });
 });

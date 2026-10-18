@@ -1,6 +1,6 @@
 import type { HomeBlueprint } from "#src/models/home/HomeBlueprint";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
-import type { InventoryItem } from "#src/models/inventory/InventoryItem";
+import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { startHomeMake } from "#src/services/home/startHomeMake";
@@ -29,17 +29,18 @@ describe(startHomeMake, () => {
     stackLimit: 99,
   };
   const progress: HomeProgress = {
-    accruedAt: EPOCH,
     claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [blueprint.id],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
-  const bag = (quantity: number): { items: InventoryItem[]; nextId: number; quickSwapItemIds: number[] } => ({
+  const bag = (quantity: number): Inventory => ({
     items: [{ definition, id: 1, quantity }],
     nextId: 2,
     quickSwapItemIds: [],

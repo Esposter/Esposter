@@ -11,6 +11,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -39,9 +40,6 @@ const BURST_CONSTELLATION = 1;
 
 export const KUKI_CHARACTER_ID = 10_000_065;
 
-const getElementalMastery = ({ attributes }: Combatant): number =>
-  attributes.attributeTotalMap[Attribute.ElementalMastery];
-
 // Breaking Free raises her Healing Bonus at Ascension 1 while her HP is at or under half
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_1 || healthShare > BREAKING_FREE_HEALTH_SHARE
@@ -68,7 +66,9 @@ export const createKukiKitBehaviour = ({
   // Each tick's DMG lands from a summon, with a share of the striker's Elemental Mastery from Ascension 4
   const ringTickHit = readHit("ringTick", {
     additiveBaseDamageBonus: (striker) =>
-      striker.ascension >= ASCENSION_4 ? ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE * getElementalMastery(striker) : 0,
+      striker.ascension >= ASCENSION_4
+        ? elementalMasteryMultiplier(striker, ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE)
+        : 0,
   });
   // The burst's hits, and Constellation 1's wider ones. gcsim casts more while her HP is at 50% or less, which a kit with
   // No current HP cannot tell, so the healthy count stands
@@ -90,7 +90,7 @@ export const createKukiKitBehaviour = ({
       onTick: (tick) => {
         const ascensionHealing =
           combatant.ascension >= ASCENSION_4
-            ? ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE * getElementalMastery(combatant)
+            ? elementalMasteryMultiplier(combatant, ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE)
             : 0;
         const maxHealth = getKitMaxHealth(
           combatant,
@@ -124,7 +124,10 @@ export const createKukiKitBehaviour = ({
     getPassiveBonuses,
     skill: {
       hits: [
-        { additiveBaseDamageBonus: (striker) => INITIAL_HIT_ELEMENTAL_MASTERY_SHARE * getElementalMastery(striker) },
+        {
+          additiveBaseDamageBonus: (striker) =>
+            elementalMasteryMultiplier(striker, INITIAL_HIT_ELEMENTAL_MASTERY_SHARE),
+        },
       ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { characterId } = combatant;

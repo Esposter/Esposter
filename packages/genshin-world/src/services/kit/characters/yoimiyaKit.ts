@@ -7,6 +7,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -162,13 +163,9 @@ export const createYoimiyaKitBehaviour = ({
         id: AUROUS_BLAZE_COOLDOWN_STATUS_ID,
         secondsRemaining: aurousBlazeExplosionCooldownSeconds,
       });
-      castKitSummon(
-        kitEffectState,
-        { facing: 0, height: 0, position: enemy.position },
-        combatant,
-        [aurousBlazeExplosion],
-        { attackTag: AttackTag.ElementalBurst },
-      );
+      castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, [aurousBlazeExplosion], {
+        attackTag: AttackTag.ElementalBurst,
+      });
     },
     // Niwabi Fire-Dance is a stance for the table's seconds whose normal attacks are the Blazing Arrows
     skill: {

@@ -770,7 +770,7 @@ const {
   onPartyDown: () => {
     // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
     if (trialArena.value) {
-      const returnPose = stepTrial({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+      const returnPose = stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
       if (returnPose) jumpTo(returnPose);
       return;
     }
@@ -781,7 +781,7 @@ const {
       return;
     }
     reviveFallenParty();
-    stepDomainChallenge({ deltaMilliseconds: 0, isPlaying: false, partyDown: true });
+    stepDomainChallenge({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
   },
   onPartyRevived: () => {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
@@ -1711,18 +1711,18 @@ defineExpose({ jumpTo, readCameraPosition });
           const transitionAttacks = stepDomainChallenge({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && domainClaimOffers === undefined,
-            partyDown: false,
+            isPartyDown: false,
           });
           const trialReturnPose = stepTrial({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World,
-            partyDown: false,
+            isPartyDown: false,
           });
           if (trialReturnPose) jumpTo(trialReturnPose);
           stepAbyss({
             deltaMilliseconds: context.delta,
             isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
-            partyDown: false,
+            isPartyDown: false,
           });
           if (!isPaused && screenKind === ScreenKind.World) refreshMiningOutcrops(getWorldNow(), kitContext.random);
           // Each attack a phase's end names starts on whichever boss makes it, and a name no boss makes starts nothing

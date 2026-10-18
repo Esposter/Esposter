@@ -6,7 +6,8 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 // The one it holds, up to its maximum, rather than restarting it
 export const addEnemyStatus = (enemy: Enemy, status: EnemyStatus): void => {
   const earlier = enemy.statuses.find(({ id }) => id === status.id);
-  if (!earlier) enemy.statuses.push(status);
+  // The enemy keeps its own copy, since stepping runs the seconds down in place on the copy it holds
+  if (!earlier) enemy.statuses.push({ ...status });
   else if (status.stacks === undefined) {
     const { nextTickSeconds } = earlier;
     Object.assign(earlier, status);

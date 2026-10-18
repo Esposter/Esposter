@@ -9,6 +9,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -30,8 +31,8 @@ const BOND_OF_LIFE_TOLERANCE = 0.0000001;
 // Clorinde's behaviour: Hunter's Vigil's press starts Night Vigil for its table's seconds, ending as she leaves the field,
 // And its Constellation 6 buffs her CRIT. Night Vigil's Swift Hunt steps cast their entry of the piercing shot below a
 // Full Bond of Life share, which gains Bond of Life as it strikes, and of the normal shot otherwise, and its Impale the
-// Night press casts the variant the share picks, each where her body stands. Impale the Night's heals are not built, and
-// Neither are Last Lightfall's Bond of Life, her passives, or Constellations 1, 2 and 4
+// Night press casts the variant the share picks, each where her body stands, and the low and full ones heal her by the
+// Share they clear of her Bond of Life. Not built: Last Lightfall's Bond of Life, her passives, Constellations 1, 2, 4
 export const createClorindeKitBehaviour = ({
   readHit,
   readHits,
@@ -64,7 +65,7 @@ export const createClorindeKitBehaviour = ({
   // As gcsim's skillHeal does, the Bond takes that heal before her HP does.
   // The heal lands at the press, where gcsim queues its full heal six frames later.
   const impaleTheNight = (context: KitContext): void => {
-    const { activeCombatant, body, kitEffectState, party } = context;
+    const { activeCombatant, body, characterIdCombatantMap, kitEffectState, party } = context;
     const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
     if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) {
       castKitSummon(kitEffectState, body, activeCombatant, [impaleTheNightNoHit], {
@@ -82,7 +83,7 @@ export const createClorindeKitBehaviour = ({
       activeCombatant.characterId,
       bondOfLifeShare *
         (isFull ? impaleTheNightFullHealing : impaleTheNightLowHealing) *
-        activeCombatant.attributes.maxHealth,
+        getKitMaxHealth(activeCombatant, kitEffectState.effects, party, characterIdCombatantMap),
     );
   };
   const nightVigil = readStance("nightVigil", {

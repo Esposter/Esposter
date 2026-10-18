@@ -17,6 +17,7 @@ import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -27,6 +28,8 @@ import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { MOONRIDGE_DEW_MAXIMUM_COUNT } from "#src/services/party/constants";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -234,7 +237,9 @@ const applyConstellation1 = (context: KitContext, combatant: Combatant, reaction
   else if (reactionType === LunarReactionType.LunarCrystallize)
     castKitShield(context, COLUMBINA_CHARACTER_ID, {
       element: Element.Hydro,
-      health: CONSTELLATION_1_SHIELD_HEALTH_SHARE * combatant.attributes.maxHealth,
+      health:
+        CONSTELLATION_1_SHIELD_HEALTH_SHARE *
+        getKitMaxHealth(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap),
       secondsRemaining: CONSTELLATION_1_SHIELD_SECONDS,
     });
 };
@@ -259,7 +264,9 @@ const applyConstellation2 = (context: KitContext, combatant: Combatant, reaction
     )
       effect.secondsRemaining = 0;
   buffKitMember(context.kitEffectState, context.activeCombatant.characterId, {
-    amount: amountPerMaxHealth * combatant.attributes.maxHealth,
+    amount:
+      amountPerMaxHealth *
+      getKitMaxHealth(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap),
     attribute,
     isEndedOnSwap: true,
     secondsRemaining: CONSTELLATION_2_SECONDS,
@@ -296,7 +303,8 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 // Columbina's behaviour: her skill's DoT, a field that follows her body and ticks its hit round its centre from the press's
 // Hit for the table's duration, which a press while it runs restarts. Its tick reaches further while her team is at Ascendant
 // Gleam. Her Moonsign Benediction counts her toward that level, and its Base DMG bonus is the curve of her max HP.
-// That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each tick, and its CRIT Rate is the stacks' share.
+// That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each Gravity Ripple, not each tick,
+// And its CRIT Rate is the stacks' share.
 // The burst's field is not built yet
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
 // The Gravity Ripple's hit is not built, as the record holds none of its multipliers or hitmarks, so the ripple runs its
@@ -343,7 +351,7 @@ export const createColumbinaKitBehaviour = ({
         if (getTotalGravity(gravity) >= GRAVITY_MAX) fireGravityRipple(context, combatant, gravity, true);
       },
       onTick: (tickContext) =>
-        castKitSummon(tickContext.kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [
+        castKitSummon(tickContext.kitEffectState, createKitBody(field.centre), combatant, [
           getSkillDotHit(tickContext),
         ]),
       secondsRemaining: skillDurationSeconds,
@@ -423,14 +431,9 @@ export const createColumbinaKitBehaviour = ({
         // Constellation 1's Gravity Ripple fires on each press, once every fifteen seconds
         if (
           combatant.constellationCount >= CONSTELLATION_1 &&
-          !checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, CONSTELLATION_1_ICD_ID)
-        ) {
+          startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_1_ICD_ID, CONSTELLATION_1_ICD_SECONDS)
+        )
           fireGravityRipple(context, combatant, gravity, false);
-          addKitStatus(kitEffectState, combatant.characterId, {
-            id: CONSTELLATION_1_ICD_ID,
-            secondsRemaining: CONSTELLATION_1_ICD_SECONDS,
-          });
-        }
       },
     },
   };

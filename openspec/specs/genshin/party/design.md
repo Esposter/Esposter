@@ -8,9 +8,13 @@ In the game, a party is a team of up to four characters, and the player keeps se
 flowchart TD
   KEY["1 to 4, or a pad's direction, pressed in play"] --> SLOT{"A member in that slot of the deployed team?"}
   SLOT -->|"no, or it is the one on the field"| NOTHING["Unchanged"]
-  SLOT -->|yes| DOWN{"Is the character down?"}
+  SLOT -->|yes| FALLING{"Is the member on the field still falling?"}
+  FALLING -->|yes| REFUSE_FALLING["Falling: the fall plays"]
+  FALLING -->|no| DOWN{"Is the character down?"}
   DOWN -->|yes| REFUSE_DOWN["Down: Character is down"]
-  DOWN -->|no| COOLDOWN{"A second since the last switch?"}
+  DOWN -->|no| BLOCKED{"Does the member on the field hold a swap lock?"}
+  BLOCKED -->|yes| REFUSE_BLOCKED["Blocked: the swap lock holds"]
+  BLOCKED -->|no| COOLDOWN{"A second since the last switch?"}
   COOLDOWN -->|no| REFUSE_COOLDOWN["Cooldown"]
   COOLDOWN -->|yes| SWITCHED["Switched: the member takes the field, the clock's seconds kept"]
 ```
@@ -21,7 +25,7 @@ flowchart TD
 - **A Bond of Life takes a heal before the HP does.** A `PartyMember` carries a `bondOfLifeShare`, the Bond of Life it holds as a share of its Max HP, zero when it holds none. Both it and the cleared share are runtime-only, so a reloaded team starts with none. `healPartyMember` takes it down by the heal first, and records the share it took as `bondOfLifeShare` on the change (zero when it took none), so the kits hear a heal the bond absorbed as a change of zero HP. `grantPartyMemberBondOfLife` adds to a standing Bond of Life, and over an empty one restarts the `bondOfLifeClearedShare` a heal adds to as the bond clears, which the clearing passives read. Its stacking is additive, which is provisional: the wiki's stacking examples, Clorinde's and Sigewinne's, read that way, and no source confirms it for a plain grant.
 - **A fall brings on the next member.** `damagePartyMember` takes a share of a character's Max HP. One whose HP runs out is down and loses its energy, and if it was on the field the player chooses the next member standing once the fall ends (`checkIsNextMemberAsked`). `checkIsPartyDown` holds once the whole deployed team is down, and the game over screen's Revive runs `reviveParty`, which brings each fallen member back at 35% of its Max HP, and jumps the team to the nearest unlocked waypoint. `drownParty` is the game's drowning: every member loses its energy and 10% of its Max HP.
 - **A team is filled from the left.** A `PartyTeam` holds its members' character ids in slot order and the name the player gave it, `""` while it keeps the game's own.
-- **A switch is a key's slot, in the order of the deployed team.** `PARTY_MEMBER_INPUT_ACTIONS` holds the actions for slots 1 to 4 ([controls](../controls/design.md) binds them to `1` to `4` and a pad's up, right, left and down). `switchPartyMember` answers with a `PartySwitchResult`: `Unchanged` for an empty slot or the member already on the field, `Down` for a character who is down, `Cooldown` within `PARTY_SWITCH_COOLDOWN_SECONDS` of the last switch, and `Switched` otherwise.
+- **A switch is a key's slot, in the order of the deployed team.** `PARTY_MEMBER_INPUT_ACTIONS` holds the actions for slots 1 to 4 ([controls](../controls/design.md) binds them to `1` to `4` and a pad's up, right, left and down). `switchPartyMember` answers with a `PartySwitchResult`: `Unchanged` for an empty slot or the member already on the field, `Falling` while the fall of the member on the field plays, `Down` for a character who is down, `Blocked` while a swap lock on the member on the field holds, `Cooldown` within `PARTY_SWITCH_COOLDOWN_SECONDS` of the last switch, and `Switched` otherwise.
 - **Party Setup's edits are refused as the game refuses them.** `deployPartyTeam` deploys a team with its first member standing on the field, and answers `Empty` for a team with nobody in it and `Down` for one whose members are all down. `setPartyTeamCharacters` sets a team's members, each once and four at most; on the deployed team the field keeps its slot, or the last one past a shortened team, so it answers `Empty` for a team emptied and `Down` for a character who is down landing on the field. Both are a `PartyTeamResult`.
 - **The world's party is reactive for the screen and raw for the step's own state.** `createWorldParty` makes the party the world holds `reactive`, so the HUD redraws as a member's HP, energy or cooldowns change and as the teams do, and holds raw what no screen reads and the step writes every step: the health changes not yet sent, the Lunar-Charged cloud, Lunar-Crystallize and Verdant Dew. `stepPartyCooldowns` writes a cooldown only while it runs, since a reactive write costs the same for a zero written over a zero. A profile of the kit bench put two fifths of its minute in these writes ([character kits](../kits/README.md)).
 - **The character on the field** is `getActiveCharacterId`, the deployed team's member at the active index.

@@ -62,7 +62,8 @@ export const AYAKA_CHARACTER_ID = 10_000_002;
 // Infuses her attacks with Cryo as she sprints. Constellation 1 cuts Hyouka's running cooldown on her normal and charged
 // Hits. Senho's Cryo application and movement, and A4's effect, are not built. Constellations 4 and 6 are built: 4's DEF
 // Reduction is an enemy status on the storm hits, and 6's charged attack bonus runs on its own clear and recharge
-// Constellation 4's DEF cut, on each storm hit that deals an enemy damage, applied once that damage lands as gcsim's callback is
+// Constellation 4's DEF cut, on each storm hit that deals an enemy damage, is applied once that damage lands,
+// As gcsim's callback does
 const getFrostflakeDefenceReduction = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
   constellationCount >= CONSTELLATION_4
     ? {

@@ -17,6 +17,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
@@ -53,7 +54,7 @@ const createMonaCombatant = (): Combatant => ({
 
 const OTHER_CHARACTER_ID = 10_000_052;
 const HEXEREI_CHARACTER_ID = 10_000_029;
-const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+const kitBody = createKitBody({ x: 0, z: 0 });
 const createOmenedEnemy = (): Enemy => ({
   ...createSturdyEnemy(),
   statuses: [{ damageTakenBonus: 0, id: "mona-omen", secondsRemaining: 10 }],

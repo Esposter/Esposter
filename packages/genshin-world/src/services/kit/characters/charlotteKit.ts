@@ -9,6 +9,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
@@ -119,7 +120,7 @@ export const createCharlotteKitBehaviour = ({
         if (!target) return;
         const { characterId } = combatant;
         const { position } = target;
-        const thornBody: KitBody = { facing: 0, height: 0, position: { x: position.x, z: position.z } };
+        const thornBody: KitBody = createKitBody({ x: position.x, z: position.z });
         scheduleKitTask(kitEffectState, characterId, thornHitmarkSeconds, ({ kitEffectState: effectState }) => {
           if (!startKitCooldown(effectState, characterId, THORN_COOLDOWN_STATUS_ID, thornCooldownSeconds)) return;
           castKitSummon(effectState, thornBody, combatant, [thorn]);
@@ -132,16 +133,13 @@ export const createCharlotteKitBehaviour = ({
       const { enemy } = event;
       castKitSummon(
         kitEffectState,
-        { facing: 0, height: 0, position: { x: enemy.position.x, z: enemy.position.z } },
+        createKitBody({ x: enemy.position.x, z: enemy.position.z }),
         combatant,
         [snappyMarkHit],
         { target: enemy },
       );
     },
-    // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not built
-    // Yet, as its hit falls a held duration later, which a skill's fixed hold levels cannot give (see the character's
-    // Page)
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, _effects) => {
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       if (combatant.ascension < ASCENSION_4) return [];
       const otherMembers = deployedCombatants.filter(({ characterId }) => characterId !== combatant.characterId);
       const fontaineCount = otherMembers.filter(({ regionId }) => regionId === FONTAINE_REGION_ID).length;
@@ -153,6 +151,8 @@ export const createCharlotteKitBehaviour = ({
         },
       ];
     },
+    // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not
+    // Built Yet, as its hit falls a held duration later, which a skill's fixed hold levels cannot give (see its Page)
     skill: {
       hits: [
         {

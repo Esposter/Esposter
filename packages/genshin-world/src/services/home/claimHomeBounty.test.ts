@@ -31,14 +31,15 @@ describe(claimHomeBounty, () => {
     weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
   };
   const progress: HomeProgress = {
-    accruedAt: EPOCH,
     claimedRewardIds: [],
     companionIds: [FIRST_CHARACTER_ID, SECOND_CHARACTER_ID],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
   const options = {
@@ -63,7 +64,12 @@ describe(claimHomeBounty, () => {
       { ...character, friendshipExp: RATE },
       { ...character, friendshipExp: RATE, id: SECOND_CHARACTER_ID },
     ]);
-    expect(result.progress).toStrictEqual({ ...progress, accruedAt: now, realmBounty: 0 });
+    expect(result.progress).toStrictEqual({
+      ...progress,
+      realmBounty: 0,
+      realmBountyAccruedAt: now,
+      realmCurrencyAccruedAt: now,
+    });
   });
 
   test("a bounty claim keeps the realm currency earned since the last claim", () => {

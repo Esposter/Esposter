@@ -3,6 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -32,7 +33,7 @@ const runTickFrames = (
   framesToRun: number,
   bodyX = 0,
 ): number[] => {
-  const context = createKitTestContext(COMBATANT, { body: { facing: 0, height: 0, position: { x: bodyX, z: 0 } } });
+  const context = createKitTestContext(COMBATANT, { body: createKitBody({ x: bodyX, z: 0 }) });
   const tickFrames: number[] = [];
   let frame = 0;
   schedulePeriodicKitTask(

@@ -1,6 +1,6 @@
 import type { HomePlant } from "#src/models/home/HomePlant";
 import type { HomePlanting } from "#src/models/home/HomePlanting";
-import type { InventoryItem } from "#src/models/inventory/InventoryItem";
+import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
 import { plantHomeSeed } from "#src/services/home/plantHomeSeed";
@@ -23,7 +23,7 @@ describe(plantHomeSeed, () => {
     rarity: 0,
     stackLimit: 99,
   };
-  const bag = (quantity: number): { items: InventoryItem[]; nextId: number; quickSwapItemIds: number[] } => ({
+  const bag = (quantity: number): Inventory => ({
     items: [{ definition, id: 1, quantity }],
     nextId: 2,
     quickSwapItemIds: [],

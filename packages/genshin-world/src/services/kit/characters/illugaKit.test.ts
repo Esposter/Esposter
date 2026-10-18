@@ -67,7 +67,7 @@ const withBenediction = (combatant: Combatant, constellationCount: number): Comb
   kit: { ...combatant.kit, moonsignBenediction: { getBaseDamageBonus: () => 0, lunarReactionTypes: [] } },
 });
 
-const createEnemyGeoHit = (context: KitContext, striker: Combatant): KitEvent => ({
+const createEnemyGeoHit = (striker: Combatant): KitEvent => ({
   element: Element.Geo,
   enemy: createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "enemy", position: { x: 0, z: 0 } }, ""),
   kind: KitEventKind.EnemyHit,
@@ -245,9 +245,9 @@ describe(createIllugaKitBehaviour, () => {
     context.activeCombatant = traveler;
     const summonCount = () => context.kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
 
-    for (let hit = 0; hit < 6; hit++) emitKitEvent(createEnemyGeoHit(context, traveler), context);
+    for (let hit = 0; hit < 6; hit++) emitKitEvent(createEnemyGeoHit(traveler), context);
     expect(summonCount()).toBe(0);
-    emitKitEvent(createEnemyGeoHit(context, traveler), context);
+    emitKitEvent(createEnemyGeoHit(traveler), context);
     expect(summonCount()).toBe(1);
   });
 

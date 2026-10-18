@@ -12,6 +12,7 @@ import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ELECTRO_REACTION_TYPES } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -161,13 +162,9 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
           )
         )
           return;
-        castKitSummon(
-          kitEffectState,
-          { facing: 0, height: 0, position: enemy.position },
-          oz.combatant,
-          [thunderingRetribution],
-          { attackTag: AttackTag.ElementalSkill },
-        );
+        castKitSummon(kitEffectState, createKitBody(enemy.position), oz.combatant, [thunderingRetribution], {
+          attackTag: AttackTag.ElementalSkill,
+        });
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         const oz = findStandingKitSummon(effects, OZ_SUMMON_ID, characterId);
         const [normalAttackHit] = event.action.hits;

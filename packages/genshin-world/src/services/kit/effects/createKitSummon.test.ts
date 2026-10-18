@@ -2,6 +2,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
@@ -13,7 +14,7 @@ describe(createKitSummon, () => {
     expect.hasAssertions();
 
     const summon = createKitSummon(
-      { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      createKitBody({ x: 0, z: 0 }),
       {
         ascension: 0,
         attributes: computeCharacterAttributes([]),

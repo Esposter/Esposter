@@ -27,20 +27,20 @@ flowchart LR
 
 ## Key files
 
-| File                                                               | Role                                                               |
-| :----------------------------------------------------------------- | :----------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Hud/Stick/Index.vue`        | The stick, in its area of the game's tree                          |
-| `packages/genshin-world/src/components/Hud/Touch/Index.vue`        | The look's drag under every piece                                  |
-| `packages/genshin-world/src/components/Hud/Actions/Index.vue`      | The attack, aim, jump and sprint buttons                           |
-| `packages/genshin-world/src/services/hud/constants.ts`             | The stick's head at rest, and the look's turn for a pixel          |
-| `packages/genshin-world/src/services/hud/TouchStickPositionMap.ts` | The stick's group centre for each recorded screen shape            |
-| `packages/genshin-world/src/services/hud/getTouchStickShape.ts`    | The recorded shape nearest a window's aspect ratio                 |
-| `packages/genshin-engine/src/input/createInput.ts`                 | `press`, `release`, `setTouchStick` and `turn`, read with the rest |
+| File                                                                    | Role                                                               |
+| :---------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Hud/Stick/Index.vue`             | The stick, in its area of the game's tree                          |
+| `packages/genshin-world/src/components/Hud/Touch/Index.vue`             | The look's drag under every piece                                  |
+| `packages/genshin-world/src/components/Hud/Actions/Index.vue`           | The attack, aim, jump and sprint buttons                           |
+| `packages/genshin-world/src/services/hud/constants.ts`                  | The stick's head at rest, and the look's turn for a pixel          |
+| `packages/genshin-world/src/services/hud/TouchStickShapePositionMap.ts` | The stick's group centre for each recorded screen shape            |
+| `packages/genshin-world/src/services/hud/getTouchStickShape.ts`         | The recorded shape nearest a window's aspect ratio                 |
+| `packages/genshin-engine/src/input/createInput.ts`                      | `press`, `release`, `setTouchStick` and `turn`, read with the rest |
 
 ## Notes
 
 - **The stick's sizes are the game's canvas units.** Its area, back and head scale with the screen as the game's do, so its reach is a share of the screen rather than a fixed distance on the glass. Its rings and arcs are measured on the newest recording, which another phone's draws 0.9 times as large, so the game sizes it by device. The chevrons' shape, the back's stroke and the arrow's size are provisional, too small on the recordings to measure, and so is the look's turn for a pixel of a drag, until a drag is measured ([roadmap](../../../changes/genshin-roadmap/tasks.md)).
-- **On a wider phone the game's stick stands further in.** Its group stands 87 units further from the screen's left on a 19.5:9 recording and 95 on a 20:9 one, where the canvas's inset moves ours 59, as a notch's safe area would, as the party's right inset does ([HUD](../hud/design.md)). The offset is keyed by the window's shape (`TouchStickPositionMap`): 16:9 stands 199.5 units in, 19.5:9 227.5 and 20:9 235.5, the 28 and 36 past the inset. A shape nobody recorded takes the nearest recorded one, provisionally, until a third recording measures it (`getTouchStickShape`).
+- **On a wider phone the game's stick stands further in.** Its group stands 87 units further from the screen's left on a 19.5:9 recording and 95 on a 20:9 one, where the canvas's inset moves ours 59, as a notch's safe area would, as the party's right inset does ([HUD](../hud/design.md)). The offset is keyed by the window's shape (`TouchStickShapePositionMap`): 16:9 stands 199.5 units in, 19.5:9 227.5 and 20:9 235.5, the 28 and 36 past the inset. A shape nobody recorded takes the nearest recorded one, provisionally, until a third recording measures it (`getTouchStickShape`).
 - **The tuning panel's free camera rises by touch but does not fall.** The game's touch layout has no button to descend, so the free camera flown by touch climbs on the jump button and has no way back down.
 
 ## Sources

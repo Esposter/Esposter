@@ -31,14 +31,15 @@ describe(collectHomeOrder, () => {
   };
   const order: HomeOrder = { blueprintId: FURNISHING_ID, startedAt: EPOCH };
   const progress: HomeProgress = {
-    accruedAt: EPOCH,
     claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [FURNISHING_ID],
     madeBlueprintIds: [],
     orders: [order],
     realmBounty: 0,
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
   const emptyInventory = { items: [] as InventoryItem[], nextId: 1, quickSwapItemIds: [] };

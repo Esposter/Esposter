@@ -15,6 +15,7 @@ import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
@@ -153,8 +154,7 @@ export const createSucroseKitBehaviour = ({
           (event.hit !== skillHit && event.hit !== burstTickHit)
         )
           return;
-        const amount =
-          SKILL_BURST_ELEMENTAL_MASTERY_SHARE * event.striker.attributes.attributeTotalMap[Attribute.ElementalMastery];
+        const amount = elementalMasteryMultiplier(event.striker, SKILL_BURST_ELEMENTAL_MASTERY_SHARE);
         for (const characterId of members)
           if (characterId !== combatant.characterId)
             buffKitMember(kitEffectState, characterId, {

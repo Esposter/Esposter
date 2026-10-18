@@ -4,6 +4,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -35,7 +36,7 @@ describe("stepKitEffects", () => {
     (secondsRemaining, strikeCount) => {
       expect.hasAssertions();
       const summon: KitSummon = {
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+        body: createKitBody({ x: 0, z: 0 }),
         combatant: COMBATANT,
         elapsedSeconds: 0,
         hits: [

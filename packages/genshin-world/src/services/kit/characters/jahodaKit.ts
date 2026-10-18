@@ -14,6 +14,7 @@ import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -32,6 +33,7 @@ import {
   JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
   JAHODA_ASCENSION_4_SECONDS,
   JAHODA_ASCENSION_4_SOURCE,
+  JAHODA_CONSTELLATION_6_SOURCE,
 } from "#src/services/kit/characters/jahodaAscension";
 import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -43,7 +45,7 @@ import { takeOne } from "@esposter/shared";
 // Savvy Strategy's flask fills to 100 over the pursuit, as gcsim (MIT, v2.47.2) jahoda/skill.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/skill.go
 const FLASK_GAUGE_MAXIMUM = 100;
-const PURSUIT_FIELD_ID = "jahoda-pursuit";
+export const PURSUIT_FIELD_ID = "jahoda-pursuit";
 // The share of her health above which Hidden Aces also heals the member with the lowest share of health
 const BURST_ADDITIONAL_HEAL_HEALTH_SHARE = 0.7;
 // Hidden Aces has two robots, and each strikes the three nearest enemies, as gcsim gives them (burst.go, attack queue)
@@ -61,7 +63,6 @@ const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_CRITICAL_RATE = 0.05;
 const CONSTELLATION_6_CRITICAL_DAMAGE = 0.4;
 const CONSTELLATION_6_SECONDS = 20;
-const CONSTELLATION_6_SOURCE = "jahoda-constellation-6";
 const MEOWBALL_FIELD_ID = "jahoda-meowball";
 const MEOWBALL_ENERGY_ICD_STATUS_ID = "jahoda-meowball-energy-icd";
 // A full flask's drain gives ten Meowballs, one for each tenth of its gauge, as gcsim (MIT, v2.47.2) jahoda/skill.go does
@@ -93,9 +94,6 @@ const readFlaskElement = (kitEffectState: KitEffectState, characterId: number): 
 // Ends the Meowballs still running, as gcsim's Skill and drain end their ticks
 const removeMeowballs = (kitEffectState: KitEffectState): void =>
   removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === MEOWBALL_FIELD_ID);
-
-// The body a flask's absorb check or drain acts from, standing on a field's centre
-const absorbedArea = (centre: KitBody["position"]): KitBody => ({ facing: 0, height: 0, position: centre });
 
 // The deployed member with the lowest share of its health that still stands, as gcsim's lowest-HP pick finds it
 const findLowestHealthCharacterId = (party: Party): number | undefined => {
@@ -243,13 +241,13 @@ export const createJahodaKitBehaviour = ({
             amount: CONSTELLATION_6_CRITICAL_RATE,
             attribute: Attribute.CriticalRate,
             secondsRemaining: CONSTELLATION_6_SECONDS,
-            source: CONSTELLATION_6_SOURCE,
+            source: JAHODA_CONSTELLATION_6_SOURCE,
           });
           buffKitMember(kitEffectState, characterId, {
             amount: CONSTELLATION_6_CRITICAL_DAMAGE,
             attribute: Attribute.CriticalDamage,
             secondsRemaining: CONSTELLATION_6_SECONDS,
-            source: CONSTELLATION_6_SOURCE,
+            source: JAHODA_CONSTELLATION_6_SOURCE,
           });
         }
     castKitSummon(kitEffectState, body, combatant, [isFilled ? filledHit : unfilledHit]);
@@ -272,7 +270,7 @@ export const createJahodaKitBehaviour = ({
       onTick: (tickContext) => {
         const { enemyMap, kitEffectState: tickState } = tickContext;
         const absorbed = findAbsorbedElement(
-          [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(circle, absorbedArea(pursuit.centre), enemy)),
+          [...enemyMap.values()].filter((enemy) => checkIsInAttackArea(circle, createKitBody(pursuit.centre), enemy)),
         );
         if (absorbed === undefined) return;
         const flaskElement = readFlaskElement(tickState, characterId);
@@ -289,7 +287,7 @@ export const createJahodaKitBehaviour = ({
           stacks: gauge,
         });
         if (gauge >= FLASK_GAUGE_MAXIMUM)
-          drainFlask(tickContext, absorbedArea(pursuit.centre), combatant, filledDrainHit);
+          drainFlask(tickContext, createKitBody(pursuit.centre), combatant, filledDrainHit);
       },
       radius: circle.radius,
       secondsRemaining: pursuitSeconds,

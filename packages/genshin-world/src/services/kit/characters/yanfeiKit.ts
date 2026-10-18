@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -177,13 +178,9 @@ export const createYanfeiKitBehaviour = ({ readHits, readParameter, readSeconds 
       )
         return;
       blazingEyeArmedHits.delete(event.hit);
-      castKitSummon(
-        kitEffectState,
-        { facing: 0, height: 0, position: event.enemy.position },
-        combatant,
-        [blazingEyeHit],
-        { attackTag: AttackTag.ChargedAttack },
-      );
+      castKitSummon(kitEffectState, createKitBody(event.enemy.position), combatant, [blazingEyeHit], {
+        attackTag: AttackTag.ChargedAttack,
+      });
     },
     skill: { hits: [fullSealsHit] },
   };

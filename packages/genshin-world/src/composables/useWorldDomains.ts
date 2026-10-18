@@ -316,17 +316,17 @@ export const useWorldDomains = ({
   const stepDomainChallenge = ({
     deltaMilliseconds,
     isPlaying,
-    partyDown,
+    isPartyDown,
   }: {
     deltaMilliseconds: number;
     isPlaying: boolean;
-    partyDown: boolean;
+    isPartyDown: boolean;
   }): string[] => {
     const arena = domainArena.value;
     if (!arena) return [];
     const challenge = domainChallenge.value;
     if (!challenge) {
-      if (partyDown) leaveDomain();
+      if (isPartyDown) leaveDomain();
       return [];
     }
     const elapsedMilliseconds = computeDomainChallengeElapsed(
@@ -349,7 +349,7 @@ export const useWorldDomains = ({
         elapsedMilliseconds,
         timeLimitMilliseconds: arena.level.timeLimitSeconds * 1000,
       },
-      { partyDown },
+      { isPartyDown },
     );
     if (outcome === DomainChallengeOutcome.Running) {
       domainChallenge.value = {

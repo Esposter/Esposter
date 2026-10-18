@@ -9,6 +9,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
@@ -53,7 +54,7 @@ const HAVOC_ANNIHILATION_STATUS_ID = "tartaglia-havoc-annihilation";
 
 // A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands
 const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void => {
-  castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, hits);
+  castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, hits);
 };
 
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;

@@ -32,6 +32,8 @@ const createHeizouCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Catalyst,
 });
+// A fresh enemy each call, so a test that changes one never shares it with another
+const createHeizouEnemy = () => createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 describe(createHeizouKitBehaviour, () => {
   test("the strikes, the fourth's three hits, the charged attack and the plunges read their table indexes at talent level 1", () => {
@@ -92,7 +94,7 @@ describe(createHeizouKitBehaviour, () => {
     HEIZOU_KIT.elementalBurst.onStart?.(context);
     const auraElements = [[Element.Electro, Element.Hydro], [], [Element.Pyro], [Element.Cryo], [Element.Pyro]];
     for (const elements of auraElements) {
-      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      const enemy = createHeizouEnemy();
       for (const element of elements) applyElement(enemy.elementalState, element, 1);
       HEIZOU_KIT.onKitEvent?.(
         {
@@ -150,7 +152,7 @@ describe("penetrative reasoning", () => {
     takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(
       context,
       { body: context.body, combatant, hit: takeOne(HEIZOU_KIT.elementalSkill.hits) },
-      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      createHeizouEnemy(),
     );
 
     expect(context.kitEffectState.effects).toStrictEqual([
@@ -175,7 +177,7 @@ describe("penetrative reasoning", () => {
     takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(
       context,
       { body: context.body, combatant, hit: takeOne(HEIZOU_KIT.elementalSkill.hits) },
-      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      createHeizouEnemy(),
     );
 
     expect(context.kitEffectState.effects).toStrictEqual([]);

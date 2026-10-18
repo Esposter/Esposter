@@ -44,6 +44,8 @@ const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;
 const LIGHTFALL_STACKS_RESOURCE_ID = "eula-lightfall-stacks";
 const LIGHTFALL_SUMMON_ID = "eula-lightfall";
+const ASCENSION_1 = 1;
+const ASCENSION_4 = 4;
 // Constellation 6 starts the Sword with this many stacks, and each stack it gains rolls for one more
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_STARTING_STACKS = 5;
@@ -136,12 +138,12 @@ export const createEulaKitBehaviour = ({
         const { characterId } = combatant;
         // Ascension 4 resets Icetide Vortex's cooldown, as gcsim v2.47.2 (MIT) eula/asc.go's a4() resets the skill's
         // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/asc.go
-        if (combatant.ascension >= 4) getPartyMember(party, characterId).skillCooldownSeconds = 0;
+        if (combatant.ascension >= ASCENSION_4) getPartyMember(party, characterId).skillCooldownSeconds = 0;
         // A fresh cast takes the Sword's stacks from zero, as the cast resets them, Constellation 6 starting it with five
         spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
         removeKitEffects(kitEffectState, (effect) => effect.kind === "summon" && effect.id === LIGHTFALL_SUMMON_ID);
         // Ascension 4 gains a Grimheart stack, which gcsim keeps only while the Grimheart it adds to is up
-        if (combatant.ascension >= 4 && countGrimheartStacks(kitEffectState.effects, characterId) > 0)
+        if (combatant.ascension >= ASCENSION_4 && countGrimheartStacks(kitEffectState.effects, characterId) > 0)
           gainGrimheartStack(kitEffectState, combatant, grimheartSeconds);
         const startingStacks = combatant.constellationCount >= CONSTELLATION_6 ? CONSTELLATION_6_STARTING_STACKS : 0;
         gainKitResource(
@@ -221,7 +223,7 @@ export const createEulaKitBehaviour = ({
             }));
           castKitSummon(kitEffectState, body, combatant, icewhirls);
           // Two stacks raise a Shattered Lightfall Sword at Ascension 1, which explodes on its own once the hold has begun
-          if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= 1)
+          if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= ASCENSION_1)
             castKitSummon(kitEffectState, body, combatant, [shatteredLightfall]);
           // Constellation 1's bonus lasts six seconds plus six for each stack consumed
           if (combatant.constellationCount >= 1)

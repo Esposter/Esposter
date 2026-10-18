@@ -16,6 +16,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createGorouKitBehaviour, GOROU_CHARACTER_ID } from "#src/services/kit/characters/gorouKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getElementCriticalDamageBonus } from "#src/services/kit/effects/getElementCriticalDamageBonus";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";
@@ -172,11 +173,7 @@ describe(createGorouKitBehaviour, () => {
       checkIsField(effect),
     );
     if (field)
-      stepKitField(
-        field,
-        0,
-        createKitTestContext(createGorouCombatant(), { body: { facing: 0, height: 0, position: { x: 3, z: -2 } } }),
-      );
+      stepKitField(field, 0, createKitTestContext(createGorouCombatant(), { body: createKitBody({ x: 3, z: -2 }) }));
 
     expect(field?.centre).toStrictEqual({ x: 3, z: -2 });
   });

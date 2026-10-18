@@ -11,14 +11,15 @@ describe(claimHomeCurrency, () => {
   const LIMIT = 10;
   const COMFORT = 0;
   const progress: HomeProgress = {
-    accruedAt: EPOCH,
     claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: EPOCH,
     realmCurrency: 0,
+    realmCurrencyAccruedAt: EPOCH,
     trustExp: 0,
   };
   const options = {
@@ -35,7 +36,12 @@ describe(claimHomeCurrency, () => {
     const result = claimHomeCurrency(progress, now, options);
 
     expect(result.currency).toBe(COIN_RATE);
-    expect(result.progress).toStrictEqual({ ...progress, accruedAt: now, realmBounty: BOUNTY_RATE });
+    expect(result.progress).toStrictEqual({
+      ...progress,
+      realmBounty: BOUNTY_RATE,
+      realmBountyAccruedAt: now,
+      realmCurrencyAccruedAt: now,
+    });
   });
 
   test("a store stops at its limit", () => {
@@ -52,11 +58,11 @@ describe(claimHomeCurrency, () => {
     expect.hasAssertions();
 
     const lastClaim = EPOCH.add({ seconds: HOME_RATE_PERIOD_SECONDS * 2 });
-    const stored = { ...progress, accruedAt: lastClaim, realmCurrency: COIN_RATE };
+    const stored = { ...progress, realmCurrency: COIN_RATE, realmCurrencyAccruedAt: lastClaim };
 
     const result = claimHomeCurrency(stored, EPOCH.add({ seconds: HOME_RATE_PERIOD_SECONDS }), options);
 
     expect(result.currency).toBe(COIN_RATE);
-    expect(result.progress.accruedAt.equals(lastClaim)).toBe(true);
+    expect(result.progress.realmCurrencyAccruedAt.equals(lastClaim)).toBe(true);
   });
 });

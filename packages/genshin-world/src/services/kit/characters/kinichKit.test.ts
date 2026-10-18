@@ -12,6 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKinichKitBehaviour, KINICH_CHARACTER_ID } from "#src/services/kit/characters/kinichKit";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -46,7 +47,7 @@ const OTHER_CHARACTER_ID = 10_000_107;
 const createBlessingContext = (random: () => number) => {
   const target = createEnemyAt(0, 0);
   const context = createKitTestContext(createKinichCombatant(), {
-    body: { facing: 0, height: 0, position: { x: 3, z: 0 } },
+    body: createKitBody({ x: 3, z: 0 }),
     enemyMap: new Map([["enemy", target]]),
     enemyTables,
     random,

@@ -12,6 +12,7 @@ import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -96,7 +97,7 @@ describe("bennett kit", () => {
     };
     const context = createKitTestContext(
       { ...createBennettCombatant(), ascension },
-      { body: { facing: 0, height: 0, position: body }, kitEffectState: { effects } },
+      { body: createKitBody(body), kitEffectState: { effects } },
     );
     for (let step = 0; step < Math.round(heldSeconds / 0.1); step++)
       stepKit(

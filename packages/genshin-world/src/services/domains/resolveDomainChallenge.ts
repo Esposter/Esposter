@@ -13,10 +13,10 @@ export interface DomainChallengeProgress {
 // Time running out. A challenge with none of them is still running
 export const resolveDomainChallenge = (
   { defeatTarget, defeats, elapsedMilliseconds, timeLimitMilliseconds }: DomainChallengeProgress,
-  { partyDown }: { partyDown: boolean },
+  { isPartyDown }: { isPartyDown: boolean },
 ): DomainChallengeOutcome => {
   if (defeats >= defeatTarget) return DomainChallengeOutcome.Cleared;
-  if (partyDown) return DomainChallengeOutcome.Wiped;
+  if (isPartyDown) return DomainChallengeOutcome.Wiped;
   if (elapsedMilliseconds >= timeLimitMilliseconds) return DomainChallengeOutcome.TimedOut;
   return DomainChallengeOutcome.Running;
 };

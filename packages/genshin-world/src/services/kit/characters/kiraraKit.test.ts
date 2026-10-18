@@ -12,6 +12,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKiraraKitBehaviour, KIRARA_CHARACTER_ID } from "#src/services/kit/characters/kiraraKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -133,12 +134,7 @@ const readStrikeDamageBonus = (ascension: number, attackTag: AttackTag): number 
   };
   return (
     KIRARA_KIT.getStrikeDamageBonus?.(
-      {
-        attackTag,
-        body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-        combatant,
-        hit: takeOne(KIRARA_KIT.elementalSkill.hits),
-      },
+      { attackTag, body: createKitBody({ x: 0, z: 0 }), combatant, hit: takeOne(KIRARA_KIT.elementalSkill.hits) },
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       createParty([KIRARA_CHARACTER_ID]),
       [],

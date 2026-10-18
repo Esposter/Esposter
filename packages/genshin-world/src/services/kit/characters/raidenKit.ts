@@ -7,6 +7,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -292,7 +293,7 @@ export const createRaidenKitBehaviour = ({
         !startKitCooldown(kitEffectState, characterId, COORDINATED_ATTACK_ICD_ID, COORDINATED_ATTACK_ICD_SECONDS)
       )
         return;
-      castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy.position }, combatant, [coordinatedAttack]);
+      castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, [coordinatedAttack]);
     },
     // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a task
     // That gives it as it runs

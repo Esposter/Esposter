@@ -1,4 +1,11 @@
 import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
+import {
+  HOME_POT_GADGET_ID,
+  HOME_REALM_EXIT_POINT,
+  HOME_REALM_GROUND_HEIGHT,
+  HOME_REALM_STEWARD_POINT,
+  HOME_TUBBY_NPC_ID,
+} from "#src/services/home/constants";
 import { GameTextKey, ENGLISH_GAME_TEXT } from "genshin-text";
 import { InteractionKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
@@ -9,16 +16,16 @@ describe(computeHomeRealmInteractables, () => {
 
     expect(computeHomeRealmInteractables(ENGLISH_GAME_TEXT)).toStrictEqual([
       {
-        id: "13276",
+        id: String(HOME_TUBBY_NPC_ID),
         kind: InteractionKind.Talk,
         name: ENGLISH_GAME_TEXT[GameTextKey.Tubby],
-        position: { x: 6, y: 0, z: 0 },
+        position: { x: HOME_REALM_STEWARD_POINT.x, y: HOME_REALM_GROUND_HEIGHT, z: HOME_REALM_STEWARD_POINT.z },
       },
       {
-        id: "220026",
+        id: String(HOME_POT_GADGET_ID),
         kind: InteractionKind.Activate,
         name: ENGLISH_GAME_TEXT[GameTextKey.SereniteaPot],
-        position: { x: -6, y: 0, z: 0 },
+        position: { x: HOME_REALM_EXIT_POINT.x, y: HOME_REALM_GROUND_HEIGHT, z: HOME_REALM_EXIT_POINT.z },
       },
     ]);
   });

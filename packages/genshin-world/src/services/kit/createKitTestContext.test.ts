@@ -7,6 +7,7 @@ import type { KitState } from "#src/models/kit/KitState";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -20,7 +21,7 @@ import { describe } from "vitest";
 // One given
 export const createKitTestContext = (combatant: Combatant, context: Partial<KitContext> = {}): KitContext => ({
   activeCombatant: combatant,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+  body: createKitBody({ x: 0, z: 0 }),
   characterIdCombatantMap: new Map([[combatant.characterId, combatant]]),
   enemyMap: new Map(),
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },

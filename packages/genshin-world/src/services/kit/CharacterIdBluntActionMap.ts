@@ -9,7 +9,7 @@ import type { AttackTag } from "#src/models/combat/AttackTag";
 // Only at their stance's place in the combo that an action does not split, and Gorou's Crystal Collapse, a field's tick
 // And not one of his action's hits. Neuvillette's and Wanderer's plunges are catalyst plunges, which the wiki does not list
 // As blunt, so the rules leave them non-blunt.
-export const BluntActionMap: Partial<Record<number, Partial<Record<AttackTag, boolean>>>> = {
+export const CharacterIdBluntActionMap: Partial<Record<number, Partial<Record<AttackTag, boolean>>>> = {
   // Candace: her skill
   10_000_072: { ElementalSkill: true },
   // Chiori: her normal attack, skill and burst

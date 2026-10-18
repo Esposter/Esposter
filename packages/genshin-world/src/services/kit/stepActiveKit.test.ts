@@ -27,6 +27,7 @@ import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
@@ -374,7 +375,7 @@ describe(stepActiveKit, () => {
           secondsRemaining: 1,
         },
         {
-          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          body: createKitBody({ x: 0, z: 0 }),
           combatant: offFieldCombatant,
           elapsedSeconds: 0,
           hits: [takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits)],
@@ -464,7 +465,7 @@ describe(stepActiveKit, () => {
 
     expect(strikeOre.mock.calls).toStrictEqual([
       [context.body, readOreHit(combatant, hit)],
-      [{ facing: 0, height: 0, position: enemy.position }, readReactionOreHit(TransformativeReactionType.Overloaded)],
+      [createKitBody(enemy.position), readReactionOreHit(TransformativeReactionType.Overloaded)],
     ]);
     expect(context.oreStrikes).toStrictEqual([]);
   });

@@ -39,6 +39,7 @@ describe(addDendroCores, () => {
   };
   const enemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 3, z: 4 } }, "");
   const bloom: Reaction = { reactionType: ReactionType.Bloom };
+  const dropPosition = { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) };
 
   test("leaves a Bloom's core out from the enemy's edge, bursting as Bloom six seconds after it stands", () => {
     expect.hasAssertions();
@@ -57,7 +58,7 @@ describe(addDendroCores, () => {
         characterId: TRAVELER_CHARACTER_ID,
         coreKind: DendroCoreKind.Bloom,
         kind: "dendroCore",
-        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
+        position: dropPosition,
         reactionType: TransformativeReactionType.Bloom,
         secondsRemaining: DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
       },
@@ -95,7 +96,7 @@ describe(addDendroCores, () => {
         characterId: TRAVELER_CHARACTER_ID,
         coreKind: DendroCoreKind.Bountiful,
         kind: "dendroCore",
-        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
+        position: dropPosition,
         reactionType: TransformativeReactionType.Bloom,
         secondsRemaining: 0.4,
       },
@@ -122,7 +123,7 @@ describe(addDendroCores, () => {
         characterId: TRAVELER_CHARACTER_ID,
         coreKind: DendroCoreKind.Bloom,
         kind: "dendroCore",
-        position: { x: 3 + ENEMY_CAPSULE_RADIUS + ENEMY_DROP_OFFSET, z: expect.closeTo(4) },
+        position: dropPosition,
         reactionType: TransformativeReactionType.Bloom,
         secondsRemaining: DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
       },

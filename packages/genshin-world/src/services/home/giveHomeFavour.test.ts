@@ -18,14 +18,15 @@ describe(giveHomeFavour, () => {
     talkId: TALK_ID,
   };
   const progress: HomeProgress = {
-    accruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     claimedRewardIds: [],
     companionIds: [COMPANION_ID],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     realmCurrency: 0,
+    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     trustExp: 0,
   };
 

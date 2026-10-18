@@ -21,7 +21,6 @@ import {
   WEAPON_START_LEVEL,
   WEAPON_START_REFINEMENT,
 } from "#src/services/inventory/constants";
-import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
 import { ItemCategory } from "genshin-interface";
@@ -130,7 +129,14 @@ describe(pickUpDroppedItem, () => {
         items: [
           {
             artifact,
-            definition: getDroppedItemDefinition(pieceId, names, new Map(), materialDataMap, reliquaryPieceEntryMap),
+            definition: {
+              category: ItemCategory.Artifact,
+              id: pieceId,
+              name: "Test Piece",
+              rank: 1,
+              rarity: 1,
+              stackLimit: 1,
+            },
             id: 0,
             quantity: 1,
           },

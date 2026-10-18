@@ -6,6 +6,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -15,7 +16,7 @@ const createEnemyAt = (x: number, z: number): Enemy => ({
 });
 
 describe(checkIsInAttackArea, () => {
-  const BODY: KitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
+  const BODY: KitBody = createKitBody({ x: 0, z: 0 });
   const AREA = { angle: Math.PI / 2, height: 2, radius: 3 };
 
   test("reaches an enemy ahead of the body within its radius", () => {

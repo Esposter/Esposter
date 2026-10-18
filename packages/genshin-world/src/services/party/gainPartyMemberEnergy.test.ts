@@ -40,4 +40,13 @@ describe(gainPartyMemberEnergy, () => {
 
     expect(getPartyMember(party, TRAVELER_CHARACTER_ID).energy).toBe(TRAVELER_KIT.burstEnergyCost);
   });
+
+  test("gives a fallen member no flat energy grant", () => {
+    expect.hasAssertions();
+    const party = createParty([TRAVELER_CHARACTER_ID]);
+    getPartyMember(party, TRAVELER_CHARACTER_ID).healthShare = 0;
+    gainPartyMemberEnergy(party, createCombatant(), 2);
+
+    expect(getPartyMember(party, TRAVELER_CHARACTER_ID).energy).toBe(0);
+  });
 });

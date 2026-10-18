@@ -40,15 +40,14 @@ flowchart TD
 | `packages/genshin-world/src/services/time/computeNextWeeklyReset.ts`                    | The Monday 04:00 a week after the last weekly reset                                                        |
 | `packages/genshin-world/src/services/time/computeLastMonthlyReset.ts`                   | The first of the month's 04:00 at or before a moment                                                       |
 | `packages/genshin-world/src/services/time/computeNextMonthlyReset.ts`                   | The first of the next month's 04:00                                                                        |
+| `packages/genshin-world/src/services/time/checkIsDailyResetDayCurrent.ts`               | Whether a day keyed at a moment still stands at `now`, against the last daily reset                        |
 | `packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`                    | The last refresh of a shop's kind, read from the reset module                                              |
 | `packages/genshin-world/src/services/shop/computeNextShopRefreshTime.ts`                | The next refresh of a shop's kind, read from the reset module                                              |
 | `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`                   | The bargains' month, the game day's month                                                                  |
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | The Primogem refill's game day                                                                             |
 | `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`            | The forge cap, counted over the game day                                                                   |
 | `packages/genshin-world/src/services/investigation/countInvestigationsToday.ts`         | The investigations made since the last daily reset                                                         |
-| `packages/genshin-world/src/services/commission/checkIsCommissionDayCurrent.ts`         | Whether the kept day is still current against the last daily reset                                         |
 | `packages/genshin-world/src/services/commission/computeCommissionDay.ts`                | The day's four, dealt again when the kept day is no longer current                                         |
-| `packages/genshin-world/src/services/leyLine/checkIsOutcropDayCurrent.ts`               | Whether an outcrop's day is still current                                                                  |
 | `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`           | A mined outcrop stands until the next 04:00 reset after its mining                                         |
 | `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                  | An elite camp's member returns at the next daily reset                                                     |
 | `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`                  | A normal boss's respawn instant, five seconds after its claim                                              |

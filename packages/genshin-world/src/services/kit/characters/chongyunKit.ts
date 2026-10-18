@@ -9,6 +9,7 @@ import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -137,12 +138,10 @@ export const createChongyunKitBehaviour = ({
         const { centre, radius } = effect;
         const enemy = selectAttackTarget(
           { angle: 2 * Math.PI, height: Number.POSITIVE_INFINITY, radius },
-          { facing: 0, height: 0, position: centre },
+          createKitBody(centre),
           enemyMap.values(),
         );
-        castKitSummon(kitEffectState, { facing: 0, height: 0, position: enemy?.position ?? centre }, combatant, [
-          rimechaserBladeHit,
-        ]);
+        castKitSummon(kitEffectState, createKitBody(enemy?.position ?? centre), combatant, [rimechaserBladeHit]);
       } else if (event.kind === KitEventKind.NormalAttackLanded) {
         if (
           activeCombatant.characterId === characterId &&

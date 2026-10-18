@@ -10,6 +10,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -191,7 +192,7 @@ export const createLaylaKitBehaviour = ({
         if (combatant.constellationCount >= CONSTELLATION_2) gainPartyMemberEnergy(party, combatant, 1);
       },
     };
-    castKitSummon(kitEffectState, { facing: 0, height: 0, position: target.position }, combatant, [hit]);
+    castKitSummon(kitEffectState, createKitBody(target.position), combatant, [hit]);
   };
 
   // Restarts the tick that adds a Night Star each 1.5 seconds while the shield lasts, as gcsim's tickNightStar re-arms it

@@ -9,6 +9,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -135,6 +136,9 @@ export const createHuTaoKitBehaviour = ({
       secondsRemaining: CONSTELLATION_6_SECONDS,
       source: CONSTELLATION_6_SOURCE,
     });
+  // Constellation 6's once-a-minute cooldown, which a refused fall and a drain to a quarter of her HP or under both start
+  const startConstellation6Cooldown = (kitEffectState: KitEffectState, characterId: number): boolean =>
+    startKitCooldown(kitEffectState, characterId, CONSTELLATION_6_COOLDOWN_STATUS_ID, CONSTELLATION_6_COOLDOWN_SECONDS);
   return {
     burst: { hits: [{ onStrike: healOnSpiritSootherStrike }], onStart: resetSpiritSootherHeals },
     burstVariant: {
@@ -153,12 +157,7 @@ export const createHuTaoKitBehaviour = ({
     // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
     refusesFall: (combatant, kitEffectState) =>
       combatant.constellationCount >= CONSTELLATION_6 &&
-      startKitCooldown(
-        kitEffectState,
-        combatant.characterId,
-        CONSTELLATION_6_COOLDOWN_STATUS_ID,
-        CONSTELLATION_6_COOLDOWN_SECONDS,
-      ),
+      startConstellation6Cooldown(kitEffectState, combatant.characterId),
     // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind === KitEventKind.EffectExpired) {
@@ -204,12 +203,7 @@ export const createHuTaoKitBehaviour = ({
           event.characterId !== combatant.characterId ||
           event.healthShare >= 0 ||
           getPartyMember(party, combatant.characterId).healthShare > CONSTELLATION_6_HEALTH_SHARE ||
-          !startKitCooldown(
-            kitEffectState,
-            combatant.characterId,
-            CONSTELLATION_6_COOLDOWN_STATUS_ID,
-            CONSTELLATION_6_COOLDOWN_SECONDS,
-          )
+          !startConstellation6Cooldown(kitEffectState, combatant.characterId)
         )
           return;
         buffConstellation6CriticalRate(kitEffectState, combatant.characterId);
@@ -222,13 +216,9 @@ export const createHuTaoKitBehaviour = ({
         return;
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
-      castKitSummon(
-        kitEffectState,
-        { facing: 0, height: 0, position: event.enemy.position },
-        combatant,
-        [bloodBlossomHit],
-        { target: event.enemy },
-      );
+      castKitSummon(kitEffectState, createKitBody(event.enemy.position), combatant, [bloodBlossomHit], {
+        target: event.enemy,
+      });
     },
     skill: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {

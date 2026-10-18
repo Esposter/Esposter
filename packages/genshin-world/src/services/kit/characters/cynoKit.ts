@@ -24,6 +24,7 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
@@ -77,7 +78,7 @@ const C6_STACKS_MAX = 8;
 const createElementalMasteryShareBonus =
   (share: number) =>
   (combatant: Combatant): number =>
-    combatant.ascension >= ASCENSION_4 ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * share : 0;
+    combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, share) : 0;
 
 // Pactsworn's normal attacks take 150% of his Elemental Mastery as flat DMG from Ascension 4
 const getPactswornNormalAttackBonus = createElementalMasteryShareBonus(

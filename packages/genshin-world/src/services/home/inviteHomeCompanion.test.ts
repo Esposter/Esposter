@@ -15,14 +15,15 @@ describe(inviteHomeCompanion, () => {
     { bountyStoreLimit: 0, coinStoreLimit: 0, exp: 0, level: 2, npcCount: 2 },
   ];
   const progress: HomeProgress = {
-    accruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     claimedRewardIds: [],
     companionIds: [],
     learnedBlueprintIds: [],
     madeBlueprintIds: [],
     orders: [],
     realmBounty: 0,
+    realmBountyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     realmCurrency: 0,
+    realmCurrencyAccruedAt: Temporal.Instant.fromEpochMilliseconds(0),
     trustExp: 0,
   };
   const ownedCharacterIds = [CHARACTER_ID, OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID];

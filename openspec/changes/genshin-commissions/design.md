@@ -29,16 +29,16 @@ The as-built [commissions](../../specs/genshin/commissions/design.md) page holds
 ```text
 packages/genshin-world/src/
 ├── models/commission/CommissionDaySave.ts
-└── services/commission/
-    └── checkIsCommissionDayCurrent.ts
+└── services/time/
+    └── checkIsDailyResetDayCurrent.ts
 ```
 
 1. **The kept day.**
    - `CommissionDay` (`packages/genshin-world/src/models/commission/CommissionDay.ts`) gains `dealtAt: Temporal.Instant`.
    - The daily reset is `packages/genshin-world/src/services/time/computeLastDailyReset.ts`, the server's 04:00 at or before `now` in the [reset clock](../../specs/genshin/reset-clock/design.md), so this change adds no copy of it.
-   - `checkIsCommissionDayCurrent.ts`: whether a day's `dealtAt` is at or after the daily reset at or before `now`.
+   - `checkIsDailyResetDayCurrent.ts`, shared with the outcrops and investigations: whether a day's `dealtAt` is at or after the daily reset at or before `now`.
    - The save: `CommissionDaySave.ts`, the schema of the day with `dealtAt` as an ISO string (`z.iso.datetime()`, as `AchievementProgressSave` keeps `finishedAt`) and the dealt and claimed lists each at most `COMMISSIONS_PER_DAY` long; `genshinSaveSchema` gains `commissionDay: commissionDaySaveSchema` with no default, the stored saves backfilled to it when it lands, and a new player's save holding an empty day dealt at the epoch; `GenshinSaveState` gains `commissionDay`, read in `readGenshinSave` and written in `toGenshinSave`.
-   - Tests: the reset clock's `computeLastDailyReset.test.ts` (a moment before 04:00 reads the day before's reset, one at 04:00 reads its own) and `checkIsCommissionDayCurrent.test.ts` (dealt before the reset is stale, after it current), beside each; `readGenshinSave.test.ts` gains a day read back from its save with its `dealtAt`.
+   - Tests: the reset clock's `computeLastDailyReset.test.ts` (a moment before 04:00 reads the day before's reset, one at 04:00 reads its own) and `checkIsDailyResetDayCurrent.test.ts` (dealt before the reset is stale, after it current), beside each; `readGenshinSave.test.ts` gains a day read back from its save with its `dealtAt`.
    - No caller deals yet, so nothing in the session changes.
 2. **Scene tasks**, swapping their area's camp while open. Waits on the area's camps, placed from the official map's enemy marks as the [spawned places](../genshin-spawned-places/design.md) proposal sets out.
 3. **Quest tasks**: a quest's completion reaching its commission, once the quests report a completion.

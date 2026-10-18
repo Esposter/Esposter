@@ -12,7 +12,12 @@ import { applyElement } from "#src/services/combat/aura/applyElement";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
+import { JAHODA_ASCENSION_4_SOURCE, JAHODA_CONSTELLATION_6_SOURCE } from "#src/services/kit/characters/jahodaAscension";
+import {
+  createJahodaKitBehaviour,
+  JAHODA_CHARACTER_ID,
+  PURSUIT_FIELD_ID,
+} from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -38,9 +43,6 @@ const createJahodaCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Bow,
 });
-
-// Constellation 6's buff sources, made up, as the buff a source names restarts only itself
-const CONSTELLATION_6_SOURCE = "jahoda-constellation-6";
 
 // A team of Jahoda and a partner. Jahoda's kit holds a Moonsign Benediction, as a Moonsign character's kit does.
 // Its partner's does too when the team is to be at Ascendant Gleam. One enemy holding an aura stands at the origin.
@@ -213,7 +215,7 @@ describe(createJahodaKitBehaviour, () => {
           characterId,
           kind: "buff",
           secondsRemaining: 20,
-          source: CONSTELLATION_6_SOURCE,
+          source: JAHODA_CONSTELLATION_6_SOURCE,
         },
         {
           amount: 0.4,
@@ -221,7 +223,7 @@ describe(createJahodaKitBehaviour, () => {
           characterId,
           kind: "buff",
           secondsRemaining: 20,
-          source: CONSTELLATION_6_SOURCE,
+          source: JAHODA_CONSTELLATION_6_SOURCE,
         },
       ]),
     );
@@ -270,7 +272,7 @@ describe(createJahodaKitBehaviour, () => {
         characterId: JAHODA_CHARACTER_ID,
         kind: "buff",
         secondsRemaining: 6,
-        source: "jahoda-ascension-4",
+        source: JAHODA_ASCENSION_4_SOURCE,
       },
     ]);
   });
@@ -344,7 +346,7 @@ describe(createJahodaKitBehaviour, () => {
     for (let frame = 0; frame < 400; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
     JAHODA_KIT.elementalSkill.onStart?.(context);
     const secondPursuit = context.kitEffectState.effects.find(
-      (effect) => effect.kind === "field" && effect.id === "jahoda-pursuit",
+      (effect) => effect.kind === "field" && effect.id === PURSUIT_FIELD_ID,
     );
     if (secondPursuit?.kind !== "field") throw new Error("The second press casts no pursuit");
     fillFlaskUntilDrained(secondPursuit, context);

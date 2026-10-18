@@ -224,7 +224,7 @@ describe(createIansanKitBehaviour, () => {
     stepKitSeconds(context, 2.1);
     generateKitNightsoulPoints(context, 1, 54);
     stepKitSeconds(context, 0.9);
-    // 35 from the burst, 4 at 1 second, 1 at 2 and 3 seconds, then 1 gained at 3.6 seconds and 4 at 4 seconds
+    // 35 from the burst, 4 at 1 second, 1 at 1.5, 2 and 3 seconds, then 1 gained at 3.6 seconds and 4 at 4 seconds
     expect(countIansanPoints(context)).toBe(47);
   });
 

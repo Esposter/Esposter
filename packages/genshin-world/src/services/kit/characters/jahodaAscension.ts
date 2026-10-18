@@ -7,13 +7,14 @@ import { Element } from "#src/models/Element";
 // Gives the active character Elemental Mastery each time she heals above 70% of her health
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/asc.go
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/cons.go
-export const JAHODA_ASCENSION_1 = 1;
+const JAHODA_ASCENSION_1 = 1;
 export const JAHODA_ASCENSION_4 = 4;
 export const JAHODA_ASCENSION_4_ELEMENTAL_MASTERY = 100;
 export const JAHODA_ASCENSION_4_SECONDS = 6;
 export const JAHODA_ASCENSION_4_SOURCE = "jahoda-ascension-4";
-export const JAHODA_CONSTELLATION_2 = 2;
-export const JAHODA_CONSTELLATION_4 = 4;
+const JAHODA_CONSTELLATION_2 = 2;
+const JAHODA_CONSTELLATION_4 = 4;
+export const JAHODA_CONSTELLATION_6_SOURCE = "jahoda-constellation-6";
 const ASCENSION_1_ELEMENT_PRIORITY: readonly Element[] = [Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo];
 const ASCENSION_1_DAMAGE_MULTIPLIER = 1.3;
 const ASCENSION_1_HEAL_MULTIPLIER = 1.2;
@@ -21,7 +22,7 @@ const ASCENSION_1_EXTRA_ROBOTS = 1;
 const ASCENSION_1_INTERVAL_MULTIPLIER = 0.9;
 const CONSTELLATION_4_ENERGY = 4;
 
-export interface JahodaElementEffects {
+interface JahodaElementEffects {
   damageMultiplier: number;
   extraRobots: number;
   healMultiplier: number;

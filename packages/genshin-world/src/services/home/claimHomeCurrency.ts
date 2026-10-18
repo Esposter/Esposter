@@ -1,6 +1,5 @@
-import type { HomeComfortLevel } from "#src/models/home/HomeComfortLevel";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
-import type { HomeTrustLevel } from "#src/models/home/HomeTrustLevel";
+import type { HomeStoreLevels } from "#src/models/home/HomeStoreLevels";
 
 import { settleHomeStores } from "#src/services/home/settleHomeStores";
 
@@ -9,11 +8,7 @@ import { settleHomeStores } from "#src/services/home/settleHomeStores";
 export const claimHomeCurrency = (
   progress: HomeProgress,
   now: Temporal.Instant,
-  {
-    comfort,
-    comfortLevels,
-    trustLevels,
-  }: { comfort: number; comfortLevels: HomeComfortLevel[]; trustLevels: HomeTrustLevel[] },
+  { comfort, comfortLevels, trustLevels }: HomeStoreLevels,
 ): { currency: number; progress: HomeProgress } => {
   const settled = settleHomeStores(progress, now, { comfort, comfortLevels, trustLevels });
   return { currency: settled.realmCurrency, progress: { ...settled, realmCurrency: 0 } };
