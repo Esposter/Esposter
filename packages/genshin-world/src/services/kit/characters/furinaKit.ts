@@ -219,6 +219,7 @@ const castFollowingField = (
 // Attack, or Pneuma's Singer of Many Waters, which heals the character on the field. Let the People Rejoice starts its
 // Fanfare, which each change to a member's HP feeds. Ascensions 1 and 4 and Constellations 1, 2's Fanfare and 4 are built;
 // Constellation 2's Max HP, 3, 5 and 6 are not
+// Constellation 6 needs Center of Attention's 10 seconds and an infusion that outranks others, neither built
 export const createFurinaKitBehaviour = ({
   kit,
   readFrames,
