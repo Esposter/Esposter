@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 
 describe(toCommissionTask, () => {
   const ID = 10_100;
+  const PREFERRED_REGION = "mondstadt";
   const row: ExcelDailyTaskRow = {
     centerPosition: "Event_10100",
     cityId: 1,
@@ -18,12 +19,13 @@ describe(toCommissionTask, () => {
     poolId: 1001,
     questId: 0,
     taskRewardId: 2,
+    titleTextMapHash: 1001,
     type: "DAILY_TASK_SCENE",
   };
 
   test("should read a scene task's kind, finish and groups, with no quest", () => {
     expect.hasAssertions();
-    expect(toCommissionTask(row)).toStrictEqual({
+    expect(toCommissionTask(row, PREFERRED_REGION)).toStrictEqual({
       centerPosition: "Event_10100",
       enterDistance: 40,
       exitDistance: 60,
@@ -34,8 +36,10 @@ describe(toCommissionTask, () => {
       newGroupIds: [133_003_474],
       oldGroupIds: [133_003_170],
       poolId: 1001,
+      preferredRegion: PREFERRED_REGION,
       questId: "",
       rewardTier: 2,
+      titleTextId: 1001,
     });
   });
 
@@ -52,8 +56,9 @@ describe(toCommissionTask, () => {
       poolId: 1001,
       questId: 7,
       taskRewardId: 2,
+      titleTextMapHash: 1002,
     };
-    expect(toCommissionTask(questRow)).toStrictEqual({
+    expect(toCommissionTask(questRow, PREFERRED_REGION)).toStrictEqual({
       centerPosition: "",
       enterDistance: 40,
       exitDistance: 60,
@@ -64,14 +69,18 @@ describe(toCommissionTask, () => {
       newGroupIds: [],
       oldGroupIds: [],
       poolId: 1001,
+      preferredRegion: PREFERRED_REGION,
       questId: "7",
       rewardTier: 2,
+      titleTextId: 1002,
     });
   });
 
   test("should refuse a finish the maps do not name", () => {
     expect.hasAssertions();
-    expect(() => toCommissionTask({ ...row, finishType: "DAILY_FINISH_UNKNOWN" })).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      toCommissionTask({ ...row, finishType: "DAILY_FINISH_UNKNOWN" }, PREFERRED_REGION),
+    ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 10100, has the type DAILY_TASK_SCENE and the finish DAILY_FINISH_UNKNOWN, which the maps do not name]`,
     );
   });
