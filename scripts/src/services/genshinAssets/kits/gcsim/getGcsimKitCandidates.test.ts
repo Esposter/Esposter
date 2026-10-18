@@ -11,8 +11,10 @@ import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
+import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
-import { CombatTalent, Element, InternalCooldownTag, WeaponType } from "genshin-world";
+import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
@@ -641,6 +643,68 @@ describe(getGcsimKitCandidates, () => {
     expect(candidateMap.get("stances.blessing.normalAttacks.1.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
       createBoxReach(-0.5, 5, 3.7),
     ]);
+  });
+
+  test("gives a shell's six hitmarks as the frames its shells are cast at, and its templates the burst's six-metre circle", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("chasca", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          durability: 25,
+          element: "attributes.Anemo",
+          fieldLineMap: { Durability: 51, Element: 50, ICDTag: 47 },
+          file: "burst.go",
+          internalCooldownTag: "attacks.ICDTagNone",
+          line: 42,
+          talentVariable: "burstGalesplitting",
+          variableName: "ai",
+        },
+      ],
+      constants: [["burstSecondaryHitmark", attackConstant([103, 139, 147, 153, 157, 160], 18)]],
+      talentParameters: [
+        ["burst|Soulseeker Shell DMG", { indexes: [1], line: 5 }],
+        ["burst|Radiant Soulseeker Shell DMG", { indexes: [2], line: 6 }],
+      ],
+      talentVariables: [
+        {
+          leaves: [{ path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          name: "burstSoulseeker",
+        },
+        {
+          leaves: [{ path: [], reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          name: "burstRadiant",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect([
+      valuesAt("frames.shellHitmarks.length"),
+      valuesAt("frames.shellHitmarks.2"),
+      valuesAt("hits.soulseekerShell.hitmarkFrames"),
+      valuesAt("hits.soulseekerShell.multiplier"),
+      valuesAt("hits.soulseekerShell.element"),
+      valuesAt("hits.radiantShell.multiplier"),
+      valuesAt("hits.radiantShell.element"),
+      valuesAt("hits.radiantShell.gauge"),
+      valuesAt("hits.soulseekerShell.internalCooldownTag"),
+      valuesAt("hits.radiantShell.internalCooldownTag"),
+    ]).toStrictEqual([
+      [6],
+      [147],
+      [103],
+      [{ index: 1, proudSkillGroupId: 1 }],
+      [GcsimElementMap["attributes.Anemo"]],
+      [{ index: 2, proudSkillGroupId: 1 }],
+      undefined,
+      [1],
+      [InternalCooldownTag.ChascaBurst],
+      [InternalCooldownTag.ChascaBurst],
+    ]);
+    expect(valuesAt("hits.soulseekerShell.area")).toStrictEqual([createTargetedHitArea(SKILL_TARGETING_AREA, 6)]);
   });
 
   test("gives Fiery Passion's skill the rush's frames and multiplier, and its flying kick the burst variant's", () => {
