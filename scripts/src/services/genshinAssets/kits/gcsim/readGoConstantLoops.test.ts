@@ -126,6 +126,27 @@ describe(readConstantLoops, () => {
     ).toStrictEqual([[]]);
   });
 
+  test("reads a loop whose step is a bare local, the brace after it the loop's body and no composite literal", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package aino",
+      "",
+      "func (c *char) burst() {",
+      "\ttick := 2",
+      "\tfor i := 0; i < 5; i += tick {",
+      "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+    expect(
+      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+    ).toStrictEqual([[new Map([["i", 0]]), new Map([["i", 2]]), new Map([["i", 4]])]]);
+  });
+
   test("reads no loop from a bound a branch that is no constellation branch reassigns", () => {
     expect.hasAssertions();
 

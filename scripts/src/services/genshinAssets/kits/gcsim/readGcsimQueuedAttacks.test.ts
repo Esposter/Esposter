@@ -325,7 +325,7 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
-  test("reads a loop whose step is a call as its first iteration alone, its variable at the initial value the body reads", () => {
+  test("reads a loop whose step is a local a call gives as its first iteration alone, its variable at the initial value", () => {
     expect.hasAssertions();
 
     const sources = [
@@ -335,7 +335,8 @@ describe(readGcsimQueuedAttacks, () => {
           "package aino",
           "",
           "func (c *char) burst() {",
-          "\tfor i := 2; i < 5; i += c.a1BurstEnhance() {",
+          "\ttickrate, radius := c.a1BurstEnhance()",
+          "\tfor i := 2; i < 5; i += tickrate {",
           "\t\tc.Core.Tasks.Add(func() {",
           "\t\t\tc.Core.QueueAttack(ai, ap, 0, 4)",
           "\t\t}, i+3)",

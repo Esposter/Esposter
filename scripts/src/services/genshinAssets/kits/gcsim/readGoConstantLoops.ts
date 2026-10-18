@@ -32,7 +32,7 @@ const readRangeLoop = (
   const variable = isNamed ? tokens[forPosition + 1] : undefined;
   if (isNamed ? variable?.kind !== GoTokenKind.Identifier : tokens[forPosition + 1]?.text !== "range") return undefined;
   const boundStart = forPosition + (isNamed ? 4 : 2);
-  const bound = parseGoExpression(tokens, boundStart);
+  const bound = parseGoExpression(tokens, boundStart, true);
   const boundValue = evaluateGoNumber(bound.expression, resolveName);
   if (
     !checkIsGoPunctuation(tokens[bound.end], "{") ||
@@ -113,7 +113,7 @@ const readConstantLoop = (
   const variable = tokens[forPosition + 1];
   if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
     return undefined;
-  const start = parseGoExpression(tokens, forPosition + 3);
+  const start = parseGoExpression(tokens, forPosition + 3, true);
   if (
     !checkIsGoPunctuation(tokens[start.end], ";") ||
     tokens[start.end + 1]?.text !== variable.text ||
@@ -121,7 +121,7 @@ const readConstantLoop = (
   )
     return undefined;
   const isBoundInclusive = checkIsGoPunctuation(tokens[start.end + 2], "<=");
-  const bound = parseGoExpression(tokens, start.end + 3);
+  const bound = parseGoExpression(tokens, start.end + 3, true);
   const stepStart = bound.end + 1;
   if (!checkIsGoPunctuation(tokens[bound.end], ";") || tokens[stepStart]?.text !== variable.text) return undefined;
   // `i++` steps by one, `i += 90` by its expression
@@ -129,7 +129,7 @@ const readConstantLoop = (
   const isAddAssign =
     checkIsGoPunctuation(tokens[stepStart + 1], "+") && checkIsGoPunctuation(tokens[stepStart + 2], "=");
   if (!isIncrement && !isAddAssign) return undefined;
-  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3);
+  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3, true);
   const stepEnd = step === undefined ? stepStart + 2 : step.end;
   if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
   const startValue = evaluateGoNumber(start.expression, resolveName);
