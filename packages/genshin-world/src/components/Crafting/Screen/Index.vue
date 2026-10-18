@@ -30,6 +30,8 @@ interface Props {
   crafters: CraftingCell[];
   // The game's words in the reader's language
   gameText: GameText;
+  // The crafter picked as the bench opens, the party's character on the field
+  initialCrafterId: number;
   // The game's material table by item id, which each crafted item is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items and recipes in the reader's language, by their game text ids
@@ -42,7 +44,7 @@ interface Props {
   recipes: CraftingRecipe[];
 }
 
-const { adventureRank, crafters, gameText, materialDataMap, nameText, progress, random, recipes } =
+const { adventureRank, crafters, gameText, initialCrafterId, materialDataMap, nameText, progress, random, recipes } =
   defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
@@ -50,7 +52,7 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 // How many of each recipe the player has crafted, by the recipe's id, which the Crafting Performed line counts
 const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
 const amount = ref(1);
-const crafterId = ref(0);
+const crafterId = ref(initialCrafterId);
 const recipeId = ref(0);
 const tabId = ref(0);
 const openRecipes = computed(() => recipes.filter((recipe) => checkIsRecipeOpen(recipe, progress, adventureRank)));

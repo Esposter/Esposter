@@ -44,6 +44,7 @@ export const props = {
   craftedCountMap: new Map<number, number>([[22_007, 1]]),
   crafters: [{ id: DILUC_CHARACTER_ID, name: "Diluc" }],
   gameText: ENGLISH_GAME_TEXT,
+  initialCrafterId: DILUC_CHARACTER_ID,
   inventory: { items, nextId: 3 },
   materialDataMap,
   nameText: englishNameText,
