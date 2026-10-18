@@ -4,7 +4,7 @@ The [inventory](../../specs/genshin/inventory/design.md) page holds the bag, its
 
 ## Decisions
 
-- **Food heals its own target.** Using a food takes one from the bag and applies its own effect to the target it names, the selected character for most recovery dishes and the whole party for some, never past full health. It waits on each food's heal and target, which are the game's own figures and not yet read into the bag's data.
+- **Food heals its own target.** Using a food takes one from the bag and applies its own effect to the target it names, never past full health. Each food's heal and target are read from the game's material table into `cooking/dishes`, and the bag applies them. The 7.1 table names the selected character for every recovery dish and the whole party for none, so the party branch has no dish to heal until the table names one.
 - **An item with no material type is open.** `buildItems` leaves out an item the material table gives no type, since the dump leaves out `MATERIAL_NONE` and the world holds no member for it. A drop family, an expedition, a recipe, an offering or a Reputation reward can still name such an item, and `getItemDefinition` throws on an id missing from the materials map, so picking it up or taking it into the bag fails at runtime instead of at publish. Either the publish fails for an item a source names, or the world gains a place for it in the bag. The choice waits on the live dump, which shows which named items carry no type.
 
 ## Scope and order

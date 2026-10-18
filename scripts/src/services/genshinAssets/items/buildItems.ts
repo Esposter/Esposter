@@ -3,6 +3,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
+import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -20,14 +21,14 @@ import {
 import { z } from "zod";
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
-// Takes or yields, every gadget of the gadgets slice, every offering the Frostbearing Tree's levels take or pay, every
-// Item a Reputation level pays, and every item the Mondstadt grocery sells, each read from the game's Material table with
-// Its name's text id, which `genshin:text names` writes into the name-text chunks. The wallet's currencies are no items:
-// Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken by the Adventure Rank, so none is
-// Written. A weapon a recipe yields is no item either, it is in the weapon table. The recipes and the levels are the
-// Records their steps published, read from the dev account. An item the table lacks is an error. An item the table gives
-// No type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader leaves such an item out. Returns the
-// Record the materials publish under
+// Takes or yields, every dish a cook recipe yields, every gadget of the gadgets slice, every offering the Frostbearing
+// Tree's levels take or pay, every item a Reputation level pays, and every item the Mondstadt grocery sells, each read
+// From the game's material table with its name's text id, which `genshin:text names` writes into the name-text chunks.
+// The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
+// By the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table. The
+// Recipes and the levels are the records their steps published, read from the dev account. An item the table lacks is
+// An error. An item the table gives no type is left out, as the dump leaves out MATERIAL_NONE and the gathering reader
+// Leaves such an item out. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -52,6 +53,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
   const itemIds = [
     ...new Set([
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
+      ...readCookingRecipes().flatMap(({ resultItemIds }) => Object.values(resultItemIds)),
       ...expeditionItemIds,
       ...forgeItemIds,
       ...gadgetRows.map(({ id }) => id),
