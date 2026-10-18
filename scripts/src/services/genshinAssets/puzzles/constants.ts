@@ -24,3 +24,14 @@ export const SHRINE_KEY_REGIONS: Readonly<Record<string, string>> = {
   Snezhnaya: "snezhnaya",
   Sumeru: "sumeru",
 };
+// The Seelie page's count of each region's own Seelie, Electro Seelie included, from its Locations list. Its sub-areas count
+// Apart, the Chasm and Chenyu Vale from Liyue and the Dragonspine, Windrest Peak and Temple of Space from Mondstadt, so a
+// Region's published count can differ from its wiki count by theirs
+export const SEELIE_WIKI_COUNTS: Readonly<Record<string, number>> = {
+  fontaine: 68,
+  inazuma: 110,
+  liyue: 81,
+  mondstadt: 51,
+  snezhnaya: 13,
+  sumeru: 154,
+};
