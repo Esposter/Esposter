@@ -98,10 +98,10 @@ A fish SHALL be drawn only by its own bait, crafted from its recipe.
 
 ### Requirement: Fish are exchanged at the Fishing Association
 
-Fish SHALL be exchanged at the region's Fishing Association for the goods its shop offers, each bought with the fish its price names.
+Fish SHALL be exchanged at the region's Fishing Association for the goods its shop offers, each bought with the fish its costs name, every one of them taken from the bag.
 
 #### Scenario: Fish exchange for a good at the association
 
-- **GIVEN** the player has the fish a good is priced in
+- **GIVEN** the player has every fish a good's costs name
 - **WHEN** the player buys the good at the region's Fishing Association
 - **THEN** the good is given and the fish are spent
