@@ -410,6 +410,21 @@ describe(mergeGenshinSave, () => {
     );
   });
 
+  test("unions the request claims of both copies, kept apart from the bounty claims", () => {
+    expect.hasAssertions();
+    const claimedAts = Array.from({ length: 5 }, (_value, index) =>
+      Temporal.Instant.fromEpochMilliseconds(0)
+        .add({ hours: index + 1 })
+        .toString(),
+    );
+    const account = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(0, 2) };
+    const guest = { ...EMPTY_GENSHIN_SAVE, reputationRequestClaimedAts: claimedAts.slice(2) };
+    const merged = mergeGenshinSave(account, guest);
+
+    expect(merged.reputationRequestClaimedAts).toStrictEqual(claimedAts.slice(-REPUTATION_WEEKLY_CLAIM_LIMIT));
+    expect(merged.reputationBountyClaimedAts).toStrictEqual([]);
+  });
+
   test("the copy further on is kept when both saves hold a character", () => {
     expect.hasAssertions();
     const account = {

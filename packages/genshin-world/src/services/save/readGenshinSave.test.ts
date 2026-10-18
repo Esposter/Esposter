@@ -461,11 +461,12 @@ describe(readGenshinSave, () => {
     expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()).wallet[Currency.AnemoSigil]).toBe(0);
   });
 
-  test("a bounty taken and the week's bounty claims survive a reload", () => {
+  test("a bounty taken and the week's bounty and request claims survive a reload", () => {
     expect.hasAssertions();
     const save: GenshinSave = {
       ...EMPTY_GENSHIN_SAVE,
       reputationBountyClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString()],
+      reputationRequestClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
       reputationBountyHunt: {
         bountyId: 1,
         isTargetDefeated: true,
