@@ -7,12 +7,11 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import { DestroyRule } from "#src/models/inventory/DestroyRule";
-import { WeaponType } from "#src/models/weapon/WeaponType";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -25,7 +24,7 @@ import { createParty } from "#src/services/party/createParty";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 // The team's effects the gated passive is given, a non-empty list so only that list itself passes the gate
 const { GATED_EFFECTS } = vi.hoisted(() => ({
@@ -50,25 +49,18 @@ vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (im
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// Full HP Critic Up's weapon, with its name's text id and each refinement rank's CRIT Rate as its table gives them
-const WEAPON_DATA: WeaponData = {
-  ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 20, requiredPlayerLevel: 0 }],
-  baseExp: 0,
-  destroyReturnMaterial: 0,
-  destroyReturnMaterialCount: 0,
-  destroyRule: DestroyRule.None,
-  growAttributes: [],
-  id: 11302,
-  nameTextId: "1",
-  passiveNameTextId: "2866125259",
-  passiveRankAttributeLines: [[], [], [], [], []],
-  passiveRankDescriptionTextIds: ["1", "2", "3", "4", "5"],
-  passiveRankParams: [[0.14], [0.175], [0.21], [0.245], [0.28]],
-  rarity: 3,
-  refinementCosts: [500, 1000, 2000, 4000],
-  refinementMaterialId: 0,
-  weaponType: WeaponType.Sword,
+const { weaponDataMap } = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+// A weapon's record in the stats table, by the id a test names it with
+const readWeaponData = (id: number): WeaponData => {
+  const weaponData = weaponDataMap.get(id);
+  assert.exists(weaponData);
+  return weaponData;
 };
+// One value of a weapon's passive at a refinement rank, as its record in the stats table gives it
+const readPassiveParam = (weaponData: WeaponData, refinement: number, index: number): number =>
+  takeOne(takeOne(weaponData.passiveRankParams, refinement - 1), index);
+// Full HP Critic Up's weapon, as its record in the stats table gives it
+const WEAPON_DATA = readWeaponData(11302);
 
 // The CRIT Rate a wielder of the weapon at a refinement rank is priced with at full HP
 const getCriticalRateLines = (refinement: number, kit: Kit = KIT) => {
@@ -95,25 +87,24 @@ describe(getWeaponPassiveKit, () => {
   test("a weapon at refinement rank one reads its first passive row", () => {
     expect.hasAssertions();
 
-    expect(getCriticalRateLines(1)).toStrictEqual([{ amount: 0.14, attribute: Attribute.CriticalRate }]);
+    expect(getCriticalRateLines(1)).toStrictEqual([
+      { amount: readPassiveParam(WEAPON_DATA, 1, 0), attribute: Attribute.CriticalRate },
+    ]);
   });
 
   test("raising refinement changes the passive's effect", () => {
     expect.hasAssertions();
 
-    expect(getCriticalRateLines(2)).toStrictEqual([{ amount: 0.175, attribute: Attribute.CriticalRate }]);
+    expect(getCriticalRateLines(2)).toStrictEqual([
+      { amount: readPassiveParam(WEAPON_DATA, 2, 0), attribute: Attribute.CriticalRate },
+    ]);
   });
 
   test("a bane passive raises its wielder's strike on an enemy under its elements", () => {
     expect.hasAssertions();
 
-    // Bane of Water and Ice, whose name's text id and rank parameters its table gives
-    const baneWeaponData: WeaponData = {
-      ...WEAPON_DATA,
-      id: 11301,
-      passiveNameTextId: "523615731",
-      passiveRankParams: [[0.12], [0.15], [0.18], [0.21], [0.24]],
-    };
+    // Bane of Water and Ice, as its record in the stats table gives it
+    const baneWeaponData = readWeaponData(11301);
     const weaponKit = getWeaponPassiveKit(
       KIT,
       { ascension: 0, experience: 0, id: 11301, level: 1, refinement: 1 },
@@ -142,7 +133,7 @@ describe(getWeaponPassiveKit, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBe(0.12);
+    ).toBe(readPassiveParam(baneWeaponData, 1, 0));
   });
 
   test("a passive is given the wielder's HP share second and the deployed team third, as the contract names them", () => {
@@ -180,7 +171,7 @@ describe(getWeaponPassiveKit, () => {
       weaponKit.getPassiveBonuses?.(combatant, 1, getDeployedCombatants(party, characterIdCombatantMap), []),
     ).toStrictEqual([
       { amount: 2, attribute: Attribute.CriticalRate },
-      { amount: 0.14, attribute: Attribute.CriticalRate },
+      { amount: readPassiveParam(WEAPON_DATA, 1, 0), attribute: Attribute.CriticalRate },
     ]);
   });
 
@@ -217,7 +208,7 @@ describe(getWeaponPassiveKit, () => {
 
     expect(weaponKit.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([
       { amount: 1, attribute: Attribute.CriticalRate },
-      { amount: 0.14, attribute: Attribute.CriticalRate },
+      { amount: readPassiveParam(WEAPON_DATA, 1, 0), attribute: Attribute.CriticalRate },
     ]);
   });
 
@@ -255,13 +246,8 @@ describe(getWeaponPassiveKit, () => {
   test("the Samurai Conduct of Katsuragikiri Nagamasa raises its wielder's Elemental Skill DMG at rank one", () => {
     expect.hasAssertions();
 
-    // Katsuragikiri Nagamasa, whose name's text id and rank parameters its table gives
-    const samuraiWeaponData: WeaponData = {
-      ...WEAPON_DATA,
-      id: 12414,
-      passiveNameTextId: "1828182147",
-      passiveRankParams: [[0.06, 3, 3, 6, 10]],
-    };
+    // Katsuragikiri Nagamasa, as its record in the stats table gives it
+    const samuraiWeaponData = readWeaponData(12414);
     const weaponKit = getWeaponPassiveKit(
       KIT,
       { ascension: 0, experience: 0, id: 12414, level: 1, refinement: 1 },
@@ -289,17 +275,18 @@ describe(getWeaponPassiveKit, () => {
         createParty([TRAVELER_CHARACTER_ID]),
         [],
       ),
-    ).toBe(0.06);
+    ).toBe(readPassiveParam(samuraiWeaponData, 1, 0));
   });
 
   test("Staff of Homa's ATK follows a teammate's Max HP buff on its wielder, from the buffed Max HP", () => {
     expect.hasAssertions();
 
-    // Staff of Homa at its first rank, whose name's text id and rank parameters its table gives
+    // Staff of Homa at its first rank, as its record in the stats table gives it
+    const homaWeaponData = readWeaponData(13501);
     const homaWeaponKit = getWeaponPassiveKit(
       KIT,
-      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
-      { ...WEAPON_DATA, passiveNameTextId: "3284643059", passiveRankParams: [[0.2, 0.008, 0.01]] },
+      { ascension: 0, experience: 0, id: 13501, level: 1, refinement: 1 },
+      homaWeaponData,
     );
     const combatant: Combatant = {
       ascension: 0,
@@ -323,7 +310,7 @@ describe(getWeaponPassiveKit, () => {
     const buffed = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
 
     expect(buffed.attributes.attack - unbuffed.attributes.attack).toBeCloseTo(
-      0.008 * (buffed.attributes.maxHealth - unbuffed.attributes.maxHealth),
+      readPassiveParam(homaWeaponData, 1, 1) * (buffed.attributes.maxHealth - unbuffed.attributes.maxHealth),
     );
   });
 });
