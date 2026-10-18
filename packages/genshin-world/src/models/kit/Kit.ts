@@ -1,5 +1,4 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
@@ -12,6 +11,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitMoonsignBenediction } from "#src/models/kit/KitMoonsignBenediction";
+import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { KitSkillChain } from "#src/models/kit/KitSkillChain";
 import type { KitSkillHold } from "#src/models/kit/KitSkillHold";
 import type { KitState } from "#src/models/kit/KitState";
@@ -60,9 +60,19 @@ export interface Kit {
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
-  // The DMG bonus a transformative reaction adds to its own damage, if a constellation raises it for that reaction,
-  // Given the combatant as it stands and the reaction
-  getReactionDamageBonus?: (combatant: Combatant, reactionType: TransformativeReactionType) => number;
+  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a reaction a member makes, given
+  // The member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the deployed
+  // Team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being itself
+  getPartyReactionBonus?: (
+    member: Combatant,
+    reaction: KitReaction,
+    context: KitContext,
+  ) => {
+    additiveBaseDamageBonus?: number;
+    criticalDamageBonus?: number;
+    criticalRateBonus?: number;
+    damageBonus?: number;
+  };
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;

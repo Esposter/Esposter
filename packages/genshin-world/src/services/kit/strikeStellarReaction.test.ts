@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -95,6 +96,32 @@ describe(strikeStellarReaction, () => {
         (1 + 0.16) *
         getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Anemo)),
       6,
+    );
+  });
+
+  test("a party reaction bonus's flat base adds to a Stellar Swirl before the enemy's RES, once, to the reaction its creator makes", () => {
+    expect.hasAssertions();
+    const bonused: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100 }) },
+    };
+    const damageOf = (creator: Combatant) => {
+      const enemy = createSturdyEnemy();
+      const context = createKitTestContext(creator, { enemyTables });
+      strikeStellarReaction(
+        enemy,
+        Element.Anemo,
+        STELLAR_SWIRL_ANEMO_COEFFICIENT,
+        new Set([TRAVELER_CHARACTER_ID]),
+        creator,
+        context,
+        StellarReactionType.StellarSwirl,
+      );
+      return enemy.maxHealth - enemy.health;
+    };
+
+    expect(damageOf(bonused) - damageOf(combatant)).toBeCloseTo(
+      100 * getResistanceMultiplier(getEnemyResistance(kind, createSturdyEnemy(), Element.Anemo)),
     );
   });
 });
