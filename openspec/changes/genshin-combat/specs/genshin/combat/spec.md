@@ -16,34 +16,50 @@ Stellar-Conduct and Stellar Swirl SHALL deal damage weighted across the four hig
 - **WHEN** the reaction deals its damage
 - **THEN** only the four highest contributors are counted
 
-### Requirement: Stellar Swirl Where A Gadget Stands
+### Requirement: Stellar Swirl Once Enabled
 
-Anemo SHALL turn a Swirl into Stellar Swirl where a gadget placed by a kit stands.
+Anemo SHALL turn a Cryo Swirl into Stellar Swirl while the party holds a Stellar Jubilee passive that enables Stellar Swirl.
 
-#### Scenario: a Swirl starts Stellar Swirl where a placed gadget stands
+#### Scenario: a Cryo Swirl starts Stellar Swirl while the party enables it
 
-- **GIVEN** a gadget placed by a kit on an enemy's ground
-- **WHEN** an Anemo attack Swirls that enemy where the gadget stands
+- **GIVEN** the party holds a Stellar Jubilee passive that enables Stellar Swirl
+- **WHEN** Anemo Swirls a Cryo aura
 - **THEN** the reaction is Stellar Swirl
 
-#### Scenario: a Swirl without a placed gadget stays an ordinary Swirl
+#### Scenario: a Cryo Swirl stays an ordinary Swirl without the enabler
 
-- **GIVEN** no gadget placed by a kit where the enemy stands
-- **WHEN** an Anemo attack Swirls that enemy
+- **GIVEN** no party member holds a Stellar Jubilee passive that enables Stellar Swirl
+- **WHEN** Anemo Swirls a Cryo aura
 - **THEN** the reaction is an ordinary Swirl
 
-### Requirement: Stellar-Conduct Needs Its Gadget
+#### Scenario: a Stellar Swirl spreads no Cryo beside it
 
-Stellar-Conduct SHALL occur only where a gadget placed by a kit stands.
+- **GIVEN** the party holds a Stellar Jubilee passive that enables Stellar Swirl
+- **WHEN** Anemo Swirls a Cryo aura
+- **THEN** the reaction carries no spread gauge
 
-#### Scenario: Stellar-Conduct occurs where a placed Polestar stands
+### Requirement: Stellar-Conduct Once Enabled
 
-- **GIVEN** a Polestar placed by a kit
-- **WHEN** a reaction is triggered on an enemy within the Polestar
-- **THEN** Stellar-Conduct occurs
+A Superconduct SHALL become Stellar-Conduct while the party holds a Stellar Jubilee passive that enables Stellar-Conduct, and Stellar-Conduct SHALL NOT occur without one.
 
-#### Scenario: no Stellar-Conduct occurs with no gadget placed
+#### Scenario: a Superconduct becomes Stellar-Conduct while the party enables it
 
-- **GIVEN** no gadget placed by a kit
-- **WHEN** a reaction is triggered on an enemy
-- **THEN** Stellar-Conduct does not occur
+- **GIVEN** the party holds a Stellar Jubilee passive that enables Stellar-Conduct
+- **WHEN** Electro meets a Cryo aura
+- **THEN** the reaction is Stellar-Conduct
+
+#### Scenario: no Stellar-Conduct occurs without the enabler
+
+- **GIVEN** no party member holds a Stellar Jubilee passive that enables Stellar-Conduct
+- **WHEN** Electro meets a Cryo aura
+- **THEN** the reaction is an ordinary Superconduct
+
+### Requirement: Stellar Jubilee Enables Both Reactions
+
+A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and Stellar-Conduct for the party it is in.
+
+#### Scenario: a Stellar Jubilee passive enables both reactions for its party
+
+- **GIVEN** a party member holds a Stellar Jubilee passive
+- **WHEN** the party's reactions are read
+- **THEN** Stellar Swirl and Stellar-Conduct are both enabled
