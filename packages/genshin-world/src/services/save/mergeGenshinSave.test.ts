@@ -113,6 +113,24 @@ describe(mergeGenshinSave, () => {
     expect(mergeGenshinSave(account, guest).adventureRankRewardsClaimed).toStrictEqual([2, 3]);
   });
 
+  test("a mail starred on either copy stays starred after a merge", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isRead: false };
+    const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [{ ...mail, isStarred: true }] };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([{ ...mail, isStarred: true }]);
+  });
+
+  test("a mail starred on neither copy keeps no star after a merge", () => {
+    expect.hasAssertions();
+    const mail = { deliveredAt: EARLIER_START, id: 35, isClaimed: false, isRead: false };
+    const account = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, mails: [mail] };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([mail]);
+  });
+
   test("unions the Archive's opened entries by section and keeps the larger defeat count of each Living Being", () => {
     expect.hasAssertions();
     const account = {
@@ -680,6 +698,7 @@ describe(mergeGenshinSave, () => {
       "mondstadt-camp-1|enemy-3": EARLIER_RESPAWN,
     });
   });
+
   test("keeps each chamber cleared if either save cleared it, its most stars, and the rewards either save claimed", () => {
     expect.hasAssertions();
     const account = {
