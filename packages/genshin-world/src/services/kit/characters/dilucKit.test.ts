@@ -378,4 +378,78 @@ describe(createDilucKitBehaviour, () => {
     press(1);
     expect(getBonus(AttackTag.ElementalSkill)).toBe(0);
   });
+
+  // Constellation 6's two normal attacks are read at the damage hook and the speed bonus, as each attack of the combo starts
+  const createConstellation6Fixture = (constellationCount = 6) => {
+    const combatant = { ...createCombatant(0), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const press = () => DILUC_KIT.elementalSkill.onStart?.(context);
+    const attack = (index: number) => DILUC_KIT.normalAttacks[index]?.onStart?.(context);
+    const wait = (seconds: number) => stepKitEffects(seconds, context);
+    const getBonus = (attackTag: AttackTag) =>
+      DILUC_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: context.body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
+        { ...enemy, health: enemy.maxHealth * 0.4 },
+        createParty([DILUC_CHARACTER_ID]),
+        kitEffectState.effects,
+      );
+    const getSpeedBonus = () => DILUC_KIT.getNormalAttackSpeedBonus?.(context);
+    return { attack, getBonus, getSpeedBonus, press, wait };
+  };
+
+  test("constellation 6 adds 30% DMG and ATK SPD to the next two normal attacks after a searing onslaught press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, getSpeedBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+    expect(getSpeedBonus()).toBeCloseTo(0.3);
+    attack(1);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+    expect(getSpeedBonus()).toBeCloseTo(0.3);
+    attack(2);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+    expect(getSpeedBonus()).toBe(0);
+  });
+
+  test("constellation 6's two normal attacks must come within six seconds of the press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press, wait } = createConstellation6Fixture();
+    press();
+    wait(6);
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+  });
+
+  test("constellation 6 adds nothing to a charged attack or a skill strike", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.ChargedAttack)).toBe(0);
+    expect(getBonus(AttackTag.ElementalBurst)).toBe(0);
+  });
+
+  test("pressing searing onslaught again re-arms the two normal attacks", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, press } = createConstellation6Fixture();
+    press();
+    attack(0);
+    attack(1);
+    attack(2);
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBeCloseTo(0.3);
+  });
+
+  test("constellation 5 adds nothing to a normal attack after a searing onslaught press", () => {
+    expect.hasAssertions();
+    const { attack, getBonus, getSpeedBonus, press } = createConstellation6Fixture(5);
+    press();
+    attack(0);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+    expect(getSpeedBonus()).toBe(0);
+  });
 });

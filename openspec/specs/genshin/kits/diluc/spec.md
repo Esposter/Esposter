@@ -159,3 +159,25 @@ From constellation 4, a Searing Onslaught press that follows the one before it b
 - **GIVEN** Diluc is at constellation 3
 - **WHEN** he presses a follow-up Searing Onslaught press two seconds after the one before it
 - **THEN** that press's strikes gain no bonus
+
+### Requirement: Sixth constellation adds 30% DMG and ATK SPD to the next two normal attacks
+
+From constellation 6, after a Searing Onslaught press the next two normal attacks within six seconds SHALL deal 30% more DMG and attack 30% faster. Each press re-arms them. The combo clause, that Searing Onslaught does not interrupt the normal attack combo, is not built.
+
+#### Scenario: The next two normal attacks are buffed
+
+- **GIVEN** Diluc is at constellation 6
+- **WHEN** he presses Searing Onslaught, and then lands normal attacks
+- **THEN** the first two normal attacks deal 30% more DMG and attack 30% faster, and the third does not
+
+#### Scenario: The attacks must come within six seconds
+
+- **GIVEN** Diluc is at constellation 6 and six seconds have passed since his Searing Onslaught press
+- **WHEN** he lands a normal attack
+- **THEN** that attack gains nothing
+
+#### Scenario: Below the sixth constellation nothing is added
+
+- **GIVEN** Diluc is at constellation 5
+- **WHEN** he lands a normal attack after Searing Onslaught
+- **THEN** that attack gains nothing

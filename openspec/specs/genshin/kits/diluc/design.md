@@ -11,6 +11,7 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 - **Poise is the wiki's where gcsim gives none.** gcsim sets no poise on Diluc's skill, burst or collision; the wiki's advanced properties give 120, 100 and 35.
 - **Relentless, from Ascension 1, halves the charged attack's stamina.** The talent text's 50% cut is priced by the charged-attack stamina hook at Ascension 1 and above. Its "+3s duration" clause is not built, since the talent text does not name what that duration is; gcsim models neither part.
 - **Flowing Flame, Constellation 4, is built from the wiki's text and gcsim v2.47.2's `cons.go`.** Two seconds after a Searing Onslaught press, the next press in the combo deals 40% more DMG, for two seconds. The press's status runs two seconds, so a press that finds it running came within two seconds of the last one, and a follow-up that does not takes a bonus status for those two seconds. The damage hook reads that status from the kit's effects, which `getStrikeDamageBonus` now receives as an optional fourth argument, as the critical-rate and additive hooks already do.
+- **Flaming Sword, Nemesis of the Dark, Constellation 6, is built from the wiki's text and gcsim v2.47.2's `cons.go`, except its combo clause.** Each Searing Onslaught press arms the next two normal attacks for six seconds. Each armed attack starts its own status for the attack's seconds, which the damage hook (30% DMG, normal attacks only) and the normal attack speed hook (30% ATK SPD) read. The clause that Searing Onslaught does not interrupt the normal attack combo is not built: `endKitAction` resets the combo to its first attack whenever a skill ends, and the kit has no hook that keeps the index.
 - **Blessing of Phoenix, from Ascension 4,** lengthens Dawn's infusion by 4 seconds to 12 and gives a 20% Pyro DMG Bonus for as long, as gcsim's Pyro bonus does.
 
 ## Provisional constants
@@ -19,8 +20,9 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 
 ## Not built
 
+- **Constellation 6's combo clause**, that Searing Onslaught does not interrupt the normal attack combo, is not built: `endKitAction` resets the combo index whenever a skill's action ends, and no hook reaches it.
 - **Relentless's "+3s duration" clause and the phase-0 passive, Tradition of the Dawn Knight, are not built.** The first has no named referent in the talent text, and the second refunds ore when crafting, outside combat.
-- **Constellation 2 is built for HP lost to a strike, a drown or a wildlife's charge, and Constellation 6 is not built.** Searing Ember's stacks follow each such hit, one at most every 1.5 seconds, the 1.5 seconds being the wiki's, as gcsim sets no interval. A strike a shield takes whole sends no HP change, and the shield event names only its owner, so that hit adds no stack; a teammate's damageless hit is not built. Constellation 6 needs the next two normal attacks after Searing Onslaught, which the damage hook also needs.
+- **Constellation 2 is built for HP lost to a strike, a drown or a wildlife's charge.** Searing Ember's stacks follow each such hit, one at most every 1.5 seconds, the 1.5 seconds being the wiki's, as gcsim sets no interval. A strike a shield takes whole sends no HP change, and the shield event names only its owner, so that hit adds no stack; a teammate's damageless hit is not built. Constellation 6 needs the next two normal attacks after Searing Onslaught, which the damage hook also needs.
 
 ## Key files
 
