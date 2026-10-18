@@ -11,6 +11,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -20,9 +21,13 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+const ATTACK_BUFF = 0.25;
 const wielder: Combatant = {
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.Health, value: 1000 }]),
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseAttack, value: 250 },
+    { attribute: Attribute.Health, value: 1000 },
+  ]),
   characterId: TRAVELER_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
@@ -74,6 +79,24 @@ describe(createJusticePassiveModule, () => {
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(
       0.5 + (wielder.attributes.attack * 0.6) / wielder.attributes.maxHealth,
+    );
+  });
+
+  test("the restored HP is the rank's share of the wielder's ATK with its buffs on", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(wielder);
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: ATTACK_BUFF,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 10,
+      source: "test",
+    });
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 0.5);
+    justicePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack, true), context, wielder);
+
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(
+      0.5 + (wielder.attributes.attack * (1 + ATTACK_BUFF) * 0.6) / wielder.attributes.maxHealth,
     );
   });
 

@@ -6,11 +6,13 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { describe, expect, test } from "vitest";
 
+const ATTACK_BUFF = 0.25;
 const OTHER_CHARACTER_ID = 1;
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const wielder: Combatant = {
@@ -67,6 +69,30 @@ describe(createFalconsDefiancePassiveModule, () => {
 
     expect(context.party.healthChanges).toHaveLength(1);
     expect(context.strikes).toStrictEqual([]);
+  });
+
+  test("the heal is the rank's share of the wielder's ATK with its buffs on", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(wielder);
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: ATTACK_BUFF,
+      attribute: Attribute.AttackPercent,
+      secondsRemaining: 10,
+      source: "test",
+    });
+    getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare = 0.5;
+    aquilaFavoniaPassiveModule.onKitEvent?.(createEnemyStrikeLoss(), context, wielder);
+
+    expect(context.party.healthChanges).toStrictEqual([
+      {
+        bondOfLifeShare: 0,
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare: (wielder.attributes.attack * (1 + ATTACK_BUFF)) / wielder.attributes.maxHealth,
+        overflowHealthShare: 0,
+        sourceCharacterId: TRAVELER_CHARACTER_ID,
+      },
+    ]);
   });
 
   test("a loss another character caused heals and queues nothing", () => {

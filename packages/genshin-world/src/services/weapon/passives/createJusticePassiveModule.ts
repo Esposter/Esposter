@@ -5,6 +5,7 @@ import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrC
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { takeOne } from "@esposter/shared";
 
 const JUSTICE_COOLDOWN_ID = "justiceCooldown";
@@ -31,7 +32,13 @@ export const createJusticePassiveModule = (params: number[]): PassiveModule => {
         id: JUSTICE_COOLDOWN_ID,
         secondsRemaining: cooldownSeconds,
       });
-      changeKitMemberHealth(context, combatant, combatant.characterId, combatant.attributes.attack * attackShare);
+      const { attack } = getBuffedCombatant(
+        combatant,
+        context.kitEffectState.effects,
+        context.party,
+        context.characterIdCombatantMap,
+      ).attributes;
+      changeKitMemberHealth(context, combatant, combatant.characterId, attack * attackShare);
     },
   };
 };
