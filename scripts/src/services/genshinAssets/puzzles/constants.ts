@@ -11,3 +11,16 @@ export const PROVISIONAL_MONUMENT_IS_TIMED = true;
 // What the wiki's Elemental Monument page gives a Mondstadt monument: no element, since it names none per place, and no
 // Timing, since its one temporary variant is not tied to a place. Every Mondstadt monument is therefore provisional
 export const ELEMENTAL_MONUMENT_WIKI_TIMING: MonumentKindTiming = {};
+// A Shrine of Depths key's English name, the region it names first, as the key's source takes its region
+export const SHRINE_KEY_NAME_PATTERN = /^(?<regionName>.+) Shrine of Depths Key$/u;
+// Each region a Shrine of Depths key can name, by the name the key's English name gives it, as the slug the world's
+// Regions take. A key naming a region not here is left out and noted, never guessed at
+export const SHRINE_KEY_REGIONS: Readonly<Record<string, string>> = {
+  Fontaine: "fontaine",
+  Inazuma: "inazuma",
+  Liyue: "liyue",
+  Mondstadt: "mondstadt",
+  Natlan: "natlan",
+  Snezhnaya: "snezhnaya",
+  Sumeru: "sumeru",
+};
