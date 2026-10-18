@@ -2,9 +2,14 @@ import { GatheringRespawn } from "genshin-world";
 
 // The game's gather table in the dump beside its material table
 export const GATHER_TABLE_NAME = "GatherExcelConfigData";
-// The gather rows that are picked off the ground: the animals' and events' rows save nothing and sit on no point
+// The gather rows that are picked off the ground: the animals' and events' rows save nothing and sit on no point. Both
+// Are the enum's first values, which the dump leaves out of a row, so a row with neither field is picked off the ground
+// And saves nothing
 export const GATHER_POINT_LOCATION_GROUND = "POINT_GROUND";
 export const GATHER_SAVE_TYPE_NONE = "GATHER_SAVE_TYPE_NONE";
+// The material type a material row holds when the dump leaves its type out, the table's first value. It names no type the
+// World holds, so the item is left out
+export const MATERIAL_TYPE_NONE = "MATERIAL_NONE";
 // The official map's top-level labels of the three categories a gathering point is marked under, Local Specialties,
 // Inventory / Materials and Ores. An ore is struck until it breaks rather than picked, so its points are written beside
 // The rest and the world strikes them

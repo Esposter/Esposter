@@ -10,6 +10,7 @@ import {
   GATHER_SAVE_TYPE_NONE,
   GATHER_TABLE_NAME,
   LABEL_RESPAWN_MAP,
+  MATERIAL_TYPE_NONE,
 } from "#src/services/genshinAssets/gathering/constants";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { flattenLabelTree } from "#src/services/genshinAssets/points/flattenLabelTree";
@@ -39,7 +40,7 @@ export const readGatheringItems = (
     ...new Set(
       gatherRows
         .filter(
-          ({ pointLocation, saveType }) =>
+          ({ pointLocation = GATHER_POINT_LOCATION_GROUND, saveType = GATHER_SAVE_TYPE_NONE }) =>
             pointLocation === GATHER_POINT_LOCATION_GROUND && saveType !== GATHER_SAVE_TYPE_NONE,
         )
         .map(({ itemId }) => itemId),
@@ -58,7 +59,8 @@ export const readGatheringItems = (
     );
     const [firstLabel] = matchedLabels;
     const respawn = firstLabel && getLabelRespawn(firstLabel);
-    const materialType = Object.values(MaterialType).find((type) => type === materialRow.materialType);
+    const { materialType: materialTypeName = MATERIAL_TYPE_NONE } = materialRow;
+    const materialType = Object.values(MaterialType).find((type) => type === materialTypeName);
     if (!firstLabel || !respawn || !materialType) continue;
     const nameTextId = GameTextKeys.find((gameTextKey) => gameTextKey === String(materialRow.nameTextMapHash));
     if (!nameTextId) throw new InvalidOperationError(Operation.Read, String(itemId), "names no game text key");
