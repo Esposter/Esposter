@@ -20,6 +20,8 @@ export const VendorShopTypeMap: Partial<Record<string, number>> = {
   "1640": 1013,
   // Chloris, Mondstadt, on the Chloris shop
   "1657": 1018,
+  // Sara, the waitress at Good Hunter in Mondstadt, on the Good Hunter shop
+  "1419": 1005,
   // Nantuck, Mondstadt's Fishing Association, on the Mondstadt fishing shop
   "1673": 1064,
   // Jiawei, Liyue's Fishing Association, on the Liyue fishing shop
