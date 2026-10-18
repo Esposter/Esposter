@@ -1,5 +1,6 @@
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -75,9 +76,19 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       );
       // An aimed hit takes the weak point of an enemy that has one: the aim's point is not modelled, so every aimed hit does
       const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
-      const damageBonus = combatant.kit.getStrikeDamageBonus?.({ ...strike, hit: enemyHit }, enemy, party) ?? 0;
-      const pricedHit =
-        damageBonus === 0 ? enemyHit : { ...enemyHit, damageBonus: (enemyHit.damageBonus ?? 0) + damageBonus };
+      const pricedStrike = { ...strike, hit: enemyHit };
+      const { additiveBaseDamageBonus } = enemyHit;
+      const flatDamage =
+        combatant.kit.getStrikeAdditiveBaseDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0;
+      const pricedHit = {
+        ...enemyHit,
+        additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
+        criticalRateBonus:
+          (enemyHit.criticalRateBonus ?? 0) +
+          (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+        damageBonus:
+          (enemyHit.damageBonus ?? 0) + (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party) ?? 0),
+      };
       const { energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
         enemyTables,
         enemy,

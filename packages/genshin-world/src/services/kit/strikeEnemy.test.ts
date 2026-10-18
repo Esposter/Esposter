@@ -644,4 +644,26 @@ describe(strikeEnemy, () => {
     ]);
     expect([first.reachingReactions, second.reachingReactions]).toStrictEqual([first.reactions, []]);
   });
+
+  test("a hit's CRIT Rate bonus raises the roll it is made against", () => {
+    expect.hasAssertions();
+
+    const boosted = strikeEnemy(
+      enemyTables,
+      createSturdyEnemy(),
+      { ...TRAVELER_KIT.plungeCollision, criticalRateBonus: 0.6 },
+      createCombatant(),
+      () => 0.5,
+    );
+    const plain = strikeEnemy(
+      enemyTables,
+      createSturdyEnemy(),
+      TRAVELER_KIT.plungeCollision,
+      createCombatant(),
+      () => 0.5,
+    );
+
+    expect(boosted.isCritical).toBe(true);
+    expect(plain.isCritical).toBe(false);
+  });
 });

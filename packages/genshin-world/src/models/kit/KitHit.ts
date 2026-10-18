@@ -29,6 +29,8 @@ export interface KitHit {
   convertedHitArea?: AttackArea;
   // The poise the hit deals while its attacks are converted by an infusion that converts them, if it has one
   convertedPoiseDamage?: number;
+  // The CRIT Rate the hit adds to its striker's as its roll is made, as a passive prices it on the strike, if it carries one
+  criticalRateBonus?: number;
   // The DMG Bonus the hit adds to its striker's as it is priced, if it carries one of its own
   damageBonus?: number;
   element?: Element;
