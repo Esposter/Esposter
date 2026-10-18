@@ -82,6 +82,7 @@ import { createThePartingRefrainPassiveModule } from "#src/services/weapon/passi
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
+import { createTravelersPathPassiveModule } from "#src/services/weapon/passives/createTravelersPathPassiveModule";
 import { createTurquoiseHuntPassiveModule } from "#src/services/weapon/passives/createTurquoiseHuntPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
@@ -344,4 +345,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3205793275": createAeonWavePassiveModule,
   // Oath of Qhapaq Nan (Earth Shaker)
   "2824611011": createOathOfQhapaqNanPassiveModule,
+  // Traveler's Path (Exaiphanes Blade)
+  "1043198987": createTravelersPathPassiveModule,
 };
