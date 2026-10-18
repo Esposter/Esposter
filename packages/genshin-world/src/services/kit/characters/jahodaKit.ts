@@ -156,7 +156,7 @@ export const createJahodaKitBehaviour = ({
   const meowballFirstSeconds = readSeconds("firstMeowballFirstHitmark");
   const meowballIntervalSeconds = readSeconds("meowballHitmarkInterval");
   const meowballTalentMultiplier = readParameter("meowballTalentMultiplier");
-  const meowballHitFields = readHitFields("meowball", ["element", "hitArea", "hitmarkSeconds", "talentMultiplier"]);
+  const meowballHitFields = readHitFields("meowball", ["hitArea", "hitmarkSeconds", "talentMultiplier"]);
   // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary target does
   const meowballHitbox: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: meowballArea.radius } };
   // A Meowball's hit gives her energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy callback does
