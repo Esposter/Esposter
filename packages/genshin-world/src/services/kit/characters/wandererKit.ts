@@ -8,7 +8,7 @@ export const WANDERER_CHARACTER_ID = 10_000_075;
 // Wanderer's behaviour: Hanega: Song of the Wind enters Windfavored for as long as its skydweller points last, whose
 // Strikes and charged attack take the skill's bonus and whose burst plays its fall. The framework builds a stance's own
 // Dash and jump, the resource they spend and a skill's swap lock, which this kit does not play yet: his Dash and Jump
-// While Windfavored, the swap lock on his skill, and his Ascension and Constellation Passives are not built
+// While Windfavored, his Ascension and Constellation Passives are not built
 // Constellation 1 needs an Attack SPD bonus on Kuugo: Fushoudan and Kuugo: Toufukai, which no attribute carries
 // Constellation 2 needs the skydweller points, which the kit does not drain or track
 // Constellation 4 needs the Jade-Claimed Flower's extra buff, which the kit does not build
