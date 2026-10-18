@@ -2,45 +2,17 @@ import { getBirthdayDayCount } from "#src/services/profile/getBirthdayDayCount";
 import { describe, expect, test } from "vitest";
 
 describe(getBirthdayDayCount, () => {
-  test("february has twenty-nine days, the save keeping no year", () => {
+  test.each<[string, number, number]>([
+    ["february has twenty-nine days, the save keeping no year", 2, 29],
+    ["april has thirty days", 4, 30],
+    ["june has thirty days", 6, 30],
+    ["september has thirty days", 9, 30],
+    ["november has thirty days", 11, 30],
+    ["january has thirty-one days", 1, 31],
+    ["october has thirty-one days", 10, 31],
+  ])("%s", (_title, month, dayCount) => {
     expect.hasAssertions();
 
-    expect(getBirthdayDayCount(2)).toBe(29);
-  });
-
-  test("april has thirty days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(4)).toBe(30);
-  });
-
-  test("june has thirty days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(6)).toBe(30);
-  });
-
-  test("september has thirty days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(9)).toBe(30);
-  });
-
-  test("november has thirty days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(11)).toBe(30);
-  });
-
-  test("january has thirty-one days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(1)).toBe(31);
-  });
-
-  test("october has thirty-one days", () => {
-    expect.hasAssertions();
-
-    expect(getBirthdayDayCount(10)).toBe(31);
+    expect(getBirthdayDayCount(month)).toBe(dayCount);
   });
 });
