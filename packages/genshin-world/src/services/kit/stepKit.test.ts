@@ -836,6 +836,7 @@ describe(stepKit, () => {
     expect(step({ locomotionState: LocomotionState.Jump })).toBe(jump);
   });
 
+  // A jump pressed in a glide ends the glide rather than starting a jump, so a jump queued into a glide is dropped at the skill's end
   test("drops a queued jump the body has glided into as the skill ends, as a jump starts only on foot or in a movement state", () => {
     expect.hasAssertions();
 
