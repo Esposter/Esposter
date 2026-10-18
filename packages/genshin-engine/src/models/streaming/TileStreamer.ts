@@ -10,8 +10,6 @@ export interface TileStreamer<TTile> {
   has: (key: number) => boolean;
   // Whether a tile is held or given up, so the view has nothing more to wait on for it
   isSettled: (key: number) => boolean;
-  // The keys still generating
-  pendingKeys: () => number[];
   // Takes a tile the worker has finished, freed first once the cache is full if it is no longer wanted, in place of
   // The one held under its key, which is freed unless it is the same tile
   receive: (key: number, tile: TTile) => void;
