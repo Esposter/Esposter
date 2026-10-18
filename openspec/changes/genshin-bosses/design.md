@@ -40,7 +40,7 @@ packages/genshin-world/src/services/bosses/
 2. **The Trounce Blossom and its claim**, held by `useWorldTrounceBlossoms`, which the defeat event writes, the claim prompt reads and a respawn forgets, for the first normal boss in Mondstadt, the Anemo Hypostasis: its place the official map's one point under its label, carried by the [spawned places](../../specs/genshin/spawned-places/design.md) fit, its kind from the monster table, its blossom on defeat claimed through Original Resin's `claimResinReward` at 40 resin, with `drawNormalBossReward` as its reward list. Until the spawned places land, the blossom's place is the defeat position the enemies component reports, so it stays where the boss fell.
 3. **The first boss's own moves**, then each boss's as its region is built.
 4. **Weekly bosses**, in their trounce domains, with the once-a-week gate for each boss.
-5. **The handbook's quick challenge and first-clear rewards.**
+5. **The handbook's quick challenge and first-clear rewards.** The quick challenge opens a locked weekly boss's domain from Adventure Rank 40, by the Weekly Boss page, in `services/bosses/checkIsWeeklyBossQuickChallengeable.ts` with no handbook entry calling it yet.
 
 ## Data and measures
 
