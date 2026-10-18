@@ -51,6 +51,10 @@ export const getRuleKitCandidates = (
     ["chargedAttack", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],
+    ...Array.from({ length: readLength("plungeVariants") }, (_value, index): [string, KitTargeting] => [
+      `plungeVariants.${index}`,
+      KitTargeting.Strike,
+    ]),
     ["skill", KitTargeting.Skill],
     ["burst", KitTargeting.Skill],
     ...Array.from({ length: readLength("skillHolds") }, (_value, index): [string, KitTargeting][] => [
