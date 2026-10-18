@@ -12,6 +12,7 @@ import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
+import { ADVENTURE_EXP_PER_RESIN } from "#src/services/originalResin/constants";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { takeOne } from "@esposter/shared";
@@ -34,20 +35,18 @@ const KIND_RULES: OutcropKindRule[] = [
 const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 
 // A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
-const createOutcrops = () => {
+const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
   const events = createWorldEvents();
-  const wallet = ref<Wallet>({
-    ...EMPTY_WALLET,
-    [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.LeyLine] * 2,
-  });
+  const adventureExp = ref(0);
+  const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
   const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
   const outcrops = useWorldOutcrops({
+    adventureExp,
     adventureRankTables,
     areaId: ref("mondstadt"),
     completedMainQuestIds: new Set(),
     enemyMap: new Map(),
     events,
-    gainWorldAdventureExp: () => {},
     gameText: {},
     getGroundHeight: () => 0,
     inventory,
@@ -67,7 +66,7 @@ const createOutcrops = () => {
   outcrops.touchOutcropsNear(0, 0, () => 0);
   // The defeat of the camp's only enemy, which reveals the blossom
   events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-  return { events, outcrops, wallet };
+  return { adventureExp, events, outcrops, wallet };
 };
 
 describe("useWorldOutcrops", () => {
@@ -90,12 +89,13 @@ describe("useWorldOutcrops", () => {
   test("choosing an offer spends its resin and grants its rewards", () => {
     expect.hasAssertions();
 
-    const { outcrops, wallet } = createOutcrops();
+    const { adventureExp, outcrops, wallet } = createOutcrops();
     outcrops.openOutcropClaim(1, epoch);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value?.offers ?? [], 0), epoch, 0, () => 0);
 
     expect(wallet.value[Currency.OriginalResin]).toBe(BlossomClaimResinMap[BlossomKind.LeyLine]);
     expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora] + 100);
+    expect(adventureExp.value).toBe(ADVENTURE_EXP_PER_RESIN * BlossomClaimResinMap[BlossomKind.LeyLine]);
     expect(outcrops.outcrops.value).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: 2, stage: OutcropStage.Waiting },
     ]);
@@ -113,5 +113,15 @@ describe("useWorldOutcrops", () => {
     expect(outcrops.outcrops.value).toStrictEqual([
       { kind: OutcropKind.Revelation, placeId: 1, stage: OutcropStage.Cleared },
     ]);
+  });
+
+  test("a claim without enough resin is refused", () => {
+    expect.hasAssertions();
+
+    const { outcrops, wallet } = createOutcrops(0);
+    outcrops.openOutcropClaim(1, epoch);
+
+    expect(outcrops.claimPrompt.value).toBeUndefined();
+    expect(wallet.value[Currency.Mora]).toBe(EMPTY_WALLET[Currency.Mora]);
   });
 });
