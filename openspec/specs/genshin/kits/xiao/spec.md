@@ -1,6 +1,6 @@
 ## Purpose
 
-Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, and what is left of his third charge, jump and constellations.
+Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, Constellation 1's extra charge, and what is left of his third charge, jump and the other constellations.
 
 ## Requirements
 
@@ -114,11 +114,27 @@ From Ascension 4, each dash SHALL add a stack that lasts 7 seconds, and each sta
 - **WHEN** the next dash lands
 - **THEN** the expired stack adds nothing to it
 
+### Requirement: Constellation 1 charge
+
+From Constellation 1, Lemniscatic Wind Cycling SHALL have one more charge than its base.
+
+#### Scenario: Constellation 1 adds a charge
+
+- **GIVEN** Xiao has Constellation 1
+- **WHEN** his skill's charges are read
+- **THEN** it has one more charge than the base
+
+#### Scenario: Constellation 0 adds nothing
+
+- **GIVEN** Xiao has no constellation
+- **WHEN** his skill's charges are read
+- **THEN** no charge is added
+
 ### Requirement: Unbuilt effects
 
-Xiao's third skill charge, his jump, his constellations and his dash particles SHALL have no effect in the world yet.
+Xiao's third skill charge, his jump, his Constellations 2 through 6 and his dash particles SHALL have no effect in the world yet.
 
 #### Scenario: Constellations have no effect
 
-- **WHEN** Xiao holds a constellation
-- **THEN** no constellation effect is applied in the fight
+- **WHEN** Xiao holds Constellation 2 through 6
+- **THEN** no effect of those constellations is applied in the fight
