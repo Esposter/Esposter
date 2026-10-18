@@ -156,8 +156,13 @@ const listCarriedQuestBinaryFiles = async (): Promise<DumpFile[]> => {
 // Every readable text, table, text map and held binary the dump lacks, or holds at another size, and each binary a carried
 // Quest reads, fetched from AnimeGameData. Returns a note of the count fetched and the count kept
 export const fetchDump = async (): Promise<string[]> => {
-  const dumpFiles = await fetchRemoteFiles(await listDumpFiles());
-  const questFiles = await fetchRemoteFiles(await listCarriedQuestBinaryFiles());
+  const remoteFiles = await listDumpFiles();
+  const dumpFiles = await fetchRemoteFiles(remoteFiles);
+  // A carried binary the first pass listed is fetched or kept there, so the second pass leaves it out
+  const remotePaths = new Set(remoteFiles.map(({ path }) => path));
+  const questFiles = await fetchRemoteFiles(
+    (await listCarriedQuestBinaryFiles()).filter(({ path }) => !remotePaths.has(path)),
+  );
   return [
     `${dumpFiles.fetched + questFiles.fetched} dump files fetched, ${dumpFiles.held + questFiles.held} already held`,
   ];
