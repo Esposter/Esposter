@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.pressSteleLanding": { "cause": "Unclassified", "value": 24 },
   "frames.pressSteleEnd": { "cause": "Unclassified", "value": 1884 },
   "frames.holdSteleEnd": { "cause": "Unclassified", "value": 1908 },
