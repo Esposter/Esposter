@@ -146,7 +146,7 @@ export const useGridLayout = <T extends GridItem>(
   // A move here does. Under prevent a drop that lands on another item is refused, so nothing is committed and it returns false
   const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint): boolean => {
     const element = root.value;
-    if (!element) return false;
+    if (!element || !getOptions().isEditable) return false;
 
     const { left, top } = element.getBoundingClientRect();
     const { padding } = getOptions().spacing;

@@ -40,6 +40,7 @@ describe(useGridLayout, () => {
     columnNumber: gridColumnNumber = columnNumber,
     compactType = CompactType.Vertical,
     edge = ResizeEdge.SouthEast,
+    isEditable = true,
     items,
     spacing: gridSpacing = spacing,
   }: {
@@ -47,6 +48,7 @@ describe(useGridLayout, () => {
     columnNumber?: number;
     compactType?: CompactType;
     edge?: ResizeEdge;
+    isEditable?: boolean;
     items: GridItem[];
     spacing?: GridSpacing;
   }) => {
@@ -61,7 +63,7 @@ describe(useGridLayout, () => {
             columnNumber: gridColumnNumber,
             compactType,
             dragStartDistance,
-            isEditable: true,
+            isEditable,
             items,
             onCommit,
             rowHeight,
@@ -420,6 +422,19 @@ describe(useGridLayout, () => {
     await flushPromises();
     const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
     const point = { clientX: spacing.padding, clientY: spacing.padding };
+    dispatch("pointerdown", point);
+    dispatch("pointerup", point);
+
+    expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  test("a grid that is not editable refuses a palette drop", async () => {
+    expect.hasAssertions();
+
+    const { onCommit } = mountGrid({ isEditable: false, items: [] });
+    await flushPromises();
+    const dispatch = mountPalette({ h: 2, id: "palette", w: 2 });
+    const point = { clientX: cellPitch * 2 + spacing.padding, clientY: spacing.padding };
     dispatch("pointerdown", point);
     dispatch("pointerup", point);
 
