@@ -12,12 +12,9 @@ import {
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
 import { computeWeeklyBossRow } from "#src/services/bosses/computeWeeklyBossRow";
+import { pickItemId } from "#src/services/bosses/pickItemId";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { takeOne } from "@esposter/shared";
-
-// The item a draw of a list picks, one of its entries at random
-const pickItemId = (itemIds: number[], random: () => number): number =>
-  takeOne(itemIds, Math.floor(random() * itemIds.length));
 
 // What a weekly boss's claim pays at a World Level: its Mora, a talent count of one of Dvalin's Plume, Claw and Sigh, one
 // Northlander billet and one Dream Solvent where `random` falls under their chances, and each star tier's Ascension Gem at the
