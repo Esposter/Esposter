@@ -24,6 +24,10 @@ const HP_DRAIN_FLOOR_SHARE = 0.2;
 // Measured: gcsim (MIT) kuki/asc.go, from Ascension 4 the ring's healing is raised by 75% of Elemental Mastery and its tick's
 // DMG by 25% of it, and the initial hit's DMG by 25% of it at every ascension
 const ASCENSION_4 = 4;
+// Breaking Free, Kuki's Ascension 1 passive as its text gives it: Healing Bonus +15% while her HP is at or under 50%
+const ASCENSION_1 = 1;
+const BREAKING_FREE_HEALTH_SHARE = 0.5;
+const BREAKING_FREE_HEALING_BONUS = 0.15;
 const ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE = 0.75;
 const ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE = 0.25;
 const INITIAL_HIT_ELEMENTAL_MASTERY_SHARE = 0.25;
@@ -38,6 +42,12 @@ const getElementalMastery = ({ attributes }: Combatant): number =>
 // Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
 // Hit's share of Elemental Mastery, and Gyoei Narukami Kariyama Rite's hits. Constellations 1 and 2 are built. Her
 // Ascension 1 healing bonus, and Constellations 4 and 6, are not, as each reads her HP
+// Breaking Free raises her Healing Bonus while her HP is at or under half
+const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
+  combatant.ascension < ASCENSION_1 || healthShare > BREAKING_FREE_HEALTH_SHARE
+    ? []
+    : [{ amount: BREAKING_FREE_HEALING_BONUS, attribute: Attribute.HealingBonus }];
+
 export const createKukiKitBehaviour = ({
   readHit,
   readHits,
@@ -99,6 +109,7 @@ export const createKukiKitBehaviour = ({
           combatant.constellationCount >= BURST_CONSTELLATION ? constellationBurstHits : burstHits,
         ),
     },
+    getPassiveBonuses,
     skill: {
       hits: [
         { additiveBaseDamageBonus: (striker) => INITIAL_HIT_ELEMENTAL_MASTERY_SHARE * getElementalMastery(striker) },
