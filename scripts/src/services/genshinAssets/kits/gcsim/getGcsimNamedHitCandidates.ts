@@ -38,10 +38,11 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
     if (variableAttacks.length === 0) continue;
     const [attack] = variableAttacks;
     const joinedAttack = variableAttacks.length === 1 ? attack : undefined;
-    // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn
-    const attackCalls = queuedAttacks.filter(
-      (queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.talentVariable === variable,
-    );
+    // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn.
+    // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays
+    const attackCalls = queuedAttacks
+      .filter((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.talentVariable === variable)
+      .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
     for (const leaf of leaves) {
       const { reference } = leaf;
       const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);

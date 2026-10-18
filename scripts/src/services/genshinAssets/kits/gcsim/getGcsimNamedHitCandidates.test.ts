@@ -77,6 +77,34 @@ describe(getGcsimNamedHitCandidates, () => {
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
   });
 
+  test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
+    expect.hasAssertions();
+
+    const namedHitCandidateMap = getGcsimNamedHitCandidates(
+      {
+        ...gcsim,
+        queuedAttacks: [
+          { attackLine: 10, delay: 120, delayLine: 20, file: "burst.go", line: 19 },
+          { attackLine: 10, delay: 96, delayLine: 30, file: "burst.go", line: 29 },
+        ],
+      },
+      tables,
+    );
+    const joined = getNamedHitKitCandidates(
+      new Map<string, unknown>([
+        ["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
+        ["hits.fieryRainArrows.1.multiplier", { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }],
+      ]),
+      namedHitCandidateMap,
+    );
+
+    expect(
+      ["hits.fieryRainArrows.0.hitmarkFrames", "hits.fieryRainArrows.1.hitmarkFrames"].map((path) =>
+        joined.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[96], [120]]);
+  });
+
   test("joins a skill hold's and a stance's hit to the same talent variable, and a non-hit multiplier to none", () => {
     expect.hasAssertions();
 
