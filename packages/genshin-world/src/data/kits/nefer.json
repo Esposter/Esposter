@@ -10,7 +10,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.0.hitmarkFrames" }
   },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12239 } },
   "burst.hits.1.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.1.area" }
@@ -20,7 +19,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.1.hitmarkFrames" }
   },
-  "burst.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12239 } },
   "burst.hits.2.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.2.area" }
@@ -30,7 +28,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.2.hitmarkFrames" }
   },
-  "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 12239 } },
   "burst.hits.3.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.3.area" }
@@ -40,7 +37,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.3.hitmarkFrames" }
   },
-  "burst.hits.3.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12239 } },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 190 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -114,9 +110,7 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000073, "path": "skill.hits.0.hitmarkFrames" }
   },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12232 } },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.8 } },
   "skill.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
-  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 13 },
-  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12232 } }
+  "skill.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 13 }
 }
