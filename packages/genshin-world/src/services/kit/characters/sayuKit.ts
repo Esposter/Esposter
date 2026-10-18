@@ -1,11 +1,16 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its ticks a
@@ -15,13 +20,30 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 const BURST_FIELD_CENTRE_METRES = 1.5;
 const BURST_FIELD_RADIUS = 10;
 const BURST_HEAL_HP_SHARE = 0.7;
+// Measured: gcsim v2.47.2 (MIT) sayu/asc.go, and burst.go for the Daruma's strike. Ascension 1: a Swirl Sayu triggers while
+// On the field heals the active character by 300 and 1.2 Elemental Mastery, once every 2 seconds. Ascension 4: the Daruma's
+// Ticks strike within 3.5 metres, where they strike within 1 below it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/asc.go
+const ASCENSION_1 = 1;
+const ASCENSION_1_HEAL_FLAT = 300;
+const ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE = 1.2;
+const ASCENSION_1_COOLDOWN_STATUS_ID = "sayu-a1-cooldown";
+const ASCENSION_1_COOLDOWN_SECONDS = 2;
+const ASCENSION_4 = 4;
+const ASCENSION_4_DARUMA_RADIUS = 3.5;
 
 export const SAYU_CHARACTER_ID = 10_000_053;
 
+// Ascension 4 widens each Daruma tick's reach to the radius gcsim strikes within, as the tick hits are otherwise read
+const withAscension4Radius = (hit: KitHit): KitHit => ({
+  ...hit,
+  hitArea: { ...hit.hitArea, radius: ASCENSION_4_DARUMA_RADIUS },
+});
+
 // Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
-// Ticks strike as a summon and heal as a field. Her passives and constellations are not built, as no kit event reaches a
-// Value the fetched sources give. The roll's Elemental kick, which takes the element a roll absorbs, is not built, as the
-// Kit has no absorption check to read it
+// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl and Ascension 4's wider Daruma are built, and
+// Her constellations are not. The roll's Elemental kick, which takes the element a roll absorbs, is not built, as the kit
+// Has no absorption check to read it
 export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // Mujina Flurry's heal and Muji-Muji Daruma's heal are each a flat amount and a share of Sayu's ATK, read at the cast
   const burstInitialHealFlat = readParameter("mujinaFlurryFlatHealing");
@@ -42,7 +64,12 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
         scheduleKitTask(kitEffectState, combatant.characterId, 0, (tick) =>
           changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, initialHeal),
         );
-        castKitSummon(kitEffectState, body, combatant, darumaTicks);
+        castKitSummon(
+          kitEffectState,
+          body,
+          combatant,
+          combatant.ascension >= ASCENSION_4 ? darumaTicks.map((hit) => withAscension4Radius(hit)) : darumaTicks,
+        );
         const ahead = createAheadBody(body, BURST_FIELD_CENTRE_METRES);
         castKitField(kitEffectState, combatant.characterId, ahead.position, {
           nextTickSeconds: darumaFirstTickSeconds,
@@ -56,6 +83,35 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
           tickIntervalSeconds: darumaTickIntervalSeconds,
         });
       },
+    },
+    // Ascension 1: a Swirl Sayu triggers while she is on the field heals the active character, which is her, once every 2
+    // Seconds, from the Elemental Mastery she stands with
+    onKitEvent: (event, context, combatant) => {
+      if (event.kind !== KitEventKind.ReactionTriggered) return;
+      const { activeCombatant, kitEffectState } = context;
+      if (
+        combatant.ascension < ASCENSION_1 ||
+        event.striker.characterId !== combatant.characterId ||
+        activeCombatant.characterId !== combatant.characterId ||
+        !event.reactions.some(({ reactionType }) => reactionType === ReactionType.Swirl)
+      )
+        return;
+      if (
+        !startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          ASCENSION_1_COOLDOWN_STATUS_ID,
+          ASCENSION_1_COOLDOWN_SECONDS,
+        )
+      )
+        return;
+      changeKitMemberHealth(
+        context,
+        combatant,
+        activeCombatant.characterId,
+        ASCENSION_1_HEAL_FLAT +
+          combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ASCENSION_1_HEAL_ELEMENTAL_MASTERY_SHARE,
+      );
     },
   };
 };
