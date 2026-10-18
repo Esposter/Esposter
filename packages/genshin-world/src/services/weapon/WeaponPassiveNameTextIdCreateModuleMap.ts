@@ -96,6 +96,16 @@ import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passive
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
+// The Bane passives' modules, one named lambda per element pair, so each weapon carrying a pair shares its module
+const createBaneOfWaterAndIcePassiveModule = (params: number[]): PassiveModule =>
+  createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], params);
+const createBaneOfFireAndThunderPassiveModule = (params: number[]): PassiveModule =>
+  createBaneOfElementsPassiveModule([Element.Pyro, Element.Electro], params);
+const createBaneOfStormAndTidePassiveModule = (params: number[]): PassiveModule =>
+  createBaneOfElementsPassiveModule([Element.Hydro, Element.Electro], params);
+const createBaneOfFlameAndWaterPassiveModule = (params: number[]): PassiveModule =>
+  createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], params);
+
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
 // found by the name its table gives it. A passive with no module here gives its wielder nothing
 export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
@@ -106,13 +116,13 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   // Infusion Scroll
   "1663313163": createInfusionScrollPassiveModule,
   // Bane of Water and Ice
-  "523615731": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], params),
+  "523615731": createBaneOfWaterAndIcePassiveModule,
   // Bane of Fire and Thunder
-  "2101250155": (params) => createBaneOfElementsPassiveModule([Element.Pyro, Element.Electro], params),
+  "2101250155": createBaneOfFireAndThunderPassiveModule,
   // Bane of Storm and Tide
-  "2612787355": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Electro], params),
+  "2612787355": createBaneOfStormAndTidePassiveModule,
   // Bane of Flame and Water
-  "1958685971": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], params),
+  "1958685971": createBaneOfFlameAndWaterPassiveModule,
   // Smashed Stone
   "2507863163": createSmashedStonePassiveModule,
   // Infusion Blade
@@ -221,11 +231,11 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   // Windfall (Favonius Warbow)
   "3964029091": createCritEnergyPassiveModule,
   // Bane of Fire and Thunder (Lion's Roar)
-  "2541719715": (params) => createBaneOfElementsPassiveModule([Element.Pyro, Element.Electro], params),
+  "2541719715": createBaneOfFireAndThunderPassiveModule,
   // Bane of Storm and Tide (Rainslasher)
-  "3070185899": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Electro], params),
+  "3070185899": createBaneOfStormAndTidePassiveModule,
   // Bane of Flame and Water (Dragon's Bane)
-  "2359918763": (params) => createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], params),
+  "2359918763": createBaneOfFlameAndWaterPassiveModule,
   // Rust
   "3717831139": createRustPassiveModule,
   // The Stringless
