@@ -2,5 +2,5 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "the Stellar Jubilee passives that enable Stellar Swirl and Stellar-Conduct (task 2.3): gcsim v2.47.2 sets both flags in Odette's module, which has no module here, and the Cryo Traveler's kit has no Cryo variant yet"
+x-waiting: "the Stellar Jubilee enablers of the kits still without a module (Sandrone, Vesna, Danica and Mitya, per the wiki's Stellar Linchpin list) and the Cryo Traveler's Cryo variant; Odette's is built (task 2.3)"
 x-touches: ["packages/genshin-world/src/models/combat/**", "packages/genshin-world/src/services/combat/**"]

@@ -5,7 +5,6 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
-import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -20,11 +19,10 @@ const checkIsPolestar = (effect: KitEffect): effect is KitField =>
 const checkIsStellarVortex = (effect: KitEffect): effect is KitSummon =>
   effect.kind === "summon" && effect.id === STELLAR_VORTEX_ID;
 
-// Odette's behaviour: while she is deployed, a Superconduct any party member triggers leaves a Polestar Field round
-// The body, and a standing one is refreshed rather than doubled. A Cryo Swirl leaves a Stellar Vortex, one at a time.
-// The combat's Stellar-Conduct and Stellar Swirl stand on these placed gadgets. gcsim v2.47.2 (MIT) creates them
-// Inside the reaction (pkg/reactable/stellarconduct_gadget.go and stellarswirl_gadget.go), where this places them
-// On the next step
+// Odette's behaviour: while she is deployed, a Stellar-Conduct any party member triggers leaves a Polestar Field round
+// The body, and a standing one is refreshed rather than doubled. A Stellar Swirl leaves a Stellar Vortex, one at a time.
+// This places them on the next step, where gcsim v2.47.2 creates them inside the reaction
+// (pkg/reactable/stellarconduct_gadget.go and stellarswirl_gadget.go)
 // https://genshin-impact.fandom.com/wiki/Odette
 export const createOdetteKitBehaviour = ({ readArea, readSeconds }: KitRecordReader): KitBehaviour => {
   const polestarArea = readArea("polestar");
@@ -34,8 +32,8 @@ export const createOdetteKitBehaviour = ({ readArea, readSeconds }: KitRecordRea
   return {
     onKitEvent: (event, { body, kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
-      for (const { element, reactionType } of event.reactions)
-        if (reactionType === ReactionType.Superconduct) {
+      for (const { reactionType } of event.reactions)
+        if (reactionType === ReactionType.StellarConduct) {
           const polestar = kitEffectState.effects.find(checkIsPolestar);
           if (polestar) {
             polestar.secondsRemaining = polestarSeconds;
@@ -50,11 +48,7 @@ export const createOdetteKitBehaviour = ({ readArea, readSeconds }: KitRecordRea
             secondsRemaining: polestarSeconds,
             tickIntervalSeconds: polestarTickSeconds,
           });
-        } else if (
-          reactionType === ReactionType.Swirl &&
-          element === Element.Cryo &&
-          !kitEffectState.effects.some(checkIsStellarVortex)
-        )
+        } else if (reactionType === ReactionType.StellarSwirl && !kitEffectState.effects.some(checkIsStellarVortex))
           castKitSummon(kitEffectState, body, combatant, [], {
             id: STELLAR_VORTEX_ID,
             secondsRemaining: stellarVortexSeconds,

@@ -168,6 +168,9 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     normalAttacks: record.normalAttacks.map((actionRecord) => toAction(actionRecord)),
     plungeCollision: toHit(record.plungeCollision),
     skillCooldownSeconds: toParameter(record.skillCooldownSeconds),
+    ...(record.stellarJubilee && {
+      stellarJubilee: { stellarReactionTypes: record.stellarJubilee.stellarReactionTypes },
+    }),
   });
   return { toAction, toHit, toHitFields, toKit, toParameter };
 };

@@ -36,33 +36,42 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 - **WHEN** the player casts Odette's elemental burst
 - **THEN** four hits land on the enemies within reach, the last one as Ice
 
-### Requirement: A Polestar Field on a Superconduct
+### Requirement: A Polestar Field on a Stellar-Conduct
 
-While Odette is deployed, a Superconduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 6 seconds, and a standing field SHALL be refreshed rather than doubled.
+While Odette is deployed, a Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 6 seconds, and a standing field SHALL be refreshed rather than doubled.
 
-#### Scenario: Superconduct places a Polestar Field
+#### Scenario: Stellar-Conduct places a Polestar Field
 
-- **WHEN** a Superconduct is triggered while Odette is deployed and no Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered while Odette is deployed and no Polestar Field stands
 - **THEN** a Polestar Field stands at the body for 6 seconds
 
-#### Scenario: Superconduct refreshes a standing field
+#### Scenario: Stellar-Conduct refreshes a standing field
 
-- **WHEN** a Superconduct is triggered while a Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered while a Polestar Field stands
 - **THEN** the field's time is set back to 6 seconds, and no second field stands
 
-### Requirement: A Stellar Vortex on a Cryo Swirl
+### Requirement: A Stellar Vortex on a Stellar Swirl
 
-While Odette is deployed, a Cryo Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled.
+While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled.
 
-#### Scenario: Cryo Swirl places a Stellar Vortex
+#### Scenario: Stellar Swirl places a Stellar Vortex
 
-- **WHEN** a Cryo Swirl is triggered while Odette is deployed and no Stellar Vortex stands
+- **WHEN** a Stellar Swirl is triggered while Odette is deployed and no Stellar Vortex stands
 - **THEN** a Stellar Vortex stands for 181 frames
 
 #### Scenario: Other reactions place nothing
 
 - **WHEN** a Melt, or a Swirl of another element, is triggered while Odette is deployed
 - **THEN** no Polestar Field and no Stellar Vortex is placed
+
+### Requirement: A Stellar Jubilee enables both Stellar reactions
+
+While Odette is deployed, her Stellar Jubilee passive SHALL enable Stellar-Conduct and Stellar Swirl for her party, each once however many passives enable it.
+
+#### Scenario: a Stellar Jubilee passive enables both reactions for its party
+
+- **WHEN** Odette is deployed
+- **THEN** a Superconduct becomes a Stellar-Conduct and a Cryo Swirl becomes a Stellar Swirl for the party
 
 ### Requirement: Recast, Dance Double and Stellar Glimmer not built
 
