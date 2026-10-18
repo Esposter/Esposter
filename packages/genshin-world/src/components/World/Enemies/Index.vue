@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WorldLevelRow } from "#src/models/adventureRank/WorldLevelRow";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -52,6 +53,8 @@ interface Props {
   // The effects on the team, whose live taunts draw the enemies' strikes within their aggro range
   kitEffectState: KitEffectState;
   lightUniforms: LightUniforms;
+  // The camps of the ley line outcrops whose fights run: each spawns whole as its fight starts, and is dropped as it is won
+  outcropCamps?: EnemyCamp[];
   rampTexture: DataTexture;
   regionDataMap: ReadonlyMap<string, RegionData>;
   // The scene the sight's mask is drawn from, which each enemy's stand-in is added to, lit in its element's colour
@@ -71,6 +74,7 @@ const {
   isHeld,
   kitEffectState,
   lightUniforms,
+  outcropCamps = [],
   rampTexture,
   regionDataMap,
   sightScene,
@@ -92,14 +96,14 @@ const loadedCampIds = new Set<string>();
 // So an enemy comes back only on a load, never in view
 let spawnedWorldLevel = worldLevel;
 watchImmediate(
-  () => [worldLevel, [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps)] as const,
-  ([currentWorldLevel, enemyCamps]) => {
+  () => [worldLevel, [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps), outcropCamps] as const,
+  ([currentWorldLevel, enemyCamps, fightingCamps]) => {
     if (currentWorldLevel !== spawnedWorldLevel) {
       spawnedWorldLevel = currentWorldLevel;
       enemyMap.clear();
       loadedCampIds.clear();
     }
-    const campIds = new Set(enemyCamps.map(({ id }) => id));
+    const campIds = new Set([...enemyCamps, ...fightingCamps].map(({ id }) => id));
     for (const [spawnKey, { campId }] of enemyMap) if (!campIds.has(campId)) enemyMap.delete(spawnKey);
     for (const campId of loadedCampIds.difference(campIds)) loadedCampIds.delete(campId);
     const now = Temporal.Now.zonedDateTimeISO();
@@ -114,6 +118,16 @@ watchImmediate(
         const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
         if (defeatedAt && Temporal.ZonedDateTime.compare(computeEnemyRespawnTime(campEnemyTypes, defeatedAt), now) > 0)
           continue;
+        spawnKeyDefeatedAtMap.delete(spawnKey);
+        enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
+      }
+    }
+    // An outcrop's camp spawns whole as its fight starts, so no member's respawn time applies to it
+    for (const { id, members } of fightingCamps) {
+      if (loadedCampIds.has(id)) continue;
+      loadedCampIds.add(id);
+      for (const member of members) {
+        const spawnKey = getSpawnKey(id, member.id);
         spawnKeyDefeatedAtMap.delete(spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
       }
