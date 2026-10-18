@@ -2,11 +2,10 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { checkIsStellarGlimmerReaction } from "#src/services/kit/checkIsStellarGlimmerReaction";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { createStellarGlimmerBuffPassiveModule } from "#src/services/weapon/passives/createStellarGlimmerBuffPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const SONG_OF_THE_VIGIL_COOLDOWN_ID = "songOfTheVigilCooldown";
@@ -17,9 +16,11 @@ const SONG_OF_THE_VIGIL_SOURCE = "songOfTheVigil";
 // Wielder's ATK by the rank's percentage for the rank's seconds. The effects count whether or not the wielder is on the field
 export const createSongOfTheVigilPassiveModule = (params: number[]): WeaponPassiveModule => {
   const energy = takeOne(params, 0);
-  const atkPercent = takeOne(params, 1);
   const cooldownSeconds = takeOne(params, 2);
-  const buffSeconds = takeOne(params, 3);
+  const stellarBuffPassiveModule = createStellarGlimmerBuffPassiveModule([takeOne(params, 1), takeOne(params, 3)], {
+    attribute: Attribute.AttackPercent,
+    source: SONG_OF_THE_VIGIL_SOURCE,
+  });
   return {
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
@@ -32,13 +33,7 @@ export const createSongOfTheVigilPassiveModule = (params: number[]): WeaponPassi
         });
         gainPartyMemberEnergy(context.party, combatant, energy);
       }
-      if (event.reactions.some(checkIsStellarGlimmerReaction))
-        buffKitMember(context.kitEffectState, combatant.characterId, {
-          amount: atkPercent,
-          attribute: Attribute.AttackPercent,
-          secondsRemaining: buffSeconds,
-          source: SONG_OF_THE_VIGIL_SOURCE,
-        });
+      stellarBuffPassiveModule.onKitEvent?.(event, context, combatant);
     },
   };
 };
