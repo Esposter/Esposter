@@ -1,6 +1,6 @@
 # Post Images
 
-Image attachments on the post create/update form, rendered as a grid on the feed card — technically a straight reuse of the file-upload standard (posts blob container, `files` metadata column, dropzone on the upsert form).
+Image attachments on the post create/update form, rendered as a grid on the feed card — technically a reuse of the file-upload standard, which would need a new posts blob container, a `files` column on the post, and a dropzone on the upsert form.
 
 **Why deferred:** the feed is public, and public user-generated images are a content-moderation surface we have decided not to take on — there is no image moderation pipeline (profanity filtering covers text only), and the casual-platform trust level that is acceptable for room-scoped message uploads does not extend to a public feed. Content-related moderation for public surfaces is out of scope platform-wide.
 

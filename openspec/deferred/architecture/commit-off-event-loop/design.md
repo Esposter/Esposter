@@ -1,6 +1,6 @@
 # Commit off the event loop
 
-A staged or delta save ends with the server decompressing, parsing and validating the whole document before it writes it ([large documents](../../../specs/architecture/large-documents/design.md)). That work is synchronous, so it blocks the web server's event loop for a time that grows with the document, from a fraction of a second at a few megabytes to seconds at `MAX_RESOURCE_CONTENT_SIZE`. Every other request on that instance waits it out. The benches beside `apps/web/server/services/resource/readStagedResourceContent.ts` record the cost.
+A staged or delta save ends with the server decompressing, parsing and validating the whole document before it writes it ([large documents](../../../specs/architecture/large-documents/design.md)). Decompression runs on Node's threadpool through `promisify(gunzip)`, so only the JSON parse and the schema validation after it are synchronous. Those block the web server's event loop for a time that grows with the document, from a fraction of a second at a few megabytes to seconds at `MAX_RESOURCE_CONTENT_SIZE`. Every other request on that instance waits it out. The benches beside `apps/web/server/services/resource/readStagedResourceContent.ts` record the cost.
 
 There are two ways to take it off the loop:
 

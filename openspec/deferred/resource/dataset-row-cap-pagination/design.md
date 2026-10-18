@@ -1,6 +1,6 @@
 # Dataset row-cap pagination
 
-Paginating `dataset.readDataset` beyond the 1000-row cap (`AZURE_MAX_PAGE_SIZE`, applied consistently by every provider).
+Paginating `dataset.readDataset` beyond the row cap (`AZURE_MAX_PAGE_SIZE`, declared in `packages/azure/src/services/shared/constants.ts` and applied consistently by every provider).
 
 ## Why deferred
 

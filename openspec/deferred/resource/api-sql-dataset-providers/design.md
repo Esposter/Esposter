@@ -1,6 +1,6 @@
 # API / SQL dataset providers
 
-External HTTP APIs and SQL databases as dataset providers (the commented-out `Api`/`Sql` slots in `DataSourceType`).
+External HTTP APIs and SQL databases as dataset providers, which would be new members of `DataSourceType` beside Csv, Json and Xlsx.
 
 ## Why deferred
 

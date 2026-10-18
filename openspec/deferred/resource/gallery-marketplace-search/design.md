@@ -4,7 +4,7 @@ Azure Marketplace parity in `/resource-explorer/create`: a search field and cate
 
 ## Why deferred
 
-Seven types fit on one screen; search over seven tiles is slower than looking.
+The creatable types fit on one screen; search over a screen of tiles is slower than looking.
 
 ## Revisit when
 

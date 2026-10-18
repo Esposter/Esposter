@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — paginating dataset.readDataset beyond the 1000-row AZURE_MAX_PAGE_SIZE cap.
+Deferred — paginating dataset.readDataset beyond the row cap that AZURE_MAX_PAGE_SIZE sets.
 
 ## What Changes
 
