@@ -30,10 +30,7 @@ describe(toProfileStory, () => {
 
     expect(
       toProfileStory(
-        makeRow([
-          { condType: "FETTER_COND_FETTER_LEVEL", paramList: [LEVEL] },
-          { condType: "FETTER_COND_NONE", paramList: [] },
-        ]),
+        makeRow([{ condType: "FETTER_COND_FETTER_LEVEL", paramList: [LEVEL] }, { paramList: [] }]),
         textMap,
         englishTextMap,
       ),
@@ -63,9 +60,7 @@ describe(toProfileStory, () => {
   test("opens at once with no level, and takes English's text where its language lacks one", () => {
     expect.hasAssertions();
 
-    expect(
-      toProfileStory(makeRow([{ condType: "FETTER_COND_NONE", paramList: [] }]), textMap, englishTextMap),
-    ).toStrictEqual({
+    expect(toProfileStory(makeRow([{ paramList: [] }]), textMap, englishTextMap)).toStrictEqual({
       friendshipLevel: 0,
       hasOtherCondition: false,
       text: "Quer durch Inazuma",

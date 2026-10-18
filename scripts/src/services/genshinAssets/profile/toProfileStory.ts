@@ -18,7 +18,8 @@ export const toProfileStory = (
   return {
     friendshipLevel: levelCondition?.paramList[0] ?? 0,
     hasOtherCondition: row.openConds.some(
-      ({ condType }) => condType !== FETTER_NONE_CONDITION_TYPE && condType !== FETTER_LEVEL_CONDITION_TYPE,
+      ({ condType = FETTER_NONE_CONDITION_TYPE }) =>
+        condType !== FETTER_NONE_CONDITION_TYPE && condType !== FETTER_LEVEL_CONDITION_TYPE,
     ),
     text: getText(row.storyContextTextMapHash),
     title: getText(row.storyTitleTextMapHash),
