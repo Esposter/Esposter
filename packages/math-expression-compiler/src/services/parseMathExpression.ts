@@ -1,17 +1,19 @@
 import type { MathExpressionError } from "#src/models/MathExpressionError";
-import type { MathExpressionFunction } from "#src/models/MathExpressionFunction";
 import type { MathExpressionNode } from "#src/models/MathExpressionNode";
 import type { MathExpressionParserState } from "#src/models/MathExpressionParserState";
+import type { MathExpressionSignature } from "#src/models/MathExpressionSignature";
 import type { Result } from "neverthrow";
 
-import { MathExpressionListForm } from "#src/models/MathExpressionListForm";
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
+import { MathExpressionParameterType } from "#src/models/MathExpressionParameterType";
 import { MathExpressionTokenType } from "#src/models/MathExpressionTokenType";
 import { computeNumberLiteral } from "#src/services/computeNumberLiteral";
 import { MAX_MATH_EXPRESSION_DEPTH } from "#src/services/constants";
 import { failMathExpression, failMathExpressionAt, getMathExpressionColumn } from "#src/services/failMathExpression";
+import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
 import { getMathExpressionToken } from "#src/services/getMathExpressionToken";
+import { matchMathExpressionSignature } from "#src/services/matchMathExpressionSignature";
 import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { err, ok } from "neverthrow";
 
@@ -91,12 +93,16 @@ const checkIsOperatorOperand = (node: MathExpressionNode): boolean => {
   );
 };
 
-const parseSequence = (state: MathExpressionParserState, closing: string): MathExpressionNode[] => {
+const parseSequence = (
+  state: MathExpressionParserState,
+  closing: string,
+  parseItem: (state: MathExpressionParserState) => MathExpressionNode,
+): MathExpressionNode[] => {
   const nodes: MathExpressionNode[] = [];
   if (state.token === closing) return nodes;
 
   while (state.error === null) {
-    nodes.push(parseAssignment(state));
+    nodes.push(parseItem(state));
     if (state.token !== ",") break;
     getMathExpressionToken(state);
   }
@@ -105,45 +111,59 @@ const parseSequence = (state: MathExpressionParserState, closing: string): MathE
   return nodes;
 };
 
-const getArityMessage = (name: string, definition: MathExpressionFunction): string => {
-  if (definition.maxArity === Number.POSITIVE_INFINITY)
-    return `"${name}" takes at least ${definition.minArity} arguments`;
-  if (definition.minArity === definition.maxArity) return `"${name}" takes ${definition.minArity} arguments`;
-  return `"${name}" takes ${definition.minArity} or ${definition.maxArity} arguments`;
+const getArityMessage = (name: string, minArity: number, maxArity: number): string => {
+  if (maxArity === Number.POSITIVE_INFINITY) return `"${name}" takes at least ${minArity} arguments`;
+  if (minArity === maxArity) return `"${name}" takes ${minArity} arguments`;
+  return `"${name}" takes ${minArity} or ${maxArity} arguments`;
 };
+
+// A call no signature takes is an arity error when no signature has its count of arguments, else a list in the wrong place
+const getSignatureError = (
+  name: string,
+  signatures: readonly MathExpressionSignature[],
+  parameterTypes: MathExpressionParameterType[],
+): string => {
+  const count = parameterTypes.length;
+  const fitting = signatures.filter((signature) => count >= signature.minArity && count <= signature.maxArity);
+  if (fitting.length === 0)
+    return getArityMessage(
+      name,
+      Math.min(...signatures.map((signature) => signature.minArity)),
+      Math.max(...signatures.map((signature) => signature.maxArity)),
+    );
+  if (parameterTypes.includes(MathExpressionParameterType.List)) return `"${name}" does not take a list argument`;
+  return `"${name}" takes a list argument`;
+};
+
+// A list is a call's argument alone, and holds numbers only, so a list inside it is refused as any other value is
+const parseList = (state: MathExpressionParserState): MathExpressionNode => {
+  getMathExpressionToken(state);
+  const elements = parseSequence(state, "]", parseAssignment);
+  if (state.error !== null) return PLACEHOLDER;
+
+  getMathExpressionToken(state);
+  return { elements, type: MathExpressionNodeType.List };
+};
+
+const parseArgument = (state: MathExpressionParserState): MathExpressionNode =>
+  state.token === "[" ? parseList(state) : parseAssignment(state);
 
 // Every error of a call is reported at the function's name, which the caller read before the call's parenthesis
 const parseCall = (state: MathExpressionParserState, name: string, column: number): MathExpressionNode => {
-  const definition = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
-  if (definition === undefined) {
+  const signatures = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  if (signatures === undefined) {
     failMathExpressionAt(state, `Unknown function "${name}"`, column);
     return PLACEHOLDER;
   }
 
   getMathExpressionToken(state);
-  const isList = state.token === "[";
-  let argumentNodes: MathExpressionNode[];
-  if (isList) {
-    getMathExpressionToken(state);
-    const listNodes = parseSequence(state, "]");
-    if (definition.listForm === MathExpressionListForm.None)
-      failMathExpressionAt(state, `"${name}" does not take a list argument`, column);
-    argumentNodes = listNodes;
-    if (state.error === null) getMathExpressionToken(state);
-    if (state.error === null && state.token !== ")") failMathExpression(state, "Parenthesis ) expected");
-  } else argumentNodes = parseSequence(state, ")");
-
+  const argumentNodes = parseSequence(state, ")", parseArgument);
   if (state.error !== null) return PLACEHOLDER;
 
   getMathExpressionToken(state);
-  if (definition.listForm === MathExpressionListForm.Only && !isList) {
-    failMathExpressionAt(state, `"${name}" takes a list argument`, column);
-    return PLACEHOLDER;
-  }
-  // A list spreads into the arguments of a spread function, whose computation decides what a list of any length means
-  const isSpread = isList && definition.listForm !== MathExpressionListForm.Argument;
-  if (!isSpread && (argumentNodes.length < definition.minArity || argumentNodes.length > definition.maxArity)) {
-    failMathExpressionAt(state, getArityMessage(name, definition), column);
+  const parameterTypes = argumentNodes.map((argument) => getMathExpressionParameterType(argument));
+  if (matchMathExpressionSignature(signatures, parameterTypes) === undefined) {
+    failMathExpressionAt(state, getSignatureError(name, signatures, parameterTypes), column);
     return PLACEHOLDER;
   }
   return { arguments: argumentNodes, name, type: MathExpressionNodeType.Call };

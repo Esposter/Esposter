@@ -1,9 +1,12 @@
 import type { MathExpressionNode } from "#src/models/MathExpressionNode";
+import type { MathExpressionValue } from "#src/models/MathExpressionValue";
 
 import { MathExpressionLogicalOperator } from "#src/models/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/MathExpressionNodeType";
 import { checkIsTruthy } from "#src/services/checkIsTruthy";
 import { getMathExpressionChildren } from "#src/services/getMathExpressionChildren";
+import { getMathExpressionParameterType } from "#src/services/getMathExpressionParameterType";
+import { matchMathExpressionSignature } from "#src/services/matchMathExpressionSignature";
 import { MathExpressionConstantMap } from "#src/services/MathExpressionConstantMap";
 import { MathExpressionFunctionMap } from "#src/services/MathExpressionFunctionMap";
 import { toNumber } from "#src/services/toNumber";
@@ -17,7 +20,12 @@ interface Compiled {
   evaluate: Evaluator;
   isConstant: boolean;
 }
-type Compute = (...values: number[]) => Result;
+// An argument is a number, or the numbers of a list, so its evaluator yields either, or null where the argument is an error
+interface CompiledArgument {
+  evaluate: (values: readonly number[], locals: Result[]) => MathExpressionValue | null;
+  isConstant: boolean;
+}
+type Compute = (...values: MathExpressionValue[]) => Result;
 type Evaluator = (values: readonly number[], locals: Result[]) => Result;
 // An evaluator yields null where mathjs would throw, which is an error that the whole formula takes, and NaN where mathjs
 // Yields NaN as a value, which a comparison or a condition reads as mathjs does. The public function makes an error NaN
@@ -26,8 +34,9 @@ type Result = null | number;
 const NO_VALUES: readonly number[] = [];
 const NO_LOCALS: Result[] = [];
 
+// An operator's function takes one signature, the first of its table entry, which a call matches by its arguments
 const getCompute = (name: string): Compute =>
-  (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.compute : undefined) ??
+  (Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name]?.[0]?.compute : undefined) ??
   (() => null);
 
 // A percentage expression is a percentage, or a sum or difference of percentage expressions
@@ -184,10 +193,37 @@ const compileConditional = (
   };
 };
 
-// A call of one or two arguments applies its function directly, with no array per row, and a longer call gathers its values
+// A list argument yields the numbers of its elements, and any element that is an error makes the list one
+const compileList = (elements: MathExpressionNode[], context: CompileContext): CompiledArgument => {
+  const compiledElements = elements.map((element) => compileNode(element, context));
+  return {
+    evaluate: (values, locals) => {
+      const numbers: number[] = [];
+      for (const element of compiledElements) {
+        const elementValue = element.evaluate(values, locals);
+        if (elementValue === null) return null;
+        numbers.push(elementValue);
+      }
+      return numbers;
+    },
+    isConstant: compiledElements.every((element) => element.isConstant),
+  };
+};
+
+const compileArgument = (node: MathExpressionNode, context: CompileContext): CompiledArgument => {
+  if (node.type === MathExpressionNodeType.List) return compileList(node.elements, context);
+
+  const compiled = compileNode(node, context);
+  return { evaluate: compiled.evaluate, isConstant: compiled.isConstant };
+};
+
+// A call of one or two arguments applies its function directly, with no array per row, and a longer call gathers its values.
+// The signature a call takes is the one its argument kinds match, the same one the parser checked it against
 const compileCall = (name: string, argumentNodes: MathExpressionNode[], context: CompileContext): Compiled => {
-  const compute = getCompute(name);
-  const compiledArguments = argumentNodes.map((argument) => compileNode(argument, context));
+  const signatures = Object.hasOwn(MathExpressionFunctionMap, name) ? MathExpressionFunctionMap[name] : undefined;
+  const parameterTypes = argumentNodes.map((argument) => getMathExpressionParameterType(argument));
+  const compute = matchMathExpressionSignature(signatures ?? [], parameterTypes)?.compute ?? (() => null);
+  const compiledArguments = argumentNodes.map((argument) => compileArgument(argument, context));
   const isConstant = compiledArguments.every((argument) => argument.isConstant);
   const [first, second] = compiledArguments;
   if (compiledArguments.length === 1 && first !== undefined)
@@ -212,7 +248,7 @@ const compileCall = (name: string, argumentNodes: MathExpressionNode[], context:
 
   return {
     evaluate: (values, locals) => {
-      const argumentValues: number[] = [];
+      const argumentValues: MathExpressionValue[] = [];
       for (const argument of compiledArguments) {
         const argumentValue = argument.evaluate(values, locals);
         if (argumentValue === null) return null;
@@ -248,6 +284,9 @@ const compileUnfolded = (node: MathExpressionNode, context: CompileContext): Com
       return compileConditional(node.condition, node.whenTrue, node.whenFalse, context);
     case MathExpressionNodeType.Group:
       return compileNode(node.operand, context);
+    case MathExpressionNodeType.List:
+      // A list is only a call's argument, which compileCall reads as numbers, and the parser refuses it anywhere else
+      return { evaluate: () => null, isConstant: false };
     case MathExpressionNodeType.Logical:
       return compileLogical(node.operator, node.left, node.right, context);
     case MathExpressionNodeType.Name:

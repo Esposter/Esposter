@@ -45,6 +45,13 @@ describe(parseMathExpression, () => {
     expect(getParseError("((1 + 2) * (3))")).toBeNull();
   });
 
+  // eslint-disable-next-line vitest/prefer-lowercase-title -- the title is the coordinator's name for this behaviour, kept verbatim
+  test("A list inside a list is refused", () => {
+    expect.hasAssertions();
+
+    expect(getParseError("det([[1, 2], [3, 4]])")).toMatchInlineSnapshot(`"Value expected (char 6)"`);
+  });
+
   test("a non-breaking space between operands is whitespace, as a space is", () => {
     expect.hasAssertions();
 

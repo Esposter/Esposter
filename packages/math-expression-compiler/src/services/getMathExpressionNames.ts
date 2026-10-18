@@ -8,8 +8,8 @@ import { exhaustiveGuard } from "@esposter/shared";
 // The bitwise operations whose right side is skipped when the left side decides them, as the compiler skips it
 const LAZY_BINARY_NAMES: ReadonlySet<string> = new Set(["bitAnd", "bitOr"]);
 
-// Walks a node in the order the formula evaluates it. A name is free where it is read before every path to that read
-// has assigned it, so bound holds the names assigned on every such path and free collects the rest in reading order
+// Walks a node in the order the formula evaluates it. Bound holds the names every path to this point has assigned,
+// And free collects the names read before one of those paths assigned them, in reading order
 const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string>): void => {
   switch (node.type) {
     case MathExpressionNodeType.Assignment:
@@ -25,6 +25,7 @@ const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string
     case MathExpressionNodeType.Call:
     case MathExpressionNodeType.Comparison:
     case MathExpressionNodeType.Group:
+    case MathExpressionNodeType.List:
     case MathExpressionNodeType.Number:
     case MathExpressionNodeType.Percentage:
     case MathExpressionNodeType.Unary:
@@ -36,9 +37,7 @@ const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set<string
       const whenFalseBound = new Set(bound);
       walkNode(node.whenTrue, whenTrueBound, free);
       walkNode(node.whenFalse, whenFalseBound, free);
-      for (const name of whenTrueBound) {
-        if (whenFalseBound.has(name)) bound.add(name);
-      }
+      for (const name of whenTrueBound) if (whenFalseBound.has(name)) bound.add(name);
       return;
     }
     case MathExpressionNodeType.Logical:

@@ -11,6 +11,7 @@ export type MathExpressionNode =
       whenFalse: MathExpressionNode;
       whenTrue: MathExpressionNode;
     }
+  | { elements: MathExpressionNode[]; type: MathExpressionNodeType.List }
   | { left: MathExpressionNode; name: string; right: MathExpressionNode; type: MathExpressionNodeType.Binary }
   | {
       left: MathExpressionNode;

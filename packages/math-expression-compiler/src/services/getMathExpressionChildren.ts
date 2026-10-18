@@ -20,6 +20,8 @@ export const getMathExpressionChildren = (node: MathExpressionNode): MathExpress
     case MathExpressionNodeType.Percentage:
     case MathExpressionNodeType.Unary:
       return [node.operand];
+    case MathExpressionNodeType.List:
+      return node.elements;
     case MathExpressionNodeType.Name:
     case MathExpressionNodeType.Number:
       return [];

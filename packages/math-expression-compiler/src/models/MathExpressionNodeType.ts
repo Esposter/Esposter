@@ -6,6 +6,7 @@ export enum MathExpressionNodeType {
   Comparison = "comparison",
   Conditional = "conditional",
   Group = "group",
+  List = "list",
   Logical = "logical",
   Name = "name",
   Number = "number",

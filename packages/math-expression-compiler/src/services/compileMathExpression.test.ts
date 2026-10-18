@@ -182,6 +182,13 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
   });
 
+  // eslint-disable-next-line vitest/prefer-lowercase-title -- the title is the coordinator's name for this behaviour, kept verbatim
+  test("A function reads two lists", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("dot([1, 2], [3, 4])")).toBe(11);
+  });
+
   test("a factorial is the product mathjs computes, to the last bit", () => {
     expect.hasAssertions();
 
