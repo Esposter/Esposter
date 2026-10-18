@@ -69,6 +69,7 @@ import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
+import { createTimelessDreamEternalStovePassiveModule } from "#src/services/weapon/passives/createTimelessDreamEternalStovePassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
@@ -302,4 +303,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4131533283": createFlowerFeatherSongPassiveModule,
   // Protector's Virtue (Primordial Jade Cutter)
   "1901402467": createProtectorsVirtuePassiveModule,
+  // Timeless Dream: Eternal Stove (Engulfing Lightning)
+  "2229628147": createTimelessDreamEternalStovePassiveModule,
 };
