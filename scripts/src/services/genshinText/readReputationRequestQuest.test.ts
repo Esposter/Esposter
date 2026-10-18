@@ -16,6 +16,7 @@ describe(readReputationRequestQuest, () => {
           id: 900101,
         },
         mainQuest: { chapterId: 0, descTextMapHash: 2, id: 9001, titleTextMapHash: 1 },
+        rewards: [],
         subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
       }),
     ).toStrictEqual({
@@ -23,6 +24,7 @@ describe(readReputationRequestQuest, () => {
       id: "900101",
       kind: QuestKind.World,
       offerTalkIds: [],
+      rewards: [],
       steps: [
         { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
       ],

@@ -9,9 +9,11 @@ import {
   BAG_TAB_BY_TABLE_TYPE,
   MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/items/constants";
+import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import {
+  CHARACTER_EXP_ITEM_ID,
   craftingRecipeSchema,
   EnemyDropFamilyDropTableMap,
   ForgeRecipeKind,
@@ -35,10 +37,12 @@ const isAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields, every gadget of the gadgets slice, every offering the Frostbearing
-// Tree's levels take or pay, every item a Reputation level pays, and every item the Mondstadt grocery sells, each read
-// From the game's material table with its name's text id, which `genshin:text names` writes into the name-text chunks.
+// Tree's levels take or pay, every item a Reputation level pays, every item the Mondstadt grocery sells, and every item a
+// Carried quest's finish pays, each read from the game's material table with its name's text id, which `genshin:text names`
+// Writes into the name-text chunks.
 // The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
-// By the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table. The
+// By the Adventure Rank, and Character EXP, which no grant pays yet, is no item either, so none is written. A weapon a
+// Recipe yields is no item either, it is in the weapon table. The
 // Recipes and the levels are the records their steps published, read from the dev account. An item the table lacks is
 // An error, and so is an item the table gives no type: the publish names every such item at once, so a typeless item a
 // Source adds fails the publish rather than showing in no tab. Returns the record the materials publish under
@@ -64,6 +68,9 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .array(z.object({ itemId: z.int() }))
     .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
+  const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
+    rewards.map(({ itemId }) => itemId),
+  );
   const itemIds = [
     ...new Set([
       ...Object.values(EnemyDropFamilyDropTableMap).flatMap(({ materials }) => materials.map(({ itemId }) => itemId)),
@@ -78,9 +85,10 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
       ...materialRows.filter((row) => isAddItemConsumable(row)).map(({ id }) => id),
+      ...questRewardItemIds,
     ]),
   ]
-    .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId))
+    .filter((itemId) => !WALLET_ITEM_IDS.includes(itemId) && itemId !== CHARACTER_EXP_ITEM_ID)
     .toSorted((firstId, secondId) => firstId - secondId);
   const typelessItemIds: number[] = [];
   const items = itemIds.flatMap((itemId) => {
