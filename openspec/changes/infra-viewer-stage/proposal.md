@@ -21,7 +21,7 @@ When a viewer is on file, the character's lines show on the model and the model'
 
 ## Waiting on
 
-None.
+The reader's install for tasks 1.1 and 1.2 in `tasks.md`: a Live2DViewerEX run with a model loaded, which decides whether the model lip-syncs from a WAV path and whether a tap reaches the synthesizer. The rest ships and is tested without it.
 
 ## Impact
 

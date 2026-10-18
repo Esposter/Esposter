@@ -46,7 +46,7 @@ The persona voice SHALL stop the sound and clear the bubble on the viewer when a
 
 ### Requirement: Attention and the end of a turn move the character when the reader has mapped them
 
-The persona SHALL play the motion mapped to attention wanted on the model, and SHALL clear the expression when a turn ends, and SHALL send no motion for a moment with no mapping.
+The persona SHALL play the motion mapped to attention wanted on the model, SHALL clear the expression when a turn ends and play the motion mapped to the end of a turn if the reader mapped one, and SHALL send no motion for a moment with no mapping.
 
 #### Scenario: Attention wanted turns the character
 
@@ -84,7 +84,7 @@ The viewer's tap SHALL replay the last line the character spoke, without synthes
 
 ### Requirement: The viewer verb sets up the viewer and teardown removes it
 
-The reader SHALL set the viewer's address and motion map with one verb, see one bubble proving the connection, and remove that setup with teardown.
+The reader SHALL set the viewer's address and model with one verb, see one bubble proving the connection, map motions to moments with the same verb, and remove that setup with teardown.
 
 #### Scenario: The viewer verb proves the connection with one bubble
 

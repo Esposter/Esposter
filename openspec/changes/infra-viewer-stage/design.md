@@ -25,7 +25,7 @@ sequenceDiagram
     participant Hooks as Notification and Stop hooks
 
     Display->>Server: speak — the piece's spoken lines
-    Server->>Viewer: connect once per reading, the address on file
+    Server->>Viewer: connect at the reading's start, unless the connection an earlier reading left open still is
     alt the viewer answers
         loop each line, the next synthesized while this one plays
             Server->>Viewer: bubble — the line, for the clip's length
@@ -44,20 +44,29 @@ sequenceDiagram
 
 **Lip sync is the viewer's, and it is the first probe.** The viewer drives a model's mouth from the sound it plays when the model is set to sync from audio; whether that follows a sound sent over the socket, and whether the sound may be a WAV path rather than the compressed formats its documentation recommends for the inline form, are two facts one message answers on the person's install before anything is written. If the path form wants a compressed clip, the fallback is the stock player for the sound and the viewer for the bubble alone — a face with words and no mouth — because the plugin's runtime carries a decoder and no encoder, and adding one for a codec is not worth the bytes until the probe says it is.
 
-**Reactions.** The tool fires a notification hook when the session wants the person — a permission to grant, a question, an idle prompt — and a stop hook when a turn ends. Each becomes one ExAPI message: a motion for attention wanted, an expression cleared for a turn over. Which motion is not the plugin's to know — the models are fan-made and each names its groups its own way — so the map is the person's, written by the verb, and a moment with no mapping sends nothing. The hooks are in the plugin's hook manifest, behind the same file gate as the sink, so a machine with no viewer runs a node start for nothing on neither.
+**Reactions.** The tool fires a notification hook when the session wants the person — a permission to grant, a question, an idle prompt — and a stop hook when a turn ends. Each hook names its moment on the command line, and the script sends what that moment maps to: for attention wanted, the mapped motion; for a turn's end, the expression cleared, and the motion mapped to the end of a turn if the person mapped one. Which motion is not the plugin's to know — the models are fan-made and each names its groups its own way — so the map is the person's, written by the verb, and a moment with no mapping sends no motion. The hooks are in the plugin's hook manifest and check the same file the sink does, so a machine with no viewer pays one node start per hook and sends nothing.
 
 **A tap.** The viewer pushes a tap on a hit area to whoever listens, and the synthesizer, which holds the connection, is the listener. A tap cannot ask the model anything — that is a turn, and a turn is the terminal's — but it can play the line the character said last, and that is enough of an answer to a poke. Nothing is synthesized again for it, and nothing accumulates either: the stock player deletes each line's temporary WAV the moment the player answers for it, which the sink cannot do, since the viewer answers the message rather than the playback — so the sink keeps the clip it last sent and deletes it when the next line's clip takes its place, or when the synthesizer exits on its idle timeout. One WAV of a reading is on disk at a time, and it is the one a tap sends again.
 
-**The verb.** `viewer <address>` writes the address and the model's id to a state file, sends one bubble in the interface language to prove it, and reports; `viewer` with no argument reports what is on file; `viewer motions <moment> <group:motion>` fills the map one moment at a time. `teardown` removes the file with the rest.
+**The verb.** `viewer <address> [model]` writes the address and the model's index (0 when none is given) to a state file, sends one bubble in the interface language to prove it, and reports; `viewer` with no argument reports what is on file; `viewer motions <moment> [group:motion]` maps a motion to one moment, or unmaps it when no motion is given. `teardown` removes the file with the rest.
 
 ```text
 packages/genshin-persona/
   scripts/
-    react.ts                       ← the notification and stop hooks: one ExAPI message each, behind the file gate
+    react.ts                              ← the notification and stop hooks: the moment's motion or clear, sent over one connection
+    voice.ts                              ← the synthesizer: the opener at each reading, the reading player beside the stock player
   src/services/
-    connectViewer.ts               ← the WebSocket to ExAPI, one per reading, the answers matched by message id
-    createViewerPlayer.ts          ← the sink with the player's own interface: a clip in, the pacing by its length
-    readViewerConfiguration.ts     ← the gate: the address, the model id and the motion map, or nothing
+    connectViewer.ts                      ← the WebSocket to ExAPI, the registration waited on, the answers matched by message id
+    createViewerOpener.ts                 ← the connection held between readings, and nothing while no viewer is on file
+    createViewerPlayer.ts                 ← the sink: a clip shown and sounded, paced by its length, the last clip kept for a tap
+    createReadingPlayer.ts                ← a reading on the viewer while it is open, each clip after a drop on the stock player
+    getViewerReaction.ts                  ← what a moment sends: the mapped motion, and the expression cleared at a turn's end
+    readViewerConfiguration.ts            ← the gate: the address, the model index and the motion map, or nothing
+    writeViewerConfiguration.ts           ← the file the verb writes
+    setViewer.ts                          ← the verb's connection: one bubble to prove it, then the file
+    checkIsViewerAddress.ts               ← a ws or wss address, else no viewer
+    getViewerFrameColor.ts                ← the character's colour as the bubble's frame
+    cli/commands/viewerCommand.ts         ← the `viewer` verb
 ```
 
 ## What this does not propose
@@ -69,17 +78,22 @@ packages/genshin-persona/
 
 ## Key files
 
-| File                                                         | Role                                                                                        |
-| :----------------------------------------------------------- | :------------------------------------------------------------------------------------------ |
-| `packages/genshin-persona/scripts/voice.ts`                  | The resident synthesizer: the per-line loop the viewer sink joins, and the supersede signal |
-| `packages/genshin-persona/src/services/createAudioPlayer.ts` | The stock player, which stays the fallback; the interface the viewer sink implements        |
-| `packages/genshin-persona/src/services/cli/commands/`        | The verbs; `viewer` is added here and `teardown` extended                                   |
-| `packages/genshin-persona/hooks/hooks.json`                  | The plugin's hooks; the notification and stop hooks are registered here                     |
-| `packages/genshin-persona/src/services/constants.ts`         | The state directory's paths; the viewer's file is one more                                  |
+| File                                                           | Role                                                                                                   |
+| :------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/genshin-persona/scripts/voice.ts`                    | The resident synthesizer: the per-line loop the viewer sink joins, and the supersede signal            |
+| `packages/genshin-persona/src/services/createAudioPlayer.ts`   | The stock player, which stays the fallback; it takes the caption the viewer shows and ignores it       |
+| `packages/genshin-persona/src/services/createReadingPlayer.ts` | The reading's player where a viewer is on file: the viewer while open, the stock player after a drop   |
+| `packages/genshin-persona/src/services/createViewerPlayer.ts`  | The sink on the model: a bubble and a sound per clip, paced by the clip, the last clip kept for a tap  |
+| `packages/genshin-persona/scripts/react.ts`                    | The notification and stop hooks: the moment's motion or the expression clear, sent over one connection |
+| `packages/genshin-persona/src/services/cli/commands/`          | The verbs; `viewer` is added here and `teardown` extended                                              |
+| `packages/genshin-persona/hooks/hooks.json`                    | The plugin's hooks; the notification and stop hooks are registered here                                |
+| `packages/genshin-persona/src/services/constants.ts`           | The state directory's paths; the viewer's file is one more                                             |
 
 ## Notes
 
-- ExAPI has been stable for years and is versioned by message number; the four messages this uses are among its oldest, so the sink is not a surface a viewer update rewrites.
+- ExAPI names each message by number, and the sink uses the seven the API list documents with their parameters: register, the model event for a tap, bubble, motion, expression clear, sound and sound stop. A viewer update that renumbers one of them is seen first on the probe in task 1.1, not in a reply.
+- The API list gives no WebSocket address or port, so the verb takes the address the person's viewer shows, and nothing in the plugin assumes one.
+- Two parts of the first probe are still open, so the sink is built and tested but not yet seen on a person's install: whether the model lip-syncs from a WAV path (the fallback to the stock player for the sound is not built), and whether a tap reaches the synthesizer. The bubble that clears a superseded line is sent with a duration of zero, which the probe confirms clears it.
 - The viewer runs on Windows and on phones, not on every desktop the plugin does; the sink is loopback JSON, so a viewer elsewhere that speaks the same messages is the same sink, and a machine with none is the machine today.
 - The interface language decides the bubble's text as it decides the reply's, and the bubble's colours are the character's own from the nameplate's palette — the one place outside the terminal the element colour shows.
 
