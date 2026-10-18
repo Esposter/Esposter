@@ -5,4 +5,4 @@
 
 ## 2. The record
 
-- [ ] 2.1 Rewrite the code viewer's design as built, with the Upstream table over every `vue-codemirror` issue, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.
+- [x] 2.1 Rewrite the code viewer's design as built, with the Upstream table over every `vue-codemirror` issue, and archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/workspace/staleNames.test.ts src/services/openspec` passes.

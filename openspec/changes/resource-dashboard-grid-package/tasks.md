@@ -6,7 +6,7 @@
 ## 2. The features the audit set aside
 
 - [ ] 2.1 Resize from every edge and corner. Verify: tests titled "#38 …" and "#51 …".
-- [ ] 2.2 Padding around the grid apart from the margin between items. Verify: tests titled "#17 …" and "#62 …".
+- [ ] 2.2 Outer padding as its own option, separate from the gap between tiles. Verify: tests titled "#17 …" and "#62 …".
 - [ ] 2.3 Horizontal compaction and no compaction. Verify: a test titled "#36 …".
 - [ ] 2.4 Items sized to their content, in whole rows. Verify: tests titled "#11 …", "#42 …" and "#55 …".
 - [ ] 2.5 Swap on drop as a collision mode beside push and prevent. Verify: a test titled "#66 …".
