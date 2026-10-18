@@ -28,6 +28,9 @@ export interface GcgCardModule {
   // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
   isSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
+  // The most usages a card that can stack holds: placed again, it adds its starting usages up to this many, rather than
+  // Refreshing to them
+  maxUsages?: number;
   modifyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   // The damage the active character takes, as a number, and the element or kind of it, which a card reads when it reduces one kind alone
   modifyDamageReceived?: (
@@ -38,9 +41,16 @@ export interface GcgCardModule {
   ) => number;
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
-  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and the
-  // Skill's user is named by the hits it dealt, not by the context
-  onAnySkillUsed?: (context: GcgEffectContext, skill: GcgSkill, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]) => void;
+  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and
+  // userSideIndex is the side of the character who used the skill
+  onAnySkillUsed?: (
+    context: GcgEffectContext & { userSideIndex: number },
+    skill: GcgSkill,
+    zoneCard: GcgZoneCard,
+    dealt: GcgDealtDamage[],
+  ) => void;
+  // A side is handed the choice of its action, for a card on its field, before it chooses: the damage the card deals, if any
+  onBeforeAction?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   // A card is played by this card's side, for a card on that side's field: the played card is on the field and its own play has
   // resolved, so a card that draws on the play reads the field as it now stands
   onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
@@ -50,6 +60,8 @@ export interface GcgCardModule {
   // Attached to, for the hooks that act on it
   onOpposingDefeated?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onRollPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
+  // A side declares its round's end, for a card on its field, before the declaration counts: the damage the card deals, if any
+  onRoundEndDeclared?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   // The hits the skill landed, its own damage and its standby piercing alike, with the reactions they triggered
   onSkillUsed?: (
     context: GcgEffectContext,
@@ -57,6 +69,8 @@ export interface GcgCardModule {
     zoneCard: GcgZoneCard,
     dealt: GcgDealtDamage[],
   ) => GcgDamage | void;
+  // A summon leaves its side's field, for a support on that field: a summon that is discarded or spent counts, once for each
+  onSummonDisappears?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   onSwirl?: (context: GcgEffectContext, zoneCard: GcgZoneCard, element: Element) => void;
   onSwitch?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   permanentAura?: Element;

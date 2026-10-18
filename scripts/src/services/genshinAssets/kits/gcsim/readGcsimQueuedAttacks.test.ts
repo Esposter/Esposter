@@ -4,6 +4,20 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
 
+const createChargeSource = (callerArguments: string[]) => [
+  "package neuvillette",
+  "",
+  "const shortChargeHitmark = 27",
+  "",
+  "func (c *char) ChargeAttack(p map[string]int) {",
+  ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
+  "}",
+  "",
+  "func (c *char) chargeAttackShort(windup int) {",
+  "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
+  "}",
+];
+
 describe(readGcsimQueuedAttacks, () => {
   test("reads a queue call's attack by the name it passes and its delay from the constants, an inline literal's by its line", () => {
     expect.hasAssertions();
@@ -249,19 +263,6 @@ describe(readGcsimQueuedAttacks, () => {
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
     expect.hasAssertions();
 
-    const source = (callerArguments: string[]) => [
-      "package neuvillette",
-      "",
-      "const shortChargeHitmark = 27",
-      "",
-      "func (c *char) ChargeAttack(p map[string]int) {",
-      ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
-      "}",
-      "",
-      "func (c *char) chargeAttackShort(windup int) {",
-      "\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)",
-      "}",
-    ];
     const branchSources = [
       {
         path: "charge.go",
@@ -285,7 +286,7 @@ describe(readGcsimQueuedAttacks, () => {
         ].join("\n"),
       },
     ];
-    const valuesSources = [{ path: "charge.go", source: source(["0", "14"]).join("\n") }];
+    const valuesSources = [{ path: "charge.go", source: createChargeSource(["0", "14"]).join("\n") }];
 
     expect(
       readGcsimQueuedAttacks(branchSources, evaluateGoConstants(branchSources)).map(({ delay }) => delay),
@@ -636,6 +637,7 @@ describe(readGcsimQueuedAttacks, () => {
       readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
     ).toStrictEqual([[8, 93]]);
   });
+
   test("adds a QueueCharTask closure's delay written in a parameter, from its caller's argument", () => {
     expect.hasAssertions();
 
@@ -661,6 +663,45 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([30]);
+  });
+
+  test("reads both indexes of a named array a delay takes from a local clamped to 0 and 1 from the action's hold parameter", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package chiori",
+          "",
+          "var (",
+          "\tskillHitmarks = []int{21, 37}",
+          ")",
+          "",
+          "func (c *char) Skill(p map[string]int) {",
+          '\thold := min(max(p["hold"], 0), 1)',
+          "\tc.handleSkill(hold)",
+          "}",
+          "",
+          "func (c *char) handleSkill(hold int) {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tc.Core.QueueAttackWithSnap(ai, snap, combat.NewBoxHitOnTarget(c.Core.Combat.Player(), nil, 5.5, 3.5), 0)",
+          "\t}, skillHitmarks[hold])",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, holdValue, line }) => [
+        line,
+        delay,
+        holdValue,
+      ]),
+    ).toStrictEqual([
+      [14, 21, 0],
+      [14, 37, 1],
+    ]);
   });
 
   test("adds the delay of each Tasks.Add closure a method is called from to the queue calls in that method, once per call", () => {

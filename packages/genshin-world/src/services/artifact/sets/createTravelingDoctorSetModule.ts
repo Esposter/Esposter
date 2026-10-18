@@ -3,6 +3,7 @@ import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 // Traveling Doctor's four-piece bonus, the share of its wearer's Max HP in the set table's row: a burst its wearer uses
@@ -11,13 +12,15 @@ export const createTravelingDoctorSetModule = ({ params }: ArtifactSetBonus): Ar
   const healedHealthShare = takeOne(params, 0);
   return {
     onKitEvent: (event, context, combatant) => {
-      if (event.kind === KitEventKind.BurstUsed && event.characterId === combatant.characterId)
-        changeKitMemberHealth(
-          context,
+      if (event.kind === KitEventKind.BurstUsed && event.characterId === combatant.characterId) {
+        const maxHealth = getKitMaxHealth(
           combatant,
-          combatant.characterId,
-          healedHealthShare * combatant.attributes.maxHealth,
+          context.kitEffectState.effects,
+          context.party,
+          context.characterIdCombatantMap,
         );
+        changeKitMemberHealth(context, combatant, combatant.characterId, healedHealthShare * maxHealth);
+      }
     },
   };
 };

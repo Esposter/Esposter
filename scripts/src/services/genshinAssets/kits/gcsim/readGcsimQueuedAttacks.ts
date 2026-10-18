@@ -3,7 +3,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
-import type { ConstantLoop } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import type { ConstantLoop, GoScope } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -28,7 +28,6 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
   ["QueueAttack", 1],
   ["QueueAttackWithSnap", 2],
 ]);
-type GoScope = ReturnType<typeof createGoScope>;
 // The delay a call of a method adds to the queue calls it runs, from the closures it is in, and the line of the
 // Innermost one's delay. A call outside every closure adds none, and has no line
 interface CallTiming {
@@ -120,28 +119,18 @@ const readIterations = (loops: readonly ConstantLoop[], position: number): Map<s
       [new Map()],
     );
 
-// The values a method's parameters take at one call of it, each a number its call's argument gives at the call's position
-const readCallParameters = (
-  tokens: readonly GoToken[],
-  scope: GoScope,
-  site: number,
-  parameters: readonly string[],
-): Map<string, number> => {
-  const call = parseGoExpression(tokens, site).expression;
-  if (call.kind !== GoExpressionKind.Call) return new Map();
-  return new Map(
-    parameters.flatMap((name, index) => {
-      const argumentStart = call.parameterStarts[index];
-      const value =
-        argumentStart === undefined
-          ? undefined
-          : evaluateGoNumber(parseGoExpression(tokens, argumentStart).expression, (inner) =>
-              scope.resolveName(inner, site),
-            );
-      return value === undefined ? [] : [[name, value] as const];
-    }),
+// The ways a method's parameters are passed at one call of it: each a number its call's argument gives at the call's
+// Position, a clamped local's each of its values, so the call yields one way per combination of those
+const readCallParameters = (scope: GoScope, site: number, parameters: readonly string[]): Map<string, number>[] =>
+  parameters.reduce<Map<string, number>[]>(
+    (iterations, name, index) => {
+      const values = scope.readArgumentValues(site, index);
+      return values === undefined
+        ? iterations
+        : iterations.flatMap((iteration) => values.map((value) => new Map(iteration).set(name, value)));
+    },
+    [new Map()],
   );
-};
 
 // The delay a method's call gives when it is the function a `Tasks.Add` runs, `c.Core.Tasks.Add(c.burstTick(), 137)`, read
 // From its receiver through the call to the delay after its comma, else undefined
@@ -210,11 +199,10 @@ const readCallVariants = (
   parameters: readonly string[],
 ): CallVariant[] => {
   const variants = new Map<string, CallVariant>();
-  for (const site of sites) {
-    const callParameters = readCallParameters(tokens, scope, site, parameters);
-    for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site))
-      variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
-  }
+  for (const site of sites)
+    for (const callParameters of readCallParameters(scope, site, parameters))
+      for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site))
+        variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
   return [...variants.values()];
 };
 
@@ -258,9 +246,7 @@ export const readGcsimQueuedAttacks = (
       const enclosingTasks = taskClosures.filter(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       );
-      const taskDelayExpressions = enclosingTasks.map(
-        ({ delayStart }) => parseGoExpression(tokens, delayStart).expression,
-      );
+      const taskDelayExpressions = enclosingTasks.map((task) => parseGoExpression(tokens, task.delayStart).expression);
       const [firstTask] = enclosingTasks;
       const parameterIterations = scope.readParameterIterations(position);
       // A method's queue call runs once per call of the method, at the delay of the closures that call is in and with the
@@ -288,6 +274,7 @@ export const readGcsimQueuedAttacks = (
             (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
             0,
           );
+          const holdValue = iteration.get("hold");
           queuedAttacks.push({
             attackLine,
             attackName,
@@ -297,6 +284,7 @@ export const readGcsimQueuedAttacks = (
             hitbox,
             ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
             line: token.line,
+            ...(holdValue !== undefined && { holdValue }),
           });
         }
     }

@@ -13,17 +13,23 @@ import type { KitPlunge } from "#src/models/kit/record/KitPlunge";
 export interface KitBehaviour extends Partial<
   Pick<
     Kit,
+    | "checkCanStartAttack"
     | "getChargedAttackStaminaMultiplier"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"
+    | "getPartyDendroCoreDamageBonus"
+    | "getPartyReactionBonus"
     | "getPartyStrikeBonus"
     | "getPassiveBonuses"
-    | "getReactionDamageBonus"
     | "getSkillChargeBonus"
     | "getSkillCooldownMultiplier"
+    | "getStrikeAdditiveBaseDamageBonus"
+    | "isSkillCooldownWaived"
     | "getStrikeCriticalDamageBonus"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
+    | "getStrikeDefenceIgnored"
+    | "jumpsSkillHoldToTop"
     | "keepsNormalAttackCombo"
     | "onKitEvent"
     | "onSprint"
@@ -39,6 +45,7 @@ export interface KitBehaviour extends Partial<
   normalAttacks?: KitActionBehaviour[];
   plungeCollision?: KitHitBehaviour;
   plunges?: Partial<Record<KitPlunge, KitActionBehaviour>>;
+  plungeVariants?: KitVariantBehaviour[];
   skill?: KitActionBehaviour;
   skillChain?: KitActionBehaviour[];
   skillHolds?: KitHoldBehaviour[];

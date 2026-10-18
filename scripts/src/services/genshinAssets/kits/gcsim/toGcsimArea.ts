@@ -11,9 +11,9 @@ import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/cr
 
 // A gcsim hitbox as the area a kit prices it at, by the shared rules and the cause each carries. A box on the body is
 // The circle to its far corner, and a circle on the body is its offset plus its radius (a fan takes its angle and that
-// Reach). A circle on the target is the targeting area's radius plus its offset plus its radius, and a box on the target
-// Is the circle round the body as long as the box. Only the forward offset counts: the record has no offset field, so
-// A sideways one is ignored, as a body circle's always was. A hitbox on any other centre has no area.
+// Reach). A circle on the target is the targeting area's radius plus its offset plus its radius, and a box on the
+// Target is the circle round the body as long as the box. Only the forward offset counts: the record has no offset
+// Field, so a sideways one is ignored, as a body circle's always was. A hitbox on any other centre has no area.
 export const toGcsimArea = (
   { box, center, fanAngle, offset, radius, shape }: GcsimHitbox,
   targetingArea: AttackArea,

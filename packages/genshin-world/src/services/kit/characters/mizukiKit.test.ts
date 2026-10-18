@@ -1,9 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createMizukiKitBehaviour, MIZUKI_CHARACTER_ID } from "#src/services/kit/characters/mizukiKit";
+import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -21,6 +26,15 @@ const createMizukiCombatant = (): Combatant => ({
   kit: MIZUKI_KIT,
   level: 90,
 });
+
+// The summon her skill's press casts, which carries the clouds that have not yet landed or been cancelled
+const readCloudSummon = ({ kitEffectState }: KitContext): KitSummon | undefined => {
+  const summon = kitEffectState.effects.find((effect) => effect.kind === "summon");
+  return summon?.kind === "summon" ? summon : undefined;
+};
+
+const readCloudFrames = (context: KitContext): number[] =>
+  (readCloudSummon(context)?.hits ?? []).map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
 
 describe(createMizukiKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
@@ -80,6 +94,25 @@ describe(createMizukiKitBehaviour, () => {
     );
   });
 
+  test("the skill's press ends the state only while the Dreamdrifter lasts", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(MIZUKI_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(true);
+    stepKitSeconds(context, 5);
+    expect(MIZUKI_KIT.elementalSkill.checkIsStateEndingPress?.(context)).toBe(false);
+  });
+
+  test("the Dreamdrifter state lets her start no attack while it lasts, and any attack once it ends", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(true);
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(false);
+    stepKitSeconds(context, 5);
+    expect(MIZUKI_KIT.checkCanStartAttack?.(context)).toBe(true);
+  });
+
   test("a press in the Dreamdrifter state cancels it", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createMizukiCombatant());
@@ -88,5 +121,49 @@ describe(createMizukiKitBehaviour, () => {
     expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
       false,
     );
+  });
+
+  test("the skill's press starts seven clouds, the first landing 48 frames after it and each 45 frames after that", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(readCloudFrames(context)).toStrictEqual([48, 93, 138, 183, 228, 273, 318]);
+  });
+
+  test("each cloud is dealt as an elemental skill", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(readCloudSummon(context)?.attackTag).toBe(AttackTag.ElementalSkill);
+  });
+
+  test("a press in the Dreamdrifter state cancels the clouds not yet launched, and the one in flight still lands", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMizukiCombatant());
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 0.5);
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    expect(readCloudFrames(context)).toStrictEqual([48]);
+  });
+
+  test("swapping Mizuki out ends the Dreamdrifter state, and the clouds not yet launched with it", () => {
+    expect.hasAssertions();
+    const combatant = createMizukiCombatant();
+    const context = createKitTestContext(combatant);
+    MIZUKI_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 0.5);
+    MIZUKI_KIT.onKitEvent?.(
+      {
+        characterId: YOIMIYA_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: MIZUKI_CHARACTER_ID,
+      },
+      context,
+      combatant,
+    );
+    expect(checkIsKitStatusActive(context.kitEffectState.effects, MIZUKI_CHARACTER_ID, DREAMDRIFTER_STATUS_ID)).toBe(
+      false,
+    );
+    expect(readCloudFrames(context)).toStrictEqual([48]);
   });
 });

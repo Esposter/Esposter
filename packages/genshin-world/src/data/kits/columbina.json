@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 } },
   "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 58 },
@@ -21,7 +20,6 @@
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 12532 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" }
 }

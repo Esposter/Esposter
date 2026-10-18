@@ -51,6 +51,7 @@ describe(getGcsimNamedHitCandidates, () => {
     filePaths: [],
     folder: "amber",
     queuedAttacks: [],
+    talentArrayMap: new Map(),
     talentFile: "amber.go",
     talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
     holdCooldowns: [],
@@ -126,6 +127,40 @@ describe(getGcsimNamedHitCandidates, () => {
       { provenance: { file: "internal/characters/amber/burst.go", line: 9, source: "Gcsim" }, value: "LunarCharged" },
     ]);
     expect(readLunarReaction("attacks.AttackTagElementalBurst")).toBeUndefined();
+  });
+
+  test("joins a named hit's multiplier to its variable's array by value, where no talent row names it", () => {
+    expect.hasAssertions();
+
+    const arrayGcsim: GcsimCharacter = {
+      ...gcsim,
+      attacks: gcsim.attacks.map((attack) => ({ ...attack, talentVariable: "kick" })),
+      config: { ...gcsim.config, talentVariables: [] },
+      talentArrayMap: new Map([["kick", { line: 7, rows: [[1.5, 2]] }]]),
+      talentParameterMap: new Map(),
+    };
+    const arrayTables: KitTables = {
+      ...tables,
+      talentMultiplierMap: {
+        [BURST_PROUD_SKILL_GROUP_ID]: [
+          { level: 1, paramList: [0.5, 1.5] },
+          { level: 2, paramList: [0.6, 2] },
+        ],
+      },
+    };
+    const joined = getNamedHitKitCandidates(
+      new Map([["hits.kick.0.multiplier", { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID }]]),
+      getGcsimNamedHitCandidates(arrayGcsim, arrayTables),
+    );
+
+    expect(joined.get("hits.kick.0.multiplier")?.map(({ value }) => value)).toStrictEqual([
+      { index: 1, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
+    ]);
+    expect(joined.get("hits.kick.0.multiplier")?.[0]?.provenance).toStrictEqual({
+      file: "internal/characters/amber/amber.go",
+      line: 7,
+      source: "Gcsim",
+    });
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {

@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { createKitFallRefusal } from "#src/services/kit/createKitFallRefusal";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { healPartyMember } from "#src/services/party/healPartyMember";
 
@@ -19,14 +20,14 @@ export const changeKitMemberHealth = (
 ): void => {
   const member = characterIdCombatantMap.get(characterId);
   if (!member) return;
-  const { maxHealth } = member.attributes;
+  const maxHealth = getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap);
   if (health < 0) {
     damagePartyMember(
       party,
       characterId,
       -health / maxHealth,
       source.characterId,
-      createKitFallRefusal(member, kitEffectState),
+      createKitFallRefusal(member, kitEffectState, maxHealth),
     );
     return;
   }

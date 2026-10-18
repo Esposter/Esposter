@@ -6,6 +6,7 @@ import { checkIsInSourcewaterPickupArea } from "#src/services/kit/checkIsInSourc
 import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { absorbSourcewaterDroplets } from "#src/services/kit/effects/absorbSourcewaterDroplets";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -36,11 +37,9 @@ type DecideLength = NonNullable<KitAction["decideLength"]>;
 // The drains and the droplets' heals from that moment, and returns the frames the charge lasts. The waves are read as the
 // Named list of the judgement's hits, whose hitmarks run from the start of the judgement
 const decideEquitableJudgement = (context: KitContext, waves: KitHit[]): number => {
-  const { activeCombatant, body, kitEffectState } = context;
-  const {
-    attributes: { maxHealth },
-    characterId,
-  } = activeCombatant;
+  const { activeCombatant, body, characterIdCombatantMap, kitEffectState, party } = context;
+  const { characterId } = activeCombatant;
+  const maxHealth = getKitMaxHealth(activeCombatant, kitEffectState.effects, party, characterIdCombatantMap);
   const pickedUp = absorbSourcewaterDroplets(
     kitEffectState,
     characterId,

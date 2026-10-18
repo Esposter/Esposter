@@ -59,7 +59,12 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
-        { ...context, characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard), sideIndex },
+        {
+          ...context,
+          characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard),
+          sideIndex,
+          userSideIndex: context.sideIndex,
+        },
         skill,
         zoneCard,
         dealt,
@@ -67,6 +72,6 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   for (const passive of user?.character.skills ?? [])
     if (passive.kind === GcgSkillKind.Passive)
       GcgEffectNameSkillModuleMap.get(passive.effect)?.afterSkillUsed?.(context);
-  for (const sideState of context.duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of context.duel.sides.keys()) pruneGcgZoneCards(context.duel, sideIndex);
   return true;
 };

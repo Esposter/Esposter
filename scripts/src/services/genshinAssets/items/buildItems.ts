@@ -10,8 +10,9 @@ import {
   BAG_TAB_BY_TABLE_TYPE,
   MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/items/constants";
+import { readItemTableMap } from "#src/services/genshinAssets/items/readItemTableMap";
 import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
-import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
+import { GOOD_HUNTER_SHOP_TYPE, SHOP_GOODS_TABLE_NAME } from "#src/services/genshinAssets/shops/constants";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -46,7 +47,7 @@ const checkIsAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boole
 // The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is taken
 // By the Adventure Rank, and Character EXP, which no grant pays yet, is no item either, so none is written. A weapon a
 // Recipe yields is no item either, it is in the weapon table. The
-// Recipes and the levels are the records their steps published, read from the dev account. An item the table lacks is
+// Recipes and the levels are the records their steps published, read from the dev account. An item no table holds is
 // An error, and so is an item the table gives no type: the publish names every such item at once, so a typeless item a
 // Source adds fails the publish rather than showing in no tab. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
@@ -76,7 +77,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .array(z.object({ itemId: z.int() }))
     .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
   // The fish a Fishing Association's goods are bought with, and the items they give, as the goods table names them
-  const fishingGoods = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData").filter((row) =>
+  const fishingGoods = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME).filter((row) =>
     checkIsFishingAssociationGood(row),
   );
   const fishingGoodItemIds = [
@@ -86,10 +87,12 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     ),
   ];
   // The food, cooking ingredients and recipes the Good Hunter sells, the goods of its shop as the goods table names them
-  const goodHunterGoods = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData").filter(
+  const goodHunterGoods = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME).filter(
     (row) => row.shopType === GOOD_HUNTER_SHOP_TYPE,
   );
   const materialRows = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
+  const materialRowMap = new Map(materialRows.map((materialRow) => [materialRow.id, materialRow] as const));
+  const itemTableMap = readItemTableMap();
   const cookingRecipes = readCookingRecipes();
   const questRewardItemIds = [...readCarriedQuestRewards().values()].flatMap((rewards) =>
     rewards.map(({ itemId }) => itemId),
@@ -118,9 +121,11 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .toSorted((firstId, secondId) => firstId - secondId);
   const typelessItemIds: number[] = [];
   const items = itemIds.flatMap((itemId) => {
-    const materialRow = materialRows.find(({ id }) => id === itemId);
-    if (!materialRow)
-      throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the material table");
+    if (!itemTableMap.has(itemId))
+      throw new InvalidOperationError(Operation.Read, String(itemId), "is in no item table");
+    const materialRow = materialRowMap.get(itemId);
+    // A weapon, furnishing or reliquary is held by its own table, so the bag holds no item of it
+    if (!materialRow) return [];
     const { materialType } = materialRow;
     if (materialType === undefined || materialType === MATERIAL_TYPE_NONE) {
       typelessItemIds.push(itemId);

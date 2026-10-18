@@ -10,7 +10,7 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 // The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
 const MAX_LOOP_ITERATIONS = 100;
 
-type GoScope = ReturnType<typeof createGoScope>;
+export type GoScope = ReturnType<typeof createGoScope>;
 
 // A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, or over a constant
 // Slice, `for i, delay := range burstHitmarks {`, its iterations' variable values and the braces of its body

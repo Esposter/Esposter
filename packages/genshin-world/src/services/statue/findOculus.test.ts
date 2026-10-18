@@ -26,30 +26,27 @@ describe(findOculus, () => {
     expect(findOculus(new Set(), OCULUS_ID, progress)).toStrictEqual({
       adventureExp: OCULUS_ADVENTURE_EXP,
       foundOculusIds: new Set([OCULUS_ID]),
-      gainedLevels: [],
       progress: { heldCounts: { [OCULUS_ITEM_ID]: 1 }, level: 0, levels: LEVELS },
     });
   });
 
-  test("an offered Oculus completes a level at once", () => {
+  test("a found Oculus is held until the Worship Statue offers it", () => {
     expect.hasAssertions();
     const progress: OfferingProgress<StatueLevel> = { heldCounts: {}, level: 1, levels: LEVELS };
 
-    const { foundOculusIds, gainedLevels, progress: nextProgress } = findOculus(new Set(), OCULUS_ID, progress);
+    const { foundOculusIds, progress: nextProgress } = findOculus(new Set(), OCULUS_ID, progress);
 
     expect(foundOculusIds).toStrictEqual(new Set([OCULUS_ID]));
-    expect(gainedLevels).toStrictEqual([LEVELS[1]]);
-    expect(nextProgress).toStrictEqual({ heldCounts: {}, level: 2, levels: LEVELS });
+    expect(nextProgress).toStrictEqual({ heldCounts: { [OCULUS_ITEM_ID]: 1 }, level: 1, levels: LEVELS });
   });
 
   test("an Oculus found in an unstarted region is held until the region starts", () => {
     expect.hasAssertions();
     const progress: OfferingProgress<StatueLevel> = { heldCounts: {}, level: 0, levels: LEVELS };
 
-    const { foundOculusIds, gainedLevels, progress: nextProgress } = findOculus(new Set(), OCULUS_ID, progress);
+    const { foundOculusIds, progress: nextProgress } = findOculus(new Set(), OCULUS_ID, progress);
 
     expect(foundOculusIds).toStrictEqual(new Set([OCULUS_ID]));
-    expect(gainedLevels).toStrictEqual([]);
     expect(nextProgress).toStrictEqual({ heldCounts: { [OCULUS_ITEM_ID]: 1 }, level: 0, levels: LEVELS });
   });
 
@@ -61,7 +58,6 @@ describe(findOculus, () => {
     expect(findOculus(foundOculusIds, OCULUS_ID, progress)).toStrictEqual({
       adventureExp: 0,
       foundOculusIds,
-      gainedLevels: [],
       progress,
     });
   });

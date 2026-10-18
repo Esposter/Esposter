@@ -15,6 +15,22 @@ export const EXILE_ARTIFACT_SET_ID = 10_009;
 export const LUCKY_DOG_ARTIFACT_SET_ID = 10_011;
 // Traveling Doctor's id in the set table
 export const TRAVELING_DOCTOR_ARTIFACT_SET_ID = 10_013;
+// Defender's Will's id in the set table
+export const DEFENDERS_WILL_ARTIFACT_SET_ID = 10_003;
+// Martial Artist's id in the set table
+export const MARTIAL_ARTIST_ARTIFACT_SET_ID = 10_006;
+// Maiden Beloved's id in the set table
+export const MAIDEN_BELOVED_ARTIFACT_SET_ID = 14_004;
+// Gladiator's Finale's id in the set table
+export const GLADIATORS_FINALE_ARTIFACT_SET_ID = 15_001;
+// Wanderer's Troupe's id in the set table
+export const WANDERERS_TROUPE_ARTIFACT_SET_ID = 15_003;
+// Noblesse Oblige's id in the set table
+export const NOBLESSE_OBLIGE_ARTIFACT_SET_ID = 15_007;
+// Retracing Bolide's id in the set table
+export const RETRACING_BOLIDE_ARTIFACT_SET_ID = 15_015;
+// Heart of Depth's id in the set table
+export const HEART_OF_DEPTH_ARTIFACT_SET_ID = 15_016;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one

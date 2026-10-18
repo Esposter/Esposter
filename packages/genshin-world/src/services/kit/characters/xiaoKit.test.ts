@@ -131,6 +131,16 @@ describe(createXiaoKitBehaviour, () => {
     expect(XIAO_KIT.getSkillChargeBonus?.({ ...createXiaoCombatant(0), constellationCount: 1 })).toBe(1);
   });
 
+  test("constellation 2 gives Xiao Energy Recharge while he is off the field", () => {
+    expect.hasAssertions();
+    const combatant = { ...createXiaoCombatant(0), constellationCount: 2 };
+
+    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], [])).toStrictEqual([
+      { amount: 0.25, attribute: Attribute.EnergyRecharge },
+    ]);
+    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }], [])).toStrictEqual([]);
+  });
+
   test("a Constellation 0 switch adds no Lemniscatic Wind Cycling charge", () => {
     expect.hasAssertions();
 

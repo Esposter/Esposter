@@ -18,6 +18,9 @@ export interface GcgSideState {
   // The rerolls a card grants the side past its one in the roll phase, each spent by a reroll of named dice
   extraRerolls?: number;
   hand: number[];
+  // Whether the side's Normal Attacks this round are Charged Attacks, which they are when its Elemental Dice were even in number
+  // Before its Action Phase
+  hasChargedAttack?: boolean;
   hasDeclaredEnd: boolean;
   hasDefeatedCharacter?: boolean;
   hasPrepared: boolean;

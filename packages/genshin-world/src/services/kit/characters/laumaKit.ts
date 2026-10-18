@@ -1,15 +1,28 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { spendVerdantDew } from "#src/services/party/spendVerdantDew";
 
 // Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
@@ -36,23 +49,108 @@ const ASCENSION_4 = 4;
 const CLEANSING_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
 const CLEANSING_MAXIMUM_DAMAGE_BONUS = 0.32;
 
+// Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts, and the burst and
+// Each Pale Hymn last 15 seconds. Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the burst's
+// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+const BURST_SECONDS = 15;
+const PALE_HYMN_SECONDS = 15;
+const PALE_HYMN_BURST_STACKS = 18;
+const PALE_HYMN_GAIN_FRAMES = 96;
+// Measured: gcsim (MIT) lauma/skill.go, each Dew Hymn of Eternal Rest spends during her burst gives the Moon Song six Pale
+// Hymn, once in each burst. A Dew spent outside it waits for the burst's gain, for 15 seconds
+// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+const MOON_SONG_PALE_HYMN_PER_DEW = 6;
+
 export const LAUMA_CHARACTER_ID = 10_000_119;
+export const LAUMA_PALE_HYMN_BURST_ID = "lauma-pale-hymn-burst";
+export const LAUMA_PALE_HYMN_MOON_SONG_ID = "lauma-pale-hymn-moon-song";
+const BURST_ID = "lauma-burst";
+const MOON_SONG_DEW_ID = "lauma-moon-song-dew";
+const MOON_SONG_ICD_ID = "lauma-moon-song-icd";
+const PALE_HYMN_GAIN_ID = "lauma-pale-hymn-gain";
+// The reactions a Pale Hymn is spent on: Bloom and its kin, and the Lunar-Bloom her Benediction turns Bloom into
+const PALE_HYMN_REACTION_TYPES = new Set<ReactionType>([
+  TransformativeReactionType.Bloom,
+  TransformativeReactionType.Burgeon,
+  TransformativeReactionType.Hyperbloom,
+  LunarReactionType.LunarBloom,
+]);
+
+// Whether the team holds any Pale Hymn, the burst's or Moon Song's
+const checkHasPaleHymn = (effects: readonly KitEffect[], characterId: number): boolean =>
+  checkIsKitStatusActive(effects, characterId, LAUMA_PALE_HYMN_BURST_ID) ||
+  checkIsKitStatusActive(effects, characterId, LAUMA_PALE_HYMN_MOON_SONG_ID);
+
+// Whether a Dew can give the Moon Song now: her burst is up, and the Moon Song has not given one in this burst
+const checkCanGiveMoonSong = ({ effects }: KitEffectState, characterId: number): boolean =>
+  checkIsKitStatusActive(effects, characterId, BURST_ID) &&
+  !checkIsKitStatusActive(effects, characterId, MOON_SONG_ICD_ID);
+
+// The Moon Song's Pale Hymn, six a Dew spent, restarted for its 15 seconds, and the internal cooldown that keeps it to
+// One in each burst, which lasts as long as the burst does
+const giveMoonSongPaleHymn = (kitEffectState: KitEffectState, characterId: number, dewCount: number): void => {
+  addKitStatus(kitEffectState, characterId, {
+    id: LAUMA_PALE_HYMN_MOON_SONG_ID,
+    secondsRemaining: PALE_HYMN_SECONDS,
+    stacks: dewCount * MOON_SONG_PALE_HYMN_PER_DEW,
+  });
+  addKitStatus(kitEffectState, characterId, {
+    id: MOON_SONG_ICD_ID,
+    secondsRemaining: findKitStatus(kitEffectState.effects, characterId, BURST_ID)?.secondsRemaining ?? 0,
+  });
+  spendKitResource(kitEffectState, characterId, MOON_SONG_DEW_ID);
+};
+
+// The Moon Song a Dew spent gives, if her burst is up and has not yet given one, and waits for the burst otherwise
+const giveMoonSong = (kitEffectState: KitEffectState, characterId: number, dewCount: number): void => {
+  if (dewCount <= 0) return;
+  if (checkCanGiveMoonSong(kitEffectState, characterId)) giveMoonSongPaleHymn(kitEffectState, characterId, dewCount);
+  else
+    addKitStatus(kitEffectState, characterId, {
+      id: MOON_SONG_DEW_ID,
+      secondsRemaining: PALE_HYMN_SECONDS,
+      stacks: dewCount,
+    });
+};
+
+// Her burst's gain 96 frames in: the burst is up for its 15 seconds, the burst's Pale Hymn is 18, and a Moon Song Dew
+// That waited for the burst gives its Pale Hymn now
+const gainBurstPaleHymn = (kitEffectState: KitEffectState, characterId: number): void => {
+  addKitStatus(kitEffectState, characterId, { id: BURST_ID, secondsRemaining: BURST_SECONDS });
+  addKitStatus(kitEffectState, characterId, {
+    id: LAUMA_PALE_HYMN_BURST_ID,
+    secondsRemaining: PALE_HYMN_SECONDS,
+    stacks: PALE_HYMN_BURST_STACKS,
+  });
+  giveMoonSong(kitEffectState, characterId, countKitResource(kitEffectState.effects, characterId, MOON_SONG_DEW_ID));
+};
+
+// A Bloom or Lunar-Bloom reaction spends one Pale Hymn, the Moon Song's before the burst's
+const spendPaleHymn = (kitEffectState: KitEffectState, characterId: number): void => {
+  if (!consumeKitResource(kitEffectState, characterId, LAUMA_PALE_HYMN_MOON_SONG_ID, 1))
+    consumeKitResource(kitEffectState, characterId, LAUMA_PALE_HYMN_BURST_ID, 1);
+};
 
 // Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
 // Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
 // RES. Hymn of Eternal Rest plays while the party holds Verdant Dew, spending up to three on a direct Lunar-Bloom hit
 // Following her, its multiplier of her Elemental Mastery for each Dew spent. Her Moonsign Benediction adds Base DMG Bonus
-// For her Elemental Mastery. Not built yet: Pale Hymn's buff on Bloom and Lunar-Bloom hits, with the Moon Song Hymn of
-// Eternal Rest's Dew gives it; the Spirit Envoy state her charged attack's first press enters, which waits on a stance
-// That drains stamina; Light for the Frosty Night and her constellations; the Spirit Envoy's cooldown reduction of Cleansing
-// For the Spring, as the charged attack's cooldown is not read by a kit
+// For her Elemental Mastery. Her burst gives the party Pale Hymn 96 frames in, a Dew Hymn of Eternal Rest spends during
+// The burst gives the Moon Song its Pale Hymn, each Bloom or Lunar-Bloom reaction spends one, and the Pale Hymn adds her
+// Elemental Mastery to each of those reactions the party makes. Not built yet: the Spirit Envoy state her charged
+// Attack's first press enters, which waits on a stance that drains stamina; Light for the Frosty Night and her
+// Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
+// Read by a kit
 // Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
-// Constellation 2 needs the Pale Hymn stacks her burst gains and the Bloom bonus they give, which are not built
+// Constellation 2 needs the Bloom bonus its Pale Hymn scaling adds, which is not built
 // Constellation 4 needs a hit event from the Sanctuary's ticks to restore her energy, which no kit event carries
-// Constellation 6 needs the Pale Hymn stacks and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
+// Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
+  // Pale Hymn's flat Elemental Mastery on Bloom, Hyperbloom and Burgeon, and on Lunar-Bloom, at her burst's talent level
+  const paleHymnBloomIncrease = readParameter("paleHymnBloomDamageIncrease");
+  const paleHymnLunarBloomIncrease = readParameter("paleHymnLunarBloomDamageIncrease");
   // The RES Dendro and Hydro enemies lose to a hit of the skill's, for its seconds
   const createShredStatus = (): EnemyStatus => ({
     damageTakenBonus: 0,
@@ -84,6 +182,31 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   };
   const pressBehaviour: KitActionBehaviour = { hits: [shredBehaviour], onStart: plantSanctuary };
   return {
+    // Her burst starts the Pale Hymn's gain, which comes 96 frames later as a status's expiry, and clears the Moon Song's
+    // Internal cooldown from the last burst
+    burst: {
+      onStart: ({ activeCombatant, kitEffectState }) => {
+        const { characterId } = activeCombatant;
+        spendKitResource(kitEffectState, characterId, BURST_ID);
+        spendKitResource(kitEffectState, characterId, MOON_SONG_ICD_ID);
+        addKitStatus(kitEffectState, characterId, {
+          id: PALE_HYMN_GAIN_ID,
+          secondsRemaining: toKitSeconds(PALE_HYMN_GAIN_FRAMES),
+        });
+      },
+    },
+    onKitEvent: (event, { kitEffectState }, { characterId }) => {
+      if (event.kind === KitEventKind.EffectExpired) {
+        const { effect } = event;
+        if (effect.kind === "status" && effect.id === PALE_HYMN_GAIN_ID && effect.characterId === characterId)
+          gainBurstPaleHymn(kitEffectState, characterId);
+      } else if (event.kind === KitEventKind.ReactionTriggered) {
+        const reactionCount = event.reactions.filter(({ reactionType }) =>
+          PALE_HYMN_REACTION_TYPES.has(reactionType),
+        ).length;
+        for (let spendIndex = 0; spendIndex < reactionCount; spendIndex++) spendPaleHymn(kitEffectState, characterId);
+      }
+    },
     getStrikeDamageBonus: ({ attackTag, combatant }) =>
       combatant.ascension < ASCENSION_4 || attackTag !== AttackTag.ElementalSkill
         ? 0
@@ -101,6 +224,15 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
         ),
     },
     skill: pressBehaviour,
+    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
+    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery
+    getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
+      if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
+        return {};
+      const increase =
+        reactionType === LunarReactionType.LunarBloom ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease;
+      return { additiveBaseDamageBonus: member.attributes.attributeTotalMap[Attribute.ElementalMastery] * increase };
+    },
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [
       {
@@ -111,6 +243,7 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           onStart: (context) => {
             plantSanctuary(context);
             const dewCount = spendVerdantDew(context.party, SKILL_HOLD_MAXIMUM_DEW_COUNT);
+            giveMoonSong(context.kitEffectState, context.activeCombatant.characterId, dewCount);
             castKitSummon(
               context.kitEffectState,
               context.body,

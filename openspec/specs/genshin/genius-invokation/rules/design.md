@@ -12,6 +12,7 @@ The engine is the duel's own rules: how a duel starts, how its dice, rounds, tur
 - **Preparation switches once, then chooses.** A side's switched cards go back into its draw pile, which is shuffled and drawn from to refill its hand. Then it chooses its active character, and the first round's roll starts once both sides have.
 - **Rolls and rerolls.** Each side rolls eight dice a round, each face one of the seven elements or Omni, equally likely, from the seeded source. Each side then has one reroll of any dice it names, and naming none passes. A card may grant a side another reroll in the roll phase (Knights of Favonius Library): naming dice then rerolls them and keeps the roll open, until the side names none.
 - **Combat actions pass the turn.** Using a skill, switching for one die of any face and declaring the round's end are combat actions. Each passes the turn unless the other side has already declared its end.
+- **A turn begins with what the field deals.** A side handed its choice of action first deals what its field's before-action cards deal (Tenko Thunderbolts' 3 Electro), and a side declaring its round's end first deals what its round-end cards deal (Sesshou Sakura, with four usages left). Each is dealt like any damage, through the side's modifiers.
 - **Tuning is a fast action.** It discards a card to set one die to the active character's element, and the turn stays.
 - **Playing a card is a fast action.** A card passes no turn.
 - **A switch is paid through the field's reductions.** A switch costs one die of any face, and a card that reduces a switch takes that die off: Dawn Winery, twice a round, and Changing Shifts, once. A switch may therefore pay no die. Leave It to Me! makes the next switch a fast action and is spent by it.
@@ -20,7 +21,7 @@ The engine is the duel's own rules: how a duel starts, how its dice, rounds, tur
 - **A duel concedes after its fifteenth round.** Once that round's end phase closes, both sides concede with no winner, as the wiki gives the limit.
 - **Energy.** A normal attack and an elemental skill gain the skill row's energy, one, and a burst pays the energy its cost names. A skill that a character cannot pay for is refused, and the dice it would have paid stay in the dice.
 - **Combat actions are refused whole.** A refused action leaves the duel as it was and says why.
-- **Charged attacks are markers no tutorial skill uses**, so the engine deals them no damage. **A plunging attack is a normal attack by a character switched in this Round**: the first skill that character uses after the switch spends it, so her next Normal Attack is a plunge, and the cards hear it as one. A switch an effect makes counts as one too, and a defeat's replacement does not. Both calls are provisional: the wiki's Plunging Attack page is the open-world action and does not settle the TCG case.
+- **A charged attack is a normal attack by a side whose Elemental Dice were even in number before its Action Phase.** The flag is settled as the action phase begins, before any card hears it, and holds for the round, as the wiki's Genius Invokation TCG Rules give it: "Before your Action Phase, should the total number of your Elemental Dice be even, your Normal Attack will be considered a Charged Attack." The engine deals no damage for the flag itself; the cards that read it do. **A plunging attack is a normal attack by a character switched in this Round**: the first skill that character uses after the switch spends it, so her next Normal Attack is a plunge, and the cards hear it as one. A switch an effect makes counts as one too, and a defeat's replacement does not. Both calls are provisional: the wiki's Plunging Attack page is the open-world action and does not settle the TCG case.
 
 ## Elements, reactions and damage
 
@@ -76,7 +77,7 @@ flowchart TD
 | `packages/genshin-world/src/services/gcg/effects/switchGcgSideActive.ts`              | A switch: the active character set and flagged as switched in, so her next Normal Attack is a plunge    |
 | `packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts` | The effects a reaction leaves that deal no DMG: Frozen, shield, the Overloaded switch, and the cards    |
 | `packages/genshin-world/src/services/gcg/effects/applyGcgApplication.ts`              | An element a card applies with no damage, which reacts with the aura its character holds                |
-| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                       | The round's end, and the end phase once both sides declare                                              |
+| `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`                       | The round's end and its round-end hooks, and the end phase once both sides declare                      |
 | `packages/genshin-world/src/services/gcg/endGcgRound.ts`                              | The end phase: Frozen lapses, the draws, and the next round or the concession                           |
 | `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`                       | A switch for one die of any face, less where the field reduces it                                       |
 | `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`                               | Tuning a die by a discarded card, as a fast action                                                      |
@@ -84,7 +85,9 @@ flowchart TD
 | `packages/genshin-world/src/services/gcg/payGcgCost.ts`                               | The dice a cost takes from the dice chosen, Omni standing in                                            |
 | `packages/genshin-world/src/services/gcg/getGcgReactionKind.ts`                       | The reaction an element pair makes under a rule                                                         |
 | `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`                          | The roll-phase hooks of each side's field                                                               |
-| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                        | The action-phase hooks, then the spent cards taken off                                                  |
+| `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`                        | The Charged Attack flag, the action-phase hooks, then the spent cards taken off                         |
+| `packages/genshin-world/src/services/gcg/runGcgSideDamageHook.ts`                     | A side's before-action or round-end hook run, its damage dealt from the side                            |
+| `packages/genshin-world/src/services/gcg/effects/checkIsGcgChargedAttack.ts`          | Whether a skill is a Charged Attack for its side, by the flag the action phase settled                  |
 | `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`                           | The end-phase hooks, the rounds aged, then the spent cards taken off                                    |
 
 ## Sources

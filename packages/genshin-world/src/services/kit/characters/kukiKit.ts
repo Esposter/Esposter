@@ -9,6 +9,7 @@ import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -88,11 +89,17 @@ export const createKukiKitBehaviour = ({
           combatant.ascension >= ASCENSION_4
             ? ASCENSION_4_HEALING_ELEMENTAL_MASTERY_SHARE * getElementalMastery(combatant)
             : 0;
+        const maxHealth = getKitMaxHealth(
+          combatant,
+          tick.kitEffectState.effects,
+          tick.party,
+          tick.characterIdCombatantMap,
+        );
         changeKitMemberHealth(
           tick,
           combatant,
           tick.activeCombatant.characterId,
-          ringMaxHealthHealingShare * combatant.attributes.maxHealth + ringFlatHealing + ascensionHealing,
+          ringMaxHealthHealingShare * maxHealth + ringFlatHealing + ascensionHealing,
         );
         castKitSummon(tick.kitEffectState, { facing, height, position }, combatant, [ringTickHit]);
       },

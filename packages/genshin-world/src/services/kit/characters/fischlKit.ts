@@ -15,6 +15,7 @@ import { ELECTRO_REACTION_TYPES } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
@@ -115,7 +116,8 @@ export const createFischlKitBehaviour = ({ readHit, readHitFields, readSeconds }
             tick,
             combatant,
             combatant.characterId,
-            HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE * combatant.attributes.maxHealth,
+            HER_PILGRIMAGE_OF_BLEAK_HEALTH_SHARE *
+              getKitMaxHealth(combatant, tick.kitEffectState.effects, tick.party, tick.characterIdCombatantMap),
           ),
         );
       },

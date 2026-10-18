@@ -18,6 +18,7 @@ import {
   SUPERCONDUCT_STATUS_ID,
 } from "#src/services/combat/damage/constants";
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
+import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -25,7 +26,8 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { describe, expect, test } from "vitest";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -52,8 +54,50 @@ describe(landReactionReach, () => {
     maxHealth: STURDY_HEALTH,
   });
 
+  const context = createKitTestContext(combatant, { enemyTables });
+
   const getReactionDamage = (reactionType: TransformativeReactionType, element: Element): number =>
     getTransformativeDamage(reactionType, LEVEL, 0, kind.elementResistances[element]);
+
+  test("reads each deployed member's party reaction bonus with the reaction a combatant makes and the world it lands in", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const near = createSturdyEnemy(3);
+    const getPartyReactionBonus = vi.fn(() => ({}));
+    const blooming: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
+    const bloomContext = createKitTestContext(blooming, { enemyTables });
+    const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
+
+    landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
+
+    expect(getPartyReactionBonus).toHaveBeenCalledWith(
+      expect.objectContaining({ characterId: combatant.characterId }),
+      { combatant: blooming, reactionType: TransformativeReactionType.Bloom },
+      bloomContext,
+    );
+  });
+
+  test("a party reaction bonus's flat base adds to a transformative reaction's own damage before its enemy's RES, as a strike's additive base does", () => {
+    expect.hasAssertions();
+
+    const origin = createSturdyEnemy(0);
+    const near = createSturdyEnemy(3);
+    const resistance = kind.elementResistances[Element.Dendro];
+    const blooming: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ additiveBaseDamageBonus: 100 }) },
+    };
+    const bloomContext = createKitTestContext(blooming, { enemyTables });
+    const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
+
+    landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
+
+    expect(near.maxHealth - near.health).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, resistance) +
+        100 * getResistanceMultiplier(resistance),
+    );
+  });
 
   test("deals an Overloaded's damage to each other standing enemy within 3 metres of its edge, and none past them", () => {
     expect.hasAssertions();
@@ -66,7 +110,7 @@ describe(landReactionReach, () => {
       reactionType: TransformativeReactionType.Overloaded,
     };
 
-    const enemyStrikeResultMap = landReactionReach(enemyTables, origin, [origin, near, far], overloaded, combatant);
+    const enemyStrikeResultMap = landReactionReach(context, origin, [origin, near, far], overloaded, combatant);
 
     expect([...enemyStrikeResultMap.keys()]).toStrictEqual([near]);
     expect(near.maxHealth - near.health).toBeCloseTo(
@@ -75,15 +119,19 @@ describe(landReactionReach, () => {
     expect([origin.health, far.health]).toStrictEqual([STURDY_HEALTH, STURDY_HEALTH]);
   });
 
-  test("deals a Bloom's damage with the reaction DMG bonus the kit of the combatant that burst it gives", () => {
+  test("deals a Bloom's damage with the DMG bonus its creator's party reaction bonus gives", () => {
     expect.hasAssertions();
 
     const origin = createSturdyEnemy(0);
     const near = createSturdyEnemy(3);
-    const blooming: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getReactionDamageBonus: () => 0.6 } };
+    const blooming: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ damageBonus: 0.6 }) },
+    };
+    const bloomContext = createKitTestContext(blooming, { enemyTables });
     const bloom: TransformativeReaction = { element: Element.Dendro, reactionType: TransformativeReactionType.Bloom };
 
-    landReactionReach(enemyTables, origin, [origin, near], bloom, blooming);
+    landReactionReach(bloomContext, origin, [origin, near], bloom, blooming);
 
     expect(near.maxHealth - near.health).toBeCloseTo(
       getTransformativeDamage(TransformativeReactionType.Bloom, LEVEL, 0, kind.elementResistances[Element.Dendro], 0.6),
@@ -102,7 +150,7 @@ describe(landReactionReach, () => {
       reactionType: TransformativeReactionType.Overloaded,
     };
 
-    const enemyStrikeResultMap = landReactionReach(enemyTables, origin, [origin, near, frozen], overloaded, combatant);
+    const enemyStrikeResultMap = landReactionReach(context, origin, [origin, near, frozen], overloaded, combatant);
 
     expect([near.state, near.poise]).toStrictEqual([EnemyState.Stagger, 0]);
     expect(frozen.elementalState.auras.has(AuraType.Freeze)).toBe(false);
@@ -120,9 +168,9 @@ describe(landReactionReach, () => {
       spreadGauge: 0,
     };
 
-    landReactionReach(enemyTables, origin, [origin, near], burningTick, combatant);
+    landReactionReach(context, origin, [origin, near], burningTick, combatant);
     const pyroGauge = near.elementalState.auras.get(AuraType.Pyro)?.gauge;
-    landReactionReach(enemyTables, origin, [origin, near], burningTick, combatant);
+    landReactionReach(context, origin, [origin, near], burningTick, combatant);
 
     expect(pyroGauge).toBeGreaterThan(0);
     expect(near.elementalState.auras.get(AuraType.Pyro)?.gauge).toBe(pyroGauge);
@@ -141,7 +189,7 @@ describe(landReactionReach, () => {
       reactionType: TransformativeReactionType.Superconduct,
     };
 
-    landReactionReach(enemyTables, origin, [origin, near], superconduct, combatant);
+    landReactionReach(context, origin, [origin, near], superconduct, combatant);
 
     expect(near.statuses).toStrictEqual([
       {
@@ -167,7 +215,7 @@ describe(landReactionReach, () => {
       spreadGauge: SPREAD_GAUGE,
     };
 
-    landReactionReach(enemyTables, origin, [origin, near], swirl, combatant);
+    landReactionReach(context, origin, [origin, near], swirl, combatant);
 
     expect(near.elementalState.auras.get(auraType)?.gauge).toBeCloseTo(0.8 * SPREAD_GAUGE);
     expect(near.maxHealth - near.health).toBeCloseTo(
@@ -189,7 +237,7 @@ describe(landReactionReach, () => {
     };
 
     const enemyStrikeResultMap = landReactionReach(
-      enemyTables,
+      context,
       origin,
       [origin, dry, wet, fartherWet],
       electroCharged,
@@ -217,7 +265,7 @@ describe(landReactionReach, () => {
       spreadGauge: SPREAD_GAUGE,
     };
 
-    const enemyStrikeResultMap = landReactionReach(enemyTables, origin, [origin, wet, charged], swirl, combatant);
+    const enemyStrikeResultMap = landReactionReach(context, origin, [origin, wet, charged], swirl, combatant);
 
     expect(wet.maxHealth - wet.health).toBeCloseTo(
       getReactionDamage(TransformativeReactionType.Swirl, Element.Pyro) *

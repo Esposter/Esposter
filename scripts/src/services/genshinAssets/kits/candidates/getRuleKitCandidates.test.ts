@@ -16,7 +16,7 @@ describe(getRuleKitCandidates, () => {
       ["stances.chillingPenalty.normalAttacks.0.hits.1.hitmarkFrames", 12],
     ]);
 
-    expect(getRuleKitCandidates(valueMap)).toStrictEqual(
+    expect(getRuleKitCandidates(valueMap, undefined)).toStrictEqual(
       new Map([
         ["skillHolds.length", [{ provenance: { rule: KitRule.NoHold, source: KitSource.Rule }, value: 0 }]],
         [
@@ -78,6 +78,7 @@ describe(getRuleKitCandidates, () => {
         ["stances.blessing.normalAttacks.length", 0],
         ["stances.blessing.skill.animationFrames", 52],
       ]),
+      undefined,
     );
 
     expect(candidateMap.get("stances.blessing.skill.targeting")?.map(({ value }) => value)).toStrictEqual([
@@ -96,5 +97,26 @@ describe(getRuleKitCandidates, () => {
     expect(candidateMap.get("stances.blessing.chargedAttack.targeting")?.map(({ value }) => value)).toStrictEqual([
       KitTargeting.Strike,
     ]);
+  });
+
+  test("gives a kit's plunge variants the strike targeting a plunge takes, one per variant", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getRuleKitCandidates(
+      new Map<string, unknown>([
+        ["plungeVariants.length", 2],
+        ["plungeVariants.0.hits.length", 1],
+        ["plungeVariants.0.hits.0.hitmarkFrames", 35],
+        ["plungeVariants.1.hits.length", 1],
+        ["plungeVariants.1.hits.0.hitmarkFrames", 40],
+      ]),
+      undefined,
+    );
+
+    expect(
+      ["plungeVariants.0.targeting", "plungeVariants.1.targeting"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[KitTargeting.Strike], [KitTargeting.Strike]]);
   });
 });

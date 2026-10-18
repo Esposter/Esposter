@@ -39,6 +39,6 @@ export const getGcsimQueuedHits = (
       attack?.attackTag !== undefined &&
       attackTags.includes(attack.attackTag) &&
       delay !== undefined
-      ? [{ attack, delay, file, hitbox: queuedAttack.hitbox, line: delayLine }]
+      ? [{ attack, callLine: queuedAttack.line, delay, file, hitbox: queuedAttack.hitbox, line: delayLine }]
       : [];
   });
