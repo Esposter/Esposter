@@ -12,12 +12,11 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { wagner } from "#src/services/gcg/cards/wagner";
 import { WAGNER_ID } from "#src/services/gcg/cards/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const EVENT_ID = 332_003;
 
 const createSide = (): GcgSideState => ({
   activeIndex: 0,
@@ -26,7 +25,7 @@ const createSide = (): GcgSideState => ({
       costs: [],
       descriptionTextId: 2,
       effects: [],
-      id: EVENT_ID,
+      id: GCG_TOSS_UP_CARD_ID,
       isLocation: false,
       kind: GcgCardKind.Event,
       nameTextId: 1,
@@ -53,10 +52,10 @@ const createSide = (): GcgSideState => ({
       statuses: [],
     },
   ],
-  deckCardIds: [EVENT_ID],
+  deckCardIds: [GCG_TOSS_UP_CARD_ID],
   dice: [],
   drawPile: [],
-  hand: [EVENT_ID],
+  hand: [GCG_TOSS_UP_CARD_ID],
   hasDeclaredEnd: false,
   hasPrepared: true,
   hasRolled: true,
