@@ -1,5 +1,4 @@
-import { PMX_UNIT_METRES } from "genshin-engine";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { CHARACTER_PMX_RECKONED_UNIT_METRES, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { describe, expect, test } from "vitest";
 
@@ -20,6 +19,6 @@ describe(getCharacterPmxUnitMetres, () => {
   test("a character no measure holds keeps the reckoned unit", () => {
     expect.hasAssertions();
 
-    expect(getCharacterPmxUnitMetres(0)).toBe(PMX_UNIT_METRES);
+    expect(getCharacterPmxUnitMetres(0)).toBe(CHARACTER_PMX_RECKONED_UNIT_METRES);
   });
 });
