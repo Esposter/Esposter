@@ -276,14 +276,6 @@ const levelUpResult = computed(() => {
     ? undefined
     : levelUpCharacter(character.value, { inventory: inventory.value, maxLevel, wallet: wallet.value });
 });
-// The chosen character raised one level, with the bag's materials and the wallet's Mora taken and the character written back
-const levelUpCharacterAt = () => {
-  const raised = levelUpResult.value;
-  if (!raised) return;
-  replaceCharacter(raised.character);
-  inventory.value = raised.inventory;
-  wallet.value = raised.wallet;
-};
 // Whether the chosen character sits at a level cap a Masterless Stella Fortuna lifts, with the items in the bag for it
 const isLiftable = computed(() => {
   const liftLevel = character.value ? MASTERLESS_LEVEL_LIFTS.get(character.value.level) : undefined;
@@ -292,13 +284,6 @@ const isLiftable = computed(() => {
     checkIsItemCountsHeld(inventory.value.items, [{ count: liftLevel.count, id: MASTERLESS_STELLA_FORTUNA_ID }], 1)
   );
 });
-// The chosen character lifted past its cap, with the bag's items taken and the character written back in its place
-const liftCharacter = () => {
-  if (!character.value || !isLiftable.value) return;
-  const lifted = liftCharacterLevel(character.value, { inventory: inventory.value });
-  replaceCharacter(lifted.character);
-  inventory.value = lifted.inventory;
-};
 // The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs
 // Against the player's, the Mora and the materials, each held against what it takes. None at its last phase, or where
 // The table carries no cost for that phase yet
@@ -324,14 +309,6 @@ const ascendResult = computed(() => {
     ? ascendCharacter(character.value, { adventureRank, inventory: inventory.value, phases, wallet: wallet.value })
     : undefined;
 });
-// The chosen character ascended, with its Mora and materials taken and the character written back in its place
-const ascendCharacterAt = () => {
-  const ascended = ascendResult.value;
-  if (!ascended) return;
-  replaceCharacter(ascended.character);
-  inventory.value = ascended.inventory;
-  wallet.value = ascended.wallet;
-};
 const upgradeTalentAt = (index: number) => {
   const talent = COMBAT_TALENT_ORDER[index];
   if (!character.value || !talentGroupIds.value || !talent) return;
@@ -466,11 +443,6 @@ const constellations = computed(() => characterIdConstellationsMap.get(character
 const isActivateDisabled = computed(
   () => !character.value || getConstellationActivationRefusal(character.value, constellations.value) !== undefined,
 );
-// The next constellation activated, the character written back in its place
-const activate = () => {
-  if (!character.value) return;
-  replaceCharacter(activateConstellation(character.value, constellations.value));
-};
 </script>
 
 <template>
@@ -497,9 +469,32 @@ const activate = () => {
         :max-stamina
         :name="characterName"
         :stat-tables
-        @ascend="ascendCharacterAt()"
-        @level-up="levelUpCharacterAt()"
-        @lift="liftCharacter()"
+        @ascend="
+          () => {
+            const ascended = ascendResult;
+            if (!ascended) return;
+            replaceCharacter(ascended.character);
+            inventory = ascended.inventory;
+            wallet = ascended.wallet;
+          }
+        "
+        @level-up="
+          () => {
+            const raised = levelUpResult;
+            if (!raised) return;
+            replaceCharacter(raised.character);
+            inventory = raised.inventory;
+            wallet = raised.wallet;
+          }
+        "
+        @lift="
+          () => {
+            if (!character || !isLiftable) return;
+            const lifted = liftCharacterLevel(character, { inventory });
+            replaceCharacter(lifted.character);
+            inventory = lifted.inventory;
+          }
+        "
       />
       <CharacterMenuWeapons v-else-if="weaponPanel && tab === CharacterMenuTab.Weapons" :="weaponPanel" />
       <CharacterMenuArtifacts
@@ -562,7 +557,12 @@ const activate = () => {
         :activate-label="gameText[GameTextKey.Activate]"
         :activated="constellationsActivated"
         :is-activate-disabled
-        @activate="activate()"
+        @activate="
+          () => {
+            if (!character) return;
+            replaceCharacter(activateConstellation(character, constellations));
+          }
+        "
       />
       <CharacterMenuTalents
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
