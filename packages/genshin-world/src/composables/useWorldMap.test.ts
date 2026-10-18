@@ -62,6 +62,7 @@ describe(useWorldMap, () => {
     {
       areaId: AREA_ID,
       doings: [{ id: WAYPOINT_ID, kind: ExplorationKind.Waypoint, weight: WAYPOINT_WEIGHT }],
+      reputationRatio: 0,
       total: TOTAL,
     },
   ];

@@ -1,5 +1,7 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 
+import { computeDoneWeight } from "#src/services/exploration/computeDoneWeight";
+
 // An area's exploration as the map shows it: the done weight as a percentage of the total, rounded down, and never past
 // 100, which the English map reads in gold once an area is fully explored. Provisional: the weights are the table's,
 // And they do not yet fit the totals. Galesong Hill's nineteen doings at ten each make 190 against its total of 146,
@@ -11,6 +13,6 @@ export const computeExplorationProgress = (
 ): number => {
   // An area with no total has nothing to explore, so it reads zero rather than dividing by it
   if (total === 0) return 0;
-  const doneWeight = doings.reduce((sum, { id, weight }) => (exploredDoingIds.has(id) ? sum + weight : sum), 0);
+  const doneWeight = computeDoneWeight(doings, exploredDoingIds);
   return Math.min(Math.floor((doneWeight * 100) / total), 100);
 };
