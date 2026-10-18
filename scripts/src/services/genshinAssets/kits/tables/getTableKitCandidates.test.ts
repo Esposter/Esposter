@@ -96,6 +96,7 @@ describe(getTableKitCandidates, () => {
       "hits.etchedIntoBoneAndSoul.1.multiplier": { index: 16, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
       "hits.etchedIntoBoneAndSoul.2.multiplier": { index: 16, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
       "hits.etchedIntoBoneAndSoul.3.multiplier": { index: 16, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
+      "hits.etchedIntoBoneAndSoul.length": 4,
     });
   });
 
