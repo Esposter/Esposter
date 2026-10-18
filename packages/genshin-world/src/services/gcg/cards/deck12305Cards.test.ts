@@ -797,6 +797,26 @@ describe("dunyarzad", () => {
       hand: [RANA_ID],
     });
   });
+
+  test("a second Dunyarzad does not draw again once one has spent the match's draw", () => {
+    expect.hasAssertions();
+
+    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    side.supports.push(
+      { ...createGcgZoneCard(DUNYARZAD_ID, dunyarzad), counter: 0 },
+      createGcgZoneCard(DUNYARZAD_ID, dunyarzad),
+    );
+    side.cards.push(createCompanion(RANA_ID));
+    side.drawPile.push(RANA_ID);
+    const duel = createDuel([side, createSideState([])]);
+
+    dunyarzad.onCardPlayed?.({ duel, sideIndex: 0 }, createCompanion(LIU_SU_ID), takeOne(side.supports, 1));
+    expect({
+      counters: side.supports.map(({ counter }) => counter),
+      drawPile: side.drawPile,
+      hand: side.hand,
+    }).toStrictEqual({ counters: [0, 1], drawPile: [RANA_ID], hand: [] });
+  });
 });
 
 describe("rana", () => {
