@@ -154,7 +154,7 @@ onBeforeUnmount(() => {
       <div class="panel-layer">
         <div class="panel" />
         <div class="card" />
-        <img v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
+        <NuxtImg v-if="accountAvatarUrl" :alt="accountName" class="avatar-image" :src="accountAvatarUrl" />
         <div v-else class="avatar" />
         <p class="name">{{ accountName ?? gameText[GameTextKey.PlayerDefaultName] }}</p>
         <div class="edit" />

@@ -138,6 +138,13 @@ export const createNoelleKitBehaviour = ({
       },
     },
     chargedAttack: createCountedAttack(breastplateHealBehaviour, kit.chargedAttack.hits.length),
+    // Combat Maid's stamina cut and DMG bonus on her Charged Attacks, from Constellation 2
+    getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant }) =>
+      combatant.constellationCount >= COMBAT_MAID_CONSTELLATION ? COMBAT_MAID_CHARGED_ATTACK_STAMINA_MULTIPLIER : 1,
+    getStrikeDamageBonus: ({ attackTag, combatant }) =>
+      combatant.constellationCount >= COMBAT_MAID_CONSTELLATION && attackTag === AttackTag.ChargedAttack
+        ? COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS
+        : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => createCountedAttack(breastplateHealBehaviour, hits.length)),
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
       // A drain by a kit, unlike an enemy's strike, names its source, as Devotion's drain does
@@ -160,13 +167,6 @@ export const createNoelleKitBehaviour = ({
         secondsRemaining: DEVOTION_SECONDS,
       });
     },
-    // Combat Maid's stamina cut and DMG bonus on her Charged Attacks, from Constellation 2
-    getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant }) =>
-      combatant.constellationCount >= COMBAT_MAID_CONSTELLATION ? COMBAT_MAID_CHARGED_ATTACK_STAMINA_MULTIPLIER : 1,
-    getStrikeDamageBonus: ({ attackTag, combatant }) =>
-      combatant.constellationCount >= COMBAT_MAID_CONSTELLATION && attackTag === AttackTag.ChargedAttack
-        ? COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS
-        : 0,
     skill: {
       hits: [breastplateHealBehaviour],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {

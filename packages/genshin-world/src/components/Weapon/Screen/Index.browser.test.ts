@@ -1,3 +1,6 @@
+import type { Inventory } from "#src/models/inventory/Inventory";
+import type { Wallet } from "#src/models/inventory/Wallet";
+
 import {
   atCapWeapon,
   COPY_ENTRY_ID,
@@ -12,15 +15,13 @@ import {
 } from "#src/components/Weapon/Screen/Index.fixture";
 import WeaponScreenContainer from "#src/components/Weapon/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { getBagWeapon } from "#src/services/weapon/getBagWeapon";
+import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
-import { ENGLISH_GAME_TEXT, fillGameTextValues, GameLanguage, GameTextKey, GameTextLoaderMap } from "genshin-text";
 
 const weaponName = props.nameText[weaponData.nameTextId] ?? "";
 const levelTextOf = (level: number, maxLevel: number) =>

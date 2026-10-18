@@ -21,6 +21,7 @@ import {
   MAX_ARCHIVE_KILL_COUNT,
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
+  MAX_CLEARED_DOMAIN_COUNT,
   MAX_COOKING_RECIPE_COUNT,
   MAX_CRAFTING_RECIPE_COUNT,
   MAX_ENEMY_RESPAWN_COUNT,
@@ -28,7 +29,6 @@ import {
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_OFFERING_ITEM_KIND_COUNT,
-  MAX_CLEARED_DOMAIN_COUNT,
   MAX_OPENED_CHEST_COUNT,
   MAX_PARTY_TEAM_NAME_LENGTH,
   MAX_QUEST_COUNT,
@@ -125,6 +125,9 @@ describe("genshinSaveSchema", () => {
         id: String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
         position: { x: maxNumber, z: maxNumber },
       })),
+      clearedDomains: Array.from({ length: MAX_CLEARED_DOMAIN_COUNT }, (_value, index) =>
+        String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
+      ),
       commissionDay: {
         claimedCommissionIds: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => maxNumber - index),
         dealtAt: maxInstant,
@@ -137,12 +140,6 @@ describe("genshinSaveSchema", () => {
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),
-      crafting: {
-        craftedCounts: Object.fromEntries(
-          Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
-        ),
-        learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
-      },
       cooking: {
         learnedRecipeIds: Array.from({ length: MAX_COOKING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
         processingJobs: Object.fromEntries(
@@ -154,6 +151,12 @@ describe("genshinSaveSchema", () => {
         proficiencies: Object.fromEntries(
           Array.from({ length: MAX_COOKING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
         ),
+      },
+      crafting: {
+        craftedCounts: Object.fromEntries(
+          Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
+        ),
+        learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
       enemyRespawns: Object.fromEntries(
         Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
@@ -192,9 +195,6 @@ describe("genshinSaveSchema", () => {
           level: maxNumber,
         },
       },
-      clearedDomains: Array.from({ length: MAX_CLEARED_DOMAIN_COUNT }, (_value, index) =>
-        String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
-      ),
       openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),

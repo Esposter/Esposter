@@ -1,7 +1,7 @@
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 
-import { computeGameDay } from "#src/services/time/computeGameDay";
 import { PAIMON_BARGAINS_PAIR_COUNT, PAIMON_BARGAINS_PAIR_OFFSET } from "#src/services/shop/constants";
+import { computeGameDay } from "#src/services/time/computeGameDay";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The two characters and the five weapons Paimon's Bargains offers in the game-time month `now` falls in, the month counted

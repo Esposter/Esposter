@@ -17,7 +17,7 @@ import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTex
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
 import { snapToRange } from "#src/services/menu/snapToRange";
 import { getResultAsync } from "@esposter/shared";
-import { useResizeObserver } from "@vueuse/core";
+import { useResizeObserver, watchImmediate } from "@vueuse/core";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
 import {
   fillGameTextValues,
@@ -48,7 +48,7 @@ const sections = computed(() => SettingsTabSectionsMap[tab.value] ?? []);
 // Other is its chunk, loaded when it is chosen and kept only if it is still the choice when it arrives
 const chosenGameText = shallowRef<GameText>();
 const shownGameText = computed(() => chosenGameText.value ?? gameText);
-watch(
+watchImmediate(
   () => settings.value.language,
   (newLanguage) => {
     if (newLanguage === language) {
@@ -64,7 +64,6 @@ watch(
       (error) => console.error(error),
     );
   },
-  { immediate: true },
 );
 // The Graphics Quality and Game Language rows each open a list, one at a time, and a change of tab closes it
 const openedList = shallowRef<SettingsRowKind>();
@@ -101,7 +100,7 @@ const openedOptions = computed(() => {
     }));
   return [];
 });
-const isListRow = (row: SettingsRow): boolean =>
+const checkIsListRow = (row: SettingsRow): boolean =>
   row.kind === SettingsRowKind.Quality || row.kind === SettingsRowKind.Language;
 const toggleList = (kind: SettingsRowKind): void => {
   openedList.value = openedList.value === kind ? undefined : kind;
@@ -255,8 +254,8 @@ onMounted(() => {
                 v-else
                 class="choice"
                 :aria-label="shownGameText[row.labelKey]"
-                :aria-expanded="isListRow(row) ? openedList === row.kind : undefined"
-                :disabled="!isListRow(row)"
+                :aria-expanded="checkIsListRow(row) ? openedList === row.kind : undefined"
+                :disabled="!checkIsListRow(row)"
                 type="button"
                 @click="toggleList(row.kind)"
               >

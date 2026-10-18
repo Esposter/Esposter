@@ -5,10 +5,10 @@ import { z } from "zod";
 // Enemies' level it is set at, and the days of the week its pair is set for. A Domain of Blessing's levels are set for
 // Every day
 export const domainLevelSchema = z.object({
-  dungeonId: z.number().int(),
-  enemyLevel: z.number().int(),
-  recommendedRank: z.number().int(),
-  scheduledDaysOfWeek: z.array(z.number().int().min(1).max(7)),
+  dungeonId: z.int(),
+  enemyLevel: z.int(),
+  recommendedRank: z.int(),
+  scheduledDaysOfWeek: z.array(z.int().min(1).max(7)),
 });
 
 // A challenge domain's kind and its levels, read by its entrance's entry id

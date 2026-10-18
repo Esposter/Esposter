@@ -1,10 +1,10 @@
-import { Attribute } from "#src/models/character/Attribute";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -45,7 +45,6 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
       secondsRemaining,
     });
   return {
-    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         castShield(kitEffectState, combatant, firstShieldSeconds);
@@ -65,5 +64,6 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         });
       },
     },
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
   };
 };

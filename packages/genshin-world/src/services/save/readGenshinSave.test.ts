@@ -360,6 +360,7 @@ describe(readGenshinSave, () => {
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
         {
+          ascension: 0,
           definition: {
             category: ItemCategory.Weapon,
             destroyReturnMaterial: 0,
@@ -371,7 +372,6 @@ describe(readGenshinSave, () => {
             rarity: 4,
             stackLimit: 1,
           },
-          ascension: 0,
           experience: 0,
           id: 0,
           level: 1,
@@ -379,6 +379,7 @@ describe(readGenshinSave, () => {
           refinement: 1,
         },
         {
+          ascension: 0,
           definition: {
             category: ItemCategory.Weapon,
             destroyReturnMaterial: 0,
@@ -390,7 +391,6 @@ describe(readGenshinSave, () => {
             rarity: 3,
             stackLimit: 1,
           },
-          ascension: 0,
           experience: 0,
           id: 1,
           level: 1,

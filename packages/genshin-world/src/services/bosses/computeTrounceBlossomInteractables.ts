@@ -1,8 +1,8 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Interactable } from "#src/models/interaction/Interactable";
 
-import { GameTextKey } from "genshin-text";
 import { InteractionKind } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 
 // The interactables the unclaimed Trounce Blossoms are, each standing where its blossom lies on the ground
 export const computeTrounceBlossomInteractables = (

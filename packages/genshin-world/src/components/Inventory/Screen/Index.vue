@@ -41,9 +41,9 @@ interface Props {
   gameText: GameText;
   // The tab the bag opens on
   initialCategory: ItemCategory;
-  inventory: Inventory;
   // The dish each instruction item teaches, by the item's id, which an instruction's Use is offered from
   instructionRecipeMap: ReadonlyMap<number, CookingRecipe>;
+  inventory: Inventory;
   // The game's material table by item id, which a destroy's returned materials are defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The game's names in the reader's language, by their text ids, for the materials a destroy returns

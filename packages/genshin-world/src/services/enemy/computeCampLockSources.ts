@@ -1,5 +1,6 @@
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
+
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { ID_SEPARATOR } from "@esposter/shared";
 

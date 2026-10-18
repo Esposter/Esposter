@@ -122,11 +122,6 @@ export const createRazorKitBehaviour = ({
         effect.hits.some((hit) => lupusFulgurisHits.includes(hit)),
     );
   return {
-    // Suppression, from Constellation 2: his strikes crit 10% more often against an enemy below 30% HP
-    getStrikeCriticalRateBonus: ({ combatant }, enemy) =>
-      combatant.constellationCount >= CONSTELLATION_2 && enemy.health / enemy.maxHealth < CONSTELLATION_2_HEALTH_SHARE
-        ? CONSTELLATION_2_CRIT_RATE_BONUS
-        : 0,
     // Its sigils are cleared into energy after the burst's cost is spent, and the Wolf Within stands from its hit
     burst: {
       onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
@@ -136,6 +131,11 @@ export const createRazorKitBehaviour = ({
     },
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.ascension >= AWAKENING_ASCENSION ? AWAKENING_COOLDOWN_MULTIPLIER : 1,
+    // Suppression, from Constellation 2: his strikes crit 10% more often against an enemy below 30% HP
+    getStrikeCriticalRateBonus: ({ combatant }, enemy) =>
+      combatant.constellationCount >= CONSTELLATION_2 && enemy.health / enemy.maxHealth < CONSTELLATION_2_HEALTH_SHARE
+        ? CONSTELLATION_2_CRIT_RATE_BONUS
+        : 0,
     // While Lightning Fang stands, a strike casts its Soul Companion. From six constellations, a strike while his
     // Claymore is charged casts Lupus Fulguris's lightning, whose summon stands until 10 seconds past the strike's hit,
     // And gives him an Electro Sigil outside Lightning Fang

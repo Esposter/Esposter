@@ -121,7 +121,6 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
         });
     };
   return {
-    getPassiveBonuses,
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitField(kitEffectState, combatant.characterId, body.position, {
@@ -132,6 +131,7 @@ export const createBennettKitBehaviour = ({ readParameter, readSeconds }: KitRec
           tickIntervalSeconds: BENNETT_FIELD_TICK_INTERVAL_SECONDS,
         }),
     },
+    getPassiveBonuses,
     getSkillCooldownMultiplier,
     skillHolds: [{}, { variant: { checkIsActive: checkIsFearnaughtActive } }],
   };

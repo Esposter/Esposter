@@ -32,7 +32,7 @@ const BAG_MATERIAL_TYPES: string[] = Object.values(MaterialType);
 // The type a table type is shown under in the bag, a batch-use consumable filed with the consume tab
 const toBagMaterialType = (materialType: string): string => BAG_TAB_BY_TABLE_TYPE[materialType] ?? materialType;
 // A consumable whose use adds an item to the bag, where the bag has a tab for its type
-const isAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
+const checkIsAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
   materialType !== undefined &&
   itemUse.some(({ useOp }) => useOp === ADD_ITEM_USE_OP) &&
   BAG_MATERIAL_TYPES.includes(toBagMaterialType(materialType));
@@ -99,7 +99,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
       ...reputationLevels.flatMap(({ reward }) => reward.items.map(({ id }) => id)),
       ...groceryGoods.map(({ itemId }) => itemId),
       ...fishingGoodItemIds,
-      ...materialRows.filter((row) => isAddItemConsumable(row)).map(({ id }) => id),
+      ...materialRows.filter((row) => checkIsAddItemConsumable(row)).map(({ id }) => id),
       ...questRewardItemIds,
     ]),
   ]

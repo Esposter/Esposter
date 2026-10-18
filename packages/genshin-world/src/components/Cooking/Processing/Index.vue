@@ -6,6 +6,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
 import { collectProcessingJobs } from "#src/services/cooking/collectProcessingJobs";
+import { PROCESSING_COLLECT_INTERVAL_MS } from "#src/services/cooking/constants";
 import { startProcessing } from "#src/services/cooking/startProcessing";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { GameScreen } from "genshin-interface";
@@ -32,11 +33,10 @@ const jobs = defineModel<Record<number, ProcessingJob>>("jobs", { required: true
 const knownRecipes = recipes.filter((recipe) => recipe.isDefaultUnlocked);
 // The units the player picked for each processing, one until picked
 const counts = ref<Record<number, number>>({});
-const COLLECT_INTERVAL_MS = 1000;
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 const pickedCount = (recipe: ProcessingRecipe) => counts.value[recipe.id] ?? 1;
 const queuedCount = (recipe: ProcessingRecipe) => jobs.value[recipe.id]?.count ?? 0;
-const canStart = (recipe: ProcessingRecipe) =>
+const checkCanStart = (recipe: ProcessingRecipe) =>
   startProcessing(recipe, pickedCount(recipe), {
     inventory: inventory.value,
     job: jobs.value[recipe.id],
@@ -55,7 +55,7 @@ const collect = () => {
 let timer: ReturnType<typeof setInterval> | undefined;
 onMounted(() => {
   collect();
-  timer = setInterval(collect, COLLECT_INTERVAL_MS);
+  timer = setInterval(collect, PROCESSING_COLLECT_INTERVAL_MS);
 });
 onBeforeUnmount(() => {
   clearInterval(timer);
@@ -92,7 +92,7 @@ const start = (recipe: ProcessingRecipe) => {
             type="number"
             :max="recipe.queueSize - queuedCount(recipe)"
           />
-          <button type="button" :disabled="!canStart(recipe)" @click="start(recipe)">
+          <button type="button" :disabled="!checkCanStart(recipe)" @click="start(recipe)">
             {{ gameText[GameTextKey.ProcessingStart] }}
           </button>
         </li>

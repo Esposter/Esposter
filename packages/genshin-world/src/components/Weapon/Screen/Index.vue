@@ -26,6 +26,12 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { GameScreen, ItemCategory, WeaponMenu, WeaponMenuTab } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
+// The bag and the wallet an accepted action leaves behind
+interface ActionState {
+  inventory: Inventory;
+  wallet: Wallet;
+}
+
 interface Props {
   // The adventure rank the player holds, which an Ascend's next phase requires
   adventureRank: number;
@@ -41,12 +47,6 @@ interface Props {
   rarityRequiredExpsMap: RarityRequiredExpsMap;
   // Every weapon's game data by its id, which the open weapon, its fodder and its copies are read from
   weaponDataMap: ReadonlyMap<number, WeaponData>;
-}
-
-// The bag and the wallet an accepted action leaves behind
-interface ActionState {
-  inventory: Inventory;
-  wallet: Wallet;
 }
 
 const inventory = defineModel<Inventory>("inventory", { required: true });
