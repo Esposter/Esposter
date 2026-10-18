@@ -121,7 +121,7 @@ const items = computed<Item[]>(() => [
     </div>
     <div flex shrink-0 gap-1 items-center>
       <!-- Beside the commands rather than inside the blade, because content saves are the resource's and every blade
-           of it writes through the same door — /docs/resource/resource-save-state -->
+           of it writes through the same door — openspec/specs/resource/resource-save-state/design.md -->
       <ResourceSaveStateIndicator :resource />
       <template v-if="isPublishable">
         <UiButton v-if="publication" :variant="UiButtonVariant.Accent" @click="isShareOpen = true">Share</UiButton>

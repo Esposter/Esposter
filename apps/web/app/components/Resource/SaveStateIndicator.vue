@@ -22,7 +22,7 @@ const saveStateDefinition = computed<ResourceSaveStateDefinition>(
 
 <template>
   <!-- Why there is no Save command anywhere: an edit is durable the moment this says so. The word alone would be
-    a claim the owner has to take on trust, so the resting state names when — /docs/resource/resource-save-state.
+    a claim the owner has to take on trust, so the resting state names when — openspec/specs/resource/resource-save-state/design.md.
     A narrow row keeps the mark and drops the words, which the tooltip still spells out -->
   <UiTooltip :label="saveStateDefinition.title">
     <template #content>
