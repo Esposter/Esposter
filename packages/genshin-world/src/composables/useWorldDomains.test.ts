@@ -1,3 +1,4 @@
+import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -44,6 +45,17 @@ const domainEntrance: DomainEntranceLandmark = {
   titleTextKey: GameTextKey.DomainEntrance24,
 };
 
+// The Stormterror level a rank of 40 enters, made up with the one enemy its fight needs
+const domainChallengeLevels: DomainChallengeLevelMap = {
+  "1006": {
+    "40": {
+      defeatTarget: 1,
+      timeLimitSeconds: Number.POSITIVE_INFINITY,
+      waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+    },
+  },
+};
+
 // A boss in the arena's camp, staggered by its shield's break, with every other field made up
 const createBrokenBoss = (campId: string): Enemy => ({
   attackCooldownSeconds: 0,
@@ -85,6 +97,7 @@ const createDomains = () => {
     artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
     completedMainQuestIds: shallowRef(new Set<string>()),
+    domainChallengeLevels,
     events,
     gameDataBaseUrl: "",
     getWorldNow: () => Temporal.Instant.fromEpochMilliseconds(0),

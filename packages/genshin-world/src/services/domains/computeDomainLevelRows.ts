@@ -1,6 +1,6 @@
+import type { DomainChallengeLevel } from "#src/models/domains/DomainChallengeLevel";
 import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
-import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
 
 import { DomainLevelState } from "#src/models/domains/DomainLevelState";
 import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";

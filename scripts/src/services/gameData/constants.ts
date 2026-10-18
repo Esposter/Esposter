@@ -34,3 +34,5 @@ export const GAME_DATA_DEV_BASE_URL: string = `${GameDataTargetBlobServiceUrlMap
 export const CATALOGUE_KEY: string = `${GameDataset.Catalogue}/catalogue`;
 // The login's age rating, the one authored record of a dataset a fit otherwise publishes, so it is published as its key
 export const AGE_RATING_KEY = "login/ageRating";
+// The domains' challenge levels, which `genshin:data authored` publishes from their committed file for the world's gate
+export const DOMAIN_CHALLENGE_LEVELS_KEY = "domainChallengeLevels/levels";

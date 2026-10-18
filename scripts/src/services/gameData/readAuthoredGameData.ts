@@ -1,4 +1,4 @@
-import { AGE_RATING_KEY, CATALOGUE_KEY } from "#src/services/gameData/constants";
+import { AGE_RATING_KEY, CATALOGUE_KEY, DOMAIN_CHALLENGE_LEVELS_KEY } from "#src/services/gameData/constants";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
 import { CATALOGUE_PATH, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readRegionGroundFiles } from "#src/services/genshinAssets/shared/readRegionGroundFiles";
@@ -9,12 +9,13 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The world's authored data files, which people edit and no step generates but the catalogue's outlines
-// (`fitAreaOutlines`), as the records they publish under: the catalogue, each region's ground no fit has drawn and the
-// Login's age rating, read as the world package commits them. A ground file whose region a fit has since drawn is
-// Refused, since publishing it would put the plateaus back in place of the fitted ground
+// (`fitAreaOutlines`), as the records they publish under: the catalogue, the domains' challenge levels, each region's
+// Ground no fit has drawn and the Login's age rating, read as the world package commits them. A ground file whose
+// Region a fit has since drawn is Refused, as publishing it would put the plateaus back over the fitted ground
 export const readAuthoredGameData = async (): Promise<Record<string, unknown>> => {
-  const [catalogueJson, regionGroundMap, ageRatingJson] = await Promise.all([
+  const [catalogueJson, domainChallengeLevelsJson, regionGroundMap, ageRatingJson] = await Promise.all([
     readFile(CATALOGUE_PATH, "utf8"),
+    readFile(join(WORLD_DATA_DIRECTORY, `${DOMAIN_CHALLENGE_LEVELS_KEY}.json`), "utf8"),
     readRegionGroundFiles(),
     readFile(join(WORLD_DATA_DIRECTORY, `${AGE_RATING_KEY}.json`), "utf8"),
   ]);
@@ -30,6 +31,7 @@ export const readAuthoredGameData = async (): Promise<Record<string, unknown>> =
   );
   return {
     [CATALOGUE_KEY]: parseMachineJson(catalogueJson),
+    [DOMAIN_CHALLENGE_LEVELS_KEY]: parseMachineJson(domainChallengeLevelsJson),
     ...Object.fromEntries(
       Object.entries(regionGroundMap).map(([region, ground]) => [`${GameDataset.Ground}/${region}`, ground]),
     ),

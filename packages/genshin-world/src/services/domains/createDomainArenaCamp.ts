@@ -1,5 +1,5 @@
+import type { DomainChallengeEnemy } from "#src/models/domains/DomainChallengeEnemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
-import type { DomainChallengeEnemy } from "#src/services/domains/domainChallengeLevels";
 import type { GroundPoint } from "genshin-engine";
 
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
