@@ -1,13 +1,19 @@
 import type { BuffRow } from "#src/models/genshinAssets/cooking/BuffRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
-import type { DishUse } from "genshin-world";
+import type { Attribute, DishBonus, DishUse } from "genshin-world";
 
 import {
   ADD_SERVER_BUFF_USE_OP,
+  BONUS_ABILITY_NAMES,
+  BONUS_CLAUSE_ATTRIBUTE_MAP,
+  BONUS_CLAUSE_SEPARATOR_REGEX,
+  BONUS_FLAT_ATTRIBUTE_MAP,
+  BONUS_FLAT_CLAUSE_REGEX,
+  BONUS_PERCENT_CLAUSE_REGEX,
   DISH_TARGET_MAP,
   HEAL_BUFF_ABILITY_NAME,
   HEAL_BUFF_DESCRIPTION_REGEX,
-  HEAL_PERCENT_TOTAL,
+  PERCENT_TOTAL,
   REVIVE_BUFF_ABILITY_NAME,
   REVIVE_BUFF_DESCRIPTION_REGEX,
 } from "#src/services/genshinAssets/cooking/constants";
@@ -26,7 +32,7 @@ const getBuffs = (materialRow: MaterialRow, buffRows: BuffRow[], abilityName: st
 const toHeal = (description: string): DishUse["heal"] => {
   const match = HEAL_BUFF_DESCRIPTION_REGEX.exec(description);
   if (match?.groups === undefined) return undefined;
-  return { flat: Number(match.groups.flat), healthShare: Number(match.groups.percent) / HEAL_PERCENT_TOTAL };
+  return { flat: Number(match.groups.flat), healthShare: Number(match.groups.percent) / PERCENT_TOTAL };
 };
 
 // The HP a revive description restores, which every revive writes in the one form
@@ -37,17 +43,58 @@ const toRevive = (materialRow: MaterialRow, description: string): DishUse["reviv
   return { flat: Number(match.groups.flat) };
 };
 
-// A dish's use from its item row and the buff table: the heal its heal buff gives and the HP its revive buff restores,
-// And the target its use names. A dish whose buffs give neither has no use. A dish with more than one buff of a kind, or
-// Or a target this does not read, throws
+// The stat one clause of a bonus description gives: a flat amount of the attribute its ability names, or a percentage of
+// The attribute its name gives, kept as a fraction. A clause this does not read gives none
+const toBonusClause = (
+  clause: string,
+  flatAttribute: Attribute | undefined,
+): DishBonus["attributes"][number] | undefined => {
+  const flatMatch = BONUS_FLAT_CLAUSE_REGEX.exec(clause);
+  if (flatMatch?.groups)
+    return flatAttribute === undefined
+      ? undefined
+      : { amount: Number(flatMatch.groups.flat), attribute: flatAttribute };
+  const percentMatch = BONUS_PERCENT_CLAUSE_REGEX.exec(clause);
+  if (percentMatch?.groups === undefined) return undefined;
+  const attribute = BONUS_CLAUSE_ATTRIBUTE_MAP[percentMatch.groups.name];
+  return attribute === undefined
+    ? undefined
+    : { amount: Number(percentMatch.groups.percent) / PERCENT_TOTAL, attribute };
+};
+
+// The bonus a bonus buff's description gives, each clause one stat, with the seconds the buff lasts. A description with a
+// Clause this does not read gives no bonus
+const toBonus = (buff: BuffRow): DishBonus | undefined => {
+  const flatAttribute = BONUS_FLAT_ATTRIBUTE_MAP[buff.abilityName];
+  const attributes: DishBonus["attributes"] = [];
+  for (const clause of buff.desc.split(BONUS_CLAUSE_SEPARATOR_REGEX)) {
+    const attribute = toBonusClause(clause, flatAttribute);
+    if (attribute === undefined) return undefined;
+    attributes.push(attribute);
+  }
+  return { attributes, seconds: buff.time, source: buff.abilityName };
+};
+
+// A dish's use from its item row and the buff table: the heal its heal buff gives, the HP its revive buff restores and the
+// Bonus its bonus buff gives, and the target its use names. A dish whose buffs give none of these has no use. A dish with
+// More than one buff of a kind, or a target this does not read, throws
 export const toDishUse = (materialRow: MaterialRow, buffRows: BuffRow[]): DishUse | undefined => {
   const [healBuff, ...otherHealBuffs] = getBuffs(materialRow, buffRows, HEAL_BUFF_ABILITY_NAME);
   const [reviveBuff, ...otherReviveBuffs] = getBuffs(materialRow, buffRows, REVIVE_BUFF_ABILITY_NAME);
+  const [bonusBuff, ...otherBonusBuffs] = BONUS_ABILITY_NAMES.flatMap((abilityName) =>
+    getBuffs(materialRow, buffRows, abilityName),
+  );
   const heal = healBuff === undefined ? undefined : toHeal(healBuff.desc);
   const revive = reviveBuff === undefined ? undefined : toRevive(materialRow, reviveBuff.desc);
-  if (heal === undefined && revive === undefined) return undefined;
+  const bonus = bonusBuff === undefined ? undefined : toBonus(bonusBuff);
+  if (heal === undefined && revive === undefined && bonus === undefined) return undefined;
   const target = DISH_TARGET_MAP[materialRow.useTarget ?? ""];
-  if (otherHealBuffs.length > 0 || otherReviveBuffs.length > 0 || target === undefined)
+  if (otherHealBuffs.length > 0 || otherReviveBuffs.length > 0 || otherBonusBuffs.length > 0 || target === undefined)
     throw new InvalidOperationError(Operation.Read, String(materialRow.id), "names a use this build does not read");
-  return { ...(heal === undefined ? {} : { heal }), ...(revive === undefined ? {} : { revive }), target };
+  return {
+    ...(bonus === undefined ? {} : { bonus }),
+    ...(heal === undefined ? {} : { heal }),
+    ...(revive === undefined ? {} : { revive }),
+    target,
+  };
 };

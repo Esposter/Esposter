@@ -1,5 +1,6 @@
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
 import { eatDish } from "#src/services/cooking/eatDish";
@@ -14,11 +15,13 @@ export const useInventoryEntry = (
     dishUseMap,
     eaterId,
     getMaxHealth,
+    kitEffectState,
     party,
   }: {
     dishUseMap: ReadonlyMap<number, DishUse>;
     eaterId: number;
     getMaxHealth: (characterId: number) => number;
+    kitEffectState: KitEffectState;
     party: Party;
   },
 ): Inventory | undefined => {
@@ -29,7 +32,7 @@ export const useInventoryEntry = (
       const dishUse = dishUseMap.get(item.definition.id);
       return dishUse === undefined
         ? undefined
-        : eatDish(inventory, item.definition.id, dishUse, { eaterId, getMaxHealth, party });
+        : eatDish(inventory, item.definition.id, dishUse, { eaterId, getMaxHealth, kitEffectState, party });
     }
     default:
       return undefined;

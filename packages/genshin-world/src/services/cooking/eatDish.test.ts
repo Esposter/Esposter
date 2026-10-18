@@ -1,6 +1,8 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { DishTarget } from "#src/models/cooking/DishTarget";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { eatDish } from "#src/services/cooking/eatDish";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { createParty } from "#src/services/party/createParty";
@@ -35,7 +37,7 @@ describe(eatDish, () => {
       createInventory(2),
       DISH_ID,
       { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, party },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
     );
 
     expect(countInventoryItem(inventory?.items ?? [], DISH_ID)).toBe(1);
@@ -53,7 +55,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { heal: { flat: 100, healthShare: 0.1 }, target: DishTarget.Party },
-      { eaterId: EATER_ID, getMaxHealth, party },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
@@ -69,7 +71,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { heal: { flat: 0, healthShare: 0.3 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, party },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(1);
@@ -84,7 +86,7 @@ describe(eatDish, () => {
       createInventory(1),
       DISH_ID,
       { revive: { flat: 500 }, target: DishTarget.Selected },
-      { eaterId: EATER_ID, getMaxHealth, party },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
     );
 
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.5);
@@ -101,9 +103,56 @@ describe(eatDish, () => {
         createInventory(0),
         DISH_ID,
         { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
-        { eaterId: EATER_ID, getMaxHealth, party },
+        { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
       ),
     ).toBeUndefined();
     expect(getPartyMember(party, EATER_ID).healthShare).toBe(0.5);
+  });
+
+  test("a heal dish heals the one who eats it", () => {
+    expect.hasAssertions();
+
+    const party = createParty([EATER_ID, ALLY_ID]);
+    getPartyMember(party, EATER_ID).healthShare = 0.5;
+    getPartyMember(party, ALLY_ID).healthShare = 0.5;
+    eatDish(
+      createInventory(1),
+      DISH_ID,
+      { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState: { effects: [] }, party },
+    );
+
+    expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
+    expect(getPartyMember(party, ALLY_ID).healthShare).toBe(0.5);
+  });
+
+  test("a bonus dish lasts as its description says", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    eatDish(
+      createInventory(1),
+      DISH_ID,
+      {
+        bonus: {
+          attributes: [{ amount: 0.06, attribute: Attribute.CriticalRate }],
+          seconds: 300,
+          source: "Critical_Team",
+        },
+        target: DishTarget.Selected,
+      },
+      { eaterId: EATER_ID, getMaxHealth, kitEffectState, party: createParty([EATER_ID]) },
+    );
+
+    expect(kitEffectState.effects).toStrictEqual([
+      {
+        amount: 0.06,
+        attribute: Attribute.CriticalRate,
+        characterId: EATER_ID,
+        kind: "buff",
+        secondsRemaining: 300,
+        source: "Critical_Team",
+      },
+    ]);
   });
 });

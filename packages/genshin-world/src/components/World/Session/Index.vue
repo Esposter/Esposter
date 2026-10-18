@@ -375,6 +375,7 @@ const useBagEntry = (entryId: number) => {
     dishUseMap: dishUseMap.value,
     eaterId: getActiveCharacterId(party),
     getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
+    kitEffectState: kitContext.kitEffectState,
     party,
   });
   if (nextInventory) setInventory(nextInventory);
