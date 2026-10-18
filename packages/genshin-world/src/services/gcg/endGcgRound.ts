@@ -9,7 +9,7 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { startGcgRound } from "#src/services/gcg/startGcgRound";
 import { takeOne } from "@esposter/shared";
 
-// The end phase once both sides have declared their round's end: a Frozen status lapses, each side draws its cards from
+// The end phase once both sides have declared their round's end: a Frozen status and a switch-in lapse, each side draws its cards from
 // The first side on, and the next round begins with its roll, the side that declared first going first. The fifteenth
 // Round's end concedes the duel to both sides
 export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
@@ -18,7 +18,10 @@ export const endGcgRound = (duel: GcgDuel, rule: GcgRule): void => {
   for (const side of duel.sides) {
     side.usedCardIds = [];
     side.usedSkillIds = [];
-    for (const character of side.characters) character.isFrozen = false;
+    for (const character of side.characters) {
+      character.isFrozen = false;
+      character.isSwitchedIn = false;
+    }
     side.dice = [];
     side.hasDeclaredEnd = false;
     side.hasDefeatedCharacter = false;

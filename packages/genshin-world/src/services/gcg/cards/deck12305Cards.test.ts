@@ -370,6 +370,21 @@ describe("yaksha's Mask", () => {
       value,
     });
   });
+
+  test("a Plunging Attack deals 2 more DMG", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
+
+    expect(
+      yakshasMask.modifyDamageDealt?.(
+        { duel, isPlunge: true, sideIndex: 0 },
+        { damageType: GcgDamageKind.Physical, value: 2 },
+        zoneCard,
+      ),
+    ).toStrictEqual({ damageType: Element.Anemo, value: 5 });
+  });
 });
 
 describe("yaksha's Mask's switch clause", () => {
