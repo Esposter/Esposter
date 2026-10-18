@@ -5,7 +5,7 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { claimMail } from "#src/services/mail/claimMail";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(claimMail, () => {
   const MORA_COUNT = 5;
@@ -45,7 +45,7 @@ describe(claimMail, () => {
     expect.hasAssertions();
 
     const claimed = claimMail(STATE, HELD, ROW, NAMES, MATERIAL_DATA_MAP);
-    if (claimed === undefined) throw new Error("the mail was not claimed");
+    assert.exists(claimed);
 
     expect(claimMail(claimed, HELD, ROW, NAMES, MATERIAL_DATA_MAP)).toBeUndefined();
   });
