@@ -14,7 +14,7 @@
 
 ## 4. Boars and wildlife that fights back
 
-- [ ] 4.1 Make a boar charge at a player in its way, and Sumeru's beasts fight back. Verify: a test named after 'A boar charges a player standing in its way'.
+- [x] 4.1 Make a boar charge at a player in its way, and Sumeru's beasts fight back. Verify: a test named after 'A boar charges a player standing in its way'.
 
 ## 5. Pets and each region's animals
 

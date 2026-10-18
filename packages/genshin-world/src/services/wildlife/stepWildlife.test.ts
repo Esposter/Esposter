@@ -2,7 +2,13 @@ import type { Wildlife } from "#src/models/wildlife/Wildlife";
 
 import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { WildlifeState } from "#src/models/wildlife/WildlifeState";
-import { WILDLIFE_ESCAPE_RADIUS, WILDLIFE_ESCAPE_SECONDS, WILDLIFE_FLEE_SPEED } from "#src/services/wildlife/constants";
+import {
+  WILDLIFE_CHARGE_REACH,
+  WILDLIFE_ESCAPE_RADIUS,
+  WILDLIFE_ESCAPE_SECONDS,
+  WILDLIFE_FLEE_SPEED,
+  WILDLIFE_STEP_SECONDS,
+} from "#src/services/wildlife/constants";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { stepWildlife } from "#src/services/wildlife/stepWildlife";
 import { strikeWildlife } from "#src/services/wildlife/strikeWildlife";
@@ -14,6 +20,8 @@ const createNearWildlife = (): Wildlife =>
 
 describe(stepWildlife, () => {
   const STEP_SECONDS = 0.5;
+  // Long enough for a boar to close its reach on the target at the charge speed, and then some
+  const CHARGE_STEP_BOUND = 600;
   const TARGET = { x: 0, z: 0 };
 
   test("leaves an idle animal out of the target's reach where it stands", () => {
@@ -95,5 +103,22 @@ describe(stepWildlife, () => {
     stepWildlife(wildlife, TARGET, WILDLIFE_ESCAPE_SECONDS);
     expect(wildlife.state).toBe(WildlifeState.Fleeing);
     expect(wildlife.stateSeconds).toBe(0);
+  });
+
+  test("a boar charges a player standing in its way", () => {
+    expect.hasAssertions();
+
+    // A boar on the player's reach, charging straight at the player until it makes contact
+    const wildlife = createWildlife({
+      id: "boar",
+      kind: WildlifeKind.Boar,
+      position: { x: 0, z: WILDLIFE_CHARGE_REACH },
+    });
+    let isHit = false;
+    for (let step = 0; step < CHARGE_STEP_BOUND && !isHit; step++)
+      isHit = stepWildlife(wildlife, TARGET, WILDLIFE_STEP_SECONDS);
+
+    expect(isHit).toBe(true);
+    expect(wildlife.state).toBe(WildlifeState.Fleeing);
   });
 });

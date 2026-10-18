@@ -12,6 +12,7 @@ The game's world is lived in by animals: birds that scatter, boars that charge, 
 - **They come back on the game's refresh**, as gathering points do, by their kind's policy.
 - **A crystalfly is a material source in its own dataset.** `materialSources` publishes each crystalfly's point, the official map's label of its kind, with the id of the item its gather row gives, read off `EnvAnimalGatherExcelConfigData` through the animal's English name. A crystalfly is a PickUp prompt in the world and is taken out of it with the pick up, and the bag holds the item. It is its own dataset because it is picked up whole and never flees. It is not drawn yet, and it does not return on the refresh yet.
 - **A hit on an animal gives no attack energy.** The strike loop collects the hits that strike an enemy, and the energy roll counts those alone, so a hit that strikes only an animal leaves the team's energy as it was. Strikes on animals are not counted toward energy until a recording shows the game gives it.
+- **A boar charges.** A boar is the Snowboar label (313), the one boar label with points in Mondstadt, and its kind is `Boar`. It charges at a character within its charge reach. Its charge lands once it is within the contact distance: that hit takes a share of the character's Max HP through the team's shields, and the boar then runs off as the fleeing kinds do. Its reach, speed, contact distance and hit damage are provisional constants in `services/wildlife/constants.ts`, each marked provisional until a recording of a charge measures it. A boar's drop is left out: no table the dump carries gives it, and the wiki's entry could not be read, so a struck boar falls and gives nothing until that entry is read. Sumeru's beasts fighting back waits on Sumeru's region.
 
 ## How it works
 
@@ -20,6 +21,9 @@ stateDiagram-v2
   [*] --> Idle: spawned when the player is near
   Idle --> Fleeing: the player within its escape radius
   Fleeing --> Idle: escaped, after its escape time
+  Idle --> Charging: a boar with the player in its charge reach
+  Charging --> Fleeing: its charge lands on the player
+  Charging --> Idle: the player out of its charge reach
   Idle --> Fallen: struck down
   Fleeing --> Fallen: struck down
   Idle --> Picked: a material source picked up

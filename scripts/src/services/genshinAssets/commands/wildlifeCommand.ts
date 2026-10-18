@@ -10,7 +10,7 @@ export const wildlifeCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish each bird and beast the official map marks as a fleeing kind, carried into the scene by the fit, as one slice per region to the game data",
+      "Publish each bird and beast the official map marks, a boar included, carried into the scene by the fit, as one slice per region to the game data",
     name: "wildlife",
   },
   run: async ({ args }) => {

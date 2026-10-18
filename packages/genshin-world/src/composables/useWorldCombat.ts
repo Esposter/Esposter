@@ -33,6 +33,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
+import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
 import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
@@ -214,9 +215,17 @@ export const useWorldCombat = ({
     strikePartyMember(enemyTables, party, enemy, combatant, kitContext.kitEffectState);
     respawnParty();
   };
+  // A boar's charge lands on the character on the field through the team's shields, and a team it fells respawns
+  const chargeParty = () => {
+    const combatant = activeCombatant.value;
+    if (!combatant) return;
+    chargePartyMember(party, combatant, kitContext.kitEffectState);
+    respawnParty();
+  };
   return {
     characterIdSkillGlyphsMap,
     characters,
+    chargeParty,
     clearKitEffects,
     defeatEnemy,
     hudMember,
