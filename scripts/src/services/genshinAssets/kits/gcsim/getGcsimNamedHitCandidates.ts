@@ -39,9 +39,15 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
     const [attack] = variableAttacks;
     const joinedAttack = variableAttacks.length === 1 ? attack : undefined;
     // The calls firing any of the variable's attacks, each by the variable, since a named list's calls may fire its literals in turn.
-    // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays
+    // A list's hits are taken in the order they land, so a call a loop makes early and one it makes late sort by their delays.
+    // Each call carries the declaration its attack is made from, which a list may take the calls of several keys from
     const attackCalls = queuedAttacks
-      .filter((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.talentVariable === variable)
+      .flatMap((queuedAttack) => {
+        const attack = findQueuedAttack(attacks, queuedAttack);
+        return attack?.talentVariable === variable
+          ? [{ ...queuedAttack, site: `${attack.file}:${attack.siteLine}` }]
+          : [];
+      })
       .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
     for (const leaf of leaves) {
       const { reference } = leaf;
@@ -51,12 +57,14 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
       if (index === undefined || namedHitCandidateMap.has(key)) continue;
       const namedHitCandidate: NamedHitCandidate = {
         fieldMap: readFieldMap(key, gcsim, tables, { attack: joinedAttack, talentLeaf: leaf }),
-        queuedFieldMaps: attackCalls.map(({ delay, delayLine, file, hitbox }) =>
-          readFieldMap(key, gcsim, tables, {
+        queuedCalls: attackCalls.map(({ delay, delayLine, file, hitbox, site }) => ({
+          delay,
+          fieldMap: readFieldMap(key, gcsim, tables, {
             areaHitbox: hitbox,
             hitmark: delay === undefined ? undefined : { file, line: delayLine, value: delay },
           }),
-        ),
+          site,
+        })),
       };
       namedHitCandidateMap.set(key, namedHitCandidate);
     }
