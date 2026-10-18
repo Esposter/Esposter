@@ -31,7 +31,7 @@ export const copySpawns = (objects: readonly SceneObject[], spawns: readonly Ass
       const toCopyId = (transformId: string): string => `${transformId}~${index}`;
       return subtree.map((object) =>
         Object.assign(structuredClone(object), {
-          childIds: object.childIds.map(toCopyId),
+          childIds: object.childIds.map((childId) => toCopyId(childId)),
           parentId: object === root ? object.parentId : toCopyId(object.parentId),
           position:
             object === root

@@ -43,7 +43,7 @@ export const placeWorldPrefabs = (
       for (const object of subtree)
         copies.push(
           Object.assign(structuredClone(object), {
-            childIds: object.childIds.map(toCopyId),
+            childIds: object.childIds.map((childId) => toCopyId(childId)),
             parentFile: object === root ? WORLD_FILE : object.parentFile,
             parentId: object === root ? anchorId : toCopyId(object.parentId),
             transformId: toCopyId(object.transformId),

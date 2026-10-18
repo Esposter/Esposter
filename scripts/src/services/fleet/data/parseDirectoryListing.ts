@@ -24,7 +24,7 @@ export const parseDirectoryListing = (line: string): DirectoryListing => {
     typeof value.directory !== "string" ||
     !("files" in value) ||
     !Array.isArray(value.files) ||
-    !value.files.every(checkIsFileEntry)
+    !value.files.every((file) => checkIsFileEntry(file))
   )
     throw new InvalidOperationError(Operation.Read, "listing", "the peer's listing line is malformed");
   return { directory: value.directory, files: value.files };

@@ -141,7 +141,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   const selectBarSamples = (grid: TerrainResidualGrid): Float64Array =>
     mapTerrainResidualGrid(grid, (x, z, value) =>
       getBarDistance(x, z) < GROUND_BAR_RADIUS ? value : Number.NaN,
-    ).values.filter(Number.isFinite);
+    ).values.filter((sample) => Number.isFinite(sample));
   const detailSamples = selectBarSamples(computeTerrainDetail(naturalGrid, GROUND_STEP));
   const gate = roundFitted(computeRootMeanSquare(detailSamples));
   const getHillsHeight = createGaussianHillsHeight(hills);
@@ -167,7 +167,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   // The composed ground against the tiles inside the cities, their tiers and walls among them
   const cityMisses = mapTerrainResidualGrid(tileGrid, (x, z, height) =>
     getCityDistance(x, z) === 0 ? getGroundHeight(x, z) - height : Number.NaN,
-  ).values.filter(Number.isFinite);
+  ).values.filter((sample) => Number.isFinite(sample));
   const unfadedMisses = computeNaturalMisses(getFeaturedHeight);
   const drawnResidual = mapTerrainResidualGrid(heightGrid, (x, z, height) =>
     Number.isFinite(height) ? getGroundHeight(x, z) - getFeaturedHeight(x, z) : Number.NaN,
@@ -187,7 +187,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
     GROUND_ERROR_BANDS.map((within) => {
       const values = mapTerrainResidualGrid(grid, (x, z, value) =>
         getBarDistance(x, z) < within ? value : Number.NaN,
-      ).values.filter(Number.isFinite);
+      ).values.filter((sample) => Number.isFinite(sample));
       return `${roundFitted(compute([...values]))}${unit} within ${within}`;
     }).join(", ");
   const ground = { ...hills, features, ...computeGroundBounds(heightGrid.values), residual };
@@ -195,7 +195,7 @@ export const fitRegionGround = async (region: DerivedAssetComponent, centre: Gro
   // Null, so a ground the reader would refuse throws here, before anything is published
   regionGroundSchema.parse(ground);
   const getShareReport = (checkIsCounted: (weight: number) => boolean): string =>
-    `${roundFitted((100 * fade.weights.filter(checkIsCounted).length) / fade.weights.length)}%`;
+    `${roundFitted((100 * fade.weights.filter((weight) => checkIsCounted(weight)).length) / fade.weights.length)}%`;
   return {
     notes: [
       cityMisses.length === 0

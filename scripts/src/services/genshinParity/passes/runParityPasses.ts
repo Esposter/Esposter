@@ -27,7 +27,7 @@ export const runParityPasses = async (
       console.log(`${pass}: not owed for ${component}`);
       continue;
     }
-    const isHeld = measure.readings.length > 0 && measure.readings.every(checkIsReadingHeld);
+    const isHeld = measure.readings.length > 0 && measure.readings.every((reading) => checkIsReadingHeld(reading));
     results.push({ isHeld, measure, pass });
     if (!isHeld) break;
   }

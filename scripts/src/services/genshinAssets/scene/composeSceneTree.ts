@@ -31,7 +31,7 @@ export const composeSceneTree = (
       ?.elements.slice(12, 15);
     return (
       (position ?? [0, 0, 0]).every((value) => Math.abs(value) <= ORIGIN_TOLERANCE_METRES) &&
-      node.children.every(checkIsSubtreeAtOrigin)
+      node.children.every((child) => checkIsSubtreeAtOrigin(child))
     );
   };
   const toNode = (object: SceneObject, top: SceneObject, visitedKeys: ReadonlySet<string>): SceneTreeNode => {

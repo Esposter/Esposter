@@ -126,12 +126,12 @@ export const calibrateCommand: SubCommandsDef[string] = defineCommand({
       return;
     }
     lights[timeOfDay] = {
-      harmonics: light.harmonics.map(roundColor),
+      harmonics: light.harmonics.map((color) => roundColor(color)),
       hazeColor: roundColor(light.hazeColor),
       hazeScatterColor: roundColor(light.hazeScatterColor),
       heightDarkening: light.heightDarkening,
       heightFade: roundColor(light.heightFade),
-      ramp: light.ramp.map(roundColor),
+      ramp: light.ramp.map((color) => roundColor(color)),
     };
     console.log(await publishGameDataRecord(STONE_LIGHT_KEY, lights));
   },
