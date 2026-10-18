@@ -189,6 +189,180 @@
       "title": "El sentimiento de Ascensión - Desenlace"
     }
   ],
+  "Alyosha": [
+    {
+      "text": "Hola, soy Aliosha. Soy un cazador, aunque, si preguntas por ahí entre los bandidos, puede que descubras otra faceta mía. Pero bueno, por ahora, que eso quede entre nosotros.",
+      "title": "Hola..."
+    },
+    {
+      "text": "En lo que a habilidad con armas de fuego se refiere, el tiro al blanco y la caza son cosas completamente distintas. Aunque, por supuesto, también está lo que se aprende en la batalla... Pero eso ya es otra historia.",
+      "title": "Charla - Puntería"
+    },
+    {
+      "text": "¿Quieres adoptar un perrito? Si te interesa, no dudes en venir a verme. Tengo de todas las razas. Contigo, sé que estarán en buenas manos.",
+      "title": "Charla - Adopción"
+    },
+    {
+      "text": "Este dinero va para casa, este otro se lo doy a los de Rókot para comprar medicamentos, y el Mora para el mantenimiento del arma... Me pregunto qué banda de malhechores tendrá la mala suerte de toparse conmigo esta vez...",
+      "title": "Charla - Hacer las cuentas"
+    },
+    {
+      "text": "Se me va a empapar la capucha... ¡Tugarin, deja de sacudirte!",
+      "title": "Cuando llueve..."
+    },
+    {
+      "text": "Es hora de que la presa salga arrastrándose de su escondite.",
+      "title": "Tras la lluvia..."
+    },
+    {
+      "text": "Es el tiempo perfecto para una emboscada, si tienes a alguien en mente... Puedo aprovechar el ruido de los truenos para disimular los disparos.",
+      "title": "Cuando truena..."
+    },
+    {
+      "text": "*Tch*, va a ser imposible seguir las huellas.",
+      "title": "Cuando nieva..."
+    },
+    {
+      "text": "Con este tiempo no se puede andar con capucha...",
+      "title": "Hace mucho viento..."
+    },
+    {
+      "text": "Ojalá yo también pudiera mudar el pelaje...",
+      "title": "En el desierto..."
+    },
+    {
+      "text": "¿Oyes eso? Son los pájaros cantando en el bosque, como lo hacen todas las mañanas. ¿Por qué no vamos a cazar un par?",
+      "title": "Buenos días..."
+    },
+    {
+      "text": "Normalmente almuerzo al aire libre, pero no es algo que recomiende precisamente.",
+      "title": "Buenas tardes..."
+    },
+    {
+      "text": "Algunas de las presas más raras solo salen por la noche.",
+      "title": "Buenas noches... (I)"
+    },
+    {
+      "text": "Ve y descansa. Yo todavía tengo cosas que hacer y necesito el amparo de la noche.",
+      "title": "Buenas noches... (II)"
+    },
+    {
+      "text": "La primera vez que me topé con Tugarin, el chiquitín había sido abandonado en la nieve. Estaba acurrucado hecho una bola y ni siquiera podía moverse. Pero es un luchador. Le di de comer un par de salchichas y, en un santiamén, ya estaba de pie, corriendo en círculos a mi alrededor. No es que tenga raciones de sobra para una mascota, pero... ¿qué es un cazador sin un perro de caza?",
+      "title": "Sobre Aliosha - Tugarin"
+    },
+    {
+      "text": "Mi padre me regaló este rifle de caza hace mucho tiempo, pero desde entonces lo he renovado por completo. Un arma puede ser lo único que se interponga entre ti y una muerte segura, ya sea recuperada, robada o comprada, y eso siempre conlleva un riesgo. Me estoy arriesgando la vida con esta cosa, así que tengo que conocerla como la palma de mi mano, hasta su más mínimo componente. Por supuesto, el mantenimiento y las modificaciones no son baratos. Si tengo que saltarme un par de comidas para cubrir los gastos, que así sea.",
+      "title": "Sobre Aliosha - Rifle de caza"
+    },
+    {
+      "text": "Con la inmensidad de la naturaleza salvaje frente a ellos, un cazador da media vuelta tras atrapar a su presa, pero un aventurero siempre va un paso más allá. Por eso eres tú quien tiene una lista de hazañas épicas interminable, y yo no. Dicho esto, escucharte hablar de todas tus emocionantes aventuras ciertamente no es una mala forma de pasar el rato.",
+      "title": "Sobre nosotros - Cazadores y aventureros"
+    },
+    {
+      "text": "¿En qué tipo de nación crees que se convertirá Snezhnaya? Je... ¿Sabes? Nunca le había preguntado eso a nadie. Los aldeanos están demasiado ocupados preocupándose por su próxima comida, y los bandidos están demasiado absortos en su próxima estafa. Nadie tiene tiempo para hablar de eso. Pero tú eres la persona perfecta a quien preguntarle. Aunque no hace falta que intercambiemos respuestas ahora mismo. Todavía quiero darle algunas vueltas más. Después de todo, supongo que es solo otra forma de preguntar a qué “ideal” aspiramos.",
+      "title": "Sobre nosotros - Ideales"
+    },
+    {
+      "text": "La gente suele decir que una Visión representa tus deseos más profundos. Pero ese tipo de pensamiento sin sentido y superficial no podría ser más insignificante para mí. Lo único que me importa es lo que este artilugio puede hacer por mí. Si nunca hubiera descubierto que me hacía más poderoso, probablemente ya lo habría vendido.",
+      "title": "Sobre la Visión..."
+    },
+    {
+      "text": "Cuando te alejas de los caminos habituales en Snezhnaya, conocer el lenguaje local es una habilidad importante. Si te topas con ciertas hadas o bandidos, saber hablar su idioma puede ahorrarte muchos problemas. Ah, y si alguna vez te encuentras con un grupo de personas que no dejan de murmurar sobre un “pollo”, no lo dudes y despójalos de todo lo que tengan. “Pollo” es el código para referirse a un civil inofensivo que lleva consigo una pequeña cantidad de objetos de valor. Básicamente, un blanco fácil. Los que van tras ellos son lo peor de lo peor, pero no son rival para nosotros. Además, considerando sus propios antecedentes penales, ni siquiera se les ocurriría denunciarnos ante la Druzhna, así que no les queda más remedio que aguantarse.",
+      "title": "¿Algo que decir?"
+    },
+    {
+      "text": "Escuché que hay una taberna en Mondstadt llamada Cola de Gato, donde los maestros de Invocación de los Sabios de todo Teyvat van a enfrentarse. Si alguna vez tengo la oportunidad de viajar al extranjero, ese es el primer lugar al que quiero ir. Ojalá Mondstadt no estuviera tan lejos de aquí... *Suspira*, ¿por qué no hay un lugar así en Snezhnaya?",
+      "title": "Un dato curioso..."
+    },
+    {
+      "text": "Para mí, su majestad la Zarina es como la nieve que cubre esta tierra. Trae consigo un frío intenso que no nos queda más remedio que soportar, pero también nos protege de las cosas más oscuras de este mundo. ¿Algún hijo de esta tierra helada llegará a verla descongelarse alguna vez? Me pregunto si la Zarina nos concederá alguna vez esa misericordia.",
+      "title": "Sobre la Zarina..."
+    },
+    {
+      "text": "Me sorprendió mucho enterarme de que Odette formaba parte de Rókot. Nunca pensé que un miembro de los Fatui compartiera nuestros principios... Pero, ahora que se ha demostrado que estaba equivocado, empiezo a pensar que lograr los cambios que queremos ver tal vez no sea tan difícil como me imaginaba. Un futuro más prometedor para esta nación sigue estando a nuestro alcance.",
+      "title": "Sobre Odette..."
+    },
+    {
+      "text": "Vodyanitsa es una fuente vital de información para Rókot. Cada vez que acudo a ella en busca de información, siempre me ayuda muchísimo. Sin embargo, cuando no hablamos de negocios, apenas puedo entender lo que intenta decir. Pero Odette no parece tener ese problema. Esas dos se llevan muy bien, como si fuera lo más natural del mundo. Me hace preguntarme si las chicas tienen algún tipo de código secreto.",
+      "title": "Sobre Vodyanitsa..."
+    },
+    {
+      "text": "La primera vez que me topé a Valeri, me bloqueó el paso y me hizo alejarme de la Real Armería, citando algún artículo de algún reglamento u otro que decía que no se me permitía acercarme... Bueno, la verdad es que andaba merodeando con un rifle de caza, así que me sorprendió que el tipo no me arrestara en el acto. De hecho, esperaba tener que pelear con él, pero en cambio, conseguí un nuevo contacto en la Real Armería. No puedo quejarme de cómo se desarrollaron las cosas. Sinceramente, pensamos igual en muchos aspectos. Así que ahora que hemos establecido un límite claro, siempre y cuando no se cruce, nos llevamos muy bien.",
+      "title": "Sobre Valeri..."
+    },
+    {
+      "text": "La verdad es que nunca recibí mucha educación formal, así que pensé que sería difícil llevarme bien con alguien como Mitya. Pero él me ha ayudado a modificar mi rifle más de una vez, sin que yo siquiera tuviera que pedírselo, así que claramente me preocupé para nada. Es fácil hablar con Mitya. Simplemente lo trato como a cualquier otro vecino, y todo sale bien. Un consejo, eso sí... Si se pone en plan científico, mejor aléjate.",
+      "title": "Sobre Mitya..."
+    },
+    {
+      "text": "¿Intentas que te revele mis secretos? Está bien. Te diré uno, pero solo uno: ser un “cazador” es un disfraz muy útil.",
+      "title": "Más sobre Aliosha (I)"
+    },
+    {
+      "text": "Una vez alguien me preguntó si hay alguna diferencia entre apuntar con un arma a un animal o a una persona. En ese momento no respondí, pero creo firmemente que sí la hay. Es solo que, cuantos más disparo, más se difumina esa línea, y más empiezo a sentir que el movimiento de apretar el gatillo es el mismo, sin importar a quién le esté apuntando... Por eso, no me da ningún placer apuntar con mi arma a las personas. A veces me pregunto qué pasaría si algún día esa línea desapareciera, y eso me asusta.",
+      "title": "Más sobre Aliosha (II)"
+    },
+    {
+      "text": "Cuando era niño, una pandilla de matones saqueó mi casa y nos robó todas nuestras pertenencias. Mis padres trataron de restarle importancia y decir que todo estaría bien, pero yo sabía lo que significaba para nuestra familia perder todo lo que teníamos. Así que decidí darle un buen uso a mis habilidades como cazador y, por primera vez, mi objetivo no fue un animal. Ahora, mis manos están manchadas de su sangre, y no me arrepiento. Se merecían pagar por lo que hicieron. Sin embargo, resulta que eran tan pobres y desamparados como nosotros, llevados a la desesperación por circunstancias fuera de su control. Fue entonces cuando me di cuenta: los matones y los ladrones no son el verdadero problema de este país, y si no logramos descubrir cuál es, que me haya manchado las manos de sangre habrá sido en vano.",
+      "title": "Más sobre Aliosha (III)"
+    },
+    {
+      "text": "Decidí unirme a Rókot porque siento que los principios por los que luchamos son exactamente lo que Snezhnaya necesita en este momento. Pero sé que, algún día, eso ya no será así. Cuando consigamos nuestro objetivo, muchas cosas cambiarán, y ahí es cuando comenzará la verdadera prueba.",
+      "title": "Más sobre Aliosha (IV)"
+    },
+    {
+      "text": "En mi opinión, los “realistas” son algunas de las personas más egocéntricas y oportunistas del mundo, siempre obsesionadas con las ganancias, el poder o lo que la gente a su alrededor podría estar ocultando. Los “idealistas”, por otro lado, podrían ser algunos de los más nobles entre nosotros. No toleran la mentira, el robo ni la más mínima injusticia. Sin embargo, en realidad existe un tercer tipo de persona: el “idealista realista”. Atrapados en medio, viven cada día constantemente empujados en direcciones opuestas.",
+      "title": "Más sobre Aliosha (V)"
+    },
+    {
+      "text": "Modificar, mantener y probar mi rifle... Antes pensaba que el cuidado de las armas de fuego era algo puramente necesario. Pero, al pensar en todo el tiempo y los Moras que le dedico, supongo que ya es hora de admitir que también se ha convertido en una especie de pasión.",
+      "title": "Aficiones de Aliosha..."
+    },
+    {
+      "text": "Todo el dinero que gasto en modificar, mantener y probar mi rifle... Haz los cálculos y tal vez te des cuenta de que las cosas que más te gustan en la vida son también la fuente de todos tus problemas.",
+      "title": "Preocupaciones de Aliosha..."
+    },
+    {
+      "text": "Carne curada, pan duradero, queso que se derrita al tostarlo... Con esos ingredientes, solo necesito un fuego, y siempre tengo un festín al alcance de la mano, incluso cuando estoy rodeado de hielo y nieve.",
+      "title": "Comida que más le gusta..."
+    },
+    {
+      "text": "Cualquier cosa con caparazón: cangrejos, langostas... todo ese tipo de cosas. ¿Gastar tanto Mora y tanto esfuerzo peleando contra pinzas y púas para sacar tan poca carne? No vale la pena para nada.",
+      "title": "Comida que menos le gusta..."
+    },
+    {
+      "text": "Gracias, está delicioso... ¿Se conserva bien? Creo que me lo terminaré más tarde.",
+      "title": "Al recibir un regalo (I)"
+    },
+    {
+      "text": "Humm... ¿Qué te parece si te ayudo a conseguir algo de carne de caza poco común? Con ingredientes de mejor calidad, esto quedaría aún mejor.",
+      "title": "Al recibir un regalo (II)"
+    },
+    {
+      "text": "Bueno, no puedo dejar que se eche a perder la comida. Seguro que hay algún aldeano que lo necesita más que yo.",
+      "title": "Al recibir un regalo (III)"
+    },
+    {
+      "text": "Feliz cumpleaños. Es hoy, ¿no? Sabes, de donde yo vengo, las celebraciones de cumpleaños suelen ser un lujo que no podemos permitirnos. Buena suerte tratando de conseguir suficiente harina y crema para un pastel, o encontrando a alguien que venda algo más que lo estrictamente necesario como regalo. Pero nunca le voy a reprochar a un niño que quiera celebrar su cumpleaños. Así es como debe ser, y espero que algún día ningún niño en Snezhnaya tenga que renunciar a eso. Por eso, decidí tomarme tu cumpleaños muy en serio y pensé mucho en el regalo y la tarjeta que te compré. A veces, uno tiene que ser el cambio que quiere ver en el mundo, ¿no?",
+      "title": "Cumpleaños..."
+    },
+    {
+      "text": "Genial. Siento que mi puntería ha mejorado.",
+      "title": "El sentimiento de Ascensión - Introducción"
+    },
+    {
+      "text": "Tugarin también está mejorando. Parece que estamos más en sintonía.",
+      "title": "El sentimiento de Ascensión - Desarrollo"
+    },
+    {
+      "text": "Para bien o para mal, ahora mis disparos no van a fallar.",
+      "title": "El sentimiento de Ascensión - Nudo"
+    },
+    {
+      "text": "¿Cuánto más tenemos que avanzar para que el mundo por el que luchamos se haga realidad?",
+      "title": "El sentimiento de Ascensión - Desenlace"
+    }
+  ],
   "Columbina": [
     {
       "text": "Puedes llamarme Colombina, Kuutar o Diosa Lunar... Como prefieras. Ya estoy acostumbrada a poseer multitud de nombres. Cuando la necesites, la bendición de la luna puede ser tuya.",
@@ -321,6 +495,10 @@
     {
       "text": "No estoy segura de qué cuenta como “muerte” para una marioneta... Lo único que sé es que Sandrone ya no se mueve y que no puedo percibir su funcionamiento. Su llave de cuerda simplemente... se detuvo. Y todo por esa “técnica” que usó para traerme de vuelta. Esa vez dijo que se vengaría de mí. Ojalá eso fuera todo, un intento de asustarme...",
       "title": "Sobre Sandrone - Naturaleza mecánica (II)"
+    },
+    {
+      "text": "Sandrone ha vuelto. Estoy muy feliz. Me di cuenta de que ahora su llave de cuerda a veces gira un poco más rápido. Antes siempre parecía girar a la misma velocidad. Ella dijo que es porque aceptó sus sentimientos más profundos y que ahora es diferente. Pero tanto si ha cambiado de ropa como si su llave gira más rápido, siento que Sandrone sigue siendo Sandrone, mi mejor amiga. Ya sea su yo pasado o su yo presente, me inspira una admiración total. Cuando le dije eso, su llave empezó a girar más rápido. No sé por qué, pero me pareció muy curioso.",
+      "title": "Sobre Sandrone - Naturaleza mecánica (III)"
     },
     {
       "text": "Para él, todo y todos tenemos un precio, y él decide su valor. Solo somos las monedas de cambio que puede aprovechar para expandir su imperio de riqueza, que no para de crecer. Pero ¿quién querría visitar un imperio tan aburrido como ese? Yo no, desde luego.\nHumm... Si me viera ahora, estoy segura de que su sonrisa ocultaría incluso más desdén que antes. Casi puedo oírlo ahora... “Felicidades, Srta. Colombina. Se ha revalorizado”.",
@@ -699,7 +877,7 @@
       "title": "Sobre Venti..."
     },
     {
-      "text": "Después de que la Srta. Lisa me asigne la tarea, me obliga a sentarme en mi pupitre para hacerla. Una vez, cuando estaba agotado, puse mi libro de pie sobre el pupitre para que no me viera e intenté echar una siesta a escondidas. Cuando me desperté, ella estaba allí de pie, sonriendo. Me quedé paralizado del susto. Pero antes de que pudiera terminar de disculparme, me felicitó por haber aprendido la lección más valiosa... Creo que se refería a mi disposición para reconocer los errores.\n¿Dices que ese no fue el elogio?",
+      "text": "Después de que la maestra Lisa me asigne la tarea, me obliga a sentarme en mi pupitre para hacerla. Una vez, cuando estaba agotado, puse mi libro de pie sobre el pupitre para que no me viera e intenté echar una siesta a escondidas. Cuando me desperté, ella estaba allí de pie, sonriendo. Me quedé paralizado del susto. Pero antes de que pudiera terminar de disculparme, me felicitó por haber aprendido la lección más valiosa... Creo que se refería a mi disposición para reconocer los errores.\n¿Dices que ese no fue el elogio?",
       "title": "Sobre Lisa..."
     },
     {
@@ -2583,7 +2761,7 @@
       "title": "Más sobre Lohen (V)"
     },
     {
-      "text": "Además de la emoción de la matanza en el campo de batalla, mi pasatiempo favorito es preparar pequeñas «sorpresas» para alegrar la vida de mis queridos compañeros de armas. Lo considero parte de su entrenamiento, ya que, al fin y al cabo, los caballeros deben mantenerse alerta en todo momento.",
+      "text": "Además de la emoción de la matanza en el campo de batalla, mi pasatiempo favorito es preparar pequeñas “sorpresas” para alegrar la vida de mis queridos compañeros de armas. Lo considero parte de su entrenamiento, ya que, al fin y al cabo, los caballeros deben mantenerse alerta en todo momento.",
       "title": "Aficiones de Lohen..."
     },
     {
@@ -2991,6 +3169,204 @@
       "title": "El sentimiento de Ascensión - Desenlace"
     }
   ],
+  "Odette": [
+    {
+      "text": "Gracias por tu apoyo. Quieres un autógrafo, ¿verdad? ¿Qué quieres que dibuje al lado? ¿Qué tal una pluma? Ah, espera, ¿no eres uno de mis seguidores? Supongo que te he malinterpretado. Entonces, déjame empezar desde el principio. Soy Odette, una bailarina de la Compañía Korolevski... Bueno, gracias por tu apoyo, de todos modos.",
+      "title": "Hola..."
+    },
+    {
+      "text": "Bueno, si eso es todo, me voy a ensayar.",
+      "title": "Charla - Ocupada"
+    },
+    {
+      "text": "Si basta con una respuesta sencilla, ¿por qué iba a decir algo más?",
+      "title": "Charla - No te compliques"
+    },
+    {
+      "text": "Ojalá el día tuviera el doble de horas... De hecho, mejor que sea el triple.",
+      "title": "Charla - El tiempo"
+    },
+    {
+      "text": "El golpeteo de las gotas de lluvia siempre me hace sentir muy tranquila. Este tipo de tiempo es perfecto para bailar sola.",
+      "title": "Cuando llueve..."
+    },
+    {
+      "text": "Los momentos más hermosos y serenos son siempre los más fugaces.",
+      "title": "Tras la lluvia..."
+    },
+    {
+      "text": "La nieve en Snezhnaya siempre es gélida y parece que nunca se acaba.",
+      "title": "Cuando nieva..."
+    },
+    {
+      "text": "Mi peinado... Lo arreglaré más tarde.",
+      "title": "Hace mucho viento..."
+    },
+    {
+      "text": "Al menos no puede haber un encuentro con seguidores en un lugar como este.",
+      "title": "En el desierto..."
+    },
+    {
+      "text": "Ya hice el calentamiento y estoy lista para empezar.",
+      "title": "Buenos días..."
+    },
+    {
+      "text": "No soy de las que duermen la siesta. El mediodía tampoco es un buen momento para entrenar, así que suelo pasar el tiempo leyendo los guiones de nuestras obras de danza. ¿Eh? ¿Que qué son estas cartas? Son de mis admiradores. Vodyanitsa prácticamente me las puso en la mano. Quiere que las lea aunque sea por una vez.",
+      "title": "Buenas tardes..."
+    },
+    {
+      "text": "Ah, ¿ya es hora de cenar? Tengo que salir al escenario en un rato, así que solo me comeré un huevo duro. Ya tomaré algo más cuando termine el espectáculo.",
+      "title": "Buenas noches... (I)"
+    },
+    {
+      "text": "Misiones completadas, cuota de entrenamiento cumplida, nueva rutina ensayada a la perfección. Aunque no estoy satisfecha con mis expresiones faciales. Necesito practicar un poco más frente al espejo... ¿Ya es tan tarde? Siéntete libre de retirarte. Todavía tengo cosas que hacer.",
+      "title": "Buenas noches... (II)"
+    },
+    {
+      "text": "Desde que se puso en marcha el Plan Stuzha, nuestra audiencia ha ido disminuyendo. Mientras la mayoría de la gente lucha por salir adelante, las sanguijuelas corruptas siguen aprovechándose del público. Me niego a hacer la vista gorda. Sé que no puedo cambiar el rumbo por mi cuenta, pero aun así quiero hacer lo que esté a mi alcance.",
+      "title": "Sobre Odette - Rókot"
+    },
+    {
+      "text": "Los recuerdos de mi pasado están grabados para siempre en mi mente. Como una kinografía, se reproducen una y otra vez en plena noche... No hace falta decir que tener una memoria perfecta no siempre es algo bueno.",
+      "title": "Sobre Odette - Su memoria"
+    },
+    {
+      "text": "Confiar en los demás para que me protejan es como apoyarse en una delgada capa de hielo recién formada. No pongo mis esperanzas en nadie más que en mí misma.",
+      "title": "Sobre nosotr{F#a}{M#o}s - Confianza"
+    },
+    {
+      "text": "Mi sensibilidad al dolor es bastante baja. Muchas veces ni siquiera me doy cuenta de que estoy lesionada hasta que la herida ya empieza a formar una costra. Pero prefiero que sea así. Ya sea en un ensayo de baile o en un entrenamiento especial de los Fatui, es mejor que algo tan trivial como mi estado físico no se interponga.",
+      "title": "Sobre nosotr{F#a}{M#o}s - Heridas"
+    },
+    {
+      "text": "Una vez, durante una intensa sesión de entrenamiento, sufrí congelación en los pies y las piernas debido al frío extremo, y casi perdí el conocimiento por completo. Cuando volví en mí, lo primero que noté fue una luz brillante que emanaba de la Cuña Estelar que tenía enfrente. Nunca había oído que las Cuñas Estelares pudieran despertar a la gente de esa manera... Así que, si eso no fue lo que me despertó... quizás fue algún deseo instintivo de sobrevivir.",
+      "title": "Sobre la Cuña Estelar..."
+    },
+    {
+      "text": "Me tomo cada ensayo con la misma seriedad que una actuación real.",
+      "title": "¿Algo que decir?"
+    },
+    {
+      "text": "Puedes resaltar el sabor dulce de las grosellas escarchadas espolvoreándolas con un poco de sal. Al parecer, el contraste ayuda a realzar su dulzura natural. Eso me lo dijo un seguidor.",
+      "title": "Un dato curioso..."
+    },
+    {
+      "text": "Estoy en deuda con Rosalyne, pero también hubo un tiempo en el que realmente la odiaba. Era muy exigente e increíblemente estricta. Congelarme de frío, desplomarme de agotamiento, lesionarme, enfermarme... todo eso era algo habitual cuando entrenaba con ella. Solía albergar ese sueño ingenuo de que solo tenía que triunfar como bailarina, ganar lo suficiente para mantener a mi madre y, luego, algún día, dejarla a ella y a los Fatui atrás.",
+      "title": "Sobre Rosalyne - El pasado"
+    },
+    {
+      "text": "Cuando alguien ya no está, de repente hay muchas cosas que no vale la pena decir. Podría romper este cor ignis en un santiamén, pero eso haría que el dolor y los malentendidos que causó parecieran aún más ridículos... ¿Por qué es solo ahora, después de todo este tiempo, cuando por fin nos entendemos?",
+      "title": "Sobre Rosalyne - Cor ignis"
+    },
+    {
+      "text": "Su majestad la Zarina es el pilar de la fe de Snezhnaya. Sus obligaciones la mantienen muy ocupada, por lo que rara vez hace apariciones públicas. De hecho, solo la he visto en unas pocas ocasiones, pero siempre me parece una figura increíblemente majestuosa y solemne. No importa dónde se pose su mirada, es tan fría e inquebrantable como una capa de hielo, una que ni siquiera el paso del tiempo podría derretir.",
+      "title": "Sobre la Zarina..."
+    },
+    {
+      "text": "Camina con una gracia casi etérea que sería la envidia de cualquier bailarina. Según Vodyanitsa, también tiene una voz cautivadora. Aunque supongo que lo que vemos y envidiamos es la imagen que proyecta en apariencia. Quién sabe qué dolor oculto se esconde en su interior...",
+      "title": "Sobre La Damisela..."
+    },
+    {
+      "text": "Los niños de la Casa de la Hoguera la consideran su “Padre”. Ojalá eso les ahorre algo del frío punzante y las tormentas furiosas que trae la vida. Al fin y al cabo, el papel de un padre es el de proteger.",
+      "title": "Sobre La Sota..."
+    },
+    {
+      "text": "Las horas del té de la Srta. Títere siempre le levantaban el ánimo a Rosalyne. Era igual de estricta, pero su tono se volvía un poco más suave. La diferencia resultaba bastante notable.",
+      "title": "Sobre la Srta. Títere..."
+    },
+    {
+      "text": "La primera vez que la Zarina vino a ver una de las presentaciones de la Compañía Korolevski, fue Vodyanitsa quien me lo dijo. Respondí con un simple movimiento de cabeza. Luego, ella me obligó a sonreír levantándome las comisuras de los labios y me hizo repetir después de ella: “Qué-gran-noticia”.\nQuizás fuera un ensayo para cuando tuviera que presentarme ante la Zarina, pero sigo sin creer que Su Majestad aprecie ese tipo de sonrisa.",
+      "title": "Sobre Vodyanitsa - Sonrisa"
+    },
+    {
+      "text": "Cada vez que Vodyanitsa se enferma, se pone muy melosa y prácticamente se pega a mi lado. Dice que es porque le da miedo que le pongan una inyección o que tenga que tomar un medicamento amargo, así que necesita algo a lo que aferrarse, y supongo que mi brazo es su opción preferida. Sin embargo, tengo una gran tolerancia al dolor, así que no hay razón para quitármela de encima.",
+      "title": "Sobre Vodyanitsa - Enfermarse"
+    },
+    {
+      "text": "Podría ganarse la vida fácilmente solo con la caza si no le importara nada más que él mismo, pero aun así acepta trabajos ocasionales en el teatro para poder ayudar a otros que están pasándolo mal... No me sorprende que se haya unido a Rókot.",
+      "title": "Sobre Aliosha..."
+    },
+    {
+      "text": "Humm... Supongo que se le podría llamar un “seguidor” del teatro. Viene a vernos actuar a mí y a Vodyanitsa con bastante frecuencia. Pero en cuanto empieza la función, siempre se sumerge en sus notas, escribiendo sin parar sobre quién sabe qué. Es difícil no fijarse en él, sobre todo cuando el resto del público tiene los ojos clavados en el escenario. No me sorprendería que su bufanda apreciara más las artes que él mismo.",
+      "title": "Sobre Mitya..."
+    },
+    {
+      "text": "El comandante Valeri es un oficial de los Fatui muy estricto en cuanto al cumplimiento de los horarios. Escuché que dirige con una actitud sensata que también puede resultar bastante aterradora... Pero pertenecemos a divisiones diferentes, así que casi nunca tenemos la oportunidad de interactuar. Además... no necesito que nadie me recuerde lo que debo hacer.",
+      "title": "Sobre Valeri..."
+    },
+    {
+      "text": "No creas que es una mariposa delicada e inofensiva solo por esas alas. Puede que la gente se acerque a ella en masa, pero es la comandante en jefe de la Druzhna, uno de los depredadores más feroces de la tundra. Mantén los ojos bien abiertos y no te dejes engañar por su sonrisa.",
+      "title": "Sobre Vesna..."
+    },
+    {
+      "text": "Tendrás que disculparme. Tengo el día bastante ocupado y más tarde debo ir a ensayar, así que si quieres charlar, por favor, que sea breve.",
+      "title": "Más sobre Odette (I)"
+    },
+    {
+      "text": "Mi madre venía de una familia de bailarinas de ballet, y mi padre servía en los Fatui. Se conocieron después de una de sus actuaciones y se enamoraron rápidamente. Es una historia bonita que seguro que le sacaría una sonrisa a cualquiera. Cuando era pequeña, pasaba los días bailando junto a mi madre, vestida con uno de los muchos tutús hermosos que mi padre me compraba. No tenía preocupaciones... excepto, tal vez, decidir qué tomar cada día del frasco de dulces.",
+      "title": "Más sobre Odette (II)"
+    },
+    {
+      "text": "Por supuesto, al poco tiempo recibimos la trágica noticia de que mi padre había fallecido en el cumplimiento de su deber. Mi madre quedó devastada y terminó rompiéndose la pierna durante una actuación. Antes de eso, la vida era dulce como el azúcar. Pero después, sentía como si el frasco de dulces estuviera vacío y yo estuviera atrapada dentro.",
+      "title": "Más sobre Odette (III)"
+    },
+    {
+      "text": "Después de eso, bueno... Ya sabes lo que pasó. He revivido esos recuerdos tantas veces que ya no pueden hacerme daño. Luchar contra lo que el destino me deparó... me hizo fuerte, y esa fortaleza es solo mía. No lo olvidaré.",
+      "title": "Más sobre Odette (IV)"
+    },
+    {
+      "text": "Nunca les contaría nada de esto a mis seguidores, así que menos mal que no eres un{F#a}{M#o} de ellos. Ya tengo demasiadas versiones de mí misma que mantener, y prefiero que no se mezclen entre sí... Por supuesto, en mi corazón, seguiré bailando para siempre en busca de la perfección.",
+      "title": "Más sobre Odette (V)"
+    },
+    {
+      "text": "Siempre me ha encantado el ballet, y hago todo lo posible por dar lo mejor de mí cada vez que subo al escenario.",
+      "title": "Aficiones de Odette..."
+    },
+    {
+      "text": "La verdad, siento que los animalitos me odian. Vodyanitsa siempre me hace acompañarla a alimentar a los gatos callejeros que hay cerca del teatro, pero en cuanto me acerco, empiezan a afilarse las garras... ¿Eh? ¿Eso significa que se alegran de verme? Humm...",
+      "title": "Preocupaciones de Odette..."
+    },
+    {
+      "text": "Justo antes de cerrar, las ensaladas del comedor están a mitad de precio, así que solía comerlas mucho. Obviamente, las ensaladas que han estado fuera todo el día no saben tan bien como las frescas, pero hay algo familiar en ellas que me resulta bastante reconfortante.",
+      "title": "Comida que más le gusta..."
+    },
+    {
+      "text": "Para ser sincera, no creo que haya ningún alimento que me resulte particularmente desagradable. Pero, como bailarina de ballet, tengo que ser estricta con mi dieta, así que todas mis comidas están cuidadosamente planificadas. Suelo evitar todo lo que no esté incluido en ese plan.",
+      "title": "Comida que menos le gusta..."
+    },
+    {
+      "text": "He tenido bastantes actuaciones estos últimos días. Quizás un poco más no estaría... *Ejem*, no importa. Está delicioso. Gracias.",
+      "title": "Al recibir un regalo (I)"
+    },
+    {
+      "text": "¿Esto es solo un plato? Parece más bien... la comida de todo un día.",
+      "title": "Al recibir un regalo (II)"
+    },
+    {
+      "text": "Ah, no, gracias. Estoy cuidando lo que como.",
+      "title": "Al recibir un regalo (III)"
+    },
+    {
+      "text": "¡Feliz cumpleaños! Estaba pensando qué regalarte... Normalmente me regalan cosas como flores, zapatos de ballet y cajas de música, pero dudo que eso sea lo que tienes en mente. ¿Qué tal si simplemente... pides un deseo, aquí y ahora? Ojalá sea algo que esté a mi alcance conceder, claro.",
+      "title": "Cumpleaños..."
+    },
+    {
+      "text": "Humm, todavía me falta... Necesito entrenar aún más duro.",
+      "title": "El sentimiento de Ascensión - Introducción"
+    },
+    {
+      "text": "Humm, siento que mis movimientos son más precisos. Debería mantener esta intensidad.",
+      "title": "El sentimiento de Ascensión - Desarrollo"
+    },
+    {
+      "text": "Mis fouettés ya son perfectos. Pero no es momento de bajar la guardia.",
+      "title": "El sentimiento de Ascensión - Nudo"
+    },
+    {
+      "text": "“La emoción es una parte indispensable del ballet”. Ahora entiendo lo que eso significa. Gracias por tu fiel compañía y apoyo. Si te interesa venir a mi actuación más tarde, aquí tienes una entrada.",
+      "title": "El sentimiento de Ascensión - Desenlace"
+    }
+  ],
   "Prune": [
     {
       "text": "Hola. La cazadora de brujas Prune a tu servicio. ¿Mi enemiga? Alguien a quien le divierte burlarse de los niños y que usa los amigos imaginarios de los demás para involucrarlos en sus planes. Alguien que es una auténtica fanfarrona, demasiado dramática y obsesionada con llevar un sombrero ahuecado. ¡Me refiero, por supuesto, a la bruja más malvada de todas! ¿Alguna información relevante sobre su paradero?",
@@ -3198,6 +3574,216 @@
     },
     {
       "text": "Sigo sin creer en los cuentos de hadas inventados, y tampoco tengo mucha fe en este mundo. Pero sí creo en ti, así que espero que tú también creas en mí. Aunque pienses que sigo siendo solo una niña, al menos... soy una niña grande, alguien lo suficientemente fuerte como para que puedas confiar en mí.",
+      "title": "El sentimiento de Ascensión - Desenlace"
+    }
+  ],
+  "Sandrone": [
+    {
+      "text": "Odio las presentaciones. Si alguien está destinado a conocerme, lo hará de forma natural, y si no... ¿por qué malgastar tiempo y energía? Pero está bien. Por una cuestión de etiqueta, te haré el favor solo por esta vez... ¡Contempla ante ti a Sandrone, la séptima de Los Once de los Fatui!",
+      "title": "Hola..."
+    },
+    {
+      "text": "Ya va siendo hora de que organicemos otra hora del té, ¿no crees? Me pregunto quién más estará libre.",
+      "title": "Charla - Hora del té"
+    },
+    {
+      "text": "Me gusta la música. De hecho, aprendí a tocar muchos instrumentos diferentes por mi cuenta. ¿No me crees? Ja, búscame un piano y te enseñaré un par de cosas.",
+      "title": "Charla - Piano"
+    },
+    {
+      "text": "¿Me han vuelto a llamar al Palacio Zapoliarni? Uf... En serio, ¿qué sentido tienen todas estas reuniones interminables?",
+      "title": "Charla - Reuniones"
+    },
+    {
+      "text": "Qué fastidio.",
+      "title": "Cuando llueve..."
+    },
+    {
+      "text": "A mis flores les encanta este tiempo.",
+      "title": "Tras la lluvia..."
+    },
+    {
+      "text": "Sistemas defensivos... Mhm, funcionan con normalidad.",
+      "title": "Cuando truena..."
+    },
+    {
+      "text": "Arg, ya estará esa haciendo más “damiselas de nieve”...",
+      "title": "Cuando nieva..."
+    },
+    {
+      "text": "El tiempo ideal para disfrutar de un pastel, un café bien cargado y perderse en un buen libro.",
+      "title": "Qué sol hace..."
+    },
+    {
+      "text": "Esta falda no está hecha para un tiempo como este... ¿Cómo demonios lo hacía Rosalyne?",
+      "title": "Hace mucho viento..."
+    },
+    {
+      "text": "Buenos días. ¿Te gustaría una taza de café? Te puede ayudar a levantar el ánimo. ¿Eh? ¿Que por qué alguien como yo necesitaría café? Ja, ¡¿acaso una dama no puede apreciar el sabor de una bebida?!",
+      "title": "Buenos días..."
+    },
+    {
+      "text": "¿Ya es por la tarde? Entonces será mejor que prepare algún refrigerio.",
+      "title": "Buenas tardes..."
+    },
+    {
+      "text": "¿Volviste para cenar? Sabes que esto no es un comedor, ¿verdad? Bueno, da igual. Ya que estás aquí, le diré a Fagio que te prepare algo.",
+      "title": "Buenas noches... (I)"
+    },
+    {
+      "text": "Deberías dormir un poco. Yo prefiero investigar por la noche porque hay más tranquilidad y no hay nadie que me moleste. ¡¿Cómo dices?! ¡Mi horario de sueño está bien tal y como está, y no hay más que hablar!",
+      "title": "Buenas noches... (II)"
+    },
+    {
+      "text": "¿Es que no puedes llamarme Sandrone y ya está? ¿Eh? ¿Mi nombre original? Ja, ¿de verdad quieres saberlo? Está bien... Todavía recuerdo cuando abrí los ojos por primera vez. Alain acababa de terminar de crearme. Me llamó “Marionette”. Intenté repetirlo y decirlo yo misma en voz alta, pero... vi que ponía una cara que en aquel momento no supe interpretar. Solo más tarde entendí que era una mezcla de arrepentimiento y culpa. Nunca más volvió a llamarme así. En fin, tras contarme la historia de la Comunidad Cruz de los Narcisos y de su hermana, Alain concluyó insistiendo en que era libre de elegir mi propio camino en la vida. Dijo que una parte importante de eso era decidir mi propio nombre. Por mi parte, le dije que me parecía perfecto el que él me había dado: “Marionette Guillotin”. Un nombre bastante único, ¿no crees? Y, por diferentes razones, la Zarina lo cambió un poco y acabó convirtiéndolo en “La Títere” para mi título de Los Once. Je... Supongo que es una de esas cosas a las que la gente llama “destino”.",
+      "title": "Sobre Sandrone - Nombre"
+    },
+    {
+      "text": "Cuando me crearon, me parecía demasiado esfuerzo buscar un sitio donde tumbarme, así que normalmente me “dormía” en una silla. No me acostumbré a dormir en una cama hasta que llegué a Snezhnaya. Tengo que decir que, tras un día agotador lidiando con mis compañeros, ponerme algo cómodo y meterme bajo las sábanas es maravillosamente acogedor. En ese momento, mi sistema sensorial y mis circuitos emocionales me crean una sensación de seguridad. Ahora sé por qué a la gente le gusta dormir hasta tarde. Sin embargo, tengo algunos inconvenientes con las camas, como por ejemplo, que mi llave mecánica me impide dormir boca arriba y me cuesta mantener el equilibrio cuando estoy acostada de lado. La única opción es dormir boca abajo.",
+      "title": "Sobre Sandrone - Dormir"
+    },
+    {
+      "text": "Ya leíste mi diario, así que ¿no crees que ya es hora de que compartas algunos de tus secretos para que las cosas estén un poco equilibradas? ¿Eh? ¿Tu Manual del aventurero? ¿De qué me iba a servir eso? Si quisiera saber qué haces cada día, simplemente le pediría a Katheryne que me lo contara.",
+      "title": "Sobre nosotr{F#a}{M#o}s - Diario"
+    },
+    {
+      "text": "Puede que ahora nos conozcamos mejor, pero una vez que lleguemos a Snezhnaya, tendremos que seguir las normas. Después de todo, no has dejado de luchar contra los Fatui, así que a saber qué revuelo podrías causar allí. Haré todo lo posible por no ponerte las cosas difíciles, pero te agradecería que hicieras lo mismo por mí. Ayudarse mutuamente basándose en el entendimiento mutuo... Eso es lo que hacen los compañeros, ¿no?",
+      "title": "Sobre nosotr{F#a}{M#o}s - Posturas"
+    },
+    {
+      "text": "Me viene muy bien, el elemento Cryo es muy útil. Por ejemplo, ya no tengo que preocuparme de sobrecalentarme tras haber hecho un montón de cálculos.",
+      "title": "Sobre la Cuña Estelar..."
+    },
+    {
+      "text": "Sin Pulonia, la vida de repente se volvió mucho más difícil. Por eso creé a Fagio, mi “Facilitadora Automatizada Generalista Interactiva y Omnitarea”. Ella puede encargarse de un montón de tareas triviales con las que prefiero no perder el tiempo... Y además, sabe pelear. ¿Eh? ¿Te parece que su nombre completo es demasiado largo y... difícil de entender? ¿No es así como se nombran todas las máquinas funcionales? A Alain se le ocurrió Pulonia, que significa “Proyecto de Unidad Localizadora de Observación Navegadora e Investigación Automatizada”. Pensaba que todo el mundo ponía nombres así. Entonces, ¿crees que es hereditario?",
+      "title": "¿Algo que decir?"
+    },
+    {
+      "text": "Aparte de mi investigación, a veces me gusta reflexionar sobre temas metafísicos, igual que la gente de las demás naciones también tiene sus propias creencias sobre la muerte. En ese sentido, a menudo oigo a la gente hablar del “más allá”, del “lugar en el que descansan las almas” y cosas así... Pero no tengo absolutamente ningún recuerdo desde el momento en que mi núcleo resultó dañado luchando contra Dottore hasta que la Cuña Estelar activó el legado de Alain y me reactivó. ¿A dónde van las construcciones mecánicas, las “marionetas”, cuando mueren? ¿Cómo se definen nuestras “almas”? ¿Acaso tenemos alma? Todas estas son preguntas sin respuesta, así que al final siempre vuelvo a mi investigación. Sin embargo, el conocimiento es la piedra angular del mundo, así que pienso que, a medida que esas piedras sigan apilándose, algún día su altura me permitirá alcanzar las respuestas que busco.",
+      "title": "Un dato curioso..."
+    },
+    {
+      "text": "Esa gran chamana parece simpática. ¿De verdad es tan mayor? A mí me sigue pareciendo que tiene mucha energía, aunque a veces se altera bastante. ¿Que a qué me refiero? Pues a que, hace poco, le conté que tú y yo estuvimos buceando junt{F#as}{M#os} para buscar algo... Y antes de eso, le dije que estuviste en Nod Krai ayudando a Colombina a recuperar su nombre. Se alteró tanto que la cara se le puso roja como un tomate. Me pregunto si tendrá algo que ver con su edad...",
+      "title": "Sobre Citlalí..."
+    },
+    {
+      "text": "¡No sé cómo lo hace! Esa chica gata siempre parece encontrar el punto más débil de cada máquina y luego... ¡pum! Se rompe. Ojalá su hermano le dijera algo. *Suspira*, en fin... Supongo que, en realidad, es un talento. Quizá debería pedirle que me ayude a poner a prueba mis futuras creaciones. Si mis máquinas no pueden sobrevivir a su curiosidad, ¿qué posibilidades tendrán en combate?",
+      "title": "Sobre Lynette..."
+    },
+    {
+      "text": "Cuando Alain murió, puse una lápida en su memoria. En vida, me había dicho que quería que yo escribiera su epitafio, y así lo hice. No fue difícil. Bastaba con enumerar sus hazañas y elegir una cita que capturara su forma de pensar. Me decidí por “Es una pena, pero ya está todo dicho”. Era algo que solía decir a menudo. ¿Te parece fatalista? Ja, quizá lo sea para alguien que no lo conocía, pero él siempre lo decía con una sonrisa. No era resignación, no se estaba rindiendo. Irónicamente, era casi como una expresión de satisfacción, como resolver un problema matemático. La muerte no es más que un silencioso signo de igual, y él se trasladó al otro lado de la ecuación.",
+      "title": "Sobre Alain Guillotin..."
+    },
+    {
+      "text": "Incluso a mí me siguen perturbando las anomalías de mi corazón. Sin embargo, su majestad la Zarina... Me pregunto cómo logró congelar sus emociones de una forma tan absoluta.",
+      "title": "Sobre la Zarina..."
+    },
+    {
+      "text": "Siempre dando órdenes... De alguna manera, el mundo que se refleja en sus ojos parece más lejano que el que se refleja en los ojos de cualquier otra persona. La primera vez que lo vi, supe que este mundo le había quitado muchas cosas.",
+      "title": "Sobre El Bufón..."
+    },
+    {
+      "text": "Todo el mundo sabe que a Capitano no le gusta quitarse la máscara, pero eso no le impide terminarse el té cada vez que nos juntamos.",
+      "title": "Sobre El Capitán..."
+    },
+    {
+      "text": "Quizá sea mejor que te tapes los oídos. Si tengo que hablar de él, me temo que no voy a poder controlarme.",
+      "title": "Sobre El Doctor..."
+    },
+    {
+      "text": "Colombina solía sacarme de quicio y, para ser sincera, todavía lo hace. Pensé que la vida sería más tranquila sin tenerla cerca de mí, pero ¡quién iba a decir que me enfadaría aún más! ¡Uf, es para volverse loca!",
+      "title": "Sobre Colombina - Pesada"
+    },
+    {
+      "text": "Ahora mismo está viviendo una vida tan feliz... Su familia y sus amigos la apoyan, y puede irse de viaje cada vez que tiene tiempo libre... ¿Por qué no puedo tener yo esa suerte? Olvídalo, no estoy celosa. Todos sabemos que se merece ser feliz.",
+      "title": "Sobre Colombina - Vida"
+    },
+    {
+      "text": "Arlecchino es una mujer de palabra. Actúa con decisión y se puede confiar en ella para llevar a cabo cualquier tarea. Desde un punto de vista puramente profesional, estaría bien que todos mis compañeros intentaran seguir su ejemplo.",
+      "title": "Sobre Arlecchino..."
+    },
+    {
+      "text": "Es el presidente del Veche de Snezhnogrado, aunque a menudo parece más bien... su supervisor. Cada voto que se emite en el Veche afecta a los intereses de muchas facciones distintas, y solo el más astuto de los estrategas puede lograr conciliar tantos intereses que chocan entre sí. Una vez que entiendes esto, empiezas a darte cuenta del miedo que da en realidad.",
+      "title": "Sobre El Gallo..."
+    },
+    {
+      "text": "Pensé que desde el minuto uno habían investigado su relación y sus tratos con Dottore, pero ¿por qué tardaron diez veces más en concederme los fondos para mi investigación que en dárselos a ese lunático de Dottore? ¡Está claro que había gato encerrado! ¡Incluso se lo pregunté a Pantalone a la cara! Me miró fijamente con esa sonrisa estúpida suya y dijo: “Vaya, ¿por fin nuestra Sandrone se ha interesado en las finanzas? Puedo recomendarte algunos libros si quieres. Quizá deberías empezar por «Cien frases para aprender modales»”.",
+      "title": "Sobre El Regatero..."
+    },
+    {
+      "text": "Siempre vivió para sí misma, y amaba y odiaba a su manera. No es de extrañar que se extinguiera tan rápido. Aun así, su llama brilló con un matiz único hasta el momento en que se apagó por completo.",
+      "title": "Sobre Rosalyne..."
+    },
+    {
+      "text": "Otro dolor de... bueno, de todo. ¿Por qué insistió tanto en convertirse en uno de Los Once cuando podría haber vivido feliz con sus hermanos y hermanas? ¿Y cuándo se le meterá en la cabezota que no todo el mundo está siempre buscando pelea?",
+      "title": "Sobre Nobile..."
+    },
+    {
+      "text": "¿Eh? No suelo contar mi historia a los demás así como así, pero si voy a hacerlo, ¿podríamos al menos esperar a que haga buen tiempo y hacerlo acompañad{F#a}{M#o}s de té y pasteles?",
+      "title": "Más sobre Sandrone (I)"
+    },
+    {
+      "text": "Puede que mis compañeros Fatui no sean precisamente los que yo habría elegido, pero no se puede negar que esta organización es un lugar excelente para investigar. La Zarina es generosa con sus recursos y su financiación. Diría que la balanza se inclina a mi favor.",
+      "title": "Más sobre Sandrone (II)"
+    },
+    {
+      "text": "Nunca me ha molestado que Alain me creara con el aspecto de su hermana Marianne ni que me llamara “Marionette”. Tal y como yo lo veo, eso no es más que algo que me dio el mundo al nacer. ¿Te molesta a ti parecerte a tus padres o llevar su apellido?",
+      "title": "Más sobre Sandrone (III)"
+    },
+    {
+      "text": "Me gustan las matemáticas. Un mundo construido sobre fórmulas y lógica tiene una especie de elegancia arraigada en la certeza. También me gusta la música, que se parece en muchos aspectos. Solía pensar que tocar música debía abordarse como un problema matemático, equilibrando las notas y el ritmo, sin dejar lugar a desviaciones. Con el tiempo, me di cuenta de que algunos pequeños fallos, incluso errores, durante una interpretación pueden hacer que la música sea más hermosa. Una pequeña pausa aquí, una improvisación repentina allá... Es en esos pequeños errores donde nace la emoción. Se podría decir que son las reverberaciones del corazón del intérprete.",
+      "title": "Más sobre Sandrone (IV)"
+    },
+    {
+      "text": "Todo lo que el mundo da, el mundo se lo lleva. Vivir es ganar y perder, recoger lo que el mundo no puede arrebatar, aferrarse a ello en medio de las pérdidas y las despedidas, y seguir avanzando. Si una persona solo desea “vivir”, ¿es ese un deseo demasiado insignificante? Al igual que alguien que salva al mundo únicamente para “salvarse a sí mismo”, ¿es esa una razón demasiado simple? Vivir, sentir, ser testigo... Y entonces, algún día, quizá aquellas cosas que el mundo no puede arrebatarnos sean tan numerosas que lo sacudan hasta sus entrañas.",
+      "title": "Más sobre Sandrone (V)"
+    },
+    {
+      "text": "Además de la música, la mecánica y las matemáticas, también me gusta la jardinería... cuando las circunstancias lo permiten. Me gusta documentar el proceso de mis plantas creciendo y floreciendo. La mayoría de ellas apenas necesita cuidados, ya que son independientes y resistentes. Siempre he creído que en eso nos parecemos mucho.",
+      "title": "Aficiones de Sandrone..."
+    },
+    {
+      "text": "Cada vez que veo un animalito suave y blandito, solo quiero tomarlo en brazos y darle un abrazo bien fuerte... pero a la mayoría de los animales no les gustan las máquinas, así que siempre salen corriendo cuando me ven. ¡Oye, no me mires así! No quiero que te compadezcas de mí. ¡Me da igual no poder abrazarlos! No es... no es para tanto...",
+      "title": "Preocupaciones de Sandrone..."
+    },
+    {
+      "text": "Gracias a mi constitución, no sufro de alergias ni de indigestión, así que para mí la comida es solo una cuestión de placer. Pero si tuviera que elegir... Humm, creo que lo que más me gusta son los pasteles pequeños y elegantes. Solo con ver sus exquisitas formas se me alegra el corazón. Es un doble placer para la vista y el alma.",
+      "title": "Comida que más le gusta..."
+    },
+    {
+      "text": "No me gusta la comida grasienta y picante. No es por el sabor, sino porque es difícil evitar que el olor se impregne en la ropa. No es muy elegante para una dama.",
+      "title": "Comida que menos le gusta..."
+    },
+    {
+      "text": "Hum. Te haré el favor de escuchar cómo preparaste esto. Quizá pueda darte algunos consejos. No sería propio de una dama dejar pasar esta oportunidad.",
+      "title": "Al recibir un regalo (I)"
+    },
+    {
+      "text": "Oh, no está nada mal. Tendré que devolverte el favor la próxima vez que nos veamos para tomar el té.",
+      "title": "Al recibir un regalo (II)"
+    },
+    {
+      "text": "Fagio, ven a limpiar esto.",
+      "title": "Al recibir un regalo (III)"
+    },
+    {
+      "text": "¡Hum! Toma esto. No suelo regalar estas cosas, pero hoy es un día especial: el día en que viniste al mundo. Invité a Arlecchino y a Colombina, y también a algunos amigos en común. Incluso hice un pastel especial para la ocasión... así que más te vale que lo disfrutes.",
+      "title": "Cumpleaños..."
+    },
+    {
+      "text": "Cálculo en curso.",
+      "title": "El sentimiento de Ascensión - Introducción"
+    },
+    {
+      "text": "Introduciendo variables...",
+      "title": "El sentimiento de Ascensión - Desarrollo"
+    },
+    {
+      "text": "El progreso va bien.",
+      "title": "El sentimiento de Ascensión - Nudo"
+    },
+    {
+      "text": "Deconstruyendo el orden mismo de las cosas... Apuesto a que ahora te he impresionado, jajaja.",
       "title": "El sentimiento de Ascensión - Desenlace"
     }
   ],
@@ -3804,6 +4390,398 @@
     },
     {
       "text": "¿Recuerdas las tres virtudes de un caballero? Bien, pues ahora olvídalas todas. El tipo de caballero que queramos ser, el camino que elijamos seguir... ¡depende de nosotros!",
+      "title": "El sentimiento de Ascensión - Desenlace"
+    }
+  ],
+  "Vesna": [
+    {
+      "text": "Hola, querid{F#a}{M#o} amig{F#a}{M#o}. Aquí, Vesna, comandante de la Druzhna. Tengo una salva de honor y la guardia ceremonial listas para recibirte en cualquier momento. Pero, si prefieres no llamar tanto la atención, también tengo preparada una bienvenida más íntima. ¡Ven, sígueme!",
+      "title": "Hola..."
+    },
+    {
+      "text": "La Druzhna solo obedece órdenes de su majestad la Zarina, así que, por supuesto, no puede ponerse a tu servicio así como así. Pero Vesna, la vila, sí puede, querid{F#a}{M#o} amig{F#a}{M#o}.",
+      "title": "Charla - Servicio"
+    },
+    {
+      "text": "¿A que es hermoso este atuendo? Fue un regalo personal de su majestad. Jeje, sí, admíralo todo lo que quieras.",
+      "title": "Charla - Felicidad"
+    },
+    {
+      "text": "¿Qué papeleo? Ya lo he terminado, no me llevó mucho. Ahora toca patrullar. ¡Vamos!",
+      "title": "Charla - Eficiencia"
+    },
+    {
+      "text": "Las hadas también podemos resfriarnos. Si nos mojamos, hay que abanicarlas rápido para secarlas... M-me refiero a las alas.",
+      "title": "Cuando llueve..."
+    },
+    {
+      "text": "En la blancura de un campo nevado, cualquier imperfección en tu camuflaje puede resultar fatal. Avanza con cautela, querid{F#a}{M#o} amig{F#a}{M#o}.",
+      "title": "Cuando nieva..."
+    },
+    {
+      "text": "Ya lo sé, ya lo sé, mis alas brillan como nunca bajo el sol.",
+      "title": "Qué sol hace..."
+    },
+    {
+      "text": "Ah... Jeje, qué bien. A los vila nos encanta una buena brisa.",
+      "title": "Cuando hace viento..."
+    },
+    {
+      "text": "Yo tan solo pregunto, pero... ¿cuándo vamos a volver a Snezhnaya?",
+      "title": "En el desierto..."
+    },
+    {
+      "text": "¡Es un nuevo día! ¡Buenos días, Snezhnogrado!",
+      "title": "Buenos días..."
+    },
+    {
+      "text": "¡Vamos al Restaurante Podvorye! Yo invito, como siempre.",
+      "title": "Buenas tardes..."
+    },
+    {
+      "text": "La Compañía Korolevski estrena una nueva función esta noche. En ella, aparecerán la soprano Vodyanitsa y Odette con sus pasos de baile... pero también unos “nuevos amigos”.",
+      "title": "Buenas noches... (I)"
+    },
+    {
+      "text": "Pss, pss... ¿Ya te vas a dormir? ¿No quieres salir a pasear? ¡Esta noche brilla la aurora boreal!",
+      "title": "Buenas noches... (II)"
+    },
+    {
+      "text": "¿Ves esas cositas que vuelan a mi alrededor? Son mis armas mágicas, mis propias creaciones. Cada una de ellas es una mezcla de poder elemental y mi fuerza de voluntad, así que también han heredado parte de mi personalidad. Con eso quiero decir que es posible que te incordien para que juegues con ellas. No les hagas caso... Aunque, claro está, si tienes tiempo, puedes darles el gusto, jeje.",
+      "title": "Sobre Vesna - Armas mágicas"
+    },
+    {
+      "text": "¿Quién dice que una comandante tiene que ser estricta e imponente? Pff, eso es solo para gente sin presencia alguna. Yo no necesito esas cosas. Creo que nos parecemos bastante en eso.",
+      "title": "Sobre Vesna - Comandante"
+    },
+    {
+      "text": "Sí, sí, lo entiendo. Sé que hay todo tipo de rumores por ahí sobre mí, y que quieres saber la verdad. Bueno, eso está bien, tenemos tiempo más que suficiente. Pero, a cambio, me gustaría saber la verdad sobre ti también. ¡Hasta el último detalle!",
+      "title": "Sobre nosotr{F#a}{M#o}s - La verdad"
+    },
+    {
+      "text": "No me gusta la idea de “acompañar” a alguien por el camino. Puede que suene romántica en un principio, pero, cuando te paras a pensarlo, la palabra “acompañar” destaca a una persona como la protagonista, y a la otra como un acompañante.\nLo cierto es que cada paso lo damos nosotr{F#a}{M#o}s mism{F#a}{M#o}s, al igual que nuestras vivencias y las formas en que crecemos por el camino son nuestras. Por eso, no diré que te estoy “acompañando” en tu viaje, sino que me alegra poder contar con el placer de tu compañía en lo que, por el momento, es un camino compartido. Puedes verlo de la siguiente manera... Tú vas caminando, centrad{F#a}{M#o} en tus propios asuntos, y en algún momento te giras y te das cuenta... ¡Vaya, jaja, fíjate! ¡Parece que amb{F#a}{M#o}s vamos por el mismo camino!",
+      "title": "Sobre nosotr{F#a}{M#o}s - Compañía"
+    },
+    {
+      "text": "Las Cuñas Estelares tienen un diseño muy bonito, son todo un objeto de coleccionista. En realidad, los Discos Lunares tampoco están nada mal. Siempre he querido tener uno. En cuanto a las Visiones... bueno, no me interesan por el momento.",
+      "title": "Sobre la Cuña Estelar..."
+    },
+    {
+      "text": "Oh, ¿dices esto que tengo aquí? Hermosa, ¿a que sí? Es una reliquia de la familia, ¿sabes? Mucho más antigua que yo. Una verdadera antigüedad, de hecho, que podría estar en un museo. A veces la uso como una varita mágica, y a veces como un puntero cuando estoy dando clase, o como la batuta de un comandante... Ah, fíjate en cómo le estoy dando la oportunidad de revivir sus gloriosos días pasados con la edad que tiene en lugar de guardarla en la cámara de algún banco para que acumule polvo. ¡Mis ancestros se pelearían por elogiarme si lo supieran!",
+      "title": "¿Algo que decir?"
+    },
+    {
+      "text": "Las flores frigifeéricas son muy hermosas y tenaces, capaces de sobrevivir incluso en los entornos más gélidos. Además, poseen un patrón muy particular. Me gusta contemplarlo con los ojos entrecerrados mientras sacudo la cabeza. Jeje, así se crea un efecto de ensueño, como al mirar por un caleidoscopio. Dicho eso, te aconsejaría hacerlo en un lugar privado en el que no haya nadie más.",
+      "title": "Un dato curioso..."
+    },
+    {
+      "text": "He atrapado a demasiados arrogantes que creían poder llevarle la contraria a su majestad. Sus grandiosos planes de conquista no eran más que golpes al aire, puro espectáculo sin sustancia. No tenían ni la estrategia para iniciar una revuelta ni la capacidad para llevarla a cabo. En comparación con esos supuestos revolucionarios... No, retiro lo dicho. No son dignos de ser mencionados junto a su majestad.\nEn resumen, servir a la Zarina no es solo mi deber como vila. También es mi decisión personal como Vesna.",
+      "title": "Sobre la Zarina - Lealtad"
+    },
+    {
+      "text": "La palabra “compasión” siempre lleva púas de hielo cuando sale de los labios de su majestad. Ella dice que es una maldición que el Orden Celestial impuso a los dioses, no amor verdadero. Pero yo no lo creo. Cuando regreso de una expedición contra los monstruos, su majestad añade un “descansa bien” al final de sus órdenes. Y después de recuperar el poder de la Soberana de la Vida, también se percató de la tristeza que yo creía tener muy bien escondida, y me devolvió la parte que no había sido reclamada...\nAlguien en su posición no tenía la obligación de hacer ninguna de esas cosas. No quiero sonar presuntuosa, pero siempre he pensado que la cuestión de si un dios siente amor o no puede ser respondida por su pueblo. ¿Por qué no iba a contar mi veredicto entonces?",
+      "title": "Sobre la Zarina - Compasión"
+    },
+    {
+      "text": "Ah, mi querida Dánica... No te dejes engañar por ese aire serio y taciturno que tiene. De pequeñas nos metíamos en toda clase de travesuras juntas... Como aquella vez que planeamos quitarle la máscara al maestro. ¡Llegamos a subirnos a sus hombros antes de que nos atrapara! Claro, no lo conseguimos del todo, y sí, nos castigaron: tuvimos que quedarnos firmes sobre un lago congelado durante horas... Pero bueno, ¡eso no viene al caso! ¡Ella fue quien tuvo esa idea tan descabellada! Era tan revoltosa como yo. Y ahora me mira todo el tiempo con esa cara, como si ella fuera la adulta y yo la niña. Quiero decir... ¡si la mayor soy yo!",
+      "title": "Sobre Dánica - Infancia"
+    },
+    {
+      "text": "Tenemos información fiable de que ciertos sospechosos están usando eventos estrafalarios como los “concursos de discusiones” como fachada para llevar a cabo transacciones comerciales ilegales, aprovechando el alboroto del público como distracción... Así que me corresponde a mí intervenir.\nPor eso, ya he inscrito a Dánica. Se le da genial eso de demoler argumentos con frialdad y dar justo donde duele. ¿Quién podría ganarle en una discusión? Seguro que me ayudará a ganar mucho tiempo.\n¡Cuento contigo, Dánica!",
+      "title": "Sobre Dánica - Discusiones"
+    },
+    {
+      "text": "Siempre recuerdo cómo era de espaldas: tan robusto y confiable, como una montaña inquebrantable. Nunca imaginé que llegaría el día en que esa montaña se derrumbaría. O al menos... no pensé que llegaría tan pronto. Siempre solía decir: “En una guerra de verdad, no tienes la oportunidad de despedirte”. De todas las formas de demostrármelo... ya podría haberme dado una última oportunidad antes del final, pero no lo hizo...\nQué cruel fuiste, maestro mío.",
+      "title": "Sobre El Capitán..."
+    },
+    {
+      "text": "En este mundo, hay personas que caminan con paso ligero, la mayoría anhelando llegar al mañana. Pero él... siempre camina con un peso enorme. A menudo siento que se parece mucho a mi maestro, quizá porque ambos ocultan una tristeza inimaginable bajo sus máscaras y cargan a sus espaldas con todo el dolor del pasado.",
+      "title": "Sobre El Bufón..."
+    },
+    {
+      "text": "El señor alcalde habla con tanta elocuencia y desenvoltura en el Veche de Snezhnogrado que hace que parezca fácil. Verdaderamente sabe cómo resultar imponente ante los demás.",
+      "title": "Sobre El Gallo..."
+    },
+    {
+      "text": "No estoy diciendo que el salario de una comandante de la Druzhna sea bajo, pero puede resultar un poco justo si eres una coleccionista ávida a la que además le gusta invitar a la gente a comer... No, no, ¡no me refería a eso! Aún no había terminado. Desde que tengo memoria, los fondos de reserva de mi familia han sido gestionados por el Banco del Reino del Norte, y gracias al Sr. Pantalone, el interés compuesto ha hecho crecer nuestro patrimonio considerablemente. Básicamente, no tengo que preocuparme por el dinero en absoluto. Así que la próxima vez que salgamos, ¡no te cortes, que sigo invitando yo!",
+      "title": "Sobre El Regatero..."
+    },
+    {
+      "text": "Sandrone es la viva imagen de lo que significa ser una dama. Puede que sus palabras estén impregnadas de agresividad, pero su lógica impecable hace que resulte imposible sacarle algún fallo... Jeje, me fascina verdaderamente. Debo aprender cómo lo hace.",
+      "title": "Sobre La Títere..."
+    },
+    {
+      "text": "Mitya suele unirse a mí en todo tipo de travesuras. Siempre está escapándose de la Real Armería, ¡y los tres nos lo pasamos en grande! ¿Que por qué tres? Bueno, estamos Mitya, yo... y esa bufanda tan lista que tiene.",
+      "title": "Sobre Mitya..."
+    },
+    {
+      "text": "Cada una de las canciones de Vodyanitsa es sencillamente hermosa. Me encanta escucharlas en vivo. A veces me llenan de alegría, otras, me conmueven hasta que se me saltan las lágrimas, igual que al resto del público. En ocasiones, todos se quedan después del espectáculo y de repente se ponen a cantar juntos. Y curiosamente, resulta que yo tengo una batuta de directora en la mano. Y más curioso aún, he notado en varias ocasiones que Vodyanitsa se mezcla discretamente entre la multitud tras cambiarse de vestuario, se pone un sombrero y canta en armonía con el grupo.",
+      "title": "Sobre Vodyanitsa..."
+    },
+    {
+      "text": "La verdad es que cada vez que Odette viene a una audiencia, no puedo evitar quedarme mirándola de vez en cuando. Al fin y al cabo, además de ser miembro de los Fatui, tiene otra identidad “especial” que es difícil de ignorar... Me refiero, por supuesto, a que es la prima ballerina de la Compañía Korolevski. ¿A qué otra cosa iba a referirme?",
+      "title": "Sobre Odette..."
+    },
+    {
+      "text": "Lo entiendo, de verdad que sí. A ver, ¿qué cachorrito podría resistirse a perseguir una linda mariposa entre los vientos “aullantes”? Humm... Quizás le robe el desayuno a Dánica y se lo dé a Tugarin, y luego le pida a Aliosha que interceda por mí. Así no se me lanzará encima en cuanto me vea...",
+      "title": "Sobre Aliosha..."
+    },
+    {
+      "text": "Jeje, ¿y cómo quieres conocerme mejor? No querrás charlar y ya, ¿no? Eso es muy aburrido... Humm... ¿Y si jugamos a “verdad o atrevimiento”?",
+      "title": "Más sobre Vesna (I)"
+    },
+    {
+      "text": "La Druzhna es la guardia personal de su majestad la Zarina, y responde directamente ante ella. En cuanto a sus funciones, no se limitan únicamente a asuntos militares como eliminar monstruos o ir a la batalla. Todo aquello que concierna a la autoridad y el honor de su majestad requiere que la Druzhna acate sus órdenes incondicionalmente y despeje cualquier obstáculo en su camino.\nSin embargo, es inevitable que su majestad tenga las manos un poco ocupadas mientras sigue en marcha la gran empresa contra Orden Celestial, así que, hasta que las aguas se calmen, estoy más que encantada de ayudarla con las cosas divertidas... *Ejem*, quiero decir, con los asuntos más triviales, como cortar cintas inaugurales y asistir a banquetes en su nombre.",
+      "title": "Más sobre Vesna (II)"
+    },
+    {
+      "text": "Tengo muchos objetos de colección: gemas, libros antiguos, pinturas al óleo... Cualquier cosa que me haga feliz merece formar parte de mi colección. Además, tengo que hacerme con ello en cuanto lo veo, ¡no quiero esperar ni un segundo! ¿No hay un dicho que dice “la cuchara solo es valiosa a la hora de comer”? Si dejas pasar ese instante de emoción, aunque lo consigas después, ya habrá perdido gran parte de su encanto. Así que si lo quiero ahora, lo tengo que conseguir ahora.",
+      "title": "Más sobre Vesna (III)"
+    },
+    {
+      "text": "Tras el sacrificio del Zar Monómaco, Snezhnaya atravesó un periodo de gran agitación. En aquellos tiempos, mis antepasados se posicionaron firmemente del lado de su majestad la Zarina y nuestra gloria nunca perdió sus alas... Entonces, yo, que me alzo sobre sus hombros, ¿poseo la fuerza suficiente para continuar su legado? Jeje, acabo de decir en voz alta la pregunta que tenías en mente. Bueno, ahora te toca a ti responderme. Vamos.",
+      "title": "Más sobre Vesna (IV)"
+    },
+    {
+      "text": "La víspera del enfrentamiento contra la Soberana de la Muerte, extraje los sellos de la zoe de muchas personas. Cada una tenía una definición distinta de lo que era un recuerdo hermoso: para algunos, lo más preciado era sentarse con su familia alrededor de la chimenea, charlando sobre cualquier cosa. Otros no podían olvidar aquel momento a solas junto a la ventanilla del tren, contemplando cómo la aurora boreal brillaba en silencio contra el cielo nocturno. Y otros simplemente se sentían plenos tirando de un trineo para ir a pescar en el hielo...\nEsos recuerdos eran como burbujas de colores, rebosantes de una vitalidad ardiente y vívida que te hacía suspirar sin quererlo: “¡Ah, qué maravilloso es estar viva!”.\nPero esos seres celestiales pueden aplastar esas burbujas sin el menor esfuerzo, sin dignarse siquiera a dar una explicación. ¿Con qué derecho?\nDesde aquel momento, enfrentarme al Orden Celestial dejó de ser solo una forma de servir a su majestad.",
+      "title": "Más sobre Vesna (V)"
+    },
+    {
+      "text": "Cuando era muy pequeña, mi familia me asignó profesores de pintura, danza y canto. Al crecer un poco más, empecé a practicar esgrima, equitación y demás... Últimamente me he aficionado a escuchar ópera, ver espectáculos y coleccionar pequeños tesoros... En fin, en mi vida no existe la palabra “aburrimiento”.",
+      "title": "Aficiones de Vesna..."
+    },
+    {
+      "text": "No hagas caso a las tonterías de Dánica. Sé conducir perfectamente, es solo que el vehículo y yo somos uno solo. Espera a que me levanten la prohibición de conducir y verás. ¡Te llevaré a dar una vuelta!",
+      "title": "Preocupaciones de Vesna..."
+    },
+    {
+      "text": "Con el frío que hace, ¡no hay nada más reconfortante que reunirse a tomar un buen estofado calentito! Mira, ¡yo lo organizo todo y Paimon y tú pueden traer algunos ingredientes!",
+      "title": "Comida que más le gusta..."
+    },
+    {
+      "text": "¡Jeje! ¡Voy a echar todas estas verduras aburridas al plato de Dánica! Arg... aunque siempre acaban regresando al mío...",
+      "title": "Comida que menos le gusta..."
+    },
+    {
+      "text": "¡Bueno, voy a hincar el diente! Saborearé cada bocado con ganas.",
+      "title": "Al recibir un regalo (I)"
+    },
+    {
+      "text": "Mmm... Una verdadera hazaña de creatividad culinaria... Creo que probaré otro bocado.",
+      "title": "Al recibir un regalo (II)"
+    },
+    {
+      "text": "¡Estoy llena, gracias! Esto se lo guardaré a Dánica.",
+      "title": "Al recibir un regalo (III)"
+    },
+    {
+      "text": "¡Tan, tan, tan, tan! ¡Ha llegado el momento! No te imaginas lo difícil que fue contenerme ayer... Pero tenía que hacerlo, porque felicitar antes de tiempo trae mala suerte: ¡una ventisca podría tragarte! Ahora por fin puedo decirlo: ¡feliz cumpleaños, querid{F#a}{M#o} amig{F#a}{M#o}! Que te mantengas fuerte como un abedul, y que ni el viento ni la nieve puedan derrotarte jamás.\nBien, según la tradición, ahora tengo que tirar suavemente de las orejas de{F# la}{M#l} cumpleañer{F#a}{M#o} unas cuantas veces...",
+      "title": "Cumpleaños..."
+    },
+    {
+      "text": "Primera lección del entrenamiento de reclutas: solo aquellos que no se doblegan ante la ventisca son dignos de proteger a su majestad.",
+      "title": "El sentimiento de Ascensión - Introducción"
+    },
+    {
+      "text": "Segunda lección del entrenamiento de reclutas: la mano que empuña la espada no debe temblar nunca.",
+      "title": "El sentimiento de Ascensión - Desarrollo"
+    },
+    {
+      "text": "Tercera lección del entrenamiento de reclutas: no lloramos frente a nuestros enemigos.",
+      "title": "El sentimiento de Ascensión - Nudo"
+    },
+    {
+      "text": "Y tú, querid{F#a}{M#o} amig{F#a}{M#o}, me has enseñado otra lección: reservar cierta ternura para abrazar a aquellos a los que defiendo con mi espada una vez que la ventisca amaine.",
+      "title": "El sentimiento de Ascensión - Desenlace"
+    }
+  ],
+  "Vodyanitsa": [
+    {
+      "text": "Hola, soy Vodyanitsa, la soprano principal de la Compañía Korolevski. Como puedes ver... Bueno, me refiero a mis orejas. Bastante inusuales, ¿no? Es porque soy una nixie. Pero eso no viene al caso. Lo único que necesitas saber es que soy la mejor cantante de toda la Compañía Korolevski.",
+      "title": "Hola..."
+    },
+    {
+      "text": "... ¿Eh? Shh, creo que oigo a alguien susurrando otra vez... Jejeje, a ver si puedo distinguir lo que están diciendo.",
+      "title": "Charla - Audición"
+    },
+    {
+      "text": "Bueno, si no hay nada más que hacer, podría aprovechar para ensayar un poco... Eh, no, mejor no. No quiero volver a molestar a los vecinos, ni a los animales.",
+      "title": "Charla - Ensayar"
+    },
+    {
+      "text": "Uf... Llevo demasiado tiempo en tierra firme y se me está resecando la piel. Necesito volver al agua un rato.",
+      "title": "Charla - Pasar el rato"
+    },
+    {
+      "text": "Ah, qué día tan hermoso. Es perfecto para relajarse bajo el agua.",
+      "title": "Cuando llueve..."
+    },
+    {
+      "text": "Ah, ¿y la lluvia? Qué decepción...",
+      "title": "Tras la lluvia..."
+    },
+    {
+      "text": "Un vasto manto blanco. Hum, al menos tiene una estética impecable.",
+      "title": "Cuando nieva..."
+    },
+    {
+      "text": "Uf, hace demasiado calor y está todo tan seco... Llévame de vuelta al agua.",
+      "title": "En el desierto..."
+    },
+    {
+      "text": "Buenos días. Acabo de terminar mis ejercicios vocales. ¿Me escuchaste? Sí, no me sorprende. Al fin y al cabo, mi voz se oye muy bien cuando canto.",
+      "title": "Buenos días..."
+    },
+    {
+      "text": "Bien, hora de almorzar. Estoy agotada después de la mañana que tuve. Iré a buscar a Odette y luego podemos comer algo rápido.",
+      "title": "Buenas tardes..."
+    },
+    {
+      "text": "Uf, por fin se acabó el día. Voy a darme un chapuzón en el lago en un rato, ¿quieres venir conmigo? ¿Eh? ¿Por qué te asustas tanto? Pff, no, ¡yo no arrastro a la gente al fondo del agua para ahogarla! ¡No soy ESE tipo de nixie! Aunque, si quieres, ¡puedo hacerlo!",
+      "title": "Buenas noches... (I)"
+    },
+    {
+      "text": "Buenas noches. Deberías irte a dormir. Yo me levantaré bastante temprano mañana para hacer mis ejercicios vocales. Por supuesto, si quieres que cante algo en especial, estaré encantada de hacerlo.",
+      "title": "Buenas noches... (II)"
+    },
+    {
+      "text": "Por desgracia, mi voz no lanza ningún tipo de hechizo mágico que vuelva loca a la gente. Me escuchan simplemente porque canto bien. Oh, aunque ahora que lo mencionas, tengo un chiste sobre los domovói, jejeje. *Ejem*, olvídalo, no dije nada. Odette va a fulminarme con la mirada otra vez si lo cuento.",
+      "title": "Sobre Vodyanitsa - Voz encantadora"
+    },
+    {
+      "text": "Seas artista o no, si de verdad quieres que los demás te vean, tienes que aceptar las miradas y críticas que eso conlleva. Nada que valga la pena en este mundo se consigue sin pagar un precio. Y si crees que alguna vez obtuviste algo gratis... Je, eso solo significa que el destino decidió el precio por ti en secreto.",
+      "title": "Sobre Vodyanitsa - Críticas"
+    },
+    {
+      "text": "Transformé mi cola de pez en dos piernas para que me fuera más fácil caminar por tierra. ¿Que qué precio pagué? ¡Ninguno! Hum, para nosotros, los nixies, dejar el agua atrás ya es un precio bastante alto. ¿Qué más quieres quitarme, el derecho a beber agua fresca? Supongo que me harías sobrevivir solo a base de jugo de frutas o fonta, ¿verdad?",
+      "title": "Sobre nosotr{F#a}{M#o}s - Cola de pez"
+    },
+    {
+      "text": "Aun así, no puedo quedarme en Snezhnaya todo el tiempo. A veces, sigo las corrientes y nado por el mundo para escuchar cómo suenan los cantantes de otros lugares. He ido a Liyue, Fontaine, Inazuma, Sumeru... ¿Eh? ¿Que si alguien me ha visto alguna vez? Jeje, claro que sí. Por eso hay leyendas sobre tritones, sirenas, ninfas acuáticas y demás por todo el mundo. Pero Natlan... Natlan fue otra historia. En ese lugar hace mucho calor. C-A-L-O-R, con mayúsculas.",
+      "title": "Sobre nosotr{F#a}{M#o}s - Días de excursión"
+    },
+    {
+      "text": "¿Esto? Sí, es bonito. Supongo que funciona como joya. Pero como cantante, no le encuentro mucha utilidad la mayor parte del tiempo. Y en cuanto a la mirada de los dioses... Hum, a mí me interesa más la mirada de mi público.",
+      "title": "Sobre la Visión..."
+    },
+    {
+      "text": "¡La calidad del agua en Fontaine es increíble! La última vez que viajé a Fontaine para ver un espectáculo, no pude resistirme a bucear. Estuve ahí un buen rato y tragué un montón de agua. Pero supongo que hice demasiado alboroto, porque llamé la atención de alguien de la Unidad Especial de Seguridad y Vigilancia que estaba entrenando en la orilla. Pensó que me estaba ahogando. Vino corriendo al rescate gritando a todo pulmón. Pero, eh... yo simplemente agité mi cola y me alejé a toda velocidad, jejeje. Y luego la observé desde lejos mientras ella chapoteaba en el agua y miraba a su alrededor toda confundida. Fue bastante gracioso. En fin, esperé a que volviera sana y salva a la orilla antes de sumergirme otra vez para seguir bebiendo. De verdad es deliciosa, ¿sabes? La próxima vez deberías acompañarme.",
+      "title": "¿Algo que decir?"
+    },
+    {
+      "text": "¿Conoces las orcas aletaescarcha? Se comunican mediante cantos que la mayoría de la gente ni siquiera puede oír, y mucho menos entender. Pero a los nixies no nos cuesta nada comprenderlas, e incluso podemos aprender su idioma. De hecho, llegué a conocer a una orca aletaescarcha llamada Hitova. Es muy amigable. Cuando andaba viajando por todas partes, me llevó a pasear sobre su lomo. Tendré que presentártela si algún día se da la oportunidad. Estoy segura de que estará encantada de llevarnos a l{F#as}{M#os} dos a dar un paseo.",
+      "title": "Un dato curioso..."
+    },
+    {
+      "text": "Siempre que Odette ensaya, escucho atentamente sus pasos de baile desde detrás del escenario. Aterriza, salta, gira en el aire y vuelve a aterrizar. Cada movimiento es limpio y con un ritmo impecable. Solo con escucharla, puedo decir que su baile es perfecto. ¿Eh? ¿Que por qué no voy al frente a mirar? Jeje, ¡porque quiero esconderme entre bastidores y saltar para asustarla después! Puede que todavía no haya logrado asustarla, pero tengo que seguir intentándolo. De lo contrario, ¡todo el tiempo que paso escondida ahí atrás habrá sido en vano!",
+      "title": "Sobre Odette..."
+    },
+    {
+      "text": "Ojalá ese sabelotodo dejara de intentar hacer descubrimientos científicos mientras ve la función. El teatro no es una sala de estudio gigante, y desde luego no es un refugio para oficinistas que se dan a la fuga. Más le vale empezar a tomarse nuestras funciones en serio o me veré obligada a... *Suspira*... ¿Qué estoy diciendo? No puedo hacer nada al respecto, sobre todo porque técnicamente sí respeta las normas de etiqueta del teatro... Hum, la próxima vez que lo vea entre el público, tendré que interpretar una de mis piezas más estruendosas. A ver si así puede concentrarse en su trabajo.",
+      "title": "Sobre Mitya..."
+    },
+    {
+      "text": "Siempre me he preguntado si los perritos de Aliosha pueden entender mis canciones. Supongo que no, porque nosotros tampoco entendemos las canciones de los perritos. De hecho, ni siquiera sé si ellos pueden cantar. Pero mis canciones de cuna funcionan de maravilla con ellos. Apenas llego al primer verso y ya están todos dormidos como troncos. Humm, aunque no sé muy bien qué dice eso de mi forma de cantar... ¿Es algo bueno o malo?",
+      "title": "Sobre Aliosha..."
+    },
+    {
+      "text": "Gracias a Vesna, los revendedores de entradas del teatro ya saben que no deben tentar a la suerte. Me dijo que piensa invitarme pronto a presentar una pequeña conferencia sobre prevención de estafas de entradas, y se supone que al final tengo que cantar una canción para cerrar el evento. El problema es que, de todas las canciones que conozco, no creo que haya una sola que sirva para satirizar a los estafadores. Espera, el engaño táctico en la guerra debería contar como estafa, ¿no? Humm, ¿quizás podría cantar una epopeya bélica?",
+      "title": "Sobre Vesna..."
+    },
+    {
+      "text": "No conozco mucho a Dánica personalmente, aunque, por supuesto, su reputación la precede. Debe de haberlo pasado mal, respondiendo ante la Zarina por un lado y teniendo que lidiar con Vesna por el otro... *Ejem*, pero, eh, tú no escuchaste eso. Al menos, no de mí.",
+      "title": "Sobre Dánica..."
+    },
+    {
+      "text": "Si su majestad la Zarina viene a ver una función al teatro, le cantaré las viejas canciones de los nixies. ¿Qué tan viejas? Pues... No tanto como para que solo la Zarina las haya escuchado antes, pero sí lo suficiente como para que se levante polvo al cantarlas. Solo espero que el polvo no se le meta a la gente en los ojos. No me gustaría hacer llorar a todo el mundo.",
+      "title": "Sobre la Zarina..."
+    },
+    {
+      "text": "¿La Srta. Colombina ya no es una Los Once? Vaya, qué lástima. Siempre pensé que tenía una voz preciosa. Sus canciones eran como la luz de la luna: tan suaves y delicadas, y sin embargo, gélidas. Tan presentes y vívidas, pero a la vez inalcanzables. Je, solo espero que encuentre un lugar al que pertenecer, con buenos amigos que comprendan sus canciones.",
+      "title": "Sobre Colombina..."
+    },
+    {
+      "text": "El Sr. Tartaglia suele traer a su familia al teatro. Los Once tienen entrada gratuita, aunque los familiares deben comprar entradas, como todo el mundo. Por suerte, él siempre se las arregla para conseguir entradas para los suyos. Ah, cierto, conoces a Tonia, ¿verdad? Es una gran fanática del teatro. Puede que incluso se una a nosotros cuando crezca. Si eso pasa, supongo que el Sr. Tartaglia tendrá que acostumbrarse a visitar el teatro con aún más frecuencia.",
+      "title": "Sobre Tartaglia..."
+    },
+    {
+      "text": "La Srta. Arlecchino a veces trae a algunos de sus niños a ver las funciones. Una de ellos incluso tiene orejas de gato. Creo que se llamaba Lynette. Ella y el chico llamado Lyney son excelentes con la magia. Una vez, durante una función de fin de año, incluso montaron un espectáculo de magia en el escenario de nuestro teatro. Sin embargo, la Srta. Arlecchino casi siempre viene sola cuando se representa la obra «El gorrión de la montaña»... Quizás prefiere disfrutar de esa obra a solas.",
+      "title": "Sobre Arlecchino..."
+    },
+    {
+      "text": "La Srta. Sandrone siempre parece tener prisa cada vez que viene a ver un espectáculo. A veces aprieta los dientes, a veces le tiembla el ojo... Otras veces, su cara no muestra expresión alguna, pero tiene algún papel arrugado en la mano. Si no la conociera, diría que alguien la obliga a venir en contra de su voluntad, pero no me corresponde especular sobre quién tiene el poder de obligarla a hacer algo. Aun así... Je, siempre parece un poco más relajada al final del espectáculo. Así que al menos no está perdiendo el tiempo del todo.",
+      "title": "Sobre Sandrone..."
+    },
+    {
+      "text": "¿El capitán? Ah, ¿te refieres a EL Capitán? Bueno, para ser honesta, nunca he tenido una conversación de verdad con él. Es decir, hemos intercambiado algunas palabras breves en ocasiones cuando nos hemos cruzado después de un espectáculo, pero eso es todo. Aun así, puedo notar que es una persona muy seria y recta. Incluso en las butacas del público, se sienta completamente erguido, como un mástil o un pilar. Tengo la sensación de que nada podría perturbarlo, y mucho menos quebrarlo, ni siquiera la tormenta más feroz.",
+      "title": "Sobre El Capitán..."
+    },
+    {
+      "text": "Así que tienes algunas preguntas que te mueres por hacer, ¿eh? Bueno, adelante, pregunta. Pero por cada pregunta que me hagas, yo también te haré una. Es lo justo. No te preocupes, no voy a preguntarte nada difícil. Solo, eh... Ya sabes, cosas cuyas respuestas no he encontrado en ningún otro lugar.",
+      "title": "Más sobre Vodyanitsa (I)"
+    },
+    {
+      "text": "Lamento destruir tus ilusiones, pero los nixies de Snezhnaya no somos criaturas míticas que enloquecen a los marineros con nuestros cantos seductores, ni pagamos un precio enorme por caminar en tierra firme solo para convertirnos en espuma de mar si rompemos nuestros votos. No, somos gente común y corriente que vive vidas normales, como todos los demás en Snezhnaya.",
+      "title": "Más sobre Vodyanitsa (II)"
+    },
+    {
+      "text": "Desde aquel incidente, casi todos los nixies abandonaron Snezhnogrado. Mis queridos hermanos y hermanas me invitaron a irme con ellos, pero les dije que no. Estoy segura de que los ciudadanos de Snezhnaya se entristecerían si llegara el día en que ya no pudieran escuchar nuestras canciones. Y si Snezhnaya olvidara nuestras canciones, los demás nixies y yo también nos pondríamos tristes. Por eso me quedé, para seguir cantando. Para que nadie tuviera que estar triste.",
+      "title": "Más sobre Vodyanitsa (III)"
+    },
+    {
+      "text": "Los tiempos han cambiado. Snezhnaya es un lugar completamente diferente hoy en día. Inevitablemente, eso también ha cambiado mi relación con el canto. Con el paso del tiempo, es como si las canciones se hubieran vuelto... más pesadas, con más capas y más complejas que nunca, y no puedo evitar sentir... En fin, no me gusta ser así, así que me puse una regla sencilla: cada vez que siento ganas de volver a casa, busco a diez personas en Snezhnaya y les pregunto si les gusta cómo canto. Si al menos una de cada diez personas disfruta de mis canciones de verdad, me quedaré. Pero si ni una sola de diez muestra interés, volveré con mis hermanos y hermanas.",
+      "title": "Más sobre Vodyanitsa (IV)"
+    },
+    {
+      "text": "Je, no sé si llamarlo buena o mala suerte, pero cada vez que he buscado a diez personas para conocer su opinión, siempre he encontrado al menos a una que de verdad está dispuesta a escucharme cantar. Algunas personas apenas estaban comenzando, otras se encontraban en medio de la lucha más importante de sus vidas, y algunas se preparaban tranquilamente para la última etapa de su camino por la vida. Aunque ese fuera todo el público, yo y cualquiera de los míos que aún permanezca en el teatro seguiríamos cantando para ellos. Y tú, ¿disfrutas de mi canto? Jeje. Ten cuidado con lo que respondes: los nixies tenemos un oído excepcionalmente fino. Sabré si mientes solo por los latidos de tu corazón. ¿List{F#a}{M#o}? Voy a empezar a contar: tres, dos...",
+      "title": "Más sobre Vodyanitsa (V)"
+    },
+    {
+      "text": "Cuando estoy de buen humor, o de muy mal humor, me sumerjo en el agua, cierro los ojos y dejo que la corriente me lleve a donde quiera. Mientras me dejo llevar, escucho todos los sonidos que traen las olas: pececitos rozando sus escamas unas con otras cuando se reúnen, ballenas enormes entonando canciones profundas y prolongadas para llamar a sus parejas en la lejanía, burbujas ascendiendo desde las profundidades y estallando. A veces, cuando paso cerca de una ciudad, hasta escucho a los pescadores cantando mientras lanzan sus redes, a los niños riendo mientras se lanzan al agua y a los barcos crujiendo mientras se preparan para un largo viaje o regresan al puerto. Escuchar así los sonidos del mundo es verdaderamente mágico. ¿Quieres intentarlo? Si te animas, la próxima vez te llevo conmigo.",
+      "title": "Aficiones de Vodyanitsa..."
+    },
+    {
+      "text": "No me gustan los sonidos cargados de demasiado significado. Cantar es simplemente otro sonido, como las noticias que traen las olas, el crujido de las hojas al caer o el repiqueteo de unos pasos apresurados. Cuanto más significado carga un sonido, más difícil es de comprender y más desagradable resulta a mis oídos.",
+      "title": "Preocupaciones de Vodyanitsa..."
+    },
+    {
+      "text": "Humm... Cualquier cosa dulce, la verdad. Aunque, preferiblemente, bien fría, con un toquecito de sirope y... Ah, ahora que lo digo en voz alta, creo que solo estoy describiendo un helado.",
+      "title": "Comida que más le gusta..."
+    },
+    {
+      "text": "Si no tiene ni una pizca de humedad, simplemente no puedo comerlo. O sea, puedo obligarme a tragarlo, claro, pero siento como si me desgarrara la garganta al bajar.",
+      "title": "Comida que menos le gusta..."
+    },
+    {
+      "text": "¡Ooh, está delicioso! Parece que recordaste lo que te conté sobre mis comidas favoritas, ¿eh? Tienes buena memoria. La próxima vez, me toca a mí prepararte algo a tu gusto. Sí, ya sé que nunca me lo has dicho directamente, pero no te preocupes, ya lo sé. Tengo mis propios métodos para averiguar estas cosas.",
+      "title": "Al recibir un regalo (I)"
+    },
+    {
+      "text": "Gracias. Ah, por cierto, ¿todavía recuerdas cuál es mi comida favorita? Te lo dije la última vez. ¿Sí? Humm... Parece que tienes buena memoria. La próxima vez tendré que darte algo más difícil de recordar, jejeje.",
+      "title": "Al recibir un regalo (II)"
+    },
+    {
+      "text": "... Quizás la próxima vez debería decirte de antemano qué comida me gusta. O también podría enseñarte a preparar algo realmente delicioso.",
+      "title": "Al recibir un regalo (III)"
+    },
+    {
+      "text": "¡Feliz cumpleaños! Ya tengo tu regalo preparado. Puedes abrirlo dentro de un rato. Son solo algunas cositas, juguetes y esas cosas... Pero bueno, eso no es lo importante. Ahora estás libre, ¿verdad? Entonces, ¡ven conmigo! Vamos a mi cámara de eco. Hace unos días le pedí a alguien que me comprara un Escenario de baile ferviente de Natlan, junto con un montón de instrumentos raros y maravillosos. Estoy preparando el mejor evento musical que Snezhnaya haya visto jamás, y adivina quién es la primera persona en recibir una invitación. ¡Exacto, tú! Vamos, ¡cantemos hasta que amanezca!",
+      "title": "Cumpleaños..."
+    },
+    {
+      "text": "*Ejem, ejem*... Bien. Suena bien.",
+      "title": "El sentimiento de Ascensión - Introducción"
+    },
+    {
+      "text": "Creo que acabo de alcanzar una nota más alta.",
+      "title": "El sentimiento de Ascensión - Desarrollo"
+    },
+    {
+      "text": "Ah, siento la voz más fuerte que nunca.",
+      "title": "El sentimiento de Ascensión - Nudo"
+    },
+    {
+      "text": "¡Yuju! ¡Es hora de cantar toda la noche!",
       "title": "El sentimiento de Ascensión - Desenlace"
     }
   ],

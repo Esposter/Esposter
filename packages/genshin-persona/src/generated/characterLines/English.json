@@ -189,6 +189,180 @@
       "title": "Feelings About Ascension: Conclusion"
     }
   ],
+  "Alyosha": [
+    {
+      "text": "Hello, I'm Alyosha. I'm a hunter — though if you've talked to any highwaymen, you might've heard a different side to my story. But anyway, let's keep that between us for now.",
+      "title": "Hello"
+    },
+    {
+      "text": "When it comes to honing your marksmanship, target practice and actual hunting are two different beasts. Then, of course, there's the skills you pick up in battle... That's a whole other story.",
+      "title": "Chat: Marksmanship"
+    },
+    {
+      "text": "If you ever want to adopt a dog, come find me. I've got all kinds of breeds, and I know that any of them would be in good hands with you.",
+      "title": "Chat: Adoption"
+    },
+    {
+      "text": "This amount goes back home, and this is for the Rokot to buy medicine. Now I just need to find enough for gun maintenance... Heh, let's see which gang of highwaymen are out of luck this time...",
+      "title": "Chat: Balancing the Books"
+    },
+    {
+      "text": "My hood's getting soaked... Oh no, Tugarin! Don't shake!",
+      "title": "When It Rains"
+    },
+    {
+      "text": "Time for the prey to crawl out of its hiding place...",
+      "title": "After the Rain"
+    },
+    {
+      "text": "Perfect weather for an ambush, if you had anyone in mind... I can use the sound of the thunder to mask my gunshots.",
+      "title": "When Thunder Strikes"
+    },
+    {
+      "text": "Tch, tracking is going to be impossible in this.",
+      "title": "When It Snows"
+    },
+    {
+      "text": "No wearing a hood in this weather...",
+      "title": "When the Wind Is Blowing"
+    },
+    {
+      "text": "Wish I could shed some fur too...",
+      "title": "In the Desert"
+    },
+    {
+      "text": "Hear that? That's the birds chirping away in the woods, like they do every morning... Why don't we go shoot a couple down?",
+      "title": "Good Morning"
+    },
+    {
+      "text": "I usually eat lunch out in the wild, but I wouldn't exactly recommend it.",
+      "title": "Good Afternoon"
+    },
+    {
+      "text": "Some of the rarest prey only come out at night.",
+      "title": "Good Evening"
+    },
+    {
+      "text": "Go ahead and rest. I still have things to do, and I need the cover of night.",
+      "title": "Good Night"
+    },
+    {
+      "text": "When I first stumbled on Tugarin, the little guy had been abandoned in the snow. He was curled up in a ball and couldn't even move. He's a tough one, though. I fed him a couple sausages, and he was up, running circles around me in no time. It's not like I have the rations to spare for a pet, but... What's a hunter without a hunting dog?",
+      "title": "About Alyosha: Tugarin"
+    },
+    {
+      "text": "My father gave me this hunting rifle back in the day, but I've completely revamped it since then. Whether a weapon is scavenged, stolen, or bought, it can be the only thing standing between you and certain death, and that's always a risk. I'm putting my life on the line with this thing, so I have to know it like the back of my hand, down to its smallest component. Of course, maintenance and modification don't come cheap. If it takes skipping a couple meals to cover the cost, so be it...",
+      "title": "About Alyosha: Hunting Rifle"
+    },
+    {
+      "text": "With the sprawling wilderness before them, a hunter turns back after catching their prey, but an adventurer always goes that extra step further. That's why you're the one with a list of epic deeds a mile long, and not me. That said, listening to you talk about all your thrilling adventures certainly isn't a bad way to pass the time.",
+      "title": "About Us: Hunters and Adventurers"
+    },
+    {
+      "text": "What kind of nation do you think Snezhnaya will become? Heh... Y'know, I've never asked anyone that before. The villagers are too busy worrying where their next meal is coming from, and the highwaymen are too preoccupied with their next scam. No one has the time to entertain that kind of talk. But, you're the perfect person to ask. We don't need to swap answers right now, though. I still want to give it some thought. After all, I suppose it's just a different way of asking what \"ideal\" we aspire to.",
+      "title": "About Us: Ideals"
+    },
+    {
+      "text": "People often say that a Vision is supposed to represent your deepest wishes. But that kind of pointless, fluffy thinking couldn't be more meaningless to me. All I care about is what this trinket can do for me. If I never discovered that it made me more powerful, I probably would have traded it for Mora by now.",
+      "title": "About the Vision"
+    },
+    {
+      "text": "When you're off the beaten path in Snezhnaya, knowing the local code is an important skill. If you run into certain fae or highwaymen, being able to talk the talk can save you a lot of trouble. Oh, and if you ever encounter a group of people who keep muttering about \"chicken,\" go ahead and rob them blind. \"Chicken\" is code for a harmless civilian carrying a small amount of valuables. Basically, an easy target. The people who go after them are the worst of the worst, but they're no match for us. Plus, considering their own criminal record, they wouldn't even dream of reporting us to the Druzhna, so they just have to take it.",
+      "title": "Something to Share"
+    },
+    {
+      "text": "I've heard there's a tavern in Mondstadt called The Cat's Tail, where Genius Invokation TCG masters from all over Teyvat go to face off. If I ever get the chance to travel abroad, that's the first place I wanna go. I just wish Mondstadt wasn't so far from here... *sigh* Why doesn't Snezhnaya have a place like that?",
+      "title": "Interesting Things"
+    },
+    {
+      "text": "To me, Her Majesty the Tsaritsa is like the snow that covers this land. She brings a bitter cold we have no choice but to endure, but she also provides a buffer against the darker things in this world. Will any child of this frozen land ever see it thawed...? I do wonder if the Tsaritsa will ever grant that mercy...",
+      "title": "About the Tsaritsa"
+    },
+    {
+      "text": "I was very surprised to learn that Odette was part of the Rokot. I never thought a member of the Fatui would share our principles... But, now that I've been proven wrong, I'm starting to think that making the changes we want to see might not be as difficult as I imagined. A brighter future for this nation is still within our grasp.",
+      "title": "About Odette"
+    },
+    {
+      "text": "Vodyanitsa is a vital source of intelligence for the Rokot. Whenever I go to her for information, she's always a huge help. When we're not talking business, though, I can barely make heads or tails of what she's trying to say. But Odette doesn't seem to have that problem. Those two get on like it's the most natural thing in the world... Makes me wonder if girls have some kind of secret code...",
+      "title": "About Vodyanitsa"
+    },
+    {
+      "text": "The first time I met Valeriy, he blocked my path and turned me away from the Armory Palace, listing off some article of some regulation or other that said I wasn't allowed to approach... I mean, I was sneaking around with a hunting rifle no less, so I was surprised the guy didn't arrest me on the spot. In fact, I was expecting to have to fight him off, but instead, I gained a new contact at the Armory. Not a bad turn of events. Honestly, we think alike in a lot of ways. So now that we've established a clear boundary, as long as it isn't crossed, we get along great.",
+      "title": "About Valeriy"
+    },
+    {
+      "text": "I've never really had much formal schooling, so I thought it would be hard to get along with someone like Mitya. But he's helped me modify my rifle more than once, without me even having to ask, so clearly I was worried for nothing. Mitya is easy to talk to. I just treat him like any other neighbor, and it works out fine. Word to the wise, though... If he's off on one of his science tangents, steer clear.",
+      "title": "About Mitya"
+    },
+    {
+      "text": "Trying to get me to spill my secrets, huh? Fine. You can have one, but that's it: Being a \"hunter\" is a very useful disguise.",
+      "title": "More About Alyosha: I"
+    },
+    {
+      "text": "Someone once asked me if there's a difference between pointing a gun at an animal versus a person. I didn't answer at the time, but I firmly believe there is one. It's just, the more shots I fire, the more that line gets blurred, and the more the motion of pulling the trigger starts to feel the same, no matter who I'm aiming at... So, I take no pleasure in pointing my gun at people. Sometimes I wonder what will happen if that line disappears one day, and that scares me.",
+      "title": "More About Alyosha: II"
+    },
+    {
+      "text": "When I was a kid, a gang of thugs ransacked my home and stole all our belongings. My parents tried to brush it off and say that we'd be fine, but I knew what losing all we had meant for our family. So, I decided to put my skills as a hunter to good use, and for the first time, my target wasn't an animal. Now, their blood is on my hands, and I don't regret it. They deserved to pay for what they did. It turns out, though, they were as poor and destitute as we were, driven to desperation by circumstances beyond their control. That's when I realized: Thugs and robbers aren't the real problem with this country, and if we can't figure out what it is, the blood on my hands is for nothing.",
+      "title": "More About Alyosha: III"
+    },
+    {
+      "text": "I decided to join the Rokot because I feel like the principles we're fighting for are exactly what Snezhnaya needs right now. But I know, one day, that will no longer be the case. Once we get what we've been fighting for, a lot of things will change, and that's when the real test begins.",
+      "title": "More About Alyosha: IV"
+    },
+    {
+      "text": "In my eyes, realists are some of the most self-centered, opportunistic people in the world, always fixated on profit, power, or what the people around them might be hiding. Idealists, on the other hand, might be some of the most noble among us. No tolerance for lying, stealing, or the slightest injustice. There's actually a third type of person, though — the \"realistic idealist.\" Caught in the middle, they live every day constantly pulled in opposite directions.",
+      "title": "More About Alyosha: V"
+    },
+    {
+      "text": "Modifying, maintaining, and testing my rifle... I used to think firearm care was out of pure necessity. But considering how much time and Mora I pour into it, I suppose it's time to admit it's become something of a passion, too.",
+      "title": "Alyosha's Hobbies"
+    },
+    {
+      "text": "Now that would be all the Mora I spend on modifying, maintaining, and testing my rifle... Do the math, and you might just realize the things you love the most in life are also the source of all your problems.",
+      "title": "Alyosha's Troubles"
+    },
+    {
+      "text": "Cured meat, long-lasting bread, cheese that melts when toasted... With those ingredients, all I need is a fire, and I always have a feast at my fingertips, even when surrounded by ice and snow.",
+      "title": "Favorite Food"
+    },
+    {
+      "text": "Anything with a shell. Crabs, lobsters... things like that. They cost an arm and a leg, you practically have to wrestle their pincers and spikes just to get them open, and after all that, there's barely any meat inside. It's not worth the cost or the effort.",
+      "title": "Least Favorite Food"
+    },
+    {
+      "text": "Thanks, it's delicious... Does this keep well? I think I'll finish it later.",
+      "title": "Receiving a Gift: I"
+    },
+    {
+      "text": "Hmm... Why don't I help you get your hands on some rare wild game? Higher-quality ingredients would make this even better.",
+      "title": "Receiving a Gift: II"
+    },
+    {
+      "text": "...Well, can't let food go to waste. I'm sure there's a villager who needs this more than I do.",
+      "title": "Receiving a Gift: III"
+    },
+    {
+      "text": "Happy Birthday. It is today, isn't it? Y'know, where I come from, birthday celebrations are usually a luxury we can't afford. Good luck scrounging up enough flour and cream for a cake, or finding someone who sells anything but the bare essentials to use as a gift. But, I'll never begrudge a kid for wanting to celebrate their birthday. That's how it should be, and one day, I hope no child in Snezhnaya has to go without. So, I've decided to take your birthday very seriously, and I've put a lot of thought into the gift and card I got for you. Sometimes, you have to be the change you want to see in the world, right?",
+      "title": "Birthday"
+    },
+    {
+      "text": "Nice. Feels like my aim is more accurate.",
+      "title": "Feelings About Ascension: Intro"
+    },
+    {
+      "text": "Tugarin's getting better too. Seems like we're more in sync.",
+      "title": "Feelings About Ascension: Building Up"
+    },
+    {
+      "text": "For better or for worse, my shots aren't going to miss now.",
+      "title": "Feelings About Ascension: Climax"
+    },
+    {
+      "text": "How much further must we go until the world we're fighting for becomes a reality?",
+      "title": "Feelings About Ascension: Conclusion"
+    }
+  ],
   "Columbina": [
     {
       "text": "You can call me Columbina, or Kuutar, or Moon Goddess... Whatever you prefer. I'm used to having many names. The moon's blessing is yours, whenever you might find yourself in need.",
@@ -321,6 +495,10 @@
     {
       "text": "I'm not sure what counts as \"death\" for a puppet... All I know is, Sandrone isn't moving, and I can't feel her \"operating.\" Her key has just... stopped. And all because of the \"technique\" she used to bring me back. She said she was going to get back at me that one time. How I wish that's all this was. Just an attempt to scare me...",
       "title": "About Sandrone: Clockwork Nature II"
+    },
+    {
+      "text": "Sandrone has returned. I'm so happy. I noticed her wind-up key sometimes turns a bit faster now — it always seemed to turn at the same speed before. She said it's because she's embraced her inner feelings, and that she's different now. But whether she's changed her outfit or her key turns faster, I feel like Sandrone is still Sandrone, my best friend. Whether it's her past or present self, she has my complete admiration. I told her this, and her key turned faster. I don't know why, but it's really interesting.",
+      "title": "About Sandrone: Clockwork Nature III"
     },
     {
       "text": "In his eyes, everything and everyone has a price tag, and he gets to decide their value. We're all just bargaining chips he can use to expand his ever-increasing empire of wealth. But who would want to visit a boring empire like that? Not me, that's for sure.\nHmm... If he saw me now, I'm sure his smile would hide even more contempt than before. I can almost hear it now... \"Congratulations, Miss Columbina. Your value has appreciated.\"",
@@ -2991,6 +3169,204 @@
       "title": "Feelings About Ascension: Conclusion"
     }
   ],
+  "Odette": [
+    {
+      "text": "...Thanks for all the support. You want an autograph, right? What do you want me to draw next to it? How about a feather? Oh, wait, you're not one of my fans? Guess I misunderstood. Lemme start from the top, then. I'm Odette, a ballerina with the Korolevskiy Troupe... Well, thanks for all the support, anyway.",
+      "title": "Hello"
+    },
+    {
+      "text": "Well, if that's all, I'm going to go rehearse.",
+      "title": "Chat: Busy"
+    },
+    {
+      "text": "If a simple response will do, why waste your breath on anything longer?",
+      "title": "Chat: Keep It Simple"
+    },
+    {
+      "text": "If only there were double the hours in a day... Hmm. Actually, make that triple.",
+      "title": "Chat: Time"
+    },
+    {
+      "text": "The pitter-patter of the raindrops always makes me feel so serene. This kind of weather is perfect for dancing alone.",
+      "title": "When It Rains"
+    },
+    {
+      "text": "The most beautiful, serene moments are always the most fleeting.",
+      "title": "After the Rain"
+    },
+    {
+      "text": "The snow in Snezhnaya is always bitterly cold, and it never seems to end.",
+      "title": "When It Snows"
+    },
+    {
+      "text": "My hair... I'll fix it later.",
+      "title": "When the Wind Is Blowing"
+    },
+    {
+      "text": "...At least there wouldn't be a meet-and-greet in a place like this.",
+      "title": "In the Desert"
+    },
+    {
+      "text": "I'm warmed up and ready to go.",
+      "title": "Good Morning"
+    },
+    {
+      "text": "I'm not one for naps. Noon isn't a suitable time for training either, so I usually spend it reading through the scripts for our dance dramas. Hm? What about these letters? They're from my fans. Vodyanitsa practically forced them into my hand. She wants me to read through them for once.",
+      "title": "Good Afternoon"
+    },
+    {
+      "text": "Oh, is it time for dinner? I have to go on stage soon, so I'll just have a hard-boiled egg. I'll grab something else once the show's over.",
+      "title": "Good Evening"
+    },
+    {
+      "text": "...Missions complete, training quota met, new routine fully rehearsed. Not satisfied with my facial expressions, though. I need to practice some more in front of the mirror... Oh, is it that late already? Feel free to retire. I still have things to do.",
+      "title": "Good Night"
+    },
+    {
+      "text": "Since the implementation of Project Stuzha, the size of our audience has been dwindling. While most people are struggling to get by, corrupt leeches continue to prey on the public. I refuse to turn a blind eye. I know I can't turn the tide on my own, but I still want to do what I can.",
+      "title": "About Odette: The Rokot"
+    },
+    {
+      "text": "The memories of my past are forever etched into my mind. Like a film, they play on repeat in the dead of night... Suffice to say, having a perfect memory isn't always a good thing.",
+      "title": "About Odette: Memory"
+    },
+    {
+      "text": "Relying on others for protection is like leaning on a thin layer of fresh ice. I don't pin my hopes on anyone but myself.",
+      "title": "About Us: Trust"
+    },
+    {
+      "text": "My sense of pain is quite dull. I often don't even notice I'm injured until the wound has already started to scab over. But, I prefer it that way. Whether it's dance rehearsal or Fatui special training, it's better if a trivial thing like my physical condition doesn't get in the way.",
+      "title": "About Us: Wounds"
+    },
+    {
+      "text": "Once, during an intense training session, I developed frostbite in my feet and legs due to the extreme cold, and almost lost consciousness entirely. When I came to, the first thing I noticed was a bright light emanating from the Stellar Linchpin in front of me. But, I've never heard of Stellar Linchpins being able to awaken people like that. So if that didn't wake me up... then maybe it was some instinctual desire to survive...?",
+      "title": "About the Stellar Linchpin"
+    },
+    {
+      "text": "I treat every rehearsal as seriously as an actual performance.",
+      "title": "Something to Share"
+    },
+    {
+      "text": "You can bring out the sweetness of Rimecurrants by sprinkling them with a little table salt. Supposedly, the contrast helps amplify their inner sweetness. I heard that from a fan.",
+      "title": "Interesting Things"
+    },
+    {
+      "text": "I'm indebted to Rosalyne, but there was also a time when I really hated her. She was exacting in her demands and incredibly strict. Freezing from the cold, collapsing from exhaustion, getting injured, falling sick... Those were all common occurrences when I trained under her. I used to harbor this naive dream that I just needed to make it as a ballerina, earn enough to support my mother, and then, one day, I would leave her and the Fatui in the dust...",
+      "title": "About Rosalyne: The Past"
+    },
+    {
+      "text": "After someone is gone, a lot of things are suddenly no longer worth saying. I could shatter this Cor Ignis in a heartbeat, yet that would make the pain and the misunderstandings it caused feel all the more ridiculous... Why is it only now, after all this time, that we finally understand each other?",
+      "title": "About Rosalyne: Cor Ignis"
+    },
+    {
+      "text": "Her Majesty the Tsaritsa is Snezhnaya's pillar of faith. Her duties keep her quite occupied, so she rarely makes public appearances. In fact, I've only seen her on a handful of occasions, but she always strikes me as an incredibly regal and solemn figure. No matter where her gaze falls, it is as cold and unwavering as a sheet of ice, one that no amount of time could melt.",
+      "title": "About the Tsaritsa"
+    },
+    {
+      "text": "She walks with an almost feather-light grace that would be the envy of any dancer. According to Vodyanitsa, she also has a hauntingly beautiful singing voice. Although, I suppose what we see and envy is the persona she projects on the surface. Who knows what untold pain lies underneath...",
+      "title": "About Lady Damselette"
+    },
+    {
+      "text": "The children of the House of the Hearth think of her as their \"Father.\" Hopefully, that will spare them some of the bitter chill and raging storms that life brings. A father's role is to protect, after all.",
+      "title": "About Lady Arlecchino"
+    },
+    {
+      "text": "Lady Marionette's tea parties always used to put Rosalyne in a better mood. She was just as strict, but her tone was a bit softer. It was quite a noticeable difference.",
+      "title": "About Lady Marionette"
+    },
+    {
+      "text": "The first time the Tsaritsa was coming to see one of the Korolevskiy Troupe's performances, Vodyanitsa was the one who told me. I replied with a simple nod of the head. She then proceeded to force a smile onto my face by pushing up both corners of my mouth, then made me repeat after her, \"What. Great. News.\"\nPerhaps it was practice for appearing in front of the Tsaritsa, but I still don't think Her Majesty appreciates that kind of smile.",
+      "title": "About Vodyanitsa: Smile"
+    },
+    {
+      "text": "Whenever Vodyanitsa gets sick, she always gets so clingy and practically latches herself to my side... She says it's because she's scared of getting a shot or having to take bitter medicine, so she needs something to hold onto, and I suppose my arm is her instrument of choice. I have a high pain tolerance, though, so there's no reason to shake her off.",
+      "title": "About Vodyanitsa: Getting Sick"
+    },
+    {
+      "text": "He could easily make a living on hunting alone if all he cared about was himself, but he still takes on odd jobs around the theater so he can help others who are suffering... I'm not surprised he joined the Rokot.",
+      "title": "About Alyosha"
+    },
+    {
+      "text": "Hm... I suppose you could call him a \"fan\" of the theater. He comes to see me and Vodyanitsa perform often enough. But as soon as the show starts, he always buries his head in his notes, writing away about goodness knows what. It's hard to ignore, especially when the rest of the audience has their eyes glued to the stage. I wouldn't be surprised if there's more true appreciation for the arts in his scarf than his entire body.",
+      "title": "About Mitya"
+    },
+    {
+      "text": "Major Valeriy is a Fatui officer who's very strict about keeping things on schedule. I've heard he commands with a level-headed disposition that can also come off as quite terrifying... But we belong to different divisions, so we rarely have a chance to interact. Besides... I don't need anyone to remind me what I should be doing.",
+      "title": "About Valeriy"
+    },
+    {
+      "text": "Don't be thinking she's some dainty, harmless butterfly just because of those wings. People may flock to her, but she's the commander-in-chief of the Druzhna — one of the fiercest predators on the tundra. Keep your eyes wide open, and don't be fooled by her smile.",
+      "title": "About Vesna"
+    },
+    {
+      "text": "You'll have to excuse me. My schedule for the day is quite packed, and I have rehearsal later, so if you want to chat, please keep it brief.",
+      "title": "More About Odette: I"
+    },
+    {
+      "text": "My mother came from a family of ballet dancers, and my father served in the Fatui. They met after one of her performances and quickly fell in love. It's a sweet story that would bring a smile to anyone's face, I'm sure. When I was little, my days were spent dancing alongside my mother, clad in one of the many beautiful tutus my father would buy for me. I had no worries... except perhaps for which piece of candy to pick from the candy jar each day.",
+      "title": "More About Odette: II"
+    },
+    {
+      "text": "Of course, before long, we received the tragic news that my father had died in the line of duty. My mother was devastated and ended up breaking her leg during a performance. Before this, life was sugary-sweet. But now, it felt like the candy jar was empty, and I was trapped inside.",
+      "title": "More About Odette: III"
+    },
+    {
+      "text": "After that, well... You know what happened. I've unpacked those memories so many times, they can no longer hurt me. Struggling against the hand that fate dealt me... It made me strong, and that strength is mine alone. I won't forget that.",
+      "title": "More About Odette: IV"
+    },
+    {
+      "text": "I wouldn't say any of this to my fans, so it's a good thing you're not one. I already have too many versions of myself to maintain, and I prefer for them not to bleed into each other... Of course, in my heart, I will forever keep dancing toward perfection.",
+      "title": "More About Odette: V"
+    },
+    {
+      "text": "I've always loved ballet, and I do my utmost to give the best possible performance every time I'm on stage.",
+      "title": "Odette's Hobbies"
+    },
+    {
+      "text": "Honestly, I feel like small animals hate me. Vodyanitsa always makes me go with her to feed the stray cats around the theater, but as soon as I approach, they start sharpening their claws... Hm? That means they're excited to see me? Huh...",
+      "title": "Odette's Troubles"
+    },
+    {
+      "text": "Right before closing, the salads at the dining hall are half-price, so I used to eat that a lot. Obviously, salads that have been left out all day don't taste as good as fresh ones. But something about the familiarity of it is quite comforting to me.",
+      "title": "Favorite Food"
+    },
+    {
+      "text": "To be honest, I don't think there's any food I find particularly unpalatable. But, as a ballet dancer, I have to be strict about my diet, so all of my meals are carefully planned. I tend to avoid anything not included in that.",
+      "title": "Least Favorite Food"
+    },
+    {
+      "text": "I have had quite a few performances these last few days. Perhaps a little more couldn't... Ahem, never mind. It's delicious. Thank you.",
+      "title": "Receiving a Gift: I"
+    },
+    {
+      "text": "This is just one dish? It looks more like... a whole day's worth of food.",
+      "title": "Receiving a Gift: II"
+    },
+    {
+      "text": "Uhm, no thank you. I'm watching what I eat.",
+      "title": "Receiving a Gift: III"
+    },
+    {
+      "text": "Happy Birthday! I was trying to think of what to get you... I usually receive things like flowers, ballet shoes, and music boxes, but I doubt that's what you have in mind. How about you simply... make a wish, here and now? Ideally, something within my power to grant, of course...",
+      "title": "Birthday"
+    },
+    {
+      "text": "Hm, not quite there yet... I need to train even harder.",
+      "title": "Feelings About Ascension: Intro"
+    },
+    {
+      "text": "Mm, my movements feel sharper. I should keep up the intensity.",
+      "title": "Feelings About Ascension: Building Up"
+    },
+    {
+      "text": "My fouettés are now perfect. But now is no time to let up.",
+      "title": "Feelings About Ascension: Climax"
+    },
+    {
+      "text": "\"Emotion is an indispensable part of ballet.\" I now understand what that means. Thank you for your faithful companionship and support. If you're interested in coming to my performance later today, here's a ticket.",
+      "title": "Feelings About Ascension: Conclusion"
+    }
+  ],
   "Prune": [
     {
       "text": "Hello. Prune the Witch Hunter at your service. My enemy? Someone who takes pleasure in teasing children, uses other people's imaginary friends to ensnare them in her schemes. Someone who's a complete show-off, way too dramatic, and obsessed with wearing a hollowed-out hat. I'm referring, of course, to the wickedest witch of them all! Any relevant intel on her whereabouts is more than welcome.",
@@ -3198,6 +3574,216 @@
     },
     {
       "text": "I still don't believe in made-up fairy tales, and I don't have much faith in this world. But I do believe in you, so I hope you'll believe in me too. Even if you think I'm still just a kid, at the very least... I'm a big kid — someone strong enough to rely on.",
+      "title": "Feelings About Ascension: Conclusion"
+    }
+  ],
+  "Sandrone": [
+    {
+      "text": "I hate self-introductions. If you're supposed to know me, you'll get to know me naturally, and if you're not... why waste the time and energy? But, very well — for the sake of etiquette, I'll humor you just this once... Behold, before you stands Marionette, Seventh of the Fatui Harbingers!",
+      "title": "Hello"
+    },
+    {
+      "text": "It's about time we threw another tea party, don't you think? I wonder who else is free...",
+      "title": "Chat: Tea Party"
+    },
+    {
+      "text": "I like music. In fact, I've taught myself to play many different instruments. You don't believe me? Hah, find me a piano, and I'll show you a thing or two.",
+      "title": "Chat: Piano"
+    },
+    {
+      "text": "Called back to the Zapolyarny Palace, again? Ugh... Seriously, what's the point in all these endless meetings!?",
+      "title": "Chat: Meetings"
+    },
+    {
+      "text": "...Well, this is inconvenient.",
+      "title": "When It Rains"
+    },
+    {
+      "text": "My flowers adore this kind of weather.",
+      "title": "After the Rain"
+    },
+    {
+      "text": "Defensive systems... Mmhmm, operating normally.",
+      "title": "When Thunder Strikes"
+    },
+    {
+      "text": "Ugh, time for more \"snow damselettes\"...",
+      "title": "When It Snows"
+    },
+    {
+      "text": "The perfect weather for cake, strong coffee, and getting lost in a good book.",
+      "title": "When the Sun Is Out"
+    },
+    {
+      "text": "Ugh... This skirt really wasn't made for weather like this... How in the blazes did Rosalyne use to cope?",
+      "title": "When the Wind Is Blowing"
+    },
+    {
+      "text": "Good morning. Would you like a cup of coffee? It really raises the spirits. Hmm? Why would someone like me need coffee? Hah, can't a lady appreciate the taste!?",
+      "title": "Good Morning"
+    },
+    {
+      "text": "Is it that time already? I'd better prepare some refreshments...",
+      "title": "Good Afternoon"
+    },
+    {
+      "text": "Back for dinner? This isn't a canteen, you know... Ugh, forget it, you're here now, I'll have Fagio whip something up.",
+      "title": "Good Evening"
+    },
+    {
+      "text": "You should get some sleep. I prefer to do my research at night — it's quieter, and there's no one around to bother me. ...What do you mean!? My sleep schedule is fine as it is, thank you very much!",
+      "title": "Good Night"
+    },
+    {
+      "text": "What's wrong with calling me Sandrone? Huh...? My original name? Hah... So, you really want to know? Alright, alright... I can still remember when I first opened my eyes. Alain had just finished creating me. He called me \"Marionette.\" I tried to repeat it, to say it out loud myself, but I noticed something... complicated in his expression. Only later did I come to understand what it was — a mixture of regret and guilt. He never called me that again. Anyway, after telling me the story of the Narzissenkreuz Ordo and his sister, Alain concluded by insisting that I was free to choose my own path in life. An important part of that, he said, was deciding on my own name. For my part, I told him I was perfectly fine with the one he'd given me. \"Marionette Guillotin\"... Pretty unique as names go, wouldn't you say? And yet, no doubt for different reasons, the Tsaritsa ended up making \"Marionette\" my title as a Harbinger. Heh... Perhaps that was simply another so-called \"act of fate.\"",
+      "title": "About Sandrone: Name"
+    },
+    {
+      "text": "When I was first created, it seemed like too much work to find a place to lie down, so I usually just \"slept\" in a chair. It was only after I arrived in Snezhnaya that I grew accustomed to sleeping in beds. I have to say, after an exhausting day of dealing with my \"colleagues,\" wearing something comfortable and hiding beneath the covers is wonderfully cozy. There's a sense of security created by my sensory system and emotional circuitry. I now know why people like to sleep in. However, beds come with their own issues — my clockwork key prevents me from sleeping on my back, and it's difficult to balance when lying on my side. The only option is to sleep face down.",
+      "title": "About Sandrone: Sleep"
+    },
+    {
+      "text": "You've read my diary, so don't you think it's about time you shared some of your own secrets to even things out? Huh? Your Adventurer Handbook? Why would I want that? If I wanted to know what you do every day, I'd just get Katheryne to tell me.",
+      "title": "About Us: Diary"
+    },
+    {
+      "text": "We may know each other better now, but once we arrive in Snezhnaya, we still have to follow the rules. After all, you've been fighting the Fatui since you arrived... Who knows what kind of a stir you'll cause over there. Naturally, I'll try my best not to make your life difficult. I'd appreciate it if you could do the same for me. Helping each other out based on mutual understanding — that's what companions do, right?",
+      "title": "About Us: Beliefs"
+    },
+    {
+      "text": "It's a good fit for me — Cryo is useful. For instance, I no longer need to worry about overheating after lengthy calculations.",
+      "title": "About the Stellar Linchpin"
+    },
+    {
+      "text": "With Pulonia gone, life suddenly felt a lot more difficult to navigate. That's why I created Fagio — my \"Facilitatrice Automatisee Generaliste Interactive et Omnitache.\" She can deal with a lot of trivial tasks that I'd rather not waste my time with — and she can fight. Huh? You think her full name's too long and... hard to understand? Is that not how all working machines get their names? Alain came up with Pulonia, which stands for \"Prospective Undulation Localized Observing and Investigating Automaton.\" I thought everyone named things that way. So, you think it's hereditary...?",
+      "title": "Something to Share"
+    },
+    {
+      "text": "Outside of my research, I sometimes like to ponder metaphysical questions. Just as people from every nation have their own beliefs about death. I often hear people talking about the \"afterlife,\" \"where souls go to rest,\" things like that... But from the time my core was damaged fighting Il Dottore, to the time the \"Stellar Linchpin\" activated Alain's legacy and reactivated me, my memory is blank — completely empty. Where do mechanical constructs, \"puppets,\" go when they die? How are our \"souls\" defined? Do we even have souls? There are no answers, so I always turn back to my research. But knowledge is the cornerstone of the world. I believe that as these stones continue to stack, one day their height alone will allow me to reach the answers to my doubts.",
+      "title": "Interesting Things"
+    },
+    {
+      "text": "That great shaman seems nice. Is she really very old? Still seems like she's got plenty of energy to me — though she does get a little too worked up sometimes. What do I mean? Oh, well, recently, I was talking to her about you and me going underwater to look for something... and before that, I told her you were in Nod-Krai helping Columbina get her name back... She got so animated, her face turned bright red. I wonder if it has something to do with her age...",
+      "title": "About Citlali"
+    },
+    {
+      "text": "I don't know how she does it! That cat-girl always seems to find the weakest spot in every machine and then... beh, broken. I wish her brother would have a word with her. *sigh* Nevermind... I guess it's a talent, really. Maybe I should have her help me stress test my future creations. If my machines can't survive her curiosity, what chance do they have in battle?",
+      "title": "About Lynette"
+    },
+    {
+      "text": "After Alain died, I put up a tombstone for him. When he was alive, he said he wanted me to write his epitaph. So I did. It wasn't difficult — list out his deeds, then pick a quote that captures the way he thought. I went with, \"Regrettably, there's nothing more to say.\" It was something he often said. You think it sounds fatalistic? Hah, maybe to those who didn't know him. But he always said it with a smile. It wasn't resignation — he wasn't giving up. Ironically, it was almost like an expression of contentment. Like solving a mathematical problem. Death is just a silent equals sign, and he's moved to the other side of the equation.",
+      "title": "About Alain Guillotin"
+    },
+    {
+      "text": "Even I still get bothered by the errors in my heart, but Her Majesty the Tsaritsa... How did she manage to freeze her emotions so completely?",
+      "title": "About the Tsaritsa"
+    },
+    {
+      "text": "Always issuing orders... Somehow, the world reflected in his eyes seems farther away than it does with anyone else. The first time I saw him, I knew this world had taken too much from him.",
+      "title": "About The Jester"
+    },
+    {
+      "text": "Everyone knows Il Capitano doesn't like to remove his mask, but it doesn't stop him from finishing his tea whenever we get together.",
+      "title": "About The Captain"
+    },
+    {
+      "text": "You might want to cover your ears. I'm afraid I won't be able to control my emotions.",
+      "title": "About The Doctor"
+    },
+    {
+      "text": "Columbina used to drive me up the wall — to be honest, she still does. I thought life would be quieter without her around. Who knew I'd find myself getting more annoyed once she wasn't here! Ugh, it's infuriating!",
+      "title": "About Columbina: Annoying"
+    },
+    {
+      "text": "She's living such a happy life right now. Her family and friends are by her side, and she gets to go traveling whenever she's free... Why can't I have that kind of fortune? Oh, forget it, I'm not jealous. We all know she deserves to be happy.",
+      "title": "About Columbina: Life"
+    },
+    {
+      "text": "Arlecchino is a woman of her word. She acts decisively, and you can trust her to get things done. Purely from a professional standpoint, it would be nice if all my colleagues could try to emulate her.",
+      "title": "About Arlecchino"
+    },
+    {
+      "text": "He's the chairman of the Snezhnograd Veche, though he often feels more like... its overseer. Every vote cast in the Evaluation Council affects the interests of countless factions. Reconciling so many competing concerns can only be achieved by the shrewdest of operators. Once you understand this, you start to realize just how terrifying he really is.",
+      "title": "About The Rooster"
+    },
+    {
+      "text": "You would think his relationship and dealings with Dottore would have been properly investigated from the start, right? Why did it take ten times longer for my research funds to be granted than that lunatic Dottore's? It's clear there was something shady going on! I even asked Pantalone about it to his face! He looked right at me with that stupid smile and said, \"Oh my, has our Lady Sandrone finally developed an interest in finances? I can recommend a few books if you'd like — maybe you should start with '100 Phrases to Teach You Manners.'\"",
+      "title": "About Regrator"
+    },
+    {
+      "text": "She always lived for herself. She loved in her own way, and hated in her own way, too. No wonder she burned out so fast. Still, her flame shone with a unique hue until the moment it flickered into nothing.",
+      "title": "About Rosalyne"
+    },
+    {
+      "text": "Another pain in the... well, everything. He could happily just spend his days with his brothers and sisters — why insist on becoming a Harbinger at all? And when will he get it into his thick skull that not everyone is always looking for a fight?",
+      "title": "About Childe"
+    },
+    {
+      "text": "Hmm? I'm not in the habit of casually sharing my life story with others. But if I'm going to open up, can we at least wait for pleasant weather and to do it over tea and cake?",
+      "title": "More About Sandrone: I"
+    },
+    {
+      "text": "My colleagues in the Fatui might not be the ones I'd choose, but there's no denying that it's an excellent place to conduct research. The Tsaritsa is generous with her resources and funding. I'd say the equation balances out in my favor.",
+      "title": "More About Sandrone: II"
+    },
+    {
+      "text": "It never bothered me that Alain created me to look like his sister Mary-Ann — or that he named me \"Marionette.\" The way I see it, these are simply the consequences of my birth. Does it bother you to look like your parents, or to bear their family name?",
+      "title": "More About Sandrone: III"
+    },
+    {
+      "text": "I like mathematics. A world built on formulae and logic has a kind of elegance anchored in certainty. I also like music, which is similar in many ways. I used to think playing music should be approached like a mathematical problem, balancing the notes and the beat, no space for deviation. Later, I came to realize that some minor flaws — even mistakes — during a performance can actually make the music more beautiful. A slight pause here, a sudden improvisation there... Such tiny errors are where emotion is born. Reverberations of the performer's heart, you might say.",
+      "title": "More About Sandrone: IV"
+    },
+    {
+      "text": "What the world gives, the world will take away. To live is to gain and to lose, to pick up what the world can't seize, to hold onto it amid loss and farewells, and to keep walking forward. If a person desires merely \"to live,\" is that too insignificant a wish? Just like someone saving the world solely to \"save themselves\" — is such a reason too simple? To live, to feel, to witness. And then one day, perhaps those things the world cannot take away will grow numerous enough to shake it to its core.",
+      "title": "More About Sandrone: V"
+    },
+    {
+      "text": "Besides music, machines, and mathematics, I also enjoy horticulture... when conditions allow. I like to document the process as my plants grow and flourish. Most of them require little intervention — they're independent, resilient. I used to believe I was the same.",
+      "title": "Sandrone's Hobbies"
+    },
+    {
+      "text": "Every time I see a fluffy little animal, I just wanna pick it up and give it a big hug... but most animals don't like machines, so they always run away when they see me. Hey! Don't look at me like that! I don't want your pity. So what if I can't hug them? It's not... it's not that big of a deal...",
+      "title": "Sandrone's Troubles"
+    },
+    {
+      "text": "Thanks to this body, I don't suffer from allergies or indigestion, so food is purely a matter of pleasure for me. But if I had to choose... Hmm, I think I like small, dainty pastries most of all. Just looking at their exquisite shape brings joy to my heart — it's a one-two punch for the eyes and soul.",
+      "title": "Favorite Food"
+    },
+    {
+      "text": "I don't like greasy, spicy food. It's got nothing to do with taste — it's just hard to keep the smell from clinging to my clothes. It's very inelegant for a lady.",
+      "title": "Least Favorite Food"
+    },
+    {
+      "text": "Hmm... Oh, I—I'll do you a favor and listen to how you prepared this. Perhaps I can give you a few pointers. It would be unladylike to let the opportunity go to waste.",
+      "title": "Receiving a Gift: I"
+    },
+    {
+      "text": "Oh? That's not half bad. I'll have to return the favor next time we get together for tea.",
+      "title": "Receiving a Gift: II"
+    },
+    {
+      "text": "Ugh... Fagio, I have something for you to clean up.",
+      "title": "Receiving a Gift: III"
+    },
+    {
+      "text": "Hmph. Here, take this. I wouldn't normally give these out, but today's a special day — it marks the day you came into the world. I invited Arlecchino and Columbina, plus a few shared friends. I even baked a special cake for the occasion... so you'd best look forward to it.",
+      "title": "Birthday"
+    },
+    {
+      "text": "Calculation underway.",
+      "title": "Feelings About Ascension: Intro"
+    },
+    {
+      "text": "Inputting variables...",
+      "title": "Feelings About Ascension: Building Up"
+    },
+    {
+      "text": "Progress is smooth.",
+      "title": "Feelings About Ascension: Climax"
+    },
+    {
+      "text": "Deconstructing the very order of things. Bet you're impressed with me now? Hahaha...",
       "title": "Feelings About Ascension: Conclusion"
     }
   ],
@@ -3804,6 +4390,398 @@
     },
     {
       "text": "Remember the three knightly virtues? Good — now forget 'em all. Whatever kind of knight we wanna be, whatever path we choose to take, it's up to us!",
+      "title": "Feelings About Ascension: Conclusion"
+    }
+  ],
+  "Vesna": [
+    {
+      "text": "Hello, dear friend. Commander Vesna of the Druzhna. The pleasure is all mine. The gun salute and honor guard are in position and ready for your grand welcome. Of course, if you're not one for fanfare, I've also arranged a more private welcome ceremony. Come on, this way~",
+      "title": "Hello"
+    },
+    {
+      "text": "The Druzhna takes orders only from the Tsaritsa, so they cannot be at your beck and call. But Vesna the Vila is happy to be of service, my dear friend.",
+      "title": "Chat: Service"
+    },
+    {
+      "text": "Isn't this outfit just gorgeous? It was a personal gift from Her Majesty. Hehe, that's right, feast your eyes.",
+      "title": "Chat: Happiness"
+    },
+    {
+      "text": "What paperwork? Oh, I finished it ages ago — flew through it. Now it's time to get out on patrol. C'mon, let's go~",
+      "title": "Chat: Efficiency"
+    },
+    {
+      "text": "Fae can absolutely catch colds. When they get wet, it's important to flap them dry right away. T—The wings, I mean.",
+      "title": "When It Rains"
+    },
+    {
+      "text": "In the snow, the slightest imperfection in your camouflage can be fatal. So tread carefully, dear friend.",
+      "title": "When It Snows"
+    },
+    {
+      "text": "I know what you're thinking — and I agree. My wings look their most dazzling in the sun.",
+      "title": "When the Sun Is Out"
+    },
+    {
+      "text": "Ah... Hehe, very nice. The Vila just love a good breeze.",
+      "title": "When It's Windy"
+    },
+    {
+      "text": "Just wondering... When are we heading back to Snezhnaya again?",
+      "title": "In the Desert"
+    },
+    {
+      "text": "A new day! Good morning, Snezhnograd!",
+      "title": "Good Morning"
+    },
+    {
+      "text": "Off we go to Podvorye Restaurant, come on! My treat, of course. As always!",
+      "title": "Good Afternoon"
+    },
+    {
+      "text": "The Korolevskiy Troupe is debuting a new show tonight. Featuring Prima Donna Vodyanitsa's high soprano, Miss Odette latest choreography... and a few \"new friends.\"",
+      "title": "Good Evening"
+    },
+    {
+      "text": "Pssst... You can't be asleep already. Come out for a late-night walk? The aurora is great tonight!",
+      "title": "Good Night"
+    },
+    {
+      "text": "See these little things flying around me? They're my magic weapons, my own creations. Each one is a blend of elemental energy and my own will, so they've inherited something of my personality as well. Which is to say, it's possible that they might pester you to play with them. Don't mind them... Though of course, if you have time, please indulge them, hehe!",
+      "title": "About Vesna: Magic Weapon"
+    },
+    {
+      "text": "Who says a commander needs to be strict and imposing? Pshh, that's for people with no presence. I don't need it~ I think we're quite similar in that regard.",
+      "title": "About Vesna: Commander"
+    },
+    {
+      "text": "I get it, I get it. There are all sorts of rumors flying around about me, and you want to know the truth. Well, that's fine, we have plenty of time for that. But in return, I want to know the truth about you, too, down to the very last detail.",
+      "title": "About Us: The Truth"
+    },
+    {
+      "text": "I don't like the idea of \"accompanying\" someone on a journey. It sounds romantic at first, but when you think about it, the word \"accompany\" makes one person the protagonist and the other a mere sidekick.\nThe truth is, every step we take is our own, as are the things we experience and the ways we grow along the way. So, I won't say that I'm \"accompanying\" you on your journey — rather that I'm glad to have the pleasure of your company on what happens to be, for now, a shared journey. Think of it like this... you're walking along, minding your own business, then at some point you turn your head and notice: Oh wow! Haha, look at that — seems like we're both going the same way!",
+      "title": "About Us: Company"
+    },
+    {
+      "text": "Stellar Linchpins are beautifully designed. Absolutely a collector's item. Actually, Moon Wheels aren't bad, either. Always wanted to get my hands on one. As for Visions, though... Not interested at the moment, sorry.",
+      "title": "About the Stellar Linchpin"
+    },
+    {
+      "text": "Oh, you mean this old thing? Beautiful, isn't it? It's a family heirloom, you know. Much, much older than I am. A true antique, in fact, worthy of a museum. Sometimes I use it as a magic wand, sometimes as a pointer when giving a class, and sometimes as a commander's baton... Ah, just look at me, giving it the chance to relive its glory days at this ripe old age, rather than locking it up in a bank vault somewhere to gather dust. My ancestors would be lining up to sing my praises if they knew!",
+      "title": "Something to Share"
+    },
+    {
+      "text": "The Frostfairy Flower is a thing of beauty and resilience, surviving in spite of the brutally cold environment. It also has a very distinctive pattern. I like gazing at it through half-closed eyes as I shake my head, hehe — it creates a dreamy effect, like looking through a kaleidoscope. That said, I'd advise doing that in a private place with no one else around.",
+      "title": "Interesting Things"
+    },
+    {
+      "text": "I've apprehended far too many self-righteous fools who wish to oppose Her Majesty. Their grand speeches about conquest? All show and no substance. They have neither the strategy to launch a rebellion nor the competence to see it through. Compared to those would-be revolutionaries... No, I take that back. They don't even deserve to be mentioned in the same breath as Her Majesty.\nMy point is, serving the Tsaritsa is not only my duty as a Vila. It's also my personal choice as Vesna.",
+      "title": "About the Tsaritsa: Loyalty"
+    },
+    {
+      "text": "Her Majesty always speaks the word \"compassion\" with an icy sting to it. She says it's a curse imposed upon the gods by the Heavenly Principles, not genuine love. But I very much disagree. Whenever I return from a campaign against monsters, Her Majesty adds \"rest well\" at the end of her personal decree. And after the Ruler of Life's power was reclaimed, she sensed how disappointed I was, despite my efforts to hide it, and sent the unclaimed portion back to me...\nSomeone in her position has no obligation to do any of these things. At the risk of sounding presumptuous, I've always believed that the question of whether a god is truly loving can only be answered by their people. So why shouldn't my verdict count?",
+      "title": "About the Tsaritsa: Compassion"
+    },
+    {
+      "text": "Oh, dearest Miss Danica... Don't be fooled by her serious and brooding demeanor. We got up to all kinds of mischief together when we were little... Like the time we plotted to steal Teacher's mask right off of his face. We made it all the way up onto his shoulders before getting caught! Sure, we didn't quite pull it off, and yes, we got punished — had to stand at attention on a frozen lake for hours... Ah, but anyway, that's besides the point! She was the one who came up with that crazy idea in the first place! She was every bit the troublemaker I was. And now she gives me that look all the time, like she's the adult and I'm the child. I mean, puh-lease. I'm actually the older one.",
+      "title": "About Danica: Childhood"
+    },
+    {
+      "text": "We have good intel that certain suspects are using bizarre events like \"Quarreling Contests\" as a front to conduct illegal business transactions, the rowdy crowd serving as a handy distraction... And so, it falls to me to intervene.\nTo that end, I've taken the liberty of signing Danica up. She's a master of deadpan takedowns and hitting people where it hurts. No one can out-quarrel her, so she'll definitely buy me tons of time.\nCounting on you, Danica!",
+      "title": "About Danica: Arguments"
+    },
+    {
+      "text": "I always remember how he looked from behind. So sturdy and reliable, like a steadfast mountain. I never imagined there'd come a day when that mountain would fall. Or at least... I didn't think it would come so soon. He always used to say, \"In a real war, you don't get the chance to say goodbye.\" Of all the ways to prove it to me... Surely, he could have given me one last chance before the end, but he didn't...\nI'll never let that go, Teach.",
+      "title": "About The Captain"
+    },
+    {
+      "text": "Some people skip through the world with a pep in their step, most of them full of hope for what tomorrow will bring. Not him. His steps are always slow and heavy. I always felt that he and my teacher were similar people. I guess it's because they both hide unimaginable sorrow beneath a mask, bearing all the pain of the past on their shoulders.",
+      "title": "About The Jester"
+    },
+    {
+      "text": "Mr. Mayor speaks with such eloquence and composure at the Snezhnograd Veche, and he makes it look so effortless. He can really command the room.",
+      "title": "About The Rooster"
+    },
+    {
+      "text": "Now, I'm not saying that a Druzhna Commander's salary is low, but it can get a little tight if you're an avid collector who also enjoys treating people to meals... No, oh, no no no, I didn't mean it like that! I wasn't finished. Ever since I can remember, my family's spare funds have been managed by the Northland Bank, and thanks to Mr. Pantalone, the compound returns have grown our wealth quite substantially. Basically, I don't have to worry about money at all. So next time we're out, it's still my treat, and no need to hold back!",
+      "title": "About Regrator"
+    },
+    {
+      "text": "Sandrone fully embodies what it means to be a lady. Her words may be highly aggressive in nature, but her impeccable logic makes it impossible to find fault with her... Hehe, it really fascinates me. I must learn how she does it.",
+      "title": "About Marionette"
+    },
+    {
+      "text": "Mitya often joins me for hijinks. He's forever sneaking out of the Armory, and the three of us always have a blast! Why \"three,\" you ask? Because there's me, Mitya, and his ever-so-clever scarf.",
+      "title": "About Mitya"
+    },
+    {
+      "text": "Every one of Miss Vodyanitsa's songs is simply beautiful. I love hearing them live. At times they fill me with joy, at other times they move me to tears, just like everyone else in the audience. Sometimes, everyone stays behind after the show ends and suddenly breaks into song together. Well, funnily enough, I just so happen to have a conductor's baton in my hand. And even more funnily, I've noticed on several occasions that Miss Vodyanitsa quietly blends into the crowd after changing out of her stage outfit, puts on a hat, and sings a harmony for the group.",
+      "title": "About Vodyanitsa"
+    },
+    {
+      "text": "I have to be honest — every time I see Miss Odette at a court gathering, I find myself stealing a glance at her constantly. After all, as well as being a member of the Fatui, she has a special alter ego that makes her hard to ignore... Hmm? Why, her role as prima ballerina of the Korolevskiy Troupe, of course. What did you think I meant?",
+      "title": "About Odette"
+    },
+    {
+      "text": "I get it, I really do. I mean, how could any little puppy resist the urge to chase a pretty butterfly through the \"howling\" winds? Hmm... Maybe I'll steal Danica's breakfast and feed it to Tugarin, then ask Alyosha to put in a good word for me, so he doesn't come charging at me the moment he sees me...",
+      "title": "About Alyosha"
+    },
+    {
+      "text": "Hehe, so how would you like to get to know me? Surely, we're not just going to chat? Well, that's no fun... Hmm... Can't we play a game of \"Truth or Dare\" instead?",
+      "title": "More About Vesna: I"
+    },
+    {
+      "text": "We Druzhna are the Tsaritsa's personal guard, answering directly to Her Majesty. Our duties aren't just limited to neutralizing monster threats and going into battle — they extend beyond military affairs. In all matters concerning Her Majesty's authority and honor, we are bound to answer her call unconditionally and remove all obstacles from her path.\nHowever, Her Majesty is inevitably spread a little thin while the grand endeavor against the Heavenly Principles is ongoing. So until the dust has settled, I am more than happy to assist her with the fun stuff— Ahem, I mean, the more trivial matters, such as ribbon-cutting ceremonies and attending banquets on her behalf.",
+      "title": "More About Vesna: II"
+    },
+    {
+      "text": "I have an eclectic collection of treasures. Jewelry, ancient books, oil paintings... Anything that makes me happy is worth adding to the collection. And I have to have it the moment I lay eyes upon it, not a single second can be wasted! You know the saying, don't you? \"A spoon is dear when lunch time is near.\" If you wait until after the initial thrill has passed before acquiring it, it loses it appeal. So, if I want it now, I must have it now.",
+      "title": "More About Vesna: III"
+    },
+    {
+      "text": "After Tsar Monomakh's sacrifice, Snezhnaya went through a period of great turmoil. My forebears stood firmly by the Tsaritsa's side. So, as I stand here on their shoulders today, do I really possess the strength to do justice to their legacy? Hehe, I've put words to the question in your mind, haven't I? Well, now it's your turn to voice the answer that's in mine. Go ahead~",
+      "title": "More About Vesna: IV"
+    },
+    {
+      "text": "On the eve of the battle against the Ruler of Death, I extracted \"Seals of Life\" from many people. Everyone's definition of a beautiful memory varies. Some cherish sitting around the fireplace with family, chatting idly. Some fondly remember sitting alone by a train window, watching the aurora drift silently across the night sky. Still others are satisfied simply pulling a sled out for some ice fishing...\nThose memories are like iridescent bubbles, filled with an effervescence and vitality that just makes you want to exclaim: \"Ah, it's so good to be alive!\"\nYet, those so-called heavenly beings can crush those bubbles with ease, without giving a single word of explanation. What gives them that right?\nFrom that moment on, for me, the fight against the Heavenly Principles was no longer solely about assisting Her Majesty.",
+      "title": "More About Vesna: V"
+    },
+    {
+      "text": "When I was very young, my family arranged for me to take painting, dance, and singing classes. As I got a little older, I took up fencing, horse riding, and the like, hehe... More recently, I've been getting into opera, theater, and collecting my little treasures... In short, the word \"bored\" doesn't exist in my dictionary.",
+      "title": "Vesna's Hobbies"
+    },
+    {
+      "text": "Don't listen to Danica's nonsense — there is absolutely nothing wrong with my driving skills. It's called being one with the vehicle! Just wait till my driving ban is lifted. I'll take you for a spin!",
+      "title": "Vesna's Troubles"
+    },
+    {
+      "text": "When it's so cold out, there's nothing cozier than gathering everyone together for some nice hot stew! Tell you what — I'll host, and you and Paimon can bring along some cooking ingredients. Anything you like will do~",
+      "title": "Favorite Food"
+    },
+    {
+      "text": "Hehe! I'm slipping all those annoying veggies onto Danica's plate! Ugh... but they always come right back to me...",
+      "title": "Least Favorite Food"
+    },
+    {
+      "text": "Oh, don't mind if I do! I'm going to savor every last bite.",
+      "title": "Receiving a Gift: I"
+    },
+    {
+      "text": "Mmm... Quite a feat of culinary ingenuity... I think I'll take another bite.",
+      "title": "Receiving a Gift: II"
+    },
+    {
+      "text": "Oof... I'm sorry, I already ate! But let me box them up for Danica~",
+      "title": "Receiving a Gift: III"
+    },
+    {
+      "text": "Ding-dong! The moment has arrived! You have no idea how hard it was for me to hold it in yesterday... But I had to, because saying it early is bad luck — you might get swallowed up by a snowstorm! Now, I can finally say it: Happy Birthday, my dear friend. May you stand as strong as the birch tree, never defeated by the wind and snow.\nAlright, that part's done. Next, tradition dictates that I've got to give our birthday superstar a few gentle tugs on the ear...",
+      "title": "Birthday"
+    },
+    {
+      "text": "First lesson in boot camp: Only those who do not stand firm and do not yield to the wind and snow are qualified to stand guard by Her Majesty's side.",
+      "title": "Feelings About Ascension: Intro"
+    },
+    {
+      "text": "Second lesson in boot camp: Your sword arm must never tremble.",
+      "title": "Feelings About Ascension: Building Up"
+    },
+    {
+      "text": "Third lesson in boot camp: We do not weep before our foes.",
+      "title": "Feelings About Ascension: Climax"
+    },
+    {
+      "text": "You, dear friend, have taught me a lesson from beyond boot camp: To reserve a soft touch with which to embrace those I defend with my sword after the blizzard has died down.",
+      "title": "Feelings About Ascension: Conclusion"
+    }
+  ],
+  "Vodyanitsa": [
+    {
+      "text": "Hello, I'm Vodyanitsa, the Prima Donna of the Korolevskiy Troupe. As you can see... Well, I mean, look at my ears. Pretty unusual, right? That's because I'm a \"Water Imp.\" But that's neither here nor there. All you need to know is that I'm the best singer in the entire Korolevskiy Troupe.",
+      "title": "Hello"
+    },
+    {
+      "text": "...Hmm? Keep it down, I think I hear someone whispering again... Hehehe, lemme see if I can make out what they're saying...",
+      "title": "Chat: Hearing"
+    },
+    {
+      "text": "Well, if there's nothing else going on, I might as well do some rehearsing... Uh, no, forget it. I don't wanna disturb the locals again. Or the animals...",
+      "title": "Chat: Practice"
+    },
+    {
+      "text": "Whew... I've been on dry land for too long — my skin's getting dry. I'm in serious need of some underwater time.",
+      "title": "Chat: Passing the Time"
+    },
+    {
+      "text": "Ah, what a lovely day. Perfect for some underwater relaxation.",
+      "title": "When It Rains"
+    },
+    {
+      "text": "Aw, where'd the rain go? What a downer...",
+      "title": "After the Rain"
+    },
+    {
+      "text": "A vast expanse of white. Hmph, if nothing else, it's a clean aesthetic.",
+      "title": "When It Snows"
+    },
+    {
+      "text": "Ugh, it's so hot and dry... Get me back to the water...",
+      "title": "In the Desert"
+    },
+    {
+      "text": "Good morning. I just finished my vocal warm-ups. Did you hear me? Yeah, I'm not surprised. My singing voice really carries.",
+      "title": "Good Morning"
+    },
+    {
+      "text": "Alright, time for some lunch. My poor voice is so tired after the morning I've had. I'll go get Odette, then we can grab a quick bite.",
+      "title": "Good Afternoon"
+    },
+    {
+      "text": "Whew, the day is finally over. I'm gonna take a dip in the lake in a bit, you wanna join me? ...Huh? What are you so scared of? Pssh, no, I don't drag people underwater and try to drown them! I'm not THAT kind of Water Imp! But I can do that if you want!",
+      "title": "Good Evening"
+    },
+    {
+      "text": "Nighty-night~ You should get to bed — I'll be getting up pretty early tomorrow to do my vocal warm-ups. Of course, if you have any song requests, I'm more than happy to oblige.",
+      "title": "Good Night"
+    },
+    {
+      "text": "Unfortunately, my voice doesn't cast any kind of magic spell on people that drives them crazy. People listen to me purely because I sing well. ...Ooh, although on that note, I actually have a joke about the Domovoy, hehehe... Ahem, never mind, forget I said that. Odette will start glaring at me again if I tell it.",
+      "title": "About Vodyanitsa: Charming Singing Voice"
+    },
+    {
+      "text": "Whether you're a performer or not, if you truly want to be seen by other people, you have to accept the scrutiny that comes with it. Nothing worth having in this world comes without a price. And if it ever seems like you got something for free... Heh, that just means that fate has secretly decided the price for you.",
+      "title": "About Vodyanitsa: Scrutiny"
+    },
+    {
+      "text": "I turned my fish tail into two legs to make walking on land easier. ...What price did I pay? None! Hmph, for us Water Imps, leaving the water behind is a big enough price to pay already. What else do you wanna take away from me, the right to drink fresh water? I suppose you'd make me subsist entirely on fruit juice or Fonta, wouldn't you?",
+      "title": "About Us: Fish Tail"
+    },
+    {
+      "text": "Still, I can't just stay in Snezhnaya all the time. Sometimes, I'll follow the waterways and swim around the world to hear what singers in other places sound like. I've been to Liyue, Fontaine, Inazuma, Sumeru... Huh? Has anyone ever noticed me? Hehe, of course. That's why there's legends about merfolk, mermaids, sirens, and so on all over the world. Natlan was something else, though... That place is hot. With a capital H, O, T.",
+      "title": "About Us: Outing Days"
+    },
+    {
+      "text": "Oh, this old thing? Yeah, it's pretty. Makes a nice piece of jewelry, I guess. But as a singer, I don't have much use for it most of the time. And as for \"the gaze of the gods\"... Hmph, I'm more interested in the gaze of my audience.",
+      "title": "About the Vision"
+    },
+    {
+      "text": "The water quality in Fontaine is amazing! Last time I traveled to Fontaine to watch a show, I couldn't resist diving underwater. I stayed there for ages, and gulped down loads of water. But I guess I must have made too much of a splash, because I caught the attention of someone from the Special Security and Surveillance Patrol who was training on the shore. She thought I was drowning... She came rushing to the rescue, yelling at the top of her lungs. But, uh... I just flicked my tail and whoosed away, hehehe. Then watched from a distance while she treaded water and looked around in confusion. It was pretty hilarious. Anyway, I waited until she was safely back on shore before I went underwater again to carry on gulping away. It really is delicious, you know. You should join me next time.",
+      "title": "Something to Share"
+    },
+    {
+      "text": "Do you know about Frostfin Whales? They communicate using \"whale songs,\" which most people can't even hear, let alone understand. But we Water Imps have no trouble understanding them, and we can even learn the language. I've actually gotten to know a Frostfin Whale named Hitova — real good-natured. Back when I was traveling all over, I hitched a ride off of her. I'll have to introduce you if I ever get the chance. I'm sure she'd be happy to take us both out for a ride.",
+      "title": "Interesting Things"
+    },
+    {
+      "text": "Whenever Odette is rehearsing, I listen along intently to her dance steps from backstage. She lands, then jumps, spins in the air, then lands again... Every motion is cleanly executed with impeccable timing. Just by listening, I can tell her dancing is flawless... Hm, why don't I go out front to watch? Hehe, because I wanna hide backstage and jump out at her afterwards! Sure, I haven't managed to scare her yet, but I have to keep trying. Otherwise, all that time I've spent hiding backstage would've been for nothing!",
+      "title": "About Odette"
+    },
+    {
+      "text": "I wish that Mr. Smarty Pants would stop trying to make scientific breakthroughs while he's watching the show. The theater is not a glorified study hall, and it's certainly not a refugee camp for escaped office workers. He'd better start taking our performances seriously... or I'll be forced to... *sigh* What am I saying — there's nothing I can do about it, especially since he technically does abide by theater etiquette... Hmph, next time I see him in the audience, I'll have to perform one of my louder pieces. Let's see how well he can concentrate on his work then.",
+      "title": "About Mitya"
+    },
+    {
+      "text": "I've always wondered if Alyosha's puppies can understand my songs. I'm guessing probably not, since we can't understand puppy songs either. Matter of fact, I don't even know if they can sing at all... But my lullabies work like a dream on them. I'll barely make it through the opening verse before they're all out like a light. ...Hmm, not sure what that says about my singing, though... Is that good or bad?",
+      "title": "About Alyosha"
+    },
+    {
+      "text": "Thanks to Miss Vesna, those theater ticket scalpers know not to push their luck. She said she's planning to invite me to host a small conference on ticket scam prevention soon, and I'm supposed to be singing a song at the end to wrap things up. The thing is, out of all the songs I know, I don't think there's a single one for satirizing scam artists. ...Wait, tactical deception in war should count as a scam, right...? Ummm... maybe I could sing a war epic...?",
+      "title": "About Vesna"
+    },
+    {
+      "text": "I'm not personally very familiar with Miss Danica, though of course, her reputation precedes her. She must have had it tough, answering to the Tsaritsa on one hand while having to deal with Miss Vesna on the other... Ahem, but uh, you didn't hear that. At least, not from me.",
+      "title": "About Danica"
+    },
+    {
+      "text": "If Her Majesty the Tsaritsa comes to see a show at the theater, I'll break out the old songs of the Water Imps for her. ...How old? Well... Not so old that only the Tsaritsa has heard them before, but definitely old enough that you can hear the dust coming off when you start singing them. I just hope it doesn't get in people's eyes. Wouldn't want to make everyone cry.",
+      "title": "About the Tsaritsa"
+    },
+    {
+      "text": "Is Miss Columbina no longer a Harbinger? Huh, shame. I always thought she had a great singing voice. Her songs were like the moonlight itself: so soft and gentle, yet somehow icy cold. So present and vivid, yet so impossibly out of reach... Heh, I only hope she finds somewhere she can belong, with good friends who understand her songs.",
+      "title": "About Columbina"
+    },
+    {
+      "text": "Mr. Tartaglia often brings his family to the theater. Harbingers get free admission, although family members have to buy tickets like everyone else. Fortunately, he always manages to secure tickets for his family. Oh, right — you know Tonia, don't you? She's a huge theater fan. She might even join us when she grows up. If that happens, I guess Mr. Tartaglia will have to get used to visiting the theater even more often.",
+      "title": "About Tartaglia"
+    },
+    {
+      "text": "Lady Arlecchino sometimes brings a few children to watch a show at the theater. One of them has these cat ears — Lynette, I think her name was? Yeah, that's right — she and the boy, Lyney, are both excellent magicians. They actually performed a magic show here on the stage one time during an end-of-year performance. The only time Lady Arlecchino tends to come without the children is to watch \"The Mountain Sparrow\"... I suppose she prefers to enjoy that show alone.",
+      "title": "About Arlecchino"
+    },
+    {
+      "text": "Miss Sandrone always seems to be in a hurry whenever she comes to see a show. Sometimes she grits her teeth, sometimes her eyes twitch... Other times, her face is completely blank, but she's crumpled some scrap paper into a ball. If I didn't know better, I'd say someone was forcing her to come against her will... But far be it from me to speculate who has the power to force her into anything. Still... Heh, she always seems a little more relaxed by the end of the show. So at least she's not completely wasting her time.",
+      "title": "About Sandrone"
+    },
+    {
+      "text": "The captain? Oh, you mean THE Captain? Well... to be honest, I've never really had a proper conversation with him. I mean, we've exchanged a few brief words on occasion when we've bumped into each other after a show, but that's about it. Still, I can tell that he's a very serious and upstanding sort of person. Even in the audience stalls, he sits there completely straight, like a flagstaff or a pillar. I get the sense that nothing could ever faze him, let alone break him, not even the fiercest storm.",
+      "title": "About The Captain"
+    },
+    {
+      "text": "So, you got some burning questions, huh? Well, ask away — but for every question you ask me, I get to ask you one, too. It's only fair. Don't worry, I won't ask any difficult questions. Just, uh... Y'know, the things I haven't found the answers to anywhere else.",
+      "title": "More About Vodyanitsa: I"
+    },
+    {
+      "text": "Sorry to burst your bubble, but we Snezhnayan Water Imps aren't some mythical creatures who drive sailors mad with our alluring songs, or pay some enormous price to walk on land, only to turn into sea foam if we break our vows. Nope, we're just ordinary people living ordinary lives, like everyone else in Snezhnaya.",
+      "title": "More About Vodyanitsa: II"
+    },
+    {
+      "text": "Since that incident, almost all the Water Imps have left Snezhnograd. My dear brothers and sisters invited me to leave with them, but I turned them down. I'm sure the citizens of Snezhnaya would be saddened if the day ever came that they could no longer hear our songs. And if Snezhnaya forgot our songs, the other Water Imps and I would be sad, too. That's why I stayed behind to keep singing. To prevent sadness all around.",
+      "title": "More About Vodyanitsa: III"
+    },
+    {
+      "text": "...Times have changed. Snezhnaya is a completely different place today. Inevitably, it's changed the way I relate to my singing, too. As time goes by, it's like the songs become... heavier, more layered and complex than ever, and I can't help but feel... Anyway, I don't like being like that, so I made a simple rule for myself: Whenever I feel like just going home, I find ten people in Snezhnaya and see if they like my singing. If even one out of ten genuinely likes my songs, I will stay. But if not even one person in ten cares, I'll return to my brothers and sisters.",
+      "title": "More About Vodyanitsa: IV"
+    },
+    {
+      "text": "Heh, I don't know whether to call it good or bad luck, but every time I've sought out ten people to get their verdict, I've always found at least one who is genuinely willing to listen to my singing. Some were just starting out, others were deep in the trenches of the most heroic struggle of their lives, and some were calmly preparing for the final leg of their life's journey... Even if that were the entire audience, I and any of my kin who linger still in the theater would continue to sing for them. So, what about you? Do you enjoy my singing? Hehe. Be careful how you answer — we Water Imps have exceptionally good hearing. I'll know whether you're lying from your heartbeat alone. Ready? I'll count you in: Three, two...",
+      "title": "More About Vodyanitsa: V"
+    },
+    {
+      "text": "Whenever I'm in a good mood — or a really bad mood — I dive into the water, close my eyes, and let the current carry me around. As I drift along, I listen to all the sounds carried on the waves: Little fishies gathering together, their scales brushing against one another... giant whales singing deep, drawn-out songs as they call out to their partners far away... bubbles rising up from the deep, then bursting... Occasionally, when I drift by a city, I'll even hear the fishermen chanting as they cast their nets, children laughing as they leap into the water, and ships creaking as they prepare for a long voyage or return to port... Listening to the sounds of the world like this is truly magical. Do you want to try it? If so, I'll take you with me next time.",
+      "title": "Vodyanitsa's Hobbies"
+    },
+    {
+      "text": "I don't like sounds laden with too much meaning. Singing is just another sound, like the news carried by the waves, the crisp sound of falling leaves, or the pitter-patter of running footsteps... The greater a sound's burden, the harder it is to understand, and the more unpleasant it is to my ear.",
+      "title": "Vodyanitsa's Troubles"
+    },
+    {
+      "text": "Mm... Anything sweet, really. Although, preferably nice and cold, with just a dash of syrup, and... Huh, now that I say it out loud, I guess I'm just describing ice cream.",
+      "title": "Favorite Food"
+    },
+    {
+      "text": "If there's no moisture in it whatsoever, I just cannot handle it. I mean, I can physically force myself to swallow it, sure, but my throat will feel like it's being torn to shreds on the way down.",
+      "title": "Least Favorite Food"
+    },
+    {
+      "text": "Ooh, this is delicious! I guess you remembered what I told you about my favorite foods, huh? You have a pretty good memory. Next time, it's my turn to make some food tailored to your tastes. ...Yeah, I know you've never explicitly told me before, but don't worry — I already know. I have my ways of finding these things out.",
+      "title": "Receiving a Gift: I"
+    },
+    {
+      "text": "Thanks. Oh, by the way, do you still remember my favorite food? I told you last time. You do? Hmm... Guess you've got a pretty good memory. I'll have to give you something tougher to remember next time, hehehe.",
+      "title": "Receiving a Gift: II"
+    },
+    {
+      "text": "...Maybe next time, I should be clear about my food preferences in advance. Or maybe I can teach you how to make something really delicious.",
+      "title": "Receiving a Gift: III"
+    },
+    {
+      "text": "Happy Birthday! I've set aside your gift. You can open it later. It's just some small trinkets, toys, and whatnot... Eh, but that's not the important part. You're free now, aren't you? In that case, come with me! We're going to my echo chamber. I got someone to buy me a Dance-Off Stage from Natlan a few days ago, along with a whole bunch of weird and wonderful instruments. I'm working on the best music event Snezhnaya's ever seen, and guess who's the first person to receive an invitation? That's right, it's you! Come on, let's sing the night away!",
+      "title": "Birthday"
+    },
+    {
+      "text": "Ahem, ahem... Alright. Sounding good.",
+      "title": "Feelings About Ascension: Intro"
+    },
+    {
+      "text": "I think I just reached a new high note.",
+      "title": "Feelings About Ascension: Building Up"
+    },
+    {
+      "text": "Ah, my voice is feeling stronger than ever.",
+      "title": "Feelings About Ascension: Climax"
+    },
+    {
+      "text": "Whoo! Time to sing the whole night through!",
       "title": "Feelings About Ascension: Conclusion"
     }
   ],

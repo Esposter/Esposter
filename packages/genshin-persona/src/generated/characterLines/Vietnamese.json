@@ -189,6 +189,180 @@
       "title": "Cảm Giác Đột Phá - Hợp"
     }
   ],
+  "Alyosha": [
+    {
+      "text": "Xin chào, tôi là Alyosha, một thợ săn. Đương nhiên, nếu {F#cô}{M#cậu} đến chỗ bọn cướp hỏi thăm, có thể sẽ biết một thân phận khác của tôi... Cứ coi như đây là bí mật giữa chúng ta trước nhé.",
+      "title": "Lần đầu gặp mặt..."
+    },
+    {
+      "text": "Kỹ thuật bắn súng rèn luyện từ việc bắn bia và săn bắn hoàn toàn không thể so sánh với nhau. Dĩ nhiên, còn một loại kỹ thuật bắn là do rèn luyện từ chiến trường... Ừm, thôi không nhắc đến thì hơn.",
+      "title": "Nói chuyện phiếm - Kỹ Thuật Bắn"
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} có muốn nhận nuôi cún con không? Nếu có ý định thì nhớ tìm tôi nhé, giống nào tôi cũng có hết. Giao cho {F#cô}{M#cậu} nuôi, tôi yên tâm lắm.",
+      "title": "Nói chuyện phiếm - Nhận Nuôi"
+    },
+    {
+      "text": "Khoản này gửi về quê, khoản này đưa cho người trong hội mua thuốc, còn Mora để bảo dưỡng súng săn thì... để xem lần này băng cướp nào xui xẻo gặp phải tôi đây.",
+      "title": "Nói chuyện phiếm - Tính Toán"
+    },
+    {
+      "text": "Mũ trùm đầu sắp ướt hết rồi... Tugarin, đừng có vẩy nữa!",
+      "title": "Khi trời mưa..."
+    },
+    {
+      "text": "Mấy kẻ trốn trong hang sắp ra ngoài rồi.",
+      "title": "Sau cơn mưa trời lại sáng..."
+    },
+    {
+      "text": "Muốn mai phục người khác à? Vừa hay có thể lợi dụng tiếng sấm để bắn tỉa.",
+      "title": "Khi có sấm sét..."
+    },
+    {
+      "text": "Chậc, dấu vết của con mồi sắp bị che mất rồi.",
+      "title": "Khi tuyết rơi..."
+    },
+    {
+      "text": "Thời tiết thế này, đội mũ kiểu gì cũng không được...",
+      "title": "Gió lớn quá..."
+    },
+    {
+      "text": "Giá mà tôi cũng có thể thay lông thì tốt rồi...",
+      "title": "Khi trong sa mạc..."
+    },
+    {
+      "text": "Sáng nào chim trong rừng cũng kêu ríu rít... Có muốn đi bắn vài con không?",
+      "title": "Chào buổi sáng..."
+    },
+    {
+      "text": "Bữa trưa của tôi thường ăn ở bên ngoài, nhưng tôi không khuyến khích {F#cô}{M#cậu} làm vậy đâu.",
+      "title": "Chào buổi trưa..."
+    },
+    {
+      "text": "Đêm xuống rồi, rất nhiều con mồi quý hiếm thường chỉ ra ngoài hoạt động vào lúc này.",
+      "title": "Chào buổi tối..."
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} nghỉ ngơi đi, bên chỗ tôi còn có vài việc chỉ có thể làm vào ban đêm.",
+      "title": "Chúc ngủ ngon..."
+    },
+    {
+      "text": "Lần đầu tiên nhìn thấy Tugarin, nó bị bỏ rơi giữa trời tuyết, co ro thành một cục, còn không đứng dậy nổi. Vậy mà nó cũng cao số lắm, chỉ cần cho ăn hai cái xúc xích là đã có thể chạy xung quanh tôi rồi. Không phải tôi dư dả đến mức nuôi được thú cưng đâu, chỉ là một thợ săn mà không có chó săn thì kỳ lắm, phải không?",
+      "title": "Về bản thân Alyosha - Tugarin"
+    },
+    {
+      "text": "Khẩu súng săn này ban đầu do cha trao lại cho tôi, sau đó tôi đã tự tay cải tạo lại toàn bộ. Để mà nói thì vũ khí liên quan đến tính mạng, dù là nhặt được, cướp được hay mua về, đều không đáng tin. Đây là người đồng hành cùng tôi xông pha, tôi phải nắm rõ từng bộ phận của nó. Nhưng mà, việc bảo dưỡng và cải tạo súng quả thực là một khoản chi phí không nhỏ, có lúc tôi phải nhịn ăn vài bữa mới bù được lỗ hổng đó...",
+      "title": "Về bản thân Alyosha - Súng Săn"
+    },
+    {
+      "text": "Như tôi đã nói, khi đối mặt với vùng hoang dã chưa biết, thợ săn sau khi bắt được con mồi sẽ quay về, còn nhà mạo hiểm thì luôn muốn đi xa hơn nữa. Chính vì thế, những chuyện kinh thiên động địa hiếm khi nào liên quan tới một thợ săn như tôi. Thế nhưng, thỉnh thoảng được nghe một nhà mạo hiểm như {F#cô}{M#cậu} kể về những chuyến hành trình ly kỳ ấy, xem ra cũng là một cách tiêu khiển khá thú vị.",
+      "title": "Về chúng ta - Thợ Săn Và Nhà Mạo Hiểm"
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} nghĩ Snezhnaya sẽ trở thành một đất nước như thế nào? Hừm... Đây là lần đầu tiên tôi nói với người khác về vấn đề này đấy. Dù là những người dân đang lo lắng cho bữa ăn tiếp theo, hay những tên cướp đang tính kế khách qua đường, chẳng ai rảnh rỗi mà ngồi bàn luận chuyện này với tôi. Còn {F#cô}{M#cậu} thì khác, {F#cô}{M#cậu} mới là người thích hợp. Nhưng mà, chưa cần phải trao đổi đáp án ngay đâu, tôi vẫn muốn suy nghĩ thêm một chút. Xét cho cùng, đáp án cho câu hỏi này chính là thứ mà chúng ta vẫn hay gọi là \"lý tưởng\" đấy thôi.",
+      "title": "Về chúng ta - Lý Tưởng"
+    },
+    {
+      "text": "Tôi nghe người ta nói Vision đại diện cho nguyện vọng của một người. Nhưng mà nguyện vọng nghe có vẻ hư ảo quá, tôi chỉ quan tâm đến những lợi ích thực tế mà nó mang lại thôi. Nếu không phát hiện ra nó có thể tăng cường năng lực đặc biệt của mình thì chắc tôi đã đem đi đổi lấy Mora rồi.",
+      "title": "Về \"Vision\"..."
+    },
+    {
+      "text": "Khi đi bộ trên cánh đồng tuyết Snezhnaya, biết tiếng lóng là một kỹ năng rất quan trọng. Lỡ gặp phải băng đảng fae hay bọn cướp, miệng lưỡi lanh lợi một chút là có thể tránh được cả đống rắc rối. À đúng rồi, nếu gặp một đám cứ nhắc đi nhắc lại \"thịt gà\" thì cứ việc cướp luôn. \"Thịt gà\" là chỉ những người qua đường không có gì đáng lo, nhưng mang theo ít tiền bạc trên người. Kẻ nào chỉ dám ra tay với \"thịt gà\" là đồ vô dụng trong giới cướp bóc, với tay nghề của {F#cô}{M#cậu} và tôi thì vài ba chiêu là xử xong. Ừm, đây là cướp lại của kẻ cướp, chúng không dám báo cáo với Druzhna đâu, chỉ có thể ngậm bồ hòn làm ngọt thôi.",
+      "title": "Có gì muốn chia sẻ không..."
+    },
+    {
+      "text": "Từ lâu tôi đã nghe nói ở Thành Mondstadt có một quán rượu tên là Quán Rượu Đuôi Mèo, nơi các cao thủ Thất Thánh Triệu Hồi từ khắp Teyvat tìm đến so tài. Nếu có cơ hội ra nước ngoài, nơi đầu tiên tôi muốn đến chính là chỗ đó. Điểm trừ duy nhất là Mondstadt cách đây xa quá... Haiz, sao Snezhnaya lại không có quán rượu như vậy nhỉ?",
+      "title": "Những kiến thức thú vị..."
+    },
+    {
+      "text": "Với tôi, Nữ Hoàng bệ hạ giống như những bông tuyết rơi xuống mặt đất này vậy. Người khiến chúng tôi chịu đựng cái lạnh thấu xương, nhưng cũng giúp chúng tôi vùi chôn những thứ ô uế phiền não. Không biết đến bao giờ người mới rủ lòng thương, để người con của vương quốc băng tuyết như tôi cũng có dịp được nhìn thấy Snezhnaya sau khi băng tuyết tan chảy.",
+      "title": "Về \"Nữ Hoàng\" bệ hạ..."
+    },
+    {
+      "text": "Lúc đầu, khi biết Odette cũng là thành viên của Rokot, tôi khá bất ngờ đấy. Ai mà ngờ được trong Fatui lại có người đồng tình với lý tưởng của Rokot chứ? Nhưng nếu đã vậy thì có lẽ con đường thực hiện lý tưởng đó không khó như tôi nghĩ, tương lai của đất nước này vẫn còn đáng kỳ vọng lắm.",
+      "title": "Về Odette..."
+    },
+    {
+      "text": "Vodyanitsa là nguồn thông tin quan trọng của Rokot. Tôi hay tìm cô ấy để hỏi thăm tin tức, mà những thông tin cô ấy cung cấp cũng giúp tôi rất nhiều. Nhưng mà, lúc không nói chuyện công việc, tôi thường chẳng hiểu cô ấy đang nghĩ gì, còn Odette thì lại trò chuyện với cô ấy tự nhiên hơn hẳn... Hay là con gái có ngôn ngữ riêng với nhau nhỉ?",
+      "title": "Về Vodyanitsa..."
+    },
+    {
+      "text": "Lần đầu gặp Valeriy, anh ấy chặn ngay trước mặt tôi, nói là theo điều mấy khoản mấy của cái quy định nào đó, tôi không được phép tiếp cận Cục Khí Tài, nên phải áp giải tôi ra ngoài... Thường thì khi thấy một tên vác súng săn lén lút đến gần Cục Khí Tài, lẽ ra phải bắt ngay tại chỗ chứ? Tôi đã sẵn sàng đánh một trận rồi đó. Nhưng mà, cái trận không đánh được đó lại giúp tôi có thêm một người quen trong Cục Khí Tài. Về phương diện nào đó, suy nghĩ của anh ấy khá hợp với tôi. Chúng tôi đã vạch ra một ranh giới rõ ràng, chỉ cần không vượt qua nó, chúng tôi sẽ có thể chơi với nhau rất vui vẻ.",
+      "title": "Về Valeriy..."
+    },
+    {
+      "text": "Tôi chưa từng được học hành tử tế, nên tôi cứ nghĩ mình sẽ khó mà hợp với những người như Mitya. Mãi đến khi anh ấy chủ động giúp tôi cải tạo khẩu súng vài lần, tôi mới hiểu ra nỗi lo đó hoàn toàn thừa thãi. Mitya rất dễ nói chuyện, cứ coi anh ấy như người hàng xóm bình thường là được. Điều duy nhất cần chú ý, chắc là đừng làm phiền anh ấy khi đang lẩm bẩm mấy thuật ngữ khoa học.",
+      "title": "Về Mitya..."
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} muốn biết bí mật của tôi à? Hiện tại thì tôi chỉ có thể nói với {F#cô}{M#cậu} rằng, thân phận thợ săn là một lớp ngụy trang rất hữu dụng.",
+      "title": "Muốn tìm hiểu Alyosha - Điều thứ 1"
+    },
+    {
+      "text": "Đã từng có người hỏi tôi, ngắm bắn một con vật và ngắm bắn một con người có gì khác nhau? Tôi không trả lời. Tôi tin chắc rằng giữa hai điều này có sự khác biệt. Nhưng khi số lần bóp cò ngày càng nhiều hơn, tôi nhận ra rằng dù nhắm vào con vật hay con người, động tác siết cò của tôi đã không còn thay đổi nữa... Vì vậy tôi không thích chĩa súng vào một người, tôi sợ rằng một ngày nào đó, sự khác biệt đó sẽ biến mất khỏi trái tim tôi.",
+      "title": "Muốn tìm hiểu Alyosha - Điều thứ 2"
+    },
+    {
+      "text": "Lúc nhỏ nhà tôi bị một băng cướp đột nhập và vơ vét sạch tài sản. Dù cha mẹ cứ an ủi tôi rằng không sao, nhưng tôi hiểu việc mất đi những thứ đó có ý nghĩa gì với gia đình mình. Tôi đã dùng năng lực của mình để truy tìm bọn cướp đó. Đó là lần đầu tiên tôi săn đuổi một mục tiêu không phải con vật, và tay tôi đã vấy máu... Tôi không hối hận, bọn cướp đó hung ác tàn bạo, chúng đáng phải trả giá, chỉ là tôi nhận ra chúng cũng chỉ là một lũ cùng khổ bần hàn. Từ đó, tôi dần hiểu ra rằng vấn đề lớn nhất của đất nước này không phải là mấy tên cướp đó. Nếu không tìm được căn nguyên thực sự của đất nước này, thì máu trên tay tôi sẽ chẳng có ý nghĩa gì cả.",
+      "title": "Muốn tìm hiểu Alyosha - Điều thứ 3"
+    },
+    {
+      "text": "Ban đầu, lý do tôi quyết định gia nhập Rokot là vì tôi thấy lý tưởng của tổ chức rất phù hợp với Snezhnaya hiện tại. Nhưng tôi cũng hiểu rằng, lý tưởng đó sẽ có lúc không còn phù hợp với Snezhnaya nữa. Khi mọi thứ chúng ta đấu tranh cuối cùng cũng có kết quả, thì nhiều thứ sẽ thay đổi, và đó mới chính là lúc thử thách thật sự bắt đầu.",
+      "title": "Muốn tìm hiểu Alyosha - Điều thứ 4"
+    },
+    {
+      "text": "Theo tôi, \"người thực dụng\" có lẽ là những kẻ tầm thường nhất trên đời, lúc nào cũng chăm chăm vào tiền, vào quyền, vào những chuyện bẩn thỉu trong lòng mỗi người. Mặt khác, \"người lý tưởng\" có lẽ lại là những kẻ thanh cao nhất, khinh thường kẻ trộm, khinh thường kẻ gian, mắt không chịu đựng nổi một hạt bụi. Thực ra còn có một kiểu người nữa, gọi là \"người lý tưởng thực dụng\", kẹt giữa hai thái cực đó, ngày nào cũng sống trong mâu thuẫn.",
+      "title": "Muốn tìm hiểu Alyosha - Điều thứ 5"
+    },
+    {
+      "text": "Cải tạo, bảo dưỡng, thử súng... Ban đầu tôi cứ nghĩ mình quan tâm đến súng là vì nhu cầu chiến đấu, nhưng sau khi nhận ra mình luôn dành quá nhiều thời gian và Mora cho chúng, tôi đành thừa nhận rằng mình đã coi đây là sở thích rồi.",
+      "title": "Sở thích của Alyosha..."
+    },
+    {
+      "text": "Mora chi cho việc cải tạo, Mora chi cho việc bảo dưỡng, Mora chi cho việc thử súng... Chỉ cần ngồi tính kỹ một chút, ai cũng sẽ nhận ra rằng sở thích lớn nhất đôi khi lại chính là nỗi phiền não lớn nhất.",
+      "title": "Phiền não của Alyosha..."
+    },
+    {
+      "text": "Thịt được hun khói, bánh mì để được lâu, phô mai nướng lên là tan chảy ngay... Có mấy thứ ngon lành này rồi, dù giữa trời băng giá, chỉ cần nhóm lửa lên là tôi có thể dọn ra cả một bữa tiệc linh đình.",
+      "title": "Món ăn yêu thích..."
+    },
+    {
+      "text": "Tôi rất không thích ăn mấy thứ có vỏ, như cua, tôm hùm, kiểu thế. Tốn bao nhiêu Mora, mất bao nhiêu công sức, vật lộn với càng và gai, chỉ để lấy được chút xíu thịt? Vừa không đáng, vừa không thỏa mãn gì cả.",
+      "title": "Món ăn ghét..."
+    },
+    {
+      "text": "Cảm ơn nhé, ngon thật đấy... Loại đồ ăn này có thể bảo quản để ăn dần không?",
+      "title": "Nhận Được Quà I"
+    },
+    {
+      "text": "Hm... Để tôi giới thiệu cho {F#cô}{M#cậu} vài loại thịt rừng hiếm nhé? Thêm vào vài nguyên liệu cao cấp hơn thì món ăn này chắc chắn sẽ ngon hơn nhiều.",
+      "title": "Nhận Được Quà II"
+    },
+    {
+      "text": "...Không được lãng phí lương thực, ở những ngôi làng trên cánh đồng tuyết chắc chắn có người cần những thứ này hơn tôi.",
+      "title": "Nhận Được Quà III"
+    },
+    {
+      "text": "Hôm nay là sinh nhật của {F#cô}{M#cậu} phải không? Cho tôi gửi lời chúc mừng nhé. Từ khi còn nhỏ, \"mừng sinh nhật\" trong mắt người lớn luôn là một điều xa xỉ, không chỉ phải tìm cho được bột mì và kem khan hiếm để làm bánh, mà còn phải lùng sục những món đồ tinh xảo đã biến mất khỏi thị trường từ lâu để làm quà. Nhưng tôi nghĩ lỗi không phải ở bọn trẻ, sinh nhật vốn dĩ phải như vậy chứ. Tôi mong có một ngày, tất cả những đứa trẻ ở Snezhnaya đều có thể đón sinh nhật theo cách đó. Vì vậy tôi đã chuẩn bị quà rất cẩn thận, viết sẵn lời chúc. Giúp người bạn tốt của mình có một ngày sinh nhật vui vẻ, cũng xem như là một bước khởi đầu tốt cho lý tưởng tôi vừa mới lớn tiếng tuyên bố đó, phải không nào?",
+      "title": "Sinh nhật..."
+    },
+    {
+      "text": "Tốt lắm, cảm thấy như kỹ thuật bắn súng của tôi chuẩn hơn rồi.",
+      "title": "Cảm Giác Đột Phá - Khởi"
+    },
+    {
+      "text": "Ăn ý với Tugarin hơn rồi, nó cũng ngày càng tiến bộ đấy.",
+      "title": "Cảm Giác Đột Phá - Thừa"
+    },
+    {
+      "text": "Số lần trúng nhiều hơn rồi... Đây rốt cuộc là chuyện tốt hay xấu đây?",
+      "title": "Cảm Giác Đột Phá - Chuyển"
+    },
+    {
+      "text": "Để thực hiện được lý tưởng đó, còn bao xa nữa mới tới đích nhỉ?",
+      "title": "Cảm Giác Đột Phá - Hợp"
+    }
+  ],
   "Columbina": [
     {
       "text": "{F#Cô}{M#Cậu} có thể gọi tôi là Columbina, Kuutar hay Nguyệt Thần đều được... Tôi đã quen với việc có nhiều tên gọi khác nhau rồi. Nếu cần thiết, tôi sẽ ban cho {F#cô}{M#cậu} phước lành của ánh trăng.",
@@ -321,6 +495,10 @@
     {
       "text": "Tôi không rõ thế nào mới được coi là \"chết\" đối với một con rối... Nhưng Sandrone thực sự đã không còn cử động nữa. Tôi không còn cảm nhận được sự \"vận hành\" của cô ấy, cả dây cót cũng ngừng lại. Cô ấy vì \"thuật thức\" đó, vì để đưa tôi quay trở lại nơi này mà trở nên như vậy... Tôi ước gì cô ấy chỉ đang dọa tôi thôi, giống như khi cô ấy từng nói là sẽ trả thù tôi vậy...",
       "title": "Về Sandrone - Dây Cót II"
+    },
+    {
+      "text": "Sandrone đã trở về rồi. Tôi rất vui. Tôi phát hiện bây giờ dây cót của cô ấy thỉnh thoảng sẽ quay nhanh hơn một chút, hình như trước đây nó luôn quay với cùng một tốc độ. Cô ấy nói đó là vì bản thân đã chấp nhận những cảm xúc trong lòng, rằng cô ấy bây giờ đã khác trước rồi. Nhưng tôi thấy dù có thay một bộ quần áo khác, hay dây cót có quay nhanh hơn, thì Sandrone vẫn là Sandrone, vẫn là người bạn thân nhất của tôi. Dù là dáng vẻ trước đây hay bây giờ, tôi đều rất thích. Sau khi nghe tôi nói vậy, dây cót của cô ấy còn quay nhanh hơn. Tuy không biết tại sao, nhưng thật thú vị.",
+      "title": "Về Sandrone - Dây Cót III"
     },
     {
       "text": "Trong mắt anh ta thì mọi thứ và mọi người đều được gắn giá rõ ràng. Anh ta nắm rõ quy luật về giá cả và mở rộng đế chế tài phú của mình thông qua việc vận hành các quân cờ. Nhưng nơi đó thật nhàm chán, tôi cũng chẳng muốn đến thăm làm gì.\nAh... Nếu Pantalone thấy tôi bây giờ, chắc hẳn trong nụ cười của anh ta sẽ chứa đựng sự ghê tởm sâu sắc hơn cả trước đây. Tôi thậm chí còn có thể tưởng tượng được giọng nói của anh ta đấy. \"Chúc mừng cô đã gia tăng giá trị của bản thân nhé, tiểu thư Columbina.\"",
@@ -2991,6 +3169,204 @@
       "title": "Cảm Giác Đột Phá - Hợp"
     }
   ],
+  "Odette": [
+    {
+      "text": "...Cảm ơn {F#cô}{M#cậu} đã ủng hộ, phía sau chữ ký có cần vẽ họa tiết gì không? Một chiếc lông vũ nhé? Ồ, không phải là người hâm mộ à. Xem ra tôi đã hiểu lầm rồi. Để tôi tự giới thiệu lại nhé. Tôi là Odette, vũ công ba lê của Đoàn Kịch Korolevskiy ở Snezhnaya... Dù sao cũng cảm ơn {F#cô}{M#cậu} đã ủng hộ.",
+      "title": "Lần đầu gặp mặt..."
+    },
+    {
+      "text": "Nếu không có chuyện gì khác, thì tôi xin phép đi luyện tập vũ đạo trước nhé.",
+      "title": "Nói chuyện phiếm - Bận Rộn"
+    },
+    {
+      "text": "Những chuyện có thể trả lời đơn giản, thì không cần nói dài dòng làm gì.",
+      "title": "Nói chuyện phiếm - Đơn Giản"
+    },
+    {
+      "text": "Giá mà thời gian có thể tăng gấp đôi... Không, gấp ba thì tốt biết mấy.",
+      "title": "Nói chuyện phiếm - Thời Gian"
+    },
+    {
+      "text": "Tiếng mưa rơi tí tách lúc nào cũng khiến tôi cảm thấy bình yên, thời tiết như vậy rất thích hợp để luyện tập một mình.",
+      "title": "Khi trời mưa..."
+    },
+    {
+      "text": "Những khoảnh khắc bình yên và tươi đẹp luôn chỉ thoáng qua mà thôi.",
+      "title": "Sau cơn mưa trời lại sáng..."
+    },
+    {
+      "text": "Tuyết ở Snezhnaya vốn dĩ lạnh thấu xương, nhưng lại chẳng bao giờ ngừng rơi.",
+      "title": "Khi tuyết rơi..."
+    },
+    {
+      "text": "Kiểu tóc... để lát nữa chải lại vậy.",
+      "title": "Gió lớn quá..."
+    },
+    {
+      "text": "...May mà không phải tổ chức buổi gặp mặt ở nơi thế này.",
+      "title": "Khi trong sa mạc..."
+    },
+    {
+      "text": "Tôi đã khởi động xong rồi, có thể hành động bất cứ lúc nào.",
+      "title": "Chào buổi sáng..."
+    },
+    {
+      "text": "Tôi không cần ngủ trưa đâu, khoảng thời gian buổi chiều không thích hợp để luyện tập, tôi thường đọc kịch bản kịch múa. Hm? Đang nói đến mấy tờ giấy viết thư này sao? Đây là thư của người hâm mộ do Vodyanitsa nhét cho tôi, cô ấy muốn tôi phải đọc hết.",
+      "title": "Chào buổi trưa..."
+    },
+    {
+      "text": "Đến giờ ăn tối chưa nhỉ? Lát nữa phải lên sân khấu rồi, ăn một quả trứng luộc là đủ, đợi sau khi buổi biểu diễn tối nay kết thúc rồi ăn thoải mái vậy.",
+      "title": "Chào buổi tối..."
+    },
+    {
+      "text": "...Nhiệm vụ hoàn thành, chỉ tiêu tập luyện đạt chuẩn, vũ đạo mới cũng đã luyện xong. Quản lý biểu cảm vẫn còn thiếu sót, cần điều chỉnh thêm trước gương... Đã đến giờ này rồi à? {F#Cô}{M#Cậu} nghỉ trước đi nhé, tôi vẫn còn việc phải làm.",
+      "title": "Chúc ngủ ngon..."
+    },
+    {
+      "text": "Sau khi Kế Hoạch Stuzha được triển khai, số khán giả đến nhà hát xem biểu diễn ngày càng ít. Cuộc sống của mọi người rơi vào cảnh khốn khó, lại còn có những kẻ đục khoét gây hại cho người dân, tôi không thể thờ ơ trước chuyện đó được. Tôi biết, chỉ dựa vào sức mình thì không thể xoay chuyển tình thế, nhưng tôi vẫn muốn làm vài chuyện trong khả năng.",
+      "title": "Về bản thân Odette - Rokot"
+    },
+    {
+      "text": "Những ký ức cũ khắc sâu trong đầu, vào đêm khuya thanh vắng cứ lặp đi lặp lại như chiếu phim vậy... Nhớ dai quá cũng không phải chuyện tốt.",
+      "title": "Về bản thân Odette - Trí Nhớ"
+    },
+    {
+      "text": "Sự bảo vệ từ người khác cũng mong manh như lớp băng mỏng vừa mới đông lại, tôi sẽ không gửi gắm hy vọng vào người khác đâu.",
+      "title": "Về chúng ta - Gửi Gắm"
+    },
+    {
+      "text": "Tôi khá vô cảm với cơn đau, đến khi phát hiện ra vết thương thì nó đã đóng vảy rồi. Như thế cũng được. Dù là luyện tập vũ đạo hay huấn luyện đặc biệt của Fatui, tôi cũng sẽ không để tình trạng cơ thể làm ảnh hưởng đến lịch trình của mình.",
+      "title": "Về chúng ta - Vết Thương"
+    },
+    {
+      "text": "Trước đây, trong một lần luyện tập, cái lạnh khắc nghiệt đã làm chân tôi bị thương, khiến tôi gần như mất hết cảm giác, cuối cùng tôi tỉnh lại trong ánh sáng tỏa ra từ Chốt Tinh Tú. Nhưng tôi chưa bao giờ nghe nói Chốt Tinh Tú có thể đánh thức người khác, lúc đó tôi tỉnh lại là vì... bản năng muốn sống của tôi chăng...?",
+      "title": "Về \"Chốt Tinh Tú\"..."
+    },
+    {
+      "text": "Mỗi buổi tập dượt tôi đều rất coi trọng, như một buổi biểu diễn thật sự vậy.",
+      "title": "Có gì muốn chia sẻ không..."
+    },
+    {
+      "text": "Có vài quả Lý Gai Băng Giá không đủ ngọt, chỉ cần rắc một chút muối mịn lên là sẽ thơm ngon ngọt ngào hơn. Nghe nói là nhờ có vị mặn làm nền, vị ngọt sẽ được khuếch đại. Một người hâm mộ đã chỉ cho tôi điều này.",
+      "title": "Những kiến thức thú vị..."
+    },
+    {
+      "text": "Rosalyne có ơn với tôi, nhưng tôi cũng từng ghét cô ấy. Yêu cầu của cô ấy rất khắt khe, thời gian luyện tập dưới trướng cô ấy, chuyện bị lạnh, kiệt sức, bị thương hay đổ bệnh là bình thường. Ngày đó tôi ngây thơ nghĩ rằng, chỉ cần tôi có thể tự mình đứng trên sân khấu, kiếm sống bằng ba lê để nuôi bản thân và mẹ, là tôi sẽ rời khỏi Fatui cho cô ấy thấy.",
+      "title": "Về Rosalyne - Ngày Xưa"
+    },
+    {
+      "text": "Khi người không còn nữa, nhiều lời nói cũng mất đi ý nghĩa. Hổ Phách Lửa dễ vỡ đến vậy, chỉ khiến những hiểu lầm và tổn thương trở nên mỉa mai hơn thôi... Tại sao mãi đến bây giờ cả hai mới có thể hiểu nhau nhỉ?",
+      "title": "Về Rosalyne - Hổ Phách Lửa"
+    },
+    {
+      "text": "Nữ Hoàng là niềm tin của cả Snezhnaya, người bận rộn với muôn vàn công việc và hiếm khi xuất hiện trước mọi người. Số lần tôi được diện kiến người chỉ đếm trên đầu ngón tay. Người toát lên vẻ trang nghiêm uy nghi, ánh mắt dù nhìn về đâu cũng lạnh lẽo và kiên định, tựa như băng tuyết ngàn năm không tan.",
+      "title": "Về \"Nữ Hoàng\" bệ hạ..."
+    },
+    {
+      "text": "Dáng đi của cô ấy như chiếc lông vũ đang lướt nhẹ trong không trung. Bất kỳ vũ công nào cũng sẽ phải ghen tị với sự nhẹ nhàng đó. Vodyanitsa cũng từng kể với tôi về giọng hát thoát tục của cô ấy. Nhưng những gì chúng ta thấy và ngưỡng mộ, cũng đều chỉ là diện mạo \"trên sân khấu\" của cô ấy thôi. Chúng ta không thực sự hiểu được liệu trong lòng cô ấy có đang gánh chịu những nỗi đau không ai hay biết hay không...",
+      "title": "Về \"Columbina\" đại nhân..."
+    },
+    {
+      "text": "Những đứa trẻ ở Căn Nhà Hơi Ấm đều xem Arlecchino như \"cha\". Đứa trẻ nào có cha che chở, con đường trưởng thành sẽ bớt phải gánh chịu giông tố phong ba.",
+      "title": "Về \"Arlecchino\" đại nhân..."
+    },
+    {
+      "text": "Trước đây, mỗi lần Rosalyne tham dự tiệc trà của Sandrone đại nhân xong, tâm trạng đều sẽ vui hơn bình thường. Dù yêu cầu vẫn khắt khe như vậy, nhưng giọng điệu rõ ràng đã dịu đi nhiều, ai cũng có thể nhận ra điều đó.",
+      "title": "Về \"Sandrone\" đại nhân..."
+    },
+    {
+      "text": "Lần đầu tiên khi Nữ Hoàng bệ hạ muốn đến Đoàn Kịch Korolevskiy xem chúng tôi biểu diễn, Vodyanitsa đã báo trước cho tôi biết tin này, tôi chỉ trả lời đơn giản là \"ừm\". Kết quả, cô ấy vươn tay ra kéo khóe miệng tôi lên, cố tạo ra một nụ cười, rồi bắt tôi đọc theo cô ấy: \"Tuyệt... quá... đi\"!\nTôi vẫn không nghĩ là Nữ Hoàng sẽ thích nhìn thấy nụ cười như vậy.",
+      "title": "Về Vodyanitsa - Mỉm Cười"
+    },
+    {
+      "text": "Mỗi khi Vodyanitsa bị bệnh là lại quấn lấy tôi, bắt tôi ở bên cạnh... Lý do là lỡ phải tiêm hay uống thuốc đắng thì cô ấy sẽ rất sợ, nên muốn nắm chặt tay tôi. Tôi vốn không nhạy cảm với cơn đau, nên cũng chẳng có lý do gì để gạt tay cô ấy ra.",
+      "title": "Về Vodyanitsa - Đi Khám Bệnh"
+    },
+    {
+      "text": "Là một thợ săn, việc tự nuôi sống bản thân không khó, nhưng anh ấy vẫn thường đến nhà hát làm thêm để giúp đỡ những người đang đau khổ... Tôi vốn không ngạc nhiên khi anh ấy gia nhập Rokot.",
+      "title": "Về Alyosha..."
+    },
+    {
+      "text": "Hm... \"Người hâm mộ\" này, anh ấy thường xuyên đến nhà hát xem tôi và Vodyanitsa biểu diễn. Nhưng mỗi khi màn trình diễn bắt đầu, anh ấy lại cúi đầu ghi chép điều gì đó, trông rất nổi bật giữa các khán giả đang ngước nhìn lên sân khấu. Có lẽ chiếc khăn quàng cổ của anh ấy còn biết thưởng thức buổi diễn hơn cả anh ấy nữa.",
+      "title": "Về Mitya..."
+    },
+    {
+      "text": "Thiếu Tá Valeriy, một sĩ quan Fatui có quan điểm về giờ giấc rất nghiêm khắc, nghe nói anh ấy luôn dùng thái độ bình thản mà đáng sợ để phân công công việc cho đồng nghiệp. Nhưng chúng tôi thuộc các bộ phận khác nhau nên ít có dịp tiếp xúc, vả lại... những việc tôi cần làm thì không cần ai nhắc nhở cả.",
+      "title": "Về Valeriy..."
+    },
+    {
+      "text": "Đừng vì cô ấy có đôi cánh mà xem cô ấy như một con bướm lộng lẫy vô hại. Người được mọi người vây quanh đó chính là tổng tư lệnh của Druzhna, kẻ săn mồi giữa băng tuyết. {F#Cô}{M#Cậu} phải tỉnh táo mà nhìn cho kỹ, đừng để bị đánh lừa bởi nụ cười nhiệt tình đó.",
+      "title": "Về Vesna..."
+    },
+    {
+      "text": "Lịch trình của tôi khá dày, lát nữa còn có buổi tập luyện. Thông cảm nhé. Nếu muốn trò chuyện thì chúng ta nói ngắn gọn thôi vậy.",
+      "title": "Muốn tìm hiểu Odette - Điều thứ 1"
+    },
+    {
+      "text": "Mẹ tôi xuất thân từ một gia đình ba lê danh tiếng, còn cha tôi từng phục vụ trong Fatui. Họ nên duyên với nhau qua một buổi biểu diễn, đó là một câu chuyện tình lãng mạn khiến bất kỳ ai nghe xong cũng phải mỉm cười. Lúc nhỏ, mẹ thường dẫn tôi cùng nhảy múa nhẹ nhàng, còn cha thì mua cho tôi những chiếc váy múa xinh xắn. Mối trăn trở duy nhất mỗi ngày của tôi khi ấy, là phải chọn viên nào trong hũ kẹo.",
+      "title": "Muốn tìm hiểu Odette - Điều thứ 2"
+    },
+    {
+      "text": "Rồi tin dữ ập đến. Cha tôi mất trong lúc làm nhiệm vụ, mẹ tôi suy sụp hoàn toàn, ngã gãy chân ngay trên sân khấu. Hũ kẹo vỡ tan, kẹo văng ra khắp nơi, còn tôi thì bị nhốt lại bên trong đó.",
+      "title": "Muốn tìm hiểu Odette - Điều thứ 3"
+    },
+    {
+      "text": "Còn những gì xảy ra sau đó thì {F#cô}{M#cậu} cũng đã biết rồi. Những ký ức này đã được tôi nhai đi nhai lại quá nhiều lần, chúng không còn có thể làm tôi tổn thương nữa. Nhưng sức mạnh mà tôi có được trong quá trình chống lại số phận, đó là thứ thuộc về riêng tôi. Tôi sẽ không quên điều này.",
+      "title": "Muốn tìm hiểu Odette - Điều thứ 4"
+    },
+    {
+      "text": "Tôi không muốn nói những điều này với bất kỳ người hâm mộ nào, may mà {F#cô}{M#cậu} không phải. Tôi đã có quá nhiều thân phận rồi, bất kỳ khía cạnh nào tốt nhất cũng nên giữ được sự trong sáng vốn có của nó... Tôi sẽ tiếp tục khiêu vũ để hướng tới sự hoàn hảo trong lòng mình.",
+      "title": "Muốn tìm hiểu Odette - Điều thứ 5"
+    },
+    {
+      "text": "Từ trước đến nay tôi luôn yêu thích ba lê, tôi sẽ cố hết sức để mang đến cho khán giả vũ điệu đẹp nhất mà tôi có thể thể hiện trên sân khấu này.",
+      "title": "Sở thích của Odette..."
+    },
+    {
+      "text": "Nói thật thì tôi luôn cảm thấy mình không được các loài động vật nhỏ yêu quý cho lắm. Xung quanh nhà hát thường hay có mèo con xuất hiện, Vodyanitsa hay kéo tôi đi cho chúng ăn, nhưng tôi vừa bước tới là mèo con đã bắt đầu mài móng ngay... Hm? {F#Cô}{M#Cậu} nói đó là chúng đang chào đón tôi à?",
+      "title": "Phiền não của Odette..."
+    },
+    {
+      "text": "Gần đến giờ đóng cửa, nhà hàng thường sẽ giảm giá một nửa cho những phần salad trong ngày. Lúc trước, có một thời gian tôi hay ăn món đó lắm. Salad để lâu thì đương nhiên không ngon bằng salad tươi rồi, nhưng vì đã quá quen với hương vị đó nên lại thấy an tâm hơn.",
+      "title": "Món ăn yêu thích..."
+    },
+    {
+      "text": "Theo sở thích cá nhân thì tôi không có món nào thấy khó nuốt cả. Nhưng là một vũ công ba lê, tôi phải giữ kỷ luật trong chuyện ăn uống, những món nằm ngoài kế hoạch ăn uống hàng ngày thì tôi sẽ không ăn.",
+      "title": "Món ăn ghét..."
+    },
+    {
+      "text": "Mấy hôm nay biểu diễn khá nhiều, có lẽ... không, không có gì đâu. Cảm ơn {F#cô}{M#cậu}, cái này ngon lắm.",
+      "title": "Nhận Được Quà I"
+    },
+    {
+      "text": "Một món ăn? Trông giống... thức ăn cho cả ngày hơn.",
+      "title": "Nhận Được Quà II"
+    },
+    {
+      "text": "Xin lỗi, tôi đang kiểm soát cân nặng.",
+      "title": "Nhận Được Quà III"
+    },
+    {
+      "text": "Chúc mừng sinh nhật. Không biết {F#cô}{M#cậu} muốn nhận món quà sinh nhật như thế nào? Những gì tôi nhận được luôn là hoa tươi, giày múa và hộp nhạc. Nhưng tôi đoán, đó không phải điều {F#cô}{M#cậu} mong muốn. Chi bằng hãy ước một điều với tôi đi, chỉ cần là điều tôi có thể thực hiện là được.",
+      "title": "Sinh nhật..."
+    },
+    {
+      "text": "Vẫn còn thiếu chút gì đó... Tập luyện thêm một chút vậy.",
+      "title": "Cảm Giác Đột Phá - Khởi"
+    },
+    {
+      "text": "Ừm, động tác chính xác hơn rồi đó. Duy trì cường độ tập luyện như vậy nhé.",
+      "title": "Cảm Giác Đột Phá - Thừa"
+    },
+    {
+      "text": "Giờ thì tôi tự tin có thể thực hiện hoàn hảo động tác xoay vòng rồi. Nhưng không được giảm cường độ tập luyện.",
+      "title": "Cảm Giác Đột Phá - Chuyển"
+    },
+    {
+      "text": "\"Cảm xúc cũng là một phần không thể thiếu của ba lê.\" Giờ tôi đã hiểu ý nghĩa của câu đó rồi. Cảm ơn {F#cô}{M#cậu} đã luôn đồng hành và ủng hộ tôi, hôm nay tôi có buổi biểu diễn, đây là vé vào cửa.",
+      "title": "Cảm Giác Đột Phá - Hợp"
+    }
+  ],
   "Prune": [
     {
       "text": "Xin chào, đây là Prune, Thợ Săn Ma Nữ. Kẻ thù của tôi là ma nữ, hay nói chính xác hơn, là ma nữ tà ác lấy việc trêu đùa trẻ con làm niềm vui, lợi dụng người bạn tưởng tượng của người khác để giăng bẫy, gu thẩm mỹ phô trương lại còn thích đội mũ rộng vành có hoạ tiết khắc rỗng. Bất cứ lúc nào cũng hoan nghênh {F#cô}{M#cậu} cung cấp thông tin liên quan.",
@@ -3198,6 +3574,216 @@
     },
     {
       "text": "Tôi vẫn không tin vào những câu chuyện cổ tích giả dối, cũng chẳng mấy tin tưởng thế giới này. Nhưng tôi sẽ tin {F#cô}{M#cậu}. Cũng mong {F#cô}{M#cậu} tin tôi, dù {F#cô}{M#cậu} có nghĩ tôi vẫn chỉ là một đứa trẻ, thì cũng là đứa trẻ lớn trong số những đứa trẻ, một đứa trẻ lớn đáng tin cậy và giỏi giang.",
+      "title": "Cảm Giác Đột Phá - Hợp"
+    }
+  ],
+  "Sandrone": [
+    {
+      "text": "Tôi ghét việc phải tự giới thiệu. Người cần biết tôi là ai thì tự khắc sẽ biết, còn người không cần biết thì tôi việc gì phải tốn công? Thôi được rồi. Vì lễ nghi của một quý cô, tôi sẽ chỉ nói lần này thôi... nhìn cho kỹ đây. Đứng trước mặt {F#cô}{M#cậu} đây chính là Sandrone, Quan Chấp Hành thứ bảy của Fatui.",
+      "title": "Lần đầu gặp mặt..."
+    },
+    {
+      "text": "Cũng đến lúc nên tổ chức một buổi tiệc trà rồi nhỉ? Không biết những người khác có rảnh không.",
+      "title": "Nói chuyện phiếm - Tiệc Trà"
+    },
+    {
+      "text": "Tôi thích âm nhạc, cũng từng tự học qua không ít nhạc cụ. {F#Cô}{M#Cậu} không tin sao? Hah, nếu ở đây có đàn piano, tôi sẽ cho {F#cô}{M#cậu} mở mang tầm mắt.",
+      "title": "Nói chuyện phiếm - Piano"
+    },
+    {
+      "text": "Lại có thông báo quay về Cung Điện Zapolyarny? Hah... Sao lúc nào cũng có lắm cuộc họp thế không biết?",
+      "title": "Nói chuyện phiếm - Họp"
+    },
+    {
+      "text": "...Thật phiền phức.",
+      "title": "Khi trời mưa..."
+    },
+    {
+      "text": "Những bông hoa tôi trồng rất thích thời tiết này.",
+      "title": "Sau cơn mưa trời lại sáng..."
+    },
+    {
+      "text": "Hệ thống phòng hộ... ừm, vận hành bình thường.",
+      "title": "Khi có sấm sét..."
+    },
+    {
+      "text": "Lại đến lúc người nào đó lao mình vào đống tuyết...",
+      "title": "Khi tuyết rơi..."
+    },
+    {
+      "text": "Thời tiết này rất thích hợp để pha một tách cà phê đậm đà, ăn chút bánh ngọt, rồi thư thả dựa vào ban công đọc sách cả buổi chiều.",
+      "title": "Ánh nắng thật chan hòa..."
+    },
+    {
+      "text": "Vạt váy thật vướng víu... Không biết trước đây Rosalyne đã giải quyết như thế nào...",
+      "title": "Gió lớn quá..."
+    },
+    {
+      "text": "Chào buổi sáng, muốn uống một tách cà phê nóng không? Giúp tỉnh táo đấy. Hửm? {F#Cô}{M#Cậu} hỏi tôi uống cà phê có tác dụng gì à? Chậc, chỉ đơn giản là thích hương vị này thôi, không được sao?",
+      "title": "Chào buổi sáng..."
+    },
+    {
+      "text": "Đã đến giờ này rồi à? Tôi đi chuẩn bị trà bánh đây.",
+      "title": "Chào buổi trưa..."
+    },
+    {
+      "text": "Bữa tối cũng tìm đến tôi sao? Chỗ này không phải nhà ăn... Thôi bỏ đi, dù sao cũng đã đến rồi, để Fagio chuẩn bị vài món đơn giản vậy.",
+      "title": "Chào buổi tối..."
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} đi ngủ đi. Tôi muốn nhân lúc đêm khuya yên tĩnh không ai quấy rầy làm chút nghiên cứu. Tôi không có thói quen sinh hoạt thất thường đâu nhé!",
+      "title": "Chúc ngủ ngon..."
+    },
+    {
+      "text": "Cứ gọi tôi là Sandrone chẳng phải được rồi sao. Hả...? Tên ban đầu á? Hah... muốn biết đến vậy sao? Thôi được rồi... Tôi vẫn còn nhớ lần đầu tiên mở mắt, cũng chính là lúc Alain vừa tạo ra tôi, ông ấy đã gọi tôi là... \"Marionette\". Tôi thử cất tiếng xác nhận cách phát âm của cái tên đó, nhưng lại thấy được một loại biểu cảm phức tạp xuất hiện trên gương mặt Alain. Mãi về sau tôi mới biết, đó là \"hối hận\" và \"áy náy\", sau lần đó ông ấy cũng không còn gọi tôi như vậy nữa. Sau khi kể cho tôi nghe chuyện về Hội Narzissenkreuz và em gái mình, Alain nói rằng tôi hoàn toàn tự do, tôi nên có cuộc đời và cái tên của riêng mình. Ông ấy nói tôi có thể tự chọn tên cho mình. Tôi nói \"Marionette\" cũng được, tôi không để bụng đâu. Marionette Guillotin, cái tên được trao cho tôi ngay từ lúc ra đời, độc nhất vô nhị. Trùng hợp làm sao, Nữ Hoàng đã trao cho tôi cái tên \"Marionette\", mà cách phát âm của nó lại y hệt cái tên ban đầu. Heh... đây cũng được coi là một kiểu \"vận mệnh\" chăng?",
+      "title": "Về bản thân Sandrone - Tên"
+    },
+    {
+      "text": "Lúc mới ra đời, tôi cảm thấy việc phải đi tìm chỗ nằm xuống ngủ thật phiền phức, nên tôi thường hoàn thành việc \"ngủ\" mỗi ngày ngay trên ghế. Sau này khi đến Snezhnaya, tôi mới dần thử ngủ trên giường. Phải thừa nhận rằng, sau một ngày dài vất vả giao tiếp với đồng nghiệp phiền phức, thì việc thay một bộ đồ thoải mái rồi chui vào ổ chăn mềm mại đúng là rất thư thái. Đó là cảm giác an toàn được tạo nên từ hệ thống xúc giác và mạch cảm xúc, giờ thì tôi đã hiểu vì sao nhiều người lại thích ngủ nướng đến thế. Tuy nhiên ngủ trên giường cũng có nỗi khổ riêng, dây cót sau lưng khiến tôi không thể nằm ngửa, nằm nghiêng thì lại khó giữ thăng bằng, cuối cùng chỉ còn cách chọn tư thế nằm sấp mà thôi.",
+      "title": "Về bản thân Sandrone - Ngủ"
+    },
+    {
+      "text": "Ngay cả nhật ký của tôi {F#cô}{M#cậu} cũng đọc rồi, chẳng lẽ không nên kể cho tôi nghe chút bí mật của bản thân để cho công bằng sao? Hửm? Sổ tay mạo hiểm? Tôi cần cái đó làm gì? Muốn biết mỗi ngày {F#cô}{M#cậu} làm gì thì tôi hỏi thẳng Katheryne cho xong.",
+      "title": "Về chúng ta - Nhật Ký"
+    },
+    {
+      "text": "Mặc dù chúng ta cũng coi như khá thân thiết, nhưng khi đến Snezhnaya, vẫn phải làm theo quy tắc. Dù sao thì trên hành trình này {F#cô}{M#cậu} luôn đối đầu với Fatui, không biết {F#cô}{M#cậu} sẽ gặp rắc rối gì ở đó... Đương nhiên tôi sẽ cố gắng không làm khó {F#cô}{M#cậu}, {F#cô}{M#cậu} cũng cố đừng để tôi khó xử. Giúp đỡ lẫn nhau trên cơ sở thấu hiểu, như vậy mới là đồng đội, đúng không nào?",
+      "title": "Về chúng ta - Lập Trường"
+    },
+    {
+      "text": "Rất tốt, nguyên tố Băng rất hữu dụng. Không cần phải lo chuyện cơ thể quá nóng sau khi tính toán hàng loạt nữa.",
+      "title": "Về \"Chốt Tinh Tú\"..."
+    },
+    {
+      "text": "Không có Pulonia, cuộc sống của tôi gặp rất nhiều bất tiện. Vì vậy tôi đã chế tạo ra Cỗ Máy Tự Động Đa Năng Thông Dụng, Fagio. Cô ấy có thể giúp tôi xử lý nhiều việc vặt vãnh mà tôi không muốn động tay vào, cũng như chiến đấu hằng ngày. Hửm? Tên gốc rất phức tạp sao? Máy móc chức năng chẳng phải nên được đặt tên như vậy à? Tên của Pulonia là do Alain đặt, có nghĩa là Cỗ Máy Quan Sát Sự Kiện Tương Lai. Người khác không đặt tên kiểu này à? Hmm, thì ra đây là di truyền...?",
+      "title": "Có gì muốn chia sẻ không..."
+    },
+    {
+      "text": "Tôi không phủ nhận rằng ngoài lúc nghiên cứu ra, đôi khi tôi cũng sẽ suy ngẫm vài vấn đề mang tính siêu hình. Giống như người ở mỗi quốc gia đều có tín ngưỡng riêng về cái chết vậy. Thường nghe họ nhắc tới \"thế giới sau khi chết\", \"nơi linh hồn trở về\" gì đấy... Nhưng từ lúc lõi của tôi bị hư hại trong trận chiến với Dottore, cho đến khi Chốt Tinh Tú kích hoạt di sản của Alain để khởi động lại tôi, tôi không có bất kỳ ký ức nào. Hoàn toàn trống rỗng. Một tạo vật máy móc, hay nói cách khác là \"con rối\" sau khi chết sẽ đi về đâu? \"Linh hồn\" của chúng tôi nên được định nghĩa như thế nào? Chúng tôi có thực sự có \"linh hồn\" không? Những câu hỏi này đều không có đáp án, cho nên cuối cùng tôi vẫn quay lại với nghiên cứu của mình. Nhưng tri thức là nền tảng của thế giới, tôi tin rằng những viên đá này không ngừng được xếp chồng lên, rồi sẽ có một ngày độ cao của nó đủ để tôi chạm tới đáp án của những câu hỏi ấy.",
+      "title": "Những kiến thức thú vị..."
+    },
+    {
+      "text": "Vị Shaman vĩ đại khá tốt đấy. Nghe nói tuổi tác cũng khá cao rồi nhỉ? Hmm, đúng là tràn đầy sức sống, chỉ có điều đôi khi lại rất dễ kích động. {F#Cô}{M#Cậu} hỏi lúc nào à? Ồ, lần trước là khi nói với cô ấy về việc chúng ta cùng nhau xuống nước tìm đồ. Lần trước nữa là khi nói đến chuyện {F#cô}{M#cậu} giúp Columbina tìm lại tên ở Nod-Krai... Cô ấy nghe xong kích động đến mức đỏ bừng cả mặt, có phải do lớn tuổi rồi nên mới như vậy không?",
+      "title": "Về Citlali..."
+    },
+    {
+      "text": "Chịu hết nổi rồi! Sao cô mèo đó lần nào cũng tìm được điểm yếu nhất của máy móc để ra tay? Anh trai cô ta có quản được không vậy? Haiz, thôi bỏ đi... E rằng đây cũng là một loại thiên phú, lần sau để cô ta giúp giám sát sửa chữa lỗ hổng máy móc vậy. Nếu ngay cả ải của cô ta còn không qua nổi, thì đừng nói gì đến chuyện thực chiến nữa.",
+      "title": "Về Lynette..."
+    },
+    {
+      "text": "Sau khi Alain qua đời, tôi đã dựng cho ông ấy một tấm bia mộ. Lúc sinh thời, ông ấy từng nói muốn tôi viết lời trên bia mộ cho ông ấy. Thế là tôi đã viết. Chẳng có gì khó cả, chỉ cần liệt kê sự tích của ông ấy, rồi chọn một câu có thể đại diện cho ông ấy... \"Thật đáng tiếc... Nhưng đây chính là kết cục\". Đó là câu ông ấy thường nói. Nghe có vẻ bi quan sao? Hah, với người không hiểu ông ấy thì đúng là vậy. Nhưng ông ấy luôn mỉm cười khi nói câu đó. Không phải cam chịu hay buông xuôi, mà giống như một sự mãn nguyện nào đó. Giống như vừa giải xong một bài toán vậy. Cái chết chẳng qua chỉ là một dấu bằng bình thản, và giờ ông ấy đã sang vế bên phải của công thức.",
+      "title": "Về Alain Guillotin..."
+    },
+    {
+      "text": "Tôi còn thường xuyên cảm thấy phiền lòng vì những \"sai sót\" trong cảm xúc của bản thân, nhưng rốt cuộc...  Nữ Hoàng đã làm thế nào để có thể đóng băng \"tình cảm\" một cách triệt để đến như vậy?",
+      "title": "Về \"Nữ Hoàng Băng\"..."
+    },
+    {
+      "text": "Người ra lệnh. Tôi luôn có cảm giác rằng khung cảnh phản chiếu trong mắt ông ta xa xăm hơn những người khác rất nhiều. Ngay từ cái nhìn đầu tiên, tôi đã cảm nhận được, thế giới này đã cướp đi của ông ta quá nhiều thứ.",
+      "title": "Về Pierro..."
+    },
+    {
+      "text": "Mọi người đều hiểu Capitano thường không thích tháo mặt nạ, nhưng dù vậy, anh ta vẫn sẽ uống hết tách trà được rót cho mình trong buổi tiệc trà.",
+      "title": "Về Capitano..."
+    },
+    {
+      "text": "Hay là {F#cô}{M#cậu} bịt tai lại đi? Tôi sợ mình không kiềm chế được cảm xúc.",
+      "title": "Về Dottore..."
+    },
+    {
+      "text": "Trước đây Columbina đã rất phiền phức, bây giờ cũng chẳng khá hơn là bao. Tôi còn tưởng không có cô ấy ở đây sẽ được yên tĩnh, ai ngờ không thấy mặt lại càng phiền hơn! Thật không chịu nổi.",
+      "title": "Về Columbina - Đồ Phiền Phức"
+    },
+    {
+      "text": "Bây giờ cuộc sống của cô nàng này hạnh phúc lắm, người thân và bạn bè đều ở bên cạnh, lúc rảnh rỗi còn có thể đi du lịch... Sao tôi lại không có vận may như vậy nhỉ? Thôi bỏ đi, tôi cũng không thực sự ghen tị với cô ấy. Chúng ta đều biết mà, hạnh phúc là thứ mà cô ấy xứng đáng có được.",
+      "title": "Về Columbina - Cuộc Sống"
+    },
+    {
+      "text": "Arlecchino là người giữ lời hứa, hành động quyết đoán, rất đáng để giao phó công việc. Không bàn tới mối quan hệ cá nhân, tôi hy vọng về mặt công việc, tất cả những đồng nghiệp mà tôi tiếp xúc, ít nhất cũng nên học hỏi phẩm cách của Arlecchino trước đã.",
+      "title": "Về Arlecchino..."
+    },
+    {
+      "text": "Ông ta là người chủ trì của Snezhnograd Veche, nhưng đôi khi lại giống như... người kiểm soát. Mỗi lá phiếu trong hội đồng đều liên quan đến lợi ích của vô số người. Để trung hòa nhiều mối quan hệ quyền lực phức tạp như vậy, mà không có chút thủ đoạn thì tuyệt đối không thể làm được. Xét từ điểm này, ông ta đáng sợ hơn những kẻ khác rất nhiều.",
+      "title": "Về Pulcinella..."
+    },
+    {
+      "text": "Lẽ ra ngay từ đầu phải điều tra kỹ chuyện hắn và Dottore trao đổi lợi ích nội bộ chứ? Dựa vào đâu mà kinh phí nghiên cứu của tôi lại duyệt chậm hơn cái tên tâm thần Dottore đó tận mười lần? Tôi không tin trong chuyện này không có gì khuất tất. Tôi còn từng chất vấn thẳng mặt với Pantalone. Kết quả là hắn nhìn tôi bằng đôi mắt cười híp ấy rồi nói rằng: \"Chà, xem ra tiểu thư Sandrone cuối cùng cũng bắt đầu hứng thú với quản lý kinh tế rồi. Tôi có thể giới thiệu cho cô vài cuốn sách để đọc. Chi bằng hãy bắt đầu từ cuốn '100 Câu Giao Tiếp Lịch Sự' đi.\"",
+      "title": "Về Pantalone..."
+    },
+    {
+      "text": "Cô ấy luôn sống vì bản thân mình. Yêu theo cách của mình, hận cũng theo cách của mình. Cách sống ấy cuối cùng đã thiêu rụi sinh mệnh của cô ấy. Nhưng cho đến tận giây phút cuối cùng, ngọn lửa ấy vẫn mang một màu sắc độc nhất vô nhị chỉ thuộc về riêng cô ấy.",
+      "title": "Về Rosalyne..."
+    },
+    {
+      "text": "Lại thêm một đồng nghiệp khiến người ta không thể yên tâm nổi... Rõ ràng có thể sống vui vẻ bên anh em, sao cứ nhất quyết phải làm Quan Chấp Hành chứ? Còn nữa, rốt cuộc đến bao giờ thì anh ta mới chịu hiểu ra rằng, không phải ai cũng thích đánh nhau như anh ta.",
+      "title": "Về Childe..."
+    },
+    {
+      "text": "Hả? Tôi không có thói quen tùy tiện chia sẻ cuộc sống của mình đâu. Có thế nào thì cũng phải chọn một ngày đẹp trời, kèm thêm chút trà ngon và bánh ngọt rồi hẵng nói chứ?",
+      "title": "Muốn tìm hiểu Sandrone - Điều thứ 1"
+    },
+    {
+      "text": "Dù trong Fatui có rất nhiều đồng nghiệp phiền phức, nhưng không thể phủ nhận đó là nơi vô cùng thích hợp để nghiên cứu. Làm việc cho Nữ Hoàng thì sẽ được cung cấp tài nguyên nghiên cứu dồi dào và kinh phí dự án hậu hĩnh, theo tôi thấy thì đây là một phép tính khá ổn.",
+      "title": "Muốn tìm hiểu Sandrone - Điều thứ 2"
+    },
+    {
+      "text": "Tôi chưa bao giờ bận tâm chuyện Alain đã tạo ra tôi dựa trên ngoại hình Mary-Ann, em gái của ông ấy, cũng không bận tâm vì tên của mình là \"Marionette\". Trong mắt tôi, đây chính là những thứ thế giới ban tặng cho mình khi chào đời. Chẳng lẽ {F#cô}{M#cậu} lại để ý chuyện mình trông giống cha mẹ, hay trong tên mình mang họ của họ sao?",
+      "title": "Muốn tìm hiểu Sandrone - Điều thứ 3"
+    },
+    {
+      "text": "Tôi thích toán học. Thế giới được tạo nên từ công thức và logic mang một vẻ đẹp dựa trên tính xác định. Tôi cũng thích âm nhạc, vì nó có điểm chung với toán học. Nhưng trước đây, tôi từng cho rằng chơi nhạc cũng nên giống như giải một bài toán, nhịp điệu và nốt nhạc trên nhạc phổ phải khớp nhau một cách hoàn hảo, không chút sai lệch. Mãi sau này tôi mới nhận ra, một vài \"khiếm khuyết nhỏ\" hay thậm chí là những \"sai sót nhỏ\" trong lúc diễn tấu, ngược lại càng khiến âm nhạc thêm du dương. Chỗ này ngừng lại một chút, chỗ kia bất ngờ thêm vào một vài nốt ngẫu hứng... Những \"sai sót nhỏ\" đó chính là nơi cảm xúc được sinh ra, là những dư âm của trái tim người diễn tấu.",
+      "title": "Muốn tìm hiểu Sandrone - Điều thứ 4"
+    },
+    {
+      "text": "Thế giới ban tặng, rồi thế giới lại cướp nó đi. Sống là không ngừng nhận được và mất đi, là trong những mất mát và chia ly nhặt lấy những gì thế giới không thể cướp đi được, rồi tiếp tục bước về phía trước. Nếu như nguyện vọng của một người chỉ đơn giản là \"sống\", liệu điều đó có quá nhỏ bé không? Cũng giống như một người chỉ vì \"tự cứu mình\" mà cứu vớt cả thế giới, liệu lý do ấy có quá đơn giản không? \"Sống\", để cảm nhận, để chứng kiến. Rồi đến một ngày nào đó, biết đâu những thứ thế giới không thể cướp đi được, sẽ nhiều đến mức đủ sức rung chuyển cả thế giới này.",
+      "title": "Muốn tìm hiểu Sandrone - Điều thứ 5"
+    },
+    {
+      "text": "Ngoài âm nhạc và toán học máy móc, tôi còn thích trồng một ít hoa cỏ khi có điều kiện, ghi chép lại quá trình phát triển của chúng. Hầu hết chúng không cần can thiệp gì nhiều mà vẫn có thể phát triển tốt, độc lập và ngoan cường. Trước đây tôi vẫn luôn nghĩ rằng điều đó rất giống với mình.",
+      "title": "Sở thích của Sandrone..."
+    },
+    {
+      "text": "Muốn ôm một con vật nhỏ lông xù nào đó để tha hồ vuốt ve... Nhưng chúng không thích máy móc, cứ thấy tôi là trốn ra xa. Này! Đừng có nhìn tôi bằng ánh mắt thương hại đó! Không ôm được thì thôi! Cũng chẳng... chẳng có gì đáng tiếc hết...",
+      "title": "Phiền não của Sandrone..."
+    },
+    {
+      "text": "Nhờ cơ thể này, tôi sẽ không bị dị ứng, cũng không bị khó tiêu, nên đối với tôi việc thưởng thức món ngon là niềm vui thuần túy. Nhưng nếu phải nói thì... ừm, tôi thích những món điểm tâm nhỏ nhắn và tinh xảo. Chỉ cần ngắm nhìn tạo hình tao nhã đó thôi cũng đã thấy vui vẻ rồi, đúng là sự tận hưởng trọn vẹn cho cả thị giác lẫn vị giác.",
+      "title": "Món ăn yêu thích..."
+    },
+    {
+      "text": "Không thích đồ ăn dầu mỡ cay nồng. Không phải vì hương vị không ngon, chỉ là trong quá trình thưởng thức, mùi của những món đó rất dễ bám vào quần áo. Chẳng thanh lịch chút nào.",
+      "title": "Món ăn ghét..."
+    },
+    {
+      "text": "Hừm... Hừm. Tôi sẽ tốt bụng lắng nghe xem {F#cô}{M#cậu} làm như thế nào, rồi góp ý cho {F#cô}{M#cậu} vậy. Không lãng phí là lễ nghi của một quý cô!",
+      "title": "Nhận Được Quà I"
+    },
+    {
+      "text": "Ồ? Hương vị cũng được đấy. Lần tới trong buổi tiệc trà tôi sẽ chuẩn bị một phần quà đáp lễ cho {F#cô}{M#cậu}.",
+      "title": "Nhận Được Quà II"
+    },
+    {
+      "text": "Fagio, đến giờ dọn dẹp rồi.",
+      "title": "Nhận Được Quà III"
+    },
+    {
+      "text": "Hừm. Đây, cầm lấy. Bình thường tôi không bao giờ tặng mấy thứ này đâu. Nhưng hôm nay là một ngày đáng để ăn mừng đối với {F#cô}{M#cậu}, vì nó đại diện cho ngày mà {F#cô}{M#cậu} lần đầu làm quen với thế giới này. Tôi đã mời Arlecchino và Columbina, cùng một vài người bạn mà chúng ta đều quen biết. Trà bánh cũng đổi thành bánh kem do chính tay tôi làm rồi, {F#cô}{M#cậu} cứ việc mà mong chờ đi.",
+      "title": "Sinh nhật..."
+    },
+    {
+      "text": "Bắt đầu giải mã.",
+      "title": "Cảm Giác Đột Phá - Khởi"
+    },
+    {
+      "text": "Điền biến số.",
+      "title": "Cảm Giác Đột Phá - Thừa"
+    },
+    {
+      "text": "Tiến độ ổn định.",
+      "title": "Cảm Giác Đột Phá - Chuyển"
+    },
+    {
+      "text": "Phân tích mọi nguyên lý. Tôi đúng là lợi hại mà! Ahahaha.",
       "title": "Cảm Giác Đột Phá - Hợp"
     }
   ],
@@ -3804,6 +4390,398 @@
     },
     {
       "text": "Nhớ hết ba đức tính tốt đẹp của kỵ sĩ rồi chứ? Tốt, giờ thì quên hết đi nhé... Muốn trở thành kỵ sĩ thế nào, bước chân vào hành trình ra sao, tất cả đều do chúng ta tự quyết định!",
+      "title": "Cảm Giác Đột Phá - Hợp"
+    }
+  ],
+  "Vesna": [
+    {
+      "text": "Xin chào, bạn thân mến. Tư lệnh Druzhna Vesna, xin gửi lời chào đến {F#cô}{M#cậu}. Pháo mừng và đội nghi lễ đã sẵn sàng, đang chờ lệnh để chào đón {F#cô}{M#cậu} bất cứ lúc nào. Tất nhiên, nếu {F#cô}{M#cậu} không quen với những nghi thức phô trương, tôi cũng đã chuẩn bị một buổi chào đón riêng tư hơn. Nào, mau đi theo tôi.",
+      "title": "Lần đầu gặp mặt..."
+    },
+    {
+      "text": "Druzhna chỉ nghe lệnh Nữ Hoàng, đương nhiên không thể tùy tiện phục vụ {F#cô}{M#cậu} được. Nhưng Vila Vesna thì có thể đấy, bạn thân mến ạ.",
+      "title": "Nói chuyện phiếm - Phục Vụ"
+    },
+    {
+      "text": "Bộ lễ phục này đẹp chứ? Bệ hạ đích thân ban tặng đấy, ngắm thêm vài lần cũng không sao đâu.",
+      "title": "Nói chuyện phiếm - Vui Vẻ"
+    },
+    {
+      "text": "Công việc giấy tờ ấy à? Xong từ sớm rồi, không tốn bao nhiêu thời gian. Thời gian còn lại đều dành cho việc tuần tra, đi thôi...",
+      "title": "Nói chuyện phiếm - Hiệu Quả Cao"
+    },
+    {
+      "text": "Đương nhiên fae cũng bị cảm lạnh. Nếu bị ướt thì phải vẫy nhanh cho khô, ý tôi là đôi cánh ấy.",
+      "title": "Khi trời mưa..."
+    },
+    {
+      "text": "Trên nền tuyết trắng xóa, bất kỳ một sơ hở ngụy trang nào cũng có thể trở nên chí mạng. Đi đường cẩn thận nhé, bạn thân mến.",
+      "title": "Khi tuyết rơi..."
+    },
+    {
+      "text": "Tôi biết tôi biết, đôi cánh của tôi lấp lánh nhất dưới ánh mặt trời.",
+      "title": "Ánh nắng thật chan hòa..."
+    },
+    {
+      "text": "Tuyệt vời, đây là kiểu thời tiết mà Vila yêu thích.",
+      "title": "Khi gió nổi lên..."
+    },
+    {
+      "text": "Tùy tiện hỏi một câu... Khi nào thì chúng ta về Snezhnaya?",
+      "title": "Khi trong sa mạc..."
+    },
+    {
+      "text": "Một ngày mới! Xin chào, Snezhnograd!",
+      "title": "Chào buổi sáng..."
+    },
+    {
+      "text": "Đi thôi, đến Nhà Hàng Podvorye! Đương nhiên vẫn là tôi mời.",
+      "title": "Chào buổi trưa..."
+    },
+    {
+      "text": "Đoàn Kịch Korolevskiy có buổi biểu diễn mới. Ngoài giọng soprano của hát chính Vodyanitsa, điệu múa của Odette... còn có một vài \"người bạn mới\".",
+      "title": "Chào buổi tối..."
+    },
+    {
+      "text": "Chậc... đã định đi ngủ rồi sao? Có muốn ra ngoài đi dạo không? Có cực quang đó!",
+      "title": "Chúc ngủ ngon..."
+    },
+    {
+      "text": "Có thấy mấy \"nhóc\" đang bay lượn quanh tôi không? Đó là \"vũ khí phép thuật\" do tôi tạo ra, mỗi nhóc đều là sự kết hợp giữa sức mạnh nguyên tố và ý thức của bản thân, nên ít nhiều cũng mang theo chút tính cách của tôi. Vì vậy có thể chúng sẽ quấn lấy {F#cô}{M#cậu} đòi chơi cùng, xin đừng để bụng. Tất nhiên, nếu có thể thì cũng đừng từ chối nhé, haha!",
+      "title": "Về bản thân Vesna - \"Vũ Khí Phép Thuật\""
+    },
+    {
+      "text": "\"Dáng vẻ\" của tư lệnh... Hì. Thứ đó là dành cho kẻ không đủ bản lĩnh khiến người khác nể phục thôi, tôi thì không cần đâu... Điểm này chúng ta giống nhau mà.",
+      "title": "Về bản thân Vesna - Tư Lệnh"
+    },
+    {
+      "text": "Tôi hiểu, tôi hiểu mà, chắc hẳn có rất nhiều tin đồn về tôi mà {F#cô}{M#cậu} muốn xác minh. Không sao, chúng ta có rất nhiều thời gian. Nhưng đổi lại, mọi thứ về {F#cô}{M#cậu}, tôi cũng sẽ từng chút một \"xác minh\" cho rõ đấy nhé.",
+      "title": "Về chúng ta - Xác Minh"
+    },
+    {
+      "text": "Tôi không quen với cách nói \"đi cùng ai đó một đoạn đường\". Nghe có vẻ rất lãng mạn, nhưng nghĩ kỹ lại thì... chữ \"đi cùng\" ấy vô tình đặt một người vào vị trí nhân vật chính, còn người kia lại trở thành kẻ làm nền.\nNhưng đôi chân là do chính mình bước đi, những trải nghiệm và thu hoạch trên suốt hành trình cũng đều thuộc về chính mình. Vì vậy, tôi sẽ không nói \"đi cùng {F#cô}{M#cậu}\", mà là tôi rất vui khi được \"đồng hành cùng {F#cô}{M#cậu}\". Cảm giác ấy giống như... đang đi trên đường, bỗng ngoảnh đầu lại thì phát hiện ra... Haha trùng hợp ghê, không ngờ chúng ta lại đi cùng đường!",
+      "title": "Về chúng ta - Đồng Hành"
+    },
+    {
+      "text": "Kiểu dáng của Chốt Tinh Tú vô cùng đẹp mắt, rất có giá trị sưu tầm. Nói đến chuyện này, Vòng Mặt Trăng cũng rất tuyệt, tôi vẫn luôn bị nó thu hút. Còn Vision thì... tạm thời không nghĩ đến.",
+      "title": "Về \"Chốt Tinh Tú\"..."
+    },
+    {
+      "text": "\"Bạn cũ\" trên tay tôi ấy hả? Đẹp chứ! Đây là vật được truyền lại trong gia tộc, tuổi đời của nó lớn hơn tôi nhiều, nói là đồ cổ cấp bậc bảo vật cung đình cũng không quá. Có lúc tôi dùng nó như gậy phép thuật, có lúc làm gậy giảng dạy, lúc lại làm gậy chỉ huy... Ây da, thay vì khóa nó trong két sắt ngân hàng cho bám bụi, thì thà để nó ở cái tuổi này phát huy nốt chút giá trị còn sót lại còn hơn. Tổ tiên mà biết có khi còn khen tôi không kịp ấy chứ.",
+      "title": "Có gì muốn chia sẻ không..."
+    },
+    {
+      "text": "Hoa Sương Tiên vừa đẹp vừa ngoan cường, có thể sống sót được ở những nơi giá lạnh khắc nghiệt. Hoa văn cũng rất đặc biệt, tôi thích nheo mắt lại rồi lắc đầu nhìn nó, khung cảnh hiện ra trước mắt sẽ như kính vạn hoa vậy, rất huyền ảo. Nhưng tốt nhất {F#cô}{M#cậu} nên thử khi không có ai ở bên cạnh nhé.",
+      "title": "Những kiến thức thú vị..."
+    },
+    {
+      "text": "Tôi đã từng bắt rất nhiều kẻ tự cao tự đại, muốn chống đối bệ hạ. Những tham vọng to lớn mà chúng rêu rao, thực chất chỉ là màn trình diễn hào nhoáng nhưng rỗng tuếch. Vừa không có mưu lược, vừa không có bản lĩnh để biến tham vọng thành hiện thực. So với những kẻ có dã tâm kia... Không, tôi rút lại những lời này. Chúng không xứng được nhắc đến chung với bệ hạ.\nTóm lại, trung thành với bệ hạ không chỉ là trách nhiệm của tộc Vila, mà còn là lựa chọn của cá nhân tôi.",
+      "title": "Về Nữ Hoàng bệ hạ - Trung Thành"
+    },
+    {
+      "text": "Từ \"yêu thương\" khi được bệ hạ thốt ra lúc nào cũng mang theo gai băng. Người nói đó là lời nguyền mà Thiên Lý áp đặt lên các vị thần, chứ không phải tình yêu thực sự. Nhưng tôi lại không nghĩ vậy, mỗi lần trở về sau cuộc thảo phạt ma thú, bệ hạ đều thêm vào cuối chỉ thị viết tay một câu \"hãy nghỉ ngơi cho tốt\". Sau khi năng lực của Chấp Chính Của Sự Sống bị thu hồi, người cũng để ý đến nỗi mất mát mà tôi cứ tưởng mình đã giấu rất kỹ, rồi trao lại phần sức mạnh chưa bị thu hồi cho tôi...\nNhưng với thân phận của bệ hạ, người vốn không cần phải làm những việc này. Nói thế này có lẽ hơi vượt quá bổn phận, nhưng tôi vẫn luôn cho rằng một vị thần có \"tình yêu\" hay không, nên do chính con dân của họ quyết định! Vậy nên, lời tôi nói cũng được tính chứ?",
+      "title": "Về Nữ Hoàng bệ hạ - Yêu Thương"
+    },
+    {
+      "text": "Tiểu thư Danica thân mến của chúng ta ấy à, đừng thấy bây giờ cô ấy nghiêm túc trầm tư vậy, lúc nhỏ cô ấy cũng là đứa nghịch ngợm cùng tôi lên kế hoạch \"lật mặt nạ của thầy\", chúng tôi thậm chí đã trèo được lên vai của thầy rồi! Tuy cuối cùng không thành công, còn bị phạt đứng nghiêm trên hồ băng rất lâu... À không, chuyện mất mặt này không phải trọng tâm! Trọng tâm là, cái ý tưởng kỳ quái đó rõ ràng là cô ấy đưa ra trước. Nói về khoản ham chơi, cô ấy không thua tôi chút nào đâu. Giờ thì hay rồi, suốt ngày nhìn tôi rồi bày ra vẻ mặt người lớn bó tay trước trẻ con. Làm ơn đi, tôi mới là chị cơ mà.",
+      "title": "Về Danica - Khi Còn Nhỏ"
+    },
+    {
+      "text": "Theo tin tức đáng tin cậy, có kẻ tình nghi đã lợi dụng một sự kiện kỳ lạ mang tên \"Đại Hội Cãi Nhau\" làm chiêu trò, rồi nhân lúc đám đông hò hét hỗn loạn để thực hiện giao dịch phi pháp... Tôi nhất định phải can thiệp vụ này.\nVì vậy, tôi đã thay Danica đăng ký tham gia. Cô ấy rất giỏi khoản \"lạnh lùng hạ bệ, chọc đúng chỗ đau\", ai mà cãi lại được cô ấy chứ? Như vậy nhất định có thể giúp tôi câu giờ.\nCố lên nhé, Danica!",
+      "title": "Về Danica - Cãi Nhau"
+    },
+    {
+      "text": "Trong ký ức của tôi, bóng lưng thầy luôn rộng lớn và đáng tin cậy như một ngọn núi vững chãi. Tôi chưa bao giờ nghĩ rằng có một ngày ngọn núi ấy cũng sẽ sụp đổ, ít nhất... không nghĩ ngày đó lại đến nhanh như vậy... Cái gì mà \"chiến trường thực sự không có cơ hội để nói lời từ biệt\" chứ, dù là thế cũng đâu cần tự chứng minh điều đó với tôi, ngay cả cơ hội cuối cùng... cũng không để lại cho tôi.\nThầy thật xấu xa.",
+      "title": "Về Capitano..."
+    },
+    {
+      "text": "Trên thế giới này, có những người bước đi rất nhẹ nhàng, phần lớn họ đều mong chờ hướng về ngày mai. Còn ngài ấy, bước chân lúc nào cũng nặng nề. Tôi thường thấy ngài ấy có nét gì đó rất giống thầy, có lẽ vì cả hai đều giấu nỗi đau khó lòng tưởng tượng bên dưới lớp mặt nạ, và gánh trên vai cả một quá khứ đau thương.",
+      "title": "Về Pierro..."
+    },
+    {
+      "text": "Hình ảnh ngài thị trưởng phát biểu hùng hồn, đầy tự tin tại Snezhnograd Veche, trông thật oai phong lẫm liệt.",
+      "title": "Về Pulcinella..."
+    },
+    {
+      "text": "Lương của tư lệnh Druzhna không tính là thấp, nhưng nếu muốn thoải mái mua sắm đồ sưu tầm và chiêu đãi bạn bè thì vẫn hơi eo hẹp... Ấy, không phải ý đó đâu, nghe tôi nói hết đã. Từ khi có ký ức, \"tiền nhàn rỗi\" của gia tộc đã được Ngân Hàng Bắc Quốc quản lý. Nhờ ơn ngài Pantalone, lợi nhuận tích lũy đến giờ đã trở nên vô cùng đáng kể. Vậy nên tôi hoàn toàn không có gánh nặng gì cả, {F#cô}{M#cậu} không cần khách sáo, lần sau vẫn phải để tôi mời đấy!",
+      "title": "Về Pantalone..."
+    },
+    {
+      "text": "Cử chỉ của Sandrone hoàn toàn đúng chuẩn một quý cô, nhưng lời nói lại mang tính \"công kích\" cực kỳ mạnh mẽ, đồng thời logic lại chặt chẽ không thể bắt bẻ... Thật thú vị, hihi, tôi phải học hỏi thêm mới được.",
+      "title": "Về Sandrone..."
+    },
+    {
+      "text": "Mitya là bạn chơi cố định của tôi, anh ấy lúc nào cũng tìm được cách trốn khỏi Cục Khí Tài, cả ba chúng tôi lần nào cũng chơi rất vui! Ba người nào ấy hả? Tôi, Mitya, và chiếc khăn quàng thông minh của anh ấy nữa.",
+      "title": "Về Mitya..."
+    },
+    {
+      "text": "Mỗi bài hát của Vodyanitsa đều rất hay, tôi rất thích cảm giác được nghe cô ấy hát trực tiếp. Cũng như phần lớn khán giả dưới sân khấu, tôi cũng bị cuốn theo tiếng hát của cô ấy, khi thì bật cười, khi lại không kìm được nước mắt. Có những lúc buổi diễn đã kết thúc, nhưng mọi người vẫn ở lại rồi cùng nhau hát vang. Thật trùng hợp làm sao, trên tay tôi vừa hay có một chiếc gậy chỉ huy. Còn trùng hợp hơn nữa là, đã có vài lần tôi phát hiện Vodyanitsa lặng lẽ ẩn mình vào đám đông, cô ấy đã thay trang phục biểu diễn, đội mũ lên, hòa giọng cho mọi người.",
+      "title": "Về Vodyanitsa..."
+    },
+    {
+      "text": "Thật ra mỗi lần Odette đến tham dự buổi triều, tôi đều sẽ không nhịn được mà liếc nhìn cô ấy vài lần. Dù sao thì ngoài việc là thành viên Fatui, cô ấy còn có một thân phận \"đặc biệt\" khác khiến người ta khó mà không để ý... Tất nhiên là tôi đang nói đến vũ công ba lê hàng đầu của Đoàn Kịch Korolevskiy rồi, chẳng lẽ còn thân phận nào khác sao?",
+      "title": "Về Odette..."
+    },
+    {
+      "text": "Tôi hiểu mà, có chú chó nào có thể từ chối việc đuổi theo cánh bướm xinh đẹp trong cơn gió \"hú\" điên cuồng cơ chứ? Hic... Để tôi lén lấy bữa sáng của Danica cho Tugarin ăn, rồi nhờ Alyosha nói giúp vài câu, xin nó đừng có vừa gặp đã đuổi theo tôi nữa được không...",
+      "title": "Về Alyosha..."
+    },
+    {
+      "text": "Hihi, muốn tìm hiểu tôi theo cách nào? Không lẽ chỉ ngồi tán gẫu thôi sao? Vậy thì chán lắm... Sao không chơi trò gì kiểu như \"Sự Thật Hay Thách Thức\" đi?",
+      "title": "Muốn tìm hiểu Vesna - Điều thứ 1"
+    },
+    {
+      "text": "Druzhna là đội cận vệ trực thuộc Nữ Hoàng bệ hạ. Nhiệm vụ không chỉ đơn thuần là thảo phạt ma thú hay tham chiến đâu nhé. Tất cả những gì liên quan đến uy quyền và danh dự của Nữ Hoàng bệ hạ, Druzhna đều phải vô điều kiện tuân lệnh, vì bệ hạ mà quét sạch mọi chướng ngại trên con đường phía trước.\nTuy nhiên, trước khi sự nghiệp chống lại Thiên Lý kết thúc, bệ hạ khó tránh khỏi bận rộn trăm bề. Thế nên tôi rất sẵn lòng đảm nhận những việc nhẹ nhàng... Khụ khụ, những việc vặt vãnh như cắt băng khánh thành, tham dự tiệc tùng này kia.",
+      "title": "Muốn tìm hiểu Vesna - Điều thứ 2"
+    },
+    {
+      "text": "Tôi có rất nhiều đồ sưu tầm, nào là trang sức, sách cổ, tranh sơn dầu... bất kỳ thứ gì khiến tôi vui vẻ đều xứng đáng được đưa vào bộ sưu tầm. Hơn nữa tôi phải có ngay lập tức, không muốn chờ dù chỉ một giây! Chẳng phải người ta có câu: \"Chiếc muỗng chỉ quý giá vào bữa trưa\" đó sao. Nếu bỏ lỡ khoảnh khắc rung động ấy, thì dù sau này có được đi nữa, cảm giác cũng phai nhạt đi rất nhiều rồi. Cho nên thứ gì ngay lúc này muốn, thì ngay lúc này phải có được.",
+      "title": "Muốn tìm hiểu Vesna - Điều thứ 3"
+    },
+    {
+      "text": "Sau khi hoàng đế Monomakh hy sinh, Snezhnaya đã trải qua một thời kỳ đầy biến động. Tổ tiên tôi khi ấy đã không chút do dự đứng về phía Nữ Hoàng bệ hạ, vinh quang của chúng tôi cũng chưa từng lụi tàn... Vậy thì, người đứng trên nền tảng mà họ tạo ra như tôi, liệu có đủ thực lực để vượt qua thế hệ đi trước hay không? Hì hì, tôi đã thay {F#cô}{M#cậu} nói ra thắc mắc trong lòng rồi đó. Đúng vậy, rốt cuộc là có hay không? Giờ đến lượt {F#cô}{M#cậu} nói ra câu trả lời trong lòng tôi. Nào...",
+      "title": "Muốn tìm hiểu Vesna - Điều thứ 4"
+    },
+    {
+      "text": "Vào đêm trước khi đối đầu với Chấp Chính Của Cái Chết, tôi đã chiết xuất \"Dấu Ấn Sự Sống\" của rất nhiều người. Mỗi người có một định nghĩa khác nhau về những ký ức tươi đẹp. Có người trân trọng những khoảnh khắc quây quần bên lò sưởi, trò chuyện tâm sự cùng gia đình. Có người lại nhớ mãi về hình ảnh một mình bên cửa sổ tàu, ngắm nhìn cực quang lặng lẽ lướt qua bầu trời đêm. Cũng có người, chỉ cần kéo xe trượt tuyết đi câu cá trên băng là đã cảm thấy thỏa mãn...\nNhững ký ức ấy giống như bong bóng tươi đẹp đầy sắc màu, mang theo \"sức sống\" nóng bỏng và sống động, khiến người ta không khỏi cảm thán rằng... A, được sống thật tốt!\nVậy mà cái gọi là tồn tại trên trời kia lại có thể dễ dàng nghiền nát những bong bóng ấy, chẳng thèm đưa ra một lời giải thích. Dựa vào đâu cơ chứ?\nKể từ lúc đó, đối với tôi mà nói, chống lại Thiên Lý không chỉ là để hỗ trợ bệ hạ nữa.",
+      "title": "Muốn tìm hiểu Vesna - Điều thứ 5"
+    },
+    {
+      "text": "Khi còn nhỏ, gia đình đã sắp xếp cho tôi học vẽ, học múa và thanh nhạc. Lớn hơn một chút, tôi bắt đầu luyện đấu kiếm, cưỡi ngựa và nhiều thứ khác nữa... Còn gần đây thì tôi mê nghe ca kịch, xem biểu diễn, và sưu tầm một số đồ nho nhỏ... Tóm lại trong cuộc sống của tôi không tồn tại hai chữ \"nhàm chán\".",
+      "title": "Sở thích của Vesna..."
+    },
+    {
+      "text": "Đừng nghe Danica nói lung tung, kỹ thuật lái tàu của tôi thật sự không tệ đâu, đó gọi là người và tàu hợp nhất. Đợi sau khi lệnh cấm được gỡ bỏ, tôi sẽ chở {F#cô}{M#cậu} đi một vòng nhé!",
+      "title": "Phiền não của Vesna..."
+    },
+    {
+      "text": "Trời lạnh thế này, chẳng có gì tuyệt hơn là quây quần bên nhau uống bát súp hầm nóng hổi! Thế này đi, tôi sẽ đứng ra tổ chức, {F#cô}{M#cậu} và Paimon chỉ cần mang một ít nguyên liệu đến là được.",
+      "title": "Món ăn yêu thích..."
+    },
+    {
+      "text": "Hì hì! Mấy thứ rau củ phiền phức đều bị tôi gắp hết sang đĩa của Danica rồi! Hic... Bị gắp trả về rồi...",
+      "title": "Món ăn ghét..."
+    },
+    {
+      "text": "Vậy thì tôi không khách sáo nữa, tôi sẽ cất hết những món ngon vào bụng.",
+      "title": "Nhận Được Quà I"
+    },
+    {
+      "text": "Mhm hmm... Sự tinh tế trong nấu nướng sao... Mhm hmm... Để tôi nếm thử thêm một miếng nữa.",
+      "title": "Nhận Được Quà II"
+    },
+    {
+      "text": "Tôi no rồi, cảm ơn nhé! Tôi sẽ gói những thứ này về cho Danica ăn.",
+      "title": "Nhận Được Quà III"
+    },
+    {
+      "text": "Tèn tén ten! Đến giờ rồi! Có biết hôm qua tôi phải kìm nén vất vả đến mức nào không? Lời chúc lỡ nói sớm hơn sẽ bị bão tuyết nuốt chửng đấy! Cuối cùng thì bây giờ cũng có thể nói rồi... Chúc mừng sinh nhật! Bạn thân mến của tôi. Mong {F#cô}{M#cậu} sẽ mạnh mẽ như cây bạch dương, không bao giờ khuất phục trước gió tuyết.\nĐược rồi, theo tập tục thì tiếp theo tôi sẽ véo nhẹ tai chủ nhân của bữa tiệc sinh nhật vài cái...",
+      "title": "Sinh nhật..."
+    },
+    {
+      "text": "Bài học đầu tiên trong huấn luyện tân binh: Chỉ có sống lưng của người không bị gió tuyết bẻ cong mới có tư cách bảo vệ bên cạnh bệ hạ.",
+      "title": "Cảm Giác Đột Phá - Khởi"
+    },
+    {
+      "text": "Bài học thứ hai trong huấn luyện tân binh: Tay cầm kiếm không được run.",
+      "title": "Cảm Giác Đột Phá - Thừa"
+    },
+    {
+      "text": "Bài học thứ ba trong huấn luyện tân binh: Không được khóc trước mặt kẻ địch.",
+      "title": "Cảm Giác Đột Phá - Chuyển"
+    },
+    {
+      "text": "Còn bạn thân mến của tôi, {F#cô}{M#cậu} đã dạy cho tôi một bài học khác: Hãy giữ lại một chút mềm mại, để ôm lấy những người xứng đáng được tôi rút kiếm bảo vệ sau cơn gió tuyết.",
+      "title": "Cảm Giác Đột Phá - Hợp"
+    }
+  ],
+  "Vodyanitsa": [
+    {
+      "text": "Xin chào, tôi là Vodyanitsa, soprano hàng đầu của Đoàn Kịch Korolevskiy. Như {F#cô}{M#cậu} thấy đó... À, ý tôi là đôi tai của tôi, trông kỳ lạ lắm phải không? Bởi vì tôi là một thủy yêu. Nhưng thân phận này không quan trọng, {F#cô}{M#cậu} chỉ cần nhớ, trong cả Đoàn Kịch Korolevskiy, tôi là người hát hay nhất là được.",
+      "title": "Lần đầu gặp mặt..."
+    },
+    {
+      "text": "...Hửm? Nói khẽ thôi, hình như tôi lại nghe thấy ai đó đang thì thầm rồi. Hì hì, để tôi nghe thử xem...",
+      "title": "Nói chuyện phiếm - Thính Giác"
+    },
+    {
+      "text": "Dù sao cũng đang rảnh, luyện tập một chút ở đây vậy. Thôi bỏ đi, có vẻ sẽ làm ảnh hưởng đến người dân, hoặc các loại động vật mất...",
+      "title": "Nói chuyện phiếm - Tập Luyện"
+    },
+    {
+      "text": "Phù... Ở trên cạn lâu như vậy, da khô hết cả rồi. Mau xuống dưới nước nghỉ ngơi thôi.",
+      "title": "Nói chuyện phiếm - Cách Thư Giãn"
+    },
+    {
+      "text": "Ừm, thời tiết thật đẹp, rất thích hợp để nằm dưới nước nghỉ ngơi.",
+      "title": "Khi trời mưa..."
+    },
+    {
+      "text": "Tạnh rồi á? Chán ghê...",
+      "title": "Sau cơn mưa trời lại sáng..."
+    },
+    {
+      "text": "Một vùng trắng xóa, hmm, sạch sẽ thật.",
+      "title": "Khi tuyết rơi..."
+    },
+    {
+      "text": "Nóng quá, khô quá... Muốn xuống dưới nước...",
+      "title": "Khi trong sa mạc..."
+    },
+    {
+      "text": "Chào buổi sáng, tôi vừa mới làm ấm giọng xong, {F#cô}{M#cậu} nghe thấy rồi à? Ừm, vậy cũng bình thường thôi, dù sao thì giọng hát của tôi rất có sức xuyên thấu mà.",
+      "title": "Chào buổi sáng..."
+    },
+    {
+      "text": "Được rồi, đi ăn trưa thôi. Bận rộn cả buổi sáng, cổ họng sắp nứt ra rồi, lát nữa rủ Odette, chúng ta ăn đơn giản một chút.",
+      "title": "Chào buổi trưa..."
+    },
+    {
+      "text": "Phù, cuối cùng cũng kết thúc một ngày. Lát nữa tôi sẽ xuống hồ ngâm mình một chút, {F#cô}{M#cậu} đi không? Sợ gì chứ, tôi đâu phải loại thủy yêu kéo người ta chìm xuống nước, nhưng nếu {F#cô}{M#cậu} muốn thử thì cũng không phải không được.",
+      "title": "Chào buổi tối..."
+    },
+    {
+      "text": "Ngủ ngon nhé. Ngủ sớm đi, sáng mai tôi còn phải luyện giọng đúng giờ. Tất nhiên, nếu {F#cô}{M#cậu} có nhu cầu, tôi cũng có thể đổi bài khác.",
+      "title": "Chúc ngủ ngon..."
+    },
+    {
+      "text": "Tiếc là giọng hát của tôi không có ma lực đặc biệt nào khiến người ta điên đảo cả, mọi người muốn nghe tôi hát chỉ đơn giản là vì tôi hát hay thôi. À, nhưng nói đến chuyện này, tôi có một câu chuyện cười về Domovoy, phì... Ờm, thôi thôi, không kể nữa, không thì Odette lại lườm tôi mất.",
+      "title": "Về bản thân Vodyanitsa - Sức Hấp Dẫn Của Giọng Hát"
+    },
+    {
+      "text": "Dù là diễn viên hay không, nếu một người muốn được \"nhìn thấy\", thì họ phải chấp nhận bị \"soi xét\". Trên đời này không có chuyện chỉ hưởng lợi mà không phải trả giá, cho dù có... Ha, thì e rằng cũng chỉ là vận mệnh đã giấu bảng giá đi mà thôi.",
+      "title": "Về bản thân Vodyanitsa - Soi Xét"
+    },
+    {
+      "text": "Để tiện đi lại trên đất liền, tôi đã biến đuôi cá thành đôi chân. Cái giá phải trả ư? Chẳng có gì cả. Hừ, một thủy yêu như tôi chịu rời khỏi nước đã là cái giá đủ lớn rồi. Tôi còn có thể đánh đổi thêm điều gì nữa chứ? Chẳng lẽ từ nay về sau không được uống nước tinh khiết, chỉ có thể uống nước trái cây hoặc Fonta thôi sao?",
+      "title": "Về chúng ta - Đuôi Cá"
+    },
+    {
+      "text": "Nhưng mà, cứ ở mãi Snezhnaya cũng chán, đôi khi tôi cũng men theo dòng nước mà bơi đi khắp nơi, xem các ca sĩ ở những vùng đất khác hát như thế nào. Đến nay tôi đã đi qua Liyue, Fontaine, Inazuma, Sumeru... Hửm? Có bị ai phát hiện không ấy hả? Có chứ, hì hì. Vì thế trên khắp thế giới mới lưu truyền những truyền thuyết về \"giao nhân\", \"người cá\", hay \"tiên suối\" đấy. Nhưng ấn tượng của tôi về Natlan... ừm, rất nóng, cực kỳ nóng.",
+      "title": "Về chúng ta - Ngày Dạo Chơi"
+    },
+    {
+      "text": "Món đồ nhỏ này ấy hả? Rất đẹp, đeo làm phụ kiện cũng khá hợp, nhưng lúc hát thì tôi cũng chẳng dùng đến nó. Còn chuyện \"được thần linh để mắt\"... Ha, so với điều đó, tôi thích được khán giả để mắt hơn.",
+      "title": "Về Vision..."
+    },
+    {
+      "text": "Chất lượng nước ở Fontaine thật tuyệt. Trước đây khi tôi đến Fontaine xem biểu diễn, không nhịn được đã lặn xuống đáy nước ngồi một lúc thật lâu, rồi cứ thế uống ừng ực rất nhiều nước. Có lẽ vì động tĩnh tôi gây ra hơi lớn nên đã khiến một thành viên Đội Tuần Tra Đặc Biệt đang huấn luyện bên bờ chú ý tới, cô ấy còn tưởng tôi bị đuối nước, vừa la lớn vừa vội vàng chạy tới định kéo tôi lên bờ. Còn tôi thì... đương nhiên là quẫy đuôi một cái rồi nhanh chóng chuồn mất, hì hì hì. Sau đó tôi từ xa nhìn cô ấy vừa đạp nước vừa ngơ ngác nhìn quanh, trông cũng thú vị lắm. Mãi đến khi thấy cô ấy lên bờ an toàn, tôi mới quay lại đáy nước tiếp tục ừng ực uống nước. Thật sự ngon lắm đó, lần sau cùng đi uống thử nhé?",
+      "title": "Có gì muốn chia sẻ không..."
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} có biết Cá Voi Vây Sương không? Chúng thường dùng \"tiếng hát cá voi\" mà người thường không hiểu được, thậm chí không nghe thấy để giao tiếp với nhau. Nhưng thủy yêu chúng tôi thì có thể nghe hiểu được tiếng hát của chúng, thậm chí còn có thể học theo. Tôi quen một con Cá Voi Vây Sương tính tình cực kỳ hiền lành, tên nó là Hitova. Trước kia khi tôi đi du ngoạn khắp nơi trên thế giới, đều là nó dẫn tôi đi. Nếu có cơ hội tôi sẽ giới thiệu nó với {F#cô}{M#cậu}, chắc chắn nó sẽ đồng ý chở chúng ta đi chơi.",
+      "title": "Những kiến thức thú vị..."
+    },
+    {
+      "text": "Mỗi lần Odette ra phía trước sân khấu tập dượt, tôi đều ở phía sau chăm chú lắng nghe tiếng bước nhảy của cô ấy. Đáp xuống, nhảy lên, xoay tròn, rồi lại đáp xuống... Gọn gàng, dứt khoát, nhịp điệu chuẩn xác, dù chỉ nghe thôi cũng biết đây chắc chắn là một màn biểu diễn hoàn hảo... Tại sao tôi không ra phía trước xem ấy hả? Vì tôi còn phải nấp ở hậu trường để dọa cô ấy một phen chứ! Tuy lần nào cũng không thành công, nhưng vẫn phải tiếp tục dọa chứ, nếu không thì chẳng phải uổng công tôi nấp sao?",
+      "title": "Về Odette..."
+    },
+    {
+      "text": "Hy vọng anh chàng thông minh đó đừng tiếp tục suy nghĩ vấn đề nghiên cứu khi ngồi trên khán đài nhà hát nữa. Nhà hát đâu phải phòng tự học siêu cấp, cũng không phải nơi trú ẩn để trốn tránh công việc, xin hãy thưởng thức buổi biểu diễn một cách nghiêm túc. Nếu không thì tôi sẽ... Phù, thôi bỏ đi, tôi cũng chẳng làm được gì, anh ta quả thật rất tuân thủ quy tắc xem biểu diễn của nhà hát. Hừ, lần sau tôi sẽ chọn một bài hát sôi động hơn, để xem anh ta còn có thể tập trung suy nghĩ được không.",
+      "title": "Về Mitya..."
+    },
+    {
+      "text": "Tôi vẫn luôn tự hỏi, liệu mấy chú chó của Alyosha có nghe hiểu được bài hát của tôi không? Chắc là không hiểu, dù sao thì chúng ta cũng chẳng hiểu được tiếng hát của chúng, thậm chí còn không rõ chúng có biết hát hay không... Có điều, bài hát ru của tôi lại thực sự có tác dụng với mấy chú chó đó, lần nào cũng vậy, mới hát đoạn mở đầu thôi là chúng đã ngủ say rồi. Haiz, cũng không biết đây là hát hay hay hát dở nữa.",
+      "title": "Về Alyosha..."
+    },
+    {
+      "text": "Nhờ có tiểu thư Vesna mà mấy tên phe vé ở nhà hát mới không dám quá mức lộng hành. Một thời gian nữa, tiểu thư Vesna còn định mời tôi tổ chức một buổi tọa đàm nhỏ về phòng chống lừa đảo vé, đồng thời khi kết thúc tôi còn phải hát một bài để bế mạc. Nhưng trong số những bài tôi biết, chẳng có bài nào dùng để châm biếm lừa đảo cả. Khoan đã... những chiến thuật đánh lừa trong chiến tranh, chắc cũng được xem là lừa đảo nhỉ...? Không, không thì... hát một bài sử thi chiến tranh...?",
+      "title": "Về Vesna..."
+    },
+    {
+      "text": "Tuy tôi và tiểu thư Danica không quen thân lắm, nhưng cũng từng nghe qua danh tiếng của cô ấy. Tiểu thư Danica thật vất vả, vừa phải chia sẻ nỗi lo cùng Nữ Hoàng bệ hạ, vừa phải trông chừng Vesna... Khụ, tôi chưa nói gì, chưa nói gì cả.",
+      "title": "Về Danica..."
+    },
+    {
+      "text": "Nếu Nữ Hoàng bệ hạ đến nhà hát xem biểu diễn, tôi sẽ hát cho người nghe những bài hát cổ xưa của thủy yêu. Xưa cỡ nào ư? Ừm... tuy chưa đến mức chỉ có Nữ Hoàng bệ hạ từng nghe qua, nhưng cũng đủ để thổi lên một làn bụi mỏng của thời gian, hy vọng mọi người đừng để làn bụi đó bay vào mắt mà rơi lệ nhé.",
+      "title": "Về Nữ Hoàng bệ hạ..."
+    },
+    {
+      "text": "Vị tiểu thư Columbina đó không còn là Quan Chấp Hành nữa sao? Tiếc thật, tôi vẫn luôn rất thích giọng hát của cô ấy. Những giai điệu mà cô ấy ngân nga cứ như ánh trăng vậy, dịu dàng, nhẹ nhàng mà lạnh lẽo, tuy ở ngay trước mắt nhưng lại không thể chạm tới. Ha, hy vọng cô ấy có thể tìm được một nơi tốt đẹp, và những người bạn có thể lắng nghe và hiểu được tiếng hát của cô ấy.",
+      "title": "Về Columbina..."
+    },
+    {
+      "text": "Ngài Tartaglia thường đưa người nhà đến nhà hát xem biểu diễn. Dù các Quan Chấp Hành được miễn phí vé vào cửa, nhưng theo quy định, nhưng người nhà thì vẫn phải mua vé như thường, may mà lúc nào anh ấy cũng kiếm được vé cho người nhà. À, Tonia thì chắc {F#cô}{M#cậu} đã biết rồi nhỉ? Cô bé cũng rất thích xem biểu diễn, biết đâu sau này khi lớn lên lại gia nhập nhà hát của chúng tôi cũng nên. Đến lúc đó, số lần Tartaglia đến nhà hát e là lại phải tăng thêm rồi.",
+      "title": "Về Tartaglia..."
+    },
+    {
+      "text": "Đôi khi quý cô Arlecchino sẽ dẫn theo lũ trẻ đến xem biểu diễn, trong đó có một cô nhóc còn có tai mèo, tôi nhớ hình như tên là Lynette thì phải? Cô nhóc đó và anh chàng tên Lyney đều rất giỏi ảo thuật. Có một lần biểu diễn cuối năm, hai người họ còn lên sân khấu nhà hát của chúng tôi để trình diễn ảo thuật nữa. Có điều, mỗi lần vở \"Núi Và Chim Sẻ\" được công diễn, quý cô Arlecchino hầu như đều đến một mình... Có lẽ, cô ấy muốn một mình thưởng thức vở diễn ấy chăng.",
+      "title": "Về Arlecchino..."
+    },
+    {
+      "text": "Mỗi lần quý cô Sandrone đến xem biểu diễn đều rất vội vàng. Có lúc cô ấy nghiến răng, khóe mắt giật giật, có lúc thì mặt không biểu cảm nhưng tờ giấy trong tay đã bị vo thành cục, trông cứ như thể bị ai đó cưỡng ép \"mời\" đến xem biểu diễn vậy. Tôi không muốn suy đoán xem ai có thể \"mời\" được cô ấy, nhưng... ha, ít nhất thì mỗi lần biểu diễn kết thúc, nét mặt của cô ấy đều dịu đi đôi chút, xem ra cũng không đến nỗi uổng công đến xem.",
+      "title": "Về Sandrone..."
+    },
+    {
+      "text": "{F#Cô}{M#Cậu} đang nói đến ngài Capitano sao? Ngài ấy... Thật ra mà nói, tôi và ngài ấy chưa từng nói chuyện với nhau quá lâu, nhiều nhất cũng chỉ là tình cờ gặp nhau sau khi buổi biểu diễn kết thúc rồi trao đổi vài câu ngắn ngủi. Nhưng tôi có thể cảm nhận được rằng ngài ấy là một người vô cùng nghiêm túc và chính trực. Dù là ngồi trên hàng ghế khán giả, nhưng tư thế của ngài ấy vẫn luôn thẳng tắp, tựa như cột cờ hay trụ đá vậy. Có cảm giác dù cơn bão hung tàn đến đâu cũng không thể lay chuyển hay quật ngã ngài ấy được.",
+      "title": "Về Capitano..."
+    },
+    {
+      "text": "Có thắc mắc gì thì cứ hỏi đi. Nhưng {F#cô}{M#cậu} hỏi tôi một câu, tôi cũng phải hỏi lại {F#cô}{M#cậu} một câu, như vậy mới công bằng. Yên tâm đi, tôi sẽ không hỏi những câu khó trả lời đâu, chỉ hỏi... những thứ mà tôi tạm thời chưa tìm hiểu được.",
+      "title": "Muốn tìm hiểu Vodyanitsa - Điều thứ 1"
+    },
+    {
+      "text": "Mặc dù rất xin lỗi vì đã phá vỡ ảo tưởng của {F#cô}{M#cậu}, nhưng thủy yêu ở Snezhnaya không phải là kiểu như trong truyền thuyết. Sẽ không dùng giọng hát để mê hoặc thủy thủ, hoặc phải trả một cái giá đắt mới lên được bờ, hay chỉ cần phá vỡ lời thề sẽ tan thành bọt biển. Chúng tôi chỉ đơn giản là sống ở Snezhnaya thôi, giống như tất cả mọi người, chỉ vậy thôi.",
+      "title": "Muốn tìm hiểu Vodyanitsa - Điều thứ 2"
+    },
+    {
+      "text": "Từ sau chuyện đó, hầu hết các thủy yêu đều rời khỏi Snezhnograd. Các anh chị em thân yêu của tôi cũng từng mời tôi đi cùng, nhưng tôi đã từ chối họ. Nếu người dân Snezhnaya đột nhiên không còn nghe thấy tiếng hát của thủy yêu nữa, chắc chắn họ sẽ rất buồn. Còn nếu tiếng hát của thủy yêu bị Snezhnaya lãng quên, thì tôi và các thủy yêu khác cũng sẽ rất buồn. Để cả hai bên đều không phải buồn, nên tôi đã ở lại và tiếp tục ca hát.",
+      "title": "Muốn tìm hiểu Vodyanitsa - Điều thứ 3"
+    },
+    {
+      "text": "...Thời thế đổi thay, Snezhnaya ngày nay cũng không còn như trước. Giọng hát của tôi cũng vì thế mà buộc phải gánh vác nhiều thứ hơn, ngày càng trở nên phức tạp, nặng nề, không được tự do... Tôi không thích như vậy, vì thế nên đã tự đặt ra một quy tắc cho bản thân. Mỗi khi muốn về nhà, tôi sẽ tìm mười người ở Snezhnaya, xem thử họ có thực sự yêu thích giọng hát của tôi hay không. Nếu trong mười người đó dù chỉ có một người thực lòng yêu thích những bài hát của tôi, thì tôi sẽ ở lại. Còn nếu đến một người cũng không có, thì tôi sẽ quay về bên cạnh các anh chị em của mình.",
+      "title": "Muốn tìm hiểu Vodyanitsa - Điều thứ 4"
+    },
+    {
+      "text": "Ha, chẳng biết là may hay rủi nữa, nhưng cho đến bây giờ, trong số \"mười người\" đó tôi luôn tìm được những người thực lòng muốn nghe tôi hát. Trong số họ, có người vừa mới đội mũ, có người đang ngẩng cao đầu nỗ lực phấn đấu, có người đang thản nhiên bước qua chặng cuối của cuộc đời... Cho dù là vì những khán giả ấy, tôi cũng sẽ cùng các anh chị em vẫn luôn vấn vương trong nhà hát này tiếp tục ca hát. Thế nào, {F#cô}{M#cậu} có thích bài hát của tôi không? Nhớ trả lời thật lòng đấy nhé. Thính giác của thủy yêu rất nhạy bén, nếu {F#cô}{M#cậu} nói dối, tôi có thể nghe thấy nhịp tim rối loạn của {F#cô}{M#cậu} ngay. Để tôi đếm ngược, ba, hai...",
+      "title": "Muốn tìm hiểu Vodyanitsa - Điều thứ 5"
+    },
+    {
+      "text": "Mỗi khi tâm trạng tốt hay không tốt, tôi đều sẽ nhảy xuống nước, nhắm mắt lại, để dòng chảy đưa mình trôi dạt khắp nơi. Tôi vừa trôi dạt, vừa lắng nghe đủ thứ âm thanh mà sóng nước mang đến. Những chú cá nhỏ tụ lại, vảy của chúng phát ra tiếng cọ xát xào xạc, cá voi khổng lồ cất tiếng ngân dài trầm thấp, gọi những người bạn ở nơi xa, những bong bóng dưới đáy nước nổi lên rồi vỡ tan... Thỉnh thoảng trôi đến gần thành phố, tôi còn nghe được tiếng của ngư dân hò vang kéo lưới, tiếng bọn trẻ cười đùa rồi nhảy ùm xuống nước, tiếng kẽo kẹt của những con thuyền chuẩn bị ra khơi hay vừa cập bến... Cảm giác lắng nghe âm thanh của thế giới như vậy thật sự rất kỳ diệu, {F#cô}{M#cậu} có muốn thử không? Lần sau dẫn {F#cô}{M#cậu} đi cùng nhé.",
+      "title": "Sở thích của Vodyanitsa..."
+    },
+    {
+      "text": "Tôi không thích âm thanh bị gán cho quá nhiều ý nghĩa. Tiếng hát thì chỉ nên là tiếng hát, giống như âm thanh được sóng nước mang về, tiếng lá khô xào xạc rơi xuống đất, hay tiếng bước chân chạy nhảy... Âm thanh gánh vác càng nhiều, thì càng khó được thấu hiểu, cũng càng khó nghe.",
+      "title": "Phiền não của Vodyanitsa..."
+    },
+    {
+      "text": "Ngọt là được, tốt nhất phải mát lạnh, kèm thêm chút siro nữa... A, nói như vậy thì chẳng phải là kem sao.",
+      "title": "Món ăn yêu thích..."
+    },
+    {
+      "text": "Tôi thực sự không thể nuốt nổi những thứ quá khô. Nếu cố nuốt xuống, sẽ có cảm giác như cổ họng mình đang bị cứa rách vậy.",
+      "title": "Món ăn ghét..."
+    },
+    {
+      "text": "Thực sự rất ngon. Sao vậy? Lần trước tôi nói khẩu vị mình thích, {F#cô}{M#cậu} đã nhớ rõ rồi sao? Trí nhớ cũng tốt đấy chứ, lần sau tôi sẽ làm cho {F#cô}{M#cậu} vài món hợp khẩu vị nhé. {F#Cô}{M#Cậu} chưa từng nói khẩu vị mà mình thích sao? Không sao, tôi biết rồi, tôi có cách riêng để tìm hiểu mà.",
+      "title": "Nhận Được Quà I"
+    },
+    {
+      "text": "Cảm ơn nhé. Ồ đúng rồi, lần trước tôi có nói cho {F#cô}{M#cậu} nghe món tôi thích ăn nhất, {F#cô}{M#cậu} còn nhớ không? Còn nhớ à, ừm... trí nhớ không tồi. Vậy lần sau tôi sẽ kể thứ khó nhớ hơn, hì hì.",
+      "title": "Nhận Được Quà II"
+    },
+    {
+      "text": "...Lần sau, tôi vẫn nên nói rõ khẩu vị mà tôi thích cho {F#cô}{M#cậu} biết thì hơn. Hoặc là, tôi sẽ trực tiếp dạy {F#cô}{M#cậu} làm món ngon.",
+      "title": "Nhận Được Quà III"
+    },
+    {
+      "text": "Chúc mừng sinh nhật! Quà tôi để ở bên kia, lát nữa tự mở ra xem nhé, cũng chỉ là vài món đồ trang sức nhỏ với đồ chơi này nọ thôi... Ây da, cái đó không quan trọng, giờ chắc {F#cô}{M#cậu} không bận gì đúng không? Đi nào đi nào, đến phòng vọng âm của tôi. Mấy hôm trước tôi nhờ người từ Natlan mua về một Đài Nhạc Rực Cháy, cùng với rất nhiều nhạc cụ kỳ lạ nhưng cực kỳ thú vị khác nữa. Tôi đang chuẩn bị tổ chức một buổi tiệc âm nhạc tuyệt vời nhất Snezhnaya, đoán xem ai là người được mời đầu tiên nào? Đúng vậy, chính là {F#cô}{M#cậu} đấy. Tới đây nào, hôm nay chúng ta hát thâu đêm luôn!",
+      "title": "Sinh nhật..."
+    },
+    {
+      "text": "E hèm... Giọng không tệ.",
+      "title": "Cảm Giác Đột Phá - Khởi"
+    },
+    {
+      "text": "Hình như có thể hát âm cao hơn rồi.",
+      "title": "Cảm Giác Đột Phá - Thừa"
+    },
+    {
+      "text": "Trạng thái cổ họng đã tốt hơn rồi.",
+      "title": "Cảm Giác Đột Phá - Chuyển"
+    },
+    {
+      "text": "Ừm! Đến lúc hát vang suốt đêm rồi!",
       "title": "Cảm Giác Đột Phá - Hợp"
     }
   ],
