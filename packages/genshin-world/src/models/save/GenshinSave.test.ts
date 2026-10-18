@@ -159,6 +159,7 @@ describe("genshinSaveSchema", () => {
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
       encounterPoints: { earnedOn: maxInstant, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
+      longTermEncounterPoints: { halfPoints: maxNumber, majorVersion: maxNumber },
       enemyRespawns: Object.fromEntries(
         Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

@@ -6,6 +6,7 @@ import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { CommissionFinishKind } from "#src/models/commission/CommissionFinishKind";
 import { CommissionKind } from "#src/models/commission/CommissionKind";
 import { QuestKind } from "#src/models/quest/QuestKind";
+import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -83,6 +84,7 @@ describe(useWorldCommissions, () => {
       rank: computed(() => RANK),
       savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
     });
     events.emit(
       "finishQuest",
@@ -98,5 +100,30 @@ describe(useWorldCommissions, () => {
       {} as QuestProgress,
     );
     expect(encounterPoints.value.halfPoints).toBe(8);
+  });
+
+  test("a finished Archon quest past the storage keeps the overflow as Long-Term Encounter Points", () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
+    const { longTermEncounterPoints } = useWorldCommissions({
+      events,
+      finishedMainQuestIds: computed(() => new Set<number>()),
+      gameDataBaseUrl: "",
+      getWorldNow: () => todayReset.add({ hours: 1 }),
+      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
+      questsInProgress: computed<Quest[]>(() => []),
+      rank: computed(() => RANK),
+      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedEncounterPoints: { earnedOn: todayReset, halfPoints: 4 },
+      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
+    });
+    events.emit(
+      "finishQuest",
+      { id: "archon", kind: QuestKind.Archon } as Quest,
+      {} as QuestProgress,
+      {} as QuestProgress,
+    );
+    expect(longTermEncounterPoints.value).toStrictEqual({ halfPoints: 4, majorVersion: LONG_TERM_MAJOR_VERSION });
   });
 });

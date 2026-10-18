@@ -6,6 +6,7 @@ import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
 import { encounterPointsSaveSchema } from "#src/models/commission/EncounterPointsSave";
+import { longTermEncounterPointsSaveSchema } from "#src/models/commission/LongTermEncounterPointsSave";
 import { cookingSaveSchema } from "#src/models/cooking/CookingSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
@@ -58,6 +59,8 @@ export const genshinSaveSchema = z
     crafting: craftingSaveSchema,
     // The Encounter Points held and the daily reset they were earned on, with no default, as the other slices have none
     encounterPoints: encounterPointsSaveSchema,
+    // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
+    longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,

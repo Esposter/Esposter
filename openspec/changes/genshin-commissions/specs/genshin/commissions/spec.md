@@ -138,3 +138,25 @@ An unfinished commission's claim SHALL spend one Encounter Point from the whole 
 - **GIVEN** two half points held, an unfinished commission and a bag with no room for its item
 - **WHEN** the commission is claimed
 - **THEN** the claim is refused and both half points stay held
+
+### Requirement: Overflow Past The Storage Is Kept As Long-Term Points
+
+Encounter Points an earn would hold past the storage SHALL be kept as Long-Term Encounter Points, which the daily reset does not clear and the major version does. Thirty Original Resin SHALL convert one Long-Term Encounter Point into an Encounter Point while the daily points fall short of the storage by a whole point.
+
+#### Scenario: a quest past the storage keeps the overflow as Long-Term Encounter Points
+
+- **GIVEN** two Encounter Points held and no commission finished
+- **WHEN** an Archon quest completes
+- **THEN** four Encounter Points are held, and the two past the storage are kept as Long-Term Encounter Points
+
+#### Scenario: Long-Term Encounter Points earned in an earlier major version are gone
+
+- **GIVEN** Long-Term Encounter Points held from an earlier major version
+- **WHEN** the player reads them in the current major version
+- **THEN** none are held
+
+#### Scenario: thirty Original Resin converts a long-term point while the daily points are short
+
+- **GIVEN** one Long-Term Encounter Point held, no Encounter Points held and thirty Original Resin
+- **WHEN** the conversion is made
+- **THEN** one Encounter Point is held and the thirty Original Resin are spent

@@ -13,3 +13,7 @@ export const HALF_POINTS_PER_ENCOUNTER_POINT = 2;
 export const MAX_ENCOUNTER_HALF_POINTS = ENCOUNTER_POINT_STORAGE * HALF_POINTS_PER_ENCOUNTER_POINT;
 // The Encounter Points an Archon quest or a Story quest gives on its completion
 export const QUEST_ENCOUNTER_POINTS = 4;
+// The major version the Long-Term Encounter Points are kept through, reset when the game's major version moves past it
+export const LONG_TERM_MAJOR_VERSION = 6;
+// The Original Resin spent to convert one Long-Term Encounter Point into an Encounter Point while the daily points fall short
+export const LONG_TERM_RESIN_COST = 30;
