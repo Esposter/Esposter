@@ -33,6 +33,7 @@ import { icicle } from "#src/services/gcg/cards/icicle";
 import { iHaventLostYet } from "#src/services/gcg/cards/iHaventLostYet";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
+import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
@@ -140,6 +141,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [311_501, travelersHandySword],
   [311_502, sacrificialSword],
   [312_002, luckyDogsSilverCirclet],
+  [312_005, instructorsCap],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],

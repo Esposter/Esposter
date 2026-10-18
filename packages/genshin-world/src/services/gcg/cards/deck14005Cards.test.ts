@@ -9,6 +9,7 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
+import { instructorsCap } from "#src/services/gcg/cards/instructorsCap";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
@@ -122,6 +123,46 @@ describe("floral Brush", () => {
     ]);
     runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([FULL_HP - 3]);
+  });
+});
+
+describe("instructor's Cap", () => {
+  const createEquippedCollei = (): GcgCharacterState => ({
+    ...createCharacterState(COLLEI_ID),
+    equipments: [createGcgZoneCard(312_005, instructorsCap)],
+  });
+
+  test("after the equipped character's skill triggers a reaction, an Elemental Die of its element is created", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createEquippedCollei()]),
+      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), aura: Element.Pyro }]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Dendro]);
+  });
+
+  test("a skill that triggers no reaction creates no die", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createEquippedCollei()]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
+  });
+
+  test("creates at most three Elemental Dice a round", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createEquippedCollei()]),
+      createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: FULL_HP * 10 }]),
+    ]);
+    for (let use = 0; use < 4; use++) {
+      takeOne(duel.sides, 1).characters[0].aura = Element.Pyro;
+      runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
+    }
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Dendro, Element.Dendro, Element.Dendro]);
   });
 });
 
