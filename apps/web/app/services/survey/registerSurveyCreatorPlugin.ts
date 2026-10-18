@@ -8,14 +8,11 @@ import { surveyCreatorPlugin } from "survey-creator-vue";
 
 import { registerSurveyPlugin } from "@/services/survey/registerSurveyPlugin";
 
-// The creator's theme registry is global to the page, so the theme registers once however many mounts call this
-let isThemeRegistered = false;
-
+// The plugin registers SurveyCreatorComponent first, so a mount after the first finds it and registers neither the
+// Plugin nor the page-wide theme registry's themes again
 export const registerSurveyCreatorPlugin = (vueApp: App): void => {
   registerSurveyPlugin(vueApp);
+  if (vueApp.component("SurveyCreatorComponent")) return;
   vueApp.use(surveyCreatorPlugin);
-  if (isThemeRegistered) return;
-
-  isThemeRegistered = true;
   registerSurveyTheme(SurveyTheme);
 };
