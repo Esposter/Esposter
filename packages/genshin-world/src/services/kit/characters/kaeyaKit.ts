@@ -4,11 +4,17 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
+import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
+import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -34,6 +40,12 @@ const CONSTELLATION_4_HEALTH_SHARE = 0.2;
 const CONSTELLATION_4_SHIELD_HEALTH_SHARE = 0.3;
 const CONSTELLATION_4_SHIELD_SECONDS = 20;
 const GLACIAL_WALTZ_ID = "kaeya-glacial-waltz";
+// The wiki's Glacial Heart: an opponent Frozen by Frostgnaw drops an Elemental Particle, up to two each use. The
+// Wiki gives no element for the particle, so it is Cryo, the element of the Frostgnaw that drops it
+// https://genshin-impact.fandom.com/wiki/Kaeya
+const ASCENSION_4 = 4;
+const GLACIAL_HEART_HOLD_ID = "kaeya-glacial-heart";
+const GLACIAL_HEART_MAX_PARTICLES = 2;
 
 export const KAEYA_CHARACTER_ID = 10_000_015;
 
@@ -45,12 +57,35 @@ const extendGlacialWaltz = (kitEffectState: KitEffectState, characterId: number)
   summon.secondsRemaining += Math.min(CONSTELLATION_2_EXTENSION_SECONDS, Math.max(0, lifetimeLeftSeconds));
 };
 
+// A use of Frostgnaw sets two holds of Glacial Heart, each spent by an opponent it freezes, and they run as long as the skill's
+// Action does, so every hit of the use can spend one
+const startGlacialHeartParticles = (kitEffectState: KitEffectState, characterId: number, seconds: number): void => {
+  releaseKitHolds(kitEffectState, characterId, GLACIAL_HEART_HOLD_ID);
+  for (let index = 0; index < GLACIAL_HEART_MAX_PARTICLES; index++)
+    addKitHold(kitEffectState, characterId, {
+      id: GLACIAL_HEART_HOLD_ID,
+      maximum: GLACIAL_HEART_MAX_PARTICLES,
+      seconds,
+    });
+};
+
+// Spends one of the use's holds, and says whether one was left to spend
+const spendGlacialHeartParticle = (kitEffectState: KitEffectState, characterId: number): boolean => {
+  for (const effect of kitEffectState.effects)
+    if (checkIsKitHold(effect, characterId, GLACIAL_HEART_HOLD_ID)) {
+      effect.secondsRemaining = 0;
+      return true;
+    }
+  return false;
+};
+
 // Kaeya's behaviour: Frostgnaw's hit heals him from Ascension 1, and Glacial Waltz's icicles are a summon's hits, landing
-// From where he cast it and priced by him. Frostgnaw's damage against Water, A4's particles and Glacial Waltz's
-// Activation knockback are not built. Constellations 1, 2 and 4 are built
+// From where he cast it and priced by him. Frostgnaw's damage against Water and Glacial Waltz's Activation knockback are
+// Not built. Ascension 4 and Constellations 1, 2 and 4 are built
 // Constellation 6 needs one more icicle, whose timing the record's icicle hits do not give
-export const createKaeyaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const icicles = readHits("icicle");
+  const glacialHeartSeconds = kit.elementalSkill.seconds;
   const glacialWaltzSeconds = readSeconds("glacialWaltz");
   return {
     burst: {
@@ -69,7 +104,24 @@ export const createKaeyaKitBehaviour = ({ readHits, readSeconds }: KitRecordRead
         : 0,
     // Constellation 2: each enemy defeated during Glacial Waltz extends it
     // Constellation 4: a drain that takes him under 20% HP shields him, once every 60 seconds
-    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+    onKitEvent: (event, context, combatant) => {
+      const { kitEffectState, party } = context;
+      // Ascension 4: a freeze Frostgnaw makes drops a Cryo particle while its use still has one of its two to spend
+      if (event.kind === KitEventKind.ReactionTriggered) {
+        if (
+          event.striker.characterId === combatant.characterId &&
+          event.attackTag === AttackTag.ElementalSkill &&
+          combatant.ascension >= ASCENSION_4 &&
+          event.reactions.some(({ reactionType }) => reactionType === ReactionType.Frozen) &&
+          spendGlacialHeartParticle(kitEffectState, combatant.characterId)
+        )
+          collectKitEnergyDrops(
+            [{ count: 1, element: Element.Cryo, energyDropKind: EnergyDropKind.Particle }],
+            undefined,
+            context,
+          );
+        return;
+      }
       if (event.kind === KitEventKind.EnemyDefeated) {
         if (combatant.constellationCount >= CONSTELLATION_2) extendGlacialWaltz(kitEffectState, combatant.characterId);
         return;
@@ -101,6 +153,10 @@ export const createKaeyaKitBehaviour = ({ readHits, readSeconds }: KitRecordRead
             combatant.ascension >= COLD_BLOODED_STRIKE_ASCENSION ? COLD_BLOODED_STRIKE_ATTACK_SHARE : 0,
         },
       ],
+      onStart: ({ activeCombatant, kitEffectState }) => {
+        if (activeCombatant.ascension >= ASCENSION_4)
+          startGlacialHeartParticles(kitEffectState, activeCombatant.characterId, glacialHeartSeconds);
+      },
     },
   };
 };

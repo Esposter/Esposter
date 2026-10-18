@@ -10,8 +10,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { startKitAction } from "#src/services/kit/startKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -20,6 +22,7 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
 
 describe(stepKit, () => {
   const TRAVELER_COMBATANT: Combatant = {
@@ -464,5 +467,64 @@ describe(stepKit, () => {
     expect(kitState.action).toBe(action);
     stepFor(2);
     expect(kitState.action).toBeUndefined();
+  });
+  // Bennett's kit, whose skill has holds, for a hold on it: its character, the kit's skill held for the steps given and then
+  // Released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
+  const BENNETT_COMBATANT: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: BENNETT_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: BENNETT_KIT,
+    level: 90,
+  };
+  const CHARGED_BENNETT_ACTION = BENNETT_KIT.elementalSkillHolds?.at(-1)?.action;
+  const releaseBennettHold = (
+    heldSteps: number,
+    { completeAt, completeBefore = false }: { completeAt?: number; completeBefore?: boolean } = {},
+  ) => {
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const context = createKitTestContext(BENNETT_COMBATANT);
+    if (completeBefore) completeKitSkillCharge(context.kitEffectState, BENNETT_CHARACTER_ID);
+    for (let stepIndex = 0; stepIndex < heldSteps; stepIndex++) {
+      stepKit(
+        kitState,
+        BENNETT_KIT,
+        { ...IDLE_INPUT, isSkillHeld: true },
+        partyMember,
+        stamina,
+        STEP_SECONDS,
+        [],
+        context,
+      );
+      if (stepIndex === completeAt) completeKitSkillCharge(context.kitEffectState, BENNETT_CHARACTER_ID);
+    }
+    return stepKit(kitState, BENNETT_KIT, IDLE_INPUT, partyMember, stamina, STEP_SECONDS, [], context);
+  };
+
+  test("a held skill whose charge a kit completes mid-hold releases at its highest level, however short it was held", () => {
+    expect.hasAssertions();
+
+    expect(CHARGED_BENNETT_ACTION).toBeDefined();
+    expect(releaseBennettHold(2, { completeAt: 0 })).toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("a held skill short of its highest level, with no charge completed, releases below it", () => {
+    expect.hasAssertions();
+
+    const action = releaseBennettHold(2);
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("a charge completed before its skill is held does not carry into the hold", () => {
+    expect.hasAssertions();
+
+    const action = releaseBennettHold(2, { completeBefore: true });
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_BENNETT_ACTION);
   });
 });

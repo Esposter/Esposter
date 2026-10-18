@@ -20,9 +20,9 @@ A skill whose effect is named by its damage SHALL deal the stated amount of the 
 - **WHEN** the skill is used
 - **THEN** the damage is Electro
 
-### Requirement: A skill's damage passes the field's bonuses before any doubling
+### Requirement: Every damage a side deals passes the field's bonuses before any doubling
 
-A skill's damage SHALL pass every additive bonus on the field before any doubling is applied.
+Every damage a side deals SHALL pass every additive bonus on its field before any doubling is applied, a skill's hit, a Swirl's spread, a piercing, an End Phase DMG and a switch's DMG alike.
 
 #### Scenario: Doubling applies after the field's bonus
 
@@ -112,6 +112,22 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 - **WHEN** the dice are rolled
 - **THEN** the two guaranteed dice are set
 
+### Requirement: A summon or combat status placed again is refreshed, and a support or onstage takes a slot of its own
+
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added. A support or onstage SHALL NOT be refreshed: a second copy SHALL take a slot of its own, and the copy already there SHALL keep its counter and usages.
+
+#### Scenario: A summon placed again refreshes the one on the field
+
+- **GIVEN** a Frostflake Seki no To is on a side with one usage left
+- **WHEN** Kamisato Art: Soumetsu summons a Frostflake again
+- **THEN** the one Frostflake on the field is refreshed to its starting usages, and no second copy appears
+
+#### Scenario: A support played again takes its own slot
+
+- **GIVEN** a Wagner is on a side's supports with its counter at three
+- **WHEN** a second Wagner is played
+- **THEN** the second Wagner takes a slot of its own, and the first keeps its counter
+
 ### Requirement: The Oceanic Mimics are summoned by the kind fewest on the field
 
 The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the earliest kind winning a tie.
@@ -121,6 +137,12 @@ The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the e
 - **GIVEN** a side holds more copies of one Mimic kind than of another
 - **WHEN** Mimics are summoned
 - **THEN** the kind it holds fewest of is summoned
+
+#### Scenario: A further Mimic refreshes a kind already held
+
+- **GIVEN** a side holds one Mimic of each kind
+- **WHEN** a Mimic is summoned
+- **THEN** the earliest kind's Mimic is refreshed to its usages, and no second copy appears
 
 ### Requirement: A character eats one food a round
 

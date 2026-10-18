@@ -1,10 +1,15 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Element } from "#src/models/Element";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
+import { countDeployedElements } from "#src/services/party/countDeployedElements";
 import { takeOne } from "@esposter/shared";
 
 // Low-Temperature Cooking's Surging Blade lands only while the Aligned interval is not running, as gcsim (MIT, main)
@@ -22,13 +27,42 @@ const BURST_HEAL_FIELD_ID = "escoffier-scoring-cuts-heal";
 const REHAB_DIET_SCALING = 1.3824;
 const REHAB_DIET_FIELD_ID = "escoffier-rehab-diet";
 const REHAB_DIET_ASCENSION = 1;
+// Measured: gcsim (MIT, main) escoffier/asc.go, Ascension 4's Hydro and Cryo RES shred by how many Hydro or Cryo members the
+// Team holds, 0 to 55%, for 12 seconds, on each enemy her skill and burst hit
+// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/asc.go
+const ASCENSION_4 = 4;
+const ASCENSION_4_RES_SHREDS = [0, 0.05, 0.1, 0.15, 0.55];
+const ASCENSION_4_SECONDS = 12;
+const ASCENSION_4_STATUS_ID = "escoffier-ascension-4-res-shred";
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_CRITICAL_DAMAGE = 0.6;
+const CRYO_HYDRO_ELEMENTS: readonly Element[] = [Element.Cryo, Element.Hydro];
+
+// Whether the deployed team holds members of Cryo and Hydro alone, and at least one of them
+const checkIsCryoHydroTeam = (deployedElements: readonly (Element | undefined)[] | undefined): boolean =>
+  deployedElements !== undefined &&
+  deployedElements.length > 0 &&
+  countDeployedElements(deployedElements, CRYO_HYDRO_ELEMENTS) === deployedElements.length;
+
+// The RES shred a hit of hers applies to the enemy it strikes, as the team stands
+const getAscension4Status = (combatant: Combatant): EnemyStatus | undefined => {
+  const shred =
+    ASCENSION_4_RES_SHREDS[countDeployedElements(combatant.deployedElements, [Element.Hydro, Element.Cryo])];
+  if (combatant.ascension < ASCENSION_4 || !shred) return undefined;
+  return {
+    damageTakenBonus: 0,
+    id: ASCENSION_4_STATUS_ID,
+    resistanceReduction: { [Element.Cryo]: shred, [Element.Hydro]: shred },
+    secondsRemaining: ASCENSION_4_SECONDS,
+  };
+};
 
 export const ESCOFFIER_CHARACTER_ID = 10_000_112;
 
 // Escoffier's behaviour outside the passives and constellations that wait: Low-Temperature Cooking casts its Frosty
 // Parfait ticks and, outside the Aligned interval, its Surging Blade, and Scoring Cuts sets going its heal and, from
-// Ascension 1, Rehab Diet. Her Cryo RES shred from Ascension 4, and her Constellations, wait on the hooks the page names
-// Constellation 1 needs the party's elements, which the kit does not read, to set the Cryo CRIT DMG of nearby members
+// Ascension 1, Rehab Diet and the Cryo and Hydro RES shred of Ascension 4 are built. Her Constellations wait on the hooks the page names
+// Constellation 1 is built on her own Cryo strikes, its CRIT DMG reaching a teammate's Cryo attacks once the party-scope strike hooks land
 // Constellation 2 needs Cooking Mek's Cold Storage Mode, which the skill does not build yet
 // Constellation 4 needs Rehab Diet's six seconds and its chance to heal and restore energy, which the kit does not roll
 // Constellation 6 needs Cooking Mek's Cold Storage Mode and the effects it sets, which are not built
@@ -39,8 +73,8 @@ export const createEscoffierKitBehaviour = ({
   readParameter,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
-  const skillTickHits = readHits("frostyParfaitTicks");
-  const surgingBladeHit = readHit("surgingBlade");
+  const skillTickHits = readHits("frostyParfaitTicks").map((hit) => ({ ...hit, enemyStatus: getAscension4Status }));
+  const surgingBladeHit = { ...readHit("surgingBlade"), enemyStatus: getAscension4Status };
   const alignedIntervalSeconds = readParameter("alignedIntervalSeconds");
   const burstHealFlat = readParameter("scoringCutsFlatHeal");
   const burstHealAttackShare = readParameter("scoringCutsHealAttackShare");
@@ -50,7 +84,16 @@ export const createEscoffierKitBehaviour = ({
   const rehabDietIntervalSeconds = readSeconds("rehabDietInterval");
   const rehabDietLastTickSeconds = readSeconds("rehabDietLastTick");
   return {
+    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while the deployed team holds only Cryo and Hydro members. It
+    // Reaches only her own strikes, until the party-scope strike hooks reach a teammate's
+    getStrikeCriticalDamageBonus: ({ combatant, hit }) =>
+      combatant.constellationCount >= CONSTELLATION_1 &&
+      getKitHitElement(hit, combatant) === Element.Cryo &&
+      checkIsCryoHydroTeam(combatant.deployedElements)
+        ? CONSTELLATION_1_CRITICAL_DAMAGE
+        : 0,
     burst: {
+      hits: [{ enemyStatus: getAscension4Status }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         // Scoring Cuts' heal is one tick of a field, which heals the active character from the caster's ATK, a flat
         // Amount and a share of it

@@ -15,6 +15,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { takeOne } from "@esposter/shared";
 
@@ -24,6 +25,10 @@ import { takeOne } from "@esposter/shared";
 const SWORD_RAIN_INTERVAL_SECONDS = 1;
 const SWORD_RAIN_WAVE_SIZES = [2, 3];
 const RAINCUTTER_ID = "xingqiu-raincutter";
+// The first strike of a string casts its wave 7 frames on from its start, as gcsim v2.47.2 (MIT) xingqiu/xingqiu.go delays
+// Its animation, and a later strike's wave is cast as it starts
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xingqiu/xingqiu.go
+const RAINCUTTER_FIRST_STRIKE_DELAY_SECONDS = toKitSeconds(7);
 // Hydropathic, from Ascension 1, heals the character on the field by 6% of Xingqiu's Max HP as each Rain Sword shatters
 // Or its seconds end, as the wiki's passive page gives it. The Rain Swords number 3, and 4 from The Scent Remained at one
 // Constellation
@@ -65,18 +70,19 @@ const HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY = 3;
 const checkIsRainSwords = (effect: KitEffect, characterId: number): effect is KitSummon =>
   effect.kind === "summon" && effect.isFollowing === true && effect.combatant.characterId === characterId;
 
-// Whether an effect is a character's Raincutter: its summon, from which the normal attacks of the character on the field land a wave
+// Whether an effect is a character's Raincutter: its summon, from which the normal attacks of the character on the
+// Field set off a wave
 const checkIsRaincutter = (effect: KitEffect, characterId: number): effect is KitSummon =>
   effect.kind === "summon" && effect.id === RAINCUTTER_ID && effect.combatant.characterId === characterId;
 
 export const XINGQIU_CHARACTER_ID = 10_000_025;
 
-// Xingqiu's behaviour: Fatal Rainscreen's hits land from a summon cast where he stands, raised by Evilsoother from four
-// Constellations while his Raincutter stands, and the skill stands his Rain Swords round the body on the field. Raincutter
-// Is a summon of no hits that the normal attacks of the character on the field land its sword rain from, a wave at
-// Most a second, and it stands the Rain Swords too, both lengthened by Rainbow Upon the Azure Sky from two
-// Constellations, whose Hydro RES each sword takes. From Ascension 1, the Rain Swords heal the character on the field as
-// They end, and from Ascension 4 Blades Amidst Raindrops adds its Hydro DMG Bonus
+// Xingqiu's behaviour: Fatal Rainscreen's hits land from a summon cast where Xingqiu stands, raised by Evilsoother from
+// Four Constellations while his Raincutter stands, and the skill stands his Rain Swords round the body on the field.
+// Raincutter is a summon of no hits that the normal attacks of the character on the field set off its sword rain from,
+// A wave at most a second, and it stands the Rain Swords too, both lengthened by Rainbow Upon the Azure Sky from two
+// Constellations, whose Hydro RES each sword takes. From Ascension 1, the Rain Swords heal the character on the field
+// As they end, and from Ascension 4 Blades Amidst Raindrops adds its Hydro DMG Bonus
 export const createXingqiuKitBehaviour = ({
   readHit,
   readHitFields,
@@ -158,10 +164,10 @@ export const createXingqiuKitBehaviour = ({
       changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, heal);
     });
   };
-  // A wave of swords cast where the character on the field stands as a normal attack of the character on the field lands, priced by Xingqiu, unless
-  // A wave was cast within the second. Each wave stands until Raincutter ends, so the next counts the waves before it to
-  // Find its swords. From six constellations, a wave of five swords gives Xingqiu his energy up to his burst's cost as it
-  // Lands, through a task run then
+  // A wave of swords cast where the character on the field stands as a normal attack of the character on the field
+  // Starts, priced by Xingqiu, unless a wave was cast within the second. Each wave stands until Raincutter ends, so the
+  // Next counts the waves before it to find its swords. From six constellations, a wave of five swords gives Xingqiu
+  // His energy up to his burst's cost as it lands, through a task run then
   const castSwordRain = (
     raincutter: KitSummon,
     { body: { facing, height, position }, kitEffectState }: KitContext,
@@ -186,10 +192,17 @@ export const createXingqiuKitBehaviour = ({
       gainPartyMemberEnergy(party, combatant, HENCE_CALL_THEM_MY_OWN_VERSES_ENERGY),
     );
   };
+  // Casts a wave from the character's Raincutter where the character on the field stands, if Raincutter stands
+  const castRaincutterWave = (context: KitContext, characterId: number): void => {
+    const raincutter = context.kitEffectState.effects.find((effect): effect is KitSummon =>
+      checkIsRaincutter(effect, characterId),
+    );
+    if (raincutter) castSwordRain(raincutter, context);
+  };
   return {
     // Raincutter is a summon of no hits standing for the table's seconds and the record's past them, which the normal
-    // Attacks of the character on the field land its sword rain from. The burst stands the Rain Swords for the table's
-    // Seconds, lengthened by Rainbow Upon the Azure Sky from two constellations
+    // Attacks of the character on the field set off its sword rain from. The burst stands the Rain Swords for the
+    // Table's seconds, lengthened by Rainbow Upon the Azure Sky from two constellations
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const seconds =
@@ -204,13 +217,16 @@ export const createXingqiuKitBehaviour = ({
         standRainSwords(kitEffectState, body, combatant, seconds, rainSwordsBurstFirstTickSeconds);
       },
     },
-    // A normal attack of the character on the field lands a wave of swords where that character stands, while Raincutter stands
+    // A normal attack of the character on the field sets off a wave of swords where that character stands, while
+    // Raincutter stands: the first strike of a string 7 frames on from its start, as gcsim's watcher casts it, and a
+    // Later one as it starts
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.NormalAttackLanded) return;
-      const raincutter = context.kitEffectState.effects.find((effect): effect is KitSummon =>
-        checkIsRaincutter(effect, combatant.characterId),
-      );
-      if (raincutter) castSwordRain(raincutter, context);
+      if (event.kind !== KitEventKind.NormalAttackStarted) return;
+      if (event.isFirstStrike)
+        scheduleKitTask(context.kitEffectState, combatant.characterId, RAINCUTTER_FIRST_STRIKE_DELAY_SECONDS, (tick) =>
+          castRaincutterWave(tick, combatant.characterId),
+        );
+      else castRaincutterWave(context, combatant.characterId);
     },
     getPassiveBonuses: (combatant) =>
       combatant.ascension < BLADES_AMIDST_RAINDROPS_ASCENSION

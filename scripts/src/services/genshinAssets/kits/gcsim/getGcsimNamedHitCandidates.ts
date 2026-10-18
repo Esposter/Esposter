@@ -4,6 +4,10 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
@@ -18,6 +22,12 @@ const readFieldMap = (
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(key, hit, SKILL_TARGETING_AREA);
+  // An attack gcsim gives no poise deals none, as the rule gives an action's hit that has none
+  if (hit.attack !== undefined && !candidateMap.has(`${key}.poiseDamage`))
+    addKitCandidate(candidateMap, `${key}.poiseDamage`, {
+      provenance: { cause: KitProvisionalCause.NoPoiseSource, rule: KitRule.NoPoiseSource, source: KitSource.Rule },
+      value: 0,
+    });
   return new Map(
     Array.from(candidateMap, ([path, candidates]): [string, KitCandidate[]] => [
       path.slice(key.length + 1),

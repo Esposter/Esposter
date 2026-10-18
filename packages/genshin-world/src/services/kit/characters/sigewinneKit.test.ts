@@ -6,8 +6,10 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createSigewinneKitBehaviour, SIGEWINNE_CHARACTER_ID } from "#src/services/kit/characters/sigewinneKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -100,5 +102,31 @@ describe(createSigewinneKitBehaviour, () => {
     expect(SIGEWINNE_KIT.burstEnergyCost).toBe(70);
     expect(SIGEWINNE_KIT.burstCooldownSeconds).toBe(18);
     expect(SIGEWINNE_KIT.skillCooldownSeconds).toBe(18);
+  });
+
+  test("a passive takes effect at its ascension phase: a skill press gives her an 8% Hydro DMG Bonus", () => {
+    expect.hasAssertions();
+    const combatant = { ...createSigewinneCombatant(1000), ascension: 1 };
+    const { effects } = castKitAction(SIGEWINNE_KIT.elementalSkill, combatant);
+
+    expect(effects.filter(({ kind }) => kind === "buff")).toStrictEqual([
+      {
+        amount: 0.08,
+        attribute: Attribute.HydroDamageBonus,
+        characterId: SIGEWINNE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 18,
+        source: "sigewinne-semi-strict-bedrest",
+      },
+    ]);
+    const pricedCombatant = getBuffedCombatant(combatant, effects, createParty([SIGEWINNE_CHARACTER_ID]), new Map());
+    expect(pricedCombatant.attributes.attributeTotalMap[Attribute.HydroDamageBonus]).toBeCloseTo(0.08, 5);
+  });
+
+  test("a passive does not take effect below its ascension phase: no Hydro DMG Bonus at Ascension 0", () => {
+    expect.hasAssertions();
+    const { effects } = castKitAction(SIGEWINNE_KIT.elementalSkill, createSigewinneCombatant(1000));
+
+    expect(effects.filter(({ kind }) => kind === "buff")).toStrictEqual([]);
   });
 });

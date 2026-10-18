@@ -17,6 +17,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/characters/ainoKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -204,7 +205,7 @@ describe(createAinoKitBehaviour, () => {
 
     // The first tick drops the first ball at its first tick's seconds, so the ball lands ten frames on from its drop
     stepKitTestEffects(2.1, context);
-    const [summon] = kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+    const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     expect(summon?.hits[0]?.hitmarkSeconds).toBeCloseTo(10 / 60);
   });
 
@@ -297,5 +298,85 @@ describe(createAinoKitBehaviour, () => {
 
       expect([countBeforeCooldown, countWhileCoolingDown, countQueuedBalls()]).toStrictEqual([1, 0, 1]);
     });
+  });
+});
+
+// Aino's Elemental Mastery as the combatant is priced with the buffs on it from the effects the kit has left
+const getBuffedMastery = (combatant: Combatant, context: KitContext): number =>
+  getBuffedCombatant(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap)
+    .attributes.attributeTotalMap[Attribute.ElementalMastery];
+
+describe("constellation 1's Elemental Mastery", () => {
+  test("aino gets 80 Elemental Mastery for 15 seconds after her skill, and none below Constellation 1", () => {
+    expect.hasAssertions();
+    const combatant = { ...createAinoCombatant(0), constellationCount: 1 };
+    const base = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    const below = { ...combatant, constellationCount: 0 };
+    const belowContext = createKitTestContext(below, { kitEffectState: { effects: [] } });
+    AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, belowContext, below);
+    expect(getBuffedMastery(below, belowContext)).toBe(base);
+
+    AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, combatant);
+    expect(getBuffedMastery(combatant, context)).toBe(base + 80);
+    stepKitSeconds(context, 15);
+    expect(getBuffedMastery(combatant, context)).toBe(base);
+  });
+
+  test("the member swapped in while Aino's status runs gets 80 Elemental Mastery, and keeps it to the status's end", () => {
+    expect.hasAssertions();
+    const aino = { ...createAinoCombatant(0), constellationCount: 1 };
+    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const base = teammate.attributes.attributeTotalMap[Attribute.ElementalMastery];
+    const context = createKitTestContext(aino, {
+      characterIdCombatantMap: new Map<number, Combatant>([
+        [aino.characterId, aino],
+        [teammate.characterId, teammate],
+      ]),
+      kitEffectState: { effects: [] },
+      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
+    });
+    AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, aino);
+    expect(getBuffedMastery(teammate, context)).toBe(base);
+
+    AINO_KIT.onKitEvent?.(
+      {
+        characterId: teammate.characterId,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: AINO_CHARACTER_ID,
+      },
+      context,
+      aino,
+    );
+    expect(getBuffedMastery(teammate, context)).toBe(base + 80);
+    stepKitSeconds(context, 15);
+    expect(getBuffedMastery(teammate, context)).toBe(base);
+  });
+
+  test("a member swapped in after Aino's status runs out gets no Elemental Mastery", () => {
+    expect.hasAssertions();
+    const aino = { ...createAinoCombatant(0), constellationCount: 1 };
+    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const base = teammate.attributes.attributeTotalMap[Attribute.ElementalMastery];
+    const context = createKitTestContext(aino, {
+      characterIdCombatantMap: new Map<number, Combatant>([
+        [aino.characterId, aino],
+        [teammate.characterId, teammate],
+      ]),
+      kitEffectState: { effects: [] },
+      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
+    });
+    AINO_KIT.onKitEvent?.({ characterId: AINO_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, aino);
+    stepKitSeconds(context, 15);
+    AINO_KIT.onKitEvent?.(
+      {
+        characterId: teammate.characterId,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: AINO_CHARACTER_ID,
+      },
+      context,
+      aino,
+    );
+    expect(getBuffedMastery(teammate, context)).toBe(base);
   });
 });

@@ -3,6 +3,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const PYRONADO_FIELD_ID = 113_022;

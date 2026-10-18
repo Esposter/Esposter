@@ -131,6 +131,7 @@ const characterController = createCharacterController({
     getGroundHeight(WINDRISE_START_POINT.x, WINDRISE_START_POINT.z),
     WINDRISE_START_POINT.z,
   ),
+  stamina: kitContext.stamina,
   staminaMaximum: STAMINA_MAX,
 });
 let followCamera: FollowCamera | undefined;

@@ -182,7 +182,11 @@ describe(createKleeKitBehaviour, () => {
       const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
       const [bombHit] = summon?.hits ?? [];
       const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
-      bombHit?.onStrike?.(context, { body: context.body, combatant, hit: bombHit });
+      bombHit?.onStrike?.(
+        context,
+        { body: context.body, combatant, hit: bombHit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
       return kitEffectState.effects;
     };
 

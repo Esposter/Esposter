@@ -8,7 +8,10 @@ import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAs
 import type { Element } from "genshin-world";
 import { KitPlunge, KitTargeting } from "genshin-world";
 
-const STANCE_PATH_REGEX = /^stances\.(?<name>[^.]+)\./u;
+// Every stance's normal attacks, whichever stance a kit names, by the length its normal attacks carry
+const STANCE_NORMAL_ATTACKS_LENGTH_REGEX = /^(?<actionsPath>stances\.[^.]+\.normalAttacks)\.length$/u;
+// The stance a path names, read from the path's first two segments
+const STANCE_PATH_REGEX = /^(?<stance>stances\.[^.]+)\./u;
 
 // The values the builder's rules give a kit's record, by their paths, over the actions and hits its sources and overlay
 // Already give it: each action's targeting zone by its slot, a hit's poise where no source gives one, no hold, a hold's
@@ -30,11 +33,24 @@ export const getRuleKitCandidates = (
   };
   const nodePaths = [...valueMap].flatMap(([path, value]) => (value === undefined ? [] : [path]));
   const checkHasNode = (path: string) => nodePaths.some((nodePath) => nodePath.startsWith(`${path}.`));
+  const stanceNormalAttackPaths = [...valueMap.keys()].flatMap((path) => {
+    const actionsPath = STANCE_NORMAL_ATTACKS_LENGTH_REGEX.exec(path)?.groups?.actionsPath;
+    return actionsPath === undefined
+      ? []
+      : Array.from({ length: readLength(actionsPath) }, (_value, index) => `${actionsPath}.${index}`);
+  });
+  const stances = [...new Set(nodePaths.flatMap((path) => STANCE_PATH_REGEX.exec(path)?.groups?.stance ?? []))];
+  const stanceActionEntries = stances.flatMap((stance): [string, KitTargeting][] => [
+    [`${stance}.chargedAttack`, KitTargeting.Strike],
+    [`${stance}.skill`, KitTargeting.Skill],
+  ]);
   const actionTargetingEntries: [string, KitTargeting][] = [
     ...Array.from({ length: readLength("normalAttacks") }, (_value, index): [string, KitTargeting] => [
       `normalAttacks.${index}`,
       KitTargeting.Strike,
     ]),
+    ...stanceNormalAttackPaths.map((path): [string, KitTargeting] => [path, KitTargeting.Strike]),
+    ...stanceActionEntries,
     ["chargedAttack", KitTargeting.Strike],
     [`plunges.${KitPlunge.Low}`, KitTargeting.Strike],
     [`plunges.${KitPlunge.High}`, KitTargeting.Strike],
@@ -50,24 +66,7 @@ export const getRuleKitCandidates = (
       KitTargeting.Skill,
     ]),
   ];
-  // A stance's strikes and charged attack target as the kit's own do, and its skill as the kit's skill does, for each stance
-  // The value map names
-  const stanceNames = new Set<string>();
-  for (const path of valueMap.keys()) {
-    const name = STANCE_PATH_REGEX.exec(path)?.groups?.name;
-    if (name !== undefined) stanceNames.add(name);
-  }
-  const stanceTargetingEntries: [string, KitTargeting][] = [];
-  for (const name of stanceNames) {
-    const stancePath = `stances.${name}`;
-    for (let index = 0; index < readLength(`${stancePath}.normalAttacks`); index++)
-      stanceTargetingEntries.push([`${stancePath}.normalAttacks.${index}`, KitTargeting.Strike]);
-    stanceTargetingEntries.push(
-      [`${stancePath}.chargedAttack`, KitTargeting.Strike],
-      [`${stancePath}.skill`, KitTargeting.Skill],
-    );
-  }
-  for (const [path, targeting] of [...actionTargetingEntries, ...stanceTargetingEntries]) {
+  for (const [path, targeting] of actionTargetingEntries) {
     if (!checkHasNode(path)) continue;
     add(`${path}.targeting`, targeting, KitRule.Targeting);
     for (let hitIndex = 0; hitIndex < readLength(`${path}.hits`); hitIndex++)

@@ -17,7 +17,7 @@
 - [x] 4.1 Open the Mystic Offering from Adventure Rank 45 and no lower. Verify: a test named after the scenario 'the offering opens from adventure rank 45'.
 - [x] 4.2 List only the offerable artifacts in the panel, and pass the craft's result to the parent. Verify: a test named after the scenario 'the panel lists only the offerable artifacts'.
 
-- [ ] 4.3 Open the panel from the Crafting Bench from Adventure Rank 45, with the strongbox records read from the hosted game data. Verify: the gate test of 4.1 and the record read of 1.2, once the record is published.
+- [x] 4.3 Open the panel from the Crafting Bench from Adventure Rank 45, with the strongbox records read from the hosted game data. Verify: the gate test of 4.1 and the record read of 1.2, once the record is published. The bench's tab list adds the offering from the same gate (`computeCraftingTabCells`), seen failing first.
 
 ## 5. Words
 

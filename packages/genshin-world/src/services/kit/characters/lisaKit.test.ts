@@ -58,7 +58,12 @@ const swapCharacter = (combatant: Combatant, context: KitContext, characterId: n
 const strikeHoldEnemies = (combatant: Combatant, context: KitContext, count: number) => {
   const hold = takeOne(LISA_KIT.elementalSkillHolds ?? []).action;
   const hit = takeOne(hold.hits);
-  for (let enemy = 0; enemy < count; enemy++) hit.onStrike?.(context, { body: context.body, combatant, hit });
+  for (let strike = 0; strike < count; strike++)
+    hit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
   return hold;
 };
 

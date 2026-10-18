@@ -1,9 +1,11 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -13,6 +15,8 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
 // Of radius 6 whose centre lies 3 metres ahead, every tick, for 12.5 seconds
@@ -21,6 +25,12 @@ const SKILL_DURATION_SECONDS = 12.5;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
 const ASCENSION_1 = 1;
+// Measured: gcsim (MIT) kokomi/cons.go, Constellation 4's energy: while she dons the garment, each normal attack that hits an
+// Opponent restores 0.8 energy to her, once every 0.2 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/cons.go
+const CONSTELLATION_4_ENERGY = 0.8;
+const CONSTELLATION_4_ENERGY_SECONDS = 0.2;
+const CONSTELLATION_4_ENERGY_STATUS_ID = "kokomi-c4-energy";
 // Measured: gcsim (MIT) kokomi/burst.go, Ceremonial Garment lasts ten seconds
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/burst.go
 const GARMENT_SECONDS = 10;
@@ -33,6 +43,21 @@ const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
 // Decreased by 100%
 const FLAWLESS_STRATEGY_HEALING_BONUS = 0.25;
 const FLAWLESS_STRATEGY_CRITICAL_RATE = -1;
+
+// Constellation 4's energy, given to the striker by each garment normal attack that hits, once every 0.2 seconds
+const giveGarmentNormalAttackEnergy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  if (combatant.constellationCount < 4) return;
+  if (
+    !startKitCooldown(
+      kitEffectState,
+      combatant.characterId,
+      CONSTELLATION_4_ENERGY_STATUS_ID,
+      CONSTELLATION_4_ENERGY_SECONDS,
+    )
+  )
+    return;
+  gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
+};
 
 // A garment attack's hit adds its share of her Max HP to its damage, and from Ascension 4 Song of Pearls' share of her
 // Healing Bonus of her Max HP as well. Its heal is rolled every time, whether or not she holds a shield, as gcsim's heal
@@ -77,7 +102,7 @@ export const KOKOMI_CHARACTER_ID = 10_000_054;
 // Attacks from Ascension 4
 // Constellation 1 needs the effect the garment's final combo attack unleashes, which the kit does not build
 // Constellation 2 needs her healing bonus to characters at low HP, which her heals do not read
-// Constellation 4's energy needs the energy each landed attack in the garment gives, on a short cooldown, not built
+// Constellation 4's energy is built, from each garment normal attack that hits, on a 0.2-second cooldown
 // Constellation 6 needs the Hydro DMG Bonus her heals grant for a short time, which the kit does not build
 export const createKokomiKitBehaviour = ({
   kit,
@@ -117,7 +142,14 @@ export const createKokomiKitBehaviour = ({
       });
     },
   });
-  const garmentNormalAttack = { hits: [createGarmentAttackHit(readParameter("garmentNormalAttackMaxHealthBonus"))] };
+  const garmentNormalAttack = {
+    hits: [
+      {
+        ...createGarmentAttackHit(readParameter("garmentNormalAttackMaxHealthBonus")),
+        onStrike: giveGarmentNormalAttackEnergy,
+      },
+    ],
+  };
   // The garment's normal attacks are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
   // In kokomi/attack.go and AttackTagExtra in kokomi/charge.go; its Bake-Kurage is Elemental Skill DMG in skill.go
   const ceremonialGarment = readStance("ceremonialGarment", {

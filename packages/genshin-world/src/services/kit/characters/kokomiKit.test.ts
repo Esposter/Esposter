@@ -6,11 +6,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKokomiKitBehaviour, KOKOMI_CHARACTER_ID } from "#src/services/kit/characters/kokomiKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KOKOMI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KOKOMI_CHARACTER_ID);
 
 const MAX_HEALTH = 10_000;
@@ -54,6 +59,24 @@ const readGarmentBonus = (ascension: number): number => {
   if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
   const [firstNormalAttack] = garment.combatant.kit.normalAttacks;
   return firstNormalAttack?.hits[0]?.additiveBaseDamageBonus?.(combatant) ?? 0;
+};
+
+// The energy Kokomi holds after her garment's normal attack strikes at each of the given seconds, one strike per time
+const readGarmentEnergy = (constellationCount: number, strikeSeconds: number[]): number => {
+  const combatant = { ...createKokomiCombatant(), constellationCount };
+  const context = createKitTestContext(combatant);
+  KOKOMI_KIT.elementalBurst.onStart?.(context);
+  const garment = context.kitEffectState.effects.find((effect) => effect.kind === "stance");
+  if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
+  const hit = garment.combatant.kit.normalAttacks[0]?.hits[0];
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  let elapsedSeconds = 0;
+  for (const seconds of strikeSeconds) {
+    stepKitSeconds(context, seconds - elapsedSeconds);
+    elapsedSeconds = seconds;
+    hit?.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
+  }
+  return getPartyMember(context.party, KOKOMI_CHARACTER_ID).energy;
 };
 
 describe(createKokomiKitBehaviour, () => {
@@ -128,5 +151,11 @@ describe("song of Pearls", () => {
     expect.hasAssertions();
 
     expect(readGarmentBonus(3)).toBeCloseTo(0.0484 * MAX_HEALTH);
+  });
+
+  test("constellation 4 restores 0.8 energy to Kokomi for each garment normal attack that hits, once every 0.2 seconds", () => {
+    expect.hasAssertions();
+
+    expect([readGarmentEnergy(3, [0, 0.25]), readGarmentEnergy(4, [0, 0.1, 0.25])]).toStrictEqual([0, 1.6]);
   });
 });

@@ -241,6 +241,7 @@ export const useWorldMap = ({
     jumpPose,
     jumpTo,
     lockedJumpLandmarks,
+    payReputationReward,
     unlockedLandmarkIds,
     unlockedLandmarks,
   };
