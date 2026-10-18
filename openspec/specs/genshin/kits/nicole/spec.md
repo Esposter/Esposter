@@ -61,12 +61,12 @@ Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her 
 
 ### Requirement: Nicole's burst projections
 
-Nicole's burst SHALL project a copy of each elemental hit the active character lands on an enemy while its status lasts. A projection SHALL land 30 frames after its hit, at most four times and once each 3 seconds.
+Nicole's burst SHALL project a copy of each hit the active character lands on an enemy while its status lasts, physical hits included. A projection SHALL land 30 frames after its hit, at most four times and once each 3 seconds.
 
 #### Scenario: Projection lands 30 frames after the hit that starts it
 
 - **GIVEN** Nicole's burst has started and 109 frames have passed
-- **WHEN** the active character's elemental hit lands on an enemy
+- **WHEN** the active character's hit lands on an enemy
 - **THEN** a projection lands on that enemy 30 frames later
 
 #### Scenario: No projection before the status starts
@@ -87,10 +87,16 @@ Nicole's burst SHALL project a copy of each elemental hit the active character l
 - **WHEN** five hits land 3.1 seconds apart
 - **THEN** four projections land
 
+#### Scenario: Physical hit is projected at her element
+
+- **GIVEN** Nicole's burst has started and 109 frames have passed
+- **WHEN** the active character's physical hit lands on an enemy
+- **THEN** a projection lands on that enemy 30 frames later, dealt as Nicole's element
+
 #### Scenario: Only the active character's hit projects
 
 - **GIVEN** Nicole's burst is active and another character is active
-- **WHEN** that other character's elemental hit lands on an enemy
+- **WHEN** that other character's hit lands on an enemy
 - **THEN** no projection lands
 
 ### Requirement: Nicole's passives not yet built

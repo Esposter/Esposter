@@ -69,7 +69,7 @@ const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
 };
 
 describe(strikeKitEnemies, () => {
-  test("sends the team's kits an elemental hit that carries the element it was dealt as", () => {
+  test("sends the team's kits an enemy hit that carries the element it was dealt as", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const combatant = createCombatant(onKitEvent);
@@ -79,7 +79,7 @@ describe(strikeKitEnemies, () => {
     expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
       element: Element.Pyro,
       enemy,
-      kind: KitEventKind.ElementalHit,
+      kind: KitEventKind.EnemyHit,
       striker: combatant,
     });
   });
@@ -167,14 +167,19 @@ describe(strikeKitEnemies, () => {
     ).toStrictEqual(["target", "reached"]);
   });
 
-  test("sends the team's kits no elemental hit for a hit with no element", () => {
+  test("sends the team's kits an enemy hit with no element for a hit that deals none", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const combatant = createCombatant(onKitEvent);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     strikeWithHit({ ...KIT_HIT, element: undefined, gauge: undefined }, enemy, combatant);
 
-    expect(onKitEvent.mock.calls.map(([event]) => event.kind)).not.toContain(KitEventKind.ElementalHit);
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      element: undefined,
+      enemy,
+      kind: KitEventKind.EnemyHit,
+      striker: combatant,
+    });
   });
 
   test("sends the team's kits a weak-point hit for a hit that lands on a weak point", () => {

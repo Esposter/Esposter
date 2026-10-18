@@ -165,8 +165,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         );
       }
       const element = getKitHitElement(enemyHit, combatant);
-      if (element !== undefined)
-        emitKitEvent({ element, enemy, kind: KitEventKind.ElementalHit, striker: combatant }, context);
+      emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
       if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {
