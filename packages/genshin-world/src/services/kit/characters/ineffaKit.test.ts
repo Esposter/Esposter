@@ -6,6 +6,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { Enemy } from "#src/models/enemy/Enemy";
 
@@ -400,5 +401,71 @@ describe("panoramic Permutation Protocol", () => {
 
     swapTo(INEFFA_CHARACTER_ID, OTHER_CHARACTER_ID);
     expect(holders()).toStrictEqual([INEFFA_CHARACTER_ID]);
+  });
+});
+
+// Casts Ineffa's skill, steps its kit for the frames given and returns each strike that is a Lunar-Charged hit with the
+// Frame it is queued on, counted in steps as the Punishment Edit's helper counts them. A Lunar-Charged reaction, if it is
+// Asked for, is triggered before the first step
+const readA1Strikes = (combatant: Combatant, frames: number, hasLunarCharged = false) => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map([["1", enemy]]),
+    enemyTables,
+    kitEffectState: castKitAction(INEFFA_KIT.elementalSkill, combatant),
+    party: createParty([INEFFA_CHARACTER_ID]),
+    primaryTarget: enemy,
+  });
+  if (hasLunarCharged)
+    emitKitEvent(
+      {
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ reactionType: LunarReactionType.LunarCharged }],
+        striker: combatant,
+      },
+      context,
+    );
+  const queued: { frame: number; strike: KitStrike }[] = [];
+  for (let frame = 1; frame <= frames; frame++) {
+    stepKitEffects(1 / 60, context);
+    for (const strike of context.strikes) if (strike.hit.lunarHit) queued.push({ frame, strike });
+  }
+  return queued;
+};
+
+describe("birgitta's Ascension 1 Lunar-Charged hit", () => {
+  test("a Birgitta discharge queues a Lunar-Charged hit 38 frames on, while a Lunar-Charged reaction holds for 5.5 seconds", () => {
+    expect.hasAssertions();
+
+    expect(
+      readA1Strikes({ ...createIneffaCombatant(), ascension: 1 }, 400, true).map(({ frame }) => frame),
+    ).toStrictEqual([148, 267]);
+  });
+
+  test("a Birgitta discharge queues no Lunar-Charged hit with no Lunar-Charged reaction in the last 5.5 seconds", () => {
+    expect.hasAssertions();
+
+    expect(readA1Strikes({ ...createIneffaCombatant(), ascension: 1 }, 400)).toStrictEqual([]);
+  });
+
+  test("below Ascension 1, a Birgitta discharge queues no Lunar-Charged hit", () => {
+    expect.hasAssertions();
+
+    expect(readA1Strikes({ ...createIneffaCombatant(), ascension: 0 }, 400, true)).toStrictEqual([]);
+  });
+
+  test("the Lunar-Charged hit is Electro at 0.65 of her ATK, ignores all of the enemy's DEF, and reaches the primary target's circle of radius 4", () => {
+    expect.hasAssertions();
+
+    const [queued] = readA1Strikes({ ...createIneffaCombatant(), ascension: 1 }, 150, true);
+    const hit = queued?.strike.hit;
+    expect([hit?.defenseIgnored, hit?.element, hit?.lunarHit, hit?.talentMultiplier]).toStrictEqual([
+      1,
+      Element.Electro,
+      { lunarReactionType: LunarReactionType.LunarCharged },
+      0.65,
+    ]);
+    expect(queued?.strike.hitbox).toStrictEqual({ offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: 4 } });
   });
 });

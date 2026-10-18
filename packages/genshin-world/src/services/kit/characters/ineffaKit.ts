@@ -7,6 +7,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -17,9 +18,11 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -66,6 +69,16 @@ const BIRGITTA_PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
+const ASCENSION_1 = 1;
+// Birgitta's Ascension 1 hit, as gcsim (MIT, main) internal/characters/ineffa/asc.go gives it (lines 20-44).
+// Each discharge of hers, while a Lunar-Charged reaction holds, queues a Lunar-Charged Electro hit 38 frames on.
+// The hit is 0.65 of her ATK, ignores all of each enemy's DEF, and lands on the primary target's circle of radius 4.
+// A Lunar-Charged reaction holds for 5.5 seconds, as gcsim's cloud does (pkg/reactable/lunarcharged.go 69).
+const BIRGITTA_A1_DELAY_SECONDS = toKitSeconds(38);
+const BIRGITTA_A1_MULTIPLIER = 0.65;
+const BIRGITTA_A1_RADIUS = 4;
+const BIRGITTA_LUNAR_CHARGED_ID = "ineffa-lunar-charged";
+const BIRGITTA_LUNAR_CHARGED_SECONDS = toKitSeconds(5.5 * 60);
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa and
 // The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim (MIT, main) ineffa/asc.go gives it.
 // The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
@@ -158,6 +171,17 @@ export const createIneffaKitBehaviour = ({
         secondsRemaining: shieldSeconds,
       }),
     );
+  // Birgitta's Ascension 1 hit, priced as her discharges are, which reaches the primary target's circle
+  const birgittaA1Hit: KitHit = {
+    defenseIgnored: 1,
+    element: Element.Electro,
+    hitArea: { ...burstHit.hitArea, radius: BIRGITTA_A1_RADIUS },
+    hitmarkSeconds: 0,
+    lunarHit: { lunarReactionType: LunarReactionType.LunarCharged },
+    poiseDamage: 0,
+    talentMultiplier: BIRGITTA_A1_MULTIPLIER,
+  };
+  const birgittaA1Hitbox: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: BIRGITTA_A1_RADIUS } };
   // The Punishment Edit, a Lunar-Charged hit on the mark's enemy at the burst's area's height, its radius 6
   const punishmentEditHit: KitHit = {
     element: Element.Electro,
@@ -201,11 +225,26 @@ export const createIneffaKitBehaviour = ({
   ): void => {
     for (const effect of kitEffectState.effects)
       if (effect.kind === "summon" && effect.id === BIRGITTA_ID) effect.secondsRemaining = 0;
-    castKitSummon(kitEffectState, body, combatant, discharges, {
+    const summon = castKitSummon(kitEffectState, body, combatant, discharges, {
       id: BIRGITTA_ID,
       secondsRemaining: spawnSeconds + birgittaSeconds,
       spawnSeconds,
     });
+    if (combatant.ascension < ASCENSION_1) return;
+    // Each discharge asks at its own time whether a Lunar-Charged reaction holds, as gcsim's discharge does, and queues the
+    // Hit 38 frames on while Birgitta still stands: a recast ends her, and the discharges she had left with her
+    for (const { hitmarkSeconds } of discharges)
+      scheduleKitTask(kitEffectState, combatant.characterId, hitmarkSeconds, (tickContext) => {
+        if (
+          summon.secondsRemaining <= 0 ||
+          !checkIsKitStatusActive(tickContext.kitEffectState.effects, combatant.characterId, BIRGITTA_LUNAR_CHARGED_ID)
+        )
+          return;
+        scheduleKitTask(tickContext.kitEffectState, combatant.characterId, BIRGITTA_A1_DELAY_SECONDS, (hitContext) => {
+          if (hitContext.primaryTarget)
+            queueKitPassiveHit(hitContext, combatant, birgittaA1Hit, hitContext.primaryTarget, birgittaA1Hitbox);
+        });
+      });
   };
   return {
     burst: {
@@ -253,6 +292,15 @@ export const createIneffaKitBehaviour = ({
           ![...context.enemyMap.values()].some((enemy) => hasPunishmentEdit(enemy))
         )
           markPunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
+      // A Lunar-Charged reaction of the party holds the window Birgitta's discharges read, for 5.5 seconds from it
+      if (
+        event.kind === KitEventKind.ReactionTriggered &&
+        event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarCharged)
+      )
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: BIRGITTA_LUNAR_CHARGED_ID,
+          secondsRemaining: BIRGITTA_LUNAR_CHARGED_SECONDS,
+        });
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         combatant.constellationCount < CONSTELLATION_4 ||
