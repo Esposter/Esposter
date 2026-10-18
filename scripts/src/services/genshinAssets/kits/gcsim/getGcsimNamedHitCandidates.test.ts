@@ -68,6 +68,15 @@ describe(getGcsimNamedHitCandidates, () => {
     talentMultiplierMap: {},
     weaponType: WeaponType.Bow,
   };
+  // The Lunar reaction a named hit of the burst's literal gets, its literal's attack tag set to the one given
+  const readLunarReaction = (attackTag: string) =>
+    getNamedHitKitCandidates(
+      multiplierMap(BURST_PROUD_SKILL_GROUP_ID),
+      getGcsimNamedHitCandidates(
+        { ...gcsim, attacks: [{ ...gcsim.attacks[0], attackTag, fieldLineMap: { AttackTag: 9, Element: 11 } }] },
+        tables,
+      ),
+    ).get("hits.fieryRainArrows.0.lunarReactionType");
 
   test("joins a named hit's multiplier to the one literal of its talent variable, and to none for another group", () => {
     expect.hasAssertions();
@@ -86,6 +95,15 @@ describe(getGcsimNamedHitCandidates, () => {
       { index: 0, proudSkillGroupId: BURST_PROUD_SKILL_GROUP_ID },
     ]);
     expect(getNamedHitKitCandidates(multiplierMap(0), namedHitCandidateMap).size).toBe(0);
+  });
+
+  test("gives a named hit the Lunar reaction its literal's attack tag names, from the tag's line, and none for another tag", () => {
+    expect.hasAssertions();
+
+    expect(readLunarReaction("attacks.AttackTagDirectLunarCharged")).toStrictEqual([
+      { provenance: { file: "internal/characters/amber/burst.go", line: 9, source: "Gcsim" }, value: "LunarCharged" },
+    ]);
+    expect(readLunarReaction("attacks.AttackTagElementalBurst")).toBeUndefined();
   });
 
   test("takes a named list's calls in the order they land, whatever order the source calls them in", () => {
