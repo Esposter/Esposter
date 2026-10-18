@@ -15,6 +15,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHeizouKitBehaviour, HEIZOU_CHARACTER_ID } from "#src/services/kit/characters/heizouKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -133,5 +134,50 @@ describe(createHeizouKitBehaviour, () => {
       burstEnergyCost: HEIZOU_KIT.burstEnergyCost,
       skillCooldownSeconds: HEIZOU_KIT.skillCooldownSeconds,
     }).toStrictEqual({ burstCooldownSeconds: 12, burstEnergyCost: 40, skillCooldownSeconds: 10 });
+  });
+});
+
+describe("penetrative reasoning", () => {
+  const TEAMMATE_CHARACTER_ID = 1;
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHeizouCombatant(), ascension: 4 };
+    const context = createKitTestContext(combatant, {
+      party: createParty([HEIZOU_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+
+    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(context, {
+      body: context.body,
+      combatant,
+      hit: takeOne(HEIZOU_KIT.elementalSkill.hits),
+    });
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 80,
+        attribute: Attribute.ElementalMastery,
+        characterId: TEAMMATE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: "heizou-a4",
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHeizouCombatant(), ascension: 3 };
+    const context = createKitTestContext(combatant, {
+      party: createParty([HEIZOU_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+
+    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(context, {
+      body: context.body,
+      combatant,
+      hit: takeOne(HEIZOU_KIT.elementalSkill.hits),
+    });
+
+    expect(context.kitEffectState.effects).toStrictEqual([]);
   });
 });
