@@ -13,6 +13,9 @@ export interface KitStanceRecord {
   dash?: KitActionRecord;
   jump?: KitActionRecord;
   normalAttacks?: KitActionRecord[];
+  // The count the stance holds as it begins, which its dash and jump each drain by `drainPerAction`, and whose spending
+  // To none ends the stance, if it holds one
+  resource?: { drainPerAction: KitParameter; startingCount: KitParameter };
   skill?: KitActionRecord;
 }
 
@@ -23,5 +26,6 @@ export const kitStanceRecordSchema = z.strictObject({
   dash: kitActionRecordSchema.optional(),
   jump: kitActionRecordSchema.optional(),
   normalAttacks: z.array(kitActionRecordSchema).optional(),
+  resource: z.strictObject({ drainPerAction: kitParameterSchema, startingCount: kitParameterSchema }).optional(),
   skill: kitActionRecordSchema.optional(),
 }) satisfies z.ZodType<KitStanceRecord>;

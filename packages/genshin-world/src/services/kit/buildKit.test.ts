@@ -1,5 +1,8 @@
 import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
 import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitRecord } from "#src/models/kit/record/KitRecord";
@@ -8,7 +11,12 @@ import type { RequiredKeysOf } from "type-fest";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { KitTargeting } from "#src/models/kit/record/KitTargeting";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { buildKit } from "#src/services/kit/buildKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -218,5 +226,78 @@ describe(buildKit, () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: stances.dance, its behaviour names an action it plays as its kit does]`,
     );
+  });
+
+  describe("a stance's resource", () => {
+    const GLIDE_CHARACTER_ID = 1;
+    const GLIDE_STANCE = "glide";
+    // The stance of the record holding the resource given, entered on its character, with its effects and its own kit
+    const enterGlide = (resource: { drainPerAction: number; startingCount: number }) => {
+      const stances: KitStanceActions[] = [];
+      const record: KitRecord = {
+        ...RECORD,
+        stances: {
+          ...RECORD.stances,
+          [GLIDE_STANCE]: { dash: createActionRecord(), jump: createActionRecord([]), resource },
+        },
+      };
+      const kit = buildKit(record, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, ({ readStance }) => {
+        stances.push(readStance(GLIDE_STANCE));
+        return {};
+      });
+      const combatant: Combatant = {
+        ascension: 0,
+        attributes: computeCharacterAttributes([]),
+        characterId: GLIDE_CHARACTER_ID,
+        constellationCount: 0,
+        elementalResonances: [],
+        kit,
+        level: 90,
+      };
+      const kitEffectState: KitEffectState = { effects: [] };
+      enterKitStance(kitEffectState, combatant, takeOne(stances), 10);
+      return {
+        context: createKitTestContext(combatant, { kitEffectState }),
+        held: () => countKitResource(kitEffectState.effects, GLIDE_CHARACTER_ID, GLIDE_STANCE),
+        kitEffectState,
+        stanceKit: findKitStance(kitEffectState.effects, GLIDE_CHARACTER_ID)?.combatant.kit,
+      };
+    };
+
+    test("starts at its starting count, and its dash and jump spend it, refused where it cannot cover them", () => {
+      expect.hasAssertions();
+      const { context, held, kitEffectState, stanceKit } = enterGlide({ drainPerAction: 2, startingCount: 3 });
+      const started = held();
+      const canStartAtStart = [stanceKit?.dash?.canStart?.(context), stanceKit?.jump?.canStart?.(context)];
+      stanceKit?.dash?.onStart?.(context);
+      const canStartAfterDash = stanceKit?.jump?.canStart?.(context);
+
+      expect({
+        canStartAfterDash,
+        canStartAtStart,
+        held: held(),
+        secondsRemaining: findKitStance(kitEffectState.effects, GLIDE_CHARACTER_ID)?.secondsRemaining,
+        started,
+      }).toStrictEqual({
+        canStartAfterDash: false,
+        canStartAtStart: [true, true],
+        held: 1,
+        secondsRemaining: 10,
+        started: 3,
+      });
+    });
+
+    test("ends the stance as its dash or jump spends the resource to none", () => {
+      expect.hasAssertions();
+      const { context, held, kitEffectState, stanceKit } = enterGlide({ drainPerAction: 1, startingCount: 2 });
+      stanceKit?.dash?.onStart?.(context);
+      stanceKit?.jump?.onStart?.(context);
+
+      expect({
+        canStart: stanceKit?.dash?.canStart?.(context),
+        held: held(),
+        secondsRemaining: findKitStance(kitEffectState.effects, GLIDE_CHARACTER_ID)?.secondsRemaining,
+      }).toStrictEqual({ canStart: false, held: 0, secondsRemaining: 0 });
+    });
   });
 });
