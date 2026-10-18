@@ -25,3 +25,9 @@ export const WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK = 40;
 // Read from the wiki's list of the act and matched to the dump's main quest rows by title. Provisional: the dump leaves
 // The domain's own condition empty, so this gate is the wiki's reading until the game's condition is read
 export const STORMTERROR_INTRO_QUEST_IDS: readonly number[] = [388, 389, 390, 393, 394, 396, 397, 398];
+// The Adventure EXP a normal boss's Trounce Blossom pays at every World Level, from the wiki's Basic Drops tab, which the
+// Rank takes as the world's Adventure EXP does. Provisional until a recording measures it
+export const NORMAL_BOSS_ADVENTURE_EXP = 200;
+// The Companionship EXP each character of the deployed team gets from a normal boss's Trounce Blossom at each World
+// Level, World Level 0 first, from the same tab. World Level 9 repeats World Level 8's, provisional like the Mora
+export const NORMAL_BOSS_COMPANIONSHIP_EXP: number[] = [30, 30, 30, 35, 35, 40, 40, 45, 45, 45];
