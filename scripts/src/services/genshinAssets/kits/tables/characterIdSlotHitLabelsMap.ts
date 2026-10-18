@@ -144,6 +144,18 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Mika's avatar id, as his kit module names it. His Starfrost Swirl's ATK SPD bonus is his skill's label, and his
+  // Eagleplume's heal is his burst's, the share of Max HP first and the flat amount after
+  [
+    10_000_080,
+    {
+      values: {
+        "parameters.atkSpdBuff": { combatTalent: SKILL, label: "ATK SPD Bonus" },
+        "parameters.burstHealF": { combatTalent: BURST, label: "Eagleplume Healing", position: 1 },
+        "parameters.burstHealP": { combatTalent: BURST, label: "Eagleplume Healing", position: 0 },
+      },
+    },
+  ],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
   // From her skill's labels, the share of Max HP first and the flat amount after
   [
