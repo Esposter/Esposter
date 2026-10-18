@@ -13,7 +13,6 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelayedKitEnergy";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
