@@ -21,9 +21,9 @@ export const RESIDENT_DUEL_GAME_ID_MAP: ReadonlyMap<string, number> = new Map<st
 export const RESIDENT_WEEK_GAME_MAP: ReadonlyMap<string, ResidentWeekGame> = new Map<string, ResidentWeekGame>([
   ["9715", { gameId: 1103, gcgLevel: 5, luckyCoins: 900, playerExp: 200 }],
 ]);
-// The night spots the wiki's NPC pages give the residents outside Nod-Krai, each by its NPC id and placed as an estimate,
-// Provisional. No page is read for a position yet, since the wiki gives each NPC's location by name and no coordinates, so
-// The map is empty and no resident gains a night spot
+// The night spots of the residents outside Nod-Krai, each by its NPC id. The map fills from the PC's NPC placements export,
+// Which the wiki's NPC pages cannot stand in for: they give each NPC's location by name and no coordinates. Until that export
+// Is read, the map is empty and no resident gains a night spot
 export const RESIDENT_NIGHT_SPOT_MAP: ReadonlyMap<number, ResidentSpot> = new Map<number, ResidentSpot>();
 // The Reputation keepers, each by the building point the scene names its service with, and the NPC who keeps it. A keeper
 // Has no birth in the scene, so her place is her service's point, an estimate the residents carry as provisional: Mondstadt's
