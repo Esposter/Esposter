@@ -22,6 +22,11 @@ The audit's feature rows show the cost. Twenty requested features were marked ou
 
 The app's PDF behaviour stays as it is. The new package's README is its record.
 
+## Decisions owed
+
+- **Capability specs.** The package's observable behaviour, from loading and page drawing through overlays, forms, comments, XFDF and the watermarked download, has no capability spec, so `skip_specs` stays true and nothing checks it. Owed: name the capability specs the package gets, write their deltas, and set `skip_specs` to false. The proposal rule in `openspec/config.yaml` allows `skip_specs` only for tooling, refactor or docs changes.
+- **Size.** `tasks.md` is over the twelve-task limit of the same rule. Owed: split the change, or record here that the user accepted its size.
+
 ## Waiting on
 
 None.
