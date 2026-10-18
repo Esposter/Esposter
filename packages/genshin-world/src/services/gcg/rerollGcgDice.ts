@@ -3,7 +3,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
-import { rollGcgDice } from "#src/services/gcg/rollGcgDice";
+import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { takeOne } from "@esposter/shared";
 
@@ -14,11 +14,7 @@ export const rerollGcgDice = (duel: GcgDuel, sideIndex: number, diceIndices: num
   const side = takeOne(duel.sides, sideIndex);
   if (side.hasRolled) return GcgActionResult.WrongPhase;
   else if (!checkIsGcgIndexSelection(diceIndices, side.dice.length)) return GcgActionResult.Unavailable;
-  const rerolledFaces = rollGcgDice(diceIndices.length, duel.random);
-  side.dice = side.dice.map((face, index) => {
-    const position = diceIndices.indexOf(index);
-    return position === -1 ? face : takeOne(rerolledFaces, position);
-  });
+  rethrowGcgDice(side, diceIndices, duel.random);
   side.hasRolled = true;
   if (duel.sides.every((rolledSide) => rolledSide.hasRolled)) {
     duel.phase = GcgPhase.Action;

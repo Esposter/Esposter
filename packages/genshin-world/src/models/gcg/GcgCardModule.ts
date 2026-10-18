@@ -4,6 +4,7 @@ import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
+import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
@@ -37,7 +38,8 @@ export interface GcgCardModule {
   onSwirl?: (context: GcgEffectContext, zoneCard: GcgZoneCard, element: Element) => void;
   onSwitch?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   permanentAura?: Element;
-  play?: (context: GcgEffectContext, targetIndex: number | undefined) => void;
+  // The choice the duel screen gives the card as it is played, for a card that takes one (Toss-Up's dice to reroll)
+  play?: (context: GcgEffectContext, targetIndex: number | undefined, choice?: GcgPlayChoice) => void;
   reduceCost?: (
     context: GcgEffectContext,
     subject: GcgCostSubject,

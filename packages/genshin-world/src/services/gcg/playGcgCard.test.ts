@@ -1,0 +1,91 @@
+import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
+import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
+import type { GcgSideState } from "#src/models/gcg/GcgSideState";
+
+import { Element } from "#src/models/Element";
+import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { GcgAura } from "#src/models/gcg/GcgAura";
+import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+const EVENT_ID = 332_003;
+
+const createSide = (): GcgSideState => ({
+  activeIndex: 0,
+  cards: [
+    {
+      costs: [],
+      descriptionTextId: 2,
+      effects: [],
+      id: EVENT_ID,
+      isLocation: false,
+      kind: GcgCardKind.Event,
+      nameTextId: 1,
+    },
+  ],
+  characters: [
+    {
+      aura: GcgAura.None,
+      character: {
+        descriptionTextId: 2,
+        element: Element.Hydro,
+        hp: 10,
+        id: 1,
+        maxEnergy: 3,
+        nameTextId: 1,
+        skills: [],
+        weapon: "",
+      },
+      energy: 0,
+      equipments: [],
+      hp: 10,
+      isFrozen: false,
+      shield: 0,
+      statuses: [],
+    },
+  ],
+  deckCardIds: [EVENT_ID],
+  dice: [],
+  drawPile: [],
+  hand: [EVENT_ID],
+  hasDeclaredEnd: false,
+  hasPrepared: true,
+  hasRolled: true,
+  isReplacementPending: false,
+  onstages: [],
+  summons: [],
+  supports: [],
+  usedCardIds: [],
+  usedSkillIds: [],
+});
+
+const createDuel = (): GcgDuel => ({
+  actingSideIndex: 0,
+  firstSideIndex: 0,
+  nextFirstSideIndex: 0,
+  phase: GcgPhase.Action,
+  random: () => 0,
+  round: 1,
+  rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
+  sides: [createSide(), createSide()],
+});
+
+describe(playGcgCard, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("should hand the card's play the choice it is played with as its third argument", () => {
+    expect.hasAssertions();
+    const play = vi.fn<NonNullable<GcgCardModule["play"]>>();
+    vi.spyOn(GcgCardIdModuleMap, "get").mockReturnValue({ play });
+    const duel = createDuel();
+    const choice: GcgPlayChoice = { rerollDiceIndices: [[0], [2]] };
+    expect(playGcgCard(duel, 0, 0, undefined, [], choice)).toBe(GcgActionResult.Done);
+    expect(play.mock.calls).toStrictEqual([[{ duel, sideIndex: 0 }, undefined, choice]]);
+  });
+});
