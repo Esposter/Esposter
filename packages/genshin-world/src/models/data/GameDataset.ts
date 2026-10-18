@@ -59,6 +59,8 @@ export enum GameDataset {
   StatueLevels = "statueLevels",
   TalentLabels = "talentLabels",
   TalentMultipliers = "talentMultipliers",
+  Tips = "tips",
+  TipText = "tipText",
   TransPoints = "transPoints",
   Wildlife = "wildlife",
   Windrise = "windrise",

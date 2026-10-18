@@ -64,6 +64,7 @@ import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralA
 import { statsCommand } from "#src/services/genshinAssets/commands/statsCommand";
 import { statuesCommand } from "#src/services/genshinAssets/commands/statuesCommand";
 import { timingsCommand } from "#src/services/genshinAssets/commands/timingsCommand";
+import { tipsCommand } from "#src/services/genshinAssets/commands/tipsCommand";
 import { transPointsCommand } from "#src/services/genshinAssets/commands/transPointsCommand";
 import { treeCommand } from "#src/services/genshinAssets/commands/treeCommand";
 import { waypointsCommand } from "#src/services/genshinAssets/commands/waypointsCommand";
@@ -130,6 +131,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     home: homeCommand,
     achievements: achievementsCommand,
     archive: archiveCommand,
+    tips: tipsCommand,
     exploration: explorationCommand,
     puzzles: puzzlesCommand,
     gathering: gatheringCommand,

@@ -3,5 +3,7 @@
 export interface ExcelPushTipsRow {
   pushTipsId: number;
   pushTipsType: string;
+  subtitleTextMapHash: number;
   titleTextMapHash: number;
+  watcherId?: number;
 }
