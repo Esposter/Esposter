@@ -1,6 +1,6 @@
 ## Purpose
 
-Baizhu's kit as built, with his strikes, charged attack, plunges, Universal Diagnosis's first hit, and Holistic Revivification's seamless shield with its Spiritvein explosions, and what is left of his bounces, heals and passives.
+Baizhu's kit as built, with his strikes, charged attack, plunges, Universal Diagnosis's first hit, and Holistic Revivification's seamless shield with its Spiritvein explosions, with Five Fortunes Forever's Dendro DMG Bonus from Ascension 1, and what is left of his bounces, heals and passives.
 
 ## Requirements
 
@@ -56,3 +56,19 @@ Each of the five recasts of Holistic Revivification, every 146 frames from 223 f
 - **GIVEN** Holistic Revivification has been recast five times
 - **WHEN** the next recast time passes
 - **THEN** no further recast occurs
+
+### Requirement: Baizhu's Dendro hits deal more DMG while the field is healthy from Ascension 1
+
+From Ascension 1, each Dendro hit of Baizhu's SHALL deal 25% more DMG while the character on the field is at half their HP or more.
+
+#### Scenario: A healthy character on the field raises his Dendro DMG
+
+- **GIVEN** Baizhu has reached Ascension 1 and the character on the field is at half their HP or more
+- **WHEN** a Dendro hit of his strikes
+- **THEN** it takes a 25% DMG Bonus
+
+#### Scenario: A hurt character on the field gives nothing
+
+- **GIVEN** Baizhu has reached Ascension 1 and the character on the field is below half their HP
+- **WHEN** a Dendro hit of his strikes
+- **THEN** it takes no bonus from Five Fortunes Forever
