@@ -2,7 +2,13 @@ import { sumLunarContributions } from "#src/services/combat/damage/sumLunarContr
 import { describe, expect, test } from "vitest";
 
 describe(sumLunarContributions, () => {
-  test("weights the largest contribution 0.6, the next 0.3, the two after 0.05 and a fifth nothing", () => {
+  test("a Glimmer reaction weights its four highest contributors", () => {
+    expect.hasAssertions();
+
+    expect(sumLunarContributions([1, 4, 2, 3])).toBeCloseTo(4 * 0.6 + 3 * 0.3 + 2 * 0.05 + 1 * 0.05);
+  });
+
+  test("a Glimmer reaction with a lower contributor is not counted", () => {
     expect.hasAssertions();
 
     expect(sumLunarContributions([1, 4, 2, 3, 5])).toBeCloseTo(5 * 0.6 + 4 * 0.3 + 3 * 0.05 + 2 * 0.05);

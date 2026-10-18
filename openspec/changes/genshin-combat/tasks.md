@@ -1,6 +1,6 @@
 ## 1. Glimmer formula
 
-- [ ] 1.1 Weight the four highest contributors of a Glimmer reaction at 0.6, 0.3, 0.05 and 0.05. Verify: tests named after the scenarios 'a Glimmer reaction weights its four highest contributors' and 'a Glimmer reaction with a lower contributor is not counted', seen failing first.
+- [x] 1.1 Weight the four highest contributors of a Glimmer reaction at 0.6, 0.3, 0.05 and 0.05. Verify: tests named after the scenarios 'a Glimmer reaction weights its four highest contributors' and 'a Glimmer reaction with a lower contributor is not counted', seen failing first.
 
 ## 2. Stellar reactions
 
