@@ -1,6 +1,7 @@
 import type { InputState } from "#src/models/input/InputState";
 
 import {
+  FOLLOW_CAMERA_CLEARANCE,
   FOLLOW_CAMERA_DEFAULT_SETTINGS,
   FOLLOW_CAMERA_EASE_OUT_SPEED,
   FOLLOW_CAMERA_MAX_PITCH,
@@ -105,7 +106,7 @@ describe(createFollowCamera, () => {
     expect(camera.position.y).toBeCloseTo(PIVOT_HEIGHT - Math.sin(FOLLOW_CAMERA_MAX_PITCH) * DEFAULT_DISTANCE);
   });
 
-  test("keeps its eye the minimum distance from the pivot when the ground stands under the arm", () => {
+  test("drops its eye to the ground's clearance rather than the minimum distance when the ground stands under the arm", () => {
     expect.hasAssertions();
 
     const camera = new PerspectiveCamera();
@@ -119,7 +120,10 @@ describe(createFollowCamera, () => {
     followCamera.look({ ...STILL_INPUT, lookPitch: LOOK_PAST_LIMIT }, 0);
     followCamera.follow(pivot, new Vector3(), FRAME_SECONDS);
 
-    expect(camera.position.distanceTo(pivot)).toBeCloseTo(FOLLOW_CAMERA_MIN_DISTANCE);
+    expect({
+      isAboveGround: camera.position.y >= FOLLOW_CAMERA_CLEARANCE,
+      isNearerThanMinimum: camera.position.distanceTo(pivot) < FOLLOW_CAMERA_MIN_DISTANCE,
+    }).toStrictEqual({ isAboveGround: true, isNearerThanMinimum: true });
   });
 
   test("starts level, whatever pose the camera it takes over was looking at", () => {

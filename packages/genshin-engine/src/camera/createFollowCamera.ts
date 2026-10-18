@@ -61,8 +61,9 @@ export const createFollowCamera = ({
     follow: (pivot, origin, frameSeconds) => {
       armDirection.set(Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
       const landmarkReach = landmarkCollider.castSphere(pivot, armDirection, distance, FOLLOW_CAMERA_CLEARANCE);
-      // The eye is never pushed in under the minimum distance, so the arm cannot collapse onto the pivot's body or the feet
-      const reach = Math.max(FOLLOW_CAMERA_MIN_DISTANCE, computeGroundReach(pivot, landmarkReach));
+      // A landmark never pulls the eye in under the minimum distance, so it cannot collapse the arm onto the body. The
+      // Ground or the water's surface under the arm wins over that minimum, so the eye stays above it, even at the pivot
+      const reach = computeGroundReach(pivot, Math.max(FOLLOW_CAMERA_MIN_DISTANCE, landmarkReach));
       armLength = reach < armLength ? reach : Math.min(reach, armLength + FOLLOW_CAMERA_EASE_OUT_SPEED * frameSeconds);
       camera.position.copy(pivot).addScaledVector(armDirection, armLength).sub(origin);
     },
