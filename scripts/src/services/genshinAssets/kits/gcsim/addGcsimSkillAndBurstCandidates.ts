@@ -3,6 +3,7 @@ import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcs
 
 import {
   GCSIM_BURST_ATTACK_TAGS,
+  GCSIM_QUEUED_BURST_ABILITIES,
   GCSIM_SKILL_ATTACK_TAGS,
   GCSIM_SKILL_PRESS_HITBOX_NAMES,
 } from "#src/services/genshinAssets/kits/constants";
@@ -13,6 +14,7 @@ import { findGcsimVariableHitbox } from "#src/services/genshinAssets/kits/gcsim/
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
+import { posix } from "node:path";
 import { takeOne } from "@esposter/shared";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
@@ -78,7 +80,12 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     };
     const hitboxes = config.abilityHitboxesMap.get(slot) ?? [];
     const isHitboxJoined = hitboxes.length === hitmarkValues.length;
-    add(`${slot}.hits.length`, hitmarkValues.length, toFile(hitmarks.file), hitmarks.line);
+    // The queued hits past the hitmarks, which a character's burst fires as its last hits: Wriothesley's Surging Blade
+    const queuedBurstAbility =
+      slot === "burst" ? GCSIM_QUEUED_BURST_ABILITIES[posix.basename(gcsim.folder)] : undefined;
+    const queuedBurstHits =
+      queuedBurstAbility === undefined ? [] : queuedHits.filter(({ attack }) => attack.abil === queuedBurstAbility);
+    add(`${slot}.hits.length`, hitmarkValues.length + queuedBurstHits.length, toFile(hitmarks.file), hitmarks.line);
     for (const [hitIndex, hitmark] of hitmarkValues.entries()) {
       const queuedHit = readQueuedHit(hitmark);
       // A hit whose leaves are joined by place takes the slot's attack, unless its queue call fires an iteration's own
@@ -109,6 +116,19 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
             value: getGcsimLandingFrames(travelMap, hitmarks.name, hitmark),
           },
           talentLeaf,
+        },
+        SKILL_TARGETING_AREA,
+      );
+    }
+    for (const [queuedIndex, queuedHit] of queuedBurstHits.entries()) {
+      const talentLeaves = config.talentVariables.find(({ name }) => name === queuedHit.attack.talentVariable)?.leaves;
+      addHit(
+        `${slot}.hits.${hitmarkValues.length + queuedIndex}`,
+        {
+          areaHitbox: queuedHit.hitbox,
+          attack: queuedHit.attack,
+          hitmark: { file: queuedHit.file, line: queuedHit.line, value: queuedHit.delay },
+          talentLeaf: talentLeaves?.length === 1 ? talentLeaves[0] : undefined,
         },
         SKILL_TARGETING_AREA,
       );

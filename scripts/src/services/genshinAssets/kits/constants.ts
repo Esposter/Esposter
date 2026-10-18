@@ -44,6 +44,9 @@ export const GCSIM_SKILL_ATTACK_TAGS: readonly string[] = [
   "attacks.AttackTagElementalArtHold",
 ];
 export const GCSIM_BURST_ATTACK_TAGS: readonly string[] = ["attacks.AttackTagElementalBurst"];
+// The burst's queued hit past its hitmarks, by the character's folder: Wriothesley's Surging Blade, which gcsim queues 160
+// Frames into the burst, after its own hits, as the burst's last hit in the record
+export const GCSIM_QUEUED_BURST_ABILITIES: Partial<Record<string, string>> = { wriothesley: "Surging Blade" };
 export const GCSIM_PHYSICAL_ELEMENT = "attributes.Physical";
 // The gauge a hit applies is its durability over 25, gcsim's units to the game's
 export const GCSIM_DURABILITY_PER_GAUGE = 25;
