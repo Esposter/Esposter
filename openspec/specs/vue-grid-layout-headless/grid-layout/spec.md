@@ -44,7 +44,7 @@ The package SHALL keep every item within the grid's columns and compact the layo
 
 - **GIVEN** two items in one row that a sideways compaction pushes past the last column
 - **WHEN** the layout is placed
-- **THEN** the pushed item moves down a row and ends at the grid's right edge
+- **THEN** the pushed item moves down a row and then as far left as the row allows
 
 ### Requirement: A collision pushes, swaps or refuses
 

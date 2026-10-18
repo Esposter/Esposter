@@ -68,21 +68,40 @@ describe(compactLayout, () => {
     ]);
   });
 
-  test("a horizontal push past the last column moves the item down a row", () => {
+  test("a horizontal push past the last column moves the item down a row and back along it", () => {
+    expect.hasAssertions();
+
+    const layout = compactLayout(
+      [
+        { h: 1, id: "a", w: 3, x: 0, y: 0 },
+        { h: 1, id: "b", w: 2, x: 0, y: 0 },
+      ],
+      columnNumber,
+      CompactType.Horizontal,
+    );
+
+    expect(layout).toStrictEqual([
+      { h: 1, id: "a", w: 3, x: 0, y: 0 },
+      { h: 1, id: "b", w: 2, x: 0, y: 1 },
+    ]);
+    expect(compactLayout(layout, columnNumber, CompactType.Horizontal)).toStrictEqual(layout);
+  });
+
+  test("two items on one cell keep their input order, the earlier keeping the cell", () => {
     expect.hasAssertions();
 
     expect(
       compactLayout(
         [
-          { h: 1, id: "a", w: 3, x: 0, y: 0 },
-          { h: 1, id: "b", w: 2, x: 0, y: 0 },
+          { h: 1, id: "a", w: 1, x: 0, y: 0 },
+          { h: 1, id: "b", w: 1, x: 0, y: 0 },
         ],
         columnNumber,
-        CompactType.Horizontal,
+        CompactType.Vertical,
       ),
     ).toStrictEqual([
-      { h: 1, id: "a", w: 3, x: 0, y: 0 },
-      { h: 1, id: "b", w: 2, x: 2, y: 1 },
+      { h: 1, id: "a", w: 1, x: 0, y: 0 },
+      { h: 1, id: "b", w: 1, x: 0, y: 1 },
     ]);
   });
 });
