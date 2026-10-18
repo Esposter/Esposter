@@ -19,7 +19,7 @@ flowchart TD
   B -->|"pointercancel"| J["Gesture and preview discarded"]
 ```
 
-**Placement is pure.** Everything under `apps/web/app/services/dashboard/grid/` takes a layout and returns a new one: column and row pitch, cell position and size from a span, span from pixels, bounds correction, collision and the push that moves a visual aside, vertical compaction, and the cell a gesture lands on. A visual pushed aside is moved down by the visual it lands on, and a visual the moved one has passed over by more than a quarter of its height stays where it is.
+**Placement is pure.** Everything under `packages/vue-grid-layout-headless/src/placement/` takes a layout and returns a new one: column and row pitch, cell position and size from a span, span from pixels, bounds correction, collision and the push that moves a visual aside, vertical compaction, and the cell a gesture lands on. A visual pushed aside is moved down by the visual it lands on, and a visual the moved one has passed over by more than a quarter of its height stays where it is.
 
 **Breakpoints are published only.** The published view picks a column count from its width, 12 at 1200 pixels and above down to 2 below 480, and reflows its visuals with it. The editor always has the full 12 columns and saves what the user sets.
 
@@ -99,18 +99,18 @@ The library this grid replaced is `qmhc/grid-layout-plus`. Its tracker holds fif
 
 ## Key files
 
-| File                                                     | Role                                                                       |
-| -------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `apps/web/app/components/Dashboard/Grid.vue`             | The gesture grid: pointer events, the preview, the placeholder, one commit |
-| `apps/web/app/services/dashboard/grid/moveItem.ts`       | Places a dropped visual and pushes the visuals it lands on below it        |
-| `apps/web/app/services/dashboard/grid/compactLayout.ts`  | Moves every visual up until blocked, then down until clear                 |
-| `apps/web/app/services/dashboard/grid/fitLayout.ts`      | Fits a saved layout to a column count, then compacts it                    |
-| `apps/web/app/services/dashboard/grid/getGestureCell.ts` | Turns a pointer offset into the whole cells a move or resize lands on      |
-| `apps/web/app/services/dashboard/constants.ts`           | Column counts, row heights, the grid margin, the breakpoints               |
-| `apps/web/shared/models/dashboard/data/LayoutItem.ts`    | The placement schema: `x`, `y`, `w` and `h` as cells                       |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`   | The editor binding: twelve columns, one store write per commit             |
-| `apps/web/app/components/Dashboard/Index.vue`            | The published view: breakpoint columns, nothing saved                      |
-| `apps/web/app/components/Resource/Dashboard/Editor.vue`  | The autosave that the store write feeds                                    |
+| File                                                                | Role                                                                       |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `apps/web/app/components/Dashboard/Grid.vue`                        | The gesture grid: pointer events, the preview, the placeholder, one commit |
+| `packages/vue-grid-layout-headless/src/placement/moveItem.ts`       | Places a dropped visual and pushes the visuals it lands on below it        |
+| `packages/vue-grid-layout-headless/src/placement/compactLayout.ts`  | Moves every visual up until blocked, then down until clear                 |
+| `packages/vue-grid-layout-headless/src/placement/fitLayout.ts`      | Fits a saved layout to a column count, then compacts it                    |
+| `packages/vue-grid-layout-headless/src/placement/getGestureCell.ts` | Turns a pointer offset into the whole cells a move or resize lands on      |
+| `apps/web/app/services/dashboard/constants.ts`                      | Column counts, row heights, the grid margin, the breakpoints               |
+| `apps/web/shared/models/dashboard/data/LayoutItem.ts`               | The placement schema: `x`, `y`, `w` and `h` as cells                       |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`              | The editor binding: twelve columns, one store write per commit             |
+| `apps/web/app/components/Dashboard/Index.vue`                       | The published view: breakpoint columns, nothing saved                      |
+| `apps/web/app/components/Resource/Dashboard/Editor.vue`             | The autosave that the store write feeds                                    |
 
 ## Sources
 
