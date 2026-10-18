@@ -24,8 +24,8 @@ describe(drawFishingPointFish, () => {
     expect.hasAssertions();
 
     const regionPools = {
-      [REGION]: [createPool(FIRST_FISH_ID), createPool(SECOND_FISH_ID)],
       [OTHER_REGION]: [createPool(OTHER_FISH_ID)],
+      [REGION]: [createPool(FIRST_FISH_ID), createPool(SECOND_FISH_ID)],
     };
 
     expect(drawFishingPointFish(regionPools, REGION, HOUR, FIRST_ROLL)).toBe(FIRST_FISH_ID);

@@ -13,7 +13,7 @@ export const inviteHomeCompanion = (
     ownedCharacterIds,
     progress,
   }: { levels: HomeTrustLevel[]; ownedCharacterIds: number[]; progress: HomeProgress },
-): undefined | HomeProgress => {
+): HomeProgress | undefined => {
   const trustRank = computeHomeTrustRank(progress.trustExp, levels);
   const npcCount = levels.find(({ level }) => level === trustRank)?.npcCount ?? 0;
   if (
