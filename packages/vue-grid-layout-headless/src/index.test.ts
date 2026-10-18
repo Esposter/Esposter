@@ -11,7 +11,7 @@ describe("vue-grid-layout-headless", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 9.38 KB (9601 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 9.31 KB (9530 bytes)"`);
   });
 
   test("types size", () => {

@@ -153,9 +153,10 @@ export const useGridLayout = <T extends GridItem>(
     const offset = { x: point.x - left - padding, y: point.y - top - padding };
     const columnIndex = Math.floor(offset.x / columnPitch.value);
     const rowIndex = Math.floor(offset.y / rowPitch.value);
-    const x = Math.min(Math.max(columnIndex, 0), getOptions().columnNumber - item.w);
     const y = Math.max(0, rowIndex);
-    const cell = takeOne(correctBounds([{ h: item.h, id: item.id, w: item.w, x, y }], getOptions().columnNumber));
+    const cell = takeOne(
+      correctBounds([{ h: item.h, id: item.id, w: item.w, x: columnIndex, y }], getOptions().columnNumber),
+    );
     const isRefused =
       getOptions().collision === CollisionMode.Prevent && layout.value.some((other) => checkIsColliding(cell, other));
     if (isRefused) return false;
