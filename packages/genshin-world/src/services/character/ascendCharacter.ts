@@ -19,7 +19,7 @@ export const ascendCharacter = (
     phases,
     wallet,
   }: { adventureRank: number; inventory: Inventory; phases: CharacterAscensionPhase[]; wallet: Wallet },
-): { character: Character; inventory: Inventory; wallet: Wallet } | undefined => {
+): undefined | { character: Character; inventory: Inventory; wallet: Wallet } => {
   const nextPhase = getAscendableNextPhase(phases, character.ascension, character.level);
   if (
     nextPhase?.coinCost === undefined ||

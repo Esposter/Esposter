@@ -140,10 +140,10 @@ onBeforeUnmount(() => {
         <MenuGlyph :glyph="{ ...MenuFrameGlyphMap[icon], x: 0, y: 0 }" />
       </GameButton>
       <GameButton
+        ref="quitGameButton"
         class="side-entry"
         :kind="GameButtonKind.Disc"
         :style="getMenuGlyphStyle(MenuFrameGlyphMap[MenuFrameIcon.Quit])"
-        ref="quitGameButton"
         :tip="gameText[GameTextKey.QuitGame]"
         @click="isExitPrompted = true"
       >

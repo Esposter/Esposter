@@ -19,7 +19,7 @@ export const grantRewardItems = (
   rewards: ItemCount[],
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
-): { inventory: Inventory; wallet: Wallet } | undefined => {
+): undefined | { inventory: Inventory; wallet: Wallet } => {
   let grantedInventory = inventory;
   let moraCount = 0;
   for (const { count, id } of rewards)

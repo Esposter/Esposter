@@ -1,8 +1,7 @@
 import type { EnemyCamp } from "genshin-world";
 
-import { describe, expect, test } from "vitest";
-
 import { replaceEnemyCamps } from "#src/services/genshinAssets/camps/replaceEnemyCamps";
+import { describe, expect, test } from "vitest";
 
 describe("replaceEnemyCamps", () => {
   test("the stand-in camp in mondstadt is replaced", () => {

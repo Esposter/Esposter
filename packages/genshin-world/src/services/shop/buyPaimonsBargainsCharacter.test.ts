@@ -5,11 +5,11 @@ import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotati
 import { BodyType } from "#src/models/character/BodyType";
 import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { WeaponType } from "#src/models/weapon/WeaponType";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargainsCharacter";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
-import { WeaponType } from "#src/models/weapon/WeaponType";
 import { describe, expect, test } from "vitest";
 
 // A character's data as the tables hold it, with the rest of its fields left empty since a purchase reads only its weapon

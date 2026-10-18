@@ -16,6 +16,7 @@ import { craftingCommand } from "#src/services/genshinAssets/commands/craftingCo
 import { domainLevelsCommand } from "#src/services/genshinAssets/commands/domainLevelsCommand";
 import { domainsCommand } from "#src/services/genshinAssets/commands/domainsCommand";
 import { enemiesCommand } from "#src/services/genshinAssets/commands/enemiesCommand";
+import { enemyCampsCommand } from "#src/services/genshinAssets/commands/enemyCampsCommand";
 import { expeditionsCommand } from "#src/services/genshinAssets/commands/expeditionsCommand";
 import { explorationCommand } from "#src/services/genshinAssets/commands/explorationCommand";
 import { extractCommand } from "#src/services/genshinAssets/commands/extractCommand";
@@ -40,7 +41,6 @@ import { musicCommand } from "#src/services/genshinAssets/commands/musicCommand"
 import { namecardsCommand } from "#src/services/genshinAssets/commands/namecardsCommand";
 import { oculiCommand } from "#src/services/genshinAssets/commands/oculiCommand";
 import { offeringsCommand } from "#src/services/genshinAssets/commands/offeringsCommand";
-import { enemyCampsCommand } from "#src/services/genshinAssets/commands/enemyCampsCommand";
 import { outcropPlacesCommand } from "#src/services/genshinAssets/commands/outcropPlacesCommand";
 import { paletteCommand } from "#src/services/genshinAssets/commands/paletteCommand";
 import { playlistCommand } from "#src/services/genshinAssets/commands/playlistCommand";

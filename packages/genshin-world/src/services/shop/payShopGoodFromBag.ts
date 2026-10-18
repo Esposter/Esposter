@@ -12,7 +12,7 @@ import { recordShopPurchase } from "#src/services/shop/recordShopPurchase";
 export const payShopGoodFromBag = (
   inventory: Inventory,
   purchases: ShopPurchase[],
-  good: ShopGoodLimit & Pick<ShopGood, "priceCount" | "priceItemId">,
+  good: Pick<ShopGood, "priceCount" | "priceItemId"> & ShopGoodLimit,
   now: Temporal.Instant,
 ): undefined | { inventory: Inventory; purchases: ShopPurchase[] } => {
   if (

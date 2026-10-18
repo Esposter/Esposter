@@ -1,7 +1,7 @@
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 import type { ParticleDrop } from "#src/models/party/ParticleDrop";
 import type { Party } from "#src/models/party/Party";
-import type { Reaction } from "#src/models/combat/Reaction";
 
 import { Element } from "#src/models/Element";
 import { ParticleSource } from "#src/models/party/ParticleSource";

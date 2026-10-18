@@ -39,8 +39,8 @@ const emit = defineEmits<{ quit: []; toggleWorldLevel: [] }>();
        World does not have yet under its title, every one closing back to the world -->
   <MenuPaimon
     v-if="screenKind === ScreenKind.PaimonMenu"
-    :account-avatar-url="accountAvatarUrl"
-    :account-name="accountName"
+    :account-avatar-url
+    :account-name
     :adventure-exp-progress
     :adventure-rank
     :check-is-built="(titledScreenKind) => Boolean(slots[titledScreenKind])"

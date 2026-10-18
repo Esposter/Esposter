@@ -6,8 +6,8 @@ import type { ResinClaim } from "#src/models/originalResin/ResinClaim";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { drawNormalBossReward } from "#src/services/bosses/drawNormalBossReward";
-import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
+import { claimResinReward } from "#src/services/originalResin/claimResinReward";
 
 // A claim at a normal boss's Trounce Blossom: the boss's price in Original Resin, and the reward its World Level and its
 // Own drop draw. Undefined where the resin or the bag cannot pay it, as any resin claim is refused

@@ -42,8 +42,8 @@ export enum GameTextKey {
   AttributeBaseAttack = "FIGHT_PROP_BASE_ATTACK",
   AttributeBaseDefense = "FIGHT_PROP_BASE_DEFENSE",
   AttributeBaseHealth = "FIGHT_PROP_BASE_HP",
-  AttributeCriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   AttributeCooldownReduction = "FIGHT_PROP_SKILL_CD_MINUS_RATIO",
+  AttributeCriticalDamage = "FIGHT_PROP_CRITICAL_HURT",
   AttributeCriticalRate = "FIGHT_PROP_CRITICAL",
   AttributeCryoDamageBonus = "FIGHT_PROP_ICE_ADD_HURT",
   AttributeCryoResistance = "FIGHT_PROP_ICE_SUB_HURT",
@@ -130,8 +130,6 @@ export enum GameTextKey {
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
-  // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
-  ProcessingStart = "1809596508",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
@@ -360,8 +358,8 @@ export enum GameTextKey {
   // The Luxurious Chest, the kind the wiki places in the most hidden spots, as the game names it
   LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
-
   Mail = "UI_PLAYER_PROFILE_MAIL",
+
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",
   MasterlessStardust = "3899400612",
@@ -408,18 +406,20 @@ export enum GameTextKey {
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
   Pinecone = "4200020428",
+  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
+  PlayerDefaultName = "Player_Default_Name",
   // The game over screen's title, once every member of the deployed team has fallen
   PlayerDieNone = "PlayerDieNone",
   // The prompt asking the player for the next member after a fall, in the game's words for a character to select
   PleaseSelectCharacter = "UI_ACTIVITY_WEEK_ACTIVE_UNSELECTED_TIPS",
-  // The name a new player's profile holds until the player sets one, shown by the Paimon menu's profile card
-  PlayerDefaultName = "Player_Default_Name",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
   PreciousChest = "3576739246",
   PressToOpen = "1860729186",
   Primogem = "2696654964",
+  // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
+  ProcessingStart = "1809596508",
   PyroSigil = "4277114300",
   Qingxin = "1573292356",
   QuenepaBerry = "2670149892",

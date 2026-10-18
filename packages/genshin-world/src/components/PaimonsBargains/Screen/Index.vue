@@ -31,6 +31,18 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { GameScreen, ShopScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
+// What buying one offer leaves in the player's hands and in the shop's record
+interface Bought {
+  characters: Character[];
+  inventory: Inventory;
+  purchases: ShopPurchase[];
+  wallet: Wallet;
+}
+
+// A good on offer with the currency it is paid in: a Fate the shop's dataset gives, or a character or weapon of the rotation
+type Offer =
+  | { good: PaimonsBargainsGood; kind: ShopOfferKind.Character | ShopOfferKind.Weapon; priceCurrency: Currency }
+  | { good: ShopGood; kind: ShopOfferKind.Fate; priceCurrency: Currency };
 interface Props {
   // The Adventure Rank the player has reached, which opens the Fates the shop sells from it
   adventureRank: number;
@@ -48,18 +60,6 @@ interface Props {
   rotation: PaimonsBargainsRotation;
   // The game's weapon table by weapon id, which each weapon on offer is named and defined from
   weaponDataMap: ReadonlyMap<number, WeaponData>;
-}
-
-// A good on offer with the currency it is paid in: a Fate the shop's dataset gives, or a character or weapon of the rotation
-type Offer =
-  | { good: ShopGood; kind: ShopOfferKind.Fate; priceCurrency: Currency }
-  | { good: PaimonsBargainsGood; kind: ShopOfferKind.Character | ShopOfferKind.Weapon; priceCurrency: Currency };
-// What buying one offer leaves in the player's hands and in the shop's record
-interface Bought {
-  characters: Character[];
-  inventory: Inventory;
-  purchases: ShopPurchase[];
-  wallet: Wallet;
 }
 
 const { adventureRank, characterDataMap, gameText, goods, materialDataMap, nameText, rotation, weaponDataMap } =

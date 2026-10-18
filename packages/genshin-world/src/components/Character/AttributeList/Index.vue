@@ -14,16 +14,16 @@ interface Props {
   character: Character;
   // The game's words in the reader's language
   gameText: GameText;
+  // Whether the character can be raised a level with its Character EXP materials now
+  isLevelUpable?: boolean;
+  // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
+  isLiftable?: boolean;
   // The party's stamina, which the tab shows with every character's own attributes
   maxStamina: number;
   // The character's name in the reader's language, which the panel's top names it by
   name: string;
   // The game's tables the character's level cap and attributes are read from
   statTables: StatTables;
-  // Whether the character can be raised a level with its Character EXP materials now
-  isLevelUpable?: boolean;
-  // Whether the character sits at a cap a Masterless Stella Fortuna lifts, with the items to do it
-  isLiftable?: boolean;
   // The bonuses the Traveler holds from the elements it resonated with, given to the Traveler alone
   travelerBonusLines?: AttributeLine[];
 }

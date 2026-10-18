@@ -6,10 +6,10 @@ import { CharacterMenuTabs } from "#src/models/CharacterMenuTab";
 import { computed } from "vue";
 
 interface Props {
-  // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
-  elementMarkPath?: string;
   // The player's characters, across the screen's top in the order given
   characters: CharacterMenuEntry[];
+  // The element mark's path drawn at the name's left, the chosen character's element, none where it has none yet
+  elementMarkPath?: string;
   // Each tab's name in the reader's language
   tabLabels: Record<CharacterMenuTab, string>;
 }

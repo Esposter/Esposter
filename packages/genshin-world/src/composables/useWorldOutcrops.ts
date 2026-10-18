@@ -103,7 +103,7 @@ export const useWorldOutcrops = ({
   );
   // The claims F offers at a cleared outcrop's blossom, and the place they are offered at, none where the held resin
   // Affords none
-  const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; placeId: number } | undefined>(undefined);
+  const claimPrompt = shallowRef<undefined | { offers: BlossomClaimOffer[]; placeId: number }>(undefined);
   // An event moves the one outcrop it names, and the place the other kind holds is kept out of its move
   const applyEvent = (placeId: number, event: OutcropEvent) => {
     outcrops.value = outcrops.value.map((outcrop) =>

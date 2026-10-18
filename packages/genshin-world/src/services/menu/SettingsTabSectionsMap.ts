@@ -89,25 +89,6 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
       ],
     },
   ],
-  [Tab.KeyBindings]: [
-    {
-      headingKey: GameTextKey.SettingsKeyBindingActions,
-      rows: [
-        getKey(GameTextKey.MoveForward, "W"),
-        getKey(GameTextKey.MoveBackward, "S"),
-        getKey(GameTextKey.MoveLeft, "A"),
-        getKey(GameTextKey.MoveRight, "D"),
-        getKey(GameTextKey.SwitchToWalkRun, "Left Ctrl"),
-        getKey(GameTextKey.NormalAttack, "Left Click"),
-        getKey(GameTextKey.ElementalSkill, "E"),
-        getKey(GameTextKey.ElementalBurst, "Q"),
-        getKey(GameTextKey.Sprint, "Left Shift"),
-        getKey(GameTextKey.Sprint, "Right Click"),
-        getKey(GameTextKey.SwitchAimingMode, "R"),
-        getKey(GameTextKey.JumpOrMoveUpward, "Space"),
-      ],
-    },
-  ],
   [Tab.Graphics]: [
     {
       headingKey: GameTextKey.SettingsGraphicsTitle,
@@ -154,6 +135,25 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
         // Provisional: written alike in every language
         { getValue: () => "8x", kind: SettingsRowKind.Choice, labelKey: GameTextKey.SettingsAnisotropicFiltering },
         getChoice(GameTextKey.SettingsDynamicCharacterResolution, GameTextKey.SettingsOn),
+      ],
+    },
+  ],
+  [Tab.KeyBindings]: [
+    {
+      headingKey: GameTextKey.SettingsKeyBindingActions,
+      rows: [
+        getKey(GameTextKey.MoveForward, "W"),
+        getKey(GameTextKey.MoveBackward, "S"),
+        getKey(GameTextKey.MoveLeft, "A"),
+        getKey(GameTextKey.MoveRight, "D"),
+        getKey(GameTextKey.SwitchToWalkRun, "Left Ctrl"),
+        getKey(GameTextKey.NormalAttack, "Left Click"),
+        getKey(GameTextKey.ElementalSkill, "E"),
+        getKey(GameTextKey.ElementalBurst, "Q"),
+        getKey(GameTextKey.Sprint, "Left Shift"),
+        getKey(GameTextKey.Sprint, "Right Click"),
+        getKey(GameTextKey.SwitchAimingMode, "R"),
+        getKey(GameTextKey.JumpOrMoveUpward, "Space"),
       ],
     },
   ],

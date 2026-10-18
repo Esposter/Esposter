@@ -3,8 +3,8 @@ import type { CatalogueArea } from "#src/models/world/CatalogueArea";
 import type { Vector3 } from "three";
 
 import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED } from "#src/services/constants";
-import { checkIsInCity } from "#src/services/world/checkIsInCity";
 import { findAreaAt } from "#src/services/map/findAreaAt";
+import { checkIsInCity } from "#src/services/world/checkIsInCity";
 import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
 import { createSeededRandom, WeatherKind } from "genshin-engine";

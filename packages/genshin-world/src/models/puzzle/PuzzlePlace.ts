@@ -1,9 +1,9 @@
 import type { MonumentPlace } from "#src/models/puzzle/MonumentPlace";
+import type { SeeliePlace } from "#src/models/puzzle/SeeliePlace";
 import type { GroundPoint } from "genshin-engine";
 
 import { monumentPlaceSchema } from "#src/models/puzzle/MonumentPlace";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
-import type { SeeliePlace } from "#src/models/puzzle/SeeliePlace";
 import { seeliePlaceSchema } from "#src/models/puzzle/SeeliePlace";
 import { groundPointSchema } from "#src/models/world/groundPointSchema";
 import { z } from "zod";

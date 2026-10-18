@@ -13,8 +13,8 @@ describe(computeJumpLandmarkTextKey, () => {
     expect.hasAssertions();
 
     const waypoint: WaypointLandmark = {
-      arrival,
       areaId: "windrise",
+      arrival,
       heightOffset: 0,
       id: "",
       kind: LandmarkKind.TeleportWaypoint,

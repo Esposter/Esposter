@@ -19,6 +19,8 @@ import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
+import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import {
   IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER,
@@ -28,8 +30,6 @@ import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
-import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
-import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
 import { stepPartyElementalStates } from "#src/services/party/stepPartyElementalStates";
 import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
