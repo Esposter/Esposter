@@ -37,6 +37,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     burstVariant,
     chargedAttack,
     getChargedAttackStaminaMultiplier,
+    getNormalAttackSpeedBonus,
     getPassiveBonuses,
     getSkillChargeBonus,
     getSkillCooldownMultiplier,
@@ -53,6 +54,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     skillHolds = [],
   } = behaviour;
   if (getChargedAttackStaminaMultiplier) kit.getChargedAttackStaminaMultiplier = getChargedAttackStaminaMultiplier;
+  if (getNormalAttackSpeedBonus) kit.getNormalAttackSpeedBonus = getNormalAttackSpeedBonus;
   if (getPassiveBonuses) kit.getPassiveBonuses = getPassiveBonuses;
   if (getSkillChargeBonus) kit.getSkillChargeBonus = getSkillChargeBonus;
   if (getSkillCooldownMultiplier) kit.getSkillCooldownMultiplier = getSkillCooldownMultiplier;
