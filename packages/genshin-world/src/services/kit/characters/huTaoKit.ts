@@ -14,6 +14,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { healKitPerStrike } from "#src/services/kit/healKitPerStrike";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -43,17 +44,33 @@ const BLOOD_BLOSSOM_STATUS_ID = "hu-tao-blood-blossom";
 // The count of heals is a kit resource, which a cast's start clears.
 const SPIRIT_SOOTHER_HEAL_RESOURCE = "hu-tao-spirit-soother-heals";
 const SPIRIT_SOOTHER_MAXIMUM_HEALS = 5;
+// Constellation 4, as gcsim v2.47.2 (MIT) hutao/cons.go gives it: upon defeating an enemy Blood Blossom marked, each ally
+// Other than Hu Tao gains 12% CRIT Rate for 15 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_CRITICAL_RATE = 0.12;
+const CONSTELLATION_4_SECONDS = 15;
+const CONSTELLATION_4_SOURCE = "hu-tao-c4";
+// Constellation 6, as gcsim v2.47.2 hutao/cons.go gives it: once a drain leaves her at a quarter of her HP or under, her
+// CRIT Rate is 100% for 10 seconds, and it comes once in 60 seconds
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_HEALTH_SHARE = 0.25;
+const CONSTELLATION_6_CRITICAL_RATE = 1;
+const CONSTELLATION_6_SECONDS = 10;
+const CONSTELLATION_6_COOLDOWN_SECONDS = 60;
+const CONSTELLATION_6_COOLDOWN_STATUS_ID = "hu-tao-c6-cooldown";
+const CONSTELLATION_6_SOURCE = "hu-tao-c6";
 
 export const HU_TAO_CHARACTER_ID = 10_000_046;
 
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
-// Under. Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By and Sanguine Rouge are built.
+// Under. Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By, Sanguine Rouge and the CRIT
+// Rate of Constellations 4 and 6 are built.
 // Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her
 // Constellation 2 needs Blood Blossom's DMG by 10% of her Max HP, and Spirit Soother applying it, not built
-// Constellation 4 needs the defeat of an enemy her Blood Blossom marked, which no kit event reports
-// Constellation 6 needs the lethal-strike check and the 10 seconds of RES, which the kit does not build
+// Constellation 6's revive to 1 HP from a lethal drain needs the drain to stop at 1 HP, which the party's drain does not, not built
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
@@ -134,6 +151,48 @@ export const createHuTaoKitBehaviour = ({
               secondsRemaining: FLUTTER_BY_SECONDS,
               source: FLUTTER_BY_SOURCE,
             });
+        return;
+      }
+      // Constellation 4: an enemy her Blood Blossom marked, defeated, gives each ally other than her CRIT Rate
+      if (event.kind === KitEventKind.EnemyDefeated) {
+        if (
+          combatant.constellationCount < CONSTELLATION_4 ||
+          !event.enemy.statuses.some(
+            ({ id, secondsRemaining }) => id === BLOOD_BLOSSOM_STATUS_ID && secondsRemaining > 0,
+          )
+        )
+          return;
+        for (const characterId of getDeployedCharacterIds(party))
+          if (characterId !== combatant.characterId)
+            buffKitMember(kitEffectState, characterId, {
+              amount: CONSTELLATION_4_CRITICAL_RATE,
+              attribute: Attribute.CriticalRate,
+              secondsRemaining: CONSTELLATION_4_SECONDS,
+              source: CONSTELLATION_4_SOURCE,
+            });
+        return;
+      }
+      // Constellation 6: a drain that leaves her at a quarter of her HP or under gives her CRIT Rate, once a minute
+      if (event.kind === KitEventKind.HealthChanged) {
+        if (
+          combatant.constellationCount < CONSTELLATION_6 ||
+          event.characterId !== combatant.characterId ||
+          event.healthShare >= 0 ||
+          getPartyMember(party, combatant.characterId).healthShare > CONSTELLATION_6_HEALTH_SHARE ||
+          !startKitCooldown(
+            kitEffectState,
+            combatant.characterId,
+            CONSTELLATION_6_COOLDOWN_STATUS_ID,
+            CONSTELLATION_6_COOLDOWN_SECONDS,
+          )
+        )
+          return;
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: CONSTELLATION_6_CRITICAL_RATE,
+          attribute: Attribute.CriticalRate,
+          secondsRemaining: CONSTELLATION_6_SECONDS,
+          source: CONSTELLATION_6_SOURCE,
+        });
         return;
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
