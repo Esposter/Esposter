@@ -766,6 +766,7 @@ const {
   openOutcropClaim,
   outcropCamps,
   outcropInteractables,
+  restoreOutcropClaim,
   touchOutcropsNear,
 } = useWorldOutcrops({
   adventureExp,
@@ -1231,11 +1232,14 @@ defineExpose({ jumpTo, readCameraPosition });
         <OfferChoice
           v-if="claimPrompt"
           :cancel-label="gameText[GameTextKey.Cancel]"
+          :can-restore="claimPrompt.canRestore"
           :condensed-label="gameText[GameTextKey.UseCondensedResin]"
           :offers="claimPrompt.offers"
           :original-label="gameText[GameTextKey.UseOriginalResin]"
+          :restore-label="gameText[GameTextKey.FragileResinRestore]"
           @choose="(offer) => chooseOutcropClaim(offer, getWorldNow(), worldLevel, kitContext.random)"
           @close="closeOutcropClaim"
+          @restore="restoreOutcropClaim(getWorldNow())"
         />
         <OfferChoice
           v-if="trounceClaimPrompt"
