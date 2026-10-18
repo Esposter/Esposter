@@ -1,7 +1,15 @@
+import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 
 export const CLORINDE_CHARACTER_ID = 10_000_098;
 
@@ -12,26 +20,67 @@ const HUNTERS_VIGIL_CRIT_DAMAGE = 0.7;
 const HUNTERS_VIGIL_CRIT_RATE = 0.1;
 const HUNTERS_VIGIL_CRIT_SECONDS = 12;
 
-// Clorinde's behaviour: none of her own, since her strikes, charged attack, plunges and Last Lightfall are her record's
-// Alone, and Hunter's Vigil's press plays its animation and starts its cooldown with no hit of its own. Not built: the
-// Night Vigil stance the press starts, with its Swift Hunt, Impale the Night and Surging Blade, and Last Lightfall's Bond
-// Of Life. Her passives are not built either. Constellation 6's Glimbright Shade and its damage reduction need Night Vigil's state, which
-// Is not built. Constellation 1 needs Night Vigil's Electro DMG on her normal attacks, Constellation 2 the Ascension talent
-// Dark-Shattering Flame, and Constellation 4 Last Lightfall's Bond of Life percentage, none of which is built
-export const createClorindeKitBehaviour = (): KitBehaviour => ({
-  skill: {
-    onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-      if (combatant.constellationCount < CONSTELLATION_6) return;
-      buffKitMember(kitEffectState, combatant.characterId, {
-        amount: HUNTERS_VIGIL_CRIT_RATE,
-        attribute: Attribute.CriticalRate,
-        secondsRemaining: HUNTERS_VIGIL_CRIT_SECONDS,
-      });
-      buffKitMember(kitEffectState, combatant.characterId, {
-        amount: HUNTERS_VIGIL_CRIT_DAMAGE,
-        attribute: Attribute.CriticalDamage,
-        secondsRemaining: HUNTERS_VIGIL_CRIT_SECONDS,
-      });
+// Night Vigil's Bond of Life thresholds, as gcsim v2.47.2 (MIT) clorinde/skill.go and attack.go read her HP debt ratio: a
+// Full share is 100%, and Impale the Night takes its no-share variant within gcsim's tolerance of zero
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/clorinde/skill.go
+const BOND_OF_LIFE_FULL_SHARE = 1;
+const BOND_OF_LIFE_TOLERANCE = 0.0000001;
+
+// Clorinde's behaviour: Hunter's Vigil's press starts Night Vigil for its table's seconds, ending as she leaves the field,
+// And its Constellation 6 buffs her CRIT. Night Vigil's Swift Hunt steps cast their entry of the piercing shot below a
+// Full Bond of Life share, which gains Bond of Life as it strikes, and of the normal shot otherwise, and its Impale the
+// Night press casts the variant the share picks, each where her body stands. Impale the Night's heals are not built, and
+// Neither are Last Lightfall's Bond of Life, her passives, or Constellations 1, 2 and 4
+export const createClorindeKitBehaviour = ({ readHits, readParameter, readStance }: KitRecordReader): KitBehaviour => {
+  const nightVigilSeconds = readParameter("nightVigilSeconds");
+  const swiftHuntBondOfLifeGain = readParameter("swiftHuntBondOfLifeGain");
+  const swiftHuntNormalShots = readHits("swiftHuntNormalShot");
+  const swiftHuntPiercingShots = readHits("swiftHuntPiercingShot", {
+    onStrike: (context, strike) =>
+      grantPartyMemberBondOfLife(context.party, strike.combatant.characterId, swiftHuntBondOfLifeGain),
+  });
+  const impaleTheNightFullHits = readHits("impaleTheNightFullBondOfLife");
+  const impaleTheNightLowHits = readHits("impaleTheNightLowBondOfLife");
+  const impaleTheNightNoHits = readHits("impaleTheNightNoBondOfLife");
+  // Swift Hunt's step casts its own entry of the list its share picks, the step's index in each list
+  const swiftHuntStep = (index: number): KitActionBehaviour => ({
+    onStart: ({ activeCombatant, body, kitEffectState, party }) => {
+      const isPiercing = getPartyMember(party, activeCombatant.characterId).bondOfLifeShare < BOND_OF_LIFE_FULL_SHARE;
+      const hit = (isPiercing ? swiftHuntPiercingShots : swiftHuntNormalShots).at(index);
+      if (hit !== undefined)
+        castKitSummon(kitEffectState, body, activeCombatant, [hit], { attackTag: AttackTag.NormalAttack });
     },
-  },
-});
+  });
+  // Impale the Night's variant: the full one at a full share, its no-share one at none, and the low one between
+  const impaleTheNight = ({ activeCombatant, body, kitEffectState, party }: KitContext): void => {
+    const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
+    let hits = impaleTheNightLowHits;
+    if (bondOfLifeShare >= BOND_OF_LIFE_FULL_SHARE) hits = impaleTheNightFullHits;
+    else if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) hits = impaleTheNightNoHits;
+    castKitSummon(kitEffectState, body, activeCombatant, hits, { attackTag: AttackTag.ElementalSkill });
+  };
+  const nightVigil = readStance("nightVigil", {
+    normalAttacks: [swiftHuntStep(0), swiftHuntStep(1), swiftHuntStep(2)],
+    skill: { onStart: impaleTheNight },
+  });
+  return {
+    skill: {
+      onStart: (context) => {
+        const { activeCombatant: combatant, kitEffectState } = context;
+        if (combatant.constellationCount >= CONSTELLATION_6) {
+          buffKitMember(kitEffectState, combatant.characterId, {
+            amount: HUNTERS_VIGIL_CRIT_RATE,
+            attribute: Attribute.CriticalRate,
+            secondsRemaining: HUNTERS_VIGIL_CRIT_SECONDS,
+          });
+          buffKitMember(kitEffectState, combatant.characterId, {
+            amount: HUNTERS_VIGIL_CRIT_DAMAGE,
+            attribute: Attribute.CriticalDamage,
+            secondsRemaining: HUNTERS_VIGIL_CRIT_SECONDS,
+          });
+        }
+        enterKitStance(kitEffectState, combatant, nightVigil, nightVigilSeconds, { isEndedOnSwap: true });
+      },
+    },
+  };
+};
