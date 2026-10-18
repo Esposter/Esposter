@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 the two scenario tests ('A request is not offered before level two', 'A delivery request pays on completion') are not written yet;2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the 'A passed threshold does not pay again' test, and the Reputation quests pay only once their parents' records are published (Mondstadt's 25 are carried as ReputationParent<id>, but their binaries are not in the dump yet); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the 'A passed threshold does not pay again' test, and the Reputation quests pay only once their parents' records are published (Mondstadt's 23 are carried as ReputationParent<id>, but their binaries are not in the dump yet, and parents 311 and 418 are left out: their steps finish on the PC's Lua quest export, the QUEST_CONTENT_LUA_NOTIFY steps, so the Reputation quests they parent wait on that export); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -47,6 +47,8 @@ x-touches:
     "scripts/src/services/genshinText/readReputationRequestQuest.test.ts",
     "scripts/src/models/genshinText/DumpedGiving.ts",
     "scripts/src/models/genshinText/DumpedGivingGroup.ts",
+    "scripts/src/services/shared/mapCollectingFailures.ts",
+    "scripts/src/services/shared/mapCollectingFailures.test.ts",
     ".agents/skills/genshin-text/SKILL.md",
     ".agents/skills/genshin-parity/references/data-sources.md",
   ]

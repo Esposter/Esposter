@@ -20,10 +20,8 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
     readGameData(gameDataBaseUrl, "quests/20741", z.unknown()),
   [QuestIdValues.ReputationParent20743]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/20743", z.unknown()),
-  [QuestIdValues.ReputationParent311]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/311", z.unknown()),
   [QuestIdValues.ReputationParent384]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/384", z.unknown()),
   [QuestIdValues.ReputationParent396]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/396", z.unknown()),
-  [QuestIdValues.ReputationParent418]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/418", z.unknown()),
   [QuestIdValues.ReputationParent70061]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/70061", z.unknown()),
   [QuestIdValues.ReputationParent70078]: (gameDataBaseUrl) =>
