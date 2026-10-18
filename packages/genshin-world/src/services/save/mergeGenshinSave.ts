@@ -120,7 +120,7 @@ const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySa
 // Objective's count takes the larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a
 // Counter only grows. Each kind of wish keeps the counters of the copy that has made more wishes of it, whole, so its
 // Pity is one copy's and never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the
-// Wallet and the opened chests are the account's copy, except that a Primogem refill count from the same game day
+// Wallet, the party and the opened chests are the account's copy, except that a Primogem refill count from the same game day
 // Takes the larger, as a count of refills within a day only grows. The World Level adjustment is the copy changed
 // Later, since the one change of it the player made last is the one they still stand by. The day's commissions are the
 // Copy dealt later, the day the player is on. The Traveler's name is the account's, or the guest's while the account
@@ -171,6 +171,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         : account.offerings.frostbearingTree,
     },
     openedChests: account.openedChests,
+    party: account.party,
     puzzles: {
       settledSeelieIds: [...new Set([...account.puzzles.settledSeelieIds, ...guest.puzzles.settledSeelieIds])],
       solvedPuzzleIds: [...new Set([...account.puzzles.solvedPuzzleIds, ...guest.puzzles.solvedPuzzleIds])],

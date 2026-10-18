@@ -9,6 +9,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { Party } from "#src/models/party/Party";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 
@@ -25,7 +26,6 @@ import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { strikePartyMember } from "#src/services/kit/strikePartyMember";
 import { checkIsPartyDown } from "#src/services/party/checkIsPartyDown";
-import { STARTING_TEAM_CHARACTER_IDS } from "#src/services/party/constants";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -48,6 +48,7 @@ export const useWorldCombat = ({
   onPartyRevived,
   placeWorldDrops,
   savedCharacters,
+  savedParty,
   startingCharacterIdKitMap,
   statTables,
 }: {
@@ -57,6 +58,7 @@ export const useWorldCombat = ({
   onPartyRevived: () => void;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   savedCharacters: Character[];
+  savedParty: Party;
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   statTables: StatTables;
 }) => {
@@ -66,7 +68,7 @@ export const useWorldCombat = ({
       ? savedCharacters
       : [createCharacter(TRAVELER_CHARACTER_ID, statTables.characterDataMap)],
   );
-  const party = createWorldParty([...STARTING_TEAM_CHARACTER_IDS]);
+  const party = createWorldParty(savedParty);
   // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
   // Changes to take it in, its module and multipliers read on demand
   const characterIdKitMap = shallowRef(startingCharacterIdKitMap);

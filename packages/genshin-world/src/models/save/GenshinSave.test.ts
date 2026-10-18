@@ -5,10 +5,12 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute, Attributes } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
+import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
   EMPTY_GENSHIN_SAVE,
   MAX_ACHIEVEMENT_COUNT,
@@ -20,6 +22,7 @@ import {
   MAX_INVENTORY_ITEM_COUNT,
   MAX_OBJECTIVE_COUNT,
   MAX_OPENED_CHEST_COUNT,
+  MAX_PARTY_TEAM_NAME_LENGTH,
   MAX_QUEST_COUNT,
   MAX_SAVE_ID_LENGTH,
   MAX_SETTLED_SEELIE_COUNT,
@@ -140,6 +143,15 @@ describe("genshinSaveSchema", () => {
       openedChests: Array.from({ length: MAX_OPENED_CHEST_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
       ),
+      party: {
+        activeIndex: PARTY_TEAM_SIZE - 1,
+        deployedTeamIndex: PARTY_TEAM_MAX_COUNT - 1,
+        downCharacterIds: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => maxNumber - index),
+        teams: Array.from({ length: PARTY_TEAM_MAX_COUNT }, () => ({
+          characterIds: Array.from({ length: PARTY_TEAM_SIZE }, (_value, index) => maxNumber - index),
+          name: "x".repeat(MAX_PARTY_TEAM_NAME_LENGTH),
+        })),
+      },
       puzzles: {
         settledSeelieIds: Array.from({ length: MAX_SETTLED_SEELIE_COUNT }, (_value, index) =>
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -236,6 +248,11 @@ describe("genshinSaveSchema", () => {
 
   // A slice a save predates is refused rather than defaulted: a stored save is backfilled to the shape, so a default
   // Would only hide a save nobody brought to it
+  test("refuses a party whose member on the field is not in the deployed team", () => {
+    expect.hasAssertions();
+    expect(partySaveSchema.safeParse({ ...EMPTY_GENSHIN_SAVE.party, activeIndex: 1 }).success).toBe(false);
+  });
+
   test("refuses a save written before the slices were added", () => {
     expect.hasAssertions();
     const predatingSave = {

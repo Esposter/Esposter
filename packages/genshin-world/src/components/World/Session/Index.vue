@@ -352,6 +352,7 @@ const {
   },
   placeWorldDrops,
   savedCharacters: savedState.characters,
+  savedParty: savedState.party,
   startingCharacterIdKitMap,
   statTables,
 });
@@ -431,6 +432,7 @@ useWorldSaveSync({
     frostbearingTreeProgress: frostbearingTreeProgress.value,
     inventory: inventory.value,
     openedChestIds: openedChestIds.value,
+    party,
     quests: questProgressMap.value,
     regionStatueProgressMap: savedState.regionStatueProgressMap,
     reputation: reputation.value,

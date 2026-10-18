@@ -8,6 +8,7 @@ import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
 import { toCharacters } from "#src/services/save/toCharacters";
 import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
+import { toParty } from "#src/services/save/toParty";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
@@ -25,6 +26,7 @@ export const readGenshinSave = (
     inventory,
     offerings,
     openedChests,
+    party,
     puzzles,
     quests,
     reputation,
@@ -59,6 +61,7 @@ export const readGenshinSave = (
     frostbearingTreeProgress: offerings.frostbearingTree,
     inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap),
     openedChestIds: new Set(openedChests),
+    party: toParty(party),
     quests: new Map(Object.entries(quests)),
     regionStatueProgressMap: new Map(Object.entries(statues.regions)),
     reputation,

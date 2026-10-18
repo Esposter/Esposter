@@ -1,3 +1,4 @@
+import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test, vi } from "vitest";
@@ -7,7 +8,7 @@ describe(createWorldParty, () => {
   test("is heard as a member changes and not as the step's own state does", () => {
     expect.hasAssertions();
 
-    const party = createWorldParty([1]);
+    const party = createWorldParty(createParty([1]));
     const onChange = vi.fn<() => void>();
     watch(() => [getPartyMember(party, 1).energy, party.lunarCrystallize.count, party.verdantDew.count], onChange, {
       flush: "sync",
