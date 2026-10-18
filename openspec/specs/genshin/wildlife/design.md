@@ -28,8 +28,8 @@ flowchart TD
 
 The numbers are provisional, each marked in `services/wildlife/constants.ts`:
 
-- **The escape radius, four metres, and the escape time, one second.** The environment table holds no row for a bird or a beast, so these are its gadget rows' values, the closest it holds, until a recording of each kind's flight measures them.
-- **The flight speed, six metres a second.** No table gives it, so it is a placeholder until a recording times it.
+- **The escape radius and the escape time.** `WILDLIFE_ESCAPE_RADIUS` and `WILDLIFE_ESCAPE_SECONDS` are the environment table's gadget rows' values, the closest it holds, since it has no row for a bird or a beast, until a recording of each kind's flight measures them.
+- **The flight speed.** `WILDLIFE_FLEE_SPEED` is a placeholder, since no table gives it, until a recording times it.
 
 ## The placement
 

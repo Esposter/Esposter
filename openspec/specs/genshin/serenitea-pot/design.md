@@ -73,7 +73,6 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 - **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines, since the Furnishings tab and its item definitions are not built.
 - **Realm Currency is not in the wallet.** It is a store of the realm's progress, not a currency the wallet counts, until its game text name has a key in `genshin-text`.
 - **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at.
-- **Nothing is measured here.** The one provisional constant is the per-hour unit above, and its recording is owed on the roadmap.
 
 ## Sources
 
