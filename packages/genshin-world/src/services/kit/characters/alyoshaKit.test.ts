@@ -1,47 +1,16 @@
-import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplierMap";
-import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
-import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
-import type { KitRecord } from "#src/models/kit/record/KitRecord";
-
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
-import { KitTargeting } from "#src/models/kit/record/KitTargeting";
-import { buildKit } from "#src/services/kit/buildKit";
-import { createAlyoshaKitBehaviour } from "#src/services/kit/characters/alyoshaKit";
+import { ALYOSHA_CHARACTER_ID, createAlyoshaKitBehaviour } from "#src/services/kit/characters/alyoshaKit";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { describe, expect, test } from "vitest";
 
-const PROUD_SKILL_GROUP_ID = 1;
-const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5] }] };
-const TALENT_LEVEL_MAP = { [PROUD_SKILL_GROUP_ID]: 1 };
+const kit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALYOSHA_CHARACTER_ID);
+const { record, toParameter } = await readCharacterKitRecord(ALYOSHA_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
-const createHit = (hitmarkFrames: number): KitHitRecord => ({
-  area: { angle: 2 * Math.PI, height: 2, radius: 1 },
-  hitmarkFrames,
-  multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
-  poiseDamage: 0,
-});
-const createAction = (animationFrames: number, hitmarkFrames: number[]): KitActionRecord => ({
-  animationFrames,
-  hits: hitmarkFrames.map((hitmarkFrame) => createHit(hitmarkFrame)),
-  targeting: KitTargeting.Strike,
-});
-const RECORD: KitRecord = {
-  areas: {},
-  burst: createAction(50, []),
-  burstCooldownSeconds: 18,
-  chargedAttack: createAction(42, [25]),
-  chargedAttackStamina: 0,
-  frames: {},
-  normalAttacks: [createAction(60, [11]), createAction(70, [16]), createAction(80, [16, 39]), createAction(90, [43])],
-  plungeCollision: createHit(30),
-  plunges: { [KitPlunge.High]: createAction(107, [38]), [KitPlunge.Low]: createAction(18, [36]) },
-  skill: createAction(20, [16]),
-  skillCooldownSeconds: 15,
-  skillHolds: [],
-};
-const kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, createAlyoshaKitBehaviour);
 
 describe(createAlyoshaKitBehaviour, () => {
-  test("four strikes in sequence", () => {
+  test("the normal attacks, in sequence", () => {
     expect.hasAssertions();
 
     expect(
@@ -49,43 +18,52 @@ describe(createAlyoshaKitBehaviour, () => {
         frames: toFrames(action.seconds),
         hitmarks: action.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds)),
       })),
-    ).toStrictEqual([
-      { frames: 60, hitmarks: [11] },
-      { frames: 70, hitmarks: [16] },
-      { frames: 80, hitmarks: [16, 39] },
-      { frames: 90, hitmarks: [43] },
-    ]);
+    ).toStrictEqual(
+      record.normalAttacks.map((action) => ({
+        frames: action.animationFrames,
+        hitmarks: action.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+      })),
+    );
   });
 
   test("charged attack lands on the enemies in reach", () => {
     expect.hasAssertions();
 
-    expect(toFrames(kit.chargedAttack.seconds)).toBe(42);
-    expect(kit.chargedAttack.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([25]);
+    expect(toFrames(kit.chargedAttack.seconds)).toBe(record.chargedAttack.animationFrames);
+    expect(kit.chargedAttack.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      record.chargedAttack.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
   });
 
   test("plunge lands on the enemies in reach", () => {
     expect.hasAssertions();
 
-    expect(toFrames(kit.lowPlunge.seconds)).toBe(18);
-    expect(kit.lowPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([36]);
-    expect(toFrames(kit.highPlunge.seconds)).toBe(107);
-    expect(kit.highPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([38]);
-    expect(toFrames(kit.plungeCollision.hitmarkSeconds)).toBe(30);
+    expect(toFrames(kit.lowPlunge.seconds)).toBe(record.plunges[KitPlunge.Low].animationFrames);
+    expect(kit.lowPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      record.plunges[KitPlunge.Low].hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
+    expect(toFrames(kit.highPlunge.seconds)).toBe(record.plunges[KitPlunge.High].animationFrames);
+    expect(kit.highPlunge.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      record.plunges[KitPlunge.High].hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
+    expect(toFrames(kit.plungeCollision.hitmarkSeconds)).toBe(record.plungeCollision.hitmarkFrames);
   });
 
   test("thunderbolt strike's tap deals one hit", () => {
     expect.hasAssertions();
 
-    expect(toFrames(kit.elementalSkill.seconds)).toBe(20);
-    expect(kit.elementalSkill.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual([16]);
+    expect(toFrames(kit.elementalSkill.seconds)).toBe(record.skill.animationFrames);
+    expect(kit.elementalSkill.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
+      record.skill.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+    );
+    expect(kit.skillCooldownSeconds).toBe(toParameter(record.skillCooldownSeconds));
   });
 
   test("hunter's advance deals no hit yet", () => {
     expect.hasAssertions();
 
-    expect(toFrames(kit.elementalBurst.seconds)).toBe(50);
+    expect(toFrames(kit.elementalBurst.seconds)).toBe(record.burst.animationFrames);
     expect(kit.elementalBurst.hits).toHaveLength(0);
-    expect(kit.burstCooldownSeconds).toBe(18);
+    expect(kit.burstCooldownSeconds).toBe(toParameter(record.burstCooldownSeconds));
   });
 });
