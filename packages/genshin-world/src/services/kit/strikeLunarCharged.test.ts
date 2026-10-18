@@ -152,6 +152,7 @@ describe(strikeLunarCharged, () => {
     const ifa: Combatant = { ...createMember(IFA_CHARACTER_ID, 0), ascension: 1, kit: IFA_KIT };
     const deployed = [...members, ifa];
     const kitEffectState = castKitAction(IFA_KIT.elementalSkill, ifa);
+    castKitAction(IFA_KIT.elementalSkill, { ...ifa, characterId: SECOND_CHARACTER_ID }, kitEffectState);
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
     applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
@@ -175,7 +176,7 @@ describe(strikeLunarCharged, () => {
         takeOne(CharacterLevelMultiplierMap, LEVEL),
         elementalMastery,
         baseDamageBonusMap[LunarReactionType.LunarCharged] ?? 0,
-        reactionBonus + 80 * 0.002,
+        reactionBonus + 150 * 0.002,
       );
 
     strikeLunarCharged(enemy, context);
