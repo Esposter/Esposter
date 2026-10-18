@@ -29,7 +29,6 @@ const detailUiSchema = computed(() =>
 <!-- An object of a schema form, drawn as its own fields -->
 <template>
   <UiSchemaFormDispatch
-    v-if="control.visible"
     :cells="control.cells"
     :enabled="control.enabled"
     :form

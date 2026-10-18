@@ -53,7 +53,6 @@ const dispatch: Dispatch<CoreActions> = (action) => {
   if (!checkIsDeepEqual(jsonforms.core.data, modelValue.value)) modelValue.value = jsonforms.core.data;
   return action;
 };
-// Every renderer of the form takes this, and reads the state and writes its changes through the dispatch
 const form: UiSchemaFormBinding = { dispatch, state: { jsonforms } };
 
 watch([modelValue, jsonFormsSchema, uischema], ([newModelValue, newJsonFormsSchema, newUischema]) => {

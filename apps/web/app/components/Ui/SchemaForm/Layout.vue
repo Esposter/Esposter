@@ -17,7 +17,6 @@ const labelId = useId();
   Form passes no UI schema, so the generated vertical layouts and groups are all it draws -->
 <template>
   <div
-    v-if="layout.visible"
     :role="isGroup ? 'group' : undefined"
     :aria-labelledby="isGroup && layout.label ? labelId : undefined"
     flex
@@ -27,7 +26,7 @@ const labelId = useId();
   >
     <span v-if="isGroup && layout.label" :id="labelId" text-heading-color>{{ layout.label }}</span>
     <UiSchemaFormDispatch
-      v-for="(element, index) of props.uischema.elements"
+      v-for="(element, index) of layout.uischema.elements"
       :key="index"
       :cells="layout.cells"
       :enabled="layout.enabled"

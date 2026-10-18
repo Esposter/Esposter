@@ -45,7 +45,7 @@ const getItemLabel = (item: unknown, index: number) => {
   End from the list's own. An item has no identity of its own to key by, so only an added one moves in: keyed by
   Position, a removal would animate the last card out rather than the removed one -->
 <template>
-  <div v-if="control.visible" role="group" :aria-labelledby="labelId" flex flex-col gap-2>
+  <div role="group" :aria-labelledby="labelId" flex flex-col gap-2>
     <div flex gap-2 items-center>
       <span :id="labelId" text-heading-color flex-1 truncate>{{ control.label }}</span>
       <UiIconButton

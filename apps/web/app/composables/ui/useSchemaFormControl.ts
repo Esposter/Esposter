@@ -8,13 +8,14 @@ import { mapDispatchToControlProps, mapStateToControlProps } from "@jsonforms/co
 // Its path once the reader has changed it, so a form opened empty does not open covered in what it still needs
 export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const control = computed(() => ({ ...props, ...mapStateToControlProps(props.form.state, props) }));
+  const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
   const isChanged = ref(false);
   const config = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
   const issue = computed(() => (isChanged.value ? config.value.issueMap.get(control.value.path) : undefined));
   const change = (value: unknown) => {
     isChanged.value = true;
-    mapDispatchToControlProps(props.form.dispatch).handleChange(control.value.path, value);
+    handleChange(control.value.path, value);
   };
   return { change, config, control, issue, layout };
 };
