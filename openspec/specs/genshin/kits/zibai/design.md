@@ -14,7 +14,8 @@ Zibai's kit is its record and one behaviour module, `createZibaiKitBehaviour`, a
 
 ## Not built
 
-- **Lunar Phase Shift's behaviour waits on the side branch.** The fourth normal attack's Moonsign gate, and the second instance of Spirit Steed's Stride as Lunar-Crystallize, are behaviour, not record.
+- **Lunar Phase Shift's behaviour waits on the side branch.** The fourth normal attack's Moonsign gate is behaviour, not record.
+- **The second instance of Spirit Steed's Stride is Lunar-Crystallize.** Its hit's `lunarReactionType` is `LunarCrystallize`, Unsourced, from the wiki's Lunar Phase Shift text, which says the second instance is Lunar-Crystallize Reaction DMG. The hit keeps its Geo element, and its scaling stat is not read yet.
 
 ## Key files
 
