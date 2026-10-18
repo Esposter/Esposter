@@ -43,7 +43,7 @@ Doubles:
 
 Environment and running:
 
-- `references/test-environment.md` — when a test needs a DOM or the nuxt runtime, or tests a composable with lifecycle hooks.
+- `references/test-environment.md` — when a test needs a DOM, a layout engine or the nuxt runtime, or tests a composable with lifecycle hooks.
 - `references/nuxt-environment-and-mounting.md` — when a test mounts a component: a routed link, a mount attached to the body, a dispatched event.
 - `references/mounted-stores.md` — when a test seeds a store a mounted component reads, room-scoped stores included, or a suite reaches for its own Pinia.
 - `references/platform-and-bundle-tests.md` — when a suite is skipped on some hosts, or its output depends on the host.

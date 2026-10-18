@@ -238,22 +238,26 @@ export const app: NuxtConfig["app"] = {
         rel: "apple-touch-startup-image",
       },
     ],
-    script: [
-      {
-        // @TODO: https://webstatus.dev/features/temporal
-        // Safari ships no Temporal, nor does any iOS browser. Modules read it while they load, and the bundler
-        // Evaluates a shared chunk before the entry's own body, so the polyfill runs ahead of the bundle in the same
-        // Queue rather than inside it. It leaves a native Temporal alone
-        defer: true,
-        src: `/${TEMPORAL_POLYFILL_BASE_URL}/global.js`,
-      },
-      {
-        // @TODO: https://webstatus.dev/features/requestidlecallback
-        // Safari ships no requestIdleCallback, nor does any iOS browser. The Genshin login synthesizes its cloud
-        // Layer's textures a texture an idle moment at a time. It leaves a native one alone
-        defer: true,
-        src: "/polyfills/requestIdleCallback.js",
-      },
-    ],
+    // A test serves neither polyfill: the browser suite's server has no Nitro to serve the Temporal files and no public
+    // Folder, so each would load as a module a classic script cannot parse. No browser a test runs in lacks either API
+    script: process.env.VITEST
+      ? []
+      : [
+          {
+            // @TODO: https://webstatus.dev/features/temporal
+            // Safari ships no Temporal, nor does any iOS browser. Modules read it while they load, and the bundler
+            // Evaluates a shared chunk before the entry's own body, so the polyfill runs ahead of the bundle in the same
+            // Queue rather than inside it. It leaves a native Temporal alone
+            defer: true,
+            src: `/${TEMPORAL_POLYFILL_BASE_URL}/global.js`,
+          },
+          {
+            // @TODO: https://webstatus.dev/features/requestidlecallback
+            // Safari ships no requestIdleCallback, nor does any iOS browser. The Genshin login synthesizes its cloud
+            // Layer's textures a texture an idle moment at a time. It leaves a native one alone
+            defer: true,
+            src: "/polyfills/requestIdleCallback.js",
+          },
+        ],
   },
 };

@@ -1,6 +1,6 @@
 # The Test Environment
 
-Read when a test needs a DOM or the nuxt runtime, or a composable under test registers lifecycle hooks.
+Read when a test needs a DOM, a layout engine or the nuxt runtime, or a composable under test registers lifecycle hooks.
 
 ## `node` by default, `nuxt` by directive
 
@@ -13,6 +13,10 @@ The `// @vitest-environment nuxt` directives are **load-bearing** — never remo
 - tRPC router tests stay node-env: `createCallerFactory` is pure `@trpc/server`, and the Nitro runtime a middleware reaches (`useRuntimeConfig`) is mocked in `shared/test/setup.ts`.
 
 **DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration. `fake-indexeddb/auto` stays a global setup file: it only assigns the `indexedDB` global and the IDB\* constructors, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) open databases through the shared wrapper transitively across many tests, so scoping it isn't worth the surface area (`openspec/rejected/architecture/indexed-db-mock/design.md`).
+
+## A layout engine: the browser suite
+
+What happy-dom cannot show — a box's width, a media query, a frame's isolation — is a `*.browser.test.ts` beside the component. The default run excludes it, and the package's `vitest.browser.config.ts` runs it in the machine's Edge: in `apps/web` that is `pnpm test:browser`, under the nuxt environment, rendering with `render` from `@nuxt/test-utils/browser`. The browser loads the app's stylesheets where the unit suites never do, so a worktree runs it only once the packages whose `style.css` the app's CSS list imports are built.
 
 ## Composables with lifecycle hooks
 

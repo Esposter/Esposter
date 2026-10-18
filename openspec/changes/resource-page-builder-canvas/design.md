@@ -16,7 +16,7 @@ The cost is that pointer routing and hit testing cross a document boundary, whic
 
 No script ever reaches the canvas, by construction rather than by policy: every element is created by Vue from a typed node, the one raw-HTML type is sanitised before it is inserted, and a style value may contain neither `<`, so it can never close a style element, nor `{` or `}`, so it can never leave its rule. Behaviour a published page runs as a script — the countdown's ticking, typed text, the tabs — runs in the canvas as the type's `canvas` component, in the app's own realm. Whether the frame can also carry `sandbox="allow-same-origin"` as defence in depth depends on whether listeners from the app's realm still fire inside it; a browser test answers that, and the frame carries the sandbox if they do.
 
-**The browser suite.** The isolation, the frame's widths and the sandbox question need a layout engine, which the app's suites, under happy-dom, do not have. This change gives the app a browser suite of its own on `getVitestBrowserConfiguration`, as the Genshin packages have, in a configuration apart from the default run so an ordinary run never starts a browser. The rest of the canvas is component tests under happy-dom, as the library's are.
+**The browser suite.** The isolation, the frame's widths and the sandbox question need a layout engine, which the app's suites, under happy-dom, do not have. This change gives the app a browser suite of its own on `getVitestBrowserConfiguration`, as the Genshin packages have, in a configuration apart from the default run so an ordinary run never starts a browser. Nuxt's test utilities run Vitest's browser mode under the Nuxt environment, so a component's auto-imports resolve there as they do in the unit suites, and each `*.browser.test.ts` runs only in that suite, as in the Genshin packages. The rest of the canvas is component tests under happy-dom, as the library's are.
 
 **Overlays** — the hover outline, the selection outline, the drop indicator — live in a layer inside the frame after the content root, positioned from each node's `getBoundingClientRect` and redrawn in one animation frame after a scroll, a resize or a patch. They read the library's accent and focus tokens through custom properties copied into the frame, so a theme or style switch restyles them, and the selection ring is a double ring that stays visible on any page colour. The node toolbar — select parent, move up, move down, Move to…, duplicate, delete, and the type's own actions — is library buttons in the app's document, placed from the frame's rect plus the node's; the same `Item` list is its overflow menu and the right-click menu through `useContextMenu`.
 
@@ -75,11 +75,11 @@ The editor around the frame is library parts: the palette and the layers tree in
 | `packages/headless-block-editor/src/services/moveOutAfterParent.ts`          | the move Alt+Left makes, to just after the parent                                         |
 | `packages/headless-block-editor/src/services/duplicateBlockNode.ts`          | the duplicate command, a paste of the node's copy after it                                |
 | `apps/web/package.json`                                                      | the browser suite's script, apart from the default run                                    |
+| `apps/web/vitest.browser.config.ts`                                          | the app's browser suite, each `*.browser.test.ts` under the Nuxt environment              |
 
 New code lands here:
 
 ```text
-apps/web/vitest.browser.config.ts               the app's browser suite
 apps/web/shared/services/pageBuilder/            the device widths and the breakpoints they sit inside
 apps/web/app/store/pageBuilder/                  the selection and the device width, keyed by resource
 apps/web/app/components/PageBuilder/             the shell, canvas frame, overlays, toolbar, palette, layers and Content panel

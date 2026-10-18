@@ -1,5 +1,6 @@
 import { getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
+import { configDefaults } from "vitest/config";
 
 // `defineVitestProject` builds its own config rather than taking the shared factory's, so the factory's test options
 // Are handed in and only the app's own are written here: the project name every member is addressed by, the
@@ -19,6 +20,8 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   // Request it misses there went out to whatever listened on the default port — a running dev server answered
   // With the real router, so a suite failed only while one was up. On this origin a missed request fails at once
   environmentOptions: { nuxt: { rootDir: import.meta.dirname, url: "http://nuxt.test" } },
+  // A `*.browser.test.ts` runs in the browser suite alone (`vitest.browser.config.ts`), where a layout engine draws it
+  exclude: [...configDefaults.exclude, "**/*.browser.test.ts"],
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),
