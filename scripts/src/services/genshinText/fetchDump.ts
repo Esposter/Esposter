@@ -7,6 +7,7 @@ import {
   ANIME_GAME_DATA_URL,
   BIN_OUTPUT_DIRECTORY,
   DUMP_FETCH_BATCH_SIZE,
+  DUMP_FILE_DOWNLOAD_TIMEOUT_MS,
   GAME_TEXT_DIRECTORY,
   GameLanguageCodeMap,
   SCENE_NPC_BORN_DIRECTORY,
@@ -89,6 +90,7 @@ const downloadDumpFile = async ({ path }: DumpFile): Promise<void> => {
   const localPath = join(GAME_TEXT_DIRECTORY, ...segments);
   const response = await fetchOk(
     `${ANIME_GAME_DATA_URL}/${segments.map((segment) => encodeURIComponent(segment)).join("/")}`,
+    { timeoutMs: DUMP_FILE_DOWNLOAD_TIMEOUT_MS },
   );
   await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
 };

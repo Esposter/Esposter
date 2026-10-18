@@ -153,3 +153,6 @@ export const SCENE_WORLD_AREA_DIRECTORY = "BinOutput/Scene/WorldArea";
 export const SCENE_WORLD_AREA_FILE_NAME = "scene3_worldArea.json";
 // How many files a fetch downloads at once, so the readable texts' thousands of small files do not open as many requests
 export const DUMP_FETCH_BATCH_SIZE = 8;
+// How long one dump file may take to download: a language's text map is tens of megabytes, which the default bound cuts
+// Off before its body is read
+export const DUMP_FILE_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
