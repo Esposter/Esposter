@@ -15,7 +15,7 @@
 ## 4. The console's world and its labels
 
 - [ ] 4.1 Replace the console's voxel world at the Genshin page with the Genshin world, keeping the console's sessions reachable. Verify: tests named after the scenarios "The Genshin page opens the Genshin world" and "A console session stays reachable over the world", written first and seen failing.
-- [ ] 4.2 Label the world's pages as an unofficial fan work and serve no game asset. Verify: tests named after the scenarios "The world's page carries the fan-made label" and "A visitor cannot retrieve a game asset from the app".
+- [x] 4.2 Label the world's pages as an unofficial fan work and serve no game asset. Verify: tests named after the scenarios "The world's page carries the fan-made label" and "A visitor cannot retrieve a game asset from the app".
 
 ## 5. The play features
 

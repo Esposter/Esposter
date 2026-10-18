@@ -2,3 +2,10 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/app/components/Genshin/**",
+    "apps/web/modules/serveGenshinExtractions.test.ts",
+    "openspec/changes/genshin-program/**",
+  ]
+x-waiting: "Task 4.1 is not ticked: its first scenario (the Genshin page opens the Genshin world) is built, since the voxel world was replaced at 8b5c1bfaa7 and the page mounts Genshin, whose world shows once the opening opens its door; no vitest test reaches that door, so its proof is a browser run of /genshin, and apps/web has no browser project. Its second scenario (a console session stays reachable over the world) is not built: the console is unmounted from /genshin by a recorded decision (e9a05b4b71, the agent console spec: hidden until rebuilt in the game's own style), and mounting it again over the world reverses that, which is the owner's call. Task 6.2 is not ticked: no remote player exists to fail a test (co-op is deferred), and the chrome's one HoYoverse mark is the publisher splash in the opening, which the localized opening page keeps, while the Paimon menu draws its Battle Pass entry disabled; whether either counts as chrome is the owner's ruling."
