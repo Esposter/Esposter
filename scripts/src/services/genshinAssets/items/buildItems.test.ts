@@ -2,6 +2,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -116,5 +117,18 @@ describe(buildItems, () => {
     const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
 
     expect(ids.map(({ id }) => id)).toContain(REPUTATION_REWARD_ITEM_ID);
+  });
+
+  test("throws on an item the material table gives no type, rather than publishing it untyped", async () => {
+    expect.hasAssertions();
+    const materialTable = readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME);
+    vi.mocked(readExcelTable).mockReturnValue([
+      ...materialTable.filter(({ id }) => id !== TREE_ITEM_ID),
+      { ...materialRows[1], materialType: undefined },
+    ]);
+
+    await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: 107010, has no material type in the material table]`,
+    );
   });
 });

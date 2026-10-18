@@ -22,8 +22,8 @@ import { z } from "zod";
 // Each read from the game's Material table with its name's text id, which `genshin:text names` writes into the name-text
 // Chunks. The wallet's currencies are no items: Mora, Primogems and the rest are held by the wallet, and Adventure EXP is
 // Taken by the Adventure Rank, so none is written. A weapon a recipe yields is no item either, it is in the weapon table.
-// The recipes and the levels are the records their steps published, read from the dev account. An item the table lacks
-// Is an error. Returns the record the materials publish under
+// The recipes and the levels are the records their steps published, read from the dev account. An item the table lacks,
+// Or gives no type, is an error. Returns the record the materials publish under
 export const buildItems = async (): Promise<Record<string, unknown>> => {
   const expeditionItemIds = readMondstadtExpeditionPlaces().flatMap(({ durations }) =>
     durations.flatMap(({ items }) => items.map(({ itemId }) => itemId)),
@@ -59,6 +59,8 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     const materialRow = materialRows.find(({ id }) => id === itemId);
     if (!materialRow)
       throw new InvalidOperationError(Operation.Read, String(itemId), "has no row in the material table");
+    if (materialRow.materialType === undefined)
+      throw new InvalidOperationError(Operation.Read, String(itemId), "has no material type in the material table");
     return {
       id: materialRow.id,
       materialType: materialRow.materialType,
