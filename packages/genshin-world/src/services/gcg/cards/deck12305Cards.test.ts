@@ -15,6 +15,7 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
 import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
 import { liuSu } from "#src/services/gcg/cards/liuSu";
@@ -30,7 +31,7 @@ import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummo
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 import { TALISMAN_SPIRIT_ID, talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMask";
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
@@ -257,6 +258,18 @@ describe("icy Quill", () => {
       value: 3,
     });
     expect(zoneCard.usages).toBe(1);
+  });
+  test("a Swirl's spread is Cryo DMG too, so it takes Icy Quill's 1 more and spends a usage", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      { ...createSideState([createCharacterState(SHENHE_ID)]), onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)] },
+      createSideState([{ ...createCharacterState(1_202), aura: Element.Cryo }, createCharacterState(1_203)]),
+    ]);
+
+    applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
+    expect(takeOne(takeOne(duel.sides, 1).characters, 1).hp).toBe(10 - GCG_SPREAD_DAMAGE - 1);
+    expect(takeOne(duel.sides, 0).onstages.map(({ usages }) => usages)).toStrictEqual([1]);
   });
 });
 
