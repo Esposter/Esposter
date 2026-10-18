@@ -16,8 +16,16 @@ import { Transition } from "vue";
 
 // The grammar loads from its own module on first use, so a test holds it back until the text is already on screen
 vi.mock(import("@/services/codemirror/getLanguageExtension"), () => ({
-  getLanguageExtension: vi.fn<typeof getLanguageExtension>(async () => []),
+  getLanguageExtension: vi.fn<typeof getLanguageExtension>(() => Promise.resolve([])),
 }));
+
+const findView = () => {
+  const editor = document.body.querySelector<HTMLElement>(".cm-editor");
+  assert.exists(editor);
+  const view = EditorView.findFromDOM(editor);
+  assert.exists(view);
+  return view;
+};
 
 describe("messageModelFileRendererCode", () => {
   const failedStatus = 500;
@@ -29,18 +37,11 @@ describe("messageModelFileRendererCode", () => {
   const props = { file, isPreview: false, language: languageName, url };
   const mountCode = (propsOverride?: Partial<typeof props>) =>
     mountSuspended(MessageModelFileRendererCode, { attachTo: document.body, props: { ...props, ...propsOverride } });
-  const findView = () => {
-    const editor = document.body.querySelector<HTMLElement>(".cm-editor");
-    assert.exists(editor);
-    const view = EditorView.findFromDOM(editor);
-    assert.exists(view);
-    return view;
-  };
 
   beforeEach(() => {
     vi.stubGlobal(
       "fetch",
-      vi.fn<typeof fetch>(async () => new Response(text)),
+      vi.fn<typeof fetch>(() => Promise.resolve(new Response(text))),
     );
   });
 
@@ -66,7 +67,7 @@ describe("messageModelFileRendererCode", () => {
 
     vi.stubGlobal(
       "fetch",
-      vi.fn<typeof fetch>(async () => new Response(text, { status: failedStatus })),
+      vi.fn<typeof fetch>(() => Promise.resolve(new Response(text, { status: failedStatus }))),
     );
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     await mountCode();

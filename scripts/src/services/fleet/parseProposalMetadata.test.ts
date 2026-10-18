@@ -27,11 +27,7 @@ describe(parseProposalMetadata, () => {
   test("reads every field as empty when the change names none", () => {
     expect.hasAssertions();
 
-    expect(parseProposalMetadata("schema: spec-driven\ncreated: 2026-10-18\n")).toStrictEqual({
-      needs: [],
-      touches: [],
-      waiting: "",
-    });
+    expect(parseProposalMetadata("schema: spec-driven\n")).toStrictEqual({ needs: [], touches: [], waiting: "" });
   });
 
   test("rejects a sequence field given as one string, so a mistyped field is not silently empty", () => {

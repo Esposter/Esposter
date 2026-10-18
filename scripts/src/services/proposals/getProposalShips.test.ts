@@ -12,7 +12,7 @@ describe(getProposalShips, () => {
       "openspec/changes/a-b/design.md",
       "openspec/changes/a-c-d/tasks.md",
       "openspec/changes/refactors-e/design.md",
-      "openspec/changes/archive/2026-01-01-f-g/design.md",
+      `openspec/changes/archive/${date}-f-g/design.md`,
       "openspec/specs/h/design.md",
     ].join("\n");
 

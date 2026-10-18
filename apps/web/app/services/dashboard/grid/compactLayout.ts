@@ -6,7 +6,7 @@ import { checkIsColliding } from "@/services/dashboard/grid/checkIsColliding";
 // Inside another is moved down until it clears, so a compacted layout never overlaps
 export const compactLayout = <T extends GridItem>(layout: T[]) => {
   const placedItems: T[] = [];
-  const sortedItems = layout.map((item) => ({ ...item })).sort((a, b) => a.y - b.y || a.x - b.x);
+  const sortedItems = layout.map((item) => ({ ...item })).toSorted((a, b) => a.y - b.y || a.x - b.x);
   for (const item of sortedItems) {
     const checkIsBlocked = (candidate: T) => placedItems.some((placedItem) => checkIsColliding(candidate, placedItem));
     while (item.y > 0 && !checkIsBlocked({ ...item, y: item.y - 1 })) item.y -= 1;

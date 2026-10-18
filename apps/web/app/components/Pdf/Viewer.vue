@@ -69,12 +69,12 @@ const renderPrintImage = async (pdfDocument: PDFDocumentProxy, pageNumber: numbe
     pixelRatio: PDF_PRINT_SCALE,
   });
   const viewport = page.getViewport({ scale: printScale });
-  const canvas = document.createElement("canvas");
+  const canvas = window.document.createElement("canvas");
   canvas.width = viewport.width;
   canvas.height = viewport.height;
   await page.render({ canvas, viewport }).promise;
 
-  const image = document.createElement("img");
+  const image = window.document.createElement("img");
   image.src = canvas.toDataURL("image/png");
   return image;
 };
@@ -140,24 +140,24 @@ const printDocument = getSynchronizedFunction(async () => {
   if (!printed) return;
 
   await getResultAsync(async () => {
-    const style = document.createElement("style");
+    const style = window.document.createElement("style");
     style.textContent = PDF_PRINT_STYLE;
-    const printRoot = document.createElement("div");
+    const printRoot = window.document.createElement("div");
     printRoot.className = PDF_PRINT_CLASS;
     printRoot.append(style);
-    // Each batch renders together and lands in the print container before the next one starts
     for (let firstPageNumber = 1; firstPageNumber <= printed.numPages; firstPageNumber += PDF_PRINT_BATCH_SIZE) {
       const lastPageNumber = Math.min(firstPageNumber + PDF_PRINT_BATCH_SIZE - 1, printed.numPages);
       const pageNumbers = Array.from(
         { length: lastPageNumber - firstPageNumber + 1 },
         (_, index) => firstPageNumber + index,
       );
+      // oxlint-disable-next-line no-await-in-loop -- A batch lands before the next renders, so no print holds every page
       printRoot.append(...(await Promise.all(pageNumbers.map((pageNumber) => renderPrintImage(printed, pageNumber)))));
     }
     // A viewer closed while its pages rendered has no dialog left to print from, and a sheet appended now would outlive it
     if (isUnmounted) return;
 
-    document.body.append(printRoot);
+    window.document.body.append(printRoot);
     printContainer = printRoot;
     window.print();
   }).match(noop, console.error);
@@ -250,7 +250,9 @@ onUnmounted(() => {
 });
 // A fit stays a fit when the container changes width, which pdf.js does not do on its own (#66, #70)
 useResizeObserver(container, () => {
-  if (pdfViewer) pdfViewer.currentScaleValue = pdfViewer.currentScaleValue;
+  if (!pdfViewer) return;
+  const { currentScaleValue } = pdfViewer;
+  pdfViewer.currentScaleValue = currentScaleValue;
 });
 useEventListener("afterprint", destroyPrintContainer);
 </script>

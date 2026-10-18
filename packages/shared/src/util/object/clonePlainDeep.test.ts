@@ -17,11 +17,10 @@ describe(clonePlainDeep, () => {
   test("shares a function and a date rather than copying them", () => {
     expect.hasAssertions();
 
-    const formatter = (value: number) => String(value);
     const date = new Date(0);
-    const clone = clonePlainDeep({ date, legend: { formatter } });
+    const clone = clonePlainDeep({ date, legend: { formatter: String } });
 
-    expect(clone.legend.formatter).toBe(formatter);
+    expect(clone.legend.formatter).toBe(String);
     expect(clone.date).toBe(date);
   });
 
