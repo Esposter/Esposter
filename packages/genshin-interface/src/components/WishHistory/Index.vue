@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { WishHistoryCell } from "#src/models/WishHistoryCell";
 
+import RarityStars from "#src/components/RarityStars/Index.vue";
+
 interface Props {
   // The way out of the popup in the reader's language
   closeLabel: string;
@@ -26,7 +28,7 @@ const emit = defineEmits<{ close: [] }>();
           <span class="time">{{ time }}</span>
           <span class="banner">{{ bannerLabel }}</span>
           <span class="name">{{ name }}</span>
-          <span class="stars">{{ "★".repeat(rarity) }}</span>
+          <RarityStars :rarity />
         </li>
       </ul>
     </div>
@@ -85,10 +87,5 @@ const emit = defineEmits<{ close: [] }>();
   grid-template-columns: 1fr 1fr 1fr auto;
   gap: calc(var(--unit) * 16);
   padding: calc(var(--unit) * 6) 0;
-}
-
-.stars {
-  color: #ffcc32;
-  white-space: nowrap;
 }
 </style>
