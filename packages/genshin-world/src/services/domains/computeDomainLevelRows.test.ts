@@ -26,6 +26,7 @@ describe(computeDomainLevelRows, () => {
               recommendedRank: 20,
               resinCost: 20,
               scheduledDaysOfWeek: [1, 4],
+              treeArtifacts: [],
               treeRewards: [],
             },
             {
@@ -34,6 +35,7 @@ describe(computeDomainLevelRows, () => {
               recommendedRank: 35,
               resinCost: 20,
               scheduledDaysOfWeek: [1, 4],
+              treeArtifacts: [],
               treeRewards: [],
             },
             {
@@ -42,6 +44,7 @@ describe(computeDomainLevelRows, () => {
               recommendedRank: 20,
               resinCost: 20,
               scheduledDaysOfWeek: [2, 5],
+              treeArtifacts: [],
               treeRewards: [],
             },
           ],
@@ -71,6 +74,7 @@ describe(computeDomainLevelRows, () => {
               recommendedRank: 45,
               resinCost: 20,
               scheduledDaysOfWeek: [],
+              treeArtifacts: [],
               treeRewards: [],
             },
           ],

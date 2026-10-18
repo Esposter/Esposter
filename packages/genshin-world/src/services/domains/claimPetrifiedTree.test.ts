@@ -46,10 +46,11 @@ describe(claimPetrifiedTree, () => {
         wallet,
         EMPTY_INVENTORY,
         { claimCount: 1, condensedResinCount: 0, resin: DOMAIN_RESIN },
-        () => [
-          { count: MORA_COUNT, id: MORA_ITEM_ID },
-          { count: REWARD_COUNT, id: REWARD_ITEM_ID },
+        [
+          { itemId: MORA_ITEM_ID, maxCount: MORA_COUNT, minCount: MORA_COUNT },
+          { itemId: REWARD_ITEM_ID, maxCount: REWARD_COUNT, minCount: REWARD_COUNT },
         ],
+        () => 0,
         0,
         noQuest,
         epoch,
@@ -88,10 +89,11 @@ describe(claimPetrifiedTree, () => {
         wallet,
         EMPTY_INVENTORY,
         { claimCount: 2, condensedResinCount: 0, resin: 2 * DOMAIN_RESIN },
-        () => [
-          { count: MORA_COUNT, id: MORA_ITEM_ID },
-          { count: REWARD_COUNT, id: REWARD_ITEM_ID },
+        [
+          { itemId: MORA_ITEM_ID, maxCount: MORA_COUNT, minCount: MORA_COUNT },
+          { itemId: REWARD_ITEM_ID, maxCount: REWARD_COUNT, minCount: REWARD_COUNT },
         ],
+        () => 0,
         0,
         noQuest,
         epoch,
@@ -121,6 +123,28 @@ describe(claimPetrifiedTree, () => {
     });
   });
 
+  test("each of two claims draws its own count of an item between its least and most", () => {
+    expect.hasAssertions();
+
+    // The first claim's roll is the least, the second's the most of a range of one to three
+    const rolls = [0, 0.99];
+    expect(
+      claimPetrifiedTree(
+        adventureRankTables,
+        wallet,
+        EMPTY_INVENTORY,
+        { claimCount: 2, condensedResinCount: 0, resin: 2 * DOMAIN_RESIN },
+        [{ itemId: REWARD_ITEM_ID, maxCount: 3, minCount: 1 }],
+        () => rolls.shift() ?? 0,
+        0,
+        noQuest,
+        epoch,
+        { [REWARD_NAME_TEXT_ID]: REWARD_NAME },
+        materialDataMap,
+      )?.inventory.items[0]?.quantity,
+    ).toBe(4);
+  });
+
   test("claiming the tree with too little resin is refused", () => {
     expect.hasAssertions();
 
@@ -130,7 +154,8 @@ describe(claimPetrifiedTree, () => {
         { ...EMPTY_WALLET, [Currency.OriginalResin]: DOMAIN_RESIN - 1 },
         EMPTY_INVENTORY,
         { claimCount: 1, condensedResinCount: 0, resin: DOMAIN_RESIN },
-        () => [{ count: MORA_COUNT, id: MORA_ITEM_ID }],
+        [{ itemId: MORA_ITEM_ID, maxCount: MORA_COUNT, minCount: MORA_COUNT }],
+        () => 0,
         0,
         noQuest,
         epoch,
