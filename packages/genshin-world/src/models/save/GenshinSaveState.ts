@@ -17,6 +17,7 @@ import type { MailSave } from "#src/models/mail/MailSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { Party } from "#src/models/party/Party";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { ReputationBountyHunt } from "#src/models/reputation/ReputationBountyHunt";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
@@ -68,6 +69,8 @@ export interface GenshinSaveState {
   quests: ReadonlyMap<string, QuestProgress>;
   regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
+  reputationBountyClaimedAts: readonly Temporal.Instant[];
+  reputationBountyHunt: ReputationBountyHunt | undefined;
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
   shownTipIds: ReadonlySet<number>;

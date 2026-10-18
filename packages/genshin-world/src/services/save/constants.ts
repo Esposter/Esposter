@@ -25,6 +25,7 @@ import {
   PARTY_TEAM_SIZE,
   STARTING_TEAM_CHARACTER_IDS,
 } from "#src/services/party/constants";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { MAX_WEAPON_REFINEMENT } from "#src/services/weapon/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
@@ -215,6 +216,14 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   puzzles: { settledSeelieIds: [], solvedPuzzleIds: [] },
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
+  reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
+  reputationBountyHunt: {
+    bountyId: MAX_SAVE_NUMBER,
+    isTargetDefeated: true,
+    regionId: MAX_SAVE_NUMBER,
+    spawn: [-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE],
+    targetEnemyKindId: MAX_SAVE_NUMBER,
+  },
   namecardItemId: 0,
   shopPurchases: [],
   spiralAbyss: {},

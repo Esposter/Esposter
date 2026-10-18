@@ -18,6 +18,7 @@ import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 
@@ -209,7 +210,20 @@ const mergeEnemyRespawns = (account: EnemyRespawnSave, guest: EnemyRespawnSave):
 // The settled Seelies and the solved puzzles of both copies union, as neither is undone once it has happened. Each good
 // Bought in both copies keeps the purchase made later. Each dish keeps the higher proficiency of its two copies, the
 // Learned dishes union, and each processing's queue keeps the copy started later
+// The bounty claims of both copies, each moment once, the latest of the week's limit kept: the older claims are no longer counted
+const mergeReputationBountyClaimedAts = (account: string[], guest: string[]): string[] =>
+  [...new Set([...account, ...guest])]
+    .toSorted((claimedAt, than) =>
+      Temporal.Instant.compare(Temporal.Instant.from(claimedAt), Temporal.Instant.from(than)),
+    )
+    .slice(-REPUTATION_WEEKLY_CLAIM_LIMIT);
+
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
+  const reputationBountyClaimedAts = mergeReputationBountyClaimedAts(
+    account.reputationBountyClaimedAts ?? [],
+    guest.reputationBountyClaimedAts ?? [],
+  );
+  const reputationBountyHunt = account.reputationBountyHunt ?? guest.reputationBountyHunt;
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
     const accountProgress = achievements[achievementId];
@@ -299,6 +313,8 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests,
     reputation: checkIsFurtherReputation(guest.reputation, account.reputation) ? guest.reputation : account.reputation,
+    ...(reputationBountyClaimedAts.length > 0 && { reputationBountyClaimedAts }),
+    ...(reputationBountyHunt && { reputationBountyHunt }),
     shopPurchases: mergeShopPurchases(account.shopPurchases, guest.shopPurchases),
     spiralAbyss: mergeSpiralAbyss(account.spiralAbyss, guest.spiralAbyss),
     statues: mergeStatueProgress(account.statues, guest.statues),

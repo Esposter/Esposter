@@ -22,6 +22,7 @@ import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgres
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave";
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
+import { reputationBountyHuntSaveSchema } from "#src/models/reputation/ReputationBountyHuntSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
@@ -33,11 +34,13 @@ import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
 import { travelerBirthdaySaveSchema } from "#src/models/save/TravelerBirthdaySave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
   MAX_CHARACTER_COUNT,
   MAX_CLEARED_CAMP_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
   MAX_SHOP_PURCHASE_COUNT,
+  MAX_SAVE_INSTANT_LENGTH,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_WISH_HISTORY_COUNT,
 } from "#src/services/save/constants";
@@ -89,6 +92,13 @@ export const genshinSaveSchema = z
     puzzles: puzzleProgressSaveSchema,
     quests: questProgressSaveSchema,
     reputation: reputationProgressSaveSchema,
+    // The moments the bounty claims were made, the ones before the week's reset no longer counted, absent while none is held
+    reputationBountyClaimedAts: z
+      .array(z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH))
+      .max(REPUTATION_WEEKLY_CLAIM_LIMIT)
+      .optional(),
+    // The Mondstadt bounty the player has taken and not yet claimed, absent while none is taken
+    reputationBountyHunt: reputationBountyHuntSaveSchema.optional(),
     // The goods bought that still count against a limit, each good once, with how many were bought in its refresh window
     shopPurchases: z.array(shopPurchaseSaveSchema).max(MAX_SHOP_PURCHASE_COUNT),
     // The Spiral Abyss's progress by cycle: the Corridor's one cycle, and each Moon Spire period by its id

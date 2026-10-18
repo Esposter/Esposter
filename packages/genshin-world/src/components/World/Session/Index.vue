@@ -956,12 +956,14 @@ const {
 });
 // The Mondstadt bounty the keeper offers from the level its bounties unlock at, and its claim once the taken one's target is
 // Defeated. A bounty's offer stands ahead of her request, which waits until the bounty is claimed
-const { bountyCamps, bountyHunt, claimBounty, takeBounty } = useWorldReputationBounty({
+const { bountyCamps, bountyClaimedAts, bountyHunt, claimBounty, takeBounty } = useWorldReputationBounty({
   events,
   payReputationReward,
   random: () => kitContext.random(),
   reputation,
   reputationCity,
+  savedBountyClaimedAts: savedState.reputationBountyClaimedAts,
+  savedBountyHunt: savedState.reputationBountyHunt,
   worldLevel,
 });
 const reputationBountyOffer = computed(() => {
@@ -1008,6 +1010,8 @@ useWorldSaveSync({
     quests: questProgressMap.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
+    reputationBountyClaimedAts: bountyClaimedAts.value,
+    reputationBountyHunt: bountyHunt.value,
     settledSeelieIds: settledSeelieIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
