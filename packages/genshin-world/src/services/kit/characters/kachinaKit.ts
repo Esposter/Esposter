@@ -1,8 +1,24 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+
+import { Attribute } from "#src/models/character/Attribute";
 
 export const KACHINA_CHARACTER_ID = 10_000_100;
 
-// Kachina's behaviour: none of her own, since her strikes, charged attack, plunges and burst's hit are her record's
-// Alone. Her skill's Turbo Twirly, her Nightsoul's Blessing and her passives wait on their hooks, and her record's
-// Frames and areas are provisional, read from Xiangling's gcsim hitmarks and the clips' durations.
-export const createKachinaKitBehaviour = (): KitBehaviour => ({});
+// The Weight of Stone, Kachina's Ascension 4 passive: Turbo Twirly's DMG is increased by 20% of her DEF, as the passive's
+// Text in the game gives it. Her Ascension 1 passive, Mountain Echoes, waits on the Nightsoul Burst of nearby members, which
+// The kit has no event for
+const ASCENSION_4 = 4;
+const WEIGHT_OF_STONE_DEFENSE_SHARE = 0.2;
+
+// Kachina's behaviour: her strikes, charged attack, plunges and burst's hit are her record's alone, and from Ascension 4
+// Turbo Twirly's hits add 20% of her DEF. Her skill's Turbo Twirly, her Nightsoul's Blessing and her other passives wait on
+// Their hooks, and her record's frames and areas are provisional, read from Xiangling's gcsim hitmarks and the clips' durations
+export const createKachinaKitBehaviour = ({ kit }: KitRecordReader): KitBehaviour => ({
+  skill: {
+    hits: kit.elementalSkill.hits.map(() => ({
+      additiveBaseDamageBonus: ({ ascension, attributes }) =>
+        ascension < ASCENSION_4 ? 0 : WEIGHT_OF_STONE_DEFENSE_SHARE * attributes.attributeTotalMap[Attribute.Defense],
+    })),
+  },
+});
