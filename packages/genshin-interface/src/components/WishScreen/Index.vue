@@ -53,7 +53,7 @@ interface Props {
   // The Shop button's words
   shopLabel: string;
   title: string;
-  // The trial button's words, the name of the featured character the banner's trial is for, "undefined" on a banner with none
+  // The trial button's words in the reader's language, "undefined" on a banner with no trial
   trialLabel?: string;
 }
 

@@ -187,15 +187,11 @@ const fatePoints = computed(() =>
     : [],
 );
 const banner = computed(() => banners.value.find(({ id }) => id === bannerId.value));
-// The trial the open banner's featured character has, which the card's button opens, and the name the button is labelled with
+// The trial the open banner's featured character has, which the card's button opens, and the game's words the button is labelled with
 const bannerTrial = computed(() =>
   banner.value ? findBannerTrial(trials, banner.value.featuredFiveStars) : undefined,
 );
-const trialLabel = computed(() => {
-  if (!bannerTrial.value) return undefined;
-  const nameTextId = statTables.characterDataMap.get(bannerTrial.value.characterId)?.nameTextId;
-  return nameTextId === undefined ? undefined : nameText[nameTextId];
-});
+const trialLabel = computed(() => (bannerTrial.value ? gameText[GameTextKey.WishGoToTrial] : undefined));
 const openTrial = () => {
   if (bannerTrial.value) emit("trial", bannerTrial.value);
 };
