@@ -1,7 +1,7 @@
 ## 1. The package
 
 - [x] 1.1 Create `vue-grid-layout-headless` by the file-organization skill's new-package recipe. Move the placement functions and their tests into its `/placement` subpath, generic over an item with an id, a position and a size. Verify: tests titled "Compacting upward", "An item wider than the grid" and "Pushing items aside" in the package, and `pnpm test --run` there passing with its bundle size snapshot.
-- [ ] 1.2 Move the gesture state out of the dashboard's grid component into `useGridLayout`, and move the gesture tests to the composable's suite. The component renders the composable's tiles, handles and placeholder. Verify: tests titled "A press that barely moves stays a click", "A drag writes its changed cells once", "A cancelled pointer writes nothing" and "A second pointer pressed during a drag", and `pnpm test app/components/Dashboard --run` from `apps/web` passing.
+- [x] 1.2 Move the gesture state out of the dashboard's grid component into `useGridLayout`, and move the gesture tests to the composable's suite. The component renders the composable's tiles, handles and placeholder. Verify: tests titled "A press that barely moves stays a click", "A drag writes its changed cells once", "A cancelled pointer writes nothing" and "A second pointer pressed during a drag", and `pnpm test app/components/Dashboard --run` from `apps/web` passing.
 
 ## 2. The features the audit set aside
 

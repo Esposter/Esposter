@@ -4,7 +4,7 @@ import DashboardGrid from "@/components/Dashboard/Grid.vue";
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { afterEach, assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { getCellPosition, getCellSize, getColumnPitch } from "vue-grid-layout-headless/placement";
 
 describe("dashboardGrid", () => {
@@ -42,21 +42,6 @@ describe("dashboardGrid", () => {
     vi.unstubAllGlobals();
   });
 
-  test("a short drag is a click", async () => {
-    expect.hasAssertions();
-
-    const wrapper = await mountSuspended(DashboardGrid, {
-      props: { columnNumber, isEditable: true, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
-    });
-    const tile = wrapper.get(".dashboard-grid-tile");
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: 2, clientY: 0, pointerId });
-    await tile.trigger("pointerup", { clientX: 2, clientY: 0, pointerId });
-
-    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(false);
-    expect(wrapper.emitted("commit")).toBeUndefined();
-  });
-
   test("#45 Dragging across several cells writes the visual once, after the release", async () => {
     expect.hasAssertions();
 
@@ -75,62 +60,6 @@ describe("dashboardGrid", () => {
     await tile.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 2, y: 0 }]]]);
-  });
-
-  test("#2 keeps tracking a drag whose pointer has left its tile", async () => {
-    expect.hasAssertions();
-
-    const visual = new Visual({ h: 2, w: 2, x: 0, y: 0 });
-    const wrapper = await mountSuspended(DashboardGrid, {
-      props: { columnNumber, isEditable: true, rowHeight, visuals: [visual] },
-    });
-    const grid = wrapper.get(".dashboard-grid");
-    await wrapper.get(".dashboard-grid-tile").trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await grid.trigger("pointermove", { clientX: cellPitch * 2, clientY: 0, pointerId });
-    await grid.trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
-
-    expect(wrapper.emitted("commit")).toStrictEqual([[[{ h: 2, id: visual.id, w: 2, x: 2, y: 0 }]]]);
-  });
-
-  test("a second pointer's press waits for the first pointer's drag to end", async () => {
-    expect.hasAssertions();
-
-    const wrapper = await mountSuspended(DashboardGrid, {
-      props: {
-        columnNumber,
-        isEditable: true,
-        rowHeight,
-        visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 }), new Visual({ h: 2, w: 2, x: 4, y: 0 })],
-      },
-    });
-    const tiles = wrapper.findAll(".dashboard-grid-tile");
-    await takeOne(tiles, 0).trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await takeOne(tiles, 0).trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
-    await takeOne(tiles, 1).trigger("pointerdown", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
-    await takeOne(tiles, 1).trigger("pointerup", { clientX: cellPitch * 4, clientY: 0, pointerId: pointerId + 1 });
-
-    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(true);
-    expect(wrapper.emitted("commit")).toBeUndefined();
-  });
-
-  test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {
-    expect.hasAssertions();
-
-    const text = document.createTextNode("a");
-    document.body.append(text);
-    onTestFinished(() => {
-      text.remove();
-      window.getSelection()?.removeAllRanges();
-    });
-    window.getSelection()?.selectAllChildren(document.body);
-    const wrapper = await mountSuspended(DashboardGrid, {
-      props: { columnNumber, isEditable: true, rowHeight, visuals: [new Visual({ h: 2, w: 2, x: 0, y: 0 })] },
-    });
-    const tile = wrapper.get(".dashboard-grid-tile");
-    await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
-    await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
-
-    expect(wrapper.find(".dashboard-grid-placeholder").exists()).toBe(true);
   });
 
   test("opening a dashboard draws each visual at its saved cell and size", async () => {

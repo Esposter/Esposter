@@ -1,24 +1,10 @@
 <script setup lang="ts">
-import type { GridGesture } from "@/models/dashboard/GridGesture";
-import type { GridTile } from "@/models/dashboard/GridTile";
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { GridItem, GridSpacing } from "vue-grid-layout-headless";
+import type { GridGeometry, GridItem } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
-import { checkIsNestedControl } from "@esposter/shared";
-import { GridGestureType } from "vue-grid-layout-headless";
-import {
-  checkIsSameCell,
-  compactLayout,
-  fitLayout,
-  getCellPosition,
-  getCellSize,
-  getColumnPitch,
-  getGestureCell,
-  getLayoutBottom,
-  moveItem,
-} from "vue-grid-layout-headless/placement";
+import { GridGestureType, useGridLayout } from "vue-grid-layout-headless";
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 
@@ -32,125 +18,42 @@ interface Props {
 const { columnNumber, isEditable, rowHeight, visuals } = defineProps<Props>();
 const emit = defineEmits<{ commit: [changes: GridItem[]] }>();
 const grid = useTemplateRef("grid");
-const { width } = useElementSize(grid);
-const spacing: GridSpacing = { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN };
-const columnPitch = computed(() => getColumnPitch(width.value, columnNumber, spacing));
-const rowPitch = computed(() => rowHeight + spacing.gap);
-// Each visual at its saved cell, kept within the columns and compacted, so a narrower screen never overlaps
-const layout = computed(() =>
-  fitLayout(
-    visuals.map((visual) => ({ h: visual.h, id: visual.id, visual, w: visual.w, x: visual.x, y: visual.y })),
-    columnNumber,
-  ),
+const items = computed(() =>
+  visuals.map((visual) => ({ h: visual.h, id: visual.id, visual, w: visual.w, x: visual.x, y: visual.y })),
 );
-const gesture = shallowRef<GridGesture>();
-// The cells as the gesture would leave them, held here until its release so the store is written once
-const preview = shallowRef<GridTile[]>();
-const idTileMap = computed(() => new Map((preview.value ?? []).map((tile) => [tile.id, tile])));
-const draggedGesture = computed(() =>
-  gesture.value?.kind === GridGestureType.Move && gesture.value.isStarted ? gesture.value : undefined,
-);
-const getCellStyle = (cell: GridItem) => ({
-  height: `${getCellSize(cell.h, rowPitch.value, spacing.gap)}px`,
-  left: `${getCellPosition(cell.x, columnPitch.value, spacing.padding)}px`,
-  top: `${getCellPosition(cell.y, rowPitch.value, spacing.padding)}px`,
-  width: `${getCellSize(cell.w, columnPitch.value, spacing.gap)}px`,
-});
-// A dragged tile stays under the pointer while the others move aside, so it is drawn from its own cell and offset
-const tiles = computed(() =>
-  layout.value.map((tile) => {
-    const dragged = draggedGesture.value?.origin.id === tile.id ? draggedGesture.value : undefined;
-    const cell = dragged ? tile : (idTileMap.value.get(tile.id) ?? tile);
-    return {
-      style: {
-        ...getCellStyle(cell),
-        touchAction: isEditable ? "none" : undefined,
-        transform: dragged ? `translate(${dragged.offset.x}px, ${dragged.offset.y}px)` : undefined,
-        zIndex: dragged ? 1 : undefined,
-      },
-      tile,
-    };
-  }),
-);
-const placeholderStyle = computed(() => {
-  if (!gesture.value?.isStarted) return undefined;
-
-  const target = idTileMap.value.get(gesture.value.origin.id);
-  return target ? getCellStyle(target) : undefined;
-});
-const gridStyle = computed(() => ({
-  height: `${getCellPosition(getLayoutBottom(preview.value ?? layout.value), rowPitch.value, spacing.padding)}px`,
+const { gridHeight, placeholder, startGesture, tiles } = useGridLayout(grid, () => ({
+  columnNumber,
+  dragStartDistance: DRAG_START_DISTANCE,
+  isEditable: isEditable === true,
+  items: items.value,
+  onCommit: (changes) => emit("commit", changes),
+  rowHeight,
+  spacing: { gap: DASHBOARD_GRID_MARGIN, padding: DASHBOARD_GRID_MARGIN },
 }));
-const resetGesture = () => {
-  gesture.value = undefined;
-  preview.value = undefined;
-};
-
-// A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
-const startGesture = (event: PointerEvent, tile: GridTile, kind: GridGestureType) => {
-  if (!isEditable || checkIsNestedControl(event)) return;
-  // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
-  if (gesture.value && gesture.value.pointerId !== event.pointerId) return;
-  if (!(event.currentTarget instanceof Element)) return;
-
-  gesture.value = {
-    element: event.currentTarget,
-    isStarted: false,
-    kind,
-    offset: { x: 0, y: 0 },
-    origin: tile,
-    pointerId: event.pointerId,
-    start: { x: event.clientX, y: event.clientY },
-  };
-};
-
-useEventListener(grid, "pointermove", (event: PointerEvent) => {
-  const activeGesture = gesture.value;
-  if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
-
-  const offset = { x: event.clientX - activeGesture.start.x, y: event.clientY - activeGesture.start.y };
-  if (!activeGesture.isStarted && Math.hypot(offset.x, offset.y) < DRAG_START_DISTANCE) return;
-
-  // The drag holds the pointer, so nothing else it passes over takes a hover or its events, and a press that stays a click never does
-  if (!activeGesture.isStarted) activeGesture.element.setPointerCapture(event.pointerId);
-  const cell = getGestureCell({
-    columnNumber,
-    columnPitch: columnPitch.value,
-    kind: activeGesture.kind,
-    offset,
-    origin: activeGesture.origin,
-    rowPitch: rowPitch.value,
-  });
-  const isCellChanged = !activeGesture.cell || !checkIsSameCell(cell, activeGesture.cell);
-  gesture.value = { ...activeGesture, cell, isStarted: true, offset };
-  if (isCellChanged) preview.value = compactLayout(moveItem(layout.value, cell));
-});
-// A pointer that is released after a drag writes every cell the drag changed, once, and a press that never started writes nothing
-useEventListener(grid, "pointerup", (event: PointerEvent) => {
-  if (event.pointerId !== gesture.value?.pointerId) return;
-
-  const changes = (preview.value ?? [])
-    .filter((tile) => !checkIsSameCell(tile, tile.visual))
-    .map(({ h, id, w, x, y }) => ({ h, id, w, x, y }));
-  resetGesture();
-  if (changes.length > 0) emit("commit", changes);
-});
-useEventListener(grid, "pointercancel", (event: PointerEvent) => {
-  if (event.pointerId === gesture.value?.pointerId) resetGesture();
+const getBoxStyle = (geometry: GridGeometry) => ({
+  height: `${geometry.height}px`,
+  left: `${geometry.left}px`,
+  top: `${geometry.top}px`,
+  width: `${geometry.width}px`,
 });
 </script>
 
 <template>
-  <div ref="grid" class="dashboard-grid" relative :style="gridStyle">
+  <div ref="grid" class="dashboard-grid" relative :style="{ height: `${gridHeight}px` }">
     <div
-      v-for="{ style, tile } of tiles"
-      :key="tile.id"
+      v-for="{ geometry, isDragged, item, offset } of tiles"
+      :key="item.id"
       class="dashboard-grid-tile"
       absolute
-      :style
-      @pointerdown="(event) => startGesture(event, tile, GridGestureType.Move)"
+      :style="{
+        ...getBoxStyle(geometry),
+        touchAction: isEditable ? 'none' : undefined,
+        transform: isDragged ? `translate(${offset.x}px, ${offset.y}px)` : undefined,
+        zIndex: isDragged ? 1 : undefined,
+      }"
+      @pointerdown="(event) => startGesture(event, item, GridGestureType.Move)"
     >
-      <slot :visual="tile.visual" />
+      <slot :visual="item.visual" />
       <span
         v-if="isEditable"
         class="dashboard-grid-handle"
@@ -159,10 +62,10 @@ useEventListener(grid, "pointercancel", (event: PointerEvent) => {
         right-0
         size-4
         cursor="nwse-resize"
-        @pointerdown.stop="(event) => startGesture(event, tile, GridGestureType.Resize)"
+        @pointerdown.stop="(event) => startGesture(event, item, GridGestureType.Resize)"
       />
     </div>
-    <div v-if="placeholderStyle" class="dashboard-grid-placeholder" absolute :style="placeholderStyle" />
+    <div v-if="placeholder" class="dashboard-grid-placeholder" absolute :style="getBoxStyle(placeholder)" />
   </div>
 </template>
 
