@@ -23,7 +23,7 @@ vi.mock(import("#src/services/genshinAssets/cooking/readCookingRecipes"), () => 
   readCookingRecipes: vi.fn<() => CookingRecipe[]>(() => []),
 }));
 vi.mock(import("#src/services/genshinText/readExcelTable"), () => ({
-  readExcelTable: vi.fn<(tableName: string) => unknown[]>(() => []),
+  readExcelTable: vi.fn<typeof readExcelTable>(() => []),
 }));
 
 // The game's time as the dump writes it, read off the epoch
