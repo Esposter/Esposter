@@ -1,5 +1,4 @@
 {
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 10431 } },
   "normalAttacks.2.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 10431 } },
   "plungeCollision.area": {
