@@ -26,6 +26,7 @@ import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import GameOverScreen from "#src/components/GameOver/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
@@ -439,11 +440,15 @@ const {
   locomotion,
   party,
   respawnParty,
+  reviveFallenParty,
   strikeParty,
 } = useWorldCombat({
   enemyTables,
   events,
   gameDataBaseUrl,
+  onPartyDown: () => {
+    screenKind.value = ScreenKind.GameOver;
+  },
   onPartyRevived: () => {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
     if (nearestWaypoint) jumpTo(computeJumpPose(nearestWaypoint));
@@ -1184,6 +1189,15 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
     </MenuScreen>
+    <GameOverScreen
+      v-if="screenKind === ScreenKind.GameOver"
+      :revive-label="gameText[GameTextKey.Revive]"
+      :title="gameText[GameTextKey.PlayerDieNone]"
+      @revive="
+        reviveFallenParty();
+        screenKind = ScreenKind.World;
+      "
+    />
     <DialogueTalk
       v-if="screenKind === ScreenKind.Dialogue && talk"
       :key="talk.id"

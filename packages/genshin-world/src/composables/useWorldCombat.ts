@@ -46,11 +46,12 @@ import { computed, shallowRef, watch } from "vue";
 
 // The party the player fields, the characters it is made of and their combat, and the world's combat state the kit on the
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
-// Doing the quests count, and a team that falls revives where the host places it
+// Doing the quests count, and a team that falls opens the game over screen, whose revive the host places
 export const useWorldCombat = ({
   enemyTables,
   events,
   gameDataBaseUrl,
+  onPartyDown,
   onPartyRevived,
   placeWorldDrops,
   savedCharacters,
@@ -63,6 +64,7 @@ export const useWorldCombat = ({
   enemyTables: EnemyTables;
   events: WorldEvents;
   gameDataBaseUrl: string;
+  onPartyDown: () => void;
   onPartyRevived: () => void;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   savedCharacters: Character[];
@@ -217,9 +219,13 @@ export const useWorldCombat = ({
     ]);
     events.emit("questEvent", { kind: QuestObjectiveKind.Defeat, targetId: String(enemy.enemyKindId) });
   };
-  // A team that has all fallen revives at the share the game brings it back with, and is jumped to where the host places it
+  // A team that has all fallen opens the game over screen, which offers its revive
   const respawnParty = () => {
-    if (!checkIsPartyDown(party)) return;
+    if (checkIsPartyDown(party)) onPartyDown();
+  };
+  // The game over screen's revive: the team comes back at the share the game brings it back with, and is jumped to where
+  // The host places it
+  const reviveFallenParty = () => {
     reviveParty(party);
     onPartyRevived();
   };
@@ -254,6 +260,7 @@ export const useWorldCombat = ({
     locomotion,
     party,
     respawnParty,
+    reviveFallenParty,
     strikeParty,
   };
 };

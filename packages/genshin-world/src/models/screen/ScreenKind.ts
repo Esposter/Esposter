@@ -17,6 +17,7 @@ export enum ScreenKind {
   Fishing = "Fishing",
   Forge = "Forge",
   Friends = "Friends",
+  GameOver = "GameOver",
   GcgDuel = "GcgDuel",
   Inventory = "Inventory",
   Mail = "Mail",

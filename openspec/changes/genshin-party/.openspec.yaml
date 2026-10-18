@@ -7,4 +7,13 @@ x-touches:
   [
     "packages/genshin-interface/src/components/PartySetupScreen/**",
     "packages/genshin-world/src/components/Party/Screen/**",
+    "packages/genshin-world/src/components/GameOver/**",
+    "packages/genshin-world/src/components/Hud/Party/Index.vue",
+    "packages/genshin-world/src/components/Hud/Screen/Index.vue",
+    "packages/genshin-world/src/components/World/Session/Index.vue",
+    "packages/genshin-world/src/composables/useWorldCombat.ts",
+    "packages/genshin-world/src/composables/useWorldCombat.test.ts",
+    "packages/genshin-world/src/models/screen/ScreenKind.ts",
+    "packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts",
+    "packages/genshin-text/src/models/GameTextKey.ts",
   ]
