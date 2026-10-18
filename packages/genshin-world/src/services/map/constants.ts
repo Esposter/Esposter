@@ -1,7 +1,10 @@
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 
 // The landmarks a jump lands at, as the game teleports to its waypoints and statues and nowhere else
-export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [LandmarkKind.StatueOfTheSeven];
+export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [
+  LandmarkKind.StatueOfTheSeven,
+  LandmarkKind.TeleportWaypoint,
+];
 // Provisional: the game's own arrival point for each statue, its scene point's transport place. How far in front of a
 // Landmark a jump lands, in metres, clear of a statue's plinth
 export const JUMP_STANDOFF_DISTANCE = 8;
