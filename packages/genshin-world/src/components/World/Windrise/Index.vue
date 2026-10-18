@@ -566,7 +566,13 @@ onUnmounted(() => {
       :places="frostbearingTreePlaces"
       :ramp-texture
     />
-    <WorldOculi v-if="!witness" :get-ground-height :light-uniforms :places="oculusPlaces" :ramp-texture />
+    <WorldOculi
+      v-if="!witness && oculusPlaces.length > 0"
+      :get-ground-height
+      :light-uniforms
+      :places="oculusPlaces"
+      :ramp-texture
+    />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
     <QuestBeam v-if="questTargetPosition" :origin :position="questTargetPosition" />

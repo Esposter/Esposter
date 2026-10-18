@@ -20,7 +20,8 @@ interface Props {
 const { getGroundHeight, lightUniforms, places, rampTexture } = defineProps<Props>();
 
 // Every Oculus is one sphere of one instanced draw sharing one material. The stand-ins are placed anywhere in the world,
-// So the mesh's bounds, measured from its geometry alone, would cull them
+// So the mesh's bounds, measured from its geometry alone, would cull them. The places are read after the world starts, so
+// The parent mounts this once they are in, as an instanced mesh's count is fixed at setup
 const oculusMesh = createInstancedMesh(
   new SphereGeometry(OCULUS_STAND_IN_RADIUS),
   createToonMaterial({ color: OCULUS_STAND_IN_COLOR, lightUniforms, rampTexture }),
