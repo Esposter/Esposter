@@ -36,4 +36,12 @@ x-touches:
     "scripts/src/services/genshinAssets/shops/toShopGoodSlice.test.ts",
     "scripts/src/services/genshinAssets/shops/buildShopGoodSlice.ts",
     "scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts",
+    "scripts/src/services/genshinText/buildQuests.ts",
+    "scripts/src/services/genshinText/constants.ts",
+    "scripts/src/services/genshinText/fetchDump.ts",
+    "scripts/src/services/genshinText/readCarriedMainQuestId.ts",
+    "scripts/src/services/genshinText/readCarriedQuestBinaryPaths.ts",
+    "scripts/src/services/genshinText/readCarriedQuestBinaryPaths.test.ts",
+    ".agents/skills/genshin-text/SKILL.md",
+    ".agents/skills/genshin-parity/references/data-sources.md",
   ]

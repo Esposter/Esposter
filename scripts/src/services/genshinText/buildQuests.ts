@@ -19,6 +19,7 @@ import {
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
 import { OpeningParentTitleMap } from "#src/services/genshinText/OpeningParentTitleMap";
+import { readCarriedMainQuestId } from "#src/services/genshinText/readCarriedMainQuestId";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readOpeningParentQuestIds } from "#src/services/genshinText/readOpeningParentQuestIds";
@@ -72,6 +73,8 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   const carriedQuestIds = new Set<string>(QuestIds);
   const rewardsByQuest = readCarriedQuestRewards();
   const talkTables = await readTalkTables();
+  const mainQuestIds = new Set(mainQuestMap.keys());
+  const mainIdBySubId = new Map([...subQuestMap].map(([subId, subQuest]) => [subId, subQuest.mainId] as const));
   const quests: Quest[] = QuestIds.map((questId) => {
     const rewards = rewardsByQuest.get(questId) ?? [];
     if (ReputationRequestQuestIds.includes(questId)) {
@@ -93,8 +96,8 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       return readReputationRequestQuest({ giving, groupItemIds, mainQuest, rewards, subQuest });
     }
     // A city's opening quest is one sub quest of its world quest: titled by that world quest, read from its binary
-    const subQuestRow = subQuestMap.get(Number(questId));
-    const mainQuest = mainQuestMap.get(Number(questId)) ?? (subQuestRow && mainQuestMap.get(subQuestRow.mainId));
+    const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, mainIdBySubId);
+    const mainQuest = mainQuestId === undefined ? undefined : mainQuestMap.get(mainQuestId);
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
     const questType = mainQuest.type ?? MAIN_QUEST_DEFAULT_TYPE;
     const questKind = DumpedQuestKindMap[questType];
