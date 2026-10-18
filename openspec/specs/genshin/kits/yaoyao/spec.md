@@ -84,11 +84,30 @@ Yaoyao's skill SHALL spawn a Yuegui two metres ahead of her 63 frames after the 
 - **WHEN** the active character stands at or below 70% of her Max HP
 - **THEN** the radish lands at Yaoyao's own position
 
-### Requirement: Unbuilt burst Yuegui, Mega Radish and passives
+### Requirement: Moonjade Descent's Yuegui and whole-team radishes
 
-Yaoyao's Yuegui from Moonjade Descent, the Mega Radish, and her passives and constellations SHALL have no effect in the world yet.
+Moonjade Descent SHALL spawn a Yuegui two metres behind Yaoyao at 104, 162 and 221 frames after the cast, while the burst lasts. Each of them SHALL throw its first radish 29 frames after it spawns, and that radish SHALL heal each member of the deployed team.
 
-#### Scenario: Burst throws no radish
+#### Scenario: Yuegui spawns behind her at each spawn
 
 - **WHEN** Yaoyao casts Moonjade Descent
-- **THEN** no radish is thrown from a Yuegui that the burst spawns
+- **THEN** a Yuegui stands two metres behind her body at 104, 162 and 221 frames after the cast, and none before 104 frames
+
+#### Scenario: First radish heals the whole team
+
+- **WHEN** a burst Yuegui has stood 29 frames
+- **THEN** its radish lands 13 frames after the throw and heals each member of the deployed team
+
+#### Scenario: Swap ends the burst's Yuegui
+
+- **WHEN** the player swaps off Yaoyao during her burst
+- **THEN** the Yuegui her burst spawned throws no further radish
+
+### Requirement: Unbuilt Mega Radish, constellations and passives
+
+Yaoyao's Mega Radish, her constellations and her passives SHALL have no effect in the world yet.
+
+#### Scenario: Yuegui throws no Mega Radish
+
+- **WHEN** the skill's Yuegui throws its third or sixth radish
+- **THEN** no Mega Radish is thrown in place of it
