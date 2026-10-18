@@ -130,6 +130,26 @@ describe(applyPatches, () => {
     );
   });
 
+  test("refuses removing the root", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      applyPatches(document, [{ op: JsonPatchOperationType.Remove, path: "" }]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Delete, "", "the root cannot be removed").message}]`,
+    );
+  });
+
+  test("refuses adding under a scalar", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      applyPatches(document, [{ op: JsonPatchOperationType.Add, path: "/c/d/e", value: "" }]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Update, "/c/d/e", "its parent holds no members").message}]`,
+    );
+  });
+
   test("refuses a pointer that does not start at the root", () => {
     expect.hasAssertions();
 
