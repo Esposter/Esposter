@@ -303,7 +303,9 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 179 / 60);
     expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
     stepKitSeconds(context, 1 / 60);
-    const [skill, ascension] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const buffs = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const skill = takeOne(buffs, 0);
+    const ascension = takeOne(buffs, 1);
     expect({ amount: ascension.amount, attribute: ascension.attribute, kind: ascension.kind }).toStrictEqual({
       amount: 300,
       attribute: Attribute.Attack,
@@ -462,7 +464,7 @@ describe(createNicoleKitBehaviour, () => {
     NICOLE_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8 / 60);
 
-    const [, constellation] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const constellation = takeOne(getBuffs(context, TRAVELER_CHARACTER_ID), 1);
     expect({
       amount: constellation.amount,
       attribute: constellation.attribute,
