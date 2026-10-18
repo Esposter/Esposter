@@ -27,6 +27,7 @@ export enum ScreenKind {
   PaimonsBargains = "PaimonsBargains",
   PartySetup = "PartySetup",
   PhotoMode = "PhotoMode",
+  Processing = "Processing",
   Quests = "Quests",
   Reputation = "Reputation",
   Settings = "Settings",

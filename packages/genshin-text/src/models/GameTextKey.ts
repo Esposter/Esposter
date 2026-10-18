@@ -132,6 +132,8 @@ export enum GameTextKey {
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
+  // The stove's processing row and its screen's queue button, named by the game's own "Start Processing"
+  ProcessingStart = "1809596508",
   CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
   Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
