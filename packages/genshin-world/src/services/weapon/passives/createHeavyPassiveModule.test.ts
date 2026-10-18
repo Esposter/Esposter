@@ -12,8 +12,8 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const wielder: Combatant = createWielderCombatant();
-// Heavy at its first rank: the multiplier and the cooldown in seconds
-const heavyPassiveModule = createHeavyPassiveModule([1.6, 10]);
+// Heavy with synthetic params: the multiplier and the cooldown in seconds
+const heavyPassiveModule = createHeavyPassiveModule([1.4, 8]);
 const createNormalAttackLanded = () => ({
   action: takeOne(TRAVELER_KIT.normalAttacks, 0),
   kind: KitEventKind.NormalAttackLanded as const,
@@ -27,7 +27,7 @@ describe(createHeavyPassiveModule, () => {
     heavyPassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.6);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBeCloseTo(1.4);
   });
 
   test("a normal attack inside the rank's cooldown queues no second extra hit, and one after it queues another", () => {
@@ -39,7 +39,7 @@ describe(createHeavyPassiveModule, () => {
 
     expect(context.strikes).toHaveLength(1);
 
-    stepKitSeconds(context, 10.1);
+    stepKitSeconds(context, 8.1);
     heavyPassiveModule.onKitEvent?.(createNormalAttackLanded(), context, wielder);
 
     expect(context.strikes).toHaveLength(1);

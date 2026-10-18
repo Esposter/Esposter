@@ -18,8 +18,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const OTHER_CHARACTER_ID = 10_000_066;
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Infusion Scroll at its first rank, which reads its per-stack bonus from the affix row's first number
-const infusionScrollPassiveModule = createInfusionScrollPassiveModule([0.08]);
+// Infusion Scroll with synthetic params, which reads its per-stack bonus from the first number
+const infusionScrollPassiveModule = createInfusionScrollPassiveModule([0.1]);
 
 const createReaction = (striker: Combatant) => ({
   enemy,
@@ -35,8 +35,8 @@ describe(createInfusionScrollPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.08);
-    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.08);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.1);
+    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.1);
   });
 
   test("a second reaction stacks the bonus to two, and a third holds it there", () => {
@@ -47,11 +47,11 @@ describe(createInfusionScrollPassiveModule, () => {
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.16);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.2);
 
     infusionScrollPassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.16);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.2);
   });
 
   test("a reaction another character triggers gives nothing", () => {

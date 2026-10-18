@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Infusion Arrow at its first rank, which reads its ATK and Normal ATK SPD per stack from the affix row's first two numbers
-const infusionArrowPassiveModule = createInfusionArrowPassiveModule([0.04, 0.012, 0.3]);
+// Infusion Arrow with synthetic params, which reads its ATK and Normal ATK SPD per stack from the first two numbers
+const infusionArrowPassiveModule = createInfusionArrowPassiveModule([0.05, 0.02, 0.2]);
 const createDamageTaken = (attackTag: AttackTag) => ({
   attackTag,
   enemy,
@@ -38,8 +38,8 @@ describe(createInfusionArrowPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.04);
-    expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBeCloseTo(0.012);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.NormalAttackSpeed)?.amount).toBeCloseTo(0.02);
   });
 
   test("a charged attack hit stacks the same as a normal attack", () => {
@@ -49,6 +49,6 @@ describe(createInfusionArrowPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionArrowPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.04);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
   });
 });

@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Infusion Blade at its first rank, which reads its per-stack percentage from the affix row's first number
-const infusionBladePassiveModule = createInfusionBladePassiveModule([0.06]);
+// Infusion Blade with synthetic params, which reads its per-stack percentage from the first number
+const infusionBladePassiveModule = createInfusionBladePassiveModule([0.05]);
 const createDamageTaken = (attackTag: AttackTag) => ({
   attackTag,
   enemy,
@@ -38,8 +38,8 @@ describe(createInfusionBladePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.06);
-    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBeCloseTo(0.05);
   });
 
   test("a hit inside the rank's half-second cooldown adds no stack, and one after it stacks to two", () => {
@@ -51,11 +51,11 @@ describe(createInfusionBladePassiveModule, () => {
     stepKitSeconds(context, 0.45);
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.05);
 
     stepKitSeconds(context, 0.1);
     infusionBladePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBeCloseTo(0.1);
   });
 });
