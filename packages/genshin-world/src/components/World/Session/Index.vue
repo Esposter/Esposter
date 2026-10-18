@@ -1013,8 +1013,11 @@ const reputationLevel = shallowRef(reputation.value.level);
 // The request the keeper offers as her screen opens, drawn from the requests the world carries that the player has not
 // Started, not kept with the save, and none past the week's request limit: a provisional rule until the weekly refresh is read
 const reputationOffer = shallowRef<ReputationRequest>();
+// The request waits while a taken bounty hunts, and is offered once the bounty is claimed
+const reputationRequestOffer = computed(() => (bountyHunt.value ? undefined : reputationOffer.value));
 const reputationOfferTitle = computed(() => {
-  const quest = reputationOffer.value && quests.value.find(({ id }) => id === String(reputationOffer.value?.questId));
+  const request = reputationRequestOffer.value;
+  const quest = request && quests.value.find(({ id }) => id === String(request.questId));
   return quest ? questTextMap.value[quest.titleTextId] : undefined;
 });
 const drawReputationOffer = () => {
@@ -1033,8 +1036,8 @@ const drawReputationOffer = () => {
 const acceptReputationOffer = () => {
   if (reputationBountyOffer.value === ReputationBountyOffer.Claim) return claimBounty();
   if (reputationBountyOffer.value === ReputationBountyOffer.Offer) return takeBounty();
-  if (!reputationOffer.value) return;
-  acceptQuest(String(reputationOffer.value.questId));
+  if (!reputationRequestOffer.value) return;
+  acceptQuest(String(reputationRequestOffer.value.questId));
   reputationOffer.value = undefined;
 };
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
