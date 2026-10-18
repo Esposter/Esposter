@@ -1,3 +1,5 @@
+import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
+import { LabelIdOfferingKindMap } from "#src/services/genshinAssets/offerings/LabelIdOfferingKindMap";
 import { placeMapPoints } from "#src/services/genshinAssets/points/placeMapPoints";
 import { describe, expect, test } from "vitest";
 
@@ -48,6 +50,22 @@ describe(placeMapPoints, () => {
     );
     expect(placement.places).toStrictEqual({
       mondstadt: [{ id: "chest-100495", kind: "Common", position: { x: 452.43, z: -797.48 } }],
+    });
+  });
+
+  test("an offering appears at its map point", () => {
+    expect.hasAssertions();
+    // The Sacred Sakura's label stands on one ground point of Inazuma's area, which the fit leaves where it lies
+    const transform = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
+    const placement = placeMapPoints(
+      [{ area_id: 3, id: 7, label_id: 316, x_pos: 1.5, y_pos: 2.25, z_level: 0 }],
+      transform,
+      LabelIdOfferingKindMap,
+      "offering",
+      [0, 0, 0],
+    );
+    expect(placement.places).toStrictEqual({
+      inazuma: [{ id: "offering-7", kind: OfferingKind.SacredSakura, position: { x: 1.5, z: -2.25 } }],
     });
   });
 });

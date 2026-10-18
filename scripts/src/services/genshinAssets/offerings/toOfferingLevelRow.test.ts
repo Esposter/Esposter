@@ -37,6 +37,27 @@ describe(toOfferingLevelRow, () => {
     });
   });
 
+  test("should read the item in the slot that names one, past the empty slot the dump writes back as zero", () => {
+    expect.hasAssertions();
+
+    const levelRow: ExcelOfferingLevelupRow = {
+      consumeItemConfigVec: [
+        { count: 0, id: 0 },
+        { count: ITEMS_PER_LEVEL, id: FROSTBEARING_ITEM_ID },
+      ],
+      level: LEVEL,
+      offeringId: 1,
+      rewardId: REWARD_ID,
+    };
+
+    expect(toOfferingLevelRow(levelRow, rewardRow)).toStrictEqual({
+      itemCount: ITEMS_PER_LEVEL,
+      itemId: FROSTBEARING_ITEM_ID,
+      level: LEVEL,
+      rewards: [{ itemCount: MORA_COUNT, itemId: MORA_ITEM_ID }],
+    });
+  });
+
   test("should take no item for a level that names none", () => {
     expect.hasAssertions();
 
