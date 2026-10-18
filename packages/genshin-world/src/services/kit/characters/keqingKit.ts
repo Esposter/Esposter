@@ -22,6 +22,10 @@ export const KEQING_CHARACTER_ID = 10_000_042;
 // Her attacks with Electro for the infusion's seconds as it starts. From Ascension 4 Starward Sword gives her CRIT Rate and
 // Energy Recharge. Her other passives and constellations are not built, as no kit event reaches a value the fetched
 // Sources give
+// Constellation 1 needs an ATK-scaled Electro hit on each Lightning Stiletto recast, which no hit carries
+// Constellation 2 needs an Elemental Particle chance on each hit against Electro, which no hit drops yet
+// Constellation 4 needs the Electro-related reactions Keqing triggers, which the reaction types do not name
+// Constellation 6 needs the 6% Electro DMG stacking on each initiated action, which the kit does not build
 export const createKeqingKitBehaviour = (): KitBehaviour => ({
   burst: {
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {

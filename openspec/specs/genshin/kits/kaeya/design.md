@@ -10,6 +10,7 @@ Kaeya's kit is its record and one behaviour module, `createKaeyaKitBehaviour`, o
 
 ## Not built
 
+- **Constellations 1, 2, 4 and 6 are not built.** Each needs a hook the kit does not yet have: the enemy's Cryo state, enemies defeated during Glacial Waltz, the 20% HP shield, and the extra icicle with its Energy.
 - **Glacial Waltz's activation knockback is not built.** Its 400 poise has no damage and gcsim gives no area for it, so the icicles alone are built.
 
 ## Key files
