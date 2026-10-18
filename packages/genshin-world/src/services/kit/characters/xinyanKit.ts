@@ -2,20 +2,23 @@ import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { takeOne } from "@esposter/shared";
 
 // The count Sweeping Fervor keeps as it strikes lasts this long past the press, long enough for its one hit to strike
@@ -38,6 +41,13 @@ const FIELD_LINGER_SECONDS = 0.1;
 const SHIELD_LEVEL_STATUS_ID = "xinyan-shield-level";
 const HIT_COUNT_STATUS_ID = "xinyan-sweeping-fervor-hits";
 const SHIELD_DOT_FIELD_ID = "xinyan-shield-dot";
+// "...Now That's Rock 'N' Roll!", as the dump's Xinyan_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT)
+// Xinyan/asc.go give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as long
+// As the shield stands
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xinyan/asc.go
+const ROCK_N_ROLL_ASCENSION = 4;
+const ROCK_N_ROLL_PHYSICAL_DAMAGE_BONUS = 0.15;
+const ROCK_N_ROLL_SOURCE = "xinyan-a4";
 
 // Constellation gates, as gcsim v2.47.2 (MIT) gives them: 1's ATK SPD is not built, as the kit's normal attack speed reads
 // Only an infusion's, 2's Riff Revolution CRIT Rate and shield, and 4's Physical RES cut. Constellation 6 has no gcsim
@@ -80,9 +90,9 @@ export const XINYAN_CHARACTER_ID = 10_000_044;
 // Shield's level up, lowered by Ascension 1, its health read off the table at the level it stands at, and Rave's field
 // Striking every 2 seconds while it stands at level 3. Riff Revolution casts its Pyro DoT, a summon that follows the
 // Body. Constellation 2 gives its Physical hit CRIT Rate and sets Rave's shield as it is cast, its DoT striking Rave's
-// Two pulses besides, and Constellation 4's skill hit cuts Physical RES. Her Ascension 4 is not built, as no kit event
-// Reaches the team's shield, her Constellation 1 is not, as the kit's normal attack speed reads only an infusion's, and
-// Constellation 6 is not, as gcsim has none
+// Two pulses besides, and Constellation 4's skill hit cuts Physical RES. From Ascension 4 the team deals more Physical DMG
+// while her shield stands. Her Constellation 1 is not built, as the kit's normal attack speed reads only an infusion's,
+// and Constellation 6 is not, as gcsim has none
 // Constellation 1 needs an ATK SPD bonus on her normal and charged attacks, which no attribute carries
 // Constellation 6 needs the Charged Attacks' stamina cut and ATK bonus, which the kit does not build
 export const createXinyanKitBehaviour = ({
@@ -105,8 +115,14 @@ export const createXinyanKitBehaviour = ({
   const shieldDefenseShares = readParameters("shieldDefenseShares");
   const shieldFlatHealths = readParameters("shieldFlatHealths");
   // Sets a shield at a level, its health its flat HP plus its share of DEF at that level, and at level 3 starts the field
-  // That strikes each 2 seconds while it stands, the earlier fields of the same kind ending
-  const setShield = (kitEffectState: KitEffectState, combatant: Combatant, body: KitBody, level: number): void => {
+  // That strikes each 2 seconds while it stands, the earlier fields of the same kind ending. From Ascension 4 the team
+  // It shields deals more Physical DMG for the shield's seconds, ended sooner if it breaks
+  const setShield = (
+    { kitEffectState, party }: Pick<KitContext, "kitEffectState" | "party">,
+    combatant: Combatant,
+    body: KitBody,
+    level: number,
+  ): void => {
     const { characterId } = combatant;
     const defenseShare = takeOne(shieldDefenseShares, level - 1);
     const flatHealth = takeOne(shieldFlatHealths, level - 1);
@@ -115,6 +131,13 @@ export const createXinyanKitBehaviour = ({
       health: flatHealth + defenseShare * combatant.attributes.defense,
       secondsRemaining: shieldSeconds,
     });
+    if (combatant.ascension >= ROCK_N_ROLL_ASCENSION)
+      buffKitTeam(kitEffectState, party, {
+        amount: ROCK_N_ROLL_PHYSICAL_DAMAGE_BONUS,
+        attribute: Attribute.PhysicalDamageBonus,
+        secondsRemaining: shieldSeconds,
+        source: ROCK_N_ROLL_SOURCE,
+      });
     addKitStatus(kitEffectState, characterId, {
       id: SHIELD_LEVEL_STATUS_ID,
       secondsRemaining: shieldSeconds,
@@ -141,7 +164,8 @@ export const createXinyanKitBehaviour = ({
     // Riff Revolution's DoT is a summon that follows the body, struck from the cast as its hits fall. At Constellation 2
     // The shield is set as the burst is cast, with the Physical hit's CRIT Rate for the moment it lands
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         if (combatant.constellationCount >= CRITICAL_RATE_CONSTELLATION)
           buffKitMember(kitEffectState, combatant.characterId, {
             amount: RIFF_CRITICAL_RATE_BONUS,
@@ -150,11 +174,24 @@ export const createXinyanKitBehaviour = ({
             source: RIFF_CRITICAL_RATE_SOURCE,
           });
         const hasShieldOnBurst = combatant.constellationCount >= SHIELD_ON_BURST_CONSTELLATION;
-        if (hasShieldOnBurst) setShield(kitEffectState, combatant, body, SHIELD_LEVEL_THREE);
+        if (hasShieldOnBurst) setShield(context, combatant, body, SHIELD_LEVEL_THREE);
         castKitSummon(kitEffectState, body, combatant, hasShieldOnBurst ? constellationDotHits : riffDotHits, {
           isFollowing: true,
         });
       },
+    },
+    // Her shield's Physical DMG Bonus ends as the shield breaks, unless a shield of hers was set over it
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (
+        event.kind !== KitEventKind.EffectExpired ||
+        event.effect.kind !== "shield" ||
+        event.effect.characterId !== combatant.characterId ||
+        kitEffectState.effects.some(
+          (effect) => checkIsKitShieldLive(effect) && effect.characterId === combatant.characterId,
+        )
+      )
+        return;
+      removeKitEffects(kitEffectState, (effect) => effect.kind === "buff" && effect.source === ROCK_N_ROLL_SOURCE);
     },
     skill: {
       hits: [
@@ -162,20 +199,22 @@ export const createXinyanKitBehaviour = ({
           enemyStatus: getPhysicalResistanceStatus,
           // Each enemy the hit strikes counts toward the shield's level, which the hit steps up as the count reaches each
           // Level
-          onStrike: ({ kitEffectState }, { body, combatant }) => {
+          onStrike: (context, { body, combatant }) => {
+            const { kitEffectState } = context;
             const hitCount = findKitStatus(kitEffectState.effects, combatant.characterId, HIT_COUNT_STATUS_ID);
             if (!hitCount) return;
             hitCount.stacks = (hitCount.stacks ?? 0) + 1;
             const requiredLevel = getRequiredShieldLevel(hitCount.stacks, combatant.ascension);
             if (requiredLevel > findShieldLevel(kitEffectState.effects, combatant.characterId))
-              setShield(kitEffectState, combatant, body, requiredLevel);
+              setShield(context, combatant, body, requiredLevel);
           },
         },
       ],
       // The press sets the level-1 shield when none stands, and resets the count its hit adds to
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         if (findShieldLevel(kitEffectState.effects, combatant.characterId) === 0)
-          setShield(kitEffectState, combatant, body, SHIELD_LEVEL_ONE);
+          setShield(context, combatant, body, SHIELD_LEVEL_ONE);
         addKitStatus(kitEffectState, combatant.characterId, {
           id: HIT_COUNT_STATUS_ID,
           secondsRemaining: SKILL_HIT_WINDOW_SECONDS,

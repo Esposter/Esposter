@@ -1,6 +1,6 @@
 ## Purpose
 
-Xinyan's kit as built, with Sweeping Fervor's shield that steps up by the enemies it strikes and Riff Revolution's DoT hits, and what is left of her Ascension 4 and constellations.
+Xinyan's kit as built, with Sweeping Fervor's shield that steps up by the enemies it strikes and Riff Revolution's DoT hits, and what is left of her constellations.
 
 ## Requirements
 
@@ -66,14 +66,16 @@ Xinyan's burst SHALL deal a Physical hit and then seven Pyro DoT hits.
 
 ### Requirement: Ascension and constellation scope
 
-Xinyan's Ascension 1 and her Constellations 2 and 4 SHALL take effect, while her Ascension 4 and Constellations 1 and 6 SHALL have no effect yet.
+Xinyan's Ascension 1, Ascension 4 and her Constellations 2 and 4 SHALL take effect, while her Constellations 1 and 6 SHALL have no effect yet.
 
 #### Scenario: Constellation 1 has no effect
 
 - **WHEN** Xinyan holds Constellation 1
 - **THEN** no Constellation 1 effect is applied
 
-#### Scenario: Ascension 4 has no effect
+#### Scenario: Ascension 4 raises the shielded team's Physical DMG
 
-- **WHEN** Xinyan reaches Ascension 4
-- **THEN** no shield effect from Ascension 4 applies
+- **GIVEN** Xinyan has reached Ascension 4
+- **WHEN** Sweeping Fervor sets her shield
+- **THEN** every deployed member deals 15% more Physical DMG while the shield stands
+- **AND** the bonus ends as the shield breaks

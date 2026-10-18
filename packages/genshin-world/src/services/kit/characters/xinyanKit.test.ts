@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -7,11 +8,13 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createXinyanKitBehaviour, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -26,6 +29,28 @@ const createXinyanCombatant = (ascension = 0): Combatant => ({
   level: 90,
   weaponType: WeaponType.Claymore,
 });
+
+// A member beside Xinyan on the team
+const ALLY_CHARACTER_ID = 10_000_050;
+// The Physical DMG Bonus buffs on the team once Xinyan at the ascension sets her shield, as [member, amount], and after
+// The shield breaks when it is told to
+const readPhysicalDamageBuffs = (ascension: number, isShieldBroken = false): [number, number][] => {
+  const combatant = createXinyanCombatant(ascension);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, {
+    kitEffectState,
+    party: createParty([XINYAN_CHARACTER_ID, ALLY_CHARACTER_ID]),
+  });
+  XINYAN_KIT.elementalSkill.onStart?.(context);
+  if (isShieldBroken) {
+    const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
+    shield.secondsRemaining = 0;
+    XINYAN_KIT.onKitEvent?.({ effect: shield, kind: KitEventKind.EffectExpired }, context, combatant);
+  }
+  return kitEffectState.effects
+    .filter((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.PhysicalDamageBonus)
+    .map(({ amount, characterId }) => [characterId, amount]);
+};
 
 describe(createXinyanKitBehaviour, () => {
   const skillHit = takeOne(XINYAN_KIT.elementalSkill.hits);
@@ -83,5 +108,28 @@ describe(createXinyanKitBehaviour, () => {
     const shield = castSkill(combatant, 3).effects.findLast((effect): effect is KitShield => effect.kind === "shield");
 
     expect(shield?.health).toBeCloseTo(692.8066 + 1.44 * combatant.attributes.defense);
+  });
+});
+
+describe("\"...Now That's Rock 'N' Roll!\"", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPhysicalDamageBuffs(4)).toStrictEqual([
+      [XINYAN_CHARACTER_ID, 0.15],
+      [ALLY_CHARACTER_ID, 0.15],
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPhysicalDamageBuffs(3)).toStrictEqual([]);
+  });
+
+  test("the Physical DMG Bonus ends as her shield breaks", () => {
+    expect.hasAssertions();
+
+    expect(readPhysicalDamageBuffs(4, true)).toStrictEqual([]);
   });
 });
