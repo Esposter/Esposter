@@ -578,19 +578,19 @@ describe(mergeGenshinSave, () => {
     const OTHER_MAIL_ID = 2;
     const account = {
       ...EMPTY_GENSHIN_SAVE,
-      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isRead: true }],
+      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: true }],
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
       mails: [
-        { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isRead: false },
-        { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isRead: false },
+        { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: false },
+        { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
       ],
     };
 
     expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
-      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isRead: true },
-      { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isRead: false },
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: true },
+      { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
     ]);
   });
 
