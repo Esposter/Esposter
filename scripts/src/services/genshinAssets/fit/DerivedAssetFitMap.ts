@@ -38,65 +38,38 @@ const readRegionGroundFits = async (
 // Region data file and publishes nothing
 type DerivedAssetFit = (only: readonly string[], options: DryRunOptions) => Promise<GameDataBuild>;
 
-// A component whose only fits are its region's ground pieces
-const createGroundFit =
-  (region: DerivedAssetComponent): DerivedAssetFit =>
+// A region's fit: its ground pieces, and the fits it has beside them, such as its waterfalls
+const createRegionFit =
+  (
+    region: DerivedAssetComponent,
+    extraFits: Record<string, (options: DryRunOptions) => Promise<GameDataBuild>> = {},
+  ): DerivedAssetFit =>
   async (only, options) =>
-    runFits(await readRegionGroundFits(region), only, options);
+    runFits({ ...(await readRegionGroundFits(region)), ...extraFits }, only, options);
 
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
 // Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
 export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAssetFit>> = {
-  [DerivedAssetComponent.Fontaine]: createGroundFit(DerivedAssetComponent.Fontaine),
+  [DerivedAssetComponent.Fontaine]: createRegionFit(DerivedAssetComponent.Fontaine),
   [DerivedAssetComponent.Hud]: fitHud,
-  [DerivedAssetComponent.Inazuma]: async (only, options) =>
-    runFits(
-      {
-        ...(await readRegionGroundFits(DerivedAssetComponent.Inazuma)),
-        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
-      },
-      only,
-      options,
-    ),
-  [DerivedAssetComponent.Liyue]: async (only, options) =>
-    runFits(
-      {
-        ...(await readRegionGroundFits(DerivedAssetComponent.Liyue)),
-        rivers: (fitOptions) => fitRiverCourses(DerivedAssetComponent.Liyue, fitOptions),
-        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Liyue, fitOptions),
-      },
-      only,
-      options,
-    ),
+  [DerivedAssetComponent.Inazuma]: createRegionFit(DerivedAssetComponent.Inazuma, {
+    waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
+  }),
+  [DerivedAssetComponent.Liyue]: createRegionFit(DerivedAssetComponent.Liyue, {
+    rivers: (fitOptions) => fitRiverCourses(DerivedAssetComponent.Liyue, fitOptions),
+    waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Liyue, fitOptions),
+  }),
   [DerivedAssetComponent.Login]: fitLoginScene,
-  [DerivedAssetComponent.Mondstadt]: async (only, options) =>
-    runFits(
-      {
-        ...(await readRegionGroundFits(DerivedAssetComponent.Mondstadt)),
-        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Mondstadt, fitOptions),
-      },
-      only,
-      options,
-    ),
-  [DerivedAssetComponent.Natlan]: async (only, options) =>
-    runFits(
-      {
-        ...(await readRegionGroundFits(DerivedAssetComponent.Natlan)),
-        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Natlan, fitOptions),
-      },
-      only,
-      options,
-    ),
-  [DerivedAssetComponent.NodKrai]: createGroundFit(DerivedAssetComponent.NodKrai),
-  [DerivedAssetComponent.Snezhnaya]: createGroundFit(DerivedAssetComponent.Snezhnaya),
-  [DerivedAssetComponent.Sumeru]: async (only, options) =>
-    runFits(
-      {
-        ...(await readRegionGroundFits(DerivedAssetComponent.Sumeru)),
-        waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Sumeru, fitOptions),
-      },
-      only,
-      options,
-    ),
+  [DerivedAssetComponent.Mondstadt]: createRegionFit(DerivedAssetComponent.Mondstadt, {
+    waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Mondstadt, fitOptions),
+  }),
+  [DerivedAssetComponent.Natlan]: createRegionFit(DerivedAssetComponent.Natlan, {
+    waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Natlan, fitOptions),
+  }),
+  [DerivedAssetComponent.NodKrai]: createRegionFit(DerivedAssetComponent.NodKrai),
+  [DerivedAssetComponent.Snezhnaya]: createRegionFit(DerivedAssetComponent.Snezhnaya),
+  [DerivedAssetComponent.Sumeru]: createRegionFit(DerivedAssetComponent.Sumeru, {
+    waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Sumeru, fitOptions),
+  }),
   [DerivedAssetComponent.Windrise]: fitWindriseScene,
 };
