@@ -330,4 +330,34 @@ describe(stepKit, () => {
     expect(landStrike(0)).toStrictEqual([]);
     expect(landStrike(0.08)).toStrictEqual([firstHit]);
   });
+
+  test("lands an extra hit the kit's hook gives on a normal attack's hit, after that hit", () => {
+    expect.hasAssertions();
+    const [firstHit] = TRAVELER_KIT.normalAttacks[0]?.hits ?? [];
+    const hitmarkSeconds = firstHit?.hitmarkSeconds ?? 0;
+    const extraHit = TRAVELER_KIT.plungeCollision;
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      getNormalAttackExtraHit: (_context, hit) => (hit === firstHit ? extraHit : undefined),
+    };
+    const kitState = createKitState();
+    const landedHits: KitHit[] = [];
+    const step = (isAttackPressed: boolean, stepSeconds: number): void => {
+      stepKit(
+        kitState,
+        kit,
+        { ...IDLE_INPUT, isAttackPressed },
+        createPartyMember(),
+        createStamina(STAMINA_MAX),
+        stepSeconds,
+        landedHits,
+        createKitTestContext(TRAVELER_COMBATANT),
+      );
+    };
+
+    step(true, 0);
+    step(false, hitmarkSeconds);
+
+    expect(landedHits).toStrictEqual([firstHit, extraHit]);
+  });
 });
