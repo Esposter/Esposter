@@ -1,4 +1,5 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -10,9 +11,22 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 const PARAMITA_SOURCE = "hu-tao-paramita";
+const FLUTTER_BY_SOURCE = "hu-tao-a1";
+const ASCENSION_1 = 1;
+const ASCENSION_4 = 4;
+// Flutter By, as gcsim v2.47.2 (MIT) hutao/asc.go gives it: when the Paramita Guide to Afterlife activated ends, each ally
+// Other than Hu Tao gains 12% CRIT Rate for 8 seconds, from Ascension 1
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/asc.go
+const FLUTTER_BY_CRITICAL_RATE = 0.12;
+const FLUTTER_BY_SECONDS = 8;
+// Sanguine Rouge, as gcsim v2.47.2 hutao/asc.go gives it: from Ascension 4, her Pyro DMG Bonus is 33% while her HP is at
+// Or under half
+const SANGUINE_ROUGE_HEALTH_SHARE = 0.5;
+const SANGUINE_ROUGE_PYRO_DAMAGE_BONUS = 0.33;
 // Guide to Afterlife's HP cost never takes Hu Tao below this much HP
 const GUIDE_MINIMUM_HP = 1;
 // Measured: gcsim v2.47.2 (MIT) hutao/skill.go, Blood Blossom's status ticking on the one enemy it is put on, which the
@@ -25,7 +39,12 @@ export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
-// Under. Spirit Soother's heal, her passives and her constellations are not built
+// Under. Flutter By and Sanguine Rouge are built; Spirit Soother's heal and her constellations are not
+const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
+  combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
+    ? []
+    : [{ amount: SANGUINE_ROUGE_PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }];
+
 export const createHuTaoKitBehaviour = ({
   readHit,
   readParameter,
@@ -58,8 +77,26 @@ export const createHuTaoKitBehaviour = ({
       checkIsActive: ({ activeCombatant: combatant, party }) =>
         getPartyMember(party, combatant.characterId).healthShare <= lowHealthShare,
     },
-    // Blood Blossom's tick strikes the enemy it is on
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    getPassiveBonuses,
+    // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+      if (event.kind === KitEventKind.EffectExpired) {
+        if (
+          combatant.ascension < ASCENSION_1 ||
+          event.effect.kind !== "stance" ||
+          event.effect.characterId !== combatant.characterId
+        )
+          return;
+        for (const characterId of getDeployedCharacterIds(party))
+          if (characterId !== combatant.characterId)
+            buffKitMember(kitEffectState, characterId, {
+              amount: FLUTTER_BY_CRITICAL_RATE,
+              attribute: Attribute.CriticalRate,
+              secondsRemaining: FLUTTER_BY_SECONDS,
+              source: FLUTTER_BY_SOURCE,
+            });
+        return;
+      }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
       castKitSummon(
         kitEffectState,

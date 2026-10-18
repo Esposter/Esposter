@@ -8,6 +8,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -116,5 +117,65 @@ describe(createHuTaoKitBehaviour, () => {
 
     const tick = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
     expect(tick?.target).toBe(enemy);
+  });
+});
+
+describe("flutter By", () => {
+  const TEAMMATE_CHARACTER_ID = 1;
+
+  // Guide to Afterlife's Paramita stance, which its end gives the allies Flutter By's CRIT Rate from, then ends
+  const endParamitaStance = (ascension: number) => {
+    const combatant = { ...createHuTaoCombatant(), ascension };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, {
+      kitEffectState,
+      party: createParty([HU_TAO_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    HU_TAO_KIT.elementalSkill.onStart?.(context);
+    const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
+    if (!stance) throw new Error("Guide to Afterlife held no stance");
+    HU_TAO_KIT.onKitEvent?.({ effect: stance, kind: KitEventKind.EffectExpired }, context, combatant);
+    return kitEffectState.effects.filter(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+    );
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(endParamitaStance(1)).toStrictEqual([
+      {
+        amount: 0.12,
+        attribute: Attribute.CriticalRate,
+        characterId: TEAMMATE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 8,
+        source: "hu-tao-a1",
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(endParamitaStance(0)).toStrictEqual([]);
+  });
+});
+
+describe("sanguine Rouge", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHuTaoCombatant(), ascension: 4 };
+
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([
+      { amount: 0.33, attribute: Attribute.PyroDamageBonus },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHuTaoCombatant(), ascension: 3 };
+
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5)).toStrictEqual([]);
   });
 });
