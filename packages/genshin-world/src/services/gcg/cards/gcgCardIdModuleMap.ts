@@ -18,6 +18,7 @@ import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
 import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
 import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
+import { chinjuForest } from "#src/services/gcg/cards/chinjuForest";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
@@ -35,6 +36,7 @@ import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { elementalLifeformElectro } from "#src/services/gcg/cards/elementalLifeformElectro";
+import { elementalResonanceHighVoltage } from "#src/services/gcg/cards/elementalResonanceHighVoltage";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
@@ -114,6 +116,8 @@ import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
 import { shadowswordGallopingFrost } from "#src/services/gcg/cards/shadowswordGallopingFrost";
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
 import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
+import { shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
+import { sinOfPride } from "#src/services/gcg/cards/sinOfPride";
 import { starsigns } from "#src/services/gcg/cards/starsigns";
 import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
@@ -215,6 +219,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [213_021, crossfire],
   [211071, mysticalAbandon],
   [213051, naganoharaMeteorSwarm],
+  [214_061, sinOfPride],
   [214_081, theShrinesSacredShade],
   [215041, conquerorOfEvilGuardianYaksha],
   [222011, streamingSurge],
@@ -242,11 +247,14 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_013, capriciousVisage],
   [311402, lithicSpear],
   [312012, vermillionHereafter],
+  [312_014, shimenawasReminiscence],
+  [321_012, chinjuForest],
   [322012, liuSu],
   [322_013, hanachirusato],
   [322_014, kidKujirai],
   [322016, dunyarzad],
   [322017, rana],
+  [331_402, elementalResonanceHighVoltage],
   [332_015, abyssalSummons],
   [3120111, vermillionHereafterBonus],
   [312101, brokenRimesEcho],

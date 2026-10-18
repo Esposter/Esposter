@@ -19,15 +19,22 @@ import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { ABSORBING_PRISM_ID, absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
 import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/aegisOfAbyssalFlame";
 import { CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
+import { CHINJU_FOREST_ID, chinjuForest } from "#src/services/gcg/cards/chinjuForest";
 import { ABYSSAL_SUMMONS_ID } from "#src/services/gcg/cards/abyssalSummons";
 import { CROWFEATHER_COVER_ID, crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
 import { CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
 import { DARKFIRE_FURNACE_ID, darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { ELECTRO_HILICHURL_SHOOTER_ID, electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
+import {
+  ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID,
+  elementalResonanceHighVoltage,
+} from "#src/services/gcg/cards/elementalResonanceHighVoltage";
 import { EMBERS_REKINDLED_ID, embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { FIERY_REBIRTH_ID, fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
 import { HILICHURL_BERSERKER_ID, hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
+import { SIN_OF_PRIDE_ID, sinOfPride } from "#src/services/gcg/cards/sinOfPride";
+import { SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
 import { TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
 import { TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -627,5 +634,178 @@ describe("hilichurl summons", () => {
 
     expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
     expect(takeOne(duel.sides, 0).summons).toStrictEqual([]);
+  });
+});
+
+describe("sin of Pride", () => {
+  const SIN_OF_PRIDE_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: SIN_OF_PRIDE_ID,
+    isLocation: false,
+    kind: GcgCardKind.Talent,
+    nameTextId: 1,
+  };
+  const createSaraWithSkills = (): GcgCharacterState => {
+    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    return { ...sara, character: { ...sara.character, skills: [TENGU_STORMCALL] } };
+  };
+
+  test("it is equipped to Kujou Sara when she is active, and her Tengu Stormcall is used once at once", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([createSaraWithSkills()]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [SIN_OF_PRIDE_ID];
+    takeOne(duel.sides, 0).cards = [SIN_OF_PRIDE_CARD];
+
+    expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Done);
+
+    expect(takeOne(duel.sides, 0).characters[0]?.equipments.map(({ cardId }) => cardId)).toStrictEqual([
+      SIN_OF_PRIDE_ID,
+    ]);
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(9);
+    expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([TENGU_JUURAI_AMBUSH_ID]);
+  });
+
+  test("with Crowfeather Cover on her, Kujou Sara's Elemental Burst deals 1 more DMG on top of the Cover's", () => {
+    expect.hasAssertions();
+
+    const sara = createSaraWithSkills();
+    sara.equipments = [createGcgZoneCard(SIN_OF_PRIDE_ID, sinOfPride)];
+    sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
+    const duel = createDuel([
+      createSideState([sara]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KOUKOU_SENDOU);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(6);
+    expect(takeOne(duel.sides, 0).characters[0]?.statuses).toStrictEqual([
+      { cardId: CROWFEATHER_COVER_ID, counter: 0, rounds: 0, usages: 1 },
+    ]);
+  });
+
+  test("without Crowfeather Cover on her, Kujou Sara's Elemental Burst gets no bonus from it", () => {
+    expect.hasAssertions();
+
+    const sara = createSaraWithSkills();
+    sara.equipments = [createGcgZoneCard(SIN_OF_PRIDE_ID, sinOfPride)];
+    const duel = createDuel([
+      createSideState([sara]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KOUKOU_SENDOU);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
+  });
+});
+
+describe("shimenawa's Reminiscence", () => {
+  test("once per round, a Talent card or Elemental Skill spends one Elemental Die less", () => {
+    expect.hasAssertions();
+
+    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    sara.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
+    const duel = createDuel([
+      createSideState([sara], [Element.Electro, Element.Electro]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    const costs: GcgCost[] = [{ count: 3, element: Element.Electro, kind: GcgCostKind.Dice }];
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 0 }, 0, { skill: TENGU_STORMCALL }, costs, [0, 1])).toBe(true);
+    expect(takeOne(duel.sides, 0).usedCardIds).toStrictEqual([SHIMENAWAS_REMINISCENCE_ID]);
+
+    takeOne(duel.sides, 0).dice = [Element.Electro, Element.Electro];
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 0 }, 0, { skill: TENGU_STORMCALL }, costs, [0, 1])).toBe(false);
+  });
+
+  test.each([
+    ["a Normal Attack at 2 Energy", SARA_NORMAL_ATTACK, 2, 7],
+    ["an Elemental Skill at 2 Energy", TENGU_STORMCALL, 2, 8],
+    ["a Normal Attack below 2 Energy", SARA_NORMAL_ATTACK, 1, 8],
+  ])("%s deals the damage it would, plus 1 when at 2 Energy", (_name, skill, energy, hp) => {
+    expect.hasAssertions();
+
+    const sara = { ...createCharacterState(KUJOU_SARA_ID, Element.Electro), energy };
+    sara.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
+    const duel = createDuel([
+      createSideState([sara]),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, skill);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(hp);
+  });
+});
+
+describe("chinju Forest", () => {
+  const createChinjuDuel = (dice: Element[]) => {
+    const duel = createDuel([
+      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)], dice),
+      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+    ]);
+    takeOne(duel.sides, 0).supports = [createGcgZoneCard(CHINJU_FOREST_ID, chinjuForest)];
+    return duel;
+  };
+  const NORMAL_ATTACK_COSTS: GcgCost[] = [{ count: 2, kind: GcgCostKind.Unaligned }];
+
+  test("with an even number of dice, a normal attack costs 1 fewer Unaligned die, and the card spends a usage", () => {
+    expect.hasAssertions();
+
+    const duel = createChinjuDuel([Element.Pyro, Element.Hydro]);
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 0 }, 0, { skill: SARA_NORMAL_ATTACK }, NORMAL_ATTACK_COSTS, [0])).toBe(
+      true,
+    );
+    expect(takeOne(duel.sides, 0).supports[0]?.usages).toBe(3);
+  });
+
+  test("with an odd number of dice, a normal attack pays its full Unaligned dice", () => {
+    expect.hasAssertions();
+
+    const duel = createChinjuDuel([Element.Pyro]);
+
+    expect(payGcgSubjectCost({ duel, sideIndex: 0 }, 0, { skill: SARA_NORMAL_ATTACK }, NORMAL_ATTACK_COSTS, [0])).toBe(
+      false,
+    );
+    expect(takeOne(duel.sides, 0).supports[0]?.usages).toBe(4);
+  });
+});
+
+describe("elemental Resonance: High Voltage", () => {
+  const HIGH_VOLTAGE_CARD: GcgCard = {
+    costs: [],
+    descriptionTextId: 1,
+    effects: [],
+    id: ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID,
+    isLocation: false,
+    kind: GcgCardKind.Event,
+    nameTextId: 1,
+  };
+
+  test("the active character and the next character without maximum Energy each gain 1 Energy", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel([
+      createSideState([
+        createCharacterState(KUJOU_SARA_ID, Element.Electro),
+        { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), energy: 3 },
+        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
+      ]),
+      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+    ]);
+    takeOne(duel.sides, 0).hand = [ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID];
+    takeOne(duel.sides, 0).cards = [HIGH_VOLTAGE_CARD];
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(takeOne(duel.sides, 0).characters.map(({ energy }) => energy)).toStrictEqual([1, 3, 1]);
   });
 });
