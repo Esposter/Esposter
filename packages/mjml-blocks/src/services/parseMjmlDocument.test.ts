@@ -181,4 +181,23 @@ describe(parseMjmlDocument, () => {
       root: { props: { body: {} } },
     });
   });
+  test("stray text is refused by name, not dropped", () => {
+    expect.hasAssertions();
+
+    const inContainer = parseMjmlDocument(
+      "<mjml><mj-body><mj-section>Hi</mj-section></mj-body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(inContainer.error?.issues.map((issue) => issue.message)).toStrictEqual(['"#text" is not in the registry']);
+
+    const inHead = parseMjmlDocument(
+      "<mjml><mj-head>Hi</mj-head><mj-body></mj-body></mjml>",
+      TEST_REGISTRY,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(inHead.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
+  });
 });
