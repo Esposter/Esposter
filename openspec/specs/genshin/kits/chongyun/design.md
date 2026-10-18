@@ -13,7 +13,7 @@ Chongyun's kit is its record and one behaviour module, `createChongyunKitBehavio
 
 - **Chongyun's charged attack is provisional.** gcsim marks its spinning and final slashes not implemented, so they are priced at half a second and a second, with the attack ending at 1.2 seconds.
 - **Ice Unleashed's blades reach what the fourth strike reaches, and the fourth Cloud-Parting Star blade the other blades' 5 metres**, both provisional, as gcsim's circles on the primary target hold no area here.
-- **Ice Unleashed's blades deal no kind of attack**, as gcsim tags Chongyun's Constellation 1 none, so no attack tag is set on them.
+- **Ice Unleashed's blades deal no kind of attack.** The wiki gives them 50% of Chongyun's ATK as Cryo DMG and names no kind, as gcsim tags them none, so no attack tag is set on them.
 
 ## Key files
 
