@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 // A fish as the generated fish slice holds it: its hit points, the ranges its lure reactions are drawn at, its bite's
-// Timeout in seconds, the feeler range its nibbles run over, the moving zone its tension is held in while reeled, and
-// The item it becomes in the bag
+// Timeout in seconds, the feeler range its nibbles run over, the moving zone its tension is held in while reeled, the
+// Item it becomes in the bag, the proficiency it counts toward, its catch's reward row and the skills it fights with
 export interface Fish {
   attractRange: number;
   biteTimeout: number;
@@ -15,6 +15,9 @@ export interface Fish {
   hp: number;
   id: number;
   itemId: number;
+  proficientId: number;
+  rewardId: number;
+  skillId: number[];
 }
 
 export const fishSchema = z.object({
@@ -29,4 +32,7 @@ export const fishSchema = z.object({
   hp: z.int().positive(),
   id: z.int().positive(),
   itemId: z.int().positive(),
+  proficientId: z.int().positive(),
+  rewardId: z.int().positive(),
+  skillId: z.array(z.int().positive()),
 }) satisfies z.ZodType<Fish>;
