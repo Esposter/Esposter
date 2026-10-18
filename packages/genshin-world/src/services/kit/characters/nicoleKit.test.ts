@@ -3,7 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Mock } from "vitest";
@@ -69,7 +69,7 @@ const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Part
   return { context, enemy, nicole, traveler };
 };
 
-const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag): KitEvent => ({
+const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag): KitEnemyHitEvent => ({
   attackTag,
   element: Element.Pyro,
   enemy,
