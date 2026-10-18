@@ -213,7 +213,7 @@ describe("instructor's Cap", () => {
       createSideState([{ ...createCharacterState(OPPOSING_CHARACTER_ID), hp: FULL_HP * 10 }]),
     ]);
     for (let use = 0; use < 4; use++) {
-      takeOne(duel.sides, 1).characters[0].aura = Element.Pyro;
+      takeOne(takeOne(duel.sides, 1).characters).aura = Element.Pyro;
       runGcgSkillUse({ duel, sideIndex: 0 }, FLORAL_BRUSH_SKILL);
     }
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Dendro, Element.Dendro, Element.Dendro]);

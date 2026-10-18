@@ -17,7 +17,13 @@ const CHARACTER_ID = 1001;
 const WEAPON_ID = 2001;
 const TRIAL: Trial = { characterId: CHARACTER_ID, level: 85, trialId: 3001 };
 const PHASE_CAPS = [20, 40, 50, 60, 70, 80, 90];
-const PHASES = PHASE_CAPS.map((maxLevel) => ({ attributeLines: [], maxLevel }));
+const PHASES = PHASE_CAPS.map((maxLevel) => ({
+  attributeLines: [],
+  coinCost: 0,
+  costItems: [],
+  maxLevel,
+  requiredPlayerLevel: 0,
+}));
 const CHARACTER_DATA_MAP = new Map<number, Pick<CharacterData, "ascensionPhases">>([
   [CHARACTER_ID, { ascensionPhases: PHASES }],
 ]);
