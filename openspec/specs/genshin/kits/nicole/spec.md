@@ -59,12 +59,46 @@ Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her 
 - **WHEN** the skill's buff lands on a deployed member at level 1
 - **THEN** the member gets 8.25% of Nicole's attack as ATK, up to 330, for 20 seconds
 
-### Requirement: Projections and passives not yet built
+### Requirement: Nicole's burst projections
 
-Nicole's burst projections and her passives SHALL NOT take effect.
+Nicole's burst SHALL project a copy of each elemental hit the active character lands on an enemy while its status lasts. A projection SHALL land 30 frames after its hit, at most four times and once each 3 seconds.
 
-#### Scenario: Projections and passives do nothing
+#### Scenario: Projection lands 30 frames after the hit that starts it
 
-- **GIVEN** Nicole has a passive unlocked or her burst is cast
+- **GIVEN** Nicole's burst has started and 109 frames have passed
+- **WHEN** the active character's elemental hit lands on an enemy
+- **THEN** a projection lands on that enemy 30 frames later
+
+#### Scenario: No projection before the status starts
+
+- **GIVEN** Nicole's burst has started
+- **WHEN** a hit lands 108 frames into the burst
+- **THEN** no projection lands
+
+#### Scenario: One projection each 3 seconds
+
+- **GIVEN** Nicole's burst is active
+- **WHEN** two hits land 1 second apart
+- **THEN** only one projection lands
+
+#### Scenario: Projections stop at four
+
+- **GIVEN** Nicole's burst is active
+- **WHEN** five hits land 3.1 seconds apart
+- **THEN** four projections land
+
+#### Scenario: Only the active character's hit projects
+
+- **GIVEN** Nicole's burst is active and another character is active
+- **WHEN** that other character's elemental hit lands on an enemy
+- **THEN** no projection lands
+
+### Requirement: Nicole's passives not yet built
+
+Nicole's passives SHALL NOT take effect.
+
+#### Scenario: Passives do nothing
+
+- **GIVEN** Nicole has a passive unlocked
 - **WHEN** the player fights with Nicole
-- **THEN** no projection or passive effect applies
+- **THEN** no passive effect applies

@@ -1,8 +1,17 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
+import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { Mock } from "vitest";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createNicoleKitBehaviour, NICOLE_CHARACTER_ID } from "#src/services/kit/characters/nicoleKit";
@@ -10,10 +19,11 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const NICOLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NICOLE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createNicoleCombatant = (attack: number): Combatant => ({
   ascension: 0,
@@ -25,6 +35,44 @@ const createNicoleCombatant = (attack: number): Combatant => ({
   kit: NICOLE_KIT,
   level: 90,
 });
+
+// A team of Nicole and the Traveler on one enemy at the body's origin, with the Traveler's kit hearing what the team's events
+// Report, so each projection's damage shows in its count
+const createProjectionScene = (onKitEvent: Kit["onKitEvent"]) => {
+  const nicole = createNicoleCombatant(1000);
+  const traveler: Combatant = {
+    ...nicole,
+    characterId: TRAVELER_CHARACTER_ID,
+    element: Element.Hydro,
+    kit: { ...TRAVELER_KIT, onKitEvent },
+  };
+  // A test enemy that outlives its projections, so each one finds it standing
+  const enemy = {
+    ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: "enemy", position: { x: 0, z: 0 } }, ""),
+    health: 1_000_000,
+  };
+  const context = createKitTestContext(nicole, {
+    characterIdCombatantMap: new Map([
+      [NICOLE_CHARACTER_ID, nicole],
+      [TRAVELER_CHARACTER_ID, traveler],
+    ]),
+    enemyMap: new Map([[enemy.id, enemy]]),
+    enemyTables,
+    party: createParty([NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+  });
+  return { context, enemy, nicole, traveler };
+};
+
+const createElementalHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
+  element: Element.Pyro,
+  enemy,
+  kind: KitEventKind.ElementalHit,
+  striker,
+});
+
+// The projections a team's kit heard land, each reported as the damage its enemy takes
+const countDamageTaken = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number =>
+  onKitEvent.mock.calls.filter(([event]) => event.kind === KitEventKind.DamageTaken).length;
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -96,5 +144,72 @@ describe(createNicoleKitBehaviour, () => {
     expect(Math.round(burstHit.hitmarkSeconds * 60)).toBe(108);
     expect(NICOLE_KIT.burstEnergyCost).toBe(60);
     expect(NICOLE_KIT.burstCooldownSeconds).toBe(15);
+  });
+
+  test("her burst's projection lands 30 frames after the hit that starts it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent(createElementalHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 29 / 60);
+    expect(countDamageTaken(onKitEvent)).toBe(0);
+    stepKitSeconds(context, 1 / 60);
+    expect(countDamageTaken(onKitEvent)).toBe(1);
+  });
+
+  test("her burst makes no projection for a hit before its status starts 109 frames in", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 108 / 60);
+    emitKitEvent(createElementalHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 1);
+    expect(countDamageTaken(onKitEvent)).toBe(0);
+  });
+
+  test("her burst holds its projections to one each 3 seconds", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent(createElementalHit(enemy, nicole), context);
+    stepKitSeconds(context, 1);
+    emitKitEvent(createElementalHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 91 / 60);
+    expect(countDamageTaken(onKitEvent)).toBe(1);
+  });
+
+  test("her burst's projections stop at four", () => {
+    expect.hasAssertions();
+    const HIT_COUNT = 5;
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    for (let hit = 0; hit < HIT_COUNT; hit++) {
+      emitKitEvent(createElementalHit(enemy, nicole), context);
+      stepKitSeconds(context, 186 / 60);
+    }
+
+    expect(countDamageTaken(onKitEvent)).toBe(4);
+  });
+
+  test("her burst makes no projection for a hit by a character other than her active one", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, traveler } = createProjectionScene(onKitEvent);
+    NICOLE_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 109 / 60);
+    emitKitEvent(createElementalHit(enemy, traveler), context);
+
+    stepKitSeconds(context, 1);
+    expect(countDamageTaken(onKitEvent)).toBe(0);
   });
 });
