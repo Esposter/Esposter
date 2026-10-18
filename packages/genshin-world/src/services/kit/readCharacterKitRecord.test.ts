@@ -9,6 +9,7 @@ import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { createKitRecordResolver } from "#src/services/kit/build/createKitRecordResolver";
 import { readTalentMultipliers } from "#src/services/kit/readTalentMultipliers";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { describe } from "vitest";
 
 // A character's hosted kit record read through the local mirror, with readers for its frames and hits, and the
 // Resolver its kit resolves the record's parameters with: each parameter read off its talent's table at the level the
@@ -48,3 +49,5 @@ export const readCharacterKitRecord = async (characterId: number) => {
   };
   return { readFrame, readFrameList, readHits, record, toParameter };
 };
+
+describe.todo("readCharacterKitRecord");
