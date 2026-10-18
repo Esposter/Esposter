@@ -25,6 +25,7 @@ import { createElementalMasteryPassiveModule } from "#src/services/weapon/passiv
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
+import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
@@ -279,4 +280,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2270410107": createRepentanceAndRedemptionPassiveModule,
   // An End Sublime (Finale of the Deep)
   "2548633643": createFinaleOfTheDeepPassiveModule,
+  // Unfinished Masterpiece (Flowing Purity)
+  "3335241819": createFlowingPurityPassiveModule,
 };
