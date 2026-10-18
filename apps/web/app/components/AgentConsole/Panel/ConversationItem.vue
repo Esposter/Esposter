@@ -7,9 +7,10 @@ import { AgentEventType } from "agent-console-server/contracts";
 
 interface Props {
   event: ConversationEvent;
+  isSideChat?: true;
 }
 
-const { event } = defineProps<Props>();
+const { event, isSideChat } = defineProps<Props>();
 const { toolCallMap } = useAgentConsoleSession();
 </script>
 
@@ -19,11 +20,16 @@ const { toolCallMap } = useAgentConsoleSession();
   <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
     <span text-accent>›</span> {{ event.text }}
     <span v-if="event.attachmentCount > 0" text-muted>[{{ event.attachmentCount }} attached]</span>
-    <AgentConsolePanelMessageActions is-prompt :message-uuid="event.messageUuid" :text="event.text" />
+    <AgentConsolePanelMessageActions
+      is-prompt
+      :is-side-chat="isSideChat"
+      :message-uuid="event.messageUuid"
+      :text="event.text"
+    />
   </div>
   <div v-else-if="event.type === AgentEventType.AssistantMessage" class="group" relative>
     <AgentConsoleMarkdown :source="event.text" />
-    <AgentConsolePanelMessageActions :message-uuid="event.messageUuid" :text="event.text" />
+    <AgentConsolePanelMessageActions :is-side-chat="isSideChat" :message-uuid="event.messageUuid" :text="event.text" />
   </div>
   <AgentConsolePanelThinking v-else-if="event.type === AgentEventType.Thinking" :text="event.thinking" />
   <!-- The fold records the call as it folds its use, so the call as first made is only ever the type's fallback -->

@@ -6,9 +6,10 @@ import { createSessionReads } from "@/services/agentConsole/createSessionReads";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
+import { CommandType } from "agent-console-server/contracts";
 
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
-const { closeSideChat } = agentConsoleConnectionStore;
+const { closeSideChat, sendCommand } = agentConsoleConnectionStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { sessions } = storeToRefs(agentConsoleSessionStore);
 const { getDataRef } = agentConsoleSessionStore;
@@ -22,7 +23,7 @@ const sideChatSession = {
   sessionId: sideChatSessionId,
 };
 provide(AGENT_CONSOLE_SESSION_KEY, sideChatSession);
-const { pendingPermissionRequests } = sideChatSession;
+const { isTurnRunning, pendingPermissionRequests } = sideChatSession;
 const sideChat = useTemplateRef("sideChat");
 // Opening it puts the keys in its composer, as opening the console puts them in the console's
 onMounted(() => sideChat.value?.querySelector("textarea")?.focus());
@@ -45,6 +46,13 @@ onMounted(() => sideChat.value?.querySelector("textarea")?.focus());
         closeSideChat();
       }
     "
+    @keydown.ctrl.b="
+      (event: KeyboardEvent) => {
+        // The drawer's Ctrl+B is its own session's, and claims the key so the console's does not also act
+        event.preventDefault();
+        if (isTurnRunning) sendCommand({ sessionId: sideChatSessionId, type: CommandType.BackgroundTasks });
+      }
+    "
   >
     <header flex gap-2 items-center>
       <h3 text-heading-color flex-1 truncate>Side chat</h3>
@@ -56,7 +64,7 @@ onMounted(() => sideChat.value?.querySelector("textarea")?.focus());
       />
     </header>
     <p text-muted>Asks about this conversation without adding to it. Closing it discards its answers.</p>
-    <AgentConsolePanelConversation flex-1 min-h-32 />
+    <AgentConsolePanelConversation is-side-chat flex-1 min-h-32 />
     <AgentConsolePanelPermission
       v-for="permissionRequest of pendingPermissionRequests"
       :key="permissionRequest.requestId"

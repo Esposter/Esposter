@@ -9,11 +9,13 @@ import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection"
 
 interface Props {
   isPrompt?: true;
+  // A message in the side chat forks as a side chat, not as a session of its own
+  isSideChat?: true;
   messageUuid: string;
   text: string;
 }
 
-const { isPrompt, messageUuid, text } = defineProps<Props>();
+const { isPrompt, isSideChat, messageUuid, text } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
 const { sessionId } = useAgentConsoleSession();
@@ -49,7 +51,13 @@ const items = computed<UiMenuItem<MessageActionType>[]>(() => [
       @select="
         (value) => {
           if (value === MessageActionType.Copy) copy(text);
-          else sendCommand({ isSideChat: false, messageUuid, sessionId, type: MessageActionCommandTypeMap[value] });
+          else
+            sendCommand({
+              isSideChat: isSideChat ?? false,
+              messageUuid,
+              sessionId,
+              type: MessageActionCommandTypeMap[value],
+            });
         }
       "
     >

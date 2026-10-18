@@ -3,6 +3,11 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getEventSearchText } from "@/services/agentConsole/getEventSearchText";
 import { SessionState } from "agent-console-server/contracts";
 
+interface Props {
+  isSideChat?: true;
+}
+
+const { isSideChat } = defineProps<Props>();
 const { conversationEvents, sessionState, streamDraft } = useAgentConsoleSession();
 const searchQuery = ref("");
 const displayEvents = computed(() => {
@@ -28,7 +33,12 @@ watch([() => displayEvents.value.length, () => streamDraft.value?.text.length], 
   <UiFrame>
     <UiTextField v-model="searchQuery" label="Search this session" :type="UiTextFieldType.Search" />
     <div ref="scrollContainer" flex flex-1 flex-col gap-3 min-h-0 of-y-auto>
-      <AgentConsolePanelConversationItem v-for="event of displayEvents" :key="event.id" :event />
+      <AgentConsolePanelConversationItem
+        v-for="event of displayEvents"
+        :key="event.id"
+        :event
+        :is-side-chat="isSideChat"
+      />
       <AgentConsolePanelStreamDraft v-if="streamDraft && !searchQuery" :stream-draft />
       <AgentConsolePanelWorking
         v-if="sessionState && [SessionState.Compacting, SessionState.Running].includes(sessionState)"

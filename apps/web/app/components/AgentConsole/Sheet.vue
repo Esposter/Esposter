@@ -99,7 +99,8 @@ onConsoleFocusRequest(async () => {
     focus-visible:outline-hidden
     @keydown.ctrl.b="
       (event: KeyboardEvent) => {
-        if (!isTurnRunning) return;
+        // The side chat's drawer answers its own Ctrl+B first, so this one is the console's only when it did not
+        if (event.defaultPrevented || !isTurnRunning) return;
         event.preventDefault();
         sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks });
       }
