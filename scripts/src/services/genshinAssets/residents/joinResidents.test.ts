@@ -21,8 +21,10 @@ describe(joinResidents, () => {
         ]),
         new Map([[1002, 7]]),
         getAreaId,
+        new Set(),
       ),
     ).toStrictEqual({
+      invisible: 0,
       noName: 0,
       noTalk: 1,
       regions: new Map([
@@ -44,7 +46,42 @@ describe(joinResidents, () => {
         new Map([[1002, ""]]),
         new Map([[1002, 7]]),
         getAreaId,
+        new Set(),
       ),
-    ).toStrictEqual({ noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
+    ).toStrictEqual({ invisible: 0, noName: 1, noTalk: 0, regions: new Map(), repeated: 0 });
+  });
+
+  test("leaves out an NPC the table marks invisible, since it is an interaction point rather than a person", () => {
+    expect.hasAssertions();
+
+    expect(
+      joinResidents(
+        [
+          { npcId: 1002, position: { x: 1, z: 2 }, region: "mondstadt", rotation: 0 },
+          { npcId: 1005, position: { x: 3, z: 4 }, region: "mondstadt", rotation: 0.25 },
+        ],
+        new Map([
+          [1002, "101"],
+          [1005, "102"],
+        ]),
+        new Map([
+          [1002, 7],
+          [1005, 8],
+        ]),
+        getAreaId,
+        new Set([1002]),
+      ),
+    ).toStrictEqual({
+      invisible: 1,
+      noName: 0,
+      noTalk: 0,
+      regions: new Map([
+        [
+          "mondstadt",
+          [{ areaId, day: { position: { x: 3, z: 4 }, rotation: 0.25 }, id: "1005", nameTextId: "102", talkId: "8" }],
+        ],
+      ]),
+      repeated: 0,
+    });
   });
 });
