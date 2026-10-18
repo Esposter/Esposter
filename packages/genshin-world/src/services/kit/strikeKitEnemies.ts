@@ -165,6 +165,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       enemyHit.onStrike?.(context, strike, enemy);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
+      // The defeat the strike dealt is reported here, and a Stellar reaction's defeat by the damage point it deals
+      const isDefeatedByStrike = enemy.state === EnemyState.Dead;
       if (reactions.some(({ reactionType }) => reactionType === ReactionType.StellarSwirl))
         strikeStellarReaction(
           enemy,
@@ -197,8 +199,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         },
         context,
       );
-      if (enemy.state === EnemyState.Dead)
-        emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
+      if (isDefeatedByStrike) emitKitEvent({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context);
     }
     if (target === undefined && hit.targetIndex === undefined)
       for (const wildlife of strikeKitWildlife(hit.hitArea, body, wildlifeList, placeWildlifeDrops))

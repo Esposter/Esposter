@@ -12,6 +12,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -265,6 +266,29 @@ describe(strikeKitEnemies, () => {
       kind: KitEventKind.EnemyDefeated,
       striker: combatant,
     });
+  });
+
+  test("sends the team's kits one defeat for a Stellar Swirl that takes an enemy the hit left standing to nothing", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant: Combatant = {
+      ...createCombatant(onKitEvent, 0),
+      kit: {
+        ...TRAVELER_KIT,
+        onKitEvent,
+        stellarJubilee: { stellarReactionTypes: [StellarReactionType.StellarSwirl] },
+      },
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.elementalState.auras.set(AuraType.Cryo, { decayRate: 0, gauge: 1, isImmutable: false });
+    enemy.health = 1;
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
+    const hit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
+    strikeKitEnemies([{ body: context.body, combatant, hit, target: enemy }], context);
+
+    expect(
+      onKitEvent.mock.calls.map(([event]) => event).filter(({ kind }) => kind === KitEventKind.EnemyDefeated),
+    ).toStrictEqual([{ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }]);
   });
 
   test("an aimed hit on an enemy with weak points takes one, which the team's kits see", () => {
