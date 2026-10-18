@@ -44,7 +44,7 @@ export const fitWindriseScene = (only: readonly string[] = []): Promise<GameData
             isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
             key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
           },
-          false,
+          true,
         ),
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
       landmarks: async () => {
