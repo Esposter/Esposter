@@ -73,10 +73,15 @@ export const useMiningOutcrops = ({
       drawnMap.value = new Map([...drawnMap.value, [regionId, { at, placeIds }]]);
     }
   };
-  // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. The list is replaced only
-  // When its places change, so the world's stand-ins are not written each frame
+  // Read each frame, so a place drawn at a reset or come back from its respawn shows at once. A reset reaches the standing
+  // Places only through its day's draw, which replaces the draws, so they are worked out again only when the places, the
+  // Draws or the mined map is replaced, and the list is replaced only when its places change
+  let standingInputs: readonly unknown[] | undefined;
   const refreshMiningOutcrops = (now: Temporal.Instant, random: () => number) => {
     drawDayMiningOutcrops(now, random);
+    const inputs = [placesMap.value, drawnMap.value, minedAtMap.value];
+    if (standingInputs?.every((input, index) => input === inputs[index])) return;
+    standingInputs = inputs;
     const standing = [...placesMap.value].flatMap(([regionId, places]) =>
       computeStandingMiningOutcrops(places, drawnMap.value.get(regionId), minedAtMap.value, now),
     );
