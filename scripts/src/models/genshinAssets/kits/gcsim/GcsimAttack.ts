@@ -13,7 +13,6 @@ export interface GcsimAttack {
   line: number;
   poiseDamage?: number;
   poiseDamageVariable?: string;
-  strikeType?: string;
   talentVariable?: string;
   variableName?: string;
 }
