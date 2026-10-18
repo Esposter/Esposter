@@ -1,25 +1,29 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { GroundPoint } from "genshin-engine";
 
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
-import { castKitField } from "#src/services/kit/effects/castKitField";
-import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { castKitField } from "#src/services/kit/effects/castKitField";
+import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { changeKitTeamHealth } from "#src/services/kit/effects/changeKitTeamHealth";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { selectRandomKitEnemy } from "#src/services/kit/selectRandomKitEnemy";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 export const YAOYAO_CHARACTER_ID = 10_000_077;
@@ -32,13 +36,15 @@ const YUEGUI_HEALTH_SHARE_THRESHOLD = 0.7;
 // Measured: gcsim (MIT) yaoyao/skill.go, the Yuegui spawns two metres ahead of her body
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/skill.go
 const YUEGUI_SPAWN_METRES = 2;
-// Measured: gcsim (MIT) yaoyao/burst.go, Moonjade Descent's Yuegui spawn behind her, two metres back from her body
+// Measured: gcsim (MIT) yaoyao/burst.go, Moonjade Descent's Yuegui spawns behind her, two metres back from her body
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/burst.go
 const JUMPING_YUEGUI_METRES = 2;
 const BURST_STATUS_ID = "yaoyao-burst";
+const JUMPING_YUEGUI_ID = "yaoyao-jumping-yuegui";
 // Measured: gcsim (MIT) yaoyao/cons.go, Constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds
 // After each radish heal. Its stamina restore is not built, as the kit has no stamina to restore
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+const CONSTELLATION_1 = 1;
 const C1_DENDRO_DMG_BONUS = 0.15;
 const C1_SECONDS = 8;
 // Measured: gcsim (MIT) yaoyao/asc.go and radish.go, Ascension 4 heals the active character each second for five seconds
@@ -49,7 +55,26 @@ const A4_HEAL_MAX_HEALTH_SHARE = 0.008;
 const A4_INTERVAL_SECONDS = 1;
 const A4_SECONDS = 5;
 const A4_HEAL_ID = "yaoyao-a4-heal";
-const JUMPING_YUEGUI_ID = "yaoyao-jumping-yuegui";
+// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 2 gives Yaoyao 3 energy when a radish strikes an enemy while her burst
+// Lasts, once each 0.8 seconds
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+const CONSTELLATION_2 = 2;
+const C2_ENERGY = 3;
+const C2_INTERVAL_SECONDS = 0.8;
+const C2_ICD_ID = "yaoyao-c2-icd";
+// Measured: gcsim (MIT) yaoyao/cons.go, Constellation 4 gives Yaoyao Elemental Mastery of 0.3% of her Max HP, up to 120,
+// For 8.8 seconds on each skill and burst cast
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+const CONSTELLATION_4 = 4;
+const C4_ELEMENTAL_MASTERY_SHARE = 0.003;
+const C4_ELEMENTAL_MASTERY_CAP = 120;
+const C4_SECONDS = 8.8;
+// Measured: gcsim (MIT) yaoyao/cons.go and yuegui.go, Constellation 6 throws a Mega Radish at the target of a skill Yuegui's
+// Third and sixth radishes, healing the active character by 7.5% of Yaoyao's Max HP
+// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+const CONSTELLATION_6 = 6;
+const C6_THROW_INDICES = new Set([2, 5]);
+const C6_HEAL_MAX_HEALTH_SHARE = 0.075;
 
 // A radish lands where it is thrown: its hit strikes the enemies its circle reaches, and the heal it gives reaches the
 // Character on the field from that point, only while the body stands within the circle as the radish lands, as gcsim's
@@ -123,7 +148,7 @@ const startA4Heal = (context: KitContext, combatant: Combatant): void => {
 // Constellation 1 and Ascension 4 follow each radish's heal, as gcsim's radish heal does
 const applyRadishHealRiders = (context: KitContext, combatant: Combatant): void => {
   const { activeCombatant, kitEffectState } = context;
-  if (combatant.constellationCount >= 1)
+  if (combatant.constellationCount >= CONSTELLATION_1)
     buffKitMember(kitEffectState, activeCombatant.characterId, {
       amount: C1_DENDRO_DMG_BONUS,
       attribute: Attribute.DendroDamageBonus,
@@ -132,45 +157,79 @@ const applyRadishHealRiders = (context: KitContext, combatant: Combatant): void 
   if (combatant.ascension >= ASCENSION_4) startA4Heal(context, combatant);
 };
 
-// A Yuegui throws a radish at its target, and the radish's heal is priced from the thrower's Max HP as it is thrown
+// A Yuegui throws a radish at its target, pricing the radish's heal from the thrower's Max HP as it is thrown, and returns
+// The target, for a Mega Radish to fly at the same one
 const throwRadish = (
   context: KitContext,
   combatant: Combatant,
   yueguiCentre: GroundPoint,
   hit: KitHit,
   { flat, healsTeam, maxHealthShare }: RadishHeal,
-): void => {
+): GroundPoint => {
   const healing = maxHealthShare * combatant.attributes.maxHealth + flat;
-  landRadish(context, combatant, pickRadishTarget(context, yueguiCentre), hit, (tick) => {
+  const target = pickRadishTarget(context, yueguiCentre);
+  landRadish(context, combatant, target, hit, (tick) => {
     if (healsTeam) changeKitTeamHealth(tick, combatant, healing);
     else changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing);
     applyRadishHealRiders(tick, combatant);
+  });
+  return target;
+};
+
+// Constellation 6's Mega Radish lands at the target of the throw beside it, healing the active character with no riders
+const throwMegaRadish = (context: KitContext, combatant: Combatant, target: GroundPoint, hit: KitHit): void => {
+  const healing = C6_HEAL_MAX_HEALTH_SHARE * combatant.attributes.maxHealth;
+  landRadish(context, combatant, target, hit, (tick) =>
+    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, healing),
+  );
+};
+
+// Constellation 2: a radish that strikes an enemy while the burst lasts gives Yaoyao energy, once each interval
+const giveConstellation2Energy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  if (
+    combatant.constellationCount < CONSTELLATION_2 ||
+    !checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, BURST_STATUS_ID)
+  )
+    return;
+  if (!startKitCooldown(kitEffectState, combatant.characterId, C2_ICD_ID, C2_INTERVAL_SECONDS)) return;
+  gainPartyMemberEnergy(party, combatant, C2_ENERGY);
+};
+
+// Constellation 4: the Elemental Mastery Yaoyao gains on each skill and burst cast
+const applyConstellation4 = ({ activeCombatant: combatant, kitEffectState }: KitContext): void => {
+  if (combatant.constellationCount < CONSTELLATION_4) return;
+  buffKitMember(kitEffectState, combatant.characterId, {
+    amount: Math.min(C4_ELEMENTAL_MASTERY_SHARE * combatant.attributes.maxHealth, C4_ELEMENTAL_MASTERY_CAP),
+    attribute: Attribute.ElementalMastery,
+    secondsRemaining: C4_SECONDS,
   });
 };
 
 // Yaoyao's behaviour: her Yuegui, which her skill spawns, throws a White Jade Radish each throw interval at a target the
 // Pick above chooses. Her burst spawns three Yuegui behind her while it lasts, whose radishes heal the whole team, and a
-// Swap ends the burst and the Yuegui it spawned
-// Constellation 2 needs the Adeptal Legacy state and the radish explosion damage, which the kit does not build
-// Constellation 4 needs an Elemental Mastery bonus from 0.3% of her Max HP, which the kit does not build
-// Constellation 6 needs the Yuegui throw's Mega Radish every two radishes, which the kit does not build
+// Swap ends the burst and the Yuegui it spawned. Each radish heal gives Constellation 1's Dendro DMG Bonus and Ascension 4's
+// Heal chain, and Constellation 2 and 4 follow her radishes' strikes and her casts
+// Constellation 1's stamina restore needs a stamina pool the kit does not carry, and Ascension 1's passive reads the
+// Locomotion state the kit context does not carry, so neither is built
+// Constellation 6 throws a Mega Radish at the skill Yuegui's third and sixth radishes, at the same target
 export const createYaoyaoKitBehaviour = ({
   readHit,
   readParameter,
   readSecondsList,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
-  const skillRadish = readHit("skillRadish");
+  const skillRadish = readHit("skillRadish", { onStrike: giveConstellation2Energy });
   const skillRadishHeal: RadishHeal = {
     flat: readParameter("skillRadishFlatHeal"),
     healsTeam: false,
     maxHealthShare: readParameter("skillRadishHealMaxHealthShare"),
   };
+  const megaRadish = readHit("megaRadish");
   const yueguiSpawnSeconds = readSeconds("skillCooldownStart") + readSeconds("yueguiSpawnDelay");
   const yueguiFirstThrowSeconds = readSeconds("yueguiFirstThrow");
   const yueguiThrowIntervalSeconds = readSeconds("yueguiThrowInterval");
   const yueguiDurationSeconds = readSeconds("yueguiDuration");
-  const burstRadish = readHit("burstRadish");
+  const burstRadish = readHit("burstRadish", { onStrike: giveConstellation2Energy });
   const burstRadishHeal: RadishHeal = {
     flat: readParameter("burstRadishFlatHeal"),
     healsTeam: true,
@@ -182,8 +241,10 @@ export const createYaoyaoKitBehaviour = ({
   return {
     burst: {
       // Moonjade Descent lasts for its duration, and spawns a Yuegui behind her at each of its three spawns while it lasts
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, kitEffectState } = context;
         const { characterId } = combatant;
+        applyConstellation4(context);
         addKitStatus(kitEffectState, characterId, { id: BURST_STATUS_ID, secondsRemaining: burstDurationSeconds });
         for (const spawnSeconds of jumpingYueguiSpawnSecondsList)
           scheduleKitTask(kitEffectState, characterId, spawnSeconds, (tick) => {
@@ -194,8 +255,9 @@ export const createYaoyaoKitBehaviour = ({
             castKitField(tick.kitEffectState, characterId, yueguiCentre, {
               id: JUMPING_YUEGUI_ID,
               nextTickSeconds: yueguiFirstThrowSeconds,
-              onTick: (throwContext) =>
-                throwRadish(throwContext, combatant, yueguiCentre, burstRadish, burstRadishHeal),
+              onTick: (throwContext) => {
+                throwRadish(throwContext, combatant, yueguiCentre, burstRadish, burstRadishHeal);
+              },
               secondsRemaining: burst.secondsRemaining,
               tickIntervalSeconds: yueguiThrowIntervalSeconds,
             });
@@ -211,12 +273,18 @@ export const createYaoyaoKitBehaviour = ({
     },
     skill: {
       // Raphanus Sky Cluster schedules the Yuegui's spawn, two metres ahead of where Yaoyao's body stands when it spawns
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, kitEffectState } = context;
+        applyConstellation4(context);
         scheduleKitTask(kitEffectState, combatant.characterId, yueguiSpawnSeconds, (tick) => {
           const yueguiCentre = createAheadBody(tick.body, YUEGUI_SPAWN_METRES).position;
           castKitField(tick.kitEffectState, combatant.characterId, yueguiCentre, {
             nextTickSeconds: yueguiFirstThrowSeconds,
-            onTick: (throwContext) => throwRadish(throwContext, combatant, yueguiCentre, skillRadish, skillRadishHeal),
+            onTick: (throwContext, tickIndex) => {
+              const target = throwRadish(throwContext, combatant, yueguiCentre, skillRadish, skillRadishHeal);
+              if (combatant.constellationCount >= CONSTELLATION_6 && C6_THROW_INDICES.has(tickIndex))
+                throwMegaRadish(throwContext, combatant, target, megaRadish);
+            },
             secondsRemaining: yueguiDurationSeconds,
             tickIntervalSeconds: yueguiThrowIntervalSeconds,
           });

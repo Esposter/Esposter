@@ -1,6 +1,6 @@
 ## Purpose
 
-Yaoyao's kit as built, with her four strikes, charged attack and plunges, and Moonjade Descent's initial hit, and what is left to build: her Yuegui and its radishes, and her passives and constellations.
+Yaoyao's kit as built, with her four strikes, charged attack and plunges, and Moonjade Descent's initial hit, her Yuegui and radishes from both her skill and burst, her riders, and her constellations 2, 4 and 6, and what is left to build: her Constellation 1 stamina restore and her Ascension 1 passive.
 
 ## Requirements
 
@@ -117,11 +117,40 @@ Constellation 1 SHALL give the active character 15% Dendro DMG Bonus for eight s
 - **WHEN** a radish heals the active character while Yaoyao is at Ascension 4
 - **THEN** the active character is healed by 0.8% of Yaoyao's Max HP each second, for five seconds
 
-### Requirement: Unbuilt Mega Radish, Constellations 2, 4 and 6, and passives
+### Requirement: Constellations 2, 4 and 6
 
-Yaoyao's Mega Radish, her Constellations 2, 4 and 6, her Constellation 1 stamina restore, and her Ascension 1 passive SHALL have no effect in the world yet.
+Constellation 2 SHALL give Yaoyao 3 energy when a radish strikes an enemy while Moonjade Descent lasts, once each 0.8 seconds. Constellation 4 SHALL give Yaoyao Elemental Mastery of 0.3% of her Max HP, up to 120, for 8.8 seconds on each skill and burst cast, a cast restarting the one running. Constellation 6 SHALL throw a Mega Radish at the target of the skill Yuegui's third and sixth radishes, healing the active character by 7.5% of Yaoyao's Max HP.
 
-#### Scenario: Yuegui throws no Mega Radish
+#### Scenario: Constellation 2 gives energy from a radish's strike during the burst
 
-- **WHEN** the skill's Yuegui throws its third or sixth radish
-- **THEN** no Mega Radish is thrown in place of it
+- **WHEN** a burst radish strikes an enemy while Moonjade Descent lasts, at Constellation 2
+- **THEN** Yaoyao gains 3 energy
+
+#### Scenario: Constellation 2 gives no energy after the burst ends
+
+- **WHEN** a skill radish strikes an enemy after a swap has ended Moonjade Descent
+- **THEN** no energy is gained
+
+#### Scenario: Constellation 2 gives energy once each 0.8 seconds
+
+- **WHEN** one radish strikes several enemies, or a second strike comes within 0.8 seconds of the first
+- **THEN** energy is given once per 0.8 seconds
+
+#### Scenario: Constellation 4 gives Elemental Mastery on each cast
+
+- **WHEN** Yaoyao casts her skill or burst at Constellation 4
+- **THEN** she gains Elemental Mastery of 0.3% of her Max HP, up to 120, for 8.8 seconds, the cast restarting one already running
+
+#### Scenario: Constellation 6 throws a Mega Radish at the third and sixth throws
+
+- **WHEN** the skill Yuegui throws its third or sixth radish at Constellation 6
+- **THEN** a Mega Radish lands at the same target, healing the active character by 7.5% of Yaoyao's Max HP
+
+### Requirement: Unbuilt Ascension 1 and Constellation 1 stamina
+
+Ascension 1's passive and Constellation 1's stamina restore SHALL have no effect in the world yet.
+
+#### Scenario: Ascension 1 gives no locomotion bonus
+
+- **WHEN** Yaoyao is dashing or jumping during Moonjade Descent at Ascension 1
+- **THEN** no extra radish is thrown
