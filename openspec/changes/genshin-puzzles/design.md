@@ -62,6 +62,7 @@ scripts/src/services/genshinAssets/puzzles/toMonumentPlace.ts
 
 ## Sources
 
+- Read on 2026-10-18: the four wiki pages below returned HTTP 402 Payment Required to an anonymous fetch, so none of their values is in the build yet. Each element, timing, limit, target count, Seelie chest kind and Shrine of Depths key waits on a readable copy of its page.
 - [Puzzle](https://genshin-impact.fandom.com/wiki/Puzzle), Genshin Impact Wiki: the mechanisms of the open world and of each region, and what solving them does.
 - The Elemental Monument and Minacious Isle sequence sources are the [puzzles](../../specs/genshin/puzzles/README.md) page's, which the monument's state machine is built from.
 - [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki: Seelies led to their courts, returning if left, Elemental Sight's trail, and the chest a settled Seelie gives.
