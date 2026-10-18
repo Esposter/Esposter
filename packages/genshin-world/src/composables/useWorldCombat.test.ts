@@ -1,17 +1,17 @@
-import type { Element } from "#src/models/Element";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
+import { IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER, REVIVE_HEALTH_SHARE } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
+import { STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
@@ -66,6 +66,38 @@ describe(useWorldCombat, () => {
     events.emit("chestOpened");
 
     expect(kitContext.outbox).toStrictEqual([{ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.ChestOpened }]);
+  });
+
+  test("Impetuous Winds cuts each spend from the stamina the party shares", () => {
+    expect.hasAssertions();
+    const characterIds = [
+      TRAVELER_CHARACTER_ID,
+      ...[...statTables.characterDataMap]
+        .filter(([, { element }]) => element === Element.Anemo)
+        .slice(0, 3)
+        .map(([characterId]) => characterId),
+    ];
+    const { kitContext } = useWorldCombat({
+      characterIdConstellationsMap: shallowRef(new Map()),
+      enemyTables,
+      events: createWorldEvents(),
+      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+      onPartyDown: () => {},
+      onPartyRevived: () => {},
+      partyBonusLines: shallowRef([]),
+      placeWorldDrops: () => {},
+      savedCharacters: characterIds.map((characterId) => createCharacter(characterId, statTables.characterDataMap)),
+      savedParty: createParty(characterIds),
+      startingCharacterIdKitMap: new Map(characterIds.map((characterId) => [characterId, TRAVELER_KIT])),
+      statTables,
+      travelerBonusLines: shallowRef([]),
+      travelerElement: shallowRef(Element.Anemo),
+      wildlifePlaces: [],
+    });
+    const amount = 1;
+    kitContext.stamina.spend(amount);
+
+    expect(kitContext.stamina.value).toBe(STAMINA_MAX - amount * IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER);
   });
 
   test("game over offers revive at the nearest waypoint", () => {

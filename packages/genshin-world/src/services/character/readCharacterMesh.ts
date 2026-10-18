@@ -7,13 +7,13 @@ import { getCharacterMaterialTextureIndices } from "#src/services/character/getC
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import {
+  checkIsPmxSphereDrawn,
   checkTransparentTexels,
   createCharacterMaterial,
   createPmxMesh,
   createPmxTexture,
   createPmxToonTexture,
   parsePmx,
-  PmxSphereMode,
 } from "genshin-engine";
 
 // A character's model from its pack: the PMX read, then every texture a material draws with read once: its Texture, its
@@ -40,7 +40,7 @@ export const readCharacterMesh = (
     );
     const colourTextureIndices = new Set(
       pmxModel.materials.flatMap(({ sphereMode, sphereTextureIndex, textureIndex }) =>
-        sphereMode === PmxSphereMode.Disabled ? [textureIndex] : [textureIndex, sphereTextureIndex],
+        checkIsPmxSphereDrawn(sphereMode) ? [textureIndex, sphereTextureIndex] : [textureIndex],
       ),
     );
     const toonTextureIndices = new Set(

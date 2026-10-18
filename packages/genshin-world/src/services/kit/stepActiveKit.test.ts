@@ -86,7 +86,6 @@ const createControls = (stamina = createStamina(STAMINA_MAX)): ActiveKitControls
     landmarkCollider: createLandmarkCollider(),
     position: new Vector3(),
     stamina,
-    staminaMaximum: STAMINA_MAX,
   }),
   isAimHeld: false,
   landedHits: [],

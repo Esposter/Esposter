@@ -86,6 +86,20 @@ describe(unequipArtifactToBag, () => {
     });
   });
 
+  test("unequipping keeps the gadget equipped to the quick-use slot", () => {
+    expect.hasAssertions();
+
+    const unequipped = unequipArtifactToBag(
+      { equippedGadgetItemId: 1, items: [], nextId: 1, quickSwapItemIds: [] },
+      createCharacter([createArtifact(1)]),
+      ArtifactSlot.FlowerOfLife,
+      options,
+    );
+    assert(!unequipped.isBagFull);
+
+    expect(unequipped.inventory.equippedGadgetItemId).toBe(1);
+  });
+
   test("unequipping with the artifacts tab full reports the full bag, and the piece stays worn", () => {
     expect.hasAssertions();
 

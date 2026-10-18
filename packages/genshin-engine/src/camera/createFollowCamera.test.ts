@@ -34,6 +34,8 @@ describe(createFollowCamera, () => {
   // A ground rising one metre for every two along the eye's side, and enough frames for the pitch to settle on it
   const SLOPE_RISE_PER_METRE = 0.5;
   const SLOPE_FRAMES = 60;
+  // A look up that the slope pitch leaves alone
+  const SLOPE_LOOK_PITCH = 0.1;
   const STILL_INPUT: InputState = {
     heldActions: new Set(),
     lookPitch: 0,
@@ -245,5 +247,58 @@ describe(createFollowCamera, () => {
       followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
 
     expect(camera.position.toArray()).toStrictEqual([0, PIVOT_HEIGHT, FOLLOW_CAMERA_DEFAULT_SETTINGS.defaultDistance]);
+  });
+
+  test("a look holds its pitch on flat ground while the slope pitch is on", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, slopePitch: true },
+    });
+    followCamera.look({ ...STILL_INPUT, lookPitch: SLOPE_LOOK_PITCH }, 0);
+    for (let frame = 0; frame < SLOPE_FRAMES; frame++)
+      followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(new Euler().setFromQuaternion(camera.quaternion, "YXZ").x).toBeCloseTo(SLOPE_LOOK_PITCH);
+  });
+
+  test("a look is held beside the pitch settled on the slope", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery((_x, z) => z * SLOPE_RISE_PER_METRE, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, slopePitch: true },
+    });
+    followCamera.look({ ...STILL_INPUT, lookPitch: SLOPE_LOOK_PITCH }, 0);
+    for (let frame = 0; frame < SLOPE_FRAMES; frame++)
+      followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(new Euler().setFromQuaternion(camera.quaternion, "YXZ").x).toBeCloseTo(
+      SLOPE_LOOK_PITCH - Math.atan(SLOPE_RISE_PER_METRE),
+    );
+  });
+
+  test("a reset drops the look, so the pitch settles from level", () => {
+    expect.hasAssertions();
+
+    const camera = new PerspectiveCamera();
+    const followCamera = createFollowCamera({
+      camera,
+      ground: createGroundQuery(() => 0, WATER_LEVEL),
+      landmarkCollider: createLandmarkCollider(),
+      settings: { ...FOLLOW_CAMERA_DEFAULT_SETTINGS, slopePitch: true },
+    });
+    followCamera.look({ ...STILL_INPUT, lookPitch: SLOPE_LOOK_PITCH }, 0);
+    followCamera.reset(0);
+    followCamera.follow(new Vector3(0, PIVOT_HEIGHT, 0), new Vector3(), FRAME_SECONDS);
+
+    expect(new Euler().setFromQuaternion(camera.quaternion, "YXZ").x).toBeCloseTo(0);
   });
 });

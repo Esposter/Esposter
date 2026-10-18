@@ -121,13 +121,16 @@ describe(createCharacterMaterial, () => {
     expect(translucent.isMeshToonMaterial).toBe(false);
   });
 
-  test("keeps the sphere off a material whose mode is disabled", () => {
+  test.each([
+    ["disabled", PmxSphereMode.Disabled],
+    ["the second UV set's", PmxSphereMode.AdditionalUv],
+  ] as const)("keeps the sphere off a material whose mode is %s", (_name, sphereMode) => {
     expect.hasAssertions();
 
     const sphereTexture = new DataTexture();
     const characterMaterial = createCharacterMaterial({
       lightUniforms: createLightUniforms(),
-      pmxMaterial: { ...pmxMaterial, isOutlined: false },
+      pmxMaterial: { ...pmxMaterial, isOutlined: false, sphereMode, sphereTextureIndex: 1 },
       rampTexture: new DataTexture(),
       sphereTexture,
     });

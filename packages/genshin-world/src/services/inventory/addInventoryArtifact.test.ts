@@ -50,6 +50,14 @@ describe(addInventoryArtifact, () => {
     });
   });
 
+  test("keeps the equipped gadget in the bag it takes an artifact into", () => {
+    expect.hasAssertions();
+
+    const { inventory } = addInventoryArtifact({ ...emptyInventory, equippedGadgetItemId: 1 }, definition, artifact);
+
+    expect(inventory.equippedGadgetItemId).toBe(1);
+  });
+
   test("leaves the artifact over once the artifacts tab is full", () => {
     expect.hasAssertions();
 
@@ -61,5 +69,20 @@ describe(addInventoryArtifact, () => {
       inventory: { items, nextId: room, quickSwapItemIds: [] },
       overflow: 1,
     });
+  });
+
+  test("keeps the equipped gadget in the bag that has no room for the artifact", () => {
+    expect.hasAssertions();
+
+    const room = ItemCategoryRoomMap[ItemCategory.Artifact];
+    assert.exists(room);
+    const items = Array.from({ length: room }, (_value, index) => ({ artifact, definition, id: index, quantity: 1 }));
+    const { inventory } = addInventoryArtifact(
+      { equippedGadgetItemId: 1, items, nextId: room, quickSwapItemIds: [] },
+      definition,
+      artifact,
+    );
+
+    expect(inventory.equippedGadgetItemId).toBe(1);
   });
 });

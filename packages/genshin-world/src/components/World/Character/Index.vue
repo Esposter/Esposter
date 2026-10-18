@@ -27,10 +27,7 @@ import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
 import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
-import {
-  IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER,
-  PARTY_MEMBER_BURST_INPUT_ACTIONS,
-} from "#src/services/party/constants";
+import { PARTY_MEMBER_BURST_INPUT_ACTIONS } from "#src/services/party/constants";
 import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
@@ -50,7 +47,6 @@ import {
   FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
-  STAMINA_MAX,
   stepGrassTrail,
 } from "genshin-engine";
 import { PerspectiveCamera, Vector2, Vector3 } from "three";
@@ -122,8 +118,6 @@ const checkIsImpetuousWinds = (): boolean =>
   kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.elementalResonances.includes(Element.Anemo) ??
   false;
 const characterController = createCharacterController({
-  // Impetuous Winds cuts every stamina spend, the kit's and the body's, read from the same resonance as its speeds
-  getStaminaConsumptionMultiplier: () => (checkIsImpetuousWinds() ? IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER : 1),
   ground,
   landmarkCollider,
   position: new Vector3(
@@ -132,7 +126,6 @@ const characterController = createCharacterController({
     WINDRISE_START_POINT.z,
   ),
   stamina: kitContext.stamina,
-  staminaMaximum: STAMINA_MAX,
 });
 let followCamera: FollowCamera | undefined;
 // The poser of the body's model, which is found again once the model arrives or is taken away, as a pack switch does

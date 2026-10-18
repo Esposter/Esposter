@@ -1,11 +1,13 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitInput } from "#src/models/kit/KitInput";
 
 import { Element } from "#src/models/Element";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { CHASCA_CHARACTER_ID, createChascaKitBehaviour } from "#src/services/kit/characters/chascaKit";
 import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
@@ -15,8 +17,14 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
+import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
+import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
@@ -32,6 +40,40 @@ const createPartyMember = (characterId: number, element: Element): Combatant => 
 const readShells = ({ kitEffectState }: KitContext) => {
   const summon = kitEffectState.effects.find((effect) => effect.kind === "summon");
   return summon?.kind === "summon" ? summon.hits : [];
+};
+
+const SKILL_INPUT: KitInput = {
+  height: 0,
+  isAttackHeld: false,
+  isAttackPressed: false,
+  isBurstPressed: false,
+  isSkillHeld: false,
+  isSkillPressed: true,
+  locomotionState: LocomotionState.Idle,
+};
+
+// The skill pressed as the world presses it: the action its gates start, with the cooldown it sets and its start run
+const pressSkill = (context: KitContext): void => {
+  const action = startNextKitAction(
+    createKitState(),
+    CHASCA_KIT,
+    SKILL_INPUT,
+    getPartyMember(context.party, CHASCA_CHARACTER_ID),
+    createStamina(STAMINA_MAX),
+    true,
+    [],
+    context,
+  );
+  action?.onStart?.(context);
+};
+
+// The seconds stepped as the world steps them: the team's cooldowns, then its effects, then each deployed kit's own step
+const stepWorldSeconds = (context: KitContext, seconds: number): void => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepPartyCooldowns(context.party, FIXED_STEP_SECONDS);
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    stepDeployedKits(context, FIXED_STEP_SECONDS);
+  }
 };
 
 const createChascaCombatant = (): Combatant => ({
@@ -135,6 +177,40 @@ describe(createChascaKitBehaviour, () => {
     expect(
       findKitStatus(context.kitEffectState.effects, CHASCA_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
     ).toBeUndefined();
+  });
+
+  test("the skill cannot enter the Blessing again until its cooldown has run from her leaving it by a press", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(createChascaCombatant());
+    pressSkill(context);
+    stepWorldSeconds(context, 5);
+    pressSkill(context);
+    stepWorldSeconds(context, CHASCA_KIT.skillCooldownSeconds - 0.5);
+    pressSkill(context);
+
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CHASCA_CHARACTER_ID)).toBe(false);
+
+    stepWorldSeconds(context, 1);
+    pressSkill(context);
+
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CHASCA_CHARACTER_ID)).toBe(true);
+  });
+
+  test("the skill cannot enter the Blessing again until its cooldown has run from its points draining to none", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(createChascaCombatant());
+    pressSkill(context);
+    stepWorldSeconds(context, 10 + CHASCA_KIT.skillCooldownSeconds - 0.5);
+    pressSkill(context);
+
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CHASCA_CHARACTER_ID)).toBe(false);
+
+    stepWorldSeconds(context, 1);
+    pressSkill(context);
+
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, CHASCA_CHARACTER_ID)).toBe(true);
   });
 
   test("a sprint in the Nightsoul Blessing drains 13.3 points", () => {

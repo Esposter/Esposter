@@ -41,6 +41,7 @@ import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
 import { getDeployedElements } from "#src/services/party/getDeployedElements";
+import { getImpetuousWindsStaminaConsumptionMultiplier } from "#src/services/party/getImpetuousWindsStaminaConsumptionMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
@@ -182,8 +183,11 @@ export const useWorldCombat = ({
   // The world's combat state, which the character on the field steps into: it starts with the active character standing at
   // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
   // Seeded source, so a session's rolls repeat
-  // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps
-  const stamina = createStamina(STAMINA_MAX);
+  // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps.
+  // Impetuous Winds cuts every spend from it, the body's and the kit's, read from the field's resonances at each spend
+  const stamina = createStamina(STAMINA_MAX, () =>
+    getImpetuousWindsStaminaConsumptionMultiplier(activeCombatant.value?.elementalResonances ?? []),
+  );
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },

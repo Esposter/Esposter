@@ -12,8 +12,9 @@ export const FREE_CAMERA_CLEARANCE = 1.5;
 export const FREE_CAMERA_MAX_PITCH: number = Math.PI / 2 - 0.01;
 // The settings the follow camera starts at, and the sensitivity its look turns at as it always has, the middle of the
 // Game's 1 to 5 range
-// Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export. The wiki's Settings
-// Page gives no default for the slope pitch, so it starts off and the camera changes only where a player turns it on
+// Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export. The wiki's
+// Settings page gives no default for the slope pitch, so it starts off and the camera changes only where a player turns
+// It on
 export const FOLLOW_CAMERA_DEFAULT_SETTINGS: FollowCameraSettings = {
   defaultDistance: 5,
   horizontalSensitivity: 3,
@@ -27,8 +28,8 @@ export const FOLLOW_CAMERA_NEUTRAL_SENSITIVITY = 3;
 // (`genshin:assets camera`): its global config's elevation limits, its nearest zoom radius and its furthest on foot
 export const FOLLOW_CAMERA_PIVOT_SHARE = 0.7;
 export const FOLLOW_CAMERA_FOV = 45;
-// Provisional: the PC client's look stops a little short of straight up from below and down from above. No recording has
-// Read the exact stop yet, so the look is held to 70 degrees down and 80 up until one does
+// Provisional: the PC client's look stops a little short of straight up from below and down from above. No recording
+// Has read the exact stop yet, so the look is held to 70 degrees down and 80 up until one does
 export const FOLLOW_CAMERA_MIN_PITCH: number = MathUtils.degToRad(-70);
 export const FOLLOW_CAMERA_MAX_PITCH: number = MathUtils.degToRad(80);
 export const FOLLOW_CAMERA_MIN_DISTANCE = 1;
@@ -37,10 +38,10 @@ export const FOLLOW_CAMERA_MAX_DISTANCE = 6;
 // Out once what pulled it in has cleared, in metres a second
 export const FOLLOW_CAMERA_DISTANCE_PER_ZOOM_STEP = 0.5;
 export const FOLLOW_CAMERA_EASE_OUT_SPEED = 4;
-// Provisional, read off no recording yet: how fast the pitch closes the gap to the slope, as the share of it closed each
-// Second, so the camera settles on a new slope within a few seconds
+// Provisional, read off no recording yet: how fast the pitch closes the gap to the slope, as the share of it closed
+// Each second, so the camera settles on a new slope within a few seconds
 export const FOLLOW_CAMERA_SLOPE_PITCH_SPEED = 4;
-// The room the eye keeps from the ground, the water's surface and the landmarks, the radius of the sphere its arm casts,
-// And how far apart the arm is stepped through the terrain's height function, in metres
+// The room the eye keeps from the ground, the water's surface and the landmarks, the radius of the sphere its arm
+// Casts, and how far apart the arm is stepped through the terrain's height function, in metres
 export const FOLLOW_CAMERA_CLEARANCE = 0.2;
 export const FOLLOW_CAMERA_ARM_STEP = 0.25;

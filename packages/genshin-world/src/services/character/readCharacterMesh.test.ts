@@ -1,7 +1,7 @@
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { PmxModel } from "genshin-engine";
 
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { CHARACTER_MODEL_PATH, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
 import {
@@ -80,6 +80,36 @@ describe(readCharacterMesh, () => {
     expect(materialOptions[0]?.texture).toBe(colourTexture);
     expect(materialOptions[1]?.toonTexture).toBe(toonTexture);
     expect(materialOptions[1]?.toonTexture).not.toBe(materialOptions[0]?.texture);
+  });
+
+  test.each([
+    ["multiplied", PmxSphereMode.Multiply, [CHARACTER_MODEL_PATH, "a", "b"]],
+    ["read through the second UV set", PmxSphereMode.AdditionalUv, [CHARACTER_MODEL_PATH, "a"]],
+  ] as const)("reads a sphere texture only where its mode is drawn: %s", async (_name, sphereMode, expectedPaths) => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("ImageBitmap", Blob);
+    vi.mocked(createPmxTexture).mockResolvedValue(new Texture());
+    vi.mocked(parsePmx).mockReturnValue({
+      materials: [{ isToonShared: true, sphereMode, sphereTextureIndex: 1, textureIndex: 0, toonIndex: -1 }],
+      textures: ["a", "b"],
+    } as PmxModel);
+    const readPaths: string[] = [];
+    const characterPackReader: CharacterPackReader = {
+      key: "test",
+      readFile: (path) => {
+        readPaths.push(path);
+        return Promise.resolve(new Blob([path]));
+      },
+    };
+
+    await readCharacterMesh(characterPackReader, {
+      characterId: TRAVELER_CHARACTER_ID,
+      lightUniforms: createLightUniforms(),
+      rampTexture: new DataTexture(),
+    });
+
+    expect(readPaths).toStrictEqual(expectedPaths);
   });
 
   test("a model is drawn at its character's unit", async () => {
