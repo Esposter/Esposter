@@ -1,6 +1,6 @@
 # Map unlocking
 
-In the game the map is blank until a statue fills in its area, and a place is a jump only once it is unlocked. Here a Statue of The Seven is unlocked by resonating with it on F, and until then its area is blank on the map and the minimap and the statue is not offered as a jump. This page is what is built of [map unlocking](../../../changes/genshin-map-unlocking/design.md); Teleport Waypoints and domain entrances are not yet in the world's data, so they are not unlocked here.
+In the game the map is blank until a statue fills in its area, and a place is a jump only once it is unlocked. Here a Statue of The Seven is unlocked by resonating with it on F, and until then its area is blank on the map and the minimap and the statue is not offered as a jump. This page is what is built of [map unlocking](../../../changes/genshin-map-unlocking/design.md); Teleport Waypoints are in the world's data from [exploring](../exploring/design.md) and unlock the same way; domain entrances are not yet in the world's data, so they are not unlocked here.
 
 ## How it works
 
@@ -35,7 +35,7 @@ flowchart TD
 ## Notes
 
 - **The unlock is not yet animated.** The game's resonating light and the time it holds the player are measured off a published clip ([roadmap](../../../changes/genshin-roadmap/tasks.md), References sought), so the unlock is instant here.
-- **Waypoints wait on exploring.** Teleport Waypoints are not landmarks of the region data until [exploring](../../../changes/genshin-exploring/design.md) fits them, so no waypoint is unlocked, rewarded or pointed to yet. The slice already holds every open-world point's reward, so a waypoint needs only its point id to be matched.
+- **Waypoints pay nothing on their first unlock.** A Teleport Waypoint is unlocked on F as a statue is, and the pointer marks it while it is locked. The first unlock's reward is looked up by the point id `LandmarkIdStatuePointIdMap` names, which holds Windrise's statue alone, so a waypoint pays nothing until its point is named there. The slice already holds every open-world point's reward, so a waypoint needs only that id.
 
 ## Sources
 

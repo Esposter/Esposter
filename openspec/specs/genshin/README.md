@@ -55,6 +55,7 @@ It is unofficial and non-commercial, and makes no claim to be HoYoverse's. No mo
 | [Map](map/design.md)                                   | the map on M at full screen, dragged to pan and zoomed by the wheel or slider, its keyboard jump list, and a jump's fade to black and back                                       |
 | [Minimap](minimap/design.md)                           | the HUD's corner map, the map's drawing cut to a circle round the camera and turned with it                                                                                      |
 | [Map unlocking](map-unlocking/design.md)               | a Statue of The Seven resonated with on F, its area filled in on the map and minimap, and only the unlocked statues offered as jumps and revives                                 |
+| [Exploring](exploring/design.md)                       | Teleport Waypoints fitted from the official map into each region's data, listed as jumps once unlocked, and every jump landing at the game's arrival place                       |
 | [Statues of The Seven](statues-of-the-seven/design.md) | a region's levels and rewards from the game's table, the stamina they raise to 240, and the Blessing's pool and heals, not yet on a screen                                       |
 | [Offering systems](offering-systems/design.md)         | the offering rule, each held item offered to its levels, and the Frostbearing Tree in Dragonspine with its levels and saved progress                                             |
 | [HUD](hud/design.md)                                   | the heads-up display's Paimon button, minimap, quest tracker, stamina meter, party, health and skill and burst buttons, and hiding it                                            |
@@ -171,6 +172,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - The load budget: each screen's load steps measured and held to a budget by `genshin:parity load`, and the world's load cut to what its first frame reads, its ready on the production build more than halved.
 - The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, the modules down to about a third of their lines and the kit tree to no duplicate code.
 - Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
+- Exploring: Teleport Waypoints paired with the scene's transport points and written into Mondstadt's data, each jump landing at the game's own arrival place.
 
 ## Key files
 

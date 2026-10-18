@@ -1,6 +1,6 @@
 # Map
 
-The game's map opens on M and is how a player crosses the continent: they choose a Teleport Waypoint or a Statue of The Seven and arrive there. The world's map is built the same way. It draws the [world map](../world-map/design.md)'s catalogue rather than any of the game's imagery, and a jump lands the [character](../character-controller/design.md) in front of the landmark chosen.
+The game's map opens on M and is how a player crosses the continent: they choose a Teleport Waypoint or a Statue of The Seven and arrive there. The world's map is built the same way. It draws the [world map](../world-map/design.md)'s catalogue rather than any of the game's imagery, and a jump lands the [character](../character-controller/design.md) where the game lands it at the landmark chosen.
 
 ## How it works
 
@@ -10,7 +10,7 @@ flowchart TD
   SCR --> OV["The overlay: the map on the player, its names, pointer and controls"]
   REG["Every region's data, read once"] --> LM["The landmarks a jump lands at"]
   LM --> OV
-  OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: in front of it, facing it"]
+  OV -->|"a landmark chosen, on the map or in the jump list"| POSE["The jump's pose: the landmark's arrival, facing its turn"]
   POSE --> CLOSE["The map closes to the world"]
   CLOSE --> FADE["The screen fades to the loading screen's pale grey"]
   FADE -->|"the fade ends"| PLACE["The character placed on the ground there, the camera behind it"]
@@ -27,9 +27,9 @@ flowchart TD
 
 ## The jump
 
-- **The landmarks a jump lands at.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven alone today, as the game teleports to its statues and waypoints and nowhere else; a tree is never a jump. Only the unlocked ones are offered, as the world's jump list, the map and a revive are given the unlocked landmarks alone ([map unlocking](../map-unlocking/design.md)). Teleport Waypoints join as a landmark kind of their own once the regions' data holds them.
+- **The landmarks a jump lands at.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven and the Teleport Waypoint, as the game teleports to its statues and waypoints and nowhere else; a tree is never a jump. Only the unlocked ones are offered, as the world's jump list, the map and a revive are given the unlocked landmarks alone ([map unlocking](../map-unlocking/design.md)). The waypoints are [exploring](../exploring/design.md)'s.
 - **A landmark's name is its area's.** Each statue lights one area, so its area's catalogue name is the name a jump goes by, with no name of its own written anywhere.
-- **The pose lands in front, facing back.** `computeJumpPose` stands the arrival a fixed distance in front of the landmark, along the way it faces, at a yaw that looks back at it, so the view arrives on what was jumped to, clear of a statue's plinth. The body stands on the ground's height there, read when the jump lands.
+- **The pose lands at the arrival.** `computeJumpPose` puts the character at the landmark's arrival place, facing the turn the game gives it. The body stands on the ground's height there, read when the jump lands.
 - **The world screen jumps.** `WorldScreen` exposes `jumpTo(pose)` and `readCameraPosition()` to its host. A jump closes the map, fades a veil of the loading screen's pale grey over the screen, and once the fade ends asks `WorldCharacter` to `place` the body at the pose, facing its yaw with the [follow camera](../follow-camera/design.md) level behind it, then fades back in.
 - **A near teleport within one region fades through the loading screen as a cross-region one does.** The cross-region clip `captures/yt-UVCdkuNpmf4-world-teleport.mp4` shows the fade through the pale-grey screen; a near teleport's fade is not yet read off a clip.
 
@@ -52,7 +52,7 @@ The overlay is scored against two references, each over its interface alone, the
 | `packages/genshin-world/src/composables/useJumpLandmarks.ts`          | Every region's landmarks a jump lands at, read once                                                                                              |
 | `packages/genshin-world/src/services/map/computeJumpPose.ts`          | Where a jump to a landmark lands, and which way it faces                                                                                         |
 | `packages/genshin-world/src/services/map/computeAreaLabels.ts`        | Where each area's name is written                                                                                                                |
-| `packages/genshin-world/src/services/map/constants.ts`                | The kinds a jump lands at, the arrival's distance, the view's metres and zoom range, the marks' and names' sizes                                 |
+| `packages/genshin-world/src/services/map/constants.ts`                | The kinds a jump lands at, the view's metres and zoom range, the marks' and names' sizes                                                         |
 | `packages/genshin-world/src/services/map/computeZoomShare.ts`         | Where a view's metres sit on the zoom slider's track, on a logarithm                                                                             |
 | `packages/genshin-world/src/services/map/computeZoomMetresAtShare.ts` | The metres a place on the track shows, clamped at either end                                                                                     |
 | `packages/genshin-world/src/services/map/computeWheelZoomMetres.ts`   | The metres after a wheel turn, along the same track                                                                                              |
@@ -68,7 +68,6 @@ The overlay is scored against two references, each over its interface alone, the
 - **Not built yet.** The region tag at the bottom right, its exploration progress, the UID line and the domains-only toggle are missing: their words are not in the text dump, so they wait on their text ids rather than being typed by hand. The top bar's floor counter belongs to a feature not yet built, and its resin counter is [Original Resin](../original-resin/design.md)'s, placed provisionally until its recording lands. No reference for the teleport panel has been found, so it is not drawn ([roadmap](../../../changes/genshin-roadmap/tasks.md)).
 - **The jump list is hidden, not removed.** It is kept for the keyboard and a screen reader and is not drawn, because the reference shows no list. Whether it should be shown beside the map is a call for the user.
 - **The pointer is the overlay's alone.** The minimap marks the character with the game's own arrow and the view with its fan, each placed by the HUD's tree ([minimap](../minimap/design.md)), so `Map/Pointer` is measured off the map's reference only.
-- **The arrival is a fixed distance until the game's own arrival points are read.** The game sets a transport point for every statue and waypoint, which the text dump's scene points hold under obfuscated field names; until they are named and fitted, a jump lands a provisional distance in front of the landmark.
 - **The fade does not wait on the ground.** A jump far from where the camera stood fades back in as soon as it is placed, and the terrain streams in round it as it does after any flight.
 
 ## Sources

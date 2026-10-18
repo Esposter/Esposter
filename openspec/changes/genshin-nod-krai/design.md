@@ -7,7 +7,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 - **The moon is part of its sky.** Nod-Krai's deep connection to the moons makes the moon a larger, brighter element of its night sky, a regional override of the [sky](../../specs/genshin/sky-and-time/design.md)'s moon. Its captures at night set how large and how bright.
 - **An archipelago of distinct isles.** Lempo Isle, Hiisi Island and Paha Isle are separate islands with their own outlines in the [world map](../../specs/genshin/world-map/design.md), joined by the Moontide Sea. The sea between them is part of the region, as it is for Inazuma.
 - **Two kits: the dieselpunk and the Scions'.** The first builds the ports, towns and Fatui works: riveted iron, pipework, cranes, smokestacks and timber sheds. The second builds the Frostmoon Scions' enclaves and stone circles. Both are fitted against their own exports, since no earlier region's kit carries over.
-- **Statues of the New Moon.** Nod-Krai's statues stand where other regions have Statues of The Seven. They are a landmark kind of their own and act as waypoints in [exploring](../genshin-exploring/design.md).
+- **Statues of the New Moon.** Nod-Krai's statues stand where other regions have Statues of The Seven. They are a landmark kind of their own and act as waypoints in [exploring](../../specs/genshin/exploring/design.md).
 
 ## How it works
 

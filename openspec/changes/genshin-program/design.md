@@ -44,7 +44,7 @@ flowchart TD
 | [Windrise derivation](../genshin-windrise-derivation/design.md) | Windrise's open world rebuilt from every object the game streams             |
 | [Ground detail](../genshin-ground-detail/design.md)             | the ground's layers' detail, each at its own texture's metres per texel      |
 | [Weather](../genshin-weather/design.md)                         | rain, storms, snow, fog and sandstorms, set per area as the game sets them   |
-| [Exploring](../genshin-exploring/design.md)                     | waypoints to jump to, the game's arrival points, and the map's pan and zoom  |
+| [Exploring](../../specs/genshin/exploring/design.md)            | waypoints to jump to, the game's arrival points, and the map's pan and zoom  |
 
 ### Phase two: the regions
 
