@@ -5,4 +5,7 @@ export const XIANYUN_CHARACTER_ID = 10_000_093;
 // Xianyun's behaviour: none of her own, since her four strikes, charged attack, plunges, Skyladder's first press and
 // Stars Gather at Dusk's hit are her record's alone. Driftcloud Wave, her two further Skyladder presses, Starwicker, the
 // Burst's heals, her airborne buff, her passives and constellations are not built
+// Constellation 2 needs the Skyladder's ATK buff for 15s, which the kit does not build
+// Constellation 4 needs the Skyladder count in one Cloud Transmogrification, which the kit does not build
+// Constellation 6 needs a CRIT DMG bonus on the Driftcloud Wave, which no strike hook can apply here
 export const createXianyunKitBehaviour = (): KitBehaviour => ({});
