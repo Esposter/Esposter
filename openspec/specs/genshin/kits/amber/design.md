@@ -23,3 +23,6 @@ Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, a
 
 - [Sharpshooter](https://genshin-impact.fandom.com/wiki/Sharpshooter), [Explosive Puppet](https://genshin-impact.fandom.com/wiki/Explosive_Puppet) and [Fiery Rain](https://genshin-impact.fandom.com/wiki/Fiery_Rain), Genshin Impact Wiki: Amber's arrows' and shots' poise and gauges, the bunny's explosion, and Fiery Rain's arrows.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/amber), MIT: the kit's hitmarks, cancel frames and areas, the bunny's explosion.
+- [gcsim v2.47.2 skill file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/skill.go), MIT: Constellation 1's second arrow.
+- [gcsim v2.47.2 burst file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/burst.go), MIT: Constellation 6's Movement SPD and ATK buff.
+- [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/cons.go), MIT: Constellation 2, which is left.
