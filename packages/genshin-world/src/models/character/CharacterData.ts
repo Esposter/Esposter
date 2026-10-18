@@ -1,9 +1,9 @@
-import type { AscensionPhase } from "#src/models/character/AscensionPhase";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
+import type { CharacterAscensionPhase } from "#src/models/character/CharacterAscensionPhase";
 import type { GrowAttribute } from "#src/models/character/GrowAttribute";
 
-import { ascensionPhaseSchema } from "#src/models/character/AscensionPhase";
 import { attributeLineSchema } from "#src/models/character/AttributeLine";
+import { characterAscensionPhaseSchema } from "#src/models/character/CharacterAscensionPhase";
 import { BodyType } from "#src/models/character/BodyType";
 import { growAttributeSchema } from "#src/models/character/GrowAttribute";
 import { Element } from "#src/models/Element";
@@ -15,7 +15,7 @@ import { z } from "zod";
 // Its rarity in stars; the catalogue region its association names, none for one that names no nation; its body; the
 // Attributes that grow with its level, its ascension phases, and the attributes every level of it starts with
 export interface CharacterData {
-  ascensionPhases: AscensionPhase[];
+  ascensionPhases: CharacterAscensionPhase[];
   attributeLines: AttributeLine[];
   bodyType: BodyType;
   element?: Element;
@@ -29,7 +29,7 @@ export interface CharacterData {
 }
 
 export const characterDataSchema = z.object({
-  ascensionPhases: z.array(ascensionPhaseSchema).min(1),
+  ascensionPhases: z.array(characterAscensionPhaseSchema).min(1),
   attributeLines: z.array(attributeLineSchema),
   bodyType: z.enum(BodyType),
   element: z.enum(Element).optional(),
