@@ -518,6 +518,28 @@ describe(mergeGenshinSave, () => {
     });
   });
 
+  test("a mail is kept once by its id, and read or claimed on either copy stays so", () => {
+    expect.hasAssertions();
+    const MAIL_ID = 1;
+    const OTHER_MAIL_ID = 2;
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: false, isRead: true }],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [
+        { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isRead: false },
+        { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isRead: false },
+      ],
+    };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isRead: true },
+      { deliveredAt: LATER_START, id: OTHER_MAIL_ID, isClaimed: false, isRead: false },
+    ]);
+  });
+
   test("merged saves keep every found Oculus", () => {
     expect.hasAssertions();
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [OCULUS_ID, SHARED_OCULUS_ID], regions: {} } };
