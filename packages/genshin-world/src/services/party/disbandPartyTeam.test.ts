@@ -7,19 +7,27 @@ import { setPartyTeamCharacters } from "#src/services/party/setPartyTeamCharacte
 import { describe, expect, test } from "vitest";
 
 describe(disbandPartyTeam, () => {
-  test("keeps the four default teams and the deployed one", () => {
+  test("the deployed team cannot be disbanded", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
     addPartyTeam(party);
-    addPartyTeam(party);
-    setPartyTeamCharacters(party, 5, [2]);
-    deployPartyTeam(party, 5);
+    setPartyTeamCharacters(party, 4, [2]);
+    deployPartyTeam(party, 4);
 
-    expect([disbandPartyTeam(party, 2), disbandPartyTeam(party, 5), party.teams.length]).toStrictEqual([
+    expect([disbandPartyTeam(party, 4), party.teams.length]).toStrictEqual([PartyTeamResult.Kept, 5]);
+  });
+
+  test("the four default teams are kept", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    addPartyTeam(party);
+
+    expect([disbandPartyTeam(party, 0), disbandPartyTeam(party, 3), party.teams.length]).toStrictEqual([
       PartyTeamResult.Kept,
       PartyTeamResult.Kept,
-      6,
+      5,
     ]);
   });
 

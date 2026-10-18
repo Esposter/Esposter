@@ -5,7 +5,7 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 describe(addPartyTeam, () => {
-  test("adds an empty team named standing by, and refuses one past fifteen teams", () => {
+  test("a sixteenth team is refused", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
