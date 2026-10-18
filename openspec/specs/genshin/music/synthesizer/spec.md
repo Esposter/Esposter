@@ -34,7 +34,7 @@ A note's envelope SHALL be scheduled to its computed value at the note's end rat
 
 ### Requirement: Noise starts from the loop clock
 
-Each note's noise SHALL start from the loop clock's position, with one phase per band across every buffer. The lowest band it overfills is a known defect the design records, not a behaviour this requirement holds.
+Each note's noise SHALL start from the loop clock's position, with one phase per band across every buffer.
 
 #### Scenario: Notes sounding at once share one noise
 
