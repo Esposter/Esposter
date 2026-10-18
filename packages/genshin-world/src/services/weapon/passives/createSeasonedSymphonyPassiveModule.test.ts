@@ -6,6 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
@@ -35,10 +36,20 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []),
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        1,
+        [createDeployedCombatant(wielder, { isOnField: true })],
+        [],
+      ),
     ).toStrictEqual([{ amount: 0.25, attribute: Attribute.AttackPercent }]);
     expect(
-      seasonedSymphonyPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: false }], []),
+      seasonedSymphonyPassiveModule.getPassiveBonuses?.(
+        wielder,
+        1,
+        [createDeployedCombatant(wielder, { isOnField: false })],
+        [],
+      ),
     ).toStrictEqual([{ amount: 0.75, attribute: Attribute.AttackPercent }]);
   });
 

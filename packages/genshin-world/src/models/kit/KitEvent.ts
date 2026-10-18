@@ -17,8 +17,10 @@ import type { KitNightsoulPointsConsumedEvent } from "#src/models/kit/KitNightso
 import type { KitNightsoulPointsGainedEvent } from "#src/models/kit/KitNightsoulPointsGainedEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 import type { KitNormalAttackStartedEvent } from "#src/models/kit/KitNormalAttackStartedEvent";
+import type { KitPartyMemberStruckEvent } from "#src/models/kit/KitPartyMemberStruckEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
 import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
+import type { KitShieldCastEvent } from "#src/models/kit/KitShieldCastEvent";
 import type { KitSkillUsedEvent } from "#src/models/kit/KitSkillUsedEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
 import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent";
@@ -46,8 +48,10 @@ export type KitEvent =
   | KitNightsoulPointsGainedEvent
   | KitNormalAttackLandedEvent
   | KitNormalAttackStartedEvent
+  | KitPartyMemberStruckEvent
   | KitReactionTriggeredEvent
   | KitShieldAbsorbedEvent
+  | KitShieldCastEvent
   | KitSkillUsedEvent
   | KitStatusTickedEvent
   | KitTauntDamagedEvent

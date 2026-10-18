@@ -10,13 +10,15 @@ import { createVermillionHereafterSetModule } from "#src/services/artifact/sets/
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import {
+  createKitTestContext,
+  stepKitSeconds,
+  stepKitSecondsSendingExpiries,
+} from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -51,13 +53,6 @@ const getAttackBonus = (wearer: Combatant, kitEffectState: KitEffectState): numb
   (wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [])
     .filter((bonus) => bonus.attribute === Attribute.AttackPercent)
     .reduce((sum, bonus) => sum + bonus.amount, 0);
-// The seconds stepped one step at a time, each step's expired effects sent to the team as the world sends them
-const stepKitSecondsEmittingExpiries = (context: ReturnType<typeof createKitTestContext>, seconds: number) => {
-  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-  }
-};
 
 describe(createVermillionHereafterSetModule, () => {
   test("a burst gives Nascent Light, ATK +8% for 16 seconds", () => {
@@ -99,7 +94,7 @@ describe(createVermillionHereafterSetModule, () => {
     }
     expect(getAttackBonus(wearer, kitEffectState)).toBeCloseTo(0.48);
 
-    stepKitSecondsEmittingExpiries(context, 13);
+    stepKitSecondsSendingExpiries(context, 13);
     expect(getAttackBonus(wearer, kitEffectState)).toBe(0);
   });
 

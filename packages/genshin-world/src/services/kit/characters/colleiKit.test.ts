@@ -11,6 +11,7 @@ import { COLLEI_CHARACTER_ID, createColleiKitBehaviour } from "#src/services/kit
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -147,8 +148,8 @@ describe(createColleiKitBehaviour, () => {
     const combatant = createColleiCombatant(1);
 
     expect([
-      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], []),
-      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }], []),
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: false })], []),
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: true })], []),
     ]).toStrictEqual([[{ amount: 0.2, attribute: Attribute.EnergyRecharge }], []]);
   });
 
@@ -156,6 +157,8 @@ describe(createColleiKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = createColleiCombatant(0);
 
-    expect(COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], [])).toStrictEqual([]);
+    expect(
+      COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: false })], []),
+    ).toStrictEqual([]);
   });
 });

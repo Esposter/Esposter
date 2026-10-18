@@ -86,24 +86,23 @@ const castBlindSpot = (context: KitContext, target: Enemy) => {
 // Scalespiker shot after the blessing. Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's
 // Energy, which wait on it. Constellation 6 needs its bounce hit, which the kit does not build
 export const createKinichKitBehaviour = ({
-  readFrames,
   readFramesList,
   readHitFields,
   readStance,
 }: KitRecordReader): KitBehaviour => {
   const dragonBreathFields = readHitFields("dragonBreath", []);
-  const dragonBreathFirstHitmarkFrames = readFrames("dragonBreathFirstHitmark");
   const dragonBreathIntervalFramesList = readFramesList("dragonBreathInterval");
-  // The Ajaw's lasers, each landing the interval drawn for it after the one before
+  // The Ajaw's lasers, the first at the record's hitmark and each after it by the interval drawn for it
   const createDragonBreathHits = (random: () => number): KitHit[] => {
-    let hitmarkFrames = dragonBreathFirstHitmarkFrames;
+    let intervalFrames = 0;
     return Array.from({ length: DRAGON_BREATH_COUNT }, (_value, index) => {
       if (index > 0)
-        hitmarkFrames += takeOne(
+        intervalFrames += takeOne(
           dragonBreathIntervalFramesList,
           Math.floor(random() * dragonBreathIntervalFramesList.length),
         );
-      return { ...dragonBreathFields, hitmarkSeconds: toKitSeconds(hitmarkFrames) };
+      const hitmarkSeconds = dragonBreathFields.hitmarkSeconds + toKitSeconds(intervalFrames);
+      return { ...dragonBreathFields, hitmarkSeconds };
     });
   };
   const gainLoopShotPoints = (context: KitContext) => {

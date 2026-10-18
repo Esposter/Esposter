@@ -10,7 +10,6 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
-import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -72,7 +71,6 @@ export const stepActiveKit = (
   context.locomotionState = input.locomotionState;
   context.isSkillHeld = input.isSkillHeld;
   context.stamina = characterController.stamina;
-  context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {
     body,
     characterIdCombatantMap,
@@ -110,7 +108,7 @@ export const stepActiveKit = (
   stepDeployedKits(context, stepSeconds);
   stepVerdantDew(party, stepSeconds);
   stepMoondrifts(party, stepSeconds);
-  pickUpCrystallizeShards(kitEffectState, characterId, position, outbox);
+  pickUpCrystallizeShards(context, characterId, position);
   pickUpKitPickUps(context, position);
   tickEnemyStatuses(enemyMap.values(), stepSeconds, outbox);
   sendKitOutbox(context);

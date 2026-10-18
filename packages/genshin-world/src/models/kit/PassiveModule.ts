@@ -1,8 +1,9 @@
 import type { Kit } from "#src/models/kit/Kit";
 
 // What a passive does once its numbers are read, whether a weapon's or an artifact set's, as a kit's passive does: the
-// attributes it adds to its wielder's or wearer's pricing at the HP it stands at, the stats it converts from its Max HP,
-// the strikes it adds to, and the events of combat it answers, each read as its own kit reads them
+// Attributes it adds to its wielder's or wearer's pricing at the HP it stands at, the stats it converts from its Max
+// HP, the strikes it adds to, the events of combat it answers and the clock it keeps each step, each read as its own
+// Kit reads them
 export type PassiveModule = Pick<
   Kit,
   | "getChargedAttackStaminaMultiplier"
@@ -14,4 +15,5 @@ export type PassiveModule = Pick<
   | "getStrikeCriticalRateBonus"
   | "getStrikeDamageBonus"
   | "onKitEvent"
+  | "onStep"
 >;

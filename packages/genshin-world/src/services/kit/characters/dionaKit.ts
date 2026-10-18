@@ -65,13 +65,10 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const signatureMixTicks = readHits("signatureMixTicks", { enemyStatus: getDrunkardsFarceStatus });
   const signatureMixHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   // The shield is a share of her Max HP and a flat amount, times its strength, which Constellation 2 raises by 15%
-  const castShield = (
-    { characterIdCombatantMap, kitEffectState, party }: KitContext,
-    combatant: Combatant,
-    strengthMultiplier: number,
-  ): KitShield => {
+  const castShield = (context: KitContext, combatant: Combatant, strengthMultiplier: number): KitShield => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-    return castKitShield(kitEffectState, combatant.characterId, {
+    return castKitShield(context, combatant.characterId, {
       element: Element.Cryo,
       health:
         (shieldMaxHealthShare * maxHealth + shieldFlatHealth) *

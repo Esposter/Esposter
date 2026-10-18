@@ -12,6 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSunkenSongOfTheSandsPassiveModule } from "#src/services/weapon/passives/createSunkenSongOfTheSandsPassiveModule";
@@ -35,7 +36,7 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
   const otherMemberCharacterId = -1;
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
   const maximumHealth = wielder.attributes.maxHealth;
-  const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
+  const onField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: true })];
   const elementalSkillHit = {
     attackTag: AttackTag.ElementalSkill,
     enemy,

@@ -7,7 +7,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createMizukiKitBehaviour, MIZUKI_CHARACTER_ID } from "#src/services/kit/characters/mizukiKit";
+import {
+  createMizukiKitBehaviour,
+  DREAMDRIFTER_STATUS_ID,
+  MIZUKI_CHARACTER_ID,
+} from "#src/services/kit/characters/mizukiKit";
 import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -15,7 +19,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const MIZUKI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MIZUKI_CHARACTER_ID);
-const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
 
 const createMizukiCombatant = (): Combatant => ({
   ascension: 0,

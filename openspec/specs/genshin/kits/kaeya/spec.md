@@ -64,6 +64,13 @@ Glacial Waltz SHALL summon thirteen icicles that strike enemies on their ticks.
 - **THEN** thirteen icicles are summoned
 - **AND** each icicle strikes enemies on its ticks
 
+#### Scenario: Recasting Glacial Waltz replaces the one standing
+
+- **GIVEN** Glacial Waltz is standing
+- **WHEN** the player casts Glacial Waltz again
+- **THEN** the standing Glacial Waltz ends, and its icicles stop
+- **AND** thirteen icicles are summoned for the new one
+
 ### Requirement: Constellation 1 CRIT Rate against Cryo-affected enemies
 
 From Constellation 1, Kaeya's normal and charged attacks SHALL have 15% more CRIT Rate against an enemy under Cryo or Frozen.

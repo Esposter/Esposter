@@ -16,7 +16,7 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 
 // Sparkly Explosion, from four constellations, goes off as Klee leaves the field while Sparks 'n' Splash stands, as the
 // Wiki's constellation page and gcsim v2.47.2 (MIT) klee/burst.go give it
@@ -162,10 +162,8 @@ export const createKleeKitBehaviour = ({
           !startKitCooldown(kitEffectState, characterId, SPARKLING_BURST_COOLDOWN_ID, SPARKLING_BURST_COOLDOWN_SECONDS)
         )
           return;
-        for (const memberCharacterId of getDeployedCharacterIds(party)) {
-          const member = characterIdCombatantMap.get(memberCharacterId);
-          if (member) gainPartyMemberEnergy(party, member, SPARKLING_BURST_ENERGY);
-        }
+        for (const member of getDeployedCombatants(party, characterIdCombatantMap))
+          gainPartyMemberEnergy(party, member, SPARKLING_BURST_ENERGY);
         return;
       }
       if (

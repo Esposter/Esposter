@@ -9,7 +9,7 @@ import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNightsoulPoints";
+import { drainKitSprintNightsoulPoints } from "#src/services/kit/effects/drainKitSprintNightsoulPoints";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -66,11 +66,8 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
         castKitSummon(kitEffectState, body, activeCombatant, shells, { attackTag: AttackTag.ElementalBurst });
       },
     },
-    onSprint: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
-      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
-        drainKitNightsoulPoints(kitEffectState, characterId, NIGHTSOUL_SPRINT_DRAIN);
-    },
+    onSprint: (context, kitState, stepSeconds) =>
+      drainKitSprintNightsoulPoints(context, kitState, stepSeconds, NIGHTSOUL_SPRINT_DRAIN),
     onStep: ({ kitEffectState, party }, { characterId }, stepSeconds) => {
       if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
         changeKitSkillCooldown(party, characterId, stepSeconds);

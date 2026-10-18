@@ -170,14 +170,16 @@ export const createBeidouKitBehaviour = ({
     // Tidecaller's Electro shield is set at the press, of the group's share of Beidou's Max HP plus its flat HP, and
     // Stands until the hit, as gcsim's does
     skill: {
-      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) =>
-        castKitShield(kitEffectState, combatant.characterId, {
+      onStart: (context) => {
+        const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
+        castKitShield(context, combatant.characterId, {
           element: Element.Electro,
           health:
             shieldMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) +
             shieldFlatHealth,
           secondsRemaining: tidecallerHitmarkSeconds,
-        }),
+        });
+      },
     },
   };
 };

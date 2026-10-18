@@ -98,13 +98,15 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
   // Hit lands, as gcsim expires it at that frame
   const createShieldOnStart = ({ hits }: KitAction): KitAction["onStart"] => {
     const shieldSeconds = takeOne(hits).hitmarkSeconds;
-    return ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) =>
-      castKitShield(kitEffectState, combatant.characterId, {
+    return (context) => {
+      const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
+      castKitShield(context, combatant.characterId, {
         element: Element.Geo,
         health:
           shieldShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) + shieldFlat,
         secondsRemaining: shieldSeconds,
       });
+    };
   };
   return {
     // Cliffbreaker's Banner is set as the burst starts, its seconds counted from its hit, as gcsim counts them from the

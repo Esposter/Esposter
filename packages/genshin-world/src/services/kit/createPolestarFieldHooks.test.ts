@@ -17,6 +17,7 @@ import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { RADIANCE_STELLAR_CONDUCT_STATUS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -78,6 +79,24 @@ describe("createPolestarFieldHooks", () => {
 
     expect(buffAmounts(context.kitEffectState, Attribute.CryoDamageBonus)).toStrictEqual([expect.closeTo(0.29, 9)]);
     expect(buffAmounts(context.kitEffectState, Attribute.ElectroDamageBonus)).toStrictEqual([expect.closeTo(0.29, 9)]);
+  });
+
+  test("a member's Radiance: Stellar-Conduct carries the count of hits the last tick took", () => {
+    expect.hasAssertions();
+    const enemy = createEnemyAt(3);
+    const context = createKitTestContext(combatant, {
+      body: { facing: 0, height: 0, position: ORIGIN },
+      enemyMap: new Map([[enemy.id, enemy]]),
+    });
+    addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);
+    emitKitEvent(applyElement(enemy, Element.Cryo), context);
+    emitKitEvent(applyElement(enemy, Element.Electro), context);
+
+    stepKitSeconds(context, POLESTAR_TICK_SECONDS + 1);
+
+    expect(
+      findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, RADIANCE_STELLAR_CONDUCT_STATUS_ID)?.stacks,
+    ).toBe(2);
   });
 
   test("an element other than Cryo or Electro applied inside the field is not a recorded hit", () => {

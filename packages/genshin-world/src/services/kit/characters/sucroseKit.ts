@@ -65,8 +65,8 @@ const ALCHEMANIA_STATUS_ID = "sucrose-alchemania";
 // Sucrose's behaviour: Forbidden Creation-Isomer 75 / Type II sets its field ahead of her, whose Anemo tick lands from a
 // Summon while it lasts, and whose absorb check takes the first aura an enemy within its reach carries, the absorbed
 // Element's hit then landing on every tick. Her passives and Constellations 1, 2, 4 and 6 are built. The skill's pull is
-// Not, as no enemy moves on a kit's terms, and her Hexerei team bonus is not built, as the party does not count the Hexerei
-// It needs
+// Not, as no enemy moves on a kit's terms. Her Hexerei team bonus is not built, though the team's Hexerei count is
+// Read by checkIsKitSecretRite, as the bonus itself is the team effect every Hexerei kit waits on
 export const createSucroseKitBehaviour = ({
   kit,
   readArea,

@@ -11,23 +11,27 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createTheFirstGreatMagicPassiveModule } from "#src/services/weapon/passives/createTheFirstGreatMagicPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createMember = (characterId: number, element: Element): DeployedCombatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  element,
-  elementalResonances: [],
-  isOnField: false,
-  kit: TRAVELER_KIT,
-  level: 1,
-});
+const createMember = (characterId: number, element: Element): DeployedCombatant =>
+  createDeployedCombatant(
+    {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId,
+      constellationCount: 0,
+      element,
+      elementalResonances: [],
+      kit: TRAVELER_KIT,
+      level: 1,
+    },
+    { isOnField: false },
+  );
 
 describe(createTheFirstGreatMagicPassiveModule, () => {
   // Synthetic params, not the weapon's row: half Charged Attack DMG, a tenth, a fifth and three tenths ATK for one,
@@ -71,7 +75,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     expect.hasAssertions();
 
     const deployedCombatants = [
-      { ...wielder, isOnField: true },
+      createDeployedCombatant(wielder, { isOnField: true }),
       createMember(1, Element.Pyro),
       createMember(2, Element.Hydro),
       createMember(3, Element.Cryo),
@@ -87,7 +91,7 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     expect.hasAssertions();
 
     const deployedCombatants = [
-      { ...wielder, isOnField: true },
+      createDeployedCombatant(wielder, { isOnField: true }),
       createMember(1, Element.Pyro),
       createMember(2, Element.Pyro),
       createMember(3, Element.Pyro),
@@ -103,7 +107,12 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(wielder, 1, [{ ...wielder, isOnField: true }], []),
+      theFirstGreatMagicPassiveModule.getPassiveBonuses?.(
+        wielder,
+        1,
+        [createDeployedCombatant(wielder, { isOnField: true })],
+        [],
+      ),
     ).toStrictEqual([
       { amount: 0.1, attribute: Attribute.AttackPercent },
       { amount: 0, attribute: Attribute.MovementSpeed },

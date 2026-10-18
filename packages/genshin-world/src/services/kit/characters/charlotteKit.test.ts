@@ -13,6 +13,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const CHARLOTTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHARLOTTE_CHARACTER_ID);
@@ -88,10 +89,10 @@ describe(createCharlotteKitBehaviour, () => {
     expect.hasAssertions();
     const charlotte = { ...createCharlotteCombatant(), ascension: 4 };
     const team: DeployedCombatant[] = [
-      { ...charlotte, isOnField: true },
-      { ...charlotte, characterId: 2, isOnField: false, regionId: "fontaine" },
-      { ...charlotte, characterId: 3, isOnField: false, regionId: "mondstadt" },
-      { ...charlotte, characterId: 4, isOnField: false },
+      createDeployedCombatant(charlotte, { isOnField: true }),
+      createDeployedCombatant({ ...charlotte, characterId: 2, regionId: "fontaine" }, { isOnField: false }),
+      createDeployedCombatant({ ...charlotte, characterId: 3, regionId: "mondstadt" }, { isOnField: false }),
+      createDeployedCombatant({ ...charlotte, characterId: 4 }, { isOnField: false }),
     ];
     expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, team, [])).toStrictEqual([
       { amount: 0.05, attribute: Attribute.HealingBonus },
@@ -104,9 +105,9 @@ describe(createCharlotteKitBehaviour, () => {
     expect.hasAssertions();
     const charlotte = { ...createCharlotteCombatant(), ascension: 4 };
     const team: DeployedCombatant[] = [
-      { ...charlotte, isOnField: true },
-      { ...charlotte, characterId: 2, isOnField: false, regionId: "fontaine" },
-      { ...charlotte, characterId: 3, isOnField: false, regionId: "fontaine" },
+      createDeployedCombatant(charlotte, { isOnField: true }),
+      createDeployedCombatant({ ...charlotte, characterId: 2, regionId: "fontaine" }, { isOnField: false }),
+      createDeployedCombatant({ ...charlotte, characterId: 3, regionId: "fontaine" }, { isOnField: false }),
     ];
     expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, team, [])).toStrictEqual([
       { amount: 0.1, attribute: Attribute.HealingBonus },

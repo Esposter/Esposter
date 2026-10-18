@@ -76,7 +76,7 @@ Mona's Ascension 4 SHALL add 20% of her Energy Recharge to her Hydro DMG Bonus o
 
 ### Requirement: Constellation 1 adds to a striker's Hydro-related reactions while an Omen holds
 
-From Constellation 1, a party member's hit on an enemy under the Omen SHALL give that member's Electro-Charged, Vaporize, Lunar-Charged and Lunar-Crystallize 15% more DMG for eight seconds, and 160% of that for an off-field member while Mona is Hexerei with a second Hexerei member on the team.
+From Constellation 1, a party member's hit on an enemy under the Omen SHALL give that member's Electro-Charged, Vaporize, Lunar-Charged, Lunar-Crystallize and Hydro Swirl 15% more DMG for eight seconds, and 160% of that for an off-field member while Mona is Hexerei with a second Hexerei member on the team.
 
 #### Scenario: A hit on an Omen adds 15% to the striker's reactions for eight seconds
 
@@ -84,21 +84,33 @@ From Constellation 1, a party member's hit on an enemy under the Omen SHALL give
 - **WHEN** a party member hits an enemy under the Omen, and then its Electro-Charged reaction lands
 - **THEN** that reaction deals 15% more DMG, and the bonus is gone eight seconds after the hit
 
+#### Scenario: A Hydro Swirl gains the bonus, and another Swirl does not
+
+- **GIVEN** Mona has Constellation 1
+- **WHEN** a party member hits an enemy under the Omen, and then a Hydro Swirl and an Anemo Swirl land on it
+- **THEN** the Hydro Swirl deals 15% more DMG, and the Anemo Swirl deals no more
+
 #### Scenario: An off-field member gets 160% while Mona is Hexerei with a second Hexerei member
 
 - **GIVEN** Mona has Constellation 1, is Hexerei with a second Hexerei member on the team, and the member that hit the Omen is off the field
 - **WHEN** that member's reaction lands
 - **THEN** the bonus is 24% more DMG
 
-### Requirement: Constellation 4 adds CRIT to strikes on an Omen or a bubble
+### Requirement: Constellation 4 adds CRIT to strikes and Lunar reactions on an Omen or a bubble
 
-From Constellation 4, each party member's strike on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's strike SHALL gain 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
+From Constellation 4, each party member's strike on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's strike SHALL gain 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team. Each party member's Lunar-Charged and Lunar-Crystallize reaction on such an enemy SHALL gain the same CRIT Rate, and a Hexerei member's such reaction the same CRIT DMG under the same condition.
 
 #### Scenario: A strike on an Omen or a bubble gains CRIT Rate
 
 - **GIVEN** Mona has Constellation 4
 - **WHEN** any party member strikes an enemy under the Omen or in her bubble
 - **THEN** that strike gains 15% CRIT Rate
+
+#### Scenario: A Lunar reaction on an Omen gains CRIT
+
+- **GIVEN** Mona has Constellation 4 and is Hexerei with a second Hexerei member on the team
+- **WHEN** a Hexerei member's Lunar-Crystallize lands on an enemy under the Omen
+- **THEN** that reaction gains 15% CRIT Rate and 15% CRIT DMG
 
 #### Scenario: A Hexerei strike gains CRIT DMG while the team is Hexerei
 
@@ -158,11 +170,11 @@ From Constellation 6, each second of sprint SHALL give her next Charged Attack 6
 
 ### Requirement: Unbuilt Mona effects
 
-Constellation 1's Hydro Swirl and Frozen duration, Constellation 4's Lunar-Charged and Lunar-Crystallize CRIT, and Hexerei's post-burst follow-up SHALL NOT take effect.
+Constellation 1's Frozen duration and Hexerei's post-burst follow-up SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Mona has Constellation 1 or 4, or is Hexerei
+- **GIVEN** Mona has Constellation 1, or is Hexerei
 - **WHEN** the player fights with Mona
 - **THEN** those effects have no effect
 

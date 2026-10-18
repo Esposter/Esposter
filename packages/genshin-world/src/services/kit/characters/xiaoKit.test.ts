@@ -14,6 +14,7 @@ import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -135,10 +136,12 @@ describe(createXiaoKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = { ...createXiaoCombatant(0), constellationCount: 2 };
 
-    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: false }], [])).toStrictEqual([
-      { amount: 0.25, attribute: Attribute.EnergyRecharge },
-    ]);
-    expect(XIAO_KIT.getPassiveBonuses?.(combatant, 1, [{ ...combatant, isOnField: true }], [])).toStrictEqual([]);
+    expect(
+      XIAO_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: false })], []),
+    ).toStrictEqual([{ amount: 0.25, attribute: Attribute.EnergyRecharge }]);
+    expect(
+      XIAO_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: true })], []),
+    ).toStrictEqual([]);
   });
 
   test("a Constellation 0 switch adds no Lemniscatic Wind Cycling charge", () => {

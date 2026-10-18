@@ -232,7 +232,7 @@ const applyConstellation1 = (context: KitContext, combatant: Combatant, reaction
   if (reactionType === LunarReactionType.LunarCharged)
     gainPartyMemberEnergy(context.party, context.activeCombatant, CONSTELLATION_1_ENERGY);
   else if (reactionType === LunarReactionType.LunarCrystallize)
-    castKitShield(context.kitEffectState, COLUMBINA_CHARACTER_ID, {
+    castKitShield(context, COLUMBINA_CHARACTER_ID, {
       element: Element.Hydro,
       health: CONSTELLATION_1_SHIELD_HEALTH_SHARE * combatant.attributes.maxHealth,
       secondsRemaining: CONSTELLATION_1_SHIELD_SECONDS,

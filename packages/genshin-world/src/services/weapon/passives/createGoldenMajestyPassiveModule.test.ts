@@ -11,6 +11,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
 import { createGoldenMajestyPassiveModule } from "#src/services/weapon/passives/createGoldenMajestyPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
@@ -25,7 +26,7 @@ describe(createGoldenMajestyPassiveModule, () => {
   const goldenMajestyPassiveModule = createGoldenMajestyPassiveModule([0.2, 0.04, 8]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  const deployedOnField = [{ ...wielder, isOnField: true }];
+  const deployedOnField = [createDeployedCombatant(wielder, { isOnField: true })];
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
@@ -112,7 +113,7 @@ describe(createGoldenMajestyPassiveModule, () => {
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
-    castKitShield(context.kitEffectState, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
+    castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
@@ -127,13 +128,13 @@ describe(createGoldenMajestyPassiveModule, () => {
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
-    castKitShield(context.kitEffectState, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
+    castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(
         wielder,
         1,
-        [{ ...wielder, isOnField: false }],
+        [createDeployedCombatant(wielder, { isOnField: false })],
         context.kitEffectState.effects,
       ),
     ).toStrictEqual([

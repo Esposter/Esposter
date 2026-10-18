@@ -10,6 +10,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { endKitStatus } from "#src/services/kit/effects/endKitStatus";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
@@ -37,6 +38,7 @@ const NIGHTSOUL_RATE = { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_
 const BURST_POINTS = 15;
 const BURST_POINTS_FRAMES = 40;
 const BURST_RESTORE_SECONDS = 12;
+const BURST_RESTORE_ID = "iansan-burst-restore";
 
 // Constellation 1's energy, as gcsim (MIT) iansan/cons.go c1 gives it: each 6 points her blessing consumes restore her 15
 // Energy, then her cooldown of 18 seconds starts, and points consumed while it runs are not counted
@@ -104,8 +106,8 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
 
 // Iansan's behaviour: her skill's press enters the Nightsoul Blessing with its points, which drain six a second for the 16
 // Seconds it lasts. gcsim ends the blessing when the points fall to 0.2, and the kit ends it when they reach none, a gap of
-// A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and a second after it lands her restore
-// Starts, running for the burst's 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
+// A thirtieth of a second. Her burst's 15 points land 40 frames after the press, and her restore's first tick falls
+// A second after the press, for 12 seconds while the blessing lasts, as gcsim's restore task does. Not built: the
 // Burst's Party ATK bonus and its conversion of the points into ATK, the restore's share of the movement of the other
 // Members on the field, which no kit event carries, so Warming Up does not heal on those points, and the points her
 // Constellations add. Her strikes and plunges are her record's alone
@@ -141,6 +143,17 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     // Warming Up is given by a Nightsoul burst that goes off anywhere in the team, on the field or off it, as gcsim subscribes
     if (event.kind === KitEventKind.NightsoulBurst && combatant.ascension >= ASCENSION_4)
       addKitStatus(kitEffectState, characterId, { id: IANSAN_WARMING_UP_ID, secondsRemaining: WARMING_UP_SECONDS });
+    // The blessing's exit, by its seconds or by its points, ends Precise Movement and the burst's restore, as gcsim's
+    // ExitNightsoul deletes a1Key and resets burstSrc, so a blessing she enters again resumes neither
+    if (
+      event.kind === KitEventKind.EffectExpired &&
+      event.effect.kind === "status" &&
+      event.effect.characterId === characterId &&
+      event.effect.id === NIGHTSOUL_BLESSING_STATUS_ID
+    ) {
+      endKitStatus(kitEffectState, characterId, PRECISE_MOVEMENT_ID);
+      endKitStatus(kitEffectState, characterId, BURST_RESTORE_ID);
+    }
     // Ascension 1 arms its four points on a gain or consumption of her points while she is on the field, as gcsim's
     // Nightsoul generate and consume callbacks do, and holds the arming for 2.8 seconds once it has
     if (
@@ -200,13 +213,14 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
             secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
           });
       });
+      addKitStatus(kitEffectState, characterId, { id: BURST_RESTORE_ID, secondsRemaining: BURST_RESTORE_SECONDS });
       schedulePeriodicKitTask(
         kitEffectState,
         characterId,
         { firstSeconds: 1, intervalSeconds: 1, untilSeconds: BURST_RESTORE_SECONDS },
         (context) => {
-          // The restore stops once the blessing it lands in ends, as gcsim's does when the blessing exits
-          if (!checkHasKitStatus(context.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID)) return;
+          // The restore stops once the blessing it lands in exits, which ends its status, as gcsim's does with burstSrc
+          if (!checkIsKitStatusActive(context.kitEffectState.effects, characterId, BURST_RESTORE_ID)) return;
           const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
           if (points <= 0) return;
           generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);

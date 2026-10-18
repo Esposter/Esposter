@@ -28,6 +28,7 @@ import {
   MAIDEN_BELOVED_ARTIFACT_SET_ID,
   MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID,
   MARTIAL_ARTIST_ARTIFACT_SET_ID,
+  NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
   NYMPHS_DREAM_ARTIFACT_SET_ID,
   OBSIDIAN_CODEX_ARTIFACT_SET_ID,
@@ -72,6 +73,7 @@ import { createLuckyDogSetModule } from "#src/services/artifact/sets/createLucky
 import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/createMaidenBelovedSetModule";
 import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/createMarechausseeHunterSetModule";
 import { createMartialArtistSetModule } from "#src/services/artifact/sets/createMartialArtistSetModule";
+import { createNighttimeWhispersInTheEchoingWoodsSetModule } from "#src/services/artifact/sets/createNighttimeWhispersInTheEchoingWoodsSetModule";
 import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
 import { createNymphsDreamSetModule } from "#src/services/artifact/sets/createNymphsDreamSetModule";
 import { createObsidianCodexSetModule } from "#src/services/artifact/sets/createObsidianCodexSetModule";
@@ -121,6 +123,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [MAIDEN_BELOVED_ARTIFACT_SET_ID]: createMaidenBelovedSetModule,
   [MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID]: createMarechausseeHunterSetModule,
   [MARTIAL_ARTIST_ARTIFACT_SET_ID]: createMartialArtistSetModule,
+  [NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID]: createNighttimeWhispersInTheEchoingWoodsSetModule,
   [NOBLESSE_OBLIGE_ARTIFACT_SET_ID]: createNoblesseObligeSetModule,
   [NYMPHS_DREAM_ARTIFACT_SET_ID]: createNymphsDreamSetModule,
   [OBSIDIAN_CODEX_ARTIFACT_SET_ID]: createObsidianCodexSetModule,

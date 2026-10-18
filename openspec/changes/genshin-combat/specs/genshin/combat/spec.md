@@ -2,11 +2,11 @@
 
 ### Requirement: Glimmer Reaction Damage
 
-Stellar-Conduct and Stellar Swirl SHALL deal damage weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit.
+A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit. A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
 
 #### Scenario: a Glimmer reaction weights its four highest contributors
 
-- **GIVEN** a Stellar-Conduct with four contributors of differing damage
+- **GIVEN** a Stellar Swirl with four contributors of differing damage
 - **WHEN** the reaction deals its damage
 - **THEN** the highest contributor counts for 60%, the next for 30%, and the two lowest of the four for 5% each
 
@@ -15,6 +15,28 @@ Stellar-Conduct and Stellar Swirl SHALL deal damage weighted across the four hig
 - **GIVEN** a Stellar Swirl with five contributors
 - **WHEN** the reaction deals its damage
 - **THEN** only the four highest contributors are counted
+
+### Requirement: Direct Stellar Hits
+
+A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimmer formula over its talent multiplier of its striker's ATK, raised by the Base DMG Bonus of the deployed team's Stellar Jubilees, its elemental mastery and its Stellar Glimmer reaction DMG Bonus, cut by the enemy's RES alone with no Defence. Its coefficient SHALL be 1 for a Stellar Swirl and, for a Stellar-Conduct, the Starlight Prism's by the count of hits its striker carries. It SHALL take the party reaction bonuses its reaction takes, with the Elevation last.
+
+#### Scenario: prices a direct Stellar-Conduct hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
+
+- **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
+- **WHEN** its direct Stellar-Conduct hit strikes an enemy
+- **THEN** it is priced at a coefficient of 1.55, with no Defence
+
+#### Scenario: prices a direct Stellar Swirl hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
+
+- **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
+- **WHEN** its direct Stellar Swirl hit strikes an enemy
+- **THEN** it is priced at a coefficient of 1, which the count does not raise
+
+#### Scenario: a direct Stellar-Conduct hit takes the party reaction bonuses Stellar-Conduct takes, and its Elevation last
+
+- **GIVEN** a party member whose kit grants Stellar-Conduct a DMG Bonus, a CRIT DMG bonus and an Elevation
+- **WHEN** a direct Stellar-Conduct hit strikes an enemy
+- **THEN** the DMG Bonus joins its reaction bonus, the CRIT DMG its CRIT hit, and the Elevation multiplies the whole last
 
 ### Requirement: Stellar Swirl Once Enabled
 
@@ -66,7 +88,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
-A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered while a field stands SHALL set its time back to 7 seconds rather than leave a second field. While it stands, the enemies inside it have their Physical RES lowered by 40%.
+A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 7 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
 #### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
@@ -75,8 +97,13 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 
-- **WHEN** a Stellar-Conduct is triggered while a Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered with the body inside a standing Polestar Field
 - **THEN** the field's time is set back to 7 seconds, and no second field stands
+
+#### Scenario: a Stellar-Conduct with the body outside the standing Polestar Field places a second one beside it
+
+- **WHEN** a Stellar-Conduct is triggered with the body outside the one Polestar Field that stands
+- **THEN** a second field stands at the body for 7 seconds, and the first keeps its time
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
@@ -96,6 +123,11 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 
 - **WHEN** one Cryo or Electro hit is recorded
 - **THEN** the characters in the field have a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
+
+#### Scenario: a member's Radiance: Stellar-Conduct carries the count of hits the last tick took
+
+- **WHEN** two Cryo or Electro hits are recorded and the field's next tick passes with the body inside it
+- **THEN** each deployed member's Radiance: Stellar-Conduct carries the count of 2, which a direct Stellar-Conduct hit reads its coefficient by
 
 #### Scenario: a field lowers the enemies' Physical RES by 40%
 

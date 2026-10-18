@@ -202,7 +202,6 @@ export const useWorldCombat = ({
     kitEffectState: shallowReactive<KitEffectState>({ effects: [] }),
     locomotionState: LocomotionState.Idle,
     isSkillHeld: false,
-    hexereiCount: 0,
     stamina,
     oreStrikes: [],
     reactionTriggers: [],

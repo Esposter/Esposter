@@ -71,7 +71,7 @@ Spirit Reins' Resonance SHALL land an Anemo circle of radius 5.5 metres round Ch
 
 ### Requirement: Spirit Reins' Nightsoul Blessing
 
-Spirit Reins' press SHALL enter the Nightsoul Blessing with 80 points, which drain eight a second, and a sprint in the Blessing SHALL drain 13.3 points. The Blessing SHALL end when its points drain to none.
+Spirit Reins' press SHALL enter the Nightsoul Blessing with 80 points, which drain eight a second, and a sprint in the Blessing SHALL drain 13.3 points once, as the sprint starts. The Blessing SHALL end when its points drain to none.
 
 #### Scenario: The press enters the Blessing with 80 points
 

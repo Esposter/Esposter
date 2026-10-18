@@ -5,6 +5,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
@@ -17,8 +18,8 @@ describe(createExtinguishingPreceptPassiveModule, () => {
   const attackBonusPerSecond = 0.032;
   const wielder: Combatant = createWielderCombatant();
   const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
-  const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
-  const offField: DeployedCombatant[] = [{ ...wielder, isOnField: false }];
+  const onField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: true })];
+  const offField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: false })];
 
   test("the wielder gains 12% of each Elemental DMG Bonus", () => {
     expect.hasAssertions();

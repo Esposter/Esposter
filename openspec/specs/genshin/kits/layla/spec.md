@@ -74,7 +74,7 @@ Layla's burst SHALL deal a share of her Max HP as flat damage, which her talent 
 
 ### Requirement: Night Stars fire Shooting Stars
 
-Layla's shield SHALL build Night Stars, up to four, from its tick, her skill and her burst, and four Night Stars SHALL fire one Shooting Star each at the nearest living enemy within 10 metres.
+Layla's shield SHALL build Night Stars, up to four, from its tick, her skill and her burst, and four Night Stars SHALL fire one Shooting Star each at the nearest living enemy within 10 metres, or when none is within 10 metres, at the one the search or the star before it aimed at.
 
 #### Scenario: Four Night Stars fire four Shooting Stars
 

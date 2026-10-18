@@ -2,11 +2,16 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitState } from "#src/models/kit/KitState";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe } from "vitest";
 
@@ -23,7 +28,6 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   kitEffectState: { effects: [] },
   locomotionState: LocomotionState.Idle,
   isSkillHeld: false,
-  hexereiCount: countKitHexereiMembers([combatant.characterId]),
   stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],
   reactionTriggers: [],
@@ -40,6 +44,42 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
 export const stepKitSeconds = (context: KitContext, seconds: number) => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
     stepKitEffects(FIXED_STEP_SECONDS, context);
+};
+
+const SPRINT_INPUT: KitInput = {
+  height: 0,
+  isAttackHeld: false,
+  isAttackPressed: false,
+  isBurstPressed: false,
+  isSkillHeld: false,
+  isSkillPressed: false,
+  locomotionState: LocomotionState.Sprint,
+};
+
+// The given seconds of sprint stepped through the character on the field's own kit at the fixed step, as the world
+// Steps its kit, and not the effects, which stepKitSeconds steps on their own
+export const sprintKitSeconds = (context: KitContext, kitState: KitState, seconds: number) => {
+  const { activeCombatant, party } = context;
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
+    stepKit(
+      kitState,
+      activeCombatant.kit,
+      SPRINT_INPUT,
+      getPartyMember(party, activeCombatant.characterId),
+      createStamina(STAMINA_MAX),
+      FIXED_STEP_SECONDS,
+      [],
+      context,
+    );
+};
+
+// The given seconds stepped as the world steps them, one fixed step at a time, each step's expired effects sent to the
+// Team's kits as the world sends them
+export const stepKitSecondsSendingExpiries = (context: KitContext, seconds: number) => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
 };
 
 // The effects an action's start adds to the kit's state, which the action is run in and returned

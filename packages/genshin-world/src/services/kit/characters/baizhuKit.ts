@@ -79,12 +79,9 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
   const refreshFieldSeconds = readSeconds("seamlessShieldRefreshField");
   const spiritvein = readHit("spiritvein");
   // The shield a cast or a recast sets on the team, its health the share of Max HP plus its flat amount, and its explosion
-  const castShield = (
-    { characterIdCombatantMap, kitEffectState, party }: KitContext,
-    combatant: Combatant,
-    secondsRemaining: number,
-  ): KitShield =>
-    castKitShield(kitEffectState, combatant.characterId, {
+  const castShield = (context: KitContext, combatant: Combatant, secondsRemaining: number): KitShield => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
+    return castKitShield(context, combatant.characterId, {
       element: Element.Dendro,
       explosion: { combatant, hit: spiritvein },
       health:
@@ -92,6 +89,7 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         shieldFlatHealth,
       secondsRemaining,
     });
+  };
   return {
     getStrikeDamageBonus: ({ combatant, hit }, _enemy, party) =>
       combatant.ascension >= FIVE_FORTUNES_FOREVER_ASCENSION &&

@@ -6,4 +6,4 @@ import { createSkillBuffPassiveModule } from "#src/services/weapon/passives/crea
 // Smoke-and-Mirror Mystery at its rank: after its wielder uses an Elemental Skill, its DEF rises by the rank's percentage
 // For the rank's seconds
 export const createSmokeAndMirrorMysteryPassiveModule = (params: number[]): PassiveModule =>
-  createSkillBuffPassiveModule(params, { attribute: Attribute.DefensePercent, source: "smokeAndMirrorMystery" });
+  createSkillBuffPassiveModule(params, { attributes: [Attribute.DefensePercent], source: "smokeAndMirrorMystery" });

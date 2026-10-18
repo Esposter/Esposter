@@ -38,7 +38,7 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 
 ### Requirement: A Polestar Field on a Stellar-Conduct
 
-A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds. While the body stands inside it, every deployed member SHALL be in Radiance: Stellar-Conduct, and SHALL stay in it for 4 seconds after the body leaves.
+A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field the body is inside SHALL be refreshed rather than doubled, while one triggered with the body inside none SHALL leave a new field beside it. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds. While the body stands inside it, every deployed member SHALL be in Radiance: Stellar-Conduct, carrying the field's count of the last 4 seconds, and SHALL stay in it for 4 seconds after the body leaves.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
@@ -47,7 +47,7 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 
 #### Scenario: Stellar-Conduct refreshes a standing field
 
-- **WHEN** a Stellar-Conduct is triggered while a Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered with the body inside a standing Polestar Field
 - **THEN** the field's time is set back to 7 seconds, and no second field stands
 
 #### Scenario: an enemy inside a standing field loses 40% Physical RES

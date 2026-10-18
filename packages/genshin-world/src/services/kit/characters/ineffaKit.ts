@@ -152,8 +152,8 @@ export const createIneffaKitBehaviour = ({
   const burstBirgittaSpawnSeconds = burstHit.hitmarkSeconds;
   // The shield her skill and Constellation 2's burst place, priced from her ATK as the task that places it runs
   const scheduleShield = (kitEffectState: KitEffectState, combatant: Combatant, seconds: number): void =>
-    scheduleKitTask(kitEffectState, combatant.characterId, seconds, ({ kitEffectState: tickState }) =>
-      castKitShield(tickState, combatant.characterId, {
+    scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) =>
+      castKitShield(tick, combatant.characterId, {
         element: Element.Electro,
         health: shieldAttackShare * combatant.attributes.attack + shieldFlatHealth,
         secondsRemaining: shieldSeconds,

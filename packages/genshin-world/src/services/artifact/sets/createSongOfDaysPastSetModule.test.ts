@@ -10,13 +10,11 @@ import { createSongOfDaysPastSetModule } from "#src/services/artifact/sets/creat
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -76,12 +74,7 @@ const createTeam = (characterIds: number[]) => {
       context,
     );
   // The step of the team's effects, each expired effect sent as the step ends it
-  const stepSeconds = (seconds: number) => {
-    for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-      stepKitEffects(FIXED_STEP_SECONDS, context);
-      for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-    }
-  };
+  const stepSeconds = (seconds: number) => stepKitSecondsSendingExpiries(context, seconds);
   // The flat base damage a strike by the given member adds as it is priced, read from the hook that prices it: the
   // Wearer's own hook for its own strike, and the party hook it lends the others
   const priceStrike = (striker: Combatant, attackTag: AttackTag) => {

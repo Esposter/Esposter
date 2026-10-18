@@ -84,7 +84,7 @@ const createConstellation6Fixture = (constellationCount = 6) => {
       stepKitEffects(1 / 60, context);
     }
   };
-  const waitFor = (seconds: number) => stepKitEffects(seconds, context);
+  const waitFor = (seconds: number) => stepKitTestEffects(seconds, context);
   const getBonus = (attackTag: AttackTag) =>
     MONA_KIT.getStrikeDamageBonus?.(
       { attackTag, body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) },
@@ -405,16 +405,15 @@ describe("mona kit", () => {
   test("constellation 1's bonus is multiplied by 160% for a member off the field while Mona is Hexerei with a second Hexerei member", () => {
     expect.hasAssertions();
     const mona = { ...createMonaCombatant(), constellationCount: 1 };
-    const readWithActive = (active: Combatant, hexereiCount: number) => {
-      const other = createOther();
+    const readWithActive = (active: Combatant, teamMemberId: number) => {
+      const other = createOther(teamMemberId);
       const context = createKitTestContext(active, {
         characterIdCombatantMap: new Map([
           [MONA_CHARACTER_ID, mona],
-          [OTHER_CHARACTER_ID, other],
+          [teamMemberId, other],
         ]),
-        hexereiCount,
         kitEffectState: { effects: [] },
-        party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+        party: createParty([MONA_CHARACTER_ID, teamMemberId]),
       });
       MONA_KIT.onKitEvent?.(
         { element: Element.Electro, enemy: createOmenedEnemy(), kind: KitEventKind.EnemyHit, striker: other },
@@ -436,10 +435,43 @@ describe("mona kit", () => {
     };
 
     expect({
-      offFieldHexerei: readWithActive(mona, 2),
-      offFieldNoTeam: readWithActive(mona, 1),
-      onFieldHexerei: readWithActive(createOther(), 2),
+      offFieldHexerei: readWithActive(mona, HEXEREI_CHARACTER_ID),
+      offFieldNoTeam: readWithActive(mona, OTHER_CHARACTER_ID),
+      onFieldHexerei: readWithActive(createOther(HEXEREI_CHARACTER_ID), HEXEREI_CHARACTER_ID),
     }).toStrictEqual({ offFieldHexerei: expect.closeTo(0.24), offFieldNoTeam: 0.15, onFieldHexerei: 0.15 });
+  });
+
+  test("constellation 1 gives a party member's Hydro Swirl 15% DMG for 8 seconds after it hits an Omen, and no other Swirl", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 1 };
+    const other = createOther();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(mona, {
+      characterIdCombatantMap: new Map([
+        [MONA_CHARACTER_ID, mona],
+        [OTHER_CHARACTER_ID, other],
+      ]),
+      kitEffectState,
+      party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+    const readBonus = (element: Element) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        mona,
+        { combatant: other, element, enemy: createSturdyEnemy(), reactionType: TransformativeReactionType.Swirl },
+        context,
+      )?.damageBonus ?? 0;
+    MONA_KIT.onKitEvent?.(
+      { element: Element.Electro, enemy: createOmenedEnemy(), kind: KitEventKind.EnemyHit, striker: other },
+      context,
+      mona,
+    );
+    const afterHit = { anemo: readBonus(Element.Anemo), hydro: readBonus(Element.Hydro) };
+    stepKitTestEffects(8, context);
+
+    expect({ afterExpiry: readBonus(Element.Hydro), afterHit }).toStrictEqual({
+      afterExpiry: 0,
+      afterHit: { anemo: 0, hydro: 0.15 },
+    });
   });
 
   test("constellation 4 gives 15% CRIT Rate to a party member's strike on an enemy under an Omen, and nothing below it or on another enemy", () => {
@@ -462,6 +494,44 @@ describe("mona kit", () => {
       omened: readPartyRate(4, createOmenedEnemy()),
       plain: readPartyRate(4, createSturdyEnemy()),
     }).toStrictEqual({ below: 0, omened: 0.15, plain: 0 });
+  });
+
+  test("constellation 4 gives 15% CRIT Rate to a Lunar-Charged or Lunar-Crystallize reaction on an enemy under an Omen, and nothing below it or on another enemy", () => {
+    expect.hasAssertions();
+    const other = createOther();
+    const context = createKitTestContext(other, { party: createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]) });
+    const readRate = (constellationCount: number, enemy: Enemy, reactionType: ReactionType) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        { ...createMonaCombatant(), constellationCount },
+        { combatant: other, element: Element.Electro, enemy, reactionType },
+        context,
+      )?.criticalRateBonus ?? 0;
+
+    expect({
+      below: readRate(3, createOmenedEnemy(), LunarReactionType.LunarCharged),
+      electroCharged: readRate(4, createOmenedEnemy(), TransformativeReactionType.ElectroCharged),
+      lunarCharged: readRate(4, createOmenedEnemy(), LunarReactionType.LunarCharged),
+      lunarCrystallize: readRate(4, createOmenedEnemy(), LunarReactionType.LunarCrystallize),
+      plain: readRate(4, createSturdyEnemy(), LunarReactionType.LunarCharged),
+    }).toStrictEqual({ below: 0, electroCharged: 0, lunarCharged: 0.15, lunarCrystallize: 0.15, plain: 0 });
+  });
+
+  test("constellation 4 gives 15% CRIT DMG to a Hexerei member's Lunar-Charged reaction on an Omen while the team is Hexerei", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 4 };
+    const omened = createOmenedEnemy();
+    const context = createKitTestContext(mona, { party: createParty([MONA_CHARACTER_ID, HEXEREI_CHARACTER_ID]) });
+    const readDamage = (striker: Combatant) =>
+      MONA_KIT.getPartyReactionBonus?.(
+        mona,
+        { combatant: striker, element: Element.Electro, enemy: omened, reactionType: LunarReactionType.LunarCharged },
+        context,
+      )?.criticalDamageBonus ?? 0;
+
+    expect({
+      hexereiReaction: readDamage(createOther(HEXEREI_CHARACTER_ID)),
+      otherReaction: readDamage(createOther()),
+    }).toStrictEqual({ hexereiReaction: 0.15, otherReaction: 0 });
   });
 
   test("constellation 4 counts a bubble holding the enemy as an Omen, for Mona's own strikes too", () => {
@@ -500,5 +570,21 @@ describe("mona kit", () => {
       plainTeam: readPartyDamage(plainParty, hexerei),
       otherStrike: readPartyDamage(hexereiParty, createOther()),
     }).toStrictEqual({ hexereiStrike: 0.15, ownStrike: 0.15, otherStrike: 0, plainTeam: 0 });
+  });
+
+  test("constellation 4 gives no CRIT DMG to a Hexerei strike while a second Hexerei character is owned but not deployed", () => {
+    expect.hasAssertions();
+    const mona = { ...createMonaCombatant(), constellationCount: 4 };
+    const party = createParty([MONA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    party.characterIdMemberMap.set(HEXEREI_CHARACTER_ID, createPartyMember());
+
+    expect(
+      MONA_KIT.getStrikeCriticalDamageBonus?.(
+        { body: kitBody, combatant: mona, hit: takeOne(MONA_KIT.elementalBurst.hits) },
+        createOmenedEnemy(),
+        party,
+        [],
+      ),
+    ).toBe(0);
   });
 });

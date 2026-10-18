@@ -108,13 +108,10 @@ export const createZhongliKitBehaviour = ({
   // The Jade Shield: a Geo shield on the team of the table's flat health and share of Zhongli's Max HP, for its seconds,
   // And its RES cut, landing from a summon that follows the body on the field. A field ticking every step ends the summon
   // Once the shield is spent or recast over
-  const castJadeShield = (
-    { characterIdCombatantMap, kitEffectState, party }: KitContext,
-    body: KitBody,
-    combatant: Combatant,
-  ): void => {
+  const castJadeShield = (context: KitContext, body: KitBody, combatant: Combatant): void => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     const { characterId } = combatant;
-    const shield = castKitShield(kitEffectState, characterId, {
+    const shield = castKitShield(context, characterId, {
       element: Element.Geo,
       health:
         shieldFlatHealth +

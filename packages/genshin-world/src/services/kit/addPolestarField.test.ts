@@ -76,6 +76,19 @@ describe(addPolestarField, () => {
     ).toStrictEqual([7]);
   });
 
+  test("a Stellar-Conduct with the body outside the standing Polestar Field places a second one beside it", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    addPolestarField(kitEffectState, ODETTE_CHARACTER_ID, [STELLAR_CONDUCT], POSITION);
+    for (const effect of kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 1;
+
+    addPolestarField(kitEffectState, ODETTE_CHARACTER_ID, [STELLAR_CONDUCT], { x: 30, z: 4 });
+
+    expect(
+      kitEffectState.effects.map((effect) => (effect.kind === "field" ? effect.secondsRemaining : effect.kind)),
+    ).toStrictEqual([1, 7]);
+  });
+
   test("places nothing for a Stellar Swirl or any other reaction", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };

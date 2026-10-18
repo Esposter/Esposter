@@ -117,3 +117,7 @@ export const STELLAR_VORTEX_LEVEL_TWO_RADIUS = 8;
 // Measured: gcsim v2.47.2 template/sourcewaterdroplet/sourcewaterdroplet.go, a droplet lasts 878 frames
 export const SOURCEWATER_DROPLET_FIELD_ID = "sourcewater-droplet";
 export const SOURCEWATER_DROPLET_SECONDS = 878 / KIT_FRAMES_PER_SECOND;
+
+// The fewest Hexerei members a team holds Hexerei: Secret Rite with, as gcsim reads its GetHexereiCount against two
+// (internal/weapons/spear/disasterandremorse/disasterandremorse.go:49)
+export const HEXEREI_SECRET_RITE_MINIMUM = 2;

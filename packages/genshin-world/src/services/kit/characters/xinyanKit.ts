@@ -117,16 +117,12 @@ export const createXinyanKitBehaviour = ({
   // Sets a shield at a level, its health its flat HP plus its share of DEF at that level, and at level 3 starts the field
   // That strikes each 2 seconds while it stands, the earlier fields of the same kind ending. From Ascension 4 the team
   // It shields deals more Physical DMG for the shield's seconds, ended sooner if it breaks
-  const setShield = (
-    { kitEffectState, party }: Pick<KitContext, "kitEffectState" | "party">,
-    combatant: Combatant,
-    body: KitBody,
-    level: number,
-  ): void => {
+  const setShield = (context: KitContext, combatant: Combatant, body: KitBody, level: number): void => {
+    const { kitEffectState, party } = context;
     const { characterId } = combatant;
     const defenseShare = takeOne(shieldDefenseShares, level - 1);
     const flatHealth = takeOne(shieldFlatHealths, level - 1);
-    castKitShield(kitEffectState, characterId, {
+    castKitShield(context, characterId, {
       element: Element.Pyro,
       health: flatHealth + defenseShare * combatant.attributes.defense,
       secondsRemaining: shieldSeconds,

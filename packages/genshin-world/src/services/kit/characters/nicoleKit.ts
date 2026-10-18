@@ -18,6 +18,7 @@ import { KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";
 import { SUCROSE_CHARACTER_ID } from "#src/services/kit/characters/sucroseKit";
 import { checkIsInKitHitbox } from "#src/services/kit/checkIsInKitHitbox";
+import { checkIsKitSecretRite } from "#src/services/kit/checkIsKitSecretRite";
 import { checkIsKitHexerei } from "#src/services/kit/countKitHexereiMembers";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -189,7 +190,9 @@ const scheduleProjection = (
     // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
     // Hexerei and two or more Hexerei are deployed
     const flatDamage =
-      checkIsKitHexerei(nicole.characterId) && checkIsKitHexerei(striker.characterId) && tick.hexereiCount >= 2
+      checkIsKitHexerei(nicole.characterId) &&
+      checkIsKitHexerei(striker.characterId) &&
+      checkIsKitSecretRite(getDeployedCharacterIds(tick.party))
         ? nicole.attributes.attack * 3
         : 0;
     strikeKitEnemies(
@@ -404,7 +407,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
               effect.source === CONSTELLATION_2_SOURCE),
         );
         scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(SKILL_SNAPSHOT_FRAMES), (tick) => {
-          castKitShield(tick.kitEffectState, combatant.characterId, {
+          castKitShield(tick, combatant.characterId, {
             element: Element.Pyro,
             health: skillShieldAtk * combatant.attributes.attack + skillShieldFlat,
             secondsRemaining: SKILL_SECONDS,

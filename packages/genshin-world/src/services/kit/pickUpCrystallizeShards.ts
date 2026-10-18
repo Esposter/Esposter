@@ -1,5 +1,4 @@
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { GroundPoint } from "genshin-engine";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,15 +11,12 @@ import {
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 
 // The Crystallize shards the body of the character on the field stands within reach of, picked up once each may be:
-// Each ends, grants the team its Crystallize shield, which overwrites the one the team held, and raises its pickup by
-// That character into the outbox, as gcsim's shard adds its shield and the shield's add emits OnShielded
-export const pickUpCrystallizeShards = (
-  kitEffectState: KitEffectState,
-  fieldCharacterId: number,
-  body: GroundPoint,
-  outbox: KitEvent[],
-): void => {
-  for (const effect of kitEffectState.effects) {
+// Each ends and grants the team its Crystallize shield, which overwrites the one the team held, cast as the character
+// Whose reaction left the shard, so the team's kits are told it as gcsim's shield add emits OnShielded with that
+// Character its owner (pkg/reactable/crystallize.go:102, pkg/core/player/shield/handler.go:81), and raises its pickup
+// By the character on the field into the outbox
+export const pickUpCrystallizeShards = (context: KitContext, fieldCharacterId: number, body: GroundPoint): void => {
+  for (const effect of context.kitEffectState.effects) {
     if (
       effect.kind !== "crystallizeShard" ||
       effect.secondsRemaining <= 0 ||
@@ -30,12 +26,12 @@ export const pickUpCrystallizeShards = (
       continue;
     const { characterId, element, health } = effect;
     effect.secondsRemaining = 0;
-    castKitShield(kitEffectState, characterId, {
+    castKitShield(context, characterId, {
       element,
       health,
       isCrystallize: true,
       secondsRemaining: CRYSTALLIZE_SHIELD_SECONDS,
     });
-    outbox.push({ characterId: fieldCharacterId, element, kind: KitEventKind.CrystallizeShardPickedUp });
+    context.outbox.push({ characterId: fieldCharacterId, element, kind: KitEventKind.CrystallizeShardPickedUp });
   }
 };

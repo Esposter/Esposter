@@ -8,6 +8,8 @@ export interface KitStatus extends KitSwapEndable {
   id: string;
   kind: "status";
   secondsRemaining: number;
+  // The seconds the status has run past the seconds it started with, if a passive extends it up to a cap
+  extendedSeconds?: number;
   // The count a kit keeps on the status as its hits strike or its heals land, if it counts them
   stacks?: number;
   // The Nightsoul points a Nightsoul's Blessing gains or drains each second it lasts, if it has any

@@ -86,17 +86,15 @@ export const createCandaceKitBehaviour = ({
 
   // The shield is the one Candace casts onto the team, for the seconds until its hit lands, as gcsim sets its shield to
   // Expire at the hitmark
-  const castShield = (
-    { characterIdCombatantMap, kitEffectState, party }: KitContext,
-    combatant: Combatant,
-    secondsRemaining: number,
-  ): KitShield =>
-    castKitShield(kitEffectState, combatant.characterId, {
+  const castShield = (context: KitContext, combatant: Combatant, secondsRemaining: number): KitShield => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
+    return castKitShield(context, combatant.characterId, {
       element: Element.Hydro,
       health:
         shieldFlat + shieldShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
       secondsRemaining,
     });
+  };
 
   return {
     // The Prayer's field infuses the character on the field each tick, from the hitmark, and the wave count is a status,

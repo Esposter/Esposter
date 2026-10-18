@@ -7,8 +7,8 @@ import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNight
 
 export const MUALANI_CHARACTER_ID = 10_000_102;
 
-// Her Nightsoul points are set to 60 as her blessing is entered, and her blessing drains one a sixth of a second, ten a
-// Second, as gcsim (MIT) mualani/skill.go reduceNightsoulPoints does
+// Her Nightsoul points are set to 60 as her blessing is entered, and her blessing drains ten a second, as gcsim (MIT)
+// Mualani's skill.go reduceNightsoulPoints does
 const NIGHTSOUL_POINTS = 60;
 const NIGHTSOUL_DRAIN_PER_SECOND = 10;
 

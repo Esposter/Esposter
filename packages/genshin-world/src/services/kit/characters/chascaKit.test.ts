@@ -14,7 +14,7 @@ import { XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { YOIMIYA_CHARACTER_ID } from "#src/services/kit/characters/yoimiyaKit";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitState } from "#src/services/kit/createKitState";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, sprintKitSeconds, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -237,21 +237,20 @@ describe(createChascaKitBehaviour, () => {
     );
   });
 
-  test("a sprint in the Nightsoul Blessing drains 13.3 points", () => {
+  test("a sprint in the Nightsoul Blessing drains 13.3 points once, however long the sprint runs", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createChascaCombatant());
     CHASCA_KIT.elementalSkill.onStart?.(context);
-    stepKitSeconds(context, 1);
-    CHASCA_KIT.onSprint?.(context, createKitState());
+    sprintKitSeconds(context, createKitState(), 1);
     expect(countKitResource(context.kitEffectState.effects, CHASCA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(
-      58.7,
+      66.7,
     );
   });
 
   test("a sprint outside the Nightsoul Blessing drains nothing", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createChascaCombatant());
-    CHASCA_KIT.onSprint?.(context, createKitState());
+    sprintKitSeconds(context, createKitState(), 1);
     expect(countKitResource(context.kitEffectState.effects, CHASCA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(0);
   });
 
