@@ -257,6 +257,10 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 - **Hitlag, ICD groups and strike types other than blunt are not recorded.** gcsim holds them, and they stay out of the record until a rule reads them.
 - **A character holds no aura.** Only an enemy holds elemental state in this package, so an aura on a party member is not built.
 
+## Out of scope
+
+- **The Mannequins have no kit.** Avatars 10000117 and 10000118 are Miliastra Wonderland's avatars, not the main game's roster. Their dump entries hold no energy skill, and a kit's record requires its burst, so no record is built for them and they stay without a kit. A character without a kit fights by the Traveler's kit.
+
 ## Key files
 
 | File                                                                                       | Role                                                                                                                                                                                                                                                                                                                                |
