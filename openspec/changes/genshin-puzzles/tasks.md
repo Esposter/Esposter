@@ -1,6 +1,6 @@
 ## 1. Seelies in Mondstadt
 
-- [ ] 1.1 Add the Seelie court kind and publish Mondstadt's thirty courts through the puzzle points pipeline, then pair each court with one Seelie, closest first. Verify: `pairSeelieCourts.test.ts` asserts that two courts and three Seelies pair closest first, the third Seelie is left unpaired, and a court is never taken twice, written first and seen failing.
+- [x] 1.1 Add the Seelie court kind and publish Mondstadt's thirty courts through the puzzle points pipeline, then pair each court with one Seelie, closest first. Verify: `pairSeelieCourts.test.ts` asserts that two courts and three Seelies pair closest first, the third Seelie is left unpaired, and a court is never taken twice, written first and seen failing.
 - [ ] 1.2 Step each paired Seelie along its route while it is followed, and settle it at its court. Verify: tests named after the scenarios 'A followed Seelie reaches its court and spawns its chest' and 'A Seelie left unfollowed returns to its start'.
 
 ## 2. Elemental Monuments in Mondstadt
