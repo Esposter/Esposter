@@ -588,6 +588,31 @@ describe(strikeEnemy, () => {
     expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
   });
 
+  test("takes an enemy's statuses' DEF reduction off the defence a hit reads", () => {
+    expect.hasAssertions();
+
+    const DEFENSE_REDUCTION = 0.15;
+    const enemy = createSturdyEnemy();
+    addEnemyStatus(enemy, {
+      damageTakenBonus: 0,
+      defenseReduction: DEFENSE_REDUCTION,
+      id: "razor-constellation-4",
+      secondsRemaining: 1,
+    });
+    const damage = getDamage({
+      attackerLevel: LEVEL,
+      defense,
+      defenseReduction: DEFENSE_REDUCTION,
+      resistance: kind.physicalResistance,
+      stat: ATTACK,
+      talentMultiplier: TRAVELER_KIT.plungeCollision.talentMultiplier,
+    });
+
+    strikeEnemy(enemyTables, enemy, TRAVELER_KIT.plungeCollision, createCombatant(), NEVER_CRITICAL);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
   test("takes Superconduct's 40% off the Physical RES a physical hit then reads", () => {
     expect.hasAssertions();
 
