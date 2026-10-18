@@ -10,6 +10,8 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 
 // The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
 const MAX_LOOP_ITERATIONS = 100;
+// The blank identifier, which a loop's variable may be and which names no value an iteration carries
+const GO_BLANK_IDENTIFIER = "_";
 
 export type GoScope = ReturnType<typeof createGoScope>;
 
@@ -85,13 +87,12 @@ const readSliceRangeLoop = (
     : {
         bodyEnd,
         bodyStart,
-        iterations: slice.map(
-          (element, index) =>
-            new Map<string, number>([
-              [indexToken.text, index],
-              [valueToken.text, element],
-            ]),
-        ),
+        iterations: slice.map((element, index) => {
+          const iteration = new Map<string, number>();
+          if (indexToken.text !== GO_BLANK_IDENTIFIER) iteration.set(indexToken.text, index);
+          if (valueToken.text !== GO_BLANK_IDENTIFIER) iteration.set(valueToken.text, element);
+          return iteration;
+        }),
       };
 };
 
