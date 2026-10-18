@@ -29,9 +29,12 @@ export const resolveKitValues = (
 ): ResolvedKitValues => {
   const valueMap = new Map<string, unknown>();
   const provenanceMap = new Map<string, KitValueSource>();
-  const chooseDefaults = (candidateMap: ReadonlyMap<string, KitCandidate[]>) => {
+  const chooseDefaults = (
+    candidateMap: ReadonlyMap<string, KitCandidate[]>,
+    isSkipped = (path: string) => valueMap.has(path),
+  ) => {
     for (const [path, [candidate]] of candidateMap) {
-      if (candidate === undefined || valueMap.has(path)) continue;
+      if (candidate === undefined || isSkipped(path)) continue;
       valueMap.set(path, candidate.value);
       provenanceMap.set(path, candidate.provenance);
     }
@@ -79,11 +82,7 @@ export const resolveKitValues = (
   // The tables, so the list is read once the source defaults are in, and it takes over what they chose for paths the
   // Overlay does not set
   const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
-  for (const [path, [candidate]] of namedListKitCandidateMap) {
-    if (candidate === undefined || Object.hasOwn(overlay, path)) continue;
-    valueMap.set(path, candidate.value);
-    provenanceMap.set(path, candidate.provenance);
-  }
+  chooseDefaults(namedListKitCandidateMap, (path) => Object.hasOwn(overlay, path));
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
