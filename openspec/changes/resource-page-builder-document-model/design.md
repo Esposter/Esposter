@@ -28,7 +28,7 @@ interface PageDocument<TRootProps, TNode> {
 }
 ```
 
-**Beside the live editors.** The two documents are new classes, built beside `WebpageEditor` and `EmailEditor` rather than in place of them, and each open one sits in the page builder's document store, keyed by its resource, loaded and saved through functions its caller passes in. GrapesJS still mounts and saves its own shape until the [cutover](../resource-page-builder-cutover/design.md), so nothing it reads or writes changes here, as the [program](../resource-page-builder-program/design.md)'s phases require. The cutover puts these documents into the two content classes, under the same names, and removes `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through, so the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks. Rejected: changing the two classes here, which would leave GrapesJS saving documents the new schemas refuse.
+**Beside the live editors.** The two documents are new models, built beside `WebpageEditor` and `EmailEditor` rather than in place of them, and each open one sits in the page builder's document store, keyed by its resource, loaded and saved through functions its caller passes in. GrapesJS still mounts and saves its own shape until the [cutover](../resource-page-builder-cutover/design.md), so nothing it reads or writes changes here, as the [program](../resource-page-builder-program/design.md)'s phases require. The cutover puts these documents into the two content classes, under the same names, and removes `AGrapesJsEditor`, its `pages` default and the `catchall` that let GrapesJS's own keys ride through, so the schemas describe every field, as [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md) asks. Rejected: changing the two classes here, which would leave GrapesJS saving documents the new schemas refuse.
 
 The tree, the registry contract and the schema below are the [headless core](../../specs/headless-block-editor/editor-core/design.md)'s, generic over a registry; this page holds the webpage and email registries and what only they read. A registry also says what may sit at the top of a document and what the document-wide props must hold. The webpage's root accepts every placeable type, and its props hold the page's language. The email's root is the MJML blocks', taking only what MJML's body takes, with the head as its props. Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry: each node's shape is parsed first, then a refinement walks the tree checking the root's props, every type against the registry and its slot, every props schema, ids unique within the document, and the node count under a named `MAX_*` limit this page passes in, so a refusal names the slot that refused. An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS.
 
@@ -39,20 +39,16 @@ The text inside a text node is the ProseMirror JSON the Note stores, validated b
 A plugin is a typed node-type registration. The webpage's are collected in maps keyed by an enum of the webpage's types, and the email's are the MJML blocks' types, named by their MJML tags, so neither editor's type can be dropped into the other's document. A webpage registration has two halves because two runtimes read it: the server renders a type when it publishes, and only the editor draws one. Each half is a `Record` over the enum, so a type missing either fails the typecheck. The shared half extends the core's `BlockTypeDefinition`:
 
 ```ts
-// Shared with the server: what a type is and what it emits
-interface NodeTypeDefinition<TType extends string, TProps> {
+// Shared with the server: what a type emits, beside the core's type name, props schema and slots
+interface NodeTypeDefinition extends BlockTypeDefinition {
   // Structural CSS emitted once per document holding the type
   css?: string;
   // The editable content props, drawn by UiSchemaForm
   formSchema: z.ZodType;
-  propsSchema: z.ZodType<TProps>;
-  // Pure: props and rendered slots in, an element tree out, folded by the core's renderBlockNodes
-  render: (props: TProps, slots: Record<string, HtmlNode[]>, context: RenderContext) => HtmlNode;
+  // Pure: the node and its rendered slots in, an element tree out, folded by the core's renderBlockNodes
+  render: (node: BlockNode, slots: Record<string, HtmlNode[]>, context: RenderContext) => HtmlNode;
   // A self-contained runtime emitted once per published page holding the type
   script?: () => void;
-  // Each slot prop and the child types it accepts
-  slots?: Partial<Record<keyof TProps, { allow: TType[] }>>;
-  type: TType;
 }
 // The editor's half: how a type is offered and drawn
 interface NodeTypeEditorDefinition {
@@ -64,6 +60,8 @@ interface NodeTypeEditorDefinition {
   styleFields: StyleFieldDefinition[];
 }
 ```
+
+This change builds the shared half. The editor half is built by the changes that read it: the palette entry and the canvas component by the [canvas](../resource-page-builder-canvas/design.md), and the style fields by the [style panel](../resource-page-builder-style-panel/design.md).
 
 A container whose children are always one type uses a slot that allows only that type — Columns holds Column, Tabs holds Tab, an Email section holds Email columns — so the tree never needs a second structural idea. A cross-resource reference is a prop declared with `createResourceLinkSchema`, so `ResourceTypeGetLinkTargetsMap` indexes it with no code of the type's own: a survey invite in a webpage or an email becomes a `resourceLinks` row, and the [delete reference warning](../../specs/resource/delete-reference-warning/design.md) names it when the survey is deleted, which today it cannot.
 
@@ -80,7 +78,7 @@ Each type's contract makes its published output accessible by construction rathe
 
 ## Rendering and publishing
 
-`render` returns a small element tree — a tag, typed attributes, children — and one serialiser turns a tree into HTML, escaping every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it, every URL prop passes `checkIsAllowedUrl` at its schema, and the one raw-HTML type stores what `sanitizeHtml` returns. That closes the vectors GrapesJS's parser leaves open — a `javascript:` URL behind a leading space or another case, `srcdoc`, an SVG `xlink:href` — and each becomes a regression test on Custom HTML.
+`render` returns a small element tree — a tag, typed attributes, children — and one serialiser turns a tree into HTML, escaping every text node and attribute value through the shared sanitiser's `escapeText` and `escapeAttribute`. Attribute names come from a typed set with no event handler in it, every URL prop passes `checkIsAllowedUrl` at its schema, and the one raw-HTML type is written as `sanitizeHtml` returns it, both when it is stored and again when it is published. That closes the vectors GrapesJS's parser leaves open — a `javascript:` URL behind a leading space or another case, `srcdoc`, an SVG `xlink:href` — and each becomes a regression test on Custom HTML. Two types hand the serialiser HTML rather than a tree, as a raw node it writes as given: Text, whose HTML is the Note's `generateHTML` through `sanitizeTextHtml`, and Custom HTML. A render's context is the site's origin, which the survey invite's link to the published survey needs.
 
 A webpage renders to one document through the core's `renderBlockNodes`. The document opens with `<html lang>` from the root, then a single stylesheet of each present type's structural CSS. The [style panel](../resource-page-builder-style-panel/design.md) later opens that stylesheet with the page's tokens and closes it with every styled node's rules. Then come the body, and each present type's script, once. An email renders through the MJML blocks' `renderMjmlDocument` to MJML's JSON form, with the head built from the root's props and the body from its content. The app's survey invite renders as an `mj-button` beside the package's own types.
 

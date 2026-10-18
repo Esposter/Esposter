@@ -59,7 +59,7 @@ Each type is a definition of the core's registry with three additions: its attri
 
 Three kinds of component carry content rather than children, each in the node's `content` prop:
 
-- **Rich text**, in `mj-text` and `mj-accordion-text`. Its schema and its HTML come from the consumer: `createMjmlRegistry` takes a rich text definition of a content schema, a `renderHtml` and a `parseHtml`. The app passes the Note's ProseMirror node schema and the `@tiptap/html` functions the Note's server rendering already uses, so the package knows nothing of ProseMirror.
+- **Rich text**, in `mj-text` and `mj-accordion-text`. Its schema and its HTML come from the consumer: `createMjmlRegistry` takes a rich text definition of a content schema, a `renderHtml` and a `parseHtml`. The app passes the Note's ProseMirror node schema and `@tiptap/html`'s `generateHTML` and `generateJSON`, whose `node` build runs on the server, so the package knows nothing of ProseMirror.
 - **Plain labels**, in `mj-button`, `mj-navbar-link`, `mj-social-element` and `mj-accordion-title`. These are written through `escapeText` from `@esposter/shared`. An imported label that holds an element is refused at its node rather than reduced to its text, because the email editor edits a label as plain text.
 - **Raw HTML**, in `mj-raw` and `mj-table`. The schema refuses HTML that `sanitizeHtml` would change, and the read back stores what `sanitizeHtml` returns, so a raw block only ever holds the sanitiser's output, as the webpage's custom HTML does. The closed vectors are regression tests here too.
 
