@@ -20,4 +20,4 @@
 ## 5. Region pools and routing
 
 - [ ] 5.1 Join each region's commissions to the deal once its quest is done. Verify: tests named after the scenarios 'a region's commissions join the deal once its quest is done' and 'a region's commissions do not join the deal before its quest is done', seen failing first.
-- [ ] 5.2 Send a claim's Mora, items and Companionship EXP where each is kept. Verify: a test named after the scenario 'a claim sends its Mora, items and Companionship EXP where they are kept', seen failing first.
+- [x] 5.2 Send a claim's Mora, items and Companionship EXP where each is kept. Verify: a test named after the scenario 'a claim sends its Mora, items and Companionship EXP where they are kept', seen failing first.
