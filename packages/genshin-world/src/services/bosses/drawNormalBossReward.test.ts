@@ -29,13 +29,24 @@ describe(drawNormalBossReward, () => {
     ]);
   });
 
-  test("a World Level with no row in the table is refused", () => {
+  test("a World Level 9 claim pays what World Level 8 pays until its own row is read", () => {
+    expect.hasAssertions();
+
+    const highestWorldLevel = 9;
+    const nextToHighestWorldLevel = 8;
+
+    expect(drawNormalBossReward(highestWorldLevel, UNIQUE_DROP_ID, () => 0.1)).toStrictEqual(
+      drawNormalBossReward(nextToHighestWorldLevel, UNIQUE_DROP_ID, () => 0.1),
+    );
+  });
+
+  test("a World Level the game does not have is refused", () => {
     expect.hasAssertions();
 
     expect(() =>
       drawNormalBossReward(NORMAL_BOSS_MORA.length, UNIQUE_DROP_ID, () => 0.9),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: 9, has no normal boss reward row]`,
+      `[InvalidOperationError: Invalid operation: Read, name: 10, has no normal boss reward row]`,
     );
   });
 });
