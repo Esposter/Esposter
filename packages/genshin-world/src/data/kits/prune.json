@@ -1,4 +1,6 @@
 {
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 30 },
+  "frames.burstFirstTick": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 137 },
+  "frames.burstTickInterval": { "file": "burst.go", "line": 104, "source": "Gcsim", "value": 117 },
   "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 50 }
 }

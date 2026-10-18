@@ -13,15 +13,15 @@ gcsim sources: Prune's attack, charge, skill and burst files, with the table dat
 ## Not built
 
 - **The Clang Clang convert waits on the convert hook.** A second press of her skill converts it into Clang Clang! Witch-tribution Comes!, a hit that needs the state the press left behind. The kit holds the press alone.
-- **The Witchlure Bell DoT waits on the burst's ticks.** The burst's ticks and its detection area are scheduled after the initial hit, which no kit reads yet, so the burst is its initial hit alone.
+- **The Witchlure Bell DoT waits on a closest-enemy hit.** Its first tick falls 137 frames after the cast and its ticks repeat every 117 frames (`burst.go:56` and `burst.go:104`), both recorded in the overlay. Each tick lands on the closest enemy within 10 metres of Prune (`burst.go:88`, `ClosestEnemyWithinArea`), a 1.6-metre circle around that enemy, and no tick falls while none is in reach. No kit selects an enemy by distance, so the DoT is not built and the burst is its initial hit alone.
 - **Her passives wait on their hooks.** Each reads her convert state, her burst's bell or the party's Elemental Resonance, so none is built.
 
 ## Key files
 
-| File                                                             | Role                                                                                                                           |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now                                                |
-| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: two entries, the poise of her skill's and burst's first hits, each 0; her hits and areas come from the record |
+| File                                                             | Role                                                                                                                                                                                            |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now                                                                                                                 |
+| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits, each 0 (Wiki), and the Witchlure Bell's first tick and interval, cited to `burst.go`; her hits and areas come from the record |
 
 ## Sources
 
