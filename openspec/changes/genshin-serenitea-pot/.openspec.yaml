@@ -9,4 +9,4 @@ x-touches:
     "scripts/src/models/genshinAssets/home/**",
     "scripts/src/services/genshinAssets/home/**",
   ]
-x-waiting: "The fish rule: no table gives a pond's fish a growth time or count, so a recording of a pond or the game's own rule settles it"
+x-waiting: "The fish rule (5.1, the pond half): no table gives a pond's fish a growth time or count, so a recording of a pond or the game's own rule settles it. The favour (2.2) waits on the favour rows of `HomeWorldEventExcelConfigData` being published (`pnpm -C scripts genshin:assets home`, not run here) and on the companion's dialogue text (`genshin:text`). The gardens (5.1, the seed half) wait on a realm runtime that calls the home services, which nothing in the repo does yet, and on the planted seeds the save does not hold"
