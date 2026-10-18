@@ -107,6 +107,7 @@ import { createUnreturningPassiveModule } from "#src/services/weapon/passives/cr
 import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/passives/createWhitehillsBestowalPassiveModule";
 import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passives/createWhitemoonBristlePassiveModule";
+import { createWithoutHeedForDayNorNightPassiveModule } from "#src/services/weapon/passives/createWithoutHeedForDayNorNightPassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
@@ -431,4 +432,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3901432203": createKaguraDanceOfTheSacredSakuraPassiveModule,
   // Whitehill's Bestowal (Azurelight)
   "1741516147": createWhitehillsBestowalPassiveModule,
+  // Without Heed for Day nor Night (Clash of Kings)
+  "407790963": createWithoutHeedForDayNorNightPassiveModule,
 };
