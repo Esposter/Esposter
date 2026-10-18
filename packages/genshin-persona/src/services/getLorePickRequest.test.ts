@@ -67,7 +67,7 @@ describe(getLorePickRequest, () => {
     });
   });
 
-  test("states the characters met in recent sessions with the date each was met", () => {
+  test("A recent pick is read by the next draw", () => {
     expect.hasAssertions();
 
     const recentPicks: PickRecord[] = [
