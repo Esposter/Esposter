@@ -2,8 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
 import { createRazorKitBehaviour, RAZOR_CHARACTER_ID } from "#src/services/kit/characters/razorKit";

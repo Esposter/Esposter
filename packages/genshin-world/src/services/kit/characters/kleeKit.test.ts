@@ -10,7 +10,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKleeKitBehaviour, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
-import { createKitTestContext, castKitAction } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";

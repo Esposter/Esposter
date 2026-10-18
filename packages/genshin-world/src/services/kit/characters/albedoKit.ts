@@ -4,9 +4,9 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
-import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) albedo/skill.go, Abiogenesis: Solar Isotoma's field set 3 metres ahead of the body with a
