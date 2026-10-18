@@ -3,7 +3,6 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
-import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitParameter } from "#src/models/kit/record/KitParameter";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -29,7 +28,13 @@ import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const { record: yaoyaoRecord, toParameter } = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
+const {
+  readFrame,
+  readFrameList,
+  readHits,
+  record: yaoyaoRecord,
+  toParameter,
+} = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
 // A parameter of her record, resolved off its talent's table at the level the talent plays at, as her kit resolves it
 const readRecordParameter = (name: string): number => {
   const parameter = yaoyaoRecord.parameters?.[name];
@@ -42,26 +47,6 @@ const readRecordField = (field: KitParameter | undefined, name: string): number 
   if (field === undefined) throw new InvalidOperationError(Operation.Read, name, "is not in her record");
   return toParameter(field);
 };
-// A frame count of her record, which her kit plays in seconds
-const readRecordFrame = (name: string): number => {
-  const frame = yaoyaoRecord.frames?.[name];
-  if (typeof frame !== "number")
-    throw new InvalidOperationError(Operation.Read, name, "is not a frame count of her record");
-  return frame;
-};
-// A list of frame counts of her record, such as the frames her burst spawns each Yuegui at
-const readRecordFrameList = (name: string): number[] => {
-  const frames = yaoyaoRecord.frames?.[name];
-  if (!Array.isArray(frames)) throw new InvalidOperationError(Operation.Read, name, "is not a list of her record");
-  return frames;
-};
-// The hits a name of her record holds, which may be one hit or a list of them
-const readRecordHits = (name: string): KitHitRecord[] => {
-  const hits = yaoyaoRecord.hits?.[name];
-  if (hits === undefined) throw new InvalidOperationError(Operation.Read, name, "is not a hit of her record");
-  return Array.isArray(hits) ? hits : [hits];
-};
-
 // A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
 const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
 const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
@@ -72,14 +57,14 @@ const MEMBER_ID = 10_000_032;
 const MEMBER_MAX_HEALTH = 20_000;
 // Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the
 // Throw. Each tick lands on the step its frame names, so a test steps to that frame and one frame short of it
-const YUEGUI_SPAWN_FRAMES = readRecordFrame("skillCooldownStart") + readRecordFrame("yueguiSpawnDelay");
-const YUEGUI_FIRST_THROW_FRAMES = readRecordFrame("yueguiFirstThrow");
-const YUEGUI_THROW_INTERVAL_FRAMES = readRecordFrame("yueguiThrowInterval");
-const RADISH_HITMARK_FRAMES = takeOne(readRecordHits("skillRadish")).hitmarkFrames;
-const MEGA_RADISH_HITMARK_FRAMES = takeOne(readRecordHits("megaRadish")).hitmarkFrames;
+const YUEGUI_SPAWN_FRAMES = readFrame("skillCooldownStart") + readFrame("yueguiSpawnDelay");
+const YUEGUI_FIRST_THROW_FRAMES = readFrame("yueguiFirstThrow");
+const YUEGUI_THROW_INTERVAL_FRAMES = readFrame("yueguiThrowInterval");
+const RADISH_HITMARK_FRAMES = takeOne(readHits("skillRadish")).hitmarkFrames;
+const MEGA_RADISH_HITMARK_FRAMES = takeOne(readHits("megaRadish")).hitmarkFrames;
 // The frames after the cast at which her burst spawns each Yuegui behind her, and the frames the burst lasts
-const JUMPING_YUEGUI_SPAWN_FRAMES = readRecordFrameList("jumpingYueguiSpawns");
-const BURST_DURATION_FRAMES = readRecordFrame("burstDuration");
+const JUMPING_YUEGUI_SPAWN_FRAMES = readFrameList("jumpingYueguiSpawns");
+const BURST_DURATION_FRAMES = readFrame("burstDuration");
 const readJumpingYueguiSpawnFrame = (index: number): number => takeOne(JUMPING_YUEGUI_SPAWN_FRAMES, index);
 
 const createYaoyaoCombatant = (): Combatant => ({
