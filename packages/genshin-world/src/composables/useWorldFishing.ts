@@ -171,7 +171,7 @@ export const useWorldFishing = ({
           zone: computeFishingZone(cast.value.travel, cast.value.reelSeconds),
         },
   );
-  const isFishingPoint = (id: string) => fishingPointRegionMap.value.has(id);
+  const checkIsFishingPoint = (id: string): boolean => fishingPointRegionMap.value.has(id);
   const openFishingPoint = (id: string) => {
     pointId.value = id;
   };
@@ -180,5 +180,13 @@ export const useWorldFishing = ({
     cast.value = undefined;
   };
 
-  return { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoint, openFishingPoint, stepFishing };
+  return {
+    castView,
+    checkIsFishingPoint,
+    closeFishing,
+    fishingPointPlaces,
+    isFishingOpen,
+    openFishingPoint,
+    stepFishing,
+  };
 };

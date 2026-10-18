@@ -27,6 +27,7 @@ const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealt
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
   healthShare,
+  isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
   ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
