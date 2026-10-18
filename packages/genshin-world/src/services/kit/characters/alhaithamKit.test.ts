@@ -20,6 +20,7 @@ import { KUKI_CHARACTER_ID } from "#src/services/kit/characters/kukiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -151,6 +152,51 @@ describe(createAlhaithamKitBehaviour, () => {
     expect(summons.map(({ hits }) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60)))).toStrictEqual([
       [28, 37],
     ]);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant(0, 1);
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    tickField(kitEffectState, 15, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const partyMember = getPartyMember(context.party, ALHAITHAM_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 5;
+    const hit = getFirstStrikeHit();
+    hit.onStrike?.(context, { body: kitBody, combatant, hit });
+    const [projectionHit] = takeOne(
+      kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+    ).hits;
+    projectionHit?.onStrike?.(context, {
+      body: kitBody,
+      combatant,
+      hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits),
+    });
+    projectionHit?.onStrike?.(context, {
+      body: kitBody,
+      combatant,
+      hit: takeOne(takeOne(ALHAITHAM_KIT.normalAttacks).hits),
+    });
+
+    expect(partyMember.skillCooldownSeconds).toBeCloseTo(3.8);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = createAlhaithamCombatant(0, 0);
+    const kitEffectState = castAction(ALHAITHAM_KIT.elementalSkill, combatant);
+    tickField(kitEffectState, 15, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const partyMember = getPartyMember(context.party, ALHAITHAM_CHARACTER_ID);
+    partyMember.skillCooldownSeconds = 5;
+    const hit = getFirstStrikeHit();
+    hit.onStrike?.(context, { body: kitBody, combatant, hit });
+    const [projectionHit] = takeOne(
+      kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+    ).hits;
+    projectionHit?.onStrike?.(context, { body: kitBody, combatant, hit: getFirstStrikeHit() });
+
+    expect(partyMember.skillCooldownSeconds).toBe(5);
   });
 
   test("his burst strikes four hits plus two per Mirror, then makes the Mirrors it did not use after 184 frames", () => {
