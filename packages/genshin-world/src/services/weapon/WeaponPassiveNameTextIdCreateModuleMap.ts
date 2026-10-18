@@ -13,6 +13,7 @@ import { createBlackWingPassiveModule } from "#src/services/weapon/passives/crea
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
+import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
@@ -350,4 +351,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1043198987": createTravelersPathPassiveModule,
   // At the End of the Beast-Paths (Hunter's Path)
   "1173973395": createAtTheEndOfTheBeastPathsPassiveModule,
+  // Byakuya Kougetsu (Everlasting Moonglow)
+  "1301139739": createByakuyaKougetsuPassiveModule,
 };
