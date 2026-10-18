@@ -4,7 +4,9 @@ import type { GridGesture } from "#src/models/GridGesture";
 import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
 import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
+import type { GridPoint } from "#src/models/GridPoint";
 import type { GridTile } from "#src/models/GridTile";
+import type { MountedGrid } from "#src/models/MountedGrid";
 import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
@@ -18,6 +20,7 @@ import { getColumnPitch } from "#src/placement/getColumnPitch";
 import { getGestureCell } from "#src/placement/getGestureCell";
 import { getLayoutBottom } from "#src/placement/getLayoutBottom";
 import { resolveMove } from "#src/placement/resolveMove";
+import { findGridAt, registerGrid, unregisterGrid } from "#src/services/mountedGrids";
 import { checkIsNestedControl } from "@esposter/shared";
 import { computed, onMounted, onUnmounted, ref, shallowRef, toValue } from "vue";
 
@@ -115,21 +118,59 @@ export const useGridLayout = <T extends GridItem>(
     if (isCellChanged)
       preview.value = compactLayout(resolveMove(layout.value, cell, getOptions().collision), getOptions().compactType);
   };
-  // The cells of a layout that differ from the saved one, in the form the consumer writes back
-  const getChangedCells = (changedLayout: T[]): GridItem[] =>
+  // The cells of a layout that differ from the saved one, or are new to it, in the form the consumer writes back
+  const getChangedCells = (changedLayout: GridItem[]): GridItem[] =>
     changedLayout.flatMap((item): GridItem[] => {
       const savedItem = savedItemMap.value.get(item.id);
-      return savedItem && !checkIsSameCell(item, savedItem)
+      return !savedItem || !checkIsSameCell(item, savedItem)
         ? [{ h: item.h, id: item.id, w: item.w, x: item.x, y: item.y }]
         : [];
     });
-  // A pointer released after a drag writes every cell the drag changed, once, and a press that never started writes nothing
-  const handlePointerUp = (event: PointerEvent) => {
-    if (event.pointerId !== gesture.value?.pointerId) return;
+  // A dropped item lands with its top-left under the point, and compacts and resolves its collisions as a move here does
+  const accept = (item: Pick<GridItem, "h" | "id" | "w">, point: GridPoint) => {
+    const element = root.value;
+    if (!element) return;
 
+    const { left, top } = element.getBoundingClientRect();
+    const { padding } = getOptions().spacing;
+    const offset = { x: point.x - left - padding, y: point.y - top - padding };
+    const origin = { ...item, x: 0, y: 0 };
+    const cell = getGestureCell({
+      columnNumber: getOptions().columnNumber,
+      columnPitch: columnPitch.value,
+      offset,
+      origin,
+      rowPitch: rowPitch.value,
+    });
+    const landingLayout = [...layout.value, cell];
+    const landedLayout = compactLayout(
+      resolveMove(landingLayout, cell, getOptions().collision),
+      getOptions().compactType,
+    );
+    const changes = getChangedCells(landedLayout);
+    if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
+  };
+  const self: MountedGrid = { accept };
+  // A release over this grid writes what the drag previewed. A drag released over another grid leaves this one and lands there,
+  // And a drag released over no grid is dropped, so the item stays where it was
+  const handlePointerUp = (event: PointerEvent) => {
+    const activeGesture = gesture.value;
+    if (!activeGesture || event.pointerId !== activeGesture.pointerId) return;
+
+    const point = { x: event.clientX, y: event.clientY };
+    const dropGrid = draggedGesture.value ? findGridAt(point) : self;
     const changes = getChangedCells(preview.value ?? []);
     resetGesture();
-    if (changes.length > 0) getOptions().onCommit(changes);
+    if (dropGrid === self) {
+      if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
+      return;
+    }
+    if (!dropGrid) return;
+
+    const remainingItems = layout.value.filter((item) => item.id !== activeGesture.origin.id);
+    const remainingLayout = compactLayout(remainingItems, getOptions().compactType);
+    getOptions().onCommit({ changes: getChangedCells(remainingLayout), removed: [activeGesture.origin.id] });
+    dropGrid.accept(activeGesture.origin, point);
   };
   // An auto-height item takes the whole rows that hold its reported content, and the layout compacts around it, as one commit
   const reportContentHeight = (id: string, contentHeight: number) => {
@@ -143,7 +184,7 @@ export const useGridLayout = <T extends GridItem>(
     const changes = getChangedCells(
       fitLayout([...otherItems, { ...savedItem, h }], getOptions().columnNumber, getOptions().compactType),
     );
-    if (changes.length > 0) getOptions().onCommit(changes);
+    if (changes.length > 0) getOptions().onCommit({ changes, removed: [] });
   };
   const handlePointerCancel = (event: PointerEvent) => {
     if (event.pointerId === gesture.value?.pointerId) resetGesture();
@@ -162,6 +203,7 @@ export const useGridLayout = <T extends GridItem>(
     element.addEventListener("pointermove", handlePointerMove);
     element.addEventListener("pointerup", handlePointerUp);
     element.addEventListener("pointercancel", handlePointerCancel);
+    registerGrid(element, self);
     attached.value = { element, observer };
   });
   onUnmounted(() => {
@@ -169,6 +211,7 @@ export const useGridLayout = <T extends GridItem>(
 
     const { element, observer } = attached.value;
     observer.disconnect();
+    unregisterGrid(element);
     element.removeEventListener("pointermove", handlePointerMove);
     element.removeEventListener("pointerup", handlePointerUp);
     element.removeEventListener("pointercancel", handlePointerCancel);

@@ -49,6 +49,8 @@ describe("dashboardGrid", () => {
     const wrapper = await mountSuspended(DashboardGrid, {
       props: { columnNumber, isEditable: true, rowHeight, visuals: [visual] },
     });
+    // A DOM without layout hits nothing, so the release is pointed at the grid it was pressed on, as a browser would hit it
+    vi.spyOn(document, "elementFromPoint").mockReturnValue(wrapper.element);
     const tile = wrapper.get(".dashboard-grid-tile");
     await tile.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
     await tile.trigger("pointermove", { clientX: cellPitch, clientY: 0, pointerId });
