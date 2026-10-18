@@ -459,14 +459,18 @@ const {
 // The dishes' uses, read as the world starts. A food the bag uses is eaten by the character on the field, through its use
 const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 const useBagEntry = (entryId: number) => {
-  const nextInventory = useInventoryEntry(inventory.value, entryId, {
+  const use = useInventoryEntry(inventory.value, entryId, {
     dishUseMap: dishUseMap.value,
     eaterId: getActiveCharacterId(party),
     getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
     kitEffectState: kitContext.kitEffectState,
+    now: getWorldNow(),
     party,
+    wallet: wallet.value,
   });
-  if (nextInventory) setInventory(nextInventory);
+  if (!use) return;
+  setInventory(use.inventory);
+  if (use.wallet) setWallet(use.wallet);
 };
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does

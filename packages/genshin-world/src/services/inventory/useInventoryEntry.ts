@@ -1,13 +1,18 @@
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryEntryUse } from "#src/models/inventory/InventoryEntryUse";
+import type { Wallet } from "#src/models/inventory/Wallet";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { Party } from "#src/models/party/Party";
 
 import { eatDish } from "#src/services/cooking/eatDish";
+import { FRAGILE_RESIN_ITEM_ID } from "#src/services/originalResin/constants";
+import { refillOriginalResinWithFragileResin } from "#src/services/originalResin/refillOriginalResinWithFragileResin";
 import { ItemCategory } from "genshin-interface";
 
-// The bag after one of its entries is used, routed by the entry's kind: a food is eaten through its dish's use by the
-// Character on the field. Undefined, with nothing changed, where the bag holds no such entry or its kind has no use yet
+// The bag and wallet after one of its entries is used, routed by the entry's kind: a food is eaten through its dish's use
+// By the Character on the field, and Fragile Resin is routed by its id, since the published material table does not yet
+// Carry the item. Undefined, with nothing changed, where the bag holds no such entry or its kind has no use yet
 export const useInventoryEntry = (
   inventory: Inventory,
   entryId: number,
@@ -16,23 +21,35 @@ export const useInventoryEntry = (
     eaterId,
     getMaxHealth,
     kitEffectState,
+    now,
     party,
+    wallet,
   }: {
     dishUseMap: ReadonlyMap<number, DishUse>;
     eaterId: number;
     getMaxHealth: (characterId: number) => number;
     kitEffectState: KitEffectState;
+    now: Temporal.Instant;
     party: Party;
+    wallet: Wallet;
   },
-): Inventory | undefined => {
+): InventoryEntryUse | undefined => {
   const item = inventory.items.find(({ id }) => id === entryId);
   if (item === undefined) return undefined;
+  if (item.definition.id === FRAGILE_RESIN_ITEM_ID) return refillOriginalResinWithFragileResin(inventory, wallet, now);
   switch (item.definition.category) {
     case ItemCategory.Food: {
       const dishUse = dishUseMap.get(item.definition.id);
       return dishUse === undefined
         ? undefined
-        : eatDish(inventory, item.definition.id, dishUse, { eaterId, getMaxHealth, kitEffectState, party });
+        : {
+            inventory: eatDish(inventory, item.definition.id, dishUse, {
+              eaterId,
+              getMaxHealth,
+              kitEffectState,
+              party,
+            }),
+          };
     }
     default:
       return undefined;
