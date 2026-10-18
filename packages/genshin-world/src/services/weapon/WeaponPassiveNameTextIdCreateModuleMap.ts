@@ -2,6 +2,7 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { createAquilaFavoniaPassiveModule } from "#src/services/weapon/passives/createAquilaFavoniaPassiveModule";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
@@ -222,4 +223,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2421341659": createBlackWingPassiveModule,
   // Echoing Ballad (Skyward Harp)
   "2971867387": createEchoingBalladPassiveModule,
+  // Falcon's Defiance (Aquila Favonia)
+  "1362579531": createAquilaFavoniaPassiveModule,
 };
