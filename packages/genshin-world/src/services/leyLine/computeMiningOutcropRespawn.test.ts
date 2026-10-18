@@ -2,8 +2,8 @@ import { computeMiningOutcropRespawn } from "#src/services/leyLine/computeMining
 import { describe, expect, test } from "vitest";
 
 describe(computeMiningOutcropRespawn, () => {
-  // Six o'clock in the game's time zone, UTC+8, is the refresh time of the day the epoch begins
-  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 2 });
+  // Four o'clock in the game's time zone, UTC+8, is the daily reset of the day the epoch begins
+  const refresh = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: 4 });
 
   test("a mining outcrop mined before the day's draw is back at that draw", () => {
     expect.hasAssertions();
