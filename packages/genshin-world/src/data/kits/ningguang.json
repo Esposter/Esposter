@@ -1,5 +1,5 @@
 {
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },
   "hits.piercingFragmentsStrikeGem.length": { "cause": "Unclassified", "value": 2 },
   "hits.piercingFragmentsStrikeGem.0.area": {
@@ -130,8 +130,8 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
-  "normalAttacks.length": { "cause": "Unclassified", "value": 2 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
+  "normalAttacks.0.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "normalAttacks.1.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 }
 }
