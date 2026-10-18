@@ -14,7 +14,9 @@ Zibai's kit is its record and one behaviour module, `createZibaiKitBehaviour`, a
 
 ## Not built
 
-- **Lunar Phase Shift's behaviour waits on the side branch.** The fourth normal attack's Moonsign gate, and the second instance of Spirit Steed's Stride as Lunar-Crystallize, are behaviour, not record.
+- **Her shift's entry is built; its Phase Shift Radiance is not.** Heaven and Earth Made Manifest enters the Lunar Phase Shift for her record's seconds, which the wiki gives as at most 15. Spirit Steed's Stride's cost of 70 Radiance, the shift's gains, and the Moonsign's gains from nearby Lunar-Crystallize wait on a Radiance rule her record does not carry.
+- **The fourth normal attack's Moonsign gate is not built.** Her stance hit is gated in behaviour, and the wiki text for that gate is not yet read into the record.
+- **The second instance of Spirit Steed's Stride as Lunar-Crystallize is not on her record.** A Lunar reaction is the `lunarReactionType` field of a hit's record, which her overlay does not set, so that hit is Geo until it does.
 
 ## Key files
 
