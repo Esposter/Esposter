@@ -33,7 +33,7 @@ flowchart TD
 | `packages/genshin-world/src/composables/useMiningOutcrops.ts`                    | Each loaded region's draw, the standing outcrops and the strike             |
 | `packages/genshin-world/src/services/gathering/computeDailyMiningOutcrops.ts`    | A region's count drawn from its places, none below Adventure Rank 30        |
 | `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts` | The places standing at an instant: the day's draw, not mined since          |
-| `packages/genshin-world/src/components/World/MiningOutcrops/Index.vue`           | The stand-in rock at each standing place                                    |
+| `packages/genshin-world/src/components/World/StandIns/Index.vue`                 | The stand-in at each standing place, shared with the Oculi                  |
 
 ## Notes
 

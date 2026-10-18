@@ -17,6 +17,7 @@ import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
+import { StandInShape } from "#src/models/world/StandInShape";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GrassTrail, LandmarkCollider, Locomotion, QualityTier } from "genshin-engine";
@@ -30,8 +31,7 @@ import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
-import WorldMiningOutcrops from "#src/components/World/MiningOutcrops/Index.vue";
-import WorldOculi from "#src/components/World/Oculi/Index.vue";
+import WorldStandIns from "#src/components/World/StandIns/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
@@ -55,6 +55,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
+import { MINING_OUTCROP_STAND_IN_COLOR, MINING_OUTCROP_STAND_IN_RADIUS } from "#src/services/gathering/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { LEAF_SHADER, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
@@ -90,6 +91,7 @@ import {
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
 } from "#src/services/windrise/constants";
+import { OCULUS_STAND_IN_COLOR, OCULUS_STAND_IN_RADIUS } from "#src/services/statue/constants";
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
@@ -581,20 +583,27 @@ onUnmounted(() => {
       :places="frostbearingTreePlaces"
       :ramp-texture
     />
-    <WorldOculi
+    <WorldStandIns
       v-if="!witness && oculusPlaces.length > 0"
+      :key="oculusPlaces.length"
+      :color="OCULUS_STAND_IN_COLOR"
       :get-ground-height
       :light-uniforms
       :places="oculusPlaces"
+      :radius="OCULUS_STAND_IN_RADIUS"
       :ramp-texture
+      :shape="StandInShape.Sphere"
     />
-    <WorldMiningOutcrops
+    <WorldStandIns
       v-if="!witness && miningOutcropPlaces.length > 0"
       :key="miningOutcropPlaces.length"
+      :color="MINING_OUTCROP_STAND_IN_COLOR"
       :get-ground-height
       :light-uniforms
       :places="miningOutcropPlaces"
+      :radius="MINING_OUTCROP_STAND_IN_RADIUS"
       :ramp-texture
+      :shape="StandInShape.Rock"
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
     <WorldInteractables v-if="!witness" :interactables :light-uniforms :ramp-texture :sight-scene />
