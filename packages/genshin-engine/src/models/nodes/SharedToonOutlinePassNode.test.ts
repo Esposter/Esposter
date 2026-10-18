@@ -1,9 +1,11 @@
 /* oxlint-disable no-underscore-dangle -- the test reads the outline hook three names _getOutlineMaterial */
 import type { ToonEdge } from "#src/models/nodes/ToonEdge";
 
+import { createInstanceMatrixBuffer } from "#src/culling/createInstanceMatrixBuffer";
+import { createInstanceMatrixNode } from "#src/culling/createInstanceMatrixNode";
 import { SharedToonOutlinePassNode } from "#src/models/nodes/SharedToonOutlinePassNode";
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
-import { Camera, Scene } from "three";
+import { Camera, Matrix4, Scene } from "three";
 import { float, vec3, vec4 } from "three/tsl";
 import { MeshToonNodeMaterial } from "three/webgpu";
 import { describe, expect, test } from "vitest";
@@ -16,6 +18,26 @@ describe(SharedToonOutlinePassNode, () => {
     const outlineMaterial = pass._getOutlineMaterial(new MeshToonNodeMaterial());
 
     expect(pass._getOutlineMaterial(new MeshToonNodeMaterial())).toBe(outlineMaterial);
+  });
+
+  test("outlines a placed copy by the matrix its fill reads, one outline material per matrix", () => {
+    expect.hasAssertions();
+
+    const pass = new SharedToonOutlinePassNode(new Scene(), new Camera(), vec3(0, 0, 0), float(0.01), float(1));
+    const instanceMatrix = createInstanceMatrixNode(createInstanceMatrixBuffer([new Matrix4()]), float(0));
+    const outlineMaterial = pass._getOutlineMaterial(Object.assign(new ToonNodeMaterial({}, true), { instanceMatrix }));
+
+    expect(pass._getOutlineMaterial(Object.assign(new ToonNodeMaterial({}, true), { instanceMatrix }))).toBe(
+      outlineMaterial,
+    );
+    expect(pass._getOutlineMaterial(new ToonNodeMaterial({}, true))).not.toBe(outlineMaterial);
+    expect(
+      pass._getOutlineMaterial(
+        Object.assign(new ToonNodeMaterial({}, true), {
+          instanceMatrix: createInstanceMatrixNode(createInstanceMatrixBuffer([new Matrix4()]), float(0)),
+        }),
+      ),
+    ).not.toBe(outlineMaterial);
   });
 
   test("shares an edge's outline material only between materials reading the same per-pixel colour", () => {

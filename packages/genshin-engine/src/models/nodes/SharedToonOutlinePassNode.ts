@@ -23,12 +23,16 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   #drawn?: PromiseWithResolvers<void>;
   readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
   #outlineMaterial?: NodeMaterial;
+  readonly #instancedOutlineMaterials = new WeakMap<Node<"mat4">, NodeMaterial>();
   readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
 
-  // A material with its own edge is outlined in that edge, and every other toon material by the one shared material
+  // A placed copy is outlined through the matrix its fill reads, a material with its own edge in that edge, and every other
+  // Toon material by the one shared material
   _getOutlineMaterial(originalMaterial: Material): NodeMaterial {
-    if (originalMaterial instanceof ToonNodeMaterial && originalMaterial.edge)
-      return this.#getEdgeOutlineMaterial(originalMaterial.edge);
+    if (originalMaterial instanceof ToonNodeMaterial) {
+      if (originalMaterial.instanceMatrix) return this.#getInstancedOutlineMaterial(originalMaterial.instanceMatrix);
+      if (originalMaterial.edge) return this.#getEdgeOutlineMaterial(originalMaterial.edge);
+    }
     return this.#getSharedOutlineMaterial();
   }
 
@@ -86,6 +90,21 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
       edgeOutlineMaterials.set(key, edgeOutlineMaterial);
     }
     return edgeOutlineMaterial;
+  }
+
+  // One outline material per matrix, which every copy the matrix places shares: it reads the very node its fill reads, so the
+  // Outline and the fill take their place from one read
+  #getInstancedOutlineMaterial(instanceMatrix: Node<"mat4">): NodeMaterial {
+    let instancedOutlineMaterial = this.#instancedOutlineMaterials.get(instanceMatrix);
+    if (instancedOutlineMaterial === undefined) {
+      instancedOutlineMaterial = createOutlineMaterial(
+        vec4(this.colorNode, this.alphaNode),
+        this.thicknessNode,
+        instanceMatrix,
+      );
+      this.#instancedOutlineMaterials.set(instanceMatrix, instancedOutlineMaterial);
+    }
+    return instancedOutlineMaterial;
   }
 
   #getSharedOutlineMaterial(): NodeMaterial {
