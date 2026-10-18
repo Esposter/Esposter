@@ -52,17 +52,17 @@ const mail = (isClaimed: boolean): MailSave => ({
 });
 
 describe("mailScreen", () => {
-  // The held mail listed by its title, and the claim pressed on the selected mail gives its id back
+  // The held mail listed by its title, and the claim pressed on the selected mail gives that held mail back
   test("should claim the selected mail when its claim is pressed", async () => {
     expect.hasAssertions();
 
-    const onClaim = vi.fn<(mailId: number) => void>();
+    const onClaim = vi.fn<(held: MailSave) => void>();
     render(MailScreen, { ...props, mails: [mail(false)], onClaim });
 
     await page.getByRole("tab", { name: "Best Wishes on Your Birthday" }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaim] }).click();
 
-    expect(onClaim).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+    expect(onClaim).toHaveBeenCalledWith(mail(false));
   });
 
   // A claimed birthday mail sits in the Gift Mail Box, and Claim All has nothing left to claim
@@ -138,37 +138,37 @@ describe("mailScreen", () => {
     expect(document.querySelector("time")?.getAttribute("datetime")).toBe(DELIVERED_AT);
   });
 
-  // The pin pressed on the selected mail gives its id back to the screen's owner
+  // The pin pressed on the selected mail gives that held mail back to the screen's owner
   test("should pin the selected mail when its pin is pressed", async () => {
     expect.hasAssertions();
 
-    const onPin = vi.fn<(mailId: number) => void>();
+    const onPin = vi.fn<(held: MailSave) => void>();
     render(MailScreen, { ...props, mails: [mail(false)], onPin });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailStar] }).click();
 
-    expect(onPin).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+    expect(onPin).toHaveBeenCalledWith(mail(false));
   });
 
-  // Delete on a gift mail asks first, and gives the mail's id back to the screen's owner only once the player confirms it
+  // Delete on a gift mail asks first, and gives the mail back to the screen's owner only once the player confirms it
   test("should delete a gift mail once its delete is confirmed", async () => {
     expect.hasAssertions();
 
-    const onDeleteGift = vi.fn<(mailId: number) => void>();
+    const onDeleteGift = vi.fn<(held: MailSave) => void>();
     render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDelete] }).click();
 
-    expect(onDeleteGift).toHaveBeenCalledWith(BIRTHDAY_MAIL_ID);
+    expect(onDeleteGift).toHaveBeenCalledWith(mail(true));
   });
 
   // Cancel closes the warning and leaves the gift mail in the Gift Mail Box
   test("should keep the gift mail when its delete is cancelled", async () => {
     expect.hasAssertions();
 
-    const onDeleteGift = vi.fn<(mailId: number) => void>();
+    const onDeleteGift = vi.fn<(held: MailSave) => void>();
     render(MailScreen, { ...props, mails: [mail(true)], onDeleteGift });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();

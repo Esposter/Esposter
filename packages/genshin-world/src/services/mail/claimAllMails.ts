@@ -12,8 +12,8 @@ export const claimAllMails = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): MailboxState =>
-  state.mails.reduce<MailboxState>((current, { id }) => {
-    const mailRow = mailRows.get(id);
+  state.mails.reduce<MailboxState>((current, held) => {
+    const mailRow = mailRows.get(held.id);
     if (mailRow === undefined) return current;
-    return claimMail(current, mailRow, names, materialDataMap) ?? current;
+    return claimMail(current, held, mailRow, names, materialDataMap) ?? current;
   }, state);

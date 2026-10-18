@@ -6,10 +6,9 @@ import { describe, expect, test } from "vitest";
 
 describe(deliverBirthdayMail, () => {
   const BIRTHDAY = { day: 1, month: 1 };
-  const BIRTHDAY_NOON = Temporal.PlainDate.from({ day: 1, month: 1, year: 1971 })
-    .toZonedDateTime(GAME_TIME_ZONE)
-    .add({ hours: 12 })
-    .toInstant();
+  const getBirthdayNoon = (year: number): Temporal.Instant =>
+    Temporal.PlainDate.from({ day: 1, month: 1, year }).toZonedDateTime(GAME_TIME_ZONE).add({ hours: 12 }).toInstant();
+  const BIRTHDAY_NOON = getBirthdayNoon(1971);
   const BIRTHDAY_ROWS = [
     { effectiveDate: "1970-01-01 08:00:00", mailId: 9 },
     { effectiveDate: "1970-04-11 08:00:00", mailId: 35 },
@@ -40,6 +39,21 @@ describe(deliverBirthdayMail, () => {
     ];
 
     expect(deliverBirthdayMail(delivered, BIRTHDAY, BIRTHDAY_ROWS, BIRTHDAY_NOON)).toStrictEqual(delivered);
+  });
+
+  // The next birthday delivers its own copy beside the one claimed on an earlier birthday, which the Gift Mail Box keeps
+  test("the birthday mail is delivered again on a later birthday beside the copy claimed on an earlier one", () => {
+    expect.hasAssertions();
+
+    const claimed: MailSave[] = [
+      { deliveredAt: BIRTHDAY_NOON.toString(), id: 35, isClaimed: true, isPinned: false, isRead: true },
+    ];
+    const nextBirthdayNoon = getBirthdayNoon(1972);
+
+    expect(deliverBirthdayMail(claimed, BIRTHDAY, BIRTHDAY_ROWS, nextBirthdayNoon)).toStrictEqual([
+      ...claimed,
+      { deliveredAt: nextBirthdayNoon.toString(), id: 35, isClaimed: false, isPinned: false, isRead: false },
+    ]);
   });
 
   // A player who has not set a birthday has no birthday mail due

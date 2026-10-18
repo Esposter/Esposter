@@ -16,6 +16,7 @@ import { claimMail } from "#src/services/mail/claimMail";
 import { deleteGiftMail } from "#src/services/mail/deleteGiftMail";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
+import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
@@ -88,17 +89,18 @@ export const useWorldMail = ({
     setWallet(nextState.wallet);
     mails.value = nextState.mails;
   };
-  const claim = (mailId: number) => {
-    const mailRow = mailData.value?.mailRows.get(mailId);
+  const claim = (held: MailSave) => {
+    const mailRow = mailData.value?.mailRows.get(held.id);
     if (!mailRow) return;
     const nextState = claimMail(
       { inventory: inventory.value, mails: mails.value, wallet: wallet.value },
+      held,
       mailRow,
       names,
       materialDataMap,
     );
     if (!nextState) {
-      isBagFull.value = mails.value.some(({ id, isClaimed }) => id === mailId && !isClaimed);
+      isBagFull.value = mails.value.some((mail) => isSameHeldMail(mail, held) && !mail.isClaimed);
       return;
     }
     isBagFull.value = false;
@@ -116,21 +118,25 @@ export const useWorldMail = ({
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);
   };
-  const deleteGift = (mailId: number) => {
+  const deleteGift = (held: MailSave) => {
     if (!mailData.value) return;
     const { birthdayMailIds, mailRows } = mailData.value;
-    mails.value = deleteGiftMail(mails.value, mailRows, birthdayMailIds, mailId);
+    mails.value = deleteGiftMail(mails.value, mailRows, birthdayMailIds, held);
   };
   const deleteRead = () => {
     if (!mailData.value) return;
     const { birthdayMailIds, mailRows } = mailData.value;
     mails.value = deleteReadMails(mails.value, mailRows, birthdayMailIds);
   };
-  const markMailRead = (mailId: number) => {
-    mails.value = mails.value.map((mail) => (mail.id === mailId && !mail.isRead ? { ...mail, isRead: true } : mail));
+  const markMailRead = (held: MailSave) => {
+    mails.value = mails.value.map((mail) =>
+      isSameHeldMail(mail, held) && !mail.isRead ? { ...mail, isRead: true } : mail,
+    );
   };
-  const toggleMailPin = (mailId: number) => {
-    mails.value = mails.value.map((mail) => (mail.id === mailId ? { ...mail, isPinned: !mail.isPinned } : mail));
+  const toggleMailPin = (held: MailSave) => {
+    mails.value = mails.value.map((mail) =>
+      isSameHeldMail(mail, held) ? { ...mail, isPinned: !mail.isPinned } : mail,
+    );
   };
 
   return { claim, claimAll, deleteGift, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailPin };

@@ -627,7 +627,25 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("a mail is kept once by its id, and read or claimed on either copy stays so", () => {
+  test("a mail delivered again is kept beside the copy the account holds, with the account's own flags", () => {
+    expect.hasAssertions();
+    const MAIL_ID = 1;
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: true }],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: [{ deliveredAt: LATER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: false }],
+    };
+
+    expect(mergeGenshinSave(account, guest).mails).toStrictEqual([
+      { deliveredAt: EARLIER_START, id: MAIL_ID, isClaimed: true, isPinned: false, isRead: true },
+      { deliveredAt: LATER_START, id: MAIL_ID, isClaimed: false, isPinned: false, isRead: false },
+    ]);
+  });
+
+  test("a mail is kept once per delivery, and read or claimed on either copy stays so", () => {
     expect.hasAssertions();
     const MAIL_ID = 1;
     const OTHER_MAIL_ID = 2;

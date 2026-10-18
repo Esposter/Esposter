@@ -92,8 +92,9 @@ export const genshinSaveSchema = z
     homeProgress: homeProgressSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
     homePlantings: homePlantingSaveSchema,
-    // The mails the player holds, each once by its id, with when it was delivered and whether it was claimed and read
-    mails: createUniqueArraySchema(mailSaveSchema, "id").max(MAX_MAIL_COUNT),
+    // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
+    // Claimed and read
+    mails: createUniqueArraySchema(mailSaveSchema, ["id", "deliveredAt"]).max(MAX_MAIL_COUNT),
     inventory: inventorySaveSchema,
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)

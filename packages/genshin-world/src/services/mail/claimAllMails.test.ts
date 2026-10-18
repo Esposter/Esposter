@@ -43,4 +43,20 @@ describe(claimAllMails, () => {
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT * 2 },
     });
   });
+
+  // A mail held on two deliveries is claimed delivery by delivery, so each gives its items once
+  test("claim all gives each delivery of a mail its items once", () => {
+    expect.hasAssertions();
+
+    const later = { deliveredAt: new Date(1).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
+
+    expect(claimAllMails({ ...STATE, mails: [STATE.mails[0], later] }, mailRows, {}, new Map())).toStrictEqual({
+      inventory: EMPTY_INVENTORY,
+      mails: [
+        { deliveredAt, id: 1, isClaimed: true, isPinned: false, isRead: true },
+        { deliveredAt: later.deliveredAt, id: 1, isClaimed: true, isPinned: false, isRead: true },
+      ],
+      wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT * 2 },
+    });
+  });
 });

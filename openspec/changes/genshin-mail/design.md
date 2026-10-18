@@ -23,7 +23,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 
 ## Decisions
 
-- **The save holds the mails a player has, as a required list.** A save without it is refused, with no default, as the quick swap's slots were, and the backfill for existing saves is the main session's.
+- **The save holds the mails a player has, as a required list, with each mail held once per delivery.** A mail delivered again on a later birthday is a second held mail beside the copy claimed on an earlier one, so the Gift Mail Box keeps each year's letter. A save without the list is refused, with no default, as the quick swap's slots were, and the backfill for existing saves is the main session's.
 - **A mail's text is its game text, not a translated string.** The title, sender and content are referenced by text id through `genshin-text`, so the main session writes them and no string is typed here.
 - **Only the Traveler's birthday mail is delivered, until the rules are read.** Every other mail waits on the export, so the mailbox holds no mail the rules have not yet placed. The birthday mail is the one the wiki states.
 - **Claiming gives the items once.** A claimed mail stays in the list as read, so a reload cannot grant its items twice.
@@ -75,6 +75,7 @@ packages/genshin-world/src/services/mail/claimMail.ts        ← one held mail's
 packages/genshin-world/src/services/mail/claimAllMails.ts    ← every held mail claimed in order, the ones the bag cannot take left unclaimed
 packages/genshin-world/src/services/mail/deleteReadMails.ts  ← the held mails without the read ones that have nothing left to claim, and the pinned ones
 packages/genshin-world/src/services/mail/isGiftBoxed.ts      ← whether a held mail is in the Gift Mail Box: a claimed birthday mail, or one the mail table flags
+packages/genshin-world/src/services/mail/isSameHeldMail.ts   ← whether a held mail is the delivery another names: its id and the instant it was delivered
 packages/genshin-world/src/services/mail/removeExpiredMails.ts ← the mailbox without the mails past their expiry
 packages/genshin-world/src/services/mail/deliverBirthdayMail.ts ← the Traveler's birthday mail added when due
 scripts/src/services/genshinAssets/mail/buildMailPublication.ts ← the mail table as one entry per mail, and the birthday rows

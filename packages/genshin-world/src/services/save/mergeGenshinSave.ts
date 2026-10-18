@@ -18,6 +18,7 @@ import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAb
 import type { StatueProgressSave, StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
+import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
@@ -273,9 +274,10 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     const accountProgress = quests[questId];
     quests[questId] = accountProgress ? mergeQuestProgress(accountProgress, guestProgress) : guestProgress;
   }
-  // A mail is kept once by its id, and a read, claimed or pinned mail stays so whichever save it was read, claimed or pinned in
+  // A mail is kept once per delivery, and a read, claimed or pinned mail stays so whichever save it was read, claimed
+  // Or pinned in
   const mails = account.mails.map((accountMail) => {
-    const guestMail = guest.mails.find(({ id }) => id === accountMail.id);
+    const guestMail = guest.mails.find((mail) => isSameHeldMail(mail, accountMail));
     return guestMail
       ? {
           ...accountMail,
@@ -285,7 +287,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
         }
       : accountMail;
   });
-  mails.push(...guest.mails.filter(({ id }) => !account.mails.some((accountMail) => accountMail.id === id)));
+  mails.push(...guest.mails.filter((guestMail) => !account.mails.some((mail) => isSameHeldMail(mail, guestMail))));
   const isSameRefillDay = account.wallet.primogemResinRefillDay === guest.wallet.primogemResinRefillDay;
   return {
     achievements,

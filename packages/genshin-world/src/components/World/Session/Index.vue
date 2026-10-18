@@ -2126,13 +2126,13 @@ defineExpose({ jumpTo, readCameraPosition });
           :names="nameText"
           :now="getWorldNow()"
           :text-map="mailData.textMap"
-          @claim="(mailId) => claimMail(mailId)"
+          @claim="(mail) => claimMail(mail)"
           @claim-all="claimAllMails()"
           @close="screenKind = ScreenKind.World"
-          @delete-gift="(mailId) => deleteGiftMail(mailId)"
+          @delete-gift="(mail) => deleteGiftMail(mail)"
           @delete-read="deleteReadMails()"
-          @read="(mailId) => markMailRead(mailId)"
-          @pin="(mailId) => toggleMailPin(mailId)"
+          @read="(mail) => markMailRead(mail)"
+          @pin="(mail) => toggleMailPin(mail)"
         />
       </template>
       <template #[ScreenKind.Quests]>
