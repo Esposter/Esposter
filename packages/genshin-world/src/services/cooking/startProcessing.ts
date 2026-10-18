@@ -2,7 +2,7 @@ import type { ProcessingJob } from "#src/models/cooking/ProcessingJob";
 import type { ProcessingRecipe } from "#src/models/cooking/ProcessingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
-import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 
 // The bag and queue after `count` units of a processing are queued at `now`, their ingredients taken from the bag at once.
@@ -20,7 +20,7 @@ export const startProcessing = (
     !Number.isInteger(count) ||
     count < 1 ||
     queuedCount + count > recipe.queueSize ||
-    recipe.ingredients.some(({ count: perUnit, id }) => countInventoryItem(inventory.items, id) < perUnit * count)
+    !checkIsItemCountsHeld(inventory.items, recipe.ingredients, count)
   )
     return undefined;
   const idleStartedAt = now.subtract({ seconds: queuedCount * recipe.costTime });

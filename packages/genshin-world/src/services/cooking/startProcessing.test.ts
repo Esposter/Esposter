@@ -63,6 +63,24 @@ describe(startProcessing, () => {
     expect(startProcessing(recipe, 2, { inventory: createInventory(3), job: undefined, now: EPOCH })).toBeUndefined();
   });
 
+  test("should be refused where the bag holds too few of an ingredient the recipe names twice", () => {
+    expect.hasAssertions();
+
+    expect(
+      startProcessing(
+        {
+          ...recipe,
+          ingredients: [
+            { count: 2, id: INGREDIENT_ID },
+            { count: 2, id: INGREDIENT_ID },
+          ],
+        },
+        1,
+        { inventory: createInventory(3), job: undefined, now: EPOCH },
+      ),
+    ).toBeUndefined();
+  });
+
   test("should be refused where the queue would hold more units than its size", () => {
     expect.hasAssertions();
 

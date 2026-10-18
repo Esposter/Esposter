@@ -22,6 +22,6 @@ export const getTalentUpgradeRefusal = (
   if (!upgrade) return TalentUpgradeRefusal.LastLevel;
   else if (character.ascension < upgrade.phase) return TalentUpgradeRefusal.Phase;
   else if (wallet[Currency.Mora] < upgrade.coinCost) return TalentUpgradeRefusal.Mora;
-  else if (!checkIsItemCountsHeld(inventory.items, upgrade.costItems)) return TalentUpgradeRefusal.Materials;
+  else if (!checkIsItemCountsHeld(inventory.items, upgrade.costItems, 1)) return TalentUpgradeRefusal.Materials;
   return undefined;
 };

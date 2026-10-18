@@ -13,7 +13,7 @@ import { checkIsForgeRecipeRefusedInRealm } from "#src/services/forging/checkIsF
 import { computeForgeQueueCount } from "#src/services/forging/computeForgeQueueCount";
 import { computeForgeTalents } from "#src/services/forging/computeForgeTalents";
 import { refundForgeOres } from "#src/services/forging/refundForgeOres";
-import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { checkIsItemCountsHeld } from "#src/services/inventory/checkIsItemCountsHeld";
 import { takeItemCounts } from "#src/services/inventory/takeItemCounts";
 import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
@@ -49,6 +49,7 @@ export const startForge = (
 ): undefined | { inventory: Inventory; progress: ForgeProgress; wallet: Wallet } => {
   const resinCount = recipe.materials.find(({ id }) => id === ORIGINAL_RESIN_ITEM_ID)?.count ?? 0;
   const spentWallet = spendOriginalResin(wallet, resinCount * count, now);
+  const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);
   if (
     !checkIsForgeRecipeOpen(recipe, progress, adventureRank) ||
     !Number.isInteger(count) ||
@@ -57,10 +58,7 @@ export const startForge = (
     progress.orders.length >= computeForgeQueueCount(adventureRank) ||
     checkIsForgeDailyCapReached(recipe, count, progress, now) ||
     (isInRealm && checkIsForgeRecipeRefusedInRealm(recipe)) ||
-    recipe.materials.some(
-      ({ count: perUnit, id }) =>
-        id !== ORIGINAL_RESIN_ITEM_ID && countInventoryItem(inventory.items, id) < perUnit * count,
-    ) ||
+    !checkIsItemCountsHeld(inventory.items, bagMaterials, count) ||
     !spentWallet ||
     wallet[Currency.Mora] < recipe.mora * count
   )
@@ -74,7 +72,6 @@ export const startForge = (
   );
   const gameDay = now.toZonedDateTimeISO(GAME_TIME_ZONE).subtract({ hours: GAME_DAY_START_HOUR }).toPlainDate();
   const forgedPoints = progress.forgedPointsDay.equals(gameDay) ? progress.forgedPoints : 0;
-  const bagMaterials = recipe.materials.filter(({ id }) => id !== ORIGINAL_RESIN_ITEM_ID);
   const takenInventory = { items: takeItemCounts(inventory.items, bagMaterials, count), nextId: inventory.nextId };
   return {
     inventory: refundForgeOres(takenInventory, recipe, count, talents, definitions),

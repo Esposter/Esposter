@@ -94,6 +94,24 @@ describe(craftRecipe, () => {
     expect(craftRecipe(tierRecipe, 3, resultDefinition, craftingState(inventory, wallet))).toBeUndefined();
   });
 
+  test("should refuse a batch whose materials name one item twice the bag holds too few of in sum", () => {
+    expect.hasAssertions();
+
+    const inventory: Inventory = { items: [{ definition: materialDefinition, id: 0, quantity: 5 }], nextId: 1 };
+    const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 200 };
+    const recipe = {
+      ...tierRecipe,
+      materials: [
+        { count: 3, id: MATERIAL_ID },
+        { count: 3, id: MATERIAL_ID },
+      ],
+    };
+
+    expect(
+      craftRecipe(recipe, 1, resultDefinition, craftingState(inventory, wallet, { learnedRecipeIds: [] })),
+    ).toBeUndefined();
+  });
+
   test("should refuse a count that is not whole", () => {
     expect.hasAssertions();
 

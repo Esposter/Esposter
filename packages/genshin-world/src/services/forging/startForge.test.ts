@@ -99,6 +99,24 @@ describe(startForge, () => {
     expect(startForge(recipe, 2, { ...startArguments, inventory: createInventory(5) })).toBeUndefined();
   });
 
+  test("should be refused where the bag holds too few of a material the recipe names twice for every unit", () => {
+    expect.hasAssertions();
+
+    expect(
+      startForge(
+        {
+          ...recipe,
+          materials: [
+            { count: 3, id: INGREDIENT_ID },
+            { count: 3, id: INGREDIENT_ID },
+          ],
+        },
+        1,
+        { ...startArguments, inventory: createInventory(5) },
+      ),
+    ).toBeUndefined();
+  });
+
   test("should be refused for a count that is not whole", () => {
     expect.hasAssertions();
 

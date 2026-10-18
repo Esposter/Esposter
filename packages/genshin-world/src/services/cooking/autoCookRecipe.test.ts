@@ -66,6 +66,29 @@ describe(autoCookRecipe, () => {
     ).toBeUndefined();
   });
 
+  test("should be refused where the bag holds too few of an ingredient the dish names twice", () => {
+    expect.hasAssertions();
+
+    expect(
+      autoCookRecipe(
+        {
+          ...createRecipe(),
+          ingredients: [
+            { count: 1, id: INGREDIENT_ID },
+            { count: 1, id: INGREDIENT_ID },
+          ],
+        },
+        {
+          avatarId: AVATAR_ID,
+          getDefinition: createDefinition,
+          inventory: createInventory(1),
+          progress: provenProgress,
+          random: () => 0.99,
+        },
+      ),
+    ).toBeUndefined();
+  });
+
   test("should make as many Delicious dishes as the ingredients allow, up to the batch limit", () => {
     expect.hasAssertions();
 

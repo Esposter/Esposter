@@ -5,10 +5,12 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import { Currency } from "#src/models/inventory/Currency";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
+import { countItemCost } from "#src/services/inventory/countItemCost";
 import { regenerateOriginalResin } from "#src/services/originalResin/regenerateOriginalResin";
 
 // How many times a recipe can be crafted at `now` from what the bag and the wallet hold: the least of the times each
-// Material's count and the Mora allow. Original Resin is paid from the wallet regenerated to `now`, not from the bag
+// Material's cost per craft and the Mora allow, a material the recipe names twice costing both counts together. Original
+// Resin is paid from the wallet regenerated to `now`, not from the bag
 export const computeCraftableCount = (
   recipe: CraftingRecipe,
   { inventory, wallet }: { inventory: Inventory; wallet: Wallet },
@@ -21,6 +23,6 @@ export const computeCraftableCount = (
       material.id === ORIGINAL_RESIN_ITEM_ID
         ? regeneratedWallet[Currency.OriginalResin]
         : countInventoryItem(inventory.items, material.id);
-    return Math.min(count, Math.floor(heldCount / material.count));
+    return Math.min(count, Math.floor(heldCount / countItemCost(recipe.materials, material.id)));
   }, moraCount);
 };

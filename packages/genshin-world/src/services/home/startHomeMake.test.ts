@@ -74,4 +74,21 @@ describe(startHomeMake, () => {
       startHomeMake(blueprint, { inventory: bag(8), now: EPOCH, progress: busy, trustRank: TRUST_RANK }),
     ).toBeUndefined();
   });
+
+  test("should refuse a furnishing whose materials name one item twice the bag holds too few of in sum", () => {
+    expect.hasAssertions();
+
+    expect(
+      startHomeMake(
+        {
+          ...blueprint,
+          materials: [
+            { count: 4, id: MATERIAL_ID },
+            { count: 4, id: MATERIAL_ID },
+          ],
+        },
+        { inventory: bag(7), now: EPOCH, progress, trustRank: TRUST_RANK },
+      ),
+    ).toBeUndefined();
+  });
 });

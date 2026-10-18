@@ -106,6 +106,22 @@ describe(cookRecipeByHand, () => {
     expect(cook(createRecipe(), DELICIOUS_STOP, AVATAR_ID, 0)).toBeUndefined();
   });
 
+  test("should be refused where the bag holds too few of an ingredient the dish names twice", () => {
+    expect.hasAssertions();
+
+    expect(
+      cook(
+        createRecipe({
+          ingredients: [
+            { count: 1, id: INGREDIENT_ID },
+            { count: 1, id: INGREDIENT_ID },
+          ],
+        }),
+        DELICIOUS_STOP,
+      ),
+    ).toBeUndefined();
+  });
+
   test("should be refused for a dish that is not yet known", () => {
     expect.hasAssertions();
 
