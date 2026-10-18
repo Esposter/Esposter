@@ -11,6 +11,7 @@ import {
   MATERIAL_TABLE_NAME,
 } from "#src/services/genshinAssets/items/constants";
 import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -70,7 +71,7 @@ export const buildItems = async (): Promise<Record<string, unknown>> => {
     .array(z.object({ itemId: z.int() }))
     .parse(await readPublishedGameData("shops/mondstadtGeneralGoods"));
   // The fish a Fishing Association's goods are bought with, and the items they give, as the goods table names them
-  const fishingGoods = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData").filter((row) =>
+  const fishingGoods = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME).filter((row) =>
     checkIsFishingAssociationGood(row),
   );
   const fishingGoodItemIds = [

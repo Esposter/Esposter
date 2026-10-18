@@ -15,6 +15,7 @@ import {
   SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
 import { getShopGoodPrice } from "#src/services/genshinAssets/shops/getShopGoodPrice";
+import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
@@ -34,7 +35,7 @@ interface PaimonsBargainsPrice {
 // A missing order or a rotation priced two ways is an error
 export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   const rotationRows = readExcelTable<ExcelShopRotateRow>("ShopRotateExcelConfigData");
-  const goodRows = readExcelTable<ExcelShopGoodsRow>("ShopGoodsExcelConfigData");
+  const goodRows = readExcelTable<ExcelShopGoodsRow>(SHOP_GOODS_TABLE_NAME);
   const cardIdAvatarIdMap = new Map(
     readExcelTable<ExcelMaterialRow>("MaterialExcelConfigData").flatMap(({ id, itemUse }) => {
       const avatarUse = itemUse.find(({ useOp }) => useOp === GAIN_AVATAR_ITEM_USE);
