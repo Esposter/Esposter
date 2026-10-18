@@ -7,6 +7,7 @@ import { describe, expect, test } from "vitest";
 
 const ORIGIN = [100, 20, 200] as const;
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({
+  cooldownTipsDungeonId: [],
   descriptionCycleRewardList: [],
   dungeonEntryId: 7,
   id: 1,

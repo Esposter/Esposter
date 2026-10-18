@@ -8,6 +8,7 @@ import { checkIsDomainKindOpenOnDay, DomainKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({
+  cooldownTipsDungeonId: [],
   descriptionCycleRewardList: [],
   dungeonEntryId: 7,
   id: 10,
