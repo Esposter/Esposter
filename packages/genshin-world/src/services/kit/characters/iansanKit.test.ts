@@ -1,6 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,6 +9,9 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
+import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { createIansanKitBehaviour, IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -138,5 +142,86 @@ describe(createIansanKitBehaviour, () => {
     stepKitSeconds(context, 9);
 
     expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(0);
+  });
+  const countIansanPoints = (context: KitContext) =>
+    countKitResource(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
+  // Iansan's burst lands on a blessing of the points given, with no drain, so only the burst and her Ascension 1 move it
+  const landIansanBurst = (combatant: Combatant, points = 20) => {
+    const context = createKitTestContext(combatant);
+    if (combatant.ascension >= 1)
+      IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, { points, secondsRemaining: 16 });
+    IANSAN_KIT.elementalBurst.onStart?.(context);
+    return context;
+  };
+
+  test("the burst gains 15 points on a held blessing 0.67 seconds after it lands", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIansanCombatant());
+    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, { points: 20, secondsRemaining: 16 });
+    IANSAN_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 0.5);
+    expect(countIansanPoints(context)).toBe(20);
+    stepKitSeconds(context, 0.2);
+    expect(countIansanPoints(context)).toBe(35);
+  });
+
+  test("the burst enters a 16-second blessing with 15 points, draining them, when none is held", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIansanCombatant());
+    IANSAN_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 0.7);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(true);
+    expect(countIansanPoints(context)).toBeCloseTo(15, 0);
+  });
+
+  test("a passive takes effect at its ascension phase: with Precise Movement up, the burst's points are restored once a second, four on the first after her points are gained", () => {
+    expect.hasAssertions();
+    const context = landIansanBurst({ ...createIansanCombatant(), ascension: 1 });
+    stepKitSeconds(context, 1.2);
+    expect(countIansanPoints(context)).toBe(39);
+    stepKitSeconds(context, 1);
+    expect(countIansanPoints(context)).toBe(40);
+  });
+
+  test("does not take effect below its ascension phase: the burst's restore gives Iansan no points below Ascension 1", () => {
+    expect.hasAssertions();
+    const context = landIansanBurst(createIansanCombatant());
+    stepKitSeconds(context, 2.2);
+    expect(countIansanPoints(context)).toBe(35);
+  });
+
+  test("a passive takes effect at its ascension phase: its four points wait out their 2.8-second cooldown after each arming", () => {
+    expect.hasAssertions();
+    const context = landIansanBurst({ ...createIansanCombatant(), ascension: 1 });
+    // Armed by the burst's 15 at 0.67 seconds, so the gain at 1.5 seconds falls in its cooldown and arms nothing
+    stepKitSeconds(context, 1.5);
+    generateKitNightsoulPoints(context, 1, 54);
+    stepKitSeconds(context, 2.1);
+    generateKitNightsoulPoints(context, 1, 54);
+    stepKitSeconds(context, 0.9);
+    // 35 from the burst, 4 at 1 second, 1 at 2 and 3 seconds, then 1 gained at 3.6 seconds and 4 at 4 seconds
+    expect(countIansanPoints(context)).toBe(47);
+  });
+
+  test("the burst's restore runs a second for its 12 seconds, and not after", () => {
+    expect.hasAssertions();
+    // Her points stay under the 54 cap. The restore's ticks at 1 to 11 seconds give 23 from the burst's 15: the armed 4
+    // Comes on the first, then her own generations re-arm it when the 2.8-second cooldown ends, at 4, 7 and 10 seconds,
+    // As gcsim's generate callback does, so a 4 follows at 5, 8 and 11 seconds
+    const context = landIansanBurst({ ...createIansanCombatant(), ascension: 1 }, 10);
+    stepKitSeconds(context, 13);
+    expect(countIansanPoints(context)).toBe(48);
+  });
+
+  test("the burst's restore stops once the blessing it lands in ends", () => {
+    expect.hasAssertions();
+    const combatant = { ...createIansanCombatant(), ascension: 1 };
+    const context = createKitTestContext(combatant);
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+    IANSAN_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, 6);
+    expect(hasKitNightsoulBlessing(context.kitEffectState.effects, IANSAN_CHARACTER_ID)).toBe(false);
+    expect(countIansanPoints(context)).toBe(0);
   });
 });
