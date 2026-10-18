@@ -11,11 +11,12 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AINO_CHARACTER_ID, createAinoKitBehaviour } from "#src/services/kit/characters/ainoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -85,6 +86,39 @@ const strikeSkillHit = (context: KitContext, hit: KitHit): void => {
     },
     context,
     context.activeCombatant,
+  );
+};
+
+// Aino's burst is cast with a teammate in the team, and the teammate is the one on the field: the context her kit reads
+// The teammate's hits in, with the zone the burst left standing
+const createTeammateTeam = (constellationCount: number) => {
+  const aino = { ...createAinoCombatant(0), constellationCount };
+  const teammate = { ...aino, characterId: MOONSIGN_CHARACTER_IDS[0] };
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(aino, {
+    characterIdCombatantMap: new Map<number, Combatant>([
+      [aino.characterId, aino],
+      [teammate.characterId, teammate],
+    ]),
+    kitEffectState,
+    party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
+  });
+  AINO_KIT.elementalBurst.onStart?.(context);
+  return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
+};
+// The kit reads a hit of the striker's on the enemy, as the party's kits take each event
+const strikeEnemy = (context: KitContext, striker: Combatant, combatant: Combatant): void => {
+  AINO_KIT.onKitEvent?.(
+    {
+      enemy: AINO_ENEMY,
+      hit: takeOne(AINO_KIT.elementalSkill.hits),
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker,
+    },
+    context,
+    combatant,
   );
 };
 
@@ -196,6 +230,61 @@ describe(createAinoKitBehaviour, () => {
       strikeSkillHit(context, takeOne(AINO_KIT.elementalSkill.hits));
 
       expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
+    });
+  });
+
+  describe("constellation 2's water ball", () => {
+    test("an active constellation's switch queues a water ball on an enemy the active member hits while Aino is off the field", () => {
+      expect.hasAssertions();
+      const { aino, context, teammate } = createTeammateTeam(2);
+      strikeEnemy(context, teammate, aino);
+
+      expect(context.strikes.map(({ target }) => target)).toStrictEqual([AINO_ENEMY]);
+    });
+
+    test("an inactive constellation changes nothing", () => {
+      expect.hasAssertions();
+      const { aino, context, teammate } = createTeammateTeam(1);
+      strikeEnemy(context, teammate, aino);
+
+      expect(context.strikes).toHaveLength(0);
+    });
+
+    test("the water ball queues nothing while Aino is on the field", () => {
+      expect.hasAssertions();
+      const { aino, context, teammate } = createTeammateTeam(2);
+      const onField = { ...context, activeCombatant: aino };
+      strikeEnemy(onField, aino, aino);
+      strikeEnemy(onField, teammate, aino);
+
+      expect(context.strikes).toHaveLength(0);
+    });
+
+    test("the water ball queues nothing once her burst's zone has run out", () => {
+      expect.hasAssertions();
+      const { aino, context, kitEffectState, teammate } = createTeammateTeam(2);
+      for (const effect of kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 0;
+      strikeEnemy(context, teammate, aino);
+
+      expect(context.strikes).toHaveLength(0);
+    });
+
+    test("the water ball fires once every five seconds", () => {
+      expect.hasAssertions();
+      const { aino, context, teammate } = createTeammateTeam(2);
+      // A step clears the strikes queued before it, so each read counts the balls queued on the enemy since the last step
+      const countQueuedBalls = (): number => context.strikes.filter(({ target }) => target === AINO_ENEMY).length;
+      strikeEnemy(context, teammate, aino);
+      strikeEnemy(context, teammate, aino);
+      const countBeforeCooldown = countQueuedBalls();
+      stepKitSeconds(context, 4);
+      strikeEnemy(context, teammate, aino);
+      const countWhileCoolingDown = countQueuedBalls();
+      // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the ball is read once a step past five
+      stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
+      strikeEnemy(context, teammate, aino);
+
+      expect([countBeforeCooldown, countWhileCoolingDown, countQueuedBalls()]).toStrictEqual([1, 0, 1]);
     });
   });
 });
