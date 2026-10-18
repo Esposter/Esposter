@@ -10,7 +10,7 @@ Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, a
 
 ## Not built
 
-- **Amber's A4 is left.** Its ATK bonus after a weak-point hit has no weak spot to strike: the enemies here have none, so there is no hit for the bonus to follow.
+- **Amber's A4 is left.** Its ATK bonus after a weak-point hit now has a hit to follow: the strike gives the Ruin machines' weak points to an aimed hit (provisional, see the kits README). The bonus itself is not built, so it stays left.
 
 ## Key files
 

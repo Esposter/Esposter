@@ -156,6 +156,7 @@ export const stepActiveKit = (
       body,
       combatant,
       hit: infusion === undefined ? hit : infuseKitHit(hit, infusion),
+      ...(action?.isAimed ? { isAimed: true } : {}),
     });
   landedHits.length = 0;
   if (strikes.length > 0) {
