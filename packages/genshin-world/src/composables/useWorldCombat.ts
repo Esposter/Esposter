@@ -181,14 +181,14 @@ export const useWorldCombat = ({
   const startingCombatant = activeCombatant.value;
   if (!startingCombatant)
     throw new InvalidOperationError(Operation.Read, useWorldCombat.name, `${getActiveCharacterId(party)}`);
-  // The world's combat state, which the character on the field steps into: it starts with the active character standing at
-  // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
-  // Seeded source, so a session's rolls repeat
   // The party's stamina pool, which the character on the field spends from and the kit restores to, held across swaps.
   // Impetuous Winds cuts every spend from it, the body's and the kit's, read from the field's resonances at each spend
   const stamina = createStamina(STAMINA_MAX, () =>
     getImpetuousWindsStaminaConsumptionMultiplier(activeCombatant.value?.elementalResonances ?? []),
   );
+  // The world's combat state, which the character on the field steps into: it starts with the active character standing at
+  // The origin, its enemies are written in as their Camps load and as they die, and its random source is the world's one
+  // Seeded source, so a session's rolls repeat
   const kitContext: KitContext = {
     activeCombatant: startingCombatant,
     body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
