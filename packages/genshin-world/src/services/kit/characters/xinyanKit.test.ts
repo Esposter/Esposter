@@ -16,6 +16,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createXinyanKitBehaviour, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -104,6 +105,41 @@ describe(createXinyanKitBehaviour, () => {
 
     expect([shieldLevelAfter(0, 1), shieldLevelAfter(0, 2), shieldLevelAfter(0, 3)]).toStrictEqual([1, 2, 3]);
     expect([shieldLevelAfter(1, 1), shieldLevelAfter(1, 2)]).toStrictEqual([2, 3]);
+  });
+
+  test("a burst's shield reads Xinyan's DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createXinyanCombatant(), constellationCount: 2 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    buffKitMember(kitEffectState, XINYAN_CHARACTER_ID, {
+      amount: 0.5,
+      attribute: Attribute.DefensePercent,
+      secondsRemaining: 10,
+    });
+    XINYAN_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const shield = kitEffectState.effects.findLast((effect): effect is KitShield => effect.kind === "shield");
+
+    expect(shield?.health).toBeCloseTo(692.8066 + 1.44 * 1_200);
+  });
+
+  test("a skill's later shield reads the DEF the skill was cast with, after the buff it was cast under lapses", () => {
+    expect.hasAssertions();
+    const combatant = createXinyanCombatant();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    buffKitMember(kitEffectState, XINYAN_CHARACTER_ID, {
+      amount: 0.5,
+      attribute: Attribute.DefensePercent,
+      secondsRemaining: 10,
+    });
+    XINYAN_KIT.elementalSkill.onStart?.(context);
+    kitEffectState.effects = kitEffectState.effects.filter((effect) => effect.kind !== "buff");
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    for (let strike = 0; strike < 3; strike++)
+      skillHit.onStrike?.(context, { body: context.body, combatant, hit: skillHit }, enemy);
+    const shield = kitEffectState.effects.findLast((effect): effect is KitShield => effect.kind === "shield");
+
+    expect(shield?.health).toBeCloseTo(692.8066 + 1.44 * 1_200);
   });
 
   test("rave's shield is its flat HP plus its share of DEF at level 3", () => {

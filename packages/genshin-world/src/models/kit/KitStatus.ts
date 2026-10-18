@@ -10,6 +10,8 @@ export interface KitStatus extends KitSwapEndable {
   secondsRemaining: number;
   // The count a kit keeps on the status as its hits strike or its heals land, if it counts them
   stacks?: number;
+  // A value a kit prices at the status's start and keeps for its seconds, such as the DEF a shield's later level is priced by
+  value?: number;
   // The Nightsoul points a Nightsoul's Blessing gains or drains each second it lasts, if it has any
   nightsoulRate?: KitNightsoulRate;
 }

@@ -18,6 +18,7 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { takeOne } from "@esposter/shared";
 
@@ -40,6 +41,7 @@ const SHIELD_DOT_INTERVAL_SECONDS = 2;
 const FIELD_LINGER_SECONDS = 0.1;
 const SHIELD_LEVEL_STATUS_ID = "xinyan-shield-level";
 const HIT_COUNT_STATUS_ID = "xinyan-sweeping-fervor-hits";
+const SHIELD_DEFENSE_STATUS_ID = "xinyan-shield-defense";
 const SHIELD_DOT_FIELD_ID = "xinyan-shield-dot";
 // "...Now That's Rock 'N' Roll!", as the dump's Xinyan_PermanentSkill_2 row (promote 4) and gcsim v2.47.2 (MIT)
 // Xinyan/asc.go give it: from Ascension 4, characters shielded by Sweeping Fervor deal 15% more Physical DMG, for as long
@@ -122,13 +124,14 @@ export const createXinyanKitBehaviour = ({
     combatant: Combatant,
     body: KitBody,
     level: number,
+    defense: number,
   ): void => {
     const { characterId } = combatant;
     const defenseShare = takeOne(shieldDefenseShares, level - 1);
     const flatHealth = takeOne(shieldFlatHealths, level - 1);
     castKitShield(kitEffectState, characterId, {
       element: Element.Pyro,
-      health: flatHealth + defenseShare * combatant.attributes.defense,
+      health: flatHealth + defenseShare * defense,
       secondsRemaining: shieldSeconds,
     });
     if (combatant.ascension >= ROCK_N_ROLL_ASCENSION)
@@ -165,7 +168,7 @@ export const createXinyanKitBehaviour = ({
     // The shield is set as the burst is cast, with the Physical hit's CRIT Rate for the moment it lands
     burst: {
       onStart: (context) => {
-        const { activeCombatant: combatant, body, kitEffectState } = context;
+        const { activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party } = context;
         if (combatant.constellationCount >= CRITICAL_RATE_CONSTELLATION)
           buffKitMember(kitEffectState, combatant.characterId, {
             amount: RIFF_CRITICAL_RATE_BONUS,
@@ -174,7 +177,14 @@ export const createXinyanKitBehaviour = ({
             source: RIFF_CRITICAL_RATE_SOURCE,
           });
         const hasShieldOnBurst = combatant.constellationCount >= SHIELD_ON_BURST_CONSTELLATION;
-        if (hasShieldOnBurst) setShield(context, combatant, body, SHIELD_LEVEL_THREE);
+        if (hasShieldOnBurst)
+          setShield(
+            context,
+            combatant,
+            body,
+            SHIELD_LEVEL_THREE,
+            getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap),
+          );
         castKitSummon(kitEffectState, body, combatant, hasShieldOnBurst ? constellationDotHits : riffDotHits, {
           isFollowing: true,
         });
@@ -202,19 +212,31 @@ export const createXinyanKitBehaviour = ({
           onStrike: (context, { body, combatant }) => {
             const { kitEffectState } = context;
             const hitCount = findKitStatus(kitEffectState.effects, combatant.characterId, HIT_COUNT_STATUS_ID);
-            if (!hitCount) return;
+            const castDefense = findKitStatus(
+              kitEffectState.effects,
+              combatant.characterId,
+              SHIELD_DEFENSE_STATUS_ID,
+            )?.value;
+            if (!hitCount || castDefense === undefined) return;
             hitCount.stacks = (hitCount.stacks ?? 0) + 1;
             const requiredLevel = getRequiredShieldLevel(hitCount.stacks, combatant.ascension);
             if (requiredLevel > findShieldLevel(kitEffectState.effects, combatant.characterId))
-              setShield(context, combatant, body, requiredLevel);
+              setShield(context, combatant, body, requiredLevel, castDefense);
           },
         },
       ],
-      // The press sets the level-1 shield when none stands, and resets the count its hit adds to
+      // The press sets the level-1 shield when none stands, and resets the count its hit adds to. Its DEF is read as the press
+      // Casts, and kept for the hit window, as gcsim prices every level the hits raise by the cast's snapshot
       onStart: (context) => {
-        const { activeCombatant: combatant, body, kitEffectState } = context;
+        const { activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party } = context;
+        const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         if (findShieldLevel(kitEffectState.effects, combatant.characterId) === 0)
-          setShield(context, combatant, body, SHIELD_LEVEL_ONE);
+          setShield(context, combatant, body, SHIELD_LEVEL_ONE, defense);
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: SHIELD_DEFENSE_STATUS_ID,
+          secondsRemaining: SKILL_HIT_WINDOW_SECONDS,
+          value: defense,
+        });
         addKitStatus(kitEffectState, combatant.characterId, {
           id: HIT_COUNT_STATUS_ID,
           secondsRemaining: SKILL_HIT_WINDOW_SECONDS,
