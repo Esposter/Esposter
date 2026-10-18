@@ -11,6 +11,7 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 - **The Prayer of the Crimson Crown is a field that stands wherever the body is.** It starts with the burst at the 33-frame hitmark and runs nine seconds, twelve from Constellation 1. Every 30 frames it infuses the party member on the field with Hydro for one second, if that member wields a sword, claymore or polearm, and a swap infuses the one coming on at once.
 - **Each swap while the Prayer stands sets off a wave round the body, three at most.** A wave is a circle of radius 3.5 metres round the body, struck one frame on, for 6.6% of her Max HP as flat Hydro DMG, the table's wave share. The wave count is a status that each burst restarts, as gcsim resets it on each cast.
 - **Constellation 6 sets off a wave on a party member's elemental normal attack.** While the Prayer stands, a `DamageTaken` event for a normal attack of the character on the field, by another member and with an element, sets off a wave for 15% of her Max HP. It waits 2.3 seconds, as gcsim's cooldown does. The event carries the striker and its element, so the check is the one gcsim makes.
+- **The skill's count holds at 1, as the charged hit is the hold's.** gcsim's skill has two hitmarks, 16 and 91, the tap and the charged hit, and the record builds the charged hit as the hold's action, so removing the count breaks the build. A reader that counts the hold's hit toward the skill settles it.
 
 ## Not built
 
