@@ -33,9 +33,9 @@ The trial rows come from five 7.1 tables. `TrialAvatar` maps a trial id to a cha
 
 ## Notes
 
-- The trial weapon is not in the trial rows. The three `TrialTpsWeapon` rows carry ids that are not weapon ids, so a trial party has no weapon until a source is found (blocked).
-- A trial's enemies are the monsters of its dungeon, which no built table yet reads (blocked on a dungeon reader).
-- Constellations are not in the trial rows, so a trial party has none (not built).
+- The trial weapon is not in the trial rows: a bare-value search of every trial table finds no weapon id, and the `TrialTpsWeapon` rows carry ids that are not weapon ids. The weapon is the wiki's, cited per character in `scripts/src/services/genshinAssets/trials/wikiTrialBuilds.ts`: the newest level-90 build by page date, joined by character name, so provisional. 30 characters have level-80 builds only and no cited weapon.
+- A trial's enemies are not in the dungeon rows, so the wiki's Trial Challenge wave lists stand in. They join to a chosen build by its page for 11 of 80, so the arena stays blocked until the lists are joined by group.
+- Constellations are not in the trial rows. Every level-90 wiki block reads 0 and an absent field is C0, so a trial party is C0 (cited).
 - The first-clear reward is claimed once and saved with the save, so the save gains a key and the stored saves owe a backfill when it lands.
 
 ## Sources

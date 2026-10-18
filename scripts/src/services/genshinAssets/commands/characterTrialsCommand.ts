@@ -14,6 +14,7 @@ import {
   TRIAL_STAGE_TABLE_NAME,
   TRIAL_TEMPLATE_TABLE_NAME,
 } from "#src/services/genshinAssets/trials/constants";
+import { WIKI_TRIAL_BUILDS } from "#src/services/genshinAssets/trials/wikiTrialBuilds";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
@@ -39,6 +40,7 @@ export const characterTrialsCommand: SubCommandsDef[string] = defineCommand({
             ),
             stageRows: readExcelTable<ExcelTrialAvatarActivityRow>(TRIAL_STAGE_TABLE_NAME),
             templateRows: readExcelTable<ExcelTrialAvatarTemplateRow>(TRIAL_TEMPLATE_TABLE_NAME),
+            wikiBuilds: WIKI_TRIAL_BUILDS,
           }),
         },
         scopes: [GameDataset.CharacterTrials],

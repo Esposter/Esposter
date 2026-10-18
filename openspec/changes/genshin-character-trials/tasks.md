@@ -13,9 +13,9 @@
 ## 3. Fight and reward
 
 - [ ] 3.1 Give a trial's first-clear reward once and record the claim. Verify: tests named after 'A trial's first clear gives its reward once' and 'A trial's later clear gives no reward'.
-- [ ] 3.2 Stand a trial's enemies in the domain arena. Blocked: the dungeon's monsters are not read yet.
+- [ ] 3.2 Stand a trial's enemies in the domain arena. Blocked: the dungeon rows carry no monsters, and the wiki's Trial Challenge wave lists join to 11 of the 80 cited builds by page, so the waves are not carried yet.
 
-## 4. Blocked
+## 4. Weapon and constellation
 
-- [ ] 4.1 Give a trial its weapon. Blocked: the trial rows carry no weapon id, and `TrialTpsWeapon` holds item ids.
-- [ ] 4.2 Give a trial its constellations. Blocked: not in the trial rows.
+- [x] 4.1 Give a trial its weapon from the wiki's Character Trial builds, cited to their page. The trial rows carry no weapon id, and the bare-value search finds none, so the table is the source; the join is by character name at level 90, provisional. Verify: buildTrials.test.ts, 'a trial stage pays its first-clear reward, and its character is kept at its level'.
+- [x] 4.2 Give a trial its constellation. Every level-90 wiki block reads 0 and an absent field is C0, so the trial's constellation is C0. Verify: the cited table's constellation field, in buildTrials.test.ts.

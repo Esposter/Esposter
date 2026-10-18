@@ -3,6 +3,7 @@ import type { ExcelTrialAvatarActivityRow } from "#src/models/genshinAssets/tria
 import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
 import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarTemplateRow";
 import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
+import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
 
 import { toRewardItemsById } from "#src/services/genshinAssets/rewards/toRewardItemsById";
 import { toTrialAvatar } from "#src/services/genshinAssets/trials/toTrialAvatar";
@@ -12,13 +13,15 @@ import { toTrialTemplate } from "#src/services/genshinAssets/trials/toTrialTempl
 import { GameDataset } from "genshin-world";
 
 // The character trials' records, each published under the dataset's key: the stages by id, the trial avatars by id, the
-// Reliquaries by id, the templates by level and the items each stage's first-clear reward pays, keyed by the reward id
+// Reliquaries by id, the templates by level, the weapon each trial character is fought with by character id, and the items
+// Each stage's first-clear reward pays, keyed by the reward id
 export interface TrialTables {
   avatarRows: ExcelTrialAvatarRow[];
   reliquaryRows: ExcelTrialReliquaryRow[];
   rewardMap: ReadonlyMap<number, ExcelRewardRow>;
   stageRows: ExcelTrialAvatarActivityRow[];
   templateRows: ExcelTrialAvatarTemplateRow[];
+  wikiBuilds: readonly WikiTrialBuild[];
 }
 
 export const buildTrials = ({
@@ -27,12 +30,19 @@ export const buildTrials = ({
   rewardMap,
   stageRows,
   templateRows,
+  wikiBuilds,
 }: TrialTables): Record<string, unknown> => {
   const stages = stageRows.map((row) => toTrialStage(row));
   const rewardIds = new Set(stages.map(({ rewardId }) => rewardId));
   return {
     [`${GameDataset.CharacterTrials}/avatars`]: Object.fromEntries(
       avatarRows.map((row) => toTrialAvatar(row)).map((avatar) => [avatar.trialAvatarId, avatar]),
+    ),
+    [`${GameDataset.CharacterTrials}/builds`]: Object.fromEntries(
+      wikiBuilds.map(({ characterId, constellation, refinement, weaponId }) => [
+        characterId,
+        { characterId, constellation, refinement, weaponId },
+      ]),
     ),
     [`${GameDataset.CharacterTrials}/reliquaries`]: Object.fromEntries(
       reliquaryRows.map((row) => toTrialReliquary(row)).map((reliquary) => [reliquary.id, reliquary]),
