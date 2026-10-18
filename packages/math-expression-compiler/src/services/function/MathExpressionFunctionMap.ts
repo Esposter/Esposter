@@ -83,7 +83,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   acsch: createUnarySignatures((value) => Math.asinh(1 / value)),
   add: createVariadicSignatures(2, computeSum, (left, right) => left + right),
   addScalar: createBinarySignatures((left, right) => left + right),
-  and: createVariadicSignatures(2, (values) => toNumber(values.every((value) => checkIsTruthy(value)))),
+  and: createVariadicSignatures(1, (values) => toNumber(values.every((value) => checkIsTruthy(value)))),
   arg: createUnarySignatures((value) => (Number.isNaN(value) ? Number.NaN : value < 0 ? Math.PI : 0)),
   asec: createUnarySignatures((value) => Math.acos(1 / value)),
   asech: createUnarySignatures((value) => Math.acosh(1 / value)),
@@ -308,7 +308,7 @@ export const MathExpressionFunctionMap: Record<string, MathExpressionSignature[]
   unequal: createBinarySignatures((left, right) => toNumber(!checkIsNearlyEqual(left, right))),
   variance: createSpreadSignatures(1, createNonEmptyCompute(computeVariance)),
   xor: createVariadicSignatures(
-    2,
+    1,
     (values) => toNumber(computeTruthyCount(values) % 2 === 1),
     (left, right) => toNumber(checkIsTruthy(left) !== checkIsTruthy(right)),
   ),

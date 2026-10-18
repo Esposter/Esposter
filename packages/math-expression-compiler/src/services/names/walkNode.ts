@@ -1,5 +1,6 @@
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
+import { MathExpressionLogicalOperator } from "#src/models/shared/MathExpressionLogicalOperator";
 import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 import { MathExpressionBitwiseAbsorptionMap } from "#src/services/compiler/MathExpressionBitwiseAbsorptionMap";
 import { getMathExpressionChildren } from "#src/services/shared/getMathExpressionChildren";
@@ -47,7 +48,8 @@ export const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set
     }
     case MathExpressionNodeType.Logical:
       walkNode(node.left, bound, free);
-      walkNode(node.right, new Set(bound), free);
+      // A nullish takes its left side over numbers, so its right side is never read
+      if (node.operator !== MathExpressionLogicalOperator.Nullish) walkNode(node.right, new Set(bound), free);
       return;
     case MathExpressionNodeType.Name:
       if (!bound.has(node.name)) free.add(node.name);

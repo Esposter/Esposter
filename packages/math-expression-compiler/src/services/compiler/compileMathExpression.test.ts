@@ -145,6 +145,10 @@ describe("defect fixes", () => {
     expect(evaluateFormula("or(0, 0, 1)")).toBe(1);
     expect(evaluateFormula("xor(1, 1, 1)")).toBe(1);
     expect(evaluateFormula("xor(1, 1)")).toBe(0);
+    expect(evaluateFormula("and(1)")).toBe(1);
+    expect(evaluateFormula("and(0)")).toBe(0);
+    expect(evaluateFormula("xor(1)")).toBe(1);
+    expect(evaluateFormula("xor(0)")).toBe(0);
   });
 
   test("#2464 an exact root of a perfect power is exact", () => {

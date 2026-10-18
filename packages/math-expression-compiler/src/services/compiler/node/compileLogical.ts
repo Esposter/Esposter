@@ -13,6 +13,10 @@ export const compileLogical = (
   context: MathExpressionCompileContext,
 ): MathExpressionCompiled => {
   const compiledLeft = context.compile(node.left);
+  // A nullish takes its left side over numbers, so its right side, which nothing evaluates, is not compiled
+  if (node.operator === MathExpressionLogicalOperator.Nullish)
+    return { evaluate: (values, locals) => compiledLeft.evaluate(values, locals), isConstant: compiledLeft.isConstant };
+
   const compiledRight = context.compile(node.right);
   const isConstant = compiledLeft.isConstant && compiledRight.isConstant;
   switch (node.operator) {
@@ -26,11 +30,6 @@ export const compileLogical = (
           return rightValue === null ? null : toNumber(checkIsTruthy(rightValue));
         },
         isConstant,
-      };
-    case MathExpressionLogicalOperator.Nullish:
-      return {
-        evaluate: (values, locals) => compiledLeft.evaluate(values, locals),
-        isConstant: compiledLeft.isConstant,
       };
     case MathExpressionLogicalOperator.Or:
       return {
