@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -13,6 +14,7 @@ import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 import { takeOne } from "@esposter/shared";
@@ -60,6 +62,37 @@ describe(strikeStellarReaction, () => {
       takeOne(CharacterLevelMultiplierMap, LEVEL) *
         0.75 *
         LUNAR_CONTRIBUTION_WEIGHTS[0] *
+        getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Anemo)),
+      6,
+    );
+  });
+
+  test("a contributor's Stellar Glimmer reaction DMG bonus raises its share of the reaction by that amount", () => {
+    expect.hasAssertions();
+    const enemy = createSturdyEnemy();
+    const context = createKitTestContext(combatant, { enemyTables });
+    buffKitMember(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      amount: 0.16,
+      attribute: Attribute.StellarGlimmerReactionDamageBonus,
+      secondsRemaining: 12,
+      source: "test",
+    });
+
+    strikeStellarReaction(
+      enemy,
+      Element.Anemo,
+      STELLAR_SWIRL_ANEMO_COEFFICIENT,
+      new Set([TRAVELER_CHARACTER_ID]),
+      combatant,
+      context,
+    );
+
+    // The unbuffed share with its reaction bonus of sixteen per cent added to the Elemental Mastery's bonus, which is nil at zero
+    expect(enemy.maxHealth - enemy.health).toBeCloseTo(
+      takeOne(CharacterLevelMultiplierMap, LEVEL) *
+        0.75 *
+        LUNAR_CONTRIBUTION_WEIGHTS[0] *
+        (1 + 0.16) *
         getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Anemo)),
       6,
     );
