@@ -14,6 +14,7 @@ import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTre
 import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
+import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
@@ -68,6 +69,10 @@ export interface WorldTables {
   seelies: Seelie[];
   // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
   shopIdShopGoodMap: ReadonlyMap<number, ShopGood[]>;
+  // The Shrine of Depths keys of Mondstadt's region, each opening the shrines of that region
+  shrineKeySources: ShrineKeySource[];
+  // The Shrines of Depths the official map marks in Mondstadt, each opened by a key of its region
+  shrinePlaces: PuzzlePlace[];
   // The kits of the team the world starts with, by character id, so its first frame has each member's combatant
   startingCharacterIdKitMap: ReadonlyMap<number, Kit>;
   // The game's stat tables a character is made and summed from

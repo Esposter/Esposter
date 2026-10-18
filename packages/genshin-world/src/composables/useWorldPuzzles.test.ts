@@ -44,6 +44,9 @@ describe(useWorldPuzzles, () => {
     position: { x: 0, z: 0 },
   };
 
+  const SHRINE_ID = "shrine";
+  const shrinePlace: PuzzlePlace = { id: SHRINE_ID, kind: PuzzleKind.ShrineOfDepths, position: { x: 0, z: 0 } };
+
   test("a Seelie the save names as settled starts settled at its court", () => {
     expect.hasAssertions();
 
@@ -52,6 +55,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set([SETTLED_SEELIE_ID]),
       savedSolvedPuzzleIds: new Set(),
       seelies: [createSeelie(SETTLED_SEELIE_ID), createSeelie(RESTING_SEELIE_ID)],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
 
@@ -66,6 +70,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [createSeelie(RESTING_SEELIE_ID)],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
     stepWorldPuzzles(1, { x: SEELIE_FOLLOW_DISTANCE, z: 0 });
@@ -81,6 +86,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE + 1, z: 0 });
@@ -101,6 +107,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(0, timeTrialPlace.position);
@@ -117,6 +124,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set([TIME_TRIAL_ID]),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(1, timeTrialPlace.position);
@@ -135,6 +143,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
     strikeWorldPuzzles(STRIKING_BODY, PYRO_HIT);
@@ -150,11 +159,30 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [],
     });
     strikeWorldPuzzles(STRIKING_BODY, HYDRO_HIT);
 
     expect(monumentMarkers.map(({ puzzle }) => puzzle.monuments.map(({ isLit }) => isLit))).toStrictEqual([[false]]);
+  });
+
+  test("a shrine the save names as opened is kept open", () => {
+    expect.hasAssertions();
+
+    const { shrineMarkers, solvedPuzzleIds } = useWorldPuzzles({
+      monumentPlaces: [],
+      savedSettledSeelieIds: new Set(),
+      savedSolvedPuzzleIds: new Set([SHRINE_ID]),
+      seelies: [],
+      shrinePlaces: [shrinePlace],
+      timeTrialPlaces: [],
+    });
+
+    expect({ isOpen: shrineMarkers[0]?.shrine.isOpen, solvedPuzzleIds: [...solvedPuzzleIds.value] }).toStrictEqual({
+      isOpen: true,
+      solvedPuzzleIds: [SHRINE_ID],
+    });
   });
 
   test("finishing every target in time spawns the chest", () => {
@@ -165,6 +193,7 @@ describe(useWorldPuzzles, () => {
       savedSettledSeelieIds: new Set(),
       savedSolvedPuzzleIds: new Set(),
       seelies: [],
+      shrinePlaces: [],
       timeTrialPlaces: [timeTrialPlace],
     });
     stepWorldPuzzles(0, { x: TIME_TRIAL_MARKER_REACH_DISTANCE, z: 0 });

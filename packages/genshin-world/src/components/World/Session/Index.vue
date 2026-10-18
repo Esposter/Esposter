@@ -93,6 +93,7 @@ import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
+import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
 import { useWorldSave } from "#src/composables/useWorldSave";
@@ -258,6 +259,8 @@ const {
   seelies,
   serverClockOffsetMs = 0,
   shopIdShopGoodMap,
+  shrineKeySources,
+  shrinePlaces,
   startingCharacterIdKitMap,
   statTables,
   talentUpgradeMap,
@@ -548,12 +551,13 @@ const {
   weaponDataMap: statTables.weaponDataMap,
   wallet,
 });
-// The Elemental Monuments of Mondstadt, the Seelies and the Time Trial Challenges, each lit, led or started by the player,
-// And each settled or solved where the save names it, with the chests they spawn
+// The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
+// Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
 const {
   puzzleChestPlaces,
   puzzleSeelies,
   settledSeelieIds,
+  shrineMarkers,
   solvedPuzzleIds,
   stepWorldPuzzles,
   strikeWorldPuzzles,
@@ -563,6 +567,7 @@ const {
   savedSettledSeelieIds: savedState.settledSeelieIds,
   savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
   seelies,
+  shrinePlaces,
   timeTrialPlaces,
 });
 // The camps' chest locks as the Enemies component writes them, and each time trial's lock until it is solved
@@ -571,6 +576,15 @@ const chestLockSources = computed<ChestLockSource[]>(() => [
   ...campLockSources.value,
   ...timeTrialMarkers.map(({ id, position }) => ({ isDone: solvedPuzzleIds.value.has(id), positions: [position] })),
 ]);
+// Each shut shrine is offered beneath its point while the bag holds a key of its region, and opened with that key
+const { openShrineById, shrineInteractables } = useWorldShrines({
+  gameText,
+  getGroundHeight,
+  inventory,
+  setInventory,
+  shrineKeySources,
+  shrineMarkers,
+});
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, digChestById, openChestById, worldChestPlaces } = useWorldChests({
   artifactMainAffixPools,
@@ -1206,6 +1220,7 @@ const interactables = computed<Interactable[]>(() => {
     ...pickUpInteractables.value,
     ...residentInteractables.value,
     ...chestInteractables.value,
+    ...shrineInteractables.value,
     ...outcropInteractables.value,
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
@@ -1503,6 +1518,11 @@ defineExpose({ jumpTo, readCameraPosition });
             else if (interactable?.kind === InteractionKind.PickUp && materialSource)
               pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
+            else if (
+              interactable?.kind === InteractionKind.Open &&
+              shrineMarkers.some(({ id }) => id === interactable.id)
+            )
+              openShrineById(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
             else if (interactable?.kind === InteractionKind.Claim && trounceBlossoms.has(interactable.id))
               openTrounceBlossomClaim(interactable.id, getWorldNow());
