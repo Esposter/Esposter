@@ -103,6 +103,7 @@ const create = () => {
         </GameButton>
       </li>
     </ul>
+    <p v-if="candidates.length === 0">{{ gameText[GameTextKey.MysticOfferingRequiresFiveStar] }}</p>
     <p v-if="!isReady">{{ gameText[GameTextKey.MysticOfferingNotEnough] }}</p>
     <GameButton :kind="GameButtonKind.Row" :disabled="!isReady" @click="isConfirming = true">
       {{ gameText[GameTextKey.MysticOfferingCreate] }}
