@@ -32,14 +32,14 @@ A note's envelope SHALL be scheduled to its computed value at the note's end rat
 - **WHEN** a note ends in a browser that lacks holding the envelope
 - **THEN** the envelope ends at its computed level
 
-### Requirement: Lowest band overfilled
+### Requirement: Noise starts from the loop clock
 
-Each note's noise SHALL start from the loop clock's position, which overfills the lowest band.
+Each note's noise SHALL start from the loop clock's position, with one phase per band across every buffer. The lowest band it overfills is a known defect the design records, not a behaviour this requirement holds.
 
-#### Scenario: Lowest band plays
+#### Scenario: Notes sounding at once share one noise
 
-- **WHEN** notes play in the lowest band
-- **THEN** that band sounds louder than its measured level
+- **WHEN** two notes sound at the same time
+- **THEN** they play one noise in step, as the clock's position gives every note the same phase
 
 ### Requirement: Player schedules ahead of the clock
 
