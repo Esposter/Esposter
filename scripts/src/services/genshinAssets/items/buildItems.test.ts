@@ -34,6 +34,9 @@ describe(buildItems, () => {
 
   const DISH_ITEM_ID = 108_011;
 
+  const BATCH_CONSUMABLE_ITEM_ID = 7001;
+  const QUEST_CONSUMABLE_ITEM_ID = 7002;
+
   const materialRows = [
     {
       foodQuality: "",
@@ -240,5 +243,60 @@ describe(buildItems, () => {
     await expect(buildItems()).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 107010, has no material type in the material table, so the bag would show it in no tab]`,
     );
+  });
+
+  test("publishes a consumable whose use adds an item, filed under the consume tab", async () => {
+    expect.hasAssertions();
+    vi.mocked(readExcelTable).mockReturnValue([
+      ...readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
+      {
+        foodQuality: "",
+        id: BATCH_CONSUMABLE_ITEM_ID,
+        itemUse: [{ useOp: "ITEM_USE_ADD_ITEM", useParam: [String(GADGET_ITEM_ID), "1"] }],
+        materialType: "MATERIAL_CONSUME_BATCH_USE",
+        nameTextMapHash: 7,
+        rank: 1,
+        rankLevel: 2,
+        stackLimit: 99,
+      },
+    ]);
+
+    const built = await buildItems();
+
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(items.filter(({ id }) => id === BATCH_CONSUMABLE_ITEM_ID)).toStrictEqual([
+      {
+        id: BATCH_CONSUMABLE_ITEM_ID,
+        materialType: "MATERIAL_CONSUME",
+        nameTextId: "7",
+        rank: 1,
+        rarity: 2,
+        stackLimit: 99,
+      },
+    ]);
+  });
+
+  test("a consumable of a tab the bag does not show is no bag item", async () => {
+    expect.hasAssertions();
+    vi.mocked(readExcelTable).mockReturnValue([
+      ...readExcelTable<MaterialRow>(MATERIAL_TABLE_NAME),
+      {
+        foodQuality: "",
+        id: QUEST_CONSUMABLE_ITEM_ID,
+        itemUse: [{ useOp: "ITEM_USE_ADD_ITEM", useParam: [String(GADGET_ITEM_ID), "1"] }],
+        materialType: "MATERIAL_QUEST",
+        nameTextMapHash: 8,
+        rank: 1,
+        rankLevel: 1,
+        stackLimit: 99,
+      },
+    ]);
+
+    const built = await buildItems();
+
+    const ids = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(ids.map(({ id }) => id)).not.toContain(QUEST_CONSUMABLE_ITEM_ID);
   });
 });
