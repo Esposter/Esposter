@@ -43,8 +43,9 @@ export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveM
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.DamageTaken || event.striker.characterId !== combatant.characterId) return;
       const { attackTag } = event;
-      const stacks = attackTag === undefined ? undefined : stacksByAttackTag.get(attackTag);
-      if (attackTag === undefined || stacks === undefined) return;
+      if (attackTag === undefined) return;
+      const stacks = stacksByAttackTag.get(attackTag);
+      if (stacks === undefined) return;
       const { characterId } = combatant;
       const { kitEffectState, party } = context;
       if (getActiveCharacterId(party) !== characterId) return;
