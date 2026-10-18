@@ -9,4 +9,5 @@ export const VARKA_CHARACTER_ID = 10_000_128;
 // Constellation 1 needs the Sturm und Drang switch's Windbound Execution effects, which the kit does not build
 // Constellation 2 needs the Four Winds' Ascension Cryo infusion and its extra hits, which the kit does not build
 // Constellation 6 needs the Sturm und Drang mode's own effects, which the kit does not build
+// Constellation 4 needs the Swirl's team Anemo buff, which the empty kit does not build
 export const createVarkaKitBehaviour = (): KitBehaviour => ({});

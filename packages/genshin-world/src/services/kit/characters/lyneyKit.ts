@@ -19,6 +19,7 @@ const CONSTELLATION_4_STATUS_ID = "lyney-c4-pyro-resistance";
 // Bonus, its heal and the hats it explodes, Miracle Parade's ticks, and his passives and Constellations 1 and 6 are not built
 // Constellation 1 needs Prop Surplus stacks, which the kit does not build, and the hat Prop Arrows add
 // Constellation 6 needs the Reprised Pyrotechnic Strike's own hitmark, which the kit does not read
+// Constellation 2 needs Crisp Focus's stack every 2 seconds on the field, which the kit's timers do not build
 export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecordReader): KitBehaviour => {
   const pyrotechnicStrikeFields = readHitFields("pyrotechnicStrike", ["hitmarkSeconds"]);
   // The Pyro RES the Prop Arrow's strike cuts from the enemy it hits, from Constellation 4, for its seconds
