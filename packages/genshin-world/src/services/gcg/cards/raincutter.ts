@@ -4,6 +4,7 @@ import { Element } from "#src/models/Element";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplication";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const RAINCUTTER_DAMAGE = 2;

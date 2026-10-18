@@ -2,7 +2,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { reflection } from "#src/services/gcg/cards/reflection";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const REFLECTION_ID = 112_031;
@@ -12,7 +12,7 @@ const MIRROR_REFLECTION_OF_DOOM_DAMAGE = 1;
 
 export const mirrorReflectionOfDoom: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).summons.push(createGcgZoneCard(REFLECTION_ID, reflection));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).summons, REFLECTION_ID, reflection);
   },
   getDamage: () => ({ damageType: Element.Hydro, value: MIRROR_REFLECTION_OF_DOOM_DAMAGE }),
 };

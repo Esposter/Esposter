@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { shadowswordLoneGale } from "#src/services/gcg/cards/shadowswordLoneGale";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const SHADOWSWORD_LONE_GALE_ID = 125_011;
@@ -10,6 +10,6 @@ const SHADOWSWORD_LONE_GALE_ID = 125_011;
 // Blustering Blade (Character Card Skill))
 export const blusteringBlade: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).summons.push(createGcgZoneCard(SHADOWSWORD_LONE_GALE_ID, shadowswordLoneGale));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).summons, SHADOWSWORD_LONE_GALE_ID, shadowswordLoneGale);
   },
 };

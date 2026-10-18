@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const DANDELION_FIELD_ID = 115_021;
@@ -14,6 +14,6 @@ export const dandelionBreeze: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
     for (const character of side.characters) healGcgCharacter(character, DANDELION_BREEZE_HEAL);
-    side.summons.push(createGcgZoneCard(DANDELION_FIELD_ID, dandelionField));
+    placeGcgZoneCard(side.summons, DANDELION_FIELD_ID, dandelionField);
   },
 };
