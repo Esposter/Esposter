@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.rainSwordsTickInterval": { "cause": "Unclassified", "value": 135 },
   "frames.raincutterExtra": { "cause": "Unclassified", "value": 33 },
   "frames.rainSwordsBurstFirstTick": { "cause": "Unclassified", "value": 19 },
