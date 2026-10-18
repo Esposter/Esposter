@@ -182,6 +182,14 @@ describe("counting and primality", () => {
     expect(evaluateFormula("isPrime(1.5)")).toBe(0);
   });
 
+  test("a factorial is the product mathjs computes, to the last bit", () => {
+    expect.hasAssertions();
+
+    expect(evaluateFormula("30!")).toBe(2.6525285981219107e32);
+    expect(evaluateFormula("100!")).toBe(9.332621544394414e157);
+    expect(evaluateFormula("170!")).toBe(7.257415615307998e306);
+  });
+
   test("compare orders a NaN operand before any number, as mathjs does", () => {
     expect.hasAssertions();
 

@@ -4098,7 +4098,7 @@
 {"formula":"boolean()","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":false},
 {"formula":"factorial(-1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
 {"formula":"factorial(0.5)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":0.8862269254527576,"tolerance":true},
-{"formula":"factorial(170)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":7.257415615307998e+306,"tolerance":true},
+{"formula":"factorial(170)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":7.257415615307998e+306},
 {"formula":"factorial(171)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
 {"formula":"gamma(0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
 {"formula":"gamma(-1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
@@ -5916,8 +5916,8 @@
 {"formula":"gamma((-0.5))","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-3.5449077018110335,"tolerance":true},
 {"formula":"gamma(10)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":362880},
 {"formula":"gamma(20)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":121645100408832000},
-{"formula":"gamma(170)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":4.2690680090047036e+304,"tolerance":true},
-{"formula":"gamma(171)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":7.257415615307998e+306,"tolerance":true},
+{"formula":"gamma(170)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":4.2690680090047036e+304},
+{"formula":"gamma(171)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":7.257415615307998e+306},
 {"formula":"gamma(172)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
 {"formula":"gcd(0, 1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1},
 {"formula":"gcd(0, (-1))","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":1},
@@ -8452,5 +8452,10 @@
 {"formula":"compare(1, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
 {"formula":"compare(0 / 0, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
 {"formula":"compareNatural(0 / 0, 1)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
-{"formula":"compareNatural(1, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1}
+{"formula":"compareNatural(1, 0 / 0)","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":-1},
+{"formula":"20!","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":2432902008176640000},
+{"formula":"50!","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3.0414093201713376e+64},
+{"formula":"150!","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":5.713383956445854e+262},
+{"formula":"171!","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"},
+{"formula":"172!","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":"Infinity"}
 ]}
