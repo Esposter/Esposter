@@ -21,7 +21,7 @@ export const buildKitPublication = (
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
-  for (const { characterId, name, publishedRecord } of inputs) {
+  for (const { characterId, name, publishedRecord, tables } of inputs) {
     let built: BuiltKit;
     try {
       built = buildKitRecordWithDonors(characterId, inputMap, builtMap);

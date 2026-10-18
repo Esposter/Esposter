@@ -1,4 +1,5 @@
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
@@ -42,7 +43,7 @@ describe(buildKitPublication, () => {
     ]),
   );
   // The same values, with the first strike's hitmark as another donor's gcsim gives it
-  const DONOR_CANDIDATE_MAP = new Map([
+  const DONOR_CANDIDATE_MAP = new Map<string, KitCandidate[]>([
     ...SOURCE_CANDIDATE_MAP,
     [HITMARK_PATH, [{ provenance: { file: "donor.go", line: 1, source: KitSource.Gcsim } as const, value: 99 }]],
   ]);
@@ -69,7 +70,7 @@ describe(buildKitPublication, () => {
     characterId: number,
     isPublished: boolean,
     overlay: KitOverlay = {},
-    sourceCandidateMap = SOURCE_CANDIDATE_MAP,
+    sourceCandidateMap: Map<string, KitCandidate[]> = SOURCE_CANDIDATE_MAP,
   ): KitInput => {
     const tables = createTables(characterId);
     return {

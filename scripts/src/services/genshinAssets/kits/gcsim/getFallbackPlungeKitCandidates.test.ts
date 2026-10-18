@@ -28,6 +28,7 @@ describe(getFallbackPlungeKitCandidates, () => {
         ["collisionHitmark", plungeConstant(50, 20)],
       ]),
       filePaths: [],
+      holdCooldowns: [],
       folder: "bennett",
       queuedAttacks: [],
       talentFile: "bennett.go",
