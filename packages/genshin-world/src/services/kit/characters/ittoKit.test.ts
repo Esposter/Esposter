@@ -14,6 +14,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIttoKitBehaviour, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
@@ -55,6 +56,39 @@ describe(createIttoKitBehaviour, () => {
     expect(context.kitEffectState.effects).toStrictEqual([
       {
         amount: 0.576 * combatant.attributes.defense,
+        attribute: Attribute.Attack,
+        characterId: ITTO_CHARACTER_ID,
+        isEndedOnSwap: true,
+        kind: "buff",
+        secondsRemaining: 13.25,
+      },
+      {
+        characterId: ITTO_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        isEndedOnSwap: true,
+        kind: "infusion",
+        normalAttackSpeedBonus: 0.1,
+        secondsRemaining: 13.25,
+      },
+    ]);
+  });
+
+  test("the burst's ATK per DEF reads Itto's DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIttoCombatant());
+    buffKitMember(context.kitEffectState, ITTO_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    ITTO_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      { amount: 100, attribute: Attribute.Defense, characterId: ITTO_CHARACTER_ID, kind: "buff", secondsRemaining: 1 },
+      {
+        amount: 0.576 * 100,
         attribute: Attribute.Attack,
         characterId: ITTO_CHARACTER_ID,
         isEndedOnSwap: true,

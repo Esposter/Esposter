@@ -1,17 +1,14 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import {
-  CRYO_ELEMENTAL_INFUSION_ID,
-  CRYO_ELEMENTAL_INFUSION_ROUNDS,
-  cryoElementalInfusion,
-} from "#src/services/gcg/cards/cryoElementalInfusion";
+import { CRYO_ELEMENTAL_INFUSION_ROUNDS, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 
 // The id Kamisato Art: Senho's status is held under: the passive's own skill id, since the dump names no card for it
-export const SENHO_STATUS_ID = 11_054;
 const SENHO_TRIGGERS_PER_ROUND = 2;
 const SENHO_BONUS = 1;
 

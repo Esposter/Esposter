@@ -12,8 +12,10 @@ import { timaeus } from "#src/services/gcg/cards/timaeus";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const TIMAEUS_ID = 322_003;
 const ARTIFACT_IDS = [401, 402, 403, 404, 405, 406];
 const ACTION_ID = 501;
 const HAND_CARD_LIMIT = 10;
@@ -54,6 +56,8 @@ const createSide = (deckCardIds: number[], drawPile: number[], hand: number[] = 
 });
 
 const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

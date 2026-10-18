@@ -1,6 +1,5 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2439 } },
-  "burst.hits.0.poiseDamage": { "cause": "Unclassified", "value": 400 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }

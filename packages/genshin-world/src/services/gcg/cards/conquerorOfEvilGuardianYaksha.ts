@@ -3,13 +3,10 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
 import { Element } from "#src/models/Element";
-import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/yakshasMask";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
-
-const XIAO_ID = 1_504;
-const BANE_OF_ALL_EVIL_ID = 15_043;
-const LEMNISCATIC_WIND_CYCLING_ID = 15_042;
+import { BANE_OF_ALL_EVIL_ID, LEMNISCATIC_WIND_CYCLING_ID, XIAO_ID } from "#src/services/gcg/cards/constants";
 
 // Conqueror of Evil: Guardian Yaksha, Xiao's talent: equipped to her while she is active, it has her use Bane of All Evil at
 // once. While she has Yaksha's Mask, her Lemniscatic Wind Cycling costs one Anemo die less, and each attachment of the mask

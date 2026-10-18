@@ -143,3 +143,31 @@ From Ascension 1, while Precise Movement lasts, Iansan's burst restore SHALL giv
 - **GIVEN** Iansan is at Ascension 0
 - **WHEN** the burst's restore falls
 - **THEN** it gives her no points
+
+### Requirement: Ascension 4's Warming Up heals on her restore
+
+From Ascension 4, a nearby party member's Nightsoul burst SHALL give Iansan Warming Up for 10 seconds. While it lasts, each restore of at least one Nightsoul point SHALL heal the active character for 60% of Iansan's ATK, and the heal SHALL wait 2.8 seconds after each heal. Below Ascension 4 a burst SHALL give her nothing.
+
+#### Scenario: The restore heals the active character for 60% of her ATK
+
+- **GIVEN** Iansan is at Ascension 4 with Warming Up up
+- **WHEN** her burst's restore gives her points
+- **THEN** the active character heals for 60% of her current ATK
+
+#### Scenario: The heal waits 2.8 seconds after each heal
+
+- **GIVEN** Iansan has just healed the active character with Warming Up
+- **WHEN** a further restore falls within 2.8 seconds
+- **THEN** it heals nothing
+
+#### Scenario: Warming Up lasts 10 seconds
+
+- **GIVEN** a nearby party member's Nightsoul burst gives Iansan Warming Up
+- **WHEN** 10 seconds pass
+- **THEN** Warming Up is gone, and a restore heals nothing
+
+#### Scenario: Below Ascension 4 a burst gives no Warming Up
+
+- **GIVEN** Iansan is at Ascension 3
+- **WHEN** a Nightsoul burst goes off
+- **THEN** she gains no Warming Up

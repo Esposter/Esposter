@@ -9,6 +9,7 @@ import type { ComputedRef, Ref } from "vue";
 
 import { getTalkOffers } from "#src/services/dialogue/getTalkOffers";
 import { mergeTalks } from "#src/services/dialogue/mergeTalks";
+import { checkIsGcgCardGameOpen } from "#src/services/gcg/checkIsGcgCardGameOpen";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { getResultAsync } from "@esposter/shared";
@@ -19,6 +20,7 @@ import { InteractionKind } from "genshin-interface";
 // Starts. A quest's talk wins a shared id
 export const useWorldTalks = ({
   gameDataBaseUrl,
+  getAdventureRank,
   getGroundHeight,
   getResidents,
   getResidentSpot,
@@ -30,6 +32,8 @@ export const useWorldTalks = ({
   questTextMap,
 }: {
   gameDataBaseUrl: string;
+  // The Adventure Rank the player stands at, which opens the card game's duels from its rank
+  getAdventureRank: () => number;
   getGroundHeight: (x: number, z: number) => number;
   getResidents: () => Resident[];
   getResidentSpot: (residentId: string) => ResidentSpot | undefined;
@@ -87,9 +91,11 @@ export const useWorldTalks = ({
       ? getTalkOffers(questsOpen.value, questProgressMap.value, talk.value.npcIds)
       : [],
   );
-  // The card game's duel a resident offers from the talk it begins, if that resident offers one
+  // The card game's duel a resident offers from the talk it begins, if that resident offers one and the card game is open
   const getTalkDuelGameId = (talkId: string) =>
-    getResidents().find((resident) => resident.talkId === talkId)?.duelGameId;
+    checkIsGcgCardGameOpen(getAdventureRank())
+      ? getResidents().find((resident) => resident.talkId === talkId)?.duelGameId
+      : undefined;
   // A resident is a row only at the spot they are shown at this hour, so one absent from it is no row. F begins their
   // Own talk where the world holds it, else the first quest talk open to them, and a resident with neither is no row
   const residentInteractables = computed<Interactable[]>(() =>

@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -13,7 +13,7 @@ const SWIRL_REACTIONS = [{ reactionType: ReactionType.Swirl }, { reactionType: R
 // Bathhouses, Hawks, and Narukami at its rank: Elemental Mastery rises by the rank's amount for its seconds after its wielder
 // Triggers a Swirl or a Stellar Swirl, by the second amount for the second seconds after its Elemental Skill hits an opponent,
 // And by the third amount for the third seconds after its Elemental Burst hits one
-export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]): PassiveModule => {
   const swirlMastery = takeOne(params, 0);
   const skillMastery = takeOne(params, 1);
   const burstMastery = takeOne(params, 2);

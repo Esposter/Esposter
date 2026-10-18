@@ -4,9 +4,8 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { Element } from "#src/models/Element";
 import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { takeOne } from "@esposter/shared";
+import { ARATAKI_ITTO_ID } from "#src/services/gcg/cards/constants";
 
-export const USHI_ID = 116_051;
-const ARATAKI_ITTO_ID = 1_605;
 const USHI_DAMAGE = 1;
 const USHI_REDUCTION = 1;
 const USHI_USAGES = 1;

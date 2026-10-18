@@ -11,6 +11,8 @@ const LINNEA_BURST_GROUP_ID = 13_039;
 const LINNEA_SKILL_GROUP_ID = 13_032;
 const LOHEN_BURST_GROUP_ID = 12_939;
 const LOHEN_SKILL_GROUP_ID = 12_932;
+const COLUMBINA_BURST_GROUP_ID = 12_539;
+const COLUMBINA_SKILL_GROUP_ID = 12_532;
 
 const CLORINDE_NAME = "Clorinde";
 const CLORINDE_CHARACTER_ID = 10_000_098;
@@ -213,6 +215,19 @@ describe(getTableKitCandidates, () => {
     expect(readCandidateValues(candidates)).toStrictEqual({
       "parameters.etchedWillToWinDamagePerPoint": { index: 17, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
       "parameters.manifestJudgmentWillToWinDamagePerPoint": { index: 1, proudSkillGroupId: LOHEN_BURST_GROUP_ID },
+    });
+  });
+
+  test("reads Columbina's Lunar Reaction DMG Bonus from her burst as the burst's Lunar damage bonus, at its index in the burst group", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates(
+      createTables(new Map([[COLUMBINA_BURST_GROUP_ID, [{ indexes: [1], label: "Lunar Reaction DMG Bonus" }]]]), {
+        burstGroupId: COLUMBINA_BURST_GROUP_ID,
+        skillGroupId: COLUMBINA_SKILL_GROUP_ID,
+      }),
+    );
+    expect(readCandidateValues(candidates)).toStrictEqual({
+      "parameters.burstLunarReactionDamageBonus": { index: 1, proudSkillGroupId: COLUMBINA_BURST_GROUP_ID },
     });
   });
 

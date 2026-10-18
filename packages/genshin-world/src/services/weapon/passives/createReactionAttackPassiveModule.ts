@@ -1,6 +1,6 @@
 import type { Element } from "#src/models/Element";
 import type { ReactionType } from "#src/models/combat/ReactionType";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -15,7 +15,7 @@ const REACTION_ATTACK_SECONDS = 12;
 export const createReactionAttackPassiveModule = (
   reactions: { element?: Element; reactionType: ReactionType }[],
   params: number[],
-): WeaponPassiveModule => {
+): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {

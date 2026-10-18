@@ -9,6 +9,8 @@ import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const FULL_HP = 10;
 
@@ -53,6 +55,8 @@ const createSide = (sideCharacters: GcgCharacterState[]) => ({
 
 // A duel of two sides, the first with the given characters, the round in progress
 const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

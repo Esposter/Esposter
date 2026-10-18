@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -11,7 +11,7 @@ const ARCHERS_MESSAGE_COOLDOWN_SECONDS = 10;
 
 // Archer's Message at its rank: a Charged Attack hit on a weak point queues an extra hit on the enemy it struck
 // At the rank's multiplier of ATK, which always lands as a critical hit, and a proc holds off the next for ten seconds
-export const createArchersMessagePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createArchersMessagePassiveModule = (params: number[]): PassiveModule => {
   const talentMultiplier = takeOne(params, 0);
   return {
     onKitEvent: (event, context, combatant) => {

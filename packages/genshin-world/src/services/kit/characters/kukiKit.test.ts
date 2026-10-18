@@ -41,6 +41,11 @@ const castEffects = (action: KitAction, combatant = createKukiCombatant()): KitE
 const castSummon = (action: KitAction): KitSummon | undefined =>
   castEffects(action).find((effect): effect is KitSummon => effect.kind === "summon");
 
+const ringsOf = (effects: readonly KitEffect[]): KitField[] =>
+  effects.filter(
+    (effect): effect is KitField => effect.kind === "field" && Number.isFinite(effect.tickIntervalSeconds),
+  );
+
 const ringSeconds = (constellationCount: number): number =>
   castEffects(KUKI_KIT.elementalSkill, createKukiCombatant(0, constellationCount))
     .filter((effect): effect is KitField => effect.kind === "field")
@@ -90,6 +95,16 @@ describe(createKukiKitBehaviour, () => {
 
     expect(ringSeconds(1)).toBeCloseTo(23 / 60 + 12 + 0.1);
     expect(ringSeconds(2)).toBeCloseTo(23 / 60 + 15 + 0.1);
+  });
+
+  test("a second cast replaces the Grass Ring rather than standing beside it, as gcsim keeps one ring for the skill", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const combatant = createKukiCombatant();
+    KUKI_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    KUKI_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(ringsOf(kitEffectState.effects)).toHaveLength(1);
   });
 
   test("each Grass Ring tick heals the active character and strikes 2 frames after it, from the 113th frame every 90", () => {

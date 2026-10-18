@@ -11,11 +11,20 @@ import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import {
+  GCSIM_NOELLE_FIXTURE_DIRECTORY,
+  GCSIM_ROSARIA_FIXTURE_DIRECTORY,
+  GCSIM_SARA_FIXTURE_DIRECTORY,
+} from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
+import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
@@ -627,6 +636,60 @@ describe(getGcsimKitCandidates, () => {
     expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([0]);
   });
 
+  test("reads each queue call of Noelle's burst as a hit, its second slash a Mult set's copy of the attack the first fires", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "noelle",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_NOELLE_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_NOELLE_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [24], [65]]);
+  });
+  test("reads each queue call of Rosaria's burst as a hit, her lance's a Mult set's copy of the attack the first fires, and no DoT tick", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "rosaria",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_ROSARIA_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_ROSARIA_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [15], [56]]);
+  });
+  test("reads no hit from the repeated calls of a Mult set's copy in Kujou Sara's cluster loop, which are its ticks", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "sara",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_SARA_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_SARA_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [51], undefined]);
+  });
   test("joins a frames path the kit holds under a constant's name to that constant, and adds no path the kit lacks", () => {
     expect.hasAssertions();
 
@@ -849,6 +912,62 @@ describe(getGcsimKitCandidates, () => {
     ]);
     expect(candidateMap.get("stances.blessing.normalAttacks.1.hits.0.area")?.map(({ value }) => value)).toStrictEqual([
       createBoxReach(-0.5, 5, 3.7),
+    ]);
+  });
+
+  test("gives a loop shot's two actions to the blessing stance, each striking twice on the player's circle from its hitmarks, the skill's multiplier and its attack", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("kinich", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArt",
+          durability: 25,
+          element: "attributes.Dendro",
+          fieldLineMap: {},
+          file: "attack.go",
+          internalCooldownTag: "attacks.ICDTagKinichLoopShot",
+          line: 115,
+          talentVariable: "loopShot",
+          variableName: "ai",
+        },
+      ],
+      constants: [
+        ["skillHitNum", attackConstant(2, 35)],
+        [
+          "skillAttackHitmarks",
+          attackConstant(
+            [
+              [30, 38],
+              [31, 38],
+            ],
+            29,
+          ),
+        ],
+      ],
+      talentParameters: [["skill|Loop Shot DMG", { indexes: [0], line: 161 }]],
+      talentVariables: [
+        {
+          leaves: [{ path: [0], reference: { label: "Loop Shot DMG", selector: 0, type: GcsimTalentType.Skill } }],
+          name: "loopShot",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect(valuesAt("stances.blessing.normalAttacks.length")).toStrictEqual([2]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.animationFrames")).toStrictEqual([53]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.hits.0.hitmarkFrames")).toStrictEqual([30]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.hitmarkFrames")).toStrictEqual([31]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.1.hitmarkFrames")).toStrictEqual([38]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.area")).toStrictEqual([createCircleReach(0, 0.5)]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.multiplier")).toStrictEqual([
+      { index: 0, proudSkillGroupId: 2 },
+    ]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.element")).toStrictEqual([Element.Dendro]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.internalCooldownTag")).toStrictEqual([
+      InternalCooldownTag.KinichLoopShot,
     ]);
   });
 

@@ -16,6 +16,7 @@ import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
+import { DAWN_WINERY_ID, ICICLE_ID, LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 
 describe("switching characters under the field's cards", () => {
   const SEED = 5;

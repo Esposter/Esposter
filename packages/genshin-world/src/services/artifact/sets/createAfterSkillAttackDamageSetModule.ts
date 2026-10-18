@@ -1,4 +1,4 @@
-import type { ArtifactSetModule } from "#src/models/artifact/ArtifactSetModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ export const createAfterSkillAttackDamageSetModule = ({
   amount: number;
   seconds: number;
   source: string;
-}): ArtifactSetModule => ({
+}): PassiveModule => ({
   onKitEvent: (event, { kitEffectState }, combatant) => {
     if (event.kind !== KitEventKind.SkillUsed || event.characterId !== combatant.characterId) return;
     for (const attribute of [Attribute.NormalAttackDamageBonus, Attribute.ChargedAttackDamageBonus])

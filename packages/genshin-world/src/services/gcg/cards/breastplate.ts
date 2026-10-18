@@ -2,13 +2,13 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
+import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { FULL_PLATE_ID } from "#src/services/gcg/cards/constants";
 
 const BREASTPLATE_DAMAGE = 1;
-const FULL_PLATE_ID = 116_021;
 const FULL_PLATE_SHIELD = 2;
 
 // Breastplate, Noelle's elemental skill: 1 Geo DMG, and a Full Plate onstage, which grants 2 Shield points to the active
@@ -17,7 +17,7 @@ export const breastplate: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
-    if (user) user.shield = Math.min(GCG_SHIELD_LIMIT, user.shield + FULL_PLATE_SHIELD);
+    if (user) addGcgShield(user, FULL_PLATE_SHIELD);
     side.onstages.push(createGcgZoneCard(FULL_PLATE_ID, fullPlate));
   },
   getDamage: () => ({ damageType: Element.Geo, value: BREASTPLATE_DAMAGE }),

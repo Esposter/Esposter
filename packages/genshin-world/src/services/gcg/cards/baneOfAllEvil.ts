@@ -1,7 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 

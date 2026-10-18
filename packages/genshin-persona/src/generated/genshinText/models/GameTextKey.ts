@@ -119,19 +119,6 @@ export enum GameTextKey {
   // The blossom of an outcrop that gives Mora, by its English name
   BlossomOfWealth = "UI_BLOSSOM_CHEST_TIMEOUT_MORA",
   BossQuickChallenge = "UI_BOSS_QUICKSTART_TITLE",
-  // The Mondstadt bounty copy the keeper's offer, the world's target and the claim show, as the game's manual text map files it
-  BountyAccept = "HUNTING_ACCEPT",
-  BountyAcceptReplaceConfirm = "HUNTING_ACCEPT_INFO",
-  BountyClaim = "HUNTING_TAKE_REWARD",
-  BountyCompleted = "HUNTING_SUCCESS",
-  BountyCompletedHint = "HUNTING_SUCCESS_HINT",
-  BountyFailed = "HUNTING_FAIL",
-  BountyFailedHint = "HUNTING_FAIL_HINT",
-  BountyInProgress = "HUNTING_ACCEPTING",
-  BountyOffer = "HUNTING_OFFERREWARD",
-  BountyRewards = "HUNTING_REWARD",
-  BountyStart = "HUNTING_START",
-  BountyWeeklyLimit = "REPUTATION_HUNTING_TIPS_MAX",
   BrilliantChrysanthemum = "2302571844",
   BulleFruit = "457891068",
   Cacahuatl = "1982182708",
@@ -756,8 +743,6 @@ export enum GameTextKey {
   StatueBlessing = "3126052466",
   // A Statue of The Seven, as the map titles its mark
   StatueOfTheSeven = "UI_MAPMARK_MarkGoddess_TITLE",
-  // The title of a Statue of The Seven's Worship screen, which F on a resonated statue opens
-  StatueWorship = "1652053571",
   StormbearerMountains = "490004829",
   StormterrorsLair = "775762325",
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title

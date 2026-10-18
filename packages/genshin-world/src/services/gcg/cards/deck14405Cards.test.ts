@@ -19,22 +19,31 @@ import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { BAKE_KURAGE_ID, bakeKurage } from "#src/services/gcg/cards/bakeKurage";
-import { CAPRICIOUS_VISAGE_ID, capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
-import { CEREMONIAL_GARMENT_ID, ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
-import { EMBLEM_OF_SEVERED_FATE_ID, emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
-import { HANACHIRUSATO_ID, hanachirusato } from "#src/services/gcg/cards/hanachirusato";
-import { KID_KUJIRAI_ID, kidKujirai } from "#src/services/gcg/cards/kidKujirai";
-import { RAGING_ONI_KING_ID, ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
-import { SESSHOU_SAKURA_ID, sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
-import {
-  SUPERLATIVE_SUPERSTRENGTH_ID,
-  superlativeSuperstrength,
-} from "#src/services/gcg/cards/superlativeSuperstrength";
-import { TENKO_THUNDERBOLTS_ID, tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
-import { THE_SHRINES_SACRED_SHADE_ID, theShrinesSacredShade } from "#src/services/gcg/cards/theShrinesSacredShade";
+import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
+import { BAKE_KURAGE_ID } from "#src/services/gcg/cards/constants";
+import { capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
+import { CAPRICIOUS_VISAGE_ID } from "#src/services/gcg/cards/constants";
+import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
+import { CEREMONIAL_GARMENT_ID } from "#src/services/gcg/cards/constants";
+import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
+import { EMBLEM_OF_SEVERED_FATE_ID } from "#src/services/gcg/cards/constants";
+import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
+import { HANACHIRUSATO_ID } from "#src/services/gcg/cards/constants";
+import { kidKujirai } from "#src/services/gcg/cards/kidKujirai";
+import { KID_KUJIRAI_ID } from "#src/services/gcg/cards/constants";
+import { ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
+import { RAGING_ONI_KING_ID } from "#src/services/gcg/cards/constants";
+import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
+import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
+import { superlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
+import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
+import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
+import { TENKO_THUNDERBOLTS_ID } from "#src/services/gcg/cards/constants";
+import { theShrinesSacredShade } from "#src/services/gcg/cards/theShrinesSacredShade";
+import { THE_SHRINES_SACRED_SHADE_ID } from "#src/services/gcg/cards/constants";
 import { thunderAndEternity } from "#src/services/gcg/cards/thunderAndEternity";
-import { USHI_ID, ushi } from "#src/services/gcg/cards/ushi";
+import { ushi } from "#src/services/gcg/cards/ushi";
+import { USHI_ID } from "#src/services/gcg/cards/constants";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
@@ -46,16 +55,15 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { TENKO_KENSHIN_ID, XIAO_ID, YAE_MIKO_ID, YAKAN_EVOCATION_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const INAZUMA = "INAZUMA";
 const LIYUE = "LIYUE";
-const YAE_MIKO_ID = 1_408;
 const KOKOMI_ID = 1_205;
 const ITTO_ID = 1_605;
-const XIAO_ID = 1_504;
-const YAKAN_EVOCATION_ID = 14_082;
-const TENKO_KENSHIN_ID = 14_083;
 const KURAGE_OATH_ID = 12_052;
 const NEREID_ASCENSION_ID = 12_053;
 const MASATSU_ZETSUGI_ID = 16_052;
@@ -101,6 +109,8 @@ const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["di
   usedSkillIds: [],
 });
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -155,7 +165,7 @@ describe("capricious Visage", () => {
       createSideState([createCharacterState(YAE_MIKO_ID, Element.Electro)]),
       createSideState([]),
     ]);
-    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
     const zoneCard = createZoneCard(CAPRICIOUS_VISAGE_ID);
     const subject: GcgCostSubject = { card: TALENT_CARD, costs: [{ ...ELECTRO_DIE }], element: Element.Electro };
     expect(capriciousVisage.reduceCost?.(context, subject, zoneCard)).toStrictEqual({
@@ -174,7 +184,11 @@ describe("capricious Visage", () => {
     ]);
     const subject: GcgCostSubject = { costs: [{ ...ELECTRO_DIE }], element: Element.Electro, skill: ELEMENTAL_SKILL };
     expect(
-      capriciousVisage.reduceCost?.({ duel, sideIndex: 0 }, subject, createZoneCard(CAPRICIOUS_VISAGE_ID)),
+      capriciousVisage.reduceCost?.(
+        { characterIndex: 0, duel, sideIndex: 0 },
+        subject,
+        createZoneCard(CAPRICIOUS_VISAGE_ID),
+      ),
     ).toStrictEqual({ count: 1, kind: GcgCostKind.Dice });
   });
 
@@ -192,7 +206,11 @@ describe("capricious Visage", () => {
       createSideState([]),
     ]);
     expect(
-      capriciousVisage.reduceCost?.({ duel, sideIndex: 0 }, subject, createZoneCard(CAPRICIOUS_VISAGE_ID)),
+      capriciousVisage.reduceCost?.(
+        { characterIndex: 0, duel, sideIndex: 0 },
+        subject,
+        createZoneCard(CAPRICIOUS_VISAGE_ID),
+      ),
     ).toBeUndefined();
   });
 });
@@ -537,7 +555,7 @@ describe("superlative Superstrength", () => {
       element: Element.Geo,
       skill: ITTO_NORMAL_ATTACK,
     };
-    const context: GcgEffectContext = { duel, sideIndex: 0 };
+    const context: GcgEffectContext = { characterIndex: 0, duel, sideIndex: 0 };
     expect(
       superlativeSuperstrength.reduceCost?.(context, subject, {
         ...createGcgZoneCard(SUPERLATIVE_SUPERSTRENGTH_ID, superlativeSuperstrength),

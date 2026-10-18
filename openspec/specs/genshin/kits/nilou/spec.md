@@ -1,6 +1,6 @@
 ## Purpose
 
-Nilou's kit as built, with Dance of Haftkarsvar's Pirouette and Lunar Prayer, Dance of Abzendegi's hit, Constellations 1 and 6, and what is left of Ascension, Lingering Aeon, Tranquility Aura and Constellations 2 to 5.
+Nilou's kit as built, with Dance of Haftkarsvar's Pirouette and Lunar Prayer, Dance of Abzendegi's hit, Constellations 1, 2 and 6, and what is left of Ascension, Lingering Aeon, Tranquility Aura and Constellations 3 to 5.
 
 ## Requirements
 
@@ -86,6 +86,28 @@ Constellation 1 SHALL add 65% damage to the sword dance's Luminous Illusion hit 
 - **WHEN** her attacks are priced
 - **THEN** her CRIT Rate stops at 30% and her CRIT DMG stops at 60%
 
+### Requirement: Constellation 2's RES cuts
+
+From Constellation 2 with Ascension 1, a Hydro hit by a team member under Golden Chalice's Bounty SHALL lower the struck enemy's Hydro RES by 35% for 10 seconds, and a Bloom or Lunar-Bloom reaction SHALL lower the Dendro RES of the enemy it triggers on by 35% for 10 seconds.
+
+#### Scenario: A Bounty member's Hydro hit cuts the enemy's Hydro RES
+
+- **GIVEN** Nilou has Constellation 2 and Ascension 1, and a team member is under Golden Chalice's Bounty
+- **WHEN** that member's Hydro hit lands on an enemy
+- **THEN** the enemy's Hydro RES is lowered by 35% for 10 seconds
+
+#### Scenario: A Bloom reaction cuts the enemy's Dendro RES
+
+- **GIVEN** Nilou has Constellation 2 and Ascension 1
+- **WHEN** a Bloom or Lunar-Bloom reaction triggers on an enemy
+- **THEN** the enemy's Dendro RES is lowered by 35% for 10 seconds
+
+#### Scenario: Constellation 1 cuts no RES
+
+- **GIVEN** Nilou has Constellation 1 but not Constellation 2
+- **WHEN** a Hydro hit under the Bounty or a Bloom reaction lands
+- **THEN** no enemy RES is lowered
+
 ### Requirement: Pirouette's later steps are blocked
 
 A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the cast set, so the Whirling Steps are reachable only after Pirouette ends.
@@ -160,7 +182,7 @@ From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG 
 
 ### Requirement: Unbuilt Nilou effects
 
-Nilou's Constellations 2 and 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
+Nilou's Constellation 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -15,7 +15,7 @@ const WOLFISH_TRACKER_SECONDS = 12;
 // Wolf's Gravestone's Wolfish Tracker at its rank: its wielder's ATK is raised by the rank's percentage.
 // A hit the wielder deals on an enemy under thirty per cent of its HP raises the deployed team's ATK by the rank's second
 // Percentage for twelve seconds, once every thirty seconds. The seconds and the thirty per cent are the text's, not the parameter list's
-export const createWolfishTrackerPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createWolfishTrackerPassiveModule = (params: number[]): PassiveModule => {
   const attackPercent = takeOne(params, 0);
   const teamAttackPercent = takeOne(params, 1);
   return {

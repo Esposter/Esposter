@@ -18,6 +18,8 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki
 const RING_CONSTELLATION = 2;
 const RING_CONSTELLATION_SECONDS = 3;
+// The ring's field id: a second cast restarts the ring it finds, as gcsim keeps one Grass Ring status for her skill
+const RING_FIELD_ID = "kuki-grass-ring";
 // Measured: gcsim (MIT) kuki/skill.go, Kuki drains 30% of her current HP as she casts, but no further than to 20% of her
 // Max HP. Her HP is a party member's health share, so the drain reads it at the cast's first step
 const HP_DRAIN_SHARE = 0.3;
@@ -83,6 +85,7 @@ export const createKukiKitBehaviour = ({
     const ringSeconds =
       ringBaseSeconds + (combatant.constellationCount >= RING_CONSTELLATION ? RING_CONSTELLATION_SECONDS : 0);
     castKitField(kitEffectState, combatant.characterId, position, {
+      id: RING_FIELD_ID,
       nextTickSeconds: ringFirstTickSeconds,
       onTick: (tick) => {
         const ascensionHealing =

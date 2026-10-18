@@ -4,8 +4,8 @@ import { Element } from "#src/models/Element";
 import { checkCanPlayGcgElementalResonance } from "#src/services/gcg/effects/createGcgElementalResonance";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { SHATTERING_ICE_ID } from "#src/services/gcg/cards/constants";
 
-const SHATTERING_ICE_ID = 331_102;
 const SHATTERING_ICE_BONUS = 2;
 
 // Elemental Resonance: Shattering Ice, a Cryo Elemental Resonance event: the active character deals 2 more DMG on her next
