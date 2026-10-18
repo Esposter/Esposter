@@ -28,6 +28,7 @@ import InteractionPromptList from "#src/components/Interaction/PromptList/Index.
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
+import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -877,6 +878,17 @@ defineExpose({ jumpTo, readCameraPosition });
           :stat-tables
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
+        />
+      </template>
+      <template #[ScreenKind.PartySetup]>
+        <PartyScreen
+          :character-data-map="statTables.characterDataMap"
+          :characters
+          :game-text
+          :name-text="nameText"
+          :party
+          :traveler-name="savedState.travelerName"
+          @close="screenKind = ScreenKind.World"
         />
       </template>
     </MenuScreen>
