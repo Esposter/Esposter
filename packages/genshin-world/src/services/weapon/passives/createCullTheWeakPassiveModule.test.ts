@@ -17,8 +17,8 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
-// Cull the Weak at its first rank: eight per cent of Max HP for each defeat
-const cullTheWeakPassiveModule = createCullTheWeakPassiveModule([0.08]);
+// Cull the Weak with synthetic params: 20% of Max HP for each defeat
+const cullTheWeakPassiveModule = createCullTheWeakPassiveModule([0.2]);
 
 describe(createCullTheWeakPassiveModule, () => {
   test("defeating an opponent restores the wielder its share of Max HP", () => {
@@ -32,7 +32,7 @@ describe(createCullTheWeakPassiveModule, () => {
       wielder,
     );
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(0.58);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(0.7);
   });
 
   test("a defeat with no striker restores the wielder nothing", () => {

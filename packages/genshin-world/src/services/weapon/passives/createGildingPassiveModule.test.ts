@@ -13,8 +13,9 @@ import { createGildingPassiveModule } from "#src/services/weapon/passives/create
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// Gilding at its first rank: six seconds of energy every two seconds and a share of Max HP to the team on each tick
-const gildingPassiveModule = createGildingPassiveModule([6, 2, 4, 0.04]);
+// Gilding with synthetic params: eight seconds, a tick every two seconds, and on each tick three energy and 5%
+// Of Max HP, given to the deployed team
+const gildingPassiveModule = createGildingPassiveModule([8, 2, 3, 0.05]);
 const createBurstUsed = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   energyCost: 0,
@@ -31,7 +32,7 @@ const createWielder = (health: number): Combatant => ({
 });
 
 describe(createGildingPassiveModule, () => {
-  test("a burst regenerates the wielder's energy every two seconds for six seconds", () => {
+  test("a burst regenerates the wielder's energy every two seconds for eight seconds", () => {
     expect.hasAssertions();
 
     const wielder = createWielder(1000);
@@ -40,9 +41,9 @@ describe(createGildingPassiveModule, () => {
 
     stepKitSeconds(context, 2.1);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBeCloseTo(4);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBeCloseTo(3);
 
-    stepKitSeconds(context, 4.1);
+    stepKitSeconds(context, 6.1);
 
     expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBeCloseTo(12);
   });
@@ -57,6 +58,6 @@ describe(createGildingPassiveModule, () => {
 
     stepKitSeconds(context, 6.1);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(0.62);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).healthShare).toBeCloseTo(0.65);
   });
 });

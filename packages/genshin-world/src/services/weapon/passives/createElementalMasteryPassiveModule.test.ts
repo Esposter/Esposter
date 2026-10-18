@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Elemental Mastery at its first rank: the elemental DMG percentage per stack and its seconds
-const elementalMasteryPassiveModule = createElementalMasteryPassiveModule([0.06, 6]);
+// Elemental Mastery with synthetic params: the elemental DMG percentage per stack and its seconds
+const elementalMasteryPassiveModule = createElementalMasteryPassiveModule([0.05, 3]);
 const createNormalAttackHit = () => ({
   attackTag: AttackTag.NormalAttack,
   enemy,
@@ -38,8 +38,8 @@ describe(createElementalMasteryPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     elementalMasteryPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.06);
-    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.06);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.05);
+    expect(getBuff(kitEffectState, Attribute.HydroDamageBonus)?.amount).toBeCloseTo(0.05);
   });
 
   test("a third normal attack hit holds the stacks at two", () => {
@@ -51,6 +51,6 @@ describe(createElementalMasteryPassiveModule, () => {
     elementalMasteryPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
     elementalMasteryPassiveModule.onKitEvent?.(createNormalAttackHit(), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.12);
+    expect(getBuff(kitEffectState, Attribute.PyroDamageBonus)?.amount).toBeCloseTo(0.1);
   });
 });

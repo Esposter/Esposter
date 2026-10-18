@@ -23,8 +23,8 @@ const strike: KitStrike = {
   hit: takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits),
 };
 const party = createParty([TRAVELER_CHARACTER_ID]);
-// Bane of the Soft at its first rank, which reads its DMG percentage from the affix row's first number
-const baneOfTheSoftPassiveModule = createBaneOfTheSoftPassiveModule([0.4]);
+// Bane of the Soft with a synthetic percentage, which is its only param
+const baneOfTheSoftPassiveModule = createBaneOfTheSoftPassiveModule([0.2]);
 
 describe(createBaneOfTheSoftPassiveModule, () => {
   test("a strike on a slime is raised by the rank's percentage", () => {
@@ -32,7 +32,7 @@ describe(createBaneOfTheSoftPassiveModule, () => {
 
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), enemyKindId: EnemyKindId.AnemoSlime };
 
-    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party, [])).toBeCloseTo(0.4);
+    expect(baneOfTheSoftPassiveModule.getStrikeDamageBonus?.(strike, enemy, party, [])).toBeCloseTo(0.2);
   });
 
   test("a strike on another kind of enemy is not raised", () => {

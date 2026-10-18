@@ -15,8 +15,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
-// Lost Prayer to the Sacred Winds at its first rank: ten per cent Movement SPD and eight per cent Elemental DMG Bonus a stack
-const boundlessBlessingPassiveModule = createBoundlessBlessingPassiveModule([0.1, 0.08, 0, 0]);
+// Lost Prayer to the Sacred Winds with synthetic params: 20% Movement SPD and 5% Elemental DMG Bonus a stack
+const boundlessBlessingPassiveModule = createBoundlessBlessingPassiveModule([0.2, 0.05]);
 const swapOnto = (characterId: number, previousCharacterId: number): KitEvent => ({
   characterId,
   kind: KitEventKind.CharacterSwapped,
@@ -30,7 +30,7 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     expect(boundlessBlessingPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.1, attribute: Attribute.MovementSpeed },
+      { amount: 0.2, attribute: Attribute.MovementSpeed },
     ]);
   });
 
@@ -46,7 +46,7 @@ describe(createBoundlessBlessingPassiveModule, () => {
       (effect): effect is KitBuff => effect.kind === "buff" && effect.source === BOUNDLESS_BLESSING_ID,
     );
     expect(buffs.map(({ attribute }) => attribute)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES);
-    expect(buffs.map(({ amount }) => amount)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map(() => 0.08));
+    expect(buffs.map(({ amount }) => amount)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map(() => 0.05));
   });
 
   test("the stacks are at most four", () => {

@@ -22,10 +22,10 @@ const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
-  // At the End of the Beast-Paths at its first rank: its All Elemental DMG Bonus is a passive bonus. A Charged Attack obtains
-  // Tireless Hunt, adding 160% of Elemental Mastery to the Charged Attack DMG it is obtained with, ending after 12 Charged
-  // Attacks or 10 seconds, and it is obtained once every 12 seconds
-  const atTheEndOfTheBeastPathsPassiveModule = createAtTheEndOfTheBeastPathsPassiveModule([0.12, 1.6, 12, 10, 12]);
+  // At the End of the Beast-Paths with synthetic params: its All Elemental DMG Bonus is a passive bonus. A Charged
+  // Attack obtains Tireless Hunt, adding 50% of Elemental Mastery to the Charged Attack DMG it is obtained with, ending
+  // After 3 Charged Attacks or 2 seconds, and it is obtained once every 4 seconds
+  const atTheEndOfTheBeastPathsPassiveModule = createAtTheEndOfTheBeastPathsPassiveModule([0.2, 0.5, 3, 2, 4]);
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.ElementalMastery, value: 100 }]);
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
@@ -58,7 +58,7 @@ describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
     expect([createBonus(context, AttackTag.ChargedAttack), createBonus(context, AttackTag.NormalAttack)]).toStrictEqual(
-      [160, 0],
+      [50, 0],
     );
   });
 
@@ -71,52 +71,52 @@ describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
     expect(createBonus(context, AttackTag.ChargedAttack)).toBe(0);
   });
 
-  test("the Tireless Hunt ends after its 12 charged attacks", () => {
+  test("the Tireless Hunt ends after its 3 charged attacks", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     const chargedAttackHit = createDamageTaken(AttackTag.ChargedAttack);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
-    for (let instance = 0; instance < 11; instance++)
+    for (let instance = 0; instance < 2; instance++)
       atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
-    const bonusAfter11Instances = createBonus(context, AttackTag.ChargedAttack);
+    const bonusAfter2Instances = createBonus(context, AttackTag.ChargedAttack);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
 
-    expect([bonusAfter11Instances, createBonus(context, AttackTag.ChargedAttack)]).toStrictEqual([160, 0]);
+    expect([bonusAfter2Instances, createBonus(context, AttackTag.ChargedAttack)]).toStrictEqual([50, 0]);
   });
 
-  test("the Tireless Hunt ends after ten seconds", () => {
+  test("the Tireless Hunt ends after two seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
-    stepKitSeconds(context, 10.1);
+    stepKitSeconds(context, 2.1);
 
     expect(createBonus(context, AttackTag.ChargedAttack)).toBe(0);
   });
 
-  test("the wielder obtains Tireless Hunt once every twelve seconds", () => {
+  test("the wielder obtains Tireless Hunt once every four seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     const chargedAttackHit = createDamageTaken(AttackTag.ChargedAttack);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
-    for (let instance = 0; instance < 12; instance++)
+    for (let instance = 0; instance < 3; instance++)
       atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
     const bonusInsideCooldown = createBonus(context, AttackTag.ChargedAttack);
-    stepKitSeconds(context, 12.1);
+    stepKitSeconds(context, 4.1);
     atTheEndOfTheBeastPathsPassiveModule.onKitEvent?.(chargedAttackHit, context, wielder);
 
-    expect([bonusInsideCooldown, createBonus(context, AttackTag.ChargedAttack)]).toStrictEqual([0, 160]);
+    expect([bonusInsideCooldown, createBonus(context, AttackTag.ChargedAttack)]).toStrictEqual([0, 50]);
   });
 
-  test("the wielder's Elemental DMG Bonuses rise by 12% each", () => {
+  test("the wielder's Elemental DMG Bonuses rise by 20% each", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     expect(
       atTheEndOfTheBeastPathsPassiveModule.getPassiveBonuses?.(wielder, 1, [], context.kitEffectState.effects),
-    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })));
+    ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.2, attribute })));
   });
 });

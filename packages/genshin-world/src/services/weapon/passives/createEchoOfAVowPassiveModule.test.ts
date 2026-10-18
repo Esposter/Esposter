@@ -18,9 +18,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Echo of a Vow at its first rank: sixty Elemental Mastery for twelve seconds after a reaction, and sixteen per cent Stellar Glimmer
-// Reaction DMG for twelve seconds after a Stellar Glimmer reaction
-const echoOfAVowPassiveModule = createEchoOfAVowPassiveModule([60, 0.16, 12, 12]);
+// Echo of a Vow with synthetic params: 50 Elemental Mastery for three seconds after a reaction, and 10% Stellar Glimmer
+// Reaction DMG for two seconds after a Stellar Glimmer reaction
+const echoOfAVowPassiveModule = createEchoOfAVowPassiveModule([50, 0.1, 3, 2]);
 const createReaction = (reactionType: ReactionType, element: Element) => ({
   enemy,
   kind: KitEventKind.ReactionTriggered as const,
@@ -38,11 +38,11 @@ describe(createEchoOfAVowPassiveModule, () => {
 
     expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
       {
-        amount: 60,
+        amount: 50,
         attribute: Attribute.ElementalMastery,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "echoOfAVow",
       },
     ]);
@@ -60,19 +60,19 @@ describe(createEchoOfAVowPassiveModule, () => {
 
     expect(getBuffs(context.kitEffectState.effects)).toStrictEqual([
       {
-        amount: 60,
+        amount: 50,
         attribute: Attribute.ElementalMastery,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "echoOfAVow",
       },
       {
-        amount: 0.16,
+        amount: 0.1,
         attribute: Attribute.StellarGlimmerReactionDamageBonus,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 2,
         source: "echoOfAVow",
       },
     ]);

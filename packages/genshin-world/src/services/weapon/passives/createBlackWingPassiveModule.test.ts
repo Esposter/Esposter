@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Skyward Spine at its first rank: eight per cent CRIT Rate, twelve per cent Normal Attack SPD, a half chance, forty per cent ATK
-const blackWingPassiveModule = createBlackWingPassiveModule([0.08, 0.12, 0.5, 0.4]);
+// Skyward Spine with synthetic params: 20% CRIT Rate, 30% Normal Attack SPD, a quarter chance, 60% ATK
+const blackWingPassiveModule = createBlackWingPassiveModule([0.2, 0.3, 0.25, 0.6]);
 const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
   attackTag,
   enemy,
@@ -36,8 +36,8 @@ describe(createBlackWingPassiveModule, () => {
     expect.hasAssertions();
 
     expect(blackWingPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.08, attribute: Attribute.CriticalRate },
-      { amount: 0.12, attribute: Attribute.NormalAttackSpeed },
+      { amount: 0.2, attribute: Attribute.CriticalRate },
+      { amount: 0.3, attribute: Attribute.NormalAttackSpeed },
     ]);
   });
 
@@ -48,7 +48,7 @@ describe(createBlackWingPassiveModule, () => {
     blackWingPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toHaveLength(1);
-    expect(context.strikes[0]?.hit.talentMultiplier).toBe(0.4);
+    expect(context.strikes[0]?.hit.talentMultiplier).toBe(0.6);
   });
 
   test("a normal attack that rolls at or above the chance queues nothing", () => {

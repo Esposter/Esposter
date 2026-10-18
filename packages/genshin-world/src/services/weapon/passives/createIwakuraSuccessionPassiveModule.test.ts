@@ -11,9 +11,9 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant();
-// Iwakura Succession at its first rank: seeds last thirty seconds, three at most, a seed on a five-second cooldown, and six
-// Energy a seed
-const iwakuraSuccessionPassiveModule = createIwakuraSuccessionPassiveModule([30, 3, 5, 6]);
+// Iwakura Succession with synthetic params: seeds last twenty-four seconds, two at most, and a seed on a
+// Three-second cooldown, and four Energy a seed
+const iwakuraSuccessionPassiveModule = createIwakuraSuccessionPassiveModule([24, 2, 3, 4]);
 const SEED_ID = "succession";
 const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
@@ -35,10 +35,10 @@ describe(createIwakuraSuccessionPassiveModule, () => {
     const context = createKitTestContext(wielder);
     for (let use = 0; use < 4; use++) {
       iwakuraSuccessionPassiveModule.onKitEvent?.(SKILL_USED, context, wielder);
-      stepKitSeconds(context, 5.5);
+      stepKitSeconds(context, 4.5);
     }
 
-    expect(countKitHolds(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, SEED_ID)).toBe(3);
+    expect(countKitHolds(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, SEED_ID)).toBe(2);
   });
 
   test("a burst consumes the seeds and gives their energy two seconds later", () => {
@@ -46,12 +46,12 @@ describe(createIwakuraSuccessionPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     iwakuraSuccessionPassiveModule.onKitEvent?.(SKILL_USED, context, wielder);
-    stepKitSeconds(context, 5.5);
+    stepKitSeconds(context, 4.5);
     iwakuraSuccessionPassiveModule.onKitEvent?.(SKILL_USED, context, wielder);
     iwakuraSuccessionPassiveModule.onKitEvent?.(BURST_USED, context, wielder);
 
     expect(countKitHolds(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, SEED_ID)).toBe(0);
-    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, "successionEnergy")?.stacks).toBe(12);
+    expect(findKitStatus(context.kitEffectState.effects, TRAVELER_CHARACTER_ID, "successionEnergy")?.stacks).toBe(8);
 
     iwakuraSuccessionPassiveModule.onKitEvent?.(
       {
@@ -60,7 +60,7 @@ describe(createIwakuraSuccessionPassiveModule, () => {
           id: "successionEnergy",
           kind: "status",
           secondsRemaining: 0,
-          stacks: 12,
+          stacks: 8,
         },
         kind: KitEventKind.EffectExpired,
       },
@@ -68,6 +68,6 @@ describe(createIwakuraSuccessionPassiveModule, () => {
       wielder,
     );
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(12);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
   });
 });

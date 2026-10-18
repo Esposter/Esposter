@@ -13,9 +13,10 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
-// Finale of the Deep at its first rank: twelve per cent ATK for fifteen seconds after an Elemental Skill, with a Bond of Life
-// Worth a quarter of Max HP once every ten seconds, and 2.4% of the HP a Bond of Life cleared as flat ATK, at most 150, for fifteen seconds
-const finaleOfTheDeepPassiveModule = createFinaleOfTheDeepPassiveModule([0.12, 15, 0.25, 0.024, 150, 15, 10]);
+// Finale of the Deep with synthetic params: 10% ATK for twelve seconds after an Elemental Skill, and a Bond of Life
+// Worth a fifth of Max HP once every six seconds, and 3% of the HP a Bond of Life cleared as flat ATK, at most 90,
+// For eight seconds after it is cleared
+const finaleOfTheDeepPassiveModule = createFinaleOfTheDeepPassiveModule([0.1, 12, 0.2, 0.03, 90, 8, 6]);
 const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const getBuffs = (effects: readonly KitEffect[], source: string) =>
   effects.filter((effect): effect is KitBuff => effect.kind === "buff" && effect.source === source);
@@ -37,15 +38,15 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
 
     expect(getBuffs(context.kitEffectState.effects, "finaleOfTheDeep")).toStrictEqual([
       {
-        amount: 0.12,
+        amount: 0.1,
         attribute: Attribute.AttackPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 15,
+        secondsRemaining: 12,
         source: "finaleOfTheDeep",
       },
     ]);
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.25);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.2);
   });
 
   test("a second Elemental Skill inside the rank's cooldown grants nothing, and one after it grants again", () => {
@@ -54,15 +55,15 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
     const context = createKitTestContext(wielder);
     finaleOfTheDeepPassiveModule.onKitEvent?.(skillUsed, context, wielder);
     finaleOfTheDeepPassiveModule.onKitEvent?.(skillUsed, context, wielder);
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.25);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.2);
 
-    stepKitSeconds(context, 10.5);
+    stepKitSeconds(context, 6.5);
     finaleOfTheDeepPassiveModule.onKitEvent?.(skillUsed, context, wielder);
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.5);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).bondOfLifeShare).toBe(0.4);
   });
 
-  test("a Bond of Life cleared raises the wielder's flat ATK by 2.4% of the HP it cleared, for fifteen seconds", () => {
+  test("a Bond of Life cleared raises the wielder's flat ATK by 3% of the HP it cleared, for eight seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -73,9 +74,9 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
 
     const buffs = getBuffs(context.kitEffectState.effects, "finaleOfTheDeepCleared");
     expect(buffs.map(({ attribute, secondsRemaining }) => ({ attribute, secondsRemaining }))).toStrictEqual([
-      { attribute: Attribute.Attack, secondsRemaining: 15 },
+      { attribute: Attribute.Attack, secondsRemaining: 8 },
     ]);
-    expect(takeOne(buffs).amount).toBeCloseTo(60);
+    expect(takeOne(buffs).amount).toBeCloseTo(75);
   });
 
   test("the flat ATK a clear raises is at most the rank's maximum", () => {
@@ -87,7 +88,7 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
     partyMember.bondOfLifeClearedShare = 1;
     finaleOfTheDeepPassiveModule.onKitEvent?.(clearHealth(0.01), context, wielder);
 
-    expect(takeOne(getBuffs(context.kitEffectState.effects, "finaleOfTheDeepCleared")).amount).toBe(150);
+    expect(takeOne(getBuffs(context.kitEffectState.effects, "finaleOfTheDeepCleared")).amount).toBe(90);
   });
 
   test("a heal that takes no Bond of Life clears nothing", () => {
