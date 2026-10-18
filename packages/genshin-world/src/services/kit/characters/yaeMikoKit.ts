@@ -27,6 +27,10 @@ export const YAE_MIKO_CHARACTER_ID = 10_000_058;
 // Yae Miko's behaviour: Sesshou Sakura's totems, which strike on their own schedule at a level by how many stand, and
 // Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. Her passives and
 // Constellations are not built, as the kit's events reach none of them yet
+// Constellation 1 needs the Tenko Thunderbolt's activation as an event, which the kit does not emit
+// Constellation 2 needs Sesshou Sakura's starting level, max level and range, which the kit does not build
+// Constellation 4 needs the Electro DMG Bonus from Sesshou Sakura's lightning hits, which the kit does not build
+// Constellation 6 needs the Sesshou Sakura's DEF ignore, which no strike hook carries
 export const createYaeMikoKitBehaviour = ({
   readHitFields,
   readHits,
