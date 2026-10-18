@@ -13,7 +13,11 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { JAHODA_ASCENSION_4_SOURCE, JAHODA_CONSTELLATION_6_SOURCE } from "#src/services/kit/characters/jahodaAscension";
-import { createJahodaKitBehaviour, JAHODA_CHARACTER_ID } from "#src/services/kit/characters/jahodaKit";
+import {
+  createJahodaKitBehaviour,
+  JAHODA_CHARACTER_ID,
+  PURSUIT_FIELD_ID,
+} from "#src/services/kit/characters/jahodaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -342,7 +346,7 @@ describe(createJahodaKitBehaviour, () => {
     for (let frame = 0; frame < 400; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
     JAHODA_KIT.elementalSkill.onStart?.(context);
     const secondPursuit = context.kitEffectState.effects.find(
-      (effect) => effect.kind === "field" && effect.id === "jahoda-pursuit",
+      (effect) => effect.kind === "field" && effect.id === PURSUIT_FIELD_ID,
     );
     if (secondPursuit?.kind !== "field") throw new Error("The second press casts no pursuit");
     fillFlaskUntilDrained(secondPursuit, context);

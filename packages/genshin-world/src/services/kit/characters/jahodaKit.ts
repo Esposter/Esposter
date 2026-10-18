@@ -45,7 +45,7 @@ import { takeOne } from "@esposter/shared";
 // Savvy Strategy's flask fills to 100 over the pursuit, as gcsim (MIT, v2.47.2) jahoda/skill.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/skill.go
 const FLASK_GAUGE_MAXIMUM = 100;
-const PURSUIT_FIELD_ID = "jahoda-pursuit";
+export const PURSUIT_FIELD_ID = "jahoda-pursuit";
 // The share of her health above which Hidden Aces also heals the member with the lowest share of health
 const BURST_ADDITIONAL_HEAL_HEALTH_SHARE = 0.7;
 // Hidden Aces has two robots, and each strikes the three nearest enemies, as gcsim gives them (burst.go, attack queue)
