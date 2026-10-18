@@ -23,6 +23,7 @@ export const ScreenBehaviourMap: Readonly<Record<ScreenKind, Readonly<ScreenBeha
   [ScreenKind.Fishing]: { isHeld: true, isHudHidden: false, isPointerReleased: false },
   [ScreenKind.Forge]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Friends]: MENU_SCREEN_BEHAVIOUR,
+  [ScreenKind.GameOver]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.GcgDuel]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Inventory]: MENU_SCREEN_BEHAVIOUR,
   [ScreenKind.Mail]: MENU_SCREEN_BEHAVIOUR,

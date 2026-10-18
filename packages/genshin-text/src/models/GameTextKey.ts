@@ -376,6 +376,10 @@ export enum GameTextKey {
   PhilanemoMushroom = "873400484",
   PineAmber = "3765897708",
   Pinecone = "4200020428",
+  // The game over screen's title, once every member of the deployed team has fallen
+  PlayerDieNone = "PlayerDieNone",
+  // The prompt asking the player for the next member after a fall, in the game's words for a character to select
+  PleaseSelectCharacter = "UI_ACTIVITY_WEEK_ACTIVE_UNSELECTED_TIPS",
   PluieLotus = "2192902588",
   PortableBearing = "3720804436",
   // The Precious Chest, the richest tier the wallet rewards, as the game names it
@@ -423,6 +427,8 @@ export enum GameTextKey {
   ReputationMondstadtOutcropSearch = "1452899589",
   ReputationNotAchieved = "UI_WISHINGPOND_OFFERING_LEVEL_UNREACH",
   ReputationReward = "REPUTATION_CITY_REWARD",
+  // The game over screen's button that revives the team at the nearest teleport waypoint
+  Revive = "UI_STC_World_Revive",
   RomaritimeFlower = "3918052700",
   RukkhashavaMushrooms = "225599940",
   SakuraBloom = "3896942756",
