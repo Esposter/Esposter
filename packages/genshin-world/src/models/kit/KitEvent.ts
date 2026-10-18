@@ -2,6 +2,7 @@ import type { KitBurstUsedEvent } from "#src/models/kit/KitBurstUsedEvent";
 import type { KitCharacterSwappedEvent } from "#src/models/kit/KitCharacterSwappedEvent";
 import type { KitChargedAttackLandedEvent } from "#src/models/kit/KitChargedAttackLandedEvent";
 import type { KitChestOpenedEvent } from "#src/models/kit/KitChestOpenedEvent";
+import type { KitCrystallizeShardPickedUpEvent } from "#src/models/kit/KitCrystallizeShardPickedUpEvent";
 import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffectExpiredEvent } from "#src/models/kit/KitEffectExpiredEvent";
 import type { KitElementAppliedEvent } from "#src/models/kit/KitElementAppliedEvent";
@@ -11,7 +12,9 @@ import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyP
 import type { KitFallRefusedEvent } from "#src/models/kit/KitFallRefusedEvent";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitMoraPickedUpEvent } from "#src/models/kit/KitMoraPickedUpEvent";
+import type { KitNightsoulBurstEvent } from "#src/models/kit/KitNightsoulBurstEvent";
 import type { KitNightsoulPointsConsumedEvent } from "#src/models/kit/KitNightsoulPointsConsumedEvent";
+import type { KitNightsoulPointsGainedEvent } from "#src/models/kit/KitNightsoulPointsGainedEvent";
 import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 import type { KitNormalAttackStartedEvent } from "#src/models/kit/KitNormalAttackStartedEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
@@ -28,6 +31,7 @@ export type KitEvent =
   | KitCharacterSwappedEvent
   | KitChargedAttackLandedEvent
   | KitChestOpenedEvent
+  | KitCrystallizeShardPickedUpEvent
   | KitDamageTakenEvent
   | KitEffectExpiredEvent
   | KitElementAppliedEvent
@@ -37,7 +41,9 @@ export type KitEvent =
   | KitFallRefusedEvent
   | KitHealthChangedEvent
   | KitMoraPickedUpEvent
+  | KitNightsoulBurstEvent
   | KitNightsoulPointsConsumedEvent
+  | KitNightsoulPointsGainedEvent
   | KitNormalAttackLandedEvent
   | KitNormalAttackStartedEvent
   | KitReactionTriggeredEvent

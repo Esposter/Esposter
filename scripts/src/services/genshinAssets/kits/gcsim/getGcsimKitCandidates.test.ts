@@ -10,11 +10,21 @@ import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHit
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import {
+  GCSIM_NOELLE_FIXTURE_DIRECTORY,
+  GCSIM_ROSARIA_FIXTURE_DIRECTORY,
+  GCSIM_SARA_FIXTURE_DIRECTORY,
+} from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createCircleReach } from "#src/services/genshinAssets/kits/gcsim/createCircleReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
+import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, WeaponType } from "genshin-world";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
@@ -58,6 +68,7 @@ const createCharacterFixture = (
   folder,
   holdCooldowns: [],
   queuedAttacks: [],
+  talentArrayMap: new Map(),
   talentFile: `${folder}.go`,
   talentParameterMap: new Map(talentParameters),
   travelMap: new Map(),
@@ -80,6 +91,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -121,6 +133,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -168,6 +181,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "itto",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "itto.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -215,6 +229,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "jean",
       queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
+      talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -239,6 +254,197 @@ describe(getGcsimKitCandidates, () => {
         candidateMap.get(path)?.map(({ value }) => value),
       ),
     ).toStrictEqual([[1], [55]]);
+  });
+
+  test("cites a burst's hit count at its queue call's line and its hit at the line of the damage delay the call passes", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 6,
+          siteLine: 6,
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstFrames", { elementLines: {}, file: "burst.go", line: 1, value: 90 }]]),
+      filePaths: [],
+      folder: "jean",
+      queuedAttacks: [{ attackName: "ai", delay: 92, delayLine: 9, file: "burst.go", line: 7 }],
+      talentArrayMap: new Map(),
+      talentFile: "zz_jean.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Jean",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames"].map((path) => candidateMap.get(path)?.[0]?.provenance),
+    ).toStrictEqual([
+      { file: "internal/characters/jean/burst.go", line: 7, source: KitSource.Gcsim },
+      { file: "internal/characters/jean/burst.go", line: 9, source: KitSource.Gcsim },
+    ]);
+  });
+
+  test("reads a single-hit burst's area from the one queue call firing the hit's talent variable, where the hitmark has no hitbox of its own", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 51,
+          siteLine: 51,
+          talentVariable: "kick",
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
+      filePaths: [],
+      folder: "varesa",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 77,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 74,
+        },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zz_varesa.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Varesa",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(
+      candidateMap.get("burst.hits.0.area")?.map(({ value }) => (value as { radius: number }).radius),
+    ).toStrictEqual([SKILL_TARGETING_AREA.radius + 8.5]);
+  });
+
+  test("reads no single-hit burst's area where two queue calls fire the hit's talent variable, one hit's alternatives", () => {
+    expect.hasAssertions();
+
+    const gcsim: GcsimCharacter = {
+      animationFrameNameMap: new Map(),
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalBurst",
+          fieldLineMap: {},
+          file: "burst.go",
+          line: 51,
+          siteLine: 51,
+          talentVariable: "kick",
+          variableName: "ai",
+        },
+      ],
+      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
+      configFile: "config.yml",
+      constantMap: new Map([["burstHitmark", { elementLines: {}, file: "burst.go", line: 18, value: 88 }]]),
+      filePaths: [],
+      folder: "varesa",
+      queuedAttacks: [
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 77,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 74,
+        },
+        {
+          attackName: "ai",
+          delay: 88,
+          delayLine: 79,
+          file: "burst.go",
+          hitbox: {
+            center: GcsimHitboxCenter.PrimaryTarget,
+            file: "burst.go",
+            line: 76,
+            name: "NewCircleHit",
+            offset: [0, 1],
+            radius: 7.5,
+            shape: GcsimHitboxShape.Circle,
+          },
+          line: 78,
+        },
+      ],
+      talentArrayMap: new Map(),
+      talentFile: "zz_varesa.go",
+      talentParameterMap: new Map(),
+      holdCooldowns: [],
+      travelMap: new Map(),
+    };
+    const tables: KitTables = {
+      characterId: 0,
+      labelMap: new Map(),
+      name: "Varesa",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: 0,
+        [CombatTalent.ElementalSkill]: 0,
+        [CombatTalent.NormalAttack]: 0,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Sword,
+    };
+    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
+
+    expect(candidateMap.get("burst.hits.0.area")).toBeUndefined();
   });
 
   test("joins a burst's hit to the talent variable of the attack its queue call fires at its hitmark, where a second attack under the burst tag has its own", () => {
@@ -296,6 +502,7 @@ describe(getGcsimKitCandidates, () => {
         { attackName: "ai", delay: 32, delayLine: 67, file: "burst.go", line: 67 },
         { attackName: "ai", delay: 1, delayLine: 110, file: "burst.go", line: 110 },
       ],
+      talentArrayMap: new Map(),
       talentFile: "zz_razor.go",
       talentParameterMap: new Map([["burst|Burst DMG", { indexes: [3], line: 40 }]]),
       holdCooldowns: [],
@@ -334,6 +541,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "mona",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "mona.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -370,6 +578,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "navia",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "navia.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -404,6 +613,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "barbara",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "barbara.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -426,6 +636,60 @@ describe(getGcsimKitCandidates, () => {
     expect(candidateMap.get("burst.hits.length")?.map(({ value }) => value)).toStrictEqual([0]);
   });
 
+  test("reads each queue call of Noelle's burst as a hit, its second slash a Mult set's copy of the attack the first fires", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "noelle",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_NOELLE_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_NOELLE_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [24], [65]]);
+  });
+  test("reads each queue call of Rosaria's burst as a hit, her lance's a Mult set's copy of the attack the first fires, and no DoT tick", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "rosaria",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_ROSARIA_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_ROSARIA_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[2], [15], [56]]);
+  });
+  test("reads no hit from the repeated calls of a Mult set's copy in Kujou Sara's cluster loop, which are its ticks", () => {
+    expect.hasAssertions();
+
+    const gcsim = readGcsimCharacter(
+      "sara",
+      new Map([
+        ["burst.go", readFileSync(join(GCSIM_SARA_FIXTURE_DIRECTORY, "burst.go"), "utf8")],
+        ["config.yml", readFileSync(join(GCSIM_SARA_FIXTURE_DIRECTORY, "config.yml"), "utf8")],
+      ]),
+    );
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+
+    expect(
+      ["burst.hits.length", "burst.hits.0.hitmarkFrames", "burst.hits.1.hitmarkFrames"].map((path) =>
+        candidateMap.get(path)?.map(({ value }) => value),
+      ),
+    ).toStrictEqual([[1], [51], undefined]);
+  });
   test("joins a frames path the kit holds under a constant's name to that constant, and adds no path the kit lacks", () => {
     expect.hasAssertions();
 
@@ -441,6 +705,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "aino",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "aino.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -479,6 +744,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "aino",
       queuedAttacks: [],
+      talentArrayMap: new Map(),
       talentFile: "aino.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -542,6 +808,7 @@ describe(getGcsimKitCandidates, () => {
         { attackLine: undefined, attackName: undefined, delay: 60, delayLine: 4, file: "skill.go", hitbox, line: 4 },
         { attackLine: undefined, attackName: "hit", delay: 60, delayLine: 5, file: "skill.go", hitbox, line: 5 },
       ],
+      talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],
@@ -577,6 +844,7 @@ describe(getGcsimKitCandidates, () => {
           file: "attack.go",
           internalCooldownTag: "attacks.ICDTagXilonenSkate",
           line: 112,
+          siteLine: 112,
           talentVariable: "attackE",
           variableName: "ai",
         },
@@ -616,8 +884,9 @@ describe(getGcsimKitCandidates, () => {
         {
           leaves: [0, 1, 2, 3].map((index) => ({
             path: [index],
-            reference: { label: `Blade Roller ${index + 1}-Hit DMG`, selector: 0, type: "attack" },
+            reference: { label: `Blade Roller ${index + 1}-Hit DMG`, selector: 0, type: GcsimTalentType.Attack },
           })),
+          line: 10,
           name: "attackE",
         },
       ],
@@ -646,6 +915,62 @@ describe(getGcsimKitCandidates, () => {
     ]);
   });
 
+  test("gives a loop shot's two actions to the blessing stance, each striking twice on the player's circle from its hitmarks, the skill's multiplier and its attack", () => {
+    expect.hasAssertions();
+
+    const gcsim = createCharacterFixture("kinich", {
+      attacks: [
+        {
+          attackTag: "attacks.AttackTagElementalArt",
+          durability: 25,
+          element: "attributes.Dendro",
+          fieldLineMap: {},
+          file: "attack.go",
+          internalCooldownTag: "attacks.ICDTagKinichLoopShot",
+          line: 115,
+          talentVariable: "loopShot",
+          variableName: "ai",
+        },
+      ],
+      constants: [
+        ["skillHitNum", attackConstant(2, 35)],
+        [
+          "skillAttackHitmarks",
+          attackConstant(
+            [
+              [30, 38],
+              [31, 38],
+            ],
+            29,
+          ),
+        ],
+      ],
+      talentParameters: [["skill|Loop Shot DMG", { indexes: [0], line: 161 }]],
+      talentVariables: [
+        {
+          leaves: [{ path: [0], reference: { label: "Loop Shot DMG", selector: 0, type: GcsimTalentType.Skill } }],
+          name: "loopShot",
+        },
+      ],
+    });
+    const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);
+    const valuesAt = (path: string) => candidateMap.get(path)?.map(({ value }) => value);
+
+    expect(valuesAt("stances.blessing.normalAttacks.length")).toStrictEqual([2]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.animationFrames")).toStrictEqual([53]);
+    expect(valuesAt("stances.blessing.normalAttacks.0.hits.0.hitmarkFrames")).toStrictEqual([30]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.hitmarkFrames")).toStrictEqual([31]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.1.hitmarkFrames")).toStrictEqual([38]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.area")).toStrictEqual([createCircleReach(0, 0.5)]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.multiplier")).toStrictEqual([
+      { index: 0, proudSkillGroupId: 2 },
+    ]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.element")).toStrictEqual([Element.Dendro]);
+    expect(valuesAt("stances.blessing.normalAttacks.1.hits.0.internalCooldownTag")).toStrictEqual([
+      InternalCooldownTag.KinichLoopShot,
+    ]);
+  });
+
   test("gives a shell's six hitmarks as the frames its shells are cast at, and its templates the burst's six-metre circle", () => {
     expect.hasAssertions();
 
@@ -659,6 +984,7 @@ describe(getGcsimKitCandidates, () => {
           file: "burst.go",
           internalCooldownTag: "attacks.ICDTagNone",
           line: 42,
+          siteLine: 42,
           talentVariable: "burstGalesplitting",
           variableName: "ai",
         },
@@ -670,11 +996,20 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            { path: [], reference: { label: "Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst } },
+          ],
+          line: 5,
           name: "burstSoulseeker",
         },
         {
-          leaves: [{ path: [], reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            {
+              path: [],
+              reference: { label: "Radiant Soulseeker Shell DMG", selector: 0, type: GcsimTalentType.Burst },
+            },
+          ],
+          line: 6,
           name: "burstRadiant",
         },
       ],
@@ -722,6 +1057,7 @@ describe(getGcsimKitCandidates, () => {
           internalCooldownTag: "attacks.ICDTagElementalArt",
           line: 177,
           poiseDamage: 20,
+          siteLine: 177,
           talentVariable: "cloudDMG",
           variableName: "cloudAttack",
         },
@@ -735,7 +1071,10 @@ describe(getGcsimKitCandidates, () => {
       talentParameters: [["skill|Continuous Attack DMG", { indexes: [0], line: 3 }]],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: "skill" } }],
+          leaves: [
+            { path: [], reference: { label: "Continuous Attack DMG", selector: 0, type: GcsimTalentType.Skill } },
+          ],
+          line: 3,
           name: "cloudDMG",
         },
       ],
@@ -766,6 +1105,7 @@ describe(getGcsimKitCandidates, () => {
           file: "skill.go",
           internalCooldownTag: "attacks.ICDTagVaresaCombatCycle",
           line: 47,
+          siteLine: 47,
           talentVariable: "rush",
           variableName: "ai",
         },
@@ -777,6 +1117,7 @@ describe(getGcsimKitCandidates, () => {
           file: "burst.go",
           internalCooldownTag: "attacks.ICDTagNone",
           line: 48,
+          siteLine: 48,
           talentVariable: "kick",
           variableName: "ai",
         },
@@ -793,11 +1134,20 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentVariables: [
         {
-          leaves: [{ path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: "skill" } }],
+          leaves: [
+            { path: [], reference: { label: "Fiery Passion Rush DMG", selector: 0, type: GcsimTalentType.Skill } },
+          ],
+          line: 3,
           name: "fieryRush",
         },
         {
-          leaves: [{ path: [], reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: "burst" } }],
+          leaves: [
+            {
+              path: [],
+              reference: { label: "Fiery Passion Flying Kick DMG", selector: 0, type: GcsimTalentType.Burst },
+            },
+          ],
+          line: 4,
           name: "fieryKick",
         },
       ],
@@ -847,6 +1197,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "zhongli",
       queuedAttacks: [{ attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", line: 5 }],
+      talentArrayMap: new Map(),
       talentFile: "zhongli.go",
       talentParameterMap: new Map(),
       holdCooldowns: [],

@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const EAGLE_SPEAR_SECONDS = 6;
 // Stacks, which last six seconds from the last gained, a stack at most once every 0.3 seconds. While the wielder holds the
 // Maximum, its DMG dealt is raised by the rank's second number, a buff the stacks carry. Provisional: every hit counts, a
 // Passive's own queued hit too, since the text says only "on hit"
-export const createEagleSpearOfJusticePassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createEagleSpearOfJusticePassiveModule = (params: number[]): PassiveModule => {
   const attackPercentage = takeOne(params, 0);
   const maximumDamageBonus = takeOne(params, 1);
   return {

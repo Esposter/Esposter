@@ -1,3 +1,4 @@
+import type { Element } from "#src/models/Element";
 import type { FallRefusal } from "#src/models/party/FallRefusal";
 import type { Party } from "#src/models/party/Party";
 
@@ -10,12 +11,14 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Energy, and if it was on the field, its fall starts, after which the player is asked for the next member standing.
 // Where a fall refusal holds for the damage, the member is left at the share the refusal keeps and its change is
 // Recorded as refused, and a character already down takes nothing
+// A change carries the element of the attack that caused it, where the attack has one
 export const damagePartyMember = (
   party: Party,
   characterId: number,
   lostHealthShare: number,
   sourceCharacterId?: number,
   fallRefusal?: FallRefusal,
+  element?: Element,
 ): void => {
   const partyMember = getPartyMember(party, characterId);
   if (partyMember.healthShare === 0 || lostHealthShare <= 0) return;
@@ -26,6 +29,7 @@ export const damagePartyMember = (
   party.healthChanges.push({
     bondOfLifeShare: 0,
     characterId,
+    ...(element === undefined ? {} : { element }),
     healthShare: partyMember.healthShare - previousHealthShare,
     ...(isFallRefused ? { isFallRefused } : {}),
     overflowHealthShare: 0,

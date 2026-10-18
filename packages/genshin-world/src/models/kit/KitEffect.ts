@@ -6,6 +6,7 @@ import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
 import type { KitElementCriticalDamage } from "#src/models/kit/KitElementCriticalDamage";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
+import type { KitPickUp } from "#src/models/kit/KitPickUp";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
@@ -22,6 +23,7 @@ export type KitEffect =
   | KitElementCriticalDamage
   | KitField
   | KitInfusion
+  | KitPickUp
   | KitShield
   | KitStance
   | KitStatus

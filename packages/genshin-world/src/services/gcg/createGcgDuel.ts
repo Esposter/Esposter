@@ -3,12 +3,15 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgSideState } from "#src/services/gcg/createGcgSideState";
 
 // A duel between two decks under a rule as it opens: each side's cards shuffled and its starting hand drawn, the first round
 // To come being the first side's, and the duel waiting in its preparation for each side to switch cards and choose its active
 export const createGcgDuel = (decks: [GcgDeck, GcgDeck], random: () => number, rule: GcgRule): GcgDuel => ({
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -17,5 +20,6 @@ export const createGcgDuel = (decks: [GcgDeck, GcgDeck], random: () => number, r
   round: 1,
   rule,
   sides: [createGcgSideState(decks[0], random), createGcgSideState(decks[1], random)],
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });

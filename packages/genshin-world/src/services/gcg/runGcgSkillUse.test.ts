@@ -11,7 +11,8 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { YAKSHAS_MASK_ID, yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -26,6 +27,8 @@ import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { XIAO_ID } from "#src/services/gcg/cards/constants";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 describe("a skill's on-use hooks", () => {
   const SEED = 9;
@@ -110,6 +113,8 @@ const createSide = (): GcgSideState => ({
 });
 
 const createDuel = (): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -147,7 +152,7 @@ describe("a skill's any-side hooks", () => {
     expect(runGcgSkillUse({ duel, sideIndex: 0 }, DAMAGE_SKILL)).toBe(true);
     expect(onAnySkillUsed.mock.calls).toStrictEqual([
       [
-        { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL },
+        { characterIndex: undefined, duel, isPlunge: false, sideIndex: 1, skill: DAMAGE_SKILL, userSideIndex: 0 },
         DAMAGE_SKILL,
         supportZoneCard,
         [{ damageType: Element.Pyro }],
@@ -237,6 +242,8 @@ describe("a Plunging Attack", () => {
     usedSkillIds: [],
   });
   const createPlungeDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,

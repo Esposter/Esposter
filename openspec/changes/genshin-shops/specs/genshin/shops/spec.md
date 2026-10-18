@@ -1,14 +1,14 @@
 ## ADDED Requirements
 
-### Requirement: A shop offers each good at its own price, limit and sale dates
+### Requirement: A shop offers each good at its own costs, limit and sale dates
 
-A shop SHALL offer each good at its price, its buy limit and the dates it sells between, and SHALL NOT offer a good outside those dates.
+A shop SHALL offer each good at its costs, its buy limit and the dates it sells between, and SHALL NOT offer a good outside those dates.
 
-#### Scenario: A good is offered at its shop's price
+#### Scenario: A good is offered at its shop's costs
 
 - **GIVEN** an open shop that sells a good for Mora
 - **WHEN** the player views the good
-- **THEN** the good shows the price the game gives it
+- **THEN** the good shows the costs the game gives it
 
 #### Scenario: A good is not offered outside its sale dates
 
@@ -46,7 +46,7 @@ A purchase of a grocery ingredient SHALL take its Mora and add the ingredient to
 
 - **GIVEN** an empty bag and a grocery ingredient priced in Mora
 - **WHEN** the player buys the ingredient
-- **THEN** the price is taken in Mora
+- **THEN** the cost is taken in Mora
 - **AND** one of the ingredient is in the bag
 
 #### Scenario: A purchase the bag cannot hold whole is refused
@@ -58,13 +58,13 @@ A purchase of a grocery ingredient SHALL take its Mora and add the ingredient to
 
 ### Requirement: Paimon's Bargains offers its rotation of characters and weapons
 
-Paimon's Bargains SHALL offer two characters each month and a set of weapons every two months, each at its Starglitter price.
+Paimon's Bargains SHALL offer two characters each month and a set of weapons every two months, each at its Starglitter cost.
 
 #### Scenario: Two characters are offered each month
 
 - **GIVEN** the month of a rotation
 - **WHEN** the player opens Paimon's Bargains
-- **THEN** two characters are offered at their Starglitter price
+- **THEN** two characters are offered at their Starglitter cost
 
 #### Scenario: A character with full constellations cannot be bought
 
@@ -120,15 +120,15 @@ A city's vendor SHALL open their shop when the player talks to them.
 - **WHEN** the player talks to the vendor
 - **THEN** the vendor's shop opens
 
-### Requirement: The Shop screen buys a good at its price
+### Requirement: The Shop screen buys a good at its costs
 
-The Shop screen SHALL let the player pick a good and a count, and buying SHALL spend the price and give the good through the same purchase rule every shop uses.
+The Shop screen SHALL let the player pick a good and a count, and buying SHALL spend its costs and give the good through the same purchase rule every shop uses.
 
-#### Scenario: buying a good from the screen spends its price and gives the good
+#### Scenario: buying a good from the screen spends its costs and gives the good
 
 - **GIVEN** a good the player can afford, shown on the Shop screen
 - **WHEN** the player picks a count and presses Buy
-- **THEN** the price is spent and the good is given
+- **THEN** the costs are spent and the good is given
 
 ### Requirement: Goods paid in Genesis Crystals are never offered
 

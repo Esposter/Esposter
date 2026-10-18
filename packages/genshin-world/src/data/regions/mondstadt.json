@@ -15212,6 +15212,18 @@
       "areaId": "windrest-peak",
       "arrival": { "heightOffset": 61.77, "position": { "x": 1368.31, "z": -1314.65 }, "rotation": -1.6392 },
       "heightOffset": 61.77
+    },
+    {
+      "domainKind": "Trounce",
+      "entryId": 1006,
+      "id": "domain-entrance-1006",
+      "kind": "DomainEntrance",
+      "position": { "x": 768.29, "z": -1389.74 },
+      "rotation": 0.2947,
+      "titleTextKey": "UI_DUNGEON_ENTRY_24",
+      "areaId": "brightcrown-mountains",
+      "arrival": { "heightOffset": 72.36, "position": { "x": 768.29, "z": -1389.74 }, "rotation": 0.2947 },
+      "heightOffset": 72.36
     }
   ],
   "residents": [
@@ -15433,7 +15445,7 @@
       "talkId": "34706"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": 46.83, "z": -702.67 }, "rotation": -2.9671 },
       "id": "1252",
       "nameTextId": "3607117061",
@@ -15538,7 +15550,7 @@
       "talkId": "34710"
     },
     {
-      "areaId": "starfell-valley",
+      "areaId": "windwail-highland",
       "day": { "position": { "x": -30.65, "z": -691.25 }, "rotation": 2.0631 },
       "id": "1202",
       "nameTextId": "1518221317",
@@ -15867,7 +15879,7 @@
       "talkId": "7012302"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -782.21, "z": -348.99 }, "rotation": 0 },
       "id": "20183",
       "nameTextId": "872369597",
@@ -15902,7 +15914,7 @@
       "talkId": "7012401"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -987.14, "z": -415.43 }, "rotation": 0 },
       "id": "20185",
       "nameTextId": "855994549",
@@ -15923,7 +15935,7 @@
       "talkId": "7012404"
     },
     {
-      "areaId": "galesong-hill",
+      "areaId": "dragonspine",
       "day": { "position": { "x": -852.24, "z": -455.78 }, "rotation": 0 },
       "id": "20188",
       "nameTextId": "495607901",
@@ -16106,6 +16118,14 @@
     },
     {
       "areaId": "starfell-valley",
+      "day": { "position": { "x": 353.04, "z": -488.74 }, "rotation": 0.2702 },
+      "duelGameId": 1031,
+      "id": "9704",
+      "nameTextId": "2404082984",
+      "talkId": "6970401"
+    },
+    {
+      "areaId": "starfell-valley",
       "day": { "position": { "x": 350, "z": -378.62 }, "rotation": -1.9771 },
       "id": "1419",
       "nameTextId": "3395805645",
@@ -16121,6 +16141,7 @@
     {
       "areaId": "starfell-valley",
       "day": { "position": { "x": 358.54, "z": -361.63 }, "rotation": 1.0891 },
+      "duelGameId": 1021,
       "id": "1435",
       "nameTextId": "3218942421",
       "talkId": "40172"

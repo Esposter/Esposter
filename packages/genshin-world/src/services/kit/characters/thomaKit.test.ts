@@ -1,9 +1,12 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -15,6 +18,7 @@ import { createThomaKitBehaviour, THOMA_CHARACTER_ID } from "#src/services/kit/c
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -37,8 +41,13 @@ const startNormalAttack = (context: KitContext): void => {
 };
 
 // Sets off a Fiery Collapse over the shield standing, if any, strikes with it the given times, and reads the shield
-const readShieldHealth = (standingShieldHealth: number | undefined, strikeCount: number): number[] => {
+const readShieldHealth = (
+  standingShieldHealth: number | undefined,
+  strikeCount: number,
+  buffs: readonly KitEffect[] = [],
+): number[] => {
   const context = createKitTestContext(createThomaCombatant());
+  context.kitEffectState.effects.push(...buffs);
   if (standingShieldHealth !== undefined)
     context.kitEffectState.effects.push({
       characterId: THOMA_CHARACTER_ID,
@@ -89,6 +98,15 @@ const readEnergy = (constellationCount: number): number => {
     if (effect.kind === "status" && effect.id === "thoma-c4-energy")
       THOMA_KIT.onKitEvent?.({ effect, kind: KitEventKind.EffectExpired }, context, combatant);
   return getPartyMember(context.party, THOMA_CHARACTER_ID).energy;
+};
+
+// The status effects Blazing Blessing sets for a Thoma at the constellation count, as its skill starts
+const readBlazingBlessingStatuses = (constellationCount: number): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  THOMA_KIT.elementalSkill.onStart?.(
+    createKitTestContext({ ...createThomaCombatant(), constellationCount }, { kitEffectState }),
+  );
+  return kitEffectState.effects.filter(({ kind }) => kind === "status");
 };
 
 describe(createThomaKitBehaviour, () => {
@@ -147,6 +165,18 @@ describe(createThomaKitBehaviour, () => {
     expect(readShieldHealth(maxShieldHealth - 1, 1)).toStrictEqual([maxShieldHealth]);
   });
 
+  test("a Fiery Collapse's shield is built from Thoma's Max HP with the buffs on it", () => {
+    expect.hasAssertions();
+    const healthPercentBuff: KitEffect = {
+      amount: 0.5,
+      attribute: Attribute.HealthPercent,
+      characterId: THOMA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 8,
+    };
+    expect(readShieldHealth(undefined, 2, [healthPercentBuff])).toStrictEqual([0.01144 * 15_000 + 110.03398]);
+  });
+
   test("constellation 2 holds Crimson Ooyoroi for three seconds longer, and Constellation 1 holds it for the table's seconds", () => {
     expect.hasAssertions();
 
@@ -157,6 +187,73 @@ describe(createThomaKitBehaviour, () => {
     expect.hasAssertions();
 
     expect([readEnergy(3), readEnergy(4)]).toStrictEqual([0, 15]);
+  });
+
+  test("constellation 6 adds a six-second status as Blazing Blessing sets its shield, and Constellation 5 adds none", () => {
+    expect.hasAssertions();
+
+    expect([readBlazingBlessingStatuses(5), readBlazingBlessingStatuses(6)]).toStrictEqual([
+      [],
+      [{ characterId: THOMA_CHARACTER_ID, id: "thoma-c6-damage", kind: "status", secondsRemaining: 6 }],
+    ]);
+  });
+
+  test("constellation 6 raises the normal, charged and plunging attacks of Thoma and of each other member by 15% while it stands", () => {
+    expect.hasAssertions();
+    const thoma: Combatant = { ...createThomaCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(thoma, { kitEffectState });
+    THOMA_KIT.elementalSkill.onStart?.(context);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const hit = takeOne(takeOne(THOMA_KIT.normalAttacks).hits);
+    const otherMember: Combatant = { ...thoma, characterId: 10_000_002 };
+    const createStrike = (striker: Combatant, attackTag: AttackTag): KitStrike => ({
+      attackTag,
+      body: context.body,
+      combatant: striker,
+      hit,
+    });
+    // The DMG Bonus Thoma's own strikes and another member's strikes get from his constellation
+    const getBonuses = (attackTag: AttackTag): number[] => [
+      THOMA_KIT.getStrikeDamageBonus?.(createStrike(thoma, attackTag), enemy, context.party, kitEffectState.effects) ??
+        0,
+      THOMA_KIT.getPartyStrikeBonus?.(
+        thoma,
+        createStrike(otherMember, attackTag),
+        enemy,
+        context.party,
+        kitEffectState.effects,
+        context.characterIdCombatantMap,
+      )?.damageBonus ?? 0,
+    ];
+
+    expect(
+      [
+        AttackTag.NormalAttack,
+        AttackTag.ChargedAttack,
+        AttackTag.PlungingAttack,
+        AttackTag.ElementalSkill,
+        AttackTag.ElementalBurst,
+      ].map((attackTag) => getBonuses(attackTag)),
+    ).toStrictEqual([
+      [0.15, 0.15],
+      [0.15, 0.15],
+      [0.15, 0.15],
+      [0, 0],
+      [0, 0],
+    ]);
+  });
+
+  test("a Fiery Collapse's shield is built from Thoma's Max HP with the buffs on it", () => {
+    expect.hasAssertions();
+    const healthPercentBuff: KitEffect = {
+      amount: 0.5,
+      attribute: Attribute.HealthPercent,
+      characterId: THOMA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 8,
+    };
+    expect(readShieldHealth(undefined, 2, [healthPercentBuff])).toStrictEqual([0.01144 * 15_000 + 110.03398]);
   });
 });
 

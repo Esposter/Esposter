@@ -4,7 +4,6 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -14,6 +13,7 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -124,12 +124,13 @@ export const createXingqiuKitBehaviour = ({
   // Them. From Ascension 1, a task runs as their new seconds end, and unless they were lengthened since, each sword heals
   // The character on the field by Hydropathic's share of Xingqiu's Max HP then, since no strike here shatters one
   const standRainSwords = (
-    kitEffectState: KitEffectState,
+    context: KitContext,
     { facing, height, position }: KitBody,
     combatant: Combatant,
     seconds: number,
     firstTickSeconds: number,
   ): void => {
+    const { characterIdCombatantMap, kitEffectState, party } = context;
     const rainSwords = kitEffectState.effects.find((effect) => checkIsRainSwords(effect, combatant.characterId));
     if (rainSwords !== undefined && rainSwords.secondsRemaining >= seconds) return;
     if (rainSwords === undefined)
@@ -152,7 +153,8 @@ export const createXingqiuKitBehaviour = ({
       );
     if (combatant.ascension < HYDROPATHIC_ASCENSION) return;
     const swordCount = RAIN_SWORD_COUNT + (combatant.constellationCount >= THE_SCENT_REMAINED_CONSTELLATION ? 1 : 0);
-    const heal = swordCount * HYDROPATHIC_MAX_HEALTH_SHARE * combatant.attributes.maxHealth;
+    const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+    const heal = swordCount * HYDROPATHIC_MAX_HEALTH_SHARE * maxHealth;
     scheduleKitTask(kitEffectState, combatant.characterId, seconds, (tick) => {
       // Lengthened Rain Swords still stand past this tick, and heal at their own end instead
       if (
@@ -204,7 +206,8 @@ export const createXingqiuKitBehaviour = ({
     // Attacks of the character on the field set off its sword rain from. The burst stands the Rain Swords for the
     // Table's seconds, lengthened by Rainbow Upon the Azure Sky from two constellations
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         const seconds =
           raincutterSeconds +
           (combatant.constellationCount >= RAINBOW_UPON_THE_AZURE_SKY_CONSTELLATION
@@ -214,7 +217,7 @@ export const createXingqiuKitBehaviour = ({
           id: RAINCUTTER_ID,
           secondsRemaining: seconds + raincutterExtraSeconds,
         });
-        standRainSwords(kitEffectState, body, combatant, seconds, rainSwordsBurstFirstTickSeconds);
+        standRainSwords(context, body, combatant, seconds, rainSwordsBurstFirstTickSeconds);
       },
     },
     // A normal attack of the character on the field sets off a wave of swords where that character stands, while
@@ -236,13 +239,14 @@ export const createXingqiuKitBehaviour = ({
     // Starts, from four constellations while his Raincutter stands. The skill stands the Rain Swords for the table's
     // Seconds
     skill: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState } = context;
         const isEvilsoothed =
           combatant.constellationCount >= EVILSOOTHER_CONSTELLATION &&
           kitEffectState.effects.some((effect) => checkIsRaincutter(effect, combatant.characterId));
         const hits = isEvilsoothed ? evilsootherRainscreenHits : rainscreenHits;
         castKitSummon(kitEffectState, body, combatant, hits);
-        standRainSwords(kitEffectState, body, combatant, rainSwordsSeconds, rainSwordsSkillFirstTickSeconds);
+        standRainSwords(context, body, combatant, rainSwordsSeconds, rainSwordsSkillFirstTickSeconds);
       },
     },
   };

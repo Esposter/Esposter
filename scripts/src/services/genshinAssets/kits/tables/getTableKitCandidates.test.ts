@@ -11,6 +11,8 @@ const LINNEA_BURST_GROUP_ID = 13_039;
 const LINNEA_SKILL_GROUP_ID = 13_032;
 const LOHEN_BURST_GROUP_ID = 12_939;
 const LOHEN_SKILL_GROUP_ID = 12_932;
+const COLUMBINA_BURST_GROUP_ID = 12_539;
+const COLUMBINA_SKILL_GROUP_ID = 12_532;
 
 const CLORINDE_NAME = "Clorinde";
 const CLORINDE_CHARACTER_ID = 10_000_098;
@@ -216,6 +218,19 @@ describe(getTableKitCandidates, () => {
     });
   });
 
+  test("reads Columbina's Lunar Reaction DMG Bonus from her burst as the burst's Lunar damage bonus, at its index in the burst group", () => {
+    expect.hasAssertions();
+    const candidates = getTableKitCandidates(
+      createTables(new Map([[COLUMBINA_BURST_GROUP_ID, [{ indexes: [1], label: "Lunar Reaction DMG Bonus" }]]]), {
+        burstGroupId: COLUMBINA_BURST_GROUP_ID,
+        skillGroupId: COLUMBINA_SKILL_GROUP_ID,
+      }),
+    );
+    expect(readCandidateValues(candidates)).toStrictEqual({
+      "parameters.burstLunarReactionDamageBonus": { index: 1, proudSkillGroupId: COLUMBINA_BURST_GROUP_ID },
+    });
+  });
+
   test("the Night Vigil duration is read from Clorinde's elemental skill row, at the row's own index", () => {
     expect.hasAssertions();
 
@@ -246,6 +261,27 @@ describe(getTableKitCandidates, () => {
       full: { index: 7, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
       low: { index: 5, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
     });
+  });
+
+  test("the Swift Hunt's normal shot reads the DMG label's first value and its piercing shot the second, on each of their three hits", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates({
+      ...createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID),
+      labelMap: new Map([
+        [ELEMENTAL_SKILL_GROUP_ID, [...CLORINDE_SKILL_LABELS, { indexes: [0, 1], label: "Swift Hunt DMG" }]],
+      ]),
+    });
+    const readValueIndexes = (listName: string) =>
+      [0, 1, 2].map(
+        (hit) =>
+          (candidateMap.get(`hits.${listName}.${hit}.multiplier`)?.[0]?.value as { index: number } | undefined)?.index,
+      );
+
+    expect({
+      normalShot: readValueIndexes("swiftHuntNormalShot"),
+      piercingShot: readValueIndexes("swiftHuntPiercingShot"),
+    }).toStrictEqual({ normalShot: [0, 0, 0], piercingShot: [1, 1, 1] });
   });
 
   test("a character with no mapping of its own reads none of the same labels as parameters", () => {
@@ -289,8 +325,10 @@ describe(getTableKitCandidates, () => {
       "burst.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_239 },
       "burst.hits.2.multiplier": { index: 2, proudSkillGroupId: 12_239 },
       "burst.hits.3.multiplier": { index: 3, proudSkillGroupId: 12_239 },
+      "burst.hits.length": 4,
       "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 12_232 },
       "skill.hits.1.multiplier": { index: 1, proudSkillGroupId: 12_232 },
+      "skill.hits.length": 2,
       "stances.phantasmPerformance.chargedAttack.hits.0.multiplier": { index: 4, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.1.multiplier": { index: 5, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.2.multiplier": { index: 6, proudSkillGroupId: 12_232 },
@@ -298,6 +336,7 @@ describe(getTableKitCandidates, () => {
       "stances.phantasmPerformance.chargedAttack.hits.4.multiplier": { index: 8, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.5.multiplier": { index: 9, proudSkillGroupId: 12_232 },
       "stances.phantasmPerformance.chargedAttack.hits.6.multiplier": { index: 10, proudSkillGroupId: 12_232 },
+      "stances.phantasmPerformance.chargedAttack.hits.length": 7,
     });
   });
 
@@ -339,7 +378,9 @@ describe(getTableKitCandidates, () => {
     });
     expect(readCandidateValues(candidates)).toStrictEqual({
       "burst.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_339 },
+      "burst.hits.length": 1,
       "skill.hits.0.multiplier": { index: 0, proudSkillGroupId: 14_332 },
+      "skill.hits.length": 1,
     });
   });
 
@@ -393,6 +434,7 @@ describe(getTableKitCandidates, () => {
         "stances.phantasmPerformance.chargedAttack.hits.4.multiplier",
         "stances.phantasmPerformance.chargedAttack.hits.5.multiplier",
         "stances.phantasmPerformance.chargedAttack.hits.6.multiplier",
+        "stances.phantasmPerformance.chargedAttack.hits.length",
         "stances.phantasmPerformance.chargedAttackStamina",
         "parameters.phantasmPerformanceCharges",
         "parameters.shadowDanceSeconds",
@@ -450,14 +492,21 @@ describe(getTableKitCandidates, () => {
       [
         "stances.lunarPhaseShift.chargedAttack.hits.0.multiplier",
         "stances.lunarPhaseShift.chargedAttack.hits.1.multiplier",
+        "stances.lunarPhaseShift.chargedAttack.hits.length",
         "stances.lunarPhaseShift.normalAttacks.0.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.0.hits.length",
         "stances.lunarPhaseShift.normalAttacks.1.hits.0.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.1.hits.length",
         "stances.lunarPhaseShift.normalAttacks.2.hits.0.multiplier",
         "stances.lunarPhaseShift.normalAttacks.2.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.2.hits.length",
         "stances.lunarPhaseShift.normalAttacks.3.hits.0.multiplier",
         "stances.lunarPhaseShift.normalAttacks.3.hits.1.multiplier",
+        "stances.lunarPhaseShift.normalAttacks.3.hits.length",
+        "stances.lunarPhaseShift.normalAttacks.length",
         "stances.lunarPhaseShift.skill.hits.0.multiplier",
         "stances.lunarPhaseShift.skill.hits.1.multiplier",
+        "stances.lunarPhaseShift.skill.hits.length",
         "parameters.lunarPhaseShiftSeconds",
       ].toSorted(),
     );
@@ -473,6 +522,9 @@ describe(getTableKitCandidates, () => {
       index: 2,
       proudSkillGroupId: 12_632,
     });
+    expect(values["stances.lunarPhaseShift.normalAttacks.length"]).toBe(4);
+    expect(values["stances.lunarPhaseShift.normalAttacks.3.hits.length"]).toBe(2);
+    expect(values["stances.lunarPhaseShift.chargedAttack.hits.length"]).toBe(2);
   });
 
   test("gives Illuga's skill hold its hits from the Hold DMG label, and its cooldown from the skill's CD", () => {
@@ -498,5 +550,7 @@ describe(getTableKitCandidates, () => {
     expect(values["skillHolds.0.action.hits.0.multiplier"]).toStrictEqual({ index: 2, proudSkillGroupId: 12_732 });
     expect(values["skillHolds.0.action.hits.1.multiplier"]).toStrictEqual({ index: 3, proudSkillGroupId: 12_732 });
     expect(values["skillHolds.0.cooldownSeconds"]).toStrictEqual({ index: 4, proudSkillGroupId: 12_732 });
+    expect(values["skillHolds.0.action.hits.length"]).toBe(2);
+    expect(values["skillHolds.length"]).toBe(1);
   });
 });

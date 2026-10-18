@@ -3,6 +3,9 @@ import type { TalentMultiplierMap } from "#src/models/character/TalentMultiplier
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { KitActionRecord } from "#src/models/kit/record/KitActionRecord";
 import type { KitHitRecord } from "#src/models/kit/record/KitHitRecord";
 import type { KitRecord } from "#src/models/kit/record/KitRecord";
@@ -23,7 +26,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { buildKit } from "#src/services/kit/buildKit";
 import { createOdetteKitBehaviour, ODETTE_CHARACTER_ID } from "#src/services/kit/characters/odetteKit";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
@@ -36,6 +39,13 @@ const shapeEffects = (context: KitContext) =>
     effect.kind === "summon" ? { id: effect.id, stacks: effect.stacks } : effect.kind,
   );
 
+const DANCE_DOUBLE_ID = "danceDouble";
+// The Dance Double a summon leaves on the effects, and the frames each of its hits falls at from its summon
+const checkIsDanceDouble = (effect: KitEffect): effect is KitSummon =>
+  effect.kind === "summon" && effect.id === DANCE_DOUBLE_ID;
+const findDanceDoubles = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(checkIsDanceDouble);
+const toHitFrames = ({ hits }: KitSummon) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
+
 describe(createOdetteKitBehaviour, () => {
   const PROUD_SKILL_GROUP_ID = 1;
   const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5] }] };
@@ -46,6 +56,23 @@ describe(createOdetteKitBehaviour, () => {
     multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
     poiseDamage: 0,
   };
+  const PLUME_HIT_RECORD: KitHitRecord = {
+    area: { angle: 2 * Math.PI, height: 2, radius: 19 },
+    hitmarkFrames: 134,
+    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
+    poiseDamage: 0,
+  };
+  const WING_HIT_RECORD: KitHitRecord = {
+    area: { angle: 2 * Math.PI, height: 2, radius: 20 },
+    hitmarkFrames: 243,
+    multiplier: { index: 0, proudSkillGroupId: PROUD_SKILL_GROUP_ID },
+    poiseDamage: 0,
+  };
+  const createFollowUpRecord = (): KitActionRecord => ({
+    animationFrames: 76,
+    hits: [HIT_RECORD],
+    targeting: KitTargeting.Skill,
+  });
   const createActionRecord = (): KitActionRecord => ({
     animationFrames: 30,
     hits: [HIT_RECORD],
@@ -57,13 +84,25 @@ describe(createOdetteKitBehaviour, () => {
     burstCooldownSeconds: 15,
     chargedAttack: createActionRecord(),
     chargedAttackStamina: 20,
-    frames: { stellarVortex: 181 },
+    frames: {
+      danceDoubleBurstFirstTick: 252,
+      danceDoubleBurstSpawn: 1,
+      danceDoubleDuration: 1262,
+      danceDoubleRecastFirstTick: 114,
+      danceDoubleFirstTick: 134,
+      danceDoubleSkillSpawn: 23,
+      plumeTickInterval: 109,
+      stellarVortex: 181,
+      wingTickInterval: 125,
+    },
+    hits: { plume: PLUME_HIT_RECORD, wing: WING_HIT_RECORD },
     normalAttacks: [createActionRecord()],
     plungeCollision: HIT_RECORD,
     plunges: { [KitPlunge.High]: createActionRecord(), [KitPlunge.Low]: createActionRecord() },
     skill: createActionRecord(),
     skillCooldownSeconds: 6,
     skillHolds: [],
+    skillChain: { followUps: [createFollowUpRecord()], windowSeconds: 394 / 60 },
     stellarJubilee: { stellarReactionTypes: [StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl] },
   };
   const kit: Kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, createOdetteKitBehaviour);
@@ -167,5 +206,61 @@ describe(createOdetteKitBehaviour, () => {
     expect(
       getPartyStellarReactionTypes(new Map([[ODETTE_CHARACTER_ID, combatant]]), createParty([ODETTE_CHARACTER_ID])),
     ).toStrictEqual([StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl]);
+  });
+
+  test("a skill press summons a Dance Double whose Plume lands 157 frames after the press, then alternates with Wing", () => {
+    expect.hasAssertions();
+
+    expect(
+      findDanceDoubles(castKitAction(kit.elementalSkill, combatant)).map((summon) => toHitFrames(summon)),
+    ).toStrictEqual([[157, 266, 391, 500, 625, 734, 859, 968, 1093, 1202]]);
+  });
+
+  test("a Dance Double runs out with its status, 1262 frames after its summon", () => {
+    expect.hasAssertions();
+
+    expect(
+      findDanceDoubles(castKitAction(kit.elementalSkill, combatant)).map(({ secondsRemaining }) =>
+        Math.round(secondsRemaining * 60),
+      ),
+    ).toStrictEqual([1285]);
+  });
+
+  test("a Coda recast restarts the Dance Double on a Plume 114 frames after the recast, on the status it has", () => {
+    expect.hasAssertions();
+    const kitEffectState = castKitAction(kit.elementalSkill, combatant);
+    stepKitSeconds(createKitTestContext(combatant, { kitEffectState }), 200 / 60);
+
+    for (const followUp of kit.elementalSkillChain?.followUps ?? []) castKitAction(followUp, combatant, kitEffectState);
+
+    expect(findDanceDoubles(kitEffectState).map((summon) => toHitFrames(summon))).toStrictEqual([
+      [157, 314, 423, 548, 657, 782, 891, 1016, 1125, 1250],
+    ]);
+    // The 200 frames stepped run down the status's 1285, which the recast does not renew
+    expect(
+      findDanceDoubles(kitEffectState).map(({ secondsRemaining }) => Math.round(secondsRemaining * 60)),
+    ).toStrictEqual([1085]);
+  });
+
+  test("a burst with no Dance Double standing summons one whose Plume lands 253 frames after the burst", () => {
+    expect.hasAssertions();
+
+    expect(
+      findDanceDoubles(castKitAction(kit.elementalBurst, combatant)).map((summon) => toHitFrames(summon)),
+    ).toStrictEqual([[253, 362, 487, 596, 721, 830, 955, 1064, 1189]]);
+  });
+
+  test("a burst while a Dance Double stands takes up its next attack, Wing once the Plume has landed, and ends the one standing", () => {
+    expect.hasAssertions();
+    const kitEffectState = castKitAction(kit.elementalSkill, combatant);
+    stepKitSeconds(createKitTestContext(combatant, { kitEffectState }), 160 / 60);
+
+    castKitAction(kit.elementalBurst, combatant, kitEffectState);
+
+    expect(
+      findDanceDoubles(kitEffectState)
+        .filter(({ secondsRemaining }) => secondsRemaining > 0)
+        .map((summon) => toHitFrames(summon)),
+    ).toStrictEqual([[253, 378, 487, 612, 721, 846, 955, 1080, 1189]]);
   });
 });

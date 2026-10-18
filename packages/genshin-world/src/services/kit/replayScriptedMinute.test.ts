@@ -119,6 +119,7 @@ export const replayScriptedMinute = ({
     expiredEffects: [],
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
+    isSkillHeld: false,
     hexereiCount: 0,
     stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
@@ -142,7 +143,12 @@ export const replayScriptedMinute = ({
     const turnIndex = Math.floor(stepIndex / turnStepCount);
     const turnStep = stepIndex % turnStepCount;
     if (isInCombat && turnStep === 0)
-      switchPartyMember(party, turnIndex % characterIds.length, stepIndex * FIXED_STEP_SECONDS);
+      switchPartyMember(
+        party,
+        turnIndex % characterIds.length,
+        stepIndex * FIXED_STEP_SECONDS,
+        context.kitEffectState.effects,
+      );
     const characterId = getActiveCharacterId(party);
     characterController.step(inputState, 0, getCharacterLocomotion(characterId, characterDataMap), FIXED_STEP_SECONDS);
     stepPartyCooldowns(party, FIXED_STEP_SECONDS);

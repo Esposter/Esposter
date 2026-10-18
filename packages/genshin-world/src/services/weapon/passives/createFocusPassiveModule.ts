@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,7 +14,7 @@ const FOCUS_MAXIMUM_STACKS = 5;
 // The stacks are holds with no end time: a critical hit releases them all and adds none, and any other hit adds one.
 // The stacks are a CRIT Rate bonus on the wielder as it is priced, as the game's are a buff on the character, so every
 // Roll its wielder makes reads them, a Lunar reaction's included
-export const createFocusPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createFocusPassiveModule = (params: number[]): PassiveModule => {
   const criticalRateBonus = takeOne(params, 0);
   return {
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [

@@ -86,5 +86,121 @@
   "skill.animationFrames": { "cause": "Unsourced", "value": 51 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unsourced", "value": 1 },
-  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarCrystallize" }
+  "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarCrystallize" },
+  "stances.lunarPhaseShift.normalAttacks.0.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.0.animationFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.0.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.0.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.0.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.0.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.1.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.1.animationFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.1.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.1.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.1.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.1.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.2.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.2.animationFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.2.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.2.hits.1.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.2.hits.1.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.3.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.3.animationFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.3.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.3.hits.1.area" }
+  },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.normalAttacks.3.hits.1.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.chargedAttack.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.chargedAttack.animationFrames" }
+  },
+  "stances.lunarPhaseShift.chargedAttack.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.chargedAttack.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.chargedAttack.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.chargedAttack.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.chargedAttack.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.chargedAttack.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.chargedAttack.hits.1.area" }
+  },
+  "stances.lunarPhaseShift.chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.chargedAttack.hits.1.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000114, "path": "stances.sevenPhaseFlash.chargedAttack.hits.1.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.skill.animationFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000032, "path": "skillHolds.0.action.animationFrames" }
+  },
+  "stances.lunarPhaseShift.skill.hits.0.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000032, "path": "skillHolds.0.action.hits.0.area" }
+  },
+  "stances.lunarPhaseShift.skill.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.skill.hits.0.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000032, "path": "skillHolds.0.action.hits.0.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.skill.hits.1.area": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000032, "path": "skillHolds.0.action.hits.1.area" }
+  },
+  "stances.lunarPhaseShift.skill.hits.1.element": { "cause": "Unsourced", "value": "Rock" },
+  "stances.lunarPhaseShift.skill.hits.1.hitmarkFrames": {
+    "cause": "BorrowedFromDonor",
+    "donor": { "characterId": 10000032, "path": "skillHolds.0.action.hits.1.hitmarkFrames" }
+  },
+  "stances.lunarPhaseShift.skill.hits.1.lunarReactionType": { "cause": "Unsourced", "value": "LunarCrystallize" },
+  "burst.hits.1.lunarReactionType": { "cause": "Unsourced", "value": "LunarCrystallize" }
 }

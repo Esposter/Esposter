@@ -1,6 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -12,6 +12,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
@@ -78,11 +79,17 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
   const refreshFieldSeconds = readSeconds("seamlessShieldRefreshField");
   const spiritvein = readHit("spiritvein");
   // The shield a cast or a recast sets on the team, its health the share of Max HP plus its flat amount, and its explosion
-  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, secondsRemaining: number): KitShield =>
+  const castShield = (
+    { characterIdCombatantMap, kitEffectState, party }: KitContext,
+    combatant: Combatant,
+    secondsRemaining: number,
+  ): KitShield =>
     castKitShield(kitEffectState, combatant.characterId, {
       element: Element.Dendro,
       explosion: { combatant, hit: spiritvein },
-      health: shieldMaxHealthShare * combatant.attributes.maxHealth + shieldFlatHealth,
+      health:
+        shieldMaxHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) +
+        shieldFlatHealth,
       secondsRemaining,
     });
   return {
@@ -93,8 +100,9 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         ? FIVE_FORTUNES_FOREVER_DENDRO_DAMAGE_BONUS
         : 0,
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
-        castShield(kitEffectState, combatant, firstShieldSeconds);
+      onStart: (context) => {
+        const { activeCombatant: combatant, body, kitEffectState, party } = context;
+        castShield(context, combatant, firstShieldSeconds);
         if (combatant.constellationCount >= CONSTELLATION_4)
           buffKitTeam(kitEffectState, party, {
             amount: CONSTELLATION_4_ELEMENTAL_MASTERY,
@@ -105,7 +113,7 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         // The field recasts the shield at each refresh, from wherever the body stands, so its radius reaches every body
         castKitField(kitEffectState, combatant.characterId, body.position, {
           nextTickSeconds: firstRefreshSeconds,
-          onTick: ({ kitEffectState: tickKitEffectState }) => castShield(tickKitEffectState, combatant, shieldSeconds),
+          onTick: (tick) => castShield(tick, combatant, shieldSeconds),
           secondsRemaining: refreshFieldSeconds,
           tickIntervalSeconds: refreshIntervalSeconds,
         });

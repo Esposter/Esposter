@@ -5,6 +5,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -56,16 +57,8 @@ const checkIsOutOfStrikeReach = (strike: KitStrike, target: Enemy | undefined, e
 // Reaches the enemies round its own, whose energy and reactions follow in turn. The strikes given keep only those that
 // Struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
-  const {
-    characterIdCombatantMap,
-    enemyMap,
-    enemyTables,
-    kitEffectState,
-    party,
-    placeWildlifeDrops,
-    random,
-    wildlifeList,
-  } = context;
+  const { characterIdCombatantMap, enemyMap, kitEffectState, party, placeWildlifeDrops, random, wildlifeList } =
+    context;
   let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
@@ -107,11 +100,17 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         enemy,
         party,
         kitEffectState.effects,
+        characterIdCombatantMap,
       );
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
-        (combatant.kit.getStrikeAdditiveBaseDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
-        deployedBonuses.additiveBaseDamageBonus;
+        (combatant.kit.getStrikeAdditiveBaseDamageBonus?.(
+          pricedStrike,
+          enemy,
+          party,
+          kitEffectState.effects,
+          characterIdCombatantMap,
+        ) ?? 0) + deployedBonuses.additiveBaseDamageBonus;
       const pricedHit = {
         ...enemyHit,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
@@ -122,7 +121,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
             combatant.characterId,
             getKitHitElement(enemyHit, combatant),
           ) +
-          (combatant.kit.getStrikeCriticalDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeCriticalDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.criticalDamageBonus,
         criticalRateBonus:
           (enemyHit.criticalRateBonus ?? 0) +
           (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
@@ -137,11 +137,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           deployedBonuses.defenseIgnored,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
-        enemyTables,
         enemy,
         pricedHit,
         pricedCombatant,
-        random,
+        context,
         moonsign,
         stellarReactionTypes,
       );
@@ -174,6 +173,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           new Set([combatant.characterId]),
           combatant,
           context,
+          StellarReactionType.StellarSwirl,
         );
       if (reactions.length > 0) {
         context.reactionTriggers.push({ enemy, reactions });

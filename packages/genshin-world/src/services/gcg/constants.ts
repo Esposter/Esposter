@@ -24,6 +24,8 @@ export const GCG_SHIELD_LIMIT = 2;
 // The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
 // rewards a victory of, none the same
 export const GCG_REWARDABLE_GAME_COUNT = 942;
+// The Adventure Rank the card game opens at: its tutorial quest is offered from it, and no duel of it is offered below
+export const GCG_OPEN_ADVENTURE_RANK = 32;
 
 // The card game's items in the dump: its Player EXP, a virtual item the card game's rewards pay into its EXP, and the Lucky Coin
 // Its Card Shop prices in and its rewards pay
@@ -109,15 +111,17 @@ export const GCG_TOSS_UP_REROLL_COUNT = 2;
 // The side the player steers is the duel's first, and the opponent the resident's, which the scripted policy takes its turns by
 export const GCG_PLAYER_SIDE_INDEX = 0;
 export const GCG_OPPONENT_SIDE_INDEX = 1;
-// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst
+// The skills the active character offers the player as its buttons, its normal attack, elemental skill and burst, then a Technique
 export const GCG_SKILL_KIND_DISPLAY_ORDER: GcgSkillKind[] = [
   GcgSkillKind.NormalAttack,
   GcgSkillKind.ElementalSkill,
   GcgSkillKind.ElementalBurst,
+  GcgSkillKind.Technique,
 ];
 // The action card kinds that are equipped to a character, so a click on one waits for the character it goes onto
 export const GCG_EQUIPMENT_CARD_KINDS = new Set<GcgCardKind>([
   GcgCardKind.Artifact,
   GcgCardKind.Talent,
+  GcgCardKind.Vehicle,
   GcgCardKind.Weapon,
 ]);

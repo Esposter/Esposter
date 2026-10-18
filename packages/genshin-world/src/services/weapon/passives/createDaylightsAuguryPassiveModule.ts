@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -20,7 +20,7 @@ const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
 // Daylight's Augury at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's percentage, and each normal,
 // Charged, Elemental Skill or Elemental Burst hit it deals gains a stack of Ashen Nightstar for the rank's seconds. Each stack
 // Runs its own seconds, and its ATK rises by the rank's share on the ladder of one to four stacks
-export const createDaylightsAuguryPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const stackSeconds = takeOne(params, 1);
   const attackShares = params.slice(2, 6);

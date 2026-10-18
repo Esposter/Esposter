@@ -1,14 +1,14 @@
-import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
 import { parseGcgDamageEffect } from "#src/services/gcg/effects/parseGcgDamageEffect";
+import { runGcgOnSkillUsed } from "#src/services/gcg/effects/runGcgOnSkillUsed";
+import { runGcgSkillEffect } from "#src/services/gcg/effects/runGcgSkillEffect";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
@@ -33,33 +33,17 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
     sideState,
     zoneCards: listGcgFieldCards(sideState, undefined),
   }));
-  const dealt: GcgDealtDamage[] = damage
-    ? applyGcgDamage(context.duel, context.sideIndex, damage, context.duel.rule, context)
-    : [];
-  const standbyPiercing = skillModule?.getStandbyPiercing?.(context);
-  if (standbyPiercing) dealt.push(...applyGcgStandbyPiercing(context.duel, context.sideIndex, standbyPiercing, skill));
-  skillModule?.afterDamage?.(context);
-  side.usedSkillIds.push(skill.id);
-  for (const zoneCard of fieldCards) {
-    const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
-    const skillDamage = GcgCardIdModuleMap.get(zoneCard.cardId)?.onSkillUsed?.(
-      { ...context, characterIndex },
-      skill,
-      zoneCard,
-      dealt,
-    );
-    // A card's damage on a skill is not the skill's own hit, so the Plunging Attack bonus does not bear on it
-    if (skillDamage)
-      applyGcgDamage(context.duel, context.sideIndex, skillDamage, context.duel.rule, {
-        ...context,
-        characterIndex,
-        isPlunge: false,
-      });
-  }
+  const dealt = runGcgSkillEffect(context, skill, damage);
+  runGcgOnSkillUsed(context, fieldCards, skill, dealt);
   for (const [sideIndex, { sideState, zoneCards }] of fieldOfEachSide.entries())
     for (const zoneCard of zoneCards)
       GcgCardIdModuleMap.get(zoneCard.cardId)?.onAnySkillUsed?.(
-        { ...context, characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard), sideIndex },
+        {
+          ...context,
+          characterIndex: findGcgZoneCardOwner(sideState.characters, zoneCard),
+          sideIndex,
+          userSideIndex: context.sideIndex,
+        },
         skill,
         zoneCard,
         dealt,
@@ -67,6 +51,6 @@ export const runGcgSkillUse = (baseContext: GcgEffectContext, skill: GcgSkill): 
   for (const passive of user?.character.skills ?? [])
     if (passive.kind === GcgSkillKind.Passive)
       GcgEffectNameSkillModuleMap.get(passive.effect)?.afterSkillUsed?.(context);
-  for (const sideState of context.duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of context.duel.sides.keys()) pruneGcgZoneCards(context.duel, sideIndex);
   return true;
 };

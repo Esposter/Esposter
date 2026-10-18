@@ -1,6 +1,6 @@
 ## Purpose
 
-Flins's kit as built, with his five strikes, charged attack, provisional plunges, Manifest Flame's press and the stance it starts, and Cometh the Night's initial and final hits, and what is left waiting on the Lunar-Charged hook and a stance's own skill cooldown.
+Flins's kit as built, with his five strikes, charged attack, provisional plunges, Manifest Flame's press and the stance it starts, and Cometh the Night's initial, middle and final hits, and what is left waiting on the Lunar-Charged hook and a stance's own skill cooldown.
 
 ## Requirements
 
@@ -50,7 +50,7 @@ Pressing Manifest Flame SHALL deal no damage and start a 10-second stance in whi
 
 ### Requirement: Cometh the Night hits
 
-Cometh the Night SHALL deal an initial Electro hit 93 frames after it is cast and a final hit 164 frames after, each in a circle of 7 metres round Flins.
+Cometh the Night SHALL deal an initial Electro hit 93 frames after it is cast, two middle hits at 110 and 119 frames, and a final hit 164 frames after, each in a circle of 7 metres round Flins. Two more middle hits, at 128 and 137 frames, SHALL land while the team is at Ascendant Gleam.
 
 #### Scenario: The initial and final hits land
 
@@ -58,6 +58,12 @@ Cometh the Night SHALL deal an initial Electro hit 93 frames after it is cast an
 - **WHEN** the player casts Cometh the Night
 - **THEN** the initial Electro hit lands at 93 frames
 - **AND** the final hit lands at 164 frames, after its 130-frame animation
+
+#### Scenario: Ascendant Gleam adds two middle hits
+
+- **GIVEN** Flins has enough energy and the team is at Ascendant Gleam
+- **WHEN** the player casts Cometh the Night
+- **THEN** four middle hits land, at 110, 119, 128 and 137 frames
 
 ### Requirement: Cometh the Night cooldown
 

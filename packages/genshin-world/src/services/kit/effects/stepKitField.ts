@@ -15,7 +15,7 @@ export const stepKitField = (field: KitField, stepSeconds: number, context: KitC
     field.centre.x = position.x;
     field.centre.z = position.z;
   }
-  field.onStep?.(context, field);
+  field.onStep?.(context, field, stepSeconds);
   field.nextTickSeconds = runDownSeconds(field.nextTickSeconds, stepSeconds);
   while (field.nextTickSeconds <= FLOAT_RESIDUE) {
     if (checkIsInKitField(field, position)) field.onTick(context, field.tickIndex);

@@ -14,6 +14,8 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const CHANG_THE_NINTH_ID = 322_009;
 const SKILL: GcgSkill = { costs: [], effect: "", energyGain: 0, id: 1, kind: GcgSkillKind.ElementalSkill };
@@ -60,6 +62,8 @@ const createSide = (drawPile: number[]): GcgSideState => ({
 // A skill of the side at index 0 has dealt the hits: Chang the Ninth on that side hears it
 const hearSkill = (side: GcgSideState, zoneCard: GcgZoneCard, dealt: GcgDealtDamage[]): void => {
   const duel: GcgDuel = {
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
@@ -69,7 +73,7 @@ const hearSkill = (side: GcgSideState, zoneCard: GcgZoneCard, dealt: GcgDealtDam
     rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
     sides: [side, createSide([])],
   };
-  const context: GcgEffectContext = { duel, sideIndex: 0 };
+  const context: GcgEffectContext & { userSideIndex: number } = { duel, sideIndex: 0, userSideIndex: 0 };
   changTheNinth.onAnySkillUsed?.(context, SKILL, zoneCard, dealt);
 };
 

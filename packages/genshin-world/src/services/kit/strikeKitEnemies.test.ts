@@ -82,8 +82,9 @@ const createMember = (getPartyStrikeBonus: Kit["getPartyStrikeBonus"]): Combatan
 const SURVIVING_HEALTH = 1e9;
 
 // The health the Traveler's first hit takes off an enemy that survives it, struck by the striker with the members given
-// Among the built combatants of the team, the team given as the deployed one
-const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[]): number => {
+// Among the built combatants of the team, the team given as the deployed one, and the roll its critical check takes: 0 lands
+// A critical hit for any Critical Rate above zero, and 1 never does
+const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[], roll = 1): number => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   enemy.health = SURVIVING_HEALTH;
   const context = createKitTestContext(striker, {
@@ -91,7 +92,7 @@ const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacte
     enemyMap: new Map([[enemy.id, enemy]]),
     enemyTables,
     party: createParty(teamCharacterIds),
-    random: () => 1,
+    random: () => roll,
   });
   strikeKitEnemies([{ body: context.body, combatant: striker, hit: KIT_HIT, target: enemy }], context);
   return SURVIVING_HEALTH - enemy.health;
@@ -390,6 +391,23 @@ describe(strikeKitEnemies, () => {
     ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
   });
 
+  test("a deployed member's party strike bonus CRIT DMG adds to another member's critical strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ criticalDamageBonus: 1 }));
+    // A Critical Rate above zero, so the roll of 0 lands a critical hit
+    const striker = {
+      ...createCombatant(undefined),
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: 1000 },
+        { attribute: Attribute.CriticalRate, value: 0.5 },
+      ]),
+    };
+
+    expect(takeStrikeHealth(striker, [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID], 0)).toBeGreaterThan(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID], 0),
+    );
+  });
+
   test("a member's party strike bonus does not add to its own strike, which its own hooks already price", () => {
     expect.hasAssertions();
     const striker = createCombatant(undefined);
@@ -435,6 +453,16 @@ describe(strikeKitEnemies, () => {
     takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     expect(getPartyStrikeBonus.mock.calls.map(([handed]) => handed.characterId)).toStrictEqual([OTHER_CHARACTER_ID]);
+  });
+
+  test("the party strike bonus is handed the team's built combatants, to read a member's buffed attributes from", () => {
+    expect.hasAssertions();
+    const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));
+    const member = createMember(getPartyStrikeBonus);
+    takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const characterIdCombatantMap = takeOne(getPartyStrikeBonus.mock.calls, 0)[5];
+
+    expect(characterIdCombatantMap.get(OTHER_CHARACTER_ID)).toBe(member);
   });
 
   const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 2, radius: 3 };

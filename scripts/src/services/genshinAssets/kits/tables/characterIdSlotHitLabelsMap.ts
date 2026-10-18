@@ -31,6 +31,21 @@ interface KitSlotLabels {
 // Stride while it holds, each stance read from its skill's labels. Illuga's Hold is his skill's hold, read from its Hold
 // DMG label. Vesna's skill tag is the wiki's, so her skill reads its label here like her burst
 export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Clorinde. Her Swift Hunt's DMG label gives its normal shot the first value and its piercing shot the second, and each
+  // Of the three hits of a shot reads its shot's value, as gcsim's Swift Hunt multipliers do
+  [
+    10_000_098,
+    {
+      values: {
+        "hits.swiftHuntNormalShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntNormalShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntNormalShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 0 },
+        "hits.swiftHuntPiercingShot.0.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "hits.swiftHuntPiercingShot.1.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+        "hits.swiftHuntPiercingShot.2.multiplier": { combatTalent: SKILL, label: "Swift Hunt DMG", position: 1 },
+      },
+    },
+  ],
   // Nefer
   [
     10_000_122,
@@ -94,7 +109,39 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         "skillHolds.0.action": { combatTalent: SKILL, labels: ["Hold DMG"] },
         skill: { combatTalent: SKILL, labels: ["Press DMG"] },
       },
-      values: { "skillHolds.0.cooldownSeconds": { combatTalent: SKILL, label: "CD" } },
+      values: {
+        "parameters.nightingaleSongGeoDamageBonus": { combatTalent: BURST, label: "Geo DMG Bonus" },
+        "skillHolds.0.cooldownSeconds": { combatTalent: SKILL, label: "CD" },
+      },
+    },
+  ],
+  // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger quotas
+  // Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and hold positions
+  [
+    10_000_063,
+    {
+      values: {
+        "parameters.icyQuillAttackRatio": { combatTalent: SKILL, label: "DMG Bonus" },
+        "parameters.icyQuillHoldSeconds": { combatTalent: SKILL, label: "Press/Hold Duration", position: 1 },
+        "parameters.icyQuillHoldTriggers": { combatTalent: SKILL, label: "Press/Hold Trigger Quota", position: 1 },
+        "parameters.icyQuillPressSeconds": { combatTalent: SKILL, label: "Press/Hold Duration", position: 0 },
+        "parameters.icyQuillPressTriggers": { combatTalent: SKILL, label: "Press/Hold Trigger Quota", position: 0 },
+      },
+    },
+  ],
+  // Flins's avatar id, as his kit module names it. Cometh the Night's initial, middle and final hits read their multipliers
+  // From its skill labels, the middle label once for each of its four hits
+  [
+    10_000_120,
+    {
+      values: {
+        "burst.hits.0.multiplier": { combatTalent: BURST, label: "Initial Skill DMG" },
+        "burst.hits.1.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.2.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.3.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.4.multiplier": { combatTalent: BURST, label: "Middle Phase Lunar-Charged DMG" },
+        "burst.hits.5.multiplier": { combatTalent: BURST, label: "Final Phase Lunar-Charged DMG" },
+      },
     },
   ],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
@@ -127,4 +174,6 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Jahoda. Her Meowball DMG label gives each Meowball's multiplier, read from the proud skill group its skill's table holds
+  [10_000_124, { values: { "parameters.meowballTalentMultiplier": { combatTalent: SKILL, label: "Meowball DMG" } } }],
 ]);

@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import type { Attribute } from "#src/models/character/Attribute";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
@@ -13,7 +13,7 @@ import { takeOne } from "@esposter/shared";
 export const createReactionBuffPassiveModule = (
   params: number[],
   { attribute, source }: { attribute: Attribute; source: string },
-): WeaponPassiveModule => {
+): PassiveModule => {
   const amount = takeOne(params, 0);
   const seconds = takeOne(params, 1);
   const ascendantGleamAmount = takeOne(params, 2);

@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
@@ -18,6 +19,7 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { takeOne } from "@esposter/shared";
@@ -71,9 +73,9 @@ const checkIsStrikeOn = (event: KitEvent, characterId: number): boolean =>
 // Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
 // Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1
 // And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's instant finish of a charge on a hit taken is built, see its design note. Not built: Ascension 4's DMG and the Prayer's 20% DMG Bonus on the
-// Team's normal attacks, as no hook reads another member's normal attack's DMG; Constellation 2's Max HP, as a buff on Max
-// HP is not read back into maxHealth; Constellation 4's shorter hold cooldown, as a hold's cooldown is one number on the
-// Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
+// Team's normal attacks, as no hook reads another member's normal attack's DMG; Constellation 2's Max HP buff, as
+// No hook starts it on Heron's Sanctum's hit on an opponent; Constellation 4's shorter hold cooldown, as a hold's
+// Cooldown is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
 export const createCandaceKitBehaviour = ({
   kit,
   readHit,
@@ -93,10 +95,15 @@ export const createCandaceKitBehaviour = ({
 
   // The shield is the one Candace casts onto the team, for the seconds until its hit lands, as gcsim sets its shield to
   // Expire at the hitmark
-  const castShield = (kitEffectState: KitEffectState, combatant: Combatant, secondsRemaining: number): KitShield =>
+  const castShield = (
+    { characterIdCombatantMap, kitEffectState, party }: KitContext,
+    combatant: Combatant,
+    secondsRemaining: number,
+  ): KitShield =>
     castKitShield(kitEffectState, combatant.characterId, {
       element: Element.Hydro,
-      health: shieldFlat + shieldShare * combatant.attributes.maxHealth,
+      health:
+        shieldFlat + shieldShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
       secondsRemaining,
     });
 
@@ -157,15 +164,7 @@ export const createCandaceKitBehaviour = ({
       )
         castKitSummon(kitEffectState, body, combatant, [constellation6Wave]);
     },
-    skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-        castShield(kitEffectState, combatant, tapHitmarkSeconds),
-    },
-    skillHolds: [
-      {
-        onStart: ({ activeCombatant: combatant, kitEffectState }) =>
-          castShield(kitEffectState, combatant, chargedHitmarkSeconds),
-      },
-    ],
+    skill: { onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds) },
+    skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, chargedHitmarkSeconds) }],
   };
 };

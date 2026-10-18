@@ -8,6 +8,8 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { mushroomPizza } from "#src/services/gcg/cards/mushroomPizza";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const MAX_HP = 10;
 const WOUNDED_HP = 5;
@@ -52,6 +54,8 @@ const createSide = (): GcgSideState => ({
 });
 
 const createDuel = (side: GcgSideState): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

@@ -1,11 +1,11 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { SkillGlyphs } from "#src/models/hud/SkillGlyphs";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
@@ -26,6 +26,9 @@ export interface Kit {
   burstEnergyCost: number;
   chargedAttack: KitAction;
   chargedAttackStamina: number;
+  chargedAttackVariant?: KitVariant;
+  // The action the body plays as it enters a dash, if the kit has one, which a stance may give in place of its own
+  dash?: KitAction;
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
@@ -42,6 +45,11 @@ export interface Kit {
   elementalSkillMaximumHeldSeconds?: number;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
+  // The attributes a stat converted from Max HP adds to the character's pricing, given the character as every ordinary
+  // Passive, buff and Enduring Rock bonus leaves it, so its Max HP is the buffed one, and its HP as a share of its
+  // Max HP, which a conversion gated on low HP reads. No conversion reads another's output: the kit's and each weapon's
+  // Hook are handed the same character, before any conversion's output is on it
+  getConversionBonuses?: (combatant: Combatant, healthShare: number) => { amount: number; attribute: Attribute }[];
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
   // Hit that landed and the normal attack's place in the kit's chain, from 0, so a hook can tell its last hit or its attack
   getNormalAttackExtraHit?: (context: KitContext, hit: KitHit, chainIndex: number) => KitHit | undefined;
@@ -58,25 +66,42 @@ export interface Kit {
     deployedCombatants: readonly DeployedCombatant[],
     effects: readonly KitEffect[],
   ) => { amount: number; attribute: Attribute }[];
-  // The DMG bonus a transformative reaction adds to its own damage, if a constellation raises it for that reaction,
-  // Given the combatant as it stands and the reaction
-  getReactionDamageBonus?: (combatant: Combatant, reactionType: TransformativeReactionType) => number;
+  // The flat base damage, CRIT DMG, CRIT Rate, DMG Bonus and Elevation a deployed member's kit adds to a reaction a member
+  // Makes, given the member whose kit it is, the reaction and the world's combat state the reaction lands in, which holds the
+  // Deployed team and the effects on it. A kit reads its own reactions here too, and guards on the reaction's combatant being
+  // Itself. The Elevation multiplies a Lunar or Stellar reaction's damage and a direct Lunar hit's last, the only damage the
+  // Game elevates
+  getPartyReactionBonus?: (
+    member: Combatant,
+    reaction: KitReaction,
+    context: KitContext,
+  ) => {
+    additiveBaseDamageBonus?: number;
+    criticalDamageBonus?: number;
+    criticalRateBonus?: number;
+    damageBonus?: number;
+    elevationBonus?: number;
+  };
   // The extra charges of the elemental skill a constellation gives the character as it stands, on top of the kit's
   // Own charges, given the combatant as it stands
   getSkillChargeBonus?: (combatant: Combatant) => number;
   // The factor a skill's cooldown is multiplied by as it starts, if a passive or a field lowers it
   getSkillCooldownMultiplier?: (context: KitContext) => number;
+  // Whether a skill starts whatever its cooldown is, while the kit's effects waive it, as a constellation's status does
+  isSkillCooldownWaived?: (context: KitContext) => boolean;
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands, the deployed team and the effects on it, which a constellation
   // Reads for a bonus its kit's actions set going
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The flat base damage a strike of the kit's own adds as it lands on an enemy, if a passive adds one from the striker's
-  // Stats, given the enemy as it stands, the deployed team and the effects on it
+  // Stats, given the enemy as it stands, the deployed team, the effects on it and the team's built combatants by id, which
+  // A share of the team's elements is read from
   getStrikeAdditiveBaseDamageBonus?: (
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   ) => number;
   // The CRIT Rate a strike of the kit's own adds as its roll is made against an enemy, if a passive or a constellation raises
   // It on the strike, against some enemies only, given the enemy as it stands, the deployed team and the effects on it
@@ -92,21 +117,37 @@ export interface Kit {
   // The share of its enemy's defence a strike of the kit's own ignores as it lands on an enemy, if a constellation gives one,
   // Given the enemy as it stands, the deployed team and the effects on it
   getStrikeDefenceIgnored?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
-  // The flat base damage, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
-  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team and the effects on
-  // It. A member's own strikes are priced by its own hooks, not this one. The defence it ignores joins the hit's
+  // The flat base damage, CRIT DMG, CRIT Rate and DMG Bonus a deployed member's kit adds to a strike another member lands on,
+  // Given the member whose kit it is, the strike as priced, the enemy it lands on, the deployed team, the effects on
+  // It and the team's built combatants by id, which a member's current attributes are read from. A member's own strikes
+  // Are priced by its own hooks, not this one. The defence it ignores joins the hit's defenseIgnored
   getPartyStrikeBonus?: (
     member: Combatant,
     strike: KitStrike,
     enemy: Enemy,
     party: Party,
     effects: readonly KitEffect[],
-  ) => { additiveBaseDamageBonus?: number; criticalRateBonus?: number; damageBonus?: number; defenseIgnored?: number };
+    characterIdCombatantMap: ReadonlyMap<number, Combatant>,
+  ) => {
+    additiveBaseDamageBonus?: number;
+    criticalDamageBonus?: number;
+    criticalRateBonus?: number;
+    damageBonus?: number;
+    defenseIgnored?: number;
+  };
   highPlunge: KitAction;
+  // The action the body plays as it enters a jump, if the kit has one, which a stance may give in place of its own
+  jump?: KitAction;
+  // Whether a skill with holds releases at its top level whatever seconds it was held, as a counter window on its
+  // Character does, given the context the release starts in
+  jumpsSkillHoldToTop?: (context: KitContext) => boolean;
   // Whether an action that ends keeps the normal attack string where it stands, rather than starting it over, as a
   // Constellation's exception to the actions that break it
   keepsNormalAttackCombo?: (context: KitContext, action: KitAction) => boolean;
   lowPlunge: KitAction;
+  // The plunges a character's skill state turns its plunge into while each one's check holds, the first holding one playing
+  // In place of the standard plunge when the body lands, as Xianyun's Driftcloud Wave does at each Skyladder press
+  plungeVariants?: KitVariant[];
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign
   moonsignBenediction?: KitMoonsignBenediction;
   normalAttacks: KitAction[];

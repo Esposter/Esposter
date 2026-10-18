@@ -2,8 +2,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 
-export const OCEANIC_MIMIC_RAPTOR_ID = 122_012;
-
 // Oceanic Mimic: Raptor, a summon for three usages that deals 1 Hydro DMG at the end phase (the wiki's Oceanid Mimic Summoning)
 const RAPTOR_DAMAGE = 1;
 

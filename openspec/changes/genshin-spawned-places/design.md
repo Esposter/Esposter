@@ -41,12 +41,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role after the change                               |
-| :----------------------------------------------------------------- | :-------------------------------------------------- |
-| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`      | Carries each kind's points into its region          |
-| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`    | Builds the Oculi slices from the points and the fit |
-| `scripts/src/services/genshinAssets/points/buildMapPointSlices.ts` | Builds each kind's places as one record a region    |
-| `packages/genshin-world/src/services/world/createWorldHeight.ts`   | The ground a fitted place stands on                 |
+| File                                                                | Role after the change                                              |
+| :------------------------------------------------------------------ | :----------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/points/placeMapPoints.ts`       | Carries each kind's points into its region                         |
+| `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`     | Builds the Oculi slices from the points and the fit                |
+| `scripts/src/services/genshinAssets/points/buildMapPointSlices.ts`  | Builds each kind's places as one record a region                   |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`    | The ground a fitted place stands on                                |
+| `packages/genshin-world/src/services/world/getPlaceGroundHeight.ts` | The height a fitted place stands at, or none outside every outline |
 
 ## Sources
 

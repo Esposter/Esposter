@@ -20,7 +20,7 @@ interface HitboxConstructor {
 }
 
 // The constructor of a hit gcsim gives its target alone, `combat.NewSingleTargetHit(e.Key())`, with no reach beyond it
-const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
+export const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
 
 const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewBoxHit", { fanAngle: false, onTarget: false, shape: GcsimHitboxShape.Box }],
@@ -126,10 +126,11 @@ export const readGoHitbox = (
   const offsetStart = argumentStarts[offsetIndex];
   const offset = offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName);
   if (center === undefined || offset === undefined) return undefined;
-  // Only a circle or box on the player takes an offset: a target's centre is the target itself
+  // A circle on the player or the target takes its offset, which moves its centre as a body circle's does; a box on the
+  // Target keeps none
   if (
     center === GcsimHitboxCenter.PrimaryTarget
-      ? offset !== null
+      ? offset !== null && shape === GcsimHitboxShape.Box
       : !onTarget && sourceCenter !== GcsimHitboxCenter.Player
   )
     return undefined;

@@ -6,9 +6,9 @@ import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplicati
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { RAIN_SWORD_ID } from "#src/services/gcg/cards/constants";
 
 const FATAL_RAINSCREEN_DAMAGE = 2;
-const RAIN_SWORD_ID = 112_021;
 
 // Fatal Rainscreen, Xingqiu's elemental skill: 2 Hydro DMG, Hydro Application on the active character, and a Rain Sword
 // Onstage (the wiki's Fatal Rainscreen (Character Card Skill))

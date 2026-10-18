@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
@@ -10,7 +10,7 @@ const BOLT_COOLDOWN_ID = "boltOfPerceptionCooldown";
 // Echo at its rank: a normal or charged attack its wielder lands has the rank's chance of a Bolt of Perception, an extra hit at
 // The rank's multiplier of ATK on the enemy it struck, once every the rank's cooldown in seconds. The bolt's bounces, which the
 // Text gives as a maximum of four, are not modelled, so the bolt is a single hit provisionally
-export const createBoltOfPerceptionPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createBoltOfPerceptionPassiveModule = (params: number[]): PassiveModule => {
   const chance = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 2);
   const cooldownSeconds = takeOne(params, 3);

@@ -20,10 +20,10 @@ describe(getPaimonsBargainsOffer, () => {
       [10_000_024, 10_000_034],
       [10_000_027, 10_000_025],
     ],
-    characterPrice: { buyLimit: 2, priceCount: 5, priceItemId: 221, refresh: ShopRefresh.Monthly },
+    characterPrice: { buyLimit: 2, costs: [{ count: 5, itemId: 221 }], refresh: ShopRefresh.Monthly },
     royalWeaponIds: [11_404, 12_404, 13_408, 14_404, 15_404],
     weaponGoodIds: [51, 52, 53, 54, 55],
-    weaponPrice: { buyLimit: 3, priceCount: 4, priceItemId: 221, refresh: ShopRefresh.Monthly },
+    weaponPrice: { buyLimit: 3, costs: [{ count: 4, itemId: 221 }], refresh: ShopRefresh.Monthly },
   };
 
   test("two characters are offered each month", () => {

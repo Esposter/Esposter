@@ -8,6 +8,8 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { luckyDogsSilverCirclet } from "#src/services/gcg/cards/luckyDogsSilverCirclet";
 import { describe, expect, test } from "vitest";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const CIRCLET_ID = 312_002;
 const MAX_HP = 10;
@@ -54,6 +56,8 @@ const createSide = (hp: number): GcgSideState => ({
 });
 
 const createDuel = (side: GcgSideState): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

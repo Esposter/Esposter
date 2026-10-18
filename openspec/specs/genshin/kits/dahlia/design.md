@@ -4,12 +4,12 @@ Dahlia's kit is its record and one behaviour module, `createDahliaKitBehaviour`,
 
 ## Not yet built
 
-The framework holds no Benison stacks and no attack-speed buff for the party, so everything that depends on them waits on those hooks.
+The framework has no attack-speed buff for the party, so what depends on it waits on that hook. The Benison stacks need no hook of their own.
 
-- **Benison stacks and the shield's regeneration wait on the Benison hook.** Her normal attacks gain her stacks during Favonian Favor, four hits to a stack, and a broken shield is made again from a stack. Radiant Psalter's shield is built here, but it is not made again once it breaks.
+- **Benison stacks and the shield's regeneration wait on the kit keeping them.** Her normal attacks gain her stacks during Favonian Favor, four hits to a stack, and a broken shield is made again from a stack. Radiant Psalter's shield is built here, but it is not made again once it breaks. gcsim keeps the stacks on Dahlia alone, gained and spent inside her own package with no event for any other character (`dahlia/dahlia.go:15`, `burst.go:134`, `shield.go:58`), so they are a status of hers with `stacks`, as Navia's Crystal Shrapnel is: an `EnemyHit` of a normal attack by the member on the field gains them, a `ReactionTriggered` with Frozen gains Ascension 1's two, and a `ShieldAbsorbed` that leaves her shield's `health` at 0 spends one to cast it again.
 - **The Favonian Favor attack speed waits on the attack-speed hook.** The active party member gets an attack-speed bonus from her burst's Favonian Favor, which the framework has no attribute or party buff for. Her charged attack takes none.
 - **Her skill's Hydro particles wait on the particle hook.** Immersive Ordinance gives three Hydro particles on an internal cooldown, so its energy goes ungenerated, as the index says of every particle.
-- **Her Ascension passives and Constellations 1, 2 and 6 are not built.** Ascension 1 and Constellations 1 and 2 read the Benison stacks, and Ascension 4 and Constellation 6 read the attack-speed bonus, so they wait on the hooks above. Constellation 4 lengthens Favonian Favor by three seconds on the shield the burst places.
+- **Her Ascension passives and Constellations 1, 2 and 6 are not built.** Ascension 1 and Constellations 1 and 2 read the Benison stacks, so they wait on the kit keeping them: Constellation 1's 2.5 Energy a stack gained is `gainPartyMemberEnergy` (`dahlia/cons.go:21`), and Constellation 2's 25% Shield Strength is a buff of `ShieldStrength` on the member on the field, which a shield's absorption reads with the member's buffs on (`dahlia/cons.go:37`). Ascension 4 and Constellation 6 read the attack-speed bonus, so they wait on that hook. Constellation 4 lengthens Favonian Favor by three seconds on the shield the burst places.
 
 ## Decisions
 

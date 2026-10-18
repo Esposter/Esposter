@@ -96,12 +96,12 @@ A fish SHALL be drawn only by its own bait, crafted from its recipe.
 - **WHEN** the cast draws
 - **THEN** that fish is not drawn
 
-### Requirement: Proficiency is exchanged at the Fishing Association
+### Requirement: Fish are exchanged at the Fishing Association
 
-Fishing proficiency SHALL be exchanged at the region's Fishing Association for the rewards its shop offers.
+Fish SHALL be exchanged at the region's Fishing Association for the goods its shop offers, each bought with the fish its costs name, every one of them taken from the bag.
 
-#### Scenario: Proficiency exchanges for a reward at the association
+#### Scenario: Fish exchange for a good at the association
 
-- **GIVEN** the player has fishing proficiency
-- **WHEN** the player exchanges it at the region's Fishing Association
-- **THEN** the reward is given and the proficiency is spent
+- **GIVEN** the player has every fish a good's costs name
+- **WHEN** the player buys the good at the region's Fishing Association
+- **THEN** the good is given and the fish are spent

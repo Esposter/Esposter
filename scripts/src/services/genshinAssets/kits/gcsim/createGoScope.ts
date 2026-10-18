@@ -1,4 +1,5 @@
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
+import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
@@ -186,6 +187,31 @@ const findAssignment = (
     : { kind: "conditional" };
 };
 
+// The values a gcsim action's hold takes, `min(max(p["hold"], 0), 1)` taking 0 for the press and 1 for the hold: the
+// Lookup's own value is unknown, but the clamp bounds it to 0 and 1. Only that clamp on the `hold` key has this shape,
+// Else Undefined
+const readClampValues = (expression: GoExpression): number[] | undefined => {
+  if (expression.kind !== GoExpressionKind.Call || expression.callee !== "min" || expression.parameters.length !== 2)
+    return undefined;
+  const [inner, upper] = expression.parameters;
+  if (inner?.kind !== GoExpressionKind.Call || inner.callee !== "max" || inner.parameters.length !== 2)
+    return undefined;
+  const [lookup, lower] = inner.parameters;
+  if (
+    lookup?.kind !== GoExpressionKind.Index ||
+    lookup.target.kind !== GoExpressionKind.Identifier ||
+    lookup.target.name !== "p" ||
+    lookup.index.kind !== GoExpressionKind.String ||
+    lookup.index.value !== "hold" ||
+    lower?.kind !== GoExpressionKind.Number ||
+    lower.value !== 0 ||
+    upper?.kind !== GoExpressionKind.Number ||
+    upper.value !== 1
+  )
+    return undefined;
+  return [0, 1];
+};
+
 // The value of each name a Go source's references read at a position: a parameter's from its callers' arguments, a
 // Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has none,
 // So a local of another function is never read
@@ -201,6 +227,16 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   const findScope = (position: number): GoFunctionScope | undefined =>
     scopes.find(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd);
 
+  // The values of an argument that is a local dominated by a clamp of the action's hold, read at its call's position
+  const readClampedArgument = (argument: GoExpression, callPosition: number): number[] | undefined => {
+    const scope = findScope(callPosition);
+    if (argument.kind !== GoExpressionKind.Identifier || scope === undefined) return undefined;
+    const assignment = findAssignment(tokens, scope, argument.name, callPosition, constantMap);
+    return assignment.kind === "dominating"
+      ? readClampValues(parseGoExpression(tokens, assignment.valueStart).expression)
+      : undefined;
+  };
+
   // Each number a function's parameter takes at its call sites, undefined where a call's argument has none
   const readParameterValues = (scope: GoFunctionScope, index: number, depth: number): number[] | undefined => {
     if (depth > MAX_DEPTH) return undefined;
@@ -213,9 +249,13 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       const call = parseGoExpression(tokens, callPosition).expression;
       const argumentStart = call.kind === GoExpressionKind.Call ? call.parameterStarts[index] : undefined;
       if (argumentStart === undefined) return undefined;
-      const value = evaluateGoNumber(parseGoExpression(tokens, argumentStart).expression, (name) =>
-        resolveAt(name, callPosition, depth + 1),
-      );
+      const argument = parseGoExpression(tokens, argumentStart).expression;
+      const clampValues = readClampedArgument(argument, callPosition);
+      if (clampValues !== undefined) {
+        for (const clampValue of clampValues) values.add(clampValue);
+        continue;
+      }
+      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, depth + 1));
       if (value === undefined) return undefined;
       values.add(value);
     }
@@ -241,6 +281,15 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   };
 
   return {
+    // The numbers an argument of a call takes at the call's position: each of the two a clamp of the action's hold bounds
+    // A local to, else the one number it evaluates to, and none where it evaluates to none
+    readArgumentValues: (callPosition: number, argumentStart: number): number[] | undefined => {
+      const argument = parseGoExpression(tokens, argumentStart).expression;
+      const clampValues = readClampedArgument(argument, callPosition);
+      if (clampValues !== undefined) return clampValues;
+      const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, 0));
+      return value === undefined ? undefined : [value];
+    },
     // Every combination of the numbers a position's function's parameters take at their call sites, a parameter no
     // Single number reaches left out of each
     readParameterIterations: (position: number): Map<string, number>[] => {
@@ -257,5 +306,13 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       );
     },
     resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0),
+    // The first token of a local's value at a position, where one assignment dominates it, as a call passing `ap` reads
+    // The constructor `ap := combat.NewCircleHitOnTarget(...)` gave it
+    resolveAssignment: (name: string, position: number): number | undefined => {
+      const scope = findScope(position);
+      if (scope === undefined || scope.parameters.includes(name)) return undefined;
+      const assignment = findAssignment(tokens, scope, name, position, constantMap);
+      return assignment.kind === "dominating" ? assignment.valueStart : undefined;
+    },
   };
 };

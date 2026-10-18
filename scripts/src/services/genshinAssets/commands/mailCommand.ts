@@ -1,10 +1,12 @@
+import type { CommandDef } from "citty";
+
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildMailPublication } from "#src/services/genshinAssets/mail/buildMailPublication";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
-export const mailCommand = defineCommand({
+export const mailCommand: CommandDef<typeof dryRunArgs> = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:

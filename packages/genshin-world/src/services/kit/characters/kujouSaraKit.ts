@@ -2,18 +2,22 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
@@ -37,6 +41,13 @@ const DECORUM_ID = "sara-decorum";
 const DECORUM_SECONDS = 3;
 const C2_CONSTELLATION = 2;
 const C4_CONSTELLATION = 4;
+const C6_CONSTELLATION = 6;
+// Constellation 6 marks the character the ATK Bonus reaches for six seconds, and gives its Electro DMG and its Lunar-Charged
+// Reactions 60% CRIT DMG, as gcsim v2.47.2 (MIT) sara/cons.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go
+const C6_CRITICAL_DAMAGE = 0.6;
+const C6_MARK_SECONDS = 6;
+export const KUJOU_SARA_C6_MARK_ID = "sara-c6-mark";
 
 export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 
@@ -44,10 +55,10 @@ export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 // Crowfeather the Ambush strikes, and from Constellation 2 a weaker crowfeather where she stands. Subjugation: Koukou
 // Sendou's Stormclusters, four bouts or six from Constellation 4. Her fully charged shot, Titanbreaker, the Ambushes and
 // The Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as each lands.
-// Ascension 1's shorter charge is not built, as a charged attack has one duration. Constellations 1 and 6 are not
-// Built, as no hit reads the Electro DMG Bonus they need. Ascension 4's Decorum restores Energy as the Ambush lands
-// Constellation 1 needs the hits and ATK grants of Tengu Juurai as events, which the kit does not emit
-// Constellation 6 needs a strike hook that raises CRIT DMG on the Electro DMG of her ATK-buffed members, not built
+// Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's Decorum restores Energy
+// As the Ambush lands. Constellation 1 is not built, as it needs the hits and ATK grants of Tengu Juurai as events, which
+// The kit does not emit. Constellation 6's mark gives the character it reaches 60% CRIT DMG on its Electro DMG and on its
+// Lunar-Charged reactions, for six seconds
 // Restores the party's Energy as the Ambush's hits land, once every three seconds, from the Energy Recharge its striker has
 const restoreDecorumEnergy = (
   { characterIdCombatantMap, kitEffectState, party }: KitContext,
@@ -66,17 +77,29 @@ const restoreDecorumEnergy = (
   }
 };
 
+// The CRIT DMG Constellation 6 adds to an Electro strike of a character holding its mark, whichever kit reads it
+const getMarkedElectroCriticalDamage = ({ combatant, hit }: KitStrike, effects: readonly KitEffect[]): number =>
+  getKitHitElement(hit, combatant) === Element.Electro &&
+  checkIsKitStatusActive(effects, combatant.characterId, KUJOU_SARA_C6_MARK_ID)
+    ? C6_CRITICAL_DAMAGE
+    : 0;
+
 export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const atkBonusRatio = readParameter("atkBonusRatio");
   const atkBonusSeconds = readParameter("atkBonusSeconds");
-  // The ATK Bonus Tengu Stormcall gives the character on the field as a hit lands, a share of Sara's base ATK
-  const addAtkBonus = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void =>
-    buffKitMember(kitEffectState, getActiveCharacterId(party), {
+  // The ATK Bonus Tengu Stormcall gives the character on the field as a hit lands, a share of Sara's base ATK, and from
+  // Constellation 6 the same character is marked
+  const addAtkBonus = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+    const characterId = getActiveCharacterId(party);
+    buffKitMember(kitEffectState, characterId, {
       amount: atkBonusRatio * combatant.attributes.attributeTotalMap[Attribute.BaseAttack],
       attribute: Attribute.Attack,
       secondsRemaining: atkBonusSeconds,
       source: TENGU_SOURCE,
     });
+    if (combatant.constellationCount >= C6_CONSTELLATION)
+      addKitStatus(kitEffectState, characterId, { id: KUJOU_SARA_C6_MARK_ID, secondsRemaining: C6_MARK_SECONDS });
+  };
   const ambushHit = readHit("ambush", {
     onStrike: (context, strike) => {
       addAtkBonus(context, strike);
@@ -128,5 +151,18 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
           castKitSummon(kitEffectState, body, combatant, [constellationAmbushHit]);
       },
     },
+    // Constellation 6's mark gives Sara's own Electro strikes CRIT DMG while she holds it, and gives the party's Electro strikes
+    // And Lunar-Charged reactions by a marked character the same
+    getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) => getMarkedElectroCriticalDamage(strike, effects),
+    getPartyStrikeBonus: (_member, strike, _enemy, _party, effects) => ({
+      criticalDamageBonus: getMarkedElectroCriticalDamage(strike, effects),
+    }),
+    getPartyReactionBonus: (_member, { combatant, reactionType }, { kitEffectState }) => ({
+      criticalDamageBonus:
+        reactionType === LunarReactionType.LunarCharged &&
+        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, KUJOU_SARA_C6_MARK_ID)
+          ? C6_CRITICAL_DAMAGE
+          : 0,
+    }),
   };
 };

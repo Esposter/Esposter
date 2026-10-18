@@ -6,8 +6,8 @@ import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
+import { STONE_AND_CONTRACTS_ID } from "#src/services/gcg/cards/constants";
 
-const STONE_AND_CONTRACTS_ID = 331_802;
 const STONE_AND_CONTRACTS_OMNI_DICE = 3;
 
 // Stone and Contracts, an event: when the next Round's Action Phase begins, 3 Omni dice are created and a card is drawn. The

@@ -22,6 +22,7 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   expiredEffects: [],
   kitEffectState: { effects: [] },
   locomotionState: LocomotionState.Idle,
+  isSkillHeld: false,
   hexereiCount: countKitHexereiMembers([combatant.characterId]),
   stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],

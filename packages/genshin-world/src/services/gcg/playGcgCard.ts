@@ -9,9 +9,10 @@ import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
-import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
+import { GCG_EQUIPMENT_CARD_KINDS, GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
+import { notifyGcgSummonsDisappeared } from "#src/services/gcg/effects/notifyGcgSummonsDisappeared";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -45,7 +46,9 @@ export const playGcgCard = (
     return GcgActionResult.Unpayable;
   side.hand = side.hand.filter((_cardId, index) => index !== handIndex);
   placeGcgCard(side, card, targetIndex, module);
+  const summonsBeforePlay = duel.sides.map(({ summons }) => [...summons]);
   module.play?.(context, targetIndex, choice);
+  for (const [index, summons] of summonsBeforePlay.entries()) notifyGcgSummonsDisappeared(duel, index, summons);
   for (const zoneCard of listGcgFieldCards(side, undefined))
     GcgCardIdModuleMap.get(zoneCard.cardId)?.onCardPlayed?.(context, card, zoneCard);
   const switchIndex = module.switchOnPlay?.(context);
@@ -53,7 +56,7 @@ export const playGcgCard = (
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
   if (module.isCombatAction) passGcgTurn(duel, sideIndex);
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return GcgActionResult.Done;
 };
 
@@ -69,8 +72,7 @@ const checkCanPlaceGcgCard = (side: GcgSideState, card: GcgCard, targetIndex: nu
   );
 };
 
-const checkIsGcgEquipment = (card: GcgCard): boolean =>
-  card.kind === GcgCardKind.Artifact || card.kind === GcgCardKind.Talent || card.kind === GcgCardKind.Weapon;
+const checkIsGcgEquipment = (card: GcgCard): boolean => GCG_EQUIPMENT_CARD_KINDS.has(card.kind);
 
 // Puts a played card where its kind keeps it: a support in the support zone, equipment on the target, an event nowhere
 const placeGcgCard = (

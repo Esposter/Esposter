@@ -4,9 +4,7 @@ import { Element } from "#src/models/Element";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
-
-const FLOWING_FLAME_CHARACTER_ID = 1301;
-const SEARING_ONSLAUGHT_ID = 13_012;
+import { FLOWING_FLAME_CHARACTER_ID, SEARING_ONSLAUGHT_ID } from "#src/services/gcg/cards/constants";
 
 // Flowing Flame, Diluc's talent: equipped to Diluc while she is active, it has her Searing Onslaught used at once, and her
 // Second and third uses each round spend one Pyro die less

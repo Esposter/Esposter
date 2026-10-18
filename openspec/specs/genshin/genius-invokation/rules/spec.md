@@ -68,6 +68,16 @@ A refused action SHALL leave the duel unchanged and SHALL say why it was refused
 - **WHEN** the player uses the burst
 - **THEN** the action is refused, the dice it would have paid stay in the dice, and the refusal says why
 
+### Requirement: A reduction a card names its holder for applies while the holder is active
+
+A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it. The wiki's Equipment Card pages read "the character" for Vermillion Hereafter and Capricious Visage, and the game's text names the side for Shimenawa's Reminiscence, so the holder reading is the wiki's and the side reading is the game's, as the decks design records.
+
+#### Scenario: A standby holder's status reduces no Normal Attack of the active character
+
+- **GIVEN** a Minty Meat Rolls status is on a standby character, and the active character pays for a Normal Attack with an Unaligned die
+- **WHEN** the Normal Attack is paid
+- **THEN** the cost is not reduced, and the status keeps its usages
+
 ### Requirement: A switch costs one die, less any reduction from the field
 
 A switch SHALL cost one die of any face, less any reduction the field's cards give to switches.
@@ -172,6 +182,22 @@ A switch an effect makes SHALL count as a switch, and a defeat's replacement SHA
 - **WHEN** the replacement's next skill is a normal attack
 - **THEN** that normal attack is no plunging attack
 
+### Requirement: A normal attack is a charged attack when the side's dice are even before its action phase
+
+A normal attack SHALL be a charged attack when its side held an even number of Elemental Dice as its Action Phase began. That number SHALL be settled then and SHALL hold for the round, so a die added later does not change it.
+
+#### Scenario: An even number of dice makes the Normal Attacks charged
+
+- **GIVEN** a side holds two Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is a charged attack
+
+#### Scenario: An odd number of dice leaves them plain
+
+- **GIVEN** a side holds three Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is no charged attack
+
 ### Requirement: Elements apply an aura and Anemo and Geo set none
 
 Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, and Anemo and Geo damage SHALL set no aura.
@@ -260,9 +286,9 @@ An Overloaded active character SHALL be switched to the next standing character 
 - **WHEN** the reaction resolves
 - **THEN** the side switches to the next standing character in order without a choice
 
-### Requirement: A character at no health is cleared and its side owes a replacement or loses
+### Requirement: A character at no health is defeated and its side owes a replacement or loses
 
-A character at no health SHALL be cleared, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does.
+A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does. The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard.
 
 #### Scenario: Defeated character with a standing ally owes a replacement
 
@@ -275,3 +301,9 @@ A character at no health SHALL be cleared, and its side SHALL owe a replacement 
 - **GIVEN** a side has no character standing
 - **WHEN** the defeat is settled
 - **THEN** the side loses the duel
+
+#### Scenario: A defeat discards the character's cards
+
+- **GIVEN** a character with equipment and statuses attached is defeated by a hit
+- **WHEN** the defeat is settled
+- **THEN** its equipment and statuses are discarded, and its Energy is cleared

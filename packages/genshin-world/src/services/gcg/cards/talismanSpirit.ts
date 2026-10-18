@@ -3,7 +3,6 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 
-export const TALISMAN_SPIRIT_ID = 111_073;
 const TALISMAN_SPIRIT_DAMAGE = 1;
 const TALISMAN_SPIRIT_BONUS = 1;
 

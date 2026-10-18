@@ -12,12 +12,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { CHARGED_ATTACK_HOLD_SECONDS, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { startKitAction } from "#src/services/kit/startKitAction";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
@@ -36,6 +39,8 @@ describe(stepKit, () => {
   };
 
   const STEP_SECONDS = 0.1;
+  // The steps the first strike takes to end, counting the one that starts it out
+  const STRIKE_STEP_COUNT = Math.ceil(takeOne(TRAVELER_KIT.normalAttacks, 0).seconds / STEP_SECONDS);
   const IDLE_INPUT: KitInput = {
     height: 0,
     isAttackHeld: false,
@@ -47,7 +52,7 @@ describe(stepKit, () => {
   };
 
   // One character's kit, its party member and the stamina it spends, stepped by its input at the fixed step
-  const createFixture = () => {
+  const createFixture = (kit: Kit = TRAVELER_KIT) => {
     const kitState = createKitState();
     const landedHits: KitHit[] = [];
     const partyMember = createPartyMember();
@@ -56,7 +61,7 @@ describe(stepKit, () => {
       landedHits.length = 0;
       return stepKit(
         kitState,
-        TRAVELER_KIT,
+        kit,
         { ...IDLE_INPUT, ...input },
         partyMember,
         stamina,
@@ -74,9 +79,8 @@ describe(stepKit, () => {
     const { step } = createFixture();
 
     expect(step({ isAttackPressed: true })).toBe(TRAVELER_KIT.normalAttacks[0]);
-    step();
-    step();
-    step();
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step();
+
     expect(step()).toBeUndefined();
     expect(step({ isAttackPressed: true })).toBe(TRAVELER_KIT.normalAttacks[1]);
   });
@@ -101,7 +105,7 @@ describe(stepKit, () => {
     step({ isAttackPressed: true });
     step();
     step({ isAttackPressed: true });
-    step();
+    for (let index = 0; index < STRIKE_STEP_COUNT - 3; index++) step();
 
     expect(step()).toBe(TRAVELER_KIT.normalAttacks[1]);
   });
@@ -113,9 +117,7 @@ describe(stepKit, () => {
     const heldInput = { isAttackHeld: true };
 
     step({ isAttackHeld: true, isAttackPressed: true });
-    step(heldInput);
-    step(heldInput);
-    step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
 
     expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
     expect(stamina.value).toBe(80);
@@ -123,13 +125,43 @@ describe(stepKit, () => {
     const lowStaminaFixture = createFixture();
     lowStaminaFixture.stamina.value = 19;
     lowStaminaFixture.step({ isAttackHeld: true, isAttackPressed: true });
-    for (let index = 0; index < 3; index++) lowStaminaFixture.step(heldInput);
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) lowStaminaFixture.step(heldInput);
 
     expect(lowStaminaFixture.step(heldInput)).toBeUndefined();
     expect(lowStaminaFixture.stamina.value).toBe(19);
   });
 
-  test("holds a charged attack at its stamina times the kit's multiplier, so none starts it on an empty pool", () => {
+  test("starts a charged attack variant in place of the charged attack while its check holds", () => {
+    expect.hasAssertions();
+
+    const variant: KitAction = { ...TRAVELER_KIT.chargedAttack };
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttackVariant: { action: variant, checkIsActive: () => true } };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
+
+    expect(step(heldInput)).toBe(variant);
+  });
+
+  test("keeps the charged attack while a charged attack variant's check fails", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      chargedAttackVariant: { action: { ...TRAVELER_KIT.chargedAttack }, checkIsActive: () => false },
+    };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step(heldInput);
+
+    expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
+  });
+
+  test("a charged attack costing none needs some stamina in the pool, so none starts it on an empty pool", () => {
     expect.hasAssertions();
 
     const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
@@ -141,10 +173,28 @@ describe(stepKit, () => {
     const step = (input: Partial<KitInput>) =>
       stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
     step({ isAttackHeld: true, isAttackPressed: true });
-    for (let index = 0; index < 3; index++) step({ isAttackHeld: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
+
+    expect(step({ isAttackHeld: true })).toBeUndefined();
+    expect(stamina.value).toBe(0);
+  });
+
+  test("a charged attack costing none starts on a pool that holds some stamina, and spends none of it", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, getChargedAttackStaminaMultiplier: () => 0 };
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    stamina.value = 1;
+    const context = createKitTestContext(TRAVELER_COMBATANT);
+    const step = (input: Partial<KitInput>) =>
+      stepKit(kitState, kit, { ...IDLE_INPUT, ...input }, partyMember, stamina, STEP_SECONDS, [], context);
+    step({ isAttackHeld: true, isAttackPressed: true });
+    for (let index = 0; index < STRIKE_STEP_COUNT - 1; index++) step({ isAttackHeld: true });
 
     expect(step({ isAttackHeld: true })).toBe(kit.chargedAttack);
-    expect(stamina.value).toBe(0);
+    expect(stamina.value).toBe(1);
   });
 
   test("starts a skill only off its cooldown", () => {
@@ -156,6 +206,59 @@ describe(stepKit, () => {
     expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
 
     for (let index = 0; index < 11; index++) step();
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+  });
+
+  test("a press that ends the state plays none of the skill's hits, and sets no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { landedHits, partyMember, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+
+    step({ isSkillPressed: true });
+    landed.push(...landedHits);
+    for (let index = 0; index < Math.ceil(kit.elementalSkill.seconds / STEP_SECONDS); index++) {
+      step();
+      landed.push(...landedHits);
+    }
+
+    expect(landed).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("a press that ends the state starts the skill off its cooldown, which it leaves as it was", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { partyMember, step } = createFixture(kit);
+    partyMember.skillCooldownSeconds = TRAVELER_KIT.skillCooldownSeconds;
+
+    expect(step({ isSkillPressed: true })?.hits).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
+  });
+
+  test("starts a skill whose cooldown its kit waives while the cooldown runs", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture({ ...TRAVELER_KIT, isSkillCooldownWaived: () => true });
+    partyMember.skillCooldownSeconds = 5;
+
+    expect(step({ isSkillPressed: true })).toBe(TRAVELER_KIT.elementalSkill);
+  });
+
+  test("keeps a skill's cooldown while its kit does not waive it", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture();
+    partyMember.skillCooldownSeconds = 5;
 
     expect(step({ isSkillPressed: true })).toBeUndefined();
   });
@@ -224,6 +327,117 @@ describe(stepKit, () => {
     expect(partyMember.burstCooldownSeconds).toBe(TRAVELER_KIT.burstCooldownSeconds);
   });
 
+  test("refuses a plunge collision whose landing condition fails, striking none", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, plungeCollision: { ...TRAVELER_KIT.plungeCollision, landsWhen: () => false } };
+    const { landedHits, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+    const plungeInput = { height: 5, locomotionState: LocomotionState.Plunge };
+
+    step(plungeInput);
+    landed.push(...landedHits);
+    step(plungeInput);
+    landed.push(...landedHits);
+    step(plungeInput);
+    landed.push(...landedHits);
+
+    expect(landed).toStrictEqual([]);
+  });
+
+  test("refuses a plunge landing whose start gate fails, starting none", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      highPlunge: { ...TRAVELER_KIT.highPlunge, canStart: () => false },
+      lowPlunge: { ...TRAVELER_KIT.lowPlunge, canStart: () => false },
+    };
+    const { step } = createFixture(kit);
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBeUndefined();
+  });
+
+  // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
+  const startChargedAttack = (kit: Kit, stamina: { value: number }) =>
+    startNextKitAction(
+      { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
+      kit,
+      { ...IDLE_INPUT, isAttackHeld: true },
+      createPartyMember(),
+      stamina as ReturnType<typeof createStamina>,
+      true,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+  test("starts a charged attack whose start gate holds, spending its stamina", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => true } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBe(kit.chargedAttack);
+    expect(stamina.value).toBe(STAMINA_MAX - TRAVELER_KIT.chargedAttackStamina);
+  });
+
+  test("refuses a charged attack whose start gate fails, spending no stamina and starting none", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => false } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBeUndefined();
+    expect(stamina.value).toBe(STAMINA_MAX);
+  });
+
+  test("refuses a normal attack whose start gate fails, keeping its place in the string", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      normalAttacks: TRAVELER_KIT.normalAttacks.map((action) => ({ ...action, canStart: () => false })),
+    };
+    const kitState = createKitState();
+    const started = startNextKitAction(
+      kitState,
+      kit,
+      { ...IDLE_INPUT, isAttackPressed: true },
+      createPartyMember(),
+      createStamina(STAMINA_MAX),
+      false,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+    expect(started).toBeUndefined();
+    expect(kitState.comboIndex).toBe(0);
+  });
+
+  test("refuses a skill whose start gate fails, setting no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("refuses a burst whose start gate fails, keeping its energy", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalBurst: { ...TRAVELER_KIT.elementalBurst, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    partyMember.energy = TRAVELER_KIT.burstEnergyCost;
+
+    expect(step({ isBurstPressed: true })).toBeUndefined();
+    expect(partyMember.energy).toBe(TRAVELER_KIT.burstEnergyCost);
+  });
+
   test("strikes its collision every 0.3 seconds of a plunge", () => {
     expect.hasAssertions();
 
@@ -235,6 +449,47 @@ describe(stepKit, () => {
     step(plungeInput);
 
     expect(landedHits).toStrictEqual([TRAVELER_KIT.plungeCollision]);
+  });
+
+  test("a plunge variant plays in place of the standard plunge while its check holds", () => {
+    expect.hasAssertions();
+    const variant: KitAction = { ...TRAVELER_KIT.highPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: variant, checkIsActive: () => true }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(variant);
+  });
+
+  test("keeps the standard plunge while every plunge variant's check fails", () => {
+    expect.hasAssertions();
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(TRAVELER_KIT.highPlunge);
+  });
+
+  test("plays the first plunge variant whose check holds", () => {
+    expect.hasAssertions();
+    const second: KitAction = { ...TRAVELER_KIT.lowPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [
+        { action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false },
+        { action: second, checkIsActive: () => true },
+      ],
+    });
+
+    step({ height: 2, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(second);
   });
 
   test("lands a high plunge from a drop past 2.4 metres and a low one from less", () => {
@@ -457,7 +712,7 @@ describe(stepKit, () => {
       decideLength: { atSeconds: 0.45, decide: () => 1.7 },
       seconds: 0.7,
     };
-    startKitAction(kitState, action, []);
+    startKitAction(kitState, action, [], createKitTestContext(TRAVELER_COMBATANT));
     const stepFor = (stepCount: number) => {
       for (let stepIndex = 0; stepIndex < stepCount; stepIndex++) step();
     };
@@ -526,5 +781,90 @@ describe(stepKit, () => {
     const action = releaseBennettHold(2, { completeBefore: true });
     expect(action).toBeDefined();
     expect(action).not.toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("starts the kit's dash as the body enters the Dash state, and its jump as it enters Jump", () => {
+    expect.hasAssertions();
+
+    const dash: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const dashFixture = createFixture({ ...TRAVELER_KIT, dash, jump });
+    const jumpFixture = createFixture({ ...TRAVELER_KIT, dash, jump });
+
+    expect([
+      dashFixture.step(),
+      dashFixture.step({ locomotionState: LocomotionState.Dash }),
+      jumpFixture.step({ locomotionState: LocomotionState.Jump }),
+    ]).toStrictEqual([undefined, dash, jump]);
+  });
+
+  test("starts no dash or jump where the kit holds none", () => {
+    expect.hasAssertions();
+
+    const { step } = createFixture();
+
+    expect([
+      step({ locomotionState: LocomotionState.Dash }),
+      step({ locomotionState: LocomotionState.Jump }),
+    ]).toStrictEqual([undefined, undefined]);
+  });
+
+  // A kit whose skill runs for two steps, so a jump entered on its first step is the one its end starts
+  const createSkillJumpFixture = (jump: KitAction) =>
+    createFixture({ ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, seconds: 0.2 }, jump });
+
+  test("holds a jump entered during a skill that has not run its length, starting none at once", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBeUndefined();
+  });
+
+  test("starts a jump entered during a skill on the step the skill's length elapses", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Jump })).toBe(jump);
+  });
+
+  test("drops a queued jump the body has glided into as the skill ends, as a jump starts only on foot or in a movement state", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Glide })).toBeUndefined();
+  });
+
+  test("clears a queued jump its start gate refuses as the skill ends, starting none after", () => {
+    expect.hasAssertions();
+
+    let isStartAllowed = false;
+    const jump: KitAction = {
+      canStart: () => isStartAllowed,
+      hits: [],
+      seconds: 0.5,
+      targetingArea: STRIKE_TARGETING_AREA,
+    };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+    const refused = step({ locomotionState: LocomotionState.Jump });
+    isStartAllowed = true;
+
+    expect([refused, step({ locomotionState: LocomotionState.Jump })]).toStrictEqual([undefined, undefined]);
   });
 });

@@ -6,7 +6,7 @@ import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTal
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
-import { CombatTalent, KitPlunge, WeaponType } from "genshin-world";
+import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world";
 
 const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
 const CHARGED_ATTACK_TITLE_REGEX =
@@ -19,6 +19,14 @@ const WikiTitlePathMap: Partial<Record<string, string>> = {
   "Low Plunge": `plunges.${KitPlunge.Low}.hits.0`,
   "Plunging Attack Collision": "plungeCollision",
 };
+
+// The hit paths a talent's rows join to: the skill's own hits and the stances and holds it plays, whose labels the
+// Skill reads, and the burst's
+const SKILL_HIT_PATH_PREFIXES: readonly string[] = ["skill.", "stances.", "skillHolds."];
+const checkIsTalentHitPath = (hitPath: string, combatTalent: CombatTalent): boolean =>
+  combatTalent === CombatTalent.ElementalSkill
+    ? SKILL_HIT_PATH_PREFIXES.some((prefix) => hitPath.startsWith(prefix))
+    : hitPath.startsWith("burst.");
 
 // A row title or a table label as the words they share, `1-Hit Swing DMG` and `Swing DMG` both `swing`
 const toTitleWords = (title: string): string =>
@@ -51,13 +59,15 @@ export const getWikiKitCandidates = (
         value,
       });
     if (poise !== undefined) add("poiseDamage", poise);
-    if (internalCooldownTag !== undefined)
-      add(
-        "internalCooldownTag",
+    if (internalCooldownTag !== undefined) {
+      const tag =
         internalCooldownTag === WIKI_NO_INTERNAL_COOLDOWN_TAG
           ? undefined
-          : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag),
-      );
+          : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag);
+      // A tag the enum does not name is not written, as the record would reject it; the row's poise still stands
+      if (tag === undefined || (Object.values(InternalCooldownTag) as string[]).includes(tag))
+        add("internalCooldownTag", tag);
+    }
     if (isElemental && gauge !== undefined) add("gauge", gauge);
   };
   // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the
@@ -83,14 +93,12 @@ export const getWikiKitCandidates = (
         } else if (plungePath !== undefined)
           addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
       }
-    else {
-      const slot = page.combatTalent === CombatTalent.ElementalSkill ? "skill" : "burst";
+    else
       for (const [hitPath, label] of hitLabelMap) {
-        const property = hitPath.startsWith(`${slot}.`)
+        const property = checkIsTalentHitPath(hitPath, page.combatTalent)
           ? page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label))
           : undefined;
         if (property !== undefined) addRow(hitPath, property, page, true);
       }
-    }
   return candidateMap;
 };

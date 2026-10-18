@@ -2,7 +2,6 @@
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 96 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 20 },
   "hits.stormclusterTicks.length": { "cause": "Unclassified", "value": 6 },
   "hits.stormclusterTicks.0.area": {

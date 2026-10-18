@@ -2,8 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-
-const MONDSTADT_HASH_BROWN_ID = 333_006;
+import { MONDSTADT_HASH_BROWN_ID } from "#src/services/gcg/cards/constants";
 
 // Mondstadt Hash Brown: the target character heals for two HP, and at most one food is eaten a round
 export const mondstadtHashBrown: GcgCardModule = {

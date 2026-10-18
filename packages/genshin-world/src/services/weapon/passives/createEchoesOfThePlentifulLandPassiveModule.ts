@@ -1,8 +1,9 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 const JADE_FORGED_CROWN_SOURCE = "jadeForgedCrown";
@@ -12,14 +13,16 @@ const MAX_HEALTH_STEP = 1000;
 // Echoes of the Plentiful Land at its rank: an Elemental Skill its wielder uses grants the Jade-Forged Crown, which raises
 // Its Normal Attack DMG by the rank's share for each whole thousand of its Max HP, up to the rank's maximum, for the rank's
 // Seconds
-export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createEchoesOfThePlentifulLandPassiveModule = (params: number[]): PassiveModule => {
   const amountPerStep = takeOne(params, 0);
   const maximumAmount = takeOne(params, 1);
   const seconds = takeOne(params, 2);
   return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {
       if (event.kind !== KitEventKind.SkillUsed || event.characterId !== combatant.characterId) return;
-      const steps = Math.floor(combatant.attributes.maxHealth / MAX_HEALTH_STEP);
+      const steps = Math.floor(
+        getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap) / MAX_HEALTH_STEP,
+      );
       buffKitMember(kitEffectState, combatant.characterId, {
         amount: Math.min(steps * amountPerStep, maximumAmount),
         attribute: Attribute.NormalAttackDamageBonus,

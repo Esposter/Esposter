@@ -3,7 +3,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
+import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { Mock } from "vitest";
 
@@ -68,7 +69,7 @@ const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Part
   return { context, enemy, nicole, traveler };
 };
 
-const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag): KitEvent => ({
+const createEnemyHit = (enemy: Enemy, striker: Combatant, attackTag?: AttackTag): KitEnemyHitEvent => ({
   attackTag,
   element: Element.Pyro,
   enemy,
@@ -116,13 +117,25 @@ const emitEnemyHits = (
 
 // The flat base damage Nicole's kit gives a strike as a deployed member of the team, zero when it gives none
 const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
-  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
-    ?.additiveBaseDamageBonus ?? 0;
+  NICOLE_KIT.getPartyStrikeBonus?.(
+    nicole,
+    strike,
+    enemy,
+    context.party,
+    context.kitEffectState.effects,
+    context.characterIdCombatantMap,
+  )?.additiveBaseDamageBonus ?? 0;
 
 // The share of its enemy's defence Nicole's kit has a strike of a deployed member ignore, zero when it ignores none
 const getPartyDefenceIgnored = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
-  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
-    ?.defenseIgnored ?? 0;
+  NICOLE_KIT.getPartyStrikeBonus?.(
+    nicole,
+    strike,
+    enemy,
+    context.party,
+    context.kitEffectState.effects,
+    context.characterIdCombatantMap,
+  )?.defenseIgnored ?? 0;
 
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -153,7 +166,7 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 7 / 60);
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "shield")).toStrictEqual([]);
     stepKitSeconds(context, 1 / 60);
-    const shields = context.kitEffectState.effects.filter(({ kind }) => kind === "shield");
+    const shields = context.kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield");
     expect(shields.map(({ characterId, element, health }) => ({ characterId, element, health }))).toStrictEqual([
       {
         characterId: NICOLE_CHARACTER_ID,
@@ -180,7 +193,7 @@ describe(createNicoleKitBehaviour, () => {
     NICOLE_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8 / 60);
 
-    const buffs = context.kitEffectState.effects.filter(({ kind }) => kind === "buff");
+    const buffs = context.kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
     expect(buffs.map(({ amount, attribute, characterId }) => ({ amount, attribute, characterId }))).toStrictEqual([
       { amount: expected, attribute: Attribute.Attack, characterId: NICOLE_CHARACTER_ID },
       { amount: expected, attribute: Attribute.Attack, characterId: TRAVELER_CHARACTER_ID },
@@ -302,7 +315,9 @@ describe(createNicoleKitBehaviour, () => {
     stepKitSeconds(context, 179 / 60);
     expect(getBuffs(context, TRAVELER_CHARACTER_ID)).toHaveLength(1);
     stepKitSeconds(context, 1 / 60);
-    const [skill, ascension] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const buffs = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const skill = takeOne(buffs, 0);
+    const ascension = takeOne(buffs, 1);
     expect({ amount: ascension.amount, attribute: ascension.attribute, kind: ascension.kind }).toStrictEqual({
       amount: 300,
       attribute: Attribute.Attack,
@@ -461,7 +476,7 @@ describe(createNicoleKitBehaviour, () => {
     NICOLE_KIT.elementalSkill.onStart?.(context);
     stepKitSeconds(context, 8 / 60);
 
-    const [, constellation] = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const constellation = takeOne(getBuffs(context, TRAVELER_CHARACTER_ID), 1);
     expect({
       amount: constellation.amount,
       attribute: constellation.attribute,
@@ -647,7 +662,13 @@ describe(createNicoleKitBehaviour, () => {
     };
 
     expect(
-      NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects),
+      NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(
+        strike,
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+        context.characterIdCombatantMap,
+      ),
     ).toBe(700);
   });
 

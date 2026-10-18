@@ -112,7 +112,7 @@ describe(createZhongliKitBehaviour, () => {
     const cutStrikes = stepKitTestEffects(0.8, context).filter(({ hit }) => hit.enemyStatus);
     const shieldHealth = kitEffectState.effects.find((effect) => effect.kind === "shield")?.health;
     const summonCount = kitEffectState.effects.filter((effect) => effect.kind === "summon").length;
-    absorbKitShield(kitEffectState.effects, combatant, Number.POSITIVE_INFINITY);
+    absorbKitShield(kitEffectState.effects, combatant, Number.POSITIVE_INFINITY, undefined);
 
     expect(summonCount).toBe(2);
     expect(shieldHealth).toBeCloseTo(1232.4108 + 0.128 * 10_000);
