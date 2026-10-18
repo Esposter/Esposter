@@ -102,6 +102,50 @@ describe(writeResidents, () => {
     );
   });
 
+  test("a seated challenger's talk opens the duel", async () => {
+    expect.hasAssertions();
+    // Ellin keeps no point of her own, so she stands at the Knights' headquarters point, NPC 9704, the duel game her week row names
+    const KNIGHTS_HEADQUARTERS_POINT_ID = "54";
+    const ELLIN_NPC_ID = 9704;
+    const ELLIN_NAME_TEXT_HASH = 2404082984;
+    const ELLIN_TALK_ID = 6970401;
+    const ELLIN_DUEL_GAME_ID = 1031;
+    vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
+    vi.mocked(readFittedRegions).mockResolvedValueOnce({
+      origin: [0, 0, 0],
+      regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
+      regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
+    });
+    vi.mocked(readPublishedGameData).mockResolvedValueOnce({
+      buildings: {
+        [KNIGHTS_HEADQUARTERS_POINT_ID]: {
+          name: "Knights",
+          place: { height: 0, position: { x: 0, z: 0 }, rotationY: 0, source: SceneGroupSource.ScenePoints },
+        },
+      },
+      groups: {},
+    } satisfies SceneGroups);
+    vi.mocked(readExcelTable).mockReturnValueOnce([
+      { id: ELLIN_NPC_ID, nameTextMapHash: ELLIN_NAME_TEXT_HASH },
+    ] satisfies DumpedNpc[]);
+    vi.mocked(readDialogSpeakers).mockReturnValueOnce([{ speakerId: ELLIN_NPC_ID, talkId: ELLIN_TALK_ID }]);
+
+    await writeResidents({ isDryRun: false });
+
+    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(
+      REGION_FILE,
+      expect.objectContaining({
+        residents: [
+          expect.objectContaining({
+            duelGameId: ELLIN_DUEL_GAME_ID,
+            id: String(ELLIN_NPC_ID),
+            talkId: String(ELLIN_TALK_ID),
+          }),
+        ],
+      }),
+    );
+  });
+
   test("a run writes a region whose residents changed", async () => {
     expect.hasAssertions();
 
