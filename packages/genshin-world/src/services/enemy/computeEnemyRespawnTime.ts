@@ -1,14 +1,16 @@
 import { EnemyType } from "#src/models/enemy/EnemyType";
+import { computeBossRespawnTime } from "#src/services/bosses/computeBossRespawnTime";
 import { COMMON_ENEMY_RESPAWN_DURATION, DAILY_RESET_TIME } from "#src/services/enemy/constants";
 
-// When a camp member defeated at a time comes back, by the hardest kind in its camp. A boss is back once its reward is
-// Claimed, which the world takes as at once, so it is there on its region's next load; a camp with an elite comes
-// Back whole at the next daily reset; and a common enemy twelve hours on
+// When a camp member defeated at a time comes back, by the hardest kind in its camp. A boss is back five seconds after
+// Its blossom is claimed, given as `bossClaimedAt`, and held defeated while unclaimed, so undefined; a camp with an elite
+// Comes back whole at the next daily reset; and a common enemy twelve hours on
 export const computeEnemyRespawnTime = (
   campEnemyTypes: EnemyType[],
   defeatedAt: Temporal.ZonedDateTime,
-): Temporal.ZonedDateTime => {
-  if (campEnemyTypes.includes(EnemyType.Boss)) return defeatedAt;
+  bossClaimedAt: Temporal.ZonedDateTime | undefined,
+): Temporal.ZonedDateTime | undefined => {
+  if (campEnemyTypes.includes(EnemyType.Boss)) return computeBossRespawnTime(bossClaimedAt);
   else if (campEnemyTypes.includes(EnemyType.Elite)) {
     const dailyReset = defeatedAt
       .toPlainDate()

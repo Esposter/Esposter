@@ -87,6 +87,8 @@ const { onBeforeRender } = useLoop();
 const getSpawnKey = (campId: string, memberId: string) => `${campId}${ID_SEPARATOR}${memberId}`;
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.ZonedDateTime>();
+// When each boss's Trounce Blossom was claimed, which brings the boss back five seconds on
+const spawnKeyBossClaimedAtMap = new Map<string, Temporal.ZonedDateTime>();
 const loadedCampIds = new Set<string>();
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
@@ -112,8 +114,10 @@ watchImmediate(
       for (const member of members) {
         const spawnKey = getSpawnKey(id, member.id);
         const defeatedAt = spawnKeyDefeatedAtMap.get(spawnKey);
-        if (defeatedAt && Temporal.ZonedDateTime.compare(computeEnemyRespawnTime(campEnemyTypes, defeatedAt), now) > 0)
-          continue;
+        if (defeatedAt) {
+          const respawnAt = computeEnemyRespawnTime(campEnemyTypes, defeatedAt, spawnKeyBossClaimedAtMap.get(spawnKey));
+          if (!respawnAt || Temporal.ZonedDateTime.compare(respawnAt, now) > 0) continue;
+        }
         spawnKeyDefeatedAtMap.delete(spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
       }
