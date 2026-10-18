@@ -25,6 +25,7 @@ import { buildKit } from "#src/services/kit/buildKit";
 import { createOdetteKitBehaviour, ODETTE_CHARACTER_ID } from "#src/services/kit/characters/odetteKit";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitSummon } from "#src/services/kit/effects/createKitSummon";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { describe, expect, test } from "vitest";
@@ -128,7 +129,12 @@ describe(createOdetteKitBehaviour, () => {
 
   test("three more Stellar Swirls explode a vortex at once", () => {
     expect.hasAssertions();
-    const context = createKitTestContext(combatant, { body: { facing: 0, height: 0, position: { x: 3, z: 4 } } });
+    const struckEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, "");
+    const context = createKitTestContext(combatant, {
+      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
+      enemyMap: new Map([[struckEnemy.id, struckEnemy]]),
+      enemyTables,
+    });
 
     for (let swirl = 0; swirl < STELLAR_VORTEX_LEVEL_TWO_STACKS; swirl++) triggerStellarSwirl(context);
     for (let swirl = 0; swirl < 2; swirl++) triggerStellarSwirl(context);
@@ -138,6 +144,22 @@ describe(createOdetteKitBehaviour, () => {
     triggerStellarSwirl(context);
 
     expect(shapeEffects(context)).toStrictEqual([]);
+    expect(struckEnemy.health).toBeLessThan(struckEnemy.maxHealth);
+  });
+
+  test("a Stellar Vortex that runs out explodes at the stacks it has", () => {
+    expect.hasAssertions();
+    const struckEnemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, "");
+    const context = createKitTestContext(combatant, {
+      body: { facing: 0, height: 0, position: { x: 3, z: 4 } },
+      enemyMap: new Map([[struckEnemy.id, struckEnemy]]),
+      enemyTables,
+    });
+    const vortex = createKitSummon(context.body, combatant, [], { id: "stellarVortex", stacks: 1 });
+
+    kit.onKitEvent?.({ effect: vortex, kind: KitEventKind.EffectExpired }, context, combatant);
+
+    expect(struckEnemy.health).toBeLessThan(struckEnemy.maxHealth);
   });
 
   test("a Stellar Jubilee passive enables both reactions for its party", () => {

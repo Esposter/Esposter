@@ -3,8 +3,11 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { STELLAR_SWIRL_ANEMO_COEFFICIENT } from "#src/services/combat/damage/constants";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
@@ -18,6 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
+import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
@@ -106,6 +110,15 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       hit.onStrike?.(context, strike);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, hit);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
+      if (reactions.some(({ reactionType }) => reactionType === ReactionType.StellarSwirl))
+        strikeStellarReaction(
+          enemy,
+          Element.Anemo,
+          STELLAR_SWIRL_ANEMO_COEFFICIENT,
+          new Set([combatant.characterId]),
+          combatant,
+          context,
+        );
       if (reactions.length > 0)
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
       emitKitEvent(
