@@ -1,10 +1,19 @@
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
-import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createCharacterState = (): GcgCharacterState => ({
   aura: GcgAura.None,
@@ -45,13 +54,29 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   usedSkillIds: [],
 });
 
-describe(switchGcgSideActive, () => {
+const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
+  actingSideIndex: 0,
+  firstSideIndex: 0,
+  nextFirstSideIndex: 0,
+  outcome: undefined,
+  phase: GcgPhase.Action,
+  random: () => 0,
+  round: 1,
+  rule: TEST_RULE,
+  sides,
+  winnerSideIndex: undefined,
+});
+
+describe(switchGcgActiveCharacter, () => {
   test("should make the character at the index the active one, flagged as switched in, and leave the others unflagged", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(), createCharacterState()]);
-    switchGcgSideActive(side, 1);
+    const duel = createDuel([createSideState([createCharacterState(), createCharacterState()]), createSideState([])]);
+    switchGcgActiveCharacter(duel, 0, 1);
 
+    const side = takeOne(duel.sides, 0);
     expect({
       activeIndex: side.activeIndex,
       flags: side.characters.map(({ isSwitchedIn }) => isSwitchedIn),

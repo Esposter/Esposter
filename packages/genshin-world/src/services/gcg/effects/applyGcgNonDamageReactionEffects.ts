@@ -18,8 +18,8 @@ import {
 } from "#src/services/gcg/constants";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
 // The effects a reaction leaves that deal no DMG: the Frozen status on the character it hits, the Shield its user's active
@@ -44,7 +44,7 @@ export const applyGcgNonDamageReactionEffects = (
     targetSide.characters.at(targetSide.activeIndex) === hit
   ) {
     const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, 1);
-    if (nextIndex !== undefined) switchGcgSideActive(targetSide, nextIndex);
+    if (nextIndex !== undefined) switchGcgActiveCharacter(duel, targetSideIndex, nextIndex);
   } else if (reaction === GcgReactionKind.Burning)
     addGcgReactionCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame, GCG_BURNING_FLAME_MAX_USAGES);
   else if (reaction === GcgReactionKind.Bloom)

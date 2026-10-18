@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
-import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 import { BLUSTERING_BLADE_ID, FROSTY_ASSAULT_ID, MAGUU_KENKI_ID } from "#src/services/gcg/cards/constants";
 
@@ -15,6 +15,6 @@ export const transcendentAutomaton: GcgCardModule = {
     const step = skill.id === BLUSTERING_BLADE_ID ? 1 : skill.id === FROSTY_ASSAULT_ID ? -1 : undefined;
     if (step === undefined) return;
     const nextIndex = findGcgAdjacentCharacterIndex(side, side.activeIndex, step);
-    if (nextIndex !== undefined) switchGcgSideActive(side, nextIndex);
+    if (nextIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, nextIndex);
   },
 };
