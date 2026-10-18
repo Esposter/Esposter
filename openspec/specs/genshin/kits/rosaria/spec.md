@@ -1,6 +1,6 @@
 ## Purpose
 
-Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with her passives, her other constellations and the teleport behind the target left unbuilt.
+Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with her Ascension 4 Crit Rate share built, and her Ascension 1, her other constellations and the teleport behind the target left unbuilt.
 
 ## Requirements
 
@@ -61,10 +61,10 @@ Rites of Termination SHALL strike a slash and a lance, then leave a field that t
 
 ### Requirement: Unbuilt Rosaria effects
 
-Rosaria's passives, her other constellations and the teleport behind the target SHALL NOT take effect.
+Rosaria's Ascension 1, her other constellations and the teleport behind the target SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Rosaria has a passive, a constellation or the teleport unlocked
+- **GIVEN** Rosaria has her Ascension 1 passive, a constellation or the teleport unlocked
 - **WHEN** the player fights with Rosaria
 - **THEN** that effect has no effect

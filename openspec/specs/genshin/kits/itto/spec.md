@@ -1,6 +1,6 @@
 ## Purpose
 
-Itto's kit as built: four strikes, the Saichimonji Slash and the Arataki Kesagiri his Superlative Superstrength turns it into, a collision and two plunges, Masatsu Zetsugi's hit with Ushi, and Royal Descent's ATK bonus and Geo conversion, with his passives and constellations not built.
+Itto's kit as built: four strikes, the Saichimonji Slash and the Arataki Kesagiri his Superlative Superstrength turns it into, a collision and two plunges, Masatsu Zetsugi's hit with Ushi, and Royal Descent's ATK bonus and Geo conversion, with his Ascension 4 passive built, and his Arataki Ichiban ATK SPD and constellations not built.
 
 ## Requirements
 

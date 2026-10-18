@@ -1,6 +1,6 @@
 ## Purpose
 
-Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her passives, her other constellations and her Hexerei kit not built.
+Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her Ascension 1 Explosive Spark built, and her other passives, her other constellations and her Hexerei kit not built.
 
 ## Requirements
 
@@ -88,12 +88,12 @@ Klee's plunge attacks SHALL land their low and high bombs at 47 and 48 frames, a
 - **THEN** the low bomb lands at 47 frames and the high bomb at 48 frames
 - **AND** the collision lands on the enemies within reach
 
-### Requirement: Klee's passives and other constellations not yet built
+### Requirement: Klee's other passives and constellations not yet built
 
-Klee's passives, her other constellations and her Hexerei kit SHALL NOT take effect.
+Klee's other passives, her other constellations and her Hexerei kit SHALL NOT take effect.
 
 #### Scenario: Unbuilt passives do nothing
 
-- **GIVEN** Klee has a passive, a constellation beyond the built ones or the Hexerei kit unlocked
+- **GIVEN** Klee has another passive, a constellation beyond the built ones or the Hexerei kit unlocked
 - **WHEN** the player fights with Klee
 - **THEN** that passive or constellation has no effect

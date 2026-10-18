@@ -1,6 +1,6 @@
 ## Purpose
 
-Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his passives left unbuilt.
+Tighnari's kit as built: his four strikes, a fully charged shot, a collision and two plunges, Vijnana-Phala Mine, and Tanglevine Shaft with its secondary, with Vijnana Suffusion's Wreath Arrow and his Ascension 1 passive left unbuilt, and his Ascension 4 passive built.
 
 ## Requirements
 
@@ -45,10 +45,10 @@ Tanglevine Shaft SHALL land six hits from 112 to 175 frames and its secondary si
 
 ### Requirement: Unbuilt Tighnari effects
 
-Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, and Tighnari's passives and constellations SHALL NOT take effect.
+Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, and Tighnari's Ascension 1 passive and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Tighnari has a suffusion, passive or constellation unlocked
+- **GIVEN** Tighnari has a suffusion, Ascension 1 passive or constellation unlocked
 - **WHEN** the player fights with Tighnari
 - **THEN** that effect has no effect

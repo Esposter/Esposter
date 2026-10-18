@@ -1,6 +1,6 @@
 ## Purpose
 
-Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her passives and constellations not built.
+Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her Ascension 4 passive built, and her other passives and constellations not built.
 
 ## Requirements
 

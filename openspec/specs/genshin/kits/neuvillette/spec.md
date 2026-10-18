@@ -53,10 +53,10 @@ O Tides, I Have Returned SHALL land a first hit and two Waterfalls, and the seco
 
 ### Requirement: Unbuilt Neuvillette effects
 
-Equitable Judgment, the droplets the skill and burst leave, Spiritbreath Thorn's aligned cooldown, and Neuvillette's ascension and constellation passives SHALL NOT take effect.
+Equitable Judgment, the droplets the skill and burst leave, Spiritbreath Thorn's aligned cooldown, and Neuvillette's Ascension 1 passive and constellations SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Neuvillette has Equitable Judgment, a droplet effect or a passive unlocked
+- **GIVEN** Neuvillette has Equitable Judgment, a droplet effect or his Ascension 1 passive unlocked
 - **WHEN** the player fights with Neuvillette
 - **THEN** those effects have no effect

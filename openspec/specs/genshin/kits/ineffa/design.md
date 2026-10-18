@@ -4,7 +4,7 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Not yet built
 
-- **Her Lunar-Charged passives and constellations are not built.** Ascension 1 and 4 and Constellations 1, 4 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, Energy on Lunar-Charged, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass.
+- **Her Ascension 4 passive, Panoramic Permutation Protocol, is built as the burst's Elemental Mastery. Her Ascension 1 passive and constellations are not built.** Ascension 1 and Constellations 1, 4 and 6 read Lunar-Charged: a bonus Lunar-Charged attack on Birgitta's discharge while Lunar-Charged holds, Energy on Lunar-Charged, and a bonus attack. Lunar-Charged and the direct Lunar hit are built ([combat](../../combat/design.md#lunar-reactions)), so they wait only on her kit's next pass.
 - **Constellation 2 is not built.** It places a shield 37 frames after the burst, which the passives' step adds once the shield's amount is set against the framework.
 - **Birgitta's Electro particles wait on the particle hook.** gcsim gives her particles an internal cooldown, and the framework produces none yet, so her energy goes ungenerated.
 
@@ -25,5 +25,5 @@ Ineffa's kit is its record and one behaviour module, `createIneffaKitBehaviour`,
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ineffa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and the Lunar-Charged passives and constellations not yet built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ineffa), MIT, at v2.47.2: the strikes and the charged attack as the index gives them, Cleaning Mode and its shield and Birgitta, Cyclonic Exterminator, the Moonsign Benediction, and her Ascension 1 passive and constellations not yet built.
 - [Hosted game data](../../hosted-game-data/design.md): proud skill groups 11631, 11632 and 11639, with the skill-kit record behind her cooldowns and energy cost.

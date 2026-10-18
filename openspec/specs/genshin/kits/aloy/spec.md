@@ -1,6 +1,6 @@
 ## Purpose
 
-Aloy's kit as built: her strikes, fully charged shot and plunges, with Freeze Bomb, its Chillwater Bomblets and their coil stacks giving Rushing Ice, and her passives, constellations and normal attack bonuses left unbuilt.
+Aloy's kit as built: her strikes, fully charged shot and plunges, with Freeze Bomb, its Chillwater Bomblets and their coil stacks giving Rushing Ice, her Ascension 1 and Ascension 4 passives built, and her constellations and normal attack bonuses left unbuilt.
 
 ## Requirements
 

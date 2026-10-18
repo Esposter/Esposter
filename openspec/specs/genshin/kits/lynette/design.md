@@ -2,7 +2,7 @@
 
 Lynette's kit is its record and one behaviour module, `createLynetteKitBehaviour`, on avatar 10000083: four strikes, a charged attack of two slashes, a collision and two plunges, Enigmatic Feint's press, and Magic Trick: Astonishing Shift's initial hit with the Bogglecat Box beside it. Her strikes and plunges are physical, as her gcsim folder deals them, and her skill and burst are Anemo. Her multipliers are read from proud skill groups 8331, 8332 and 8339; the charged attack's stamina, the skill's cooldown, and the burst's cooldown and energy cost are read from the same groups. The Bogglecat Box ticks eleven times, from 122 frames every 59 frames, each tick reaching every enemy within six metres of the box, which stands 1.8 metres ahead of the body where the burst starts.
 
-Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which need a hold whose hit lands at the held time; its aligned attack, the Surging Blade, which lands only off a ten-second cooldown; the Bogglecat Box's vivid shots, which absorb an enemy's Cryo, Pyro, Hydro or Electro and need an absorb check that a kit's field cannot make; the heal and HP drain on Enigmatic Feint, which read her own HP; and her Ascension and Constellation passives.
+Not built yet: Enigmatic Feint's hold, its Shadowsign and release strike, which need a hold whose hit lands at the held time; its aligned attack, the Surging Blade, which lands only off a ten-second cooldown; the Bogglecat Box's vivid shots, which absorb an enemy's Cryo, Pyro, Hydro or Electro and need an absorb check that a kit's field cannot make; the heal and HP drain on Enigmatic Feint, which read her own HP; her Ascension 4 and Constellation passives.
 
 ## Decisions
 

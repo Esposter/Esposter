@@ -1,6 +1,6 @@
 ## Purpose
 
-Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, and her passives and constellations left unbuilt.
+Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, and her Ascension 4 ATK share and constellations left unbuilt.
 
 ## Requirements
 
@@ -74,9 +74,9 @@ Yoimiya's plunges SHALL land 0.4 seconds after they start, provisionally.
 - **WHEN** Yoimiya plunges
 - **THEN** the plunge lands 0.4 seconds after it starts
 
-### Requirement: Unbuilt passives and constellations
+### Requirement: Unbuilt Ascension 4 passive and constellations
 
-Yoimiya's passives and constellations SHALL have no effect in the world yet.
+Yoimiya's Ascension 4 passive and constellations SHALL have no effect in the world yet.
 
 #### Scenario: Constellation has no effect
 
