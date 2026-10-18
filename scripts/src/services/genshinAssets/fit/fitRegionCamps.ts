@@ -14,7 +14,8 @@ import { readFile } from "node:fs/promises";
 
 // Each fitted region's enemy camps, clustered from the official map's enemy marks of the families the camp map names, in
 // Place of the camps an earlier run wrote. Each camp takes the catalogue area its enemies stand in, and an enemy in no
-// Area is left out and counted. A dry run counts them and writes nothing
+// Area is left out and counted, as are the marks on layers under the ground, which have no floor to stand on. A dry run
+// Counts them and writes nothing
 export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promise<string> => {
   const labelIdKindMap = new Map(
     flattenLabelTree(await readInteractiveMapLabels())
@@ -37,5 +38,9 @@ export const fitRegionCamps = async ({ isDryRun }: { isDryRun: boolean }): Promi
         return `${region}: ${enemyCamps.length} camps, ${enemyCount} enemies, ${places.length - enemyCount} in no area left out`;
       }),
   );
-  return isDryRun ? [...reports, "nothing written"].join("\n") : reports.join("\n");
+  const lines = [
+    ...reports,
+    `${placement.skippedUnderground} marks on layers under the ground have no floor in the data, left out`,
+  ];
+  return (isDryRun ? [...lines, "nothing written"] : lines).join("\n");
 };
