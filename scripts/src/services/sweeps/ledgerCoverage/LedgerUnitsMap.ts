@@ -35,7 +35,6 @@ export const LedgerUnitsMap: Record<string, () => string[]> = {
       )
       .map(({ name }) => `\`${name}\``);
   },
-  // One row per kit, named by its overlay
   "kit-differs-from-source": readKitOverlayRows,
   "kit-records": readKitOverlayRows,
 };
