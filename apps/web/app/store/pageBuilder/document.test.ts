@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { BlockDocument } from "headless-block-editor";
 
+import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { describe, expect, test, vi } from "vitest";
 
@@ -12,7 +13,7 @@ describe(usePageBuilderDocumentStore, () => {
     const secondResourceId = crypto.randomUUID();
     const firstDocument: BlockDocument = { content: [], root: { props: { lang: "" } } };
     const secondDocument: BlockDocument = { content: [], root: { props: { lang: " " } } };
-    const changedDocument: BlockDocument = { content: [], root: { props: { lang: "" } } };
+    const changedDocument: BlockDocument = { content: [], root: { props: { lang: TEST_LANG } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument, setDocument } = pageBuilderDocumentStore;
     await loadDocument(firstResourceId, () => Promise.resolve(firstDocument));
