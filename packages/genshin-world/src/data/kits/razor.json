@@ -103,6 +103,9 @@
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2032 } },
   "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 140 },
+  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 4.1887902047863905, "height": 2, "radius": 3.4 } },
+  "skill.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 32 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 55 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2032 } }
 }

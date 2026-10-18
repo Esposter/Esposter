@@ -3,7 +3,9 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { kitParameterSchema } from "genshin-world";
 
-const SLOT_HIT_MULTIPLIER_PATH_REGEX = /^(?<hitPath>(?:skill|burst)\.hits\.\d+)\.multiplier$/u;
+// A slot hit is the skill's or burst's, a stance's, or a hold's, whose multiplier names its table label
+const SLOT_HIT_MULTIPLIER_PATH_REGEX =
+  /^(?<hitPath>(?:skill|burst)\.hits\.\d+|stances\.[A-Za-z]+\.(?:chargedAttack|skill|normalAttacks\.\d+)\.hits\.\d+|skillHolds\.\d+\.action\.hits\.\d+)\.multiplier$/u;
 
 // The table label each of the skill's and burst's hits deals its multiplier under, by the hit's path, as its first
 // Source's parameter names it: the burst's first hit `1-Hit Swing DMG` where it reads that label's parameter

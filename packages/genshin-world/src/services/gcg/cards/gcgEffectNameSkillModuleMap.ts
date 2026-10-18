@@ -1,12 +1,14 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { astableAnemohypostasisCreation } from "#src/services/gcg/cards/astableAnemohypostasisCreation";
+import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
 import { blusteringBlade } from "#src/services/gcg/cards/blusteringBlade";
 import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { chonghuasLayeredFrost } from "#src/services/gcg/cards/chonghuasLayeredFrost";
 import { clawAndThunder } from "#src/services/gcg/cards/clawAndThunder";
 import { dandelionBreeze } from "#src/services/gcg/cards/dandelionBreeze";
 import { dawn } from "#src/services/gcg/cards/dawn";
+import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
 import { elementalSedimentation } from "#src/services/gcg/cards/elementalSedimentation";
 import { fantasticVoyage } from "#src/services/gcg/cards/fantasticVoyage";
 import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
@@ -35,6 +37,7 @@ import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
 import { signatureMix } from "#src/services/gcg/cards/signatureMix";
+import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
 import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
@@ -52,6 +55,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_11042", chonghuasLayeredFrost],
   ["Char_Skill_11053", kamisatoArtSoumetsu],
   ["Char_Skill_11054", kamisatoArtSenhoSkill],
+  ["Char_Skill_11072", springSpiritSummoning],
+  ["Char_Skill_11073", divineMaidensDeliverance],
   ["Char_Skill_12022", fatalRainscreen],
   ["Char_Skill_12023", raincutter],
   ["Char_Skill_12032", mirrorReflectionOfDoom],
@@ -75,6 +80,7 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_15013", forbiddenCreation],
   ["Char_Skill_15022", galeBlade],
   ["Char_Skill_15023", dandelionBreeze],
+  ["Char_Skill_15043", baneOfAllEvil],
   ["Char_Skill_16022", breastplate],
   ["Char_Skill_16023", sweepingTimeSkill],
   ["Char_Skill_17012", floralBrush],

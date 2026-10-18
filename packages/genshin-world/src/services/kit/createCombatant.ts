@@ -1,6 +1,7 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { StatTables } from "#src/models/character/StatTables";
+import type { Element } from "#src/models/Element";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
@@ -22,6 +23,7 @@ export const createCombatant = (
   element = statTables.characterDataMap.get(character.id)?.element,
   travelerBonusLines: AttributeLine[] = [],
   partyBonusLines: AttributeLine[] = [],
+  deployedElements?: (Element | undefined)[],
 ): Combatant => {
   const characterData = statTables.characterDataMap.get(character.id);
   return {
@@ -33,6 +35,7 @@ export const createCombatant = (
     characterId: character.id,
     constellationCount: character.constellationCount,
     element,
+    deployedElements,
     elementalResonances,
     kit: getWeaponPassiveKit(
       getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),

@@ -2,6 +2,7 @@ import type { QuestStep } from "genshin-world";
 
 import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
+import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
 import { QuestBanType, QuestObjectiveKind } from "genshin-world";
 
@@ -95,7 +96,16 @@ export const readQuestSteps = (
     const banType = Object.values(QuestBanType).find((member) => member === banGroup);
     if (banGroup !== undefined && banType === undefined)
       notes.push(`${questId}'s step ${id} names a ban group the reader does not know, ${banGroup}, so it is left off`);
-    return [{ ...(banType === undefined ? {} : { banType }), id: String(id), objectives, textId: String(textHash) }];
+    const guideNpcId = readQuestGuideNpcId(subQuest);
+    return [
+      {
+        ...(banType === undefined ? {} : { banType }),
+        ...(guideNpcId === undefined ? {} : { guideNpcId }),
+        id: String(id),
+        objectives,
+        textId: String(textHash),
+      },
+    ];
   });
   return { notes, offerTalkIds, steps };
 };

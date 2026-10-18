@@ -9,6 +9,9 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIttoKitBehaviour, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -16,6 +19,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
@@ -124,7 +128,8 @@ describe(createIttoKitBehaviour, () => {
     ]);
 
     const hit = takeOne(ITTO_KIT.elementalSkill.hits);
-    for (let index = 0; index < 2; index++) hit.onStrike?.(context, { body: context.body, combatant, hit });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    for (let index = 0; index < 2; index++) hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(1);
 

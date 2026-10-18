@@ -32,12 +32,14 @@ const party = { ...createParty(PARTY_CHARACTER_IDS), activeIndex: FIELD_MEMBER_I
 const ALBEDO_QUEST_ID = "albedo";
 // Venti's icons for the field member here, and Chongyun's for `hud-world-keys`, whose frame has him on the field
 const characterIdSkillGlyphsMap = new Map(
-  await Promise.all(
-    [VENTI_CHARACTER_ID, CHONGYUN_CHARACTER_ID].map(
-      async (characterId) =>
-        [characterId, await SkillGlyphsLoaderMap[characterId]?.(GAME_DATA_LOCAL_BASE_URL)] as const,
-    ),
-  ),
+  (
+    await Promise.all(
+      [VENTI_CHARACTER_ID, CHONGYUN_CHARACTER_ID].map(
+        async (characterId) =>
+          [characterId, await SkillGlyphsLoaderMap[characterId]?.(GAME_DATA_LOCAL_BASE_URL)] as const,
+      ),
+    )
+  ).flatMap(([characterId, skillGlyphs]) => (skillGlyphs === undefined ? [] : [[characterId, skillGlyphs] as const])),
 );
 
 export const isBackdrop = true;

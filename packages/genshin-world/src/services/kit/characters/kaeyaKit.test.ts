@@ -7,6 +7,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -255,5 +256,62 @@ describe("kaeya kit", () => {
     defeatEnemy(combatant, context);
 
     expect(getSummons(context.kitEffectState)).toStrictEqual([]);
+  });
+});
+
+describe("ascension 4's Glacial Heart particles", () => {
+  // The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given ascension
+  const getEnergyAfterFreezes = (ascension: number, freezes: number, attackTag = AttackTag.ElementalSkill): number => {
+    const combatant: Combatant = {
+      ...createKaeyaCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: 10_000 },
+        { attribute: Attribute.EnergyRecharge, value: 1 },
+      ]),
+      element: Element.Cryo,
+    };
+    const party = createParty([KAEYA_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    KAEYA_KIT.elementalSkill.onStart?.(context);
+    for (let index = 0; index < freezes; index++)
+      KAEYA_KIT.onKitEvent?.(
+        {
+          attackTag,
+          enemy,
+          kind: KitEventKind.ReactionTriggered,
+          reactions: [{ reactionType: ReactionType.Frozen }],
+          striker: combatant,
+        },
+        context,
+        combatant,
+      );
+    return getPartyMember(party, KAEYA_CHARACTER_ID).energy;
+  };
+
+  test("a Frostgnaw that freezes an opponent drops a particle at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getEnergyAfterFreezes(4, 1)).toBeGreaterThan(getEnergyAfterFreezes(4, 0));
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(getEnergyAfterFreezes(3, 2)).toBe(getEnergyAfterFreezes(3, 0));
+  });
+
+  test("a use drops at most two particles", () => {
+    expect.hasAssertions();
+
+    expect(getEnergyAfterFreezes(4, 3)).toBe(getEnergyAfterFreezes(4, 2));
+    expect(getEnergyAfterFreezes(4, 2)).toBeGreaterThan(getEnergyAfterFreezes(4, 1));
+  });
+
+  test("a freeze by another attack drops no particle", () => {
+    expect.hasAssertions();
+
+    expect(getEnergyAfterFreezes(4, 2, AttackTag.ElementalBurst)).toBe(getEnergyAfterFreezes(4, 0));
   });
 });

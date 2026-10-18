@@ -63,7 +63,7 @@ flowchart TD
 ## Notes
 
 - The rates and the damage are the wiki's. Still provisional: the heat's reach (`SHEER_COLD_HEAT_RADIUS`) and the bar's placement and look. The wiki puts the gauge over the active character's HP bar; the built bar sits across the top until a recording settles it (task 3.4).
-- The wiki's modifiers the world cannot read yet are named open, not built: a snowstorm (+200%, task 3.3), Pyro (-20%) and Cryo or Hydro (+20%) on the character's aura, cold platforms and Cryo hypostases (+200%), and wind currents (+50%). The wiki's pause during dialogue and the Paimon menu is not built either.
+- The wiki's modifiers the world cannot read yet are named open, not built: Pyro (-20%) and Cryo or Hydro (+20%) on the character's aura, cold platforms and Cryo hypostases (+200%), and wind currents (+50%). The wiki's pause during dialogue and the Paimon menu is not built either. The snowstorm's +200% is built (task 3.3).
 - Campfires are not placed in the world (task 3.2). The wiki's other sources of warmth (braziers, Seelies, statues, waypoints, the Frostbearing Tree) are not placed either.
-- The world's `WeatherKind` holds only Snow, so the snowstorm the guide names cannot quicken the fill until its weather exists.
+- The snowstorm is `WeatherKind.Snowstorm`, which the engine names for the Subzero Climate and the gauge reads off the area weather. The catalogue gives no area a snowstorm yet, so the fill is quickened only where the catalogue names one.
 - The anti-cold reaches the world through the published cooking dishes. Until `genshin:assets cooking` publishes them again, the dishes carry no anti-cold and the fill is not suppressed.

@@ -4,11 +4,12 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
+import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
 import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/checkIsPaimonsBargainsCharacterBuyable";
-import { payShopGood } from "#src/services/shop/payShopGood";
-import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
+import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";
 
 // The wallet, roster and purchases after a character of Paimon's Bargains is bought at `now`, the character being the good's
 // Item id. A character the player does not hold joins the roster at level one; one held below its sixth constellation gains
@@ -23,10 +24,9 @@ export const buyPaimonsBargainsCharacter = (
   now: Temporal.Instant,
 ): undefined | { characters: Character[]; purchases: ShopPurchase[]; wallet: Wallet } => {
   const characterId = good.itemId;
-  const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
   const held = characters.find(({ id }) => id === characterId);
-  if (priceCurrency === undefined || !checkIsPaimonsBargainsCharacterBuyable(held)) return undefined;
-  const paid = payShopGood(wallet, purchases, good, priceCurrency, now);
+  if (!checkIsCurrencyOnlyGood(good) || !checkIsPaimonsBargainsCharacterBuyable(held)) return undefined;
+  const paid = payShopGoodCosts(wallet, EMPTY_INVENTORY, purchases, good, now);
   if (!paid) return undefined;
   return {
     characters: held

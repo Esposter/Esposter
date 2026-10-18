@@ -26,8 +26,7 @@ describe(buyShopGoodCount, () => {
     itemCount: 1,
     itemId: ANEMO_SIGIL_ITEM_ID,
     minPlayerLevel: 1,
-    priceCount: MORA_PRICE,
-    priceItemId: MORA_ITEM_ID,
+    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     refresh: ShopRefresh.None,
   };
 

@@ -41,6 +41,7 @@ const items: InventoryItem[] = [
 
 export const props = {
   adventureRank: 10,
+  artifactDropTables: { artifactMainAffixPools: [], artifactRarityDataMap: new Map(), reliquarySets: [] },
   craftedCountMap: new Map<number, number>([[22_007, 1]]),
   crafters: [{ id: DILUC_CHARACTER_ID, name: "Diluc" }],
   gameText: ENGLISH_GAME_TEXT,
@@ -51,5 +52,8 @@ export const props = {
   progress: { learnedRecipeIds: [22_007] },
   random: createSeededRandom(WORLD_RANDOM_SEED),
   recipes,
+  reliquaryPieceEntryMap: new Map(),
+  strongboxes: [],
   wallet: { ...EMPTY_WALLET, [Currency.Mora]: 2_945_208, [Currency.OriginalResin]: 160 },
+  weaponDataMap: new Map(),
 };

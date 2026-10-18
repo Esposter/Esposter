@@ -14,7 +14,7 @@ A player casts at a fishing point, waits for a fish to nibble and bite, strikes,
 - A line that stays out of the reel's zone too long breaks.
 - A catch puts the items its reward row gives in the bag, with no proficiency counted.
 - Each bait draws only its own fish, and each point draws from its region's pools.
-- Proficiency is exchanged at the region's Fishing Association for its rewards.
+- Fish are exchanged at the region's Fishing Association for its goods.
 
 ## Capabilities
 
