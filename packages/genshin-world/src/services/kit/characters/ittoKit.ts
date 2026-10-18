@@ -69,6 +69,10 @@ export const ITTO_CHARACTER_ID = 10_000_057;
 // Into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal Descent adds
 // His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field. Bloodline of the
 // Crimson Oni is built; Arataki Ichiban's ATK SPD, which no attribute holds, and his constellations are not
+// Constellation 1 needs Royal Descent's two Superlative Superstrength stacks, and the third a second later, not built
+// Constellation 2 needs each Geo party member's element, which the kit does not read, and the skill's cooldown cut
+// Constellation 4 needs the Raging Oni King state's end, which no stance hook reports, and the nearby buffs
+// Constellation 6 needs the charged attacks' CRIT DMG and Arataki Kesagiri's 50% stack save, neither built
 export const createIttoKitBehaviour = ({
   kit,
   readActions,
