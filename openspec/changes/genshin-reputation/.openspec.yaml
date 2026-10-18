@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 the camp half: 7070901, 7071001 and 7071101 need their main quests' binaries (70709 to 70711) to name their kinds;2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the 'A passed threshold does not pay again' test, and the Reputation quests pay only once their parents' records are published (Mondstadt's 25 are carried as ReputationParent<id>, but their binaries are not in the dump yet); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the 'A passed threshold does not pay again' test, and the Reputation quests pay only once their parents' records are published (Mondstadt's 20 are carried as ReputationParent<id>, but their binaries are not in the dump yet, and parents 311, 418, 70061, 70078 and 76096 are left out: 311 and 418 finish on the PC's Lua quest export, the QUEST_CONTENT_LUA_NOTIFY steps, and the other three on scripted talks with no lines, so the Reputation quests they parent wait on that export for 311 and 418 and on a step source for the rest); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -46,6 +46,17 @@ x-touches:
     "scripts/src/services/genshinText/readGitHubHeaders.test.ts",
     "scripts/src/services/genshinText/readQuestSteps.ts",
     "scripts/src/services/genshinText/readQuestSteps.test.ts",
+    "packages/genshin-world/src/services/quest/**",
+    "packages/genshin-world/src/services/dialogue/getTalkOffers.ts",
+    "packages/genshin-world/src/services/dialogue/getTalkOffers.test.ts",
+    "packages/genshin-world/src/components/Quest/Screen/Index.fixture.ts",
+    "packages/genshin-world/src/components/Hud/Screen/Index.fixture.ts",
+    "scripts/src/services/genshinText/readReputationRequestQuest.ts",
+    "scripts/src/services/genshinText/readReputationRequestQuest.test.ts",
+    "scripts/src/models/genshinText/DumpedGiving.ts",
+    "scripts/src/models/genshinText/DumpedGivingGroup.ts",
+    "scripts/src/services/shared/mapCollectingFailures.ts",
+    "scripts/src/services/shared/mapCollectingFailures.test.ts",
     ".agents/skills/genshin-text/SKILL.md",
     ".agents/skills/genshin-parity/references/data-sources.md",
   ]

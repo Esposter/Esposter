@@ -4,8 +4,9 @@ import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDun
 import { WEEKLY_BOSS_DUNGEON_TYPE, WEEKLY_BOSS_ENTRY_IDS } from "#src/services/genshinAssets/domains/constants";
 import { toWeeklyBossDomains } from "#src/services/genshinAssets/domains/toWeeklyBossDomains";
 import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
 
-const ENTRY_ID = WEEKLY_BOSS_ENTRY_IDS[0];
+const ENTRY_ID = takeOne(WEEKLY_BOSS_ENTRY_IDS);
 const FIRST_DUNGEON_ID = 91001;
 const SECOND_DUNGEON_ID = 91002;
 
@@ -23,6 +24,7 @@ const toDungeon = (id: number, type: string): ExcelDungeonRow => ({
   levelRevise: 40,
   limitLevel: 25,
   passRewardPreviewID: 1,
+  statueCostCount: 0,
   type,
 });
 

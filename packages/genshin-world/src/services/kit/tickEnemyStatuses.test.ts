@@ -1,6 +1,7 @@
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -42,5 +43,21 @@ describe(tickEnemyStatuses, () => {
     tickEnemyStatuses([enemy], 1, outbox);
 
     expect(outbox).toStrictEqual([]);
+  });
+
+  test("a tick falls due on the step its seconds run out, not one step late", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    addEnemyStatus(enemy, {
+      damageTakenBonus: 0,
+      id: "",
+      nextTickSeconds: 5,
+      secondsRemaining: 100,
+      tickIntervalSeconds: 100,
+    });
+    const outbox: KitEvent[] = [];
+    for (let step = 0; step < 300; step++) tickEnemyStatuses([enemy], FIXED_STEP_SECONDS, outbox);
+
+    expect(outbox).toHaveLength(1);
   });
 });

@@ -69,6 +69,9 @@ interface Props {
   inputState: InputState;
   // Whether the body holds where it stands and the follow camera lets go of the view, as a menu or photo mode holds it
   isHeld?: true;
+  // Whether the body holds still on the move while the Shortcut Wheel is open, which reads the move as its pick, and its
+  // Presses still play
+  isMoveHeld?: true;
   // Whether a held body still has its camera orbit it, as photo mode's does: the look turns and zooms the view round the
   // Body, which neither steps nor moves
   isOrbiting?: true;
@@ -91,6 +94,7 @@ const {
   grassTrail,
   inputState,
   isHeld,
+  isMoveHeld,
   isOrbiting,
   kitContext,
   landmarkCollider,
@@ -142,7 +146,7 @@ const landedHits: KitHit[] = [];
 // Where the character is on the ground and how fast it moves across it, which the grass trail is stamped from
 const trailPosition = new Vector2();
 const trailVelocity = new Vector2();
-// The input an action plays under: the same presses with no move, so the body holds still while it plays
+// The input an action or the open wheel plays under: the same presses with no move, so the body holds still while it plays
 const stillInput: InputState = { ...inputState, moveForward: 0, moveRight: 0 };
 const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   // The controller's step spends the frame's presses, so the kit reads them first
@@ -163,7 +167,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   // Impetuous Winds raises the speeds the controller moves the body by, read from the character on the field before the
   // Controller steps
   characterController.step(
-    kitState.action ? stillInput : inputState,
+    kitState.action || isMoveHeld ? stillInput : inputState,
     followCamera?.yaw ?? 0,
     getMovementSpeedLocomotion(
       checkIsImpetuousWinds() ? getImpetuousWindsLocomotion(locomotion) : locomotion,
@@ -274,6 +278,10 @@ defineExpose({
     followCamera?.reset(yaw);
   },
   returnToDefaultDistance: () => followCamera?.returnToDefaultDistance(),
+  // The locomotion phase the Sheer Cold gauge reads its swimming off
+  get phase() {
+    return characterController.phase;
+  },
   stamina: characterController.stamina,
 });
 </script>

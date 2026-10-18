@@ -65,10 +65,11 @@ An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHA
 - **GIVEN** a staggered enemy
 - **WHEN** the stagger passes
 - **THEN** the enemy chases
+- **AND** a shield it holds stands again at its maximum
 
 ### Requirement: An enemy past its leash returns home healed and immune on the way
 
-An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its poise restored.
+An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its shield and poise restored.
 
 #### Scenario: An enemy past its leash walks home
 
@@ -87,6 +88,7 @@ An enemy farther from its spawn than its leash distance, or with no target, SHAL
 - **GIVEN** an enemy walking home
 - **WHEN** it arrives at its spawn
 - **THEN** its health is restored to full
+- **AND** its shield stands at its maximum
 - **AND** its poise is restored
 
 ### Requirement: A defeated enemy drops what its table gives and a boss drops nothing

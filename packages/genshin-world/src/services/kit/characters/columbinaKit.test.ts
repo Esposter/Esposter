@@ -9,6 +9,7 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { COLUMBINA_CHARACTER_ID, createColumbinaKitBehaviour } from "#src/services/kit/characters/columbinaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -129,5 +130,11 @@ describe(createColumbinaKitBehaviour, () => {
   test("a DoT tick reaches six from the field's centre at Ascendant Gleam, with two other Moonsign characters", () => {
     expect.hasAssertions();
     expect(getTickRadius([COLUMBINA_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS])).toBe(6);
+  });
+
+  test("her Benediction's Base DMG bonus is the curve of her max HP", () => {
+    expect(COLUMBINA_KIT.moonsignBenediction?.getBaseDamageBonus?.(combatant)).toBeCloseTo(
+      getBenedictionBaseDamageBonus(combatant.attributes.maxHealth),
+    );
   });
 });

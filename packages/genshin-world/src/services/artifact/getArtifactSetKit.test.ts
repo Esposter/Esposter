@@ -5,6 +5,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
+import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -25,7 +26,34 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { describe, expect, test } from "vitest";
+import { createWildlife } from "#src/services/wildlife/createWildlife";
+import { describe, expect, test, vi } from "vitest";
+
+// The kinds of event Instructor's module hears, which a hit on wildlife must not reach
+const { receivedKinds } = vi.hoisted(() => ({ receivedKinds: [] as string[] }));
+
+// Instructor's module, wrapped to record each event it is sent before the module answers it
+vi.mock("#src/services/artifact/ArtifactSetIdCreateModuleMap", async (importOriginal) => {
+  const { ArtifactSetIdCreateModuleMap } =
+    await importOriginal<typeof import("#src/services/artifact/ArtifactSetIdCreateModuleMap")>();
+  // INSTRUCTOR_ARTIFACT_SET_ID
+  const createInstructorModule = ArtifactSetIdCreateModuleMap[10_007];
+  return {
+    ArtifactSetIdCreateModuleMap: {
+      ...ArtifactSetIdCreateModuleMap,
+      [10_007]: (bonus: Parameters<typeof createInstructorModule>[0]) => {
+        const setModule = createInstructorModule(bonus);
+        return {
+          ...setModule,
+          onKitEvent: (event, context, combatant) => {
+            receivedKinds.push(event.kind);
+            setModule.onKitEvent?.(event, context, combatant);
+          },
+        };
+      },
+    },
+  };
+});
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -121,7 +149,7 @@ describe(getArtifactSetKit, () => {
       level: 1,
     };
 
-    expect(kit.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([
+    expect(kit.getPassiveBonuses?.(combatant, 0.5, [], [])).toStrictEqual([
       { amount: 1, attribute: Attribute.Attack },
       { amount: 0.24, attribute: Attribute.CriticalRate },
     ]);
@@ -169,5 +197,26 @@ describe(getArtifactSetKit, () => {
 
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(getPartyMember(party, ally.characterId).healthShare).toBe(0.5);
+  });
+  test("A weapon passive triggers on wildlife, an artifact set does not", () => {
+    expect.hasAssertions();
+    receivedKinds.length = 0;
+    // The weapon's passives ride on the kit the sets are added to, so they hear the hit through it
+    const weaponPassive = vi.fn();
+    const kit = getArtifactSetKit(
+      { ...TRAVELER_KIT, onKitEvent: weaponPassive },
+      createSetArtifacts(INSTRUCTOR_ARTIFACT_SET_ID, 4),
+      statTables.artifactSetDataMap,
+    );
+    const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
+    const wildlife = createWildlife({ id: "pigeon", kind: WildlifeKind.WhitePigeon, position: { x: 0, z: 2 } });
+    kit.onKitEvent?.(
+      { kind: KitEventKind.WildlifeStruck, striker: combatant, wildlife },
+      createKitTestContext(combatant),
+      combatant,
+    );
+
+    expect(weaponPassive).toHaveBeenCalledOnce();
+    expect(receivedKinds).toStrictEqual([]);
   });
 });

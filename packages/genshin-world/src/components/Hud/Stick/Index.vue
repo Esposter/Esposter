@@ -4,8 +4,9 @@ import type { Input } from "genshin-engine";
 import type { CanvasRect } from "genshin-interface";
 
 import { HudInterfaceRectName } from "#src/models/hud/HudInterfaceRectName";
-import { TOUCH_STICK_POSITION } from "#src/services/hud/constants";
-import { useEventListener } from "@vueuse/core";
+import { getTouchStickShape } from "#src/services/hud/getTouchStickShape";
+import { TouchStickPositionMap } from "#src/services/hud/TouchStickPositionMap";
+import { useEventListener, useWindowSize } from "@vueuse/core";
 import { WALK_MOVE_MAGNITUDE } from "genshin-engine";
 import { GameRect } from "genshin-interface";
 
@@ -20,10 +21,11 @@ interface Props {
 const { input, interfaceRects, parent } = defineProps<Props>();
 const area = useTemplateRef("area");
 const group = useTemplateRef("group");
-// The group where the game places it as it runs rather than where its rect in the tree stands
+// The group where the game places it as it runs rather than where its rect in the tree stands, by the window's shape
+const { height, width } = useWindowSize();
 const groupRect = computed(() => ({
   ...interfaceRects[HudInterfaceRectName.MoveJoystickGroup],
-  position: TOUCH_STICK_POSITION,
+  position: TouchStickPositionMap[getTouchStickShape(width.value / height.value)],
 }));
 // The thumb holding the stick, and how far it pushes, each axis from -1 to 1 of its reach
 const stick = reactive({ isHeld: false, pointerId: 0, x: 0, y: 0 });

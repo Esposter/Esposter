@@ -110,7 +110,8 @@ The pass option SHALL run one named measure alone and rewrite only that pass's r
 
 #### Scenario: One pass rerun
 
-- **GIVEN** a pass taken up ahead of a pass before it that still fails
-- **WHEN** the pass option names it
-- **THEN** only that measure runs
-- **AND** only that pass's rows of the report are rewritten
+- **GIVEN** a pass named by the pass option, with a pass before it still open
+- **WHEN** the run is started
+- **THEN** the run stops at the open pass and names it
+- **AND** the named pass is not measured
+- **AND** only the rows of the passes run are rewritten

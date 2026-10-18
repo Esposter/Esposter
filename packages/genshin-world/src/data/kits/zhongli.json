@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
   "frames.pressSteleLanding": { "cause": "Unclassified", "value": 24 },
   "frames.pressSteleEnd": { "cause": "Unclassified", "value": 1884 },
   "frames.holdSteleEnd": { "cause": "Unclassified", "value": 1908 },
@@ -667,15 +667,9 @@
   "hits.jadeShield.66.hitmarkFrames": { "cause": "Unclassified", "value": 1189 },
   "hits.jadeShield.66.multiplier": { "cause": "Unclassified", "value": 0 },
   "hits.jadeShield.66.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.topazMeteor.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
-  },
+  "hits.topazMeteor.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
   "hits.topazMeteor.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3039 } },
-  "hits.meteor.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 }
-  },
+  "hits.meteor.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 } },
   "hits.meteor.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3039 } },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "Unclassified", "value": 33.76 },
   "normalAttacks.4.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 3031 } },

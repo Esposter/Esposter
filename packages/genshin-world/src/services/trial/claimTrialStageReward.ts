@@ -4,7 +4,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { TrialStageClaim } from "#src/models/trial/TrialStageClaim";
 
-import { claimAbyssRewards } from "#src/services/spiralAbyss/claimAbyssRewards";
+import { claimRewards } from "#src/services/reward/claimRewards";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The claim of a trial stage's first clear: its reward paid into the bag and the wallet, and the stage recorded as claimed. A
@@ -21,7 +21,7 @@ export const claimTrialStageReward = (
   if (claimedStageIds.has(stageId)) return { claimedStageIds, inventory, wallet };
   const stage = stages[String(stageId)];
   if (!stage) throw new InvalidOperationError(Operation.Read, String(stageId), "names no trial stage");
-  const claim = claimAbyssRewards([stage.rewardId], rewards, inventory, wallet, names, materialDataMap);
+  const claim = claimRewards([stage.rewardId], rewards, inventory, wallet, names, materialDataMap);
   if (!claim) return undefined;
   return { claimedStageIds: new Set([...claimedStageIds, stageId]), inventory: claim.inventory, wallet: claim.wallet };
 };

@@ -68,6 +68,23 @@ Citlali's collision, low and high plunges SHALL land at the start of their actio
 - **WHEN** its landing is compared with the kit's
 - **THEN** the start-of-action timing stays provisional until the comparison settles it
 
+### Requirement: Nightsoul Blessing from the skill's press
+
+Citlali's skill press SHALL enter the Nightsoul Blessing for 20 seconds with its Nightsoul points plus 24, and her burst SHALL give 24 points, up to 100.
+
+#### Scenario: The press enters the Blessing with its points plus 24, which last twenty seconds
+
+- **GIVEN** Citlali holds no Nightsoul points and is out of the Blessing
+- **WHEN** the player presses Obsidian Tzitzimitl
+- **THEN** the Blessing holds 24 points
+- **AND** the Blessing ends 20 seconds later
+
+#### Scenario: The burst gains 24 Nightsoul points
+
+- **GIVEN** Citlali holds no Nightsoul points
+- **WHEN** the player casts Ice Storm
+- **THEN** she holds 24 Nightsoul points
+
 ### Requirement: Strikes and charged attack deal no poise
 
 Citlali's strikes and charged attack SHALL deal no poise, a provisional value until a recording of the game's poise settles it.

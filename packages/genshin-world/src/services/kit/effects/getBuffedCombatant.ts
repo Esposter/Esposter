@@ -30,6 +30,7 @@ export const getBuffedCombatant = (
       combatant,
       getPartyMember(party, combatant.characterId).healthShare,
       getDeployedCombatants(party, characterIdCombatantMap),
+      effects,
     ) ?? [];
   const enduringRockBonuses = checkIsEnduringRock(combatant, effects, party.lunarCrystallize.moondrifts, position)
     ? DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: ENDURING_ROCK_DAMAGE_BONUS, attribute }))

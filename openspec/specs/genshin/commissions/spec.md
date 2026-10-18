@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's daily commissions as built. Every region's daily tasks are read from the game's tables, one record a region, and four are dealt a day from the areas reached, and a finished one is claimed for the reward of the rank it was dealt at. The day's fourth claim pays Katheryne's bonus from the game's score previews, and an Encounter Point claims one unfinished. The scene swap, the handbook's tab and the kept day are not yet built.
+Genshin's daily commissions as built. Every region's daily tasks are read from the game's tables, one record a region, and four are dealt a day from the areas reached, and a finished one is claimed for the reward of the rank it was dealt at. Katheryne gives the day's bonus from the game's score previews once the four are claimed, and an Encounter Point claims one unfinished. The scene swap, the handbook's tab and the kept day are not yet built.
 
 ## Requirements
 
@@ -65,11 +65,23 @@ A player SHALL claim at most four commissions a day, whichever way each was made
 - **WHEN** the player attempts a fifth claim
 - **THEN** the claim is refused
 
-#### Scenario: The fourth claim of the day also draws Katheryne's bonus
+#### Scenario: Katheryne's bonus is given once the day's four are claimed
+
+- **GIVEN** four claims have been made today and Katheryne's bonus is not yet given
+- **WHEN** the player talks to Katheryne
+- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment, and the day records it as given
+
+#### Scenario: A claim does not draw Katheryne's bonus
 
 - **GIVEN** three claims have been made today
 - **WHEN** the player makes the fourth claim
-- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment
+- **THEN** the claim pays its reward only, and Katheryne's bonus remains to be given
+
+#### Scenario: Katheryne gives the bonus once a day
+
+- **GIVEN** Katheryne's bonus has been given today
+- **WHEN** the player talks to Katheryne again
+- **THEN** nothing more is given
 
 ### Requirement: Katheryne's bonus
 

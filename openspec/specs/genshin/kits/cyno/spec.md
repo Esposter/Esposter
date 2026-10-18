@@ -99,7 +99,7 @@ Mortuary Rite SHALL be the stance's skill, costing three seconds of cooldown ins
 
 ### Requirement: Judication and Endseer
 
-From Ascension 1, the burst SHALL add a Judication field that gives Endseer while the stance holds, and a Mortuary Rite cast under Endseer SHALL fire three Duststalker Bolts.
+From Ascension 1, the burst SHALL add a Judication field that gives Endseer while the stance holds, a Mortuary Rite cast under Endseer SHALL fire three Duststalker Bolts, and the hit that press lands SHALL deal 35% more DMG.
 
 #### Scenario: Judication gives Endseer
 
@@ -118,6 +118,12 @@ From Ascension 1, the burst SHALL add a Judication field that gives Endseer whil
 - **GIVEN** a Duststalker Bolt is fired
 - **WHEN** the bolt hits an enemy
 - **THEN** it deals the talent multiplier once, a provisional value until the game's ratio is confirmed
+
+#### Scenario: Mortuary Rite's own hit under Endseer deals 35% more
+
+- **GIVEN** Cyno has Endseer when he casts Mortuary Rite
+- **WHEN** the hit of that press lands
+- **THEN** the hit's DMG is 35% higher, and the Duststalker Bolts and Secret Rite are not
 
 ### Requirement: Ascension 4 flat damage from Elemental Mastery
 

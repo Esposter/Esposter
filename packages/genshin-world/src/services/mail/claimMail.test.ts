@@ -19,7 +19,7 @@ describe(claimMail, () => {
   };
   const STATE: MailboxState = {
     inventory: EMPTY_INVENTORY,
-    mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false, isRead: false }],
+    mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: false, isPinned: false, isRead: false }],
     wallet: EMPTY_WALLET,
   };
   const NAMES = {};
@@ -31,7 +31,7 @@ describe(claimMail, () => {
 
     expect(claimMail(STATE, ROW, NAMES, MATERIAL_DATA_MAP)).toStrictEqual({
       inventory: EMPTY_INVENTORY,
-      mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: true, isRead: true }],
+      mails: [{ deliveredAt: new Date(0).toISOString(), id: ROW.id, isClaimed: true, isPinned: false, isRead: true }],
       wallet: { ...EMPTY_WALLET, [Currency.Mora]: MORA_COUNT },
     });
   });

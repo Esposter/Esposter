@@ -6,25 +6,17 @@ import type { Quest, QuestObjective } from "genshin-world";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { QuestKind, QuestObjectiveKind, questSchema } from "genshin-world";
 
-// A giving's objectives: each exact item collected its count, or, for a giving by group, one of the group's items collected
-// Its count, the first item as the target and the rest as its alternatives, which a single collect of an item names as well.
-// A zero count is an exact giving's, since the dump's defaults write it into every row that leaves the count out
+// A giving's objectives: each exact item collected its count, or, for a giving by group, any one of the group's items collected
+// Its count, with every one of the group's items named as its targets. A zero count is an exact giving's, since the dump's
+// Defaults write it into every row that leaves the count out
 const readGivingObjectives = (giving: DumpedGiving, groupItemIds: number[]): QuestObjective[] => {
   if (!giving.givingGroupCount)
     return giving.exactItems.flatMap(({ count, id }) =>
-      id === 0 ? [] : [{ count, kind: QuestObjectiveKind.Collect, targetId: String(id) }],
+      id === 0 ? [] : [{ count, kind: QuestObjectiveKind.Collect, targetIds: [String(id)] }],
     );
-  const [firstItemId, ...alternativeItemIds] = groupItemIds;
-  if (firstItemId === undefined)
+  if (groupItemIds.length === 0)
     throw new InvalidOperationError(Operation.Read, String(giving.id), "gives by a group that holds no items");
-  return [
-    {
-      ...(alternativeItemIds.length > 0 ? { alternativeTargetIds: alternativeItemIds.map(String) } : {}),
-      count: giving.givingGroupCount,
-      kind: QuestObjectiveKind.Collect,
-      targetId: String(firstItemId),
-    },
-  ];
+  return [{ count: giving.givingGroupCount, kind: QuestObjectiveKind.Collect, targetIds: groupItemIds.map(String) }];
 };
 
 // A Reputation delivery request as the dump files it: a sub quest of a world quest, whose items a giving row of its own

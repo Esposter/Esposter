@@ -1,11 +1,9 @@
 import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { takeOne } from "@esposter/shared";
 
 const SPOTLESS_HEART_COOLDOWN_ID = "spotlessHeartCooldown";
@@ -19,16 +17,13 @@ export const createSpotlessHeartPassiveModule = (params: number[]): WeaponPassiv
   const cooldownSeconds = takeOne(params, 2);
   const clearSeconds = takeOne(params, 3);
   return {
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects) => {
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) => {
       if (
         strike.attackTag !== AttackTag.ElementalSkill ||
         !checkIsKitStatusActive(effects, strike.combatant.characterId, SPOTLESS_HEART_ID)
       )
         return 0;
-      return (
-        defenseShare *
-        getBuffedCombatant(strike.combatant, effects, party).attributes.attributeTotalMap[Attribute.Defense]
-      );
+      return defenseShare * strike.combatant.attributes.defense;
     },
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;

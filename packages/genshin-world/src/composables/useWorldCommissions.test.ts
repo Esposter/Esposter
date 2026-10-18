@@ -56,8 +56,31 @@ const useAfterReset = (events: WorldEvents) => {
     questProgressMap: shallowRef(new Map<string, QuestProgress>()),
     questsInProgress: computed<Quest[]>(() => []),
     rank: computed(() => RANK),
-    savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+    savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [], isBonusClaimed: false },
     savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+    savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
+  });
+};
+
+// The four unfinished commissions of a kept day, with one whole Encounter Point held, read as the world opens at the given rank
+const useUnfinishedDay = (rank: number) => {
+  const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
+  vi.mocked(readCommissionSlices).mockResolvedValue([createSlice()]);
+  return useWorldCommissions({
+    events: createWorldEvents(),
+    finishedMainQuestIds: computed(() => new Set<number>()),
+    gameDataBaseUrl: "",
+    getWorldNow: () => todayReset.add({ hours: 1 }),
+    questProgressMap: shallowRef(new Map<string, QuestProgress>()),
+    questsInProgress: computed<Quest[]>(() => []),
+    rank: computed(() => rank),
+    savedCommissionDay: {
+      claimedCommissionIds: [],
+      dealtAt: todayReset,
+      isBonusClaimed: false,
+      dealtCommissions: [2, 3, 4, 5].map((commissionId) => ({ commissionId, count: 0, dealtRank: RANK })),
+    },
+    savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
     savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
   });
 };
@@ -80,8 +103,11 @@ describe(useWorldCommissions, () => {
       savedCommissionDay: {
         claimedCommissionIds: [1],
         dealtAt: todayReset.subtract({ minutes: 1 }),
+        isBonusClaimed: false,
         dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
       },
+      savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
     });
     await waitForReads();
     expect(commissionDay.value.dealtCommissions).toHaveLength(4);
@@ -101,7 +127,12 @@ describe(useWorldCommissions, () => {
       questProgressMap: shallowRef(new Map<string, QuestProgress>()),
       questsInProgress: computed<Quest[]>(() => []),
       rank: computed(() => RANK),
-      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedCommissionDay: {
+        claimedCommissionIds: [],
+        dealtAt: todayReset,
+        dealtCommissions: [],
+        isBonusClaimed: false,
+      },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
     });
@@ -133,7 +164,12 @@ describe(useWorldCommissions, () => {
       questProgressMap: shallowRef(new Map<string, QuestProgress>()),
       questsInProgress: computed<Quest[]>(() => []),
       rank: computed(() => RANK),
-      savedCommissionDay: { claimedCommissionIds: [], dealtAt: todayReset, dealtCommissions: [] },
+      savedCommissionDay: {
+        claimedCommissionIds: [],
+        dealtAt: todayReset,
+        dealtCommissions: [],
+        isBonusClaimed: false,
+      },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 4 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
     });
@@ -170,5 +206,26 @@ describe(useWorldCommissions, () => {
     const { encounterPoints } = useAfterReset(events);
     events.emit("oculusFound");
     expect(encounterPoints.value.halfPoints).toBe(1);
+  });
+
+  test("the Commissions tab offers no point claim below Adventure Rank 24", async () => {
+    expect.hasAssertions();
+    const { handbookDayCommissions, isAdventureEncountersUnlocked } = useUnfinishedDay(23);
+    await waitForReads();
+    expect(isAdventureEncountersUnlocked.value).toBe(false);
+    expect(handbookDayCommissions.value.map(({ isClaimable }) => isClaimable)).toStrictEqual([
+      false,
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  test("the Commissions tab offers a point claim at Adventure Rank 24", async () => {
+    expect.hasAssertions();
+    const { handbookDayCommissions, isAdventureEncountersUnlocked } = useUnfinishedDay(24);
+    await waitForReads();
+    expect(isAdventureEncountersUnlocked.value).toBe(true);
+    expect(handbookDayCommissions.value.map(({ isClaimable }) => isClaimable)).toStrictEqual([true, true, true, true]);
   });
 });

@@ -63,6 +63,41 @@ Spirit Reins' Resonance SHALL land an Anemo circle of radius 5.5 metres round Ch
 - **WHEN** the player presses it again
 - **THEN** Resonance does not activate
 
+### Requirement: Spirit Reins' Nightsoul Blessing
+
+Spirit Reins' press SHALL enter the Nightsoul Blessing with 80 points, which drain eight a second, and a sprint in the Blessing SHALL drain 13.3 points. The Blessing SHALL end when its points drain to none.
+
+#### Scenario: The press enters the Blessing with 80 points
+
+- **GIVEN** Chasca is out of the Blessing
+- **WHEN** the player presses Spirit Reins' Resonance and two seconds pass
+- **THEN** the Blessing holds 64 points
+
+#### Scenario: The Blessing ends when its points drain to none
+
+- **GIVEN** Chasca entered the Blessing 9.5 seconds ago
+- **WHEN** another second passes
+- **THEN** the Blessing has ended
+
+#### Scenario: A press inside the Blessing leaves it
+
+- **GIVEN** Chasca is in the Blessing
+- **WHEN** the player presses Spirit Reins' Resonance
+- **THEN** the Blessing ends
+- **AND** the press still lands Resonance's strike, which gcsim's exit press does not, until the kit can play a different action on that press
+
+#### Scenario: A sprint in the Blessing drains 13.3 points
+
+- **GIVEN** Chasca is in the Blessing with 72 points
+- **WHEN** she sprints
+- **THEN** the Blessing holds 58.7 points
+
+#### Scenario: A sprint outside the Blessing drains nothing
+
+- **GIVEN** Chasca is out of the Blessing
+- **WHEN** she sprints
+- **THEN** no Nightsoul points are drained
+
 ### Requirement: Galesplitting's first hit
 
 Galesplitting Soulseeker Shell SHALL land its first Anemo hit on the primary target in a circle of radius 6 metres at 96 frames, cost 60 energy, and go on cooldown for 15 seconds.

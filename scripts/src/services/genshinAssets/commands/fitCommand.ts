@@ -28,11 +28,11 @@ export const fitCommand: SubCommandsDef[string] = defineCommand({
     name: "fit",
   },
   run: async ({ args }) => {
-    const only = args.only === undefined ? undefined : parseNames(args.only, "only");
+    const only = args.only === undefined ? [] : parseNames(args.only, "only");
     const component = parseDerivedAssetComponent(args.component);
     const fit = DerivedAssetFitMap[component];
     if (!fit) throw new InvalidOperationError(Operation.Read, component, "has no fit yet");
-    const { notes, objects } = await fit(only);
+    const { notes, objects } = await fit(only, { isDryRun: args["dry-run"] });
     for (const note of notes) console.log(note);
     console.log(await publishObjectsStep({ isDryRun: args["dry-run"], objects }));
   },

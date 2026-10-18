@@ -74,12 +74,13 @@ Each fit SHALL publish its record under its own key, so that a fit run alone rep
 - **THEN** only its own records are replaced
 - **AND** every other record keeps its key and content
 
-#### Scenario: A dry run reports without publishing
+#### Scenario: A dry run reports without publishing or writing
 
 - **GIVEN** a fit selected for a dry run
 - **WHEN** it runs
 - **THEN** it reports what it would publish
 - **AND** it sends no request
+- **AND** it writes no world data file
 
 ### Requirement: A step that runs the game's exporter fails on any logged exception
 

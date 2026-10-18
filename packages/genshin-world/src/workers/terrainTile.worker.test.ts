@@ -16,7 +16,7 @@ import { isAbsolute, resolve } from "node:path";
 import { scan } from "rolldown/experimental";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { baseGround, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
+const { baseGrounds, groundLayers, surfaces, water } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
   selectLaidGroundKeys(Object.keys(gameDataLock.objects).filter((key) => checkIsGameDataKey(key))).map((key) =>
     readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema),
@@ -32,7 +32,7 @@ describe("terrainTile.worker", () => {
     request: { cellsPerSide: 1, finestTileSize: 1, key: getTerrainTileKey(0, 0, 0) },
   };
   const loadMessage: TerrainWorkerMessage = {
-    ground: { baseGround, groundLayers, surfaces, waterLevel: water.level },
+    ground: { baseGrounds, groundLayers, surfaces, waterLevel: water.level },
     kind: TerrainWorkerMessageKind.Load,
   };
   const receive = async (message: TerrainWorkerMessage): Promise<void> => {
@@ -67,7 +67,7 @@ describe("terrainTile.worker", () => {
   test("computes a tile's heights over the ground it was loaded with", async () => {
     expect.hasAssertions();
 
-    const getGroundHeight = createWorldHeight(baseGround, []);
+    const getGroundHeight = createWorldHeight(baseGrounds, []);
     await receive(loadMessage);
     await receive(tileMessage);
 
@@ -99,7 +99,7 @@ describe("terrainTile.worker", () => {
     assert.exists(plateau);
     const x = Math.round(plateau.x);
     const z = Math.round(plateau.z);
-    const getGroundHeight = createWorldHeight(baseGround, regionGrounds);
+    const getGroundHeight = createWorldHeight(baseGrounds, regionGrounds);
     await receive(loadMessage);
     await receive({ kind: TerrainWorkerMessageKind.RegionGrounds, regionGrounds });
     await receive({

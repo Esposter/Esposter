@@ -174,6 +174,13 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 - **WHEN** the guest signs in
 - **THEN** the account's bag and wallet are kept
 
+#### Scenario: A mail is kept once by its id, and read or claimed on either copy stays so
+
+- **GIVEN** a guest and the account each hold a mail with the same id, the account having read it and the guest having claimed it
+- **WHEN** the guest signs in
+- **THEN** the account holds that mail once, read and claimed
+- **AND** a mail only the guest holds is kept
+
 ### Requirement: A replaced player is told at once when subscribed and otherwise at the next refused save
 
 A player whose session is replaced SHALL be told at once while the page is subscribed, and otherwise at the next save refused for that reason.

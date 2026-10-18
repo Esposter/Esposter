@@ -1,5 +1,5 @@
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
-import type { CraftingStrongbox } from "#src/models/crafting/CraftingStrongbox";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -27,7 +27,7 @@ export interface StrongboxCraftTables {
 export const craftStrongbox = (
   inventory: Inventory,
   wallet: Wallet,
-  strongbox: CraftingStrongbox,
+  strongbox: CraftingStrongboxData,
   pickedIds: number[],
   tables: StrongboxCraftTables,
 ): DroppedItemPickUp | undefined => {

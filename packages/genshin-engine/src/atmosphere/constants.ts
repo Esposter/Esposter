@@ -70,6 +70,14 @@ export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>
     precipitation: { density: 0.5, kind: PrecipitationKind.Snow },
     wetness: 0,
   },
+  // Provisional: the snowstorm's sky and snow are unmeasured, so it starts at the snow's settings. No area lists it yet,
+  // So nothing draws these until a recording of a snowstorm is fitted
+  [WeatherKind.Snowstorm]: {
+    cloudCoverage: 0.8,
+    fogDensity: 0.001,
+    precipitation: { density: 0.5, kind: PrecipitationKind.Snow },
+    wetness: 0,
+  },
   [WeatherKind.Thunderstorm]: {
     cloudCoverage: 1,
     fogDensity: 0.002,

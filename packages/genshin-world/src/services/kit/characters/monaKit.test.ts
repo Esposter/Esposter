@@ -5,6 +5,7 @@ import type { KitInput } from "#src/models/kit/KitInput";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -13,6 +14,7 @@ import { MONA_CHARACTER_ID } from "#src/services/kit/characters/monaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -217,5 +219,92 @@ describe("mona kit", () => {
     const strikes = stepKitTestEffects(0.2, context);
     expect(strikes.map(({ target }) => target)).toStrictEqual([enemy]);
     expect(enemy.statuses.map(({ secondsRemaining }) => secondsRemaining)).toStrictEqual([4]);
+  });
+
+  // Constellation 6's stacks are read at the Charged Attack's damage hook, as her sprint and her attack play out, one step at a time
+  const createConstellation6Fixture = (constellationCount = 6) => {
+    const combatant = { ...createMonaCombatant(), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const sprint: KitInput = {
+      height: 0,
+      isAttackHeld: false,
+      isAttackPressed: false,
+      isBurstPressed: false,
+      isSkillHeld: false,
+      isSkillPressed: false,
+      locomotionState: LocomotionState.Sprint,
+    };
+    const sprintFor = (seconds: number) => {
+      for (let step = 0; step < Math.round(seconds * 60); step++) {
+        stepKit(kitState, MONA_KIT, sprint, partyMember, stamina, 1 / 60, [], context);
+        stepKitEffects(1 / 60, context);
+      }
+    };
+    const waitFor = (seconds: number) => stepKitEffects(seconds, context);
+    const getBonus = (attackTag: AttackTag) =>
+      MONA_KIT.getStrikeDamageBonus?.(
+        { attackTag, body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) },
+        enemy,
+        createParty([MONA_CHARACTER_ID]),
+        kitEffectState.effects,
+      );
+    // Lands the Charged Attack, as its last hit does, which resets the stacks once it has struck
+    const landChargedAttack = () =>
+      MONA_KIT.chargedAttack.hits
+        .at(-1)
+        ?.onStrike?.(context, { body: context.body, combatant, hit: takeOne(MONA_KIT.chargedAttack.hits) });
+    return { getBonus, landChargedAttack, sprintFor, waitFor };
+  };
+
+  test("constellation 6 adds 60% to her next charged attack for each second of sprint, up to three seconds", () => {
+    expect.hasAssertions();
+    const { getBonus, sprintFor } = createConstellation6Fixture();
+    sprintFor(1.5);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(0.6);
+    sprintFor(2);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(1.8);
+    sprintFor(2);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(1.8);
+  });
+
+  test("constellation 6's bonus lasts eight seconds from its last stack", () => {
+    expect.hasAssertions();
+    const { getBonus, sprintFor, waitFor } = createConstellation6Fixture();
+    sprintFor(1.5);
+    waitFor(6);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(0.6);
+    waitFor(2);
+    expect(getBonus(AttackTag.ChargedAttack)).toBe(0);
+  });
+
+  test("constellation 6's charged attack resets the stacks once it has struck", () => {
+    expect.hasAssertions();
+    const { getBonus, landChargedAttack, sprintFor } = createConstellation6Fixture();
+    sprintFor(2.5);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(1.2);
+    landChargedAttack();
+    expect(getBonus(AttackTag.ChargedAttack)).toBe(0);
+  });
+
+  test("constellation 6 adds nothing to a normal attack, and a new sprint keeps the stacks the bonus still holds", () => {
+    expect.hasAssertions();
+    const { getBonus, sprintFor, waitFor } = createConstellation6Fixture();
+    sprintFor(2.5);
+    expect(getBonus(AttackTag.NormalAttack)).toBe(0);
+    waitFor(0.5);
+    sprintFor(0.5);
+    expect(getBonus(AttackTag.ChargedAttack)).toBeCloseTo(1.2);
+  });
+
+  test("constellation 5 adds nothing to her charged attack after sprinting", () => {
+    expect.hasAssertions();
+    const { getBonus, sprintFor } = createConstellation6Fixture(5);
+    sprintFor(2);
+    expect(getBonus(AttackTag.ChargedAttack)).toBe(0);
   });
 });

@@ -189,12 +189,12 @@ The passes command SHALL run a component's measures in order against their gates
 - **THEN** the audio pass is printed as not owed
 - **AND** the run goes on past it
 
-#### Scenario: One pass run alone
+#### Scenario: One pass run up to its place in the order
 
 - **GIVEN** a component with a named pass
 - **WHEN** the operator runs passes with that pass named
-- **THEN** only that measure runs
-- **AND** only its rows of the component's report are rewritten
+- **THEN** the passes before it are measured in order, and the run stops at the first still open
+- **AND** only the rows of the passes run are rewritten
 
 ### Requirement: Analysis commands rank and solve what separates the render from the reference
 

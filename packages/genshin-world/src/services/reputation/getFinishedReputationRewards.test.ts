@@ -11,7 +11,7 @@ describe(getFinishedReputationRewards, () => {
   const REWARD: ReputationReward = { exp: 80, items: [{ count: 20_000, id: 202 }] };
   const QUEST_ID = 901;
   const TARGET_ID = "3";
-  const ALTERNATIVE_TARGET_ID = "4";
+  const OTHER_TARGET_ID = "4";
   const BINDINGS = [{ questId: QUEST_ID, reward: REWARD }];
   const createQuest = (kind: QuestObjectiveKind, count: number): Quest => ({
     descriptionTextId: "description",
@@ -21,7 +21,7 @@ describe(getFinishedReputationRewards, () => {
     offerTalkIds: [],
     parentQuestIds: [],
     rewards: [],
-    steps: [{ id: "1", objectives: [{ count, kind, targetId: TARGET_ID }], textId: "step" }],
+    steps: [{ id: "1", objectives: [{ count, kind, targetIds: [TARGET_ID] }], textId: "step" }],
     talks: [],
     titleTextId: "title",
   });
@@ -44,24 +44,14 @@ describe(getFinishedReputationRewards, () => {
       steps: [
         {
           id: "1",
-          objectives: [
-            {
-              alternativeTargetIds: [ALTERNATIVE_TARGET_ID],
-              count: 2,
-              kind: QuestObjectiveKind.Collect,
-              targetId: TARGET_ID,
-            },
-          ],
+          objectives: [{ count: 2, kind: QuestObjectiveKind.Collect, targetIds: [TARGET_ID, OTHER_TARGET_ID] }],
           textId: "step",
         },
       ],
     };
     const progress = { objectiveCounts: [0], stepIndex: 0 };
     const oneCollected = advanceQuest(quest, progress, { kind: QuestObjectiveKind.Collect, targetId: TARGET_ID });
-    const finished = advanceQuest(quest, oneCollected, {
-      kind: QuestObjectiveKind.Collect,
-      targetId: ALTERNATIVE_TARGET_ID,
-    });
+    const finished = advanceQuest(quest, oneCollected, { kind: QuestObjectiveKind.Collect, targetId: OTHER_TARGET_ID });
 
     expect(getFinishedReputationRewards(quest, oneCollected, finished, BINDINGS)).toStrictEqual([REWARD]);
   });

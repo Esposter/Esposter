@@ -15,8 +15,11 @@ import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
 import { cardGameExpSaveSchema } from "#src/models/gcg/CardGameExpSave";
 import { homePlacementSaveSchema } from "#src/models/home/HomePlacementSave";
+import { homePlantingSaveSchema } from "#src/models/home/HomePlantingSave";
+import { homeProgressSaveSchema } from "#src/models/home/HomeProgressSave";
 import { inventorySaveSchema } from "#src/models/inventory/InventorySave";
 import { walletSaveSchema } from "#src/models/inventory/WalletSave";
+import { investigationDaySaveSchema } from "#src/models/investigation/InvestigationDaySave";
 import { mailSaveSchema } from "#src/models/mail/MailSave";
 import { unlockedLandmarkSaveSchema } from "#src/models/map/UnlockedLandmarkSave";
 import { offeringProgressSaveSchema } from "#src/models/offering/OfferingProgressSave";
@@ -82,9 +85,16 @@ export const genshinSaveSchema = z
     enemyRespawns: enemyRespawnSaveSchema,
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
+    // The realm's progress: the Trust EXP, blueprints, queues, companions, one-time rewards given, and the stores as they stood
+    homeProgress: homeProgressSaveSchema,
+    // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
+    homePlantings: homePlantingSaveSchema,
     // The mails the player holds, each once by its id, with when it was delivered and whether it was claimed and read
     mails: createUniqueArraySchema(mailSaveSchema, "id").max(MAX_MAIL_COUNT),
     inventory: inventorySaveSchema,
+    // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
+    // (empty before the day's first investigation)
+    investigationDay: investigationDaySaveSchema,
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
     // The party: its teams, the one deployed, the member on the field and the characters down

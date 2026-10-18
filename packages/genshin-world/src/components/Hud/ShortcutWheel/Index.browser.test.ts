@@ -2,6 +2,7 @@ import ShortcutWheel from "#src/components/Hud/ShortcutWheel/Index.vue";
 import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
 import { ScreenKindGameTextKeyMap } from "#src/services/screen/ScreenKindGameTextKeyMap";
 import { ShortcutWheelDirectionCountScreenKindsMap } from "#src/services/shortcutWheel/ShortcutWheelDirectionCountScreenKindsMap";
+import { takeOne } from "@esposter/shared";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
 import { describe, expect, test } from "vitest";
 import { render } from "vitest-browser-vue";
@@ -33,7 +34,9 @@ describe("shortcutWheel", () => {
       pickedIndex: 0,
     });
 
-    const [wishScreenKind] = ShortcutWheelDirectionCountScreenKindsMap[ShortcutWheelDirectionCount.Eight];
+    const wishScreenKind = takeOne(
+      takeOne(ShortcutWheelDirectionCountScreenKindsMap, ShortcutWheelDirectionCount.Eight),
+    );
     await expect
       .element(
         page.getByRole("option", { name: ENGLISH_GAME_TEXT[ScreenKindGameTextKeyMap[wishScreenKind]], selected: true }),

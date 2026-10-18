@@ -10,6 +10,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -44,8 +45,8 @@ describe(createBaneOfElementsPassiveModule, () => {
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], [0.12]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Hydro))).toBe(0.12);
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Cryo))).toBe(0.12);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Hydro), [], [])).toBe(0.12);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Cryo), [], [])).toBe(0.12);
   });
 
   test("a bane passive gives nothing to an enemy under neither of its elements", () => {
@@ -53,8 +54,8 @@ describe(createBaneOfElementsPassiveModule, () => {
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], [0.12]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro))).toBe(0);
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder())).toBe(0);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), [], [])).toBe(0);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(), [], [])).toBe(0);
   });
 
   test("a bane passive takes the bonus of the rank it is at", () => {
@@ -62,6 +63,6 @@ describe(createBaneOfElementsPassiveModule, () => {
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], [0.24]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro))).toBe(0.24);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), [], [])).toBe(0.24);
   });
 });

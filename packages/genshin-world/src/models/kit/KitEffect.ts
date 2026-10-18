@@ -1,7 +1,9 @@
+import type { KitAntiCold } from "#src/models/kit/KitAntiCold";
 import type { KitBubble } from "#src/models/kit/KitBubble";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitCrystallizeShard } from "#src/models/kit/KitCrystallizeShard";
 import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
+import type { KitElementCriticalDamage } from "#src/models/kit/KitElementCriticalDamage";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";
 import type { KitShield } from "#src/models/kit/KitShield";
@@ -12,10 +14,12 @@ import type { KitTaunt } from "#src/models/kit/KitTaunt";
 
 // A live effect on the deployed team, kept in the field's list and ticked each step, until its seconds run out
 export type KitEffect =
+  | KitAntiCold
   | KitBubble
   | KitBuff
   | KitCrystallizeShard
   | KitDendroCore
+  | KitElementCriticalDamage
   | KitField
   | KitInfusion
   | KitShield

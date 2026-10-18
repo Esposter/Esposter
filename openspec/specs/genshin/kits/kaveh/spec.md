@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives.
+Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives and Constellation 6.
 
 ## Requirements
 
@@ -83,6 +83,22 @@ While Painted Dome's stance lasts, Kaveh's strikes SHALL use wider fans, and the
 - **THEN** the stance ends
 - **AND** his strikes return to their normal fans
 
+### Requirement: First constellation buffs Kaveh after Artistic Ingenuity
+
+From constellation 1, Artistic Ingenuity SHALL give Kaveh 50% Dendro RES and 25% Incoming Healing Bonus for three seconds.
+
+#### Scenario: A Kaveh at constellation 1 gets both buffs after Artistic Ingenuity
+
+- **GIVEN** Kaveh is at constellation 1
+- **WHEN** the player casts Artistic Ingenuity
+- **THEN** he gains 50% Dendro RES and 25% Incoming Healing Bonus for three seconds
+
+#### Scenario: A Kaveh below constellation 1 gets no buff
+
+- **GIVEN** Kaveh is at constellation 0
+- **WHEN** the player casts Artistic Ingenuity
+- **THEN** he gains no buff
+
 ### Requirement: Second constellation raises Normal Attack SPD during Painted Dome
 
 From constellation 2, Kaveh's Normal Attack SPD SHALL be raised by 15% while Painted Dome holds him.
@@ -98,3 +114,25 @@ From constellation 2, Kaveh's Normal Attack SPD SHALL be raised by 15% while Pai
 - **GIVEN** Kaveh is at constellation 1 and Painted Dome holds him
 - **WHEN** his Normal Attack SPD bonus is read
 - **THEN** it is zero
+
+### Requirement: Fourth constellation raises the Bloom DMG of his cores
+
+From constellation 4, the Bloom reaction DMG of each Dendro Core Kaveh's Bloom left SHALL be raised by 60%, and no other reaction's.
+
+#### Scenario: A Kaveh at constellation 4 gets the Bloom bonus
+
+- **GIVEN** Kaveh is at constellation 4
+- **WHEN** the Bloom reaction DMG of his core is priced
+- **THEN** it is raised by 60%
+
+#### Scenario: A Kaveh below constellation 4 gets no Bloom bonus
+
+- **GIVEN** Kaveh is at constellation 3
+- **WHEN** the Bloom reaction DMG of his core is priced
+- **THEN** it is raised by nothing
+
+#### Scenario: The bonus is Bloom's alone
+
+- **GIVEN** Kaveh is at constellation 4
+- **WHEN** an Overloaded's damage is priced for him
+- **THEN** it is raised by nothing

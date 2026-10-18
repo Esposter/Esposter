@@ -30,7 +30,7 @@ import { readFile } from "node:fs/promises";
 // Ground the game's table files them under, a city's among them. An area the file holds no polygon for keeps the
 // Outline the catalogue gives it, and a subarea the table files no row for takes no outline and no terrain.
 // The catalogue is written back, as the source people edit, and is also its record, with what was outlined as the notes
-export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
+export const fitAreaOutlines = async ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
   const [polygonsJson, [originX, , originZ], catalogueJson] = await Promise.all([
     readFile(WORLD_AREA_POLYGONS_PATH, "utf8"),
     readWorldOrigin(DerivedAssetComponent.Windrise),
@@ -88,7 +88,7 @@ export const fitAreaOutlines = async (): Promise<GameDataBuild> => {
     `${outlinedSubareas.length} of ${subareas.length} subareas take the game's outlines, among them ${outlinedCities.length} of the ${cities.length} cities the game marks`,
   ];
   return {
-    notes: [...notes, await writeWorldData(CATALOGUE_FILE, catalogue)],
+    notes: [...notes, await writeWorldData(CATALOGUE_FILE, catalogue, { isDryRun })],
     objects: { [CATALOGUE_KEY]: catalogue },
   };
 };

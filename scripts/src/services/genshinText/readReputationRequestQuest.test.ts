@@ -29,7 +29,11 @@ describe(readReputationRequestQuest, () => {
       parentQuestIds: [],
       rewards: [],
       steps: [
-        { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
+        {
+          id: "900101",
+          objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["9001"] }],
+          textId: "3",
+        },
       ],
       talks: [],
       titleTextId: "1",
@@ -48,7 +52,7 @@ describe(readReputationRequestQuest, () => {
         subQuest: { mainId: 9001, stepDescTextMapHash: 3, subId: 900101 },
       }).steps,
     ).toStrictEqual([
-      { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetId: "9001" }], textId: "3" },
+      { id: "900101", objectives: [{ count: 3, kind: QuestObjectiveKind.Collect, targetIds: ["9001"] }], textId: "3" },
     ]);
   });
 
@@ -66,7 +70,7 @@ describe(readReputationRequestQuest, () => {
     ).toStrictEqual([
       {
         id: "900201",
-        objectives: [{ alternativeTargetIds: ["9102"], count: 2, kind: QuestObjectiveKind.Collect, targetId: "9101" }],
+        objectives: [{ count: 2, kind: QuestObjectiveKind.Collect, targetIds: ["9101", "9102"] }],
         textId: "3",
       },
     ]);

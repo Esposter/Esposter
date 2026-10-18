@@ -64,7 +64,7 @@ export const stepKit = (
 
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
-      endKitAction(kitState, kit);
+      endKitAction(kitState, kit, false);
       kitState.isAttackQueued = false;
       kitState.plungeStartHeight = height;
     }
@@ -105,7 +105,11 @@ export const stepKit = (
             context.characterIdCombatantMap,
           ).attributes.attributeTotalMap[Attribute.NormalAttackSpeed]
         : 0;
+      const elapsedSeconds = kitState.actionSeconds;
       kitState.actionSeconds += stepSeconds * (1 + speedBonus);
+      const { decideLength } = action;
+      if (decideLength && elapsedSeconds < decideLength.atSeconds && kitState.actionSeconds >= decideLength.atSeconds)
+        kitState.actionLengthSeconds = decideLength.decide(context);
       if (action.staminaPerSecond !== undefined) stamina.spend(action.staminaPerSecond * stepSeconds);
       const landedCount = landedHits.length;
       kitState.nextHitIndex = landKitHits(action.hits, kitState.nextHitIndex, kitState.actionSeconds, landedHits);
@@ -116,14 +120,14 @@ export const stepKit = (
           const extraHit = kit.getNormalAttackExtraHit(context, hit, chainIndex);
           if (extraHit) landedHits.push(extraHit);
         }
-      if (kitState.actionSeconds < action.seconds) {
+      if (kitState.actionSeconds < kitState.actionLengthSeconds) {
         if (isAttackPressed && !isSkillOrBurst) kitState.isAttackQueued = true;
         return undefined;
       }
       queueKitHits(action, kitState, context);
       isStrikeEnded = kit.normalAttacks.includes(action);
     } else kitState.isAttackQueued = false;
-    endKitAction(kitState, kit);
+    endKitAction(kitState, kit, kit.keepsNormalAttackCombo?.(context, action) === true);
   }
 
   kitState.comboSeconds += stepSeconds;

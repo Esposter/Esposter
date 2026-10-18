@@ -30,6 +30,22 @@ A river's ribbon SHALL follow the centreline, width and level the game places fo
 - **WHEN** the player views the river
 - **THEN** the ribbon follows the game's centreline at the game's level
 
+### Requirement: A river is drawn in the water's material, beside the still water
+
+A river's ribbon SHALL be drawn in the water's material, mounted with the region's still water and carrying the foam its bends gather on their outer banks, in each region whose game export does not stand in.
+
+#### Scenario: A river's ribbon is drawn along its course
+
+- **GIVEN** the player is in a region with a river the game places, and the game's export of the region is not in the scene
+- **WHEN** the player views the river
+- **THEN** its ribbon lies along the course at the game's level, with the water's shore and bend foam on its banks
+
+#### Scenario: A region the game's export stands in draws no river or fall of its own
+
+- **GIVEN** the player is in a region whose game export is in the scene
+- **WHEN** the player views the region
+- **THEN** its rivers and falls are left out, the export drawing them
+
 ## REMOVED Requirements
 
 ### Requirement: Rivers and recorded waterfalls are not drawn in the open world yet

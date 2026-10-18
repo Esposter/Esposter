@@ -72,6 +72,8 @@ describe(writeResidents, () => {
     vi.mocked(findNearestLandmarkAreaId).mockReturnValue(AREA_ID);
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
+      points: [],
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
     });

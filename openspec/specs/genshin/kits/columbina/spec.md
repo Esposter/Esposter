@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field, and the burst's hit, with her Lunar reactions, her Moonsign Benediction, Dew and her passives and constellations left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew and her passives and constellations left waiting on their hooks.
 
 ## Requirements
 
@@ -89,3 +89,25 @@ Columbina's plunges SHALL take a provisional four tenths of a second to land, th
 - **GIVEN** Columbina is in the air
 - **WHEN** the player plunges
 - **THEN** the plunge lands four tenths of a second later
+
+### Requirement: Her Moonsign Benediction turns her team's reactions Lunar and adds Base DMG from her max HP
+
+Columbina SHALL count toward the Moonsign level, turn her team's Electro-Charged, Bloom and Hydro-Crystallize reactions Lunar, and add Base DMG to their Lunar damage at 0.2% for every 1,000 of her max HP, up to 7%.
+
+#### Scenario: Her Benediction counts her toward the Moonsign level
+
+- **GIVEN** Columbina and one other Moonsign character are in the party
+- **WHEN** the party's Moonsign level is read
+- **THEN** it reads Ascendant Gleam, as it would with two Moonsign characters of any kind
+
+#### Scenario: A Bloom of the team becomes Lunar-Bloom
+
+- **GIVEN** Columbina is in the party and a party member's Bloom forms
+- **WHEN** the reaction is recorded
+- **THEN** it is Lunar-Bloom, consuming as Bloom does
+
+#### Scenario: The Base DMG bonus scales with her max HP and stops at 7%
+
+- **GIVEN** Columbina's max HP is 10,000 and a party member's Lunar reaction deals damage
+- **WHEN** the damage is priced
+- **THEN** its Base DMG carries a 2% bonus, and at 35,000 max HP or more the bonus is 7%
