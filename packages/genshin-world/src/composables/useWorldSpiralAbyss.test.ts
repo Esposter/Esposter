@@ -15,6 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { createParty } from "#src/services/party/createParty";
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { takeOne } from "@esposter/shared";
@@ -80,11 +81,6 @@ const reward: AbyssFloorReward = {
   sixStarRewardId: 202,
   threeStarRewardId: 201,
 };
-// The reads resolve in microtasks, so one macrotask after the composable is made, every read has landed in its refs
-const flushReads = () =>
-  new Promise((resolve) => {
-    setTimeout(resolve, 0);
-  });
 
 describe(useWorldSpiralAbyss, () => {
   test("a Moon Spire chamber's clear is recorded in its period's cycle, and its rewards are paid", async () => {

@@ -15,6 +15,7 @@ import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { takeOne } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -58,11 +59,6 @@ vi.mock(import("#src/services/trial/readCharacterTrials"), () => ({
 vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
   readCharacterKits: vi.fn<() => Promise<Map<number, Kit>>>(),
 }));
-
-const flushReads = () =>
-  new Promise((resolve) => {
-    setTimeout(resolve, 0);
-  });
 
 // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
 const createDependencies = () => ({

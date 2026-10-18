@@ -10,18 +10,13 @@ import { QuestKind } from "#src/models/quest/QuestKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LONG_TERM_MAJOR_VERSION } from "#src/services/commission/constants";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
+import { flushReads } from "#src/services/shared/flushReads.test";
 import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test, vi } from "vitest";
 import { computed, shallowRef } from "vue";
 
 vi.mock(import("#src/services/commission/readCommissionSlices"));
-
-// The load runs in the background, so it settles on the next turn of the event loop
-const waitForReads = () =>
-  new Promise((resolve) => {
-    setTimeout(resolve, 0);
-  });
 
 const RANK = 12;
 const createSlice = (): CommissionSlice => ({
@@ -109,7 +104,7 @@ describe(useWorldCommissions, () => {
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
     });
-    await waitForReads();
+    await flushReads();
     expect(commissionDay.value.dealtCommissions).toHaveLength(4);
     expect(commissionDay.value.claimedCommissionIds).toStrictEqual([]);
     expect(commissionDay.value.dealtAt.toString()).toBe(now.toString());
@@ -211,7 +206,7 @@ describe(useWorldCommissions, () => {
   test("the Commissions tab offers no point claim below Adventure Rank 24", async () => {
     expect.hasAssertions();
     const { handbookDayCommissions, isAdventureEncountersUnlocked } = useUnfinishedDay(23);
-    await waitForReads();
+    await flushReads();
     expect(isAdventureEncountersUnlocked.value).toBe(false);
     expect(handbookDayCommissions.value.map(({ isClaimable }) => isClaimable)).toStrictEqual([
       false,
@@ -224,7 +219,7 @@ describe(useWorldCommissions, () => {
   test("the Commissions tab offers a point claim at Adventure Rank 24", async () => {
     expect.hasAssertions();
     const { handbookDayCommissions, isAdventureEncountersUnlocked } = useUnfinishedDay(24);
-    await waitForReads();
+    await flushReads();
     expect(isAdventureEncountersUnlocked.value).toBe(true);
     expect(handbookDayCommissions.value.map(({ isClaimable }) => isClaimable)).toStrictEqual([true, true, true, true]);
   });
