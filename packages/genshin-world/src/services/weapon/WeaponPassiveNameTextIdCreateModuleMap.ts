@@ -2,6 +2,7 @@ import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
+import { createAeonWavePassiveModule } from "#src/services/weapon/passives/createAeonWavePassiveModule";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
@@ -338,4 +339,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "372854075": createGokadaiouOtogibanashiPassiveModule,
   // Whitemoon Bristle (Light of Foliar Incision)
   "2646627715": createWhitemoonBristlePassiveModule,
+  // Aeon Wave (Tome of the Eternal Flow)
+  "3205793275": createAeonWavePassiveModule,
 };
