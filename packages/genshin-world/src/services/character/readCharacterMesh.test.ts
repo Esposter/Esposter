@@ -34,7 +34,7 @@ describe(readCharacterMesh, () => {
     vi.clearAllMocks();
   });
 
-  test("a texture a material uses as a toon ramp is not decoded for its diffuse too", async () => {
+  test("a texture drawn both as a colour and as a toon ramp is decoded once each way, not shared", async () => {
     expect.hasAssertions();
 
     // Node has no ImageBitmap, which the reader names when it checks a decoded image for transparent texels, so a stand-in
