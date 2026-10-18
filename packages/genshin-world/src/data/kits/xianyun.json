@@ -48,5 +48,29 @@
   "plungeVariants.length": { "source": "Gcsim", "value": 3 },
   "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 243 },
+  "skillChain.followUps.0.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
+  },
+  "skillChain.followUps.0.hits.0.element": { "file": "skill.go", "line": 95, "source": "Gcsim" },
+  "skillChain.followUps.0.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "skillChain.followUps.0.hits.0.hitmarkFrames": { "file": "skill.go", "line": 20, "source": "Gcsim", "value": 3 },
+  "skillChain.followUps.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9332 } },
+  "skillChain.followUps.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "skillChain.followUps.0.hits.length": { "source": "Gcsim", "value": 1 },
+  "skillChain.followUps.1.animationFrames": { "file": "skill.go", "line": 56, "source": "Gcsim", "value": 178 },
+  "skillChain.followUps.1.hits.0.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.5 }
+  },
+  "skillChain.followUps.1.hits.0.element": { "file": "skill.go", "line": 95, "source": "Gcsim" },
+  "skillChain.followUps.1.hits.0.gauge": { "cause": "DiffersFromSource" },
+  "skillChain.followUps.1.hits.0.hitmarkFrames": { "file": "skill.go", "line": 20, "source": "Gcsim", "value": 3 },
+  "skillChain.followUps.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9332 } },
+  "skillChain.followUps.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "skillChain.followUps.1.hits.length": { "source": "Gcsim", "value": 1 },
+  "skillChain.followUps.length": { "source": "Gcsim", "value": 2 },
+  "skillChain.windowSeconds": { "cause": "Unsourced", "value": 3.966666666666667 },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }
