@@ -39,7 +39,7 @@ const readFieldMap = (
 };
 
 // The hit each multiplier of a talent variable joins to, keyed by its proud skill group and index: the multiplier's own
-// Talent row, the variable's attack's element, gauge, tag, poise and strike type where the variable's one literal is every
+// Talent row, the variable's attack's element, gauge, tag and poise where the variable's one literal is every
 // Attack of it, and the hitbox and damage delay of each call that queues that attack. A named list's hit takes these by
 // Its multiplier, so a variable with two literals gives its fields none. A variable no talent row names keys by the one
 // Parameter its multiplier array joins to by value

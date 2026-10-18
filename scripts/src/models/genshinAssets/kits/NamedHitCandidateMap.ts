@@ -11,7 +11,7 @@ export interface NamedHitCall {
 }
 
 // A named hit's candidates, joined from its multiplier's proud skill group and index: its fields by name, its element,
-// Gauge, tag, poise and strike type, and the calls its talent variable's attacks make, in the order they land
+// Gauge, tag and poise, and the calls its talent variable's attacks make, in the order they land
 export interface NamedHitCandidate {
   fieldMap: Map<string, KitCandidate[]>;
   queuedCalls: NamedHitCall[];
