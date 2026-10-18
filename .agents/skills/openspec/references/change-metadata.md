@@ -19,6 +19,6 @@ A change may also name the fleet's three fields, each optional and read by `pnpm
 
 - `x-needs: [game-exports, game-install, media-engine, ...]` — the capabilities a machine must hold to take the change; name one only when a part reads the installed game or its exports;
 - `x-touches: ["<glob>", ...]` — the folders a part edits that its Key files table does not already name, quoted so a `*` is not read as a YAML alias;
-- `x-waiting: "<blocker>"` — set only while the change is blocked wholly on another change or on missing data, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine.
+- `x-waiting: "<blocker>"` — set while a blocker holds the change or any part of it, naming each blocked task and its blocker and only the open ones, and removed when the blocker clears. A change with `x-waiting` is not offered to any machine.
 
 Omitted, each reads as empty, so a change with none of them is ready to take on any machine that lends its area. A sequence is written in flow style (`[a, b]`); a bare string where a sequence belongs fails the fleet's read rather than reading as empty.
