@@ -1,19 +1,7 @@
-import type { ExcelDisplayItemRow } from "#src/models/genshinAssets/crafting/ExcelDisplayItemRow";
-import type { ExcelReliquaryDecomposeRow } from "#src/models/genshinAssets/crafting/ExcelReliquaryDecomposeRow";
-import type { ExcelReliquaryOfferPurchaseRow } from "#src/models/genshinAssets/crafting/ExcelReliquaryOfferPurchaseRow";
-import type { ExcelReliquaryRow } from "#src/models/genshinAssets/stats/ExcelReliquaryRow";
-import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
+import type { StrongboxTables } from "#src/models/genshinAssets/crafting/StrongboxTables";
 import type { CraftingStrongboxData } from "genshin-world";
 
 import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
-
-export interface StrongboxTables {
-  decomposeRows: ExcelReliquaryDecomposeRow[];
-  displayItemRows: ExcelDisplayItemRow[];
-  offerRows: ExcelReliquaryOfferPurchaseRow[];
-  previewRows: ExcelRewardPreviewRow[];
-  reliquaryRows: ExcelReliquaryRow[];
-}
 
 // A pair of item ids under one of an offer row's keys, which the offer's per-slot lists are, read by shape
 const isItemIdPair = (value: unknown): value is number[] =>
