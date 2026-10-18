@@ -4,7 +4,7 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Decisions
 
-- **Nefer borrows Nahida's and Keqing's hitmarks and areas, provisional.** Her strikes and skill take Nahida's, a catalyst user of her role, and her burst takes Keqing's.
+- **Nefer borrows Nahida's, Keqing's and Bennett's hitmarks and areas, provisional.** Her strikes, skill and charged attack take Nahida's, a catalyst user of her role, and her burst takes Keqing's. Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.
 - **Nefer's skill reads its "Skill DMG" label for two hits, and her burst its "1-Hit DMG" and "2-Hit DMG" labels for four.**
 
 ## Not built
