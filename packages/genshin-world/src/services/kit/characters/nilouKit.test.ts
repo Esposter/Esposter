@@ -9,6 +9,7 @@ import type { KitStance } from "#src/models/kit/KitStance";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -347,7 +348,11 @@ describe(createNilouKitBehaviour, () => {
     const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
       const combatant = createNilouCombatant(0, ascension, maxHealth);
       const bonus =
-        NILOU_KIT.getPartyDendroCoreDamageBonus?.(combatant, coreKind, createTeamContext(combatant, [])) ?? 0;
+        NILOU_KIT.getPartyReactionBonus?.(
+          combatant,
+          { combatant, coreKind, reactionType: ReactionType.Bloom },
+          createTeamContext(combatant, []),
+        )?.damageBonus ?? 0;
       return Math.round(bonus * 1000) / 1000;
     };
 

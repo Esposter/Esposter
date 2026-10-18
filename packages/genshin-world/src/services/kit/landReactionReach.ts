@@ -42,7 +42,7 @@ export const landReactionReach = (
   context: KitContext,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reachRadius, reactionBonus: teamReactionBonus = 0, reactionType, spreadGauge }: TransformativeReaction,
+  { coreKind, element, reachRadius, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
@@ -56,10 +56,9 @@ export const landReactionReach = (
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
   // The reaction's party bonuses, its creator's own kit's among them, as the team's hooks read it
   const { additiveBaseDamageBonus: reactionAdditiveBaseDamageBonus, damageBonus } = getDeployedReactionBonuses(
-    { combatant, reactionType },
+    { combatant, coreKind, reactionType },
     context,
   );
-  const reactionBonus = damageBonus + teamReactionBonus;
   // Electro-Charged arcs to the one nearest Wet enemy within its reach, and every other reaction reaches them all
   const reachedEnemies = Array.from(enemies, (enemy) => ({
     distance: Math.hypot(enemy.position.x - origin.position.x, enemy.position.z - origin.position.z),
@@ -96,7 +95,7 @@ export const landReactionReach = (
             element,
             elementalState.seconds,
           ) *
-          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, reactionBonus) +
+          (getTransformativeDamage(reactionType, level, elementalMastery, resistance, damageBonus) +
             (additiveBaseDamageBonus + reactionAdditiveBaseDamageBonus) * getResistanceMultiplier(resistance)) *
           amplifyingMultiplier;
     enemyStrikeResultMap.set(enemy, {

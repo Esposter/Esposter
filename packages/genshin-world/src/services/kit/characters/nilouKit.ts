@@ -156,15 +156,18 @@ export const createNilouKitBehaviour = ({
   });
 
   return {
-    // Ascension 4 raises every deployed member's Bountiful Core DMG by Nilou's Max HP above 30,000, and no Bloom's
-    getPartyDendroCoreDamageBonus: (member, coreKind, { characterIdCombatantMap, kitEffectState, party }) => {
-      if (coreKind !== DendroCoreKind.Bountiful || member.ascension < ASCENSION_4) return 0;
+    // Ascension 4 raises the DMG of each Bountiful Core reaction a deployed member makes by Nilou's Max HP above
+    // 30,000, and leaves a Bloom's alone
+    getPartyReactionBonus: (member, reaction, { characterIdCombatantMap, kitEffectState, party }) => {
+      if (reaction.coreKind !== DendroCoreKind.Bountiful || member.ascension < ASCENSION_4) return {};
       const maxHealthAboveThreshold =
         getKitMaxHealth(member, kitEffectState.effects, party, characterIdCombatantMap) - ASCENSION_4_HEALTH_THRESHOLD;
-      return Math.min(
-        ASCENSION_4_DAMAGE_BONUS_MAX,
-        Math.max(0, maxHealthAboveThreshold * ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH),
-      );
+      return {
+        damageBonus: Math.min(
+          ASCENSION_4_DAMAGE_BONUS_MAX,
+          Math.max(0, maxHealthAboveThreshold * ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH),
+        ),
+      };
     },
     getPassiveBonuses,
     // Constellation 1 raises Luminous Illusion's DMG, the one hit of the sword dance it is set on
