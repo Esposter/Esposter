@@ -106,4 +106,37 @@ describe(createKavehKitBehaviour, () => {
       ),
     ]).toStrictEqual([0, 0.6, 0]);
   });
+
+  test("a Constellation 1 Kaveh's Artistic Ingenuity gives him 50% Dendro RES and 25% Incoming Healing Bonus for three seconds", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    KAVEH_KIT.elementalSkill.onStart?.(
+      createKitTestContext({ ...createKavehCombatant(), constellationCount: 1 }, { kitEffectState }),
+    );
+
+    expect(kitEffectState.effects).toStrictEqual([
+      {
+        amount: 0.5,
+        attribute: Attribute.DendroResistance,
+        characterId: KAVEH_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 3,
+      },
+      {
+        amount: 0.25,
+        attribute: Attribute.IncomingHealingBonus,
+        characterId: KAVEH_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 3,
+      },
+    ]);
+  });
+
+  test("a Constellation 0 Kaveh's Artistic Ingenuity gives him no buff", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    KAVEH_KIT.elementalSkill.onStart?.(createKitTestContext(createKavehCombatant(), { kitEffectState }));
+
+    expect(kitEffectState.effects).toStrictEqual([]);
+  });
 });

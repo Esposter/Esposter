@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives but Constellations 2 and 4.
+Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives and Constellation 6.
 
 ## Requirements
 
@@ -82,6 +82,22 @@ While Painted Dome's stance lasts, Kaveh's strikes SHALL use wider fans, and the
 - **WHEN** Kaveh leaves the field
 - **THEN** the stance ends
 - **AND** his strikes return to their normal fans
+
+### Requirement: First constellation buffs Kaveh after Artistic Ingenuity
+
+From constellation 1, Artistic Ingenuity SHALL give Kaveh 50% Dendro RES and 25% Incoming Healing Bonus for three seconds.
+
+#### Scenario: A Kaveh at constellation 1 gets both buffs after Artistic Ingenuity
+
+- **GIVEN** Kaveh is at constellation 1
+- **WHEN** the player casts Artistic Ingenuity
+- **THEN** he gains 50% Dendro RES and 25% Incoming Healing Bonus for three seconds
+
+#### Scenario: A Kaveh below constellation 1 gets no buff
+
+- **GIVEN** Kaveh is at constellation 0
+- **WHEN** the player casts Artistic Ingenuity
+- **THEN** he gains no buff
 
 ### Requirement: Second constellation raises Normal Attack SPD during Painted Dome
 
