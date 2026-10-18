@@ -35,8 +35,8 @@ export type KitEvent =
   | KitDamageTakenEvent
   | KitEffectExpiredEvent
   | KitElementAppliedEvent
-  | KitEnemyHitEvent
   | KitEnemyDefeatedEvent
+  | KitEnemyHitEvent
   | KitEnergyParticleCollectedEvent
   | KitFallRefusedEvent
   | KitHealthChangedEvent
