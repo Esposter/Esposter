@@ -105,18 +105,11 @@ const readNumber = (state: MathExpressionParserState): void => {
     return;
   }
 
-  let text = "";
-  const takeDigits = (): void => {
-    while (DIGIT_REGEX.test(getCharacter(state, 0))) {
-      text += getCharacter(state, 0);
-      state.index++;
-    }
-  };
-  takeDigits();
+  let text = takeMatching(state, DIGIT_REGEX);
   if (getCharacter(state, 0) === ".") {
     text += ".";
     state.index++;
-    takeDigits();
+    text += takeMatching(state, DIGIT_REGEX);
   }
   const exponentMarker = getCharacter(state, 0);
   if (exponentMarker === "e" || exponentMarker === "E") {
@@ -124,7 +117,7 @@ const readNumber = (state: MathExpressionParserState): void => {
     if (DIGIT_REGEX.test(afterMarker)) {
       text += "e";
       state.index++;
-      takeDigits();
+      text += takeMatching(state, DIGIT_REGEX);
     } else if (afterMarker === "+" || afterMarker === "-") {
       text += `e${afterMarker}`;
       state.index += 2;
@@ -132,7 +125,7 @@ const readNumber = (state: MathExpressionParserState): void => {
         failMathExpression(state, `Digit expected, got "${getCharacter(state, 0)}"`);
         return;
       }
-      takeDigits();
+      text += takeMatching(state, DIGIT_REGEX);
     }
   }
   state.token = text;
