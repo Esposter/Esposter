@@ -9,7 +9,7 @@ The universal model for block editing is a typed ordered tree: every node a type
 - **Puck** stores `{ root: { props }, content }`, where `content` and every slot prop hold `ComponentData` (`{ type, props }`, with the id required inside `props`). Slots, a prop holding a node array, replaced its earlier flat `zones` map, and `migrate()` moves old data across. A node is two fields, and children are a kind of prop, so a type can have any number of named regions.
 - **BlockNote** stores `{ id, type, props, content, children }`: one fixed children list, inline content beside it, and props limited to scalars. It is a ProseMirror document, and its multi-column package is licensed GPL-3.0 or commercially.
 - **Portable Text** is rich text: a flat array of `_type`/`_key` blocks with spans and mark definitions, nested only by list level. It is a text model, not a layout model.
-- **The Block Protocol** is a protocol between an embeddable block and the application embedding it. Our blocks never leave our editor, so its messaging layer would be cost with no second party.
+- **The Block Protocol** is a protocol between an embeddable block and the application embedding it. Our blocks never leave our editor, so its messaging layer would be a cost with no second party.
 
 Puck's is the minimal of these, so the document takes its shape rather than inventing one. The headless core builds it as:
 
@@ -38,7 +38,7 @@ An id is short, unique within its document and minted by one helper, since it al
 
 A registry is the core's `BlockRegistry`: the types its content accepts at the top of a document, the root's props schema, and each type's definition. The two editors' registries are built differently because the two types of node are different.
 
-- **The webpage registry** (`webpageRegistry`) takes every placeable type at the root and a `lang` as its root's props. Its types are collected in `webpageNodeTypeDefinitionMap`, a `Record` over the `WebpageNodeType` enum, so a type missing from either half of the map fails the typecheck. A Column is held only by Columns and a Tab only by Tabs, so neither is placeable at the root.
+- **The webpage registry** (`webpageRegistry`) takes every placeable type at the root and a `lang` as its root's props. Its types are collected in `webpageNodeTypeDefinitionMap`, a `Record` over the `WebpageNodeType` enum, so a type the enum names with no definition in the map fails the typecheck. A Column is held only by Columns and a Tab only by Tabs, so neither is placeable at the root.
 - **The email registry** (`emailRegistry`) is the MJML blocks' `createMjmlRegistry`, given the app's survey invite as its one leaf type and the Note's writing kit as its rich text. The root takes only what MJML's body takes, and the head is the root's props.
 
 A webpage registration has two halves, because two runtimes read it: the server renders a type when it publishes, and only the editor draws one. The shared half is the `NodeTypeDefinition` the server and editor both import, which extends the core's `BlockTypeDefinition` with the type's structural CSS, its form schema, its pure `render` and an optional script. The editor's half, the palette entry and the canvas component, belongs to the [canvas](../../../../changes/resource-page-builder-canvas/design.md), and the style fields belong to the [style panel](../../../../changes/resource-page-builder-style-panel/design.md).
@@ -50,7 +50,7 @@ A cross-resource reference is a prop declared with `createResourceLinkSchema`, s
 | Category | Types                                                                                                         |
 | -------- | ------------------------------------------------------------------------------------------------------------- |
 | Layout   | Section (a semantic tag of header, main, section, footer or div), Columns of Column                           |
-| Content  | Text, Button (a link drawn as a button), Image, Video (an uploaded file), Custom HTML                         |
+| Content  | Text, Button (a link drawn as a button), Image, Video (a file by its address), Custom HTML                    |
 | Extra    | Countdown, Tabs of Tab, Tooltip, Typed text                                                                   |
 | Survey   | Survey invite, a link to a published survey, whose survey prop is declared through `createResourceLinkSchema` |
 
