@@ -13,7 +13,6 @@ The shapes and the flow are built: see [flowing water](../../specs/genshin/flowi
 ## Still to build
 
 ```text
-scripts/src/services/genshinAssets/fit/fitWaterfallSheets.ts
 packages/genshin-world/src/components/World/Waterfalls/Index.vue
 ```
 
