@@ -18,3 +18,6 @@ export const NORMAL_BOSS_UNIQUE_DROPS: { chance: number; count: number }[] = [
   { chance: 0.5556, count: 2 },
   { chance: 0.5556, count: 2 },
 ];
+// The Adventure Rank from which a locked weekly boss's Trounce Domain can be quick challenged from the Adventurer
+// Handbook, by the wiki's Weekly Boss page, which says it applies in Single Player Mode
+export const WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK = 40;
