@@ -1184,7 +1184,7 @@ defineExpose({ jumpTo, readCameraPosition });
           });
           stepAbyss({
             deltaMilliseconds: context.delta,
-            isPlaying: !isPaused && screenKind.value === ScreenKind.World && abyssChoices.value === undefined,
+            isPlaying: !isPaused && screenKind === ScreenKind.World && abyssChoices === undefined,
             partyDown: false,
           });
           if (!isPaused && screenKind === ScreenKind.World)
