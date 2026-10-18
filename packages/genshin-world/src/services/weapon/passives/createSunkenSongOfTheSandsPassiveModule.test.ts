@@ -35,14 +35,14 @@ describe(createSunkenSongOfTheSandsPassiveModule, () => {
   const otherMemberCharacterId = -1;
   const wielder: Combatant = {
     ascension: 0,
-    attributes: computeCharacterAttributes([]),
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
     characterId: TRAVELER_CHARACTER_ID,
     constellationCount: 0,
     elementalResonances: [],
     kit: TRAVELER_KIT,
     level: 1,
   };
-  const maximumHealth = wielder.attributes.attributeTotalMap[Attribute.Health];
+  const maximumHealth = wielder.attributes.maxHealth;
   const onField: DeployedCombatant[] = [{ ...wielder, isOnField: true }];
   const elementalSkillHit = {
     attackTag: AttackTag.ElementalSkill,

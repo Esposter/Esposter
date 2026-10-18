@@ -42,12 +42,11 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
   const teamShare = takeOne(params, 4);
   const teamSeconds = takeOne(params, 5);
   return {
+    // The stack's share reads the wielder's base Max HP, as a passive bonus cannot read the Max HP it feeds into its own buffs
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
         amount:
-          countKitHolds(effects, combatant.characterId, GRAND_HYMN_ID) *
-          stackShare *
-          combatant.attributes.attributeTotalMap[Attribute.Health],
+          countKitHolds(effects, combatant.characterId, GRAND_HYMN_ID) * stackShare * combatant.attributes.maxHealth,
         attribute: Attribute.ElementalMastery,
       },
     ],
@@ -69,7 +68,7 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
         });
       else refreshSoonestGrandHymnHold(kitEffectState, characterId, stackSeconds);
       if (countKitHolds(kitEffectState.effects, characterId, GRAND_HYMN_ID) < GRAND_HYMN_MAXIMUM_STACKS) return;
-      const amount = teamShare * combatant.attributes.attributeTotalMap[Attribute.Health];
+      const amount = teamShare * combatant.attributes.maxHealth;
       for (const memberId of getDeployedCharacterIds(party))
         if (memberId !== characterId)
           buffKitMember(kitEffectState, memberId, {
