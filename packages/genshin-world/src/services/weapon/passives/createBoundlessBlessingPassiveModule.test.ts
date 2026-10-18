@@ -109,4 +109,18 @@ describe(createBoundlessBlessingPassiveModule, () => {
 
     expect(getStacks(context.kitEffectState.effects)).toBeUndefined();
   });
+
+  test("a battle that opens on the wielder starts the clock, its opening swap having no character before it", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
+      context,
+      wielder,
+    );
+    stepKitSeconds(context, 4.5);
+
+    expect(getStacks(context.kitEffectState.effects)).toBe(1);
+  });
 });

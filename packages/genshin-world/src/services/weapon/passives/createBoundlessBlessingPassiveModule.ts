@@ -27,8 +27,8 @@ const clearBoundlessBlessing = (kitEffectState: KitEffectState, characterId: num
 
 // Boundless Blessing at its rank: its Movement SPD is a passive bonus on the wielder. While the wielder is on the field, every
 // Four seconds it gains a stack of the rank's Elemental DMG Bonus on each element, up to four, and the stacks clear when it
-// Leaves the field or falls. The clock starts on the wielder's swap onto the field, so a battle that opens on the wielder starts
-// None, as Debut's and Heritage's swaps do. Provisional: the stacks are the text's, read without the game's timing
+// Leaves the field or falls. The clock starts on the wielder's swap onto the field, the battle's opening swap
+// Included. Provisional: the stacks are the text's, read without the game's timing
 export const createBoundlessBlessingPassiveModule = (params: number[]): WeaponPassiveModule => {
   const movementSpeed = takeOne(params, 0);
   const elementalDamageBonus = takeOne(params, 1);
