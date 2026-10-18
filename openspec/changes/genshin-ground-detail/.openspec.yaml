@@ -3,3 +3,4 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
+x-waiting: "the surface's octave amplitudes are solved (8fe537172a), but the Ground's structure share (12.10 against a gate of 0.0369, task 1.3) has not been re-read under them, so the layers' detail waits on that re-read against the exports"
