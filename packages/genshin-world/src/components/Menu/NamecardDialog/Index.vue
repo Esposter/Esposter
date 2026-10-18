@@ -2,6 +2,7 @@
 import type { ProfileNamecard } from "#src/models/profile/ProfileNamecard";
 import type { GameText } from "genshin-text";
 
+import MenuDialog from "#src/components/Menu/Dialog/Index.vue";
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
@@ -21,8 +22,7 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
 </script>
 
 <template>
-  <div class="namecard-dialog" role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.ChangeNamecard]">
-    <p class="title" role="heading" aria-level="2">{{ gameText[GameTextKey.ChangeNamecard] }}</p>
+  <MenuDialog :title="gameText[GameTextKey.ChangeNamecard]">
     <GameButton
       v-for="{ itemId, name } of namecards"
       :key="itemId"
@@ -41,34 +41,10 @@ const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
     >
       <MenuGlyph :glyph="MenuFrameGlyphMap[MenuFrameIcon.Close]" />
     </GameButton>
-  </div>
+  </MenuDialog>
 </template>
 
 <style scoped>
-/* Provisional: the picker's panel sits over the menu at its centre until the parity compare fits it to the reference */
-.namecard-dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--unit) * 8);
-  max-height: 70%;
-  overflow-y: auto;
-  padding: calc(var(--unit) * 16);
-  background: rgb(14 22 32 / 92%);
-  transform: translate(-50%, -50%);
-}
-
-/* Provisional: the title's size and colour are the game's heading colour until the parity compare fits it */
-.title {
-  margin: 0;
-  color: #d0bf9f;
-  font-size: calc(var(--unit) * 27);
-  font-weight: 600;
-  text-align: center;
-}
-
 .close {
   align-self: flex-end;
 }
