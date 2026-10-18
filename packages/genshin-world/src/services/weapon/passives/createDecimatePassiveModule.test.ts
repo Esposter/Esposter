@@ -44,6 +44,7 @@ describe(createDecimatePassiveModule, () => {
         strike,
         { ...enemy, enemyFamily: EnemyFamily.Automatons },
         createParty([TRAVELER_CHARACTER_ID]),
+        [],
       ),
     ).toBeCloseTo(0.4);
   });
@@ -56,6 +57,7 @@ describe(createDecimatePassiveModule, () => {
         strike,
         { ...enemy, enemyFamily: EnemyFamily.Hilichurls },
         createParty([TRAVELER_CHARACTER_ID]),
+        [],
       ),
     ).toBe(0);
   });

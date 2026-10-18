@@ -255,6 +255,7 @@ describe(createQiqiKitBehaviour, () => {
         },
         enemy,
         party,
+        [],
       );
 
     expect(getDamageBonus(AttackTag.NormalAttack)).toBe(0);

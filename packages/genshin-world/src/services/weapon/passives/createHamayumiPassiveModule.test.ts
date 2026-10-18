@@ -45,7 +45,7 @@ describe(createHamayumiPassiveModule, () => {
   test("a normal and a charged attack each raise the bonus of their own kind by the rank's amount", () => {
     expect.hasAssertions();
 
-    expect(hamayumiPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(hamayumiPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.16, attribute: Attribute.NormalAttackDamageBonus },
       { amount: 0.12, attribute: Attribute.ChargedAttackDamageBonus },
     ]);
@@ -56,7 +56,9 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party)).toBe(0.16);
+    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
+      0.16,
+    );
   });
 
   test("a charged attack's hit gains the charged attack bonus again at full Energy", () => {
@@ -64,7 +66,7 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party)).toBe(
+    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, [])).toBe(
       0.12,
     );
   });
@@ -74,7 +76,9 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost - 1);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party)).toBe(0);
+    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
+      0,
+    );
   });
 
   test("an elemental skill's hit gains nothing even at full Energy", () => {
@@ -82,6 +86,8 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party)).toBe(0);
+    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(
+      0,
+    );
   });
 });

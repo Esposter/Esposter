@@ -76,6 +76,7 @@ describe(createDilucKitBehaviour, () => {
       { body: createKitTestContext(combatant).body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
       { ...enemy, health: healthShare * enemy.maxHealth },
       createParty([DILUC_CHARACTER_ID]),
+      [],
     );
   };
 

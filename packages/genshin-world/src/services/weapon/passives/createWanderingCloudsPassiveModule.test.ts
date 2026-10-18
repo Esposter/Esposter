@@ -43,7 +43,7 @@ describe(createWanderingCloudsPassiveModule, () => {
   test("the rank's Elemental DMG Bonus is a passive bonus on every element", () => {
     expect.hasAssertions();
 
-    expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual(
+    expect(wanderingCloudsPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual(
       ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.12, attribute })),
     );
   });

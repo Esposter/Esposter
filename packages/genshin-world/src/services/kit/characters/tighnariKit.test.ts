@@ -102,6 +102,7 @@ describe(createTighnariKitBehaviour, () => {
       { attackTag, body: kitBody, combatant, hit: takeOne(TIGHNARI_KIT.chargedAttack.hits) },
       enemy,
       party,
+      [],
     ) ?? 0;
 
   test("a passive takes effect at its ascension phase", () => {

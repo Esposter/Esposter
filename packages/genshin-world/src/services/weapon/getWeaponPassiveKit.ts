@@ -14,16 +14,16 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
   const passive = createModule(params);
   return {
     ...kit,
-    getPassiveBonuses: (combatant, healthShare, deployedCombatants) => [
-      ...(kit.getPassiveBonuses?.(combatant, healthShare, deployedCombatants) ?? []),
-      ...(passive.getPassiveBonuses?.(combatant, healthShare, deployedCombatants) ?? []),
+    getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) => [
+      ...(kit.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),
+      ...(passive.getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? []),
     ],
-    getStrikeDamageBonus: (strike, enemy, party) =>
-      (kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0) +
-      (passive.getStrikeDamageBonus?.(strike, enemy, party) ?? 0),
-    getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
-      (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +
-      (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0),
+    getStrikeDamageBonus: (strike, enemy, party, effects) =>
+      (kit.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0) +
+      (passive.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0),
+    getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects, characterIdCombatantMap) =>
+      (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0) +
+      (passive.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects, characterIdCombatantMap) ?? 0),
     getStrikeCriticalRateBonus: (strike, enemy, party, effects) =>
       (kit.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0) +
       (passive.getStrikeCriticalRateBonus?.(strike, enemy, party, effects) ?? 0),

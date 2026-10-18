@@ -283,6 +283,7 @@ describe("noelle kit", () => {
       },
       enemy,
       createParty([NOELLE_CHARACTER_ID]),
+      [],
     );
   };
 
