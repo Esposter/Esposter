@@ -4,14 +4,14 @@ The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the 
 
 ## Decisions
 
-- **Reached, then unlocked.** A Teleport Waypoint or a domain's entrance is unlocked by interacting with it, as the statues are. A few unlock with a quest's step instead, which names them.
+- **Reached, then unlocked.** A Teleport Waypoint or a domain's entrance is unlocked by interacting with it, as the statues are. An activation also emits the landmark's scene point as an Interact target, so a quest step that names a waypoint by its point (`QUEST_CONTENT_UNLOCK_TRANS_POINT`) finishes when the waypoint is unlocked. A step unlocking a waypoint outright is not built: the one `QUEST_EXEC_UNLOCK_POINT` in the quest data names point 7, the Windrise statue's point, not a waypoint, and point 6 appears only as a finish condition.
 - **Its first unlock is rewarded.** Each one's Adventure EXP and Primogems are its row in `TransPointRewardConfigData`, given once.
-- **A domain entrance unlocks as a waypoint does, and is not a jump.** Mondstadt's region data places seven domain entrances as `DomainEntrance` landmarks, so each is unlocked by interacting with it and offered as a prompt row, as the waypoints are. The jump list, the pointer and a revive take the statues and waypoints alone, `JUMP_LANDMARK_KINDS` unchanged, since no requirement names a domain as a jump; the wiki says an unlocked domain acts as a waypoint, which is left to a later decision.
+- **A domain entrance unlocks as a waypoint does, and is not yet a jump.** Mondstadt's region data places seven domain entrances as `DomainEntrance` landmarks, so each is unlocked by interacting with it and offered as a prompt row. The wiki says an unlocked domain acts as a waypoint, so it is meant to be a jump, but a jump lands at a landmark's `arrival` (`computeJumpPose`) and no domain entrance has one in the region data. The scene points that carry a dungeon also carry a transfer position, which the fit would need to map into the region's frame as it does for waypoints; that fit change comes first, and then the domain joins `JUMP_LANDMARK_KINDS` with the Domain Entrance label.
 - **A waypoint's reward is keyed by the point its id ends in.** The fit names each waypoint `<region>-waypoint-<point>`, so `computeLandmarkPointId` reads the point from the id and finds its row. Of Mondstadt's 43 waypoints, 32 have a row in the published `transPoints/scene3` record; the 11 with points 1865 to 2051 have none, so they pay nothing on their first unlock.
 - **A first unlock is the only unlock that pays.** `activateLandmark` pays a landmark's reward only when it was not already unlocked, so a landmark reached again pays nothing.
-- **A waypoint the game hides stays hidden.** A waypoint the game hides until a further step stays hidden until that step.
+- **A waypoint the game hides stays hidden until its step (provisional).** A listed point is hidden from the map and the prompt list until a carried step names it, and a listed point no carried step names is shown, since nothing could reveal it. `TransPointUnlockConfigData` lists twelve scene 3 points, and the hosted game data does not carry that table yet, so the rule has no input and is not built.
 - **A locked waypoint is pointed to near.** Within 30 metres of a locked waypoint, the HUD points toward it; past 40 metres, or once it is unlocked, the pointer goes, as the wiki gives the two distances.
-- **The pointer points to every locked jump landmark, so it is built before the waypoints.** The wiki gives the pointer for a locked Teleport Waypoint, and a Statue of The Seven is a waypoint too, so the rule reads the locked jump landmarks: it points to the statues today and takes the waypoints, which [exploring](../../specs/genshin/exploring/design.md) added to `JUMP_LANDMARK_KINDS`, with no change of its own.
+- **The pointer points to every locked jump landmark.** The wiki gives the pointer for a locked Teleport Waypoint, and a Statue of The Seven is a waypoint too, so the rule reads the locked jump landmarks and points to the statues and the waypoints alike, which [exploring](../../specs/genshin/exploring/design.md) added to `JUMP_LANDMARK_KINDS`, with no change of its own.
 - **The pointer is the game's navigation mark, drawn on the HUD.** It is the mark at the landmark's place on screen, held at the screen's edge with its arrow turned toward the landmark while the landmark is out of view. Its look is read from a public clip of a waypoint being reached, and its comparison waits on the user's eyes.
 
 ## How it works
@@ -49,10 +49,11 @@ packages/genshin-world/src/
 
 ## Key files
 
-| File                                                         | Role after the change                                    |
-| :----------------------------------------------------------- | :------------------------------------------------------- |
-| `packages/genshin-world/src/composables/useJumpLandmarks.ts` | Keeps the waypoints among the jumps once they are fitted |
-| `packages/genshin-world/src/services/map/constants.ts`       | `JUMP_LANDMARK_KINDS` gains the waypoint                 |
+| File                                                                       | Role after the change                                                            |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/composables/useWorldMap.ts`                    | Unlocks on activation, emits the scene point, and pays a waypoint's first unlock |
+| `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts` | A landmark's scene point, by its statue or its waypoint id                       |
+| `packages/genshin-world/src/services/map/constants.ts`                     | `JUMP_LANDMARK_KINDS` takes the statues and the waypoints                        |
 
 ## Sources
 

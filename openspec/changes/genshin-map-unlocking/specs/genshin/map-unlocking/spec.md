@@ -2,7 +2,7 @@
 
 ### Requirement: Reaching a waypoint or domain entrance unlocks it
 
-A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts with it, or when the quest step that names it is taken.
+A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts with it. A quest step that names a waypoint by its transport point SHALL finish when the waypoint is unlocked.
 
 #### Scenario: Interacting with a locked waypoint unlocks it
 
@@ -16,11 +16,11 @@ A Teleport Waypoint or a domain entrance SHALL unlock when the player interacts 
 - **WHEN** the player interacts with the domain entrance
 - **THEN** the domain entrance is unlocked
 
-#### Scenario: A waypoint unlocked by a quest step opens with that step
+#### Scenario: A quest step that names a waypoint finishes when it is unlocked
 
-- **GIVEN** a waypoint is named by a quest step and the step is not yet taken
-- **WHEN** the player takes the quest step
-- **THEN** the waypoint is unlocked
+- **GIVEN** a quest step names a waypoint by its transport point and the step is not yet finished
+- **WHEN** the player interacts with the waypoint
+- **THEN** the step is finished
 
 ### Requirement: The first unlock of a waypoint pays its reward once
 
