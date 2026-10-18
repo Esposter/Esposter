@@ -40,6 +40,7 @@ import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
+import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { laurelCoronet } from "#src/services/gcg/cards/laurelCoronet";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
@@ -155,6 +156,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_601, maskOfSolitudeBasalt],
   [312_701, laurelCoronet],
   [321001, liyueHarborWharf],
+  [321_002, knightsOfFavoniusLibrary],
   [321_003, jadeChamber],
   [321_004, dawnWinery],
   [321005, wangshuInn],
