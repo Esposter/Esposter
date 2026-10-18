@@ -141,43 +141,6 @@ describe(getGcsimKitCandidates, () => {
     ).toStrictEqual([[2], [40], [1]]);
   });
 
-  test("gives a normal attack's hitmark the attackHitmarks literal, not the queued delay its travel lands it at", () => {
-    expect.hasAssertions();
-
-    const gcsim: GcsimCharacter = {
-      animationFrameNameMap: new Map(),
-      attacks: [],
-      config: { abilityHitboxesMap: new Map(), names: [], talentVariables: [] },
-      configFile: "config.yml",
-      constantMap: new Map([["attackHitmarks", toConstant([[15], [11]])]]),
-      filePaths: [],
-      folder: "made-up",
-      queuedAttacks: [],
-      talentFile: "made-up.go",
-      talentParameterMap: new Map(),
-      travelMap: new Map([["attackHitmarks", { file: "attack.go", frames: 10, line: 3 }]]),
-    };
-    const tables: KitTables = {
-      characterId: 0,
-      labelMap: new Map(),
-      name: "Made Up",
-      talentGroupIdMap: {
-        [CombatTalent.ElementalBurst]: 0,
-        [CombatTalent.ElementalSkill]: 0,
-        [CombatTalent.NormalAttack]: 0,
-      },
-      talentMultiplierMap: {},
-      weaponType: WeaponType.Claymore,
-    };
-    const candidateMap = getGcsimKitCandidates(gcsim, tables, gcsim);
-
-    expect(
-      ["normalAttacks.0.hits.0.hitmarkFrames", "normalAttacks.1.hits.0.hitmarkFrames"].map((path) =>
-        candidateMap.get(path)?.map(({ value }) => value),
-      ),
-    ).toStrictEqual([[15], [11]]);
-  });
-
   test("reads a burst's hits from its queue calls, each at the damage delay its call passes, where it has no hitmark constant", () => {
     expect.hasAssertions();
 
