@@ -287,7 +287,7 @@ Each page names only what it alone lacks. These are the gaps every page shares, 
 - **A hit's reach can be a hitbox about its target.** A strike with a `hitbox` lands on its target and on each enemy the hitbox reaches of it, an on-target circle or box in the world's axes as gcsim's on-target hitboxes are, an enemy keeping its default facing. A strike with a target and no hitbox lands on the target alone.
 - **A kit moves no enemy.** Pulls, knockbacks and holds that move or fix an enemy in place are not built.
 - **A fall is refused only on the paths that ask for it.** `hitPartyMember`, which an enemy's strike, a boar's charge and a fixed-damage hit go through, and `changeKitMemberHealth`, a kit's drain, ask the member's kit. Xiao's and Kuki's drains of a share of the member's current HP and drownParty's drain do not, so a member they take to none falls whatever her kit would refuse.
-- **A hit is priced from its striker alone.** A kit reads no other member's buff into a hit, so a Quill or a banner that adds to another member's hits is not built.
+- **A hit is priced from its striker and the party strike hooks alone.** A kit reads no other member's buff into a hit except through `getPartyStrikeBonus` (above), so a banner that adds to another member's hits is not built.
 - **Hitlag, ICD groups and strike types are not recorded.** gcsim holds them, and they stay out of the record until a rule reads them.
 - **A character holds no aura.** Only an enemy holds elemental state in this package, so an aura on a party member is not built.
 

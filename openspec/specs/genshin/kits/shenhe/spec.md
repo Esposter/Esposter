@@ -1,6 +1,6 @@
 ## Purpose
 
-Shenhe's kit as built: Spring Spirit Summoning's press and hold and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge, Constellation 2's six extra field seconds and its Cryo CRIT DMG on the active character built, and her Quill, other passives and Constellations 4 and 6 left unbuilt.
+Shenhe's kit as built: Spring Spirit Summoning's press and hold, which give the other party members her Icy Quill, and Divine Maiden's Deliverance field with its DoT, with Constellation 1's extra charge, Constellation 2's six extra field seconds and its Cryo CRIT DMG on the active character built, and her other passives and Constellations 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -112,12 +112,40 @@ From Constellation 2, the active character standing in Divine Maiden's Deliveran
 - **WHEN** the active character stands in Divine Maiden's Deliverance's field
 - **THEN** her strikes take no CRIT DMG from it
 
+### Requirement: Icy Quill from Spring Spirit Summoning
+
+Spring Spirit Summoning's press SHALL give each other party member Shenhe's Icy Quill for ten seconds and five triggers, and its hold for fifteen seconds and seven triggers. Each Cryo hit a member carrying the Icy Quill strikes SHALL add Shenhe's current ATK times the quill's ratio, 45.656% at her start level, to the hit's base damage, and SHALL spend one trigger, the last of which ends the quill.
+
+#### Scenario: A press gives the quill to the other members
+
+- **WHEN** the player uses Spring Spirit Summoning's press
+- **THEN** each other party member carries the Icy Quill for ten seconds and five triggers
+- **AND** Shenhe carries none
+
+#### Scenario: A hold gives the quill for longer
+
+- **WHEN** the player holds Spring Spirit Summoning and releases it
+- **THEN** each other party member carries the Icy Quill for fifteen seconds and seven triggers
+
+#### Scenario: A Cryo hit adds Shenhe's ATK and spends a trigger
+
+- **GIVEN** a party member carries the Icy Quill
+- **WHEN** that member strikes an enemy with Cryo
+- **THEN** the hit's base damage gains Shenhe's current ATK times the quill's ratio
+- **AND** the quill spends one trigger
+
+#### Scenario: Other hits add nothing
+
+- **GIVEN** a party member carries the Icy Quill
+- **WHEN** that member strikes with a non-Cryo element, or a member without the quill strikes with Cryo
+- **THEN** no Icy Quill bonus applies
+
 ### Requirement: Unbuilt Shenhe effects
 
-Shenhe's Quill, her other passives and her Constellations 4 and 6 SHALL NOT take effect.
+Shenhe's other passives and her Constellations 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Shenhe has the Quill, a passive, or Constellation 4 or 6 unlocked
+- **GIVEN** Shenhe has a passive, or Constellation 4 or 6 unlocked
 - **WHEN** the player fights with Shenhe
 - **THEN** that effect has no effect
