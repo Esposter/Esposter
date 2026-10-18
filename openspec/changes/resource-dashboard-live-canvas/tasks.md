@@ -15,4 +15,4 @@
 
 ## 4. Retire the icons
 
-- [ ] 4.1 Delete the tile preview component and the demo icon map once nothing else imports them. Verify: a search of the app for both names returns no match.
+- [ ] 4.1 Delete the tile preview component and the demo icon map once nothing else imports them. Verify: the app's typecheck passes with both deleted, and a search of the app for both names returns no match. No scenario covers a deletion, so no test is named.
