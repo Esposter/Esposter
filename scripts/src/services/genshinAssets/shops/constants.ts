@@ -15,6 +15,8 @@ export const SHOP_FATE_ITEM_IDS: readonly number[] = [223, 224];
 export const MORA_ITEM_ID = 202;
 // The refresh type the table gives a monthly good, as its string, which the filter reads
 export const MONTHLY_REFRESH_TYPE = "SHOP_REFRESH_MONTHLY";
+// The refresh the table leaves out of a good that never restocks, its enum's zero value, which the reader then finds absent
+export const UNLISTED_REFRESH_TABLE_TYPE = "SHOP_REFRESH_NONE";
 // The refresh kinds the table names, as the generated slice names them
 export const SHOP_REFRESH_BY_TABLE_TYPE: Partial<Record<string, ShopRefresh>> = {
   SHOP_REFRESH_DAILY: ShopRefresh.Daily,
@@ -32,3 +34,7 @@ export const PAIMON_BARGAINS_ROYAL_ORDER = 1;
 export const PAIMON_BARGAINS_BLACKCLIFF_ORDER = 2;
 // The item use that gives a character card's avatar, and where the avatar's id sits in its parameters
 export const GAIN_AVATAR_ITEM_USE = "ITEM_USE_GAIN_AVATAR";
+// The Sigils a region's Souvenir Shop is paid in, by their item ids in the game's tables: Anemo for Mondstadt and Geo for
+// Liyue. A Souvenir good is one priced in one of them, which is how the builder finds the shops, whose table numbers the
+// Dump's names do not match
+export const SOUVENIR_SIGIL_ITEM_IDS = { liyue: 307, mondstadt: 305 } as const;

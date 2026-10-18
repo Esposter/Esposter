@@ -13,7 +13,7 @@ export interface ExcelShopGoodsRow {
   itemCount: number;
   itemId: number;
   minPlayerLevel: number;
-  refreshType: string;
+  refreshType?: string;
   rotateId: number;
   shopType: number;
 }
