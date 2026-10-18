@@ -3,10 +3,14 @@ import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave
 
 import { GAME_TIME_ZONE } from "#src/services/originalResin/constants";
 
+// A row of the birthday mail table: the mail sent on the birthday, and the game time from which it is the one in force
 export interface BirthdayMailRow {
-  effectiveAt: string;
+  effectiveDate: string;
   mailId: number;
 }
+
+const getEffectiveAt = ({ effectiveDate }: BirthdayMailRow): Temporal.Instant =>
+  Temporal.PlainDateTime.from(effectiveDate.replace(" ", "T")).toZonedDateTime(GAME_TIME_ZONE).toInstant();
 
 // The held mails with the Traveler's birthday mail added when it is due: on the birthday's day in the game's time zone,
 // The mail in force by then, the latest row taking effect by the birthday, and only once in a birthday. Without a
@@ -26,10 +30,8 @@ export const deliverBirthdayMail = (
   if (!today.equals(birthdayDate)) return [...mails];
   const birthdayStart = birthdayDate.toZonedDateTime(GAME_TIME_ZONE).toInstant();
   const inForce = birthdayMailRows
-    .filter(({ effectiveAt }) => Temporal.Instant.compare(Temporal.Instant.from(effectiveAt), birthdayStart) <= 0)
-    .toSorted((a, b) =>
-      Temporal.Instant.compare(Temporal.Instant.from(b.effectiveAt), Temporal.Instant.from(a.effectiveAt)),
-    )[0];
+    .filter((row) => Temporal.Instant.compare(getEffectiveAt(row), birthdayStart) <= 0)
+    .toSorted((a, b) => Temporal.Instant.compare(getEffectiveAt(b), getEffectiveAt(a)))[0];
   if (inForce === undefined) return [...mails];
   const isDelivered = mails.some(
     ({ deliveredAt, id }) =>

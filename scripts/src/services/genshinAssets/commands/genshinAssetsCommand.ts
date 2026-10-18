@@ -23,6 +23,7 @@ import { fishingCommand } from "#src/services/genshinAssets/commands/fishingComm
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { forgingCommand } from "#src/services/genshinAssets/commands/forgingCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
+import { mailCommand } from "#src/services/genshinAssets/commands/mailCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
@@ -107,6 +108,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     offerings: offeringsCommand,
     palette: paletteCommand,
     friendship: friendshipCommand,
+    mail: mailCommand,
     stats: statsCommand,
     "skill-glyphs": skillGlyphsCommand,
     kits: kitsCommand,

@@ -32,6 +32,7 @@ The game's mail is in the excel tables of the dump: `MailExcelConfigData` holds 
 - **The Traveler's birthday is set once in the profile.** The wiki says the birth date is the player's choice in profile customization and cannot be changed once set, so the save holds it once and nothing after.
 - **The Traveler's birthday mail is delivered provisionally, on the birthday in the game's time zone.** The wiki says the mail arrives on the player's birthday, only that day, in the server's time (UTC+8, past midnight). The mail due is the latest row of `BirthdayMailExcelConfigData` taking effect by that birthday, and it is delivered once a birthday. The table's three rows end in 2022, so later birthdays repeat the last one, which is provisional until the export confirms it. Without a birthday set, nothing is delivered.
 - **A mail expires `expireDays` after its delivery and is deleted then, except a birthday mail already claimed.** The wiki's Gift Mail Box keeps a birthday mail once its rewards are collected, and no other mail. Claim and claim-all refuse a mail the bag cannot take whole, so a claim gives its items once or not at all.
+- **The mail data is one index, `mail/mail`, read one mail at a time.** The builder publishes each mail under its id and the birthday rows under `birthdayMails`, in the game's own effective-date text, so the world reads a held mail by its id and never fetches the whole table. The world converts the effective date with its own game time zone, so the scripts carry none.
 
 ## Key files
 
@@ -56,6 +57,10 @@ packages/genshin-world/src/services/mail/claimMail.ts        ← one held mail's
 packages/genshin-world/src/services/mail/claimAllMails.ts    ← every held mail claimed in order, the ones the bag cannot take left unclaimed
 packages/genshin-world/src/services/mail/removeExpiredMails.ts ← the mailbox without the mails past their expiry
 packages/genshin-world/src/services/mail/deliverBirthdayMail.ts ← the Traveler's birthday mail added when due
+scripts/src/services/genshinAssets/mail/buildMailPublication.ts ← the mail table as one entry per mail, and the birthday rows
+scripts/src/services/genshinAssets/commands/mailCommand.ts ← the `genshin:assets mail` publish, with its dry run
+scripts/src/models/genshinAssets/mail/ExcelBirthdayMailRow.ts ← the birthday mail table's named keys
+packages/genshin-world/src/models/mail/MailData.ts     ← the mail's and the birthday rows' schemas, read from the game data
 ```
 
 - The dump's two unnamed mail keys are not guessed at; the builder skips them, and a mail with a key it cannot name is not delivered.
