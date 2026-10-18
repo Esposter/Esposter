@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -172,5 +173,16 @@ describe("cleansing for the Spring", () => {
     expect.hasAssertions();
 
     expect(readSkillDamageBonus(3, 1000)).toBe(0);
+  });
+
+  test("the Frostgrove Sanctuary's ticks strike as her Elemental Skill, so the bonus reaches them", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext({ ...createCombatant(500), ascension: 4 });
+    LAUMA_KIT.elementalSkill.onStart?.(context);
+    const sanctuary = takeOne(
+      context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+    );
+
+    expect(sanctuary.attackTag).toBe(AttackTag.ElementalSkill);
   });
 });

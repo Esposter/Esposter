@@ -75,9 +75,13 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     enemyStatus: createShredStatus,
     talentMultiplier: holdLunarBloomMultiplier * dewCount,
   });
-  // The Frostgrove Sanctuary the press and the hold each plant where she stands
+  // The Frostgrove Sanctuary the press and the hold each plant where she stands, its ticks striking as her Elemental Skill,
+  // As gcsim v2.47.2 (MIT) lauma/skill.go tags them, so Cleansing for the Spring reaches them
   const plantSanctuary = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
-    castKitSummon(kitEffectState, body, combatant, sanctuaryTicks, { secondsRemaining: SANCTUARY_SECONDS });
+    castKitSummon(kitEffectState, body, combatant, sanctuaryTicks, {
+      attackTag: AttackTag.ElementalSkill,
+      secondsRemaining: SANCTUARY_SECONDS,
+    });
   };
   const pressBehaviour: KitActionBehaviour = { hits: [shredBehaviour], onStart: plantSanctuary };
   return {

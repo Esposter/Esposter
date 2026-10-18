@@ -17,7 +17,7 @@ Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, o
 
 - **Pale Hymn waits on the reaction hooks.** Her burst adds Pale Hymn stacks, which add Elemental Mastery to each Bloom, Hyperbloom, Burgeon and Lunar-Bloom hit that follows and are spent by them, and Hymn of Eternal Rest's Dew gives Moon Song stacks to it. No hook lets a buff read and spend itself on a reaction's hit, so the burst's hit list is empty until one does.
 - **The Spirit Envoy state waits on a stance that drains stamina.** Her charged attack's first press, when the state is ready, enters a deer state that drains 25 stamina a second, blocks dashing and ends on any other action. The kit has no stance that drains stamina or ends on an action, so that first press is not built, and the charged attack is always Spiritcall Prayer.
-- **Her Ascension 4 passive, Cleansing for the Spring, is built on her Elemental Skill. Her other passives and constellations are not built.** Each reads the Pale Hymn, the Spirit Envoy or the Moonsign's level, or the Frostgrove Sanctuary's own timing.
+- **Her Ascension 4 passive, Cleansing for the Spring, is built on her Elemental Skill, its press and the Frostgrove Sanctuary's ticks alike, as the sanctuary's summon strikes as her Elemental Skill, as gcsim tags its ticks. Its Spirit Envoy cooldown cut waits on the Spirit Envoy state. Her other passives and constellations are not built.** Each reads the Pale Hymn, the Spirit Envoy or the Moonsign's level, or the Frostgrove Sanctuary's own timing.
 
 ## Key files
 
