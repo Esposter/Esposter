@@ -23,7 +23,7 @@ flowchart TD
 
 ## Scope and order
 
-**Still to build, in order:**
+**Left to build, in order:**
 
 1. **The other Adventure EXP sources, as their pages land.** Each calls `gainWorldAdventureExp`; the quests carried by the [quests](../genshin-quests/design.md) page feed the holds as they complete.
 2. **Katheryne's rewards.** Waits on Katheryne standing among Mondstadt's residents in region data, which the [resident schedules](../genshin-resident-schedules/design.md) build: none of her name's text ids is a resident's yet.
