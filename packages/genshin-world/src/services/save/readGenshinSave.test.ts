@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { COMMISSIONS_PER_DAY, COMMISSION_UNLOCK_RANK } from "#src/services/commission/constants";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { toGenshinSave } from "#src/services/save/toGenshinSave";
@@ -166,6 +167,25 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       POPULATED_SAVE,
     );
+  });
+
+  // The day's four as the player was dealt them after the daily reset, the first of them already claimed
+  test("the day's four survive a reload before the daily reset", () => {
+    expect.hasAssertions();
+    const save: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      commissionDay: {
+        claimedCommissionIds: [1],
+        dealtAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
+        dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
+          commissionId: index + 1,
+          count: 0,
+          dealtRank: COMMISSION_UNLOCK_RANK,
+        })),
+      },
+    };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(save);
   });
 
   test("a held character survives a reload", () => {

@@ -5,6 +5,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import { toAchievementProgressMap } from "#src/services/save/toAchievementProgressMap";
 import { toCharacters } from "#src/services/save/toCharacters";
+import { toCommissionDay } from "#src/services/save/toCommissionDay";
 import { toInventory } from "#src/services/save/toInventory";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
@@ -16,6 +17,7 @@ export const readGenshinSave = (
     achievements,
     adventureExp,
     characters,
+    commissionDay,
     companionshipExp,
     crafting,
     inventory,
@@ -41,6 +43,7 @@ export const readGenshinSave = (
     adventureExp,
     characterCopyCountMap: new Map(characters.map(({ copyCount, id }) => [id, copyCount])),
     characters: toCharacters(characters, companionshipExpMap),
+    commissionDay: toCommissionDay(commissionDay),
     companionshipExpMap,
     craftedCountMap: new Map(
       Object.entries(crafting.craftedCounts).map(([recipeId, count]) => [Number(recipeId), count]),

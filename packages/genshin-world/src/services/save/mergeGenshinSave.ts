@@ -1,6 +1,7 @@
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
 import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
+import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -75,6 +76,9 @@ const checkIsLaterWorldLevelAdjustment = (
     Temporal.Instant.compare(Temporal.Instant.from(adjustment.changedAt), Temporal.Instant.from(than.changedAt)) > 0
   );
 };
+// The day dealt later is the one the player is on, since a day is dealt again at each daily reset
+const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
+  Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
 
 // A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
 // Grow-only, so they union, and an achievement keeps the larger count. Each recipe's crafted count keeps the larger. A
@@ -84,7 +88,8 @@ const checkIsLaterWorldLevelAdjustment = (
 // And never mixed. The Reputation and the Frostbearing Tree each keep the further. The bag, the wallet and the opened
 // Chests are the account's copy, except that a Primogem refill count from the same game day takes the larger, as a count
 // Of refills within a day only grows. The World Level adjustment is the copy changed later, since the one change of it the player
-// Made last is the one they still stand by. The Traveler's name is the account's, or the guest's while the account has
+// Made last is the one they still stand by. The day's commissions are the copy dealt later, the day the player is on.
+// The Traveler's name is the account's, or the guest's while the account has
 // Chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is kept
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
@@ -114,6 +119,9 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
     characters: mergeCharacters(account.characters, guest.characters),
+    commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
+      ? guest.commissionDay
+      : account.commissionDay,
     companionshipExp,
     crafting: {
       craftedCounts,

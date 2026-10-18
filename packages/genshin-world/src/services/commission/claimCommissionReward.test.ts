@@ -14,6 +14,7 @@ const minimumRoll = () => 0;
 const maximumRoll = () => 0.999;
 
 describe(claimCommissionReward, () => {
+  const DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0);
   const DEALT_RANK = 12;
   const CURRENT_RANK = 20;
   const FINISH_PROGRESS = 3;
@@ -49,16 +50,24 @@ describe(claimCommissionReward, () => {
 
   test("should refuse an unfinished commission with no Encounter Point held", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+    };
     expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
   });
 
   test("should claim an unfinished commission's reward for one point, which it spends", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)],
+    };
     expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)).toStrictEqual({
       bonus: [],
-      day: { claimedCommissionIds: [1], dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] },
+      day: { claimedCommissionIds: [1], dealtAt: DEALT_AT, dealtCommissions: [dealtOf(1, FINISH_PROGRESS - 1)] },
       encounterPoints: 1,
       rewards: [{ count: 10, id: MORA_ID }],
     });
@@ -66,22 +75,34 @@ describe(claimCommissionReward, () => {
 
   test("should claim a finished commission free, keeping the points held", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+    };
     expect(claimCommissionReward(day, 2, 1, slice, DEALT_RANK, minimumRoll)?.encounterPoints).toBe(2);
   });
 
   test("should refuse a commission that is not dealt today", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+    };
     expect(claimCommissionReward(day, 0, 2, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
   });
 
   test("should pay the reward of the rank it was dealt at, and no bonus before the day's fourth claim", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+    };
     expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, maximumRoll)).toStrictEqual({
       bonus: [],
-      day: { claimedCommissionIds: [1], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] },
+      day: { claimedCommissionIds: [1], dealtAt: DEALT_AT, dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] },
       encounterPoints: 0,
       rewards: [{ count: 20, id: MORA_ID }],
     });
@@ -91,6 +112,7 @@ describe(claimCommissionReward, () => {
     expect.hasAssertions();
     const day: CommissionDay = {
       claimedCommissionIds: [2, 3, 4],
+      dealtAt: DEALT_AT,
       dealtCommissions: [dealtOf(1, FINISH_PROGRESS), dealtOf(2, 0), dealtOf(3, 0), dealtOf(4, 0)],
     };
     const claim = claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll);
@@ -101,7 +123,11 @@ describe(claimCommissionReward, () => {
 
   test("should refuse a commission claimed already", () => {
     expect.hasAssertions();
-    const day: CommissionDay = { claimedCommissionIds: [1], dealtCommissions: [dealtOf(1, FINISH_PROGRESS)] };
+    const day: CommissionDay = {
+      claimedCommissionIds: [1],
+      dealtAt: DEALT_AT,
+      dealtCommissions: [dealtOf(1, FINISH_PROGRESS)],
+    };
     expect(claimCommissionReward(day, 0, 1, slice, CURRENT_RANK, minimumRoll)).toBeUndefined();
   });
 });

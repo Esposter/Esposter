@@ -380,8 +380,8 @@ const { activateLandmark, explorationAreas, jumpLandmarks, jumpPose, jumpTo, unl
     unlockedLandmarkIds: savedState.unlockedLandmarkIds,
     wallet,
   });
-// The Companionship EXP and the Traveler's name no source changes yet, so they are carried as they were
-// Saved
+// The Companionship EXP, the day's commissions and the Traveler's name no source changes yet, so they are carried as
+// They were saved
 useWorldSaveSync({
   emitSave: (newSave) => emit("save", newSave),
   getSaveState: () => ({
@@ -389,6 +389,7 @@ useWorldSaveSync({
     adventureExp: adventureExp.value,
     characterCopyCountMap: characterCopyCountMap.value,
     characters: characters.value,
+    commissionDay: savedState.commissionDay,
     companionshipExpMap: savedState.companionshipExpMap,
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,

@@ -40,6 +40,8 @@ describe(mergeGenshinSave, () => {
   const FATE_POINTS = 1;
   const ACCOUNT_TRAVELER_NAME = "a";
   const GUEST_TRAVELER_NAME = "b";
+  const EARLIER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
+  const LATER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
   // A character as a save holds it, the fields a test reads set by its own overrides
   const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
     artifacts: [],
@@ -270,6 +272,34 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, travelerName: GUEST_TRAVELER_NAME };
 
     expect(mergeGenshinSave(EMPTY_GENSHIN_SAVE, guest).travelerName).toBe(GUEST_TRAVELER_NAME);
+  });
+
+  test("keeps the account's commissions of the day when the account dealt them later", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      commissionDay: { ...EMPTY_GENSHIN_SAVE.commissionDay, dealtAt: LATER_DEALT_AT },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      commissionDay: { ...EMPTY_GENSHIN_SAVE.commissionDay, dealtAt: EARLIER_DEALT_AT },
+    };
+
+    expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(account.commissionDay);
+  });
+
+  test("keeps the guest's commissions of the day when the guest dealt them later", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      commissionDay: { ...EMPTY_GENSHIN_SAVE.commissionDay, dealtAt: EARLIER_DEALT_AT },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      commissionDay: { ...EMPTY_GENSHIN_SAVE.commissionDay, dealtAt: LATER_DEALT_AT },
+    };
+
+    expect(mergeGenshinSave(account, guest).commissionDay).toStrictEqual(guest.commissionDay);
   });
 
   test("keeps the Frostbearing Tree's progress of the copy that has reached the further level", () => {

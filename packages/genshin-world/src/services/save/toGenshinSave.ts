@@ -3,6 +3,7 @@ import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 
 import { toAchievementProgressSave } from "#src/services/save/toAchievementProgressSave";
 import { toCharacterSaves } from "#src/services/save/toCharacterSaves";
+import { toCommissionDaySave } from "#src/services/save/toCommissionDaySave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
@@ -13,6 +14,7 @@ export const toGenshinSave = ({
   adventureExp,
   characterCopyCountMap,
   characters,
+  commissionDay,
   companionshipExpMap,
   craftedCountMap,
   craftingProgress,
@@ -30,6 +32,7 @@ export const toGenshinSave = ({
   achievements: toAchievementProgressSave(achievementProgressMap),
   adventureExp,
   characters: toCharacterSaves(characters, characterCopyCountMap),
+  commissionDay: toCommissionDaySave(commissionDay),
   companionshipExp: Object.fromEntries([
     ...companionshipExpMap,
     ...characters.map(({ friendshipExp, id }): [number, number] => [id, friendshipExp]),

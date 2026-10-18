@@ -8,6 +8,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
+import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
@@ -92,6 +93,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
   characters: [],
+  commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: { items: [], nextId: MAX_SAVE_NUMBER },
@@ -132,6 +134,9 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ACHIEVEMENT_COUNT * getRecordEntryLength({ count: MAX_SAVE_NUMBER, finishedAt: MAX_SAVE_INSTANT }) +
   MAX_CHARACTER_COUNT * getListEntryLength(LONGEST_CHARACTER_SAVE) +
   MAX_CHARACTER_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
+  COMMISSIONS_PER_DAY * getListEntryLength(MAX_SAVE_NUMBER) +
+  COMMISSIONS_PER_DAY *
+    getListEntryLength({ commissionId: MAX_SAVE_NUMBER, count: MAX_SAVE_NUMBER, dealtRank: MAX_SAVE_NUMBER }) +
   MAX_CRAFTING_RECIPE_COUNT * (getRecordEntryLength(MAX_SAVE_NUMBER) + getListEntryLength(MAX_SAVE_NUMBER)) +
   MAX_QUEST_COUNT *
     getRecordEntryLength({
@@ -157,6 +162,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
   characters: [],
+  commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
   inventory: EMPTY_INVENTORY_SAVE,

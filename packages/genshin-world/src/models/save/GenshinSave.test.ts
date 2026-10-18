@@ -6,6 +6,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
+import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import {
   EMPTY_GENSHIN_SAVE,
@@ -87,6 +88,15 @@ describe("genshinSaveSchema", () => {
           refinement: MAX_WEAPON_REFINEMENT,
         },
       })),
+      commissionDay: {
+        claimedCommissionIds: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => maxNumber - index),
+        dealtAt: maxInstant,
+        dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
+          commissionId: maxNumber - index,
+          count: maxNumber,
+          dealtRank: maxNumber,
+        })),
+      },
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),
