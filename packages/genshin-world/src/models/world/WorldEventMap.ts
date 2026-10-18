@@ -19,6 +19,8 @@ export interface WorldEventMap {
   campCleared: [camp: ClearedCamp];
   chestOpened: [];
   defeatEnemy: [Enemy];
+  // The first unlock of a domain entrance, by the entry id it enters. A domain's weekly boss entrance opens by its quests, so it raises none
+  domainEntryUnlocked: [entryId: number];
   // The party entering combat, once an enemy is aggravated on it
   enterCombat: [];
   // A quest's progress moving from its progress before to the one that finishes it, emitted once on that move
