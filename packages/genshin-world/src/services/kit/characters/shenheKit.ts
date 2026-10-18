@@ -1,15 +1,24 @@
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT) shenhe/burst.go, Divine Maiden's Deliverance's field centred 2 metres ahead of the body, its DoT
@@ -29,14 +38,47 @@ const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_FIELD_SECONDS = 6;
 
 export const SHENHE_CHARACTER_ID = 10_000_063;
+export const ICY_QUILL_STATUS_ID = "icy-quill";
+
+// Gives each party member other than the one casting the Icy Quill, restarting one it already holds, for its seconds and
+// Its triggers
+const grantIcyQuill = (
+  { activeCombatant, characterIdCombatantMap, kitEffectState, party }: KitContext,
+  secondsRemaining: number,
+  triggers: number,
+): void => {
+  for (const { characterId } of getDeployedCombatants(party, characterIdCombatantMap))
+    if (characterId !== activeCombatant.characterId)
+      addKitStatus(kitEffectState, characterId, { id: ICY_QUILL_STATUS_ID, secondsRemaining, stacks: triggers });
+};
+
+// Spends one of a member's Icy Quill triggers, keeping the quill's seconds as they stand, and ends the quill with its last
+const spendIcyQuillTrigger = (kitEffectState: KitEffectState, characterId: number): void => {
+  const quill = findKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID);
+  if (quill === undefined) return;
+  const triggers = (quill.stacks ?? 0) - 1;
+  if (triggers > 0)
+    addKitStatus(kitEffectState, characterId, {
+      id: ICY_QUILL_STATUS_ID,
+      secondsRemaining: quill.secondsRemaining,
+      stacks: triggers,
+    });
+  else
+    removeKitEffects(
+      kitEffectState,
+      (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === ICY_QUILL_STATUS_ID,
+    );
+};
 
 // Shenhe's behaviour: Divine Maiden's Deliverance casts its field ahead of her, whose DoT ticks give the enemies within it
-// The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her Quill is not built:
-// The kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to the hits of whoever carries it, which no
-// Kit step reads. Constellation 1's charge is built; her other passives and Constellations 2, 4 and 6 are not
+// The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her skill's Icy Quill
+// Adds Shenhe's ATK to each Cryo hit the other party members strike, spending one of its triggers. It is priced by a
+// Party strike hook and spent by the hits' events. Constellation 1's charge and Constellation 2's field are built; her
+// Other passives and Constellations 4 and 6 are not
 // Constellation 2's field runs six seconds longer, and its active character gains Cryo CRIT DMG inside it
-// Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill, which the kit does not build
-// Constellation 6 needs the Icy Quill's trigger quota, which the kit does not build
+// Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill's triggers, which the kit does not build
+// Constellation 6 needs each trigger's attack kind, as Normal and Charged Attack triggers do not count toward the quota,
+// Which the enemy hit events do not carry
 export const createShenheKitBehaviour = ({
   readHitFields,
   readParameter,
@@ -57,6 +99,12 @@ export const createShenheKitBehaviour = ({
     resistanceReduction: { [Element.Cryo]: burstResistanceReduction },
     secondsRemaining: fieldTickIntervalSeconds,
   };
+  // The Icy Quill's ATK ratio, seconds and triggers, a press's and a hold's, from Spring Spirit Summoning's proud skill group
+  const icyQuillAttackRatio = readParameter("icyQuillAttackRatio");
+  const icyQuillPressSeconds = readParameter("icyQuillPressSeconds");
+  const icyQuillHoldSeconds = readParameter("icyQuillHoldSeconds");
+  const icyQuillPressTriggers = readParameter("icyQuillPressTriggers");
+  const icyQuillHoldTriggers = readParameter("icyQuillHoldTriggers");
   const burstTickFields = readHitFields("talismanSpiritTick", ["hitmarkSeconds"]);
   const createBurstTickHit = (hitmarkSeconds: number): KitHit => ({
     ...burstTickFields,
@@ -69,6 +117,23 @@ export const createShenheKitBehaviour = ({
     createBurstTickHit(burstTickSecondHitSeconds + offsetSeconds),
   ]);
   return {
+    skill: { onStart: (context) => grantIcyQuill(context, icyQuillPressSeconds, icyQuillPressTriggers) },
+    skillHolds: [{ onStart: (context) => grantIcyQuill(context, icyQuillHoldSeconds, icyQuillHoldTriggers) }],
+    // Each Cryo hit a member carrying the Icy Quill strikes adds Shenhe's current ATK times its ratio to the hit's base damage
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
+      if (
+        getKitHitElement(strike.hit, strike.combatant) !== Element.Cryo ||
+        !findKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
+      )
+        return {};
+      const { attack } = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes;
+      return { additiveBaseDamageBonus: attack * icyQuillAttackRatio };
+    },
+    // Each Cryo hit a member carrying the Icy Quill lands on an enemy spends one of its triggers
+    onKitEvent: (event, { kitEffectState }) => {
+      if (event.kind === KitEventKind.EnemyHit && event.element === Element.Cryo)
+        spendIcyQuillTrigger(kitEffectState, event.striker.characterId);
+    },
     burst: {
       // The field is cast ahead of the body, as far across as its DoT reaches, and its DoT and buff are summoned there, so
       // It stands where gcsim places it
