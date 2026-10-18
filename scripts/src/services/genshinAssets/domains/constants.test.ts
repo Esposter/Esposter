@@ -2,7 +2,7 @@ import { DOMAIN_TREE_COUNT_ROWS } from "#src/services/genshinAssets/domains/cons
 import { DomainKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-describe("the tree count rows", () => {
+describe("domainTreeCountRows", () => {
   test("every row's average lies between its least and most count", () => {
     expect.hasAssertions();
 
