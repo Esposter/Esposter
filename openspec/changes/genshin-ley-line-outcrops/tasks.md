@@ -12,8 +12,8 @@
 
 ## 4. Decisions
 
-- [ ] 4.1 Decide whether Liyue opens its blossoms at Adventure Rank 8 and 12, as the wiki has it, or at 18, as the dump's table does, from the reference clip of the map at ranks 8 and 18. This task names the options and decides nothing.
-- [ ] 4.2 Decide whether a claim grants the previews' 100 Adventure EXP or leaves it out as it does the Companionship EXP. This task names the options and decides nothing.
+- [x] 4.1 Decide whether Liyue opens its blossoms at Adventure Rank 8 and 12, as the wiki has it, or at 18, as the dump's table does, from the reference clip of the map at ranks 8 and 18. This task names the options and decides nothing.
+- [x] 4.2 Decide whether a claim grants the previews' 100 Adventure EXP or leaves it out as it does the Companionship EXP. This task names the options and decides nothing.
 
 ## 5. The regions the dump does not cover
 
