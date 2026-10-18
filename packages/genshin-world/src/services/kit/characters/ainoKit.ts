@@ -6,9 +6,11 @@ import { Attribute } from "#src/models/character/Attribute";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -28,6 +30,12 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_SECONDS = 10;
 const CONSTELLATION_4_ENERGY = 10;
 const CONSTELLATION_4_STATUS_ID = "aino-constellation-4";
+// Constellation 1: 80 Elemental Mastery on Aino for fifteen seconds after her skill or burst, and on the member a swap brings on
+// While it runs, as gcsim (MIT) aino/cons.go gives it. The status is the clock, and the buff is sourced to it so a recast restarts it
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_MASTERY = 80;
+const CONSTELLATION_1_SECONDS = 15;
+const CONSTELLATION_1_STATUS_ID = "aino-constellation-1";
 // Constellation 2, The Principle of Transference in Gear Differentials: the water ball's Attack and Elemental Mastery shares
 // Are the dump's paramList 0.25 and 1.0, and its cooldown 5 seconds, as gcsim (MIT) aino/cons.go gives them with a 1.5 metre circle
 const CONSTELLATION_2 = 2;
@@ -44,16 +52,16 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Aino's behaviour: Cool Your Jets Ducky casts a field following the body, which drops a Water Ball every interval from
 // Its first tick to its last, and Ascension 4 adds half her Elemental Mastery to each ball's damage. Ascension 1 at
 // Ascendant Gleam drops the balls faster and wider, read as the burst is cast. Constellation 4 gives her 10 energy on each
-// Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 2 queues a water ball on each enemy
-// Her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball strikes
-// The enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Not built yet: the
-// Internal cooldown gcsim gives those Moonsign hits, which the kit has no tag for, and Constellation 6's Lunar DMG bonus,
-// Which waits on the Lunar hook; Constellation 1's Elemental Mastery on the active member, which the kit does not re-add on
-// Each swap. Musecatcher's hold is not built, as gcsim does not implement it either
+// Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 1 gives her, and the member on the field
+// Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation 2 queues a water ball on each
+// Enemy her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball
+// Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Not built yet:
+// The internal cooldown gcsim gives those Moonsign hits, which the kit has no tag for, and Constellation 6's Lunar DMG bonus,
+// Which waits on the Lunar hook. Musecatcher's hold is not built, as gcsim does not implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const burstFirstTickSeconds = readSeconds("burstStart");
-  // gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its own
+  // Gcsim queues each ball at its hitmark from the burst's start, a tick at a time, and a summon's hits count from its own
   // Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
   const waterBallHit = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
@@ -108,6 +116,36 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     },
     onKitEvent: (event, context, combatant) => {
       const { activeCombatant, kitEffectState, party } = context;
+      if (
+        combatant.constellationCount >= CONSTELLATION_1 &&
+        (event.kind === KitEventKind.SkillUsed || event.kind === KitEventKind.BurstUsed) &&
+        event.characterId === combatant.characterId
+      ) {
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: CONSTELLATION_1_STATUS_ID,
+          secondsRemaining: CONSTELLATION_1_SECONDS,
+        });
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: CONSTELLATION_1_MASTERY,
+          attribute: Attribute.ElementalMastery,
+          secondsRemaining: CONSTELLATION_1_SECONDS,
+          source: CONSTELLATION_1_STATUS_ID,
+        });
+      }
+      if (event.kind === KitEventKind.CharacterSwapped && event.characterId !== combatant.characterId) {
+        // The member coming on the field takes what is left of the buff, which ends when it leaves
+        const constellation1Seconds =
+          findKitStatus(kitEffectState.effects, combatant.characterId, CONSTELLATION_1_STATUS_ID)?.secondsRemaining ??
+          0;
+        if (constellation1Seconds > 0)
+          buffKitMember(kitEffectState, event.characterId, {
+            amount: CONSTELLATION_1_MASTERY,
+            attribute: Attribute.ElementalMastery,
+            isEndedOnSwap: true,
+            secondsRemaining: constellation1Seconds,
+            source: CONSTELLATION_1_STATUS_ID,
+          });
+      }
       if (event.kind !== KitEventKind.DamageTaken) return;
       if (
         combatant.constellationCount >= CONSTELLATION_2 &&

@@ -227,8 +227,8 @@ describe(createCynoKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const hit = takeOne(takeOne(CYNO_KIT.normalAttacks).hits);
     const context = createKitTestContext(combatant, { kitEffectState });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
-    hit.onStrike?.(context, { body: context.body, combatant, hit });
+    hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
+    hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
     const bonus = kitEffectState.effects.find((effect) => effect.kind === "buff");
 
     expect(

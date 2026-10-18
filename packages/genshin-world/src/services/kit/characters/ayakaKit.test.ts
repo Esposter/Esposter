@@ -20,6 +20,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const normalHit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
@@ -41,7 +42,7 @@ const strikeWithFirstNormalAttack = (constellationCount: number, random: () => n
   const partyMember = getPartyMember(context.party, AYAKA_CHARACTER_ID);
   partyMember.skillCooldownSeconds = 5;
   const hit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
-  hit.onStrike?.(context, { body: context.body, combatant, hit });
+  hit.onStrike?.(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
   return partyMember.skillCooldownSeconds;
 };
 

@@ -27,6 +27,7 @@ export interface KitBehaviour extends Partial<
     | "onKitEvent"
     | "onSprint"
     | "onStep"
+    | "refusesFall"
   >
 > {
   burst?: KitActionBehaviour;

@@ -12,6 +12,36 @@ const LINNEA_SKILL_GROUP_ID = 13_032;
 const LOHEN_BURST_GROUP_ID = 12_939;
 const LOHEN_SKILL_GROUP_ID = 12_932;
 
+const BURST_GROUP_ID = 12_239;
+const SKILL_GROUP_ID = 12_232;
+
+const CLORINDE_NAME = "Clorinde";
+const CLORINDE_CHARACTER_ID = 10_000_098;
+const NORMAL_ATTACK_GROUP_ID = 9831;
+const ELEMENTAL_SKILL_GROUP_ID = 9832;
+const ELEMENTAL_BURST_GROUP_ID = 9839;
+
+// Clorinde's elemental skill rows as her table gives them, with the parameter indexes each reads
+const CLORINDE_SKILL_LABELS = [
+  { indexes: [2], label: "Swift Hunt Bond of Life Gain" },
+  { indexes: [5, 7], label: "Impale the Night Healing" },
+  { indexes: [8], label: "Bond of Life Conversion" },
+  { indexes: [11], label: "Night Vigil Duration" },
+];
+
+const createCharacterTables = (name: string, characterId: number): KitTables => ({
+  characterId,
+  labelMap: new Map([[ELEMENTAL_SKILL_GROUP_ID, CLORINDE_SKILL_LABELS]]),
+  name,
+  talentGroupIdMap: {
+    [CombatTalent.ElementalBurst]: ELEMENTAL_BURST_GROUP_ID,
+    [CombatTalent.ElementalSkill]: ELEMENTAL_SKILL_GROUP_ID,
+    [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
+  },
+  talentMultiplierMap: {},
+  weaponType: WeaponType.Sword,
+});
+
 const createTables = (
   labelMap: Map<number, KitTableLabel[]>,
   { burstGroupId, skillGroupId }: { burstGroupId: number; skillGroupId: number },
@@ -187,5 +217,87 @@ describe(getTableKitCandidates, () => {
       "parameters.etchedWillToWinDamagePerPoint": { index: 17, proudSkillGroupId: LOHEN_SKILL_GROUP_ID },
       "parameters.manifestJudgmentWillToWinDamagePerPoint": { index: 1, proudSkillGroupId: LOHEN_BURST_GROUP_ID },
     });
+  });
+
+  test("the Night Vigil duration is read from Clorinde's elemental skill row, at the row's own index", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID));
+
+    expect(candidateMap.get("parameters.nightVigilSeconds")).toStrictEqual([
+      {
+        provenance: {
+          index: 11,
+          label: "Night Vigil Duration",
+          proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID,
+          source: KitSource.Tables,
+        },
+        value: { index: 11, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+      },
+    ]);
+  });
+
+  test("the Impale the Night healing's two parameters are the low and full Bond of Life rows, each at its own index", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID));
+
+    expect({
+      full: candidateMap.get("parameters.impaleTheNightFullBondOfLifeHealing")?.[0]?.value,
+      low: candidateMap.get("parameters.impaleTheNightLowBondOfLifeHealing")?.[0]?.value,
+    }).toStrictEqual({
+      full: { index: 7, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+      low: { index: 5, proudSkillGroupId: ELEMENTAL_SKILL_GROUP_ID },
+    });
+  });
+
+  test("a character with no mapping of its own reads none of the same labels as parameters", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates(createCharacterTables("Amber", 10_000_021));
+
+    expect([...candidateMap.keys()].filter((path) => path.startsWith("parameters."))).toStrictEqual([]);
+  });
+
+  test("gives a folder-less character's skill and burst hits the parameters of their labels, hit after hit across labels", () => {
+    expect.hasAssertions();
+
+    const tables: KitTables = {
+      characterId: 10_000_122,
+      labelMap: new Map([
+        [
+          BURST_GROUP_ID,
+          [
+            { indexes: [0, 1], label: "1-Hit DMG" },
+            { indexes: [2, 3], label: "2-Hit DMG" },
+          ],
+        ],
+        [SKILL_GROUP_ID, [{ indexes: [0, 1], label: "Skill DMG" }]],
+      ]),
+      name: "Nefer",
+      talentGroupIdMap: {
+        [CombatTalent.ElementalBurst]: BURST_GROUP_ID,
+        [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
+        [CombatTalent.NormalAttack]: 12_231,
+      },
+      talentMultiplierMap: {},
+      weaponType: WeaponType.Catalyst,
+    };
+    const candidateMap = getTableKitCandidates(tables);
+
+    expect([...candidateMap.keys()]).toStrictEqual([
+      "burst.hits.0.multiplier",
+      "burst.hits.1.multiplier",
+      "burst.hits.2.multiplier",
+      "burst.hits.3.multiplier",
+      "skill.hits.0.multiplier",
+      "skill.hits.1.multiplier",
+    ]);
+    expect(candidateMap.get("burst.hits.2.multiplier")).toStrictEqual([
+      {
+        provenance: { index: 2, label: "2-Hit DMG", proudSkillGroupId: BURST_GROUP_ID, source: KitSource.Tables },
+        value: { index: 2, proudSkillGroupId: BURST_GROUP_ID },
+      },
+    ]);
   });
 });

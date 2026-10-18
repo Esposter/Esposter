@@ -80,7 +80,7 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "stances.ceremonialGarment.chargedAttack.hits.0.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "stances.ceremonialGarment.chargedAttack.hits.0.healParty.maxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
@@ -103,7 +103,7 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "stances.ceremonialGarment.normalAttacks.0.hits.0.healParty.maxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
@@ -126,7 +126,7 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "stances.ceremonialGarment.normalAttacks.1.hits.0.healParty.maxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
@@ -149,7 +149,7 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 5439 }
   },
-  "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.isUnshielded": { "cause": "Unclassified", "value": true },
+  "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "stances.ceremonialGarment.normalAttacks.2.hits.0.healParty.maxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5439 }
@@ -163,5 +163,6 @@
   "stances.ceremonialGarment.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.ceremonialGarment.skill.animationFrames": { "cause": "Unsourced", "value": 61 },
   "stances.ceremonialGarment.skill.hits.length": { "cause": "Unsourced", "value": 0 },
-  "stances.ceremonialGarment.skill.targeting": { "cause": "Unsourced", "value": "Skill" }
+  "stances.ceremonialGarment.skill.targeting": { "cause": "Unsourced", "value": "Skill" },
+  "stances.ceremonialGarment.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 48 }
 }

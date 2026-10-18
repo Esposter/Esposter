@@ -6,4 +6,5 @@ export const WikiInternalCooldownTagMap: Partial<Record<string, InternalCooldown
   "Elemental Burst": InternalCooldownTag.ElementalBurst,
   "Elemental Skill": InternalCooldownTag.ElementalSkill,
   "Normal Attack": InternalCooldownTag.NormalAttack,
+  "Vesna Elemental Skill Start": InternalCooldownTag.VesnaElementalSkillStart,
 };

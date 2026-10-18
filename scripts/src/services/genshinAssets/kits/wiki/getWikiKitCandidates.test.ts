@@ -78,4 +78,25 @@ describe(getWikiKitCandidates, () => {
       source: KitSource.Wiki,
     });
   });
+
+  test("names a skill row's tag by the member its wiki name is given, where the wiki names a character's own", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getWikiKitCandidates(
+      [
+        {
+          combatTalent: CombatTalent.ElementalSkill,
+          properties: [{ internalCooldownTag: "Vesna Elemental Skill Start", poise: 0, row: 1, title: "Skill DMG" }],
+          revisionId: 1,
+          title: "Vesna",
+        },
+      ],
+      { weaponType: WeaponType.Claymore },
+      new Map([["skill.hits.0", "Skill DMG"]]),
+    );
+
+    expect(candidateMap.get("skill.hits.0.internalCooldownTag")?.map(({ value }) => value)).toStrictEqual([
+      InternalCooldownTag.VesnaElementalSkillStart,
+    ]);
+  });
 });

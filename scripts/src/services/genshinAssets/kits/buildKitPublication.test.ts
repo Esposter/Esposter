@@ -145,7 +145,7 @@ describe(buildKitPublication, () => {
         [1, 2],
       ),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: 2, borrows from 1, which borrows back to a kit already being built]`,
+      `[InvalidOperationError: Invalid operation: Create, name: 1, its record cannot be built: Invalid operation: Read, name: 2, borrows from 1, which borrows back to a kit already being built]`,
     );
   });
 });

@@ -43,6 +43,16 @@ const CONSTELLATION_4_GEO_RESISTANCE_REDUCTION = 0.2;
 const CONSTELLATION_4_SECONDS = 8;
 const CONSTELLATION_4_STATUS_ID = "navia-c4-shred";
 
+// Measured: gcsim v2.47.2 (MIT) navia/cons.go, Constellation 2's CRIT Rate of 12% for each shrapnel the press consumes, three at
+// Most, and one Cannon Fire Support shot 30 frames after the blade strikes an enemy, three metres round the point of its hit.
+// Gcsim draws that point uniformly over the disk of 1.2 metres about the enemy, from its random source
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL = 0.12;
+const CONSTELLATION_2_MAXIMUM_SHRAPNEL = 3;
+const CONSTELLATION_2_CANNON_OFFSET_METRES = 1.2;
+const CONSTELLATION_2_CANNON_RADIUS_METRES = 3;
+const CONSTELLATION_2_CANNON_HITMARK_SECONDS = 30 / 60;
+
 // Undisclosed Distribution Channels, as the dump's Navia_PermanentSkill_1 row and gcsim v2.47.2 (MIT) navia/asc.go give it:
 // From Ascension 1, for 4 seconds after a shot fires, her normal attacks, charged attack and plunges deal Geo DMG and 40%
 // More of it. gcsim adds only the DMG Bonus, as her attacks are Geo there already
@@ -70,11 +80,10 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 // Navia's behaviour: Rosula Shardshot's press and hold each spend her Crystal Shrapnel and fire Surging Blade off its
 // Cooldown, and As the Sunlit Sky's Singing Salute casts Cannon Fire Support, the blast and the cannon's hits gaining
 // Crystal Shrapnel. From Ascension 1 a shot infuses her attacks with Geo and raises their DMG. From Ascension 4 each Pyro,
-// Electro, Cryo and Hydro party member adds 20% ATK, two at most. The Shrapnel gained from party Crystallize shards and the
-// shot's pellets past three stacks is not built, as no step gives a shard's reach to a hit. Constellation 4 is built,
-// Constellation 6 keeps its excess Shrapnel, and the rest of her Constellations are not built:
+// Electro, Cryo and Hydro party member adds 20% ATK, two at most. Not built: the Shrapnel gained from party Crystallize
+// Shards, and the pellets past three stacks of a shot, as no step gives a shard's reach to a hit. Constellations 2, 4 and 6
+// Are built, Constellation 6 keeping its excess Shrapnel, and the rest of her Constellations are not built:
 // Constellation 1 needs Energy and skill cooldown cuts per Shrapnel consumed, which the kit does not build yet
-// Constellation 2 needs the CRIT Rate per Shrapnel on the shot and the burst's extra Cannon shot, not built
 // Constellation 6's CRIT DMG per Shrapnel past three needs a strike CRIT DMG hook, which the kit cannot apply
 export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shrapnelSeconds = readParameter("crystalShrapnelSeconds");
@@ -82,6 +91,56 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
   const burstShrapnelIcdSeconds = readParameter("crystalShrapnelGainCooldownSeconds");
   // Surging Blade's hit after a press's shot and after a hold's
   const surgingBladeHits = readHits("surgingBlades");
+
+  // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
+  const onCannonStrike = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
+    const { characterId } = combatant;
+    if (!startKitCooldown(kitEffectState, characterId, BURST_SHRAPNEL_ICD_STATUS_ID, burstShrapnelIcdSeconds)) return;
+    const stacks = countShrapnel(kitEffectState, characterId);
+    if (stacks < SHRAPNEL_MAX)
+      addKitStatus(kitEffectState, characterId, {
+        id: SHRAPNEL_STATUS_ID,
+        secondsRemaining: shrapnelSeconds,
+        stacks: stacks + 1,
+      });
+  };
+  const cannonHitBehaviour = { enemyStatus: createConstellation4Shred, onStrike: onCannonStrike };
+  const cannonHits = readHits("cannonFireSupportShots", cannonHitBehaviour);
+  // The cannon shot Constellation 2 fires: a cannon hit of the burst's, on a circle of its own radius and hitmark
+  const constellation2CannonHit: KitHit = {
+    ...takeOne(cannonHits, 0),
+    hitArea: { ...takeOne(cannonHits, 0).hitArea, radius: CONSTELLATION_2_CANNON_RADIUS_METRES },
+    hitmarkSeconds: CONSTELLATION_2_CANNON_HITMARK_SECONDS,
+  };
+  // Constellation 2 on a press or hold's blade: its CRIT Rate for the shrapnel the shot consumed, and one cannon shot at the
+  // First enemy the blade strikes, which the shot's own flag allows once
+  const addConstellation2 = (surgingBladeHit: KitHit, consumedShrapnel: number): KitHit => {
+    let isCannonShotFired = false;
+    return {
+      ...surgingBladeHit,
+      criticalRateBonus:
+        CONSTELLATION_2_CRITICAL_RATE_PER_SHRAPNEL * Math.min(consumedShrapnel, CONSTELLATION_2_MAXIMUM_SHRAPNEL),
+      onStrike: (context, strike, enemy) => {
+        if (isCannonShotFired || enemy === undefined) return;
+        isCannonShotFired = true;
+        // The point is drawn over the disk about the enemy, its bearing first and then its distance, from the world's source
+        const bearing = context.random() * 2 * Math.PI;
+        const distance = CONSTELLATION_2_CANNON_OFFSET_METRES * Math.sqrt(context.random());
+        castKitSummon(
+          context.kitEffectState,
+          {
+            ...strike.body,
+            position: {
+              x: enemy.position.x + distance * Math.sin(bearing),
+              z: enemy.position.z + distance * Math.cos(bearing),
+            },
+          },
+          strike.combatant,
+          [constellation2CannonHit],
+        );
+      },
+    };
+  };
 
   // A shot fired spends the team's Crystal Shrapnel, keeping the excess past three for Constellation 6 as gcsim's shot does,
   // And fires the Surging Blade, unless its ICD still holds, which the kit sets on the shot and never clears early
@@ -98,32 +157,20 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
           secondsRemaining: UNDISCLOSED_DISTRIBUTION_CHANNELS_SECONDS,
         });
       const shrapnel = findKitStatus(kitEffectState.effects, characterId, SHRAPNEL_STATUS_ID);
+      const stacks = shrapnel?.stacks ?? 0;
+      const keptShrapnel =
+        combatant.constellationCount >= CONSTELLATION_6 ? Math.max(stacks - CONSTELLATION_6_KEPT_SHRAPNEL, 0) : 0;
       if (shrapnel) {
-        const keptShrapnel =
-          combatant.constellationCount >= CONSTELLATION_6
-            ? Math.max((shrapnel.stacks ?? 0) - CONSTELLATION_6_KEPT_SHRAPNEL, 0)
-            : 0;
         shrapnel.stacks = keptShrapnel;
         if (keptShrapnel === 0) shrapnel.secondsRemaining = 0;
       }
       if (!startKitCooldown(kitEffectState, characterId, ARKHE_ICD_STATUS_ID, arkheIcdSeconds)) return;
-      castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [surgingBladeHit]);
+      castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
+        combatant.constellationCount >= CONSTELLATION_2
+          ? addConstellation2(surgingBladeHit, stacks - keptShrapnel)
+          : surgingBladeHit,
+      ]);
     };
-
-  // A cannon hit gains a Crystal Shrapnel, at most once each cooldown of the burst's shrapnel group
-  const onCannonStrike = ({ kitEffectState }: KitContext, { combatant }: KitStrike): void => {
-    const { characterId } = combatant;
-    if (!startKitCooldown(kitEffectState, characterId, BURST_SHRAPNEL_ICD_STATUS_ID, burstShrapnelIcdSeconds)) return;
-    const stacks = countShrapnel(kitEffectState, characterId);
-    if (stacks < SHRAPNEL_MAX)
-      addKitStatus(kitEffectState, characterId, {
-        id: SHRAPNEL_STATUS_ID,
-        secondsRemaining: shrapnelSeconds,
-        stacks: stacks + 1,
-      });
-  };
-  const cannonHitBehaviour = { enemyStatus: createConstellation4Shred, onStrike: onCannonStrike };
-  const cannonHits = readHits("cannonFireSupportShots", cannonHitBehaviour);
 
   return {
     burst: {

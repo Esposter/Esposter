@@ -122,21 +122,49 @@ Hu Tao's Constellation 4 SHALL give each other deployed member 12% CRIT Rate for
 - **WHEN** a drain leaves her at 25% of her HP or under
 - **THEN** Hu Tao gains no CRIT Rate
 
-### Requirement: Raincutter's Waves on Landings
+### Requirement: Hu Tao's Constellation 6 Refuses a Fall
 
-Raincutter SHALL cast a wave of swords where the character on the field stands as a normal attack of that character lands, at most one wave a second, and not as the attack starts.
+Hu Tao's Constellation 6 SHALL leave her at 1 HP instead of none when a damage would take her to none, once in 60 seconds, and the refusal SHALL give her the CRIT Rate of the Constellation 6 requirement. Below Constellation 6, a damage that would take her to none SHALL take her down.
 
-#### Scenario: Raincutter's wave is cast as a normal attack lands, not as it starts
+#### Scenario: at constellation 6, a damage that would take Hu Tao to none leaves her at 1 HP
+
+- **GIVEN** Hu Tao is at Constellation 6 and standing
+- **WHEN** a damage would take her to none
+- **THEN** she is left at 1 HP, and she gains 100% CRIT Rate for 10 seconds
+
+#### Scenario: a second damage that would take Hu Tao to none within a minute takes her down
+
+- **GIVEN** Hu Tao's refusal was made less than 60 seconds ago
+- **WHEN** a damage would take her to none again
+- **THEN** she falls
+
+#### Scenario: below constellation 6, a damage that would take Hu Tao to none takes her down
+
+- **GIVEN** Hu Tao is below Constellation 6
+- **WHEN** a damage would take her to none
+- **THEN** she falls, and no CRIT Rate is gained
+
+### Requirement: Raincutter's Waves on Normal Attack Starts
+
+Raincutter SHALL cast a wave of swords where the character on the field stands as a normal attack of that character starts, at most one wave a second. A string's first strike SHALL cast its wave 7 frames on from its start, and a later strike's wave SHALL be cast as it starts.
+
+#### Scenario: a string's first strike casts its wave 7 frames after it starts
 
 - **GIVEN** Raincutter stands with Xingqiu on the team
-- **WHEN** a normal attack of the character on the field starts, and then lands
-- **THEN** no wave is cast at the start, and one wave of two swords is cast at the landing
+- **WHEN** the first normal attack of a string starts
+- **THEN** no wave is cast at the start, and one wave of two swords is cast 7 frames on
 
-#### Scenario: Raincutter's waves follow the field's normal attacks once a second
+#### Scenario: a later strike's wave is cast as it starts
+
+- **GIVEN** Raincutter stands, and its last wave was cast more than a second before
+- **WHEN** a later normal attack of the string starts
+- **THEN** a wave of swords is cast at once
+
+#### Scenario: Raincutter's waves follow the field's normal attack starts once a second
 
 - **GIVEN** Raincutter stands
-- **WHEN** normal attacks of the character on the field land, with one landing within the second of the last wave
-- **THEN** each landing outside the second casts a wave, and the landing within it casts none
+- **WHEN** normal attacks of the character on the field start, with one starting within the second of the last wave
+- **THEN** each start outside the second casts a wave, and the start within it casts none
 
 ### Requirement: Swap Ends Field Effect
 

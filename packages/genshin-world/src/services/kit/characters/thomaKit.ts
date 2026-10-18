@@ -6,10 +6,13 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element } from "#src/models/Element";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
+import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelayedKitEnergy";
+import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 // Measured: gcsim v2.47.2 (MIT) thoma/burst.go, thoma.go and shield.go, Fiery Collapse: for the burst's seconds, a normal
@@ -24,17 +27,24 @@ const FIERY_COLLAPSE_COOLDOWN_STATUS_ID = "thoma-fiery-collapse-cooldown";
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/asc.go
 const FLAMING_ASSAULT_ASCENSION = 4;
 const FLAMING_ASSAULT_MAX_HEALTH_SHARE = 0.022;
+// Measured: gcsim v2.47.2 (MIT) thoma/burst.go, Constellation 2 holds Crimson Ooyoroi for 18 seconds, three past its 15, and
+// Constellation 4 restores 15 energy to Thoma 8 frames into the burst, which a delayed energy gives as its status runs out
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/thoma/burst.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_OOYOROI_EXTRA_SECONDS = 3;
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_ENERGY = 15;
+const CONSTELLATION_4_ENERGY_SECONDS = 8 * FIXED_STEP_SECONDS;
+const CONSTELLATION_4_ENERGY_STATUS_ID = "thoma-c4-energy";
 
 export const THOMA_CHARACTER_ID = 10_000_050;
 
 // Thoma's behaviour: Blazing Blessing sets its shield as it starts and infuses his own attacks with Pyro, and Crimson
 // Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field starts,
 // At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing Blessing's may
-// Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive and his
-// constellations are not built yet
+// Hold. From Ascension 4 a Fiery Collapse adds a share of his Max HP to its DMG. His Ascension 1 passive is not built yet.
+// Constellations 2 and 4 are built, as the burst's seconds and its energy
 // Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give, not built
-// Constellation 2 needs Crimson Ooyoroi's duration extended by 3s, which the kit does not build
-// Constellation 4 needs Crimson Ooyoroi's cast to restore 15 Energy to Thoma, which the kit does not build
 // Constellation 6 needs a party-wide DMG bonus on each Blazing Barrier refresh, which the kit does not build
 export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const blazingBlessingShieldMaxHealthShare = readParameter("blazingBlessingShieldMaxHealthShare");
@@ -99,8 +109,17 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const ooyoroi = castKitSummon(kitEffectState, body, combatant, [], {
           onNormalAttackStart: (context) => setOffFieryCollapse(ooyoroi, context),
-          secondsRemaining: ooyoroiSeconds,
+          secondsRemaining:
+            combatant.constellationCount >= CONSTELLATION_2
+              ? ooyoroiSeconds + CONSTELLATION_2_OOYOROI_EXTRA_SECONDS
+              : ooyoroiSeconds,
         });
+        if (combatant.constellationCount >= CONSTELLATION_4)
+          delayKitEnergy(kitEffectState, combatant.characterId, {
+            energy: CONSTELLATION_4_ENERGY,
+            id: CONSTELLATION_4_ENERGY_STATUS_ID,
+            seconds: CONSTELLATION_4_ENERGY_SECONDS,
+          });
       },
     },
     // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its
@@ -121,5 +140,8 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
         });
       },
     },
+    // Constellation 4's energy goes to Thoma when its delay runs out
+    onKitEvent: (event, context, combatant) =>
+      collectDelayedKitEnergy(event, context, combatant, CONSTELLATION_4_ENERGY_STATUS_ID),
   };
 };

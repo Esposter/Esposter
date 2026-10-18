@@ -10,7 +10,6 @@
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000047, "path": "burst.hits.0.hitmarkFrames" }
   },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 14339 } },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 65 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
