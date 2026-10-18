@@ -3,6 +3,7 @@ import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewa
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
 import { describe, expect, test } from "vitest";
+import { takeOne } from "@esposter/shared";
 
 describe(toMails, () => {
   const REWARD_ID = 240002;
@@ -46,7 +47,7 @@ describe(toMails, () => {
 
     const { mails } = toMails([{ ...row, rewardId: REWARD_ID }], rewardMap);
 
-    expect(mails[0].items).toStrictEqual([{ itemId: ITEM_ID, quantity: 5 }]);
+    expect(takeOne(mails).items).toStrictEqual([{ itemId: ITEM_ID, quantity: 5 }]);
   });
 
   // A mail carrying a key the dump does not name is skipped and counted, not guessed at

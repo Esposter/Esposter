@@ -10,7 +10,7 @@ describe(readWeeklyBossDomains, () => {
   });
 });
 
-describe(weeklyBossDomainsSchema, () => {
+describe("weeklyBossDomainsSchema", () => {
   const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
 
   test("a weekly boss's levels are read as the domains dataset writes them", () => {

@@ -92,10 +92,10 @@ describe(createCharlotteKitBehaviour, () => {
       { ...charlotte, characterId: 3, regionId: "mondstadt" },
       { ...charlotte, characterId: 4 },
     ];
-    expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, team)).toStrictEqual([
+    expect(CHARLOTTE_KIT.getPassiveBonuses?.(charlotte, 1, [], team)).toStrictEqual([
       { amount: 0.05, attribute: Attribute.HealingBonus },
       { amount: 0.1, attribute: Attribute.CryoDamageBonus },
     ]);
-    expect(CHARLOTTE_KIT.getPassiveBonuses?.(createCharlotteCombatant(), 1, team)).toStrictEqual([]);
+    expect(CHARLOTTE_KIT.getPassiveBonuses?.(createCharlotteCombatant(), 1, [], team)).toStrictEqual([]);
   });
 });

@@ -13,6 +13,7 @@ import type { Party } from "#src/models/party/Party";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
+import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
@@ -119,6 +120,7 @@ export const useWorldDomains = ({
   setInventory,
   setWallet,
   unlockedLandmarks,
+  weaponDataMap,
   wallet,
 }: {
   adventureExp: Ref<number>;
@@ -143,6 +145,7 @@ export const useWorldDomains = ({
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
 }) => {
   const unlockedDomainEntrances = computed(() =>
@@ -436,7 +439,7 @@ export const useWorldDomains = ({
         addDroppedItem(
           bag,
           dropped,
-          getDroppedItemDefinition(dropped.itemId, nameText, materialDataMap, reliquaryPieceEntryMap),
+          getDroppedItemDefinition(dropped.itemId, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
         ).inventory,
       claim.inventory,
     );

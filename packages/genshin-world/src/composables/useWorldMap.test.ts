@@ -134,6 +134,7 @@ describe(useWorldMap, () => {
     landmarks: [statue, waypoint, domainEntrance],
     outcropPlaces: [],
     residents: [],
+    rivers: [],
     waterfalls: [],
   };
   const explorationAreas: ExplorationArea[] = [

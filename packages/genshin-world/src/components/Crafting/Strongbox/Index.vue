@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
-import type { CraftingStrongbox } from "#src/models/crafting/CraftingStrongbox";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickUp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -27,7 +27,7 @@ interface Props {
   names: Readonly<Record<string, string>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   // The strongboxes the offering makes, one for each set the player may choose
-  strongboxes: CraftingStrongbox[];
+  strongboxes: CraftingStrongboxData[];
   wallet: Wallet;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }

@@ -15,14 +15,14 @@ import { DataTexture, Texture } from "three";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("genshin-engine"), async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import("genshin-engine")>();
   return {
     ...actual,
-    createCharacterMaterial: vi.fn<typeof actual.createCharacterMaterial>(),
-    createPmxMesh: vi.fn<typeof actual.createPmxMesh>(),
-    createPmxTexture: vi.fn<typeof actual.createPmxTexture>(),
-    createPmxToonTexture: vi.fn<typeof actual.createPmxToonTexture>(),
-    parsePmx: vi.fn<typeof actual.parsePmx>(),
+    createCharacterMaterial: vi.fn(),
+    createPmxMesh: vi.fn(),
+    createPmxTexture: vi.fn(),
+    createPmxToonTexture: vi.fn(),
+    parsePmx: vi.fn(),
   };
 });
 

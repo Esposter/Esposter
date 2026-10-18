@@ -82,8 +82,8 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
   const context: GcgEffectContext = { duel, sideIndex: 0 };
   const zoneCard = createGcgZoneCard(cardId, module);
   const damage = module.modifyDamageDealt?.(context, { damageType: Element.Pyro, value: 2 }, zoneCard);
-  module.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard);
-  module.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard);
+  module.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, []);
+  module.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, []);
   return { damage, dice: takeOne(duel.sides, 0).dice, usedCardIds: takeOne(duel.sides, 0).usedCardIds };
 };
 
