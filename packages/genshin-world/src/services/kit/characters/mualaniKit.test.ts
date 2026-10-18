@@ -1,7 +1,12 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitNightsoulBurstEvent } from "#src/models/kit/KitNightsoulBurstEvent";
+import type { KitStrike } from "#src/models/kit/KitStrike";
+import type { Enemy } from "#src/models/enemy/Enemy";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -14,8 +19,8 @@ import { describe, expect, test } from "vitest";
 
 const MUALANI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MUALANI_CHARACTER_ID);
 
-const createMualaniCombatant = (constellationCount = 0): Combatant => ({
-  ascension: 0,
+const createMualaniCombatant = (constellationCount = 0, ascension = 0): Combatant => ({
+  ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: MUALANI_CHARACTER_ID,
   constellationCount,
@@ -24,6 +29,29 @@ const createMualaniCombatant = (constellationCount = 0): Combatant => ({
   level: 90,
 });
 const toFrames = (seconds: number) => Math.round(seconds * 60);
+const createNightsoulBurstEvent = (striker: Combatant): KitNightsoulBurstEvent => ({
+  enemy: {} as Enemy,
+  kind: KitEventKind.NightsoulBurst,
+  striker,
+});
+
+const getBoomsharkaBonus = (context: ReturnType<typeof createKitTestContext>, combatant: Combatant): number => {
+  const strike: KitStrike = {
+    attackTag: AttackTag.ElementalBurst,
+    body: context.body,
+    combatant,
+    hit: MUALANI_KIT.elementalBurst.hits[0] ?? {},
+  };
+  return (
+    MUALANI_KIT.getStrikeAdditiveBaseDamageBonus?.(
+      strike,
+      {} as Enemy,
+      context.party,
+      context.kitEffectState.effects,
+      context.characterIdCombatantMap,
+    ) ?? 0
+  );
+};
 
 describe(createMualaniKitBehaviour, () => {
   test("reads her three strikes, charged attack and plunges from her proud attack group", () => {
@@ -97,5 +125,38 @@ describe(createMualaniKitBehaviour, () => {
     expect(
       findKitStatus(context.kitEffectState.effects, MUALANI_CHARACTER_ID, NIGHTSOUL_BLESSING_STATUS_ID),
     ).toBeUndefined();
+  });
+
+  test("below Ascension 4 a Nightsoul Burst stacks nothing, so her burst adds no damage", () => {
+    expect.hasAssertions();
+    const combatant = createMualaniCombatant(0, 3);
+    const context = createKitTestContext(combatant);
+    for (let burst = 0; burst < 2; burst++)
+      MUALANI_KIT.onKitEvent?.(createNightsoulBurstEvent(combatant), context, combatant);
+    MUALANI_KIT.elementalBurst.onStart?.(context);
+
+    expect(getBoomsharkaBonus(context, combatant)).toBe(0);
+  });
+
+  test("from Ascension 4 each Nightsoul Burst adds a stack up to three, and her burst spends them at 0.15 of Max HP each", () => {
+    expect.hasAssertions();
+    const combatant = createMualaniCombatant(0, 4);
+    const context = createKitTestContext(combatant);
+    for (let burst = 0; burst < 4; burst++)
+      MUALANI_KIT.onKitEvent?.(createNightsoulBurstEvent(combatant), context, combatant);
+    MUALANI_KIT.elementalBurst.onStart?.(context);
+
+    expect(getBoomsharkaBonus(context, combatant)).toBeCloseTo(3 * 0.15 * 10_000);
+  });
+
+  test("a Nightsoul Burst after her burst's cast adds to the next burst's stacks, not to the damage this one spends", () => {
+    expect.hasAssertions();
+    const combatant = createMualaniCombatant(0, 4);
+    const context = createKitTestContext(combatant);
+    MUALANI_KIT.onKitEvent?.(createNightsoulBurstEvent(combatant), context, combatant);
+    MUALANI_KIT.elementalBurst.onStart?.(context);
+    MUALANI_KIT.onKitEvent?.(createNightsoulBurstEvent(combatant), context, combatant);
+
+    expect(getBoomsharkaBonus(context, combatant)).toBeCloseTo(0.15 * 10_000);
   });
 });
