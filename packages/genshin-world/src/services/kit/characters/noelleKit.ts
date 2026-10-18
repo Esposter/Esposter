@@ -16,7 +16,7 @@ import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -164,11 +164,10 @@ export const createNoelleKitBehaviour = ({
     burst: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         const hasMustBeSpotless = combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION;
-        const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+        const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         buffKitMember(kitEffectState, combatant.characterId, {
           amount:
-            sweepingTimeDefenseShare * buffedCombatant.attributes.defense +
-            (hasMustBeSpotless ? MUST_BE_SPOTLESS_DEFENSE_SHARE * buffedCombatant.attributes.defense : 0),
+            sweepingTimeDefenseShare * defense + (hasMustBeSpotless ? MUST_BE_SPOTLESS_DEFENSE_SHARE * defense : 0),
           attribute: Attribute.Attack,
           secondsRemaining: sweepingTimeSeconds,
           source: SWEEPING_TIME_SOURCE,
@@ -224,7 +223,7 @@ export const createNoelleKitBehaviour = ({
         element: Element.Cryo,
         health:
           DEVOTION_DEFENSE_MULTIPLIER *
-          getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes.defense,
+          getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap),
         secondsRemaining: DEVOTION_SECONDS,
       });
     },
@@ -233,7 +232,7 @@ export const createNoelleKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         // A skill restarts Ascension 4's count, as gcsim's skill does
         if (combatant.ascension >= ASCENSION_4) resetAscension4Count(kitEffectState, combatant.characterId);
-        const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
+        const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Geo,
           // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character
@@ -241,7 +240,7 @@ export const createNoelleKitBehaviour = ({
           ...(combatant.constellationCount >= TO_BE_CLEANED_CONSTELLATION && {
             explosion: { combatant, hit: toBeCleanedHit },
           }),
-          health: shieldFlatHealth + shieldDefenseShare * buffedCombatant.attributes.defense,
+          health: shieldFlatHealth + shieldDefenseShare * defense,
           secondsRemaining: shieldSeconds,
         });
       },

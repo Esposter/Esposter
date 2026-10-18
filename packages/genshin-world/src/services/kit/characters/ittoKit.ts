@@ -14,7 +14,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
-import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
+import { getKitDefense } from "#src/services/kit/effects/getKitDefense";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
@@ -143,9 +143,9 @@ export const createIttoKitBehaviour = ({
     // Exit deletes the burst's ATK and ATK SPD
     burst: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
-        const buffedCombatant = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         buffKitMember(kitEffectState, combatant.characterId, {
-          amount: royalDescentDefenseShare * buffedCombatant.attributes.defense,
+          amount:
+            royalDescentDefenseShare * getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           attribute: Attribute.Attack,
           isEndedOnSwap: true,
           secondsRemaining: royalDescentSeconds,
