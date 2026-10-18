@@ -5,22 +5,20 @@ import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import { toArtifactItemDefinition } from "#src/services/inventory/toArtifactItemDefinition";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A worn artifact's bag definition, rebuilt from its set's piece of its slot and rarity, since a worn piece keeps no item
-// Id of its own. A set holds one piece a slot, so the piece is the one matching both, and a set or piece the tables do not
-// Hold is refused
+// A worn artifact's bag definition, rebuilt from the piece of its set its item id names, since a set holds one piece
+// Per slot, rarity and starting minor affix count, and the artifact is the one it was rolled as. A set or piece the
+// Tables do not hold is refused
 export const getArtifactItemDefinition = (
-  { rarity, setId, slot }: Artifact,
+  { itemId, setId }: Artifact,
   reliquarySets: readonly ReliquarySetData[],
   names: Readonly<Record<string, string>>,
 ): ItemDefinition => {
-  const piece = reliquarySets
-    .find(({ id }) => id === setId)
-    ?.pieces.find((candidate) => candidate.slot === slot && candidate.rarity === rarity);
+  const piece = reliquarySets.find(({ id }) => id === setId)?.pieces.find((candidate) => candidate.itemId === itemId);
   if (!piece)
     throw new InvalidOperationError(
       Operation.Read,
       getArtifactItemDefinition.name,
-      `set ${setId} piece for ${slot} at rarity ${rarity}`,
+      `set ${setId} piece with item id ${itemId}`,
     );
   return toArtifactItemDefinition({ ...piece, setId }, names);
 };

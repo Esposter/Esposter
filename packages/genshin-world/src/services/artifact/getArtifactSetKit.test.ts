@@ -70,6 +70,7 @@ const createSetArtifacts = (setId: number, count: number): Artifact[] =>
   Array.from({ length: count }, () => ({
     experience: 0,
     isLocked: false,
+    itemId: 101,
     level: 0,
     mainAffix: Attribute.Health,
     minorAffixes: [],

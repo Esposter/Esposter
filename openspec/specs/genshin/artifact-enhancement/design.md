@@ -6,7 +6,7 @@ An artifact's attributes are summed by [character attributes](../character-attri
 
 ```mermaid
 flowchart TD
-  NEW["A drop's artifact: its slot, rarity and starting minor affixes"] --> MAIN["Main affix drawn from its slot's pool by weight"]
+  NEW["A drop's artifact: its item id, slot, rarity and starting minor affixes"] --> MAIN["Main affix drawn from its slot's pool by weight"]
   MAIN --> MINOR["Minor affixes drawn from the rarity's pool, the main affix and each one drawn left out"]
   FEED["Materials' EXP and fodder chosen"] --> MORA{"Mora for the materials and fodders' base EXP?"}
   MORA -->|"no, the caller checks first"| REFUSE["Refused, the bag untouched"]
@@ -21,7 +21,7 @@ flowchart TD
 
 - **A new artifact's main affix is drawn from its slot's pool.** The table gives each slot the attributes it may be, the circlet's flat ATK and HP among them, and the wiki's weights decide which of them roll: an attribute with no weight is never drawn. A Plume of Death is always flat ATK, and a Sands of Eon is one of its five percentages.
 - **Its minor affixes are drawn from the rarity's pool.** Each draw takes an attribute the artifact does not hold yet and is not its main affix, by weight, so a Plume may roll ATK% but never flat ATK. A minor affix's value is one of its tiers, every tier as likely as the next.
-- **A drop's starting minor affixes come from the drop.** The game's reliquary table gives each piece a variant for each starting count, and the drop that gives the piece chooses the variant. This page takes the count as its input and does not choose it.
+- **A drop's starting minor affixes come from the drop.** The game's reliquary table gives each piece of a set a variant for each starting count, each with its own item id, and the drop that gives the piece chooses the variant. The artifact keeps that item id, so a worn one goes back to the bag as the same variant. This page takes the count as its input and does not choose it.
 - **Enhancing costs a Mora a point, and the fodder's share costs none.** The Mora is the materials' EXP and each fodder's base EXP. A fodder gives its rarity's base EXP and 80% of what it was levelled with, rounded down, and that recovered share is free. `getEnhancementMoraCost` gives the Mora and the caller refuses the enhancement when the wallet holds less, leaving the bag as it was.
 - **The EXP is multiplied by a bonus drawn on each enhancement.** One time in a hundred it is multiplied by five, nine times in a hundred by two, and otherwise it stands. The draw comes from the world's seeded random source.
 - **Levels follow the table's costs, and EXP past the top is lost.** A level's cost is the table's EXP for it, the artifact levels as far as its total EXP reaches, and EXP beyond its highest level is wasted.
@@ -112,12 +112,12 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 
 | File                                                                                             | Role                                                                                                           |
 | :----------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/artifact/Artifact.ts`                                         | Gains its EXP and its lock                                                                                     |
+| `packages/genshin-world/src/models/artifact/Artifact.ts`                                         | Gains its EXP, its lock and its piece's item id                                                                |
 | `packages/genshin-world/src/models/artifact/ArtifactRarityData.ts`                               | A rarity's levels, costs, fodder base, affix levels and groups                                                 |
 | `packages/genshin-world/src/models/artifact/ArtifactMainAffixPool.ts`                            | A slot's main affix pool                                                                                       |
 | `packages/genshin-world/src/models/artifact/ArtifactExpMaterial.ts`                              | An item's EXP                                                                                                  |
 | `packages/genshin-world/src/services/artifact/constants.ts`                                      | The recovery rate, the EXP bonus and the wiki's weights                                                        |
-| `packages/genshin-world/src/services/artifact/rollArtifact.ts`                                   | A drop's artifact: main affix and minor affixes                                                                |
+| `packages/genshin-world/src/services/artifact/rollArtifact.ts`                                   | A drop's artifact: its item id, main affix and minor affixes                                                   |
 | `packages/genshin-world/src/services/artifact/enhanceArtifact.ts`                                | Feeding EXP, the bonus, levels and the affix levels passed                                                     |
 | `packages/genshin-world/src/services/artifact/enhanceMinorAffixes.ts`                            | The minor affix added or raised at an affix level                                                              |
 | `packages/genshin-world/src/services/artifact/getFodderEnhancement.ts`                           | A fodder's EXP and Mora, refusing a locked artifact                                                            |

@@ -25,6 +25,7 @@ describe(getFodderEnhancement, () => {
   const fodder: Artifact = {
     experience: 100,
     isLocked: false,
+    itemId: 101,
     level: 0,
     mainAffix: Attribute.Attack,
     minorAffixes: [],

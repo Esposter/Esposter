@@ -24,6 +24,7 @@ const createRarityData = (rarity: number, baseExperience: number): ArtifactRarit
 const createArtifact = (rarity: number, level: number, experience = 0, isLocked = false): Artifact => ({
   experience,
   isLocked,
+  itemId: 101,
   level,
   mainAffix: Attribute.Attack,
   minorAffixes: [],

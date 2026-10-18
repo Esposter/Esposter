@@ -8,6 +8,7 @@ import { describe, expect, test } from "vitest";
 describe(rollArtifact, () => {
   const RARITY = 5;
   const SET_ID = 1;
+  const ITEM_ID = 101;
   const rarityData: ArtifactRarityData = {
     affixLevels: [4],
     baseExperience: 100,
@@ -26,10 +27,11 @@ describe(rollArtifact, () => {
     expect.hasAssertions();
 
     expect(
-      rollArtifact({ mainAffixPool, minorAffixCount: 2, random: () => 0, rarityData, setId: SET_ID }),
+      rollArtifact({ itemId: ITEM_ID, mainAffixPool, minorAffixCount: 2, random: () => 0, rarityData, setId: SET_ID }),
     ).toStrictEqual({
       experience: 0,
       isLocked: false,
+      itemId: ITEM_ID,
       level: 0,
       mainAffix: Attribute.Attack,
       minorAffixes: [
@@ -46,7 +48,14 @@ describe(rollArtifact, () => {
     expect.hasAssertions();
 
     expect(
-      rollArtifact({ mainAffixPool, minorAffixCount: 1, random: () => 0.99, rarityData, setId: SET_ID }).minorAffixes,
+      rollArtifact({
+        itemId: ITEM_ID,
+        mainAffixPool,
+        minorAffixCount: 1,
+        random: () => 0.99,
+        rarityData,
+        setId: SET_ID,
+      }).minorAffixes,
     ).toStrictEqual([{ attribute: Attribute.CriticalRate, value: 4 }]);
   });
 });

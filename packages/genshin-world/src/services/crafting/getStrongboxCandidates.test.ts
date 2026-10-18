@@ -28,6 +28,7 @@ const definition = getDroppedItemDefinition(
 const createArtifact = (rarity: number, isLocked: boolean): Artifact => ({
   experience: 0,
   isLocked,
+  itemId: 101,
   level: 0,
   mainAffix: Attribute.Health,
   minorAffixes: [],

@@ -9,6 +9,7 @@ import { describe, expect, test } from "vitest";
 const createArtifact = (level: number, rarity: number): Artifact => ({
   experience: 0,
   isLocked: false,
+  itemId: 101,
   level,
   mainAffix: Attribute.HealthPercent,
   minorAffixes: [],

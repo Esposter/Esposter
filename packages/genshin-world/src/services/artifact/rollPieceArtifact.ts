@@ -6,8 +6,8 @@ import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityD
 import { rollArtifact } from "#src/services/artifact/rollArtifact";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The artifact a piece of a set is rolled as when it drops: its stats roll from its slot's main affix pool and its rarity's
-// Data, with the piece's starting minor affixes, and the piece's item id names it
+// The artifact a piece of a set is rolled as when it drops: its stats roll from its slot's main affix pool and its
+// Rarity's data, with the piece's starting minor affixes, and the piece's item id names it
 export const rollPieceArtifact = (
   setId: number,
   piece: ReliquaryPieceData,
@@ -21,6 +21,7 @@ export const rollPieceArtifact = (
   if (mainAffixPool === undefined)
     throw new InvalidOperationError(Operation.Read, rollPieceArtifact.name, `no main affix pool for ${piece.slot}`);
   const artifact = rollArtifact({
+    itemId: piece.itemId,
     mainAffixPool,
     minorAffixCount: piece.startingMinorCount,
     random,

@@ -75,6 +75,7 @@ describe(rollChestDrops, () => {
         artifact: {
           experience: 0,
           isLocked: false,
+          itemId: createPieceItemId(LOW_SET_A_ID, 0, 1, 0),
           level: 0,
           mainAffix: Attribute.CriticalRate,
           minorAffixes: [],
@@ -94,6 +95,7 @@ describe(rollChestDrops, () => {
         artifact: {
           experience: 0,
           isLocked: false,
+          itemId: createPieceItemId(LOW_SET_B_ID, SLOTS.length - 1, 2, 1),
           level: 0,
           mainAffix: Attribute.ElementalMastery,
           minorAffixes: [{ attribute: Attribute.Defense, value: 20 }],
@@ -118,6 +120,7 @@ describe(rollChestDrops, () => {
         artifact: {
           experience: 0,
           isLocked: false,
+          itemId: createPieceItemId(HIGH_SET_ID, SLOTS.length - 1, 3, 2),
           level: 0,
           mainAffix: Attribute.ElementalMastery,
           minorAffixes: [

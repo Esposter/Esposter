@@ -135,6 +135,7 @@ const LONGEST_CHARACTER_SAVE = {
   artifacts: Array.from({ length: Object.values(ArtifactSlot).length }, () => ({
     experience: MAX_SAVE_NUMBER,
     isLocked: true,
+    itemId: MAX_SAVE_NUMBER,
     level: MAX_SAVE_NUMBER,
     mainAffix: LONGEST_ATTRIBUTE,
     minorAffixes: Array.from({ length: MAX_MINOR_AFFIX_COUNT }, () => ({

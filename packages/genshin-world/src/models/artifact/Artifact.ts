@@ -9,10 +9,13 @@ import { z } from "zod";
 
 // An artifact the player has: the set and the piece it is, its rarity in stars and its enhancement level from 0, the
 // Attribute its main affix raises, at the value its rarity and level give, and its up to four minor affixes, each at
-// The value its rolls summed to. Its experience is every EXP it has been levelled with, and a locked one is never fodder
+// The value its rolls summed to. Its experience is the EXP it has been levelled with, and a locked one is never fodder.
+// Its item id names the piece of its set it was rolled as, since a set holds one piece per starting minor affix count,
+// So a worn artifact goes back to the bag as the same item
 export interface Artifact {
   experience: number;
   isLocked: boolean;
+  itemId: number;
   level: number;
   mainAffix: Attribute;
   minorAffixes: AttributeLine[];
@@ -25,6 +28,7 @@ export interface Artifact {
 export const artifactSchema = z.object({
   experience: z.int().nonnegative(),
   isLocked: z.boolean(),
+  itemId: z.int().positive(),
   level: z.int().nonnegative(),
   mainAffix: z.enum(Attribute),
   minorAffixes: createUniqueArraySchema(attributeLineSchema, "attribute").max(MAX_MINOR_AFFIX_COUNT),
