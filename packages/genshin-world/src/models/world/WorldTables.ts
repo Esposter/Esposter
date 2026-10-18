@@ -39,6 +39,8 @@ export interface WorldTables {
   hudInterfaceRects: HudInterfaceRects;
   // The game's material table by item id, which every item the bag takes in is defined from
   materialDataMap: ReadonlyMap<number, MaterialData>;
+  // The Elemental Monuments of Mondstadt, each lit by its element in the world
+  monumentPlaces: PuzzlePlace[];
   // The game's names in the reader's language, by their text ids, which the bag and the pick ups read their names from
   nameText: Readonly<Record<string, string>>;
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests

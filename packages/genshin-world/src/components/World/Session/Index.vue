@@ -155,6 +155,7 @@ const {
   keepAccountCharacterPack,
   language,
   materialDataMap,
+  monumentPlaces,
   nameText,
   qualityTier,
   regionDataBaseUrl,
@@ -384,14 +385,16 @@ const {
   setWallet,
   wallet,
 });
-// The Seelies of Mondstadt and the Time Trial Challenges, each led or started by the player and settled or solved where the save
-// Names it, with the chests they spawn
-const { puzzleChestPlaces, puzzleSeelies, settledSeelieIds, solvedPuzzleIds, stepWorldPuzzles } = useWorldPuzzles({
-  savedSettledSeelieIds: savedState.settledSeelieIds,
-  savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
-  seelies,
-  timeTrialPlaces,
-});
+// The Elemental Monuments of Mondstadt, the Seelies and the Time Trial Challenges, each lit, led or started by the player,
+// And each settled or solved where the save names it, with the chests they spawn
+const { puzzleChestPlaces, puzzleSeelies, settledSeelieIds, solvedPuzzleIds, stepWorldPuzzles, strikeWorldPuzzles } =
+  useWorldPuzzles({
+    monumentPlaces,
+    savedSettledSeelieIds: savedState.settledSeelieIds,
+    savedSolvedPuzzleIds: savedState.solvedPuzzleIds,
+    seelies,
+    timeTrialPlaces,
+  });
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, digChestById, openChestById } = useWorldChests({
   events,
@@ -941,6 +944,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @clear-kit-effects="clearKitEffects()"
           @drown="respawnParty()"
           @strike-ore="(body, hit) => strikeGatheringOres(body, hit, kitContext.random)"
+          @strike-puzzle="(body, hit) => strikeWorldPuzzles(body, hit)"
         />
         <WorldFreeCamera
           v-if="!witness && screenKind === ScreenKind.PhotoMode && isTuning"

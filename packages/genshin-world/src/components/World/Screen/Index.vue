@@ -93,6 +93,7 @@ getResultAsync(() =>
       frostbearingTreePlaces,
       hudInterfaceRects,
       materialDataMap,
+      monumentPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.ElementalMonument),
       nameText,
       seelies: pairSeelieCourts(
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
