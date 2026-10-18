@@ -66,3 +66,12 @@ export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   WeaponType.Polearm,
   WeaponType.Sword,
 ]);
+// The Polestar Field a Stellar-Conduct leaves round the body, 15 metres in radius, as the wiki and gcsim give it
+export const POLESTAR_FIELD_RADIUS = 15;
+// The seconds a Polestar Field stands for, and a Stellar-Conduct refreshes it to. The wiki gives 7 seconds where gcsim
+// Gives 6 (sscFieldDur in v2.47.2): the wiki's is kept, provisional until a recording of the field reads it
+export const POLESTAR_FIELD_SECONDS = 7;
+// A Polestar Field's schedule, every 4 seconds, the wiki's and gcsim's think interval (sscThinkInterval)
+export const POLESTAR_FIELD_TICK_SECONDS = 4;
+// The id a Polestar Field is found by, so a standing one is refreshed rather than a second placed
+export const POLESTAR_FIELD_ID = "polestar";

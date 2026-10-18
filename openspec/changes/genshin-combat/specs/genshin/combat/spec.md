@@ -71,7 +71,7 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 #### Scenario: a Stellar-Conduct sustains its Polestar Field for 7 seconds
 
 - **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
-- **THEN** a Polestar Field of radius 15 stands at the reaction's position for 7 seconds
+- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player (`stellarconduct_gadget.go`), placed by the reaction path for any enabler
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 

@@ -19,6 +19,7 @@ import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
+import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
@@ -99,6 +100,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       healKitStriker(context, combatant, pricedCombatant, hit);
       hit.onStrike?.(context, strike);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, hit);
+      addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
       if (reactions.length > 0)
         emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant }, context);
       emitKitEvent(
