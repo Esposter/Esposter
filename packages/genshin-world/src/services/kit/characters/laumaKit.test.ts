@@ -1,17 +1,31 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { ReactionType } from "#src/models/combat/ReactionType";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createLaumaKitBehaviour, LAUMA_CHARACTER_ID } from "#src/services/kit/characters/laumaKit";
+import {
+  createLaumaKitBehaviour,
+  LAUMA_CHARACTER_ID,
+  LAUMA_PALE_HYMN_BURST_ID,
+  LAUMA_PALE_HYMN_MOON_SONG_ID,
+} from "#src/services/kit/characters/laumaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -185,5 +199,117 @@ describe("cleansing for the Spring", () => {
     );
 
     expect(sanctuary.attackTag).toBe(AttackTag.ElementalSkill);
+  });
+});
+
+// The kit seconds stepped through the team's effects, each one that runs out emitted to the kits as it is in play
+const stepLaumaSeconds = (context: KitContext, seconds: number): void => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
+};
+
+const countPaleHymn = (context: KitContext, id: string): number =>
+  countKitResource(context.kitEffectState.effects, LAUMA_CHARACTER_ID, id);
+
+// Hymn of Eternal Rest's hold, which spends the party's Dew as it starts
+const castEternalRest = (context: KitContext): void => {
+  takeOne(LAUMA_KIT.elementalSkillHolds ?? [], 0).variant?.action.onStart?.(context);
+};
+
+// A reaction of the given kind triggered on an enemy by the active combatant
+const triggerReaction = (context: KitContext, reactionType: ReactionType): void => {
+  emitKitEvent(
+    {
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ reactionType }],
+      striker: context.activeCombatant,
+    },
+    context,
+  );
+};
+
+describe("pale hymn", () => {
+  test("her burst gives the team 18 Pale Hymn 96 frames after it starts, which last 15 seconds", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCombatant(0));
+    LAUMA_KIT.elementalBurst.onStart?.(context);
+
+    stepLaumaSeconds(context, toKitSeconds(95));
+    const beforeGain = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
+    stepLaumaSeconds(context, toKitSeconds(1));
+    const atGain = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
+    stepLaumaSeconds(context, 14);
+    const during = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
+    stepLaumaSeconds(context, 2);
+    const after = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
+
+    expect({ after, atGain, beforeGain, during }).toStrictEqual({ after: 0, atGain: 18, beforeGain: 0, during: 18 });
+  });
+
+  test("dew spent by Hymn of Eternal Rest during her burst gives Moon Song six Pale Hymn a Dew, once in each burst", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCombatant(0));
+    LAUMA_KIT.elementalBurst.onStart?.(context);
+    stepLaumaSeconds(context, toKitSeconds(96));
+
+    context.party.verdantDew.count = 2;
+    castEternalRest(context);
+    const firstMoonSong = countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID);
+    context.party.verdantDew.count = 1;
+    castEternalRest(context);
+
+    expect({ firstMoonSong, secondMoonSong: countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID) }).toStrictEqual({
+      firstMoonSong: 12,
+      secondMoonSong: 12,
+    });
+  });
+
+  test("dew spent before her burst waits for it, and gives Moon Song six Pale Hymn a Dew when the burst gains its own", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCombatant(0));
+    context.party.verdantDew.count = 1;
+    castEternalRest(context);
+    const beforeBurst = countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID);
+
+    LAUMA_KIT.elementalBurst.onStart?.(context);
+    stepLaumaSeconds(context, toKitSeconds(96));
+
+    expect({ beforeBurst, moonSong: countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID) }).toStrictEqual({
+      beforeBurst: 0,
+      moonSong: 6,
+    });
+  });
+
+  test("a Bloom or Lunar-Bloom reaction spends a Pale Hymn, Moon Song's first, and a reaction of another kind spends none", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createCombatant(0));
+    LAUMA_KIT.elementalBurst.onStart?.(context);
+    stepLaumaSeconds(context, toKitSeconds(96));
+    context.party.verdantDew.count = 1;
+    castEternalRest(context);
+    const snapshot = () => ({
+      burst: countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID),
+      moonSong: countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID),
+    });
+
+    triggerReaction(context, TransformativeReactionType.Overloaded);
+    const afterOverloaded = snapshot();
+    triggerReaction(context, TransformativeReactionType.Bloom);
+    triggerReaction(context, LunarReactionType.LunarBloom);
+    const afterBloomAndLunarBloom = snapshot();
+    for (let reactionIndex = 0; reactionIndex < 4; reactionIndex++)
+      triggerReaction(context, TransformativeReactionType.Bloom);
+    const afterMoonSongIsSpent = snapshot();
+    triggerReaction(context, TransformativeReactionType.Bloom);
+
+    expect({ afterBloomAndLunarBloom, afterMoonSongIsSpent, afterOneMore: snapshot(), afterOverloaded }).toStrictEqual({
+      afterBloomAndLunarBloom: { burst: 18, moonSong: 4 },
+      afterMoonSongIsSpent: { burst: 18, moonSong: 0 },
+      afterOneMore: { burst: 17, moonSong: 0 },
+      afterOverloaded: { burst: 18, moonSong: 6 },
+    });
   });
 });
