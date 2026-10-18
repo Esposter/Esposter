@@ -109,6 +109,7 @@ catalog:
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.1
   "@types/js-beautify": ^1.14.3
+  "@types/mjml": ^5.0.0
   "@types/node": ^26.6.5
   "@types/sax": ^1.2.7
   "@types/three": ^0.186.0
@@ -193,6 +194,8 @@ catalog:
   mathjs: ^15.2.0
   mime-db: ^1.54.0
   minisearch: ^7.2.0
+  mjml: ^5.4.1
+  mjml-preset-core: ^5.4.1
   mlly: ^1.8.2
   # @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
   # Remove this dependency when Nitro resolves the alias from Nuxt (nuxt/nuxt)

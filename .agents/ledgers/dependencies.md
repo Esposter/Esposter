@@ -79,6 +79,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@trpc/server`                          | —                     | Keep — framework  | the API layer                                                                                          |
 | `@tsdown/css`                           | —                     | Keep — tooling    | tsdown's CSS handling                                                                                  |
 | `@types/js-beautify`                    | —                     | Keep — types      | declarations for `js-beautify`                                                                         |
+| `@types/mjml`                           | —                     | Keep — types      | declarations for `mjml`                                                                                |
 | `@types/node`                           | —                     | Keep — types      | declarations for `node`                                                                                |
 | `@types/sax`                            | —                     | Keep — types      | declarations for `sax`                                                                                 |
 | `@types/three`                          | —                     | Keep — types      | declarations for `three`                                                                               |
@@ -161,6 +162,8 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `mathjs`                                | —                     | Keep — engine     | the expression engine                                                                                  |
 | `mime-db`                               | —                     | Keep — data       | the IANA-derived dataset our `@esposter/shared` lookup reads, which changes without us                 |
 | `minisearch`                            | —                     | Keep — engine     | the search index                                                                                       |
+| `mjml`                                  | —                     | Keep — engine     | the MJML compiler, which mjml-blocks' tests compile under strict validation                            |
+| `mjml-preset-core`                      | —                     | Keep — data       | MJML's component set and nesting map, which mjml-blocks' tables and slots are held equal to            |
 | `mlly`                                  | —                     | Keep — tooling    | the static export reader the module lists a package's exports with, never importing it                 |
 | `mocked-exports`                        | —                     | Keep — hold       | Nitro 3 resolves it from the app (`@TODO` in the catalog)                                              |
 | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |
