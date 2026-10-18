@@ -20,6 +20,7 @@ const quest = (id: string): Quest => ({
   kind: QuestKind.World,
   mainId: id,
   offerTalkIds: [],
+  parentQuestIds: [],
   rewards: [],
   steps: [],
   talks: [],

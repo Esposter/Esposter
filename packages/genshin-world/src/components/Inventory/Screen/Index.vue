@@ -27,6 +27,7 @@ import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { InventorySortGameTextKeyMap } from "#src/services/inventory/InventorySortGameTextKeyMap";
 import { ItemCategoryGameTextKeyMap } from "#src/services/inventory/ItemCategoryGameTextKeyMap";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
+import { toggleInventoryArtifactLock } from "#src/services/inventory/toggleInventoryArtifactLock";
 import { GameScreen, InventoryScreen, InventorySort, ItemCategories, ItemCategory } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
@@ -126,6 +127,8 @@ const cells = computed((): InventoryCell[] => {
       id: String(id),
       isDestroyable: checkIsInventoryItemDestroyable(item) || undefined,
       isEquipable: equipableGadgetIds.value.has(item.definition.id) || undefined,
+      isLockable: item.artifact ? true : undefined,
+      isLocked: item.artifact?.isLocked || undefined,
       isSelected: chosenIds.value.includes(String(id)) || undefined,
       isUsable: checkIsInventoryItemUsable(item, { cookingProgress, dishUseMap, instructionRecipeMap }) || undefined,
       name,
@@ -175,6 +178,8 @@ const quickUse = (id: string) => {
   const gadget = gadgetRows.find(({ id: gadgetId }) => gadgetId === item?.definition.id);
   if (gadget) emit("update:inventory", equipGadget(inventory, gadget));
 };
+// The bag with the artifact of the entry locked or unlocked, which keeps it out of fodder
+const toggleLock = (id: string) => emit("update:inventory", toggleInventoryArtifactLock(inventory, Number(id)));
 const chooseCell = (id: string) => {
   chosenIds.value = chosenIds.value.includes(id)
     ? chosenIds.value.filter((chosenId) => chosenId !== id)
@@ -238,18 +243,21 @@ const currencies = computed(() =>
       :is-confirming="isConfirming || undefined"
       :is-destroying="isDestroying || undefined"
       :is-sortable="EQUIPMENT_CATEGORIES.includes(category) || undefined"
+      :lock-label="gameText[GameTextKey.ArtifactActionLock]"
       :order-label="gameText[isDescending ? GameTextKey.SortDescending : GameTextKey.SortAscending]"
       :quick-selects
       :quick-use-label="gameText[GameTextKey.InventoryQuickUseGadget]"
       :sort-labels
       :tab-labels
       :title="gameText[GameTextKey.Inventory]"
+      :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
       :use-label="gameText[GameTextKey.InventoryUse]"
       @cancel-destroy="isConfirming = false"
       @choose="(id) => chooseCell(id)"
       @close="emit('close')"
       @confirm-destroy="confirmDestroy()"
       @destroy="isConfirming = true"
+      @lock="(id) => toggleLock(id)"
       @quick-select="(rarity) => quickSelect(rarity)"
       @quick-use="(id) => quickUse(id)"
       @toggle-destroy="toggleDestroy()"

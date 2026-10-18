@@ -1,8 +1,13 @@
+import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import {
+  buildKitRecordWithDonors,
+  readDonorRecordMap,
+} from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import {
   GCSIM_PLUNGE_FALLBACK_FOLDER,
   GCSIM_TAG,
@@ -13,8 +18,7 @@ import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/ge
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
-import { readKitOverlay, readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
-import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
+import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitOverlay";
@@ -55,11 +59,15 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
   const ruleCauses: string[] = [];
   const gapLines: string[] = [];
   let gapCount = 0;
+  const inputMap = new Map(inputs.map((input): [number, KitInput] => [input.characterId, input]));
+  const builtMap = new Map<number, BuiltKit>();
   for (const {
+    characterId,
     gcsimFolder,
     name,
     namedHitCandidateMap,
     notes,
+    overlay: committedOverlay,
     overlayName,
     publishedRecord,
     sourceCandidateMap,
@@ -70,26 +78,25 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       failureLines.push(`  ${name}: has no published kit to compare`);
       continue;
     }
-    const { committedOverlay, gapPaths, overlayFailures } = getResult(() => readKitOverlay(overlayName)).match(
-      (overlay) =>
-        getResult(() =>
-          buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables.talentGroupIdMap),
-        ).match(
-          ({ record }) => ({
-            committedOverlay: overlay,
-            gapPaths: getMismatchedKitPaths(record, publishedRecord),
-            overlayFailures: [],
-          }),
-          (error) => ({
-            committedOverlay: overlay,
-            gapPaths: [],
-            overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
-          }),
-        ),
+    // A borrowed value is seeded from its donor's record, so a kit whose donor fails to build is reported, not seeded
+    const donorRecordResult = getResult(() => readDonorRecordMap(characterId, committedOverlay, inputMap, builtMap));
+    if (donorRecordResult.isErr()) {
+      failureLines.push(
+        `  ${name}: a donor of its committed overlay fails to build: ${donorRecordResult.error.message.split("\n")[0]}`,
+      );
+      continue;
+    }
+    const donorRecordMap = donorRecordResult.value;
+    const { gapPaths, overlayFailures } = getResult(() =>
+      buildKitRecordWithDonors(characterId, inputMap, builtMap),
+    ).match(
+      ({ record }) => ({
+        gapPaths: getMismatchedKitPaths(record, publishedRecord, tables.talentMultiplierMap),
+        overlayFailures: [] as string[],
+      }),
       (error) => ({
-        committedOverlay: {},
-        gapPaths: [],
-        overlayFailures: [`the committed overlay fails to read: ${error.message.split("\n")[0]}`],
+        gapPaths: [] as string[],
+        overlayFailures: [`the committed overlay fails to build: ${error.message.split("\n")[0]}`],
       }),
     );
     gapCount += gapPaths.length;
@@ -113,8 +120,9 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       mainCandidateMap,
       isTagPredated,
       committedOverlay,
+      donorRecordMap,
       namedHitCandidateMap,
-      tables.talentGroupIdMap,
+      tables,
     );
     const overlayPath = join(KIT_OVERLAY_DIRECTORY, `${overlayName}.json`);
     const entries = Object.entries(overlay);

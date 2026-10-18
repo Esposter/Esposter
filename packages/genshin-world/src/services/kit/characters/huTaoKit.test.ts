@@ -1,3 +1,4 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -185,7 +186,7 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 4 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [], [])).toStrictEqual([
       { amount: 0.33, attribute: Attribute.PyroDamageBonus },
     ]);
   });
@@ -194,7 +195,7 @@ describe("sanguine Rouge", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), ascension: 3 };
 
-    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [])).toStrictEqual([]);
+    expect(HU_TAO_KIT.getPassiveBonuses?.(combatant, 0.5, [], [])).toStrictEqual([]);
   });
 });
 
@@ -254,5 +255,118 @@ describe("spirit Soother", () => {
     strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
+  });
+});
+
+describe("constellation 4 and 6", () => {
+  const TEAMMATE_CHARACTER_ID = 1;
+  const BLOOD_BLOSSOM: EnemyStatus = {
+    damageTakenBonus: 0,
+    id: "hu-tao-blood-blossom",
+    nextTickSeconds: 1,
+    secondsRemaining: 10,
+    tickIntervalSeconds: 1,
+  };
+
+  // The CRIT Rate buffs on the party after an enemy with the given statuses is defeated at a constellation
+  const defeatEnemy = (constellationCount: number, statuses: EnemyStatus[]) => {
+    const combatant = { ...createHuTaoCombatant(), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, {
+      kitEffectState,
+      party: createParty([HU_TAO_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses };
+    HU_TAO_KIT.onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: combatant }, context, combatant);
+    return kitEffectState.effects.filter(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+    );
+  };
+
+  // The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of her Max HP
+  const drainHuTao = (constellationCount: number, healthShare: number, drains = 1) => {
+    const combatant = { ...createHuTaoCombatant(), constellationCount };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(healthShare) });
+    for (let drain = 0; drain < drains; drain++)
+      HU_TAO_KIT.onKitEvent?.(
+        {
+          characterId: HU_TAO_CHARACTER_ID,
+          healthShare: -0.1,
+          kind: KitEventKind.HealthChanged,
+          overflowHealthShare: 0,
+        },
+        context,
+        combatant,
+      );
+    return kitEffectState.effects.filter(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+    );
+  };
+
+  test("at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate for 15 seconds", () => {
+    expect.hasAssertions();
+
+    expect(defeatEnemy(4, [BLOOD_BLOSSOM])).toStrictEqual([
+      {
+        amount: 0.12,
+        attribute: Attribute.CriticalRate,
+        characterId: TEAMMATE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 15,
+        source: "hu-tao-c4",
+      },
+    ]);
+  });
+
+  test("defeating an enemy that Blood Blossom did not mark gives no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(defeatEnemy(4, [])).toStrictEqual([]);
+  });
+
+  test("defeating an enemy whose Blood Blossom has run out gives no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(defeatEnemy(4, [{ ...BLOOD_BLOSSOM, secondsRemaining: 0 }])).toStrictEqual([]);
+  });
+
+  test("below constellation 4, defeating an enemy Blood Blossom marked gives no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(defeatEnemy(3, [BLOOD_BLOSSOM])).toStrictEqual([]);
+  });
+
+  test("at constellation 6, a drop to 25% HP or less sets Hu Tao's CRIT Rate to 100% for 10 seconds", () => {
+    expect.hasAssertions();
+
+    expect(drainHuTao(6, 0.25)).toStrictEqual([
+      {
+        amount: 1,
+        attribute: Attribute.CriticalRate,
+        characterId: HU_TAO_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: "hu-tao-c6",
+      },
+    ]);
+  });
+
+  test("above 25% HP, a drop gives Hu Tao no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(drainHuTao(6, 0.5)).toStrictEqual([]);
+  });
+
+  test("a second drop to 25% HP within 60 seconds gives Hu Tao no more CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(drainHuTao(6, 0.2, 2)).toHaveLength(1);
+  });
+
+  test("below constellation 6, a drop to 25% HP or less gives Hu Tao no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect(drainHuTao(5, 0.2)).toStrictEqual([]);
   });
 });

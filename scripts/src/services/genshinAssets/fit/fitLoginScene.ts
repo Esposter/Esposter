@@ -44,7 +44,10 @@ const CLOUD_LAYER_MATERIAL_SETTING_MAP = {
 // The login scene's parts fitted as our own kits' parameters, each a record under `login/`, with its interface's rects
 // And clips and the rows its script scrolls them in: each copied spawn's count and the length of its step, by its
 // Prefab, its music, whose fit's report is its note, and its sounds. Its title logos are a record each, by their logo
-export const fitLoginScene = async (only: readonly string[] = []): Promise<GameDataBuild> => {
+export const fitLoginScene = async (
+  only: readonly string[],
+  options: { isDryRun: boolean },
+): Promise<GameDataBuild> => {
   const directory = getComponentDirectory(DerivedAssetComponent.Login);
   const placements = await readComponentPlacements(DerivedAssetComponent.Login);
   const meshDirectory = join(directory.assets, AssetType.Mesh);
@@ -145,5 +148,5 @@ export const fitLoginScene = async (only: readonly string[] = []): Promise<GameD
       objects: { "login/walkway": await fitLoginWalkway(placements, meshDirectory) },
     }),
   };
-  return runFits(fits, only);
+  return runFits(fits, only, options);
 };

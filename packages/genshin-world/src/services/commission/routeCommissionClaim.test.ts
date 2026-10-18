@@ -97,7 +97,11 @@ describe(routeCommissionClaim, () => {
         { ...CHARACTER, id: TRAVELER_CHARACTER_ID },
         { ...CHARACTER, friendshipExp: COMPANIONSHIP_EXP },
       ],
-      inventory: { items: [{ definition: ITEM_DEFINITION, id: 0, quantity: ITEM_COUNT }], nextId: 1 },
+      inventory: {
+        items: [{ definition: ITEM_DEFINITION, id: 0, quantity: ITEM_COUNT }],
+        nextId: 1,
+        quickSwapItemIds: [],
+      },
       wallet: { ...wallet, [Currency.Mora]: STARTING_MORA + MORA_COUNT },
     });
   });

@@ -9,9 +9,8 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 export const getQuestTargetId = ({ steps, talks }: Quest, progress?: QuestProgress): string => {
   const objective = steps[progress?.stepIndex ?? 0]?.objectives[0];
   if (!objective) return "";
+  const [targetId = ""] = objective.targetIds;
   const talkNpcId =
-    objective.kind === QuestObjectiveKind.TalkTo
-      ? talks.find(({ id }) => id === objective.targetId)?.npcIds[0]
-      : undefined;
-  return talkNpcId ?? objective.targetId;
+    objective.kind === QuestObjectiveKind.TalkTo ? talks.find(({ id }) => id === targetId)?.npcIds[0] : undefined;
+  return talkNpcId ?? targetId;
 };

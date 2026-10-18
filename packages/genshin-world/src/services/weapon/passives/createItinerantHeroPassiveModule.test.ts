@@ -26,6 +26,7 @@ const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.12]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
+  bondOfLifeShare: 0,
   kind: KitEventKind.HealthChanged as const,
   overflowHealthShare: 0,
 });
@@ -34,7 +35,7 @@ describe(createItinerantHeroPassiveModule, () => {
   test("the DMG bonus is priced on the wielder as a passive", () => {
     expect.hasAssertions();
 
-    expect(itinerantHeroPassiveModule.getPassiveBonuses?.(wielder, 1, [])).toStrictEqual([
+    expect(itinerantHeroPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
       { amount: 0.12, attribute: Attribute.AllDamageBonus },
     ]);
   });

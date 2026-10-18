@@ -51,7 +51,7 @@ describe(createPmxMesh, () => {
         uvs: new Float32Array(),
       },
     };
-    const mesh = createPmxMesh(pmxModel, [new MeshBasicMaterial(), new MeshBasicMaterial()]);
+    const mesh = createPmxMesh(pmxModel, [new MeshBasicMaterial(), new MeshBasicMaterial()], 0.5);
     const {
       geometry: { groups },
       skeleton: { boneInverses, bones },
@@ -75,5 +75,30 @@ describe(createPmxMesh, () => {
       new Matrix4().elements.map((element) => roundToTen(element)),
       new Matrix4().elements.map((element) => roundToTen(element)),
     ]);
+  });
+
+  test("scales the mesh by the metres each unit stands for", () => {
+    expect.hasAssertions();
+
+    const pmxModel: PmxModel = {
+      bones: [],
+      indices: new Uint32Array(),
+      joints: [],
+      materials: [],
+      morphs: [],
+      name: "",
+      rigidBodies: [],
+      textures: [],
+      vertices: {
+        normals: new Float32Array(),
+        positions: new Float32Array(),
+        skinIndices: new Uint16Array(),
+        skinWeights: new Float32Array(),
+        subUvs: new Float32Array(),
+        uvs: new Float32Array(),
+      },
+    };
+
+    expect(createPmxMesh(pmxModel, [], 0.5).scale.x).toBe(0.5);
   });
 });

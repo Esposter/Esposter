@@ -13,6 +13,8 @@ export interface EnemyKindTraits {
   enemyDropFamily?: EnemyDropFamily;
   energyDrops: EnergyDrop[];
   poiseType: PoiseType;
+  // The share of its max HP the shield a kind holds on top of its health has, none for a kind with no shield
+  shieldHealthFraction?: number;
   // The boss's own drop its Trounce Blossom pays, none for a kind that leaves no blossom
   uniqueDropId?: number;
 }

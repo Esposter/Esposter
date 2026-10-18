@@ -11,6 +11,8 @@ export const props = {
   gameText: ENGLISH_GAME_TEXT,
   isWorldLevelAdjustable: false,
   isWorldLevelLowered: false,
+  namecardItemId: 0,
+  namecards: [],
   worldLevel: 0,
 };
 export const variants = {

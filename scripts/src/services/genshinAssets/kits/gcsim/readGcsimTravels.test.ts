@@ -33,4 +33,32 @@ func (c *char) Skill(p map[string]int) (action.Info, error) {
       ]),
     );
   });
+  test("gives the constant under a `windup` operand its travel, and the constants a struct field is set to its travel", () => {
+    expect.hasAssertions();
+
+    const source = `package xianyun
+
+func (c *char) ChargeAttack(p map[string]int) (action.Info, error) {
+	travel, ok := p["travel"]
+	if !ok {
+		travel = 10
+	}
+	c.Core.QueueAttack(ai, ap, chargeHitmark-windup, chargeHitmark-windup+travel)
+}
+
+func (c *char) Aimed(p map[string]int) (action.Info, error) {
+	travel = 10
+	a := action.Info{CanQueueAfter: aimedHitmarks[hold]}
+	c.Core.QueueAttack(ai, ap, a.CanQueueAfter, a.CanQueueAfter+travel)
+}
+`;
+
+    expect(readGcsimTravels([{ path: "charge.go", source }])).toStrictEqual(
+      new Map([
+        ["chargeHitmark", { file: "charge.go", frames: 10, line: 6 }],
+        ["windup", { file: "charge.go", frames: 10, line: 6 }],
+        ["aimedHitmarks", { file: "charge.go", frames: 10, line: 12 }],
+      ]),
+    );
+  });
 });

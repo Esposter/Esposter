@@ -72,3 +72,31 @@ From Ascension 1, each Dendro hit of Baizhu's SHALL deal 25% more DMG while the 
 - **GIVEN** Baizhu has reached Ascension 1 and the character on the field is below half their HP
 - **WHEN** a Dendro hit of his strikes
 - **THEN** it takes no bonus from Five Fortunes Forever
+
+### Requirement: Constellation 2 queues a Gossamer Sprite: Splice on each enemy his active member hits
+
+From Constellation 2, each enemy the active member hits SHALL be struck by a Gossamer Sprite: Splice from Baizhu: a Dendro hit of 250% of his ATK, dealt as Elemental Skill DMG, at most once every five seconds. Its heal is not built.
+
+#### Scenario: an active constellation's switch queues a Splice on an enemy his active member hits
+
+- **GIVEN** Baizhu has Constellation 2
+- **WHEN** his active member hits an enemy
+- **THEN** a Splice is queued on that enemy
+
+#### Scenario: an inactive constellation changes nothing
+
+- **GIVEN** Baizhu has Constellation 1
+- **WHEN** his active member hits an enemy
+- **THEN** no Splice is queued
+
+#### Scenario: a hit Baizhu lands himself while he is on the field also queues a Splice
+
+- **GIVEN** Baizhu has Constellation 2 and is on the field
+- **WHEN** he hits an enemy
+- **THEN** a Splice is queued on that enemy
+
+#### Scenario: the Splice fires once every five seconds
+
+- **GIVEN** a Splice was queued less than five seconds ago
+- **WHEN** his active member hits an enemy
+- **THEN** no Splice is queued, and one is queued once five seconds have passed

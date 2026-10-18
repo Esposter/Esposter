@@ -5,7 +5,7 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
 describe("characterPackLoader", () => {
-  test("shows the terms bundled with the model the character is drawn from", async () => {
+  test("a chosen character's terms show beside it", async () => {
     expect.hasAssertions();
 
     const key = "a";
@@ -20,7 +20,6 @@ describe("characterPackLoader", () => {
         keepCharacterPack: () => Promise.resolve(),
       },
     });
-    await page.getByRole("button", { name: "The model's terms" }).click();
 
     await expect.element(page.getByText(terms, { exact: true })).toBeVisible();
   });

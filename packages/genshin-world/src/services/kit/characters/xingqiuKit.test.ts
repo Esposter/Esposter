@@ -1,9 +1,12 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createXingqiuKitBehaviour, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
@@ -19,6 +22,9 @@ import { describe, expect, test } from "vitest";
 
 const XINGQIU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINGQIU_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+// A normal attack of the character on the field lands, as its first hit's hitmark falls
+const landNormalAttack = (action: KitAction, context: KitContext, combatant: Combatant) =>
+  XINGQIU_KIT.onKitEvent?.({ action, kind: KitEventKind.NormalAttackLanded }, context, combatant);
 const createXingqiuCombatant = (ascension: number, constellationCount: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([
@@ -55,7 +61,7 @@ describe(createXingqiuKitBehaviour, () => {
     const rainscreenStrikes = stepKitTestEffects(0.6, skillContext);
     const burstContext = createKitTestContext(combatant);
     XINGQIU_KIT.elementalBurst.onStart?.(burstContext);
-    coordinateKitSummons(takeOne(XINGQIU_KIT.normalAttacks), burstContext);
+    landNormalAttack(takeOne(XINGQIU_KIT.normalAttacks), burstContext, combatant);
     // The Rain Swords' first Hydro lands at 19 frames, and the first wave's two swords at 20
     stepKitEffects(0.32, burstContext);
     const swordStrikes = stepKitTestEffects(0.02, burstContext);
@@ -75,6 +81,25 @@ describe(createXingqiuKitBehaviour, () => {
     expect(multipliers).toHaveLength(expectedMultipliers.length);
     for (const [index, expectedMultiplier] of expectedMultipliers.entries())
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+  });
+
+  test("Raincutter's wave is cast as a normal attack lands, not as it starts", () => {
+    expect.hasAssertions();
+    const combatant = createXingqiuCombatant(0, 0);
+    const travelerCombatant = createTravelerCombatant();
+    const party = createParty([XINGQIU_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(travelerCombatant, { kitEffectState, party });
+    const normalAttack = takeOne(TRAVELER_KIT.normalAttacks);
+    XINGQIU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
+    coordinateKitSummons(normalAttack, context);
+    // The Rain Swords' Hydro ticks carry no talent multiplier, so only a wave's swords count
+    const swordsAtStart = stepKitTestEffects(0.5, context).filter(({ hit }) => hit.talentMultiplier > 0);
+    landNormalAttack(normalAttack, context, combatant);
+    const swordsAtLanding = stepKitTestEffects(0.5, context).filter(({ hit }) => hit.talentMultiplier > 0);
+
+    expect(swordsAtStart).toStrictEqual([]);
+    expect(swordsAtLanding).toHaveLength(2);
   });
 
   test("the skill's Rain Swords put Hydro of no damage round the body on the field every 2.25 seconds for 15", () => {
@@ -121,15 +146,15 @@ describe(createXingqiuKitBehaviour, () => {
       const normalAttack = takeOne(TRAVELER_KIT.normalAttacks);
       XINGQIU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
       const waves = Array.from({ length: swordCounts.length }, () => {
-        coordinateKitSummons(normalAttack, context);
+        landNormalAttack(normalAttack, context, combatant);
         const strikes = stepKitTestEffects(0.5, context);
         // A normal attack within the second of the last wave sets none off
-        coordinateKitSummons(normalAttack, context);
+        landNormalAttack(normalAttack, context, combatant);
         return [...strikes, ...stepKitTestEffects(0.5, context)].filter(({ hit }) => hit.talentMultiplier > 0);
       });
       // Raincutter ends, so a normal attack after it sets no wave off
       stepKitEffects(20, context);
-      coordinateKitSummons(normalAttack, context);
+      landNormalAttack(normalAttack, context, combatant);
 
       expect(waves.map((wave) => wave.length)).toStrictEqual(swordCounts);
       expect(takeOne(takeOne(waves)).hit.enemyStatus?.(combatant)).toStrictEqual(status);
@@ -190,6 +215,6 @@ describe(createXingqiuKitBehaviour, () => {
   ])("at Ascension %i, Blades Amidst Raindrops adds %j to his pricing", (ascension, bonuses) => {
     expect.hasAssertions();
 
-    expect(XINGQIU_KIT.getPassiveBonuses?.(createXingqiuCombatant(ascension, 0), 1, [])).toStrictEqual(bonuses);
+    expect(XINGQIU_KIT.getPassiveBonuses?.(createXingqiuCombatant(ascension, 0), 1, [], [])).toStrictEqual(bonuses);
   });
 });

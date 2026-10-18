@@ -39,6 +39,7 @@ const shapeEffects = (context: KitContext) =>
 describe(createOdetteKitBehaviour, () => {
   const PROUD_SKILL_GROUP_ID = 1;
   const TALENT_MULTIPLIER_MAP: TalentMultiplierMap = { [PROUD_SKILL_GROUP_ID]: [{ level: 1, paramList: [0.5] }] };
+  const TALENT_LEVEL_MAP = { [PROUD_SKILL_GROUP_ID]: 1 };
   const HIT_RECORD: KitHitRecord = {
     area: { angle: 2 * Math.PI, height: 2, radius: 1 },
     hitmarkFrames: 12,
@@ -65,7 +66,7 @@ describe(createOdetteKitBehaviour, () => {
     skillHolds: [],
     stellarJubilee: { stellarReactionTypes: [StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl] },
   };
-  const kit: Kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, createOdetteKitBehaviour);
+  const kit: Kit = buildKit(RECORD, TALENT_MULTIPLIER_MAP, TALENT_LEVEL_MAP, createOdetteKitBehaviour);
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

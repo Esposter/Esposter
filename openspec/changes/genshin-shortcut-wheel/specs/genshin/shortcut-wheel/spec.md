@@ -47,3 +47,9 @@ Holding Tab or the left bumper SHALL show the Shortcut Wheel over the world, and
 - **GIVEN** the Shortcut Wheel is shown with an entry picked
 - **WHEN** the player releases Tab
 - **THEN** that entry's screen opens
+
+#### Scenario: Holding Tab stops the character walking
+
+- **GIVEN** the Shortcut Wheel is shown over the world
+- **WHEN** the player pushes the move toward an entry
+- **THEN** the character holds still, and the wheel picks the entry the move points at

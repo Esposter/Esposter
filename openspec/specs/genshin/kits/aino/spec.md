@@ -1,6 +1,6 @@
 ## Purpose
 
-Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, and Constellation 4's skill energy, and what is left waiting on the Moonsign, Lunar and member-hit hooks.
+Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, Constellation 2's water ball on her teammates' hits, and Constellation 4's skill energy, and what is left waiting on the Moonsign and Lunar hooks.
 
 ## Requirements
 
@@ -125,3 +125,37 @@ From Constellation 4, each of Aino's skill hits that strikes an enemy SHALL give
 - **GIVEN** Aino has Constellation 3
 - **WHEN** a skill hit strikes an enemy
 - **THEN** she gains no energy
+
+### Requirement: Constellation 2 queues a water ball on her teammates' hits while she is off the field
+
+From Constellation 2, while Aino is off the field and her burst's zone stands, each enemy her active teammate's hit strikes SHALL be struck by a water ball from Aino: AoE Hydro DMG of 25% of her ATK and 100% of her Elemental Mastery, as Elemental Burst DMG, at most once every five seconds.
+
+#### Scenario: an active constellation's switch queues a water ball on an enemy the active member hits while Aino is off the field
+
+- **GIVEN** Aino has Constellation 2 and is off the field, her burst's zone stands
+- **WHEN** her active teammate's hit strikes an enemy
+- **THEN** a water ball is queued on that enemy
+
+#### Scenario: an inactive constellation changes nothing
+
+- **GIVEN** Aino has Constellation 1 and is off the field, her burst's zone stands
+- **WHEN** her active teammate's hit strikes an enemy
+- **THEN** no water ball is queued
+
+#### Scenario: the water ball queues nothing while Aino is on the field
+
+- **GIVEN** Aino has Constellation 2 and is on the field
+- **WHEN** a hit strikes an enemy
+- **THEN** no water ball is queued
+
+#### Scenario: the water ball queues nothing once her burst's zone has run out
+
+- **GIVEN** Aino has Constellation 2 and her burst's zone has run out
+- **WHEN** her active teammate's hit strikes an enemy
+- **THEN** no water ball is queued
+
+#### Scenario: the water ball fires once every five seconds
+
+- **GIVEN** a water ball was queued less than five seconds ago
+- **WHEN** her active teammate's hit strikes an enemy
+- **THEN** no water ball is queued, and one is queued once five seconds have passed

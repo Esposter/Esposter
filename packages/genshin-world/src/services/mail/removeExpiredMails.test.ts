@@ -16,11 +16,13 @@ describe(removeExpiredMails, () => {
     senderTextId: "2",
     titleTextId: "3",
   };
-  const rows = new Map<number, Mail>([[ROW.id, ROW]]);
-  const mail = (isClaimed: boolean): MailSave => ({
+  const FLAGGED_ROW: Mail = { ...ROW, id: 2, isStar: true };
+  const rows = new Map<number, Mail>([ROW, FLAGGED_ROW].map((row): [number, Mail] => [row.id, row]));
+  const mail = (isClaimed: boolean, id = ROW.id): MailSave => ({
     deliveredAt: new Date(0).toISOString(),
-    id: ROW.id,
+    id,
     isClaimed,
+    isPinned: false,
     isRead: false,
   });
   const PAST_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS + 1));
@@ -45,5 +47,28 @@ describe(removeExpiredMails, () => {
     expect.hasAssertions();
 
     expect(removeExpiredMails([mail(true)], rows, new Set([ROW.id]), PAST_EXPIRY)).toStrictEqual([mail(true)]);
+  });
+
+  // A claimed mail the table flags is in the Gift Mail Box, which keeps it past its expiry, as it keeps a birthday mail
+  test("a claimed mail the table flags is kept past its expiry", () => {
+    expect.hasAssertions();
+
+    expect(removeExpiredMails([mail(true, FLAGGED_ROW.id)], rows, new Set(), PAST_EXPIRY)).toStrictEqual([
+      mail(true, FLAGGED_ROW.id),
+    ]);
+  });
+
+  // A mail the table flags is kept in the Gift Mail Box only once its rewards are claimed
+  test("an unclaimed mail the table flags is deleted past its expiry", () => {
+    expect.hasAssertions();
+
+    expect(removeExpiredMails([mail(false, FLAGGED_ROW.id)], rows, new Set(), PAST_EXPIRY)).toStrictEqual([]);
+  });
+
+  // A pinned mail is the player's place at the top of the list, not the Gift Mail Box, so it still expires
+  test("a pinned mail is deleted past its expiry", () => {
+    expect.hasAssertions();
+
+    expect(removeExpiredMails([{ ...mail(false), isPinned: true }], rows, new Set(), PAST_EXPIRY)).toStrictEqual([]);
   });
 });

@@ -1,7 +1,7 @@
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
-import type { CraftingStrongbox } from "#src/models/crafting/CraftingStrongbox";
+import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 import type { ReliquaryPieceData } from "#src/models/reliquary/ReliquaryPieceData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
@@ -23,7 +23,7 @@ const PIECES: ReliquaryPieceData[] = SLOTS.flatMap((slot, slotIndex) =>
     startingMinorCount,
   })),
 );
-const STRONGBOX: CraftingStrongbox = {
+const STRONGBOX: CraftingStrongboxData = {
   id: SET_ID,
   nameTextId: "TEST_STRONGBOX",
   needCount: 3,

@@ -296,6 +296,7 @@ describe(createChongyunKitBehaviour, () => {
         { body: kitBody, combatant, hit: takeOne(CHONGYUN_KIT.elementalBurst.hits) },
         { ...enemy, health: healthShare * enemy.maxHealth },
         party,
+        [],
       );
 
     expect(fourthBlade?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([77]);

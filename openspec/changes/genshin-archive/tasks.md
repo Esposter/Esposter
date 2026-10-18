@@ -1,7 +1,7 @@
 ## 1. Geography viewpoints
 
 - [ ] 1.1 Place each viewpoint at the point its scene group record gives, provisional where the record leaves none. Verify: a test named after the scenario 'a reached viewpoint opens its entry when viewed', and a test named after the scenario 'a viewpoint is placed at the point its scene group record gives', seen failing first.
-- [ ] 1.2 Offer a viewpoint for viewing only where its place is known. Verify: a test named after the scenario 'a viewpoint with no known place is not offered', seen failing first.
+- [ ] 1.2 Offer a viewpoint for viewing only where its place is known. Partly built: `computeOfferedViewpoints` keeps the viewpoints whose codex ids the scene group record places. Nothing offers a viewpoint in the world yet, and the placed ids wait on 1.1. Verify: a test named after the scenario 'a viewpoint with no known place is not offered', seen failing first.
 
 ## 2. Living Beings
 

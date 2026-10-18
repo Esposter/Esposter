@@ -158,6 +158,7 @@ const readSkillDamageBonus = (ascension: number, elementalMastery: number): numb
       },
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       createParty([LAUMA_CHARACTER_ID]),
+      [],
     ) ?? 0
   );
 };

@@ -26,7 +26,7 @@ flowchart TD
 | :------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/leyLine/constants.ts`                       | The opening rank                                                            |
 | `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`        | Whether the outcrops are drawn at a rank                                    |
-| `packages/genshin-world/src/services/leyLine/computeMiningOutcropRespawn.ts`     | The next 04:00 after a mining, in the game's time zone                      |
+| `packages/genshin-world/src/services/time/computeNextDailyReset.ts`              | The next 04:00 after a mining, in the game's time zone                      |
 | `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`    | Whether a mined or unmined outcrop stands at an instant                     |
 | `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts`  | Each region's Magical Crystal Chunk points, fitted, as the outcrops' places |
 | `packages/genshin-world/src/services/gathering/readMiningOutcropPlaces.ts`       | A region's places, fetched by its key once a publish has written it         |

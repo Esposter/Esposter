@@ -1,13 +1,22 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -32,21 +41,80 @@ const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
 // Constellation 1, Flower of Eden, from the wiki: each Transient Blossom of the Solar Isotoma regenerates 1.2 Energy for
 // Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
 const ALBEDO_CONSTELLATION_1 = 1;
+// Constellation 4: the active party member within the standing Solar Isotoma's field has its Plunging Attack DMG raised 30%
+// for a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the skill's
+// hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it runs out. A
+// Check that finds the field standing gives the active member the bonus for a second
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+const ALBEDO_CONSTELLATION_4 = 4;
+const CONSTELLATION_4_PLUNGING_ATTACK_BONUS = 0.3;
+const CONSTELLATION_4_SECONDS = 1;
+const CONSTELLATION_4_CHECK_SECONDS = 0.3;
+const CONSTELLATION_4_CHECK_STATUS_ID = "albedo-constellation-4-check";
+const CONSTELLATION_4_SOURCE = "albedo-constellation-4";
 const TRANSIENT_BLOSSOM_ENERGY = 1.2;
 const SOLAR_ISOTOMA_DEFENSE_PERCENT = 0.5;
 const SOLAR_ISOTOMA_DEFENSE_SECONDS = 20;
 const FLOWER_OF_EDEN_SOURCE = "albedo-flower-of-eden";
+// Constellation 2, Opening of Phanerozoic, from the wiki and gcsim v2.47.2 (MIT): each Transient Blossom gives Albedo a stack
+// Of Fatal Reckoning, up to four, lasting 30 seconds, and each stack consumed by Tectonic Tide adds 30% of his DEF to each
+// Fatal Blossom as flat damage
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+const ALBEDO_CONSTELLATION_2 = 2;
+const FATAL_RECKONING_DEFENSE_SHARE = 0.3;
+const FATAL_RECKONING_MAX_STACKS = 4;
+const FATAL_RECKONING_SECONDS = 30;
+const FATAL_RECKONING_STATUS_ID = "albedo-fatal-reckoning";
 
 export const ALBEDO_CHARACTER_ID = 10_000_038;
+
+// Each Transient Blossom adds a stack of Fatal Reckoning, up to four, and refreshes the thirty seconds it lasts
+const addFatalReckoningStack = (kitEffectState: KitEffectState, combatant: Combatant): void => {
+  const { characterId } = combatant;
+  const stacks = checkIsKitStatusActive(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID)
+    ? (findKitStatus(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID)?.stacks ?? 0)
+    : 0;
+  addKitStatus(kitEffectState, characterId, {
+    id: FATAL_RECKONING_STATUS_ID,
+    secondsRemaining: FATAL_RECKONING_SECONDS,
+    stacks: Math.min(FATAL_RECKONING_MAX_STACKS, stacks + 1),
+  });
+};
+
+// A copy of a Fatal Blossom that Tectonic Tide adds the flat damage of its Fatal Reckoning stacks to
+const withFatalReckoningBonus = (hit: KitHit, bonus: number): KitHit => ({
+  ...hit,
+  additiveBaseDamageBonus: () => bonus,
+});
+
+// Tectonic Tide consumes every stack of Fatal Reckoning, and returns the flat damage they add to each Fatal Blossom, priced
+// By Albedo's DEF with the buffs on her
+const consumeFatalReckoningBonus = (context: KitContext): number => {
+  const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
+  const { characterId } = combatant;
+  if (
+    combatant.constellationCount < ALBEDO_CONSTELLATION_2 ||
+    !checkIsKitStatusActive(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID)
+  )
+    return 0;
+  const status = findKitStatus(kitEffectState.effects, characterId, FATAL_RECKONING_STATUS_ID);
+  const stacks = status?.stacks ?? 0;
+  if (status) status.stacks = 0;
+  const { defense } = getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes;
+  return stacks * FATAL_RECKONING_DEFENSE_SHARE * defense;
+};
 
 // Albedo's behaviour: Abiogenesis: Solar Isotoma casts the Solar Isotoma 3 metres ahead as the press starts, a summon that
 // Spawns as its hit lands and ends the one standing. A hit on an enemy inside the standing field sets off a Transient
 // Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
 // Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the Elemental Mastery of
-// The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellations 2, 4 and 6
-// are not built: Constellation 2's Fatal Reckoning stacks need a burst hit whose DMG grows with the stacks it consumes,
-// Constellation 4's jump destroys a Silver Isotoma and needs a plunge's ground impact DMG per member, and Constellation 6
-// needs the shield a Crystallize Gives a member read at a strike, which the kit does not yet hold
+// The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellation 1's energy
+// and Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
+// Damage to each Fatal Blossom, though not to its own first hit, which the record plays and the kit cannot change per cast.
+// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6 is
+// Not built: it needs the shield a Crystallize gives a member read at a strike, which the kit does not yet hold. The Silver
+// Isotoma clause an earlier note named for Constellation 4 is not built: gcsim v2.47.2 does not model it, and the wiki text
+// Was not checked
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -63,9 +131,17 @@ export const createAlbedoKitBehaviour = ({
   return {
     // Each Fatal Blossom is cast with the Solar Isotoma as a summon, as its own clock runs past the animation
     burst: {
-      onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, kitEffectState, party } = context;
+        const fatalReckoningBonus = consumeFatalReckoningBonus(context);
+        const blossoms =
+          fatalReckoningBonus === 0
+            ? fatalBlossoms
+            : fatalBlossoms.map((hit) => withFatalReckoningBonus(hit, fatalReckoningBonus));
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
-        if (solarIsotoma) castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, fatalBlossoms);
+        // A field whose seconds have run out casts no blossoms, though the step has not dropped it yet
+        if (solarIsotoma && solarIsotoma.secondsRemaining > 0)
+          castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, blossoms);
         if (combatant.ascension < TECTONIC_TIDE_ASCENSION) return;
         buffKitTeam(kitEffectState, party, {
           amount: TECTONIC_TIDE_ELEMENTAL_MASTERY,
@@ -88,7 +164,8 @@ export const createAlbedoKitBehaviour = ({
       const { characterId } = combatant;
       const { effects } = kitEffectState;
       const solarIsotoma = findStandingKitSummon(effects, SOLAR_ISOTOMA_ID, characterId);
-      if (!solarIsotoma) return;
+      // A field whose seconds have run out lands nothing, though the step has not dropped it yet
+      if (!solarIsotoma || solarIsotoma.secondsRemaining <= 0) return;
       const { position } = event.enemy;
       if (
         Math.hypot(position.x - solarIsotoma.body.position.x, position.z - solarIsotoma.body.position.z) >
@@ -102,9 +179,38 @@ export const createAlbedoKitBehaviour = ({
       )
         return;
       castKitSummon(kitEffectState, { facing: 0, height: 0, position }, solarIsotoma.combatant, [transientBlossom]);
+      if (combatant.constellationCount >= ALBEDO_CONSTELLATION_2) addFatalReckoningStack(kitEffectState, combatant);
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_1) return;
       const member = getPartyMember(party, characterId);
       member.energy = Math.min(combatant.kit.burstEnergyCost, member.energy + TRANSIENT_BLOSSOM_ENERGY);
+    },
+    // Constellation 4: the active member's plunges, while it stands in the standing Solar Isotoma's field, checked every
+    // 0.3 seconds from the Solar Isotoma's spawn
+    onStep: ({ activeCombatant, body, kitEffectState }, combatant) => {
+      if (combatant.constellationCount < ALBEDO_CONSTELLATION_4) return;
+      if (
+        !startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          CONSTELLATION_4_CHECK_STATUS_ID,
+          CONSTELLATION_4_CHECK_SECONDS,
+        )
+      )
+        return;
+      const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
+      // A field whose seconds have run out raises nothing, though the step has not dropped it yet
+      if (
+        !solarIsotoma ||
+        solarIsotoma.secondsRemaining <= 0 ||
+        !checkIsInKitField({ centre: solarIsotoma.body.position, radius: solarIsotomaRadius }, body.position)
+      )
+        return;
+      buffKitMember(kitEffectState, activeCombatant.characterId, {
+        amount: CONSTELLATION_4_PLUNGING_ATTACK_BONUS,
+        attribute: Attribute.PlungingAttackDamageBonus,
+        secondsRemaining: CONSTELLATION_4_SECONDS,
+        source: CONSTELLATION_4_SOURCE,
+      });
     },
     // A new Solar Isotoma ends the one standing, as Fischl's Oz does
     skill: {
@@ -118,6 +224,12 @@ export const createAlbedoKitBehaviour = ({
           });
         for (const effect of kitEffectState.effects)
           if (effect.kind === "summon" && effect.id === SOLAR_ISOTOMA_ID) effect.secondsRemaining = 0;
+        // Constellation 4's clock starts at the hitmark, the Solar Isotoma's spawn, so its first check runs 0.3 seconds after it
+        if (combatant.constellationCount >= ALBEDO_CONSTELLATION_4)
+          addKitStatus(kitEffectState, combatant.characterId, {
+            id: CONSTELLATION_4_CHECK_STATUS_ID,
+            secondsRemaining: solarIsotomaHit.hitmarkSeconds + CONSTELLATION_4_CHECK_SECONDS,
+          });
         castKitSummon(kitEffectState, createAheadBody(body, solarIsotomaAheadMetres), combatant, [solarIsotomaHit], {
           id: SOLAR_ISOTOMA_ID,
           secondsRemaining: solarIsotomaSeconds,

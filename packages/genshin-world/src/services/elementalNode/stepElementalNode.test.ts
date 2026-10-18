@@ -1,5 +1,6 @@
 import type { ElementalNode } from "#src/models/elementalNode/ElementalNode";
 
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { Element } from "#src/models/Element";
 import { stepElementalNode } from "#src/services/elementalNode/stepElementalNode";
 import { describe, expect, test } from "vitest";
@@ -24,5 +25,15 @@ describe(stepElementalNode, () => {
 
     expect(stepElementalNode(node, 35)).toBe(2);
     expect(node).toStrictEqual({ element: Element.Cryo, secondsUntilPulse: 10 });
+  });
+
+  test("a pulse falls due on the step its seconds run out, not one step late", () => {
+    expect.hasAssertions();
+
+    const node: ElementalNode = { element: Element.Pyro, secondsUntilPulse: 5 };
+    let pulses = 0;
+    for (let step = 0; step < 300; step++) pulses += stepElementalNode(node, FIXED_STEP_SECONDS);
+
+    expect(pulses).toBe(1);
   });
 });

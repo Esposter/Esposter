@@ -79,7 +79,14 @@ const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTyp
   isLocation: cardRow.tagList.includes("GCG_TAG_PLACE"),
   kind: toCardKind(cardRow),
   nameTextId: cardRow.nameTextMapHash,
+  ...toCardWeapon(cardRow),
 });
+
+// A weapon card names its weapon kind, the tag's suffix as a character's weapon is named, and any other card names none
+const toCardWeapon = ({ tagList }: ExcelGcgCardRow): { weapon?: string } => {
+  const weaponTag = tagList.find((tag) => tag.startsWith("GCG_TAG_WEAPON_"));
+  return weaponTag ? { weapon: weaponTag.slice("GCG_TAG_WEAPON_".length) } : {};
+};
 
 // The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
 // Energy. The dump's empty slots, which hold the invalid cost at its default, are left out

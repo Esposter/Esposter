@@ -1,14 +1,15 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { WorldArea } from "#src/models/genshinAssets/world/WorldArea";
-import type { GaussianHills, GroundPoint } from "genshin-engine";
+import type { GroundPoint } from "genshin-engine";
 import type { RegionGround } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
-import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { checkIsRegionGroundFitted } from "#src/services/genshinAssets/shared/checkIsRegionGroundFitted";
+import { readWorldBaseGrounds } from "#src/services/genshinAssets/shared/readWorldBaseGrounds";
 import { WORLD_AREAS_TABLE_NAME, WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readSceneTransportPoints } from "#src/services/genshinAssets/world/readSceneTransportPoints";
@@ -32,11 +33,12 @@ import { join } from "node:path";
 // Turn and the plateau's reach among them. A capital with no waypoint is an error, and one set by hand writes its
 // Landmark alone. Both files stay written, as the sources people edit, and each ground rewritten is also its record
 // `ground/<region>`, with the paths written as the notes
-export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
-  const [transportPoints, [originX, originY, originZ], { base }] = await Promise.all([
+export const fitRegionCapitals = async ({ isDryRun }: { isDryRun: boolean }): Promise<GameDataBuild> => {
+  const { objects } = await readGameDataLock();
+  const [transportPoints, [originX, originY, originZ], [{ base }]] = await Promise.all([
     readSceneTransportPoints(),
     readWorldOrigin(DerivedAssetComponent.Windrise),
-    readPublishedGameData<GaussianHills>(`${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`),
+    readWorldBaseGrounds(Object.keys(objects)),
   ]);
   const textMap = readTextMap(GameLanguage.English);
   const areas = readExcelTable<WorldArea>(WORLD_AREAS_TABLE_NAME);
@@ -54,7 +56,7 @@ export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
           const landmarks = regionData.landmarks.map((landmark) =>
             landmark.id === landmarkId ? { ...landmark, position } : landmark,
           );
-          return writeWorldData(regionFile, { ...regionData, landmarks });
+          return writeWorldData(regionFile, { ...regionData, landmarks }, { isDryRun });
         };
         // A capital the dump holds no areas for stands at the place its entry sets, so only its landmark is written: its
         // Plateau's height is the region's own ground fit's, which no waypoint gives it
@@ -86,7 +88,7 @@ export const fitRegionCapitals = async (): Promise<GameDataBuild> => {
         );
         const ground = { ...regionGround, features };
         return {
-          notes: [landmarkPath, await writeWorldData(groundFile, ground)],
+          notes: [landmarkPath, await writeWorldData(groundFile, ground, { isDryRun })],
           objects: { [`${GameDataset.Ground}/${region}`]: ground },
         };
       }),

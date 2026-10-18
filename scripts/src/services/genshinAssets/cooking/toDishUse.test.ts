@@ -3,6 +3,7 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 
 import {
   ADD_SERVER_BUFF_USE_OP,
+  ANTI_COLD_ABILITY_NAME,
   HEAL_BUFF_ABILITY_NAME,
   REVIVE_BUFF_ABILITY_NAME,
 } from "#src/services/genshinAssets/cooking/constants";
@@ -108,5 +109,13 @@ describe(toDishUse, () => {
     expect.hasAssertions();
 
     expect(toDishUse(createRow(), [createBuff("loses 200HP every second")])).toBeUndefined();
+  });
+
+  test("should read an anti-cold dish's ratio and how long it holds the fill down", () => {
+    expect.hasAssertions();
+
+    expect(
+      toDishUse(createRow(), [createBuff("用于抗寒料理，能够抑制低温条提升，ratio-0.3", ANTI_COLD_ABILITY_NAME, 900)]),
+    ).toStrictEqual({ antiCold: { ratio: -0.3, seconds: 900 }, target: DishTarget.Party });
   });
 });

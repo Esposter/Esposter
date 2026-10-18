@@ -14,7 +14,7 @@ const createQuest = (id: string): Quest => ({
   offerTalkIds: [],
   parentQuestIds: [],
   rewards: [],
-  steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "textId" }],
+  steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["0"] }], textId: "textId" }],
   talks: [],
   titleTextId: "titleTextId",
 });

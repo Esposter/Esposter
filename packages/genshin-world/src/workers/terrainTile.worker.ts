@@ -27,7 +27,7 @@ let regionGrounds: RegionGround[] = [];
 let queuedRequests: TerrainTileRequest[] = [];
 // The tiles' heights, paint and flowers over the loaded ground with the regions' grounds laid over it so far
 const createContext = ({
-  baseGround,
+  baseGrounds,
   groundLayers,
   surfaces,
   waterLevel,
@@ -35,7 +35,7 @@ const createContext = ({
   const groundPaint = createWindriseGroundPaint(groundLayers, surfaces);
   return {
     plantsGround: {
-      getHeight: createWorldHeight(baseGround, regionGrounds),
+      getHeight: createWorldHeight(baseGrounds, regionGrounds),
       getWeights: createGroundLayerWeights(groundPaint),
       waterLevel,
     },

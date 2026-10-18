@@ -28,7 +28,13 @@ const createGamingCombatant = (constellationCount: number): Combatant => ({
 const reportHealing = (combatant: Combatant, overflowHealthShare: number): KitEffectState => {
   const { kitEffectState } = createKitTestContext(combatant);
   GAMING_KIT.onKitEvent?.(
-    { characterId: GAMING_CHARACTER_ID, healthShare: 0.1, kind: KitEventKind.HealthChanged, overflowHealthShare },
+    {
+      characterId: GAMING_CHARACTER_ID,
+      healthShare: 0.1,
+      bondOfLifeShare: 0,
+      kind: KitEventKind.HealthChanged,
+      overflowHealthShare,
+    },
     createKitTestContext(combatant, { kitEffectState }),
     combatant,
   );
@@ -49,6 +55,7 @@ const getPassiveBonuses = (ascension: number, healthShare: number) =>
       level: 90,
     },
     healthShare,
+    [],
     [],
   );
 

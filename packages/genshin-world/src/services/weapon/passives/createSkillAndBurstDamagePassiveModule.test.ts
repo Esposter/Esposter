@@ -40,10 +40,10 @@ describe(createSkillAndBurstDamagePassiveModule, () => {
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
-      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party),
+      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
     ).toBeCloseTo(0.24);
     expect(
-      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party),
+      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, []),
     ).toBeCloseTo(0.24);
   });
 
@@ -52,7 +52,7 @@ describe(createSkillAndBurstDamagePassiveModule, () => {
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
-      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party),
+      skillAndBurstDamagePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
     ).toBe(0);
   });
 });

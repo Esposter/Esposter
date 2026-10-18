@@ -5,13 +5,13 @@
 
 ## 2. The stages and the acts
 
-- [ ] 2.1 Fight a stage at the lowest difficulty with the character kits. Verify: a test named after the scenario "A stage is fought by four performers with Vigor", written first and seen failing.
+- [ ] 2.1 Fight a stage at the lowest difficulty with the character kits. Verify: a test named after the scenario "A stage is fought by four performers with Vigor", written first and seen failing. The four-performer gate and its outcome are built (`fightImaginariumStage`, whose scenario test passes). Blocked: the stage's enemies are unread, since the design names no fields of `RoleCombatLevelEntityExcelConfigData` or `RoleCombatLevelExcelConfigData`, and the kit fight that deals the damage is not built.
 - [x] 2.2 Add the acts and the Battle Events. Verify: a test named after the scenario "A Battle Event offers a choice of two Alternate Cast members", written first and seen failing.
 - [x] 2.3 Add the paid events, with the Mystery Cache's Vigor. Verify: tests named after the scenarios "A Companion event costs Fantasia Flowers", "A paid event is refused without enough Fantasia Flowers" and "A Mystery Cache's option restores a character's Vigor".
 
 ## 3. The rewind, the star challenges and the other difficulties
 
-- [ ] 3.1 Add the rewind, the rerolls, the star challenges and the other four difficulties. Verify: tests named after the scenarios "A rewind is refused once the run's rewinds are used", "Meeting an act's star challenge gives one Stella" and "A stage starts every member at full health and energy".
+- [ ] 3.1 Add the rewind, the rerolls, the star challenges and the other four difficulties. Verify: tests named after the scenarios "A rewind is refused once the run's rewinds are used", "Meeting an act's star challenge gives one Stella" and "A stage starts every member at full health and energy". The rewind's refusal and the Stella for a met star challenge pass (`spendImaginariumCount`, `gainImaginariumStella`), and the rerolls are built. Blocked: a member holds only its special-guest flag and Vigor, with no health, energy or fixed stats, so no stage can start one at full; and the other four difficulties' cast size waits on the meaning of `DKAOJONAPHB`, which the design leaves unsettled.
 
 ## 4. The Theater Lobby
 

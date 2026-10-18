@@ -10,6 +10,7 @@ import { checkIsGcsimValueGiven } from "#src/services/genshinAssets/kits/checkIs
 import { GCSIM_PLUNGE_FALLBACK_FOLDER, GCSIM_TAG } from "#src/services/genshinAssets/kits/constants";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
 import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
+import { getFallbackPlungeKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getFallbackPlungeKitCandidates";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
@@ -18,7 +19,7 @@ import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths"
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKitHitLabelMap";
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
-import { readKitTables } from "#src/services/genshinAssets/kits/tables/readKitTables";
+import { readKitTablesWithDonors } from "#src/services/genshinAssets/kits/tables/readKitTablesWithDonors";
 import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getWikiKitCandidates";
 import { readWikiTalentPages } from "#src/services/genshinAssets/kits/wiki/readWikiTalentPages";
 import { InvalidOperationError, Operation, toKebabCase } from "@esposter/shared";
@@ -55,15 +56,17 @@ export const readKitInputs = async ({
   if (plungeFallback === undefined)
     throw new InvalidOperationError(Operation.Read, GCSIM_PLUNGE_FALLBACK_FOLDER, `has no folder at ${GCSIM_TAG}`);
   const publishedIds = new Set(Object.keys(await readPublishedGameDataIndex(GameDataset.Kits)));
-  const ids =
+  const requestedIds =
     characterIds === undefined
       ? [...publishedIds]
       : [...new Set([...(isEveryPublishedKitRead ? publishedIds : []), ...characterIds.map(String)])];
+  // The donors of each requested kit are read beside it, since a borrower is built after its donors
+  const tablesMap = await readKitTablesWithDonors(requestedIds.map(Number));
+  const ids = [...tablesMap.keys()].map(String);
   const publishedRecordMap = await readPublishedGameDataEntries<KitRecord>(
     GameDataset.Kits,
     ids.filter((id) => publishedIds.has(id)),
   );
-  const tablesMap = await readKitTables(ids.map(Number));
   const inputs: KitInput[] = [];
   for (const id of ids) {
     const characterId = Number(id);
@@ -81,7 +84,7 @@ export const readKitInputs = async ({
     const overlay = readKitOverlay(overlayName);
     const gcsimCandidateMap: Map<string, KitCandidate[]> = mergeKitCandidates(
       gcsim === undefined
-        ? new Map()
+        ? getFallbackPlungeKitCandidates(plungeFallback, tables)
         : getGcsimKitCandidates(gcsim, tables, plungeFallback, getKitBagPaths(publishedRecord ?? {}, overlay)),
       gcsimFolder === undefined ? new Map() : readGcsimCitedCandidates(overlay, gcsimDirectory, gcsimFolder),
     );
@@ -104,6 +107,7 @@ export const readKitInputs = async ({
       name: tables.name,
       namedHitCandidateMap,
       notes,
+      overlay,
       overlayName,
       ...(publishedRecord && { publishedRecord }),
       sourceCandidateMap,

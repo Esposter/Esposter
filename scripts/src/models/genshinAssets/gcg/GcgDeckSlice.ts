@@ -18,6 +18,7 @@ export interface GcgDeckSliceCard {
   isLocation: boolean;
   kind: GcgCardKind;
   nameTextId: number;
+  weapon?: string;
 }
 
 // A character of a deck as the slice writes it: its id, its name and description text ids, its element, HP and energy,

@@ -17095,6 +17095,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -1160.3, "z": -851.02 },
       "rotation": -1.8186,
+      "titleTextKey": "UI_DUNGEON_ENTRY_52",
       "areaId": "qiongji-estuary",
       "arrival": { "heightOffset": 13.31, "position": { "x": -1160.3, "z": -851.02 }, "rotation": -1.8186 },
       "heightOffset": 13.31
@@ -17106,6 +17107,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -2178.28, "z": -303.74 },
       "rotation": 2.0455,
+      "titleTextKey": "UI_DUNGEON_ENTRY_48",
       "areaId": "sea-of-clouds",
       "arrival": { "heightOffset": -16.57, "position": { "x": -2178.28, "z": -303.74 }, "rotation": 2.0455 },
       "heightOffset": -16.57
@@ -17117,6 +17119,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -200.74, "z": -1652.99 },
       "rotation": -1.6108,
+      "titleTextKey": "UI_DUNGEON_ENTRY_54",
       "areaId": "bishui-plain",
       "arrival": { "heightOffset": 57.05, "position": { "x": -200.74, "z": -1652.99 }, "rotation": -1.6108 },
       "heightOffset": 57.05
@@ -17128,6 +17131,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -599.46, "z": -2703.47 },
       "rotation": -2.9426,
+      "titleTextKey": "UI_DUNGEON_ENTRY_50",
       "areaId": "minlin",
       "arrival": { "heightOffset": 55.31, "position": { "x": -599.46, "z": -2703.47 }, "rotation": -2.9426 },
       "heightOffset": 55.31
@@ -17139,6 +17143,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -1226.95, "z": -2434.83 },
       "rotation": -0.7411,
+      "titleTextKey": "UI_DUNGEON_ENTRY_46",
       "areaId": "minlin",
       "arrival": { "heightOffset": -74.1, "position": { "x": -1226.95, "z": -2434.83 }, "rotation": -0.7411 },
       "heightOffset": -74.1
@@ -17150,6 +17155,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -416.07, "z": -945.62 },
       "rotation": 1.5708,
+      "titleTextKey": "UI_DUNGEON_ENTRY_282",
       "areaId": "bishui-plain",
       "arrival": { "heightOffset": 5.03, "position": { "x": -416.07, "z": -945.62 }, "rotation": 1.5708 },
       "heightOffset": 5.03
@@ -17161,6 +17167,7 @@
       "kind": "DomainEntrance",
       "position": { "x": -2368.27, "z": -3169.39 },
       "rotation": -2.68,
+      "titleTextKey": "UI_DUNGEON_ENTRY_516",
       "areaId": "the-chasm",
       "arrival": { "heightOffset": -33.99, "position": { "x": -2368.27, "z": -3169.39 }, "rotation": -2.68 },
       "heightOffset": -33.99

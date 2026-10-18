@@ -106,6 +106,8 @@ describe(useWorldCommissions, () => {
         isBonusClaimed: false,
         dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
       },
+      savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
+      savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
     });
     await waitForReads();
     expect(commissionDay.value.dealtCommissions).toHaveLength(4);

@@ -256,7 +256,7 @@ describe(createAlhaithamKitBehaviour, () => {
     const combatant = createAlhaithamCombatant(4);
 
     expect(
-      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party, []),
     ).toBeGreaterThan(0);
   });
 
@@ -265,7 +265,7 @@ describe(createAlhaithamKitBehaviour, () => {
     const combatant = createAlhaithamCombatant(3);
 
     expect(
-      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party),
+      ALHAITHAM_KIT.getStrikeDamageBonus?.({ body: kitBody, combatant, hit: getBurstHit(combatant) }, enemy, party, []),
     ).toBe(0);
   });
 });

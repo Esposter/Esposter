@@ -14,8 +14,11 @@ const WATER_MESH_INFIX = "_Water_";
 
 // A region's rivers, each water surface's mesh read as the witness lays it out, the same way its falls are. A surface
 // Is one or more courses, and a pond has none. Written to the region's data file as its `rivers`, returning the file's
-// Path and the counts of courses and points as the build's note
-export const fitRiverCourses = async (component: DerivedAssetComponent): Promise<GameDataBuild> => {
+// Path and the counts of courses and points as the build's note. A dry run writes nothing and says so
+export const fitRiverCourses = async (
+  component: DerivedAssetComponent,
+  { isDryRun }: { isDryRun: boolean },
+): Promise<GameDataBuild> => {
   const courses = (await readWitnessWorldMeshes(component, (mesh) => mesh.includes(WATER_MESH_INFIX))).map((vertices) =>
     computeRiverCourses(vertices),
   );
@@ -24,7 +27,8 @@ export const fitRiverCourses = async (component: DerivedAssetComponent): Promise
   const regionData = parseMachineJson<Record<string, unknown>>(
     await readFile(join(WORLD_DATA_DIRECTORY, regionFile), "utf8"),
   );
-  const path = await writeWorldData(regionFile, { ...regionData, rivers });
+  const path = await writeWorldData(regionFile, { ...regionData, rivers }, { isDryRun });
   const points = rivers.reduce((sum, course) => sum + course.length, 0);
-  return { notes: [`${path}: ${rivers.length} river courses, ${points} course points`], objects: {} };
+  const written = isDryRun ? ", nothing written" : "";
+  return { notes: [`${path}: ${rivers.length} river courses, ${points} course points${written}`], objects: {} };
 };

@@ -4,10 +4,12 @@ import type { GcgCost } from "#src/models/gcg/GcgCost";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 // What a cost is paid for: the skill a character uses or the card played, at most one of them named, the costs still to
-// Pay after the reductions so far, and the element of the character paying, which its Matching dice follow
+// Pay after the reductions so far, and the element of the character paying, which its Matching dice follow. A switch names
+// The character it brings in, so the cards attached to that character reduce it too
 export interface GcgCostSubject {
   card?: GcgCard;
   costs: GcgCost[];
   element: Element;
   skill?: GcgSkill;
+  switchTo?: number;
 }

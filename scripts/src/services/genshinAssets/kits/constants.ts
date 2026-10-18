@@ -15,6 +15,8 @@ export const GCSIM_CHARACTERS_PATH = "internal/characters";
 export const GCSIM_CONFIG_FILE = "config.yml";
 // The frame helpers gcsim's action files build an action's cancel frames with
 export const GCSIM_NORMAL_FRAMES_CALLEE = "frames.InitNormalCancelSlice";
+// The frames a second of game time is, the unit a gcsim cooldown is written in and the table gives it in seconds
+export const GCSIM_FRAMES_PER_SECOND = 60;
 export const GCSIM_ABILITY_FRAMES_CALLEE = "frames.InitAbilSlice";
 // The charge level a bow's aimed shot is fired at when its config sets none, gcsim's `attacks.AimParamLv1`, the fully
 // Charged shot

@@ -71,12 +71,28 @@ Mizuki's collision and two plunges SHALL land on the enemies within reach, with 
 - **WHEN** the player starts a plunge attack
 - **THEN** the collision and the plunge hits land on the enemies within reach
 
-### Requirement: Dreamdrifter and snacks not yet built
+### Requirement: Dreamdrifter state from the skill's press
 
-The Dreamdrifter state, the snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension and constellation effects that read them SHALL NOT take effect.
+Mizuki's skill press SHALL enter the Dreamdrifter state for five seconds, and a press in the state SHALL cancel it.
+
+#### Scenario: The press enters the Dreamdrifter state, which lasts five seconds
+
+- **GIVEN** Mizuki is out of the Dreamdrifter state
+- **WHEN** the player presses her skill
+- **THEN** the Dreamdrifter state holds for five seconds and then ends
+
+#### Scenario: A press in the Dreamdrifter state cancels it
+
+- **GIVEN** Mizuki is in the Dreamdrifter state
+- **WHEN** the player presses her skill
+- **THEN** the Dreamdrifter state ends
+
+### Requirement: Clouds, snacks and constellations not yet built
+
+Mizuki's Dreamdrifter clouds, the state's restriction of her actions, the snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension and constellation effects that read them SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Mizuki has a Dreamdrifter, snack or constellation effect unlocked
+- **GIVEN** Mizuki has a cloud, snack or constellation effect unlocked
 - **WHEN** the player fights with Mizuki
 - **THEN** those effects have no effect
