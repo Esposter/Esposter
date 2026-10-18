@@ -89,9 +89,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
           category: SCENE_POINT_CATEGORY,
           file: SCENE_POINT_FILE,
           id: "4",
-          position: "NPCCBOFKBCO",
+          position: "tranPos",
           prefab: { block: "00/04803507.blk", name: "SceneObj_NPC_Goddess", pathId: "1660930449232041872" },
-          rotation: "EGALADGLFJM",
+          rotation: "tranRot",
         },
       ],
       regionLandmarks: [

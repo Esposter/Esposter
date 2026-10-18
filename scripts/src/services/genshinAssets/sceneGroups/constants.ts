@@ -11,12 +11,12 @@ import { GameDataset } from "genshin-world";
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const SCENE_GROUPS_KEY: string = `${GameDataset.SceneGroups}/scene${OPEN_WORLD_SCENE_ID}`;
 // Mondstadt's restaurant's point, the exemplar of the scene's building points, with the fields its kind holds its place
-// And its turn in, and the field it names the service it marks in, as the community's dump obfuscates them
+// And its turn in, and the field it names the service it marks in, as the community's dump names them
 export const SCENE_BUILDING_POINT: ScenePointExemplar = {
   category: SCENE_POINT_CATEGORY,
   file: SCENE_POINT_FILE,
   id: "62",
-  position: "CMGLCIKBLJJ",
-  rotation: "FFHABOBFAGN",
+  position: "pos",
+  rotation: "rot",
 };
-export const SCENE_BUILDING_NAME_FIELD = "LDNJAFHKHOF";
+export const SCENE_BUILDING_NAME_FIELD = "buildingType";

@@ -14,14 +14,11 @@ export const readSceneBuildingPoints = async (): Promise<Record<string, SceneBui
       const position = point[SCENE_BUILDING_POINT.position];
       const rotation = point[SCENE_BUILDING_POINT.rotation];
       if (typeof name !== "string" || name === "" || typeof position !== "object") return [];
-      const { _x = 0, _y = 0, _z = 0 } = position;
+      const { x = 0, y = 0, z = 0 } = position;
       // A turn the dump leaves out is none, as it leaves out a vector's zero fields
-      const { _y: rotationY = 0 } = typeof rotation === "object" ? rotation : {};
+      const { y: rotationY = 0 } = typeof rotation === "object" ? rotation : {};
       return [
-        [
-          id,
-          { name, place: { height: _y, position: { x: _x, z: _z }, rotationY, source: SceneGroupSource.ScenePoints } },
-        ],
+        [id, { name, place: { height: y, position: { x, z }, rotationY, source: SceneGroupSource.ScenePoints } }],
       ];
     }),
   );

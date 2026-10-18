@@ -17,7 +17,7 @@ export const readSceneTransportPoints = async (): Promise<SceneTransportPoint[]>
     const vector = point[statuePoint.position];
     if (typeof vector !== "object") return [];
     const area = point[SCENE_POINT_AREA_FIELD];
-    const { _x = 0, _y = 0, _z = 0 } = vector;
-    return [{ area: typeof area === "number" ? area : undefined, height: _y, position: { x: _x, z: _z } }];
+    const { x = 0, y = 0, z = 0 } = vector;
+    return [{ area: typeof area === "number" ? area : undefined, height: y, position: { x, z } }];
   });
 };

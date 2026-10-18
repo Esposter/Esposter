@@ -11,7 +11,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const toVector = ({ _x = 0, _y = 0, _z = 0 }: DumpedVector): [number, number, number] => [_x, _y, _z];
+const toVector = ({ x = 0, y = 0, z = 0 }: DumpedVector): [number, number, number] => [x, y, z];
 // Every place a part of the open world sets each of its prefabs down: where each scene point stands, read from the
 // Community's dump by the fields its map names, and each StreamGen placement of a prefab's id, read from the blob and
 // Index `extract` wrote. A point or a field the dump does not hold is an error, so a dump that renamed its fields is

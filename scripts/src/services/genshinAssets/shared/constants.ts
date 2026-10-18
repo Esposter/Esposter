@@ -288,7 +288,7 @@ export const CATALOGUE_FILE = "catalogue.json";
 export const CATALOGUE_PATH: string = join(WORLD_DATA_DIRECTORY, CATALOGUE_FILE);
 // The game's own area table in the community's dump, each area's id and the text id of its name, and the field a scene
 // Point files the area it stands in under, as the dump obfuscates it: Windrise's statue's holds 201, which the table
-// Names Windrise
+// Names Windrise. The dump leaves it out of a point at its default, 0, which names no area
 export const WORLD_AREAS_TABLE_NAME = "WorldAreaConfigData";
 // The open world's areas' outlines in the community's dump, the game's own polygon for each of its areas
 export const WORLD_AREA_POLYGONS_PATH: string = join(
@@ -296,13 +296,13 @@ export const WORLD_AREA_POLYGONS_PATH: string = join(
   SCENE_WORLD_AREA_DIRECTORY,
   SCENE_WORLD_AREA_FILE_NAME,
 );
-export const SCENE_POINT_AREA_FIELD = "HDMEDFBJMPK";
+export const SCENE_POINT_AREA_FIELD = "EABBCMGNLEL";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from
 export const OPEN_WORLD_SCENE_ID = 3;
 // The open world's scene point file in the community's dump, relative to its folder, and the category its points are
-// Filed under, as that dump obfuscates it
+// Filed under
 export const SCENE_POINT_FILE = "BinOutput/Scene/Point/scene3_point.json";
-export const SCENE_POINT_CATEGORY = "NNGAFPEMOML";
+export const SCENE_POINT_CATEGORY = "points";
 // Where `genshin:parity instruments` writes the recordings the login's music plays, rewritten whole, which the world
 // Package serves from its `LOGIN_MUSIC_RECORDING_DIRECTORY`
 export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "login", "recordings");
