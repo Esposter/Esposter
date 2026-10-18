@@ -19,6 +19,7 @@ describe(drawFishingPointFish, () => {
   const HOUR = 0;
   const FIRST_ROLL = 0;
   const LAST_ROLL = 0.9;
+  const BAITED_FISH_IDS = new Set([FIRST_FISH_ID, SECOND_FISH_ID]);
 
   test("a point draws from its region's pools", () => {
     expect.hasAssertions();
@@ -28,15 +29,31 @@ describe(drawFishingPointFish, () => {
       [REGION]: [createPool(FIRST_FISH_ID), createPool(SECOND_FISH_ID)],
     };
 
-    expect(drawFishingPointFish(regionPools, REGION, HOUR, FIRST_ROLL)).toBe(FIRST_FISH_ID);
-    expect(drawFishingPointFish(regionPools, REGION, HOUR, LAST_ROLL)).toBe(SECOND_FISH_ID);
+    expect(drawFishingPointFish(regionPools, REGION, HOUR, FIRST_ROLL, BAITED_FISH_IDS)).toBe(FIRST_FISH_ID);
+    expect(drawFishingPointFish(regionPools, REGION, HOUR, LAST_ROLL, BAITED_FISH_IDS)).toBe(SECOND_FISH_ID);
   });
 
   test("a point in a region with no pool draws nothing", () => {
     expect.hasAssertions();
 
     expect(
-      drawFishingPointFish({ [OTHER_REGION]: [createPool(OTHER_FISH_ID)] }, REGION, HOUR, FIRST_ROLL),
+      drawFishingPointFish({ [OTHER_REGION]: [createPool(OTHER_FISH_ID)] }, REGION, HOUR, FIRST_ROLL, BAITED_FISH_IDS),
     ).toBeUndefined();
+  });
+
+  test("a fish is drawn only by its own bait", () => {
+    expect.hasAssertions();
+
+    const regionPools = { [REGION]: [createPool(FIRST_FISH_ID), createPool(SECOND_FISH_ID)] };
+
+    expect(drawFishingPointFish(regionPools, REGION, HOUR, LAST_ROLL, new Set([FIRST_FISH_ID]))).toBe(FIRST_FISH_ID);
+  });
+
+  test("a cast with another bait draws none of a fish's kind", () => {
+    expect.hasAssertions();
+
+    const regionPools = { [REGION]: [createPool(FIRST_FISH_ID)] };
+
+    expect(drawFishingPointFish(regionPools, REGION, HOUR, FIRST_ROLL, new Set([OTHER_FISH_ID]))).toBeUndefined();
   });
 });
