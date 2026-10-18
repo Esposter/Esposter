@@ -3,7 +3,7 @@ import type { MountedGrid } from "#src/models/MountedGrid";
 
 import { findGridAt } from "#src/services/findGridAt";
 import { mountedGrids } from "#src/services/mountedGrids";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe(findGridAt, () => {
   beforeEach(() => {
@@ -26,6 +26,10 @@ describe(findGridAt, () => {
     const targetTile = document.createElement("div");
     targetRoot.append(targetTile);
     document.body.append(sourceRoot, targetRoot);
+    onTestFinished(() => {
+      sourceRoot.remove();
+      targetRoot.remove();
+    });
     const sourceGrid: MountedGrid = { accept: () => true };
     const targetGrid: MountedGrid = { accept: () => true };
     mountedGrids.set(sourceRoot, sourceGrid);
@@ -33,8 +37,5 @@ describe(findGridAt, () => {
     vi.spyOn(document, "elementsFromPoint").mockReturnValue([sourceTile, targetTile]);
 
     expect(findGridAt({ x: 0, y: 0 }, sourceTile)).toBe(targetGrid);
-
-    sourceRoot.remove();
-    targetRoot.remove();
   });
 });
