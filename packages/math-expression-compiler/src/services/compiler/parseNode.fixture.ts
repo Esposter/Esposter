@@ -1,7 +1,6 @@
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { parseMathExpression } from "#src/services/parser/parseMathExpression";
-import { describe } from "vitest";
 
 export const parseNode = (formula: string): MathExpressionNode =>
   parseMathExpression(formula).match(
@@ -10,5 +9,3 @@ export const parseNode = (formula: string): MathExpressionNode =>
       throw error;
     },
   );
-
-describe.todo("parseNode");

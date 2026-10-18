@@ -1,3 +1,5 @@
+import type { FunctionalComponent } from "vue";
+
 import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
@@ -5,8 +7,14 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
+import { h } from "vue";
+
+// This suite is not a Nuxt app, so NuxtImg, the image component the app provides, stands in as the plain image it renders
+const NuxtImg: FunctionalComponent = (attrs) => h("img", attrs);
 
 describe("menuPaimon", () => {
+  const global = { components: { NuxtImg } };
+
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();
@@ -22,6 +30,7 @@ describe("menuPaimon", () => {
     expect.hasAssertions();
 
     render(MenuPaimon, {
+      global,
       props: { ...props, accountAvatarUrl: "https://example.com/avatar.png", accountName: "Aether" },
     });
 
