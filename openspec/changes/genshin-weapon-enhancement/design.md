@@ -61,6 +61,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Benthic Pulse (Song of Stillness, provisional reading).** After the wielder is healed, all DMG rises by the rank's 16% for 8 s, through the same heal-buff helper as Tidal Shadow, with the all-DMG attribute in place of ATK.
 - **Samurai Conduct (Kitain Cross Spear and Katsuragikiri Nagamasa, provisional reading).** The Elemental Skill DMG its wielder deals rises by the rank's 6% to 12%. After its Elemental Skill hits an opponent, the wielder loses 3 energy and regenerates the rank's 3 or 5 on each 2 s tick for 6 s, once every 10 s, through scheduleKitTask and gainPartyMemberEnergy, whether or not the wielder is on the field.
 - **Echoes of the Plentiful Land (Ring of Yaxche, provisional reading).** An Elemental Skill its wielder uses grants the Jade-Forged Crown: Normal Attack DMG rises by 0.6% for each whole 1,000 of the wielder's Max HP, up to 16%, for 10 s, through the buff helper and the skill-used event. A burst grants nothing. The rank's 1% and 32% are the five-star rank's.
+- **Flower-Feather Song (Chain Breaker, provisional reading).** The wielder's ATK rises by 4.8% for each other party member from Natlan or of another Elemental Type, and with three or more such members its Elemental Mastery rises by 24, through getPassiveBonuses over the deployed team. The rank's 9.6% and 48 are the five-star rank's.
 
 ## How it works
 
