@@ -15,7 +15,7 @@
 ## 4. Panel
 
 - [x] 4.1 Open the Mystic Offering from Adventure Rank 45 and no lower. Verify: a test named after the scenario 'the offering opens from adventure rank 45'.
-- [ ] 4.2 List only the offerable artifacts in the panel, and pass the craft's result to the parent. Verify: a test named after the scenario 'the panel lists only the offerable artifacts', seen failing first.
+- [x] 4.2 List only the offerable artifacts in the panel, and pass the craft's result to the parent. Verify: a test named after the scenario 'the panel lists only the offerable artifacts'.
 
 ## 5. Words
 
