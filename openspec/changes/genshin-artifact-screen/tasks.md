@@ -50,8 +50,9 @@ Each built task names the test it was written first in, and each test is a scena
 
 ## 6. Not built
 
-- [ ] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. Waits on the
-      character-screen agent's change (`agent/w6-character-screen`), which lands first; this change builds
-      against the `Artifact` type that change uses.
+- [x] 6.1 The bag's artifact entry holds a rolled, individual piece with a unique instance id. The character-screen
+      change has landed on `eye`: each artifact enters the bag as an entry of its own, its `id` from the bag's `nextId`.
+      Covered by `addInventoryArtifact.test.ts`'s "takes each artifact in as an entry of its own holding the artifact it
+      was rolled as".
 - [ ] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Waits on 6.1.
 - [ ] 6.3 The main affix pools are read by the drop that rolls an artifact. Waits on that drop's wiring.

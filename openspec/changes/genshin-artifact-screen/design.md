@@ -39,12 +39,10 @@ What works today and what this change adds:
   fixture and worn variant in the visual suite, and the character screen's Artifacts tab, which passes the panel its
   words, slot names, stats and the set block's lines. Their tests are named in the change's tasks, and the existing
   character, kit and save suites cover what they share.
-- **Not built, and why:** the main stat's value, which waits on the main affix pools the drop reads (task 6.3), the
-  panel's parity reference and approval, equipping from the bag, unequipping to it and fodder taken from it. Each of the
-  bag moves needs a bag piece to hold its rolled state, and the bag does not yet: an entry is saved with its level alone
-  (`InventoryItemSave`), so a piece cannot leave the bag equipped or enter it as fodder. The character-screen agent's
-  change (`agent/w6-character-screen`) makes each bag artifact an individual, rolled at its drop and saved with a unique
-  instance id, and that branch lands before this change does.
+- **Not built, and why:** the panel's parity reference and approval (task 5.4), which waits on a browser run, and the
+  bag moves' picker (task 6.2): equipping from the bag, unequipping to it and fodder taken from it. The bag holds each
+  piece as an entry of its own with a unique `id` (task 6.1, landed on `eye` with the character-screen change), so the
+  moves need only their services and the screen's wiring.
 
 ## Decisions
 
@@ -109,8 +107,8 @@ type `rollArtifact` returns and writes no second artifact model. Its dev backfil
 | `scripts/src/services/genshinAssets/stats/getArtifactSetDatas.ts`              | Each bonus's effect text hash, read from its affix row at that piece count                                                       |
 | `packages/genshin-world/src/services/artifact/ArtifactSlotGameTextKeyMap.ts`   | Each artifact slot by the game's name for it, read by the character screen                                                       |
 | `packages/genshin-world/src/components/Character/Screen/Index.vue`             | The Artifacts tab's props: the labels, the slot names, the stats and the set block's lines, from the game text and the tables    |
-| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, on the chest drop path: the character-screen agent's change, not this one's (not built)                           |
-| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact, on the chest drop path: the character-screen agent's change, not this one's (not built)           |
+| `packages/genshin-world/src/services/inventory/addInventoryItem.ts`            | The bag's add, which takes a dropped artifact in through `addInventoryArtifact`, landed on `eye` with task 6.1                   |
+| `packages/genshin-world/src/services/save/toInventorySave.ts`                  | The bag's save of an artifact entry, landed on `eye` with task 6.1                                                               |
 
 New files, as a tree:
 
