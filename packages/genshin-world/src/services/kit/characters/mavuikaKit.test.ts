@@ -1,10 +1,29 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import type { Combatant } from "#src/models/kit/Combatant";
+
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { createMavuikaKitBehaviour, MAVUIKA_CHARACTER_ID } from "#src/services/kit/characters/mavuikaKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const MAVUIKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, MAVUIKA_CHARACTER_ID);
+
+const createMavuikaCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: MAVUIKA_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: MAVUIKA_KIT,
+  level: 90,
+  weaponType: WeaponType.Claymore,
+});
 
 describe(createMavuikaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -52,5 +71,25 @@ describe(createMavuikaKitBehaviour, () => {
     expect(takeOne(MAVUIKA_KIT.lowPlunge.hits).poiseDamage).toBe(150);
     expect(Math.round(takeOne(MAVUIKA_KIT.highPlunge.hits).hitmarkSeconds * 60)).toBe(41);
     expect(takeOne(MAVUIKA_KIT.highPlunge.hits).poiseDamage).toBe(200);
+  });
+
+  test("the skill enters the Nightsoul Blessing with 80 points, or 120 from Constellation 1, and drains five a second", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMavuikaCombatant(0));
+    MAVUIKA_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 2);
+    expect(countKitResource(context.kitEffectState.effects, MAVUIKA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBeCloseTo(70);
+    const withC1 = createKitTestContext(createMavuikaCombatant(1));
+    MAVUIKA_KIT.elementalSkill.onStart?.(withC1);
+    expect(countKitResource(withC1.kitEffectState.effects, MAVUIKA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(120);
+  });
+
+  test("a skill press in the blessing refills its points to the maximum", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createMavuikaCombatant(0));
+    MAVUIKA_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 2);
+    MAVUIKA_KIT.elementalSkill.onStart?.(context);
+    expect(countKitResource(context.kitEffectState.effects, MAVUIKA_CHARACTER_ID, NIGHTSOUL_POINTS_ID)).toBe(80);
   });
 });

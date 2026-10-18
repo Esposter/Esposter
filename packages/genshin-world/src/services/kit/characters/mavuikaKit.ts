@@ -1,14 +1,41 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
+import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
+import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
+
 export const MAVUIKA_CHARACTER_ID = 10_000_106;
 
-// Mavuika's behaviour: none of her own, since her strikes outside the Nightsoul Blessing, her charged attack and her low,
-// High and collision plunges are her record's alone. Not built yet: the skill's press starts the Nightsoul Blessing and its
-// Ring of Searing Radiance, so it has no hit and spends its cooldown, and Sunfell Slice is paid in Fighting Spirit, which
-// The party's Nightsoul points feed and the framework does not hold, so its energy cost is unreachable and it cannot be
-// Cast. Both wait on the Nightsoul hook
-// Constellation 1 needs Nightsoul points and Fighting Spirit, which the kit does not build
-// Constellation 2 needs the Nightsoul's Blessing state, which the kit does not build
+const CONSTELLATION_1 = 1;
+// Her Nightsoul points are held at 80, or 120 from Constellation 1, as gcsim (MIT) mavuika/cons.go c1Init sets them
+const NIGHTSOUL_POINTS = 80;
+const NIGHTSOUL_POINTS_WITH_C1 = 120;
+// Her blessing drains half a point every six frames, five a second, as gcsim mavuika/skill.go does
+const NIGHTSOUL_DRAIN_PER_SECOND = 5;
+
+// Mavuika's behaviour: her skill's press enters the Nightsoul Blessing with her points at their maximum, and a press while
+// In it refills them, as gcsim's enterNightsoulOrRegenerate does. Not built: the blessing's Ring of Searing Radiance, the
+// Drain's pause while her burst lasts and its extra drain on the bike and in the charged attack, Sunfell Slice paid in
+// Fighting Spirit, and the points her strikes generate. Her strikes outside the blessing, her charged attack and her plunges
+// Are her record's alone
+// Constellation 1's points are built; its Fighting Spirit is not, which the kit does not build
+// Constellation 2 needs its Nightsoul effect, which the kit does not build
 // Constellation 4 needs her Ascension talent Kiongozi, which is not built
 // Constellation 6 needs the All-Fire Armaments of The Named Moment, which the kit does not build
-export const createMavuikaKitBehaviour = (): KitBehaviour => ({});
+export const createMavuikaKitBehaviour = (): KitBehaviour => ({
+  skill: {
+    onStart: ({ activeCombatant, kitEffectState }) => {
+      const { characterId, constellationCount } = activeCombatant;
+      const maximum = constellationCount < CONSTELLATION_1 ? NIGHTSOUL_POINTS : NIGHTSOUL_POINTS_WITH_C1;
+      if (hasKitNightsoulBlessing(kitEffectState.effects, characterId))
+        gainKitResource(kitEffectState, characterId, NIGHTSOUL_POINTS_ID, maximum, maximum);
+      else
+        enterKitNightsoulBlessing(kitEffectState, characterId, {
+          nightsoulRate: { maximum, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
+          points: maximum,
+          secondsRemaining: Number.POSITIVE_INFINITY,
+        });
+    },
+  },
+});
