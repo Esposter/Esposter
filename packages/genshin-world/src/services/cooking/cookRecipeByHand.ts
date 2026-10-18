@@ -52,7 +52,7 @@ export const cookRecipeByHand = (
   const itemId = pickDishItemId(recipe, quality, avatarId, random());
   const extra = rollCookingTalentExtra(talent, recipe, quality, random);
   const addition = addInventoryItem(
-    { items: takeItemCounts(inventory.items, recipe.ingredients, 1), nextId: inventory.nextId },
+    { ...inventory, items: takeItemCounts(inventory.items, recipe.ingredients, 1) },
     getDefinition(itemId),
     1 + extra,
   );

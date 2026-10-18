@@ -54,6 +54,6 @@ export const autoCookRecipe = (
       const addition = addInventoryItem(bag, getDefinition(itemId), group.length);
       return addition.overflow > 0 ? undefined : addition.inventory;
     },
-    { items: takeItemCounts(inventory.items, recipe.ingredients, count), nextId: inventory.nextId },
+    { ...inventory, items: takeItemCounts(inventory.items, recipe.ingredients, count) },
   );
 };

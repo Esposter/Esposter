@@ -21,7 +21,7 @@ export const startHomeMake = (
   if (!isOpen || progress.orders.length >= trustRank || !checkIsItemCountsHeld(inventory.items, blueprint.materials, 1))
     return undefined;
   return {
-    inventory: { items: takeItemCounts(inventory.items, blueprint.materials, 1), nextId: inventory.nextId },
+    inventory: { ...inventory, items: takeItemCounts(inventory.items, blueprint.materials, 1) },
     progress: { ...progress, orders: [...progress.orders, { blueprintId: blueprint.id, startedAt: now }] },
   };
 };

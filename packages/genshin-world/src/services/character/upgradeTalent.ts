@@ -35,7 +35,7 @@ export const upgradeTalent = (
   );
   return {
     character: { ...character, talentLevels: { ...character.talentLevels, [talent]: upgrade.level } },
-    inventory: { items, nextId: inventory.nextId },
+    inventory: { ...inventory, items },
     wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] - upgrade.coinCost },
   };
 };

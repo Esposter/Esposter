@@ -28,7 +28,7 @@ export const PRECIOUS_CURRENCIES: readonly Currency[] = [
   Currency.MasterlessStellaFortuna,
 ];
 // A new player's bag holds nothing, and their wallet nothing but Original Resin at its regeneration cap, from the epoch
-export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0 };
+export const EMPTY_INVENTORY: Readonly<Inventory> = { items: [], nextId: 0, quickSwapItemIds: [] };
 // A new player's currencies, every one at zero but Original Resin, at its regeneration cap
 export const EMPTY_CURRENCIES: Readonly<Record<Currency, number>> = {
   [Currency.AcquaintFate]: 0,
