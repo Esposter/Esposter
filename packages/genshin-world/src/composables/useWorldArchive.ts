@@ -2,7 +2,6 @@ import type { ArchiveData } from "#src/models/archive/ArchiveData";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
@@ -48,7 +47,7 @@ export const useWorldArchive = ({
 }: {
   archiveKillsMap: ShallowRef<ArchiveKills>;
   archiveProgressMap: ShallowRef<ArchiveProgress>;
-  enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
+  enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   gameDataBaseUrl: string;

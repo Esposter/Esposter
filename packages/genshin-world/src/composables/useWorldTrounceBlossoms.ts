@@ -3,7 +3,6 @@ import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -67,7 +66,7 @@ export const useWorldTrounceBlossoms = ({
   adventureRankTables: AdventureRankTables;
   characters: Ref<Character[]>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
-  enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
+  enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
   gainWorldAdventureExp: (amount: number) => void;
   gameDataBaseUrl: string;
