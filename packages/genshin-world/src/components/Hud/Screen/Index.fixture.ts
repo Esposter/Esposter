@@ -71,6 +71,7 @@ export const props = {
     weaponType: WeaponType.Bow,
   },
   nameTextMap: englishNameText,
+  nearOculusPlaces: [],
   party,
   questMark: { distance: 1540, height: QUEST_MARK_MIN_HEIGHT },
   questProgress: { objectiveCounts: [], stepIndex: 0 },

@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
@@ -54,7 +55,7 @@ describe(createBoundlessBlessingPassiveModule, () => {
 
     expect(getStacks(context.kitEffectState.effects)).toBe(1);
     const buffs = context.kitEffectState.effects.filter(
-      (effect) => effect.kind === "buff" && effect.source === BOUNDLESS_BLESSING_ID,
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.source === BOUNDLESS_BLESSING_ID,
     );
     expect(buffs.map(({ attribute }) => attribute)).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES);
     expect(buffs.every(({ amount }) => Math.abs(amount - 0.08) < 1e-9)).toBe(true);
