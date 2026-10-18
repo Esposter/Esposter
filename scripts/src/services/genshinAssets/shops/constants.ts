@@ -5,6 +5,17 @@ import { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
 export const PAIMON_BARGAINS_SHOP_TYPE = 1001;
 // The general goods the Mondstadt grocery sells, shop 1004 in the table, the one the city's grocery row is read as
 export const MONDSTADT_GENERAL_GOODS_SHOP_TYPE = 1004;
+// The seven Mondstadt vendors' shops, by the shop's number in the goods table and the stem of the dataset each vendor's goods
+// Are published under. Each vendor's stock is matched to its shop by the names of its goods, read from the wiki's vendor pages
+export const MONDSTADT_VENDOR_SHOPS: readonly { shopType: number; stem: string }[] = [
+  { shopType: 1011, stem: "mondstadtFlora" },
+  { shopType: 1012, stem: "mondstadtCharles" },
+  { shopType: 1013, stem: "mondstadtShiliu" },
+  { shopType: 1014, stem: "mondstadtSchulz" },
+  { shopType: 1015, stem: "mondstadtBrook" },
+  { shopType: 1017, stem: "mondstadtDraff" },
+  { shopType: 1018, stem: "mondstadtChloris" },
+];
 // Mondstadt's city in the shop table, whose shops' discount the grocery's goods take
 export const MONDSTADT_CITY_ID = 1;
 // The Realm Depot's goods, filed under shop type 1048 in the goods rows, each under the sub tab the depot shows it in
