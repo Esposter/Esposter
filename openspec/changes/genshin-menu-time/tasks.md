@@ -9,7 +9,7 @@
 
 ## 3. Wiring
 
-- [ ] 3.1 Expose the world's clock from the Windrise component and fill the menu's Time slot with the screen, setting the clock on confirm and closing back to the world. Verify: tests named after the scenarios 'Confirm sets the clock to the target' and 'Closing without confirming leaves the clock as it was', written first and seen failing.
+- [x] 3.1 Expose the world's clock from the Windrise component and fill the menu's Time slot with the screen, setting the clock on confirm and closing back to the world. Verify: tests named after the scenarios 'Confirm sets the clock to the target' and 'Closing without confirming leaves the clock as it was', written first and seen failing.
 
 ## 4. Check
 
