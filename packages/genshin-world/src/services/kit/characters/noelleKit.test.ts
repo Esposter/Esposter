@@ -15,6 +15,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -97,6 +98,72 @@ describe("noelle kit", () => {
     expect(context.kitEffectState.effects).toStrictEqual([
       {
         amount: 0.4 * combatant.attributes.defense,
+        attribute: Attribute.Attack,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 15 + 80 / 60,
+        source: "noelle-sweeping-time",
+      },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        kind: "infusion",
+        secondsRemaining: 15 + 80 / 60,
+      },
+    ]);
+  });
+
+  test("its Breastplate's shield reads her DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNoelleCombatant());
+    buffKitMember(context.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    NOELLE_KIT.elementalSkill.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.Defense,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 1,
+      },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Geo,
+        health: 1.6 * (DEFENSE + 100) + 769.7851,
+        kind: "shield",
+        secondsRemaining: 12,
+      },
+    ]);
+  });
+
+  test("its Sweeping Time's ATK share reads her DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNoelleCombatant());
+    buffKitMember(context.kitEffectState, NOELLE_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    NOELLE_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      {
+        amount: 100,
+        attribute: Attribute.Defense,
+        characterId: NOELLE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 1,
+      },
+      {
+        amount: 0.4 * (DEFENSE + 100),
         attribute: Attribute.Attack,
         characterId: NOELLE_CHARACTER_ID,
         kind: "buff",
