@@ -38,6 +38,15 @@ const ASCENSION_4_ATTACK_COUNT = 4;
 const ASCENSION_4_SKILL_COOLDOWN_REDUCTION_SECONDS = 1;
 const ASCENSION_4_COUNT_STATUS_ID = "noelle-ascension-4-count";
 
+// Sets Ascension 4's count back to none, as a fourth attack and a skill both do
+const resetAscension4Count = (kitEffectState: KitContext["kitEffectState"], characterId: number): void => {
+  addKitStatus(kitEffectState, characterId, {
+    id: ASCENSION_4_COUNT_STATUS_ID,
+    secondsRemaining: Number.POSITIVE_INFINITY,
+    stacks: 0,
+  });
+};
+
 export const NOELLE_CHARACTER_ID = 10_000_034;
 
 // Noelle's behaviour: Breastplate's heal on a hit of her attacks and her press while the shield stands rolls at the
@@ -56,11 +65,7 @@ const countAttack = ({ kitEffectState, party }: KitContext, characterId: number)
     });
     return;
   }
-  addKitStatus(kitEffectState, characterId, {
-    id: ASCENSION_4_COUNT_STATUS_ID,
-    secondsRemaining: Number.POSITIVE_INFINITY,
-    stacks: 0,
-  });
+  resetAscension4Count(kitEffectState, characterId);
   const partyMember = getPartyMember(party, characterId);
   if (partyMember.skillCooldownSeconds > 0)
     partyMember.skillCooldownSeconds = Math.max(
@@ -134,6 +139,7 @@ export const createNoelleKitBehaviour = ({
         event.kind !== KitEventKind.HealthChanged ||
         event.healthShare >= 0 ||
         event.sourceCharacterId === undefined ||
+        event.characterId !== activeCombatant.characterId ||
         combatant.ascension < DEVOTION_ASCENSION ||
         getPartyMember(party, activeCombatant.characterId).healthShare >= DEVOTION_HEALTH_SHARE
       )
@@ -152,12 +158,7 @@ export const createNoelleKitBehaviour = ({
       hits: [breastplateHealBehaviour],
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         // A skill restarts Ascension 4's count, as gcsim's skill does
-        if (combatant.ascension >= ASCENSION_4)
-          addKitStatus(kitEffectState, combatant.characterId, {
-            id: ASCENSION_4_COUNT_STATUS_ID,
-            secondsRemaining: Number.POSITIVE_INFINITY,
-            stacks: 0,
-          });
+        if (combatant.ascension >= ASCENSION_4) resetAscension4Count(kitEffectState, combatant.characterId);
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Geo,
           // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character

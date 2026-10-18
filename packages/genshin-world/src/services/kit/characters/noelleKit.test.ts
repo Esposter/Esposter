@@ -225,4 +225,24 @@ describe("noelle kit", () => {
     }
     expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(5);
   });
+
+  test("a drain on a background member does not shield while the active character is under 30% HP", () => {
+    expect.hasAssertions();
+    const BACKGROUND_CHARACTER_ID = 10_000_003;
+    const party = createParty([NOELLE_CHARACTER_ID, BACKGROUND_CHARACTER_ID]);
+    const context = createKitTestContext({ ...createNoelleCombatant(), ascension: 1 }, { party });
+    getPartyMember(party, NOELLE_CHARACTER_ID).healthShare = 0.2;
+    NOELLE_KIT.onKitEvent?.(
+      {
+        characterId: BACKGROUND_CHARACTER_ID,
+        healthShare: -0.5,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        sourceCharacterId: BACKGROUND_CHARACTER_ID,
+      },
+      context,
+      context.activeCombatant,
+    );
+    expect(context.kitEffectState.effects).toStrictEqual([]);
+  });
 });
