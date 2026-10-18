@@ -26,6 +26,7 @@ export interface Kit {
   burstEnergyCost: number;
   chargedAttack: KitAction;
   chargedAttackStamina: number;
+  chargedAttackVariant?: KitVariant;
   elementalBurst: KitAction;
   // The action the burst plays instead while its check holds on the step it starts, if it has one, such as a burst that
   // Hits harder at low HP
