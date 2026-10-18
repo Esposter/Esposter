@@ -9,18 +9,23 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createDilucKitBehaviour, DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
+import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createDilucKitBehaviour, () => {
   const DILUC_COMBATANT: Combatant = {
@@ -41,6 +46,29 @@ describe(createDilucKitBehaviour, () => {
     elementalResonances: [],
     kit: DILUC_KIT,
     level: 90,
+  });
+
+  // The strike-damage bonus a Diluc strike takes on an enemy at the given share of its HP, with the constellations held
+  const getDamageBonus = (constellationCount: number, healthShare: number): number | undefined => {
+    const combatant = { ...createCombatant(0), constellationCount };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    return DILUC_KIT.getStrikeDamageBonus?.(
+      { body: createKitTestContext(combatant).body, combatant, hit: takeOne(takeOne(DILUC_KIT.normalAttacks).hits) },
+      { ...enemy, health: healthShare * enemy.maxHealth },
+      createParty([DILUC_CHARACTER_ID]),
+    );
+  };
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+
+    expect(getDamageBonus(1, 0.6)).toBe(0.15);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+
+    expect(getDamageBonus(0, 0.6)).toBe(0);
   });
 
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {

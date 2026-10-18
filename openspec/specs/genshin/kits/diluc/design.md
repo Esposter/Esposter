@@ -17,6 +17,7 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 ## Not built
 
 - **Diluc's A1 and the phase-0 passive are not built.** gcsim models no combat effect for either.
+- **Diluc's Constellations 2, 4 and 6 are not built.** Constellation 2's stacks on each hit Diluc takes need a stack status and an ATK and ATK SPD bonus that follows it; Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart; Constellation 6 needs the next two normal attacks after Searing Onslaught.
 
 ## Key files
 
