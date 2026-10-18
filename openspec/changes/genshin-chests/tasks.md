@@ -5,7 +5,7 @@
 
 ## 2. Other tiers
 
-- [ ] 2.1 Decide the Luxurious chest's Mora and the Remarkable chest's blueprints: options are measuring them from a recording, or keeping both chests unopened until the wiki states them; decides nothing here. Verify: the choice is written into the design before either chest is rewarded.
+- [x] 2.1 Decide the Luxurious chest's Mora and the Remarkable chest's blueprints: options are measuring them from a recording, or keeping both chests unopened until the wiki states them; decides nothing here. Verify: the choice is written into the design before either chest is rewarded.
 
 ## 3. Locks by camps
 
