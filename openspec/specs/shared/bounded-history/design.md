@@ -1,6 +1,6 @@
 # Bounded history
 
-The undo and redo stack in `@esposter/shared`: a history holds the entries an undo can reverse, and the entries an undo has reversed, within a limit its consumer passes. It has two consumers: the editor core's documents, whose edits the page builder records as inverse patches [for each open resource](../../../changes/resource-page-builder-undo-as-patches/design.md), and the sheet's commands, whose `useSheetHistoryStore` holds command objects as its entries. The stack is generic over its entry, so the core does not own it and the sheet does not depend on a block editor to undo.
+The undo and redo stack in `@esposter/shared`: a history holds the entries an undo can reverse, and the entries an undo has reversed, within a limit its consumer passes. It has two consumers: the editor core's documents, whose edits the page builder records as inverse patches [for each open resource](../../resource/page-builder/undo-as-patches/design.md), and the sheet's commands, whose `useSheetHistoryStore` holds command objects as its entries. The stack is generic over its entry, so the core does not own it and the sheet does not depend on a block editor to undo.
 
 ## How an entry moves
 
@@ -34,4 +34,4 @@ flowchart TD
 
 ## Notes
 
-- **The page builder keeps one stack per open resource.** The stacks are the page builder's own, in its store, [as its undo change designs them](../../../changes/resource-page-builder-undo-as-patches/design.md); this capability holds one stack and no map of them.
+- **The page builder keeps one stack per open resource.** The stacks are the page builder's own, in its store, [as its undo change designs them](../../resource/page-builder/undo-as-patches/design.md); this capability holds one stack and no map of them.

@@ -1,6 +1,6 @@
 # Style panel
 
-The webpage editor's Style and Theme panels, built once the [canvas](../resource-page-builder-canvas/design.md) draws the page and its tabs and [undo as patches](../resource-page-builder-undo-as-patches/design.md) records an edit.
+The webpage editor's Style and Theme panels, built once the [canvas](../resource-page-builder-canvas/design.md) draws the page and its tabs and [undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md) records an edit.
 
 ## The style panel
 

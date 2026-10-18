@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [resource]
 x-model: claude-opus-5-5
-x-waiting: "resource/page-builder/undo-as-patches, whose command layer the patch round-trip bench measures; resource/page-builder/canvas, whose canvas and browser suite the box and mark tests run in; resource/page-builder/email, whose email canvas and compile service the email proof and bench measure"
+x-waiting: "resource/page-builder/canvas, whose canvas and browser suite the box and mark tests run in; resource/page-builder/email, whose email canvas and compile service the email proof and bench measure"
