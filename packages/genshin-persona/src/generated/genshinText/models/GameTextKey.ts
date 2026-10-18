@@ -103,11 +103,11 @@ export enum GameTextKey {
   ConfigureTeam = "UI_TEXT_TEAM_MANAGEMENT",
   // The quit prompt's first button, which goes back to the world
   ContinueGame = "UI_LOGOUT_CONFIRM_CONTINUE_GAME",
-  CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
-  Copy = "UI_FRIEND_COPY",
   // The cooking screen's title and the Stop button that ends its indicator
   CookingStop = "UI_COOKING_QTE_END_BUTTON",
   CookingTitle = "UI_COOKING_QTE_TITLE",
+  CoOp = "UI_STC_GAMEENTRYPAGE_ONLINE",
+  Copy = "UI_FRIEND_COPY",
   CorLapis = "2764520484",
   // The crafting bench: its title and Craft button, the amount slider beside the picked recipe, the Crafting Performed
   // Count, the Required line over its Mora, and the Crafting Materials heading
@@ -128,13 +128,13 @@ export enum GameTextKey {
   DendroSigil = "2628812996",
   // Party Setup's button that deploys the team shown
   Deploy = "UI_BUTTON_ENABLE_TEAM",
-  // A domain's entrance, as its map pin and its entry screen title it
-  DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
   // The dialogue's auto-play button, as it reads while off and while playing
   DialogueAuto = "UI_TALK_DIALOG_AUTO_TALK_START",
   DialogueAutoPlaying = "UI_TALK_DIALOG_AUTO_TALK_STOP",
   // The Dig prompt on the ground of a buried chest, as the game names it
   Dig = "102754774",
+  // A domain's entrance, as its map pin and its entry screen title it
+  DomainEntrance = "UI_STC_DUNGEONENTRYPAGE_DungeonEntry",
   Dracolite = "2859410932",
   // The Electro Crystal node the map marks under Inventory / Materials, named as its gathering point names it
   ElectroCrystal = "2189505020",
@@ -491,6 +491,14 @@ export enum GameTextKey {
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
+  // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
+  ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
+  ShopLimitMonthly = "UI_MALL_LIMIT_BUY_INFO",
+  ShopLimitWeekly = "UI_MALL_LIMIT_BUY_INFO_WEEKLY",
+  // The shop's Buy button, which purchases the picked good
+  ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
+  // The Refreshes in line a shop's good shows, its countdown filled in
+  ShopRefresh = "UI_MALL_REFRESH_COUNTDOWN",
   SilkFlower = "1404683740",
   // The dialogue's button that runs on to the next reply or the end
   Skip = "UI_SKIP_BUTTON",
