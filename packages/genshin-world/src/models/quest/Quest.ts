@@ -27,6 +27,8 @@ export interface Quest {
   kind: QuestKind;
   // The talks offering the quest, any one of which ending starts it, none for a quest that starts otherwise
   offerTalkIds: string[];
+  // The quests that must all be finished before this one starts, read from the accept conditions of its sub quests, none for a quest that starts otherwise
+  parentQuestIds: string[];
   // The items the quest's reward rows pay on its finish, in the rows' order, none for a quest that pays nothing
   rewards: QuestRewardItem[];
   steps: QuestStep[];
@@ -42,6 +44,7 @@ export const questSchema = z
     id: z.string().min(1),
     kind: z.enum(QuestKind) satisfies z.ZodType<QuestKind>,
     offerTalkIds: z.array(z.string().min(1)),
+    parentQuestIds: z.array(z.string().min(1)),
     rewards: z.array(questRewardItemSchema),
     steps: createUniqueArraySchema(questStepSchema, "id").min(1),
     talks: createUniqueArraySchema(talkSchema, "id"),

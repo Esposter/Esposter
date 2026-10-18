@@ -29,6 +29,7 @@ const QUEST: Quest = {
   id: "1",
   kind: QuestKind.World,
   offerTalkIds: [],
+  parentQuestIds: [],
   rewards: [
     { count: 2, itemId: 202 },
     { count: 3, itemId: ITEM_ID },

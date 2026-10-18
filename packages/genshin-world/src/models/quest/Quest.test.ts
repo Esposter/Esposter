@@ -12,6 +12,7 @@ describe("questSchema", () => {
     id: "id",
     kind: QuestKind.World,
     offerTalkIds: [],
+    parentQuestIds: [],
     rewards: [],
     steps: [
       { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: TALK.id }], textId: "textId" },

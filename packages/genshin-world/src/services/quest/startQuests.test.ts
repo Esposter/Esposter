@@ -11,6 +11,7 @@ const createQuest = (id: string): Quest => ({
   id,
   kind: QuestKind.Archon,
   offerTalkIds: [],
+  parentQuestIds: [],
   rewards: [],
   steps: [{ id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetId: "0" }], textId: "textId" }],
   talks: [],
@@ -99,5 +100,32 @@ describe(startQuests, () => {
     expect(startQuests([request], new Map(), undefined, [], request.id)).toStrictEqual(
       new Map([[request.id, { objectiveCounts: [], stepIndex: 0 }]]),
     );
+  });
+
+  test("a quest whose parent quest is finished starts", () => {
+    expect.hasAssertions();
+
+    const parentQuest = { ...createQuest("8"), kind: QuestKind.World };
+    const childQuest = { ...createQuest("9"), kind: QuestKind.World, parentQuestIds: ["8"] };
+
+    expect(
+      startQuests([parentQuest, childQuest], new Map([["8", { objectiveCounts: [], stepIndex: 1 }]])),
+    ).toStrictEqual(
+      new Map([
+        ["8", { objectiveCounts: [], stepIndex: 1 }],
+        ["9", { objectiveCounts: [], stepIndex: 0 }],
+      ]),
+    );
+  });
+
+  test("a quest waits on every parent quest, and on one the world does not carry", () => {
+    expect.hasAssertions();
+
+    const parentQuest = { ...createQuest("8"), kind: QuestKind.World };
+    const childQuest = { ...createQuest("9"), kind: QuestKind.World, parentQuestIds: ["8", "uncarried"] };
+
+    expect(
+      startQuests([parentQuest, childQuest], new Map([["8", { objectiveCounts: [], stepIndex: 1 }]])),
+    ).toStrictEqual(new Map([["8", { objectiveCounts: [], stepIndex: 1 }]]));
   });
 });
