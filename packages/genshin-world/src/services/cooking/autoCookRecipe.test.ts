@@ -1,7 +1,9 @@
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
+import { CookingTalentEffect } from "#src/models/cooking/CookingTalentEffect";
 import { autoCookRecipe } from "#src/services/cooking/autoCookRecipe";
 import { COOKING_BATCH_LIMIT } from "#src/services/cooking/constants";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -23,6 +25,7 @@ describe(autoCookRecipe, () => {
   const DELICIOUS_ITEM_ID = 108_013;
   const SPECIAL_ITEM_ID = 108_014;
   const createRecipe = (): CookingRecipe => ({
+    foodType: CookingFoodType.Heal,
     id: 1001,
     ingredients: [{ count: 1, id: INGREDIENT_ID }],
     isDefaultUnlocked: true,
@@ -116,5 +119,22 @@ describe(autoCookRecipe, () => {
     });
 
     expect(countInventoryItem(result?.items ?? [], SPECIAL_ITEM_ID)).toBe(3);
+  });
+
+  test("auto cook draws the talent once for each dish", () => {
+    expect.hasAssertions();
+
+    const rolls = [0.5, 0.05, 0.5, 0.5];
+
+    const result = autoCookRecipe(createRecipe(), {
+      avatarId: AVATAR_ID,
+      getDefinition: createDefinition,
+      inventory: createInventory(2),
+      progress: provenProgress,
+      random: () => rolls.shift() ?? 0.5,
+      talent: { chance: 12, effect: CookingTalentEffect.DoubleProduct, foodTypes: [CookingFoodType.Heal] },
+    });
+
+    expect(countInventoryItem(result?.items ?? [], DELICIOUS_ITEM_ID)).toBe(3);
   });
 });

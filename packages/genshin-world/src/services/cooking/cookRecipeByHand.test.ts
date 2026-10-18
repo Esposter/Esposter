@@ -1,8 +1,11 @@
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
+import type { CookingTalent } from "#src/models/cooking/CookingTalent";
 import type { CookingZones } from "#src/models/cooking/CookingZones";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
+import { CookingTalentEffect } from "#src/models/cooking/CookingTalentEffect";
 import { RAIDEN_SHOGUN_AVATAR_ID } from "#src/services/cooking/constants";
 import { cookRecipeByHand } from "#src/services/cooking/cookRecipeByHand";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -27,6 +30,7 @@ describe(cookRecipeByHand, () => {
     stackLimit,
   });
   const createRecipe = (overrides: Partial<CookingRecipe> = {}): CookingRecipe => ({
+    foodType: CookingFoodType.Heal,
     id: 1001,
     ingredients: [{ count: 1, id: INGREDIENT_ID }],
     isDefaultUnlocked: true,
@@ -55,6 +59,30 @@ describe(cookRecipeByHand, () => {
       progress: { learnedRecipeIds: [], proficiencies: {} },
       random: () => 0.5,
       stopPosition,
+      zones,
+    });
+
+  const cookWithTalent = ({
+    recipe,
+    roll,
+    stackLimit = DISH_STACK_LIMIT,
+    stopPosition,
+    talent,
+  }: {
+    recipe: CookingRecipe;
+    roll: number;
+    stackLimit?: number;
+    stopPosition: number;
+    talent: CookingTalent;
+  }) =>
+    cookRecipeByHand(recipe, {
+      avatarId: AVATAR_ID,
+      getDefinition: (itemId) => createDefinition(itemId, stackLimit),
+      inventory: createInventory(1),
+      progress: { learnedRecipeIds: [], proficiencies: {} },
+      random: () => roll,
+      stopPosition,
+      talent,
       zones,
     });
 
@@ -126,5 +154,74 @@ describe(cookRecipeByHand, () => {
     expect.hasAssertions();
 
     expect(cook(createRecipe({ isDefaultUnlocked: false }), DELICIOUS_STOP)).toBeUndefined();
+  });
+
+  describe("cooking talents", () => {
+    const SUSPICIOUS_ITEM_ID = 108_011;
+    const SUSPICIOUS_STOP = 0.1;
+    const ONE_DISH_STACK_LIMIT = 1;
+    const DOUBLE_TALENT: CookingTalent = {
+      chance: 12,
+      effect: CookingTalentEffect.DoubleProduct,
+      foodTypes: [CookingFoodType.Attack],
+    };
+    const SUSPICIOUS_TALENT: CookingTalent = {
+      chance: 18,
+      effect: CookingTalentEffect.SuspiciousDish,
+      foodTypes: [CookingFoodType.Attack, CookingFoodType.Defense, CookingFoodType.Function, CookingFoodType.Heal],
+    };
+
+    test("a perfect cook doubles a delicious dish", () => {
+      expect.hasAssertions();
+
+      const result = cookWithTalent({
+        recipe: createRecipe({ foodType: CookingFoodType.Attack }),
+        roll: 0.05,
+        stopPosition: DELICIOUS_STOP,
+        talent: DOUBLE_TALENT,
+      });
+
+      expect(countInventoryItem(result?.inventory.items ?? [], DELICIOUS_ITEM_ID)).toBe(2);
+    });
+
+    test("a talent does not add a dish above its chance", () => {
+      expect.hasAssertions();
+
+      const result = cookWithTalent({
+        recipe: createRecipe({ foodType: CookingFoodType.Attack }),
+        roll: 0.5,
+        stopPosition: DELICIOUS_STOP,
+        talent: DOUBLE_TALENT,
+      });
+
+      expect(countInventoryItem(result?.inventory.items ?? [], DELICIOUS_ITEM_ID)).toBe(1);
+    });
+
+    test("a suspicious-dish talent adds a dish on any food type", () => {
+      expect.hasAssertions();
+
+      const result = cookWithTalent({
+        recipe: createRecipe({ foodType: CookingFoodType.Heal }),
+        roll: 0.05,
+        stopPosition: SUSPICIOUS_STOP,
+        talent: SUSPICIOUS_TALENT,
+      });
+
+      expect(countInventoryItem(result?.inventory.items ?? [], SUSPICIOUS_ITEM_ID)).toBe(2);
+    });
+
+    test("a talent's extra dish is refused when the bag has no room for it", () => {
+      expect.hasAssertions();
+
+      const result = cookWithTalent({
+        recipe: createRecipe({ foodType: CookingFoodType.Attack }),
+        roll: 0.05,
+        stackLimit: ONE_DISH_STACK_LIMIT,
+        stopPosition: DELICIOUS_STOP,
+        talent: DOUBLE_TALENT,
+      });
+
+      expect(result).toBeUndefined();
+    });
   });
 });
