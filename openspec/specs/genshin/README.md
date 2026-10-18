@@ -173,6 +173,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - The kit framework: each character's kit a hosted record read from gcsim's last MIT release, the wiki and the game's own tables, joined to a behaviour module over the shared primitives and loaded only for the party, the modules down to about a third of their lines and the kit tree to no duplicate code.
 - Save data's roster: the characters a player holds, with their copies and Companionship EXP, kept through a reload, and a guest's characters merged with the account's by the further copy of each.
 - Exploring: Teleport Waypoints paired with the scene's transport points and written into Mondstadt's data, each jump landing at the game's own arrival place.
+- Adventurer's four-piece: a chest opened in the world restores its wearer 6% of its Max HP each second for five seconds, the set's bonus in combat built as a module that answers the chest's event.
 
 ## Key files
 
