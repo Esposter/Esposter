@@ -131,3 +131,31 @@ From constellation 2, each hit that costs Diluc HP SHALL add a stack of Searing 
 - **GIVEN** Diluc is at constellation 1
 - **WHEN** an enemy's strike costs Diluc HP
 - **THEN** his ATK and ATK SPD are unchanged
+
+### Requirement: Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before
+
+From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. The wiki's Flowing Flame text and gcsim v2.47.2's `cons.go` agree on the window.
+
+#### Scenario: A press two seconds after the last gets the bonus
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught, and then presses its next press two seconds later
+- **THEN** that press's strikes deal 40% more DMG, and the bonus ends two seconds after the press
+
+#### Scenario: A press within two seconds of the last gets nothing
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught, and then presses its next press one second later
+- **THEN** that press's strikes gain no bonus
+
+#### Scenario: The first press and his normal attacks get nothing
+
+- **GIVEN** Diluc is at constellation 4
+- **WHEN** he presses Searing Onslaught for the first time, or lands a normal attack while the bonus runs
+- **THEN** those strikes gain no bonus
+
+#### Scenario: Below the fourth constellation nothing is added
+
+- **GIVEN** Diluc is at constellation 3
+- **WHEN** he presses a follow-up Searing Onslaught press two seconds after the one before it
+- **THEN** that press's strikes gain no bonus

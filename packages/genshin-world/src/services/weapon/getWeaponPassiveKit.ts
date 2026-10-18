@@ -18,8 +18,8 @@ export const getWeaponPassiveKit = (kit: Kit, weapon: Weapon, weaponData: undefi
       ...(kit.getPassiveBonuses?.(combatant, healthShare, effects, deployedCombatants) ?? []),
       ...(passive.getPassiveBonuses?.(combatant, healthShare, effects, deployedCombatants) ?? []),
     ],
-    getStrikeDamageBonus: (strike, enemy, party) =>
-      (kit.getStrikeDamageBonus?.(strike, enemy, party) ?? 0) +
+    getStrikeDamageBonus: (strike, enemy, party, effects) =>
+      (kit.getStrikeDamageBonus?.(strike, enemy, party, effects) ?? 0) +
       (passive.getStrikeDamageBonus?.(strike, enemy, party) ?? 0),
     getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects) =>
       (kit.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, party, effects) ?? 0) +

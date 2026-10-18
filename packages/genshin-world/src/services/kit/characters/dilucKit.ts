@@ -1,9 +1,13 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -30,6 +34,14 @@ const DAWN_SPAWN_METRES = 1;
 const DAWN_METRES_PER_SECOND = 14;
 const DAWN_TICK_COUNT = 8;
 const DAWN_EXPLOSION_SECONDS = 1.7;
+
+// Constellation 4, Flowing Flame: 2s after a Searing Onslaught press, the next press in the combo deals 40% more DMG, for 2s.
+// Wiki: the Flowing Flame constellation's text, as gcsim v2.47.2 (MIT) diluc/cons.go models it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_DAMAGE_BONUS = 0.4;
+const CONSTELLATION_4_SECONDS = 2;
+const CONSTELLATION_4_STATUS_ID = "diluc-constellation-4-press";
 
 export const DILUC_CHARACTER_ID = 10_000_016;
 
@@ -84,8 +96,32 @@ const addSearingEmberStack = (kitEffectState: KitEffectState, characterId: numbe
 // Explodes at the end of its path
 // Constellation 2 is built for a hit that costs Diluc HP: an enemy's strike, a drown or a wildlife's charge. A hit his
 // Shield takes whole sends no HP change, so it adds no stack, and the damageless hits of his teammates are not built
-// Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart, which the skill does not yet read
 // Constellation 6 needs the next two normal attacks after Searing Onslaught, and their DMG and ATK SPD
+// Constellation 4 reads each press against the one before it. The status a press leaves runs two seconds, so a press that
+// Finds it running came within two seconds of the last one. A follow-up that does not is the one the bonus lands on, and
+// Its status carries the bonus for the same two seconds
+const createSearingOnslaughtPress =
+  (isFollowUp: boolean) =>
+  ({ activeCombatant: combatant, kitEffectState }: KitContext) => {
+    if (combatant.constellationCount < CONSTELLATION_4) return;
+    const { characterId } = combatant;
+    const isWithinTwoSeconds = checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_4_STATUS_ID);
+    addKitStatus(kitEffectState, characterId, {
+      id: CONSTELLATION_4_STATUS_ID,
+      secondsRemaining: CONSTELLATION_4_SECONDS,
+      stacks: isFollowUp && !isWithinTwoSeconds ? 1 : 0,
+    });
+  };
+
+// Constellation 4's bonus, as the status a follow-up press leaves on Diluc runs, for his skill's strikes
+const getConstellation4DamageBonus = ({ attackTag, combatant }: KitStrike, effects: readonly KitEffect[]): number =>
+  combatant.constellationCount >= CONSTELLATION_4 &&
+  attackTag === AttackTag.ElementalSkill &&
+  checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_4_STATUS_ID) &&
+  findKitStatus(effects, combatant.characterId, CONSTELLATION_4_STATUS_ID)?.stacks === 1
+    ? CONSTELLATION_4_DAMAGE_BONUS
+    : 0;
+
 export const createDilucKitBehaviour = ({
   kit,
   readArea,
@@ -161,9 +197,12 @@ export const createDilucKitBehaviour = ({
     // Its +3s duration clause is not built, since the talent text does not name what that duration is
     getChargedAttackStaminaMultiplier: ({ activeCombatant }) =>
       activeCombatant.ascension >= DILUC_RELENTLESS_ASCENSION ? DILUC_RELENTLESS_STAMINA_MULTIPLIER : 1,
-    getStrikeDamageBonus: ({ combatant }, enemy) =>
-      combatant.constellationCount >= CONSTELLATION_1 && enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
+    getStrikeDamageBonus: (strike, enemy, _party, effects = []) =>
+      (strike.combatant.constellationCount >= CONSTELLATION_1 &&
+      enemy.health > enemy.maxHealth * CONSTELLATION_1_HEALTH_SHARE
         ? CONSTELLATION_1_DAMAGE_BONUS
-        : 0,
+        : 0) + getConstellation4DamageBonus(strike, effects),
+    skill: { onStart: createSearingOnslaughtPress(false) },
+    skillChain: kit.elementalSkillChain?.followUps.map(() => ({ onStart: createSearingOnslaughtPress(true) })),
   };
 };
