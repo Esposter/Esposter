@@ -271,6 +271,47 @@ describe(stepKit, () => {
     expect(landedHits).toStrictEqual([TRAVELER_KIT.plungeCollision]);
   });
 
+  test("a plunge variant plays in place of the standard plunge while its check holds", () => {
+    expect.hasAssertions();
+    const variant: KitAction = { ...TRAVELER_KIT.highPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: variant, checkIsActive: () => true }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(variant);
+  });
+
+  test("keeps the standard plunge while every plunge variant's check fails", () => {
+    expect.hasAssertions();
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(TRAVELER_KIT.highPlunge);
+  });
+
+  test("plays the first plunge variant whose check holds", () => {
+    expect.hasAssertions();
+    const second: KitAction = { ...TRAVELER_KIT.lowPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [
+        { action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false },
+        { action: second, checkIsActive: () => true },
+      ],
+    });
+
+    step({ height: 2, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(second);
+  });
+
   test("lands a high plunge from a drop past 2.4 metres and a low one from less", () => {
     expect.hasAssertions();
 
