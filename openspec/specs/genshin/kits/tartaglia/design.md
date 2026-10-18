@@ -9,6 +9,7 @@ Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehav
 - **Riptide Blast lands 0.8 seconds after its hit**, the wiki's delay, clearing Riptide as the hit lands, and a Riptide Slash's interval holds it off, as gcsim checks.
 - **Hydrospout ticks on each enemy's own schedule**, every 3.9 seconds as gcsim measures the game's 4, from the first Riptide on that enemy; gcsim keeps one schedule, for the enemy last given Riptide.
 - **Tartaglia's gauges and poise are the wiki's**, Riptide Burst's 1U where gcsim gives 2U among them, his Melee Stance strikes count under their own Foul Legacy internal cooldown and Riptide Flash under its own Riptide one (`InternalCooldownTag`). His arrows are priced round his body, and his plunges are provisional.
+- **The top-level charged attack is the Ranged Stance's aimed shot, one hit.** gcsim's two-hit charge is the Melee Stance's, and the reader gives no stance-scoped count for it, so the count stays at 1 and removing it breaks the build. A stance-scoped count settles it.
 
 ## Key files
 

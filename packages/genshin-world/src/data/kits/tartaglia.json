@@ -1,6 +1,6 @@
 {
   "burst.hits.length": { "cause": "Unclassified", "value": 0 },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 1 },
+  "chargedAttack.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
