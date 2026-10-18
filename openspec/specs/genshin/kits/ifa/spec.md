@@ -144,6 +144,12 @@ From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swi
 - **THEN** it takes a DMG Bonus of 1.2
 - **AND** with 200 points it takes the DMG Bonus of 150 points, 2.25
 
+#### Scenario: A direct Lunar-Charged hit takes the same DMG Bonus
+
+- **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 80 points
+- **WHEN** a direct Lunar-Charged hit the party makes is priced
+- **THEN** it takes a DMG Bonus of 0.16 into its reaction bonus, as a Lunar-Charged reaction does
+
 #### Scenario: The party's points count, not Ifa's alone
 
 - **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 40 points
