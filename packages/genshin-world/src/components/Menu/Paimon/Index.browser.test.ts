@@ -3,10 +3,11 @@ import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { BIRTHDAY_MONTHS } from "#src/services/profile/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 
 describe("menuPaimon", () => {
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
@@ -136,6 +137,40 @@ describe("menuPaimon", () => {
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
 
     expect(onSetBirthday).toHaveBeenCalledExactlyOnceWith({ day: 13, month: 10 });
+  });
+
+  // The menu behind an open dialog is inert, so Tab walks the dialog's own stops and never lands on the menu's entries.
+  // The months and the cross are the birthday dialog's stops, and the Tab after the cross
+  // Is the one that would reach the menu
+  test("tab from the birthday dialog never reaches the menu behind it", async () => {
+    expect.hasAssertions();
+
+    render(MenuPaimon, { props });
+    const menu = document.querySelector(".menu");
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
+
+    for (let index = 0; index < BIRTHDAY_MONTHS.length + 2; index++) {
+      await userEvent.tab();
+
+      expect(menu?.contains(document.activeElement)).toBe(false);
+    }
+  });
+
+  // The namecards and the cross are the namecard dialog's stops, and the Tab after the cross
+  // Is the one that would reach the menu
+  test("tab from the namecard dialog never reaches the menu behind it", async () => {
+    expect.hasAssertions();
+
+    const namecards = [{ itemId: 1, name: "Aether" }];
+    render(MenuPaimon, { props: { ...props, namecardItemId: namecards[0].itemId, namecards } });
+    const menu = document.querySelector(".menu");
+    await page.getByRole("button", { exact: true, name: namecards[0].name }).click();
+
+    for (let index = 0; index < namecards.length + 2; index++) {
+      await userEvent.tab();
+
+      expect(menu?.contains(document.activeElement)).toBe(false);
+    }
   });
 
   test("a birthday already set shows its date and no button to set it", async () => {
