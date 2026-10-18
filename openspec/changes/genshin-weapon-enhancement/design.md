@@ -37,6 +37,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Skyward Harp (Echoing Ballad).** CRIT DMG is a passive bonus. A hit of the wielder's own attack has the rank's 60% chance to queue a Physical small AoE at 125% ATK, once every 4 s. Provisional: hits reads as the wielder's own attacks, not a passive's queued hit, and the AoE is SMALL_AOE_AREA.
 - **Skyward Spine (Black Wing).** CRIT Rate and Normal ATK SPD are passive bonuses. A Normal or Charged Attack hit has the rank's 50% chance to queue a vacuum blade of 40% ATK in a small AoE, once every 2 s. The 2 s is the text's, since the parameter list does not carry it. Provisional: the AoE is SMALL_AOE_AREA, as the game's area is not in the dump.
 - **Wolf's Gravestone (Wolfish Tracker).** ATK is a passive bonus. A hit the wielder deals on an enemy under 30% of its HP raises the deployed team's ATK by the rank's 40% for 12 s, once every 30 s. The 12 s and 30 s are the text's, since the parameter list does not carry them. Provisional: all party members reads as the deployed team, as buffKitTeam does.
+- **Aquila Favonia (Falcon's Defiance, provisional reading).** ATK is a static line the rank carries. A loss of HP naming no other character regenerates the wielder's HP by the rank's 100% of ATK and queues a physical hit at the rank's 200% of ATK on the surrounding opponents, once every 15 s. The text names neither the hit's element nor its area, so it is physical on SMALL_AOE_AREA.
 
 ## How it works
 
