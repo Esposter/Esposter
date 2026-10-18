@@ -40,11 +40,11 @@ Alhaitham SHALL hold up to three Chisel-Light Mirrors, one made by each use of h
 - **WHEN** 233 frames pass
 - **THEN** one Mirror is removed
 
-#### Scenario: A new Mirror restarts the decay count
+#### Scenario: A further Mirror leaves the decay running
 
 - **GIVEN** Alhaitham holds a Mirror that has been decaying for 100 frames
 - **WHEN** he makes a second Mirror
-- **THEN** the next Mirror is removed 233 frames after the new one is made, the decay count starting again from it
+- **THEN** the decay is not restarted, and the next Mirror is removed when the first decay comes due, 233 frames after the first Mirror was made
 
 #### Scenario: A swap clears every Mirror
 
