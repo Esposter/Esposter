@@ -1,13 +1,7 @@
-import type { StormterrorPhase } from "#src/services/bosses/stormterror";
+import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
+import type { StormterrorPhase } from "#src/models/bosses/StormterrorPhase";
 
 import { STORMTERROR_PHASES } from "#src/services/bosses/stormterror";
-
-export interface StormterrorFight {
-  phase: number;
-  phaseElapsedSeconds: number;
-  // The shield breaks across the whole fight, which is how a phase's shield limit counts them
-  totalShieldBreaks: number;
-}
 
 // The fight as it begins: the first phase, with no time spent in it and no shield broken
 export const STORMTERROR_FIGHT_START: StormterrorFight = { phase: 1, phaseElapsedSeconds: 0, totalShieldBreaks: 0 };

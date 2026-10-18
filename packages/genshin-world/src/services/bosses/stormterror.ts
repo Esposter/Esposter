@@ -1,4 +1,5 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
+import type { StormterrorPhase } from "#src/models/bosses/StormterrorPhase";
 
 import { Element } from "#src/models/Element";
 import { ENEMY_RECOVERY_SECONDS, ENEMY_WINDUP_SECONDS } from "#src/services/enemy/constants";
@@ -48,13 +49,6 @@ export const STORMTERROR_MOVES: BossMove[] = [
 // Breaks that end it, and the attack that transitions into the next phase. The fifth phase lasts to the fight's end. Timings
 // Its timings are PROVISIONAL, read from the page, which cites the speedrun recording "Confront Stormterror - Speedrun Strategy & Exploits"
 // (youtu.be/j62DdUZXczM) and is not measured in a recording of this game yet
-export interface StormterrorPhase {
-  phase: number;
-  shieldLimit: number;
-  timeLimitSeconds: number;
-  transitionAttack?: string;
-}
-
 export const STORMTERROR_PHASES: readonly StormterrorPhase[] = [
   { phase: 1, shieldLimit: 1, timeLimitSeconds: 120, transitionAttack: "Caelestinum Finale Termini" },
   { phase: 2, shieldLimit: 3, timeLimitSeconds: 480, transitionAttack: "Caelestinum Finale Termini" },
