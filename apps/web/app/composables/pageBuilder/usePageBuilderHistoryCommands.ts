@@ -1,7 +1,7 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 
 // A command titled with the edit it acts on, or with its bare verb when there is no edit to act on
@@ -17,31 +17,13 @@ export const usePageBuilderHistoryCommands = (resourceId: MaybeRefOrGetter<strin
     const id = toValue(resourceId);
     const redoLabel = getRedoLabel(id);
     const undoLabel = getUndoLabel(id);
-    return [
-      {
-        group: PAGE_BUILDER_COMMAND_GROUP,
-        id: "page-builder-undo",
-        meaning: UiIconMeaning.Undo,
-        run: () => undo(id),
-        shortcut: "cmd+z",
-        title: getTitle("Undo", undoLabel),
-      },
-      {
-        group: PAGE_BUILDER_COMMAND_GROUP,
-        id: "page-builder-redo",
-        meaning: UiIconMeaning.Redo,
-        run: () => redo(id),
-        shortcut: "cmd+shift+z",
-        title: getTitle("Redo", redoLabel),
-      },
-      {
-        group: PAGE_BUILDER_COMMAND_GROUP,
-        id: "page-builder-redo-y",
-        meaning: UiIconMeaning.Redo,
-        run: () => redo(id),
-        shortcut: "cmd+y",
-        title: getTitle("Redo", redoLabel),
-      },
-    ];
+    return getHistoryCommands({
+      group: PAGE_BUILDER_COMMAND_GROUP,
+      idPrefix: "page-builder",
+      redo: () => redo(id),
+      redoTitle: getTitle("Redo", redoLabel),
+      undo: () => undo(id),
+      undoTitle: getTitle("Undo", undoLabel),
+    });
   });
 };

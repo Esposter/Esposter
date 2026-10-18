@@ -4,6 +4,7 @@ import { PasteMode } from "@/models/resource/sheet/commands/PasteMode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ArrowKeyDefinitionMap } from "@/services/resource/sheet/ArrowKeyDefinitionMap";
 import { SHEET_COMMAND_GROUP } from "@/services/resource/sheet/constants";
+import { getHistoryCommands } from "@/services/ui/getHistoryCommands";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";
 import { useRowStore } from "@/store/resource/sheet/row";
@@ -35,30 +36,14 @@ export const useSheetCommands = () => {
   };
 
   useCommands((): UiCommand[] => [
-    {
+    ...getHistoryCommands({
       group: SHEET_COMMAND_GROUP,
-      id: "sheet-undo",
-      meaning: UiIconMeaning.Undo,
-      run: () => undoSheet(),
-      shortcut: "cmd+z",
-      title: "Undo",
-    },
-    {
-      group: SHEET_COMMAND_GROUP,
-      id: "sheet-redo",
-      meaning: UiIconMeaning.Redo,
-      run: () => redoSheet(),
-      shortcut: "cmd+shift+z",
-      title: "Redo",
-    },
-    {
-      group: SHEET_COMMAND_GROUP,
-      id: "sheet-redo-y",
-      meaning: UiIconMeaning.Redo,
-      run: () => redoSheet(),
-      shortcut: "cmd+y",
-      title: "Redo",
-    },
+      idPrefix: "sheet",
+      redo: redoSheet,
+      redoTitle: "Redo",
+      undo: undoSheet,
+      undoTitle: "Undo",
+    }),
     {
       group: SHEET_COMMAND_GROUP,
       id: "sheet-select-all",
