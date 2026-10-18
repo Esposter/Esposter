@@ -41,13 +41,13 @@ export const landReactionReach = (
   { enemyKindMap }: EnemyTables,
   origin: Pick<Enemy, "position">,
   enemies: Iterable<Enemy>,
-  { element, reactionType, spreadGauge }: TransformativeReaction,
+  { element, reachRadius, reactionType, spreadGauge }: TransformativeReaction,
   combatant: Combatant,
   lunarReactionTypes: readonly LunarReactionType[] = [],
   stellarReactionTypes: readonly StellarReactionType[] = [],
 ): Map<Enemy, EnemyStrikeResult> => {
   const enemyStrikeResultMap = new Map<Enemy, EnemyStrikeResult>();
-  const radius = TransformativeReactionReachRadiusMap[reactionType];
+  const radius = reachRadius ?? TransformativeReactionReachRadiusMap[reactionType];
   if (radius === undefined) return enemyStrikeResultMap;
   const reachPoiseDamage = TransformativeReactionPoiseDamageMap[reactionType] ?? 0;
 
