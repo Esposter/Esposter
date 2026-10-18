@@ -1,4 +1,10 @@
 {
+  "areas.meowballCircle": {
+    "file": "skill.go",
+    "line": 335,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
   "areas.pursuitCircle": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 } },
   "areas.robotAbsorbCircle": {
     "cause": "Unsourced",
@@ -20,6 +26,8 @@
   "frames.robotFirstStrike": { "file": "burst.go", "line": 23, "source": "Gcsim", "value": 41 },
   "frames.robotStrikeInterval": { "file": "burst.go", "line": 52, "source": "Gcsim", "value": 140 },
   "frames.filledPressHit": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 2 },
+  "frames.firstMeowballFirstHitmark": { "source": "Gcsim" },
+  "frames.meowballHitmarkInterval": { "source": "Gcsim" },
   "hitFields.flaskDrain.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
@@ -27,6 +35,8 @@
   "hitFields.flaskDrain.element": { "cause": "Unsourced", "value": "Wind" },
   "hitFields.flaskDrain.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.flaskDrain.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hitFields.meowball.gauge": { "cause": "Unsourced", "value": 1 },
+  "hitFields.meowball.poiseDamage": { "cause": "Unsourced", "value": 35 },
   "hitFields.robotStrike.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
