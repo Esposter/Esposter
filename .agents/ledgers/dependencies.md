@@ -37,7 +37,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@iconify-json/lucide`                  | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@iconify-json/mdi`                     | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
 | `@iconify-json/pixelarticons`           | —                     | Keep — data       | an icon set UnoCSS reads                                                                               |
-| `@jsonforms/core`                       | —                     | Keep — engine     | the form engine                                                                                        |
+| `@jsonforms/core`                       | —                     | Keep — engine     | the form engine under the schema form, which draws its own fields in place of the Vue bindings         |
 | `@kjanat/actionlint`                    | —                     | Keep — tooling    | workflow lint                                                                                          |
 | `@lerna-lite/cli`                       | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
 | `@lerna-lite/publish`                   | —                     | Keep — tooling    | fixed-mode versioning and publishing, which pnpm does not do                                           |
@@ -66,7 +66,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/extension-file-handler`        | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-list`                | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-mention`             | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
-| `@tiptap/extension-table`               | —                     |                   |                                                                                                        |
+| `@tiptap/extension-table`               | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extensions`                    | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/html`                          | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/pm`                            | —                     | Keep — engine     | the rich-text editor engine, on the stop list for accessibility                                        |
@@ -112,7 +112,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@webgpu/types`                         | —                     | Keep — types      | WebGPU's declarations                                                                                  |
 | `@xterm/addon-fit`                      | —                     | Keep — engine     | the terminal engine's sizing                                                                           |
 | `@xterm/xterm`                          | —                     | Keep — engine     | the terminal engine                                                                                    |
-| `apexcharts`                            | —                     | Keep — engine     | the chart engine                                                                                       |
+| `apexcharts`                            | —                     | Keep — engine     | the chart engine, in a chunk of its own that only the routes drawing a chart load                      |
 | `better-auth`                           | —                     | Keep — security   | authentication, on the stop list                                                                       |
 | `bowser`                                | —                     | Keep — data       | user-agent tables for the session's device label, which change without us                              |
 | `chokidar`                              | —                     | Keep — hold       | unstorage's fs driver loads it undeclared (`@TODO` in the catalog)                                     |
@@ -166,7 +166,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `msw`                                   | —                     | Keep — tooling    | request mocking                                                                                        |
 | `neverthrow`                            | —                     | Keep — framework  | the `Result` the error-handling convention is built on                                                 |
 | `nitro`                                 | —                     | Keep — framework  | the server framework                                                                                   |
-| `node-html-parser`                      | —                     | Keep — engine     | server-side HTML parsing                                                                               |
+| `node-html-parser`                      | —                     | Keep — engine     | HTML parsing with CSS selectors in the app, the server and the functions; parse5 has none              |
 | `node-pty`                              | —                     | Keep — engine     | native pseudo-terminals                                                                                |
 | `nuxt`                                  | —                     | Keep — framework  | the framework                                                                                          |
 | `ohash`                                 | —                     | Keep — free       | the framework installs it                                                                              |
