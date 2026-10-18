@@ -10,7 +10,7 @@ import {
 import { renderWebpageDocument } from "#shared/services/pageBuilder/renderWebpageDocument";
 import { describe, expect, test } from "vitest";
 
-describe("renderWebpageDocument", () => {
+describe(renderWebpageDocument, () => {
   test("a webpage document renders as one html document", () => {
     expect.hasAssertions();
 

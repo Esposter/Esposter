@@ -1,7 +1,7 @@
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { describe, expect, test } from "vitest";
 
-describe("serializeHtml", () => {
+describe(serializeHtml, () => {
   test("a text child is escaped and a raw node is written as given", () => {
     expect.hasAssertions();
 
