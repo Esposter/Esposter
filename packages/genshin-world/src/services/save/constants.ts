@@ -9,6 +9,7 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
@@ -139,6 +140,26 @@ const LONGEST_HOME_PLACEMENT = {
   rotation: -Number.MAX_VALUE,
   sceneId: MAX_SAVE_NUMBER,
 };
+// A bag entry at its longest: a weapon's, which holds its state beside its level, or a stack's at its largest count, the
+// Longer of the two
+const LONGEST_INVENTORY_ITEM_LENGTH = Math.max(
+  getListEntryLength({
+    id: MAX_SAVE_NUMBER,
+    itemId: MAX_SAVE_NUMBER,
+    kind: InventoryItemKind.Stack,
+    quantity: MAX_ITEM_QUANTITY,
+  }),
+  getListEntryLength({
+    ascension: MAX_SAVE_NUMBER,
+    experience: MAX_SAVE_NUMBER,
+    id: MAX_SAVE_NUMBER,
+    itemId: MAX_SAVE_NUMBER,
+    kind: InventoryItemKind.Weapon,
+    level: MAX_SAVE_NUMBER,
+    quantity: 1,
+    refinement: MAX_WEAPON_REFINEMENT,
+  }),
+);
 // The save at its longest outside its collections: every number at its largest, every instant at its longest and every
 // Collection empty, so the ceiling below adds only the entries of each collection
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
@@ -226,13 +247,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_ARCHIVE_KILL_COUNT * getRecordEntryLength(MAX_SAVE_NUMBER) +
   MAX_WISH_HISTORY_COUNT *
     getListEntryLength({ bannerKind: LONGEST_BANNER_KIND, itemId: MAX_SAVE_NUMBER, time: MAX_SAVE_INSTANT }) +
-  MAX_INVENTORY_ITEM_COUNT *
-    getListEntryLength({
-      id: MAX_SAVE_NUMBER,
-      itemId: MAX_SAVE_NUMBER,
-      level: MAX_SAVE_NUMBER,
-      quantity: MAX_ITEM_QUANTITY,
-    });
+  MAX_INVENTORY_ITEM_COUNT * LONGEST_INVENTORY_ITEM_LENGTH;
 // A new player's bag, which holds nothing until the world gives it something
 export const EMPTY_INVENTORY_SAVE: InventorySave = { items: [], nextId: 0 };
 // Mondstadt's Reputation at its first level, with no EXP toward the next

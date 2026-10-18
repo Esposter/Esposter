@@ -8,7 +8,7 @@ import { transformer } from "#shared/services/trpc/transformer";
 import { AzureContainer } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
-import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
+import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
 import { describe, test } from "vitest";
 
 // The bag is the one collection that reaches its ceiling, so its entry count is the scale: a typical bag,
@@ -21,7 +21,12 @@ const STALE_ETAG = '"stale"';
 const createSave = (bagEntryCount: number): GenshinSave => ({
   ...EMPTY_GENSHIN_SAVE,
   inventory: {
-    items: Array.from({ length: bagEntryCount }, (_value, index) => ({ id: index, itemId: index + 1, quantity: 1 })),
+    items: Array.from({ length: bagEntryCount }, (_value, index) => ({
+      id: index,
+      itemId: index + 1,
+      kind: InventoryItemKind.Stack,
+      quantity: 1,
+    })),
     nextId: bagEntryCount,
   },
 });

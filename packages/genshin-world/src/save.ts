@@ -1,3 +1,4 @@
+export { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 export type { GenshinSave } from "#src/models/save/GenshinSave";
 export { genshinSaveSchema } from "#src/models/save/GenshinSave";
 export type { GenshinSaveState } from "#src/models/save/GenshinSaveState";

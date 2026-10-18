@@ -13,6 +13,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
+import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
@@ -172,8 +173,26 @@ describe(readGenshinSave, () => {
     inventory: {
       equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
-        { id: 0, itemId: FORGED_WEAPON_ID, level: 1, quantity: 1 },
-        { id: 1, itemId: WISHED_WEAPON_ID, level: 1, quantity: 1 },
+        {
+          ascension: 0,
+          experience: 0,
+          id: 0,
+          itemId: FORGED_WEAPON_ID,
+          kind: InventoryItemKind.Weapon,
+          level: 1,
+          quantity: 1,
+          refinement: 1,
+        },
+        {
+          ascension: 0,
+          experience: 0,
+          id: 1,
+          itemId: WISHED_WEAPON_ID,
+          kind: InventoryItemKind.Weapon,
+          level: 1,
+          quantity: 1,
+          refinement: 1,
+        },
       ],
       nextId: 2,
     },
@@ -321,9 +340,12 @@ describe(readGenshinSave, () => {
             rarity: 4,
             stackLimit: 1,
           },
+          ascension: 0,
+          experience: 0,
           id: 0,
           level: 1,
           quantity: 1,
+          refinement: 1,
         },
         {
           definition: {
@@ -337,9 +359,12 @@ describe(readGenshinSave, () => {
             rarity: 3,
             stackLimit: 1,
           },
+          ascension: 0,
+          experience: 0,
           id: 1,
           level: 1,
           quantity: 1,
+          refinement: 1,
         },
       ],
       nextId: 2,
