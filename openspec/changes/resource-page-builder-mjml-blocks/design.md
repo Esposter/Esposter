@@ -116,6 +116,5 @@ openspec/specs/mjml-blocks/           the package's area: how it works, the Upst
 ## Sources
 
 - [MJML documentation](https://documentation.mjml.io/) — the component set, each component's attributes and defaults, the head components, and "Using MJML in JSON", the object form `mjml2html` takes in place of markup.
-- `mjml-core` 5's `createComponent` — `htmlAttributes` writes `name="value"` with the value as given, which is why the render escapes. `mjml2html` parses only a string input.
-- `mjml-preset-core`'s `dependencies` — the allowed children of every tag, which the slots are held equal to.
+- `mjml-core` 5's `createComponent` — `htmlAttributes` writes `name="value"` with the value as given, which is why the render escapes.- `mjml-preset-core`'s `dependencies` — the allowed children of every tag, which the slots are held equal to.
 - [GrapesJS MJML](https://github.com/GrapesJS/mjml) — the plugin whose surface the package meets, and whose tracker the Upstream table answers.
