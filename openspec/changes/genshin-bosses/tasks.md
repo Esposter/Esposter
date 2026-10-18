@@ -8,7 +8,7 @@
 
 - [ ] 2.1 Write the first normal boss's attacks and phases from its wiki page, timings provisional until measured. Verify: a test named after the scenario 'a boss is not displaced by a strike that would push it', seen failing first.
 - [x] 2.2 Keep bosses immune to Frozen. Verify: a test named after the scenario 'Frozen does not freeze a boss', seen failing first.
-- [ ] 2.3 Write each later boss's attacks and phases as its region is built. Verify: the immunity scenarios above pass for every boss written.
+- [ ] 2.3 Write each later boss's attacks and phases as its region is built. Verify: the immunity scenarios above pass for every boss written. Status: Stormterror's phases, shield and wind currents are written as provisional data and a pure step (`stepStormterrorFight`), and its immunity scenarios pass, since its monster row carries the Boss security level. The fight loop does not read the step yet, since the enemy loop counts no shield breaks, and the later bosses are not written, so this stays open.
 
 ## 3. Weekly bosses
 
