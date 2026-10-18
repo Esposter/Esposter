@@ -151,6 +151,12 @@ const parseCall = (state: MathExpressionParserState, name: string): MathExpressi
 const parseSymbol = (state: MathExpressionParserState): MathExpressionNode => {
   if (state.tokenType === MathExpressionTokenType.Number) {
     const value = computeNumberLiteral(state.token);
+    if (value === null) {
+      failMathExpression(state, `String "${state.token.split("i")[0]}" is out of range`);
+      getMathExpressionToken(state);
+      return PLACEHOLDER;
+    }
+
     getMathExpressionToken(state);
     return { type: MathExpressionNodeType.Number, value };
   }

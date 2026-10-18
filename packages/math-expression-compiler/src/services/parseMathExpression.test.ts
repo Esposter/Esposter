@@ -16,6 +16,7 @@ describe(parseMathExpression, () => {
     ["A list given to a function that takes none", "sin([1])", /"sin" does not take a list argument/u],
     ["A list-only function given a single value", "count(5)", /"count" takes a list argument/u],
     ["A sign with no operand", "1 +", /Unexpected end of expression/u],
+    ["A word size too small for its literal", "1 + 0x1FFi8", /String "0x1FF" is out of range \(char 5\)/u],
   ])("%s is an error", (_title, formula, message) => {
     expect.hasAssertions();
 

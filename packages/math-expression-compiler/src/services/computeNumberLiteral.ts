@@ -2,7 +2,8 @@
 // Its word size. A word size reads the digits as two's complement at that many bits, so 0xFFi8 is -1
 const RADIXES: Readonly<Record<string, number>> = { b: 2, o: 8, x: 16 };
 
-export const computeNumberLiteral = (token: string): number => {
+// Null where the literal's digits are too large for its word size
+export const computeNumberLiteral = (token: string): null | number => {
   const radix = RADIXES[token.charAt(1)];
   if (!token.startsWith("0") || radix === undefined) return Number(token);
 
@@ -18,5 +19,7 @@ export const computeNumberLiteral = (token: string): number => {
   if (wordSize === undefined) return value;
 
   const bits = Number(wordSize);
+  if (value > 2 ** bits - 1) return null;
+
   return value >= 2 ** (bits - 1) ? value - 2 ** bits : value;
 };

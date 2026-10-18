@@ -8424,5 +8424,8 @@
 {"formula":"constructor + 1","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
 {"formula":"constructor + 1","scope":{"col0":0,"col1":1,"col2":-7,"col3":2},"value":null},
 {"formula":"constructor + 1","scope":{"col0":-1,"col1":4,"col2":0.25,"col3":12},"value":null},
-{"formula":"1\u00a0+ 2","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3}
+{"formula":"1\u00a0+ 2","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":3},
+{"formula":"0x1FFi8","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"0b111i2","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null},
+{"formula":"0x1i0","scope":{"col0":3,"col1":-2.5,"col2":0.5,"col3":7},"value":null}
 ]}
