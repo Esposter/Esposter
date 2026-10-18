@@ -5,3 +5,6 @@ export const HOMEWORLD_LEVEL_TABLE_NAME = "HomeworldLevelExcelConfigData";
 export const COMFORT_LEVEL_TABLE_NAME = "HomeWorldComfortLevelExcelConfigData";
 // The use an item carries to learn the furnishing it names as its first parameter: a diagram, one item for each blueprint
 export const UNLOCK_FURNITURE_USE_OP = "ITEM_USE_UNLOCK_FURNITURE_FORMULA";
+// The garden's field and plant tables: the fields a garden lays out, and the seeds each field's plant grows
+export const FARM_FIELD_TABLE_NAME = "HomeWorldFarmFieldExcelConfigData";
+export const PLANT_TABLE_NAME = "HomeWorldPlantExcelConfigData";
