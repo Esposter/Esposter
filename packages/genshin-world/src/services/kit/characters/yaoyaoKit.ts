@@ -26,6 +26,7 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { selectRandomKitEnemy } from "#src/services/kit/selectRandomKitEnemy";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { LocomotionState } from "genshin-engine";
 
 export const YAOYAO_CHARACTER_ID = 10_000_077;
@@ -277,23 +278,23 @@ const applyConstellation4 = ({
 // Ascension 1 throws a burst radish each 0.6 seconds of the burst while she dashes or jumps
 // Constellation 6 throws a Mega Radish at the skill Yuegui's third and sixth radishes, at the same target
 export const createYaoyaoKitBehaviour = ({
-  readHit,
+  readHits,
   readParameter,
   readSecondsList,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
-  const skillRadish = readHit("skillRadish", { onStrike: giveConstellation2Energy });
+  const skillRadish = takeOne(readHits("skillRadish", { onStrike: giveConstellation2Energy }));
   const skillRadishHeal: RadishHeal = {
     flat: readParameter("skillRadishFlatHeal"),
     healsTeam: false,
     maxHealthShare: readParameter("skillRadishHealMaxHealthShare"),
   };
-  const megaRadish = readHit("megaRadish");
+  const megaRadish = takeOne(readHits("megaRadish"));
   const yueguiSpawnSeconds = readSeconds("skillCooldownStart") + readSeconds("yueguiSpawnDelay");
   const yueguiFirstThrowSeconds = readSeconds("yueguiFirstThrow");
   const yueguiThrowIntervalSeconds = readSeconds("yueguiThrowInterval");
   const yueguiDurationSeconds = readSeconds("yueguiDuration");
-  const burstRadish = readHit("burstRadish", { onStrike: giveConstellation2Energy });
+  const burstRadish = takeOne(readHits("burstRadish", { onStrike: giveConstellation2Energy }));
   const burstRadishHeal: RadishHeal = {
     flat: readParameter("burstRadishFlatHeal"),
     healsTeam: true,
