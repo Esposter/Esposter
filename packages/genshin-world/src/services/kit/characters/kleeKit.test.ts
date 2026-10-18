@@ -9,6 +9,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKleeKitBehaviour, KLEE_CHARACTER_ID } from "#src/services/kit/characters/kleeKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
@@ -16,6 +19,7 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -30,6 +34,36 @@ const createKleeCombatant = (constellationCount: number): Combatant => ({
   kit: KLEE_KIT,
   level: 90,
 });
+
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+// The energy Klee and the Traveler beside her hold once the bomb of a charged attack of Klee's at the ascension lands the
+// CRIT hits given, as [Klee's, the Traveler's]
+const landCriticalChargedAttacks = (ascension: number, criticalHitCount = 1): [number, number] => {
+  const combatant: Combatant = { ...createKleeCombatant(0), ascension };
+  const traveler: Combatant = { ...createKleeCombatant(0), characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
+  const context = createKitTestContext(combatant, {
+    characterIdCombatantMap: new Map([
+      [KLEE_CHARACTER_ID, combatant],
+      [TRAVELER_CHARACTER_ID, traveler],
+    ]),
+    party: createParty([KLEE_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
+  });
+  KLEE_KIT.chargedAttack.onStart?.(context);
+  const bomb = takeOne(
+    takeOne(context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon")).hits,
+  );
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  for (let index = 0; index < criticalHitCount; index++)
+    KLEE_KIT.onKitEvent?.(
+      { enemy, hit: bomb, isCritical: true, isDefeated: false, kind: KitEventKind.DamageTaken, striker: combatant },
+      context,
+      combatant,
+    );
+  return [
+    getPartyMember(context.party, KLEE_CHARACTER_ID).energy,
+    getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy,
+  ];
+};
 
 const statusIds = (effects: KitEffect[]): string[] =>
   effects.flatMap((effect) => (effect.kind === "status" ? [effect.id] : []));
@@ -175,5 +209,25 @@ describe(createKleeKitBehaviour, () => {
       [0.5],
       false,
     ]);
+  });
+});
+
+describe("sparkling Burst", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(landCriticalChargedAttacks(4)).toStrictEqual([2, 2]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(landCriticalChargedAttacks(3)).toStrictEqual([0, 0]);
+  });
+
+  test("a second CRIT hit within 0.6 seconds gives no more energy", () => {
+    expect.hasAssertions();
+
+    expect(landCriticalChargedAttacks(4, 2)).toStrictEqual([2, 2]);
   });
 });
