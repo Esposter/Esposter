@@ -29,7 +29,7 @@ import { dirname, join } from "node:path";
 // It runs. A key the account kit files is read from the kit's strings, every other from the text map, its colour tags
 // Kept for the screen to draw. A key missing from one language's strings shows English there and says so, since a
 // Dump that lost a string is the dump's fault rather than a reason to ship none
-export const writeGameText = (): string[] => {
+export const writeGameText = ({ isDryRun }: { isDryRun: boolean }): string[] => {
   const notes: string[] = [];
   const manualTextMap = readManualTextMap();
   const ids = GameTextKeys.toSorted();
@@ -81,6 +81,9 @@ export const writeGameText = (): string[] => {
     );
     return { characterLines, gameText, language };
   });
+  // A dry run stops here, once every language is read, so it reports what a run would write and writes nothing
+  if (isDryRun)
+    return [...notes, `dry run: ${ids.length} strings in ${GameLanguages.length} languages read, and nothing written`];
   const textDirectory = join(GENSHIN_TEXT_GENERATED_DIRECTORY, "text");
   const copyTextDirectory = join(PERSONA_COPY_DIRECTORY, "generated", "text");
   for (const directory of [textDirectory, CHARACTER_LINES_DIRECTORY, PERSONA_COPY_DIRECTORY])
