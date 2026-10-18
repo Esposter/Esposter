@@ -2,34 +2,13 @@ import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { replaceGcgCharacter } from "#src/services/gcg/replaceGcgCharacter";
 import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const createCharacterState = (): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Hydro,
-    hp: 10,
-    id: 1,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -69,9 +48,9 @@ describe(replaceGcgCharacter, () => {
   test("should leave the replacement unflagged, since a defeat's replacement is no switch", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(), createCharacterState()]);
+    const side = createSideState([createGcgCharacterState(), createGcgCharacterState()]);
     side.isReplacementPending = true;
-    const duel = createDuel([side, createSideState([createCharacterState()])]);
+    const duel = createDuel([side, createSideState([createGcgCharacterState()])]);
 
     expect(replaceGcgCharacter(duel, 0, 1)).toBe(GcgActionResult.Done);
     expect({

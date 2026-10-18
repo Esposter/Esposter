@@ -8,7 +8,6 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
@@ -16,7 +15,6 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { absorbingPrism } from "#src/services/gcg/cards/absorbingPrism";
 import { ABSORBING_PRISM_ID } from "#src/services/gcg/cards/constants";
 import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/constants";
 import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
@@ -34,7 +32,6 @@ import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { ELECTRO_CRYSTAL_CORE_ID } from "#src/services/gcg/cards/constants";
 import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
 import { ELECTRO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
-import { elementalResonanceHighVoltage } from "#src/services/gcg/cards/elementalResonanceHighVoltage";
 import { ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID } from "#src/services/gcg/cards/constants";
 import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { EMBERS_REKINDLED_ID } from "#src/services/gcg/cards/constants";
@@ -50,6 +47,7 @@ import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
 import { TENGU_JUURAI_AMBUSH_ID } from "#src/services/gcg/cards/constants";
 import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
 import { TENGU_JUURAI_STORMCLUSTER_ID } from "#src/services/gcg/cards/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -67,16 +65,6 @@ import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNa
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 const ABYSS_LECTOR_ID = 2_302;
 
-const createCharacterState = (id: number, element: Element): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: { descriptionTextId: 2, element, hp: 10, id, maxEnergy: 3, nameTextId: 1, skills: [], weapon: "" },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["dice"] = []): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -128,11 +116,13 @@ describe("fiery Rebirth", () => {
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
     expect.hasAssertions();
 
-    const lector = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), hp: 3 };
+    const lector = { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), hp: 3 };
     lector.statuses = [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)];
     const duel = createDuel([
       createSideState([lector]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     applyGcgDamage(duel, 1, { damageType: Element.Pyro, value: 5 }, TEST_RULE);
@@ -149,11 +139,13 @@ describe("fiery Rebirth", () => {
   test("once triggered, the character's skill damage is 1 higher", () => {
     expect.hasAssertions();
 
-    const lector = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const lector = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     lector.statuses = [{ cardId: FIERY_REBIRTH_ID, counter: 1, rounds: 0, usages: 0 }];
     const duel = createDuel([
       createSideState([lector]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: 3 }, TEST_RULE, {
@@ -170,11 +162,14 @@ describe("electro Crystal Core", () => {
   test("a lethal hit restores the character to 1 HP, and the core is spent", () => {
     expect.hasAssertions();
 
-    const hypostasis = { ...createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), hp: 2 };
+    const hypostasis = {
+      ...createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      hp: 2,
+    };
     hypostasis.statuses = [createGcgZoneCard(ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore)];
     const duel = createDuel([
       createSideState([hypostasis]),
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
     ]);
 
     applyGcgDamage(duel, 1, { damageType: Element.Electro, value: 4 }, TEST_RULE);
@@ -190,8 +185,12 @@ describe("rock-Paper-Scissors Combo", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }), hp: 20 },
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
@@ -209,8 +208,12 @@ describe("rock-Paper-Scissors Combo", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }), hp: 20 },
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
@@ -228,10 +231,12 @@ describe("rock-Paper-Scissors Combo", () => {
 
     const duel = createDuel([
       createSideState([
-        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
-        createCharacterState(KUJOU_SARA_ID, Element.Electro),
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }),
       ]),
-      createSideState([{ ...createCharacterState(KUJOU_SARA_ID, Element.Electro), hp: 20 }]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }), hp: 20 },
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, ROCK_PAPER_SCISSORS_COMBO);
@@ -247,9 +252,14 @@ describe("chains of Warding Thunder", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
       createSideState(
-        [createCharacterState(KUJOU_SARA_ID, Element.Electro), createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)],
+        [
+          createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }),
+          createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }),
+        ],
         [Element.Pyro, Element.Hydro, Element.Cryo],
       ),
     ]);
@@ -265,8 +275,13 @@ describe("chains of Warding Thunder", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)], [Element.Pyro]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState(
+        [createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })],
+        [Element.Pyro],
+      ),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
     const skillCost: GcgCost[] = [{ count: 1, kind: GcgCostKind.Unaligned }];
@@ -278,8 +293,10 @@ describe("chains of Warding Thunder", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(CHAINS_OF_WARDING_THUNDER_ID, chainsOfWardingThunder)];
 
@@ -299,8 +316,10 @@ describe("lightning Lockdown", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, LIGHTNING_LOCKDOWN);
@@ -316,14 +335,14 @@ describe("aegis of Abyssal Flame", () => {
   test("the shield takes a hit first, and once its points are depleted, 1 piercing DMG reaches every opposing character", () => {
     expect.hasAssertions();
 
-    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const abyss = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     abyss.shield = 2;
     abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
     const duel = createDuel([
       createSideState([abyss]),
       createSideState([
-        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
-        createCharacterState(KUJOU_SARA_ID, Element.Electro),
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }),
       ]),
     ]);
 
@@ -339,12 +358,14 @@ describe("aegis of Abyssal Flame", () => {
   test("a piercing hit takes no shield points, so the Aegis is not depleted", () => {
     expect.hasAssertions();
 
-    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const abyss = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     abyss.shield = 2;
     abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
     const duel = createDuel([
       createSideState([abyss]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Piercing, value: 3 }, TEST_RULE);
@@ -358,12 +379,14 @@ describe("aegis of Abyssal Flame", () => {
   test("a hit that defeats the character the Aegis is on takes the Aegis with it, so no piercing reaches the opposing side", () => {
     expect.hasAssertions();
 
-    const abyss = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const abyss = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     abyss.shield = 2;
     abyss.statuses = [{ cardId: AEGIS_OF_ABYSSAL_FLAME_ID, counter: 0, rounds: 0, usages: 1 }];
     const duel = createDuel([
       createSideState([abyss]),
-      createSideState([{ ...createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), hp: 1 }]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }), hp: 1 },
+      ]),
     ]);
 
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 12 }, TEST_RULE);
@@ -390,12 +413,14 @@ describe("embers Rekindled", () => {
   test("when its character triggers Fiery Rebirth, the card is discarded and the character gains the Aegis of Abyssal Flame", () => {
     expect.hasAssertions();
 
-    const lector = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), hp: 3 };
+    const lector = { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), hp: 3 };
     lector.statuses = [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)];
     lector.equipments = [createGcgZoneCard(EMBERS_REKINDLED_ID, embersRekindled)];
     const duel = createDuel([
       createSideState([lector]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     applyGcgDamage(duel, 1, { damageType: Element.Pyro, value: 5 }, TEST_RULE);
@@ -413,11 +438,13 @@ describe("embers Rekindled", () => {
   test("played on a character that has already triggered Fiery Rebirth, the card is discarded and the Aegis is applied", () => {
     expect.hasAssertions();
 
-    const lector = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const lector = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     lector.statuses = [{ cardId: FIERY_REBIRTH_ID, counter: 1, rounds: 0, usages: 0 }];
     const duel = createDuel([
       createSideState([lector]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).hand = [EMBERS_REKINDLED_ID];
     takeOne(duel.sides, 0).cards = [EMBERS_TALENT];
@@ -445,10 +472,13 @@ describe("absorbing Prism", () => {
   test("when the active character is Electro Hypostasis, it is healed 3 HP and gains the Electro Crystal Core", () => {
     expect.hasAssertions();
 
-    const hypostasis = { ...createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), hp: 5 };
+    const hypostasis = {
+      ...createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      hp: 5,
+    };
     const duel = createDuel([
       createSideState([hypostasis]),
-      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+      createSideState([createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } })]),
     ]);
     takeOne(duel.sides, 0).hand = [ABSORBING_PRISM_ID];
     takeOne(duel.sides, 0).cards = [ABSORBING_PRISM_CARD];
@@ -464,10 +494,12 @@ describe("absorbing Prism", () => {
   test("when the active character is another, the card is refused and the duel is left as it was", () => {
     expect.hasAssertions();
 
-    const lector = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), hp: 5 };
+    const lector = { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), hp: 5 };
     const duel = createDuel([
       createSideState([lector]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).hand = [ABSORBING_PRISM_ID];
     takeOne(duel.sides, 0).cards = [ABSORBING_PRISM_CARD];
@@ -483,8 +515,10 @@ describe("tengu Stormcall", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, TENGU_STORMCALL);
@@ -501,8 +535,10 @@ describe("tengu Juurai: Ambush", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(TENGU_JUURAI_AMBUSH_ID, tenguJuuraiAmbush)];
 
@@ -521,8 +557,10 @@ describe("tengu Juurai: Stormcluster", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(TENGU_JUURAI_STORMCLUSTER_ID, tenguJuuraiStormcluster)];
 
@@ -539,10 +577,16 @@ describe("darkfire Furnace", () => {
   test("End Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
     expect.hasAssertions();
 
-    const standby = { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), shield: 2 };
+    const standby = {
+      ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }),
+      shield: 2,
+    };
     const duel = createDuel([
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro), standby]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+        standby,
+      ]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(DARKFIRE_FURNACE_ID, darkfireFurnace)];
 
@@ -560,8 +604,10 @@ describe("ominous Star", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } })]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, OMINOUS_STAR);
@@ -580,11 +626,13 @@ describe("crowfeather Cover", () => {
   ])("the attached character's %s deals 1 more DMG and spends one of its two usages", (_name, skill, hp) => {
     expect.hasAssertions();
 
-    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    const sara = createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } });
     sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
     const duel = createDuel([
       createSideState([sara]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, skill);
@@ -598,11 +646,13 @@ describe("crowfeather Cover", () => {
   test("a normal attack is not boosted and spends no usage", () => {
     expect.hasAssertions();
 
-    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    const sara = createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } });
     sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
     const duel = createDuel([
       createSideState([sara]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, SARA_NORMAL_ATTACK);
@@ -634,8 +684,10 @@ describe("abyssal Summons", () => {
 
     const duel: GcgDuel = {
       ...createDuel([
-        createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-        createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+        createSideState([
+          createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+        ]),
+        createSideState([createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } })]),
       ]),
       random: () => draw,
     };
@@ -656,8 +708,10 @@ describe("hilichurl summons", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
-      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } })]),
     ]);
     takeOne(duel.sides, 0).summons = [createGcgZoneCard(cardId, module)];
 
@@ -683,17 +737,18 @@ describe("sin of Pride", () => {
     kind: GcgCardKind.Talent,
     nameTextId: 1,
   };
-  const createSaraWithSkills = (): GcgCharacterState => {
-    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
-    return { ...sara, character: { ...sara.character, skills: [TENGU_STORMCALL] } };
-  };
-
   test("it is equipped to Kujou Sara when she is active, and her Tengu Stormcall is used once at once", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createSaraWithSkills()]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Electro, id: KUJOU_SARA_ID, skills: [TENGU_STORMCALL] },
+        }),
+      ]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).hand = [SIN_OF_PRIDE_ID];
     takeOne(duel.sides, 0).cards = [SIN_OF_PRIDE_CARD];
@@ -710,12 +765,16 @@ describe("sin of Pride", () => {
   test("with Crowfeather Cover on her, Kujou Sara's Elemental Burst deals 1 more DMG on top of the Cover's", () => {
     expect.hasAssertions();
 
-    const sara = createSaraWithSkills();
+    const sara = createGcgCharacterState({
+      character: { element: Element.Electro, id: KUJOU_SARA_ID, skills: [TENGU_STORMCALL] },
+    });
     sara.equipments = [createGcgZoneCard(SIN_OF_PRIDE_ID, sinOfPride)];
     sara.statuses = [createGcgZoneCard(CROWFEATHER_COVER_ID, crowfeatherCover)];
     const duel = createDuel([
       createSideState([sara]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KOUKOU_SENDOU);
@@ -729,11 +788,15 @@ describe("sin of Pride", () => {
   test("without Crowfeather Cover on her, Kujou Sara's Elemental Burst gets no bonus from it", () => {
     expect.hasAssertions();
 
-    const sara = createSaraWithSkills();
+    const sara = createGcgCharacterState({
+      character: { element: Element.Electro, id: KUJOU_SARA_ID, skills: [TENGU_STORMCALL] },
+    });
     sara.equipments = [createGcgZoneCard(SIN_OF_PRIDE_ID, sinOfPride)];
     const duel = createDuel([
       createSideState([sara]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KOUKOU_SENDOU);
@@ -746,11 +809,13 @@ describe("shimenawa's Reminiscence", () => {
   test("once per round, a Talent card or Elemental Skill spends one Elemental Die less", () => {
     expect.hasAssertions();
 
-    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
+    const sara = createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } });
     sara.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
     const duel = createDuel([
       createSideState([sara], [Element.Electro, Element.Electro]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     const costs: GcgCost[] = [{ count: 3, element: Element.Electro, kind: GcgCostKind.Dice }];
 
@@ -769,11 +834,13 @@ describe("shimenawa's Reminiscence", () => {
   ])("%s deals the damage it would, plus 1 when at 2 Energy", (_name, skill, energy, hp) => {
     expect.hasAssertions();
 
-    const sara = { ...createCharacterState(KUJOU_SARA_ID, Element.Electro), energy };
+    const sara = { ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }), energy };
     sara.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
     const duel = createDuel([
       createSideState([sara]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, skill);
@@ -784,12 +851,14 @@ describe("shimenawa's Reminiscence", () => {
   test("a Character's Elemental Skill spends one Elemental Die less for the artifact on another character", () => {
     expect.hasAssertions();
 
-    const sara = createCharacterState(KUJOU_SARA_ID, Element.Electro);
-    const lector = createCharacterState(ABYSS_LECTOR_ID, Element.Pyro);
+    const sara = createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } });
+    const lector = createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } });
     lector.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
     const duel = createDuel([
       createSideState([sara, lector], [Element.Electro, Element.Electro]),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     const costs: GcgCost[] = [{ count: 3, element: Element.Electro, kind: GcgCostKind.Dice }];
 
@@ -801,8 +870,10 @@ describe("shimenawa's Reminiscence", () => {
 describe("chinju Forest", () => {
   const createChinjuDuel = (dice: Element[]) => {
     const duel = createDuel([
-      createSideState([createCharacterState(KUJOU_SARA_ID, Element.Electro)], dice),
-      createSideState([createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro)]),
+      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })], dice),
+      createSideState([
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
+      ]),
     ]);
     takeOne(duel.sides, 0).supports = [createGcgZoneCard(CHINJU_FOREST_ID, chinjuForest)];
     return duel;
@@ -848,11 +919,11 @@ describe("elemental Resonance: High Voltage", () => {
 
     const duel = createDuel([
       createSideState([
-        createCharacterState(KUJOU_SARA_ID, Element.Electro),
-        { ...createCharacterState(ABYSS_LECTOR_ID, Element.Pyro), energy: 3 },
-        createCharacterState(ELECTRO_HYPOSTASIS_ID, Element.Electro),
+        createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }),
+        { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), energy: 3 },
+        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
       ]),
-      createSideState([createCharacterState(ABYSS_LECTOR_ID, Element.Pyro)]),
+      createSideState([createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } })]),
     ]);
     takeOne(duel.sides, 0).hand = [ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID];
     takeOne(duel.sides, 0).cards = [HIGH_VOLTAGE_CARD];

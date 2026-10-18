@@ -5,9 +5,9 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
@@ -24,26 +24,6 @@ import { transcendentAutomaton } from "#src/services/gcg/cards/transcendentAutom
 import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Cryo,
-    hp: 10,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -94,10 +74,13 @@ describe("transcendentAutomaton", () => {
     const zoneCard = createGcgZoneCard(TRANSCENDENT_AUTOMATON_ID, transcendentAutomaton);
     const duel = createDuel([
       createSideState([
-        { ...createCharacterState(1), equipments: [zoneCard] },
-        { ...createCharacterState(2), equipments: [createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter)] },
+        { ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }), equipments: [zoneCard] },
+        {
+          ...createGcgCharacterState({ character: { id: 2, element: Element.Cryo } }),
+          equipments: [createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter)],
+        },
       ]),
-      createSideState([createCharacterState(1)]),
+      createSideState([createGcgCharacterState({ character: { id: 1, element: Element.Cryo } })]),
     ]);
     transcendentAutomaton.onSkillUsed?.({ characterIndex: 0, duel, sideIndex: 0 }, BLUSTERING_BLADE, zoneCard, []);
 

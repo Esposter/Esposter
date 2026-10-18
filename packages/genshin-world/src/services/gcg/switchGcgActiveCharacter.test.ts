@@ -3,37 +3,16 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createCharacterState = (): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Hydro,
-    hp: 10,
-    id: 1,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -73,7 +52,10 @@ describe(switchGcgActiveCharacter, () => {
   test("should make the character at the index the active one, flagged as switched in, and leave the others unflagged", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(), createCharacterState()]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState(), createGcgCharacterState()]),
+      createSideState([]),
+    ]);
     switchGcgActiveCharacter(duel, 0, 1);
 
     const side = takeOne(duel.sides, 0);

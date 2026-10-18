@@ -3,14 +3,13 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { wagner } from "#src/services/gcg/cards/wagner";
 import { WAGNER_ID } from "#src/services/gcg/cards/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
@@ -31,27 +30,7 @@ const createSide = (): GcgSideState => ({
       nameTextId: 1,
     },
   ],
-  characters: [
-    {
-      aura: GcgAura.None,
-      character: {
-        descriptionTextId: 2,
-        element: Element.Hydro,
-        hp: 10,
-        id: 1,
-        maxEnergy: 3,
-        nameTextId: 1,
-        skills: [],
-        weapon: "",
-      },
-      energy: 0,
-      equipments: [],
-      hp: 10,
-      isFrozen: false,
-      shield: 0,
-      statuses: [],
-    },
-  ],
+  characters: [createGcgCharacterState()],
   deckCardIds: [GCG_TOSS_UP_CARD_ID],
   dice: [],
   drawPile: [],

@@ -9,7 +9,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
@@ -38,6 +37,7 @@ import { TALISMAN_SPIRIT_ID } from "#src/services/gcg/cards/constants";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
 import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
@@ -61,26 +61,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Cryo,
-    hp: 10,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -172,22 +152,14 @@ const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Eve
 const createCompanion = (id: number): GcgCard => ({ ...TALENT_CARD, id, isCompanion: true, kind: GcgCardKind.Support });
 
 // A character of the element named
-const createElementCharacter = (id: number, element: Element): GcgCharacterState => {
-  const state = createCharacterState(id);
-  return { ...state, character: { ...state.character, element } };
-};
-
-// A Liyue character who wields the weapon kind named
-const createLiyueCharacter = (id: number, weapon: string): GcgCharacterState => {
-  const state = createCharacterState(id);
-  return { ...state, character: { ...state.character, nation: "LIYUE", weapon } };
-};
-
 describe("spring Spirit Summoning", () => {
   test("it deals 2 Cryo DMG, then creates an Icy Quill on its side", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(SHENHE_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const context = { duel, sideIndex: 0 };
 
     expect(springSpiritSummoning.getDamage?.(context)).toStrictEqual({ damageType: Element.Cryo, value: 2 });
@@ -198,7 +170,7 @@ describe("spring Spirit Summoning", () => {
   test("a second Icy Quill on its side refreshes the one there to its usages, and adds no second copy", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.onstages.push({ ...createGcgZoneCard(ICY_QUILL_ID, icyQuill), usages: 1 });
     const duel = createDuel([side, createSideState([])]);
 
@@ -211,7 +183,10 @@ describe("icy Quill", () => {
   test("it deals 1 more Cryo DMG to a Cryo hit, spending a usage", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(SHENHE_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
 
     expect(
@@ -230,7 +205,10 @@ describe("icy Quill", () => {
   ])("it adds nothing to a hit of %s with %i usages left", (damageType, usages) => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(SHENHE_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = { ...createGcgZoneCard(ICY_QUILL_ID, icyQuill), usages };
 
     expect(
@@ -242,7 +220,10 @@ describe("icy Quill", () => {
   test("without Mystical Abandon, a Normal Attack spends a usage like any other hit", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(SHENHE_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
     const context = { duel, sideIndex: 0, skill: KABUKI };
 
@@ -253,7 +234,7 @@ describe("icy Quill", () => {
   test("with Mystical Abandon equipped to a character of its side, the first Normal Attack each Round spends no usage", () => {
     expect.hasAssertions();
 
-    const shenhe = createCharacterState(SHENHE_ID);
+    const shenhe = createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } });
     shenhe.equipments = [createGcgZoneCard(MYSTICAL_ABANDON_ID, mysticalAbandon)];
     const duel = createDuel([createSideState([shenhe]), createSideState([])]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
@@ -275,11 +256,14 @@ describe("icy Quill", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      { ...createSideState([createCharacterState(SHENHE_ID)]), onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)] },
+      {
+        ...createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+        onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)],
+      },
       createSideState([
-        { ...createCharacterState(1_202), aura: Element.Cryo },
-        createCharacterState(1_203),
-        createCharacterState(1_204),
+        { ...createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } }), aura: Element.Cryo },
+        createGcgCharacterState({ character: { id: 1_203, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { id: 1_204, element: Element.Cryo } }),
       ]),
     ]);
 
@@ -293,8 +277,14 @@ describe("icy Quill", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      { ...createSideState([createCharacterState(SHENHE_ID)]), onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)] },
-      createSideState([{ ...createCharacterState(1_202), aura: Element.Cryo }, createCharacterState(1_203)]),
+      {
+        ...createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+        onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)],
+      },
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } }), aura: Element.Cryo },
+        createGcgCharacterState({ character: { id: 1_203, element: Element.Cryo } }),
+      ]),
     ]);
 
     applyGcgDamage(duel, 0, { damageType: Element.Anemo, value: 1 }, TEST_RULE, { duel, sideIndex: 0 });
@@ -307,7 +297,10 @@ describe("divine Maiden's Deliverance", () => {
   test("it deals 1 Cryo DMG, then summons a Talisman Spirit on its side", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(SHENHE_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const context = { duel, sideIndex: 0 };
 
     expect(divineMaidensDeliverance.getDamage?.(context)).toStrictEqual({ damageType: Element.Cryo, value: 1 });
@@ -318,7 +311,7 @@ describe("divine Maiden's Deliverance", () => {
   test("a Talisman Spirit already on its side is refreshed rather than doubled", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.summons.push({ ...createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit), usages: 0 });
     const duel = createDuel([side, createSideState([])]);
 
@@ -351,7 +344,7 @@ describe("talisman Spirit", () => {
           createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit),
         ],
       },
-      createSideState([createCharacterState(1_202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
     ]);
 
     runGcgEndPhase(duel);
@@ -363,7 +356,7 @@ describe("talisman Spirit", () => {
 
     const duel = createDuel([
       { ...createSideState([]), summons: [createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit)] },
-      createSideState([createCharacterState(1_202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
     ]);
 
     runGcgEndPhase(duel);
@@ -390,7 +383,7 @@ describe("mystical Abandon", () => {
   test("it equips to Shenhe while she is active, and has her use Spring Spirit Summoning at once", () => {
     expect.hasAssertions();
 
-    const shenhe = createCharacterState(SHENHE_ID);
+    const shenhe = createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } });
     shenhe.character.skills = [SPRING_SPIRIT_SUMMONING];
     const context = { duel: createDuel([createSideState([shenhe]), createSideState([])]), sideIndex: 0 };
 
@@ -403,7 +396,7 @@ describe("bane of All Evil", () => {
   test("it deals 4 Anemo DMG, then Xiao gains Yaksha's Mask for two Rounds", () => {
     expect.hasAssertions();
 
-    const xiao = createCharacterState(XIAO_ID);
+    const xiao = createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } });
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
     const context = { duel, sideIndex: 0 };
 
@@ -417,7 +410,7 @@ describe("bane of All Evil", () => {
     expect.hasAssertions();
 
     const xiao = {
-      ...createCharacterState(XIAO_ID),
+      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
       statuses: [{ ...createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask), rounds: 1, usages: 0 }],
     };
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
@@ -435,7 +428,10 @@ describe("yaksha's Mask", () => {
   ])("it deals a %s hit as %s, and an Anemo hit 1 more", (damageType, dealtAs, value) => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
 
     expect(yakshasMask.modifyDamageDealt?.({ duel, sideIndex: 0 }, { damageType, value: 2 }, zoneCard)).toStrictEqual({
@@ -447,7 +443,10 @@ describe("yaksha's Mask", () => {
   test("a Plunging Attack deals 2 more DMG", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
 
     expect(
@@ -465,10 +464,13 @@ describe("yaksha's Mask's switch clause", () => {
   const createSwitchDuel = (): GcgDuel => {
     const duel = createDuel([
       createSideState([
-        { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] },
-        createCharacterState(1_104),
+        {
+          ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+          statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+        },
+        createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
       ]),
-      createSideState([createCharacterState(1_107)]),
+      createSideState([createGcgCharacterState({ character: { id: 1_107, element: Element.Cryo } })]),
     ]);
     takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
     return duel;
@@ -511,7 +513,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
   test("it equips to Xiao while she is active, and has her use Bane of All Evil at once", () => {
     expect.hasAssertions();
 
-    const xiao = createCharacterState(XIAO_ID);
+    const xiao = createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } });
     xiao.character.skills = [BANE_OF_ALL_EVIL];
     const context = { duel: createDuel([createSideState([xiao]), createSideState([])]), sideIndex: 0 };
 
@@ -522,7 +524,10 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
   test("while Xiao has Yaksha's Mask, Lemniscatic Wind Cycling costs one Anemo die less, twice per attachment", () => {
     expect.hasAssertions();
 
-    const xiao = { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] };
+    const xiao = {
+      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+      statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+    };
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
     const context = { characterIndex: 0, duel, sideIndex: 0 };
     const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
@@ -539,7 +544,10 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
   test("without Yaksha's Mask, or for any other skill, nothing is reduced", () => {
     expect.hasAssertions();
 
-    const bare = createDuel([createSideState([createCharacterState(XIAO_ID)]), createSideState([])]);
+    const bare = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
     expect(
       conquerorOfEvilGuardianYaksha.reduceCost?.(
@@ -549,7 +557,10 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
       ),
     ).toBeUndefined();
 
-    const xiao = { ...createCharacterState(XIAO_ID), statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] };
+    const xiao = {
+      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+      statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+    };
     const masked = createDuel([createSideState([xiao]), createSideState([])]);
     expect(
       conquerorOfEvilGuardianYaksha.reduceCost?.(
@@ -565,7 +576,14 @@ describe("lithic Spear", () => {
   test("it deals 1 more DMG to its pole user", () => {
     expect.hasAssertions();
 
-    const duel = createDuel([createSideState([createLiyueCharacter(SHENHE_ID, "POLE")]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: SHENHE_ID, nation: "LIYUE", weapon: "POLE" },
+        }),
+      ]),
+      createSideState([]),
+    ]);
     const zoneCard = createGcgZoneCard(LITHIC_SPEAR_ID, lithicSpear);
 
     expect(
@@ -582,9 +600,13 @@ describe("lithic Spear", () => {
 
     const duel = createDuel([
       createSideState([
-        createLiyueCharacter(SHENHE_ID, "POLE"),
-        createLiyueCharacter(1_104, "CLAYMORE"),
-        createCharacterState(1_202),
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: SHENHE_ID, nation: "LIYUE", weapon: "POLE" },
+        }),
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: 1_104, nation: "LIYUE", weapon: "CLAYMORE" },
+        }),
+        createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } }),
       ]),
       createSideState([]),
     ]);
@@ -598,9 +620,13 @@ describe("lithic Spear", () => {
 
     const duel = createDuel([
       createSideState([
-        createLiyueCharacter(SHENHE_ID, "POLE"),
-        createLiyueCharacter(1_104, "CLAYMORE"),
-        createLiyueCharacter(1_504, "POLE"),
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: SHENHE_ID, nation: "LIYUE", weapon: "POLE" },
+        }),
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: 1_104, nation: "LIYUE", weapon: "CLAYMORE" },
+        }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1_504, nation: "LIYUE", weapon: "POLE" } }),
       ]),
       createSideState([]),
     ]);
@@ -616,7 +642,9 @@ describe("vermillion Hereafter", () => {
 
     const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
     const duel = createDuel([
-      createSideState([{ ...createCharacterState(1_104), equipments: [zoneCard] }]),
+      createSideState([
+        { ...createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }), equipments: [zoneCard] },
+      ]),
       createSideState([]),
     ]);
     const context = { characterIndex: 0, duel, sideIndex: 0 };
@@ -631,7 +659,10 @@ describe("vermillion Hereafter", () => {
     expect.hasAssertions();
 
     const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
-    const duel = createDuel([createSideState([createCharacterState(1_104)]), createSideState([])]);
+    const duel = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const context = { characterIndex: 0, duel, sideIndex: 0 };
 
     expect(
@@ -651,12 +682,12 @@ describe("vermillion Hereafter", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createCharacterState(1_104),
+          ...createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
           equipments: [createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter)],
         },
-        createCharacterState(1_504),
+        createGcgCharacterState({ character: { id: 1_504, element: Element.Cryo } }),
       ]),
-      createSideState([createCharacterState(1_202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
     ]);
 
     switchGcgActiveCharacter(duel, 0, 1);
@@ -669,7 +700,7 @@ describe("stone and Contracts", () => {
   test("when the next Action Phase begins, it creates 3 Omni dice and draws a card", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(1_104)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } })]);
     side.drawPile = [DRAWN_CARD_ID];
     const duel = createDuel([side, createSideState([])]);
 
@@ -688,9 +719,15 @@ describe("elemental Resonance: Shattering Ice", () => {
   test("it can be played only with two Cryo characters on its side", () => {
     expect.hasAssertions();
 
-    const one = createDuel([createSideState([createCharacterState(1_202)]), createSideState([])]);
+    const one = createDuel([
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
+      createSideState([]),
+    ]);
     const two = createDuel([
-      createSideState([createCharacterState(1_202), createCharacterState(1_104)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
+      ]),
       createSideState([]),
     ]);
 
@@ -702,8 +739,11 @@ describe("elemental Resonance: Shattering Ice", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createCharacterState(1_202), createCharacterState(1_104)]),
-      createSideState([createCharacterState(1_202)]),
+      createSideState([
+        createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
     ]);
 
     shatteringIce.play?.({ duel, sideIndex: 0 }, undefined);
@@ -717,7 +757,10 @@ describe("liu Su", () => {
   test("after a switch to a character with no Energy, she gives that character 1 Energy, once per Round", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID), createCharacterState(1_104)]);
+    const side = createSideState([
+      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
+    ]);
     side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
     const duel = createDuel([side, createSideState([])]);
 
@@ -731,7 +774,10 @@ describe("liu Su", () => {
   test("a character who has Energy keeps it, and the use is not spent", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID), createCharacterState(1_104)]);
+    const side = createSideState([
+      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }),
+    ]);
     takeOne(side.characters, 1).energy = 2;
     side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
     const duel = createDuel([side, createSideState([])]);
@@ -748,7 +794,7 @@ describe("dunyarzad", () => {
   test("a companion played spends one die less, once per Round, and a card that is not a companion spends none less", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     const zoneCard = takeOne(side.supports, 0);
     const context = { duel: createDuel([side, createSideState([])]), sideIndex: 0 };
@@ -769,7 +815,7 @@ describe("dunyarzad", () => {
   test("a companion played through the hand is paid for at one die less", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     side.cards.push({ ...createCompanion(LIU_SU_ID), costs: [{ count: 1, kind: GcgCostKind.Unaligned }] });
     side.hand.push(LIU_SU_ID);
@@ -782,7 +828,7 @@ describe("dunyarzad", () => {
   test("after a companion is played, it draws a random companion from the pile, once per match", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     side.cards.push({ ...TALENT_CARD, id: PLAIN_SUPPORT_ID, kind: GcgCardKind.Support }, createCompanion(RANA_ID), {
       ...createCompanion(LIU_SU_ID),
@@ -808,7 +854,7 @@ describe("dunyarzad", () => {
   test("a second Dunyarzad does not draw again once one has spent the match's draw", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID)]);
+    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
     side.supports.push(
       { ...createGcgZoneCard(DUNYARZAD_ID, dunyarzad), counter: 0 },
       createGcgZoneCard(DUNYARZAD_ID, dunyarzad),
@@ -830,9 +876,15 @@ describe("rana", () => {
   test("after an Elemental Skill, it creates a die of the next off-field character's element, once per Round", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID), createElementCharacter(XIAO_ID, Element.Anemo)]);
+    const side = createSideState([
+      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
+    ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
-    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+    const duel = createDuel([
+      side,
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
     expect(side.dice).toStrictEqual([Element.Anemo]);
@@ -844,12 +896,15 @@ describe("rana", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createCharacterState(SHENHE_ID),
-      { ...createCharacterState(1_104), hp: 0 },
-      createElementCharacter(XIAO_ID, Element.Anemo),
+      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      { ...createGcgCharacterState({ character: { id: 1_104, element: Element.Cryo } }), hp: 0 },
+      createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
     ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
-    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+    const duel = createDuel([
+      side,
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
     expect(side.dice).toStrictEqual([Element.Anemo]);
@@ -858,9 +913,15 @@ describe("rana", () => {
   test("a Normal Attack, or an opponent's Elemental Skill, creates no die", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createCharacterState(SHENHE_ID), createElementCharacter(XIAO_ID, Element.Anemo)]);
+    const side = createSideState([
+      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
+    ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
-    const duel = createDuel([side, createSideState([createCharacterState(1_202)])]);
+    const duel = createDuel([
+      side,
+      createSideState([createGcgCharacterState({ character: { id: 1_202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
     expect(side.dice).toStrictEqual([]);

@@ -1,10 +1,9 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { describe, expect, test } from "vitest";
 
@@ -26,27 +25,7 @@ const createCard = (id: number, kind: GcgCardKind): GcgCard => ({
 const createSide = (cards: GcgCard[], drawPile: number[]): GcgSideState => ({
   activeIndex: 0,
   cards,
-  characters: [
-    {
-      aura: GcgAura.None,
-      character: {
-        descriptionTextId: 2,
-        element: Element.Hydro,
-        hp: 10,
-        id: 1,
-        maxEnergy: 3,
-        nameTextId: 1,
-        skills: [],
-        weapon: "",
-      },
-      energy: 0,
-      equipments: [],
-      hp: 10,
-      isFrozen: false,
-      shield: 0,
-      statuses: [],
-    },
-  ],
+  characters: [createGcgCharacterState()],
   deckCardIds: [],
   dice: [],
   drawPile,

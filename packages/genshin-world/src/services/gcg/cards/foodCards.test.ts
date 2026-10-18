@@ -3,7 +3,6 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
 import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
@@ -11,28 +10,7 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const FULL_HP = 10;
-
-const createCharacterState = (id: number, hp = FULL_HP): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Hydro,
-    hp: FULL_HP,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 
 const createSide = (sideCharacters: GcgCharacterState[]) => ({
   activeIndex: 0,
@@ -72,7 +50,10 @@ const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
 describe("lotus Flower Crisp", () => {
   test("the target takes 3 less DMG the next time, and eats no other food that round", () => {
     expect.hasAssertions();
-    const duel = createDuel([createCharacterState(1), createCharacterState(2)]);
+    const duel = createDuel([
+      createGcgCharacterState({ character: { id: 1 } }),
+      createGcgCharacterState({ character: { id: 2 } }),
+    ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     expect(lotusFlowerCrisp.canPlay?.(context, 1)).toBe(true);
     lotusFlowerCrisp.play?.(context, 1);
@@ -87,7 +68,10 @@ describe("lotus Flower Crisp", () => {
 describe("teyvat Fried Egg", () => {
   test("a defeated character is revived to 1 HP and healed 1 HP, and holds the food for the round", () => {
     expect.hasAssertions();
-    const duel = createDuel([createCharacterState(1), createCharacterState(2, 0)]);
+    const duel = createDuel([
+      createGcgCharacterState({ character: { id: 1 } }),
+      createGcgCharacterState({ character: { id: 2 }, hp: 0 }),
+    ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     expect(teyvatFriedEgg.canPlay?.(context, 1)).toBe(true);
     teyvatFriedEgg.play?.(context, 1);
@@ -101,7 +85,11 @@ describe("teyvat Fried Egg", () => {
 
   test("only one character is revived a round, and a standing character cannot be the target", () => {
     expect.hasAssertions();
-    const duel = createDuel([createCharacterState(1), createCharacterState(2, 0), createCharacterState(3, 0)]);
+    const duel = createDuel([
+      createGcgCharacterState({ character: { id: 1 } }),
+      createGcgCharacterState({ character: { id: 2 }, hp: 0 }),
+      createGcgCharacterState({ character: { id: 3 }, hp: 0 }),
+    ]);
     const context: GcgEffectContext = { duel, sideIndex: 0 };
     teyvatFriedEgg.play?.(context, 1);
     expect([teyvatFriedEgg.canPlay?.(context, 2), teyvatFriedEgg.canPlay?.(context, 0)]).toStrictEqual([false, false]);

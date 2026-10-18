@@ -1,14 +1,13 @@
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
@@ -18,26 +17,6 @@ import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNa
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
-const createCharacterState = (): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Pyro,
-    hp: 10,
-    id: 1,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
-
 describe(declareGcgRoundEnd, () => {
   const SEED = 7;
   const HAND_CARD_COUNT = 1;
@@ -45,7 +24,7 @@ describe(declareGcgRoundEnd, () => {
   const createSideState = (): GcgSideState => ({
     activeIndex: 0,
     cards: [],
-    characters: [createCharacterState()],
+    characters: [createGcgCharacterState({ character: { element: Element.Pyro } })],
     dice: [Element.Pyro],
     deckCardIds: [],
     drawPile: [...DRAW_PILE_CARD_IDS],

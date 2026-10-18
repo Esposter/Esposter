@@ -31,6 +31,7 @@ import { FROSTFLAKE_SEKI_NO_TO_ID } from "#src/services/gcg/cards/constants";
 import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgStartingStatuses } from "#src/services/gcg/effects/listGcgStartingStatuses";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -44,26 +45,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createCharacterState = (id: number): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Cryo,
-    hp: 10,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -122,11 +103,6 @@ const FIREWORK_FLARE_UP: GcgSkill = {
 };
 
 // A character of the given id, who wields the weapon kind named
-const createWielder = (id: number, weapon: string): GcgCharacterState => ({
-  ...createCharacterState(id),
-  character: { ...createCharacterState(id).character, weapon },
-});
-
 describe("frostflake Seki no To", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
@@ -151,8 +127,8 @@ describe("kamisato Art: Soumetsu", () => {
   test("it deals 4 Cryo DMG and summons a Frostflake Seki no To", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1105)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, SOUMETSU);
@@ -165,10 +141,10 @@ describe("kamisato Art: Soumetsu", () => {
     expect.hasAssertions();
     const duel = createDuel([
       {
-        ...createSideState([createCharacterState(1105)]),
+        ...createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
         summons: [{ ...createGcgZoneCard(FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo), usages: 1 }],
       },
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, SOUMETSU);
@@ -202,15 +178,21 @@ describe("kamisato Art: Senho", () => {
   const createAyakaDuel = (): GcgDuel =>
     createDuel([
       createSideState([
-        createCharacterState(1202),
-        { ...createCharacterState(1105), statuses: [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)] },
+        createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }),
+        {
+          ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
+          statuses: [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)],
+        },
       ]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
   test("the passive is held from the battle's start", () => {
     expect.hasAssertions();
-    const ayaka = { ...createCharacterState(1105).character, skills: [SENHO_PASSIVE] };
+    const ayaka = {
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }).character,
+      skills: [SENHO_PASSIVE],
+    };
 
     expect(listGcgStartingStatuses(ayaka).map(({ cardId }) => cardId)).toStrictEqual([SENHO_STATUS_ID]);
     expect(kamisatoArtSenhoSkill.getStartingStatuses?.()).toHaveLength(1);
@@ -268,8 +250,8 @@ describe("the skills whose damage is parsed from the dump's effect", () => {
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1105)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
@@ -280,8 +262,8 @@ describe("the skills whose damage is parsed from the dump's effect", () => {
   test("kamisato Art: Hyouka deals 3 Cryo DMG, which applies the Cryo aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1105)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
@@ -292,8 +274,8 @@ describe("the skills whose damage is parsed from the dump's effect", () => {
   test("firework Flare-Up deals 2 Physical DMG for Yoimiya", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1305)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1305, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, FIREWORK_FLARE_UP);
@@ -306,11 +288,14 @@ describe("adventurer's Bandana", () => {
   test("after its character uses a Normal Attack, it heals that character 1 HP, up to three times per Round", () => {
     expect.hasAssertions();
     const bandanaed = {
-      ...createCharacterState(1105),
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
       equipments: [createGcgZoneCard(ADVENTURERS_BANDANA_ID, adventurersBandana)],
       hp: 5,
     };
-    const duel = createDuel([createSideState([bandanaed]), createSideState([createCharacterState(1202)])]);
+    const duel = createDuel([
+      createSideState([bandanaed]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+    ]);
 
     for (let use = 0; use < 4; use++) runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
@@ -320,11 +305,14 @@ describe("adventurer's Bandana", () => {
   test("a skill that is not a Normal Attack does not heal", () => {
     expect.hasAssertions();
     const bandanaed = {
-      ...createCharacterState(1105),
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
       equipments: [createGcgZoneCard(ADVENTURERS_BANDANA_ID, adventurersBandana)],
       hp: 5,
     };
-    const duel = createDuel([createSideState([bandanaed]), createSideState([createCharacterState(1202)])]);
+    const duel = createDuel([
+      createSideState([bandanaed]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
 
@@ -347,8 +335,8 @@ describe("aquila Favonia", () => {
   test("it is equipped on a character who wields a sword", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createWielder(1105, "SWORD")]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1105, weapon: "SWORD" } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     takeOne(duel.sides, 0).hand = [AQUILA_FAVONIA_ID];
     takeOne(duel.sides, 0).cards = [AQUILA_FAVONIA_CARD];
@@ -362,8 +350,8 @@ describe("aquila Favonia", () => {
   test("it is refused on a character who does not wield a sword", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createWielder(1305, "BOW")]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1305, weapon: "BOW" } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     takeOne(duel.sides, 0).hand = [AQUILA_FAVONIA_ID];
     takeOne(duel.sides, 0).cards = [AQUILA_FAVONIA_CARD];
@@ -375,10 +363,13 @@ describe("aquila Favonia", () => {
   test("the character it is attached to deals 1 more DMG", () => {
     expect.hasAssertions();
     const weaponed = {
-      ...createCharacterState(1105),
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
       equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
     };
-    const duel = createDuel([createSideState([weaponed]), createSideState([createCharacterState(1202)])]);
+    const duel = createDuel([
+      createSideState([weaponed]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
@@ -388,10 +379,13 @@ describe("aquila Favonia", () => {
   test("after the opposing character uses a Skill while this character is active, it heals 1 HP, up to twice per Round", () => {
     expect.hasAssertions();
     const weaponed = {
-      ...createCharacterState(1105),
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
       equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
     };
-    const duel = createDuel([createSideState([weaponed]), createSideState([createCharacterState(1202)])]);
+    const duel = createDuel([
+      createSideState([weaponed]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+    ]);
     duel.actingSideIndex = 1;
 
     for (let use = 0; use < 3; use++) runGcgSkillUse({ duel, sideIndex: 1 }, HYOUKA);
@@ -403,13 +397,13 @@ describe("aquila Favonia", () => {
   test("it does not heal while its character is on standby", () => {
     expect.hasAssertions();
     const weaponed = {
-      ...createCharacterState(1105),
+      ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
       equipments: [createGcgZoneCard(AQUILA_FAVONIA_ID, aquilaFavonia)],
       hp: 5,
     };
     const duel = createDuel([
-      createSideState([createCharacterState(1202), weaponed]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }), weaponed]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     duel.actingSideIndex = 1;
 
@@ -423,8 +417,8 @@ describe("parametric Transformer", () => {
   test("it gains 1 Qualitative Progress when either side's Skill deals Elemental DMG, and not for Physical DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1105)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     duel.sides[0].supports.push(createGcgZoneCard(PARAMETRIC_TRANSFORMER_ID, parametricTransformer));
     duel.actingSideIndex = 1;
@@ -439,8 +433,8 @@ describe("parametric Transformer", () => {
   test("at three Qualitative Progress it is discarded, and creates three different Basic Elemental Dice", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createCharacterState(1105)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     duel.sides[0].supports.push(createGcgZoneCard(PARAMETRIC_TRANSFORMER_ID, parametricTransformer));
     duel.actingSideIndex = 1;
@@ -453,18 +447,19 @@ describe("parametric Transformer", () => {
 });
 
 describe("kanten Senmyou Blessing", () => {
-  const createKantened = (statuses: GcgCharacterState["statuses"]): GcgCharacterState => ({
-    ...createCharacterState(1105),
-    equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
-    statuses,
-  });
   const INFUSED = [createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion)];
 
   test("while Ayaka holds Cryo Elemental Infusion, her Physical DMG, dealt as Cryo, is 1 more", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createKantened(INFUSED)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: 1105 },
+          equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+          statuses: INFUSED,
+        }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
@@ -475,8 +470,14 @@ describe("kanten Senmyou Blessing", () => {
   test("while Ayaka holds Cryo Elemental Infusion, her Cryo DMG is 1 more", () => {
     expect.hasAssertions();
     const duel = createDuel([
-      createSideState([createKantened(INFUSED)]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: 1105 },
+          equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+          statuses: INFUSED,
+        }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
@@ -486,7 +487,16 @@ describe("kanten Senmyou Blessing", () => {
 
   test("without the infusion, Ayaka's DMG is unchanged", () => {
     expect.hasAssertions();
-    const duel = createDuel([createSideState([createKantened([])]), createSideState([createCharacterState(1202)])]);
+    const duel = createDuel([
+      createSideState([
+        createGcgCharacterState({
+          character: { element: Element.Cryo, id: 1105 },
+          equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+          statuses: [],
+        }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+    ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
@@ -499,13 +509,13 @@ describe("kanten Senmyou Blessing's switch clause", () => {
   const createSwitchDuel = (): GcgDuel => {
     const duel = createDuel([
       createSideState([
-        createCharacterState(1202),
+        createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }),
         {
-          ...createCharacterState(1105),
+          ...createGcgCharacterState({ character: { id: 1105, element: Element.Cryo } }),
           equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
         },
       ]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
     return duel;
@@ -577,8 +587,11 @@ describe("wagner", () => {
   });
   const createWagnerDuel = (billets: number, deckWeapons: GcgCard[]): GcgDuel => {
     const duel = createDuel([
-      createSideState([createWielder(1105, "SWORD"), createWielder(1202, "SWORD")]),
-      createSideState([createCharacterState(1202)]),
+      createSideState([
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1105, weapon: "SWORD" } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1202, weapon: "SWORD" } }),
+      ]),
+      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
     ]);
     const side = takeOne(duel.sides, 0);
     const wagnerZoneCard = createGcgZoneCard(WAGNER_ID, wagner);

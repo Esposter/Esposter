@@ -8,13 +8,13 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
 import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { endGcgRound } from "#src/services/gcg/endGcgRound";
@@ -74,27 +74,7 @@ describe("a skill's on-use hooks", () => {
   });
 });
 
-const createCharacter = (id = 1): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Hydro,
-    hp: 10,
-    id,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments: [],
-  hp: 10,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
-
-const createSide = (characters: GcgCharacterState[] = [createCharacter()], activeIndex = 0): GcgSideState => ({
+const createSide = (characters: GcgCharacterState[] = [createGcgCharacterState()], activeIndex = 0): GcgSideState => ({
   activeIndex,
   cards: [],
   characters,
@@ -203,17 +183,22 @@ describe("a Plunging Attack", () => {
   };
 
   // Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
-  const createMaskedXiao = (): GcgCharacterState => ({
-    ...createCharacter(XIAO_ID),
-    statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-  });
   const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
 
   test("a Normal Attack by a character switched in this Round is a Plunging Attack, which the mask adds 2 DMG to", () => {
     expect.hasAssertions();
 
     const duel = createDuel(
-      [createSide([createCharacter(CHONGYUN_ID), createMaskedXiao()]), createSide([createCharacter(1_202)])],
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
       PLUNGE_RULE,
     );
 
@@ -226,7 +211,19 @@ describe("a Plunging Attack", () => {
     expect.hasAssertions();
 
     const duel = createDuel(
-      [createSide([createCharacter(CHONGYUN_ID), createMaskedXiao()], 1), createSide([createCharacter(1_202)])],
+      [
+        createSide(
+          [
+            createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+            createGcgCharacterState({
+              character: { id: XIAO_ID },
+              statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+            }),
+          ],
+          1,
+        ),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
       PLUNGE_RULE,
     );
 
@@ -238,7 +235,16 @@ describe("a Plunging Attack", () => {
     expect.hasAssertions();
 
     const duel = createDuel(
-      [createSide([createCharacter(CHONGYUN_ID), createMaskedXiao()]), createSide([createCharacter(1_202)])],
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
       PLUNGE_RULE,
     );
 
@@ -252,7 +258,16 @@ describe("a Plunging Attack", () => {
     expect.hasAssertions();
 
     const duel = createDuel(
-      [createSide([createCharacter(CHONGYUN_ID), createMaskedXiao()]), createSide([createCharacter(1_202)])],
+      [
+        createSide([
+          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
+          createGcgCharacterState({
+            character: { id: XIAO_ID },
+            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+          }),
+        ]),
+        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+      ],
       PLUNGE_RULE,
     );
 

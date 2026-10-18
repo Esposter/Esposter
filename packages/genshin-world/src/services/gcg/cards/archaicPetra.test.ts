@@ -5,39 +5,17 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { Element } from "#src/models/Element";
-import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
+import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 import { describe, expect, test } from "vitest";
 import { ARCHAIC_PETRA_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const FULL_HP = 10;
-
-const createCharacterState = (equipments: GcgCharacterState["equipments"] = []): GcgCharacterState => ({
-  aura: GcgAura.None,
-  character: {
-    descriptionTextId: 2,
-    element: Element.Geo,
-    hp: FULL_HP,
-    id: 1,
-    maxEnergy: 3,
-    nameTextId: 1,
-    skills: [],
-    weapon: "",
-  },
-  energy: 0,
-  equipments,
-  hp: FULL_HP,
-  isFrozen: false,
-  shield: 0,
-  statuses: [],
-});
 
 const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
   activeIndex: 0,
@@ -71,8 +49,16 @@ const createDuel = (dice: Element[]): GcgDuel => ({
   round: 1,
   rule: { handCardLimit: 10 } as GcgDuel["rule"],
   sides: [
-    createSide([createCharacterState([createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra)])], dice),
-    createSide([createCharacterState()], []),
+    createSide(
+      [
+        createGcgCharacterState({
+          character: { element: Element.Geo },
+          equipments: [createGcgZoneCard(ARCHAIC_PETRA_ID, archaicPetra)],
+        }),
+      ],
+      dice,
+    ),
+    createSide([createGcgCharacterState({ character: { element: Element.Geo } })], []),
   ],
   winnerSideIndex: undefined,
 });
