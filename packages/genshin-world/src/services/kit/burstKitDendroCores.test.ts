@@ -7,6 +7,7 @@ import type { Party } from "#src/models/party/Party";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
@@ -26,6 +27,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createCore = (reactionType: TransformativeReactionType, characterId = TRAVELER_CHARACTER_ID): KitDendroCore => ({
   characterId,
+  coreKind: DendroCoreKind.Bloom,
   kind: "dendroCore",
   position: { x: 0, z: 0 },
   reactionType,
