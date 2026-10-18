@@ -1,7 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -35,18 +36,29 @@ const createDamageTaken = (isCritical: boolean) => ({
   kind: KitEventKind.DamageTaken as const,
   striker: wielder,
 });
+const createStrike = (): KitStrike => ({
+  attackTag: AttackTag.NormalAttack,
+  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+  combatant: wielder,
+  hit: TRAVELER_KIT.plungeCollision,
+});
 
 describe(createFocusPassiveModule, () => {
-  test("each hit the wielder deals that is not critical adds a stack of the rank's CRIT Rate", () => {
+  test("each hit the wielder deals that is not critical adds a stack, and each strike it makes is rolled with a stack's CRIT Rate", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
     focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, context.kitEffectState.effects, [])).toStrictEqual([
-      { amount: 0.08 * 2, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getStrikeCriticalRateBonus?.(
+        createStrike(),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ),
+    ).toBe(0.08 * 2);
   });
 
   test("the stacks stop at five", () => {
@@ -55,9 +67,14 @@ describe(createFocusPassiveModule, () => {
     const context = createKitTestContext(wielder);
     for (let hit = 0; hit < 6; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, context.kitEffectState.effects, [])).toStrictEqual([
-      { amount: 0.08 * 5, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getStrikeCriticalRateBonus?.(
+        createStrike(),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ),
+    ).toBe(0.08 * 5);
   });
 
   test("a critical hit removes every stack and adds none", () => {
@@ -67,8 +84,13 @@ describe(createFocusPassiveModule, () => {
     for (let hit = 0; hit < 3; hit++) focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, wielder);
     focusPassiveModule.onKitEvent?.(createDamageTaken(true), context, wielder);
 
-    expect(focusPassiveModule.getPassiveBonuses?.(wielder, 1, context.kitEffectState.effects, [])).toStrictEqual([
-      { amount: 0, attribute: Attribute.CriticalRate },
-    ]);
+    expect(
+      focusPassiveModule.getStrikeCriticalRateBonus?.(
+        createStrike(),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ),
+    ).toBe(0);
   });
 });
