@@ -1,10 +1,12 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
+import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 import type { GoToPlace } from "#src/models/world/GoToPlace";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { Resident } from "#src/models/world/Resident";
 import type { WaterfallSheet } from "genshin-engine";
 
 import { enemyCampSchema } from "#src/models/enemy/EnemyCamp";
+import { outcropPlacementSchema } from "#src/models/leyLine/OutcropPlacement";
 import { goToPlaceSchema } from "#src/models/world/GoToPlace";
 import { landmarkSchema } from "#src/models/world/Landmark";
 import { residentSchema } from "#src/models/world/Resident";
@@ -13,13 +15,14 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // One region's authored data, fetched when the camera nears it and dropped when it leaves: its enemies' camps, its
-// Landmarks and the residents placed among them now, the go-to places its quests reach, its waterfalls hung from their
-// Lips, and its terrain shapes and paint as they are drawn
+// Landmarks and the residents placed among them now, the go-to places its quests reach, the ley line blossoms the
+// Official map places in it, its waterfalls hung from their lips, and its terrain shapes and paint as they are drawn
 export interface RegionData {
   enemyCamps: EnemyCamp[];
   goToPlaces: GoToPlace[];
   id: string;
   landmarks: Landmark[];
+  outcropPlaces: OutcropPlacement[];
   residents: Resident[];
   waterfalls: WaterfallSheet[];
 }
@@ -30,6 +33,8 @@ export const regionDataSchema = z.object({
   goToPlaces: z.array(goToPlaceSchema).default([]),
   id: z.string().min(1),
   landmarks: createUniqueArraySchema(landmarkSchema, "id"),
+  // A region no ley line blossom is placed in has none
+  outcropPlaces: z.array(outcropPlacementSchema).default([]),
   residents: createUniqueArraySchema(residentSchema, "id"),
   // A region the falls are not fitted for yet has none
   waterfalls: z.array(waterfallSheetSchema).default([]),
