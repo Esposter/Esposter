@@ -17,6 +17,7 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
 import { claimTrounceBlossom } from "#src/services/bosses/claimTrounceBlossom";
 import { computeDefeatTrounceBlossom } from "#src/services/bosses/computeDefeatTrounceBlossom";
+import { computeDefeatWeeklyBossTrounceBlossom } from "#src/services/bosses/computeDefeatWeeklyBossTrounceBlossom";
 import { computeTrounceBlossomInteractables } from "#src/services/bosses/computeTrounceBlossomInteractables";
 import { NORMAL_BOSS_ADVENTURE_EXP, NORMAL_BOSS_COMPANIONSHIP_EXP } from "#src/services/bosses/constants";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
@@ -95,11 +96,10 @@ export const useWorldTrounceBlossoms = ({
   };
   events.on("defeatEnemy", (enemy: Enemy) => {
     const { enemyType } = getEnemyKind(enemyKindMap, enemy.enemyKindId);
-    const trounceBlossom = computeDefeatTrounceBlossom(
-      enemyType,
-      enemy.position,
-      EnemyKindTraitsMap[enemy.enemyKindId].uniqueDropId,
-    );
+    // A weekly boss's blossom is read first, since a weekly boss is no normal boss whatever its traits say of a drop
+    const trounceBlossom =
+      computeDefeatWeeklyBossTrounceBlossom(enemy.enemyKindId, enemy.position) ??
+      computeDefeatTrounceBlossom(enemyType, enemy.position, EnemyKindTraitsMap[enemy.enemyKindId].uniqueDropId);
     if (trounceBlossom) writeTrounceBlossom(getSpawnKey(enemy.campId, enemy.id), trounceBlossom);
   });
   events.on("teleport", () => {
