@@ -34,28 +34,22 @@ export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]):
           secondsRemaining: swirlSeconds,
           source: "bathhousesSwirl",
         });
-      else if (
-        event.kind === KitEventKind.DamageTaken &&
-        event.striker.characterId === characterId &&
-        event.attackTag === AttackTag.ElementalSkill
-      )
-        buffKitMember(kitEffectState, characterId, {
-          amount: skillMastery,
-          attribute: Attribute.ElementalMastery,
-          secondsRemaining: skillSeconds,
-          source: "bathhousesSkill",
-        });
-      else if (
-        event.kind === KitEventKind.DamageTaken &&
-        event.striker.characterId === characterId &&
-        event.attackTag === AttackTag.ElementalBurst
-      )
-        buffKitMember(kitEffectState, characterId, {
-          amount: burstMastery,
-          attribute: Attribute.ElementalMastery,
-          secondsRemaining: burstSeconds,
-          source: "bathhousesBurst",
-        });
+      else if (event.kind === KitEventKind.DamageTaken && event.striker.characterId === characterId) {
+        if (event.attackTag === AttackTag.ElementalSkill)
+          buffKitMember(kitEffectState, characterId, {
+            amount: skillMastery,
+            attribute: Attribute.ElementalMastery,
+            secondsRemaining: skillSeconds,
+            source: "bathhousesSkill",
+          });
+        else if (event.attackTag === AttackTag.ElementalBurst)
+          buffKitMember(kitEffectState, characterId, {
+            amount: burstMastery,
+            attribute: Attribute.ElementalMastery,
+            secondsRemaining: burstSeconds,
+            source: "bathhousesBurst",
+          });
+      }
     },
   };
 };
