@@ -25,6 +25,7 @@ import {
   MARTIAL_ARTIST_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
   OBSIDIAN_CODEX_ARTIFACT_SET_ID,
+  OCEAN_HUED_CLAM_ARTIFACT_SET_ID,
   RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID,
   RETRACING_BOLIDE_ARTIFACT_SET_ID,
   SCHOLAR_ARTIFACT_SET_ID,
@@ -57,6 +58,7 @@ import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/c
 import { createMartialArtistSetModule } from "#src/services/artifact/sets/createMartialArtistSetModule";
 import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
 import { createObsidianCodexSetModule } from "#src/services/artifact/sets/createObsidianCodexSetModule";
+import { createOceanHuedClamSetModule } from "#src/services/artifact/sets/createOceanHuedClamSetModule";
 import { createResolutionOfSojournerSetModule } from "#src/services/artifact/sets/createResolutionOfSojournerSetModule";
 import { createRetracingBolideSetModule } from "#src/services/artifact/sets/createRetracingBolideSetModule";
 import { createScholarSetModule } from "#src/services/artifact/sets/createScholarSetModule";
@@ -94,6 +96,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [MARTIAL_ARTIST_ARTIFACT_SET_ID]: createMartialArtistSetModule,
   [NOBLESSE_OBLIGE_ARTIFACT_SET_ID]: createNoblesseObligeSetModule,
   [OBSIDIAN_CODEX_ARTIFACT_SET_ID]: createObsidianCodexSetModule,
+  [OCEAN_HUED_CLAM_ARTIFACT_SET_ID]: createOceanHuedClamSetModule,
   [RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID]: createResolutionOfSojournerSetModule,
   [RETRACING_BOLIDE_ARTIFACT_SET_ID]: createRetracingBolideSetModule,
   [SCHOLAR_ARTIFACT_SET_ID]: createScholarSetModule,
