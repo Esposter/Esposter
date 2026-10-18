@@ -27,10 +27,9 @@ export const HOME_POT_GADGET_ID = 220026;
 // Tubby, the realm's steward: the NPC row 13276, named by the name hash 3432976792, who sells from the Realm Depot, shop
 // 1048, which `VendorShopTypeMap` keys by him
 export const HOME_TUBBY_NPC_ID = 13276;
-// Provisional, made up until the PC exports the realm layout: the region the stand-in pot stands in and the point it stands
-// At in that region's world metres, the island's ground and radius, the spawn the player lands at, and the two standing points
+// Provisional, made up until the PC exports the realm layout: the region a pot set down in the open world is in, which the
+// Realm returns the player to, the island's ground and radius, the spawn the player lands at, and the two standing points
 export const HOME_STAND_IN_POT_REGION_ID = "mondstadt";
-export const HOME_STAND_IN_POT_POINT = { x: 0, z: 0 };
 export const HOME_REALM_GROUND_HEIGHT = 0;
 export const HOME_REALM_ISLAND_RADIUS = 40;
 export const HOME_REALM_SPAWN: WorldJumpPose = { heightOffset: 0, point: { x: 0, z: 0 }, yaw: 0 };

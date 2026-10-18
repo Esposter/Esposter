@@ -166,3 +166,19 @@ A companion living in the realm SHALL earn Companionship EXP when the realm's Re
 - **WHEN** the player claims the store
 - **THEN** the companion's Companionship EXP rises by the bounty the store held
 - **AND** every companion living in the realm gains the whole of it, not a share
+
+### Requirement: The Serenitea Pot used from the gadget slot is set down at the player's feet
+
+The Serenitea Pot, equipped to the gadget slot, SHALL be set down at the player's feet when the player uses it there, and SHALL NOT be set down again while one stands in the open world.
+
+#### Scenario: The pot is set down at the player's feet
+
+- **GIVEN** a player in the open world with the Serenitea Pot equipped to the gadget slot
+- **WHEN** the player uses the gadget
+- **THEN** the pot stands at the player's feet, where the player can interact with it to enter the realm
+
+#### Scenario: A second pot is refused while one stands
+
+- **GIVEN** a player in the open world whose Serenitea Pot already stands
+- **WHEN** the player uses the gadget again
+- **THEN** the pot is not set down again and the one standing stays where it is
