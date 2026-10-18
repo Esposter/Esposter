@@ -4,6 +4,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NOELLE_CHARACTER_ID } from "#src/services/kit/characters/noelleKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -152,5 +153,76 @@ describe("noelle kit", () => {
 
     expect(stepKitTestEffects(0.1, context)).toHaveLength(1);
     expect(context.kitEffectState.effects).toHaveLength(1);
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    // Ascension 1: a drain that takes the active character under 30% HP shields it with 4 times Noelle's DEF for 20 seconds
+    const shieldedContext = createKitTestContext({ ...createNoelleCombatant(), ascension: 1 });
+    getPartyMember(shieldedContext.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
+    NOELLE_KIT.onKitEvent?.(
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        healthShare: -0.5,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        sourceCharacterId: NOELLE_CHARACTER_ID,
+      },
+      shieldedContext,
+      shieldedContext.activeCombatant,
+    );
+    expect(shieldedContext.kitEffectState.effects).toStrictEqual([
+      { characterId: NOELLE_CHARACTER_ID, id: "noelle-devotion-cooldown", kind: "status", secondsRemaining: 60 },
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        element: Element.Cryo,
+        health: 4 * DEFENSE,
+        kind: "shield",
+        secondsRemaining: 20,
+      },
+    ]);
+
+    // Ascension 4: every fourth normal attack that strikes an enemy cuts the skill's cooldown by a second
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    const combatant = { ...createNoelleCombatant(), ascension: 4 };
+    const context = createKitTestContext(combatant, { party });
+    getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
+    const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
+    const strike = { body: context.body, combatant, hit: takeOne(normalAttack.hits) };
+    for (let attack = 0; attack < 4; attack++) {
+      normalAttack.onStart?.(context);
+      for (const hit of normalAttack.hits) hit.onStrike?.(context, strike);
+    }
+    expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(4);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createNoelleCombatant());
+    getPartyMember(context.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
+    NOELLE_KIT.onKitEvent?.(
+      {
+        characterId: NOELLE_CHARACTER_ID,
+        healthShare: -0.5,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        sourceCharacterId: NOELLE_CHARACTER_ID,
+      },
+      context,
+      context.activeCombatant,
+    );
+    expect(context.kitEffectState.effects).toStrictEqual([]);
+
+    const party = createParty([NOELLE_CHARACTER_ID]);
+    const combatant = { ...createNoelleCombatant(), ascension: 3 };
+    const attackContext = createKitTestContext(combatant, { party });
+    getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds = 5;
+    const normalAttack = takeOne(NOELLE_KIT.normalAttacks);
+    const strike = { body: attackContext.body, combatant, hit: takeOne(normalAttack.hits) };
+    for (let attack = 0; attack < 4; attack++) {
+      normalAttack.onStart?.(attackContext);
+      for (const hit of normalAttack.hits) hit.onStrike?.(attackContext, strike);
+    }
+    expect(getPartyMember(party, NOELLE_CHARACTER_ID).skillCooldownSeconds).toBe(5);
   });
 });

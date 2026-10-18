@@ -4,7 +4,7 @@ Neuvillette's kit is built from its record alone, on avatar 10000087, and `creat
 
 Provisional: gcsim gives Neuvillette no plunge file, so his plunges take Bennett's timings, reaches and poise, with his own multipliers from the table's plunge entries; and his charged attack is the short Charge Attack, the one released before Equitable Judgment's hold, with its box priced as a circle of its length.
 
-Not built: Equitable Judgment, the held charged attack, whose length counts the Sourcewater droplets its legal evaluation picks up and whose judgement ticks drain Max HP; the droplets the skill and burst leave; Spiritbreath Thorn's aligned 10-second cooldown, which the skill's own 12 always outlast; and his ascension and constellation passives.
+Not built: Equitable Judgment, the held charged attack, whose length counts the Sourcewater droplets its legal evaluation picks up and whose judgement ticks drain Max HP; the droplets the skill and burst leave; Spiritbreath Thorn's aligned 10-second cooldown, which the skill's own 12 always outlast; his Ascension 1, which raises Equitable Judgment's charge by the reactions it counts; and his constellations. Ascension 4's Hydro DMG Bonus, read from his HP share, is built as a passive bonus.
 
 ## Key files
 

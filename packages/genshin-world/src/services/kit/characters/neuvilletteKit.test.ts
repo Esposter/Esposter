@@ -1,10 +1,29 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createNeuvilletteKitBehaviour, NEUVILLETTE_CHARACTER_ID } from "#src/services/kit/characters/neuvilletteKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILLETTE_CHARACTER_ID);
+
+// The passive bonuses a combatant gets at an ascension phase and HP share, each as its attribute and amount to a thousandth
+const getPassiveBonusPairs = (ascension: number, healthShare: number): [Attribute, number][] =>
+  (
+    createNeuvilletteKitBehaviour().getPassiveBonuses?.(
+      {
+        ascension,
+        attributes: computeCharacterAttributes([]),
+        characterId: NEUVILLETTE_CHARACTER_ID,
+        constellationCount: 0,
+        elementalResonances: [],
+        kit: NEUVILLETTE_KIT,
+        level: 90,
+      },
+      healthShare,
+    ) ?? []
+  ).map(({ amount, attribute }) => [attribute, Math.round(amount * 1000) / 1000]);
 
 describe(createNeuvilletteKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and Spiritbreath Thorn's multipliers from his proud skill groups", () => {
@@ -50,5 +69,16 @@ describe(createNeuvilletteKitBehaviour, () => {
       normalAttackElements: [Element.Hydro, Element.Hydro, Element.Hydro],
       skillHitmarkFrames: [23, 60],
     });
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    expect(getPassiveBonusPairs(4, 0.5)).toStrictEqual([[Attribute.HydroDamageBonus, 0.12]]);
+    expect(getPassiveBonusPairs(4, 1)).toStrictEqual([[Attribute.HydroDamageBonus, 0.3]]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    expect(getPassiveBonusPairs(3, 0.5)).toStrictEqual([]);
   });
 });
