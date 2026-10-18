@@ -57,6 +57,7 @@ import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/p
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
+import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives/createSongOfTheVigilPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
@@ -270,4 +271,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2280400315": createSolemnSilencePassiveModule,
   // Full Draw (Hamayumi)
   "3099408603": createHamayumiPassiveModule,
+  // Cadence of Days Gone By (Song of the Vigil)
+  "385807483": createSongOfTheVigilPassiveModule,
 };
