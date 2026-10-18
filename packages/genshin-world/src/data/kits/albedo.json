@@ -6,8 +6,8 @@
     "source": "Gcsim",
     "value": { "angle": 2.0943951023931953, "height": 2, "radius": 8 }
   },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
+  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
+  "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "hits.fatalBlossoms.length": { "file": "burst.go", "line": 78, "source": "Gcsim", "value": 7 },
   "hits.transientBlossom.area": {
     "cause": "Unsourced",
@@ -21,16 +21,16 @@
   "hits.transientBlossom.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
   "hits.solarIsotoma.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
   "hits.solarIsotoma.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3832 } },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
+  "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 38.43 },
+  "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 38.43 },
+  "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 49.68 },
+  "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 52.11 },
+  "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 64.98 },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "plunges.high.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
-  "plunges.high.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.high.hits.0.hitmarkFrames": { "file": "plunge.go", "line": 22, "source": "Gcsim", "value": 39 },
   "plunges.low.animationFrames": { "cause": "DiffersFromSource", "value": 24 },
-  "plunges.low.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 0 },
+  "plunges.low.hits.0.hitmarkFrames": { "file": "plunge.go", "line": 21, "source": "Gcsim", "value": 37 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.internalCooldownTag": { "cause": "DiffersFromSource" },
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "DiffersFromSource" },
@@ -52,5 +52,6 @@
   "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
   "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },
   "parameters.solarIsotomaAheadMetres": { "file": "skill.go", "line": 52, "source": "Gcsim", "value": 3 },
-  "parameters.solarIsotomaRadius": { "file": "skill.go", "line": 53, "source": "Gcsim", "value": 10 }
+  "parameters.solarIsotomaRadius": { "file": "skill.go", "line": 53, "source": "Gcsim", "value": 10 },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3839 } }
 }
