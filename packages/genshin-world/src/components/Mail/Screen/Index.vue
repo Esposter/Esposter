@@ -19,10 +19,6 @@ import { sortMails } from "#src/services/mail/sortMails";
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
-// The line break in the game's text, written as a backslash and an n or as a real line break, and its size tags
-const LINE_BREAK_REGEX = /\\n|\n/u;
-const SIZE_TAG_REGEX = /<\/?size(?:=\d+)?>/gu;
-
 interface Props {
   // The held mails that are the Traveler's birthday mails, which the Gift Mail Box keeps once claimed
   birthdayMailIds: ReadonlySet<number>;
@@ -81,10 +77,6 @@ const hasClaimable = computed(() =>
 const hasDeletableMail = computed(() => deleteReadMails(mails, mailRows, birthdayMailIds).length < mails.length);
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));
-// The confirm's question and its note: the game writes the line break as a backslash and an n, and sets the note in a size tag
-const deleteReadConfirmLines = computed(() =>
-  gameText[GameTextKey.MailDeleteReadConfirm].split(LINE_BREAK_REGEX).map((line) => line.replace(SIZE_TAG_REGEX, "")),
-);
 const confirmDeleteRead = () => {
   isConfirmingDeleteRead.value = false;
   emit("deleteRead");
@@ -171,8 +163,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         aria-modal="true"
         :aria-label="gameText[GameTextKey.MailDeleteRead]"
       >
-        <p class="confirm-title">{{ deleteReadConfirmLines[0] }}</p>
-        <p class="confirm-note">{{ deleteReadConfirmLines[1] }}</p>
+        <p class="confirm-text">{{ gameText[GameTextKey.MailDeleteReadConfirm] }}</p>
         <GameButton class="cancel" :kind="GameButtonKind.Pill" @click="isConfirmingDeleteRead = false">
           {{ gameText[GameTextKey.Cancel] }}
         </GameButton>
@@ -230,17 +221,10 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
   background: #2b2a3d;
 }
 
-.confirm-title,
-.confirm-note {
+.confirm-text {
   margin: 0 0 calc(var(--unit) * 12);
-}
-
-.confirm-title {
   font-size: calc(var(--unit) * 24);
-}
-
-.confirm-note {
-  font-size: calc(var(--unit) * 22);
+  white-space: pre-line;
 }
 
 /* Provisional: the mail's marks are not yet traced off the game, so they take the list screen's unit and the quest
