@@ -3,18 +3,21 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import {
   ADVENTURER_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
+  NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -155,6 +158,28 @@ describe(getArtifactSetKit, () => {
       { amount: 1, attribute: Attribute.Attack },
       { amount: 0.24, attribute: Attribute.CriticalRate },
     ]);
+  });
+
+  test("raises the Elemental Burst DMG of its wearer's burst strikes from two pieces of Noblesse Oblige, through the kit", () => {
+    expect.hasAssertions();
+
+    const kit = getArtifactSetKit(
+      TRAVELER_KIT,
+      createSetArtifacts(NOBLESSE_OBLIGE_ARTIFACT_SET_ID, 2),
+      statTables.artifactSetDataMap,
+    );
+    const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
+    const createStrike = (attackTag: AttackTag): KitStrike => ({
+      attackTag,
+      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+      combatant,
+      hit: TRAVELER_KIT.plungeCollision,
+    });
+    const party = createParty([TRAVELER_CHARACTER_ID]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(0.2);
+    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
   });
 
   test("a wearer of fewer than four pieces is not restored", () => {
