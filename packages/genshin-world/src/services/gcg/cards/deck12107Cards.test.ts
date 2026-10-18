@@ -3,11 +3,14 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgRule } from "#src/models/gcg/GcgRule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
+import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
@@ -82,5 +85,53 @@ describe(rainSword, () => {
     expect(zoneCard.usages).toBe(1);
     expect(rainSword.modifyDamageReceived?.(context, 3, zoneCard)).toBe(2);
     expect(zoneCard.usages).toBe(0);
+  });
+});
+
+describe(rainbowBladework, () => {
+  const NORMAL_ATTACK: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_12021",
+    energyGain: 1,
+    id: 12_021,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const ELEMENTAL_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_12022",
+    energyGain: 1,
+    id: 12_022,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
+  test("after the active character uses a Normal Attack it deals 1 Hydro DMG, for three usages", () => {
+    expect.hasAssertions();
+    const RAINBOW_BLADEWORK_ID = 112_022;
+    const context: GcgEffectContext = {
+      duel: createDuel([createSideState([createCharacterState(1202)]), createSideState([])]),
+      sideIndex: 0,
+    };
+    const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
+    expect(rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, [])).toStrictEqual({
+      damageType: Element.Hydro,
+      value: 1,
+    });
+    expect(zoneCard.usages).toBe(2);
+    rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, []);
+    rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, []);
+    expect(zoneCard.usages).toBe(0);
+    expect(rainbowBladework.onSkillUsed?.(context, NORMAL_ATTACK, zoneCard, [])).toBeUndefined();
+  });
+
+  test("an elemental skill does not trigger it, and spends no usage", () => {
+    expect.hasAssertions();
+    const RAINBOW_BLADEWORK_ID = 112_022;
+    const context: GcgEffectContext = {
+      duel: createDuel([createSideState([createCharacterState(1202)]), createSideState([])]),
+      sideIndex: 0,
+    };
+    const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
+    expect(rainbowBladework.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, [])).toBeUndefined();
+    expect(zoneCard.usages).toBe(3);
   });
 });

@@ -67,6 +67,7 @@ import { paimon } from "#src/services/gcg/cards/paimon";
 import { pyroInfusion } from "#src/services/gcg/cards/pyroInfusion";
 import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
 import { quickKnit } from "#src/services/gcg/cards/quickKnit";
+import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { ravenBow } from "#src/services/gcg/cards/ravenBow";
 import { reflection } from "#src/services/gcg/cards/reflection";
@@ -108,6 +109,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [111_031, icicle],
   [111041, chonghuaFrostField],
   [112_021, rainSword],
+  [112_022, rainbowBladework],
   [112_031, reflection],
   [112_032, illusoryBubble],
   [113_011, pyroInfusion],
