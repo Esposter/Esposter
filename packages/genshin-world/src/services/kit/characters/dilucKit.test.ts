@@ -1,5 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { KitState } from "#src/models/kit/KitState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
@@ -8,6 +9,7 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -15,6 +17,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createDilucKitBehaviour, DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitSummon } from "#src/services/kit/effects/stepKitSummon";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
@@ -26,6 +29,22 @@ import { describe, expect, test } from "vitest";
 
 const DILUC_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DILUC_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+// A party member losing a tenth of its Max HP, as an enemy's strike, a drown or a wildlife's charge takes it, or as a kit
+// Of the team takes it when it names its own source
+const createHealthLossEvent = (characterId: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
+  characterId,
+  healthShare: -0.1,
+  kind: KitEventKind.HealthChanged,
+  overflowHealthShare: 0,
+  ...(sourceCharacterId === undefined ? {} : { sourceCharacterId }),
+});
+// The bonus the team's buffs give an attribute as they stand
+const getAttributeBonus = (kitEffectState: KitEffectState, attribute: Attribute): number =>
+  kitEffectState.effects.reduce(
+    (total, effect) => (effect.kind === "buff" && effect.attribute === attribute ? total + effect.amount : total),
+    0,
+  );
 
 describe(createDilucKitBehaviour, () => {
   const DILUC_COMBATANT: Combatant = {
@@ -211,5 +230,74 @@ describe(createDilucKitBehaviour, () => {
     expect(tickHits).toHaveLength(8);
     expect(explosionHits).toHaveLength(1);
     expect(phoenix.body.position.z).toBeLessThan(-24);
+  });
+
+  const OTHER_CHARACTER_ID = 10_000_049;
+  // Constellation 2's hook on a hit of Diluc's that costs him HP, with the team's effects it keeps
+  const createConstellation2Fixture = () => {
+    const combatant: Combatant = { ...createCombatant(0), constellationCount: 2 };
+    const { kitEffectState } = createKitTestContext(combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const takeHit = (characterId = DILUC_CHARACTER_ID, sourceCharacterId?: number) =>
+      DILUC_KIT.onKitEvent?.(createHealthLossEvent(characterId, sourceCharacterId), context, combatant);
+    return { combatant, kitEffectState, context, takeHit };
+  };
+
+  test("constellation 2 raises diluc's atk by 10% and atk spd by 5% when he takes damage", () => {
+    expect.hasAssertions();
+    const { kitEffectState, takeHit } = createConstellation2Fixture();
+    takeHit();
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+    expect(getAttributeBonus(kitEffectState, Attribute.NormalAttackSpeed)).toBeCloseTo(0.05);
+  });
+
+  test("constellation 2 stacks up to three times, raising diluc's atk by 30% and atk spd by 15%", () => {
+    expect.hasAssertions();
+    const { context, kitEffectState, takeHit } = createConstellation2Fixture();
+    for (let hit = 0; hit < 4; hit++) {
+      takeHit();
+      stepKitEffects(1.5, context);
+    }
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.3);
+    expect(getAttributeBonus(kitEffectState, Attribute.NormalAttackSpeed)).toBeCloseTo(0.15);
+  });
+
+  test("constellation 2 takes its stack once every 1.5 seconds, so a hit inside the interval adds none", () => {
+    expect.hasAssertions();
+    const { context, kitEffectState, takeHit } = createConstellation2Fixture();
+    takeHit();
+    stepKitEffects(1, context);
+    takeHit();
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+  });
+
+  test("constellation 2's stacks run out 10 seconds after the last one, and the next hit starts again from one", () => {
+    expect.hasAssertions();
+    const { context, kitEffectState, takeHit } = createConstellation2Fixture();
+    takeHit();
+    stepKitEffects(1.5, context);
+    takeHit();
+    stepKitEffects(10, context);
+    takeHit();
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBeCloseTo(0.1);
+  });
+
+  test("constellation 2 raises nothing for hp loss a kit of the team takes from its own effect", () => {
+    expect.hasAssertions();
+    const { kitEffectState, takeHit } = createConstellation2Fixture();
+    takeHit(DILUC_CHARACTER_ID, OTHER_CHARACTER_ID);
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
+  });
+
+  test("constellation 2 raises nothing before its constellation", () => {
+    expect.hasAssertions();
+    const combatant = createCombatant(0);
+    const { kitEffectState } = createKitTestContext(combatant);
+    DILUC_KIT.onKitEvent?.(
+      createHealthLossEvent(DILUC_CHARACTER_ID),
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
+    expect(getAttributeBonus(kitEffectState, Attribute.AttackPercent)).toBe(0);
   });
 });

@@ -19,7 +19,7 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 ## Not built
 
 - **Relentless's "+3s duration" clause and the phase-0 passive, Tradition of the Dawn Knight, are not built.** The first has no named referent in the talent text, and the second refunds ore when crafting, outside combat.
-- **Diluc's Constellations 2, 4 and 6 are not built.** Constellation 2's stacks on each hit Diluc takes need a stack status and an ATK and ATK SPD bonus that follows it; Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart; Constellation 6 needs the next two normal attacks after Searing Onslaught.
+- **Constellation 2 is built for HP lost to a strike, a drown or a wildlife's charge, and Constellations 4 and 6 are not built.** Searing Ember's stacks follow each such hit, one at most every 1.5 seconds, the 1.5 seconds being the wiki's, as gcsim sets no interval. A strike a shield takes whole sends no HP change, and the shield event names only its owner, so that hit adds no stack; a teammate's damageless hit is not built. Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart, and the damage hook reads no kit state; Constellation 6 needs the next two normal attacks after Searing Onslaught, which that hook also needs.
 
 ## Key files
 
@@ -31,4 +31,4 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour`, a
 
 - [Tempered Sword](https://genshin-impact.fandom.com/wiki/Tempered_Sword), Genshin Impact Wiki: Diluc's advanced properties (gauge, internal cooldown, poise, blunt) and the charged attack's and plunges' values.
 - [Searing Onslaught](https://genshin-impact.fandom.com/wiki/Searing_Onslaught), [Dawn](https://genshin-impact.fandom.com/wiki/Dawn) and [Elemental Gauge Theory: Character Data](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Character_Data), Genshin Impact Wiki: the skill's and burst's gauges and poise, and the infused collision's 0U.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diluc), MIT: the kit's hitmarks, cancel frames and areas, the burst's infusion and A4.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/diluc), MIT: the kit's hitmarks, cancel frames and areas, the burst's infusion and A4, and Searing Ember's stacks and 10 seconds in `cons.go`.
