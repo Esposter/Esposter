@@ -2,4 +2,5 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
+x-waiting: "the official map's Ores and Investigation labels are not fitted into the game's coordinates, since the spawned places fit covers only statues and waypoints (the genshin-spawned-places change, tasks 1.1 and 1.2, unbuilt), and the store keeping each investigation's instant is unbuilt (the investigation page)"
 x-touches: ["packages/genshin-world/src/services/gathering/**", "packages/genshin-world/src/models/gathering/**"]
