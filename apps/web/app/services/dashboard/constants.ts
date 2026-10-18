@@ -10,7 +10,7 @@ export const DASHBOARD_GRID_MIN_SPAN = 1;
 export const DASHBOARD_GRID_PASS_RATIO = 0.25;
 // Widest first, so the first breakpoint the width reaches is the one a screen takes
 export const DASHBOARD_BREAKPOINTS = [
-  { columnNumber: 12, minimumWidth: 1200 },
+  { columnNumber: DASHBOARD_NO_COLUMNS, minimumWidth: 1200 },
   { columnNumber: 10, minimumWidth: 996 },
   { columnNumber: 6, minimumWidth: 768 },
   { columnNumber: 4, minimumWidth: 480 },
