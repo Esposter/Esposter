@@ -10,15 +10,19 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 // The source a disorder's bonus is given under, so the leave ends the disorders' bonuses and no other buff
 export const DOMAIN_DISORDER_SOURCE = "domainDisorder";
 
-// The reactions an element takes part in: each one its own, and a Swirl when it is the element the Swirl spreads
+// The reactions each element takes part in, by the wiki's element pairs: the Elemental Reaction table
+// (https://genshin-impact.fandom.com/wiki/Elemental_Reaction) and the Lunar Reaction list (https://genshin-impact.fandom.com/wiki/Lunar_Reaction).
+// A reaction is related to each element in its pair, and Shattered is both Hydro's and Cryo's, as its Frozen target is. The item
+// Descriptions that use the phrase read the same way: Frostbreath's Cryo or Hydro-related reaction, Molten Iron Fortress's Dendro-related one
 const HYDRO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Vaporize,
-  ReactionType.Frozen,
   ReactionType.ElectroCharged,
+  ReactionType.Frozen,
+  ReactionType.Shattered,
   ReactionType.Bloom,
-  ReactionType.LunarCharged,
   ReactionType.LunarBloom,
-  ReactionType.Spread,
+  ReactionType.LunarCharged,
+  ReactionType.LunarCrystallize,
 ]);
 const CRYO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Melt,
@@ -27,6 +31,7 @@ const CRYO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Shattered,
 ]);
 const DENDRO_REACTIONS: ReadonlySet<ReactionType> = new Set([
+  ReactionType.Burning,
   ReactionType.Quicken,
   ReactionType.Aggravate,
   ReactionType.Spread,
@@ -35,13 +40,14 @@ const DENDRO_REACTIONS: ReadonlySet<ReactionType> = new Set([
   ReactionType.Hyperbloom,
   ReactionType.LunarBloom,
 ]);
+// Whether a reaction is one of a set's, or the Swirl or Crystallize that carries the element it is related to
 const involvesElement =
-  (reactionTypes: ReadonlySet<ReactionType>, swirledElement?: Element) =>
+  (reactionTypes: ReadonlySet<ReactionType>, element?: Element) =>
   (reaction: Reaction): boolean =>
     reactionTypes.has(reaction.reactionType) ||
-    (swirledElement !== undefined &&
-      reaction.reactionType === ReactionType.Swirl &&
-      reaction.element === swirledElement);
+    (element !== undefined &&
+      (reaction.reactionType === ReactionType.Swirl || reaction.reactionType === ReactionType.Crystallize) &&
+      reaction.element === element);
 
 interface DomainDisorderBase {
   amount: number;
