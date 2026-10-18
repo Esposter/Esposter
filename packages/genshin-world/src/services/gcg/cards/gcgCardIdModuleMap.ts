@@ -45,6 +45,7 @@ import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
+import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
 import { knightsOfFavoniusLibrary } from "#src/services/gcg/cards/knightsOfFavoniusLibrary";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
@@ -150,6 +151,7 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [126_012, stoneForce],
   [133_021, flowfireEdge],
   [134_061, elementalLifeformElectro],
+  [211_051, kantenSenmyouBlessing],
   [213_011, flowingFlame],
   [213_021, crossfire],
   [213051, naganoharaMeteorSwarm],

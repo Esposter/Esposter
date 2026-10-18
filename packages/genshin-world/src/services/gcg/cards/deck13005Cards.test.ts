@@ -13,6 +13,7 @@ import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { adventurersBandana, ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/adventurersBandana";
 import { aquilaFavonia, AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/aquilaFavonia";
 import { CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { kantenSenmyouBlessing, KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/kantenSenmyouBlessing";
 import { parametricTransformer, PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/parametricTransformer";
 import { FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import { kamisatoArtSenho, SENHO_STATUS_ID } from "#src/services/gcg/cards/kamisatoArtSenho";
@@ -352,5 +353,47 @@ describe("parametric Transformer", () => {
 
     expect(takeOne(duel.sides, 0).supports).toStrictEqual([]);
     expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Pyro, Element.Hydro, Element.Anemo]);
+  });
+});
+
+describe("kanten Senmyou Blessing", () => {
+  const createKantened = (statuses: GcgCharacterState["statuses"]): GcgCharacterState => ({
+    ...createCharacterState(1105),
+    equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+    statuses,
+  });
+  const INFUSED = [createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion)];
+
+  test("while Ayaka holds Cryo Elemental Infusion, her Physical DMG, dealt as Cryo, is 1 more", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createKantened(INFUSED)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: Element.Cryo, hp: 7 });
+  });
+
+  test("while Ayaka holds Cryo Elemental Infusion, her Cryo DMG is 1 more", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createKantened(INFUSED)]),
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(6);
+  });
+
+  test("without the infusion, Ayaka's DMG is unchanged", () => {
+    expect.hasAssertions();
+    const duel = createDuel([createSideState([createKantened([])]), createSideState([createCharacterState(1202)])]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
+
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(8);
   });
 });
