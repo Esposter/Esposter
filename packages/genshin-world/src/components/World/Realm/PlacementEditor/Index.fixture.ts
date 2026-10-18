@@ -25,6 +25,7 @@ const tablePlacement: HomePlacement = {
   rotation: 0,
   sceneId: SCENE_ID,
 };
+const placements: HomePlacement[] = [];
 
 export const props = {
   area,
@@ -37,7 +38,7 @@ export const props = {
     { itemId: CHAIR_ITEM_ID, name: "Chair" },
     { itemId: TABLE_ITEM_ID, name: "Table" },
   ],
-  placements: [] as HomePlacement[],
+  placements,
   position,
   rotation: 0,
 };
