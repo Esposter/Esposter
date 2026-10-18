@@ -117,9 +117,10 @@ export const getTableKitCandidates = ({
     { combatTalent: CombatTalent; count: number; tableLabel: KitTableLabel }
   >();
   const addSlotHitLabels = (path: string, combatTalent: CombatTalent, labelNames: readonly string[]) => {
-    const tableLabels = labelNames.map((name) => {
-      const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === name);
-      if (tableLabel === undefined) throw new InvalidOperationError(Operation.Read, name, "has no label in its talent");
+    const tableLabels = labelNames.map((labelName) => {
+      const tableLabel = labelMap.get(talentGroupIdMap[combatTalent])?.find(({ label }) => label === labelName);
+      if (tableLabel === undefined)
+        throw new InvalidOperationError(Operation.Read, labelName, "has no label in its talent");
       return tableLabel;
     });
     let hitIndex = 0;
@@ -172,10 +173,10 @@ export const getTableKitCandidates = ({
       addHitLabel(hitPaths, CombatTalent.ElementalSkill, tableLabel);
       const listLengthPath = NAMED_HIT_LIST_LENGTH_PATHS.get(tableLabel.label);
       if (listLengthPath !== undefined) addLength(listLengthPath, CombatTalent.ElementalSkill, tableLabel);
-    } else if (parameterNames !== undefined) addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
-    else
+    } else if (parameterNames === undefined)
       for (const [position, parameterName] of (characterSkillParameterNameMap[tableLabel.label] ?? []).entries())
         addLabel(`parameters.${parameterName}`, CombatTalent.ElementalSkill, tableLabel, position);
+    else addParameterLabel(parameterNames, CombatTalent.ElementalSkill, tableLabel);
   }
   for (const tableLabel of labelMap.get(talentGroupIdMap[CombatTalent.ElementalBurst]) ?? []) {
     const parameterNames = BURST_PARAMETER_NAMES.get(tableLabel.label);
