@@ -13,6 +13,7 @@ import { birthdayMailRowsSchema } from "#src/models/mail/MailData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
 import { claimMail } from "#src/services/mail/claimMail";
+import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
@@ -114,9 +115,14 @@ export const useWorldMail = ({
     isBagFull.value = nextState.mails.some(({ isClaimed }) => !isClaimed);
     applyMailboxState(nextState);
   };
+  const deleteRead = () => {
+    const mailRows = mailData.value?.mailRows;
+    if (!mailRows) return;
+    mails.value = deleteReadMails(mails.value, mailRows);
+  };
   const markMailRead = (mailId: number) => {
     mails.value = mails.value.map((mail) => (mail.id === mailId && !mail.isRead ? { ...mail, isRead: true } : mail));
   };
 
-  return { claim, claimAll, isBagFull, mailData, mails, markMailRead };
+  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead };
 };
