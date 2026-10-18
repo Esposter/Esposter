@@ -39,6 +39,7 @@ export interface KitBehaviour extends Partial<
   normalAttacks?: KitActionBehaviour[];
   plungeCollision?: KitHitBehaviour;
   plunges?: Partial<Record<KitPlunge, KitActionBehaviour>>;
+  plungeVariants?: KitVariantBehaviour[];
   skill?: KitActionBehaviour;
   skillChain?: KitActionBehaviour[];
   skillHolds?: KitHoldBehaviour[];

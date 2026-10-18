@@ -12,6 +12,9 @@ import { CombatTalent, kitParameterSchema } from "genshin-world";
 // `burst.hits.<index>`, or a skill hold's, `skillHolds.0.hits.<index>`, is not one
 const NAMED_HIT_PATH_REGEX = /^hits\.[^.]+\.\d+$/u;
 
+// A stance's action, `stances.<name>.skill` or `stances.<name>.normalAttacks.<index>`, which its hits list sits in
+const STANCE_ACTION_PATH_REGEX = /^(?<slot>stances\.[^.]+\.(?:burst|chargedAttack|skill|normalAttacks\.\d+))\./u;
+
 // The slot each combat talent with one of its own holds its hits list in, which a named list of its hits leaves empty
 const TALENT_SLOTS: [CombatTalent, string][] = [
   [CombatTalent.ElementalBurst, "burst"],
@@ -53,9 +56,17 @@ export const getNamedListKitCandidates = (
       namedParameters.add(`${parameter.proudSkillGroupId}.${parameter.index}`);
     }
   }
-  for (const [combatTalent, slot] of TALENT_SLOTS) {
-    if (!namedGroupIds.has(talentGroupIdMap[combatTalent]) || checkHasOwnSlotHit(valueMap, slot, namedParameters))
-      continue;
+  // A stance's actions are entered through the elemental skill, and the named lists they spawn sit in its group too, as
+  // Swift Hunt's and Impale the Night's do, so each one takes the skill group's
+  const slotGroupIdMap = new Map<string, number>(
+    TALENT_SLOTS.map(([combatTalent, slot]) => [slot, talentGroupIdMap[combatTalent]]),
+  );
+  for (const path of valueMap.keys()) {
+    const stanceSlot = STANCE_ACTION_PATH_REGEX.exec(path)?.groups?.slot;
+    if (stanceSlot !== undefined) slotGroupIdMap.set(stanceSlot, talentGroupIdMap[CombatTalent.ElementalSkill]);
+  }
+  for (const [slot, groupId] of slotGroupIdMap) {
+    if (!namedGroupIds.has(groupId) || checkHasOwnSlotHit(valueMap, slot, namedParameters)) continue;
     addKitCandidate(candidateMap, `${slot}.hits.length`, {
       provenance: { cause: KitProvisionalCause.NamedHitList, rule: KitRule.NamedHitList, source: KitSource.Rule },
       value: 0,

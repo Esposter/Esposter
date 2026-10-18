@@ -248,6 +248,24 @@ describe(getTableKitCandidates, () => {
     });
   });
 
+  test("the Swift Hunt's normal shot reads the DMG label's first value and its piercing shot the second, on each of their three hits", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getTableKitCandidates({
+      ...createCharacterTables(CLORINDE_NAME, CLORINDE_CHARACTER_ID),
+      labelMap: new Map([
+        [ELEMENTAL_SKILL_GROUP_ID, [...CLORINDE_SKILL_LABELS, { indexes: [0, 1], label: "Swift Hunt DMG" }]],
+      ]),
+    });
+    const readValueIndexes = (listName: string) =>
+      [0, 1, 2].map((hit) => candidateMap.get(`hits.${listName}.${hit}.multiplier`)?.[0]?.value.index);
+
+    expect({
+      normalShot: readValueIndexes("swiftHuntNormalShot"),
+      piercingShot: readValueIndexes("swiftHuntPiercingShot"),
+    }).toStrictEqual({ normalShot: [0, 0, 0], piercingShot: [1, 1, 1] });
+  });
+
   test("a character with no mapping of its own reads none of the same labels as parameters", () => {
     expect.hasAssertions();
 

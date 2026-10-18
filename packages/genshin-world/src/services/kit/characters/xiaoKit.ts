@@ -33,6 +33,8 @@ const HEAVEN_FALL_MAX_STACKS = 3;
 export const XIAO_CHARACTER_ID = 10_000_026;
 
 const CONSTELLATION_1 = 1;
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_OFF_FIELD_ENERGY_RECHARGE = 0.25;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DEFENSE_BONUS = 1;
 const CONSTELLATION_4_HEALTH_SHARE = 0.5;
@@ -118,11 +120,17 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
   return {
     burst: { onStart: castBaneOfAllEvil },
     // Dissolution Eon: Destroyer of Worlds, from Constellation 1: Lemniscatic Wind Cycling gains one more charge
+    // Constellation 2's Energy Recharge reads whether Xiao is on the field from the deployed team's flags
     // Transcension: Extinction of Suffering, from Constellation 4: while his HP is under half, he gains a 100% DEF Bonus
-    getPassiveBonuses: (combatant, healthShare) =>
-      combatant.constellationCount >= CONSTELLATION_4 && healthShare < CONSTELLATION_4_HEALTH_SHARE
-        ? [{ amount: CONSTELLATION_4_DEFENSE_BONUS, attribute: Attribute.DefensePercent }]
-        : [],
+    getPassiveBonuses: (combatant, healthShare, deployedCombatants) => {
+      const self = deployedCombatants.find(({ characterId }) => characterId === combatant.characterId);
+      const bonuses: { amount: number; attribute: Attribute }[] = [];
+      if (combatant.constellationCount >= CONSTELLATION_2 && self !== undefined && !self.isOnField)
+        bonuses.push({ amount: CONSTELLATION_2_OFF_FIELD_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge });
+      if (combatant.constellationCount >= CONSTELLATION_4 && healthShare < CONSTELLATION_4_HEALTH_SHARE)
+        bonuses.push({ amount: CONSTELLATION_4_DEFENSE_BONUS, attribute: Attribute.DefensePercent });
+      return bonuses;
+    },
     getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     skill: { onStart: castDash },
   };
