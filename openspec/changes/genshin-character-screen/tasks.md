@@ -5,7 +5,7 @@
 
 ## 2. Model and element
 
-- [ ] 2.1 Stand the chosen character's model in the middle over its element's background. Verify: a test named after the scenario 'the chosen character stands in the middle over its element's background', seen failing first.
+- [x] 2.1 Stand the chosen character's model in the middle over its element's background. Verify: a test named after the scenario 'the chosen character stands in the middle over its element's background', seen failing first.
 - [x] 2.2 Show the element mark at the top left, the Traveler's as its alignment's. Verify: tests named after the scenarios 'the element mark shows the chosen character's element' and 'the Traveler's mark shows its alignment', seen failing first.
 
 ## 3. Details

@@ -79,9 +79,9 @@ interface Props {
   statTables: StatTables;
   // The game's talent upgrades by proud skill group, which each combat talent's next level is read from
   talentUpgradeMap: TalentUpgradeMap;
-  // The element the Traveler holds from the statue it resonated with last, none before any resonance
   // The bonuses the Traveler holds from the elements it resonated with, once Welkin Moon's Homecoming is done
   travelerBonusLines?: AttributeLine[];
+  // The element the Traveler holds from the statue it resonated with last, none before any resonance
   travelerElement?: Element;
 }
 
@@ -89,7 +89,7 @@ interface Props {
 // Outside the game's own screen
 defineSlots<{
   default?: (props: { characterId: number }) => unknown;
-  scene?: (props: { tab: CharacterMenuTab }) => unknown;
+  scene?: (props: { element: Element | undefined; tab: CharacterMenuTab }) => unknown;
 }>();
 const {
   activeCharacterId,
@@ -129,9 +129,13 @@ const menuEntries = computed(() =>
   })),
 );
 const characterName = computed(() => menuEntries.value.find(({ id }) => id === characterId.value)?.name ?? "");
+// The element of the chosen character, its own or, for the Traveler, the one it holds, none while it has none
+const characterElement = computed(() =>
+  getCharacterElement(characterId.value, statTables.characterDataMap, travelerElement),
+);
 // The element mark at the chosen character's name, its element's or, for the Traveler, its alignment's, none while it has none
 const elementMarkPath = computed(() => {
-  const element = getCharacterElement(characterId.value, statTables.characterDataMap, travelerElement);
+  const element = characterElement.value;
   return element === undefined ? undefined : ElementMarkPathMap[element];
 });
 const tabLabels = computed(() =>
@@ -279,7 +283,7 @@ const activate = () => {
   <!-- The character screen, the C key's, a dialog over the world: the player's characters, the one on the field chosen
        First, the open tab's panel for the chosen one, the Profile's aside, and the way back -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.Character]">
-    <slot name="scene" :tab />
+    <slot name="scene" :element="characterElement" :tab />
     <CharacterMenu
       v-model:character-id="characterId"
       v-model:tab="tab"

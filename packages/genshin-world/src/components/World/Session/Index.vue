@@ -1373,8 +1373,8 @@ defineExpose({ jumpTo, readCameraPosition });
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >
-          <template #scene="{ tab }">
-            <CharacterScene :tab />
+          <template #scene="{ element, tab }">
+            <CharacterScene :element :tab />
           </template>
           <template #default="{ characterId }">
             <CharacterPackLoader
