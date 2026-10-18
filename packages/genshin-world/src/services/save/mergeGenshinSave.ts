@@ -19,6 +19,7 @@ import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { countHeldItems } from "#src/services/offering/countHeldItems";
+import { computeLastDailyReset } from "#src/services/time/computeLastDailyReset";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
 import { BannerKind } from "genshin-interface/save";
 
@@ -157,12 +158,18 @@ const checkIsLaterWorldLevelAdjustment = (
 // The day dealt later is the one the player is on, since a day is dealt again at each daily reset
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
-// The day whose count began later is the one the player is on, since a day's count starts again at each daily reset, and
-// A day with no key has counted no investigation
-const checkIsLaterInvestigationDay = (day: InvestigationDaySave, than: InvestigationDaySave): boolean =>
-  day.dayKey !== "" &&
-  (than.dayKey === "" ||
-    Temporal.Instant.compare(Temporal.Instant.from(day.dayKey), Temporal.Instant.from(than.dayKey)) > 0);
+// The game day's investigations of the two copies: a copy with no key has counted none, and copies counted on the same
+// Game day keep the larger count, the conservative one against the cap, while otherwise the later day's counter is kept
+const mergeInvestigationDay = (account: InvestigationDaySave, guest: InvestigationDaySave): InvestigationDaySave => {
+  if (guest.dayKey === "") return account;
+  if (account.dayKey === "") return guest;
+  const accountKey = Temporal.Instant.from(account.dayKey);
+  const guestKey = Temporal.Instant.from(guest.dayKey);
+  if (Temporal.Instant.compare(computeLastDailyReset(accountKey), computeLastDailyReset(guestKey)) === 0)
+    return guest.count > account.count ? guest : account;
+
+  return Temporal.Instant.compare(guestKey, accountKey) > 0 ? guest : account;
+};
 
 // The Encounter Points of the later daily reset are the ones the player holds, and on the same reset the larger count is
 const mergeEncounterPoints = (account: EncounterPointsSave, guest: EncounterPointsSave): EncounterPointsSave => {
@@ -278,9 +285,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
-    investigationDay: checkIsLaterInvestigationDay(guest.investigationDay, account.investigationDay)
-      ? guest.investigationDay
-      : account.investigationDay,
+    investigationDay: mergeInvestigationDay(account.investigationDay, guest.investigationDay),
     encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     longTermEncounterPoints: mergeLongTermEncounterPoints(
       account.longTermEncounterPoints,
