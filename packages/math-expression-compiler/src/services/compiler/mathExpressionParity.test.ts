@@ -1,5 +1,5 @@
-import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
+import { checkIsNearlyEqual } from "#src/services/function/checkIsNearlyEqual";
 import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
@@ -67,7 +67,7 @@ const { entries, mathjs }: Snapshot = jsonDateParse(readFileSync(SNAPSHOT_PATH, 
 const causes = [...new Set(entries.flatMap((entry) => (entry.fix === undefined ? [] : [entry.fix.cause])))];
 
 describe(compileMathExpression, () => {
-  test.each([["The parity corpus matches mathjs's recorded answers"]])("%s", (_title) => {
+  test("the parity corpus matches mathjs's recorded answers", () => {
     expect.hasAssertions();
     expect(mathjs).toBe("15.2.0");
 
