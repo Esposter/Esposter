@@ -60,6 +60,7 @@ describe(buyPaimonsBargainsWeapon, () => {
           },
         ],
         nextId: 1,
+        quickSwapItemIds: [],
       },
       purchases: [{ count: 1, goodsId: good.goodsId, lastPurchasedAt: NOW }],
       wallet: { ...wallet, [Currency.MasterlessStarglitter]: WEAPON_PRICE },
