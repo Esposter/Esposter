@@ -1,6 +1,6 @@
 ## Purpose
 
-Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, her Constellation 1 extension and defeat ATK, and her Ascension 4 ATK share and Constellations 2, 4 and 6 left unbuilt.
+Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, her Constellation 1 extension and defeat ATK, her Constellation 2 Pyro CRIT bonus, and her Ascension 4 ATK share and Constellations 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -74,6 +74,22 @@ Yoimiya's plunges SHALL land 0.4 seconds after they start, provisionally.
 - **WHEN** Yoimiya plunges
 - **THEN** the plunge lands 0.4 seconds after it starts
 
+### Requirement: Constellation 2 Pyro DMG Bonus on a CRIT
+
+From Constellation 2, a Pyro CRIT of Yoimiya's SHALL give her 25% Pyro DMG Bonus for 6 seconds, whichever character is active.
+
+#### Scenario: A Pyro CRIT gives Pyro DMG Bonus
+
+- **GIVEN** Yoimiya has Constellation 2
+- **WHEN** her Pyro DMG scores a CRIT
+- **THEN** she gains 25% Pyro DMG Bonus for 6 seconds
+
+#### Scenario: Constellation 1 changes nothing
+
+- **GIVEN** Yoimiya has Constellation 1
+- **WHEN** her Pyro DMG scores a CRIT
+- **THEN** no Pyro DMG Bonus is gained
+
 ### Requirement: Constellation 1 extends Aurous Blaze and raises ATK on a defeat
 
 From Constellation 1, Aurous Blaze SHALL last 4 seconds longer, and defeating an enemy it marks within its duration SHALL raise Yoimiya's ATK by 20% for 20 seconds.
@@ -96,11 +112,11 @@ From Constellation 1, Aurous Blaze SHALL last 4 seconds longer, and defeating an
 - **WHEN** Ryuukin Saxifrage marks an enemy, and a hit then defeats it
 - **THEN** the mark lasts 10 seconds and no ATK is raised
 
-### Requirement: Unbuilt Ascension 4 passive and Constellations 2, 4 and 6
+### Requirement: Unbuilt Ascension 4 passive and Constellations 4 and 6
 
-Yoimiya's Ascension 4 passive and Constellations 2, 4 and 6 SHALL have no effect in the world yet.
+Yoimiya's Ascension 4 passive and Constellations 4 and 6 SHALL have no effect in the world yet.
 
-#### Scenario: Constellation 2, 4 or 6 has no effect
+#### Scenario: Constellation 4 or 6 has no effect
 
-- **WHEN** Yoimiya holds Constellation 2, 4 or 6
+- **WHEN** Yoimiya holds Constellation 4 or 6
 - **THEN** no effect of that constellation is applied
