@@ -1,6 +1,7 @@
 import type { InteractiveMapFitFile } from "#src/models/genshinAssets/points/InteractiveMapFitFile";
 import type { InteractiveMapPoint } from "#src/models/genshinAssets/points/InteractiveMapPoint";
 import type { SimilarityTransform } from "#src/models/genshinAssets/points/SimilarityTransform";
+import type { RegionMapPoint } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 
 import { toRegionMapPoints } from "#src/services/genshinAssets/residents/toRegionMapPoints";
 
@@ -14,7 +15,7 @@ export const toFittedMapPoints = ({
   points: InteractiveMapPoint[];
   regions: InteractiveMapFitFile["regions"];
   transform: SimilarityTransform;
-}) => {
+}): { fittedRegions: InteractiveMapFitFile["regions"]; regionMapPoints: RegionMapPoint[] } => {
   const fittedRegions = regions.filter(({ residual }) => residual !== undefined);
   const regionMapPoints = toRegionMapPoints(points, transform).filter(({ region }) =>
     fittedRegions.some((fitted) => fitted.region === region),
