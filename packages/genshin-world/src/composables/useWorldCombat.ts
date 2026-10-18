@@ -1,5 +1,6 @@
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
+import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { Element } from "#src/models/Element";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
@@ -22,6 +23,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { getEnemyDroppedItems } from "#src/services/enemy/getEnemyDroppedItems";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
@@ -49,6 +51,7 @@ import { computed, shallowRef, watch } from "vue";
 // Field steps in, with the enemies the world holds and the kit's effects on the team. A defeat places its drops and is a
 // Doing the quests count, and a team that falls opens the game over screen, whose revive the host places
 export const useWorldCombat = ({
+  characterIdConstellationsMap,
   enemyTables,
   events,
   gameDataBaseUrl,
@@ -63,6 +66,7 @@ export const useWorldCombat = ({
   travelerElement,
   wildlifePlaces,
 }: {
+  characterIdConstellationsMap: Readonly<Ref<ReadonlyMap<number, Constellation[]>>>;
   enemyTables: EnemyTables;
   events: WorldEvents;
   gameDataBaseUrl: string;
@@ -87,7 +91,8 @@ export const useWorldCombat = ({
   );
   const party = createWorldParty(savedParty);
   // The deployed team's kits: the starting team's, built at the world's gate, and each character's built once as the team
-  // Changes to take it in, its module and multipliers read on demand
+  // Changes to take it in, its module and multipliers read on demand, playing each talent at the level it holds with what
+  // Its constellations add
   const characterIdKitMap = shallowRef(startingCharacterIdKitMap);
   const deployedCharacterIds = computed(() => getDeployedCharacterIds(party));
   // A failed read is read again a wait later, as a team that does not change starts no other
@@ -95,12 +100,21 @@ export const useWorldCombat = ({
     immediate: false,
   });
   const readUnloadedCharacterKits = () => {
-    const unloadedCharacterIds = deployedCharacterIds.value.filter(
-      (characterId) => !characterIdKitMap.value.has(characterId),
+    const unloadedCharacters = characters.value.filter(
+      ({ id }) => deployedCharacterIds.value.includes(id) && !characterIdKitMap.value.has(id),
     );
-    if (unloadedCharacterIds.length === 0) return;
+    if (unloadedCharacters.length === 0) return;
+    const characterTalentLevelMap = new Map(
+      unloadedCharacters.map(
+        (character) =>
+          [
+            character.id,
+            getPlayedTalentLevels(character, characterIdConstellationsMap.value.get(character.id) ?? []),
+          ] as const,
+      ),
+    );
     // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readCharacterKits(gameDataBaseUrl, unloadedCharacterIds)).match(
+    getResultAsync(() => readCharacterKits(gameDataBaseUrl, characterTalentLevelMap)).match(
       (newCharacterIdKitMap) => {
         // A kit already built is kept over one a read overlapping it built again, since a kit in play holds its state
         characterIdKitMap.value = new Map([...newCharacterIdKitMap, ...characterIdKitMap.value]);

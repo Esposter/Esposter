@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
+import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
@@ -6,7 +8,11 @@ import type { WorldTables } from "#src/models/world/WorldTables";
 import WorldSession from "#src/components/World/Session/Index.vue";
 import { PuzzleKind } from "#src/models/puzzle/PuzzleKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
+import { TALENT_START_LEVELS } from "#src/services/character/constants";
+import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
+import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { NameTextLoaderMap } from "#src/services/character/NameTextLoaderMap";
+import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readTalentTables } from "#src/services/character/readTalentTables";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
@@ -39,8 +45,25 @@ const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinS
 const tables = shallowRef<WorldTables>();
 // The deployed team the save holds, whose kits the world reads before it opens: a new player's starting team, as a new
 // Player's save holds it
-const { party } = props.save ?? EMPTY_GENSHIN_SAVE;
+const { characters: savedCharacters, party } = props.save ?? EMPTY_GENSHIN_SAVE;
 const deployedCharacterIds = party.teams[party.deployedTeamIndex]?.characterIds ?? [];
+// The starting team's kits play each talent at the level its save holds, with what its constellations add, and a
+// Character the save does not hold yet, a new player's Traveler, at the levels it starts at
+const getStartingTalentLevelMap = (characterConstellationKits: CharacterConstellationKit[]) => {
+  const characterIdConstellationsMap = getCharacterIdConstellationsMap(characterConstellationKits);
+  return new Map<number, TalentLevels>(
+    deployedCharacterIds.map((characterId) => {
+      const savedCharacter = savedCharacters.find(({ id }) => id === characterId);
+      return [
+        characterId,
+        savedCharacter
+          ? getPlayedTalentLevels(savedCharacter, characterIdConstellationsMap.get(characterId) ?? [])
+          : TALENT_START_LEVELS,
+      ] as const;
+    }),
+  );
+};
+const constellationKitsRequest = readConstellationTables(props.gameDataBaseUrl);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() =>
   measureLoadStep(
@@ -49,11 +72,17 @@ getResultAsync(() =>
       measureLoadStep("name-text", NameTextLoaderMap[props.language](props.gameDataBaseUrl)),
       measureLoadStep("stat-tables", readStatTables(props.gameDataBaseUrl)),
       measureLoadStep("talent-tables", readTalentTables(props.gameDataBaseUrl)),
+      measureLoadStep("constellation-tables", constellationKitsRequest),
       measureLoadStep("enemy-tables", readEnemyTables(props.gameDataBaseUrl)),
       measureLoadStep("adventure-rank-tables", readAdventureRankTables(props.gameDataBaseUrl)),
       measureLoadStep("material-data-map", readMaterialDataMap(props.gameDataBaseUrl)),
       measureLoadStep("hud-interface-rects", readHudInterfaceRects(props.gameDataBaseUrl)),
-      measureLoadStep("character-kits", readCharacterKits(props.gameDataBaseUrl, deployedCharacterIds)),
+      measureLoadStep(
+        "character-kits",
+        constellationKitsRequest.then((characterConstellationKits) =>
+          readCharacterKits(props.gameDataBaseUrl, getStartingTalentLevelMap(characterConstellationKits)),
+        ),
+      ),
       measureLoadStep("windrise-data", readWindriseData(props.gameDataBaseUrl)),
       measureLoadStep("catalogue", readCatalogue(props.gameDataBaseUrl)),
       measureLoadStep("wildlife-places", readMondstadtWildlifePlaces(props.gameDataBaseUrl)),
@@ -72,6 +101,7 @@ getResultAsync(() =>
     nameText,
     statTables,
     talentTables,
+    _characterConstellationKits,
     enemyTables,
     adventureRankTables,
     materialDataMap,
