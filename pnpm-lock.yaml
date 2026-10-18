@@ -1237,6 +1237,9 @@ importers:
       minisearch:
         specifier: 'catalog:'
         version: 7.2.0
+      mjml:
+        specifier: 'catalog:'
+        version: 5.4.1(svgo@4.1.0)(terser@5.51.2)
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.4
@@ -1367,6 +1370,9 @@ importers:
       '@types/js-beautify':
         specifier: 'catalog:'
         version: 1.14.3
+      '@types/mjml':
+        specifier: 'catalog:'
+        version: 5.0.0
       '@types/three':
         specifier: 'catalog:'
         version: 0.186.0

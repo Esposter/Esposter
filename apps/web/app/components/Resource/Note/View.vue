@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { ResourceType } from "@esposter/db-schema";
-import { sanitizeTextHtml } from "@esposter/shared";
-import { generateHTML } from "@tiptap/html";
 
 interface Props {
   id: string;
@@ -16,9 +14,9 @@ const { content, name } = await useReadPublishedResourceContent(
   () => $trpc.note.readPublishedResourceContent.query(id),
   (version) => $trpc.note.readPublishedVersionContent.query({ id, version }),
 );
-// JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary per
-// The `string-utils` standard. @tiptap/html serializes without a browser DOM, so the render is SSR-safe.
-const html = computed(() => sanitizeTextHtml(generateHTML(content.doc, getNoteExtensions())));
+// JSON is the source of truth at rest — HTML is generated here and sanitized at the render boundary, so the render
+// Is SSR-safe with no browser DOM behind it.
+const html = computed(() => renderNoteHtml(content.doc));
 </script>
 
 <template>

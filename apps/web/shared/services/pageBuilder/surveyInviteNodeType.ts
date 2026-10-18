@@ -2,9 +2,9 @@ import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefi
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
+import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
-import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { ResourceLinkType } from "@esposter/db-schema";
 import { z } from "zod";
 
 // A link to one published survey, which the resource-link index finds through the declared surveyId
@@ -22,7 +22,7 @@ export const surveyInviteNodeType = {
   render: (node, _slots, context) => {
     const { label, surveyId } = surveyInvitePropsSchema.parse(node.props);
     return {
-      attributes: { class: "survey-invite", href: `${context.origin}${RoutePath.View(ResourceType.Survey, surveyId)}` },
+      attributes: { class: "survey-invite", href: getSurveyInviteUrl(context.origin, surveyId) },
       children: [label],
       tag: "a",
     };
