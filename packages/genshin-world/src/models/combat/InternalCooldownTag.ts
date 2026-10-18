@@ -84,6 +84,7 @@ export enum InternalCooldownTag {
   VarkaExtraAttackWind = "VarkaExtraAttackWind",
   VarkaNormalAttackElem = "VarkaNormalAttackElem",
   VarkaNormalAttackWind = "VarkaNormalAttackWind",
+  VesnaElementalSkillStart = "VesnaElementalSkillStart",
   WandererA4 = "WandererA4",
   WandererC6 = "WandererC6",
   XilonenSkate = "XilonenSkate",
