@@ -52,6 +52,20 @@ describe(getNamedHitKitCandidates, () => {
 
     expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).size).toBe(0);
   });
+  test("takes no call where a second site of the key makes as many calls, though its own call has no delay", () => {
+    expect.hasAssertions();
+
+    // A skill's own call at a delay, and its A4 blade fired from a function whose delay is a parameter, so no delay reads
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "3|0",
+        { fieldMap: new Map(), queuedCalls: [call("skill.go:33", 36), { fieldMap: new Map(), site: "asc.go:18" }] },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([["hits.blade.0.multiplier", { index: 0, proudSkillGroupId: 3 }]]);
+
+    expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).size).toBe(0);
+  });
   test("takes no calls from keys whose calls of one site land at one delay, as their order is unknown", () => {
     expect.hasAssertions();
 
