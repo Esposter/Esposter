@@ -53,6 +53,7 @@ import { sceneNpcBornCommand } from "#src/services/genshinAssets/commands/sceneN
 import { sceneScriptsCommand } from "#src/services/genshinAssets/commands/sceneScriptsCommand";
 import { shadersCommand } from "#src/services/genshinAssets/commands/shadersCommand";
 import { shopsCommand } from "#src/services/genshinAssets/commands/shopsCommand";
+import { shrineKeySourcesCommand } from "#src/services/genshinAssets/commands/shrineKeySourcesCommand";
 import { skillGlyphsCommand } from "#src/services/genshinAssets/commands/skillGlyphsCommand";
 import { soundsCommand } from "#src/services/genshinAssets/commands/soundsCommand";
 import { spiralAbyssCommand } from "#src/services/genshinAssets/commands/spiralAbyssCommand";
@@ -128,6 +129,7 @@ export const genshinAssetsCommand: CommandDef = defineCommand({
     gcg: gcgCommand,
     gadgets: gadgetsCommand,
     shops: shopsCommand,
+    shrineKeySources: shrineKeySourcesCommand,
     materialSources: materialSourcesCommand,
     wildlife: wildlifeCommand,
     "wish-schedule": wishScheduleCommand,

@@ -3,6 +3,7 @@
 export interface DumpedMainQuest {
   descTextMapHash: number;
   id: number;
+  rewardIdList?: number[];
   titleTextMapHash: number;
   type?: string;
 }
