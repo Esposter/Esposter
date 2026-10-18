@@ -1,6 +1,6 @@
 ## 1. Event banner schedule
 
-- [ ] 1.1 Read each event banner page into its kind, window and featured items. Verify: parseWishPage.test.ts, written first and seen failing, named after 'An event banner page is read into its window and featured items'.
+- [x] 1.1 Read each event banner page into its kind, window and featured items. Verify: parseWishPage.test.ts, written first and seen failing, named after 'An event banner page is read into its window and featured items'.
 - [ ] 1.2 List the wiki's wish pages into the schedule record, joining each name to its id, and fail the build on an item the names do not hold. Verify: a test named after 'A schedule naming an unknown item fails the build'.
 - [ ] 1.3 Offer event banners only inside their windows, beside the standard ones. Verify: getOpenEventBanners.test.ts, named after 'A banner is offered inside its window' and 'A banner is not offered between windows'.
 
