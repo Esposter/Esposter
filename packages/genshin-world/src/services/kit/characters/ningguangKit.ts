@@ -10,7 +10,9 @@ import type { GroundPoint } from "genshin-engine";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { ElementResistanceAttributeMap } from "#src/services/combat/damage/ElementResistanceAttributeMap";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
@@ -35,6 +37,14 @@ const BACKUP_PLAN_ASCENSION = 1;
 // Ningguang/attack.go gives it
 // https://genshin-impact.fandom.com/wiki/Piercing_Fragments
 const PIERCING_FRAGMENTS_CONSTELLATION = 1;
+// Exquisite be the Jade, Outshining All Beneath, from four constellations, raises the Elemental RES of nearby characters by
+// 10%, as the wiki's constellation page gives it. No source measures the screen's box, so the active member stands for
+// "nearby" while a screen stands, as Starshatter reads it: off-field members take no enemy strikes here. Each step
+// Restarts the buffs for two steps, so they lapse within two steps of the screen's end or shatter
+// https://genshin-impact.fandom.com/wiki/Exquisite_be_the_Jade,_Outshining_All_Beneath
+const EXQUISITE_CONSTELLATION = 4;
+const EXQUISITE_ELEMENTAL_RES_SHARE = 0.1;
+const EXQUISITE_SOURCE = "ningguang-constellation-4";
 // Shock Effect, from two constellations, resets Jade Screen's cooldown as the screen shatters, at most once every 6
 // Seconds, as the wiki's constellation page gives it and gcsim v2.47.2 (MIT) ningguang/screen.go counts its 360 frames
 // https://genshin-impact.fandom.com/wiki/Shock_Effect
@@ -90,7 +100,7 @@ export const NINGGUANG_CHARACTER_ID = 10_000_027;
 // And spends no stamina from Ascension 1 while she holds one. Jade Screen stands ahead of her, and a recast or Starshatter
 // Shatters it, setting Shock Effect going from two constellations. Starshatter's gems land from a summon where she
 // Stands, a standing screen adding its own, and from six constellations she holds 7 Star Jades
-// Constellation 4 needs an Elemental RES bonus for nearby characters, which the Attribute enum does not carry
+// From four constellations, the active member holds Elemental RES while a screen stands, as Exquisite be the Jade gives it
 export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const gems = readHits("strikeGem");
   const piercingFragmentsGems = readHits("piercingFragmentsStrikeGem");
@@ -188,6 +198,18 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.CharacterSwapped || event.previousCharacterId !== combatant.characterId) return;
       removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
+    },
+    // Exquisite be the Jade's Elemental RES: while a Jade Screen stands, the active member holds 10% of each element's RES
+    onStep: ({ activeCombatant, kitEffectState }, combatant, stepSeconds) => {
+      if (combatant.constellationCount < EXQUISITE_CONSTELLATION) return;
+      if (!kitEffectState.effects.some((effect) => checkIsJadeScreen(effect, combatant.characterId))) return;
+      for (const attribute of Object.values(ElementResistanceAttributeMap))
+        buffKitMember(kitEffectState, activeCombatant.characterId, {
+          amount: EXQUISITE_ELEMENTAL_RES_SHARE,
+          attribute,
+          secondsRemaining: 2 * stepSeconds,
+          source: EXQUISITE_SOURCE,
+        });
     },
     // Jade Screen is a summon standing 3 metres ahead of Ningguang for its seconds, which lands the skill's hit round it.
     // Only one stands, so a recast shatters the one before

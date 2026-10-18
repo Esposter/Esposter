@@ -13,7 +13,9 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNingguangKitBehaviour, NINGGUANG_CHARACTER_ID } from "#src/services/kit/characters/ningguangKit";
+import { ElementResistanceAttributeMap } from "#src/services/combat/damage/ElementResistanceAttributeMap";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -39,6 +41,25 @@ const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
   Array.from({ length: Math.round(seconds / FIXED_STEP_SECONDS) }, () =>
     stepKitTestEffects(FIXED_STEP_SECONDS, context),
   ).flat();
+
+// Runs the team's effects and Ningguang's own step on at the world's fixed step for the given seconds, as the world steps them
+const stepKitWithStep = (seconds: number, context: KitContext, combatant: Combatant): void => {
+  for (let index = 0; index < Math.round(seconds / FIXED_STEP_SECONDS); index++) {
+    stepKitTestEffects(FIXED_STEP_SECONDS, context);
+    NINGGUANG_KIT.onStep?.(context, combatant, FIXED_STEP_SECONDS, 0);
+  }
+};
+
+// The RES each element holds the combatant to, as the team's buffs leave it, in the order the element map lists them
+const getElementalResistances = (combatant: Combatant, context: KitContext): number[] => {
+  const { attributeTotalMap } = getBuffedCombatant(
+    combatant,
+    context.kitEffectState.effects,
+    context.party,
+    context.characterIdCombatantMap,
+  ).attributes;
+  return Object.values(ElementResistanceAttributeMap).map((attribute) => attributeTotalMap[attribute]);
+};
 
 // Strikes an enemy with each strike, as the world does for an enemy within its area
 const landStrikes = (strikes: KitStrike[], context: KitContext): void => {
@@ -185,5 +206,29 @@ describe(createNingguangKitBehaviour, () => {
     const chargedAttackStrikes = stepEffects(2, context);
 
     expect(chargedAttackStrikes).toHaveLength(1 + 7);
+  });
+
+  test("at four constellations, the active member's elemental RES rises by 10% while a Jade Screen stands, and lapses when it ends", () => {
+    expect.hasAssertions();
+    const combatant = createNingguangCombatant(0, 4);
+    const context = createKitTestContext(combatant);
+    NINGGUANG_KIT.elementalSkill.onStart?.(context);
+    stepKitWithStep(1, context, combatant);
+
+    expect(getElementalResistances(combatant, context)).toStrictEqual([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]);
+
+    stepKitWithStep(31, context, combatant);
+
+    expect(getElementalResistances(combatant, context)).toStrictEqual([0, 0, 0, 0, 0, 0, 0]);
+  });
+
+  test("below four constellations, a standing Jade Screen gives no elemental RES", () => {
+    expect.hasAssertions();
+    const combatant = createNingguangCombatant(0, 3);
+    const context = createKitTestContext(combatant);
+    NINGGUANG_KIT.elementalSkill.onStart?.(context);
+    stepKitWithStep(1, context, combatant);
+
+    expect(getElementalResistances(combatant, context)).toStrictEqual([0, 0, 0, 0, 0, 0, 0]);
   });
 });
