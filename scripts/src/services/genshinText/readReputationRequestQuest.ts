@@ -7,14 +7,16 @@ import { QuestKind, QuestObjectiveKind, questSchema } from "genshin-world";
 
 // A Reputation delivery request as the dump files it: a sub quest of a world quest, whose items a giving row of its own
 // Id asks for. Its one step collects each item, the objective the dump's obtain-item condition maps to, and no talk
-// Offers it, since the keeper's request board does
+// Offers it, since the keeper's request board does. Its rewards are its world quest's, which the Reputation levels pay
 export const readReputationRequestQuest = ({
   giving,
   mainQuest,
+  rewards,
   subQuest,
 }: {
   giving: DumpedGiving;
   mainQuest: DumpedMainQuest;
+  rewards: Quest["rewards"];
   subQuest: DumpedSubQuest;
 }): Quest =>
   questSchema.parse({
@@ -22,6 +24,7 @@ export const readReputationRequestQuest = ({
     id: String(subQuest.subId),
     kind: QuestKind.World,
     offerTalkIds: [],
+    rewards,
     steps: [
       {
         id: String(subQuest.subId),

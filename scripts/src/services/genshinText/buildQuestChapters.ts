@@ -5,7 +5,6 @@ import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { QuestChapter, QuestReward } from "genshin-world";
 
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
-import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import {
   CARRIED_CHAPTER_IDS,
   CHAPTER_TABLE_NAME,
@@ -15,6 +14,7 @@ import {
 } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { toQuestChapter } from "#src/services/genshinText/toQuestChapter";
+import { toQuestRewardItems } from "#src/services/genshinText/toQuestRewardItems";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { QuestIds } from "genshin-world";
 
@@ -51,16 +51,14 @@ export const buildQuestChapters = (): QuestChapter[] => {
         CHAPTER_TABLE_NAME,
         `has quest ${notCarriedQuestId}, which the world does not carry`,
       );
-    const rewards: QuestReward[] = (chapterQuests.at(-1)?.rewardIdList ?? []).flatMap((rewardId) => {
-      const reward = rewardMap.get(rewardId);
-      if (!reward) throw new InvalidOperationError(Operation.Read, "reward table", `has no reward ${rewardId}`);
-      return toRewardItems(reward).map(({ itemCount, itemId }) => {
+    const rewards: QuestReward[] = toQuestRewardItems(chapterQuests.at(-1)?.rewardIdList ?? [], rewardMap).map(
+      ({ count, itemId }) => {
         const rarity = rankMap.get(itemId);
         if (rarity === undefined)
           throw new InvalidOperationError(Operation.Read, MATERIAL_TABLE_NAME, `has no item ${itemId}`);
-        return { count: itemCount, itemId, rarity };
-      });
-    });
+        return { count, itemId, rarity };
+      },
+    );
     return toQuestChapter(chapter, String(cityNameTextMapHash), questIds, rewards);
   });
 };

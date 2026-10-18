@@ -14,6 +14,7 @@ import {
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
+import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
@@ -35,11 +36,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 // Every quest `QuestId` names, published: its kind, title and description from the quest table, its shown steps and the
-// Talks offering it from its binary output, the talks its steps end on and its offers from the dialog and talk tables,
-// And every word they show, a language missing a word taking English's and saying so. An Archon quest starts from the
-// Prologue's first rather than from a talk, so it has no offer. Each quest is checked against the world's own schema
-// Before it is published. A Reputation request has no binary: its sub quest's title comes from its world quest, and its one
-// Step from its giving row
+// Talks offering it from its binary output, the talks its steps end on and its offers from the dialog and talk tables, the
+// Items its finish pays from its reward rows, and every word they show, a language missing a word taking English's and
+// Saying so. An Archon quest starts from the prologue's first rather than from a talk, so it has no offer. Each quest is
+// Checked against the world's own schema before it is published. A Reputation request has no binary: its sub quest's title
+// Comes from its world quest, and its one step from its giving row
 export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<string, unknown> }> => {
   const notes: string[] = [];
   const englishTextMap = readTextMap(GameLanguage.English);
@@ -50,15 +51,17 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME).map((subQuest) => [subQuest.subId, subQuest]),
   );
   const givingMap = new Map(readExcelTable<DumpedGiving>(GIVING_TABLE_NAME).map((giving) => [giving.id, giving]));
+  const rewardsByQuest = readCarriedQuestRewards();
   const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
+    const rewards = rewardsByQuest.get(questId) ?? [];
     if (ReputationRequestQuestIds.includes(questId)) {
       const subQuest = subQuestMap.get(Number(questId));
       const giving = givingMap.get(Number(questId));
       const mainQuest = subQuest && mainQuestMap.get(subQuest.mainId);
       if (!subQuest || !giving || !mainQuest)
         throw new InvalidOperationError(Operation.Read, questId, "has no sub quest, giving or world quest row");
-      return readReputationRequestQuest({ giving, mainQuest, subQuest });
+      return readReputationRequestQuest({ giving, mainQuest, rewards, subQuest });
     }
     const mainQuest = mainQuestMap.get(Number(questId));
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
@@ -91,6 +94,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       id: questId,
       kind: questKind,
       offerTalkIds,
+      rewards,
       steps,
       talks: Array.from(talkIds, (talkId) => readTalk(talkId, talkTables)),
       titleTextId: String(mainQuest.titleTextMapHash),
