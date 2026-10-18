@@ -69,18 +69,16 @@ const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingPr
 const checkIsFurtherStatueRegion = (progress: StatueRegionProgressSave, than: StatueRegionProgressSave): boolean =>
   progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
 // The statues' found Oculi are the union of both copies', and each region is the copy further on, as the Frostbearing
-// Tree's is, so a region only one copy holds is kept as it is. A claim is kept once made, and its rewards sit in the bag the
-// merge keeps, so the region keeps the larger level claimed of the two copies whichever copy is further on
+// Tree's is. A region's claimed level is the account's, as its rewards were paid into the account's bag, which the merge
+// keeps: a level the guest claimed was paid into the guest's bag, so the account claims it again and is paid once, and a
+// region the account does not hold claims none
 const mergeStatueProgress = (account: StatueProgressSave, guest: StatueProgressSave): StatueProgressSave => {
   const regions = { ...account.regions };
   for (const [regionId, guestProgress] of Object.entries(guest.regions)) {
     const accountProgress = regions[regionId];
-    regions[regionId] = accountProgress
-      ? {
-          ...(checkIsFurtherStatueRegion(guestProgress, accountProgress) ? guestProgress : accountProgress),
-          claimedLevel: Math.max(accountProgress.claimedLevel, guestProgress.claimedLevel),
-        }
-      : guestProgress;
+    const furtherProgress =
+      accountProgress && !checkIsFurtherStatueRegion(guestProgress, accountProgress) ? accountProgress : guestProgress;
+    regions[regionId] = { ...furtherProgress, claimedLevel: accountProgress?.claimedLevel ?? 0 };
   }
   return { foundOculusIds: [...new Set([...account.foundOculusIds, ...guest.foundOculusIds])], regions };
 };

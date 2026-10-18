@@ -694,7 +694,7 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("a level claimed in the copy behind is kept when the copy further on has claimed none", () => {
+  test("a level the account claimed is kept when the copy further on has claimed none", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -713,7 +713,7 @@ describe(mergeGenshinSave, () => {
     });
   });
 
-  test("a region both saves hold on the same level keeps the copy with more Oculi held, and the larger claim", () => {
+  test("a region both saves hold on the same level keeps the copy with more Oculi held, with the account's claim", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
@@ -728,7 +728,23 @@ describe(mergeGenshinSave, () => {
     };
 
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 4, level: GUEST_LEVEL },
+      [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a level the guest claimed on a region the account does not hold is claimed again on the account", () => {
+    expect.hasAssertions();
+    const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: 0, heldCount: 0, level: GUEST_LEVEL },
     });
   });
 

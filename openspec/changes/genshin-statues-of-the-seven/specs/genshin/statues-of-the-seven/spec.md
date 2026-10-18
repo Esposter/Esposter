@@ -163,7 +163,7 @@ With auto-recover on and a threshold set, standing by a statue for two seconds S
 
 ### Requirement: The statues' state is kept with the world and merged between saves
 
-The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level, then its held count, and each region's level claimed the larger of the two copies', so a claim is kept once made.
+The statues' levels, levels claimed, held counts and found Oculi SHALL be kept with the world, and a merge of two saves SHALL keep the union of both saves' found Oculi, with each region the save further on by its level, then its held count, and each region's level claimed taken from the account's copy, so a level only the guest's copy claimed is claimed again on the account.
 
 #### Scenario: A new player starts with no region started and no Oculus found
 
@@ -187,13 +187,20 @@ The statues' levels, levels claimed, held counts and found Oculi SHALL be kept w
 
 - **GIVEN** a region both saves hold, one of them further on by its level, or on the same level by the Oculi it holds
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the region of the save further on, its level and held count as they are, with the larger level claimed of the two copies
+- **THEN** the merged save holds the region of the save further on, its level and held count as they are, with the account's level claimed
 
-#### Scenario: A level claimed in the copy behind is kept
+#### Scenario: A level the account claimed is kept when the copy further on has claimed none
 
-- **GIVEN** a region the save further on has claimed no level of, and the other save has claimed one
+- **GIVEN** the account has claimed a level of a region, and the save further on has claimed no level of it
 - **WHEN** the two saves are merged
 - **THEN** the merged save keeps the level claimed, so its rewards are not paid again
+
+#### Scenario: A level only the guest claimed is claimed again on the account
+
+- **GIVEN** the guest has claimed a level of a region, its rewards paid into the guest's bag, and the account has not claimed it
+- **WHEN** the two saves are merged
+- **THEN** the merged save claims none of that level, so the account claims it again and is paid once from its own bag
+- **AND** the guest's rewards for it are lost with the guest's bag
 
 ## REMOVED Requirements
 
