@@ -3,6 +3,7 @@ import type { Landmark } from "#src/models/world/Landmark";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJumpLandmarks";
+import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 const ARRIVAL = { heightOffset: 0, position: { x: 1, z: 2 }, rotation: 0 };
@@ -16,6 +17,7 @@ const domainEntrance: Landmark = {
   kind: LandmarkKind.DomainEntrance,
   position: { x: 1, z: 2 },
   rotation: 0,
+  titleTextKey: GameTextKey.DomainEntrance24,
 };
 
 describe(computeUnlockedJumpLandmarks, () => {
