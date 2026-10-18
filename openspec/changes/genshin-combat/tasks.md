@@ -4,5 +4,7 @@
 
 ## 2. Stellar reactions
 
-- [ ] 2.1 Turn a Swirl into Stellar Swirl where a kit's placed gadget stands. Verify: tests named after the scenarios 'a Swirl starts Stellar Swirl where a placed gadget stands' and 'a Swirl without a placed gadget stays an ordinary Swirl', seen failing first.
-- [ ] 2.2 Add Stellar-Conduct with its placed Polestar, once the first kit that places it is built. Verify: tests named after the scenarios 'Stellar-Conduct occurs where a placed Polestar stands' and 'no Stellar-Conduct occurs with no gadget placed', seen failing first.
+- [ ] 2.1 Turn a Cryo Swirl into Stellar Swirl while the party's Stellar Swirl enabler is held. Verify: in `services/combat/aura/applyElement.test.ts`, tests named after the scenarios 'a Cryo Swirl starts Stellar Swirl while the party enables it', 'a Cryo Swirl stays an ordinary Swirl without the enabler' and 'a Stellar Swirl spreads no Cryo beside it', seen failing first.
+- [ ] 2.2 Turn a Superconduct into Stellar-Conduct while the party's Stellar-Conduct enabler is held. Verify: in `services/combat/aura/applyElement.test.ts`, tests named after the scenarios 'a Superconduct becomes Stellar-Conduct while the party enables it' and 'no Stellar-Conduct occurs without the enabler', seen failing first.
+- [ ] 2.3 Set the enablers from the Stellar Jubilee passives of the kits that carry them, once the first kit is built (Odette's module, or the Cryo Traveler's kit once it has a Cryo variant). Verify: in the test file of the kit that carries it, a test named after the scenario 'a Stellar Jubilee passive enables both reactions for its party', seen failing first.
+- [ ] 2.4 Place the Polestar Field and the Stellar Vortex the reactions create, with their effects, once a kit uses them. Verify: a test named after the Polestar Field's scenario, added to this change's spec before the field is built, seen failing first.

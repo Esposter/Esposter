@@ -1,6 +1,6 @@
 schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
-x-model: claude-opus-5-5
-x-waiting: "the Cryo Traveler's or Odette's kit, the only two that gcsim v2.47.2 turns Stellar-Conduct and Stellar Swirl on from (the character-kits unit: Odette's module, or the Traveler's Cryo set once the statues page holds the resonance)"
-x-touches: ["packages/genshin-world/src/services/combat/**"]
+x-model: claude-haiku-5-5
+x-waiting: "the Stellar Jubilee passives that enable Stellar Swirl and Stellar-Conduct (task 2.3): gcsim v2.47.2 sets both flags in Odette's module, which has no module here, and the Cryo Traveler's kit has no Cryo variant yet"
+x-touches: ["packages/genshin-world/src/models/combat/**", "packages/genshin-world/src/services/combat/**"]
