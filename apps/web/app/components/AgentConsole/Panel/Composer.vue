@@ -152,10 +152,11 @@ const submit = () => {
         @select="(value) => selectSuggestion(value)"
       />
       <div flex flex-wrap gap-2 items-center>
-        <!-- The settings are the session's, so a side chat with no session yet has none to choose for -->
+        <!-- The settings are the session's, so a side chat with no session yet has none to choose for. A side chat stays
+             In plan mode, so it offers no mode to change -->
         <template v-if="sessionId">
           <UiSelect v-model="model" :items="modelMenuItems" label="Model" />
-          <UiSelect v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
+          <UiSelect v-if="!isSideChat" v-model="permissionMode" :items="PermissionModeMenuItems" label="Mode" />
         </template>
         <!-- The terminal's Ctrl+B: what is running keeps running in the background while the turn goes on -->
         <UiButton

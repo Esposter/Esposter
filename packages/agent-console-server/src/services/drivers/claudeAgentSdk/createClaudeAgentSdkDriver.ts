@@ -1,4 +1,5 @@
 import type { OpenSession } from "#src/models/claudeAgentSdk/OpenSession";
+import type { OpenSessionOptions } from "#src/models/claudeAgentSdk/OpenSessionOptions";
 import type { Attachment } from "#src/models/command/Attachment";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
@@ -46,6 +47,9 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
   };
 
   const openSessionQuery = createSessionOpener({ emit, onSessionOpen, onSessionsChange, openSessionMap, taskRegistry });
+  // The terminal's own sessions, as opposed to a side chat's fork
+  const openMainSession = (options: Omit<OpenSessionOptions, "isFork" | "isSideChat">) =>
+    openSessionQuery({ ...options, isFork: false, isSideChat: false });
 
   const closeSession = (sessionId: string) => {
     const closingSession = getOpenSession(sessionId);
@@ -92,7 +96,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
   const resumeSession = async (sessionId: string) => {
     if (openSessionMap.has(sessionId)) return sessionId;
     const cwd = await readSessionCwd(sessionId);
-    return openSessionQuery({ cwd, isFork: false, isSideChat: false, resumeAt: "", resumeFrom: sessionId, sessionId });
+    return openMainSession({ cwd, resumeAt: "", resumeFrom: sessionId, sessionId });
   };
 
   return {
@@ -104,15 +108,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
       await taskRegistry.drain();
     },
     closeSession,
-    createSession: (cwd) =>
-      openSessionQuery({
-        cwd,
-        isFork: false,
-        isSideChat: false,
-        resumeAt: "",
-        resumeFrom: "",
-        sessionId: crypto.randomUUID(),
-      }),
+    createSession: (cwd) => openMainSession({ cwd, resumeAt: "", resumeFrom: "", sessionId: crypto.randomUUID() }),
     forkSession: async (sessionId, messageUuid, isSideChat) => {
       const cwd = await readSessionCwd(sessionId);
       return openSessionQuery({
@@ -137,14 +133,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
     resumeAt: async (sessionId, messageUuid) => {
       const cwd = await readSessionCwd(sessionId);
       if (openSessionMap.has(sessionId)) closeSession(sessionId);
-      return openSessionQuery({
-        cwd,
-        isFork: false,
-        isSideChat: false,
-        resumeAt: messageUuid,
-        resumeFrom: sessionId,
-        sessionId,
-      });
+      return openMainSession({ cwd, resumeAt: messageUuid, resumeFrom: sessionId, sessionId });
     },
     resumeSession,
     // The checkpoints are the session's, kept on disk beside its transcript, so a closed session is resumed to reach
@@ -180,8 +169,10 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
       await query.setModel(model);
       emit(sessionId, [mapper.updateSettings(crypto.randomUUID(), new Date(), { model })]);
     },
+    // A side chat asks and never acts, so it stays in the plan mode it opened in
     setPermissionMode: async (sessionId, permissionMode) => {
-      const { mapper, query } = getOpenSession(sessionId);
+      const { isSideChat, mapper, query } = getOpenSession(sessionId);
+      if (isSideChat) throw new InvalidOperationError(Operation.Update, sessionId, "a side chat stays in plan mode");
       await query.setPermissionMode(permissionMode);
       emit(sessionId, [mapper.updateSettings(crypto.randomUUID(), new Date(), { permissionMode })]);
     },
