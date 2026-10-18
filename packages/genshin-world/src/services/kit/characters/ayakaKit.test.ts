@@ -5,6 +5,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { AYAKA_CHARACTER_ID, createAyakaKitBehaviour } from "#src/services/kit/characters/ayakaKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -15,6 +18,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
@@ -33,7 +37,7 @@ const strikeWithFirstNormalAttack = (constellationCount: number, random: () => n
   const partyMember = getPartyMember(context.party, AYAKA_CHARACTER_ID);
   partyMember.skillCooldownSeconds = 5;
   const hit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
-  hit.onStrike?.(context, { body: context.body, combatant, hit });
+  hit.onStrike?.(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
   return partyMember.skillCooldownSeconds;
 };
 

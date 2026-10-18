@@ -147,11 +147,11 @@ describe("penetrative reasoning", () => {
       party: createParty([HEIZOU_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
     });
 
-    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(context, {
-      body: context.body,
-      combatant,
-      hit: takeOne(HEIZOU_KIT.elementalSkill.hits),
-    });
+    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(
+      context,
+      { body: context.body, combatant, hit: takeOne(HEIZOU_KIT.elementalSkill.hits) },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
@@ -172,11 +172,11 @@ describe("penetrative reasoning", () => {
       party: createParty([HEIZOU_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
     });
 
-    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(context, {
-      body: context.body,
-      combatant,
-      hit: takeOne(HEIZOU_KIT.elementalSkill.hits),
-    });
+    takeOne(HEIZOU_KIT.elementalSkill.hits).onStrike?.(
+      context,
+      { body: context.body, combatant, hit: takeOne(HEIZOU_KIT.elementalSkill.hits) },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(context.kitEffectState.effects).toStrictEqual([]);
   });
