@@ -29,6 +29,8 @@ export enum GameTextKey {
   ArchiveMaterials = "UI_CODEX_MATERIAL",
   ArchiveTravelLog = "UI_CODEX_QUEST",
   ArchiveTutorials = "UI_CODEX_TIPS",
+  // The button that lifts a character past its level cap with Masterless Stella Fortuna
+  AscensionLimit = "UI_TEXT_ACTIVITY_LEVEL_UP",
   // The character screen's attributes under the game's own names, and the groups its details sort them into
   AttributeAnemoDamageBonus = "FIGHT_PROP_WIND_ADD_HURT",
   AttributeAnemoResistance = "FIGHT_PROP_WIND_SUB_HURT",
