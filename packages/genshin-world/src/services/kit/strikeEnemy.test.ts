@@ -113,6 +113,41 @@ describe(strikeEnemy, () => {
     ]);
   });
 
+  test("adds the CRIT Rate a strike is given to the rate its CRIT roll is made against", () => {
+    expect.hasAssertions();
+
+    const ROLL = 0.2;
+    const CRITICAL_RATE_BONUS = 0.2;
+    const createCombatantWithCriticalRate = (): Combatant => ({
+      ascension: 0,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.Attack, value: ATTACK },
+        { attribute: Attribute.CriticalDamage, value: 0.5 },
+        { attribute: Attribute.CriticalRate, value: 0.1 },
+      ]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: TRAVELER_KIT,
+      level: LEVEL,
+    });
+    const boostedEnemy = createSturdyEnemy();
+    const plainEnemy = createSturdyEnemy();
+
+    strikeEnemy(
+      enemyTables,
+      boostedEnemy,
+      TRAVELER_KIT.plungeCollision,
+      createCombatantWithCriticalRate(),
+      () => ROLL,
+      undefined,
+      CRITICAL_RATE_BONUS,
+    );
+    strikeEnemy(enemyTables, plainEnemy, TRAVELER_KIT.plungeCollision, createCombatantWithCriticalRate(), () => ROLL);
+
+    expect(boostedEnemy.maxHealth - boostedEnemy.health).toBeGreaterThan(plainEnemy.maxHealth - plainEnemy.health);
+  });
+
   test("draws its CRIT rolls from the seeded source, so the same seed prices the same hits", () => {
     expect.hasAssertions();
 
