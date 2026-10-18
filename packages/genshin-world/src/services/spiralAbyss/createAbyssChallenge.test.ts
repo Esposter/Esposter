@@ -15,6 +15,7 @@ describe(createAbyssChallenge, () => {
   const floor: AbyssFloor = { chambers: [], id: 1, index: 1, teamCount: TEAM_COUNT, unlockStarCount: 6 };
   const chamber: AbyssChamber = {
     conditions: [{ kind: AbyssStarConditionKind.LeftTime, threshold: 90 }],
+    halfMonsterDescribeIds: [],
     id: 1,
     index: 1,
   };
