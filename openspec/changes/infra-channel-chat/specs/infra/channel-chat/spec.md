@@ -52,7 +52,7 @@ The channel SHALL show the plain half of an answer to a line from the page under
 
 ### Requirement: A tool approval is answered by a tap on the character
 
-The channel SHALL show a tool approval as a two-choice bubble on the character, and SHALL answer the approval with the choice the reader taps.
+The channel SHALL show a tool approval as a two-choice bubble on the character, and SHALL answer the approval with the choice the reader taps on the character. Where the viewer does not report which choice was tapped, the two choices are the chat page's own buttons, and the approval is answered by the one the reader picks there.
 
 #### Scenario: An approval appears as a two-choice bubble
 

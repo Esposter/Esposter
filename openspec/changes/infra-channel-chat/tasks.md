@@ -1,9 +1,11 @@
-## 1. Channel server (built)
+## 1. Channel server (built, tests owed)
 
-- [x] 1.1 Serve the chat page on the loopback under a printed token, and drop lines without it. Verify: a test named after the scenario 'A line without the token is dropped' passes.
-- [x] 1.2 Deliver each typed line into the session as a desk line. Verify: a test named after the scenario 'A typed line becomes a session turn' passes.
-- [x] 1.3 Show the plain half of an answer under its line through the reply tool. Verify: a test named after the scenario 'An answer is shown under the line that asked' passes.
-- [x] 1.4 Start the channel with its session and end it with the session. Verify: a test named after the scenario 'The chat page stops answering when the session ends' passes.
+No test carries these four scenarios' names yet, so the boxes are open until each named test is written and passes.
+
+- [ ] 1.1 Serve the chat page on the loopback under a printed token, and drop lines without it. Verify: a test named after the scenario 'A line without the token is dropped' passes.
+- [ ] 1.2 Deliver each typed line into the session as a desk line. Verify: a test named after the scenario 'A typed line becomes a session turn' passes.
+- [ ] 1.3 Show the plain half of an answer under its line through the reply tool. Verify: a test named after the scenario 'An answer is shown under the line that asked' passes.
+- [ ] 1.4 Start the channel with its session and end it with the session. Verify: a test named after the scenario 'The chat page stops answering when the session ends' passes.
 
 ## 2. Viewer and permission relay (waiting on the viewer stage)
 
