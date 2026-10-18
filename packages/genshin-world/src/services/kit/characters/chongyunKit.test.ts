@@ -42,6 +42,28 @@ const createChongyunCombatant = (ascension = 0, constellationCount = 0): Combata
   weaponType: WeaponType.Claymore,
 });
 
+// The effects the field's tick leaves a melee wielder, as the combatant stands
+const tickFieldOn = (combatant: Combatant, field: KitField | undefined): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  field?.onTick(createKitTestContext(combatant, { kitEffectState }), 0);
+  return kitEffectState.effects;
+};
+
+// The effects the field leaves when a press ends it, the enemy nearest it being struck, as the combatant stands
+const endFieldOf = (combatant: Combatant): KitEffect[] => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  CHONGYUN_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  const [field] = kitEffectState.effects;
+  const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), position: { x: 0, z: -5 } };
+  if (field?.kind === "field")
+    CHONGYUN_KIT.onKitEvent?.(
+      { effect: field, kind: KitEventKind.EffectExpired },
+      createKitTestContext(combatant, { enemyMap: new Map([["", enemy]]), kitEffectState }),
+      combatant,
+    );
+  return kitEffectState.effects;
+};
+
 describe(createChongyunKitBehaviour, () => {
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   // The effects an action's start adds, as the kit's effects hold them
@@ -278,5 +300,45 @@ describe(createChongyunKitBehaviour, () => {
 
     expect(fourthBlade?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([77]);
     expect([getDamageBonus(1), getDamageBonus(0.5)]).toStrictEqual([0, 0.15]);
+  });
+
+  describe("the Ascension 1 passive, Steady Breathing", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createChongyunCombatant(1);
+
+      expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
+        {
+          characterId: CHONGYUN_CHARACTER_ID,
+          element: Element.Cryo,
+          kind: "infusion",
+          normalAttackSpeedBonus: 0.08,
+          secondsRemaining: 2,
+        },
+      ]);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const combatant = createChongyunCombatant(0);
+
+      expect(tickFieldOn(combatant, castField(combatant))).toStrictEqual([
+        { characterId: CHONGYUN_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 2 },
+      ]);
+    });
+  });
+
+  describe("the Ascension 4 passive, Rimechaser Blade", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(endFieldOf(createChongyunCombatant(4)).filter((effect) => effect.kind === "summon")).toHaveLength(1);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(endFieldOf(createChongyunCombatant(3)).filter((effect) => effect.kind === "summon")).toHaveLength(0);
+    });
   });
 });
