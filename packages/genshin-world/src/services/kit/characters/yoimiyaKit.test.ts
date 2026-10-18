@@ -41,7 +41,26 @@ const createDamageTakenEvent = (
   striker: Combatant,
   attackTag?: AttackTag,
   isDefeated = false,
-): KitEvent => ({ attackTag, enemy, hit, isCritical: false, isDefeated, kind: KitEventKind.DamageTaken, striker });
+  isCritical = false,
+): KitEvent => ({ attackTag, enemy, hit, isCritical, isDefeated, kind: KitEventKind.DamageTaken, striker });
+
+// The buffs a Pyro hit of Yoimiya's that is or is not a CRIT gives her, at a constellation count, as its kit reads them
+const readCriticalBuffs = (constellationCount: number, isCritical: boolean) => {
+  const combatant = { ...createYoimiyaCombatant(), constellationCount };
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState });
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const hit = takeOne(takeOne(YOIMIYA_KIT.normalAttacks).hits);
+  YOIMIYA_KIT.onKitEvent?.(
+    createDamageTakenEvent(enemy, hit, combatant, AttackTag.NormalAttack, false, isCritical),
+    context,
+    combatant,
+  );
+
+  return kitEffectState.effects.flatMap((effect) =>
+    effect.kind === "buff" ? [[effect.attribute, effect.amount, effect.secondsRemaining]] : [],
+  );
+};
 
 describe(createYoimiyaKitBehaviour, () => {
   const OTHER_CHARACTER_ID = 10_000_003;
@@ -238,5 +257,17 @@ describe(createYoimiyaKitBehaviour, () => {
       marked.statuses.map(({ id, secondsRemaining }) => [id, secondsRemaining]),
       kitEffectState.effects.filter((effect) => effect.kind === "buff"),
     ]).toStrictEqual([[["yoimiya-aurous-blaze", 10]], []]);
+  });
+
+  test("a Constellation 2 switch gives Yoimiya 25% Pyro DMG Bonus for 6 seconds on her Pyro CRIT", () => {
+    expect.hasAssertions();
+
+    expect(readCriticalBuffs(2, true)).toStrictEqual([[Attribute.PyroDamageBonus, 0.25, 6]]);
+  });
+
+  test("a Constellation 1 switch, or a hit that is not a CRIT, gives no Pyro DMG Bonus", () => {
+    expect.hasAssertions();
+
+    expect([readCriticalBuffs(1, true), readCriticalBuffs(2, false)]).toStrictEqual([[], []]);
   });
 });
