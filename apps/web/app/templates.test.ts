@@ -269,12 +269,10 @@ describe("library layout", () => {
   });
 });
 
-// Every authored length is `rem` (`styling` skill). What keeps `px` holds a dependency's own values: the vendored
-// ApexCharts sample SVGs
+// Every authored length is `rem` (`styling` skill)
 describe("lengths", () => {
   const STYLE_PATH_REGEX = /\.(?:vue|css)$/u;
   const PX_REGEX = /[^a-z-]\d+px\b/u;
-  const PX_EXCLUDED_DIRECTORY = "assets/dashboard/demo/icon/";
 
   test("authors no px length", () => {
     expect.hasAssertions();
@@ -282,7 +280,7 @@ describe("lengths", () => {
     expect(
       getMatchingLines(
         (line) => PX_REGEX.test(line) && !line.trimStart().startsWith("//"),
-        (sourcePath) => STYLE_PATH_REGEX.test(sourcePath) && !sourcePath.startsWith(PX_EXCLUDED_DIRECTORY),
+        (sourcePath) => STYLE_PATH_REGEX.test(sourcePath),
       ),
     ).toStrictEqual([]);
   });
