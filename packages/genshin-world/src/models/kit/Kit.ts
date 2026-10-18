@@ -45,6 +45,9 @@ export interface Kit {
   // The DMG Bonus a strike of the kit's own adds as it lands on an enemy, if a passive or a constellation raises it
   // Against some enemies only, given the enemy as it stands and the deployed team
   getStrikeDamageBonus?: (strike: KitStrike, enemy: Enemy, party: Party) => number;
+  // The CRIT Rate a strike of the kit's own adds as its CRIT roll is made against an enemy, if a constellation raises it
+  // Against some enemies only, given the enemy as it stands
+  getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy) => number;
   highPlunge: KitAction;
   lowPlunge: KitAction;
   // The character's Moonsign Benediction, if it is a Moonsign character, which counts it toward its party's Moonsign

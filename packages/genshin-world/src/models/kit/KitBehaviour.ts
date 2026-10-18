@@ -16,6 +16,7 @@ export interface KitBehaviour extends Partial<
     | "getChargedAttackStaminaMultiplier"
     | "getPassiveBonuses"
     | "getSkillCooldownMultiplier"
+    | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
     | "onKitEvent"
     | "onSprint"
