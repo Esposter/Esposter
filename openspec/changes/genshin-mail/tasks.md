@@ -2,8 +2,8 @@
 
 ## 1. The mail table
 
-- [ ] 1.1 Read the mail table into its rows with the sender, title, content, expiry and attached reward, joined to `readRewardMap`. Verify: tests named after the scenarios 'A mail reads its sender, title and expiry' and 'A mail with a reward reads its items' written first and seen failing.
-- [ ] 1.2 Skip a mail whose key the builder cannot name, and count those it skipped. Verify: a test named after the scenario 'A mail with an unnamed key is skipped' written first and seen failing.
+- [x] 1.1 Read the mail table into its rows with the sender, title, content, expiry and attached reward, joined to `readRewardMap`. Verify: tests named after the scenarios 'A mail reads its sender, title and expiry' and 'A mail with a reward reads its items' written first and seen failing.
+- [x] 1.2 Skip a mail whose key the builder cannot name, and count those it skipped. Verify: a test named after the scenario 'A mail with an unnamed key is skipped' written first and seen failing.
 
 ## 2. The mails in the save
 
