@@ -14,7 +14,7 @@ const OCEANIC_MIMIC_KINDS: [number, GcgCardModule][] = [
 ];
 
 // Summons the given number of Oceanic Mimics, each of the kind fewest on the side's field, so the summons differ where
-// They can. A duel holds no random source the skill's effect reaches, so the choice the game makes at random is this rule
+// They can. The game chooses the kinds at random, and this rule stands in for that choice as a provisional call
 export const summonGcgOceanicMimics = (side: GcgSideState, count: number): void => {
   const countKind = (cardId: number): number => side.summons.filter((zoneCard) => zoneCard.cardId === cardId).length;
   for (let summoned = 0; summoned < count; summoned++) {

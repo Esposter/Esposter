@@ -18,6 +18,7 @@ The card game's rules engine is built, so [Genius Invokation TCG](../../specs/ge
 - **A talent card runs its own skill script.** Lightning Stiletto runs `Char_Skill_14032_Ex_1`, the card's own script, which grants Keqing Electro Infusion and creates no further Lightning Stiletto, while Keqing's Stellar Restoration (`Char_Skill_14032`) creates one in hand, or, with a Lightning Stiletto already in hand, discards every copy there and grants Electro Infusion. The Electro Infusion is the status card 114032 (provisional: the card text's `$[K1002]` token is not resolved in the dump).
 - **No duel against another player.** Duels with friends need other players, which [co-op](../../deferred/genshin/co-op/design.md) defers; the game gives them no reward either.
 - **The Player Level and the Friendship Level read one rule.** `computeLevelReached` counts the levels an EXP total has reached over any table of `{ exp }` rows, so the card game's level and the companionship level are the same function.
+- **The duel holds its random source.** `GcgDuel.random` is the seeded source its dice are rolled from and its decks shuffled with. The functions that roll or shuffle read it from the duel, so a caller passes none, and a card's draw or roll reads the duel's the same way. A choice a player makes when a card is played, such as the dice Toss-Up rerolls, is a typed argument on the play, which the duel screen supplies.
 
 ## Scope and order
 

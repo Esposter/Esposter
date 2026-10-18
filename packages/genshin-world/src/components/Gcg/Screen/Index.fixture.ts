@@ -25,8 +25,8 @@ const [rule, playerDeck, opponentDeck, englishGcgText] = await Promise.all([
 ]);
 const random = createSeededRandom(7);
 const duel: GcgDuel = createGcgDuel([playerDeck, opponentDeck], random, rule);
-for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
-for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
+for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0);
+for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, []);
 duel.phase = GcgPhase.Action;
 duel.actingSideIndex = 0;
 duel.sides[0].dice = [

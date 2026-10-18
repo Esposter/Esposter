@@ -6,9 +6,9 @@ import { rollGcgDice } from "#src/services/gcg/rollGcgDice";
 import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 
 // Opens a round's roll phase: each side throws its dice, and the phase waits on each side's one reroll
-export const startGcgRound = (duel: GcgDuel, random: () => number): void => {
+export const startGcgRound = (duel: GcgDuel): void => {
   for (const side of duel.sides) {
-    side.dice = rollGcgDice(GCG_DICE_COUNT, random);
+    side.dice = rollGcgDice(GCG_DICE_COUNT, duel.random);
     side.hasRolled = false;
   }
   runGcgRollPhase(duel);

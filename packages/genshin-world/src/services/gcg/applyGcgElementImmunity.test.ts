@@ -31,8 +31,8 @@ describe("the Electro Slime's Elemental Lifeform", () => {
       random,
       await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL),
     );
-    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0, random);
-    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, [], random);
+    for (const sideIndex of [0, 1]) prepareGcgSide(duel, sideIndex, [], 0);
+    for (const sideIndex of [0, 1]) rerollGcgDice(duel, sideIndex, []);
     takeOne(duel.sides, 0).activeIndex = ELECTRO_SLIME_INDEX;
     const slime = takeOne(takeOne(duel.sides, 0).characters, ELECTRO_SLIME_INDEX);
     const startingAura = slime.aura;

@@ -63,6 +63,7 @@ describe(declareGcgRoundEnd, () => {
     nextFirstSideIndex: 0,
     outcome: undefined,
     phase: GcgPhase.Action,
+    random: createSeededRandom(SEED),
     round,
     rule: TEST_RULE,
     sides: [createSideState(), createSideState()],
@@ -74,7 +75,7 @@ describe(declareGcgRoundEnd, () => {
 
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
-    const result = declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
+    const result = declareGcgRoundEnd(duel, 0, rule);
 
     expect({
       actingSideIndex: duel.actingSideIndex,
@@ -96,8 +97,8 @@ describe(declareGcgRoundEnd, () => {
 
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel();
-    declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
-    declareGcgRoundEnd(duel, 1, rule, createSeededRandom(SEED));
+    declareGcgRoundEnd(duel, 0, rule);
+    declareGcgRoundEnd(duel, 1, rule);
 
     expect({
       handSizes: duel.sides.map(({ hand }) => hand.length),
@@ -111,8 +112,8 @@ describe(declareGcgRoundEnd, () => {
 
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel(GCG_ROUND_LIMIT);
-    declareGcgRoundEnd(duel, 0, rule, createSeededRandom(SEED));
-    declareGcgRoundEnd(duel, 1, rule, createSeededRandom(SEED));
+    declareGcgRoundEnd(duel, 0, rule);
+    declareGcgRoundEnd(duel, 1, rule);
 
     expect({ outcome: duel.outcome, phase: duel.phase, winnerSideIndex: duel.winnerSideIndex }).toStrictEqual({
       outcome: GcgOutcome.Conceded,

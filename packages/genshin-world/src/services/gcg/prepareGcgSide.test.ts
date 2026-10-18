@@ -48,7 +48,7 @@ describe(prepareGcgSide, () => {
     expect.hasAssertions();
 
     const duel = createGcgDuel([deck, deck], createSeededRandom(SEED), TEST_RULE);
-    const result = prepareGcgSide(duel, 0, [0], 1, createSeededRandom(SEED));
+    const result = prepareGcgSide(duel, 0, [0], 1);
 
     expect({
       drawPileSize: takeOne(duel.sides, 0).drawPile.length,
@@ -65,9 +65,9 @@ describe(prepareGcgSide, () => {
     expect.hasAssertions();
 
     const duel = createGcgDuel([deck, deck], createSeededRandom(SEED), TEST_RULE);
-    prepareGcgSide(duel, 0, [], 0, createSeededRandom(SEED));
+    prepareGcgSide(duel, 0, [], 0);
     const phaseAfterFirstSide = duel.phase;
-    prepareGcgSide(duel, 1, [], 0, createSeededRandom(SEED));
+    prepareGcgSide(duel, 1, [], 0);
 
     expect({
       diceCounts: duel.sides.map(({ dice }) => dice.length),
