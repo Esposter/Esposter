@@ -390,4 +390,30 @@ describe(advanceAchievements, () => {
       ),
     ).toStrictEqual({ primogems: PRIMOGEMS, progressMap: new Map([[COUNTED_ID, { count: 1, finishedAt: EPOCH }]]) });
   });
+
+  test("a statue level row counts only its city's statues, at the level they reach", () => {
+    expect.hasAssertions();
+
+    const statueLevel: Achievement = {
+      ...counted,
+      progress: 1,
+      trigger: { parameters: [["1"], ["10"]], type: "TRIGGER_CITY_LEVEL_UP" },
+    };
+    expect(
+      advanceAchievements(
+        [statueLevel],
+        new Map(),
+        { kind: AchievementEventKind.StatueLevelReached, quantity: 10, targetId: "2" },
+        EPOCH,
+      ),
+    ).toStrictEqual({ primogems: 0, progressMap: new Map() });
+    expect(
+      advanceAchievements(
+        [statueLevel],
+        new Map(),
+        { kind: AchievementEventKind.StatueLevelReached, quantity: 10, targetId: "1" },
+        EPOCH,
+      ),
+    ).toStrictEqual({ primogems: PRIMOGEMS, progressMap: new Map([[COUNTED_ID, { count: 10, finishedAt: EPOCH }]]) });
+  });
 });

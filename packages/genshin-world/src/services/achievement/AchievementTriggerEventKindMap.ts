@@ -19,6 +19,12 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
     kind: AchievementEventKind.MonsterDefeated,
     targetSlot: 0,
   },
+  TRIGGER_CITY_LEVEL_UP: {
+    countsQuantity: false,
+    kind: AchievementEventKind.StatueLevelReached,
+    levelSlot: 1,
+    targetSlot: 0,
+  },
   TRIGGER_COMBINE_ITEM: { countsQuantity: true, kind: AchievementEventKind.ItemCrafted, targetSlot: 0 },
   TRIGGER_FINISH_PARENT_QUEST_AND: {
     countsQuantity: false,
