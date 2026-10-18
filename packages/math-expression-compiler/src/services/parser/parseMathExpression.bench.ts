@@ -1,4 +1,5 @@
-import { generateSumFormula } from "#src/services/parser/generateSumFormula.bench";
+import { generateOnes } from "#src/services/parser/generateOnes.fixture";
+import { generateSumFormula } from "#src/services/parser/generateSumFormula.fixture";
 import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
@@ -9,10 +10,11 @@ const LITERAL_FORMULA = "1 * (1 - 2) + round(3, 2)";
 const SUM_1K_FORMULA = generateSumFormula(1000);
 const SUM_100K_FORMULA = generateSumFormula(100000);
 // The same ones as SUM_1K_FORMULA and SUM_100K_FORMULA, joined by operators rather than passed as arguments
-const CHAIN_1K_FORMULA = Array.from({ length: 1000 }, () => "1").join(" + ");
-const CHAIN_100K_FORMULA = Array.from({ length: 100000 }, () => "1").join(" + ");
+const CHAIN_1K_FORMULA = generateOnes(1000, " + ");
+const CHAIN_100K_FORMULA = generateOnes(100000, " + ");
 
-// Parsing is linear in the formula's length, so each group holds one scale and its second task is the same length in another shape
+// Parsing is linear in the formula's length, so each group holds one scale and its second task holds the same operands in another shape
+// The chain is not the same length: it joins with " + " where the sum joins with ", " and wraps them in "sum(" and ")"
 describe(parseMathExpression, () => {
   test("the column formula", async ({ bench }) => {
     await bench.compare(

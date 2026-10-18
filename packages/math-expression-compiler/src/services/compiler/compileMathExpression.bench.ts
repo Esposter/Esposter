@@ -1,7 +1,7 @@
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
-import { generateSumFormula } from "#src/services/parser/generateSumFormula.bench";
+import { generateSumFormula } from "#src/services/parser/generateSumFormula.fixture";
 import { parseMathExpression } from "#src/services/parser/parseMathExpression";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
