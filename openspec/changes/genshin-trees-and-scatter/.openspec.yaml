@@ -2,6 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
+x-waiting: "the oak's species waits on the roadmap's windrise-oak-shape row; the other plants' species wait on their mesh exports, none of which is extracted for Windrise but the oak's bark and leaves; and the GPU culling and the grass trail stand unverified until a render of Windrise's grass on the parity page shows them, no fixture drawing that scene yet"
 x-needs: [game-exports]
 x-touches:
   [
