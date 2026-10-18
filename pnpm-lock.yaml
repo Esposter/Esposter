@@ -2643,6 +2643,9 @@ importers:
       genshin-engine:
         specifier: workspace:*
         version: link:../packages/genshin-engine
+      genshin-interface:
+        specifier: workspace:*
+        version: link:../packages/genshin-interface
       genshin-persona:
         specifier: workspace:*
         version: link:../packages/genshin-persona
