@@ -15,61 +15,55 @@ const paletteColourSchema = z
       .transform((hex) => Number.parseInt(hex.slice(1), 16)),
   })
   .transform(({ hex }) => hex);
-// Each kit's palette as its region's record holds it, fetched by its key from the hosted game data and checked against
-// Its schema as it arrives. Each schema reads only the fields its kit colours with, so a field the palette leaves out is
-// Never read and its kit keeps its constant. Snezhnaya's kit has no record, so it reads none
-const BuildingKitPaletteReaderMap = {
-  [BuildingKit.Fontaine]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Fontaine]: await readGameData(
+// The reader of each kit's palette: its record fetched by its key from the hosted game data and checked against its
+// Schema as it arrives, given as the bare palette the kit is coloured with and keyed by its kit at the caller. Each
+// Schema reads only the fields its kit colours with, so a field the palette leaves out is never read and its kit keeps
+// Its constant. Snezhnaya's kit has no record, so it has no reader
+const BuildingKitPaletteReaderMap: {
+  [K in keyof RegionPaletteMap]: (gameDataBaseUrl: string) => Promise<RegionPaletteMap[K]>;
+} = {
+  [BuildingKit.Fontaine]: (gameDataBaseUrl) =>
+    readGameData(
       gameDataBaseUrl,
       "regions/fontaine/palette",
       z.object({ awning: paletteColourSchema, slate: paletteColourSchema, stone: paletteColourSchema }),
     ),
-  }),
-  [BuildingKit.Inazuma]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Inazuma]: await readGameData(
+  [BuildingKit.Inazuma]: (gameDataBaseUrl) =>
+    readGameData(
       gameDataBaseUrl,
       "regions/inazuma/palette",
       z.object({ roofTile: paletteColourSchema, timber: paletteColourSchema }),
     ),
-  }),
-  [BuildingKit.Liyue]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Liyue]: await readGameData(
+  [BuildingKit.Liyue]: (gameDataBaseUrl) =>
+    readGameData(
       gameDataBaseUrl,
       "regions/liyue/palette",
       z.object({ lacquer: paletteColourSchema, roof: paletteColourSchema, stone: paletteColourSchema }),
     ),
-  }),
-  [BuildingKit.Mondstadt]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Mondstadt]: await readGameData(
+  [BuildingKit.Mondstadt]: (gameDataBaseUrl) =>
+    readGameData(
       gameDataBaseUrl,
       "regions/mondstadt/palette",
       z.object({ stone: paletteColourSchema, timber: paletteColourSchema }),
     ),
-  }),
-  [BuildingKit.Natlan]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Natlan]: await readGameData(
-      gameDataBaseUrl,
-      "regions/natlan/palette",
-      z.object({ building: paletteColourSchema }),
-    ),
-  }),
-  [BuildingKit.NodKrai]: async (gameDataBaseUrl) => ({
-    [BuildingKit.NodKrai]: await readGameData(
-      gameDataBaseUrl,
-      "regions/nod-krai/palette",
-      z.object({ iron: paletteColourSchema }),
-    ),
-  }),
-  [BuildingKit.Snezhnaya]: () => Promise.resolve({}),
-  [BuildingKit.Sumeru]: async (gameDataBaseUrl) => ({
-    [BuildingKit.Sumeru]: await readGameData(
-      gameDataBaseUrl,
-      "regions/sumeru/palette",
-      z.object({ terrace: paletteColourSchema }),
-    ),
-  }),
-} as const satisfies Record<BuildingKit, (gameDataBaseUrl: string) => Promise<Partial<RegionPaletteMap>>>;
+  [BuildingKit.Natlan]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "regions/natlan/palette", z.object({ building: paletteColourSchema })),
+  [BuildingKit.NodKrai]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "regions/nod-krai/palette", z.object({ iron: paletteColourSchema })),
+  [BuildingKit.Sumeru]: (gameDataBaseUrl) =>
+    readGameData(gameDataBaseUrl, "regions/sumeru/palette", z.object({ terrace: paletteColourSchema })),
+};
+// Whether a kit has a palette record to read, which Snezhnaya's does not
+const checkIsPaletteKit = (buildingKit: BuildingKit): buildingKit is keyof RegionPaletteMap =>
+  buildingKit in BuildingKitPaletteReaderMap;
+// Sets a kit's palette under the kit's own key, generic so the key and the palette it takes are checked against each other
+const setKitPalette = <K extends keyof RegionPaletteMap>(
+  regionPalettes: Partial<RegionPaletteMap>,
+  buildingKit: K,
+  palette: RegionPaletteMap[K],
+): void => {
+  regionPalettes[buildingKit] = palette;
+};
 
 // The palettes of the kits a region's buildings are built by, read with the region's data as it comes within reach, so
 // A region out of reach reads none
@@ -80,10 +74,13 @@ export const readRegionPalettes = async (
   const buildingKits = new Set(
     landmarks.flatMap((landmark) => (landmark.kind === LandmarkKind.Building ? [landmark.building.kit] : [])),
   );
-  const kitPalettes = await Promise.all(
-    Array.from(buildingKits, (buildingKit) => BuildingKitPaletteReaderMap[buildingKit](gameDataBaseUrl)),
-  );
   const regionPalettes: Partial<RegionPaletteMap> = {};
-  for (const kitPalette of kitPalettes) Object.assign(regionPalettes, kitPalette);
+  await Promise.all(
+    Array.from(buildingKits, async (buildingKit) => {
+      if (!checkIsPaletteKit(buildingKit)) return;
+      const palette = await BuildingKitPaletteReaderMap[buildingKit](gameDataBaseUrl);
+      setKitPalette(regionPalettes, buildingKit, palette);
+    }),
+  );
   return regionPalettes;
 };
