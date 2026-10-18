@@ -17,7 +17,7 @@ flowchart LR
   SESSION --> BOARD["The board: the player's choices"]
   BOARD --> ENGINE["The engine plays the choice, then the opponent's turns"]
   ENGINE --> BOARD
-  ENGINE -->|"the duel ends"| WORLD["The board's leave returns to the world"]
+  ENGINE -->|"the duel ends"| WORLD["The board's leave returns to the world, with whether the player won"]
 ```
 
 ## The board and the session
