@@ -6,18 +6,20 @@ import { AchievementEventKind } from "#src/models/achievement/AchievementEventKi
 import { checkIsQuestFinished } from "#src/services/quest/checkIsQuestFinished";
 
 // The doings a quest's progress moving on hands the achievements: each step it moved past finishes a sub-quest, and a
-// Quest its last step finishes finishes the main quest it is filed under, once
+// Main quest its last step finishes finishes once, under its id. A Reputation request is filed under a parent it does
+// Not share an id with, so finishing it finishes no main quest: that parent's last sub quest is another one
 export const getFinishedQuestEvents = (
   quest: Quest,
   progress: QuestProgress,
   nextProgress: QuestProgress,
 ): AchievementEvent[] => {
   const finishedSteps = quest.steps.slice(progress.stepIndex, nextProgress.stepIndex);
-  const isMainQuestFinished = checkIsQuestFinished(quest, nextProgress) && !checkIsQuestFinished(quest, progress);
+  const isMainQuestFinished =
+    quest.mainId === quest.id && checkIsQuestFinished(quest, nextProgress) && !checkIsQuestFinished(quest, progress);
   return [
     ...finishedSteps.map(({ id }) => ({ kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: id })),
     ...(isMainQuestFinished
-      ? [{ kind: AchievementEventKind.ParentQuestFinished, quantity: 1, targetId: quest.id }]
+      ? [{ kind: AchievementEventKind.ParentQuestFinished, quantity: 1, targetId: quest.mainId }]
       : []),
   ];
 };

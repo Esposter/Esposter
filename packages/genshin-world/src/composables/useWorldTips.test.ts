@@ -109,6 +109,17 @@ describe(useWorldTips, () => {
     expect(showingTip.value).toBeUndefined();
   });
 
+  test("a parent-quest tip is shown when the main quest it names finishes", () => {
+    expect.hasAssertions();
+    const { events, showingTip } = createWorldTips([
+      tip(1, { paramList: [QUEST_ID], triggerType: TipTriggerType.FinishParentQuestOr }),
+    ]);
+    events.emit("parentQuestFinish", "2");
+    expect(showingTip.value).toBeUndefined();
+    events.emit("parentQuestFinish", QUEST_ID);
+    expect(showingTip.value?.id).toBe(1);
+  });
+
   test("a world level tip is shown when the world level reaches its level", () => {
     expect.hasAssertions();
     const { events, showingTip } = createWorldTips([

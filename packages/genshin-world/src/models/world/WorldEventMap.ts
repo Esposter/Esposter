@@ -29,7 +29,8 @@ export interface WorldEventMap {
   leaveCombat: [];
   // The first collection of an Oculus, which the save keeps as found
   oculusFound: [];
-  parentQuestFinish: [];
+  // A main quest finished, by its id, once its last step is done. A Reputation request finishes no main quest
+  parentQuestFinish: [mainId: string];
   partyHealthChanged: [change: PartyHealthChange];
   pickUpMora: [];
   // An enemy whose poise a hit broke, emitted once for each time its poise breaks
