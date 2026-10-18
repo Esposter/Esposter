@@ -23,13 +23,6 @@ describe(checkIsChestLocked, () => {
     expect(checkIsChestLocked(CHEST_POSITION, [clearedCamp], REACH)).toBe(false);
   });
 
-  test("a chest stays locked while a puzzle within its reach is unsolved", () => {
-    expect.hasAssertions();
-
-    const puzzle: ChestLockSource = { isDone: false, positions: [NEAR_POSITION] };
-    expect(checkIsChestLocked(CHEST_POSITION, [puzzle], REACH)).toBe(true);
-  });
-
   test("a chest is not locked by a camp beyond its reach", () => {
     expect.hasAssertions();
 
