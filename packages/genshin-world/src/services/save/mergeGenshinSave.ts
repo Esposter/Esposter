@@ -1,5 +1,6 @@
 import type { AchievementProgressSave } from "#src/models/achievement/AchievementProgressSave";
 import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
+import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -42,6 +43,27 @@ const checkIsFurtherReputation = (reputation: ReputationProgress, than: Reputati
 // The Frostbearing Tree's progress is the further of the two, by its level and then by the items held toward the next
 const checkIsFurtherOffering = (progress: OfferingProgressSave, than: OfferingProgressSave): boolean =>
   progress.level === than.level ? progress.heldCount > than.heldCount : progress.level > than.level;
+// A character is the copy further on by its level and then its constellations, kept whole so its weapon and artifacts stay
+// One copy's. A tie on both keeps the account's
+const checkIsFurtherCharacter = (character: CharacterSave, than: CharacterSave): boolean =>
+  character.level === than.level
+    ? character.constellationCount > than.constellationCount
+    : character.level > than.level;
+// The characters both copies hold merge to the copy further on, with the larger copy count, and a character only the
+// Guest holds is kept after the account's
+const mergeCharacters = (account: CharacterSave[], guest: CharacterSave[]): CharacterSave[] => {
+  const guestCharacterMap = new Map(guest.map((character) => [character.id, character]));
+  const accountCharacterIds = new Set(account.map(({ id }) => id));
+  return [
+    ...account.map((accountCharacter) => {
+      const guestCharacter = guestCharacterMap.get(accountCharacter.id);
+      if (!guestCharacter) return accountCharacter;
+      const further = checkIsFurtherCharacter(guestCharacter, accountCharacter) ? guestCharacter : accountCharacter;
+      return { ...further, copyCount: Math.max(accountCharacter.copyCount, guestCharacter.copyCount) };
+    }),
+    ...guest.filter(({ id }) => !accountCharacterIds.has(id)),
+  ];
+};
 // The World Level adjustment is the one changed later, one never changed being the earliest
 const checkIsLaterWorldLevelAdjustment = (
   adjustment: WorldLevelAdjustmentSave,
@@ -63,7 +85,7 @@ const checkIsLaterWorldLevelAdjustment = (
 // Chests are the account's copy, except that a Primogem refill count from the same game day takes the larger, as a count
 // Of refills within a day only grows. The World Level adjustment is the copy changed later, since the one change of it the player
 // Made last is the one they still stand by. The Traveler's name is the account's, or the guest's while the account has
-// Chosen none
+// Chosen none. The characters both copies hold are the copy further on, and a character only the guest holds is kept
 export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): GenshinSave => {
   const achievements = { ...account.achievements };
   for (const [achievementId, guestProgress] of Object.entries(guest.achievements)) {
@@ -91,6 +113,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   return {
     achievements,
     adventureExp: Math.max(account.adventureExp, guest.adventureExp),
+    characters: mergeCharacters(account.characters, guest.characters),
     companionshipExp,
     crafting: {
       craftedCounts,

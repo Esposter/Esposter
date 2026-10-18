@@ -1,3 +1,6 @@
+import type { CharacterSave } from "#src/models/character/CharacterSave";
+
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { mergeGenshinSave } from "#src/services/save/mergeGenshinSave";
 import { INITIAL_WISH_PITY } from "#src/services/wish/constants";
@@ -21,7 +24,14 @@ describe(mergeGenshinSave, () => {
   const GUEST_COUNT = 3;
   const ACCOUNT_EXP = 100;
   const GUEST_EXP = 200;
-  const CHARACTER_ID = "6";
+  const CHARACTER_ID = 6;
+  const OTHER_CHARACTER_ID = 7;
+  const ACCOUNT_CHARACTER_LEVEL = 7;
+  const GUEST_CHARACTER_LEVEL = 10;
+  const ACCOUNT_CHARACTER_COPY_COUNT = 3;
+  const GUEST_CHARACTER_COPY_COUNT = 2;
+  const ACCOUNT_CONSTELLATION_COUNT = 4;
+  const GUEST_CONSTELLATION_COUNT = 2;
   const RECIPE_ID = 22_007;
   const OTHER_RECIPE_ID = 22_008;
   const ACCOUNT_LEVEL = 1;
@@ -30,6 +40,23 @@ describe(mergeGenshinSave, () => {
   const FATE_POINTS = 1;
   const ACCOUNT_TRAVELER_NAME = "a";
   const GUEST_TRAVELER_NAME = "b";
+  // A character as a save holds it, the fields a test reads set by its own overrides
+  const characterSave = (overrides: Partial<CharacterSave>): CharacterSave => ({
+    artifacts: [],
+    ascension: 0,
+    constellationCount: 0,
+    copyCount: 1,
+    id: CHARACTER_ID,
+    level: 1,
+    stellaFortunaCount: 0,
+    talentLevels: {
+      [CombatTalent.ElementalBurst]: 1,
+      [CombatTalent.ElementalSkill]: 1,
+      [CombatTalent.NormalAttack]: 1,
+    },
+    weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
+    ...overrides,
+  });
 
   test("unions the landmarks", () => {
     expect.hasAssertions();
@@ -187,6 +214,47 @@ describe(mergeGenshinSave, () => {
     const guest = { ...EMPTY_GENSHIN_SAVE, reputation: { exp: ACCOUNT_EXP, level: GUEST_LEVEL } };
 
     expect(mergeGenshinSave(account, guest).reputation).toStrictEqual({ exp: ACCOUNT_EXP, level: GUEST_LEVEL });
+  });
+
+  test("the copy further on is kept when both saves hold a character", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      characters: [characterSave({ copyCount: ACCOUNT_CHARACTER_COPY_COUNT, level: ACCOUNT_CHARACTER_LEVEL })],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      characters: [characterSave({ copyCount: GUEST_CHARACTER_COPY_COUNT, level: GUEST_CHARACTER_LEVEL })],
+    };
+
+    expect(mergeGenshinSave(account, guest).characters).toStrictEqual([
+      characterSave({ copyCount: ACCOUNT_CHARACTER_COPY_COUNT, level: GUEST_CHARACTER_LEVEL }),
+    ]);
+  });
+
+  test("equal levels are settled by constellations", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      characters: [characterSave({ constellationCount: ACCOUNT_CONSTELLATION_COUNT, level: GUEST_CHARACTER_LEVEL })],
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      characters: [characterSave({ constellationCount: GUEST_CONSTELLATION_COUNT, level: GUEST_CHARACTER_LEVEL })],
+    };
+
+    expect(mergeGenshinSave(account, guest).characters).toStrictEqual([
+      characterSave({ constellationCount: ACCOUNT_CONSTELLATION_COUNT, level: GUEST_CHARACTER_LEVEL }),
+    ]);
+  });
+
+  test("a character only the guest holds is kept", () => {
+    expect.hasAssertions();
+    const guestCharacter = characterSave({ id: OTHER_CHARACTER_ID });
+    const account = { ...EMPTY_GENSHIN_SAVE, characters: [] };
+    const guest = { ...EMPTY_GENSHIN_SAVE, characters: [guestCharacter] };
+
+    expect(mergeGenshinSave(account, guest).characters).toStrictEqual([guestCharacter]);
   });
 
   test("keeps the account's Traveler name", () => {
