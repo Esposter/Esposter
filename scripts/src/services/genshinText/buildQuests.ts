@@ -1,4 +1,5 @@
 import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
+import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { Quest } from "genshin-world";
@@ -6,6 +7,7 @@ import type { Quest } from "genshin-world";
 import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import {
+  GIVING_GROUP_TABLE_NAME,
   GIVING_TABLE_NAME,
   MAIN_QUEST_DEFAULT_TYPE,
   MAIN_QUEST_TABLE_NAME,
@@ -51,6 +53,9 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME).map((subQuest) => [subQuest.subId, subQuest]),
   );
   const givingMap = new Map(readExcelTable<DumpedGiving>(GIVING_TABLE_NAME).map((giving) => [giving.id, giving]));
+  const givingGroupMap = new Map(
+    readExcelTable<DumpedGivingGroup>(GIVING_GROUP_TABLE_NAME).map((givingGroup) => [givingGroup.id, givingGroup]),
+  );
   const rewardsByQuest = readCarriedQuestRewards();
   const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
@@ -61,7 +66,17 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       const mainQuest = subQuest && mainQuestMap.get(subQuest.mainId);
       if (!subQuest || !giving || !mainQuest)
         throw new InvalidOperationError(Operation.Read, questId, "has no sub quest, giving or world quest row");
-      return readReputationRequestQuest({ giving, mainQuest, rewards, subQuest });
+      const groupItemIds = (giving.givingGroupIds ?? []).flatMap((givingGroupId) => {
+        const givingGroup = givingGroupMap.get(givingGroupId);
+        if (!givingGroup)
+          throw new InvalidOperationError(
+            Operation.Read,
+            questId,
+            `names group ${givingGroupId}, which the dump lacks`,
+          );
+        return givingGroup.itemIds;
+      });
+      return readReputationRequestQuest({ giving, groupItemIds, mainQuest, rewards, subQuest });
     }
     const mainQuest = mainQuestMap.get(Number(questId));
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
