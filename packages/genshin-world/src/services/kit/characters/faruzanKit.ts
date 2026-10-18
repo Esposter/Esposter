@@ -48,6 +48,9 @@ const createOffsetBody = (
 // Polyhedron, whose Whirlwind Pulses shred each enemy they reach and give the party Prayerful Wind's Anemo DMG Bonus. The
 // Manifest Gale and Pressurized Collapse, her partial aimed shot, her particles, her passive, and
 // Constellations 1, 4 and 6 are not built. Constellation 2's longer polyhedron is built.
+// Constellation 1 needs the Manifest Gale's Hurricane Arrows and Pressurized Collapse, which are not built
+// Constellation 4 needs Pressurized Collapse's vortex, which restores energy by the opponents it hits, not built
+// Constellation 6 needs Pressurized Collapse and the Prayerful Wind's Benefit CRIT DMG, which are not built
 export const createFaruzanKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const perfidiousWindRuinResistanceReduction = readParameter("perfidiousWindRuinResistanceReduction");
   const perfidiousWindRuinSeconds = readParameter("perfidiousWindRuinSeconds");
