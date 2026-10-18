@@ -23,8 +23,8 @@ import { describe, expect, test } from "vitest";
 
 const YOIMIYA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YOIMIYA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createYoimiyaCombatant = (): Combatant => ({
-  ascension: 0,
+const createYoimiyaCombatant = (ascension = 0): Combatant => ({
+  ascension,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: YOIMIYA_CHARACTER_ID,
   constellationCount: 0,
@@ -115,5 +115,52 @@ describe(createYoimiyaKitBehaviour, () => {
       ["yoimiya-aurous-blaze", 10],
       ["yoimiya-aurous-blaze-cooldown", 2],
     ]);
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    // Ascension 1: two Blazing Arrows that strike an enemy while Niwabi Fire-Dance stands count two, 2% Pyro DMG Bonus each
+    const combatant = createYoimiyaCombatant(1);
+    const kitEffectState: KitEffectState = { effects: [] };
+    YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const arrow = createDamageTakenEvent(
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      takeOne(YOIMIYA_KIT.normalAttacks[0]?.hits ?? []),
+      combatant,
+      AttackTag.NormalAttack,
+    );
+    const context = createKitTestContext(combatant, { kitEffectState });
+    YOIMIYA_KIT.onKitEvent?.(arrow, context, combatant);
+    YOIMIYA_KIT.onKitEvent?.(arrow, context, combatant);
+
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([
+      {
+        amount: 0.04,
+        attribute: Attribute.PyroDamageBonus,
+        characterId: YOIMIYA_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 3,
+        source: "yoimiya-a1",
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    // Below Ascension 1 the same two Blazing Arrows raise no count
+    const combatant = createYoimiyaCombatant(0);
+    const kitEffectState: KitEffectState = { effects: [] };
+    YOIMIYA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const arrow = createDamageTakenEvent(
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      takeOne(YOIMIYA_KIT.normalAttacks[0]?.hits ?? []),
+      combatant,
+      AttackTag.NormalAttack,
+    );
+    const context = createKitTestContext(combatant, { kitEffectState });
+    YOIMIYA_KIT.onKitEvent?.(arrow, context, combatant);
+    YOIMIYA_KIT.onKitEvent?.(arrow, context, combatant);
+
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
   });
 });
