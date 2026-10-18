@@ -58,7 +58,7 @@ describe(toCommissionTask, () => {
       enterDistance: 40,
       exitDistance: 60,
       finishKind: "None",
-      finishProgress: 0,
+      finishProgress: 1,
       id: ID,
       kind: "Quest",
       newGroupIds: [],

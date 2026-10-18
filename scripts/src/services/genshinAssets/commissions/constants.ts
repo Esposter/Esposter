@@ -4,3 +4,5 @@ export const DAILY_TASK_TYPE_DEFAULT = "DAILY_TASK_QUEST";
 export const DAILY_FINISH_DEFAULT = "DAILY_FINISH_NONE";
 // The dump leaves a task's center position out when it is empty, so a task with no center position has the empty one
 export const DAILY_TASK_CENTER_POSITION_DEFAULT = "";
+// A quest task's finish count is its quest's one completion, since the dump leaves most quest tasks' count at zero
+export const QUEST_TASK_FINISH_PROGRESS = 1;
