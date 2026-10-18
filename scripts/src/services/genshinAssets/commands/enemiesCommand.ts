@@ -10,7 +10,7 @@ export const enemiesCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish the enemy kinds the regions' camps place, read from the game's monster, curve and archive tables in the text dump, and every level curve they name, to the game data",
+      "Publish the enemy kinds the regions' camps place and the Mondstadt bounties hunt, read from the game's monster, curve and archive tables in the text dump, and every level curve they name, to the game data",
     name: "enemies",
   },
   run: async ({ args }) => {
