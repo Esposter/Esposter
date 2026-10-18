@@ -34,6 +34,18 @@ The package SHALL keep every item within the grid's columns and compact the layo
 - **WHEN** the layout is placed
 - **THEN** the item is narrowed to the grid's width
 
+#### Scenario: An overlap left under no compaction moves down until it clears
+
+- **GIVEN** an item left overlapping another in a grid with no compaction
+- **WHEN** the layout is placed
+- **THEN** the overlapping item moves down until it clears the other
+
+#### Scenario: A horizontal push past the last column moves the item down a row
+
+- **GIVEN** two items in one row that a sideways compaction pushes past the last column
+- **WHEN** the layout is placed
+- **THEN** the pushed item moves down a row and ends at the grid's right edge
+
 ### Requirement: A collision pushes, swaps or refuses
 
 The package SHALL resolve an item dropped onto others by pushing them aside, swapping with the one it lands on, or refusing the move, as the consumer chooses.
@@ -93,6 +105,13 @@ The package SHALL start a drag only once a press moves past the start distance, 
 - **THEN** the drag carries on with the first pointer
 - **AND** the second press starts nothing
 
+#### Scenario: A press whose pointer was released outside the grid starts no drag
+
+- **GIVEN** a press on an item
+- **WHEN** the pointer moves past the start distance with no button held
+- **THEN** no drag starts
+- **AND** nothing is written
+
 ### Requirement: An item resizes from any edge within the grid
 
 The package SHALL resize an item from any of its four edges or four corners, keeping the opposite edge in place and the item within the grid.
@@ -120,6 +139,12 @@ The package SHALL place a padding around the grid that the consumer sets apart f
 - **WHEN** the layout is placed
 - **THEN** the first item starts at the padding from the grid's edge
 - **AND** neighbouring items stand the gap apart
+
+#### Scenario: The grid's height is its last row's bottom plus the padding on both sides
+
+- **GIVEN** a gap of 10, a padding of 20, rows 40 tall, and one item one row tall at the top
+- **WHEN** the grid's height is read
+- **THEN** it is 80
 
 ### Requirement: An item can take its height from its content
 
@@ -154,6 +179,37 @@ The package SHALL take an item dragged in from outside any grid or from another 
 - **GIVEN** an item dragged out of its grid
 - **WHEN** it is released over no grid
 - **THEN** nothing is written and the item returns to its cell
+
+#### Scenario: A palette entry dropped onto an item under prevent is refused
+
+- **GIVEN** the prevent mode and a palette entry dragged with the span it would take
+- **WHEN** it is released over an item of the grid
+- **THEN** the grid writes nothing
+
+#### Scenario: A dropped item wider than the grid is narrowed to its columns
+
+- **GIVEN** a palette entry wider than the grid's columns
+- **WHEN** it is released over the grid's first column
+- **THEN** the grid writes it at the first column, spanning every column
+
+#### Scenario: A move refused by the grid under the pointer commits nothing
+
+- **GIVEN** two grids on one page, the second in the prevent mode with an item where the drop would land
+- **WHEN** an item is dragged from the first and released over the second
+- **THEN** the second grid writes nothing
+- **AND** the first grid writes nothing, so the item stays where it was
+
+#### Scenario: A release over another grid routes past the dragged tile
+
+- **GIVEN** the dragged item's own tile under the pointer, with another grid's tile beneath it
+- **WHEN** the item is released
+- **THEN** the release reaches the grid beneath the dragged tile
+
+#### Scenario: A cancelled palette press accepts once on the next release
+
+- **GIVEN** a palette press that the browser cancels
+- **WHEN** the pointer is pressed and released again over the grid
+- **THEN** the grid writes the entry once
 
 ### Requirement: A nested grid owns its items' gestures
 
