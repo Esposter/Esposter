@@ -27,6 +27,7 @@ export const getArtifactDetailStats = (
   gameText: GameText,
   artifactMainAffixCurves: readonly ArtifactMainAffixCurve[],
 ): ArtifactDetailStats => ({
+  isLocked: artifact.isLocked,
   mainStat: {
     label: getAffixLabel(artifact.mainAffix, gameText),
     value: getAffixValue(artifact.mainAffix, getArtifactMainAffixValue(artifact, artifactMainAffixCurves)),

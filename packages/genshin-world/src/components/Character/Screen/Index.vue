@@ -23,6 +23,7 @@ import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
 import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
+import { toggleCharacterArtifactLock } from "#src/services/artifact/toggleCharacterArtifactLock";
 import { unequipArtifactToBag } from "#src/services/artifact/unequipArtifactToBag";
 import { activateConstellation } from "#src/services/character/activateConstellation";
 import { ascendCharacter } from "#src/services/character/ascendCharacter";
@@ -348,6 +349,13 @@ const unequipArtifactAt = (index: number) => {
   );
   inventory.value = unequipped.inventory;
 };
+// The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
+const toggleArtifactLockAt = (index: number) => {
+  const slot = ARTIFACT_SLOT_ORDER[index];
+  if (!character.value || !slot) return;
+  const toggled = toggleCharacterArtifactLock(character.value, slot);
+  characters.value = characters.value.map((item) => (item.id === toggled.id ? toggled : item));
+};
 // Per slot, whether the bag holds no piece for it, which Equip is disabled on
 const equipDisabledSlots = computed(() =>
   ARTIFACT_SLOT_ORDER.map((slot) => !inventory.value.items.some(({ artifact }) => artifact?.slot === slot)),
@@ -399,13 +407,16 @@ const activate = () => {
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
         :equip-disabled-slots="equipDisabledSlots"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
+        :lock-label="gameText[GameTextKey.ArtifactActionLock]"
         :no-set-bonus-label="noSetBonusLabel"
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
         :set-bonus-lines="setBonusLines"
         :slot-names="artifactSlotNames"
         :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"
+        :unlock-label="gameText[GameTextKey.ArtifactActionUnlock]"
         @equip="equipArtifactAt"
+        @lock="toggleArtifactLockAt"
         @unequip="unequipArtifactAt"
       />
       <CharacterMenuConstellation
