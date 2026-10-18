@@ -38,6 +38,7 @@ describe(createZibaiKitBehaviour, () => {
     expect(ZIBAI_KIT.chargedAttackStamina).toBe(20);
     expect(ZIBAI_KIT.skillCooldownSeconds).toBe(18);
   });
+
   test("her Moonsign Benediction adds 0.7% Base DMG Bonus per 100 Defense to Lunar-Crystallize, at most 14%", () => {
     expect.hasAssertions();
     expect(

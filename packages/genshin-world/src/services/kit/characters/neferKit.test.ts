@@ -45,6 +45,7 @@ describe(createNeferKitBehaviour, () => {
     expect.hasAssertions();
     expect(NEFER_KIT.elementalSkill.hits).not.toStrictEqual(TRAVELER_KIT.elementalSkill.hits);
   });
+
   test("her Moonsign Benediction adds 0.0175% Base DMG Bonus a point of Elemental Mastery to Lunar-Bloom, at most 14%", () => {
     expect.hasAssertions();
     expect(
