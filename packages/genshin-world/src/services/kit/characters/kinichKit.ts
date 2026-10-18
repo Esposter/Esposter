@@ -1,17 +1,24 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
@@ -35,11 +42,15 @@ const LOOP_SHOT_POINTS = 3;
 const BLIND_SPOT_APPEARANCE_FRAMES = 30;
 const BLIND_SPOT_POINTS = 4;
 const BLIND_SPOT_HALF_ANGLE = (35 * Math.PI) / 180;
+// The Cannon's tap releases at thirty-five frames (skill.go line 33), its points are spent one frame after that (line 20),
+// And its blind spot appears five frames after the spend (line 32, blindSpotAppearanceDelays[0]): forty-one frames in all
+const CANNON_POINTS_SPEND_FRAMES = 36;
+const CANNON_BLIND_SPOT_APPEARANCE_FRAMES = 41;
 
 // The blind spot lies a quarter turn either side of Kinich's bearing from the enemy his press turns to, on the side the
 // Random source draws, as gcsim's createBlindSpot does, at the distance he stands from it. Its circle is the chord of its
 // Window, which Kinich's body must stand within on the frame the blind spot is due, or any frame after it until it is filled
-const castBlindSpot = (context: KitContext, target: Enemy) => {
+const castBlindSpot = (context: KitContext, target: Enemy, appearanceFrames: number) => {
   const {
     activeCombatant: { characterId },
     body,
@@ -56,7 +67,7 @@ const castBlindSpot = (context: KitContext, target: Enemy) => {
     characterId,
     { x: x + distance * Math.sin(centreAngle), z: z + distance * Math.cos(centreAngle) },
     {
-      nextTickSeconds: toKitSeconds(BLIND_SPOT_APPEARANCE_FRAMES),
+      nextTickSeconds: toKitSeconds(appearanceFrames),
       onTick: (tickContext) => {
         // A field no longer on the team gives nothing, and neither does a body that is not Kinich's standing in it
         if (
@@ -79,11 +90,12 @@ const castBlindSpot = (context: KitContext, target: Enemy) => {
 // Frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a second up
 // To twenty while it lasts, and his Loop Shots replace his normal attacks in it, each gaining three points as it starts.
 // The press also places the blind spot on the enemy it turns to, which Kinich standing in gives four points to.
-// Not built: the press inside the blessing, the Scalespiker Cannon, which spends the points and deals the blessing's hits,
-// And waits on the cooldown bypass and the points gate. Constellation 1 needs Movement SPD after a mid-air swing, which no
-// Attribute carries, and Cannon CRIT DMG. Constellation 2 needs the Dendro RES cut on his skill's hits, and the first
-// Scalespiker shot after the blessing. Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's
-// Energy, which wait on it. Constellation 6 needs its bounce hit, which the kit does not build
+// The press inside the blessing is the Scalespiker Cannon, which starts only with all twenty points, spends them, and deals
+// The blessing's one hit on the enemy it turns to, with no cooldown of its own. Not built: the held Cannon, since a stance
+// Holds no hold record. Constellation 1 needs Movement SPD after a mid-air swing, which no Attribute carries, and Cannon
+// CRIT DMG. Constellation 2 needs the Dendro RES cut on his skill's hits, and the first Scalespiker shot after the blessing,
+// Which widens the Cannon's circle. Constellation 4 needs the Nightsoul's Blessing, its Loop Shots and Scalespiker's Energy,
+// Which wait on it. Constellation 6 needs its bounce hit, which the kit does not build
 export const createKinichKitBehaviour = ({
   readFrames,
   readFramesList,
@@ -108,11 +120,37 @@ export const createKinichKitBehaviour = ({
   const gainLoopShotPoints = (context: KitContext) => {
     generateKitNightsoulPoints(context, LOOP_SHOT_POINTS, NIGHTSOUL_MAXIMUM);
   };
-  // The blessing's two Loop Shots, which take the place of his normal attacks while it lasts
+  // The Cannon's points are spent a frame after its tap releases, as its windup ends (skill.go line 20), so Kinich holds all
+  // Twenty through the windup, and his team reads them until then. A blessing that has ended by then has no points to spend
+  const spendCannonPoints = ({ activeCombatant: { characterId }, kitEffectState }: KitContext) =>
+    scheduleKitTask(kitEffectState, characterId, toKitSeconds(CANNON_POINTS_SPEND_FRAMES), (tickContext) => {
+      const spent = spendKitResource(tickContext.kitEffectState, characterId, NIGHTSOUL_POINTS_ID);
+      if (spent > 0)
+        emitKitEvent({ characterId, kind: KitEventKind.NightsoulPointsConsumed, points: spent }, tickContext);
+    });
+  // The Scalespiker Cannon, the blessing's skill: it starts only with the blessing's full points, spends them as its windup
+  // Ends, and places the blind spot on the enemy it turns to
+  const scalespikerCannon: KitActionBehaviour = {
+    canStart: ({ activeCombatant, kitEffectState }) =>
+      countKitResource(kitEffectState.effects, activeCombatant.characterId, NIGHTSOUL_POINTS_ID) >= NIGHTSOUL_MAXIMUM,
+    onStart: (context, target) => {
+      spendCannonPoints(context);
+      if (target) castBlindSpot(context, target, CANNON_BLIND_SPOT_APPEARANCE_FRAMES);
+    },
+  };
+  // The blessing's two Loop Shots, which take the place of his normal attacks while it lasts, and its Scalespiker Cannon,
+  // Which takes the place of his skill
   const blessingStance = readStance("blessing", {
     normalAttacks: [{ onStart: gainLoopShotPoints }, { onStart: gainLoopShotPoints }],
+    skill: scalespikerCannon,
   });
   return {
+    // The Cannon's press is the blessing's own action, so the skill's cooldown neither holds it nor takes one from it, as
+    // gcsim's Scalespiker Cannon sets none
+    getSkillCooldownMultiplier: ({ activeCombatant, kitEffectState }) =>
+      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId) ? 0 : 1,
+    isSkillCooldownWaived: ({ activeCombatant, kitEffectState }) =>
+      hasKitNightsoulBlessing(kitEffectState.effects, activeCombatant.characterId),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState, random }) =>
         castKitSummon(kitEffectState, body, combatant, createDragonBreathHits(random), {
@@ -120,7 +158,7 @@ export const createKinichKitBehaviour = ({
         }),
     },
     skill: {
-      // In the blessing the press is the Scalespiker Cannon, not built, so it does nothing there
+      // In the blessing the stance plays the Scalespiker Cannon in this skill's place, so this press starts nothing there
       onStart: (context, target) => {
         const { activeCombatant: combatant, kitEffectState } = context;
         if (hasKitNightsoulBlessing(kitEffectState.effects, combatant.characterId)) return;
@@ -130,7 +168,7 @@ export const createKinichKitBehaviour = ({
           secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
         });
         enterKitStance(kitEffectState, combatant, blessingStance, NIGHTSOUL_BLESSING_SECONDS, { isEndedOnSwap: true });
-        if (target) castBlindSpot(context, target);
+        if (target) castBlindSpot(context, target, BLIND_SPOT_APPEARANCE_FRAMES);
       },
     },
   };

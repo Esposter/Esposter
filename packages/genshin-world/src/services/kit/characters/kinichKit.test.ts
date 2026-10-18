@@ -196,4 +196,65 @@ describe(createKinichKitBehaviour, () => {
     stepKitSeconds(context, toKitSeconds(60));
     expect(countKinichPoints(context)).toBeCloseTo(8);
   });
+
+  test("the Scalespiker Cannon starts only with all twenty Nightsoul points: it is refused at nineteen and starts at twenty", () => {
+    expect.hasAssertions();
+    const context = createBlessingContext(() => 0.9);
+    const cannon = findKitStance(context.kitEffectState.effects, KINICH_CHARACTER_ID)?.combatant.kit.elementalSkill;
+    stepKitSeconds(context, 9.5);
+    expect(cannon?.canStart?.(context)).toBe(false);
+    stepKitSeconds(context, 0.5);
+    expect(cannon?.canStart?.(context)).toBe(true);
+  });
+
+  test("the Scalespiker Cannon's press spends all of Kinich's twenty points as its windup ends, and holds them until then", () => {
+    expect.hasAssertions();
+    const context = createBlessingContext(() => 0.9);
+    const stance = findKitStance(context.kitEffectState.effects, KINICH_CHARACTER_ID);
+    const [loopShot] = stance?.combatant.kit.normalAttacks ?? [];
+    const cannon = stance?.combatant.kit.elementalSkill;
+    // Nine seconds in, a Loop Shot tops the blessing up to twenty, with a little over a second of it left to hold the windup
+    stepKitSeconds(context, 9);
+    loopShot?.onStart?.(context);
+    cannon?.onStart?.(context, createEnemyAt(0, 0));
+    stepKitSeconds(context, toKitSeconds(35));
+    expect(countKinichPoints(context)).toBe(20);
+    stepKitSeconds(context, toKitSeconds(1));
+    expect(countKinichPoints(context)).toBeLessThan(1);
+  });
+
+  test("the Scalespiker Cannon's blind spot appears at its forty-first frame, and gives Kinich four points standing in it", () => {
+    expect.hasAssertions();
+    const context = createBlessingContext(() => 0.9);
+    const stance = findKitStance(context.kitEffectState.effects, KINICH_CHARACTER_ID);
+    const [loopShot] = stance?.combatant.kit.normalAttacks ?? [];
+    const cannon = stance?.combatant.kit.elementalSkill;
+    // Nine seconds in, a Loop Shot tops the blessing up to twenty, so the Cannon is pressed with the blessing still on at its
+    // Forty-first frame, the points it regenerates in that time being the only ones below four
+    stepKitSeconds(context, 9);
+    loopShot?.onStart?.(context);
+    cannon?.onStart?.(context, createEnemyAt(0, 0));
+    stepKitSeconds(context, toKitSeconds(40));
+    expect(countKinichPoints(context)).toBeLessThan(4);
+    context.body.position = { x: 0, z: -3 };
+    stepKitSeconds(context, toKitSeconds(1));
+    expect(countKinichPoints(context)).toBeGreaterThan(4);
+  });
+
+  test("the Scalespiker Cannon's press sets no cooldown, and the skill's cooldown does not hold it in the blessing", () => {
+    expect.hasAssertions();
+    const outside = createKitTestContext(createKinichCombatant());
+    expect(KINICH_KIT.isSkillCooldownWaived?.(outside)).toBe(false);
+    expect(KINICH_KIT.getSkillCooldownMultiplier?.(outside)).toBe(1);
+    const context = createBlessingContext(() => 0.9);
+    expect(KINICH_KIT.isSkillCooldownWaived?.(context)).toBe(true);
+    expect(KINICH_KIT.getSkillCooldownMultiplier?.(context)).toBe(0);
+  });
+
+  test("the Scalespiker Cannon is one hit, which lands at its forty-eighth frame", () => {
+    expect.hasAssertions();
+    const context = createBlessingContext(() => 0.9);
+    const cannon = findKitStance(context.kitEffectState.effects, KINICH_CHARACTER_ID)?.combatant.kit.elementalSkill;
+    expect(cannon?.hits.map(({ hitmarkSeconds }) => hitmarkSeconds)).toStrictEqual([toKitSeconds(48)]);
+  });
 });

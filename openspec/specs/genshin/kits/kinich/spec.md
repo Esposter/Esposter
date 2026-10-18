@@ -42,7 +42,7 @@ Kinich's plunge attacks SHALL land a collision and two plunge hits on the enemie
 
 ### Requirement: Kinich's skill press enters the blessing
 
-Kinich's elemental skill press SHALL enter the Nightsoul Blessing with no points when he is not in it, SHALL deal no damage, and SHALL start an 18-second cooldown. In the blessing the press SHALL do nothing until the Scalespiker Cannon is built.
+Kinich's elemental skill press SHALL enter the Nightsoul Blessing with no points when he is not in it, SHALL deal no damage, and SHALL start an 18-second cooldown. In the blessing the press is the Scalespiker Cannon, which the Cannon requirement below gives.
 
 #### Scenario: Skill press spends its cooldown
 
@@ -55,6 +55,29 @@ Kinich's elemental skill press SHALL enter the Nightsoul Blessing with no points
 - **GIVEN** the skill is on cooldown
 - **WHEN** the player presses the elemental skill
 - **THEN** the press is not used
+
+### Requirement: The Scalespiker Cannon in the blessing
+
+In the Nightsoul Blessing Kinich's elemental skill press SHALL be the Scalespiker Cannon. It SHALL start only with all twenty of his Nightsoul points, SHALL spend all of them as its windup ends, at its thirty-sixth frame, SHALL set no skill cooldown, and SHALL deal one Dendro hit on the circle of radius three round the primary target at its forty-eighth frame. Its blind spot SHALL appear at its forty-first frame.
+
+#### Scenario: Cannon refused below twenty points
+
+- **GIVEN** Kinich is in the blessing with nineteen points
+- **WHEN** the player presses the elemental skill
+- **THEN** the Cannon does not start, and no points are spent
+
+#### Scenario: Cannon spends all twenty points at its windup's end
+
+- **GIVEN** Kinich is in the blessing with twenty points
+- **WHEN** the player presses the elemental skill
+- **THEN** the Cannon starts, and the twenty points are held through its windup
+- **AND** all of them are spent at its thirty-sixth frame
+- **AND** the press is not held up by the skill's cooldown, and sets none
+
+#### Scenario: Cannon's hit lands at its forty-eighth frame
+
+- **WHEN** the Cannon starts with a primary target
+- **THEN** its one hit lands at its forty-eighth frame on the circle of radius three round the primary target
 
 ### Requirement: Kinich's burst hit
 
@@ -86,7 +109,7 @@ Kinich's burst SHALL summon the Ajaw, which fires six Dendro lasers at the prima
 
 ### Requirement: Nightsoul effects not yet built
 
-Kinich's Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
+Kinich's Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
 
 #### Scenario: Nightsoul-dependent effects do nothing
 

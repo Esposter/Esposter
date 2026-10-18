@@ -42,6 +42,14 @@ export const KINICH_LOOP_SHOT_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = O
   resetIntervalSeconds: 2,
   sequence: Object.freeze([1, 0, 0, 0]),
 });
+// Kinich's Scalespiker Cannon, as gcsim (MIT) pkg/core/attacks/icd_groups.dm.go has it: restarted by a hit 1.2 seconds after
+// It last started (line 113), and its gauge applying on the first of every four hits (line 180). Its damage lands on every
+// Hit, as its damage sequence holds ones (line 247)
+// https://github.com/genshinsim/gcsim/blob/main/pkg/core/attacks/icd_groups.dm.go
+export const KINICH_SCALESPIKER_CANNON_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
+  resetIntervalSeconds: 1.2,
+  sequence: Object.freeze([1, 0, 0, 0]),
+});
 // A reaction's damage on a target from one source, as the game's damage sequence limits it: Swirl, Superconduct,
 // Shattered, Bloom, Hyperbloom and Burgeon deal two instances each half second, and Overloaded and Electro-Charged one
 export const TWO_REACTIONS_INTERNAL_COOLDOWN_GROUP: InternalCooldownGroup = Object.freeze({
