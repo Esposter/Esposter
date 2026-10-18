@@ -94,9 +94,9 @@ const playerAction = (action: (currentDuel: GcgDuel) => unknown) => {
     "
     @leave="emit('leave')"
     @play-card="
-      (handIndex, targetIndex, dieIndices) =>
+      (handIndex, targetIndex, dieIndices, choice) =>
         playerAction((currentDuel) =>
-          playGcgCard(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices),
+          playGcgCard(currentDuel, GCG_PLAYER_SIDE_INDEX, handIndex, targetIndex, dieIndices, choice),
         )
     "
     @prepare="

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 import type { GameText } from "genshin-text";
 
 import GcgScreenCard from "#src/components/Gcg/Screen/Card/Index.vue";
@@ -8,8 +9,14 @@ import GcgScreenDie from "#src/components/Gcg/Screen/Die/Index.vue";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { GCG_EQUIPMENT_CARD_KINDS, GCG_SKILL_KIND_DISPLAY_ORDER } from "#src/services/gcg/constants";
+import {
+  GCG_EQUIPMENT_CARD_KINDS,
+  GCG_SKILL_KIND_DISPLAY_ORDER,
+  GCG_TOSS_UP_CARD_ID,
+  GCG_TOSS_UP_REROLL_COUNT,
+} from "#src/services/gcg/constants";
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
+import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
 import { takeOne } from "@esposter/shared";
 import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
@@ -29,7 +36,7 @@ const { duel, gameText, playerSideIndex, textMap } = defineProps<Props>();
 const emit = defineEmits<{
   declareRoundEnd: [];
   leave: [];
-  playCard: [handIndex: number, targetIndex: number | undefined, dieIndices: number[]];
+  playCard: [handIndex: number, targetIndex: number | undefined, dieIndices: number[], choice?: GcgPlayChoice];
   prepare: [switchedHandIndices: number[], activeIndex: number];
   replaceCharacter: [characterIndex: number];
   reroll: [dieIndices: number[]];
@@ -45,9 +52,14 @@ const armedHandIndex = ref<number>();
 const isTuning = ref(false);
 const switchedHandIndices = ref<number[]>([]);
 const preparedActiveIndex = ref(0);
+// A Toss-Up being played: its hand card, the dice its payment took, and the groups of dice the player has picked to reroll
+const rerollHandIndex = ref<number>();
+const paidDiceIndices = ref<number[]>([]);
+const rerollGroups = ref<number[][]>([]);
 const playerSide = computed(() => takeOne(duel.sides, playerSideIndex));
 const opponentSide = computed(() => takeOne(duel.sides, 1 - playerSideIndex));
 const isPlayerTurn = computed(() => duel.phase === GcgPhase.Action && duel.actingSideIndex === playerSideIndex);
+const isChoosingReroll = computed(() => rerollHandIndex.value !== undefined);
 // A hand's cards by their ids, which the side's own card definitions name
 const playerHandCards = computed(() => {
   const cardMap = new Map(playerSide.value.cards.map((card) => [card.id, card]));
@@ -75,6 +87,9 @@ const clearSelection = () => {
   selectedDieIndices.value = [];
   armedHandIndex.value = undefined;
   isTuning.value = false;
+  rerollHandIndex.value = undefined;
+  paidDiceIndices.value = [];
+  rerollGroups.value = [];
 };
 const checkIsCharacterChoosable = (characterIndex: number): boolean => {
   const character = takeOne(playerSide.value.characters, characterIndex);
@@ -84,18 +99,23 @@ const checkIsCharacterChoosable = (characterIndex: number): boolean => {
 };
 const selectCard = (handIndex: number) => {
   const card = playerHandCards.value[handIndex];
-  if (duel.phase === GcgPhase.Preparation) switchedHandIndices.value = toggleList(switchedHandIndices.value, handIndex);
+  if (isChoosingReroll.value) return;
+  else if (duel.phase === GcgPhase.Preparation)
+    switchedHandIndices.value = toggleList(switchedHandIndices.value, handIndex);
   else if (!isPlayerTurn.value || !card) return;
   else if (isTuning.value) {
     if (selectedDieIndices.value.length === 1) emit("tuneDie", handIndex, takeOne(selectedDieIndices.value, 0));
     clearSelection();
   } else if (GCG_EQUIPMENT_CARD_KINDS.has(card.kind)) armedHandIndex.value = handIndex;
-  else {
+  else if (card.id === GCG_TOSS_UP_CARD_ID) {
+    if (selectedDieIndices.value.length === countGcgDiceCost(card.costs)) startRerollChoice(handIndex);
+  } else {
     emit("playCard", handIndex, undefined, selectedDieIndices.value);
     clearSelection();
   }
 };
 const selectCharacter = (characterIndex: number) => {
+  if (isChoosingReroll.value) return;
   const character = takeOne(playerSide.value.characters, characterIndex);
   if (duel.phase === GcgPhase.Preparation) preparedActiveIndex.value = characterIndex;
   else if (playerSide.value.isReplacementPending) {
@@ -109,12 +129,36 @@ const selectCharacter = (characterIndex: number) => {
   }
 };
 const useSkill = (skillId: number) => {
-  if (!isPlayerTurn.value) return;
+  if (!isPlayerTurn.value || isChoosingReroll.value) return;
   emit("useSkill", skillId, selectedDieIndices.value);
   clearSelection();
 };
 const reroll = () => {
   emit("reroll", selectedDieIndices.value);
+  clearSelection();
+};
+const selectDie = (dieIndex: number) => {
+  if (!paidDiceIndices.value.includes(dieIndex))
+    selectedDieIndices.value = toggleList(selectedDieIndices.value, dieIndex);
+};
+const startRerollChoice = (handIndex: number) => {
+  rerollHandIndex.value = handIndex;
+  paidDiceIndices.value = selectedDieIndices.value;
+  selectedDieIndices.value = [];
+};
+const addRerollGroup = () => {
+  if (selectedDieIndices.value.length === 0 || rerollGroups.value.length >= GCG_TOSS_UP_REROLL_COUNT) return;
+  rerollGroups.value = [...rerollGroups.value, selectedDieIndices.value];
+  selectedDieIndices.value = [];
+};
+const playRerollChoice = () => {
+  const handIndex = rerollHandIndex.value;
+  if (handIndex === undefined) return;
+  const isPicked = selectedDieIndices.value.length > 0 && rerollGroups.value.length < GCG_TOSS_UP_REROLL_COUNT;
+  const groups = isPicked ? [...rerollGroups.value, selectedDieIndices.value] : rerollGroups.value;
+  emit("playCard", handIndex, undefined, paidDiceIndices.value, {
+    rerollDiceIndices: toGcgRemainingDiceIndices(groups, paidDiceIndices.value),
+  });
   clearSelection();
 };
 </script>
@@ -161,8 +205,8 @@ const reroll = () => {
         v-for="(face, index) in playerSide.dice"
         :key="index"
         :face
-        :is-selected="selectedDieIndices.includes(index)"
-        @select="selectedDieIndices = toggleList(selectedDieIndices, index)"
+        :is-selected="selectedDieIndices.includes(index) || paidDiceIndices.includes(index)"
+        @select="selectDie(index)"
       />
     </div>
     <div class="hand">
@@ -170,7 +214,7 @@ const reroll = () => {
         v-for="(card, index) in playerHandCards"
         :key="index"
         :dice-count="countGcgDiceCost(card.costs)"
-        :is-selected="armedHandIndex === index || switchedHandIndices.includes(index)"
+        :is-selected="armedHandIndex === index || rerollHandIndex === index || switchedHandIndices.includes(index)"
         :name="textMap[card.nameTextId] ?? ''"
         @select="selectCard(index)"
       />
@@ -178,7 +222,7 @@ const reroll = () => {
     <button
       class="end-round"
       :aria-label="gameText[GameTextKey.GcgEndRound]"
-      :disabled="!isPlayerTurn"
+      :disabled="!isPlayerTurn || isChoosingReroll"
       type="button"
       @click="emit('declareRoundEnd')"
     />
@@ -189,7 +233,7 @@ const reroll = () => {
         v-for="skill in activeSkills"
         :key="skill.id"
         class="skill"
-        :disabled="!isPlayerTurn"
+        :disabled="!isPlayerTurn || isChoosingReroll"
         type="button"
         @click="useSkill(skill.id)"
       >
@@ -199,7 +243,7 @@ const reroll = () => {
     <button
       class="synchro"
       :aria-pressed="isTuning"
-      :disabled="!isPlayerTurn"
+      :disabled="!isPlayerTurn || isChoosingReroll"
       type="button"
       @click="isTuning = !isTuning"
     >
@@ -216,6 +260,11 @@ const reroll = () => {
     </div>
     <div v-else-if="duel.phase === GcgPhase.Ended" class="confirm">
       <button type="button" @click="emit('leave')">{{ gameText[GameTextKey.GcgConfirm] }}</button>
+    </div>
+    <div v-else-if="isChoosingReroll" class="confirm">
+      <button type="button" @click="addRerollGroup()">{{ gameText[GameTextKey.GcgReroll] }}</button>
+      <button type="button" @click="playRerollChoice()">{{ gameText[GameTextKey.GcgConfirm] }}</button>
+      <button type="button" @click="clearSelection()">{{ gameText[GameTextKey.Cancel] }}</button>
     </div>
   </GameScreen>
 </template>
