@@ -7,6 +7,7 @@ import type { VoiceSynthesizer } from "#src/models/VoiceSynthesizer";
 import type { VoiceSynthesizerOptions } from "#src/models/VoiceSynthesizerOptions";
 import type { VoiceTensor } from "#src/models/VoiceTensor";
 
+import { checkIsAudible } from "#src/services/checkIsAudible";
 import { checkIsSpeech } from "#src/services/checkIsSpeech";
 import {
   CHUNK_CROSSFADE_SECONDS,
@@ -143,8 +144,9 @@ export const createVoiceSynthesizer = async (
     const splice = createChunkSplicer(CHUNK_OVERLAP_SAMPLES);
     let decodedCount = 0;
     let chunkIndex = 0;
-    // A chunk's audio past the seam, checked for speech on its own samples: a failure moves the ladder down and ends
-    // The sentence. A chunk with no samples of its own is only a seam's tail, which is not checked
+    // A chunk's audio past the seam, checked for audio on its own samples: a failure moves the ladder down and ends
+    // The sentence. A chunk is a stretch of speech with no pause a whole sentence would have, so only its loudness is
+    // Checked. A chunk with no samples of its own is only a seam's tail, which is not checked
     const takeChunk = async (
       waveform: Float32Array,
       isFinal: boolean,
@@ -156,7 +158,7 @@ export const createVoiceSynthesizer = async (
 
       const clip = { sampleRate: VOICE_SAMPLE_RATE, samples };
       const body = samples.subarray(samples.length - bodyLength);
-      if (bodyLength < MIN_CHECKED_SAMPLES || checkIsSpeech({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
+      if (bodyLength < MIN_CHECKED_SAMPLES || checkIsAudible({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
         return { clip, isFailed: false };
 
       isDropped = true;
