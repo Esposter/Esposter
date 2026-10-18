@@ -1,5 +1,5 @@
 {
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 86 },
+  "chargedAttack.hits.0.hitmarkFrames": { "file": "aimed.go", "line": 17, "source": "Gcsim", "value": 96 },
   "frames.baronBunnySeconds": { "cause": "DiffersFromSource", "value": 529 },
   "hits.fieryRainArrows.length": { "cause": "Unsourced", "value": 18 },
   "hits.fieryRainArrows.0.area": {
@@ -315,11 +315,11 @@
   },
   "hits.baronBunnyExplosion.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.baronBunnyExplosion.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2132 } },
-  "normalAttacks.0.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 14 },
-  "normalAttacks.1.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 10 },
-  "normalAttacks.2.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 27 },
-  "normalAttacks.3.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
-  "normalAttacks.4.hits.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 26 },
+  "normalAttacks.0.hits.0.hitmarkFrames": { "file": "attack.go", "line": 16, "source": "Gcsim", "value": 24 },
+  "normalAttacks.1.hits.0.hitmarkFrames": { "file": "attack.go", "line": 16, "source": "Gcsim", "value": 20 },
+  "normalAttacks.2.hits.0.hitmarkFrames": { "file": "attack.go", "line": 16, "source": "Gcsim", "value": 37 },
+  "normalAttacks.3.hits.0.hitmarkFrames": { "file": "attack.go", "line": 16, "source": "Gcsim", "value": 36 },
+  "normalAttacks.4.hits.0.hitmarkFrames": { "file": "attack.go", "line": 16, "source": "Gcsim", "value": 36 },
   "parameters.baronBunnyMaxHealthShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 2132 } },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
