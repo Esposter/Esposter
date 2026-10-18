@@ -53,7 +53,7 @@ export const useWorldOutcrops = ({
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
-  completedMainQuestIds: ReadonlySet<string>;
+  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
   gameText: Readonly<Record<string, string>>;
@@ -153,7 +153,7 @@ export const useWorldOutcrops = ({
       offer,
       rewards,
       adventureExp.value,
-      completedMainQuestIds,
+      completedMainQuestIds.value,
       now,
       nameText,
       materialDataMap,

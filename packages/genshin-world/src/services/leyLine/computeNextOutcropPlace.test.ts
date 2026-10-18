@@ -26,7 +26,7 @@ describe(computeNextOutcropPlace, () => {
   test("an outcrop stays where it is when no other place is free", () => {
     expect.hasAssertions();
 
-    expect(computeNextOutcropPlace([placements[0]], FIRST_PLACE_ID, undefined)).toBeUndefined();
+    expect(computeNextOutcropPlace(placements.slice(0, 1), FIRST_PLACE_ID, undefined)).toBeUndefined();
     expect(computeNextOutcropPlace(placements.slice(0, 2), FIRST_PLACE_ID, SECOND_PLACE_ID)).toBeUndefined();
   });
 });
