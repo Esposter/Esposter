@@ -124,13 +124,17 @@ export const useWorldMap = ({
   };
   // The areas, the Reputation and the regions are read in the background, so the thresholds settle once all of them are in
   watch([mondstadtReputation, explorationAreas, isJumpLandmarksLoaded], settleExplorationThresholds);
-  // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with
+  // A landmark the player activates is unlocked, its first unlock paid, and the world told it was interacted with, by its
+  // Id and by its scene point, which the quest step that names a waypoint by its point finishes on
   const activateLandmark = (landmarkId: string) => {
     const isFirstUnlock = !unlockedLandmarkIds.value.has(landmarkId);
     unlockedLandmarkIds.value = new Set([...unlockedLandmarkIds.value, landmarkId]);
     if (isFirstUnlock) payFirstUnlockReward(landmarkId);
     settleExplorationThresholds();
     events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: landmarkId });
+    const transPointId = computeLandmarkPointId(landmarkId);
+    if (transPointId !== undefined)
+      events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: String(transPointId) });
     const pointId = LandmarkIdStatuePointIdMap[landmarkId];
     if (pointId !== undefined)
       events.emit("achievementEvents", [

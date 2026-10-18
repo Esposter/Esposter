@@ -1,5 +1,8 @@
 import type { ExplorationArea } from "#src/models/exploration/ExplorationArea";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
+import type { Quest } from "#src/models/quest/Quest";
+import type { QuestEvent } from "#src/models/quest/QuestEvent";
+import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { RegionData } from "#src/models/world/RegionData";
 import type { StatueLandmark } from "#src/models/world/StatueLandmark";
@@ -9,11 +12,14 @@ import { useWorldMap } from "#src/composables/useWorldMap";
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { Currency } from "#src/models/inventory/Currency";
+import { QuestKind } from "#src/models/quest/QuestKind";
+import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readMondstadtExplorationAreas } from "#src/services/exploration/readMondstadtExplorationAreas";
 import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
+import { advanceQuest } from "#src/services/quest/advanceQuest";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -125,7 +131,10 @@ describe(useWorldMap, () => {
     requests: [],
   };
   // The composable under test, given the landmarks already unlocked, with the Reputation and the wallet it pays into
-  const createWorldMap = (unlockedLandmarkIds: ReadonlySet<string> = new Set<string>()) => {
+  const createWorldMap = (
+    unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
+    events = createWorldEvents(),
+  ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
     const wallet = ref(EMPTY_WALLET);
@@ -135,7 +144,7 @@ describe(useWorldMap, () => {
       wallet,
       ...useWorldMap({
         catalogue: { regions: [{ areas: [], id: REGION_ID, name: "First Region" }] },
-        events: createWorldEvents(),
+        events,
         gainWorldAdventureExp,
         gameDataBaseUrl: "game-data",
         regionDataBaseUrl: "region-data",
@@ -226,6 +235,42 @@ describe(useWorldMap, () => {
     activateLandmark(waypoint.id);
 
     expect(unlockedLandmarks.value).toStrictEqual([waypoint]);
+  });
+
+  test("a quest step that names a waypoint finishes when it is unlocked", async () => {
+    expect.hasAssertions();
+
+    // The step names the waypoint by its transport point, as the quest data does, so the unlock is the Interact it finishes on
+    const quest: Quest = {
+      descriptionTextId: "",
+      id: "quest",
+      kind: QuestKind.World,
+      offerTalkIds: [],
+      steps: [
+        {
+          id: "step",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.Interact, targetId: String(TRANS_POINT_ID) }],
+          textId: "step",
+        },
+      ],
+      talks: [],
+      titleTextId: "",
+    };
+    const events = createWorldEvents();
+    const questEvents: QuestEvent[] = [];
+    events.on("questEvent", (questEvent) => {
+      questEvents.push(questEvent);
+    });
+    const { activateLandmark } = createWorldMap(new Set(), events);
+    await waitForReads();
+
+    activateLandmark(waypoint.id);
+
+    const progress = questEvents.reduce<QuestProgress>(
+      (questProgress, questEvent) => advanceQuest(quest, questProgress, questEvent),
+      { objectiveCounts: [], stepIndex: 0 },
+    );
+    expect(progress).toStrictEqual({ objectiveCounts: [], stepIndex: 1 });
   });
 
   test("interacting with a locked domain entrance unlocks it", async () => {
