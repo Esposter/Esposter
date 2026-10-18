@@ -36,7 +36,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const danceDoubleDurationSeconds = readSeconds("danceDoubleDuration");
   const recastDanceDoubleFirstTickSeconds = readSeconds("danceDoubleRecastFirstTick");
   // Each attack's hit, and the seconds gcsim waits from it to the other attack
-  const danceDoubleAttacks = [
+  const danceDoubleAttacks: [{ hit: KitHit; intervalSeconds: number }, { hit: KitHit; intervalSeconds: number }] = [
     { hit: readHit("plume"), intervalSeconds: readSeconds("plumeTickInterval") },
     { hit: readHit("wing"), intervalSeconds: readSeconds("wingTickInterval") },
   ];
