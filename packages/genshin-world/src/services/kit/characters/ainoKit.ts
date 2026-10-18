@@ -13,6 +13,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
@@ -66,9 +67,7 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
   // Spawn, so a ball lands its hitmark less the first tick's seconds past the tick that drops it
   const waterBallHit = readHit("waterBall", {
     additiveBaseDamageBonus: (combatant) =>
-      combatant.ascension >= ASCENSION_4
-        ? combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * masteryShare
-        : 0,
+      combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, masteryShare) : 0,
   });
   const waterBallBase: KitHit = {
     ...waterBallHit,
@@ -93,7 +92,7 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     ...waterBallBase,
     additiveBaseDamageBonus: (combatant) =>
       (waterBallBase.additiveBaseDamageBonus?.(combatant) ?? 0) +
-      combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * CONSTELLATION_2_MASTERY_SHARE,
+      elementalMasteryMultiplier(combatant, CONSTELLATION_2_MASTERY_SHARE),
     hitArea: { ...waterBallBase.hitArea, radius: CONSTELLATION_2_RADIUS },
     talentMultiplier: CONSTELLATION_2_ATTACK_SHARE,
   };

@@ -384,10 +384,7 @@ export const createAlhaithamKitBehaviour = ({
       combatant.ascension >= ASCENSION_4 &&
       (hit.internalCooldownTag === InternalCooldownTag.ElementalBurst ||
         hit.internalCooldownTag === InternalCooldownTag.ElementalSkill)
-        ? Math.min(
-            combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] * ascension4DamagePerElementalMastery,
-            ascension4DamageMax,
-          )
+        ? Math.min(elementalMasteryMultiplier(combatant, ascension4DamagePerElementalMastery), ascension4DamageMax)
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => strikeHitBehaviour) })),
     // Leaving the field clears the Mirrors and the Mirror a rush or a burst has yet to make, as gcsim's swap does
