@@ -247,6 +247,15 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
     screen: "MenuExit",
     wikiTitle: "File:Paimon Menu Exit Prompt.png",
   },
+  // The expedition screen at 1080 high from the public clip (yt-fxIjhlV3vUA), 26 seconds in: Mondstadt's map with six
+  // Places pinned and Wolvendom picked, its Expedition Limit across the head, its rewards and durations down the right.
+  // Scored over the screen above the recorder's UID, which the clip draws at its bottom right corner
+  "expedition-screen": {
+    capture: "yt-fxIjhlV3vUA-expedition-screen.mp4",
+    region: { height: 1050, width: 1920, x: 0, y: 0 },
+    screen: "ExpeditionScreen",
+    seconds: 26,
+  },
   // The English PC client's forge on the Materials tab with an Enhancement Ore at amount five, at 32 seconds of the public
   // Recording of the forge, letterboxed to its 886 high frame: scored whole over its blurred scene, the game's own pieces
   // (the tabs, the recipe list, the item and its amount, the Materials box, the foot) filled from round them

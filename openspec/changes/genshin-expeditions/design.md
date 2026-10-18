@@ -11,6 +11,10 @@ The [expeditions](../../specs/genshin/expeditions/design.md) page holds the send
 - **The expedition screen is drawn from a public clip.** Its layout is read off a published walkthrough of Katheryne's expedition screen, [How to Complete an Expedition and Send Characters Out on One](https://www.youtube.com/watch?v=fxIjhlV3vUA) (107 seconds), and its comparison is queued for the user's eyes. No recording is owed for it first; one of the English PC client re-measures it later without gating the build.
 - **Until Katheryne stands in the world, the screen is reached through its fixture.** The game's menus hold no expeditions entry, so none is added. The residents' join writes no Katheryne into Mondstadt's region data, since the dump's births hold none of her, so her talk is wired once her place is in region data, estimated from the wiki and marked provisional.
 - **Other nations' places open by their statues.** A place is open once its named statue is resonated, and a nation's places join the slice once its statues are placed.
+- **The screen is an NPC screen kind.** It opens from a talk, not from the Paimon menu, so `ScreenKind.Expedition` joins `NPC_SCREEN_KINDS` beside the crafting bench and the forge, which hold the same way.
+- **The pins and the panel's description come from the session, not the expedition record.** The record holds no pin position and no place description, so the screen takes each place's pin position as a prop and draws an empty description until the record carries one. Mondstadt's six pins are placed at their positions in the 26-second frame.
+- **Mondstadt's places open from the save's statues.** The screen reads the save's statue regions through `computeUnlockedStatuePointIds`, so a place opens once its named statue is resonated. Only Mondstadt's statue is placed, so the other nations' places are not joined yet.
+- **Words come from the game's own text keys, reusing one where no expedition key carries it.** The no-bonus line reuses `COOKING_QTE_NO_BONUS_DESC`, the title and limit use `UI_EXPLORE_PAGETITLE` and `UI_EXPLORE_LINELEFT`, and the remaining-time label has no key yet.
 
 ## Scope and order
 
