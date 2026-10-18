@@ -11,6 +11,7 @@ describe(takeReputationBounty, () => {
     explores: [],
     huntingRegions: [{ center: [10, 20, 30], id: 101, radius: 100 }],
     levels: [],
+    quests: [],
     requests: [],
   };
 

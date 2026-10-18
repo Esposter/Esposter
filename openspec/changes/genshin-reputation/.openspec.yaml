@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 the three camp requests need their camps' targets, and the keeper's accept action needs the Reputation screen's offer; 2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the Reputation quest rows bound by parentQuestId; 3.2 waits on the Shop screen, which the shops agent is building now; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.1 the three camp requests need their camps' targets, and the keeper's accept action needs the Reputation screen's offer; 2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the exploration thresholds (the exploration progress proposal), and the Reputation quests pay only once their parent quests are carried (none of Mondstadt's 25 is yet); 3.2 waits on the Shop screen, which the shops agent is building now; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -12,4 +12,7 @@ x-touches:
     "scripts/src/models/genshinAssets/reputation/**",
     "scripts/src/services/genshinAssets/reputation/**",
     "scripts/src/services/genshinAssets/commands/reputationCommand.ts",
+    "packages/genshin-world/src/composables/useWorldMap.ts",
+    "packages/genshin-world/src/models/reputation/**",
+    "packages/genshin-world/src/services/reputation/**",
   ]

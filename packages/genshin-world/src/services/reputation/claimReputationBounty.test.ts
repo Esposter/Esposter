@@ -12,6 +12,7 @@ describe(claimReputationBounty, () => {
     explores: [],
     huntingRegions: [],
     levels: [],
+    quests: [],
     requests: [],
   };
   const HUNT: ReputationBountyHunt = {

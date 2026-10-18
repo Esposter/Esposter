@@ -14,6 +14,7 @@ describe(offerReputationRequest, () => {
       { functionIds: [], goodsIds: [], level: 1, nextLevelExp: 10, requestGroupId: 1, reward: REWARD },
       { functionIds: [], goodsIds: [], level: 2, nextLevelExp: 0, requestGroupId: 2, reward: REWARD },
     ],
+    quests: [],
     requests: [
       { groupId: 1, questId: 901, requestId: 1001, reward: REWARD, weight: 1 },
       { groupId: 2, questId: 902, requestId: 1002, reward: REWARD, weight: 1 },

@@ -20,7 +20,7 @@ flowchart TD
 
 - **The levels.** `ReputationLevelExcelConfigData`'s rows for the nation, each with `nextLevelExp`, the EXP to leave that level, unlike Friendship's totals. The last level's is zero, and it earns no more EXP. Level 2 opens the mining outcrop search and level 4 the merchant discounts, the function ids the table names.
 - **Each reward.** A level's `rewardId`, and a request's or bounty's, read from the reward table. The nation's Reputation EXP is the item `ReputationCityExcelConfigData` names as its `virtualItemId`, so the reward is split into the EXP that item's count gives and the items it also pays. A request pays its EXP and Mora, a bounty its EXP and Mora, more of each at the harder difficulties.
-- **Requests and bounties.** The requests of the groups the levels name, each with its weight, and the nation's `HuntingRefreshExcelConfigData` bounties with the region each is hunted in.
+- **Requests, Reputation quests and bounties.** The requests of the groups the levels name, each with its weight; the Reputation quests of `ReputationQuestExcelConfigData`, each bound to the quest its `parentQuestId` names, which pays its reward once that quest finishes; and the nation's `HuntingRefreshExcelConfigData` bounties with the region each is hunted in.
 - **The exploration thresholds.** The exploration table's rows for the nation, each at a percentage of its exploration and paying a reward split the same way. The thresholds reached between two percentages are the ones the progress passes, so one already held pays nothing again.
 - **The tables the dump lacks.** The dump holds the exploration table but not the level, city, function, request, quest or hunting tables. Those are fetched from the AnimeGameData repository into the dump's `ExcelBinOutput` and never committed.
 
@@ -35,22 +35,22 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                    | Role                                                                        |
-| :-------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-interface/src/components/ReputationScreen/Index.vue`                  | The reward page: each level's mark, item slots and unlock line              |
-| `packages/genshin-world/src/components/Reputation/Screen/Index.vue`                     | The nation's reward page wired to its levels and the Reputation's level     |
-| `packages/genshin-world/src/services/reputation/ReputationFunctionGameTextKeyMap.ts`    | Each unlock function's line in the game's words, by its id                  |
-| `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level |
-| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                  |
-| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations     |
-| `packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`    | The exploration thresholds a progress passes between two percentages        |
-| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The slice, fetched by its key and checked against its shape                 |
-| `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                       |
-| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                          |
-| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The reset the weekly limit counts from                                      |
-| `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, requests and bounties     |
-| `scripts/src/services/genshinAssets/reputation/buildMondstadtReputation.ts`             | Builds the slice from the dump's tables, for publishing                     |
-| `scripts/src/services/genshinAssets/reputation/toReputationReward.ts`                   | Splits a reward into the Reputation EXP and the items it also pays          |
+| File                                                                                    | Role                                                                            |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `packages/genshin-interface/src/components/ReputationScreen/Index.vue`                  | The reward page: each level's mark, item slots and unlock line                  |
+| `packages/genshin-world/src/components/Reputation/Screen/Index.vue`                     | The nation's reward page wired to its levels and the Reputation's level         |
+| `packages/genshin-world/src/services/reputation/ReputationFunctionGameTextKeyMap.ts`    | Each unlock function's line in the game's words, by its id                      |
+| `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level     |
+| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                      |
+| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations         |
+| `packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`    | The exploration thresholds a progress passes between two percentages            |
+| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The slice, fetched by its key and checked against its shape                     |
+| `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                           |
+| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                              |
+| `packages/genshin-world/src/services/weekly/computeWeeklyResetTime.ts`                  | The reset the weekly limit counts from                                          |
+| `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, quests, requests and bounties |
+| `scripts/src/services/genshinAssets/reputation/buildMondstadtReputation.ts`             | Builds the slice from the dump's tables, for publishing                         |
+| `scripts/src/services/genshinAssets/reputation/toReputationReward.ts`                   | Splits a reward into the Reputation EXP and the items it also pays              |
 
 ## Sources
 
