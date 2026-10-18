@@ -17,7 +17,7 @@ import { flattenLabelTree } from "#src/services/genshinAssets/points/flattenLabe
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GameLanguage, GameTextKeys } from "genshin-text";
+import { GameLanguage } from "genshin-text";
 import { MaterialType } from "genshin-world";
 
 // How a label's points come back once picked or broken: by its own rule where it has one, else by its category
@@ -62,12 +62,10 @@ export const readGatheringItems = (
     const { materialType: materialTypeName = MATERIAL_TYPE_NONE } = materialRow;
     const materialType = Object.values(MaterialType).find((type) => type === materialTypeName);
     if (!firstLabel || !respawn || !materialType) continue;
-    const nameTextId = GameTextKeys.find((gameTextKey) => gameTextKey === String(materialRow.nameTextMapHash));
-    if (!nameTextId) throw new InvalidOperationError(Operation.Read, String(itemId), "names no game text key");
     items.push({
       id: itemId,
       materialType,
-      nameTextId,
+      nameTextId: String(materialRow.nameTextMapHash),
       rank: materialRow.rank,
       rarity: materialRow.rankLevel,
       respawn,

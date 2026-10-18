@@ -6,7 +6,6 @@ import { GATHER_POINT_LOCATION_GROUND, GATHER_TABLE_NAME } from "#src/services/g
 import { readGatheringItems } from "#src/services/genshinAssets/gathering/readGatheringItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
-import { GameTextKey } from "genshin-text";
 import { GatheringRespawn, MaterialType } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -25,7 +24,7 @@ describe(readGatheringItems, () => {
   // The inventory category the official map files its labels under, whose labels respawn daily
   const INVENTORY_LABEL_ID = 60;
 
-  const NAME_TEXT_KEY = GameTextKey.AcquaintFate;
+  const NAME_TEXT_ID = "1000";
 
   const labels: InteractiveMapLabel[] = [
     {
@@ -40,7 +39,7 @@ describe(readGatheringItems, () => {
     id: ITEM_ID,
     itemUse: [],
     materialType: MaterialType.Exchange,
-    nameTextMapHash: Number(NAME_TEXT_KEY),
+    nameTextMapHash: Number(NAME_TEXT_ID),
     rank: 1,
     rankLevel: 1,
     stackLimit: 1,
@@ -50,7 +49,7 @@ describe(readGatheringItems, () => {
     vi.mocked(readExcelTable).mockImplementation((name) => (name === GATHER_TABLE_NAME ? gatherRows : [materialRow]));
 
   beforeEach(() => {
-    vi.mocked(readTextMap).mockReturnValue(new Map([[NAME_TEXT_KEY, ITEM_NAME]]));
+    vi.mocked(readTextMap).mockReturnValue(new Map([[NAME_TEXT_ID, ITEM_NAME]]));
   });
 
   test("should read a row the dump leaves its point location out of as picked off the ground", () => {
@@ -61,7 +60,7 @@ describe(readGatheringItems, () => {
         {
           id: ITEM_ID,
           materialType: MaterialType.Exchange,
-          nameTextId: NAME_TEXT_KEY,
+          nameTextId: NAME_TEXT_ID,
           rank: 1,
           rarity: 1,
           respawn: GatheringRespawn.Daily,
