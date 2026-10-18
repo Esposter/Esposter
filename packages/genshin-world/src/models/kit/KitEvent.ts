@@ -11,6 +11,7 @@ import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTrigg
 import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
 import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent";
+import type { KitWildlifeStruckEvent } from "#src/models/kit/KitWildlifeStruckEvent";
 
 // What happens in combat that a kit's passives and constellations answer, sent to every kit of the deployed team
 export type KitEvent =
@@ -26,4 +27,5 @@ export type KitEvent =
   | KitReactionTriggeredEvent
   | KitShieldAbsorbedEvent
   | KitStatusTickedEvent
-  | KitTauntDamagedEvent;
+  | KitTauntDamagedEvent
+  | KitWildlifeStruckEvent;
