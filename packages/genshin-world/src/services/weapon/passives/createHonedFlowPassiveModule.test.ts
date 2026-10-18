@@ -126,4 +126,21 @@ describe(createHonedFlowPassiveModule, () => {
 
     expect(readBuffs(context.kitEffectState.effects).filter(({ amount }) => amount > 0)).toStrictEqual([]);
   });
+
+  test("a second Rippling Upheaval restarts the first at its own stacks, as gcsim's Haran does", () => {
+    expect.hasAssertions();
+
+    const context = createContext();
+    honedFlowPassiveModule.onKitEvent?.(otherSkillUsed, context, wielder);
+    stepKitSeconds(context, 1);
+    honedFlowPassiveModule.onKitEvent?.(otherSkillUsed, context, wielder);
+    honedFlowPassiveModule.onKitEvent?.(wielderSkillUsed, context, wielder);
+    stepKitSeconds(context, 4);
+    honedFlowPassiveModule.onKitEvent?.(otherSkillUsed, context, wielder);
+    honedFlowPassiveModule.onKitEvent?.(wielderSkillUsed, context, wielder);
+
+    expect(readBuffs(context.kitEffectState.effects)).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.NormalAttackDamageBonus, secondsRemaining: 8 },
+    ]);
+  });
 });
