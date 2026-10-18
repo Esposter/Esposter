@@ -31,12 +31,12 @@ const nextClaimableLevel = computed(() => levels.find(({ state }) => state === "
     <button class="blessing" type="button" @click="emit('blessing')">{{ blessingTitle }}</button>
     <button class="held" type="button" @click="emit('offer')">{{ heldCount }}</button>
     <ol class="levels">
-      <li v-for="row in levels" :key="row.level" :class="row.state">
-        <button type="button" :disabled="row.level !== nextClaimableLevel" @click="emit('claim')">
-          <span class="level">{{ row.level }}</span>
-          <span class="oculi">{{ row.oculusCount }}</span>
+      <li v-for="{ level, oculusCount, rewards, state } of levels" :key="level" :class="state">
+        <button type="button" :disabled="level !== nextClaimableLevel" @click="emit('claim')">
+          <span class="level">{{ level }}</span>
+          <span class="oculi">{{ oculusCount }}</span>
           <span class="rewards">
-            <span v-for="reward in row.rewards" :key="reward.name">{{ reward.name }} × {{ reward.count }}</span>
+            <span v-for="{ count, name } of rewards" :key="name">{{ name }} × {{ count }}</span>
           </span>
         </button>
       </li>
