@@ -9,8 +9,6 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
-import { toArchiveProgressMap } from "#src/services/save/toArchiveProgressMap";
-import { toArchiveProgressSave } from "#src/services/save/toArchiveProgressSave";
 import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
@@ -78,17 +76,13 @@ const mergeArchive = (account: ArchiveSave, guest: ArchiveSave): ArchiveSave => 
   const kills = { ...account.kills };
   for (const [livingBeingId, guestCount] of Object.entries(guest.kills))
     kills[livingBeingId] = Math.max(kills[livingBeingId] ?? 0, guestCount);
-  const accountProgressMap = toArchiveProgressMap(account.progress);
-  const guestProgressMap = toArchiveProgressMap(guest.progress);
   return {
     kills,
-    progress: toArchiveProgressSave(
-      new Map(
-        Object.values(ArchiveSection).map((section): [ArchiveSection, Set<number>] => [
-          section,
-          new Set([...(accountProgressMap.get(section) ?? []), ...(guestProgressMap.get(section) ?? [])]),
-        ]),
-      ),
+    progress: Object.fromEntries(
+      Object.values(ArchiveSection).map((section) => [
+        section,
+        [...new Set([...(account.progress[section] ?? []), ...(guest.progress[section] ?? [])])],
+      ]),
     ),
   };
 };
