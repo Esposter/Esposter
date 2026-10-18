@@ -1,6 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,6 +10,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createDionaKitBehaviour, DIONA_CHARACTER_ID } from "#src/services/kit/characters/dionaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const DIONA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DIONA_CHARACTER_ID);
@@ -32,6 +34,18 @@ const castShield = (action: KitAction, combatant = createDionaCombatant()): KitS
   return shield;
 };
 
+// The status each of Signature Mix's hits, its initial hit and its ticks, gives an enemy it strikes, struck by Diona at the
+// Ascension
+const readSignatureMixEnemyStatuses = (ascension: number) => {
+  const combatant: Combatant = { ...createDionaCombatant(), ascension };
+  const context = createKitTestContext(combatant);
+  DIONA_KIT.elementalBurst.onStart?.(context);
+  const ticks = takeOne(
+    context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
+  ).hits;
+  return [takeOne(DIONA_KIT.elementalBurst.hits), ...ticks].map((hit) => hit.enemyStatus?.(combatant));
+};
+
 describe(createDionaKitBehaviour, () => {
   const holdAction = DIONA_KIT.elementalSkillHolds?.[0]?.action;
 
@@ -51,5 +65,28 @@ describe(createDionaKitBehaviour, () => {
     const constellationShield = castShield(DIONA_KIT.elementalSkill, createDionaCombatant(2));
 
     expect(constellationShield.health / tapShield.health).toBeCloseTo(1.15);
+  });
+});
+
+describe("drunkards' Farce", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    const statuses = readSignatureMixEnemyStatuses(4);
+
+    expect(statuses.length).toBeGreaterThan(1);
+    expect(statuses).toStrictEqual(
+      statuses.map(() => ({
+        attackReduction: 0.1,
+        damageTakenBonus: 0,
+        id: "diona-drunkards-farce",
+        secondsRemaining: 15,
+      })),
+    );
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readSignatureMixEnemyStatuses(3).every((status) => status === undefined)).toBe(true);
   });
 });

@@ -1,3 +1,4 @@
+import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -30,12 +31,26 @@ const SHIELD_CONSTELLATION_MULTIPLIER = 1.15;
 const SIGNATURE_MIX_CONSTELLATION = 1;
 const SIGNATURE_MIX_CONSTELLATION_ENERGY = 15;
 
+// Drunkards' Farce, as the dump's Diona_PermanentSkill_2 row (promote 4, params -0.1 and 15) gives it: from Ascension 4,
+// Enemies Signature Mix reaches lose 10% of their ATK for 15 seconds. gcsim leaves it unbuilt, so each enemy the burst's
+// Initial hit or a tick strikes is the one that entered its AoE
+const DRUNKARDS_FARCE_ASCENSION = 4;
+const DRUNKARDS_FARCE_STATUS: EnemyStatus = {
+  attackReduction: 0.1,
+  damageTakenBonus: 0,
+  id: "diona-drunkards-farce",
+  secondsRemaining: 15,
+};
+const getDrunkardsFarceStatus = ({ ascension }: Combatant): EnemyStatus | undefined =>
+  ascension >= DRUNKARDS_FARCE_ASCENSION ? DRUNKARDS_FARCE_STATUS : undefined;
+
 export const DIONA_CHARACTER_ID = 10_000_039;
 
 // Diona's behaviour: Icy Paws' tap casts her shield as it starts, and its hold the shield times the hold's bonus, which
 // Constellation 2 raises. Signature Mix casts its field, healing the character on the field, and its ticks, a summon at
-// The cast's body; from Constellation 1 she regains energy as the field ends. Her passives and other constellations are
-// Not built, as the kit events do not reach them
+// The cast's body; from Constellation 1 she regains energy as the field ends, and from Ascension 4 the burst's hits cut
+// The ATK of the enemies they strike. Her Ascension 1 passive and other constellations are not built, as the kit events
+// do not reach them
 // Constellation 4 needs the aimed shot's charge time read within Signature Mix's radius, not read by the charged attack
 // Constellation 6 needs Signature Mix's field to buff each member inside it by its HP share, not built
 export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
@@ -46,7 +61,7 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
   const signatureMixHealMaxHealthShare = readParameter("signatureMixHealMaxHealthShare");
   const signatureMixHealFlatHealth = readParameter("signatureMixHealFlatHealth");
   const signatureMixSeconds = readParameter("signatureMixSeconds") + SIGNATURE_MIX_FIELD_MARGIN_SECONDS;
-  const signatureMixTicks = readHits("signatureMixTicks");
+  const signatureMixTicks = readHits("signatureMixTicks", { enemyStatus: getDrunkardsFarceStatus });
   const signatureMixHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   // The shield is a share of her Max HP and a flat amount, times its strength, which Constellation 2 raises by 15%
   const castShield = (kitEffectState: KitEffectState, combatant: Combatant, strengthMultiplier: number): KitShield =>
@@ -60,6 +75,7 @@ export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRec
     });
   return {
     burst: {
+      hits: [{ enemyStatus: getDrunkardsFarceStatus }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitField(kitEffectState, combatant.characterId, body.position, {
           id: SIGNATURE_MIX_FIELD_ID,
