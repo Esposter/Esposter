@@ -1,6 +1,6 @@
 ## 1. Mondstadt's keeper
 
-- [ ] 1.1 Place Mondstadt's keeper at her estimated spot, marked provisional, and open the Reputation screen when she is talked to. Verify: a test named after the scenario 'Talking to Mondstadt's keeper opens its Reputation screen', written first and seen failing.
+- [ ] 1.1 Place Mondstadt's keeper at her estimated spot, marked provisional, and open the Reputation screen when she is talked to. Verify: tests named after the scenarios 'Talking to Mondstadt's keeper opens its Reputation screen' and 'The Reputation screen is not reached before the keeper stands', written first and seen failing.
 
 ## 2. Requests and bounties
 

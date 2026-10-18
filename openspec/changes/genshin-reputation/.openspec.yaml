@@ -2,7 +2,6 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "bounties' trails on Elemental Sight (waiting on the puzzles unit); discounts on the shops' screen (the shops unit); later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
