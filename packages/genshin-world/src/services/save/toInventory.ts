@@ -24,14 +24,14 @@ const toEntryDefinition = (
 // The bag read from its save, each entry's definition read by the item's id from the game's tables, which name it in the
 // Reader's language. The save never holds a name, so a bag loads in whatever language it is read in
 export const toInventory = (
-  { items, nextId }: InventorySave,
+  { items, ...inventory }: InventorySave,
   names: Readonly<Record<string, string>>,
   weaponDataMap: ReadonlyMap<number, WeaponData>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): Inventory => ({
+  ...inventory,
   items: items.map(({ itemId, ...entry }) => ({
     ...entry,
     definition: toEntryDefinition(itemId, names, weaponDataMap, materialDataMap),
   })),
-  nextId,
 });

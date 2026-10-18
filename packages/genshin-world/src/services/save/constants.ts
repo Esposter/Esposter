@@ -108,7 +108,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
-  inventory: { items: [], nextId: MAX_SAVE_NUMBER },
+  inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER },
   offerings: { frostbearingTree: { heldCount: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER } },
   openedChests: [],
   quests: {},

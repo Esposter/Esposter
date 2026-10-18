@@ -42,6 +42,7 @@ describe(readGenshinSave, () => {
   const STATUE_REGION_PROGRESS = { heldCount: 1, level: 2 };
   const FOUND_OCULUS_ID = "2";
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
+  const EQUIPPED_GADGET_ID = 1001;
   const FORGED_WEAPON_ID = 13_401;
   const FORGED_NAME_TEXT_ID = "1";
   const WISHED_WEAPON_ID = 11_101;
@@ -147,6 +148,7 @@ describe(readGenshinSave, () => {
     companionshipExp: { [CHARACTER_ID]: COMPANIONSHIP_EXP },
     crafting: { craftedCounts: { [RECIPE_ID]: CRAFTED_COUNT }, learnedRecipeIds: [RECIPE_ID] },
     inventory: {
+      equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
         { id: 0, itemId: FORGED_WEAPON_ID, level: 1, quantity: 1 },
         { id: 1, itemId: WISHED_WEAPON_ID, level: 1, quantity: 1 },
@@ -255,6 +257,7 @@ describe(readGenshinSave, () => {
   test("reads a bag's forged and wished weapons back as weapons, each named and rarity from its own data", () => {
     expect.hasAssertions();
     expect(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map()).inventory).toStrictEqual({
+      equippedGadgetItemId: EQUIPPED_GADGET_ID,
       items: [
         {
           definition: {
