@@ -43,11 +43,14 @@ const JUMPING_YUEGUI_METRES = 2;
 const BURST_STATUS_ID = "yaoyao-burst";
 const JUMPING_YUEGUI_ID = "yaoyao-jumping-yuegui";
 // Measured: gcsim (MIT) yaoyao/cons.go, Constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds
-// After each radish heal. Its stamina restore is not built, as the kit has no stamina to restore
+// After each radish heal, and restores 15 stamina to the party's pool behind a five-second cooldown
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
 const CONSTELLATION_1 = 1;
 const C1_DENDRO_DMG_BONUS = 0.15;
 const C1_SECONDS = 8;
+const C1_STAMINA_RESTORE = 15;
+const C1_STAMINA_COOLDOWN_SECONDS = 5;
+const C1_STAMINA_COOLDOWN_ID = "yaoyao-c1-stamina-cooldown";
 // Measured: gcsim (MIT) yaoyao/asc.go and radish.go, Ascension 4 heals the active character each second for five seconds
 // After each radish heal, by 0.8% of Yaoyao's Max HP, and a newer radish heal replaces the one running
 // Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/asc.go
@@ -161,6 +164,11 @@ const applyRadishHealRiders = (context: KitContext, combatant: Combatant): void 
       attribute: Attribute.DendroDamageBonus,
       secondsRemaining: C1_SECONDS,
     });
+  if (
+    combatant.constellationCount >= CONSTELLATION_1 &&
+    startKitCooldown(kitEffectState, combatant.characterId, C1_STAMINA_COOLDOWN_ID, C1_STAMINA_COOLDOWN_SECONDS)
+  )
+    context.stamina.restore(C1_STAMINA_RESTORE);
   if (combatant.ascension >= ASCENSION_4) startA4Heal(context, combatant);
 };
 
@@ -244,10 +252,9 @@ const applyConstellation4 = ({ activeCombatant: combatant, kitEffectState }: Kit
 
 // Yaoyao's behaviour: her Yuegui, which her skill spawns, throws a White Jade Radish each throw interval at a target the
 // Pick above chooses. Her burst spawns three Yuegui behind her while it lasts, whose radishes heal the whole team, and a
-// Swap ends the burst and the Yuegui it spawned. Each radish heal gives Constellation 1's Dendro DMG Bonus and Ascension 4's
-// Heal chain, and Constellation 2 and 4 follow her radishes' strikes and her casts
+// Swap ends the burst and the Yuegui it spawned. Each radish heal gives Constellation 1's Dendro DMG Bonus and stamina
+// Restore, and Ascension 4's heal chain, and Constellation 2 and 4 follow her radishes' strikes and her casts
 // Ascension 1 throws a burst radish each 0.6 seconds of the burst while she dashes or jumps
-// Constellation 1's stamina restore needs a stamina pool the kit does not carry, so it is not built
 // Constellation 6 throws a Mega Radish at the skill Yuegui's third and sixth radishes, at the same target
 export const createYaoyaoKitBehaviour = ({
   readHit,

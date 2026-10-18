@@ -165,11 +165,21 @@ While Moonjade Descent lasts at Ascension 1, Yaoyao SHALL throw a burst radish e
 - **WHEN** a swap ends Moonjade Descent at Ascension 1
 - **THEN** no radish is thrown after it
 
-### Requirement: Unbuilt Constellation 1 stamina
+### Requirement: Constellation 1's stamina restore
 
-Constellation 1's stamina restore SHALL have no effect in the world yet.
+At Constellation 1, each radish heal SHALL restore 15 stamina to the party's pool, once each five seconds, as gcsim's Constellation 1 does on each radish heal behind its own cooldown. A heal inside the cooldown SHALL restore nothing.
 
-#### Scenario: Constellation 1 restores no stamina
+#### Scenario: a radish heal restores 15 stamina, and the next heal inside five seconds restores none
 
-- **WHEN** a radish heals Yaoyao at Constellation 1
-- **THEN** no stamina is restored
+- **WHEN** a skill radish heals Yaoyao at Constellation 1 with 50 stamina in the pool, and the next heals fall 60 and 120 frames after it
+- **THEN** the pool holds 65 stamina after the first heal, and still 65 after the later two
+
+#### Scenario: a heal five seconds on restores again
+
+- **WHEN** a radish heals Yaoyao 360 frames after the restore at Constellation 1
+- **THEN** the pool gains 15 stamina again
+
+#### Scenario: no restore without Constellation 1
+
+- **WHEN** a radish heals Yaoyao below Constellation 1
+- **THEN** the pool is unchanged

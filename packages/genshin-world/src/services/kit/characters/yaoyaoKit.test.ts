@@ -366,6 +366,32 @@ describe(createYaoyaoKitBehaviour, () => {
     ]);
   });
 
+  test("constellation 1 restores 15 stamina to the party's pool on a radish heal, once each 5 seconds", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5, {}, { constellationCount: 1 });
+    context.stamina.value = 50;
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    // The first radish heals at 105 frames, and the ones at 165 and 225 fall inside its five seconds
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES);
+    expect(context.stamina.value).toBe(65);
+    stepFrames(context, 120);
+    expect(context.stamina.value).toBe(65);
+    // The heal at 465 frames comes 360 frames after the first, past the cooldown
+    stepFrames(context, 240);
+    expect(context.stamina.value).toBe(80);
+  });
+
+  test("constellation 1 restores no stamina without the constellation", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    context.stamina.value = 50;
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES);
+    expect(context.stamina.value).toBe(50);
+  });
+
   test("ascension 4 heals the active character 0.8% of Yaoyao's Max HP each second, for five seconds after a radish heals her", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5, {}, { ascension: 4 });
