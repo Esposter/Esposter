@@ -1,6 +1,6 @@
 ## Purpose
 
-Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita stance with its HP cost, and Spirit Soother's half-HP hit with Blood Blossom, with Spirit Soother's heal and her Constellations 4 and 6 left unbuilt, and her Flutter By and Sanguine Rouge passives built.
+Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita stance with its HP cost, and Spirit Soother's half-HP hit with Blood Blossom, with Spirit Soother's heal and her Constellations 2, 4 and 6 left unbuilt, her Constellation 1 built, and her Flutter By and Sanguine Rouge passives built.
 
 ## Requirements
 

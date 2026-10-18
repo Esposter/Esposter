@@ -1,6 +1,6 @@
 ## Purpose
 
-Gaming's kit as built: his four strikes, a provisional charged attack, a collision and two plunges, and Bestial Ascent and Suanni's Gilded Dance's strike, with his Man Chai and his heals left unbuilt, his Ascension 4 Air of Prosperity built, and his Ascension 1 passive and constellations left unbuilt.
+Gaming's kit as built: his four strikes, a provisional charged attack, a collision and two plunges, and Bestial Ascent and Suanni's Gilded Dance's strike, with his Man Chai and his heals left unbuilt, his Ascension 4 Air of Prosperity and his Constellation 2 built, and his Ascension 1 passive and Constellations 1, 4 and 6 left unbuilt.
 
 ## Requirements
 

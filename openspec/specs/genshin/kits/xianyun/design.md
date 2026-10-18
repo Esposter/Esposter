@@ -1,6 +1,6 @@
 # Xianyun
 
-Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour`, on avatar 10000093: four strikes, a charged attack, a collision and two plunges, Skyladder's first press, and Stars Gather at Dusk's hit. Her multipliers are read from proud skill groups 9331, 9332 and 9339; its cooldowns and the burst's energy cost are the same groups' too. Driftcloud Wave, the plunges that replace hers while Skyladder's state stands, is not built, and neither are Starwicker, her burst's heals, the airborne buff the burst gives the party, her passives and her constellations. The poise is provisional at 0, as gcsim gives none.
+Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour`, on avatar 10000093: four strikes, a charged attack, a collision and two plunges, Skyladder's first press, and Stars Gather at Dusk's hit. Her multipliers are read from proud skill groups 9331, 9332 and 9339; its cooldowns and the burst's energy cost are the same groups' too. Driftcloud Wave, the plunges that replace hers while Skyladder's state stands, is not built, and neither are Starwicker, her burst's heals, the airborne buff the burst gives the party, her passives and Constellations 2, 4 and 6, with Constellation 1 built. The poise is provisional at 0, as gcsim gives none.
 
 ## Not built
 
@@ -8,7 +8,7 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 - **Starwicker** — the burst's plunge hook. While the burst's airborne buff stands on the active character, a plunge of any party member deals Starwicker at 4.8 metres, up to 8 times, and heals the party on its own timer. It waits on a reaction to a party member's plunge landing, which `KitEventKind` does not yet carry.
 - **The burst's heals** — the instant heal at the burst's hitmark, and the continuous heals every 2.5 seconds for 16 seconds. `KitPartyHeal` rides a hit only as the hit strikes an enemy, so a heal with no enemy struck waits on a party heal the kit's own timer can give.
 - **The airborne buff** — the higher jumps it gives the party. It waits on a party buff the controller's jump reads.
-- **Passives and constellations** — none is built.
+- **Passives, and Constellations 2, 4 and 6** — none is built.
 - **Constellation 1's extra charge is a skill charge.** White Clouds at Dawn's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
 
 ## Key files
