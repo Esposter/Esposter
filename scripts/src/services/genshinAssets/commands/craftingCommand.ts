@@ -4,6 +4,7 @@ import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/buildCraftingBenchPlaces";
 import { buildCraftingRecipes } from "#src/services/genshinAssets/crafting/buildCraftingRecipes";
+import { buildCraftingStrongboxes } from "#src/services/genshinAssets/crafting/buildCraftingStrongboxes";
 import { defineCommand } from "citty";
 import { GameDataset } from "genshin-world";
 
@@ -11,7 +12,7 @@ export const craftingCommand: SubCommandsDef[string] = defineCommand({
   args: { ...dryRunArgs },
   meta: {
     description:
-      "Publish the bench's recipes (the tiers, potions, baits, Condensed Resin and gadgets) and the instructions that open them from the dump, and the bench's place in its region from the scene's birth records, to the game data",
+      "Publish the bench's recipes (the tiers, potions, baits, Condensed Resin and gadgets) and the instructions that open them from the dump, the Mystic Offering's strongboxes, and the bench's place in its region from the scene's birth records, to the game data",
     name: "crafting",
   },
   run: async ({ args }) => {
@@ -20,7 +21,7 @@ export const craftingCommand: SubCommandsDef[string] = defineCommand({
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: { indexes: {}, objects: { ...buildCraftingRecipes(), ...objects } },
+        publication: { indexes: {}, objects: { ...buildCraftingRecipes(), ...buildCraftingStrongboxes(), ...objects } },
         scopes: [GameDataset.Crafting, GameDataset.CraftingBenchPlaces],
       }),
     );

@@ -2,6 +2,13 @@ import { CraftingRecipeKind } from "genshin-world";
 
 // The game's combine and material tables in the dump, read by their names
 export const COMBINE_TABLE_NAME = "CombineExcelConfigData";
+// The reliquary decompose table, the Mystic Offering's recipe, and the display items its reward previews show
+export const DECOMPOSE_TABLE_NAME = "ReliquaryDecomposeExcelConfigData";
+export const DISPLAY_ITEM_TABLE_NAME = "DisplayItemExcelConfigData";
+// The reliquary offer table, which lists the pieces each strongbox holds
+export const OFFER_PURCHASE_TABLE_NAME = "ReliquaryOfferPurchaseExcelConfigData";
+// The display type a strongbox's display item carries
+export const RELIQUARY_SMELT_DISPLAY_TYPE = "RELIQUARY_ITEM_SMELT";
 // The recipe type of a craft at the bench. The convert rows, which turn one boss material into another, and the
 // Homeworld's rows are other kinds of recipe and are not kept
 export const COMBINE_RECIPE_TYPE = "RECIPE_TYPE_COMBINE";
