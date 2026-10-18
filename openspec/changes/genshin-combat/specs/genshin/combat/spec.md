@@ -88,7 +88,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
-A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered while a field stands SHALL set its time back to 7 seconds rather than leave a second field. While it stands, the enemies inside it have their Physical RES lowered by 40%.
+A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 7 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
 #### Scenario: a Stellar-Conduct sustains its Polestar Field for 7 seconds
 
@@ -97,8 +97,13 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 
-- **WHEN** a Stellar-Conduct is triggered while a Polestar Field stands
+- **WHEN** a Stellar-Conduct is triggered with the body inside a standing Polestar Field
 - **THEN** the field's time is set back to 7 seconds, and no second field stands
+
+#### Scenario: a Stellar-Conduct with the body outside the standing Polestar Field places a second one beside it
+
+- **WHEN** a Stellar-Conduct is triggered with the body outside the one Polestar Field that stands
+- **THEN** a second field stands at the body for 7 seconds, and the first keeps its time
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
@@ -118,6 +123,11 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 
 - **WHEN** one Cryo or Electro hit is recorded
 - **THEN** the characters in the field have a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
+
+#### Scenario: a member's Radiance: Stellar-Conduct carries the count of hits the last tick took
+
+- **WHEN** two Cryo or Electro hits are recorded and the field's next tick passes with the body inside it
+- **THEN** each deployed member's Radiance: Stellar-Conduct carries the count of 2, which a direct Stellar-Conduct hit reads its coefficient by
 
 #### Scenario: a field lowers the enemies' Physical RES by 40%
 

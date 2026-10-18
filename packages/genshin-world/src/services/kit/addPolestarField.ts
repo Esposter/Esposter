@@ -13,13 +13,16 @@ import {
 } from "#src/services/kit/constants";
 import { createPolestarFieldHooks } from "#src/services/kit/createPolestarFieldHooks";
 import { castKitField } from "#src/services/kit/effects/castKitField";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 
 const checkIsPolestarField = (effect: KitEffect): effect is KitField =>
   effect.kind === "field" && effect.id === POLESTAR_FIELD_ID;
 
-// The Polestar Field a Stellar-Conduct leaves, written in place: a standing one is refreshed to its full seconds, and
-// Otherwise one is placed round the point given, cast by the character that triggered the reaction. The reaction exists
-// Only where a party member's enabler allows it, so any enabler's Stellar-Conduct does this with no kit of its own
+// The Polestar Field a Stellar-Conduct leaves, written in place, the point given being where the body stands: the
+// Standing one the body is inside is refreshed to its full seconds, and otherwise one is placed round the body beside
+// Any other, cast by the character that triggered the reaction, as gcsim's queueStellarConduct resets the field the
+// Player is within and places a new one where it is within none (pkg/reactable/stellarconduct.go:74). The reaction
+// Exists only where a member's enabler allows it, so any enabler's Stellar-Conduct does this with no kit of its own
 export const addPolestarField = (
   kitEffectState: KitEffectState,
   characterId: number,
@@ -27,13 +30,16 @@ export const addPolestarField = (
   position: GroundPoint,
 ): void => {
   if (!reactions.some(({ reactionType }) => reactionType === ReactionType.StellarConduct)) return;
-  const polestar = kitEffectState.effects.find(checkIsPolestarField);
+  const polestar = kitEffectState.effects.find(
+    (effect): effect is KitField => checkIsPolestarField(effect) && checkIsInKitField(effect, position),
+  );
   if (polestar) {
     polestar.secondsRemaining = POLESTAR_FIELD_SECONDS;
     return;
   }
   castKitField(kitEffectState, characterId, position, {
     id: POLESTAR_FIELD_ID,
+    isStacked: true,
     nextTickSeconds: POLESTAR_FIELD_TICK_SECONDS,
     // Its hooks carry the Prism's own count and the Physical RES it takes, so its tick has nothing to do
     ...createPolestarFieldHooks(),
