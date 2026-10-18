@@ -1,5 +1,5 @@
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
-import { createStatue } from "#src/services/shared/createStatue.test";
+import { createStatue } from "#src/services/shared/createStatue";
 import { describe, expect, test } from "vitest";
 
 describe(findPointedLandmark, () => {
