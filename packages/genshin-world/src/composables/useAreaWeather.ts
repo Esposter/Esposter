@@ -4,9 +4,10 @@ import type { Vector3 } from "three";
 
 import { AREA_WEATHER_CHANGE_SECONDS, REGION_RECHECK_DISTANCE, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { checkIsInCity } from "#src/services/world/checkIsInCity";
+import { findAreaAt } from "#src/services/world/findAreaAt";
 import { getNextAreaWeather } from "#src/services/world/getNextAreaWeather";
 import { useLoop, useTres } from "@tresjs/core";
-import { computeOutlineDistance, createSeededRandom, WeatherKind } from "genshin-engine";
+import { createSeededRandom, WeatherKind } from "genshin-engine";
 
 // The weather of the area the camera stands in, its own first one, as the game draws only the weather where the
 // Player stands, and clear where no drawn outline holds the camera or where it stands in one of the area's cities. It
@@ -33,9 +34,11 @@ export const useAreaWeather = (origin: Vector3, catalogue: Catalogue) => {
     if (Math.hypot(x - checkedX, z - checkedZ) >= REGION_RECHECK_DISTANCE) {
       checkedX = x;
       checkedZ = z;
-      const area = catalogue.regions
-        .flatMap(({ areas }) => areas)
-        .find(({ outline }) => computeOutlineDistance(outline, x, z) === 0);
+      const area = findAreaAt(
+        catalogue.regions.flatMap(({ areas }) => areas),
+        x,
+        z,
+      );
       isInCity.value = area !== undefined && checkIsInCity(area, x, z);
       if (area !== checkedArea) {
         checkedArea = area;
