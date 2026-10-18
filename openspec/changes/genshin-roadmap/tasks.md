@@ -228,15 +228,14 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](../genshin-character-screen/design.md).
 - [ ] **Profile tab** — `character-profile.png`, waits on [character screen](../genshin-character-screen/design.md).
 - [ ] **Mobile touch controls** — `mobile-touch.png`, a drag of the look, waits on [touch controls](../../specs/genshin/touch-controls/design.md).
-- [ ] **Bag open and close** — `bag-open-close.mkv`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag tabs** — `bag-tabs.mkv`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag sort** — `bag-sort.mkv`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](../genshin-wish/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Wish event rotation** — the event banners after Born of Ocean Swell of 2021-05-18, which no game table names; built from the wiki one banner at a time, waits on [wish](../genshin-wish/design.md).
+- [ ] **Bag open and close** — `bag-open-close.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag tabs** — `bag-tabs.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag sort** — `bag-sort.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](../archive/2026-10-18-genshin-wish/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](../../specs/genshin/adventurer-handbook/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Weapon levelling** — `weapon-levelling.mkv`, the [weapon screen](../genshin-weapon-screen/design.md) over [weapon enhancement](../genshin-weapon-enhancement/design.md)'s rules.
 - [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
@@ -252,10 +251,10 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Gathering pick** — `gather-pick.mkv`, waits on [gathering](../genshin-gathering/design.md).
 - [ ] **Fish reel** — `fishing-reel.mkv`, waits on [fishing](../genshin-fishing/design.md).
 - [ ] **Fishing point pools** — `fishing-point-pool.mkv`, waits on [fishing](../genshin-fishing/design.md).
-- [ ] **Cooking zones** — `cooking-zones.mkv`, waits on [cooking](../genshin-cooking/design.md).
-- [ ] **Special dish quality** — `cooking-special-dish.mkv`, waits on [cooking](../genshin-cooking/design.md).
-- [ ] **Processing queue** — `processing-queue.mkv`, waits on [cooking](../genshin-cooking/design.md).
-- [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](../genshin-cooking/design.md).
+- [ ] **Cooking zones** — `cooking-zones.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
+- [ ] **Special dish quality** — `cooking-special-dish.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
+- [ ] **Processing queue** — `processing-queue.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
+- [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
 - [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](../genshin-forging/design.md).
 - [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](../genshin-forging/design.md).
 - [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](../genshin-achievements/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
@@ -353,3 +352,6 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **The shading inputs carry the outline knots as two loose tuples.** [Shading](../../specs/genshin/characters/shading/design.md) — `CharacterShadingInputs` keeps `outlineDepths` and `outlineScales` apart, and `createCharacterMaterial` rebuilds an `OutlineWidthKnots` from them by hand, though the `ToonEdge` shape already names that type; typing the field as `OutlineWidthKnots` makes the avatar's optional knot readers required, so decide what a material with no knots draws, then type the field and drop the reassembly, which reaches `genshin-world` as well.
 - [ ] **The game outline offset is written twice, as a pure function and as the TSL node.** [Shading](../../specs/genshin/characters/shading/design.md) — `getGameOutlineOffset` is a public export of `genshin-engine` (its index re-exports it) and only its own test calls it, while `SharedToonOutlinePassNode`'s `#createGameOffsetNode` renders the same block-B scale and size with `vertexColor().b`, so a change to the rule must land in both and the tests cover only the pure copy. Decide which copy is the reference the other derives from, or whether the public function is removed, then make one copy own the rule.
 - [ ] **The pass trailer's width is inferred from the next subshader's LOD.** [Game data formats](../../specs/genshin/game-data-formats/design.md) — `readSerializedPass` rewinds 8 or 12 bytes by whether a tagless subshader's LOD is zero, so a two-word trailer followed by a tagless subshader with a nonzero LOD rewinds 12 and misreads that subshader's tags and LOD by one int32; the comment assumes such a LOD is zero, and no fixture in the repository shows otherwise. Find a serialized pass whose tagless subshader has a nonzero LOD, pin it as a fixture, then settle the trailer's rule from it.
+- [ ] **Wish history backfill: every stored save gains `wishHistory: []`.** [Wish](../../specs/genshin/wish/design.md) — the save's schema requires the list, so a save stored before the slice has none until a throwaway backfill writes it, run per the backfills skill before the schema deploys.
+- [ ] **Cooking: the stove opens the cooking screen in the world.** [Cooking](../../specs/genshin/cooking/design.md) — the stove prompt and the screen are tested in isolation, and no session mounts them or reads the recipe records they need.
+- [ ] **Crafting: the keeper Timaeus stands beside Mondstadt's bench.** [Crafting](../../specs/genshin/crafting/design.md) — he has no birth in the dump, so the record does not place him; the wiki's location for him is carried in as a provisional place.

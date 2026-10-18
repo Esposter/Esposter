@@ -29,7 +29,7 @@ packages/genshin-world/src/data/character/interfaceRects.json
 2. **The look, placed by the fitted rects.** `Character/Screen` hands `CharacterMenu` its rects, which nests a `GameRect` per piece in the tree's order, and every value marked provisional gives way to the tree's. `pnpm -C scripts genshin:parity compare character-attributes` and the four other tabs' references must not rise from the scores the [character screen](../../specs/genshin/character-screen/design.md) page holds, and the comparison is queued for the user's eyes.
 3. **The character in the middle and the element's mark.**
 4. **Details**, from `AvatarInfoDescDialog`'s tree, over the [character attributes](../../specs/genshin/character-attributes/design.md)' tables.
-5. **Level Up and Ascend**, on the [inventory](../genshin-inventory/design.md)'s materials.
+5. **Level Up and Ascend**, on the [inventory](../archive/2026-10-18-genshin-inventory/design.md)'s materials.
 6. **The Profile tab's voice-over list and namecard view**, then levels 95 and 100 and the Traveler's bonuses.
 
 ## Key files

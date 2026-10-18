@@ -22,7 +22,7 @@ A player casts at a fishing point, waits for a fish to nibble and bite, strikes,
 
 ## Waiting on
 
-- `openspec/changes/genshin-crafting/`: bait is crafted from its recipe.
+- `openspec/changes/archive/2026-10-18-genshin-crafting/`: bait is crafted from its recipe.
 - `openspec/changes/genshin-shops/`: the Fishing Association's exchanges are made at its shop.
 - A recording of the reel (`fishing-reel.mkv`) to set the bar's scale, the allowance and the zone's travel. The gear's tension rates are the table's and wait on nothing. Until it lands these stay provisional and gate nothing.
 
