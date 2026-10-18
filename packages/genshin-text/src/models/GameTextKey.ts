@@ -306,6 +306,8 @@ export enum GameTextKey {
   LumidouceBell = "205491460",
   Lumitoile = "1497627716",
   LunaSigil = "3814931852",
+  // The Luxurious Chest, the kind the wiki places in the most hidden spots, as the game names it
+  LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
 
   Mail = "UI_PLAYER_PROFILE_MAIL",
@@ -388,6 +390,8 @@ export enum GameTextKey {
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
   RedBerryshroom = "1096616044",
+  // The Remarkable Chest, the kind found in a few regions and rewarding blueprints, as the game names it
+  RemarkableChest = "26276094",
   // The features a Reputation level unlocks, each worded as the reward page's unlock line, by its function's name
   ReputationMondstadtMerchantDiscounts = "1610612133",
   ReputationMondstadtOutcropSearch = "1452899589",
