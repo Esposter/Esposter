@@ -26,9 +26,9 @@ The prompt list SHALL offer a row for each thing within reach of the character, 
 - **WHEN** the prompt list is drawn
 - **THEN** no row is shown for that resident
 
-### Requirement: Rows run from the nearest thing and keep their order between frames
+### Requirement: Rows run from the nearest thing to the farthest
 
-The rows SHALL run from the nearest thing to the farthest, with two things at the same distance ordered by id, so that rows never swap places between frames.
+The rows SHALL run from the nearest thing to the farthest, with two things at the same distance ordered by id.
 
 #### Scenario: The nearest thing is the first row
 

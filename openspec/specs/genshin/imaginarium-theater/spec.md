@@ -89,13 +89,13 @@ Blessing Level SHALL rise by two for each Alternate Cast member past the number 
 
 ### Requirement: Each Blessing level adds stats to a cast member
 
-Each Blessing level SHALL add fifty ATK, fifty DEF, twenty Elemental Mastery and eight hundred Max HP to a cast member, and a special guest SHALL receive double those stats.
+Each Blessing level SHALL add the stats its constant gives to a cast member, and a special guest SHALL receive double those stats.
 
 #### Scenario: A regular member gains the Blessing stats
 
 - **GIVEN** a cast member is not a special guest
 - **WHEN** one Blessing level is applied
-- **THEN** the member gains fifty ATK, fifty DEF, twenty Elemental Mastery and eight hundred Max HP
+- **THEN** the member gains the stats one Blessing level adds
 
 #### Scenario: A special guest gains double the Blessing stats
 

@@ -110,9 +110,9 @@ Forge points from enhancement ores SHALL be capped at 400,000 per game day, coun
 - **WHEN** the player places an order
 - **THEN** the day's forge points start again from zero
 
-#### Scenario: Mystic Enhancement Ore counts no forge points
+#### Scenario: The Mystic Enhancement Ore from Magical Crystal Chunks counts no forge points
 
-- **GIVEN** an order for Mystic Enhancement Ore
+- **GIVEN** an order for Mystic Enhancement Ore built from Magical Crystal Chunks
 - **WHEN** the order starts
 - **THEN** it adds nothing to the day's forge points
 

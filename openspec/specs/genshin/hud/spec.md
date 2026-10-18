@@ -156,7 +156,7 @@ The quest tracker SHALL show the quest that V navigates to, with its step and ho
 - **THEN** the tracker's quest is navigated to
 - **AND** a beam rises over its first objective
 
-#### Scenario: With no quest navigated the tracker stays empty
+#### Scenario: With no quest loaded the tracker stays empty
 
 - **GIVEN** no quest is loaded
 - **WHEN** the tracker is drawn

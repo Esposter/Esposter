@@ -16,11 +16,11 @@ The ground SHALL be painted in layers of grass, bare earth, sand, snow, path and
 
 ### Requirement: Layers follow the game's cell painting, not the slope
 
-Each layer's share at a place SHALL follow the layer the game paints that cell in, and SHALL NOT follow the slope.
+Each layer's share at a place SHALL follow the layer the game paints that cell in. A biome's slope rule MAY lay bare earth or rock over that share, where the biome has the rule; the field's own shares SHALL NOT follow the slope.
 
-#### Scenario: Steep ground painted as grass stays grass
+#### Scenario: Steep ground painted as grass stays grass where no slope rule applies
 
-- **GIVEN** a steep place whose cells the game paints as grass
+- **GIVEN** a steep place whose cells the game paints as grass, in a biome with no slope rule
 - **WHEN** the ground is painted
 - **THEN** the place is grass rather than rock
 

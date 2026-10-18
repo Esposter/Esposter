@@ -44,7 +44,7 @@ flowchart TD
 - **A locked statue is an activation in reach.** Each Statue of The Seven whose landmark is not yet unlocked is an `Activate` row named by its statue, and F on it unlocks it; an unlocked statue has no row ([map unlocking](../map-unlocking/design.md)).
 - **The stand-ins.** `World/Interactables` draws each drop as a small sphere and each resident as the locomotion capsule every body stands in as until its own is measured, one instanced mesh per kind rewritten only when the list changes. A witness render draws none.
 - **The held F repeats every 0.45 seconds.** The interval is read off three pick-ups 27 frames apart in `captures/world-pickup.mkv` from 38.5 to 39.6 seconds; a held F rather than a tap there would confirm it.
-- **The list shows five rows, and reach is 2.5 metres.** Both are best estimates no published source shows: a pile of more than five things shows five rows, and a thing's prompt first shows about two and a half metres from the body.
+- **The list's row count and reach are best estimates.** No published source shows either: a pile of more things than the list has rows shows that many rows, and a thing's prompt first shows at the reach from the body. Both values live in `services/interaction/constants.ts`.
 
 ## Parity
 
@@ -53,7 +53,7 @@ The list is scored against the English PC client at 1080 high in its pickup: a p
 - Three rows of 59 on a 72 pitch, the stack centred on the screen's middle, its cap's left edge 139 right of the centre.
 - The cap 40 wide and 33 high, its pointer 8 by 15 at 45 from the cap's left, the pill 290 wide from 60 past the cap's left, its name's cap height 22 in a face of 31 with letter-spacing to the game's line width, the icon 34 across at 12 inside the pill.
 
-Scored over the clean plate, the list gives a mean difference of 6.88% and a FLIP of 0.2645, with its name's place, its width and the icon's inset set. The two-percent bar is not met. What is left:
+Scored over the clean plate, with its name's place, its width and the icon's inset set, the list does not yet meet the two-percent bar on mean difference; the parity suite holds its scores. What is left:
 
 - **The item icons.** Three icons of 34 across are the game's own item art, which nothing ships, so a disc stands in. They are the largest term in the difference grid.
 - **The pill's fill and rim.** The plate fills the game's pill from its surroundings, so the fill and the rim are scored against the scene where the game's pill was, and the rim sits a pixel off.
@@ -83,7 +83,7 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 
 ## Notes
 
-- **The held F's interval is read off a published clip; the reach and the window are best estimates.** The wiki documents no reach, no row count and no repeat interval. A PC tips clip of the English client, saved as `captures/world-pickup.mkv`, picks a berry bush's three berries up with F, each pick up 27 frames at 60 a second after the last, so `INTERACTION_HELD_REPEAT_SECONDS` is 0.45. No published clip or still shows a pile of more things than the list holds, or a slow walk up to a lone thing whose distance can be solved, so `INTERACTION_WINDOW_SIZE` (5) and `INTERACTION_REACH` (2.5 metres) stand as provisional best estimates. All three are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s Manual verification list, and the clips that would measure the last two stay on its References sought list.
+- **The held F's interval is read off a published clip; the reach and the window are best estimates.** The wiki documents no reach, no row count and no repeat interval. A PC tips clip of the English client, saved as `captures/world-pickup.mkv`, picks a berry bush's three berries up with F, each pick up 27 frames at 60 a second after the last, so `INTERACTION_HELD_REPEAT_SECONDS` is 0.45. No published clip or still shows a pile of more things than the list holds, or a slow walk up to a lone thing whose distance can be solved, so `INTERACTION_WINDOW_SIZE` and `INTERACTION_REACH` stand as provisional best estimates, their values in `services/interaction/constants.ts`. All three are on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s Manual verification list, and the clips that would measure the last two stay on its References sought list.
 - **The order, the held F and the drops' stand-ins are this page's reading of the game.** The wiki documents neither how the game orders several prompts nor whether a held F repeats. Nearest first, a held F that repeats its pick up and spheres for drops are the readings closest to play; the tips clip's evenly spaced pick ups bear out the repeat, and the Manual verification confirms or replaces the rest.
 
 ## Sources

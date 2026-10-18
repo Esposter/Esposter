@@ -32,7 +32,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 - **The difficulties.** A season's difficulties are the rows its ids name, ordered from the lowest level.
 - **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing.
 - **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing.
-- **Blessing stats.** Each level of Blessing adds 50 ATK, 50 DEF, 20 Elemental Mastery and 800 Max HP to a cast member, and a special guest's stats are doubled.
+- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER`.
 - **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged.
 - **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two.
 

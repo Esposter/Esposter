@@ -53,7 +53,7 @@ flowchart TD
 | `apps/web/modules/serveGenshinExtractions.ts`                                     | Registers the exports' and the packs' routes under `nuxt dev` alone            |
 | `apps/web/server/development/genshinSceneExports.ts`                              | The route: the exports' directory handed to the service                        |
 | `apps/web/server/services/genshin/sceneExport/serveGenshinSceneExport.ts`         | Answers the index, a layout or a file inside a component's assets              |
-| `apps/web/server/services/genshin/sceneExport/listSceneExportComponents.ts`       | The index: the folders holding a witness layout                                |
+| `apps/web/server/services/genshin/sceneExport/listSceneExportComponents.ts`       | The index: the folders holding a witness layout or an avatar                   |
 | `apps/web/server/services/genshin/sceneExport/constants.ts`                       | The parity directory's default, and the folder names read                      |
 | `packages/genshin-world/src/composables/useSceneExports.ts`                       | A scene's wanted components loaded, kept while wanted and freed                |
 | `packages/genshin-world/src/services/scene/loadWitness.ts`                        | The witness's own loader, which the development world reuses                   |
