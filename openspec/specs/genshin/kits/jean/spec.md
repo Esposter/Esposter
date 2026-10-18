@@ -1,6 +1,6 @@
 ## Purpose
 
-Jean's kit as built: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast. Her other constellations, the hold's pull and the off-field members' activation heal are not built.
+Jean's kit as built: five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast, with Constellations 1, 2 and 4 built. Her Constellation 6, the hold's pull and the off-field members' activation heal are not built.
 
 ## Requirements
 
@@ -53,6 +53,50 @@ From her first constellation, a Gale Blade held for at least one second SHALL ra
 - **WHEN** a Gale Blade held for at least one second lands its blast
 - **THEN** Jean's Anemo DMG Bonus rises by 40% for the 46 frames of the blast
 - **AND** any other Anemo hit of hers that lands in those frames takes the bonus too
+
+### Requirement: Constellation 2 gives the party speed on each pickup
+
+From Constellation 2, each particle or orb Jean picks up while she is on the field SHALL give every party member 15% Movement SPD and 15% ATK SPD for 15 seconds.
+
+#### Scenario: Jean's pickup on the field gives the party speed
+
+- **GIVEN** Jean is at constellation 2 and is on the field
+- **WHEN** she picks up a particle or orb
+- **THEN** every party member has 15% Movement SPD and 15% ATK SPD for 15 seconds
+
+#### Scenario: A pickup with another character on the field gives nothing
+
+- **GIVEN** Jean is at constellation 2 and another character is on the field
+- **WHEN** a particle or orb is picked up
+- **THEN** the party gains no speed
+
+#### Scenario: Below Constellation 2 a pickup gives nothing
+
+- **GIVEN** Jean is at constellation 1
+- **WHEN** she picks up a particle or orb
+- **THEN** the party gains no speed
+
+### Requirement: Constellation 4 cuts the Anemo RES of opponents in the field
+
+From Constellation 4, each opponent within Dandelion Breeze's field SHALL have its Anemo RES reduced by 40% for 1.2 seconds at each of the field's ticks, the activation included.
+
+#### Scenario: An opponent inside the field loses Anemo RES
+
+- **GIVEN** Jean is at constellation 4 and Dandelion Breeze's field is out
+- **WHEN** the field ticks
+- **THEN** each opponent within it has its Anemo RES reduced by 40% for 1.2 seconds
+
+#### Scenario: An opponent outside the field loses none
+
+- **GIVEN** Jean is at constellation 4 and Dandelion Breeze's field is out
+- **WHEN** the field ticks
+- **THEN** an opponent outside it has no Anemo RES reduction
+
+#### Scenario: Below Constellation 4 the field cuts no Anemo RES
+
+- **GIVEN** Jean is at constellation 3 and Dandelion Breeze's field is out
+- **WHEN** the field ticks
+- **THEN** no opponent's Anemo RES is reduced
 
 ### Requirement: Dandelion Breeze's field heals and regenerates
 
