@@ -144,6 +144,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
     primogemResinRefillCount: MAX_SAVE_NUMBER,
     primogemResinRefillDay: "9999-12-31",
   },
+  wishHistory: [],
   wishPity: Object.fromEntries(
     Object.values(BannerKind).map((bannerKind) => [
       bannerKind,
@@ -159,7 +160,6 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
       },
     ]),
   ),
-  wishHistory: [],
   worldLevelAdjustment: { changedAt: MAX_SAVE_INSTANT, isLowered: true },
 }).length;
 // The serialized save's ceiling, so a crafted document cannot grow the blob without limit: the skeleton, then each

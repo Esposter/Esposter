@@ -59,9 +59,9 @@ import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
+import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
-import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
@@ -316,9 +316,9 @@ const {
 // Mondstadt's chests, each unopened one a row to open beneath its point, and opened on the key with the world's random
 const { chestInteractables, openChestById } = useWorldChests({
   events,
+  gainWorldAdventureExp,
   gameDataBaseUrl,
   gameText,
-  gainWorldAdventureExp,
   getGroundHeight,
   openedChestIds,
   placeWorldDrops,
@@ -703,7 +703,7 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused && screenKind === ScreenKind.World) {
             const interactable = readInteraction(inputState, context.delta);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
-            const materialSource = materialSources.value.find(({ id }) => id === interactable?.id);
+            const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp && materialSource)
@@ -938,19 +938,19 @@ defineExpose({ jumpTo, readCameraPosition });
           v-model:characters="characters"
           v-model:wallet="wallet"
           :active-character-id="getActiveCharacterId(party)"
-          :character-talent-kits="characterTalentKits"
-          :character-id-constellations-map="characterIdConstellationsMap"
+          :character-talent-kits
+          :character-id-constellations-map
           :companionship-exp-map="savedState.companionshipExpMap"
           :game-data-base-url
           :game-text
           :initial-tab="CharacterMenuTab.Attributes"
           :inventory
           :language
-          :material-data-map="materialDataMap"
+          :material-data-map
           :max-stamina="STAMINA_MAX"
           :name-text
           :stat-tables
-          :talent-upgrade-map="talentUpgradeMap"
+          :talent-upgrade-map
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         >
@@ -994,7 +994,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :stat-tables
           :server-clock-offset-ms
           :wish-schedule
-          :stella-fortuna-name-text-id-map="stellaFortunaNameTextIdMap"
+          :stella-fortuna-name-text-id-map
           @close="screenKind = ScreenKind.World"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
@@ -1007,7 +1007,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @close="screenKind = ScreenKind.World"
           @confirm="
             (minutes) => {
-              windrise.gameClock.minutes = minutes;
+              if (windrise) windrise.gameClock.minutes = minutes;
               screenKind = ScreenKind.World;
             }
           "
@@ -1018,7 +1018,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :character-data-map="statTables.characterDataMap"
           :characters
           :game-text
-          :name-text="nameText"
+          :name-text
           :party
           :traveler-name="savedState.travelerName"
           @close="screenKind = ScreenKind.World"
@@ -1044,8 +1044,8 @@ defineExpose({ jumpTo, readCameraPosition });
       v-if="screenKind === ScreenKind.Reputation && reputationCity"
       v-model:level="reputationLevel"
       :game-text
-      :material-data-map="materialDataMap"
-      :name-text="nameText"
+      :material-data-map
+      :name-text
       :progress="reputation"
       :reputation="reputationCity"
       @close="screenKind = ScreenKind.World"
@@ -1069,8 +1069,8 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :initial-crafter-id="crafting.crafterId"
       :inventory
-      :material-data-map="materialDataMap"
-      :name-text="nameText"
+      :material-data-map
+      :name-text
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"

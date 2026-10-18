@@ -53,8 +53,8 @@ interface Props {
 const bannerId = defineModel<string>("bannerId");
 const {
   backLabel,
-  banners,
   bannerCard,
+  banners,
   currencies,
   detailsLabel,
   fatePoints,

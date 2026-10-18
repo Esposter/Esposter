@@ -42,7 +42,7 @@ export const writeResidents = async (): Promise<string> => {
       return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
     }),
   ];
-  const reputationKeeperIds = new Set([...REPUTATION_KEEPER_NPC_ID_MAP.values()].map(String));
+  const reputationKeeperIds = new Set(Array.from(REPUTATION_KEEPER_NPC_ID_MAP.values(), String));
   const placements = npcPlaces.flatMap(([npcId, place]) => {
     const region = classifyPlacementRegion(place.position, regionMapPoints, REGION_MAX_DISTANCE);
     return region === undefined ? [] : [toResidentPlace(npcId, place, region, origin)];

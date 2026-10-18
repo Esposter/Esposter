@@ -1,5 +1,5 @@
-import type { Interactable } from "#src/models/interaction/Interactable";
 import type { CraftingBenchPlace } from "#src/models/crafting/CraftingBenchPlace";
+import type { Interactable } from "#src/models/interaction/Interactable";
 
 import { CRAFTING_BENCH_INTERACTABLE_ID } from "#src/services/crafting/constants";
 import { InteractionKind } from "genshin-interface";

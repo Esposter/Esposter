@@ -6,6 +6,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test } from "vitest";
 
@@ -23,6 +24,7 @@ describe(useWorldCombat, () => {
       onPartyRevived: () => {},
       placeWorldDrops: () => {},
       savedCharacters: [],
+      savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
       wildlifePlaces: [],
@@ -41,8 +43,10 @@ describe(useWorldCombat, () => {
       onPartyRevived: () => {},
       placeWorldDrops: () => {},
       savedCharacters: [],
+      savedParty: createParty([TRAVELER_CHARACTER_ID]),
       startingCharacterIdKitMap: new Map([[TRAVELER_CHARACTER_ID, TRAVELER_KIT]]),
       statTables,
+      wildlifePlaces: [],
     });
     events.emit("chestOpened");
 

@@ -16,6 +16,7 @@ import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { COMPANIONSHIP_EXP_ITEM_ID } from "#src/services/originalResin/constants";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 // The state after a commission claim's rewards are routed as a blossom's claim routes its draws: the Mora and the Mora
 // Its Adventure EXP pays past rank 60 into the wallet, the Adventure EXP into the rank, the Companionship EXP into the
@@ -50,7 +51,12 @@ export const routeCommissionClaim = (
   const gain = gainAdventureExp(adventureRankTables, adventureExp, adventureExpCount, completedMainQuestIds);
   return {
     adventureExp: gain.adventureExp,
-    characters: gainCompanionshipExp(characters, party, companionshipExpCount, friendshipLevels),
+    characters: gainCompanionshipExp(
+      characters,
+      getDeployedCharacterIds(party),
+      companionshipExpCount,
+      friendshipLevels,
+    ),
     inventory: claimedInventory,
     wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] + moraCount + gain.moraPaid },
   };

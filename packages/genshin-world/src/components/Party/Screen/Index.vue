@@ -14,10 +14,10 @@ import { PartySetupScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
-  // The characters the player holds, in the order they are listed, which Quick Setup picks from
-  characters: Character[];
   // The character data by id, whose element and name text id each slot shows
   characterDataMap: ReadonlyMap<number, CharacterData>;
+  // The characters the player holds, in the order they are listed, which Quick Setup picks from
+  characters: Character[];
   gameText: GameText;
   // The names of the characters in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
@@ -27,7 +27,7 @@ interface Props {
   travelerName: string;
 }
 
-const { characters, characterDataMap, gameText, nameText, party, travelerName } = defineProps<Props>();
+const { characterDataMap, characters, gameText, nameText, party, travelerName } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Party Setup opens on the deployed team, and the arrows step from there
 const teamIndex = ref(party.deployedTeamIndex);
@@ -60,7 +60,7 @@ const stepTeam = (step: number) => {
     :deploy-label="gameText[GameTextKey.Deploy]"
     :quick-setup-label="gameText[GameTextKey.QuickSetup]"
     :slots
-    :team-name="teamName"
+    :team-name
     :title="gameText[GameTextKey.PartySetup]"
     @close="emit('close')"
     @deploy="deployPartyTeam(party, teamIndex)"

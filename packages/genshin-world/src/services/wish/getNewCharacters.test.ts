@@ -32,12 +32,12 @@ describe(getNewCharacters, () => {
       new Map([[1, 1]]),
       new Map([
         [1, 2],
-        [3, 1],
         [2, 1],
+        [3, 1],
       ]),
       characterDataMap,
     );
 
-    expect(newCharacters.map(({ id }) => id)).toStrictEqual([3, 2]);
+    expect(newCharacters.map(({ id }) => id)).toStrictEqual([2, 3]);
   });
 });

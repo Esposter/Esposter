@@ -1,5 +1,6 @@
-import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import type { AchievementTriggerWatch } from "#src/models/achievement/AchievementTriggerWatch";
+
+import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 
 // The game's trigger types the world watches, each with the kind of doing it counts, the parameter slot its target id or
 // Ids sit in, and whether its event advances the count by the event's quantity. An AND trigger names one id and an OR

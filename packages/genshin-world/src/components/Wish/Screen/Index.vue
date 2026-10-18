@@ -45,10 +45,10 @@ interface Props {
   nameText: Readonly<Record<string, string>>;
   // The server's clock offset from this machine's, which the event banners are offered at the game's time by
   serverClockOffsetMs: number;
-  // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
-  stellaFortunaNameTextIdMap: ReadonlyMap<number, string>;
   // The game's stat tables, which the banners' pools are read from
   statTables: StatTables;
+  // The text id of each character's own Stella Fortuna's name, by the character's id, for a character with one set
+  stellaFortunaNameTextIdMap: ReadonlyMap<number, string>;
   // The wish schedule's event banners, each offered only inside its window
   wishSchedule: WishScheduleEvent[];
 }
@@ -63,7 +63,7 @@ const pityMap = defineModel<Readonly<Record<BannerKind, WishPity>>>("pityMap", {
 // The draws the wish history keeps, which the draws of each set are appended to
 const wishHistory = defineModel<WishDrawSave[]>("wishHistory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const { gameText, nameText, serverClockOffsetMs, stellaFortunaNameTextIdMap, statTables, wishSchedule } =
+const { gameText, nameText, serverClockOffsetMs, statTables, stellaFortunaNameTextIdMap, wishSchedule } =
   defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The banners the world offers now, their pools read from the stat tables and named in the reader's language: the

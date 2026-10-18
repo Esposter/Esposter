@@ -12,6 +12,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { createKitState } from "#src/services/kit/createKitState";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
+import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getElementalResonances } from "#src/services/party/getElementalResonances";
@@ -68,7 +69,7 @@ export const replayScriptedMinute = ({
       createCombatant(createCharacter(characterId, characterDataMap), kit, elementalResonances, statTables),
     ]),
   );
-  const party = createWorldParty(characterIds);
+  const party = createWorldParty(createParty(characterIds));
   if (isInCombat)
     for (const [characterId, { kit }] of characterIdCombatantMap)
       getPartyMember(party, characterId).energy = kit.burstEnergyCost;
@@ -118,8 +119,10 @@ export const replayScriptedMinute = ({
     oreStrikes: [],
     outbox: [],
     party,
+    placeWildlifeDrops: noop,
     random: createSeededRandom(WORLD_RANDOM_SEED),
     strikes: [],
+    wildlifeList: [],
   };
   const landedHits: KitHit[] = [];
   const turnStepCount = toStepCount(7.5);

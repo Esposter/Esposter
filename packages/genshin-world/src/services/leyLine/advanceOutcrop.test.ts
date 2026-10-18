@@ -1,7 +1,7 @@
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
 
-import { OutcropKind } from "#src/models/leyLine/OutcropKind";
 import { OutcropEvent } from "#src/models/leyLine/OutcropEvent";
+import { OutcropKind } from "#src/models/leyLine/OutcropKind";
 import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { describe, expect, test } from "vitest";

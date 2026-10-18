@@ -161,8 +161,8 @@ describe(getArtifactSetKit, () => {
     getPartyMember(party, ally.characterId).healthShare = 0.5;
     const context = createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [wearer.characterId, wearer],
         [ally.characterId, ally],
+        [wearer.characterId, wearer],
       ]),
       party,
     });

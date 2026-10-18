@@ -17,11 +17,14 @@ export const toFishingBait = (
         throw new InvalidOperationError(Operation.Read, "fishing bait", `pool ${poolId} is not in the pool table`);
       return [...fish];
     });
-    return { fishIds: [...new Set(fishIds)].toSorted((a, b) => a - b), id: row.id };
+    return {
+      fishIds: [...new Set(fishIds)].toSorted((firstFishId, secondFishId) => firstFishId - secondFishId),
+      id: row.id,
+    };
   }
   const weightedTags = new Set(row.featureList.filter(({ weight }) => weight > 0).map(({ featureTag }) => featureTag));
   const fishIds = [...fishTags]
     .filter(([, tags]) => [...tags].some((tag) => weightedTags.has(tag)))
     .map(([fishId]) => fishId);
-  return { fishIds: fishIds.toSorted((a, b) => a - b), id: row.id };
+  return { fishIds: fishIds.toSorted((firstFishId, secondFishId) => firstFishId - secondFishId), id: row.id };
 };

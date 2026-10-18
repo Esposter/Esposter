@@ -1,5 +1,5 @@
-import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/checkIsPaimonsBargainsCharacterBuyable";
+import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsPaimonsBargainsCharacterBuyable, () => {

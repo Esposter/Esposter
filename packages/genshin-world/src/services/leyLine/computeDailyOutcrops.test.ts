@@ -10,8 +10,8 @@ describe(computeDailyOutcrops, () => {
   const SECOND_SECTION_PLACE_ID = 21;
   const region = {
     kinds: [
-      { kind: OutcropKind.Revelation, playerLevel: 8, unlockCityIds: [] },
-      { kind: OutcropKind.Wealth, playerLevel: 30, unlockCityIds: [] },
+      { kind: OutcropKind.Revelation, playerLevel: 8, unlockCityIds: [], worldLevelRewards: [[]] },
+      { kind: OutcropKind.Wealth, playerLevel: 30, unlockCityIds: [], worldLevelRewards: [[]] },
     ],
     places: [
       { id: FIRST_PLACE_ID, nextIds: [], sectionId: FIRST_SECTION_ID },

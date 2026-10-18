@@ -15,6 +15,6 @@ export const appendWishHistory = (
   const windowStart = now.subtract(WISH_HISTORY_WINDOW);
   return [...history, ...draws]
     .filter((draw) => Temporal.Instant.compare(instantOf(draw), windowStart) >= 0)
-    .toSorted((a, b) => Temporal.Instant.compare(instantOf(a), instantOf(b)))
+    .toSorted((firstDraw, secondDraw) => Temporal.Instant.compare(instantOf(firstDraw), instantOf(secondDraw)))
     .slice(-MAX_WISH_HISTORY_COUNT);
 };

@@ -12,7 +12,7 @@ export const toParty = ({ activeIndex, deployedTeamIndex, downCharacterIds, team
   const characterIds = new Set([...teams.flatMap(({ characterIds }) => characterIds), ...downCharacterIds]);
   party.activeIndex = activeIndex;
   party.characterIdMemberMap = new Map(
-    [...characterIds].map((characterId) => [
+    Array.from(characterIds, (characterId) => [
       characterId,
       { ...createPartyMember(), healthShare: downCharacterIdSet.has(characterId) ? 0 : 1 },
     ]),

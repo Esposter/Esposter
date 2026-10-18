@@ -72,7 +72,7 @@ const readWishItemNames = (bullet: string): string[] =>
 // An event banner page read into its kind, its window and the names of its featured items. The first bullet of the
 // Summary names the promotional five-stars and the second the featured four-stars. A page of another kind is not read
 // And reads as undefined, while an event banner missing a field throws rather than reading as a banner without it
-export const parseWishPage = (wikitext: string): WishEventPage | undefined => {
+export const parseWishPage = (wikitext: string): undefined | WishEventPage => {
   const template = sliceWikiTemplate(wikitext, TEMPLATE_START);
   if (template === "") throw new InvalidOperationError(Operation.Read, TEMPLATE_START, "is not on the page");
 
@@ -82,7 +82,7 @@ export const parseWishPage = (wikitext: string): WishEventPage | undefined => {
 
   const [fiveStarBullet, fourStarBullet] = readSummaryBullets(wikitext);
   if (fiveStarBullet === undefined || fourStarBullet === undefined)
-    throw new InvalidOperationError(Operation.Read, SUMMARY_HEADING, "has no two bullets of featured items");
+    throw new InvalidOperationError(Operation.Read, "Summary", "has no two bullets of featured items");
 
   // A page naming no offset, as the older banner pages do, is read at the Asia server's GMT+8
   const timeZone = readTimeZone(parameters.get("time_start_offset") ?? "GMT+8");

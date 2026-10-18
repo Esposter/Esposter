@@ -12,6 +12,7 @@ import type { StatueProgressSave } from "#src/models/statue/StatueProgressSave";
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { BannerKind } from "genshin-interface/save";
 import { appendWishHistory } from "#src/services/wish/appendWishHistory";
+import { BannerKind } from "genshin-interface/save";
 
 // An achievement's progress from both copies: its count of doings takes the larger, and the moment it was first finished
 // Is the earlier of the two, since a finished achievement stays finished

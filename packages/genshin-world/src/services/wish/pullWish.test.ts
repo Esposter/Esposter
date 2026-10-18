@@ -24,7 +24,9 @@ describe(pullWish, () => {
     featuredFourStars: [featuredFourStar],
     fiveStars: [fiveStar],
     fourStars: [fourStar],
+    id: kind,
     kind,
+    kindNumber: 1,
     threeStars: [threeStar],
   });
   const pity: WishPity = {

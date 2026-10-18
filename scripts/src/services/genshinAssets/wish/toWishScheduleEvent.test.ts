@@ -6,7 +6,7 @@ describe(toWishScheduleEvent, () => {
   test("each featured name joins the one item it names", () => {
     expect.hasAssertions();
 
-    const idsByName = new Map([
+    const nameIdsMap = new Map([
       ["b", [1]],
       ["c", [2]],
     ]);
@@ -22,7 +22,7 @@ describe(toWishScheduleEvent, () => {
           kindNumber: 1,
           startTime: 0,
         },
-        idsByName,
+        nameIdsMap,
       ),
     ).toStrictEqual({
       endTime: 0,

@@ -1,13 +1,14 @@
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
 
+import { WishItemKind } from "#src/models/wish/WishItemKind";
 import {
   BEGINNERS_WISH_CHARACTER_IDS,
   BEGINNERS_WISH_FEATURED_CHARACTER_ID,
   STANDARD_WISH_CHARACTER_IDS,
   STANDARD_WISH_WEAPON_IDS,
 } from "#src/services/wish/constants";
-import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { createBanners } from "#src/services/wish/createBanners";
+import { takeOne } from "@esposter/shared";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
@@ -37,7 +38,9 @@ describe(createBanners, () => {
   test("a scheduled event banner's non-featured pool is the Standard pool", () => {
     expect.hasAssertions();
 
-    const [, eventBanner, standardBanner] = createBanners(statTables, {}, [event]);
+    const banners = createBanners(statTables, {}, [event]);
+    const eventBanner = takeOne(banners, 1);
+    const standardBanner = takeOne(banners, 2);
     expect(eventBanner.fiveStars).toStrictEqual(standardBanner.fiveStars);
     expect(eventBanner.fourStars).toStrictEqual(standardBanner.fourStars);
     expect(eventBanner.threeStars).toStrictEqual(standardBanner.threeStars);
@@ -46,7 +49,7 @@ describe(createBanners, () => {
   test("a scheduled event banner is named by its schedule id and draws its featured five-star from the schedule", () => {
     expect.hasAssertions();
 
-    const [, eventBanner] = createBanners(statTables, {}, [event]);
+    const eventBanner = takeOne(createBanners(statTables, {}, [event]), 1);
     expect(eventBanner.id).toBe(event.id);
     expect(eventBanner.kind).toBe(BannerKind.CharacterEvent);
     expect(eventBanner.featuredFiveStars.map(({ id }) => id)).toStrictEqual([LIMITED_FEATURED_CHARACTER_ID]);
@@ -67,9 +70,10 @@ describe(createBanners, () => {
   test("a featured item is read from whichever stat table holds its id", () => {
     expect.hasAssertions();
 
-    const [, eventBanner] = createBanners(statTables, {}, [{ ...event, fiveStarIds: [STANDARD_WISH_WEAPON_IDS[0]] }]);
+    const featuredWeaponId = takeOne(STANDARD_WISH_WEAPON_IDS);
+    const eventBanner = takeOne(createBanners(statTables, {}, [{ ...event, fiveStarIds: [featuredWeaponId] }]), 1);
     expect(eventBanner.featuredFiveStars).toStrictEqual([
-      { id: STANDARD_WISH_WEAPON_IDS[0], kind: WishItemKind.Weapon, name: "", rarity: 5 },
+      { id: featuredWeaponId, kind: WishItemKind.Weapon, name: "", rarity: 5 },
     ]);
   });
 });

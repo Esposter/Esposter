@@ -31,7 +31,9 @@ describe(pullFiveStar, () => {
     featuredFourStars: [],
     fiveStars: [standardCharacter],
     fourStars: [],
+    id: "CharacterEvent",
     kind: BannerKind.CharacterEvent,
+    kindNumber: 1,
     threeStars: [],
   };
   const chartedWeapon = createItem(2, WishItemKind.Weapon);
@@ -42,7 +44,9 @@ describe(pullFiveStar, () => {
     featuredFourStars: [],
     fiveStars: [standardWeapon],
     fourStars: [],
+    id: "WeaponEvent",
     kind: BannerKind.WeaponEvent,
+    kindNumber: 1,
     threeStars: [],
   };
   const chartedPity: WishPity = { ...pity, chartedWeaponId: chartedWeapon.id };

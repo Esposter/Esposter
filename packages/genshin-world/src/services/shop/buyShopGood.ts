@@ -1,24 +1,22 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
 import { addInventoryItem } from "#src/services/inventory/addInventoryItem";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { checkIsShopGoodSoldOut } from "#src/services/shop/checkIsShopGoodSoldOut";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
 
 // The wallet, bag and purchases after one of a good is bought at `now` by a player of this Adventure Rank, its price
-// Taken And its item given: into the wallet when the item is a currency this rule trades in, otherwise into the bag as
-// Its Definition has it, which the bag must hold whole. Undefined where the good is not offered: below its rank,
-// Outside its Dates, sold out this refresh, or unaffordable, where its price is no currency this rule trades in, or
-// Where the bag Cannot take the item whole
+// Taken and its item given: into the wallet when the item is a currency this rule trades in, otherwise into the bag as
+// `getGoodItemDefinition` defines it, which the bag must hold whole. Undefined where the good is not offered: below its
+// Rank, outside its dates, sold out this refresh, or unaffordable, where its price is no currency this rule trades in,
+// Or where the bag cannot take the item whole
 export const buyShopGood = (
   wallet: Wallet,
   inventory: Inventory,
-  names: Readonly<Record<string, string>>,
-  materialDataMap: ReadonlyMap<number, MaterialData>,
+  getGoodItemDefinition: (itemId: number) => ItemDefinition,
   purchases: ShopPurchase[],
   good: ShopGood,
   adventureRank: number,
@@ -45,7 +43,7 @@ export const buyShopGood = (
       purchases: boughtPurchases,
       wallet: { ...paidWallet, [itemCurrency]: paidWallet[itemCurrency] + good.itemCount },
     };
-  const addition = addInventoryItem(inventory, getItemDefinition(good.itemId, names, materialDataMap), good.itemCount);
+  const addition = addInventoryItem(inventory, getGoodItemDefinition(good.itemId), good.itemCount);
   if (addition.overflow > 0) return undefined;
   return { inventory: addition.inventory, purchases: boughtPurchases, wallet: paidWallet };
 };

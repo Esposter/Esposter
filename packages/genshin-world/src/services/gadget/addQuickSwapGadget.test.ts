@@ -1,5 +1,5 @@
-import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { addQuickSwapGadget } from "#src/services/gadget/addQuickSwapGadget";
+import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { describe, expect, test } from "vitest";
 
 describe(addQuickSwapGadget, () => {
