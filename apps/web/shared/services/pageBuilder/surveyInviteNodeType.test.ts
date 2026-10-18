@@ -6,10 +6,9 @@ import {
   TEST_ORIGIN,
   TEST_SURVEY_ID,
 } from "#shared/services/pageBuilder/constants.test";
+import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { surveyInviteNodeType } from "#shared/services/pageBuilder/surveyInviteNodeType";
-import { ResourceType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe("surveyInviteNodeType", () => {
@@ -25,7 +24,7 @@ describe("surveyInviteNodeType", () => {
         ),
       ]),
     ).toStrictEqual(
-      `<a class="survey-invite" href="${TEST_ORIGIN}${RoutePath.View(ResourceType.Survey, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`,
+      `<a class="survey-invite" href="${getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`,
     );
   });
 });

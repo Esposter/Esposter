@@ -8,8 +8,7 @@ import {
 } from "#shared/services/pageBuilder/constants.test";
 import { EMAIL_SURVEY_INVITE_TYPE } from "#shared/services/pageBuilder/email/constants";
 import { emailSurveyInviteType } from "#shared/services/pageBuilder/email/emailSurveyInviteType";
-import { ResourceType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { describe, expect, test } from "vitest";
 
 describe("emailSurveyInviteType", () => {
@@ -25,7 +24,7 @@ describe("emailSurveyInviteType", () => {
     ).toStrictEqual({
       attributes: {
         "background-color": SURVEY_INVITE_BUTTON_COLOR,
-        href: `${TEST_ORIGIN}${RoutePath.View(ResourceType.Survey, TEST_SURVEY_ID)}`,
+        href: getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID),
       },
       content: TEST_LABEL,
       tagName: "mj-button",
