@@ -1,3 +1,4 @@
+import type { DumpedChapter } from "#src/models/genshinText/DumpedChapter";
 import type { DumpedGiving } from "#src/models/genshinText/DumpedGiving";
 import type { DumpedGivingGroup } from "#src/models/genshinText/DumpedGivingGroup";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
@@ -7,6 +8,7 @@ import type { Quest } from "genshin-world";
 import { buildQuestChapters } from "#src/services/genshinText/buildQuestChapters";
 import { buildTextChunks } from "#src/services/genshinText/buildTextChunks";
 import {
+  CHAPTER_TABLE_NAME,
   GIVING_GROUP_TABLE_NAME,
   GIVING_TABLE_NAME,
   MAIN_QUEST_DEFAULT_TYPE,
@@ -16,14 +18,17 @@ import {
 } from "#src/services/genshinText/constants";
 import { DumpedQuestKindMap } from "#src/services/genshinText/DumpedQuestKindMap";
 import { getTalkTextIds } from "#src/services/genshinText/getTalkTextIds";
+import { OpeningParentTitleMap } from "#src/services/genshinText/OpeningParentTitleMap";
 import { readCarriedQuestRewards } from "#src/services/genshinText/readCarriedQuestRewards";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readOpeningParentQuestIds } from "#src/services/genshinText/readOpeningParentQuestIds";
 import { readParentQuestIds } from "#src/services/genshinText/readParentQuestIds";
 import { readQuestSteps } from "#src/services/genshinText/readQuestSteps";
 import { readReputationRequestQuest } from "#src/services/genshinText/readReputationRequestQuest";
 import { readTalk } from "#src/services/genshinText/readTalk";
 import { readTalkTables } from "#src/services/genshinText/readTalkTables";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
+import { readTitleQuestIds } from "#src/services/genshinText/readTitleQuestIds";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage, GameLanguages } from "genshin-text";
@@ -57,6 +62,14 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   const givingGroupMap = new Map(
     readExcelTable<DumpedGivingGroup>(GIVING_GROUP_TABLE_NAME).map((givingGroup) => [givingGroup.id, givingGroup]),
   );
+  // A quest is named by its title, and a chapter by the quest its end quest is in, for the wiki's named prerequisites
+  const titleQuestIds = readTitleQuestIds(
+    englishTextMap,
+    [...mainQuestMap.values()],
+    readExcelTable<DumpedChapter>(CHAPTER_TABLE_NAME),
+    subQuestMap,
+  );
+  const carriedQuestIds = new Set<string>(QuestIds);
   const rewardsByQuest = readCarriedQuestRewards();
   const talkTables = await readTalkTables();
   const quests: Quest[] = QuestIds.map((questId) => {
@@ -101,7 +114,17 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     );
     notes.push(...stepNotes);
     const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;
-    const parentQuestIds = readParentQuestIds(questBinary, mainQuest.id, subQuestMap).map(String);
+    const parentQuestIds = [
+      ...new Set([
+        ...readParentQuestIds(questBinary, mainQuest.id, subQuestMap),
+        ...readOpeningParentQuestIds(OpeningParentTitleMap[questId]?.titles ?? [], mainQuest.id, titleQuestIds),
+      ]),
+    ].map(String);
+    const uncarriedParentQuestIds = parentQuestIds.filter((parentQuestId) => !carriedQuestIds.has(parentQuestId));
+    if (uncarriedParentQuestIds.length > 0)
+      notes.push(
+        `${OpeningParentTitleMap[questId]?.region ?? questId} quest ${questId} waits on ${uncarriedParentQuestIds.join(", ")}, which the world does not carry yet, so it stays unstarted until that region loads`,
+      );
     const talkIds = new Set([
       ...offerTalkIds.map(Number),
       ...steps.flatMap(({ objectives }) =>
@@ -120,7 +143,6 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       titleTextId: String(mainQuest.titleTextMapHash),
     });
   });
-  const carriedQuestIds = new Set<string>(QuestIds);
   const parentQuestIds = quests.flatMap((quest) => quest.parentQuestIds);
   const uncarriedParentQuestIds = parentQuestIds.filter((parentQuestId) => !carriedQuestIds.has(parentQuestId));
   notes.push(
