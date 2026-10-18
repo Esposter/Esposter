@@ -17,4 +17,12 @@ describe(readGenshinSettings, () => {
 
     expect(readGenshinSettings(null, GENSHIN_SETTINGS_DEFAULTS).qualityTier).toBe(QualityTier.High);
   });
+
+  test("a chosen camera distance is kept on this device", () => {
+    expect.hasAssertions();
+
+    const storedSettings = JSON.stringify({ ...GENSHIN_SETTINGS_DEFAULTS, defaultDistance: 5.5 });
+
+    expect(readGenshinSettings(storedSettings, GENSHIN_SETTINGS_DEFAULTS).defaultDistance).toBe(5.5);
+  });
 });

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { SettingsRow } from "#src/models/menu/SettingsRow";
-import type { VolumeSetting } from "#src/models/menu/VolumeSetting";
 import type { QualityTier } from "genshin-engine";
 import type { GameLanguage, GameText } from "genshin-text";
 
@@ -10,18 +9,13 @@ import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
 import { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab } from "#src/models/menu/SettingsTab";
-import {
-  GRAPHICS_QUALITY_TIERS,
-  SETTINGS_TABS,
-  VOLUME_LEVEL_MAXIMUM,
-  VOLUME_LEVEL_MINIMUM,
-} from "#src/services/menu/constants";
+import { GRAPHICS_QUALITY_TIERS, SETTINGS_TABS } from "#src/services/menu/constants";
 import { getMenuGlyphStyle } from "#src/services/menu/getMenuGlyphStyle";
-import { getVolumeLevelAt } from "#src/services/menu/getVolumeLevelAt";
 import { MenuFrameGlyphMap } from "#src/services/menu/MenuFrameGlyphMap";
 import { QualityTierGameTextKeyMap } from "#src/services/menu/QualityTierGameTextKeyMap";
 import { SettingsTabGameTextKeyMap } from "#src/services/menu/SettingsTabGameTextKeyMap";
 import { SettingsTabSectionsMap } from "#src/services/menu/SettingsTabSectionsMap";
+import { snapToRange } from "#src/services/menu/snapToRange";
 import { getResultAsync } from "@esposter/shared";
 import { useResizeObserver } from "@vueuse/core";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
@@ -112,32 +106,35 @@ const isListRow = (row: SettingsRow): boolean =>
 const toggleList = (kind: SettingsRowKind): void => {
   openedList.value = openedList.value === kind ? undefined : kind;
 };
-// A volume row's level: the setting the world backs it with, or the level an unbacked slider is drawn at
-type VolumeRow = Extract<SettingsRow, { kind: SettingsRowKind.Slider | SettingsRowKind.Volume }>;
-const getVolumeLevel = (row: VolumeRow): number =>
-  row.kind === SettingsRowKind.Volume ? settings.value[row.setting] : row.volume;
-const setVolume = (setting: VolumeSetting, level: number): void => {
-  settings.value = { ...settings.value, [setting]: level };
+// A track row's value: the setting the world backs it with, or the value an unbacked slider is drawn at
+type TrackRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Slider | SettingsRowKind.Volume }>;
+type BackedRow = Extract<SettingsRow, { kind: SettingsRowKind.Range | SettingsRowKind.Volume }>;
+const getTrackValue = (row: TrackRow): number =>
+  row.kind === SettingsRowKind.Slider ? row.value : settings.value[row.setting];
+// The share of its track a row's value stands at, which places the knob
+const getTrackShare = (row: TrackRow): number => (getTrackValue(row) - row.range.min) / (row.range.max - row.range.min);
+// A value reads with one decimal place where its range steps by tenths, and as a whole number everywhere else
+const formatTrackValue = (row: TrackRow): string => getTrackValue(row).toFixed(row.range.step < 1 ? 1 : 0);
+const setBackedValue = (row: BackedRow, value: number): void => {
+  settings.value = { ...settings.value, [row.setting]: snapToRange(value, row.range) };
 };
-// A volume follows the pointer while its button is held, the pointer captured at the press so a drag past the track's
-// Ends keeps setting it, where the level stops at its limit
-const dragVolume = (event: PointerEvent, setting: VolumeSetting): void => {
+// A value follows the pointer while its button is held, the pointer captured at the press so a drag past the track's
+// Ends keeps setting it, where the value stops at its limit
+const dragSetting = (event: PointerEvent, row: BackedRow): void => {
   if (!(event.currentTarget instanceof HTMLElement) || event.buttons === 0) return;
 
   const { left, width } = event.currentTarget.getBoundingClientRect();
-  setVolume(setting, getVolumeLevelAt((event.clientX - left) / width));
+  setBackedValue(row, row.range.min + ((event.clientX - left) / width) * (row.range.max - row.range.min));
 };
-const startVolumeDrag = (event: PointerEvent, setting: VolumeSetting): void => {
+const startSettingDrag = (event: PointerEvent, row: BackedRow): void => {
   if (event.currentTarget instanceof HTMLElement) event.currentTarget.setPointerCapture(event.pointerId);
-  dragVolume(event, setting);
+  dragSetting(event, row);
 };
-// The arrow keys step a volume by one level, held within its range as a drag is
-const stepVolume = (event: KeyboardEvent, setting: VolumeSetting): void => {
-  const level = settings.value[setting];
-  if (event.key === "ArrowLeft" || event.key === "ArrowDown")
-    setVolume(setting, Math.max(level - 1, VOLUME_LEVEL_MINIMUM));
-  else if (event.key === "ArrowRight" || event.key === "ArrowUp")
-    setVolume(setting, Math.min(level + 1, VOLUME_LEVEL_MAXIMUM));
+// The arrow keys step a value by its range's step, held within its range as a drag is
+const stepSetting = (event: KeyboardEvent, row: BackedRow): void => {
+  const value = settings.value[row.setting];
+  if (event.key === "ArrowLeft" || event.key === "ArrowDown") setBackedValue(row, value - row.range.step);
+  else if (event.key === "ArrowRight" || event.key === "ArrowUp") setBackedValue(row, value + row.range.step);
   else return;
 
   event.preventDefault();
@@ -214,26 +211,32 @@ onMounted(() => {
           <template v-for="row of rows" :key="row.labelKey">
             <div class="row">
               <span class="label">{{ shownGameText[row.labelKey] }}</span>
-              <template v-if="row.kind === SettingsRowKind.Slider || row.kind === SettingsRowKind.Volume">
-                <svg class="speaker" aria-hidden="true" viewBox="0 0 36 30">
+              <template
+                v-if="
+                  row.kind === SettingsRowKind.Range ||
+                  row.kind === SettingsRowKind.Slider ||
+                  row.kind === SettingsRowKind.Volume
+                "
+              >
+                <svg v-if="tab === SettingsTab.Audio" class="speaker" aria-hidden="true" viewBox="0 0 36 30">
                   <path d="M 3 10 L 9 10 L 18 3 L 18 27 L 9 20 L 3 20 Z" />
                   <path class="wave" d="M 23 9 Q 26 15 23 21 M 28 5 Q 33 15 28 25" />
                 </svg>
-                <span class="volume">{{ getVolumeLevel(row) }}</span>
+                <span class="volume">{{ formatTrackValue(row) }}</span>
                 <div
-                  v-if="row.kind === SettingsRowKind.Volume"
+                  v-if="row.kind === SettingsRowKind.Range || row.kind === SettingsRowKind.Volume"
                   class="slider"
                   role="slider"
                   tabindex="0"
                   :aria-label="shownGameText[row.labelKey]"
-                  :aria-valuemax="VOLUME_LEVEL_MAXIMUM"
-                  :aria-valuemin="VOLUME_LEVEL_MINIMUM"
-                  :aria-valuenow="getVolumeLevel(row)"
-                  @keydown="stepVolume($event, row.setting)"
-                  @pointerdown="startVolumeDrag($event, row.setting)"
-                  @pointermove="dragVolume($event, row.setting)"
+                  :aria-valuemax="row.range.max"
+                  :aria-valuemin="row.range.min"
+                  :aria-valuenow="getTrackValue(row)"
+                  @keydown="stepSetting($event, row)"
+                  @pointerdown="startSettingDrag($event, row)"
+                  @pointermove="dragSetting($event, row)"
                 >
-                  <span class="knob" :style="{ left: `${(getVolumeLevel(row) / VOLUME_LEVEL_MAXIMUM) * 100}%` }" />
+                  <span class="knob" :style="{ left: `${getTrackShare(row) * 100}%` }" />
                 </div>
                 <div
                   v-else
@@ -241,11 +244,11 @@ onMounted(() => {
                   role="slider"
                   aria-disabled="true"
                   :aria-label="shownGameText[row.labelKey]"
-                  :aria-valuemax="VOLUME_LEVEL_MAXIMUM"
-                  :aria-valuemin="VOLUME_LEVEL_MINIMUM"
-                  :aria-valuenow="getVolumeLevel(row)"
+                  :aria-valuemax="row.range.max"
+                  :aria-valuemin="row.range.min"
+                  :aria-valuenow="getTrackValue(row)"
                 >
-                  <span class="knob" :style="{ left: `${(getVolumeLevel(row) / VOLUME_LEVEL_MAXIMUM) * 100}%` }" />
+                  <span class="knob" :style="{ left: `${getTrackShare(row) * 100}%` }" />
                 </div>
               </template>
               <button

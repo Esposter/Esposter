@@ -2,6 +2,7 @@ import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { MenuEntryIcon } from "#src/models/menu/MenuEntryIcon";
 import type { MenuFrameIcon } from "#src/models/menu/MenuFrameIcon";
 import type { MenuIconGlyph } from "#src/models/menu/MenuIconGlyph";
+import type { SettingRange } from "#src/models/menu/SettingRange";
 import type { SettingsTab } from "#src/models/menu/SettingsTab";
 import type { TitledScreenKind } from "#src/models/screen/TitledScreenKind";
 
@@ -9,7 +10,7 @@ import { MenuEntryIcon as EntryIcon } from "#src/models/menu/MenuEntryIcon";
 import { MenuFrameIcon as FrameIcon } from "#src/models/menu/MenuFrameIcon";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { MINUTES_PER_DAY, QualityTier } from "genshin-engine";
+import { FOLLOW_CAMERA_DEFAULT_SETTINGS, MINUTES_PER_DAY, QualityTier } from "genshin-engine";
 import { GameLanguage, GameTextKey } from "genshin-text";
 
 // The Paimon menu's contents in the game's order, as the English PC client's menu draws them. The Training Guide is
@@ -91,14 +92,24 @@ export const MENU_LIST_CLOSE_GLYPH: MenuIconGlyph = {
 // The levels a volume row's slider runs between, from its lowest to its highest
 export const VOLUME_LEVEL_MINIMUM = 1;
 export const VOLUME_LEVEL_MAXIMUM = 10;
+// The track each volume slider moves across, from its first level to its last
+export const VOLUME_RANGE: SettingRange = { max: VOLUME_LEVEL_MAXIMUM, min: VOLUME_LEVEL_MINIMUM, step: 1 };
+// The camera's ranges on the wiki's Settings page: the sensitivities from 1 to 5 and the default distance from 4.5 to 6.0.
+// The distance's step is provisional until a recording shows the slider's notches
+export const CAMERA_SENSITIVITY_RANGE: SettingRange = { max: 5, min: 1, step: 1 };
+export const CAMERA_DISTANCE_RANGE: SettingRange = { max: 6, min: 4.5, step: 0.1 };
 // The key the settings are kept under on this device, as the game keeps its settings per device
 export const GENSHIN_SETTINGS_STORAGE_KEY = "genshin-settings";
-// The settings a device starts from before it has kept any of its own
+// The settings a device starts from before it has kept any of its own: the camera's defaults are the follow camera's
+// Provisional ones until the Controls tab's export gives the game's
 export const GENSHIN_SETTINGS_DEFAULTS: GenshinSettings = {
+  defaultDistance: FOLLOW_CAMERA_DEFAULT_SETTINGS.defaultDistance,
+  horizontalSensitivity: FOLLOW_CAMERA_DEFAULT_SETTINGS.horizontalSensitivity,
   language: GameLanguage.English,
   musicVolume: VOLUME_LEVEL_MAXIMUM,
   qualityTier: QualityTier.High,
   sfxVolume: VOLUME_LEVEL_MAXIMUM,
+  verticalSensitivity: FOLLOW_CAMERA_DEFAULT_SETTINGS.verticalSensitivity,
   volume: VOLUME_LEVEL_MAXIMUM,
 };
 // The quality tiers the Graphics Quality row lists, from the lowest to the highest, as the wiki's Graphics list orders them
