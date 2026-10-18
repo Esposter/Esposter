@@ -226,7 +226,7 @@ const readCallSiteDelays = (
 };
 
 // The ways a method's queue call is run by the calls made of the method in this file, each call's parameter values and
-// The delay its closures add, one variant per distinct pair
+// The delay its closures add with the line that delay is on, one variant per distinct triple of them
 const readCallVariants = (
   tokens: readonly GoToken[],
   scope: GoScope,
