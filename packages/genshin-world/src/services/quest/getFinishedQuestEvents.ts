@@ -15,7 +15,9 @@ export const getFinishedQuestEvents = (
   const finishedSteps = quest.steps.slice(progress.stepIndex, nextProgress.stepIndex);
   const isMainQuestFinished = checkIsQuestFinished(quest, nextProgress) && !checkIsQuestFinished(quest, progress);
   return [
-    ...finishedSteps.map(({ id }) => ({ kind: AchievementEventKind.QuestFinished, targetId: id })),
-    ...(isMainQuestFinished ? [{ kind: AchievementEventKind.ParentQuestFinished, targetId: quest.id }] : []),
+    ...finishedSteps.map(({ id }) => ({ kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: id })),
+    ...(isMainQuestFinished
+      ? [{ kind: AchievementEventKind.ParentQuestFinished, quantity: 1, targetId: quest.id }]
+      : []),
   ];
 };

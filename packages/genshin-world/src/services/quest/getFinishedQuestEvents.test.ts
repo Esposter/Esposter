@@ -28,7 +28,7 @@ describe(getFinishedQuestEvents, () => {
 
     expect(
       getFinishedQuestEvents(quest, { objectiveCounts: [], stepIndex: 0 }, { objectiveCounts: [], stepIndex: 1 }),
-    ).toStrictEqual([{ kind: AchievementEventKind.QuestFinished, targetId: "10" }]);
+    ).toStrictEqual([{ kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: "10" }]);
   });
 
   test("finishes the main quest once its last step is done, and not again", () => {
@@ -37,8 +37,8 @@ describe(getFinishedQuestEvents, () => {
     const finished = { objectiveCounts: [], stepIndex: 2 };
 
     expect(getFinishedQuestEvents(quest, { objectiveCounts: [], stepIndex: 1 }, finished)).toStrictEqual([
-      { kind: AchievementEventKind.QuestFinished, targetId: "11" },
-      { kind: AchievementEventKind.ParentQuestFinished, targetId: "1" },
+      { kind: AchievementEventKind.QuestFinished, quantity: 1, targetId: "11" },
+      { kind: AchievementEventKind.ParentQuestFinished, quantity: 1, targetId: "1" },
     ]);
     expect(getFinishedQuestEvents(quest, finished, finished)).toStrictEqual([]);
   });

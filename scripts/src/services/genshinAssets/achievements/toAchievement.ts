@@ -5,9 +5,10 @@ import type { Achievement } from "genshin-world";
 import { HIDDEN_SHOW_TYPE, PRIMOGEM_ITEM_ID } from "#src/services/genshinAssets/achievements/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The table pads an OR trigger's ids with empty slots and joins the ids of one slot with commas, so each id is one parameter
-const toTriggerParameters = (paramList: string[]): string[] =>
-  paramList.flatMap((param) => param.split(",")).filter((parameter) => parameter !== "");
+// The table keeps a trigger's ids in its slots, each slot a list joined by commas or semicolons and empty when unused. Each
+// Slot is split into its ids and kept in its place, since a trigger counts only the slot its kind watches
+const toTriggerParameters = (paramList: string[]): string[][] =>
+  paramList.map((slot) => slot.split(/[,;]/u).filter((id) => id !== ""));
 
 // One achievement from its row and the reward row it pays, or undefined for an achievement the game no longer offers. The
 // Reward's Primogems are the only item an achievement pays, so a row whose reward is missing from the table is refused
