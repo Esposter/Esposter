@@ -31,6 +31,11 @@ describe(readGenshinSave, () => {
   const REPUTATION = { exp: 150, level: 2 };
   // The Frostbearing Tree offered to: the items held toward its next level and the level it has reached
   const FROSTBEARING_TREE_PROGRESS = { heldCount: 3, level: 2 };
+  // A region's statues offered to: the Oculi held toward its next level and the level it has reached, and one Oculus
+  // Found in it
+  const STATUE_REGION_ID = "1";
+  const STATUE_REGION_PROGRESS = { heldCount: 1, level: 2 };
+  const FOUND_OCULUS_ID = "2";
   // A weapon forged from a recipe and one drawn from a wish, each in the bag as an entry of its own
   const FORGED_WEAPON_ID = 13_401;
   const FORGED_NAME_TEXT_ID = "1";
@@ -147,6 +152,7 @@ describe(readGenshinSave, () => {
     openedChests: [CHEST_ID],
     quests: { [QUEST_ID]: { objectiveCounts: [1], stepIndex: 1 } },
     reputation: REPUTATION,
+    statues: { foundOculusIds: [FOUND_OCULUS_ID], regions: { [STATUE_REGION_ID]: STATUE_REGION_PROGRESS } },
     unlockedLandmarks: [LANDMARK_ID],
     wishPity: {
       ...EMPTY_GENSHIN_SAVE.wishPity,
@@ -159,6 +165,19 @@ describe(readGenshinSave, () => {
     expect(toGenshinSave(readGenshinSave(EMPTY_GENSHIN_SAVE, NAMES, WEAPON_DATA_MAP, new Map()))).toStrictEqual(
       EMPTY_GENSHIN_SAVE,
     );
+  });
+
+  test("a new player starts with no region started and no Oculus found", () => {
+    expect.hasAssertions();
+    const { foundOculusIds, regionStatueProgressMap } = readGenshinSave(
+      EMPTY_GENSHIN_SAVE,
+      NAMES,
+      WEAPON_DATA_MAP,
+      new Map(),
+    );
+
+    expect(regionStatueProgressMap).toStrictEqual(new Map());
+    expect(foundOculusIds).toStrictEqual(new Set());
   });
 
   test("reads every system a save holds back to the same save once written", () => {
