@@ -77,6 +77,34 @@ describe(createLaylaKitBehaviour, () => {
     });
   });
 
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    LAYLA_KIT.elementalSkill.onStart?.(
+      createKitTestContext({ ...createLaylaCombatant(), constellationCount: 1 }, { kitEffectState }),
+    );
+    const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+    const baseShield = castAction(LAYLA_KIT.elementalSkill).effects.find(
+      (effect): effect is KitShield => effect.kind === "shield",
+    );
+
+    expect(shield?.health).toBeCloseTo((baseShield?.health ?? 0) * 1.2);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    LAYLA_KIT.elementalSkill.onStart?.(
+      createKitTestContext({ ...createLaylaCombatant(), constellationCount: 0 }, { kitEffectState }),
+    );
+    const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+    const baseShield = castAction(LAYLA_KIT.elementalSkill).effects.find(
+      (effect): effect is KitShield => effect.kind === "shield",
+    );
+
+    expect(shield?.health).toBe(baseShield?.health);
+  });
+
   test("starlight Slug's field ticks first at 36 frames and every 90 frames after, for 12 seconds", () => {
     expect.hasAssertions();
     const field = castAction(LAYLA_KIT.elementalBurst).effects.find(
