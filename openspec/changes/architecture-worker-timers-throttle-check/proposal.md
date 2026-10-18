@@ -2,7 +2,7 @@
 
 ## Why
 
-The worker-timers page marks two upstream issues, #413 and #65, as in-scope defects. Both are about the background-tab throttling the worker exists to avoid. The page's only proof for them is a manual check in a real browser, because no unit test environment throttles a background tab. A verdict with no runnable proof cannot fail, so the page's own rule that each verdict rests on a test or a source line is not met for them.
+The worker-timers page holds two upstream issues, #413 and #65, as recorded here rather than with a verdict the triage defines. Both are about the background-tab throttling the worker exists to avoid. The page's only proof for them is a manual check in a real browser, because no unit test environment throttles a background tab. A verdict with no runnable proof cannot fail, so the page's own rule that each verdict rests on a test or a source line is not met for them.
 
 ## What Changes
 
