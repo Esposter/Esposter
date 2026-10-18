@@ -102,7 +102,20 @@ import {
   synthesizeCloudLayerTextures,
 } from "genshin-engine";
 import { BatchedMesh, DirectionalLight, Euler, Group, HemisphereLight, Matrix4, Mesh } from "three";
-import { abs, color, exp, mix, mx_fractal_noise_float, positionWorld, smoothstep, uniform, vec2 } from "three/tsl";
+import {
+  abs,
+  color,
+  exp,
+  mix,
+  modelWorldMatrix,
+  mx_fractal_noise_float,
+  positionLocal,
+  positionWorld,
+  smoothstep,
+  uniform,
+  vec2,
+  vec4,
+} from "three/tsl";
 import { MeshBasicNodeMaterial } from "three/webgpu";
 
 interface Props {
@@ -169,11 +182,13 @@ const cameraRestZ = computeLoginCameraZ(door);
 const walkwayRow = scroll.LoginScene_Bridge01_Vo;
 const towersRow = scroll.LoginScene_Build_All;
 // The door lights from a line down its middle outward, over the panel's own glow, as the game opens it: our panel and
-// The exported one alike
+// The exported one alike. The line is each piece's slit, read at the fragment's height and depth through the piece's
+// Own transform, so a piece's rise carries its line with it
 const doorGlow = uniform(0);
+const doorSlitWorldX = modelWorldMatrix.mul(vec4(0, positionLocal.y, positionLocal.z, 1)).x;
 const doorLightNode = color(LOGIN_DOOR_GLOW_COLOR).mul(
   doorGlow.mul(
-    exp(abs(positionWorld.x.sub(doorRestPosition[0])).div(LOGIN_DOOR_SLIT_WIDTH).negate())
+    exp(abs(positionWorld.x.sub(doorSlitWorldX)).div(LOGIN_DOOR_SLIT_WIDTH).negate())
       .mul(LOGIN_DOOR_SLIT_STRENGTH)
       .add(LOGIN_DOOR_PANEL_STRENGTH),
   ),
