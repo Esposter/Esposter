@@ -21,9 +21,13 @@ const STALWART_AND_TRUE_TICK_INTERVAL_SECONDS = 2;
 const STALWART_AND_TRUE_TICK_COUNT = 5;
 
 // Dehya's behaviour: none of her own, since her strikes, charged attack, plunges and Molten Inferno's initial hit are her
-// Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves, with its
-// DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and Incineration Drive.
-// Her Ascension 1 passive waits on the Sanctum
+// Record's alone. Stalwart and True is built as her drain's hook. Not built: the Sanctum Molten Inferno leaves, with
+// its DoT and Redmane's Blood's mitigation, Ranging Flame's reposition, the burst's Flame-Mane's Fists and
+// Incineration Drive. Her Ascension 1 passive waits on the Sanctum
+// Constellation 1 needs her Max HP raised by 20%, which the attributes do not read back, and Molten Inferno's DMG on it
+// Constellation 2 needs the Fiery Sanctum field that Molten Inferno: Ranging Flame recreates, not built by the burst
+// Constellation 4 needs the Flame-Mane's Fist and Incineration Drive hits during Leonine Bite, not built
+// Constellation 6 needs Leonine Bite's CRIT Rate and the Flame-Mane's Fist follow-up, not built
 export const createDehyaKitBehaviour = (): KitBehaviour => ({
   onKitEvent: (event, context, combatant) => {
     if (
