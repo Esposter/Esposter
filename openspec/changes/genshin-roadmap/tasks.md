@@ -237,7 +237,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](../../specs/genshin/adventurer-handbook/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](../genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Weapon levelling** — `weapon-levelling.mkv`, waits on [weapon enhancement](../genshin-weapon-enhancement/design.md).
+- [ ] **Weapon levelling** — `weapon-levelling.mkv`, the [weapon screen](../genshin-weapon-screen/design.md) over [weapon enhancement](../genshin-weapon-enhancement/design.md)'s rules.
 - [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](../genshin-adventure-rank/design.md).
 - [ ] **Liyue outcrops by rank** — `liyue-outcrop-rank.mkv`, waits on [ley line outcrops](../genshin-ley-line-outcrops/design.md).
