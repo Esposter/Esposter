@@ -16,7 +16,7 @@ export const computeEnemyRespawnTime = (
   lastTeleportAt?: Temporal.Instant,
 ): Temporal.Instant | undefined => {
   if (campEnemyTypes.includes(EnemyType.Boss)) {
-    const claimedRespawnTime = computeBossRespawnTime(bossBlossom?.claimedAt);
+    const claimedRespawnTime = computeBossRespawnTime(bossBlossom?.claimedAts ?? []);
     if (claimedRespawnTime) return claimedRespawnTime;
     return lastTeleportAt && Temporal.Instant.compare(lastTeleportAt, defeatedAt) > 0 ? lastTeleportAt : undefined;
   } else if (campEnemyTypes.includes(EnemyType.Elite)) return computeNextDailyReset(defeatedAt);

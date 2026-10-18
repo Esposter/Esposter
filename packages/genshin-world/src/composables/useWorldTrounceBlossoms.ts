@@ -14,6 +14,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
+import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
 import { claimTrounceBlossom } from "#src/services/bosses/claimTrounceBlossom";
 import { computeDefeatTrounceBlossom } from "#src/services/bosses/computeDefeatTrounceBlossom";
 import { computeTrounceBlossomInteractables } from "#src/services/bosses/computeTrounceBlossomInteractables";
@@ -87,7 +88,7 @@ export const useWorldTrounceBlossoms = ({
       },
     );
   const trounceBlossomInteractables = computed(() =>
-    computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight),
+    computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, Temporal.Now.instant()),
   );
   const writeTrounceBlossom = (spawnKey: string, trounceBlossom: TrounceBlossom) => {
     trounceBlossoms.value = new Map(trounceBlossoms.value).set(spawnKey, trounceBlossom);
@@ -113,7 +114,12 @@ export const useWorldTrounceBlossoms = ({
   };
   const openTrounceBlossomClaim = (spawnKey: string, now: Temporal.Instant) => {
     const trounceBlossom = trounceBlossoms.value.get(spawnKey);
-    if (!trounceBlossom || trounceBlossom.claimedAt) return;
+    if (
+      !trounceBlossom ||
+      trounceBlossom.kind !== BlossomKind.NormalBoss ||
+      !checkIsTrounceBlossomClaimable(trounceBlossom, now)
+    )
+      return;
     const { offers } = computeBlossomClaimPrompt(BlossomKind.NormalBoss, 0, wallet.value, inventory.value, now);
     claimPrompt.value = offers.length > 0 ? { offers, spawnKey } : undefined;
   };
@@ -123,7 +129,14 @@ export const useWorldTrounceBlossoms = ({
   const chooseTrounceBlossomClaim = (now: Temporal.Instant, worldLevel: number, random: () => number) => {
     const prompt = claimPrompt.value;
     const trounceBlossom = prompt && trounceBlossoms.value.get(prompt.spawnKey);
-    if (!prompt || !trounceBlossom || trounceBlossom.claimedAt || friendshipLevels.value.length === 0) return;
+    if (
+      !prompt ||
+      !trounceBlossom ||
+      trounceBlossom.kind !== BlossomKind.NormalBoss ||
+      !checkIsTrounceBlossomClaimable(trounceBlossom, now) ||
+      friendshipLevels.value.length === 0
+    )
+      return;
     claimPrompt.value = undefined;
     const claim = claimTrounceBlossom(
       adventureRankTables,
@@ -149,7 +162,7 @@ export const useWorldTrounceBlossoms = ({
       takeOne(NORMAL_BOSS_COMPANIONSHIP_EXP, worldLevel),
       friendshipLevels.value,
     );
-    writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAt: Temporal.Now.zonedDateTimeISO() });
+    writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAts: [...trounceBlossom.claimedAts, now] });
   };
   return {
     chooseTrounceBlossomClaim,
