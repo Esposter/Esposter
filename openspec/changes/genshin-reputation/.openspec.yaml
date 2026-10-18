@@ -2,7 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "2.1 the three camp requests need their camps' targets; 2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the exploration thresholds (the exploration progress proposal), and the Reputation quests pay only once their parents' records are published (Mondstadt's 25 are carried as ReputationParent<id>, but their binaries are not in the dump yet); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
+x-waiting: "2.1 the camp half: 7070901, 7071001 and 7071101 need their main quests' binaries (70709 to 70711) to name their kinds;2.2 a bounty target's kind row (the kinds table holds camps' kinds only) and the bounties' trails on Elemental Sight (waiting on the puzzles unit); 3.1 the 'A passed threshold does not pay again' test, and the Reputation quests pay only once their parents' records are published (Mondstadt's 25 are carried as ReputationParent<id>, but their binaries are not in the dump yet); 3.2 the food shop's goods are not published, so it takes no discount; 4.1 Natlan's keeper placement, its bounty source and the notice-to-tribe mapping; later nations on their regions"
 x-needs: [media-engine, game-exports]
 x-touches:
   [
@@ -20,6 +20,8 @@ x-touches:
     "packages/genshin-world/src/composables/useWorldMap.test.ts",
     "packages/genshin-world/src/models/quest/**",
     "packages/genshin-world/src/services/quest/QuestLoaderMap.ts",
+    "packages/genshin-world/src/services/exploration/**",
+    "packages/genshin-world/src/models/exploration/**",
     "packages/genshin-text/src/models/GameTextKey.ts",
     "scripts/src/models/genshinAssets/shops/ShopReputationDiscount.ts",
     "scripts/src/services/genshinAssets/shops/toShopGoodSlice.ts",
