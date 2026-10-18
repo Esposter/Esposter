@@ -189,6 +189,180 @@
       "title": "Gedanken über den Aufstieg – Ende"
     }
   ],
+  "Alyosha": [
+    {
+      "text": "Hallo, ich bin Alyosha. Ich bin ein Jäger – obwohl du vielleicht eine andere Version meiner Geschichte gehört hast, falls du mit Wegelagerern gesprochen hast. Aber wie auch immer, das sollte vorerst unter uns bleiben.",
+      "title": "Schön, dich kennenzulernen."
+    },
+    {
+      "text": "Die Schießfertigkeiten, die man sich auf dem Schießstand und bei der Jagd antrainiert, sind gar nicht vergleichbar. Natürlich gibt es auch eine Art Schießfertigkeit, die in Kriegen gestählt wird. Hm ... Reden wir lieber nicht darüber.",
+      "title": "Gespräch – Schießkunst"
+    },
+    {
+      "text": "Wenn du mal einen Hund adoptieren möchtest, komm zu mir. Ich habe alle möglichen Rassen und ich weiß, dass jeder von ihnen bei dir in guten Händen wäre.",
+      "title": "Gespräch – Adoption"
+    },
+    {
+      "text": "Das hier schicke ich nach Hause und das ist für die Rokot um Medizin zu besorgen. Jetzt muss ich nur noch genug für die Wartung meiner Waffe auftreiben ... Heh, mal sehen, welche Bande von Wegelagerern dieses Mal Pech hat ...",
+      "title": "Gespräch – Buchführung"
+    },
+    {
+      "text": "Meine Kapuze wird ganz nass ... Oh nein, Tugarin! Schüttle dich doch nicht so!",
+      "title": "Wenn es regnet"
+    },
+    {
+      "text": "Zeit für die Beute, aus ihrem Versteck zu kriechen ...",
+      "title": "Es hat aufgehört zu regnen ..."
+    },
+    {
+      "text": "Perfektes Wetter für einen Hinterhalt, falls du jemanden im Sinn hast ... Ich kann den Donner nutzen, um meine Schüsse zu übertönen.",
+      "title": "Wenn es blitzt ..."
+    },
+    {
+      "text": "Urgh, Spurenlesen wird dabei unmöglich sein.",
+      "title": "Wenn es schneit ..."
+    },
+    {
+      "text": "Bei diesem Wetter kann man keine Kapuze tragen ...",
+      "title": "Ein Sturm zieht auf."
+    },
+    {
+      "text": "Ich wünschte, ich könnte auch etwas Fell loswerden ...",
+      "title": "In der Wüste ..."
+    },
+    {
+      "text": "Hörst du das? Das sind die Vögel, die im Wald zwitschern, wie jeden Morgen ... Warum gehen wir nicht los und schießen ein paar davon ab?",
+      "title": "Guten Morgen."
+    },
+    {
+      "text": "Normalerweise esse ich draußen in der Wildnis zu Mittag, aber ich würde es nicht unbedingt empfehlen.",
+      "title": "Guten Tag."
+    },
+    {
+      "text": "Einige der seltensten Beutetiere kommen nur nachts heraus.",
+      "title": "Guten Abend."
+    },
+    {
+      "text": "Ruh dich aus. Ich habe noch Dinge zu erledigen und brauche den Schutz der Nacht.",
+      "title": "Gute Nacht."
+    },
+    {
+      "text": "Als ich Tugarin damals zufällig fand, war der Kleine im Schnee ausgesetzt worden. Er war zu einem Ball zusammengerollt und konnte sich wirklich nicht einmal mehr bewegen. Aber er ist unglaublich zäh. Ich gab ihm ein paar Würstchen, und im Nu rannte er im Kreis um mich herum. Ich habe kaum Vorräte für Haustiere. Aber ... Was ist ein Jäger schon ohne einen Jagdhund?",
+      "title": "Über Alyosha – Tugarin"
+    },
+    {
+      "text": "Mein Vater gab mir damals dieses Jagdgewehr, aber ich habe es seitdem von Grund auf komplett umgebaut. Ob eine Waffe gefunden, gestohlen oder gekauft wurde, sie ist oft das Einzige, was dich vor dem sicheren Tod bewahrt. Das ist immer ein Risiko. Ich setze mit diesem Ding mein Leben aufs Spiel. Also muss ich es auswendig kennen. Selbst das kleinste Teil kenne ich wie meine Westentasche. Natürlich sind Wartung und Anpassung nicht billig. Wenn ich Mahlzeiten ausfallen lassen muss, um diese Last zu tragen, ist das eben so ...",
+      "title": "Über Alyosha – Jagdgewehr"
+    },
+    {
+      "text": "Mit der endlosen Wildnis vor Augen kehrt ein Jäger um, nachdem er seine Beute gefangen hat. Ein Abenteurer geht immer einen Schritt weiter. Deshalb hast du eine meilenlange Liste voll epischer Taten. Und eben nicht ich. Es ist aber wirklich kein schlechter Zeitvertreib, dir zuzuhören, wenn du von all deinen aufregenden Abenteuern erzählst.",
+      "title": "Über uns – Jäger und Abenteurer"
+    },
+    {
+      "text": "Was denkst du, was für ein Land Snezhnaya werden wird? Hehe ... Weißt du was? Das habe ich noch nie jemanden gefragt. Die Dorfbewohner sorgen sich immer nur um ihre nächste Mahlzeit. Und die Räuber planen lieber gleich ihr nächstes Ding. Niemand hat Zeit für solche Gespräche. Aber du bist dafür genau die richtige Person. Wir müssen nicht sofort unsere Antworten austauschen, denn ich möchte selbst noch ein wenig in Ruhe darüber nachdenken. Schließlich ist das nur eine andere Art zu fragen, welches „Ideal“ wir anstreben.",
+      "title": "Über uns – Ideale"
+    },
+    {
+      "text": "Man sagt oft, dass ein Göttliches Auge die eigenen tiefsten Wünsche darstellt. Das ist mir aber völlig egal. Solch ein kitschiges Denken bedeutet mir überhaupt nichts. Für mich zählt nur der Nutzen. Mich interessiert bloß, was mir dieses Schmuckstück bringen kann. Zum Glück macht es mich deutlich stärker. Sonst hätte ich es wohl schon längst gegen Mora eingetauscht.",
+      "title": "Über das „Göttliche Auge“ ..."
+    },
+    {
+      "text": "Wenn du in Snezhnaya abseits der Wege unterwegs bist, ist die örtliche Geheimsprache enorm wichtig. Das hilft bei Feen oder Wegelagerern. Wer richtig mitreden kann, erspart sich dabei eine ganze Menge unnötigen Ärger. Hörst du Leute das Wort „Huhn“ murmeln? Oh, wenn du jemals auf so eine Gruppe triffst, raub sie einfach komplett aus. „Huhn“ bedeutet harmlose Zivilisten mit wenigen Wertsachen. Im Grunde genommen sind sie einfach ein sehr leichtes Ziel für fiese Schurken. Ihre Verfolger sind der absolut schlimmste Abschaum. Aber uns sind sie natürlich überhaupt nicht gewachsen und haben gar keine Chance. Sie haben ja selbst genug eigene Vorstrafen. Daher würden sie uns auch niemals im Traum bei der Druzhna anzeigen. Sie müssen es dann einfach stillschweigend hinnehmen.",
+      "title": "Willst du mir etwas mitteilen?"
+    },
+    {
+      "text": "Ich habe gehört, dass es in Mondstadt eine Taverne namens „Katzenschwanz“ gibt. Dort spielen wahre Meister der Genialen Beschwörung. Sie reisen aus ganz Teyvat an, um in Duellen gegeneinander anzutreten. Da will ich als Erstes hin! Zumindest, wenn ich jemals ins Ausland reisen darf. Schade, dass Mondstadt so weit weg ist ... *seufz* Warum hat Snezhnaya nicht auch so einen tollen Ort?",
+      "title": "Interessante Vorkommnisse ..."
+    },
+    {
+      "text": "Für mich ist Ihre Majestät, die Zarin, wie der Schnee. Er bedeckt unser ganzes Land. Sie bringt eine bittere Kälte, die wir einfach ertragen müssen. Doch sie ist auch unser Schutzschild gegen die dunkleren Dinge dieser Welt. Wird irgendein Kind dieses gefrorenen Landes je sehen dürfen, wie es auftaut ...? Ich frage mich oft, ob die Zarin uns diese Gnade wohl jemals gewähren wird ...",
+      "title": "Über die Zarin ..."
+    },
+    {
+      "text": "Dass Odette zur Rokot gehört, hat mich sehr überrascht. Nie hätte ich gedacht, dass ein Mitglied der Fatui unsere Prinzipien teilt ... Doch ich habe mich geirrt. Nun glaube ich, dass unsere gewünschten Veränderungen gar nicht so schwer zu erreichen sind. Eine strahlendere Zukunft für diese Nation ist in greifbarer Nähe.",
+      "title": "Über Odette ..."
+    },
+    {
+      "text": "Vodyanitsa ist eine extrem wichtige Informationsquelle für die Rokot. Wann immer ich sie nach Infos frage, ist sie enorm hilfsbereit. Reden wir aber nicht über die Arbeit, verstehe ich kaum, was sie meint. Odette hat dieses Problem scheinbar gar nicht. Die beiden verstehen sich, als wäre es das Natürlichste auf der Welt ... Ob Mädchen wohl eine Art Geheimcode haben ...",
+      "title": "Über Vodyanitsa ..."
+    },
+    {
+      "text": "Als ich Valeriy zum ersten Mal traf, blockierte er meinen Weg. Er schickte mich vom Büro für Heeresgerät weg, während er irgendeinen Artikel aus einer Vorschrift herunterratterte, der besagte, dass ich mich nicht nähern dürfe ... Ich mein klar, ich schlich mit einem Jagdgewehr herum. Daher war ich wirklich sehr überrascht, dass er mich nicht sofort festnahm. Ich dachte schon, ich müsste gegen ihn kämpfen. Aber stattdessen fand ich einen echt guten neuen Kontakt im Büro für Heeresgerät, also echt keine schlechte Wendung. Ehrlich gesagt denken wir beide in sehr vielen Dingen ziemlich ähnlich. Wir haben nun klare Grenzen gezogen, und solange diese nicht überschritten werden, kommen wir wirklich super miteinander aus.",
+      "title": "Über Valeriy ..."
+    },
+    {
+      "text": "Ich hatte nie wirklich viel Schulbildung. Deshalb dachte ich, es wäre schwer, mit jemandem wie Mitya klarzukommen. Aber er modifizierte mein Gewehr mehrfach ungefragt. Ich habe mir also völlig umsonst Sorgen gemacht. Mit Mitya kann man sehr gut reden. Ich behandle ihn einfach wie jeden anderen Nachbarn, und das klappt prima. Ein gut gemeinter Rat allerdings ... Wenn er mit seinem Wissenschaftskram anfängt, bleib lieber auf Abstand.",
+      "title": "Über Mitya ..."
+    },
+    {
+      "text": "Du willst wohl, dass ich meine Geheimnisse ausplaudere, was? Na gut. Eines verrate ich dir, aber mehr auch nicht: Ein „Jäger“ zu sein, ist eine sehr nützliche Tarnung.",
+      "title": "Ich will mehr über Alyosha erfahren I"
+    },
+    {
+      "text": "Jemand hat mich mal gefragt, ob es einen Unterschied macht, eine Waffe auf ein Tier oder auf einen Menschen zu richten. Ich habe damals nicht geantwortet. Aber ich glaube fest daran, dass es einen gibt. Nur verschwimmt diese Grenze immer mehr, je öfter ich schieße. Das Abdrücken fühlt sich immer gleich an. Egal, auf wen ich ziele ... Also macht es mir keinen Spaß, auf Menschen zu zielen. Manchmal frage ich mich, was passiert, wenn diese Grenze eines Tages verschwindet. Das macht mir wirklich Angst.",
+      "title": "Ich will mehr über Alyosha erfahren II"
+    },
+    {
+      "text": "Als ich noch ein Kind war, stürmte eine Bande von Schlägern unser Zuhause und stahl all unsere Habseligkeiten. Meine Eltern versuchten, die Sache kleinzureden und sagten, wir würden schon zurechtkommen. Aber ich wusste, was es bedeutete, alles zu verlieren. Also beschloss ich, meine Fähigkeiten als Jäger einzusetzen – und zum ersten Mal war mein Ziel kein Tier. Ihr Blut klebt an meinen Händen. Ich bereue es nicht. Sie haben es verdient, für das zu bezahlen, was sie getan haben. Dann stellte sich heraus, dass sie genauso arm und mittellos waren wie wir – getrieben von einer Not, die sie nicht selbst verschuldet hatten. Da wurde mir klar: Schläger und Räuber sind nicht das eigentliche Problem in diesem Land. Und wenn wir nicht herausfinden, was es wirklich ist, war das Blut an meinen Händen umsonst.",
+      "title": "Ich will mehr über Alyosha erfahren III"
+    },
+    {
+      "text": "Ich habe beschlossen, der Rokot beizutreten, denn ich spüre, dass Snezhnaya jetzt genau die Prinzipien braucht, für die wir kämpfen. Aber ich weiß, das ändert sich irgendwann. Sobald wir das erreichen, wofür wir kämpfen, wird sich vieles ändern. Und dann beginnt die wahre Prüfung.",
+      "title": "Ich will mehr über Alyosha erfahren IV"
+    },
+    {
+      "text": "In meinen Augen sind Realisten die egoistischsten Menschen der Welt. Sie nutzen jeden schamlos aus, denken nur an Profit und absolute Macht. Oder sie suchen nach Geheimnissen von anderen. Idealisten gehören hingegen zu den absolut edelsten Menschen unter uns. Sie hassen Lügen und Diebstahl. Nicht einmal die kleinste Ungerechtigkeit wird von ihnen jemals geduldet. Es gibt aber noch eine dritte Art: Die sogenannten „realistischen Idealisten“. Sie stecken genau dazwischen fest. Jeden Tag werden sie in völlig entgegengesetzte Richtungen gezogen.",
+      "title": "Ich will mehr über Alyosha erfahren V"
+    },
+    {
+      "text": "Mein Gewehr modifizieren, warten und testen ... Ich dachte früher, Waffenpflege wäre reine Notwendigkeit. Aber wenn ich bedenke, wie viel Zeit und Mora ich da reinstecke, muss ich wohl zugeben, dass es auch zu einer Art Leidenschaft geworden ist.",
+      "title": "Alyoshas Hobbys ..."
+    },
+    {
+      "text": "Das wären all die Mora, die ich für das Modifizieren, Warten und Testen meines Gewehrs ausgebe ... Rechne mal nach, und du wirst vielleicht feststellen, dass die Dinge, die du im Leben am meisten liebst, auch die Quelle all deiner Probleme sind.",
+      "title": "Alyoshas Sorgen ..."
+    },
+    {
+      "text": "Pökelfleisch, haltbares Brot, Käse, der beim Rösten schmilzt ... Mit diesen Zutaten brauche ich nur ein Feuer und habe immer ein Festmahl zur Hand, selbst wenn ich von Eis und Schnee umgeben bin.",
+      "title": "Was er so mag ..."
+    },
+    {
+      "text": "Alles, was eine Schale hat. Krabben, Hummer ... Solche Sachen. Sie kosten ein Vermögen, du musst praktisch mit ihren Scheren und Stacheln kämpfen, nur um sie aufzubekommen, und nach all dem ist kaum Fleisch drin. Das ist die Kosten und die Mühe nicht wert.",
+      "title": "Was er nicht mag ..."
+    },
+    {
+      "text": "Danke, das ist lecker ... Hält sich das auch gut? Ich glaube, ich esse es später auf.",
+      "title": "Geschenk erhalten I"
+    },
+    {
+      "text": "Hmm ... Soll ich dir helfen, etwas seltenes Wildfleisch zu besorgen? Hochwertigere Zutaten würden das noch besser machen.",
+      "title": "Geschenk erhalten II"
+    },
+    {
+      "text": "... Na ja, man darf Essen nicht verschwenden. Es gibt bestimmt einen Dorfbewohner, der das mehr braucht als ich.",
+      "title": "Geschenk erhalten III"
+    },
+    {
+      "text": "Alles Gute zum Geburtstag. Der ist doch heute, oder? Weißt du, bei mir zu Hause war eine Geburtstagsfeier meistens ein Luxus, den wir uns nicht leisten konnten. Viel Glück beim Zusammenkratzen von genug Mehl und Sahne für einen Kuchen – oder beim Finden von jemandem, der mehr als das Nötigste verkauft, damit man ein Geschenk kaufen kann. Aber ich habe einem Kind nie übel genommen, dass es seinen Geburtstag feiern wollte. So sollte es sein, und ich hoffe, dass eines Tages kein Kind in Snezhnaya mehr darauf verzichten muss. Also habe ich beschlossen, deinen Geburtstag sehr ernst zu nehmen, und ich habe mir bei dem Geschenk und der Karte, die ich für dich besorgt habe, wirklich viele Gedanken gemacht. Manchmal muss man selbst die Veränderung sein, die man sich in der Welt wünscht, oder?",
+      "title": "Dein Geburtstag ..."
+    },
+    {
+      "text": "Schön. Es fühlt sich an, als würde ich genauer zielen.",
+      "title": "Gedanken über den Aufstieg – Beginn"
+    },
+    {
+      "text": "Tugarin wird auch besser. Es scheint, als wären wir besser aufeinander abgestimmt.",
+      "title": "Gedanken über den Aufstieg – Fortschritt"
+    },
+    {
+      "text": "Wohl oder übel werden meine Schüsse jetzt nicht mehr danebengehen.",
+      "title": "Gedanken über den Aufstieg – Höhepunkt"
+    },
+    {
+      "text": "Wie weit müssen wir noch gehen, bis die Welt, für die wir kämpfen, Wirklichkeit wird?",
+      "title": "Gedanken über den Aufstieg – Ende"
+    }
+  ],
   "Columbina": [
     {
       "text": "Du kannst mich Columbina nennen, oder Kuutar, oder Mondgöttin ... Ganz wie du möchtest. Ich bin es gewohnt, so viele Namen zu haben. Der Segen des Mondes sei mit dir, wann immer du ihn brauchst.",
@@ -321,6 +495,10 @@
     {
       "text": "Ich bin mir nicht sicher, was für eine Puppe als „Tod“ zählt ... Ich weiß nur, dass Sandrone sich nicht mehr bewegt, und ich kann auch nicht mehr spüren, dass sie noch „funktioniert“. Ihr Schlüssel hat einfach ... angehalten. Und das alles wegen dieser „Technik“, die sie benutzt hat, um mich zurückzubringen. Sie sagte damals, sie würde es mir heimzahlen. Wie sehr ich mir wünsche, dass es nur das wäre. Nur ein Versuch, mir Angst einzujagen ...",
       "title": "Über Sandrone – Uhrwerkschlüssel II"
+    },
+    {
+      "text": "Sandrone ist zurück. Ich freue mich so sehr! Mir ist aufgefallen, dass ihr Aufziehschlüssel jetzt manchmal etwas schneller dreht – früher schien er immer gleich schnell zu laufen. Sie sagte, das liege daran, dass sie ihre inneren Gefühle angenommen hat. Die Sandrone von heute ist nicht mehr dieselbe wie früher. Aber ich finde, egal ob sie andere Kleider trägt oder ihr Aufziehschlüssel schneller dreht – Sandrone ist Sandrone. Sie ist meine beste Freundin. Egal wie sie früher war oder wie sie jetzt ist, ich mag sie einfach sehr. Nachdem sie das gehört hatte, drehte sich ihr Aufziehschlüssel noch schneller. Ich weiß nicht warum, aber das ist wirklich lustig.",
+      "title": "Über Sandrone – Uhrwerkschlüssel III"
     },
     {
       "text": "In seinen Augen hat alles und jeder einen Preis, und er bestimmt deren Wert. Wir sind alle nur Verhandlungsmasse, die er nutzen kann, um sein stetig wachsendes Vermögensimperium zu erweitern. Aber wer würde schon ein so langweiliges Imperium besuchen wollen? Ich jedenfalls nicht.\nHmm ... Wenn er mich jetzt sehen würde, bin ich mir sicher, dass sein Lächeln noch mehr Verachtung als zuvor zu verbergen versuchen würde. Ich kann ihn förmlich hören ... „Gratulation, Fräulein Columbina. Sie sind im Wert gestiegen.“",
@@ -2991,6 +3169,204 @@
       "title": "Gedanken über den Aufstieg – Ende"
     }
   ],
+  "Odette": [
+    {
+      "text": "... Ich danke dir sehr für all die Unterstützung. Du willst ein Autogramm, oder? Was genau soll ich dir denn daneben zeichnen? Wie wäre es mit einer Feder? Oh, Moment mal, du bist gar kein Fan von mir? Da habe ich mich wohl geirrt. Lass mich dann einfach noch einmal von vorne anfangen. Ich bin Odette, Ballerina der Korolevskiy-Theaterkompanie ... Nun, ich danke dir trotzdem sehr für all die Unterstützung.",
+      "title": "Schön, dich kennenzulernen."
+    },
+    {
+      "text": "Gut, wenn das alles ist, gehe ich jetzt proben.",
+      "title": "Gespräch – Beschäftigt"
+    },
+    {
+      "text": "Wenn eine einfache Antwort reicht, warum dann den Atem für etwas Längeres verschwenden?",
+      "title": "Gespräch – Kurz und knapp"
+    },
+    {
+      "text": "Wenn ein Tag doch nur doppelt so viele Stunden hätte ... Hmm. Eigentlich besser gleich das dreimal so viele.",
+      "title": "Gespräch – Zeit"
+    },
+    {
+      "text": "Das Plätschern der Regentropfen gibt mir immer ein so friedliches Gefühl. Dieses Wetter ist perfekt, um ganz alleine zu tanzen.",
+      "title": "Wenn es regnet ..."
+    },
+    {
+      "text": "Die schönsten und friedlichsten Momente vergehen immer am schnellsten.",
+      "title": "Es hat aufgehört zu regnen ..."
+    },
+    {
+      "text": "Der Schnee in Snezhnaya ist immer bitterkalt und er scheint nie aufzuhören.",
+      "title": "Wenn es schneit ..."
+    },
+    {
+      "text": "Meine Haare ... Ich richte sie später.",
+      "title": "Ein Sturm zieht auf."
+    },
+    {
+      "text": "... Zumindest würde es an so einem Ort kein Kennenlerntreffen geben.",
+      "title": "In der Wüste ..."
+    },
+    {
+      "text": "Ich bin aufgewärmt und startklar.",
+      "title": "Guten Morgen."
+    },
+    {
+      "text": "Ein Mittagsschlaf ist nichts für mich. Mittags zu trainieren ist auch nicht ideal, also verbringe ich die Zeit meistens damit, die Skripte für unsere Tanzdramen durchzulesen. Hm? Was es mit diesen Briefen auf sich hat? Sie sind von meinen Fans. Vodyanitsa hat sie mir regelrecht in die Hand gedrückt. Sie möchte, dass ich sie mir ausnahmsweise mal durchlese.",
+      "title": "Guten Tag."
+    },
+    {
+      "text": "Oh, ist es schon Zeit fürs Abendessen? Ich muss gleich auf die Bühne, also esse ich nur ein hartgekochtes Ei. Ich hole mir noch was anderes, sobald die Aufführung vorbei ist.",
+      "title": "Guten Abend."
+    },
+    {
+      "text": "... Missionen abgeschlossen, Trainingspensum erfüllt, neue Choreografie komplett durchgeprobt. Mit meinem Gesichtsausdruck bin ich aber noch nicht zufrieden. Ich muss noch etwas vor dem Spiegel üben ... Oh, ist es schon so spät? Du kannst gerne schon schlafen gehen. Ich habe noch etwas zu erledigen.",
+      "title": "Gute Nacht."
+    },
+    {
+      "text": "Seit der Umsetzung von Projekt Stuzha wird unser Publikum immer kleiner. Während die meisten Menschen kaum über die Runden kommen, beuten korrupte Schmarotzer die Leute weiter aus. Ich weigere mich, einfach wegzusehen. Ich weiß, dass ich das Ruder nicht allein herumreißen kann, aber ich möchte trotzdem tun, was ich kann.",
+      "title": "Über Odette – Rokot"
+    },
+    {
+      "text": "Die Erinnerungen an meine Vergangenheit haben sich für immer in mein Gedächtnis eingeprägt. Wie ein Film spielen sie sich in der Stille der Nacht immer wieder ab ... Sagen wir einfach, dass es nicht immer gut ist, ein perfektes Gedächtnis zu haben.",
+      "title": "Über Odette – Gedächtnis"
+    },
+    {
+      "text": "Sich beim Schutz auf andere zu verlassen, ist so, als würde man sich auf eine dünne Schicht frisches Eis stützen. Ich setze meine Hoffnungen auf niemanden außer auf mich selbst.",
+      "title": "Über uns – Vertrauen"
+    },
+    {
+      "text": "Mein Schmerzempfinden ist ziemlich schwach. Oft bemerke ich gar nicht, dass ich verletzt bin, bis sich schon Schorf auf der Wunde gebildet hat. Aber so ist es mir lieber. Ob bei der Tanzprobe oder beim Spezialtraining der Fatui, es ist besser, wenn mir so eine Kleinigkeit wie meine körperliche Verfassung nicht im Weg steht.",
+      "title": "Über uns – Wunden"
+    },
+    {
+      "text": "Einmal erlitt ich beim harten Training durch extreme Kälte Erfrierungen an Füßen und Beinen. Ich wurde fast komplett ohnmächtig. Als ich wieder zu mir kam, sah ich zuerst ein helles Licht. Es kam vom „Sternenkeil“ vor mir. Aber ich habe noch nie gehört, dass „Sternenkeile“ jemanden so aufwecken können. Wenn mich das also nicht aufgeweckt hat ... War es dann vielleicht ein instinktiver Wille zum Überleben ...?",
+      "title": "Über „Sternenkeile“ ..."
+    },
+    {
+      "text": "Ich nehme jede Probe genauso ernst wie einen echten Auftritt.",
+      "title": "Willst du mir etwas mitteilen?"
+    },
+    {
+      "text": "Du kannst die Süße von Raureifbeeren hervorheben, indem du sie mit ein wenig Speisesalz bestreust. Angeblich hilft der Kontrast dabei, ihre innere Süße zu verstärken. Das habe ich von einem Fan gehört.",
+      "title": "Interessante Vorkommnisse ..."
+    },
+    {
+      "text": "Ich verdanke Rosalyne viel. Aber es gab auch eine Zeit, in der ich sie wirklich gehasst habe. Sie war extrem anspruchsvoll und unglaublich streng. Frieren vor Kälte, vor Erschöpfung zusammenbrechen, sich verletzen, krank werden ... Das war bei ihrem Training Alltag. Ich hatte damals diesen naiven Traum, dass ich es nur als Ballerina schaffen müsste. Ich wollte genug für meine Mutter verdienen. Und eines Tages würde ich sie und die Fatui einfach hinter mir lassen ...",
+      "title": "Über Rosalyne – Was einst war"
+    },
+    {
+      "text": "Wenn jemand fort ist, sind viele Dinge es plötzlich nicht mehr wert, gesagt zu werden. Ich könnte dieses Cor Ignis sofort zerschmettern. Aber das würde den Schmerz und die Missverständnisse, die es verursacht hat, nur noch lächerlicher machen ... Warum verstehen wir uns erst jetzt, nach all dieser Zeit?",
+      "title": "Über Rosalyne – Cor Ignis"
+    },
+    {
+      "text": "Ihre Majestät die Zarin ist Snezhnayas Säule des Glaubens. Sie hat extrem viel zu tun. Deshalb zeigt sie sich in der Öffentlichkeit nur sehr selten. Tatsächlich sah ich sie nur ein paarmal. Dennoch wirkt sie auf mich immer unglaublich königlich und würdevoll. Ihr Blick ist dabei immer gleich: Egal, wohin sie sieht, er ist eiskalt wie eine Eisdecke, die selbst die Zeit nicht schmelzen könnte.",
+      "title": "Über die Zarin ..."
+    },
+    {
+      "text": "Sie bewegt sich mit einer fast federleichten Anmut, um die sie jeder Tänzer beneiden würde. Laut Vodyanitsa hat sie auch eine unheimlich schöne Singstimme. Obwohl ich annehme, dass das, was wir sehen und beneiden, nur die Fassade ist, die sie nach außen hin zeigt. Wer weiß schon, welcher unsagbare Schmerz sich darunter verbirgt ...",
+      "title": "Über „Columbina“ ..."
+    },
+    {
+      "text": "Die Kinder des Hauses des Kamins sehen sie als ihren „Vater“ an. Hoffentlich wird ihnen das etwas von der bitteren Kälte und den tobenden Stürmen ersparen, die das Leben mit sich bringt. Die Aufgabe eines Vaters ist es schließlich, zu beschützen.",
+      "title": "Über „Arlecchino“ ..."
+    },
+    {
+      "text": "Die Teegesellschaften von Herrin Marionette haben Rosalynes Laune früher immer gehoben. Sie war dann zwar genauso streng, aber ihr Tonfall war ein bisschen sanfter. Das war ein ziemlich deutlicher Unterschied.",
+      "title": "Über „Marionette“ ..."
+    },
+    {
+      "text": "Als die Zarin das erste Mal zu einer Aufführung der Korolevskiy-Theaterkompanie kommen wollte, war es Vodyanitsa, die es mir erzählte. Ich antwortete mit einem einfachen Nicken. Daraufhin zwang sie mir ein Lächeln auf, indem sie beide Mundwinkel nach oben drückte, und ließ mich ihr nachsprechen: „Was. Für. Tolle. Neuigkeiten.“\nVielleicht war es eine Übung für den Auftritt vor der Zarin, aber ich glaube trotzdem nicht, dass Ihre Majestät so ein Lächeln mag.",
+      "title": "Über Vodyanitsa – Lächeln"
+    },
+    {
+      "text": "Vodyanitsa ist, wenn sie krank ist, sehr anhänglich. Sie klammert sich dann praktisch an meine Seite ... Sie sagt, sie hat Angst vor Spritzen. Auch vor bitterer Medizin fürchtet sie sich sehr. Sie braucht dann etwas zum Festhalten. Mein Arm ist dabei wohl ihre erste Wahl. Ich halte Schmerzen aber gut aus. Deshalb gibt es auch gar keinen Grund, sie abzuschütteln.",
+      "title": "Über Vodyanitsa – Arztbesuche"
+    },
+    {
+      "text": "Er könnte ganz leicht allein von der Jagd leben, wenn er nur an sich selbst denken würde. Aber er macht trotzdem kleine Jobs rund um das Theater, um anderen zu helfen, denen es schlecht geht ... Es wundert mich nicht, dass er dem Rokot beigetreten ist.",
+      "title": "Über Alyosha ..."
+    },
+    {
+      "text": "Hm ... Ich denke, man könnte ihn einen „Fan“ des Theaters nennen. Er kommt oft genug, um mir und Vodyanitsa bei unseren Auftritten zuzusehen. Aber sobald die Vorstellung beginnt, vergräbt er immer den Kopf in seinen Notizen und schreibt wer weiß was. Das ist schwer zu übersehen, besonders wenn der Rest des Publikums gebannt auf die Bühne starrt. Es würde mich nicht wundern, wenn in seinem Schal mehr echte Wertschätzung für die Kunst steckt als in seinem ganzen Körper.",
+      "title": "Über Mitya ..."
+    },
+    {
+      "text": "Major Valeriy ist ein Fatui-Offizier, der sehr streng auf den Zeitplan achtet. Er soll sehr besonnen befehligen. Das kann auf andere aber auch ziemlich beängstigend wirken ... Wir gehören jedoch zu verschiedenen Abteilungen. Daher haben wir eigentlich nur sehr selten miteinander zu tun. Außerdem ... Mich muss niemand an meine Aufgaben erinnern.",
+      "title": "Über Valeriy ..."
+    },
+    {
+      "text": "Denk bloß nicht, sie sei ein zierlicher, harmloser Schmetterling, nur wegen dieser Flügel. Die Leute mögen sich um sie scharen, aber sie ist die Kommandantin der Druzhna. Sie ist eines der wildesten Raubtiere der Tundra. Halt die Augen weit offen und lass dich nicht von ihrem Lächeln täuschen.",
+      "title": "Über Vesna ..."
+    },
+    {
+      "text": "Du musst mich entschuldigen. Mein Zeitplan für heute ist ziemlich voll und ich habe später noch eine Probe. Wenn du also reden möchtest, fass dich bitte kurz.",
+      "title": "Ich will mehr über Odette erfahren I"
+    },
+    {
+      "text": "Meine Mutter stammte aus einer Familie von Balletttänzern. Mein Vater diente bei den Fatui. Sie trafen sich nach einem ihrer Auftritte und verliebten sich schnell. Es ist eine sehr süße Geschichte. Ich bin mir sicher, dass sie jedem ein Lächeln ins Gesicht zaubert. Als kleines Kind liebte ich das Tanzen, und ich verbrachte meine Tage tanzend an der Seite meiner Mutter. Dabei trug ich oft ein wunderschönes Tutu, von denen mein Vater mir sehr viele kaufte. Ich hatte damals gar keine Sorgen ... Außer vielleicht, welches Bonbon ich mir jeden Tag aus dem Bonbonglas nehmen sollte.",
+      "title": "Ich will mehr über Odette erfahren II"
+    },
+    {
+      "text": "Natürlich dauerte es nicht lange, bis uns die tragische Nachricht erreichte: Mein Vater war beim Ausüben seiner Pflicht gefallen. Meine Mutter war am Boden zerstört und brach sich dann auch noch bei einem Auftritt das Bein. Davor war das Leben zuckersüß gewesen, aber jetzt fühlte es sich an, als wäre das Bonbonglas leer. Und ich war darin gefangen.",
+      "title": "Ich will mehr über Odette erfahren III"
+    },
+    {
+      "text": "Danach, na ja ... Du weißt ja, was passiert ist. Ich bin diese Erinnerungen so oft durchgegangen, dass sie mir nicht mehr wehtun können. Mich gegen mein Schicksal zu wehren ... Das hat mich stark gemacht, und diese Stärke gehört mir ganz allein. Das werde ich nicht vergessen.",
+      "title": "Ich will mehr über Odette erfahren IV"
+    },
+    {
+      "text": "Das alles würde ich meinen Fans nicht erzählen, also ist es gut, dass du keiner bist. Ich muss schon zu viele Versionen von mir aufrechterhalten und ich möchte nicht, dass sie sich vermischen ... Natürlich werde ich in meinem Herzen für immer der Perfektion entgegentanzen.",
+      "title": "Ich will mehr über Odette erfahren V"
+    },
+    {
+      "text": "Ich habe Ballett schon immer geliebt und ich gebe alles, um jedes Mal, wenn ich auf der Bühne stehe, die bestmögliche Vorstellung abzuliefern.",
+      "title": "Odettes Hobbys ..."
+    },
+    {
+      "text": "Ehrlich gesagt habe ich das Gefühl, dass kleine Tiere mich hassen. Vodyanitsa nimmt mich immer mit, um die Straßenkatzen rund um das Theater zu füttern, aber sobald ich näher komme, fangen sie an, ihre Krallen zu wetzen ... Hm? Das heißt, sie freuen sich, mich zu sehen? Huh ...",
+      "title": "Odettes Sorgen ..."
+    },
+    {
+      "text": "Kurz bevor der Speisesaal schließt, kosten die Salate nur die Hälfte, deshalb habe ich sie früher oft gegessen. Natürlich schmecken Salate, die schon den ganzen Tag herumstehen, nicht so gut wie frische. Aber dieses vertraute Gefühl hat etwas sehr Beruhigendes für mich.",
+      "title": "Was sie so mag ..."
+    },
+    {
+      "text": "Ehrlich gesagt glaube ich nicht, dass es irgendein Essen gibt, das mir überhaupt nicht schmeckt. Aber als Balletttänzerin muss ich streng auf meine Ernährung achten, deshalb sind alle meine Mahlzeiten genau geplant. Alles, was nicht auf meinem Plan steht, meide ich lieber.",
+      "title": "Was sie nicht mag ..."
+    },
+    {
+      "text": "Ich hatte in den letzten Tagen ziemlich viele Auftritte. Vielleicht könnte ein bisschen mehr nicht ... Ähm, egal. Es ist lecker. Danke.",
+      "title": "Geschenk erhalten I"
+    },
+    {
+      "text": "Das ist nur ein Gericht? Es sieht eher aus wie ... Essen für einen ganzen Tag.",
+      "title": "Geschenk erhalten II"
+    },
+    {
+      "text": "Ähm, nein danke. Ich achte darauf, was ich esse.",
+      "title": "Geschenk erhalten III"
+    },
+    {
+      "text": "Alles Gute zum Geburtstag! Ich habe überlegt, was ich dir schenken könnte ... Meistens bekomme ich Blumen, Ballettschuhe und Spieluhren. Aber das ist wohl nichts für dich. Wie wäre es, wenn du dir einfach etwas wünschst ... Hier und jetzt? Am besten natürlich etwas, das ich dir auch erfüllen kann ...",
+      "title": "Dein Geburtstag ..."
+    },
+    {
+      "text": "Hm, noch nicht ganz ... Ich muss noch härter trainieren.",
+      "title": "Gedanken über den Aufstieg – Beginn"
+    },
+    {
+      "text": "Mm, meine Bewegungen fühlen sich präziser an. Ich sollte die Intensität beibehalten.",
+      "title": "Gedanken über den Aufstieg – Fortschritt"
+    },
+    {
+      "text": "Meine Fouettés sind jetzt perfekt. Aber jetzt ist nicht die Zeit, nachzulassen.",
+      "title": "Gedanken über den Aufstieg – Höhepunkt"
+    },
+    {
+      "text": "„Gefühle sind ein unverzichtbarer Teil des Balletts.“ Ich verstehe jetzt, was das bedeutet. Danke für deine treue Begleitung und Unterstützung. Wenn du Lust hast, heute noch zu meiner Aufführung zu kommen, ist hier eine Eintrittskarte.",
+      "title": "Gedanken über den Aufstieg – Ende"
+    }
+  ],
   "Prune": [
     {
       "text": "Hallo. Prune, die Hexenjägerin, zu deinen Diensten. Mein Feind? Jemand, der Freude daran hat, Kinder zu ärgern. Jemand, der die imaginären Freunde anderer Leute benutzt, um sie in ihre Intrigen zu verstricken. Eine komplette Angeberin, viel zu dramatisch und besessen davon, einen ausgehöhlten Hut zu tragen. Ich spreche natürlich von der bösesten aller Hexen! Jede relevante Information über ihren Aufenthaltsort ist mehr als willkommen.",
@@ -3198,6 +3574,216 @@
     },
     {
       "text": "Ich glaube immer noch nicht an erfundene Märchen und habe nicht viel Vertrauen in diese Welt. Aber ich glaube an dich, also hoffe ich, dass du auch an mich glaubst. Selbst wenn du denkst, dass ich immer noch nur ein Kind bin, zumindest ... bin ich ein großes Kind – jemand, der stark genug ist, um sich auf mich zu verlassen.",
+      "title": "Gedanken über den Aufstieg – Ende"
+    }
+  ],
+  "Sandrone": [
+    {
+      "text": "Ich hasse Selbstvorstellungen. Wenn du mich kennen sollst, wirst du mich schon von selbst kennenlernen. Und wenn nicht ... Wozu Zeit und Energie verschwenden? Aber nun gut, um der Etikette willen spiele ich dieses eine Mal mit ... Sieh her, vor dir steht Marionette, die Siebte von den Elf der Fatui!",
+      "title": "Schön, dich kennenzulernen."
+    },
+    {
+      "text": "Es wird Zeit, dass wir wieder eine Teegesellschaft veranstalten, findest du nicht auch? Ich frage mich, wer sonst noch Zeit hat ...",
+      "title": "Gespräch – Teegesellschaft"
+    },
+    {
+      "text": "Ich mag Musik. Tatsächlich habe ich mir selbst beigebracht, viele verschiedene Instrumente zu spielen. Du glaubst mir nicht? Hah, besorg mir ein Klavier und ich zeige dir, was ich kann.",
+      "title": "Gespräch – Klavier"
+    },
+    {
+      "text": "Ich werde schon wieder in den Zapolyarny-Palast zurückgerufen? Ugh ... Ernsthaft, was bringen all diese endlosen Besprechungen?!",
+      "title": "Gespräch – Besprechungen"
+    },
+    {
+      "text": "... Wie lästig.",
+      "title": "Wenn es regnet ..."
+    },
+    {
+      "text": "Meine Blumen lieben diese Art von Wetter.",
+      "title": "Es hat aufgehört zu regnen ..."
+    },
+    {
+      "text": "Verteidigungssysteme ... Mmhmm, funktionieren normal.",
+      "title": "Wenn es blitzt ..."
+    },
+    {
+      "text": "Ugh, Zeit für noch mehr „Schneemädchen“ ...",
+      "title": "Wenn es schneit ..."
+    },
+    {
+      "text": "Das perfekte Wetter für Kuchen, starken Kaffee und dafür, sich in einem guten Buch zu verlieren.",
+      "title": "Wie sonnig ..."
+    },
+    {
+      "text": "Dieser Rock ist echt nicht für so ein Wetter gemacht ... Wie um alles in der Welt ist Rosalyne früher damit klargekommen?",
+      "title": "Ein Sturm zieht auf ..."
+    },
+    {
+      "text": "Guten Morgen. Möchtest du eine Tasse Kaffee? Er hebt wirklich die Stimmung. Hmm? Warum sollte jemand wie ich Kaffee brauchen? Hah, darf eine Dame nicht einfach den Geschmack genießen?!",
+      "title": "Guten Morgen ..."
+    },
+    {
+      "text": "Ist es schon so spät? Ich sollte besser ein paar Erfrischungen vorbereiten ...",
+      "title": "Guten Tag ..."
+    },
+    {
+      "text": "Kommst du zum Abendessen? Das hier ist keine Kantine, weißt du ... Vergiss es, jetzt bist du ja nun schon hier, ich lasse Fagio schnell etwas zaubern.",
+      "title": "Guten Abend ..."
+    },
+    {
+      "text": "Du solltest etwas schlafen. Ich forsche lieber nachts, da es dann ruhiger ist und niemand in der Nähe ist, der mich stört. ... Was meinst du damit?! Mein Schlafrhythmus ist völlig in Ordnung, vielen Dank auch!",
+      "title": "Gute Nacht ..."
+    },
+    {
+      "text": "Was ist falsch daran, mich Sandrone zu nennen? Hä, du fragst nach meinem ursprünglichen Namen? Hah ... Du willst es also wirklich von mir wissen? Na gut, na gut ... Ich erinnere mich noch gut daran, als ich zum ersten Mal die Augen öffnete. Alain hatte mich gerade erst erschaffen. Er gab mir damals direkt den Namen „Marionette“. Ich versuchte, ihn selbst laut auszusprechen. Aber ich bemerkte etwas ... Kompliziertes in seinem Gesichtsausdruck. Erst viel später verstand ich es. Es war eine Mischung aus Bedauern und tief empfundener Schuld. Er nannte mich nie wieder so. Jedenfalls erzählte er mir die Geschichte vom Narzissenkreuz-Verein und seiner Schwester. Danach forderte Alain etwas von mir. Er bestand am Ende darauf, dass ich meinen eigenen Lebensweg völlig frei wähle. Und dazu gehörte auch mein eigener Name. Ich sagte ihm, dass ich mit dem von ihm gegebenen Namen völlig einverstanden sei. „Marionette Guillotin“ ... Das ist doch ein ziemlich einzigartiger Name, würdest du mir da nicht zustimmen? Die Zarin sah das wohl etwas anders. Sie machte „Marionette“ später aus anderen Gründen zu meinem Titel als Elf der Fatui. Heh ... Vielleicht war das einfach nur eine weitere sogenannte „Fügung des Schicksals“.",
+      "title": "Über Sandrone – Name"
+    },
+    {
+      "text": "Als ich erschaffen wurde, war es mir zu mühselig, einen Platz zum Hinlegen zu suchen, also habe ich meistens nur auf einem Stuhl „geschlafen“. Erst in Snezhnaya gewöhnte ich mich dann an Betten. Ich muss schon sagen, nach einem anstrengenden Tag mit meinen „Kollegen“ ist es wunderbar gemütlich, etwas Bequemes zu tragen und sich unter der Bettdecke zu verstecken. Sensoren und Gefühlsschaltkreise vermitteln mir dabei Sicherheit. Ich verstehe jetzt wirklich sehr gut, warum die Menschen so gerne und lange ausschlafen. Betten bringen aber auch eigene Probleme mit sich. Mein Aufziehschlüssel hindert mich am Schlafen auf dem Rücken, und auf der Seite verliere ich leicht das Gleichgewicht. Ich muss also auf dem Bauch schlafen.",
+      "title": "Über Sandrone – Schlafen"
+    },
+    {
+      "text": "Du hast mein Tagebuch gelesen. Findest du also nicht, dass es an der Zeit ist, ein paar deiner eigenen Geheimnisse zu teilen, damit wir quitt sind? Häh? Dein Abenteurerhandbuch? Was soll ich denn damit? Wenn ich wissen wollte, was du jeden Tag machst, würde ich mir das einfach von Katheryne erzählen lassen.",
+      "title": "Über uns – Tagebuch"
+    },
+    {
+      "text": "Wir kennen uns jetzt vielleicht besser, aber wenn wir in Snezhnaya ankommen, müssen wir uns immer noch an die Regeln halten. Schließlich bekämpfst du die Fatui schon seit deiner Ankunft ... Wer weiß, was du dort anrichtest. Natürlich werde ich mich bemühen, dir das Leben nicht schwer zu machen. Ich hoffe, du tust das Gleiche für mich. Einander zu helfen, weil man Verständnis füreinander hat, so machen das doch Gefährten, oder?",
+      "title": "Über uns – Standpunkte"
+    },
+    {
+      "text": "Das passt gut zu mir – Kryo ist nützlich. Zum Beispiel muss ich mir nach langen Berechnungen keine Sorgen mehr machen, zu überhitzen.",
+      "title": "Über „Sternenkeile“ ..."
+    },
+    {
+      "text": "Als Pulonia weg war, wurde mein Leben plötzlich viel schwieriger. Deshalb erschuf ich Fagio. Sie ist meine „Facilitatrice Automatisé Généraliste Interactif et Omnitâche“. Sie erledigt lästige, unwichtige Aufgaben für mich, mit denen ich lieber nicht meine Zeit verschwenden möchte. Außerdem kann sie auch kämpfen. Hm, du findest ihren vollen Namen zu lang und ... schwer zu verstehen? Bekommen nicht alle Arbeitsmaschinen so ihre Namen? Alain hat sich Pulonia ausgedacht, was für „Prospektive Undulation: Lokalisierter Obacht- und Investigativ-Automaton“ steht. Ich dachte, alle benennen Dinge so. Du denkst also wirklich, so etwas ist erblich ...?",
+      "title": "Willst du mir etwas mitteilen?"
+    },
+    {
+      "text": "Abseits meiner Forschung denke ich manchmal über tiefgründige Fragen nach. Jedes Volk hat eigene Vorstellungen vom Tod. Ich höre Leute oft über das „Jenseits“, den „Ruheort der Seelen“ und dergleichen reden ... Meine eigene Erinnerung ist jedoch völlig leer. Das gilt für die Zeit, als mein Kern im Kampf gegen Il Dottore beschädigt wurde, bis der „Sternenkeil“ Alains Vermächtnis und mich reaktivierte. Wohin gehen mechanische Konstrukte oder „Puppen“, wenn sie sterben? Wie werden unsere „Seelen“ in dieser Welt eigentlich definiert? Haben wir überhaupt eine Seele? Da es keine Antworten gibt, wende ich mich immer wieder meiner Forschung zu. Aber Wissen ist der Grundpfeiler der Welt. Wenn sich diese Steine immer weiter stapeln, werde ich durch ihre bloße Höhe eines Tages die Antworten auf meine Zweifel erreichen.",
+      "title": "Interessante Vorkommnisse ..."
+    },
+    {
+      "text": "Diese große Schamanin wirkt sehr nett. Ich frage mich, ob sie wirklich schon so alt ist. Sie hat jedenfalls noch viel Energie. Allerdings regt sie sich manchmal vielleicht ein bisschen zu sehr auf. Was ich denn genau damit meine? Nun ja, ich erzählte ihr neulich, dass wir beide unter Wasser nach etwas suchen wollen ... Und davor sagte ich noch, dass du in Nod-Krai warst und Columbina geholfen hast, ihren Namen zurückzubekommen ... Sie wurde ganz aufgeregt und knallrot. Ich frage mich, ob das etwas mit ihrem Alter zu tun hat ...",
+      "title": "Über Citlali ..."
+    },
+    {
+      "text": "Ich weiß nicht, wie sie das macht! Dieses Katzenmädchen findet immer die schwächste Stelle in jeder Maschine, und dann ... Pfft, kaputt. Ihr Bruder sollte mal mit ihr reden. *Seufz* Vergiss es ... Ich schätze, das ist wirklich ein Talent. Vielleicht sollte sie meine zukünftigen Erfindungen testen. Wenn meine Maschinen ihre Neugier nicht überleben, welche Chance haben sie dann überhaupt in einem Kampf?",
+      "title": "Über Lynette ..."
+    },
+    {
+      "text": "Nachdem Alain gestorben war, habe ich einen Grabstein für ihn aufgestellt. Als er noch lebte, bat er mich darum, seine Grabinschrift für ihn zu schreiben. Und das habe ich getan. Schwierig war das nicht – ich listete seine Taten auf und wählte ein passendes Zitat, dass seine Denkweisen perfekt einfangen sollte. Ich entschied mich für „Bedauerlicherweise gibt es nichts mehr zu sagen.“ Er hat das wirklich sehr oft gesagt. Du findest, dass das ein wenig zu hoffnungslos klingt? Hah, das würden wohl nur Leute denken, die ihn nicht kannten. Er lächelte nämlich immer, wenn er diesen Satz sagte. Es war kein Zeichen der Resignation, er gab nicht auf. Ironischerweise klang es bei ihm fast nach einer tiefen Zufriedenheit. Wie die Lösung eines ganz normalen Matheproblems. Der Tod ist nur ein stilles Gleichheitszeichen, und er steht nun auf der anderen Seite der Gleichung.",
+      "title": "Über Alain Guillotin ..."
+    },
+    {
+      "text": "Selbst ich werde immer noch von den Fehlern in meinem Herzen geplagt, aber Ihre Majestät die Zarin ... Wie hat sie es nur geschafft, ihre Gefühle so völlig einzufrieren?",
+      "title": "Über die Zarin des Eises ..."
+    },
+    {
+      "text": "Immerzu erteilt er Befehle ... Irgendwie scheint die Welt, die sich in seinen Augen spiegelt, weiter weg zu sein als bei allen anderen. Als ich ihn zum ersten Mal sah, wusste ich, dass diese Welt ihm zu viel genommen hatte.",
+      "title": "Über „Pierro“ ..."
+    },
+    {
+      "text": "Jeder weiß, dass Il Capitano seine Maske nicht gerne abnimmt, aber das hält ihn nicht davon ab, seinen Tee auszutrinken, wann immer wir uns treffen.",
+      "title": "Über „Capitano“ ..."
+    },
+    {
+      "text": "Du solltest dir vielleicht die Ohren zuhalten. Ich fürchte, ich werde meine Gefühle nicht kontrollieren können.",
+      "title": "Über „Il Dottore“ ..."
+    },
+    {
+      "text": "Columbina hat mich früher in den Wahnsinn getrieben, und um ehrlich zu sein, tut sie das noch immer. Ich dachte, das Leben wäre ruhiger ohne sie. Wer hätte gedacht, dass ich noch genervter bin, wenn sie nicht hier ist! Ugh, das ist zum Verrücktwerden!",
+      "title": "Über Columbina – Nervtötend"
+    },
+    {
+      "text": "Sie führt gerade so ein glückliches Leben. Ihre Familie und Freunde sind an ihrer Seite und sie kann reisen, wann immer sie Zeit hat ... Warum kann ich nicht auch so ein Glück haben? Vergiss es, ich bin nicht neidisch. Wir alle wissen, dass sie es verdient hat, glücklich zu sein.",
+      "title": "Über Columbina – Das Leben"
+    },
+    {
+      "text": "Arlecchino ist eine Frau, die zu ihrem Wort steht. Sie handelt entschlossen und man kann sich darauf verlassen, dass sie ihre Aufgaben erledigt. Rein aus beruflicher Sicht wäre es schön, wenn alle meine Kollegen versuchen würden, sich ein Beispiel an ihr zu nehmen.",
+      "title": "Über Arlecchino ..."
+    },
+    {
+      "text": "Er ist der Vorsitzende der Snezhnograd-Wetsche, obwohl er oft eher wie ... ihr Aufseher wirkt. Jede abgegebene Stimme in der Wetsche beeinflusst die Interessen unzähliger Fraktionen. So viele gegensätzliche Anliegen in Einklang zu bringen, schaffen nur die gerissensten Köpfe. Sobald du das verstehst, erkennst du, wie unheimlich er wirklich ist.",
+      "title": "Über „Pulcinella“ ..."
+    },
+    {
+      "text": "Man sollte meinen, dass seine Beziehung und Geschäfte mit Il Dottore von Anfang an ordentlich untersucht wurden, oder? Warum dauerte die Bewilligung meiner Forschungsgelder zehnmal länger als bei diesem verrückten Il Dottore? Da war doch eindeutig etwas faul! Ich sprach Pantalone direkt darauf an! Er sah mich mit diesem dümmlichen Lächeln an und sagte: „Ach du meine Güte! Hat unser Fräulein Sandrone endlich Interesse für Finanzen entwickelt? Ich kann dir ein paar Bücher empfehlen. Vielleicht solltest du mit dem Buch ‚100 Sätze, die dir Manieren beibringen‘ anfangen.“",
+      "title": "Über „Pantalone“ ..."
+    },
+    {
+      "text": "Sie hat immer für sich selbst gelebt. Sie liebte auf ihre eigene Art und hasste auch auf ihre eigene Art. Kein Wunder, dass sie so schnell ausgebrannt ist. Dennoch erstrahlte ihre Flamme in einer einzigartigen Farbe, bis zu dem Moment, in dem sie flackernd im Nichts verschwand.",
+      "title": "Über Rosalyne ..."
+    },
+    {
+      "text": "Noch so eine Nervensäge ... Naja, in jeder Hinsicht. Er könnte seine Tage doch einfach glücklich mit seinen Geschwistern verbringen. Warum bestand er überhaupt darauf, ein Elf der Fatui zu werden? Und wann geht endlich in seinen dicken Schädel rein, dass nicht jeder ständig auf einen Kampf aus ist?",
+      "title": "Über den „Grafen“ ..."
+    },
+    {
+      "text": "Hmm? Ich habe nicht die Angewohnheit, meine Lebensgeschichte einfach so mit anderen zu teilen. Aber wenn ich mich schon öffnen soll, können wir dann wenigstens auf schönes Wetter warten und das bei Tee und Kuchen tun?",
+      "title": "Ich will mehr über Sandrone erfahren I"
+    },
+    {
+      "text": "Meine Kollegen bei den Fatui sind vielleicht nicht die, die ich mir aussuchen würde, aber man kann nicht leugnen, dass es ein hervorragender Ort zum Forschen ist. Die Zarin ist großzügig mit ihren Ressourcen und Geldern. Ich würde sagen, diese Rechnung geht für mich auf.",
+      "title": "Ich will mehr über Sandrone erfahren II"
+    },
+    {
+      "text": "Es hat mich nie gestört, dass Alain mich nach dem Vorbild seiner Schwester Mary-Ann erschaffen hat, oder dass er mich „Marionette“ nannte. So wie ich das sehe, sind das einfach die Folgen meiner Geburt. Stört es dich etwa, dass du wie deine Eltern aussiehst oder ihren Familiennamen trägst?",
+      "title": "Ich will mehr über Sandrone erfahren III"
+    },
+    {
+      "text": "Ich mag Mathematik. Eine Welt aus Formeln und Logik besitzt eine Eleganz, die in Gewissheit verankert ist. Ich mag auch Musik. Sie ist ihr in vielen Dingen wirklich sehr ähnlich. Früher war Musizieren für mich ein mathematisches Problem. Noten und Takt mussten im perfekten Gleichgewicht sein, ganz ohne Platz für Abweichungen. Später habe ich dann etwas Wichtiges erkannt. Kleine Fehlerchen oder sogar richtige Patzer bei einem Auftritt machen die Musik eigentlich noch viel schöner. Eine kleine Pause hier, eine Improvisation dort ... Genau in solchen winzigen Fehlern wird die wahre Emotion geboren. Ein Widerhall im Herzen des Musikers, sozusagen.",
+      "title": "Ich will mehr über Sandrone erfahren IV"
+    },
+    {
+      "text": "Was die Welt gibt, wird die Welt wieder nehmen. Leben heißt zu gewinnen und zu verlieren. Man sammelt auf, was die Welt nicht greifen kann. Bei Verlusten und Abschieden hält man es fest. Und man geht weiter vorwärts. Wenn jemand sich nur wünscht, „zu leben“, ist das denn ein zu unbedeutender Wunsch? Wie bei jemandem, der die Welt nur rettet, um „sich selbst zu retten“. Ist ein solcher Grund zu einfach? Zu leben, zu fühlen, zu bezeugen. Eines Tages werden die Dinge, die die Welt nicht nehmen kann, vielleicht zahlreich genug sein, um sie zutiefst zu erschüttern.",
+      "title": "Ich will mehr über Sandrone erfahren V"
+    },
+    {
+      "text": "Neben Musik, Maschinen und Mathematik mag ich auch den Gartenbau ... Wenn die Bedingungen es zulassen. Ich dokumentiere gerne, wie meine Pflanzen wachsen und gedeihen. Die meisten brauchen kaum Hilfe. Sie sind eigenständig und robust. Früher dachte ich, ich wäre genauso.",
+      "title": "Sandrones Hobbys ..."
+    },
+    {
+      "text": "Jedes Mal, wenn ich ein kleines flauschiges Tier sehe, möchte ich es einfach hochheben und ganz fest drücken ... Aber die meisten Tiere mögen keine Maschinen, also laufen sie immer weg, wenn sie mich sehen. He! Schau mich nicht so an! Ich will dein Mitleid nicht. Was ist schon dabei, wenn ich sie nicht umarmen kann? Es ist keine ... Es ist keine große Sache ...",
+      "title": "Sandrones Sorgen ..."
+    },
+    {
+      "text": "Dank dieses Körpers habe ich weder Allergien noch Magenprobleme. Deshalb ist Essen für mich purer Genuss. Aber wenn ich mich entscheiden müsste ... Hmm, ich glaube, kleine, feine Gebäckstücke mag ich am liebsten. Schon ihre wunderschönen Formen machen mich glücklich. Das ist ein doppelter Genuss für Augen und Seele.",
+      "title": "Was sie so mag ..."
+    },
+    {
+      "text": "Ich mag kein fettiges, scharfes Essen. Das hat nichts mit dem Geschmack zu tun, es ist nur schwer zu vermeiden, dass sich der Geruch in meiner Kleidung festsetzt. Das ist sehr unelegant für eine Dame.",
+      "title": "Was sie nicht mag ..."
+    },
+    {
+      "text": "Hmpf ... Ich tue dir mal einen Gefallen und höre mir an, wie du das zubereitet hast. Vielleicht kann ich dir ein paar Ratschläge geben. Es würde sich für eine Dame nicht ziemen, diese Gelegenheit ungenutzt zu lassen.",
+      "title": "Geschenk erhalten I"
+    },
+    {
+      "text": "Oh? Das ist gar nicht mal so schlecht. Ich werde den Gefallen erwidern müssen, wenn wir uns das nächste Mal auf einen Tee treffen.",
+      "title": "Geschenk erhalten II"
+    },
+    {
+      "text": "Fagio, ich habe hier etwas, das du wegräumen sollst.",
+      "title": "Geschenk erhalten III"
+    },
+    {
+      "text": "Hmpf. Hier, nimm das. Normalerweise gebe ich so etwas nicht her, aber heute ist ein besonderer Tag, denn es ist der Tag, an dem du auf die Welt gekommen bist. Ich habe Arlecchino und Columbina eingeladen und noch ein paar gemeinsame Freunde. Ich habe für diesen Anlass sogar einen besonderen Kuchen gebacken ... Also freu dich am besten darauf.",
+      "title": "Dein Geburtstag ..."
+    },
+    {
+      "text": "Berechnung läuft.",
+      "title": "Gedanken über den Aufstieg – Beginn"
+    },
+    {
+      "text": "Gebe Variablen ein ...",
+      "title": "Gedanken über den Aufstieg – Fortschritt"
+    },
+    {
+      "text": "Der Fortschritt ist reibungslos.",
+      "title": "Gedanken über den Aufstieg – Höhepunkt"
+    },
+    {
+      "text": "Die Ordnung der Dinge in ihre Einzelteile zerlegen. Wetten, du bist jetzt beeindruckt von mir? Hahaha ...",
       "title": "Gedanken über den Aufstieg – Ende"
     }
   ],
@@ -3804,6 +4390,398 @@
     },
     {
       "text": "Erinnerst du dich an die drei ritterlichen Tugenden? Gut – jetzt vergiss sie einfach wieder. Was für Ritter wir sein wollen und welchen Weg wir einschlagen, das liegt ganz bei uns!",
+      "title": "Gedanken über den Aufstieg – Ende"
+    }
+  ],
+  "Vesna": [
+    {
+      "text": "Hallo, {F#meine liebe Freundin}{M#mein lieber Freund}. Hier ist Vesna, Kommandantin der „Druzhna“. Die Ehre ist ganz meinerseits. Schüsse zu deinem Salut und die Ehrengarde sind in Position, bereit, dir einen feierlichen Empfang zu bereiten. Falls du es nicht so mit großem Trara hast, habe ich natürlich auch eine eher private Begrüßungszeremonie organisiert. Komm, hier entlang.",
+      "title": "Schön, dich kennenzulernen."
+    },
+    {
+      "text": "Die „Druzhna“ steht einzig der Zarin zu Diensten, daher kann sie dir nicht auf Abruf zur Seite treten. Aber Vesna, die Vila, steht dir gerne zur Verfügung, {F#liebe Freundin}{M#lieber Freund}.",
+      "title": "Gespräch – Zu Diensten"
+    },
+    {
+      "text": "Ist dieses Set nicht einfach umwerfend? Es war ein persönliches Geschenk von Ihrer Majestät. Hehe, ganz recht, schau es dir ruhig an.",
+      "title": "Gespräch – Glücklich"
+    },
+    {
+      "text": "Der Papierkram? *seufz* Den hab ich schon vor Ewigkeiten erledigt, das ging ruckzuck. Jetzt ist es Zeit, auf Patrouille zu gehen. Komm schon, gehen wir!",
+      "title": "Gespräch – Gestärkt"
+    },
+    {
+      "text": "Feen können sich durchaus erkälten. Wenn sie nass werden, ist es wichtig, dass sie sich sofort trockenflattern. Also die Flügel, meine ich.",
+      "title": "Wenn es regnet ..."
+    },
+    {
+      "text": "Im Schnee kann schon die kleinste Unvollkommenheit in deiner Tarnung tödlich sein. Sei also besser vorsichtig.",
+      "title": "Wenn es schneit ..."
+    },
+    {
+      "text": "Ich weiß, was du denkst, und ich stimme dir zu. In der Sonne sehen meine Flügel am schönsten aus.",
+      "title": "Wie sonnig ..."
+    },
+    {
+      "text": "Ah ... Hehe, sehr schön. Die Vila lieben einfach eine frische Brise.",
+      "title": "Wenn es windig ist ..."
+    },
+    {
+      "text": "Ich frage mich nur ... Wann kehren wir wieder nach Snezhnaya zurück?",
+      "title": "In der Wüste ..."
+    },
+    {
+      "text": "Ein neuer Tag! Guten Morgen, Snezhnograd!",
+      "title": "Guten Morgen."
+    },
+    {
+      "text": "Auf geht's zum Restaurant Podvorye, komm schon! Geht natürlich auf mich. Wie immer!",
+      "title": "Guten Tag."
+    },
+    {
+      "text": "„Die Korolevskiy-Theaterkompanie präsentiert heute Abend eine neue Show. Mit dabei sind die hohe Sopranstimme von Primadonna Vodyanitsa, die neueste Choreografie von Fräulein Odette ... und ein paar „neue Freunde“.",
+      "title": "Guten Abend."
+    },
+    {
+      "text": "He ... nicht geschlafen. Komm doch mit auf einen nächtlichen Spaziergang. Die Nordlichter sind heute Nacht großartig!",
+      "title": "Gute Nacht."
+    },
+    {
+      "text": "Siehst du diese kleinen Dinger, die um mich rumschwirren? Das sind meine magischen Waffen, meine eigenen Schöpfungen. Jedes einzelne ist eine Mischung aus Elementarenergie und meinem eigenen Willen, daher haben sie auch etwas von meiner Persönlichkeit geerbt. Das heißt, es kann sein, dass sie dich nerven, weil sie mit dir spielen wollen. Kümmere dich nicht um sie ... Aber wenn du Zeit hast, dann geh doch bitte auf ihre Wünsche ein, hehe!",
+      "title": "Über Vesna – Magische Waffe"
+    },
+    {
+      "text": "Wer sagt, dass eine Kommandantin streng und einschüchternd sein muss? Pff, das ist nur was für Leute ohne Ausstrahlung. Ich hab sowas nicht nötig und ich glaube, da sind wir uns ziemlich ähnlich.",
+      "title": "Über Vesna – Kommandantin"
+    },
+    {
+      "text": "Ja, ja, ich versteh schon. Es kursieren alle möglichen Gerüchte über mich, und du willst die Wahrheit wissen. Na gut, dafür haben wir reichlich Zeit. Aber im Gegenzug möchte ich auch die Wahrheit über dich wissen, und zwar bis ins kleinste Detail.",
+      "title": "Über uns – Die Wahrheit"
+    },
+    {
+      "text": "Mir gefällt die Vorstellung nicht, jemanden auf einer Reise zu „begleiten“. Auf den ersten Blick klingt das zwar romantisch, aber wenn man genauer darüber nachdenkt, reduziert das Wort „begleiten“ die eine Person eher zu einem Protagonisten und die andere zu einer bloßen Nebenfigur.\nDie Wahrheit ist: Jeder Schritt, den wir machen, ist unser eigener, ebenso wie die Dinge, die wir erleben, und die Art und Weise, wie wir auf diesem Weg wachsen. Deshalb werde ich nicht sagen, dass ich dich auf deiner Reise „begleite“; vielmehr freue ich mich, dass ich das Vergnügen habe, deine Gesellschaft auf dieser Reise zu genießen, die – zumindest vorerst – eine gemeinsame ist. Stell es dir so vor ... du gehst einfach so vor dich hin, kümmerst dich um deine eigenen Angelegenheiten, und irgendwann drehst du den Kopf und stellst fest: Oha! Haha, schau mal, wir scheinen ja beide in die gleiche Richtung zu gehen!",
+      "title": "Über uns – Unsere Geschichte"
+    },
+    {
+      "text": "Die „Sternenkeile“ sind wunderschön. Ein echtes Sammlerstück. Die „Mondräder“ sind eigentlich auch nicht schlecht. Ich wollte schon immer mal eines haben. Aber die „Visions“ ... Da habe ich im Moment kein Interesse dran, tut mir leid.",
+      "title": "Über „Sternenkeil“ ..."
+    },
+    {
+      "text": "Ach, dieses alte Ding? Wunderschön, nicht wahr? Es ist ein Familienerbstück, weißt du. Viel, viel älter als ich. Eine echte Antiquität, die eigentlich in ein Museum gehört. Manchmal benutze ich es als Zauberstab, manchmal als Zeigestab, wenn ich Unterricht gebe, und manchmal als Befehlsstab ... Ach, siehe da, ich gebe ihm in seinem hohen Alter noch mal die Chance, seine glorreichen Tage noch einmal zu erleben, anstatt ihn irgendwo in einem Banktresor einzuschließen, wo er nur Staub fangen würde. Meine Vorfahren würden Schlange stehen, um mich zu preisen, wenn sie das wüssten!",
+      "title": "Willst du mir etwas mitteilen?"
+    },
+    {
+      "text": "Das Frostspringkraut ist ein Symbol für Schönheit und Widerstandskraft, da es trotz der extrem kalten Umgebung überlebt. Außerdem hat es ein sehr markantes Muster. Ich schaue es mir gerne mit halb geschlossenen Augen an, während ich den Kopf schüttle, hehe – das erzeugt einen verträumten Effekt, als würde man durch ein Kaleidoskop schauen. Allerdings würde ich empfehlen, das an einem abgelegenen Ort zu tun, an dem niemand sonst in der Nähe ist.",
+      "title": "Interessante Vorkommnisse ..."
+    },
+    {
+      "text": "Ich habe schon viel zu viele selbstgerechte Trottel festgenommen, die sich Ihrer Majestät widersetzen wollen. Ihre großspurigen Reden über Eroberung? Das ist alles nur heiße Luft. Sie haben weder die Strategie, um einen Aufstand anzuzetteln, noch die Kompetenz, ihn durchzuziehen. Im Vergleich zu diesen Möchtegern-Revolutionären ... Nein, das nehme ich zurück. Sie verdienen es nicht einmal, in einem Atemzug mit Ihrer Majestät genannt zu werden.\nWas ich damit sagen will, ist: Der Zarin zu dienen, ist nicht nur meine Pflicht als Vila. Es ist auch meine persönliche Entscheidung als Vesna.",
+      "title": "Über die Zarin – Loyalität"
+    },
+    {
+      "text": "Ihre Majestät spricht das Wort „Mitgefühl“ stets mit einem eisigen Unterton aus. Sie sagt, es sei ein Fluch, den die Himmlische Ordnung den Göttern auferlegt hätten, und keine echte Liebe. Doch ich bin da anderer Meinung. Immer wenn ich von einem Feldzug gegen Monster zurückkehre, fügt Ihre Majestät am Ende ihres persönlichen Erlasses die Worte „ruh dich gut aus“ hinzu. Und nachdem die Macht des Herrschers des Lebens zurückerobert worden war, spürte sie, wie enttäuscht ich war, obwohl ich mich bemühte, es zu verbergen, und schickte mir den nicht beanspruchten Teil zurück ...\nJemand in ihrer Position ist zu nichts davon verpflichtet. Auch auf die Gefahr hin, anmaßend zu klingen: Ich war schon immer der Überzeugung, dass die Frage, ob ein Gott wirklich liebevoll sein kann, nur von seinem Volk beantwortet werden kann. Warum sollte also mein Urteil nicht zählen?",
+      "title": "Über die Zarin – Mitgefühl"
+    },
+    {
+      "text": "Oh, liebstes Fräulein Danica ... Lass dich nicht von ihrem ernsten und grüblerischen Auftreten täuschen. Als wir klein waren, haben wir zusammen alle möglichen Streiche ausgeheckt ... Wie zum Beispiel damals, als wir vorhatten, dem Lehrer die Maske direkt vom Gesicht zu stibitzen. Wir haben es bis auf seine Schultern geschafft, bevor wir erwischt wurden! Klar, wir haben es nicht ganz durchgezogen, und ja, wir wurden bestraft und mussten stundenlang auf einem zugefrorenen See strammstehen ... Aber egal, darum geht es gar nicht! Sie war doch diejenige, die sich diese verrückte Idee überhaupt erst ausgedacht hat! Sie war genauso eine Unruhestifterin wie ich. Und jetzt guckt sie mich ständig so an, als wäre sie die Erwachsene und ich das Kind. Ich meine, komm schon! Ich bin doch eigentlich die Ältere.",
+      "title": "Über Danica – Kindheit"
+    },
+    {
+      "text": "Wir haben verlässliche Informationen, dass bestimmte Verdächtige bizarre Veranstaltungen wie „Streitwettbewerbe“ als Deckmantel nutzen, um illegale Geschäfte abzuwickeln, wobei die ausgelassene Menge als willkommene Ablenkung dient ... Und so ist es meine Aufgabe, einzugreifen.\nZu diesem Zweck habe ich mir die Freiheit genommen, Danica anzumelden. Sie ist eine Meisterin darin, andere mit trockenen Sprüchen zu entlarven und sie genau dort zu treffen, wo es wehtut. Bei einem Streit kann ihr niemand das Wasser reichen, also wird sie mir auf jeden Fall jede Menge Zeit verschaffen.\nIch zähle auf dich, Danica!",
+      "title": "Über Danica – Streitigkeiten"
+    },
+    {
+      "text": "Ich erinnere mich immer noch daran, wie er von hinten aussah. Kräftig und standhaft, wie ein unerschütterlicher Berg. Ich hätte mir nie vorstellen können, dass einmal der Tag kommen würde, an dem dieser Berg einstürzen würde. Oder zumindest ... hätte ich nicht gedacht, dass es so schnell gehen würde. Er hat immer gesagt: „In einem echten Krieg hat man keine Gelegenheit, sich zu verabschieden.“ Von allen Möglichkeiten, mir das zu beweisen ... Sicherlich hätte er mir vor dem Ende noch eine letzte Chance geben können, aber das hat er nie getan ...\nDas werde ich dir nie verzeihen, mein werter Lehrer.",
+      "title": "Über „Capitano“ ..."
+    },
+    {
+      "text": "Manche Menschen schreiten beschwingt durch die Welt, die meisten von ihnen erfüllt von Hoffnung auf das, was der morgige Tag wohl bringen wird. Er ist nicht so. Seine Schritte sind stets langsam und schwer. Ich hatte immer das Gefühl, dass er und mein Lehrer sich sehr ähnlich sind. Ich vermute, das liegt daran, dass beide unvorstellbaren Kummer hinter ihrer Maske verbergen und den ganzen Schmerz der Vergangenheit auf ihren Schultern tragen.",
+      "title": "Über „Pierro“ ..."
+    },
+    {
+      "text": "Der Bürgermeister spricht auf der Versammlung in Snezhnograd so eloquent und gelassen, und es sieht bei ihm so einfach aus. Er hat den Raum wirklich fest im Griff.",
+      "title": "Über „Pulcinella“ ..."
+    },
+    {
+      "text": "Ich will ja nicht behaupten, dass das Gehalt einer Kommandantin der „Druzhna“ niedrig ist, aber es kann schon mal etwas knapp werden, wenn man eine begeisterte Sammlerin ist und außerdem gerne andere zum Essen einlädt ... Nein, oh nein, nein, nein, so hab ich das nicht gemeint! Lass mich ausreden. Seit ich mich erinnern kann, werden die Ersparnisse meiner Familie von der Bank des Nordens verwaltet, und dank Herrn Pantalone haben die Zinseszinsen unser Vermögen erheblich vermehrt. Im Grunde genommen muss ich mir überhaupt keine Sorgen um meine Finanzen machen. Wenn wir also das nächste Mal weggehen, lade ich trotzdem ein; und wag es ja nicht, dich zurückzuhalten!",
+      "title": "Über „Pantalone“ ..."
+    },
+    {
+      "text": "Sandrone verkörpert voll und ganz das, was es bedeutet, eine Dame zu sein. Ihre Worte mögen zwar sehr aggressiv klingen, aber ihre makellose Logik macht es unmöglich, ihr etwas vorzuwerfen ... Hehe, das fasziniert mich wirklich. Ich muss lernen, wie sie das macht.",
+      "title": "Über „Sandrone“ ..."
+    },
+    {
+      "text": "Mitya macht oft bei meinen Streichen mit. Er schleicht sich ständig aus der Waffenkammer, und wir drei haben dann immer einen Riesenspaß! Warum „drei“, fragst du? Weil da ich bin, Mitya und sein ach so schlauer Schal.",
+      "title": "Über Mitya ..."
+    },
+    {
+      "text": "Jedes einzelne von Frau Vodyanitsas Liedern ist einfach wunderschön. Ich liebe es, sie live zu hören. Mal erfüllen sie mich mit Freude, mal rühren sie mich zu Tränen, genau wie alle anderen im Publikum. Manchmal bleiben alle nach der Vorstellung noch an ihrem Platz und fangen plötzlich gemeinsam an zu singen. Nun, lustigerweise halte ich gerade zufällig einen Dirigentenstab in der Hand. Und noch lustiger ist, dass mir schon mehrmals aufgefallen ist, dass sich Frau Vodyanitsa, nachdem sie sich ihres Bühnenoutfits entledigt hat, still in die Menge einreiht, einen Hut aufsetzt und die Gruppe im Chor begleitet.",
+      "title": "Über Vodyanitsa ..."
+    },
+    {
+      "text": "Ich muss gestehen, jedes Mal, wenn ich Fräulein Odette bei einem Hofempfang sehe, ertappe ich mich dabei, wie ich ihr ständig verstohlene Blicke zuwerfe. Schließlich ist sie nicht nur ein Mitglied der Fatui, sondern hat auch ein besonderes Alter Ego, das es schwer macht, sie zu ignorieren ... Hmm? Na, ihre Rolle als Primaballerina der Korolevskiy-Theaterkompanie natürlich. Was dachtest du denn?",
+      "title": "Über Odette ..."
+    },
+    {
+      "text": "Ich verstehe das, wirklich. Ich meine, wie könnte ein kleiner Welpe dem Drang widerstehen, einem hübschen Schmetterling durch den „heulenden“ Wind nachzujagen? Hmm ... Vielleicht klaue ich Danicas Frühstück und gebe es Tugarin zu fressen, und bitte dann Alyosha, ein gutes Wort für mich einzulegen, damit er nicht sofort auf mich losstürmt, sobald er mich sieht ...",
+      "title": "Über Alyosha ..."
+    },
+    {
+      "text": "Hehe, wie würdest du mich denn gerne kennenlernen? Wir wollen doch sicher nicht nur quatschen, oder? Na ja, das macht ja keinen Spaß ... Hmm ... Wollen wir nicht lieber eine Runde „Wahrheit oder Pflicht“ spielen?",
+      "title": "Ich will mehr über Vesna erfahren I"
+    },
+    {
+      "text": "Wir, die Druzhna, sind die Leibgarde der Zarin und unterstehen direkt dem Befehl Ihrer Majestät. Unsere Aufgaben beschränken sich nicht nur darauf, Bedrohungen durch Monster zu neutralisieren und in den Kampf zu ziehen, sondern gehen weit über militärische Belange hinaus. In allen Angelegenheiten, die die Autorität und Ehre Ihrer Majestät betreffen, sind wir verpflichtet, ihrem Ruf bedingungslos zu folgen und ihr alle Hindernisse aus dem Weg zu räumen.\nAllerdings ist Ihre Majestät zwangsläufig etwas überlastet, solange dieses großartige Unterfangen gegen die Himmlische Ordnung andauert. Bis sich die Lage wieder beruhigt hat, unterstütze ich sie daher nur allzu gerne bei den unterhaltsamen Dingen ... *räusper* Ich meine natürlich bei den eher nebensächlichen Angelegenheiten, wie zum Beispiel bei Eröffnungszeremonien und der Teilnahme an Banketten in ihrem Namen.",
+      "title": "Ich will mehr über Vesna erfahren II"
+    },
+    {
+      "text": "Ich habe eine kunterbunte Sammlung an Schätzen. Schmuck, alte Bücher, Ölgemälde ... Alles, was mich glücklich macht, ist es wert, in meine Sammlung aufgenommen zu werden. Und wenn ich etwas sehe, das mir gefällt, muss ich es sofort haben und keine Sekunde später! Du kennst doch das Sprichwort: „Teuer ist der Löffel, wenn die Mittagszeit naht.“ Wenn man also wartet, bis der erste Reiz verflogen ist, bevor man es erwirbt, verliert es seinen Reiz. Wenn ich es also jetzt will, muss ich es auch jetzt haben.",
+      "title": "Ich will mehr über Vesna erfahren III"
+    },
+    {
+      "text": "Nach dem Opfer des Herrschers Monomach durchlebte Snezhnaya eine Zeit großer Unruhen. Meine Vorfahren standen fest an der Seite der Zarin. Ich bin heute nur hier, weil sie den Weg dafür bereitet haben; und doch frage ich mich, ob ich wirklich die Kraft habe, ihrem Vermächtnis gerecht zu werden. Hehe, ich konnte die Frage förmlich vor mir sehen, die dir durch den Kopf schwirrte ... Nun, jetzt bist du an der Reihe, mir meine Frage zu beantworten!",
+      "title": "Ich will mehr über Vesna erfahren IV"
+    },
+    {
+      "text": "Am Vorabend der Schlacht gegen den Herrscher des Todes entnahm ich vielen Menschen das „Lebenssiegel“. Was eine schöne Erinnerung ausmacht, ist für jeden etwas anderes. Manche schätzen es, mit der Familie am Kamin zu sitzen und gemütlich zu plaudern. Andere erinnern sich gerne daran, wie sie allein am Zugfenster saßen und beobachteten, wie die Nordlichter lautlos über den Nachthimmel glitten. Wieder andere sind schon zufrieden, wenn sie einfach nur den Schlitten herausholen, um Eisfischen zu gehen ...\nDiese Erinnerungen sind wie schillernde Blasen, die eine brennende, pulsierende „Lebenskraft“ in sich tragen, die einen unwillkürlich ausrufen lässt: „Ach, es ist so schön, am Leben zu sein!“\nUnd doch können diese sogenannten himmlischen Wesen diese Träume mit müheloser Leichtigkeit zunichte machen, ohne auch nur ein einziges Wort der Erklärung zu geben. Wer gibt ihnen das Recht dazu?\nVon diesem Moment an ging es für mich beim Widerstand gegen die himmlische Ordnung nicht mehr nur darum, Ihrer Majestät zur Seite zu stehen.",
+      "title": "Ich will mehr über Vesna erfahren V"
+    },
+    {
+      "text": "Als ich noch ganz klein war, hat meine Familie dafür gesorgt, dass ich Mal-, Tanz- und Gesangsunterricht nehme. Als ich dann etwas älter wurde, habe ich mit Fechten, Reiten und ähnlichen Aktivitäten angefangen, hehe ... In letzter Zeit begeistere ich mich für Oper, Theater und das Sammeln meiner kleinen Schätze ... Kurz gesagt: Das Wort „Langeweile“ kommt in meinem Wortschatz nicht vor.",
+      "title": "Vesnas Hobbys ..."
+    },
+    {
+      "text": "Hör bloß nicht auf Danicas Unsinn, an meinen Fahrkünsten ist absolut nichts auszusetzen. Das nennt man „Eins sein mit dem Fahrzeug“! Warte nur, bis mein Fahrverbot aufgehoben wird. Dann nehme ich dich mit auf eine Spritztour!",
+      "title": "Vesnas Sorgen ..."
+    },
+    {
+      "text": "Wenn es draußen so kalt ist, gibt es nichts Gemütlicheres, als wenn sich alle zu einem leckeren, heißen Eintopf zusammenzufinden! Ich schlage vor, ich bin die Gastgeberin, und du und Paimon bringt ein paar Zutaten mit. Bringt einfach alles mit, was ihr so mögt.",
+      "title": "Was sie so mag ..."
+    },
+    {
+      "text": "Hehe! Danica kann gerne das ganze eklige Gemüse haben, ich schieb’s auf ihren Teller! Ugh ... Aber warum landet es immer wieder auf meinem Teller ...",
+      "title": "Was sie nicht mag ..."
+    },
+    {
+      "text": "Oh, da sage ich nicht nein! Ich werde jeden einzelnen Biss davon genießen.",
+      "title": "Geschenk erhalten I"
+    },
+    {
+      "text": "Mmm ... Ein echtes kulinarisches Meisterwerk ... Ich denke, ich nehme noch einen Bissen.",
+      "title": "Geschenk erhalten II"
+    },
+    {
+      "text": "Ohh, tut mir leid, ich habe schon gegessen! Aber lass es mich für Danica einpacken!",
+      "title": "Geschenk erhalten III"
+    },
+    {
+      "text": "Ding-dong! Der Moment ist gekommen! Du kannst dir gar nicht vorstellen, wie schwer es mir gestern gefallen ist, es für mich zu behalten ... Aber ich musste es tun, denn es bringt Unglück, es zu früh zu sagen; man könnte ja von einem Schneesturm verschlungen werden! Jetzt kann ich es endlich sagen: Alles Gute zum Geburtstag, mein{F#e} liebe{M#r} Freund{F#in}. Mögest du so stark stehen wie die Birke, die sich niemals von Wind und Schnee bezwingen lässt.\nSo, das wäre erledigt. Als Nächstes schreibt die Tradition vor, dass ich unserem Geburtstagskind ein paar sanfte Zupfer am Ohr verpasse ...",
+      "title": "Dein Geburtstag ..."
+    },
+    {
+      "text": "Erste Lektion im Ausbildungslager: Nur wer standhaft bleibt und sich weder von Wind noch Schnee beirren lässt, ist qualifiziert, an der Seite Ihrer Majestät Wache zu stehen.",
+      "title": "Gedanken über den Aufstieg – Beginn"
+    },
+    {
+      "text": "Zweite Lektion im Ausbildungslager: Der Arm, der dein Schwert führt, darf niemals zittern.",
+      "title": "Gedanken über den Aufstieg – Fortschritt"
+    },
+    {
+      "text": "Dritte Lektion im Ausbildungslager: Niemals vor dem Gegner Tränen vergießen.",
+      "title": "Gedanken über den Aufstieg – Höhepunkt"
+    },
+    {
+      "text": "Du, {M#lieber Freund}{F#liebe Freundin}, hast mir eine wichtige Lektion erteilt, die weit über das Ausbildungslager hinausgeht: dass ich mir eine sanfte Geste aufheben soll, mit der ich diejenigen umarmen kann, die ich mit meinem Schwert verteidige, nachdem der Schneesturm sich gelegt hat.",
+      "title": "Gedanken über den Aufstieg – Ende"
+    }
+  ],
+  "Vodyanitsa": [
+    {
+      "text": "Hallo, ich bin Vodyanitsa, die Primadonna der Korolevskiy-Theaterkompanie. Wie du sicher sehen kannst ... Also, schau dir mal meine Ohren an. Ziemlich ungewöhnlich, oder? Das liegt daran, dass ich ein „Wasser-Unhold“ bin. Aber das tut hier nichts zur Sache. Alles, was du wissen musst, ist, dass ich die beste Sängerin der gesamten Korolevskiy-Theaterkompanie bin.",
+      "title": "Schön, dich kennenzulernen."
+    },
+    {
+      "text": "... Hmm? Leise, ich glaube, ich höre schon wieder jemanden flüstern ... Hehehe, mal sehen, ob ich verstehen kann, was sie sagen ...",
+      "title": "Gespräch – Ohren gespitzt"
+    },
+    {
+      "text": "Na ja, wenn sonst nichts ist, kann ich auch gleich ein bisschen üben ... Ach, weißt du was, vergiss es. Ich will die Einheimischen nicht schon wieder stören. Oder die Tiere ...",
+      "title": "Gespräch – Übung"
+    },
+    {
+      "text": "Puh ... Ich war viel zu lange an Land unterwegs; meine Haut wird schon ganz trocken. Ich brauche dringend etwas Zeit unter Wasser.",
+      "title": "Gespräch – Zeit totschlagen"
+    },
+    {
+      "text": "Ah, was für ein schönes Wetter. Perfekt, um sich unter Wasser auszuruhen.",
+      "title": "Wenn es regnet ..."
+    },
+    {
+      "text": "He, wo ist der Regen hin? Das ist doch blöd ...",
+      "title": "Es hat aufgehört zu regnen ..."
+    },
+    {
+      "text": "Eine endlose weiße Weite. Hmpf, wenigstens hat der Anblick etwas sehr Reines an sich.",
+      "title": "Wenn es schneit ..."
+    },
+    {
+      "text": "Ugh, es ist so heiß und trocken ... Bring mich bitte zurück ans Wasser ...",
+      "title": "In der Wüste ..."
+    },
+    {
+      "text": "Guten Morgen. Ich habe gerade meine Gesangsübungen beendet. Hast du mich gehört? Ja, das überrascht mich nicht. Meine Singstimme ist wirklich nicht zu überhören.",
+      "title": "Guten Morgen."
+    },
+    {
+      "text": "Na gut, Zeit fürs Mittagessen. Ich bin nach diesem Vormittag total ausgelaugt. Ich hole Odette und dann können wir schnell was futtern gehen.",
+      "title": "Guten Tag."
+    },
+    {
+      "text": "Puh, endlich ist der Tag rum. Ich geh gleich mal eine Runde im See baden, Lust mitzukommen? … Häh? Wovor hast du denn so Angst? Pah, nein, ich ziehe niemanden unter Wasser und versuche, ihn zu ertränken! So ein Wasser-Unhold bin ich nun auch wieder nicht! Aber ich könnte, wenn du willst.",
+      "title": "Guten Abend."
+    },
+    {
+      "text": "Gute Nacht! Du solltest jetzt ins Bett gehen. Ich stehe morgen ziemlich früh auf, um meine Stimme aufzuwärmen. Falls du irgendwelche Musikwünsche hast, erfülle ich sie dir natürlich sehr gerne.",
+      "title": "Gute Nacht."
+    },
+    {
+      "text": "Leider übt meine Stimme keinerlei magische Wirkung auf die Leute aus, die sie in den Wahnsinn treibt. Die Leute hören mir nur zu, weil ich gut singe ... Ooh, apropos, da fällt mir tatsächlich ein Witz über den Domowoj ein, hehehe ... Ähm, egal, vergiss, was ich gesagt habe. Odette wird mich wieder böse anstarren, wenn ich ihn erzähle.",
+      "title": "Über Vodyanitsa – Bezaubernde Stimme"
+    },
+    {
+      "text": "Egal, ob du ein Künstler bist oder nicht, wenn du wirklich von anderen gesehen werden willst, musst du es in Kauf nehmen, angestarrt zu werden; das gehört eben dazu. Nichts, was sich lohnt, gibt es umsonst. Und wenn es mal so aussieht, als hättest du etwas geschenkt bekommen ... Heh, das bedeutet nur, dass das Schicksal heimlich den Preis für dich bestimmt hat.",
+      "title": "Über Vodyanitsa – Anstarren"
+    },
+    {
+      "text": "Ich habe meinen Fischschwanz in zwei Beine verwandelt, um mich an Land besser bewegen zu können. ... Welchen Preis ich dafür bezahlt habe? Keinen! Hmpf, für uns Wasser-Unholde ist es schon ein hoher Preis, das Wasser überhaupt zu verlassen. Was will man mir also noch wegnehmen? Etwa das Recht, frisches Wasser zu trinken? Was? Soll ich mich etwa nur noch von Fruchtsaft oder Fonta ernähren?",
+      "title": "Über uns – Fischschwanz"
+    },
+    {
+      "text": "Trotzdem kann ich nicht einfach die ganze Zeit in Snezhnaya bleiben. Manchmal folge ich den Wasserwegen und schwimme um die Welt, um zu hören, wie Sänger an anderen Orten klingen. Ich war schon in Liyue, Fontaine, Inazuma, Sumeru ... Hm? Hat mich denn schon mal jemand bemerkt? Hehe, natürlich. Deshalb gibt es ja überall auf der Welt Legenden über Meermenschen, Meerjungfrauen, Sirenen und so weiter. Natlan war allerdings etwas ganz Besonderes … Dort ist es heiß. Und damit meine ich richtig heiß!",
+      "title": "Über uns – Ausflugstage"
+    },
+    {
+      "text": "Oh, dieses alte Ding? Ja, ziemlich hübsch, oder? Könnte ein schönes Schmuckstück abgeben. Aber als Sängerin kann ich es die meiste Zeit eh nicht verwenden. Und was „den Blick der Götter“ angeht ... Naja, mich interessiert viel mehr der Blick meines Publikums.",
+      "title": "Über das „Göttliche Auge“ ..."
+    },
+    {
+      "text": "Die Wasserqualität in Fontaine ist einfach unglaublich! Als ich das letzte Mal nach Fontaine gereist bin, um mir eine Vorstellung anzusehen, konnte ich nicht widerstehen, ins Wasser zu tauchen. Ich blieb ewig dort unten und hab auch jede Menge davon geschluckt. Aber ich glaube, ich habe wohl auch recht viel davon aufgewirbelt, denn plötzlich bin ich jemandem von der Spezialeinheit für Sicherheit und Überwachung aufgefallen, die gerade am Ufer trainierte. Sie dachte, ich würde ertrinken … Also eilte sie mir zur Hilfe und schrie sich die Lunge aus dem Leib. Aber, äh ... ich habe einfach mit dem Schwanz geschnippt und bin davongeschwommen, hehe. Dann hab ich aus der Ferne zugesehen, wie sie Wasser trat und verwirrt um sich blickte. Das war echt zum Totlachen. Jedenfalls habe ich gewartet, bis sie wieder sicher am Ufer war, bevor ich erneut untergetaucht bin, um weiter zu trinken. Es war wirklich köstlich, weißt du. Du solltest das nächste Mal mitmachen.",
+      "title": "Willst du mir etwas mitteilen?"
+    },
+    {
+      "text": "Kennst du die „Frostflossenwale“? Sie verständigen sich mithilfe von „Walgesängen“, die die meisten Menschen nicht einmal hören, geschweige denn verstehen können. Aber wir Wasser-Unholde verstehen sie ohne Probleme und können sogar ihre Sprache lernen. Ich habe tatsächlich einen Frostflossenwal namens Hitova kennengelernt; eine richtig gutmütige Zeitgenossin. Damals, als ich noch durch die Weltgeschichte getingelt bin, durfte ich sie begleiten. Ich will euch unbedingt einander vorstellen, wenn sich jemals die Gelegenheit ergeben sollte. Ich bin mir sicher, dass sie uns beide gerne auf eine Runde mitnehmen würde.",
+      "title": "Interessante Vorkommnisse ..."
+    },
+    {
+      "text": "Immer wenn Odette probt, lausche ich hinter der Bühne gebannt ihren Tanzschritten. Sie landet, springt, dreht sich in der Luft und landet wieder ... Jede Bewegung präzise und mit perfektem Timing ausgeführt. Schon allein beim Zuhören merke ich, dass ihr Tanz makellos ist ... Hm? Warum ich nicht mal nach vorne gehe und zuschaue? Hehe, weil ich mich hinter der Bühne verstecken und sie danach überraschen will! Klar, ich habe es noch nie geschafft, ihr einen Schrecken einzujagen, aber ich muss es weiter versuchen. Sonst wäre ja all die Zeit, die ich damit verbracht habe, mich hinter der Bühne zu verstecken, umsonst gewesen!",
+      "title": "Über Odette ..."
+    },
+    {
+      "text": "Ich wünschte, dieser Besserwisser würde endlich mal aufhören, während der Vorstellung wissenschaftliche Durchbrüche erzielen zu wollen. Das Theater ist doch kein ete-petete-Lesesaal; und schon gar nicht ein Unterschlupf für entlaufene Bürohengste! Der sollte unsere Aufführungen besser mal ernst nehmen ... sonst ... *seufz* Was rede ich da eigentlich? Ich kann doch eh nichts dagegen machen, zumal er sich technisch gesehen ja an die Theateretikette hält ... *schnauf* Wenn ich ihn das nächste Mal im Publikum sehe, muss ich einfach eines meiner lauteren Stücke aufführen. Mal sehen, wie gut er sich dann auf seine ach so tolle Arbeit konzentrieren kann.",
+      "title": "Über Mitya ..."
+    },
+    {
+      "text": "Ich habe mich schon immer gefragt, ob Alyoshas Welpen meine Lieder verstehen können. Ich vermute, wahrscheinlich nicht, da wir ja Welpenlieder auch nicht verstehen können. Ehrlich gesagt weiß ich nicht einmal, ob sie überhaupt singen können ... Aber meine Schlaflieder wirken bei ihnen wie ein Traum. Ich schaffe es kaum durch die erste Strophe, da schlafen sie schon alle tief und fest... Hmm, ich bin mir allerdings nicht sicher, was das über meinen Gesang aussagt ... Ist das gut oder schlecht?",
+      "title": "Über Alyosha ..."
+    },
+    {
+      "text": "Dank Fräulein Vesna wissen diese Theaterkarten-Schwarzhändler, dass sie ihr Glück nicht überstrapazieren sollten. Sie sagte, sie plane, mich bald einzuladen, eine kleine Konferenz zum Thema „Prävention von Ticketbetrug“ zu moderieren, und ich soll am Ende ein Lied singen, um die Veranstaltung abzurunden. Die Sache ist nur: Von allen Liedern, die ich kenne, gibt es wohl kein einziges, mit dem man Betrüger auf die Schippe nehmen könnte ... Warte mal, taktische Täuschung im Krieg sollte doch als Betrug gelten, oder ...? Ähm ... vielleicht könnte ich ja ein Kriegsepos zum Besten bringen ...",
+      "title": "Über Vesna ..."
+    },
+    {
+      "text": "Ich kenne Fräulein Danica persönlich nicht besonders gut, obwohl ihr Ruf ihr natürlich vorauseilt. Sie muss es schwer gehabt haben, einerseits der Zarin gegenüber Rechenschaft abzulegen und sich andererseits mit Fräulein Vesna herumschlagen zu müssen ... Ähm, das hast du nicht gehört, ja? Zumindest nicht von mir!",
+      "title": "Über Danica ..."
+    },
+    {
+      "text": "Falls Ihre Majestät, die Zarin, eine Vorstellung im Theater besucht, werde ich für sie die alten Lieder der Wasser-Unholde anstimme ... Wie alt, fragst du? Nun ja ... Nicht so alt, dass nur die Zarin sie schon einmal gehört hat, aber definitiv alt genug, dass man den Staub rieseln hört, wenn man anfängt, sie zu singen. Ich hoffe nur, dass er den Leuten nicht in die Augen fliegt. Ich will ja nicht, dass alle weinen müssen.",
+      "title": "Über die Zarin ..."
+    },
+    {
+      "text": "Ist Fräulein Columbina nun keine der Elf mehr? Hm, schade. Ich fand immer, sie hatte eine großartige Singstimme. Ihre Lieder waren wie das Mondlicht selbst: so sanft und zart, und doch irgendwie eiskalt. So präsent und lebendig, und doch so unendlich unerreichbar ... *seufz* Ich hoffe nur, dass sie einen Ort findet, an dem sie zu Hause sein kann, mit guten Freunden, die ihre Lieder verstehen.",
+      "title": "Über Columbina ..."
+    },
+    {
+      "text": "Herr Tartaglia geht oft mit seiner Familie ins Theater. Die „Elf“ haben freien Eintritt, während ihre Familienmitglieder wie alle anderen auch Eintrittskarten kaufen müssen. Glücklicherweise gelingt es ihm immer, Karten für seine Familie zu ergattern. Ach ja, du kennst doch Tonia, oder? Sie ist ein riesiger Theaterfan. Vielleicht kommt sie ja sogar mit, wenn sie groß ist. Wenn es so weit ist, muss sich Herr Tartaglia wohl daran gewöhnen, noch öfter ins Theater zu gehen.",
+      "title": "Über Tartaglia ..."
+    },
+    {
+      "text": "Arlecchino bringt hin und wieder ein paar Kinder mit, um sich eine Vorstellung im Theater anzusehen. Eines davon trägt diese Katzenohren, Lynette, ich glaube, so hieß sie? Ja, genau – sie und der Junge, Lyney, sind beide hervorragende Zauberkünstler. Sie haben hier sogar einmal während einer Jahresabschlussvorstellung eine Zauberschau auf der Bühne aufgeführt. Das einzige Mal, dass Arlecchino ohne die Kinder kommt, ist, um sich „Der Berg und der Fink“ anzusehen ... Ich nehme an, sie genießt diese Vorstellung lieber allein.",
+      "title": "Über Arlecchino ..."
+    },
+    {
+      "text": "Fräulein Sandrone scheint stets in Eile zu sein, wenn sie zu einer Vorstellung kommt. Manchmal beißt sie die Zähne zusammen, manchmal zuckt ihr Auge ... Andere Male ist ihr Gesichtsausdruck völlig ausdruckslos, aber sie hat ein Stück Papier zu einem Knäuel zerknüllt. Wenn ich es nicht besser wüsste, würde ich sagen, jemand zwinge sie gegen ihren Willen dazu, hierher zu kommen ... Aber ich möchte mich hüten, darüber zu spekulieren, wer die Macht hat, sie zu irgendetwas zu zwingen. Trotzdem ... Hehe, am Ende der Vorstellung wirkt sie immer etwas entspannter. Zumindest verschwendet sie also nicht völlig ihre Zeit.",
+      "title": "Über Sandrone ..."
+    },
+    {
+      "text": "Der Truppenführer? Ach, du meinst DEN Truppenführer? Nun ja ... um ehrlich zu sein, habe ich mich noch nie richtig mit ihm unterhalten. Ich meine, wir haben gelegentlich ein paar kurze Worte miteinander gewechselt, wenn wir uns nach einer Vorstellung zufällig begegnet sind, aber das war’s auch schon. Trotzdem merke ich, dass er ein sehr ernsthafter und aufrechter Zeitgenosse ist. Selbst im Zuschauerraum sitzt er kerzengerade da, wie ein Fahnenmast oder eine Säule. Ich hab so das Gefühl, dass ihn nichts aus der Ruhe bringen, geschweige denn ihn brechen kann, nicht einmal der heftigste Sturm.",
+      "title": "Über „Capitano“ ..."
+    },
+    {
+      "text": "Dir liegen wohl ein paar brennende Fragen auf dem Herzen, was? Na gut, immer raus damit ... aber für jede Frage, die du mir stellst, darf ich dir auch eine im Gegenzug stellen. Das wäre nur fair. Und keine Sorge, ich werde keine schwierigen Fragen stellen. Nur, äh ... na ja, die Dinge, auf die ich sonst nirgendwo eine Antwort gefunden hätte.",
+      "title": "Ich will mehr über Vodyanitsa erfahren I"
+    },
+    {
+      "text": "Tut mir leid, wenn ich dir die Illusion raube, aber wir Wasser-Unholde aus Snezhnaya sind keine Fabelwesen, die Seeleute mit ihren verführerischen Liedern in den Wahnsinn treiben oder einen enormen Preis dafür zahlen, an Land gehen zu dürfen, nur um uns in Meerschaum zu verwandeln, wenn wir unsere Gelübde brechen. Nein, wir sind ganz normale Leute, die ein ganz normales Leben führen, so wie alle anderen in Snezhnaya auch.",
+      "title": "Ich will mehr über Vodyanitsa erfahren II"
+    },
+    {
+      "text": "Seit diesem Vorfall haben fast alle Wasser-Unholde Snezhnograd den Rücken gekehrt. Meine lieben Brüder und Schwestern haben mich eingeladen, mit ihnen zu gehen, aber ich hab abgelehnt. Ich bin mir sicher, dass die Einwohner von Snezhnaya ziemlich traurig wären, sollte der Tag jemals kommen, an dem sie unsere Lieder nicht mehr hören können. Und mein Volk wäre darüber wohl auch ziemlich betrübt, mich eingeschlossen. Aus diesem Grund bin ich hiergeblieben, um weiterzusingen. Damit niemand traurig wird.",
+      "title": "Ich will mehr über Vodyanitsa erfahren III"
+    },
+    {
+      "text": "... Die Zeiten haben sich geändert. Snezhnaya ist heute ein völlig anderer Ort geworden. Das veränderte unweigerlich meine Beziehung zum Singen. Mit der Zeit werden die Lieder scheinbar ... schwerer. Sie sind komplexer und vielschichtiger denn je. Und ich habe dabei immer wieder das Gefühl ... Egal, so will ich aber nicht sein. Also habe ich eine simple Regel für mich aufgestellt: Wenn ich einfach nach Hause will, suche ich zehn Leute in Snezhnaya. Ich teste, ob sie meinen Gesang mögen. Wenn auch nur einer von zehn meine Lieder wirklich mag, bleibe ich hier. Interessiert es aber keinen, gehe ich wieder. Ich kehre dann zu meinen Brüdern und Schwestern zurück.",
+      "title": "Ich will mehr über Vodyanitsa erfahren IV"
+    },
+    {
+      "text": "Hehe, ich weiß nicht, ob das nun Glück oder Pech ist, aber jedes Mal, wenn ich mir zehn Leute ausgesucht habe, um ihre Meinung einzuholen, habe ich immer mindestens einen gefunden, der wirklich bereit war, mir beim Singen zuzuhören. Manche standen gerade am Anfang ihres Lebens, andere mitten in den Schützengräben des heldenhaftesten Kampfes ihres Lebens, und wieder andere bereiteten sich in aller Ruhe auf die letzte Etappe ihrer Reise, die man Leben nennt, vor ... Selbst wenn das das gesamte Publikum wäre, würden ich und alle meine Angehörigen, die noch im Theater verweilen, weiterhin für sie singen. Und wie sieht es bei dir aus? Gefällt dir denn mein Gesang? Hehe. Überleg dir gut, was du sagen willst ... wir Wasser-Unholde haben ein außergewöhnlich gutes Gehör. Allein an deinem Herzschlag kann ich erkennen, ob du lügst. Bereit? Ich zähle: Drei, zwei ...",
+      "title": "Ich will mehr über Vodyanitsa erfahren V"
+    },
+    {
+      "text": "Immer wenn ich gute Laune, oder richtig miese Laune hab, tauche ich ins Wasser, schließe die Augen und lasse mich von der Strömung treiben. Während ich dahintreibe, lausche ich all den Geräuschen, die die Wellen zu mir tragen: Kleine Fischchen, die sich versammeln und deren Schuppen aneinander reiben ... riesige Wale, die ihre tiefen, langanhaltenden Lieder singen, während sie ihre weit entfernten Partner rufen ... Blasen, die aus der Tiefe emporsteigen und dann zerplatzen ... Manchmal, wenn ich an einer Stadt vorbeischwimme, höre ich sogar die Fischer singen, während sie ihre Netze auswerfen, Kinder lachen, wenn sie ins Wasser springen, und Schiffe knarren, während sie sich auf eine lange Reise vorbereiten oder in den Hafen zurückkehren ... Es ist wirklich magisch, den Klängen dieser Welt auf diese Weise zu lauschen. Willst du es auch mal ausprobieren? Wenn ja, nehme ich dich das nächste Mal gerne mit.",
+      "title": "Vodyanitsas Hobbys"
+    },
+    {
+      "text": "Ich mag keine Klänge, die mit zu viel Bedeutung beladen sind. Gesang ist nur ein Klang unter vielen, wie die Nachrichten, die die Wellen herübertragen, das knisternde Geräusch fallender Blätter oder das Trippeln eilender Schritte ... Je größer die Bedeutung eines Klangs, desto schwerer ist er zu verstehen und desto unangenehmer klingt er für mein Ohr.",
+      "title": "Vodyanitsas Sorgen"
+    },
+    {
+      "text": "Mm ... Eigentlich alles, was süß ist. Obwohl, am liebsten schön kalt, mit einem Schuss Sirup und ... Huch, jetzt, wo ich es laut sage, klingt das doch eigentlich nur nach Eiscreme, hab ich recht?",
+      "title": "Was sie so mag ..."
+    },
+    {
+      "text": "Wenn absolut keine Feuchtigkeit drin ist, halte ich das einfach nicht aus. Ich meine, rein körperlich kann ich mich natürlich zwingen, es runterzuschlucken, klar, aber mein Hals fühlt sich dann immer so an, als würde er dabei in Fetzen gerissen werden.",
+      "title": "Was sie nicht mag ..."
+    },
+    {
+      "text": "Oh Mann, das ist ja lecker! Du hast dir wohl gemerkt, was ich dir über mein Lieblingsessen erzählt habe, oder? Du hast ein ziemlich gutes Gedächtnis. Das nächste Mal bin ich dran, dir etwas zu kochen, das ganz auf deinen Geschmack zugeschnitten ist ... Ja, ich weiß, du hast mir das bisher noch nie ausdrücklich gesagt, aber keine Sorge – ich weiß schon. Ich habe meine eigenen Methoden, sowas herauszufinden.",
+      "title": "Geschenk erhalten I"
+    },
+    {
+      "text": "Danke. Ach übrigens, erinnerst du dich noch an mein Lieblingsessen? Das habe ich dir doch letztes Mal erzählt. Wirklich? Hmm ... Du hast wohl ein ziemlich gutes Gedächtnis. Da muss ich dir das nächste Mal wohl etwas geben, was schwerer zu merken ist, hehehe.",
+      "title": "Geschenk erhalten II"
+    },
+    {
+      "text": "... Vielleicht sollte ich das nächste Mal schon im Voraus klar sagen, was ich gerne esse. Oder ich bringe dir vielleicht bei, wie man etwas richtig Leckeres zubereitet.",
+      "title": "Geschenk erhalten III"
+    },
+    {
+      "text": "Herzlichen Glückwunsch zum Geburtstag! Ich hab dein Geschenk beiseitegelegt. Du kannst es später auspacken. Es sind nur ein paar Kleinigkeiten, Spielzeug und so weiter ... Ach, aber das ist nicht das Wichtigste. Du hast doch gerade Zeit, oder? Na, dann komm mit! Lass uns in meine Echokammer gehen. Ich habe vor ein paar Tagen jemanden gebeten, mir eine Tanzspaßbühne aus Natlan zu besorgen, zusammen mit einer ganzen Menge ausgefallener und wunderbarer Instrumente. Ich bin gerade dabei, das tollste Musikevent aus der Taufe zu heben, das Snezhnaya je gesehen hat, und rate mal, wer als Erstes eine Einladung bekommt? Ganz genau, du! Also komm, machen wir die Nacht zum Tag!",
+      "title": "Dein Geburtstag ..."
+    },
+    {
+      "text": "Ähm ... also ... Alles klar, klingt gut.",
+      "title": "Gedanken über den Aufstieg – Beginn"
+    },
+    {
+      "text": "Ich glaube, ich habe gerade eine neue hohe Note erreicht.",
+      "title": "Gedanken über den Aufstieg – Fortschritt"
+    },
+    {
+      "text": "Oh, meine Stimme klingt ja kräftiger denn je.",
+      "title": "Gedanken über den Aufstieg – Höhepunkt"
+    },
+    {
+      "text": "Juhu! Lass uns die Nacht durchsingen!",
       "title": "Gedanken über den Aufstieg – Ende"
     }
   ],
