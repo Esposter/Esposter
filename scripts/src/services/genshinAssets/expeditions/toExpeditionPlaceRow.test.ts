@@ -26,15 +26,15 @@ describe(toExpeditionPlaceRow, () => {
     ],
   ]);
   const row: ExcelExpeditionDataRow = {
+    cityId: 1,
+    id: PLACE_ID,
     MOOEHHLEOOB: [
       { AOCOBPPBOOL: RANK_LEVEL, OLDPDBIPNHD: 0, type: "EXP_OPEN_COND_LEVEL" },
       { AOCOBPPBOOL: STATUE_POINT_ID, OLDPDBIPNHD: OPEN_WORLD_SCENE_ID, type: "EXP_OPEN_COND_POINT" },
       { AOCOBPPBOOL: 0, OLDPDBIPNHD: 0, type: "EXP_OPEN_COND_LEVEL" },
     ],
-    cityId: 1,
-    PLLAFKOKDDE: [{ AMICCHBIALF: HOURS, AEJAMHLHEIE: 205_010_100, rewardPreview: REWARD_PREVIEW_ID }],
-    id: PLACE_ID,
     nameTextMapHash: NAME_TEXT_HASH,
+    PLLAFKOKDDE: [{ AEJAMHLHEIE: 205_010_100, AMICCHBIALF: HOURS, rewardPreview: REWARD_PREVIEW_ID }],
   };
 
   test("should read the rank, statue and durations of a place with its reward preview's items", () => {

@@ -22,7 +22,7 @@ describe(toStatueLevelRow, () => {
         { param1Vec: [STAMINA_SHARE], param2Vec: [], type: "WORLD_AREA_ACTION_IMPROVE_STAMINA" },
       ],
       cityId: 1,
-      consumeItem: { KMKNLDIOOND: 4, itemId: ANEMOCULUS_ITEM_ID },
+      consumeItem: { itemId: ANEMOCULUS_ITEM_ID, KMKNLDIOOND: 4 },
       level: LEVEL,
       rewardID: REWARD_ID,
       sceneId: 3,
@@ -47,7 +47,7 @@ describe(toStatueLevelRow, () => {
     const levelRow: ExcelCityLevelupRow = {
       actionVec: [{ param1Vec: [], param2Vec: [], type: "WORLD_AREA_ACTION_NONE" }],
       cityId: 1,
-      consumeItem: { KMKNLDIOOND: 0, itemId: 0 },
+      consumeItem: { itemId: 0, KMKNLDIOOND: 0 },
       level: 1,
       rewardID: REWARD_ID,
       sceneId: 3,
