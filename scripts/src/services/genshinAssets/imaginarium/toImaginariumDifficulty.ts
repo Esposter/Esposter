@@ -5,5 +5,5 @@ import type { ImaginariumDifficulty } from "genshin-world";
 export const toImaginariumDifficulty = (row: ExcelRoleCombatDifficultyRow): ImaginariumDifficulty => ({
   id: row.difficultyId,
   level: row.difficultyLevel,
-  levelFloor: row.BGKFIJLBDHC,
+  levelFloor: row.OHDBPBMODLP,
 });

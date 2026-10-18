@@ -1,8 +1,8 @@
 // One action a statue level grants, the stamina a level adds among them being `WORLD_AREA_ACTION_IMPROVE_STAMINA`
 export interface ExcelCityLevelupAction {
-  param1Vec: number[];
-  param2Vec: number[];
-  type: string;
+  param1Vec?: number[];
+  param2Vec?: number[];
+  type?: string;
 }
 
 // One level of a region's statues: the Oculi it takes, a count the dump names by an obfuscated key, and the reward row
@@ -10,7 +10,8 @@ export interface ExcelCityLevelupAction {
 export interface ExcelCityLevelupRow {
   actionVec: ExcelCityLevelupAction[];
   cityId: number;
-  consumeItem: { EBHHDLDJNHI: number; itemId: number };
+  // Empty on level 1, which takes none: the dump writes an empty object for a default count and item
+  consumeItem: { itemId?: number; KMKNLDIOOND?: number };
   level: number;
   rewardID: number;
   sceneId: number;

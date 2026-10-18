@@ -4,6 +4,6 @@ import type { ExcelBlossomRefreshCondition } from "#src/models/genshinAssets/ley
 // It opens by, the dump's own name for that list kept
 export interface ExcelBlossomRefreshRow {
   cityId: number;
-  HGBNAGMEAFI: ExcelBlossomRefreshCondition[];
+  KNHAALNEMLL: ExcelBlossomRefreshCondition[];
   refreshType: string;
 }

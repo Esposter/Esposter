@@ -131,27 +131,14 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
   [GameLanguage.ChineseSimplified]: "zh-cn",
   [GameLanguage.ChineseTraditional]: "zh-tw",
 };
-// The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them, at its default
+// The AnimeGameData repository the dump's readable texts and tables are fetched from when it lacks them or holds them at
+// Another size, at its default
 // Branch: `master` is the repository's deprecated one, held at an old patch. Its directories' trees give each file's size,
-// Which is what decides whether a file held is kept, and list every file, where the contents API stops at a thousand
+// Which is what decides whether a file held is replaced, and list every file, where the contents API stops at a thousand
 export const ANIME_GAME_DATA_BRANCH = "main";
 // oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_BRANCH}`;
 export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
-// The tables a reader names, which the dump's `ExcelBinOutput/` may lack, each fetched whole or in as many numbered parts
-// As the repository splits it into
-export const DUMP_TABLE_NAMES: readonly string[] = [
-  "DocumentExcelConfigData",
-  "FetterCharacterCardExcelConfigData",
-  "FetterStoryExcelConfigData",
-  "DocumentLocalizationFormatExcelConfigData",
-  "LocalizationExcelConfigData",
-  "GCGGameExcelConfigData",
-  "GCGLevelExcelConfigData",
-  "GCGWeekLevelExcelConfigData",
-  TALK_CONFIG_TABLE_NAME,
-  TRIGGER_TABLE_NAME,
-];
 // The dump's scene 3 files a reader names, the open world's, fetched like the tables: its NPC births, and its areas'
 // Outlines as the game draws them. Each one's directory and file name are split so the fetch can list the one and
 // Select the other

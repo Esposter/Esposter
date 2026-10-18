@@ -22,7 +22,7 @@ describe(toStatueLevelRow, () => {
         { param1Vec: [STAMINA_SHARE], param2Vec: [], type: "WORLD_AREA_ACTION_IMPROVE_STAMINA" },
       ],
       cityId: 1,
-      consumeItem: { EBHHDLDJNHI: 4, itemId: ANEMOCULUS_ITEM_ID },
+      consumeItem: { KMKNLDIOOND: 4, itemId: ANEMOCULUS_ITEM_ID },
       level: LEVEL,
       rewardID: REWARD_ID,
       sceneId: 3,
@@ -47,12 +47,30 @@ describe(toStatueLevelRow, () => {
     const levelRow: ExcelCityLevelupRow = {
       actionVec: [{ param1Vec: [], param2Vec: [], type: "WORLD_AREA_ACTION_NONE" }],
       cityId: 1,
-      consumeItem: { EBHHDLDJNHI: 0, itemId: 0 },
+      consumeItem: { KMKNLDIOOND: 0, itemId: 0 },
       level: 1,
       rewardID: REWARD_ID,
       sceneId: 3,
     };
 
     expect(toStatueLevelRow(levelRow, { rewardId: REWARD_ID, rewardItemList: [] }).staminaShare).toBe(0);
+  });
+
+  test("should read a level that takes no Oculi, written with no fields, as taking none", () => {
+    expect.hasAssertions();
+
+    const levelRow: ExcelCityLevelupRow = {
+      actionVec: [],
+      cityId: 1,
+      consumeItem: {},
+      level: 1,
+      rewardID: REWARD_ID,
+      sceneId: 3,
+    };
+
+    expect(toStatueLevelRow(levelRow, { rewardId: REWARD_ID, rewardItemList: [] })).toMatchObject({
+      itemCount: 0,
+      itemId: 0,
+    });
   });
 });

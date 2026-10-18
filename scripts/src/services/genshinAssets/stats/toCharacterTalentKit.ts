@@ -14,7 +14,7 @@ export const toCharacterTalentKit = (
   skillMap: ReadonlyMap<number, ExcelSkillRow>,
 ): CharacterTalentKit | undefined => {
   const getProudSkillGroupId = (skillId = 0): number => skillMap.get(skillId)?.proudSkillGroupId ?? 0;
-  for (const { energySkill, LHNAJLJNBAH = [], skills } of depotRows) {
+  for (const { energySkill, LLEFDMDOMGG = [], skills } of depotRows) {
     const [normalAttackSkillId, elementalSkillId] = skills;
     const talentGroupIds = {
       [CombatTalent.ElementalBurst]: getProudSkillGroupId(energySkill),
@@ -24,8 +24,8 @@ export const toCharacterTalentKit = (
     if (Object.values(talentGroupIds).every((groupId) => groupId > 0))
       return characterTalentKitSchema.parse({
         characterId,
-        passives: LHNAJLJNBAH.filter(({ proudSkillGroupId }) => proudSkillGroupId > 0).map(
-          ({ KGGNNMEALJM, proudSkillGroupId }) => ({ phase: KGGNNMEALJM, proudSkillGroupId }),
+        passives: LLEFDMDOMGG.filter(({ proudSkillGroupId }) => proudSkillGroupId > 0).map(
+          ({ DHIEHDPAFGI, proudSkillGroupId }) => ({ phase: DHIEHDPAFGI, proudSkillGroupId }),
         ),
         talentGroupIds,
       });

@@ -5,8 +5,8 @@ import type { ImaginariumSeason } from "genshin-world";
 // Group its Stellas draw from, and the difficulties it runs by id
 export const toImaginariumSeason = (row: ExcelRoleCombatScheduleRow): ImaginariumSeason => ({
   beginsAt: row.beginTimeStr.replace(" ", "T"),
-  difficultyIds: row.OLAEBCGKNLJ,
-  endsAt: row.NCDJOKEHKLG.replace(" ", "T"),
+  difficultyIds: row.LNCBPPGCCOA,
+  endsAt: row.IENPIBICGCC.replace(" ", "T"),
   id: row.scheduleId,
   rewardGroup: row.rewardGroupId,
 });

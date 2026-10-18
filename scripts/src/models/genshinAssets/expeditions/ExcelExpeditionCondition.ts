@@ -3,7 +3,7 @@
 // And a rank's the Adventure Rank it opens at. The dump scrambles these field names each patch, so a reader reads them
 // By the condition's kind and the value it holds
 export interface ExcelExpeditionCondition {
-  CIMKGJIONHO: number;
-  PCPMLMPDAFH: number;
-  type: string;
+  AOCOBPPBOOL: number;
+  OLDPDBIPNHD: number;
+  type?: string;
 }

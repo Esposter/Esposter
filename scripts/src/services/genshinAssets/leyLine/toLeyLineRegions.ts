@@ -11,15 +11,15 @@ import {
 import { takeOne } from "@esposter/shared";
 
 // The kind rules a blossom refresh row opens: one for a ley line kind, none for a refresh that is not one
-const toKindRules = ({ HGBNAGMEAFI, refreshType }: ExcelBlossomRefreshRow): OutcropKindRule[] => {
+const toKindRules = ({ KNHAALNEMLL, refreshType }: ExcelBlossomRefreshRow): OutcropKindRule[] => {
   const kind = LeyLineRefreshKindMap[refreshType];
-  const playerLevelCondition = HGBNAGMEAFI.find(({ type }) => type === PLAYER_LEVEL_CONDITION_TYPE);
+  const playerLevelCondition = KNHAALNEMLL.find(({ type }) => type === PLAYER_LEVEL_CONDITION_TYPE);
   if (kind === undefined || playerLevelCondition === undefined) return [];
   return [
     {
       kind,
       playerLevel: takeOne(playerLevelCondition.param, 0),
-      unlockCityIds: HGBNAGMEAFI.filter(({ type }) => type === AREA_UNLOCK_CONDITION_TYPE).map(({ param }) =>
+      unlockCityIds: KNHAALNEMLL.filter(({ type }) => type === AREA_UNLOCK_CONDITION_TYPE).map(({ param }) =>
         takeOne(param, 0),
       ),
     },

@@ -6,7 +6,6 @@ import {
   ANIME_GAME_DATA_TREES_URL,
   ANIME_GAME_DATA_URL,
   DUMP_FETCH_BATCH_SIZE,
-  DUMP_TABLE_NAMES,
   GAME_TEXT_DIRECTORY,
   GameLanguageCodeMap,
   SCENE_NPC_BORN_DIRECTORY,
@@ -34,11 +33,11 @@ const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
   );
 };
 
-// The dump's own files a fetch may add: the readable texts of every language's folder, the tables a reader names, whole or
-// In their numbered parts, and the scene's NPC births and area outlines, each at its path under the dump's folder
+// The dump's own files a fetch may refresh: the readable texts of every language's folder, every table of ExcelBinOutput
+// Whole or in its numbered parts, and the scene's NPC births and area outlines, each at its path under the dump's folder.
+// Every table is held at the install's build, so a reader never takes a row from an older patch
 const listDumpFiles = async (): Promise<DumpFile[]> => {
-  const tableRegex = new RegExp(String.raw`^ExcelBinOutput/(?:${DUMP_TABLE_NAMES.join("|")})(?:_\d+)?\.json$`, "u");
-  const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => tableRegex.test(path));
+  const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => path.endsWith(".json"));
   const readableFiles = await Promise.all(
     Object.values(GameLanguageCodeMap).map((code) => listRemoteDirectory(`Readable/${code}`)),
   );

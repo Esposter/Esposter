@@ -4,8 +4,8 @@
 // Difficulty rows of the season's levels, read by their values since the names are scrambled
 export interface ExcelRoleCombatScheduleRow {
   beginTimeStr: string;
-  NCDJOKEHKLG: string;
-  OLAEBCGKNLJ: number[];
+  IENPIBICGCC: string;
+  LNCBPPGCCOA: number[];
   rewardGroupId: number;
   scheduleId: number;
 }

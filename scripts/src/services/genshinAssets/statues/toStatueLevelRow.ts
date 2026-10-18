@@ -12,11 +12,11 @@ export const toStatueLevelRow = (
   { actionVec, consumeItem, level }: ExcelCityLevelupRow,
   rewardRow: ExcelRewardRow,
 ): StatueLevelRow => ({
-  itemCount: consumeItem.EBHHDLDJNHI,
-  itemId: consumeItem.itemId,
+  itemCount: consumeItem.KMKNLDIOOND ?? 0,
+  itemId: consumeItem.itemId ?? 0,
   level,
   rewards: toRewardItems(rewardRow),
   staminaShare: actionVec
     .filter(({ type }) => type === STAMINA_ACTION_TYPE)
-    .reduce((total, { param1Vec }) => total + (param1Vec[0] ?? 0), 0),
+    .reduce((total, { param1Vec = [] }) => total + (param1Vec[0] ?? 0), 0),
 });

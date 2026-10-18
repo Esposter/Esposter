@@ -26,13 +26,13 @@ describe(toExpeditionPlaceRow, () => {
     ],
   ]);
   const row: ExcelExpeditionDataRow = {
-    CHMIGIHPMFH: [
-      { CIMKGJIONHO: RANK_LEVEL, PCPMLMPDAFH: 0, type: "EXP_OPEN_COND_LEVEL" },
-      { CIMKGJIONHO: STATUE_POINT_ID, PCPMLMPDAFH: OPEN_WORLD_SCENE_ID, type: "EXP_OPEN_COND_POINT" },
-      { CIMKGJIONHO: 0, PCPMLMPDAFH: 0, type: "EXP_OPEN_COND_LEVEL" },
+    MOOEHHLEOOB: [
+      { AOCOBPPBOOL: RANK_LEVEL, OLDPDBIPNHD: 0, type: "EXP_OPEN_COND_LEVEL" },
+      { AOCOBPPBOOL: STATUE_POINT_ID, OLDPDBIPNHD: OPEN_WORLD_SCENE_ID, type: "EXP_OPEN_COND_POINT" },
+      { AOCOBPPBOOL: 0, OLDPDBIPNHD: 0, type: "EXP_OPEN_COND_LEVEL" },
     ],
     cityId: 1,
-    FPIOLKODPMI: [{ GBGCPBEJAEN: HOURS, PCDHHIDLOKP: 205_010_100, rewardPreview: REWARD_PREVIEW_ID }],
+    PLLAFKOKDDE: [{ AMICCHBIALF: HOURS, AEJAMHLHEIE: 205_010_100, rewardPreview: REWARD_PREVIEW_ID }],
     id: PLACE_ID,
     nameTextMapHash: NAME_TEXT_HASH,
   };
@@ -49,11 +49,17 @@ describe(toExpeditionPlaceRow, () => {
     });
   });
 
+  test("should read a rank condition the dump leaves untyped as the rank", () => {
+    expect.hasAssertions();
+    const untypedRow: ExcelExpeditionDataRow = { ...row, MOOEHHLEOOB: [{ AOCOBPPBOOL: RANK_LEVEL, OLDPDBIPNHD: 0 }] };
+    expect(toExpeditionPlaceRow(untypedRow, previews).rankLevel).toBe(RANK_LEVEL);
+  });
+
   test("should refuse a statue named in another scene", () => {
     expect.hasAssertions();
     const otherSceneRow: ExcelExpeditionDataRow = {
       ...row,
-      CHMIGIHPMFH: [{ CIMKGJIONHO: STATUE_POINT_ID, PCPMLMPDAFH: 4, type: "EXP_OPEN_COND_POINT" }],
+      MOOEHHLEOOB: [{ AOCOBPPBOOL: STATUE_POINT_ID, OLDPDBIPNHD: 4, type: "EXP_OPEN_COND_POINT" }],
     };
     expect(() => toExpeditionPlaceRow(otherSceneRow, previews)).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 101, names a point in scene 4]`,

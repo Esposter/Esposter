@@ -18,17 +18,17 @@ describe(toLeyLineRegions, () => {
   const refreshRows: ExcelBlossomRefreshRow[] = [
     {
       cityId: FIRST_CITY_ID,
-      HGBNAGMEAFI: [{ param: [8], type: PLAYER_LEVEL_CONDITION }],
+      KNHAALNEMLL: [{ param: [8], type: PLAYER_LEVEL_CONDITION }],
       refreshType: "BLOSSOM_REFRESH_EXP",
     },
     {
       cityId: FIRST_CITY_ID,
-      HGBNAGMEAFI: [{ param: [2], type: PLAYER_LEVEL_CONDITION }],
+      KNHAALNEMLL: [{ param: [2], type: PLAYER_LEVEL_CONDITION }],
       refreshType: "BLOSSOM_REFRESH_CRYSTAL",
     },
     {
       cityId: SECOND_CITY_ID,
-      HGBNAGMEAFI: [
+      KNHAALNEMLL: [
         { param: [18], type: PLAYER_LEVEL_CONDITION },
         { param: [SECOND_CITY_ID], type: AREA_UNLOCK_CONDITION },
       ],

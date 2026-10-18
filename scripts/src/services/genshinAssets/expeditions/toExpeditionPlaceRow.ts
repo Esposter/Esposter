@@ -22,20 +22,23 @@ export const toExpeditionPlaceRow = (
   let rankLevel = 0;
   let statuePointId = 0;
   let questId = "";
-  for (const condition of row.CHMIGIHPMFH)
-    if (condition.type === EXPEDITION_RANK_CONDITION) rankLevel = Math.max(rankLevel, condition.CIMKGJIONHO);
-    else if (condition.type === EXPEDITION_POINT_CONDITION) {
-      if (condition.PCPMLMPDAFH !== OPEN_WORLD_SCENE_ID)
+  for (const condition of row.MOOEHHLEOOB) {
+    // A rank condition is the table's default kind, which the dump leaves untyped
+    const kind = condition.type ?? EXPEDITION_RANK_CONDITION;
+    if (kind === EXPEDITION_RANK_CONDITION) rankLevel = Math.max(rankLevel, condition.AOCOBPPBOOL);
+    else if (kind === EXPEDITION_POINT_CONDITION) {
+      if (condition.OLDPDBIPNHD !== OPEN_WORLD_SCENE_ID)
         throw new InvalidOperationError(
           Operation.Read,
           String(row.id),
-          `names a point in scene ${condition.PCPMLMPDAFH}`,
+          `names a point in scene ${condition.OLDPDBIPNHD}`,
         );
-      statuePointId = condition.CIMKGJIONHO;
-    } else if (condition.type === EXPEDITION_QUEST_CONDITION) questId = String(condition.CIMKGJIONHO);
-    else throw new InvalidOperationError(Operation.Read, String(row.id), `has a condition of kind ${condition.type}`);
+      statuePointId = condition.AOCOBPPBOOL;
+    } else if (kind === EXPEDITION_QUEST_CONDITION) questId = String(condition.AOCOBPPBOOL);
+    else throw new InvalidOperationError(Operation.Read, String(row.id), `has a condition of kind ${kind}`);
+  }
   return {
-    durations: row.FPIOLKODPMI.map((duration) => {
+    durations: row.PLLAFKOKDDE.map((duration) => {
       const rewardPreview = rewardPreviews.get(duration.rewardPreview);
       if (!rewardPreview)
         throw new InvalidOperationError(
@@ -43,7 +46,7 @@ export const toExpeditionPlaceRow = (
           String(row.id),
           `has no reward preview ${duration.rewardPreview}`,
         );
-      return { hours: duration.GBGCPBEJAEN, items: toPreviewItems(rewardPreview) };
+      return { hours: duration.AMICCHBIALF, items: toPreviewItems(rewardPreview) };
     }),
     id: row.id,
     nameTextId: String(row.nameTextMapHash),
