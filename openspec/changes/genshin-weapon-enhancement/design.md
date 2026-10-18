@@ -20,7 +20,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** each weapon's passive rows are read from its skill affix into the hosted weapons record, which is republished. Nothing yet acts on a passive: its module waits on the kits.
+**Today:** each weapon's passive rows are read from its skill affix into the hosted weapons record, which is republished, and the weapon screen lists the passive's name and each rank's description with the held rank marked. Nothing yet acts on a passive: its module waits on the kits.
 
 **This adds, in order:**
 
@@ -38,10 +38,13 @@ packages/genshin-world/src/models/weapon/WeaponData.ts
 
 ## Key files
 
-| File                                                         | Role after the change                                 |
-| :----------------------------------------------------------- | :---------------------------------------------------- |
-| `packages/genshin-world/src/models/weapon/WeaponData.ts`     | Gains its passive's rows, grouped by its skill affix  |
-| `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts` | Reads the affix table into each weapon's passive rows |
+| File                                                             | Role after the change                                                                     |
+| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/weapon/WeaponData.ts`         | Gains its passive's rows, grouped by its skill affix                                      |
+| `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`     | Reads the affix table into each weapon's passive rows                                     |
+| `scripts/src/services/genshinText/constants.ts`                  | Names the passive's name and rank text ids among the names `genshin:text names` publishes |
+| `packages/genshin-world/src/services/weapon/getWeaponPassive.ts` | The passive's name and each rank's description, the held rank marked                      |
+| `packages/genshin-world/src/components/Weapon/Screen/Index.vue`  | Lists the passive beneath the panel's ores; its place is provisional and unmeasured       |
 
 ## Sources
 

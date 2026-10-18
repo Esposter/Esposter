@@ -17,6 +17,7 @@ import { ENHANCEMENT_ORES } from "#src/services/weapon/constants";
 import { enhanceWeapon } from "#src/services/weapon/enhanceWeapon";
 import { getRarityRequiredExps } from "#src/services/weapon/getRarityRequiredExps";
 import { getWeaponActions } from "#src/services/weapon/getWeaponActions";
+import { getWeaponPassive } from "#src/services/weapon/getWeaponPassive";
 import { refineWeapon } from "#src/services/weapon/refineWeapon";
 import { getResult } from "@esposter/shared";
 import { GameScreen, WeaponMenu, WeaponMenuTab } from "genshin-interface";
@@ -81,6 +82,8 @@ const levelText = computed(() =>
   fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.value.level}/${maxLevel.value}`),
 );
 const name = computed(() => nameText[weaponData.nameTextId] || "");
+// The passive the screen lists beneath the ores, its rank the weapon holds marked
+const passive = computed(() => getWeaponPassive(weaponData, weapon.value.refinement, nameText));
 // The ores the player picks for the next enhancement, each count taken from the bag when it is enhanced
 const pickedOres = ref<ItemCount[]>([]);
 const oreCells = computed(() =>
@@ -175,7 +178,8 @@ const act = () => {
 
 <template>
   <!-- The weapon screen, a dialog over the world: the weapon's name, rarity, level, EXP towards the next level, phase and
-       refinement rank, the open tab's panel of ores or of the refinement material, and the tab's action beneath -->
+       refinement rank, the open tab's panel of ores or of the refinement material, the passive's ranks beneath them, and
+       the tab's action beneath -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="name">
     <WeaponMenu
       v-model:tab="tab"
@@ -208,6 +212,12 @@ const act = () => {
           <span class="ore-count">{{ refinementMaterial.count }}</span>
         </p>
       </div>
+      <ul v-if="passive" class="passive">
+        <li class="passive-name">{{ passive.name }}</li>
+        <li v-for="(row, index) of passive.rows" :key="index" class="passive-row" :class="{ held: row.isHeld }">
+          {{ row.description }}
+        </li>
+      </ul>
     </WeaponMenu>
   </GameScreen>
 </template>
@@ -258,6 +268,27 @@ const act = () => {
 
 .pick:disabled {
   color: rgb(255 255 255 / 0.4);
+}
+
+/* Provisional: the passive's place beneath the ore row is unmeasured, and its ranks are listed in refinement order */
+.passive {
+  position: absolute;
+  top: calc(var(--unit) * 330);
+  right: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: calc(var(--unit) * 22);
+  list-style: none;
+}
+
+.passive-name {
+  font-weight: 600;
+}
+
+.passive-row.held {
+  color: #f0d27a;
 }
 
 .ore-count {
