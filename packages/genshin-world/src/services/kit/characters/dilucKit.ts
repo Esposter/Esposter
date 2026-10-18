@@ -1,12 +1,17 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { takeOne } from "@esposter/shared";
 
 // Dawn's infusion lasts 8 seconds, and A4 extends it by 4 seconds and gives a 20% Pyro damage bonus for as long
@@ -34,10 +39,51 @@ const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_1_HEALTH_SHARE = 0.5;
 
+// Searing Ember, from Constellation 2: each damage Diluc takes raises his ATK by 10% and his ATK SPD by 5% for 10 seconds,
+// Up to three stacks, and one stack at most every 1.5 seconds. gcsim v2.47.2 (MIT) diluc/cons.go gives the stacks and the
+// 10 seconds, and the 1.5 seconds is the wiki's, gcsim's interval never being set
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/diluc/cons.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_ATTACK_BONUS_PER_STACK = 0.1;
+const CONSTELLATION_2_ATTACK_SPEED_BONUS_PER_STACK = 0.05;
+const CONSTELLATION_2_STACK_CAP = 3;
+const CONSTELLATION_2_SECONDS = 10;
+const CONSTELLATION_2_INTERVAL_SECONDS = 1.5;
+const CONSTELLATION_2_STACK_STATUS_ID = "diluc-constellation-2-stacks";
+const CONSTELLATION_2_INTERVAL_STATUS_ID = "diluc-constellation-2-interval";
+const CONSTELLATION_2_SOURCE = "diluc-constellation-2";
+
+// Adds a stack of Searing Ember to Diluc: the count goes on from the last stack while it runs, and restarts at one
+// Once it has run out, and the stacks' ATK and ATK SPD restart with their 10 seconds
+const addSearingEmberStack = (kitEffectState: KitEffectState, characterId: number): void => {
+  const previousStacks = checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_STACK_STATUS_ID)
+    ? (findKitStatus(kitEffectState.effects, characterId, CONSTELLATION_2_STACK_STATUS_ID)?.stacks ?? 0)
+    : 0;
+  const stacks = Math.min(CONSTELLATION_2_STACK_CAP, previousStacks + 1);
+  addKitStatus(kitEffectState, characterId, {
+    id: CONSTELLATION_2_STACK_STATUS_ID,
+    secondsRemaining: CONSTELLATION_2_SECONDS,
+    stacks,
+  });
+  buffKitMember(kitEffectState, characterId, {
+    amount: stacks * CONSTELLATION_2_ATTACK_BONUS_PER_STACK,
+    attribute: Attribute.AttackPercent,
+    secondsRemaining: CONSTELLATION_2_SECONDS,
+    source: CONSTELLATION_2_SOURCE,
+  });
+  buffKitMember(kitEffectState, characterId, {
+    amount: stacks * CONSTELLATION_2_ATTACK_SPEED_BONUS_PER_STACK,
+    attribute: Attribute.NormalAttackSpeed,
+    secondsRemaining: CONSTELLATION_2_SECONDS,
+    source: CONSTELLATION_2_SOURCE,
+  });
+};
+
 // Diluc's behaviour: Dawn infuses his attacks with Pyro, lengthened and joined by a Pyro DMG Bonus from Ascension 4, and
 // Launches its phoenix at the slash, a summon a metre ahead of him that travels forward, strikes on each of its ticks and
 // Explodes at the end of its path
-// Constellation 2 needs a stack status on each hit Diluc takes, and an ATK and ATK SPD bonus that follows its stacks
+// Constellation 2 is built for a hit that costs Diluc HP: an enemy's strike, a drown or a wildlife's charge. A hit his
+// Shield takes whole sends no HP change, so it adds no stack, and the damageless hits of his teammates are not built
 // Constellation 4 needs the timing of two Searing Onslaught casts two seconds apart, which the skill does not yet read
 // Constellation 6 needs the next two normal attacks after Searing Onslaught, and their DMG and ATK SPD
 export const createDilucKitBehaviour = ({
@@ -97,6 +143,19 @@ export const createDilucKitBehaviour = ({
           { travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: launchSeconds } },
         );
       },
+    },
+    // Searing Ember: a hit that costs Diluc HP takes a stack once the interval after the last one has run out. A kit of the
+    // Team that names its source for the HP loss, such as Furina's skill, is not a hit
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.HealthChanged || combatant.constellationCount < CONSTELLATION_2) return;
+      const { characterId } = combatant;
+      if (event.characterId !== characterId || event.healthShare >= 0 || event.sourceCharacterId !== undefined) return;
+      if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_2_INTERVAL_STATUS_ID,
+        secondsRemaining: CONSTELLATION_2_INTERVAL_SECONDS,
+      });
+      addSearingEmberStack(kitEffectState, characterId);
     },
     // Relentless, from Ascension 1: his charged attacks cost half their stamina
     // Its +3s duration clause is not built, since the talent text does not name what that duration is
