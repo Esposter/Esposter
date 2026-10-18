@@ -95,9 +95,11 @@ const readSliceRangeLoop = (
       };
 };
 
-// The `for` loop opening at the position when it counts a variable from a constant start up to a bound in constant steps,
-// Its values and its body's braces, else Undefined. The bound is read at the constellation, so a constellation branch's
-// `=` to a local the bound names is taken or left out as the constellation reaches it
+// The `for` loop opening at the position when it counts a variable from a constant start up to a bound, its values and
+// Its body's braces, else Undefined. The bound is read at the constellation, so a constellation branch's `=` to a local
+// The bound names is taken or left out as the constellation reaches it. A step the reader cannot evaluate, as in
+// `i += c.call()`, is not unrolled: the loop gives its first iteration alone, at its start, or none if the bound
+// Stops it before then
 const readConstantLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
@@ -133,17 +135,17 @@ const readConstantLoop = (
   const startValue = evaluateGoNumber(start.expression, resolveName);
   const boundValue = evaluateGoNumber(bound.expression, resolveBoundName);
   const stepValue = step === undefined ? 1 : evaluateGoNumber(step.expression, resolveName);
-  if (
-    typeof startValue !== "number" ||
-    typeof boundValue !== "number" ||
-    typeof stepValue !== "number" ||
-    stepValue <= 0
-  )
+  if (typeof startValue !== "number" || typeof boundValue !== "number" || (stepValue !== undefined && stepValue <= 0))
     return undefined;
+  const isRunning = (value: number): boolean => (isBoundInclusive ? value <= boundValue : value < boundValue);
   const values: number[] = [];
-  for (let value = startValue; isBoundInclusive ? value <= boundValue : value < boundValue; value += stepValue) {
-    if (values.length === MAX_LOOP_ITERATIONS) return undefined;
-    values.push(value);
+  if (stepValue === undefined) {
+    if (isRunning(startValue)) values.push(startValue);
+  } else {
+    for (let value = startValue; isRunning(value); value += stepValue) {
+      if (values.length === MAX_LOOP_ITERATIONS) return undefined;
+      values.push(value);
+    }
   }
   const bodyEnd = findClosing(tokens, stepEnd, "{", "}");
   return bodyEnd === undefined

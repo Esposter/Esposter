@@ -325,6 +325,29 @@ describe(readGcsimQueuedAttacks, () => {
     ]);
   });
 
+  test("reads a loop whose step is a call as its first iteration alone, its variable at the initial value the body reads", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package aino",
+          "",
+          "func (c *char) burst() {",
+          "\tfor i := 2; i < 5; i += c.a1BurstEnhance() {",
+          "\t\tc.Core.Tasks.Add(func() {",
+          "\t\t\tc.Core.QueueAttack(ai, ap, 0, 4)",
+          "\t\t}, i+3)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([9]);
+  });
+
   test("repeats a queue call at a constellation in a loop bounded by a local the constellation branch raises, up to that constellation's value", () => {
     expect.hasAssertions();
 
