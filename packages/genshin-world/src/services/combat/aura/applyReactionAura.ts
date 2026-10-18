@@ -31,6 +31,8 @@ export const applyReactionAura = (state: ElementalState, reactionType: ReactionT
     case ReactionType.Melt:
     case ReactionType.Overloaded:
     case ReactionType.Spread:
+    case ReactionType.StellarConduct:
+    case ReactionType.StellarSwirl:
     case ReactionType.Superconduct:
     case ReactionType.Swirl:
     case ReactionType.Vaporize:
