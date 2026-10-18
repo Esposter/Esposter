@@ -30,12 +30,6 @@ import { describe, expect, test } from "vitest";
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
-const createPartyMember = (characterId: number, element: Element): Combatant => ({
-  ...createChascaCombatant(),
-  characterId,
-  element,
-});
-
 // The shells Galesplitting casts, which its start puts on the team's effects as one summon
 const readShells = ({ kitEffectState }: KitContext) => {
   const summon = kitEffectState.effects.find((effect) => effect.kind === "summon");
@@ -266,19 +260,15 @@ describe(createChascaKitBehaviour, () => {
 
   test("each Pyro, Hydro, Electro or Cryo party member's element is a Radiant shell twice over, shuffled by the kit's random source, and the rest are Anemo", () => {
     expect.hasAssertions();
-    const chasca = createChascaCombatant();
-    const pyro = createPartyMember(YOIMIYA_CHARACTER_ID, Element.Pyro);
-    const hydro = createPartyMember(XINGQIU_CHARACTER_ID, Element.Hydro);
+    const chasca: Combatant = {
+      ...createChascaCombatant(),
+      deployedElements: [undefined, Element.Pyro, Element.Hydro],
+    };
     // The four bullets' keys are 0.9, 0.1, 0.5 and 0.2 in the order they are dealt, so they sort Hydro, Hydro, Pyro, Pyro
     const draws = [0.9, 0.1, 0.5, 0.2];
     let drawIndex = 0;
     const context = createKitTestContext(chasca, {
-      characterIdCombatantMap: new Map([
-        [CHASCA_CHARACTER_ID, chasca],
-        [pyro.characterId, pyro],
-        [hydro.characterId, hydro],
-      ]),
-      party: createParty([CHASCA_CHARACTER_ID, pyro.characterId, hydro.characterId]),
+      party: createParty([CHASCA_CHARACTER_ID, YOIMIYA_CHARACTER_ID, XINGQIU_CHARACTER_ID]),
       random: () => draws[drawIndex++] ?? 0,
     });
     CHASCA_KIT.elementalBurst.onStart?.(context);

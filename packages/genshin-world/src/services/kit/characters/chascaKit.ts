@@ -11,7 +11,6 @@ import { drainKitNightsoulPoints } from "#src/services/kit/effects/drainKitNight
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { shuffleWithRandom } from "#src/services/shared/shuffleWithRandom";
 
 export const CHASCA_CHARACTER_ID = 10_000_104;
@@ -27,11 +26,10 @@ const RADIANT_ELEMENTS = new Set<Element>([Element.Pyro, Element.Hydro, Element.
 
 // The team's Radiant shells in the order the world's random source deals them: each Pyro, Hydro, Electro or Cryo member's
 // Element twice over, as galesplitting's bullets are (burst.go:69-74), shuffled by that source as gcsim shuffles them
-const readRadiantElements = ({ characterIdCombatantMap, party, random }: KitContext): Element[] => {
-  const elements = getDeployedCharacterIds(party).flatMap((characterId) => {
-    const element = characterIdCombatantMap.get(characterId)?.element;
-    return element !== undefined && RADIANT_ELEMENTS.has(element) ? [element] : [];
-  });
+const readRadiantElements = ({ activeCombatant, random }: KitContext): Element[] => {
+  const elements = (activeCombatant.deployedElements ?? []).flatMap((element) =>
+    element !== undefined && RADIANT_ELEMENTS.has(element) ? [element] : [],
+  );
   return shuffleWithRandom([...elements, ...elements], random);
 };
 
