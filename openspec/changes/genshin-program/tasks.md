@@ -19,7 +19,7 @@
 
 ## 5. The play features
 
-- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from the official models the reader holds, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A reader without the official model sees no character", written first and seen failing.
+- [ ] 5.1 Build the character controller and its follow camera, then the HUD, then characters from the official models the reader holds, then the menu screens, then the elemental reactions, each feature when its turn comes. Verify: a test named after the scenario "A reader without the official model sees the capsule", written first and seen failing.
 
 ## 6. The game's systems
 
