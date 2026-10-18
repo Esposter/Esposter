@@ -21,7 +21,10 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -51,6 +54,36 @@ const readEnergyAfterReactions = (constellationCount: number, reactions: Reactio
   };
   const context = createKitTestContext(combatant, { party });
   for (let index = 0; index < times; index++) INEFFA_KIT.onKitEvent?.(event, context, combatant);
+  return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
+};
+
+// Casts Ineffa's skill with an enemy at her feet, steps the kit by the frames given and lands every strike as it comes,
+// Then reads the energy her party holds
+const readEnergyAfterSkill = (random: () => number, frames: number): number => {
+  const combatant: Combatant = {
+    ...createIneffaCombatant(),
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseDefense, value: 1000 },
+      { attribute: Attribute.EnergyRecharge, value: 1 },
+    ]),
+    element: Element.Electro,
+  };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.health = 1_000_000_000;
+  const party = createParty([INEFFA_CHARACTER_ID]);
+  const kitEffectState = castKitAction(INEFFA_KIT.elementalSkill, combatant);
+  const context = createKitTestContext(combatant, {
+    enemyMap: new Map([[1, enemy]]),
+    enemyTables,
+    kitEffectState,
+    party,
+    random,
+  });
+  for (let frame = 0; frame < frames; frame++) {
+    stepKitEffects(1 / 60, context);
+    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
   return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
 };
 
@@ -143,6 +176,19 @@ describe(createIneffaKitBehaviour, () => {
     const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
     expect(shield.health).toBeCloseTo(2.21184 * combatant.attributes.attack + 1386.6759);
     expect(shield.secondsRemaining).toBe(20);
+  });
+
+  test("a Birgitta discharge that lands drops an Electro particle 100 frames later, when its roll is under two in three", () => {
+    expect.hasAssertions();
+
+    // Her first discharge lands at 110 frames, so its particle is not in yet at 209 and is by 212
+    expect([readEnergyAfterSkill(() => 0, 209), readEnergyAfterSkill(() => 0, 212)]).toStrictEqual([0, 3]);
+  });
+
+  test("a Birgitta discharge whose roll is two in three or more drops no particle", () => {
+    expect.hasAssertions();
+
+    expect(readEnergyAfterSkill(() => 0.66, 400)).toBe(0);
   });
 
   test("her Moonsign Benediction turns Electro-Charged Lunar, with 0.7% Base DMG Bonus each 100 ATK, at most 14%", () => {

@@ -11,13 +11,17 @@ import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
+import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const INEFFA_CHARACTER_ID = 10_000_116;
@@ -27,11 +31,19 @@ const CONSTELLATION_4_COOLDOWN_ID = "ineffa-constellation-4-cooldown";
 const CONSTELLATION_4_ENERGY = 5;
 const CONSTELLATION_4_SECONDS = 4;
 
-// Birgitta discharges ten times while she stands, with no poise, as gcsim (MIT, main) ineffa/skill.go gives her. Her
-// Electro Particles, which gcsim gives on an internal cooldown, wait on the particle hook
+// Birgitta discharges ten times while she stands, with no poise, as gcsim (MIT, main) ineffa/skill.go gives her. Each
+// Discharge that lands gives an Electro particle two times in three, which lands 100 frames later as gcsim's particle
+// Callback gives it
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/skill.go
 const BIRGITTA_DISCHARGE_COUNT = 10;
 const BIRGITTA_ID = "birgitta";
+
+// A Birgitta discharge that lands drops an Electro particle two times in three, as gcsim's baseParticleCB gives it
+// (skill.go lines 87-98). The particle lands 100 frames later, the default ParticleDelay (character.go line 144). Its
+// 18-frame internal cooldown cannot bind, as one chain's discharges come 119 frames apart, so it is not kept
+const BIRGITTA_PARTICLE_CHANCE = 0.66;
+const BIRGITTA_PARTICLE_DELAY_ID = "ineffa-particle-delay";
+const BIRGITTA_PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 
 // Measured: gcsim (MIT, main) ineffa/asc.go, her Moonsign Benediction turns the party's Electro-Charged into
 // Lunar-Charged and adds 0.7% Base DMG Bonus to its Lunar-Charged for each 100 of her ATK, at most 14%
@@ -105,6 +117,15 @@ export const createIneffaKitBehaviour = ({
     Array.from({ length: BIRGITTA_DISCHARGE_COUNT }, (_value, index) => ({
       hitArea: birgittaHitArea,
       hitmarkSeconds: spawnSeconds + birgittaFirstDischargeSeconds + birgittaDischargeIntervalSeconds * index,
+      // A landed discharge delays a particle, whose amount is the count the delay holds, one each
+      onStrike: ({ kitEffectState, random }, strike) => {
+        if (random() < BIRGITTA_PARTICLE_CHANCE)
+          delayKitEnergy(kitEffectState, strike.combatant.characterId, {
+            energy: 1,
+            id: BIRGITTA_PARTICLE_DELAY_ID,
+            seconds: BIRGITTA_PARTICLE_DELAY_SECONDS,
+          });
+      },
       poiseDamage: 0,
       talentMultiplier: birgittaTalentMultiplier,
     }));
@@ -145,8 +166,21 @@ export const createIneffaKitBehaviour = ({
     },
     // The Edictless Path, from Constellation 4: a Lunar-Charged reaction of the party restores 5 energy to Ineffa, once
     // Every 4 seconds
-    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+    onKitEvent: (event, context, combatant) => {
+      const { kitEffectState, party } = context;
       movePermutation(event, kitEffectState, combatant);
+      // Birgitta's particle lands as its delay runs out, of Electro, distributed by the party's energy as a drop is
+      if (
+        event.kind === KitEventKind.EffectExpired &&
+        event.effect.kind === "status" &&
+        event.effect.characterId === combatant.characterId &&
+        event.effect.id === BIRGITTA_PARTICLE_DELAY_ID
+      )
+        collectKitEnergyDrops(
+          [{ count: event.effect.stacks ?? 0, element: Element.Electro, energyDropKind: EnergyDropKind.Particle }],
+          undefined,
+          context,
+        );
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         combatant.constellationCount < CONSTELLATION_4 ||
