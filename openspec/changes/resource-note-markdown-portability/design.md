@@ -14,6 +14,7 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 
 - **No HTML or `.docx` export.** The published view already is the HTML form; `.docx` is a heavy dependency for a Word user who can paste the Markdown.
 - **No live Markdown editing mode.** The Note is a rich-text editor; Markdown is its file format, not a second editing surface.
+- **No tables in the round trip.** CommonMark has no table syntax, so a table the note's kit inserts does not survive an export and import; the round trip keeps the blocks CommonMark carries. A GFM table form is a later decision, recorded here until it is made.
 
 ## Key files
 

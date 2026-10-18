@@ -24,7 +24,7 @@ Exporting a note SHALL download its content as a Markdown file named after the n
 
 ### Requirement: A Markdown round trip keeps every block the note holds
 
-A note exported to Markdown and imported again SHALL keep the same content, for every kind of block the note can hold.
+A note exported to Markdown and imported again SHALL keep the same content, for every kind of block CommonMark carries. Tables are outside it, as the design records.
 
 #### Scenario: A note with every block survives a Markdown round trip
 
