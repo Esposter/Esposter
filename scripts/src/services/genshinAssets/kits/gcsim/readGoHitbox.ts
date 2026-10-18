@@ -20,7 +20,7 @@ interface HitboxConstructor {
 }
 
 // The constructor of a hit gcsim gives its target alone, `combat.NewSingleTargetHit(e.Key())`, with no reach beyond it
-const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
+export const SINGLE_TARGET_HIT_CONSTRUCTOR = "NewSingleTargetHit";
 
 const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewBoxHit", { fanAngle: false, onTarget: false, shape: GcsimHitboxShape.Box }],

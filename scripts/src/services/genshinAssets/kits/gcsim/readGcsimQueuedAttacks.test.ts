@@ -895,6 +895,7 @@ describe(readGcsimQueuedAttacks, () => {
       undefined,
     ]);
   });
+
   test("reads no delay from a returned closure no Tasks.Add schedules, an attack callback run by its hit", () => {
     expect.hasAssertions();
 
@@ -915,6 +916,108 @@ describe(readGcsimQueuedAttacks, () => {
 
     expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
       undefined,
+    ]);
+  });
+
+  test("gives a single-target hit fired in a loop over an area query the query's area, at the query's line", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "const skillRadius = 1.5",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, skillRadius)",
+          "\ttargets := c.Core.Combat.EnemiesWithinArea(aoe, func(t info.Enemy) bool {",
+          "\t\treturn true",
+          "\t})",
+          "\tfor _, t := range targets {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewSingleTargetHit(t.Key()), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.Player,
+        file: "skill.go",
+        line: 7,
+        name: "NewCircleHitOnTarget",
+        radius: 1.5,
+        shape: GcsimHitboxShape.Circle,
+      },
+    ]);
+  });
+
+  test("keeps a single-target hit's own hitbox in a loop over a random subset of an area, which does not reach every enemy in it", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 1.5)",
+          "\tenemies := c.Core.Combat.RandomEnemiesWithinArea(aoe, nil, 2)",
+          "\tfor _, e := range enemies {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewSingleTargetHit(e.Key()), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.PrimaryTarget,
+        file: "skill.go",
+        line: 8,
+        name: "NewSingleTargetHit",
+        radius: 0,
+        shape: GcsimHitboxShape.Circle,
+      },
+    ]);
+  });
+
+  test("keeps a hit's own hitbox in a loop over an area query where the hit is not single-target", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "skill.go",
+        source: [
+          "package xianyun",
+          "",
+          "func (c *char) skill() {",
+          "\tai := info.AttackInfo{AttackTag: attacks.AttackTagElementalArt}",
+          "\taoe := combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 1.5)",
+          "\tfor _, e := range c.Core.Combat.EnemiesWithinArea(aoe, nil) {",
+          "\t\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 2), 15, 15)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+      {
+        center: GcsimHitboxCenter.PrimaryTarget,
+        file: "skill.go",
+        line: 7,
+        name: "NewCircleHitOnTarget",
+        radius: 2,
+        shape: GcsimHitboxShape.Circle,
+      },
     ]);
   });
 });
