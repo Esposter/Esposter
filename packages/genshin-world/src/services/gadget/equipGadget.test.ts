@@ -8,6 +8,7 @@ const createGadget = (id: number, isEquipable: boolean): GadgetRow => ({
   cooldownGroup: 0,
   cooldownOnFailSeconds: 0,
   cooldownSeconds: 30,
+  gatherItemId: 0,
   id,
   isEquipable,
   kind: GadgetKind.Detector,

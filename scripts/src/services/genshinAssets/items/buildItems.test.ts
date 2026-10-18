@@ -124,6 +124,7 @@ describe(buildItems, () => {
             cooldownGroup: 0,
             cooldownOnFailSeconds: 0,
             cooldownSeconds: 0,
+            gatherItemId: 0,
             id: GADGET_ITEM_ID,
             isEquipable: true,
             kind: GadgetKind.Detector,
