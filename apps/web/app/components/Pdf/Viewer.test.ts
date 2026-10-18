@@ -39,6 +39,7 @@ describe("pdfViewer", () => {
     const component = await mountViewer({ isFailed: true });
 
     expect(component.text()).toContain("The PDF could not be loaded.");
+    expect(component.find('input[type="password"]').exists()).toBe(false);
   });
 
   test("a wrong password says so", async () => {

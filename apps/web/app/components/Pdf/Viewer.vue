@@ -23,16 +23,15 @@ const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
 const viewerApi = shallowRef<PdfViewerApi>();
 const isViewerFailed = ref(false);
-const pageInput = ref("");
 const passwordInput = ref("");
 const {
   actualSize,
   currentPageNumber,
   download,
-  fitPage,
-  fitWidth,
   findNext,
   findPrevious,
+  fitPage,
+  fitWidth,
   goToPage,
   isMatchCase,
   isNotFound,
@@ -53,6 +52,8 @@ const {
   viewer: () => viewer.value ?? undefined,
   viewerApi: () => viewerApi.value,
 });
+// The page field follows the page the reader scrolls to, and holds what is typed until Go. No page reads as empty
+const { cloned: pageInput } = useCloned(() => (currentPageNumber.value ? String(currentPageNumber.value) : ""));
 const matchesText = computed(() => {
   if (!searchQuery.value) return "";
   if (isNotFound.value) return "No matches";
@@ -74,15 +75,11 @@ onMounted(async () => {
     },
   );
 });
-
-watch(currentPageNumber, (pageNumber) => {
-  pageInput.value = String(pageNumber);
-});
 </script>
 
 <template>
   <div flex flex-col gap-2 min-h-0>
-    <div role="toolbar" aria-label="PDF tools" flex flex-wrap items-center gap-2>
+    <div role="toolbar" aria-label="PDF tools" flex flex-wrap gap-2 items-center>
       <UiIconButton
         label="Previous page"
         :meaning="UiIconMeaning.Previous"
@@ -112,7 +109,7 @@ watch(currentPageNumber, (pageNumber) => {
         @click="() => download(filename)"
       />
     </div>
-    <div role="search" flex flex-wrap items-center gap-2>
+    <div role="search" flex flex-wrap gap-2 items-center>
       <UiTextField v-model="searchQuery" label="Search" :type="UiTextFieldType.Search" />
       <UiCheckbox v-model="isMatchCase" label="Match case" is-label-shown />
       <UiCheckbox v-model="isWholeWord" label="Whole word" is-label-shown />
@@ -130,7 +127,7 @@ watch(currentPageNumber, (pageNumber) => {
       />
       <span aria-live="polite" text-sm>{{ matchesText }}</span>
     </div>
-    <UiForm v-if="isPasswordRequested" flex flex-wrap items-end gap-2 @submit="() => submitPassword()">
+    <UiForm v-if="isPasswordRequested" flex flex-wrap gap-2 items-end @submit="() => submitPassword()">
       <UiTextField
         v-model="passwordInput"
         label="Password"
@@ -140,9 +137,9 @@ watch(currentPageNumber, (pageNumber) => {
       <UiButton type="submit" :variant="UiButtonVariant.Accent">Open</UiButton>
     </UiForm>
     <!-- The document's failure or the viewer's own, since a viewer whose module never came draws no page either -->
-    <p v-if="isFailed || isViewerFailed" p-3 text-muted>The PDF could not be loaded.</p>
-    <div relative flex-1 min-h-0>
-      <div ref="container" absolute inset-0 of-auto>
+    <p v-if="isFailed || isViewerFailed" text-muted p-3>The PDF could not be loaded.</p>
+    <div flex-1 min-h-0 relative>
+      <div ref="container" inset-0 absolute of-auto>
         <div ref="viewer" class="pdfViewer" />
       </div>
     </div>
