@@ -15,7 +15,7 @@ The game's people keep hours. A hunter sells meat in Springvale by day and goes 
 
 Nothing is built until the wiki's NPC pages are read; then, in order:
 
-1. **Nod-Krai's residents and the night spots from the wiki.** `scripts/src/services/genshinAssets/residents/joinResidents.ts` reads each NPC's location and hours from its wiki page: an NPC of Nod-Krai becomes a resident as the others are, and an NPC whose page gives a night spot takes it as its night spot. `pnpm -C scripts genshin:assets residents` rewrites the regions' data, and `joinResidents.test.ts` asserts a resident with a night spot gains one and a resident with only a day spot keeps it through the night.
+1. **The wiki's night spots outside Nod-Krai.** `scripts/src/services/genshinAssets/residents/joinResidents.ts` reads each non-Nod-Krai NPC's location and hours from its wiki page: an NPC whose page gives a night spot takes it as its provisional night spot. An NPC of Nod-Krai joins as a resident only once the scene-group export places them, the same wait as its day spot. `pnpm -C scripts genshin:assets residents` rewrites the regions' data, and `joinResidents.test.ts` asserts a resident with a night spot gains one and a resident with only a day spot keeps it through the night.
 2. **Vendors' hours**, with the [shops](../genshin-shops/design.md)' vendors: a vendor sells while they stand at their spot, as Blanche's shop is open at all hours by the wiki and Draff's by day.
 
 - **Not covered by the wiki's pages.** Snezhnaya has no residents, since its fit matched no statue or waypoint, and the wiki's daytime and nighttime gallery pictures are not read, the NPC pages' location and hours standing in their place.

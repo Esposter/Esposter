@@ -53,15 +53,15 @@ Each resident's spot SHALL be read from the world's clock every frame, so that a
 - **WHEN** the player sets the time to night on the Time screen
 - **THEN** the residents with night spots move to them
 
-### Requirement: Nod-Krai's residents keep the hours the wiki gives
+### Requirement: Nod-Krai has no resident until the game places one
 
-Each Nod-Krai resident SHALL keep the hours their wiki NPC page gives, and stand at the spot the scene-group record places them, since the wiki's Nod-Krai NPC pages give no positions.
+A Nod-Krai resident SHALL NOT stand anywhere until the scene-group record places them, since the wiki's Nod-Krai NPC pages give their hours but no positions.
 
-#### Scenario: A Nod-Krai resident keeps the wiki's hours
+#### Scenario: Nod-Krai shows no resident without a placement
 
 - **GIVEN** the player is in Nod-Krai at ten in the morning
 - **WHEN** the player looks for a resident whose page gives daytime hours
-- **THEN** the resident stands at the day spot the scene-group record places them
+- **THEN** no resident stands in the world there, since the scene-group record places none
 
 ### Requirement: A vendor sells only in their hours
 
