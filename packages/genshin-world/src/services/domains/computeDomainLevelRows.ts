@@ -12,16 +12,16 @@ export interface DomainLevelRow {
   state: DomainLevelState;
 }
 
-// Each level of a domain as its entry screen lists it, with the state the player finds it in at the rank and the day
+// Each level of a domain as its entry screen lists it, with the state the player finds it in at the rank and the moment
 export const computeDomainLevelRows = (
   { kind, levels }: DomainSchedule,
   adventureRank: number,
-  day: Temporal.PlainDate,
+  now: Temporal.Instant,
 ): DomainLevelRow[] =>
   levels.map((level) => {
     const requiredRank = Math.max(DomainOpenRankMap[kind], level.recommendedRank);
     let state = DomainLevelState.Closed;
-    if (checkIsDomainLevelOpen(kind, level, adventureRank, day)) state = DomainLevelState.Open;
+    if (checkIsDomainLevelOpen(kind, level, adventureRank, now)) state = DomainLevelState.Open;
     else if (requiredRank > adventureRank) state = DomainLevelState.RankRequired;
     return { dungeonId: level.dungeonId, enemyLevel: level.enemyLevel, requiredRank, state };
   });

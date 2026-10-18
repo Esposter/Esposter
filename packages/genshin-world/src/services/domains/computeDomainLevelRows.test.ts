@@ -1,14 +1,13 @@
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { DomainLevelState } from "#src/models/domains/DomainLevelState";
 import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevelRows";
+import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeDomainLevelRows, () => {
-  const MONDAY_DAYS_AFTER_EPOCH = 4;
-  const monday = Temporal.Instant.fromEpochMilliseconds(0)
-    .toZonedDateTimeISO("UTC")
-    .toPlainDate()
-    .add({ days: MONDAY_DAYS_AFTER_EPOCH });
+  // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday
+  const DAILY_RESET = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
+  const monday = DAILY_RESET.toZonedDateTimeISO(GAME_TIME_ZONE).add({ days: 4 }).toInstant();
   const ADVENTURE_RANK = 20;
 
   test("marks each level open, rank required, or closed today", () => {
