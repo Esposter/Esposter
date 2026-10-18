@@ -50,6 +50,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   chart.value?.destroy();
+  chart.value = undefined;
 });
 </script>
 
