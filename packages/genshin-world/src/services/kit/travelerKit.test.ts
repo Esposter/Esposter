@@ -31,7 +31,7 @@ describe("travelerKit", () => {
   test("the Traveler's skill deals the element of the resonated statue", () => {
     expect.hasAssertions();
 
-    const [skillHit] = TRAVELER_KIT.elementalSkill.hits;
+    const skillHit = takeOne(TRAVELER_KIT.elementalSkill.hits);
 
     expect(getKitHitElement(skillHit, { element: computeTravelerElement(["liyue"]) })).toBe(Element.Geo);
   });
@@ -39,7 +39,7 @@ describe("travelerKit", () => {
   test("the Traveler's burst deals the element of the resonated statue", () => {
     expect.hasAssertions();
 
-    const [burstHit] = TRAVELER_KIT.elementalBurst.hits;
+    const burstHit = takeOne(TRAVELER_KIT.elementalBurst.hits);
 
     expect(getKitHitElement(burstHit, { element: computeTravelerElement(["liyue"]) })).toBe(Element.Geo);
   });
@@ -47,7 +47,7 @@ describe("travelerKit", () => {
   test("the Traveler deals no element before any statue is resonated with", () => {
     expect.hasAssertions();
 
-    const [skillHit] = TRAVELER_KIT.elementalSkill.hits;
+    const skillHit = takeOne(TRAVELER_KIT.elementalSkill.hits);
 
     expect(getKitHitElement(skillHit, { element: computeTravelerElement([]) })).toBeUndefined();
   });
