@@ -20,6 +20,7 @@ import {
   HEART_OF_DEPTH_ARTIFACT_SET_ID,
   INSTRUCTOR_ARTIFACT_SET_ID,
   LAVAWALKER_ARTIFACT_SET_ID,
+  LONG_NIGHTS_OATH_ARTIFACT_SET_ID,
   LUCKY_DOG_ARTIFACT_SET_ID,
   MAIDEN_BELOVED_ARTIFACT_SET_ID,
   MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID,
@@ -56,6 +57,7 @@ import { createGoldenTroupeSetModule } from "#src/services/artifact/sets/createG
 import { createHeartOfDepthSetModule } from "#src/services/artifact/sets/createHeartOfDepthSetModule";
 import { createInstructorSetModule } from "#src/services/artifact/sets/createInstructorSetModule";
 import { createLavawalkerSetModule } from "#src/services/artifact/sets/createLavawalkerSetModule";
+import { createLongNightsOathSetModule } from "#src/services/artifact/sets/createLongNightsOathSetModule";
 import { createLuckyDogSetModule } from "#src/services/artifact/sets/createLuckyDogSetModule";
 import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/createMaidenBelovedSetModule";
 import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/createMarechausseeHunterSetModule";
@@ -97,6 +99,7 @@ export const ArtifactSetIdCreateModuleMap: Readonly<
   [HEART_OF_DEPTH_ARTIFACT_SET_ID]: createHeartOfDepthSetModule,
   [INSTRUCTOR_ARTIFACT_SET_ID]: createInstructorSetModule,
   [LAVAWALKER_ARTIFACT_SET_ID]: createLavawalkerSetModule,
+  [LONG_NIGHTS_OATH_ARTIFACT_SET_ID]: createLongNightsOathSetModule,
   [LUCKY_DOG_ARTIFACT_SET_ID]: createLuckyDogSetModule,
   [MAIDEN_BELOVED_ARTIFACT_SET_ID]: createMaidenBelovedSetModule,
   [MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID]: createMarechausseeHunterSetModule,
