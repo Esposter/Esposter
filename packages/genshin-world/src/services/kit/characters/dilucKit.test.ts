@@ -164,21 +164,21 @@ describe(createDilucKitBehaviour, () => {
     isSkillPressed: false,
     locomotionState: LocomotionState.Idle,
   };
-  const createFixture = () => {
+  const createFixture = (combatant: Combatant = DILUC_COMBATANT) => {
     const kitState: KitState = createKitState();
     const partyMember = createPartyMember();
     const stamina = createStamina(STAMINA_MAX);
-    const step = (isSkillPressed = false) => {
+    const step = (isSkillPressed = false, isAttackPressed = false) => {
       const landedHits: never[] = [];
       return stepKit(
         kitState,
         DILUC_KIT,
-        { ...IDLE_INPUT, isSkillPressed },
+        { ...IDLE_INPUT, isAttackPressed, isSkillPressed },
         partyMember,
         stamina,
         STEP_SECONDS,
         landedHits,
-        createKitTestContext(DILUC_COMBATANT),
+        createKitTestContext(combatant),
       );
     };
     // Steps with no press until the action playing has run its seconds
@@ -217,6 +217,26 @@ describe(createDilucKitBehaviour, () => {
     wait(4.1);
     expect(step(true)).toBeUndefined();
     expect(partyMember.skillCooldownSeconds).toBeGreaterThan(0);
+  });
+
+  test("constellation 6 keeps the normal attack string through searing onslaught, so the next normal attack continues it", () => {
+    expect.hasAssertions();
+    const { playOut, step } = createFixture({ ...DILUC_COMBATANT, constellationCount: 6 });
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
+    playOut();
+    expect(step(true)).toBe(DILUC_KIT.elementalSkill);
+    playOut();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[1]);
+  });
+
+  test("searing onslaught starts the normal attack string over without constellation 6", () => {
+    expect.hasAssertions();
+    const { playOut, step } = createFixture();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
+    playOut();
+    expect(step(true)).toBe(DILUC_KIT.elementalSkill);
+    playOut();
+    expect(step(false, true)).toBe(DILUC_KIT.normalAttacks[0]);
   });
 
   test("dawn's phoenix launches at the slash, travels 14 metres a second from a metre ahead, and explodes 24.8 metres on", () => {

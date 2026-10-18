@@ -21,6 +21,7 @@ export interface KitBehaviour extends Partial<
     | "getSkillCooldownMultiplier"
     | "getStrikeCriticalRateBonus"
     | "getStrikeDamageBonus"
+    | "keepsNormalAttackCombo"
     | "onKitEvent"
     | "onSprint"
     | "onStep"
