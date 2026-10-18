@@ -13,6 +13,7 @@ import { fitWindrisePaving } from "#src/services/genshinAssets/fit/fitWindrisePa
 import { fitWindrisePlants } from "#src/services/genshinAssets/fit/fitWindrisePlants";
 import { fitWindriseStatue } from "#src/services/genshinAssets/fit/fitWindriseStatue";
 import { readGroundLayerCells } from "#src/services/genshinAssets/fit/readGroundLayerCells";
+import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import {
@@ -35,19 +36,21 @@ export const fitWindriseScene = (only: readonly string[], options: { isDryRun: b
     {
       // Every area's outline in the catalogue is drawn round the oak's foot too, as the capitals are placed
       catalogue: fitAreaOutlines,
-      ground: async () =>
-        (
+      ground: async () => {
+        const source = await readGroundSource(DerivedAssetComponent.Windrise);
+        return (
           await fitGroundPieces(
-            DerivedAssetComponent.Windrise,
             {
               centre: { x: 0, z: 0 },
               half: GROUND_RADIUS,
               isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
               key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
             },
+            source,
             true,
           )
-        ).build,
+        ).build;
+      },
       // Mondstadt's capital is in the file Windrise's landmarks are, so the two are written one after the other
       landmarks: async (fitOptions) => {
         const landmarksPath = await fitRegionLandmarks(

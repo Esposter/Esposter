@@ -3,6 +3,7 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readGroundPieceAreas";
+import { readGroundSource } from "#src/services/genshinAssets/fit/readGroundSource";
 import { toGroundPiece } from "#src/services/genshinAssets/fit/toGroundPiece";
 
 export interface RegionGroundFit {
@@ -17,11 +18,11 @@ export interface RegionGroundFit {
 // Region swaps its plateau for them only then. An area with no outline has no piece, so the plateau's ground under it
 // Would be a hole once the plateau is retired, and it holds the region back the same way
 export const fitRegionGroundPieces = async (region: DerivedAssetComponent): Promise<RegionGroundFit> => {
-  const areas = await readRegionAreas(region);
+  const [areas, source] = await Promise.all([readRegionAreas(region), readGroundSource(region)]);
   const pieces: { areaId: string; build: GameDataBuild; isRefused: boolean }[] = [];
   for (const area of areas.filter(({ outline }) => outline.length > 0))
     // oxlint-disable-next-line no-await-in-loop -- one piece at a time, as runFits fits one at a time: a piece's compute holds the thread
-    pieces.push({ areaId: area.id, ...(await fitGroundPieces(region, toGroundPiece(region, area), true)) });
+    pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), source, true)) });
   const reasons = [
     ...pieces.filter(({ isRefused }) => isRefused).map(({ areaId }) => `${areaId} refused`),
     ...areas.filter(({ outline }) => outline.length === 0).map(({ id }) => `${id} has no outline`),

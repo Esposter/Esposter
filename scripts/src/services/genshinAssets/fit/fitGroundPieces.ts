@@ -1,6 +1,6 @@
-import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { GroundPiece } from "#src/models/genshinAssets/fit/GroundPiece";
+import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
 import { fitGroundPiece } from "#src/services/genshinAssets/fit/fitGroundPiece";
@@ -16,17 +16,17 @@ export interface GroundPiecesFit {
 // A piece fitted, and where its bar misses its gate, its four quarters fitted the same way, until each holds its gate or
 // Reads on fewer samples than a gate needs. A piece that cannot split is refused in place
 export const fitGroundPieces = async (
-  region: DerivedAssetComponent,
   piece: GroundPiece,
+  source: GroundSource,
   isSplittable: boolean,
 ): Promise<GroundPiecesFit> => {
-  const fit = await fitGroundPiece(region, piece);
+  const fit = await fitGroundPiece(piece, source);
   if (fit.isHeld) return { build: fit.build, isRefused: false };
   if (!isSplittable || fit.sampleCount < GROUND_GATE_SAMPLES) return { build: fit.build, isRefused: true };
   const quarters: GroundPiecesFit[] = [];
   for (const quarter of splitGroundPiece(piece))
     // oxlint-disable-next-line no-await-in-loop -- one piece at a time, as runFits fits one at a time: a piece's compute holds the thread
-    quarters.push(await fitGroundPieces(region, quarter, true));
+    quarters.push(await fitGroundPieces(quarter, source, true));
   return {
     build: mergeGameDataBuilds([
       fit.build,

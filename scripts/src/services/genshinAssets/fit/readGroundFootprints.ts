@@ -1,20 +1,16 @@
 import type { GroundFootprint } from "#src/models/genshinAssets/fit/GroundFootprint";
+import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
 import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { GroundPoint } from "genshin-engine";
-import type { Landmark } from "genshin-world";
 
 import { GroundFootprintSource } from "#src/models/genshinAssets/fit/GroundFootprintSource";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
 import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { selectCapitalCityArea } from "#src/services/genshinAssets/world/selectCapitalCityArea";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
 import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
 
 // Every place a region file stands a landmark on inside a square round the centre, each a disc on its point: a capital's
 // Radius the farthest corner of its city area's placements from its place, since the city's whole architecture stands
@@ -23,29 +19,18 @@ import { join } from "node:path";
 // Place stands in and every one within the bar's radius of those, since a capital is laid out across several (Inazuma
 // City's lower town, upper town and keep). The city areas are read only when a capital needs them
 export const readGroundFootprints = async (
+  { landmarks, origin }: GroundSource,
   centre: GroundPoint,
   halfSide: number,
   barRadius: number,
-  origin: readonly [number, number, number],
 ): Promise<{ cityAreas: CityArea[]; footprints: GroundFootprint[] }> => {
-  const regionsDirectory = join(WORLD_DATA_DIRECTORY, "regions");
-  const regionFiles = await readdir(regionsDirectory);
-  const landmarks = (
-    await Promise.all(
-      regionFiles.map(
-        async (file) =>
-          parseMachineJson<{ landmarks: Landmark[] }>(await readFile(join(regionsDirectory, file), "utf8")).landmarks,
-      ),
-    )
-  )
-    .flat()
-    .filter(
-      ({ position }) => Math.abs(position.x - centre.x) <= halfSide && Math.abs(position.z - centre.z) <= halfSide,
-    );
+  const squareLandmarks = landmarks.filter(
+    ({ position }) => Math.abs(position.x - centre.x) <= halfSide && Math.abs(position.z - centre.z) <= halfSide,
+  );
   let cityAreas: Promise<CityArea[]> | undefined;
   const capitalCityAreas = new Set<CityArea>();
   const footprints = await Promise.all(
-    landmarks.map(async (landmark): Promise<GroundFootprint> => {
+    squareLandmarks.map(async (landmark): Promise<GroundFootprint> => {
       const {
         id,
         position: { x, z },
