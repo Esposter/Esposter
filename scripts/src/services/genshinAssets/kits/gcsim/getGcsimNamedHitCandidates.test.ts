@@ -45,6 +45,7 @@ describe(getGcsimNamedHitCandidates, () => {
     queuedAttacks: [],
     talentFile: "amber.go",
     talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
+    holdCooldowns: [],
     travelMap: new Map(),
   };
   const tables: KitTables = {
