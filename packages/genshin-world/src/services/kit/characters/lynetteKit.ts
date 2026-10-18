@@ -19,6 +19,7 @@ const ASCENSION_1 = 1;
 const SYNERGY_ATTACK_BONUS = 0.08;
 const SYNERGY_ATTACK_BONUS_PER_EXTRA_TYPE = 0.04;
 const SYNERGY_SECONDS = 10;
+const CONSTELLATION_4 = 4;
 
 export const LYNETTE_CHARACTER_ID = 10_000_083;
 
@@ -27,8 +28,11 @@ export const LYNETTE_CHARACTER_ID = 10_000_083;
 // Long as the press is held, and its aligned attack, whose Surging Blade lands only off a ten-second cooldown, both of
 // Which need a hold whose hit lands at its held time and a conditional hit. The Bogglecat Box's vivid shots, which absorb
 // The Cryo, Pyro, Hydro and Electro of an enemy hit and set it off, and its absorb check, and her heal and HP drain on
-// Enigmatic Feint, which read her own HP. Sophisticated Synergy is built from Ascension 1; her Ascension 4 and her
-// Constellations are not
+// Enigmatic Feint, which read her own HP. Sophisticated Synergy is built from Ascension 1; her Ascension 4 passive and
+// Constellations 1, 2 and 6 are not built, and Constellation 4 adds a skill charge
+// Constellation 1 needs Enigma Thrust's Shadowsign hit and the vortex it makes, which Hold E does not build
+// Constellation 2 needs the Bogglecat Box's Vivid Shots, which the kit does not build
+// Constellation 6 needs Enigma Thrust's Anemo infusion and DMG Bonus, which Hold E does not build
 export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const bogglecatTick = readHit("bogglecatTick");
   const bogglecatFirstTickSeconds = readSeconds("bogglecatFirstTick");
@@ -61,5 +65,6 @@ export const createLynetteKitBehaviour = ({ readHit, readSeconds }: KitRecordRea
         });
       },
     },
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
   };
 };

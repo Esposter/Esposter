@@ -118,4 +118,14 @@ describe(createLynetteKitBehaviour, () => {
 
     expect(readSynergyBuffs(0)).toStrictEqual([]);
   });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    expect(LYNETTE_KIT.getSkillChargeBonus?.({ ...createLynetteCombatant(), constellationCount: 4 })).toBe(1);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    expect(LYNETTE_KIT.getSkillChargeBonus?.({ ...createLynetteCombatant(), constellationCount: 3 })).toBe(0);
+  });
 });
