@@ -11,6 +11,7 @@ import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/eva
 import { getGoRootName } from "#src/services/genshinAssets/kits/gcsim/getGoRootName";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { readGoBranchAt } from "#src/services/genshinAssets/kits/gcsim/readGoBranchAt";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -81,7 +82,8 @@ const readCopySource = (tokens: readonly GoToken[], position: number): string | 
 // The talent variable its multiplier is rooted in, followed through the locals naming a slice of it. The code reads in
 // Source order, so an attack is the literal or copy its variable names as of the line: a `Mult` the code sets after a
 // Literal is an attack of its own under the variable it names, and a copy `aiC2 = ai` is the source as of the copy with
-// Its later sets, its site the copy's own line, not the literal's
+// Its later sets, its site the copy's own line, not the literal's. A set or a literal inside an if or else is tagged with
+// The branch it sits in, which a call after the branches reads
 export const readGcsimAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -91,9 +93,18 @@ export const readGcsimAttacks = (
     const tokens = tokenizeGo(source);
     const aliasMap = readGoAliases(tokens);
     const stringMap = readGoStringConstants(tokens);
+    const readBranchAt = readGoBranchAt(tokens);
+    // The attack placed at a position with the branch that position sits in, its key left out when there is none, so a
+    // Copy's branch from its source does not carry over
+    const withBranch = (attack: GcsimAttack, position: number): GcsimAttack => {
+      const branch = readBranchAt(position);
+      const placed: GcsimAttack = { ...attack, branch };
+      if (branch === undefined) delete placed.branch;
+      return placed;
+    };
     const attacks: GcsimAttack[] = [];
     const readVariableAttack = (variableName: string, line: number) =>
-      attacks.filter((attack) => attack.variableName === variableName && attack.line < line).at(-1);
+      attacks.findLast((attack) => attack.variableName === variableName && attack.line < line);
     for (const [position, token] of tokens.entries()) {
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
         // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
@@ -117,30 +128,37 @@ export const readGcsimAttacks = (
         const poiseDamage = evaluateNumber("PoiseDMG");
         const poiseField = fieldMap.get("PoiseDMG");
         const abilExpression = fieldMap.get("Abil")?.expression;
-        attacks.push({
-          abil:
-            abilExpression?.kind === GoExpressionKind.String
-              ? abilExpression.value
-              : getName(abilExpression) === undefined
-                ? undefined
-                : stringMap.get(getName(abilExpression) ?? ""),
-          attackTag: getName(fieldMap.get("AttackTag")?.expression),
-          durability: evaluateNumber("Durability"),
-          element: getName(fieldMap.get("Element")?.expression),
-          fieldLineMap: Object.fromEntries(Array.from(fieldMap, ([key, { line }]) => [key, line])),
-          file,
-          internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
-          line: token.line,
-          poiseDamage,
-          poiseDamageVariable:
-            poiseDamage === undefined && poiseField !== undefined ? getGoRootName(poiseField.expression) : undefined,
-          siteLine: token.line,
-          talentVariable:
-            multiplierField === undefined
-              ? undefined
-              : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
-          variableName: readVariableName(tokens, position),
-        });
+        attacks.push(
+          withBranch(
+            {
+              abil:
+                abilExpression?.kind === GoExpressionKind.String
+                  ? abilExpression.value
+                  : getName(abilExpression) === undefined
+                    ? undefined
+                    : stringMap.get(getName(abilExpression) ?? ""),
+              attackTag: getName(fieldMap.get("AttackTag")?.expression),
+              durability: evaluateNumber("Durability"),
+              element: getName(fieldMap.get("Element")?.expression),
+              fieldLineMap: Object.fromEntries(Array.from(fieldMap, ([key, { line }]) => [key, line])),
+              file,
+              internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
+              line: token.line,
+              poiseDamage,
+              poiseDamageVariable:
+                poiseDamage === undefined && poiseField !== undefined
+                  ? getGoRootName(poiseField.expression)
+                  : undefined,
+              siteLine: token.line,
+              talentVariable:
+                multiplierField === undefined
+                  ? undefined
+                  : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
+              variableName: readVariableName(tokens, position),
+            },
+            position,
+          ),
+        );
       } else if (
         token.text === "Mult" &&
         checkIsGoPunctuation(tokens[position - 1], ".") &&
@@ -154,17 +172,24 @@ export const readGcsimAttacks = (
           position,
         );
         if (literalAttack === undefined || talentVariable === undefined) continue;
-        attacks.push({
-          ...literalAttack,
-          fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
-          line: token.line,
-          talentVariable,
-        });
+        attacks.push(
+          withBranch(
+            {
+              ...literalAttack,
+              fieldLineMap: { ...literalAttack.fieldLineMap, Mult: token.line },
+              line: token.line,
+              talentVariable,
+            },
+            position,
+          ),
+        );
       } else {
         const copySource = readCopySource(tokens, position);
         const sourceAttack = copySource === undefined ? undefined : readVariableAttack(copySource, token.line);
         if (sourceAttack === undefined) continue;
-        attacks.push({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text });
+        attacks.push(
+          withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
+        );
       }
     }
     return attacks;

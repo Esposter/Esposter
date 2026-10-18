@@ -10,7 +10,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
-import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
 import { SKILL_TARGETING_AREA } from "genshin-world";
 
 // The candidates a hit's writer gives at its key, by their field names
@@ -53,10 +53,10 @@ export const getGcsimNamedHitCandidates = (gcsim: GcsimCharacter, tables: KitTab
     // Each call carries the declaration its attack is made from, which a list may take the calls of several keys from
     const attackCalls = queuedAttacks
       .flatMap((queuedAttack) => {
-        const attack = findQueuedAttack(attacks, queuedAttack);
-        return attack?.talentVariable === variable
-          ? [{ ...queuedAttack, site: `${attack.file}:${attack.siteLine}` }]
-          : [];
+        const callAttack = findQueuedAttacks(attacks, queuedAttack).find(
+          (candidate) => candidate.talentVariable === variable,
+        );
+        return callAttack === undefined ? [] : [{ ...queuedAttack, site: `${callAttack.file}:${callAttack.siteLine}` }];
       })
       .toSorted((left, right) => (left.delay ?? Number.MAX_SAFE_INTEGER) - (right.delay ?? Number.MAX_SAFE_INTEGER));
     for (const leaf of leaves) {
