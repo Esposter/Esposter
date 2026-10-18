@@ -4,7 +4,7 @@
 
 ## 2. The package
 
-- [ ] 2.1 Create the `mjml-blocks` package as the `file-organization` skill's new-package page sets out, depending on `headless-block-editor` and `@esposter/shared`, with `mjml` as a development dependency only. Verify: `pnpm build` in the package succeeds and its bundle size snapshot is written.
+- [x] 2.1 Create the `mjml-blocks` package as the `file-organization` skill's new-package page sets out, depending on `headless-block-editor` and `@esposter/shared`, with `mjml` as a development dependency only. Verify: `pnpm build` in the package succeeds and its bundle size snapshot is written.
 - [ ] 2.2 Write the attribute grammar and every type's attribute table, with the props schemas and field descriptors derived from them. Verify: tests named after the scenario 'An attribute value MJML's type refuses', and tests holding every table equal to the installed components' `allowedAttributes` and `defaultAttributes`.
 - [ ] 2.3 Write every type's slot and the root's content from MJML's nesting rules. Verify: tests named after the scenarios 'A section accepts only columns and groups' and 'A text at the root is refused', and a test holding every slot equal to `mjml-preset-core`'s `dependencies`.
 - [ ] 2.4 Write the three content kinds and the image's alternative text. Verify: tests named after the scenarios 'Raw HTML is cleaned before it is stored', 'An image without alternative text is refused' and 'A decorative image renders an empty alternative text'.

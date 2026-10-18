@@ -49,17 +49,19 @@ Each type declares its attributes once, as a table in MJML's own type grammar: `
 - **the props schema**: each type string becomes a Zod schema that accepts what MJML's type validator accepts, so a value the validator would refuse never reaches the compile;
 - **the field descriptors** the editor's style fields read: the kind of control, the units, the count of values and the options, so the email's fields need no attribute table of their own.
 
-A test holds every table equal to the installed component's `allowedAttributes`, less the excluded `css-class` and `mj-class`. A second test holds every type's `defaultAttributes` equal to the component's own. An MJML upgrade that adds, removes or retypes an attribute, or changes a default, fails a test.
+A test holds every table equal to the installed component's `allowedAttributes`, less the excluded `css-class` and `mj-class`. A second test holds every type's `defaultAttributes` equal to the component's own. An MJML upgrade that adds, removes or retypes an attribute, or changes a default, fails a test. The tests read MJML's component set and nesting map from `mjml-preset-core` at run time and parse them with Zod. That preset ships no declarations, and the parse leaves the package with no type shim over it.
 
-**An unset attribute stays absent.** A node's props hold only what the author set, and `resolveMjmlAttributes` answers what an attribute resolves to, in MJML's order: the node's own value, then the root's per-type `mj-attributes`, then its `mj-all`, then MJML's default. The canvas draws with what it answers and the style field shows it as the inherited placeholder. The compile is left to apply the same cascade itself. Rejected: MJML's defaults as Zod defaults on each props schema, which the email change first chose. Parsing would then write every default into every node, so `mj-attributes` could never apply and the MJML would carry every attribute of every node.
+Each type is a definition of the core's registry with three additions: its attribute table, its MJML defaults and its render to MJML's JSON form. A consumer's own leaf brings its own render, so the render fold has no case for any type. `createMjmlRegistry` takes the rich text definition and the consumer's leaf types. It adds each leaf type to the registry and to the column's and the hero's slots.
+
+**An unset attribute stays absent.** A node's props hold only what the author set, and `resolveMjmlAttributes` answers what an attribute resolves to, in MJML's order: the node's own value, then the root's per-type `mj-attributes`, then its `mj-all`, then MJML's default. The canvas draws with what it answers and the style field shows it as the inherited placeholder. The compile is left to apply the same cascade itself. An attribute named under `mj-all` applies to a type only when that type takes the attribute and the value passes that type's own grammar for it. `width` is `unit(px)` on one type and `unit(px,%)` on another, so a value for all is checked where it lands rather than against a single type. Rejected: MJML's defaults as Zod defaults on each props schema, which the email change first chose. Parsing would then write every default into every node, so `mj-attributes` could never apply and the MJML would carry every attribute of every node.
 
 ## Content
 
-Three kinds of component carry content rather than children:
+Three kinds of component carry content rather than children, each in the node's `content` prop:
 
 - **Rich text**, in `mj-text` and `mj-accordion-text`. Its schema and its HTML come from the consumer: `createMjmlRegistry` takes a rich text definition of a content schema, a `renderHtml` and a `parseHtml`. The app passes the Note's ProseMirror node schema and the `@tiptap/html` functions the Note's server rendering already uses, so the package knows nothing of ProseMirror.
-- **Plain labels**, in `mj-button`, `mj-navbar-link`, `mj-social-element` and `mj-accordion-title`. These are written through `escapeText` from `@esposter/shared`.
-- **Raw HTML**, in `mj-raw` and `mj-table`. Its schema stores what `sanitizeHtml` returns, as the webpage's custom HTML does, so the closed vectors are regression tests here too.
+- **Plain labels**, in `mj-button`, `mj-navbar-link`, `mj-social-element` and `mj-accordion-title`. These are written through `escapeText` from `@esposter/shared`. An imported label that holds an element is refused at its node rather than reduced to its text, because the email editor edits a label as plain text.
+- **Raw HTML**, in `mj-raw` and `mj-table`. The schema refuses HTML that `sanitizeHtml` would change, and the read back stores what `sanitizeHtml` returns, so a raw block only ever holds the sanitiser's output, as the webpage's custom HTML does. The closed vectors are regression tests here too.
 
 ## Rendering and reading back
 
@@ -70,7 +72,7 @@ flowchart LR
   NODE --> JSON["MJML's JSON form, the head from the root's props"]
   JSON --> COMPILE["the consumer's compile: mjml2html, strict validation"]
   JSON --> TEXT["serializeMjml: MJML source for the export"]
-  SOURCE["MJML source"] --> PARSE["MJML's own XML parser"]
+  SOURCE["MJML source"] --> PARSE["node-html-parser: each ending tag's content kept raw, attributes decoded"]
   PARSE --> READ["parseMjmlDocument: each tag a node, content through parseHtml"]
   READ --> SCHEMA{"the registry's document schema"}
   SCHEMA -->|accepted| DOC
@@ -79,7 +81,12 @@ flowchart LR
 
 `renderMjmlDocument` folds the document through the core's `renderBlockNodes` into MJML's JSON form: a tag, its attributes, and its children or its content. `mjml2html` takes that form in place of markup and skips its XML parser, so no MJML source is built just to be parsed again. MJML writes an attribute value into its output exactly as given, unescaped, so the render escapes every value once with `escapeAttribute`, and every address prop passes `checkIsAllowedUrl` at its schema. `serializeMjml` writes the same JSON as MJML source for the export, its values already escaped. An option stamps each node's id as its `css-class`, so the [proof](../resource-page-builder-performance-and-proof/design.md) can find each node's box in the compiled email.
 
-`parseMjmlDocument` is the inverse, at parity with the plugin's MJML import. MJML's own XML parser reads the source into the same JSON form. Each tag the registry knows becomes a node with its attributes as props, rich content goes through the consumer's `parseHtml`, and the result is parsed by the registry's document schema. A tag the package leaves out, an attribute it does not take or a value its type refuses is named in the refusal, so an import fails at the node that does not fit and keeps no part of a document silently. A test round-trips every type: rendering a parsed document returns the source's JSON form.
+`parseMjmlDocument` is the inverse, at parity with the plugin's MJML import. `node-html-parser`, the HTML parser the workspace already depends on, reads the source with each MJML ending tag's content kept as raw text, every attribute value decoded and every self-closing tag closed. Each body tag becomes a node of that type, with its attributes as its props. Rich content goes through the consumer's `parseHtml`. Each head tag becomes its root prop, and an unknown one is kept under its own tag name, where the root's strict schema refuses it. The result is parsed by the registry's document schema, so one refusal path names the node that does not fit: a tag the package leaves out, an attribute it does not take, or a value its type refuses. An import keeps no part of a document silently. A test round-trips every type: rendering a parsed document returns the source's JSON form.
+
+Two parsers were rejected:
+
+- MJML's own XML parser, `mjml-parser-xml`. By default it drops an `mj-include` without a word, it needs MJML's component registry to know which tags are ending tags, and it reads the disk and the working directory, so the runtime would carry MJML.
+- parse5, the sanitiser's HTML parser. It reads a self-closing custom tag as an open one, which swallows the tag's siblings: the plugin's import defect [#149](https://github.com/GrapesJS/mjml/issues/149).
 
 The compile is not the package's. It is one call to `mjml2html` with strict validation, on MJML's Node package, in whatever runtime the consumer compiles in. The package's runtime holds no copy of MJML, which is a development dependency for the tests that hold its tables equal to the installed release.
 
@@ -99,7 +106,9 @@ The component requests (the table, the carousel, the preview text, a social elem
 
 | File                                                                       | Role after the change                                        |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `packages/mjml-blocks/package.json`                                        | the package; MJML and its preset as development dependencies |
 | `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the registry's document schema, which a parsed import passes |
+| `packages/headless-block-editor/src/services/renderBlockNodes.ts`          | the fold the render walks the document with                  |
 | `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`             | escapes every attribute value the render writes              |
 | `packages/shared/src/services/sanitizeHtml/escapeText.ts`                  | escapes every plain label                                    |
 | `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw types store                                     |
@@ -118,4 +127,5 @@ openspec/specs/mjml-blocks/           the package's area: how it works, the Upst
 - [MJML documentation](https://documentation.mjml.io/) — the component set, each component's attributes and defaults, the head components, and "Using MJML in JSON", the object form `mjml2html` takes in place of markup.
 - `mjml-core` 5's `createComponent` — `htmlAttributes` writes `name="value"` with the value as given, which is why the render escapes.
 - `mjml-preset-core`'s `dependencies` — the allowed children of every tag, which the slots are held equal to.
+- `mjml-parser-xml` 5's `MJMLParser` — `ignoreIncludes` defaults to true and returns before an `mj-include` becomes a node, and the ending tags come from the `components` option, which is why the read back uses a parser of its own.
 - [GrapesJS MJML](https://github.com/GrapesJS/mjml) — the plugin whose surface the package meets, and whose tracker the Upstream table answers.
