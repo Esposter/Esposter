@@ -208,7 +208,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `unocss`                                | —                     | Keep — framework  | the styling engine                                                                                     |
 | `unplugin-auto-import`                  | —                     | Keep — tooling    | auto-imports in the packages' builds                                                                   |
 | `unplugin-vue`                          | —                     | Keep — tooling    | Vue SFCs in the packages' builds                                                                       |
-| `unstorage`                             | —                     | Keep — framework  | Nitro's storage layer, which Nitro loads from the app for its key-value mounts                         |
+| `unstorage`                             | —                     | Keep — hold       | Nitro 3 resolves it from the app for its key-value mounts (`@TODO` in the catalog)                     |
 | `vite`                                  | —                     | Keep — tooling    | the dev server and bundler                                                                             |
 | `vite-plugin-glsl`                      | —                     | Keep — tooling    | the shader plugin the module loads only when its glsl option is on, an optional peer                   |
 | `vite-plus`                             | —                     | Keep — tooling    | the task runner, lint and format                                                                       |

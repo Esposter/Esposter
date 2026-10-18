@@ -44,7 +44,6 @@ A marker is revisited on every bump of the package it links and whenever its iss
 Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. The repository's owner files them by hand when one is wanted, so a session leaves the list as it is and never asks to file one.
 
 - `apps/web/app/components/Ui/Slider.vue` — vuetifyjs/0: "Slider: `end` is emitted only on pointerup, never for a keyboard change"
-- `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue` — vue-pdf-viewer: "Menus and popovers portal to `body`, unusable inside a modal `<dialog>`"
 - `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
 - `packages/trpc-nuxt-module/src/runtime/client/models/TRPCNuxtClient.test-d.ts` — arktype/arktype: "attest: instantiation counts fail under a tsgo-backed `typescript` — `@typescript/vfs` reports the probe file as existing, then finds no source file for it"
 - `apps/web/shared/types/nuxt.d.ts` — nuxt/nuxt: "The server project types neither `import.meta.env` for `shared/` code nor a module's Nitro runtime hooks"
@@ -52,6 +51,6 @@ Each row is a marker in the unfiled form, waiting for its issue to be filed: the
 - `apps/web/configuration/hooks.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt.server` has no `upgrade`, so `nuxt dev` drops every WebSocket upgrade"
 - `apps/web/modules/mountLegacyDevHandlers.ts` — nuxt/nuxt: "The Nitro 2 compatibility layer widens a routed dev handler only when it is middleware, though Nitro 2 mounted every dev handler as a prefix, so `@nuxt/fonts` serves no font in dev"
 - `apps/web/modules/servePublicDirectory.ts` — nuxt/nuxt: "With `nitroViteEnvironment`, `nuxt dev` runs Vite's transform on every script in `public/`, serving it as a module exporting its own URL"
-- `pnpm-workspace.yaml` — nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"; nuxt/nuxt: "`@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, which Nitro 3 resolves from the app"
+- `pnpm-workspace.yaml` — nitrojs/nitro: "A storage mount's unstorage fs driver loads `chokidar`, which nothing declares"; nuxt/nuxt: "`@nuxt/nitro-server` aliases `bufferutil` to the bare `mocked-exports/proxy`, which Nitro 3 resolves from the app"; nuxt/nuxt: "Nitro 3 resolves unstorage from the app for the `kv` mounts Nuxt's storage options become, needing 2 where the app's modules install 1"
 - `knip.config.ts` — the same nitrojs/nitro and nuxt/nuxt issues as `pnpm-workspace.yaml`'s row, on the app's `ignoreDependencies` entries for the packages they leave nothing in the app importing
 - `packages/genshin-world/src/components/World/Session/Index.vue` — tresjs/tres: "A canvas switched from `renderMode: 'manual'` to `'always'` after drawing its owed frame never draws again — always mode owes a frame only once it has drawn"
