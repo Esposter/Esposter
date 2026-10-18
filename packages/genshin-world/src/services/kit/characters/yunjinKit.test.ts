@@ -27,10 +27,12 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { getDeployedStrikeBonuses } from "#src/services/kit/getDeployedStrikeBonuses";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createParty } from "#src/services/party/createParty";
 import { createPartyMember } from "#src/services/party/createPartyMember";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -50,6 +52,9 @@ const createYunjinCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Polearm,
 });
+// A teammate of Yun Jin's, with Yun Jin's kit standing in for its own, which none of these tests reads
+const OTHER_CHARACTER_ID = 1;
+const createTeammate = (): Combatant => ({ ...createYunjinCombatant(), characterId: OTHER_CHARACTER_ID });
 
 const castStart = (action: KitAction, combatant = createYunjinCombatant()): KitEffectState => {
   const context = createKitTestContext(combatant);
@@ -267,6 +272,21 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     combatant,
     hit,
   });
+  const teamParty = createParty([YUNJIN_CHARACTER_ID, OTHER_CHARACTER_ID]);
+  // The flat base damage a teammate's normal attack adds from the team's party strike hooks, as a strike of the team takes it
+  const getPartyIncrease = (
+    teammate: Combatant,
+    characterIdCombatantMap: Map<number, Combatant>,
+    kitEffectState: KitEffectState,
+  ) =>
+    getDeployedStrikeBonuses(
+      strikeOf(teammate, NORMAL_ATTACK_HIT, AttackTag.NormalAttack),
+      getDeployedCombatants(teamParty, characterIdCombatantMap),
+      enemy,
+      teamParty,
+      kitEffectState.effects,
+      characterIdCombatantMap,
+    ).additiveBaseDamageBonus;
 
   test("the burst puts the banner up, so a normal attack's hit gains the increase", () => {
     expect.hasAssertions();
@@ -347,6 +367,60 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     expect(getIncrease(normalAttack, context.kitEffectState)).toBeGreaterThan(0);
     YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
     expect(getIncrease(normalAttack, context.kitEffectState)).toBe(0);
+  });
+
+  test("a teammate's normal attack takes the banner's increase while it stands", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const teammate = createTeammate();
+    const characterIdCombatantMap = new Map([
+      [YUNJIN_CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, teammate],
+    ]);
+    const context = createKitTestContext(combatant, { characterIdCombatantMap, party: teamParty });
+    YUNJIN_KIT.elementalBurst.onStart?.(context);
+
+    expect(getPartyIncrease(teammate, characterIdCombatantMap, context.kitEffectState)).toBeCloseTo(
+      0.3216 * combatant.attributes.defense,
+    );
+  });
+
+  test("each enemy a teammate's normal attack damages spends one of the banner's 30 stacks", () => {
+    expect.hasAssertions();
+    const combatant = createYunjinCombatant();
+    const teammate = createTeammate();
+    const characterIdCombatantMap = new Map([
+      [YUNJIN_CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, teammate],
+    ]);
+    const context = createKitTestContext(combatant, { characterIdCombatantMap, party: teamParty });
+    YUNJIN_KIT.elementalBurst.onStart?.(context);
+    const damageTaken: KitEvent = {
+      attackTag: AttackTag.NormalAttack,
+      enemy,
+      hit: NORMAL_ATTACK_HIT,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: teammate,
+    };
+
+    for (let spent = 0; spent < 29; spent++) YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
+    expect(getPartyIncrease(teammate, characterIdCombatantMap, context.kitEffectState)).toBeGreaterThan(0);
+    YUNJIN_KIT.onKitEvent?.(damageTaken, context, combatant);
+    expect(getPartyIncrease(teammate, characterIdCombatantMap, context.kitEffectState)).toBe(0);
+  });
+
+  test("Constellations 1, 2 and 6 give no increase, which stays 0.3216 of her DEF", () => {
+    expect.hasAssertions();
+    for (const constellationCount of [1, 2, 6]) {
+      const combatant = { ...createYunjinCombatant(), constellationCount };
+      const kitEffectState = castStart(YUNJIN_KIT.elementalBurst, combatant);
+
+      expect(getIncrease(strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack), kitEffectState)).toBeCloseTo(
+        0.3216 * combatant.attributes.defense,
+      );
+    }
   });
 
   test("with four Elemental Types on the team, Ascension 4 adds 11.5% of her DEF to the banner's increase", () => {

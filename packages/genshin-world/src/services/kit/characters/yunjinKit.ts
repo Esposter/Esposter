@@ -16,6 +16,7 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { openKitCounterWindow } from "#src/services/kit/effects/openKitCounterWindow";
 import { takeOne } from "@esposter/shared";
@@ -51,7 +52,7 @@ const checkIsBannerStanding = (effects: readonly KitEffect[], characterId: numbe
   checkIsKitStatusActive(effects, characterId, BANNER_STATUS_ID) &&
   countKitResource(effects, characterId, BANNER_STATUS_ID) > 0;
 
-// Spends one of the banner's stacks, as each enemy a normal attack of hers damages does while it stands
+// Spends one of the banner's stacks, as each enemy a normal attack of any member's damages does while it stands
 const spendBannerStack = (effects: readonly KitEffect[], characterId: number): void => {
   const banner = findKitStatus(effects, characterId, BANNER_STATUS_ID);
   if (banner) banner.stacks = countKitResource(effects, characterId, BANNER_STATUS_ID) - 1;
@@ -65,9 +66,13 @@ const getAscension4DefenseShare = ({ ascension, deployedElements = [] }: Combata
   return ASCENSION_4_DEFENSE_SHARES[elementCount - 1] ?? 0;
 };
 
+// The banner's flat base damage on a normal attack, its share of Yun Jin's DEF with Ascension 4's share on top
+const getBannerIncrease = (banner: Combatant): number =>
+  (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(banner)) * banner.attributes.defense;
+
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
-// Cliffbreaker's Banner's DEF-scaled DMG Increase is built on her own normal attacks, as the owner ruled, with
-// Ascension 4's share of the team's Elemental Types on top. The party's share, which gcsim also gives, is not built.
+// Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take it through
+// her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental Types on top
 // Ascension 1's counter window is built.
 // Constellation 4's DEF is built, from her own Crystallize
 // Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
@@ -103,7 +108,6 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
     onKitEvent: (event, context, combatant) => {
       if (
         event.kind === KitEventKind.DamageTaken &&
-        event.striker.characterId === combatant.characterId &&
         event.attackTag === AttackTag.NormalAttack &&
         checkIsBannerStanding(context.kitEffectState.effects, combatant.characterId)
       )
@@ -131,12 +135,17 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
         source: CONSTELLATION_4_SOURCE,
       });
     },
-    // Cliffbreaker's Banner's DMG Increase on her own normal attacks while it stands: a share of her DEF as flat base
-    // Damage, priced from the striker as its buffs leave it
+    // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
       strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
-        ? (BANNER_DEFENSE_SHARE + getAscension4DefenseShare(strike.combatant)) * strike.combatant.attributes.defense
+        ? getBannerIncrease(strike.combatant)
         : 0,
+    // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
+      if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};
+      const buffedMember = getBuffedCombatant(member, effects, party, characterIdCombatantMap);
+      return { additiveBaseDamageBonus: getBannerIncrease(buffedMember) };
+    },
     // While the window stands, her skill's release plays its top level, whatever seconds it was held
     jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>
       checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, ASCENSION_1_COUNTER_WINDOW_ID),
