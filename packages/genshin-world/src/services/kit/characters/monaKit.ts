@@ -33,6 +33,10 @@ export const MONA_CHARACTER_ID = 10_000_041;
 // Stellaris Phantasm holds each enemy its cast strikes in its bubble, whose burst leaves the Omen. From Ascension 1 every
 // 2 seconds of sprint casts a phantom that explodes as it ends, and from Ascension 4 her Energy Recharge raises her Hydro
 // DMG Bonus
+// Constellation 1 needs reaction DMG and Frozen duration bonuses for the party, which no hook carries
+// Constellation 2 needs a chance-based Charged Attack after each Normal Attack, which the kit does not roll
+// Constellation 4 needs a CRIT Rate bonus on every member's strikes against Omen, which only the striker's kit reaches
+// Constellation 6 needs the sprint-based Charged Attack bonus, which a strike hook cannot read without kit state
 export const createMonaKitBehaviour = ({ readHits }: KitRecordReader): KitBehaviour => {
   const mirrorReflectionHits = readHits("mirrorReflectionPhantom");
   const sprintPhantomHits = readHits("sprintPhantom");
