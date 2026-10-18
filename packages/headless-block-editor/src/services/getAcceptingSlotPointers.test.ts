@@ -3,17 +3,15 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import { TEST_DOCUMENT, TEST_REGISTRY } from "#src/services/constants.test";
 import { getAcceptingSlotPointers } from "#src/services/getAcceptingSlotPointers";
 import { describe, expect, test } from "vitest";
-import { z } from "zod";
 
 describe(getAcceptingSlotPointers, () => {
   const recursiveRegistry: BlockRegistry = {
     ...TEST_REGISTRY,
-    types: [
-      { propsSchema: z.object({}), slots: { children: ["heading", "list", "section"] }, type: "section" },
-      { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
-      { propsSchema: z.object({}), slots: { items: ["item"] }, type: "list" },
-      { propsSchema: z.object({ text: z.string() }), slots: {}, type: "item" },
-    ],
+    types: TEST_REGISTRY.types.map((definition) =>
+      definition.type === "section"
+        ? { ...definition, slots: { children: ["heading", "list", "section"] } }
+        : definition,
+    ),
   };
 
   test("accepting slots for a heading", () => {
