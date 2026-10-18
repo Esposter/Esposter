@@ -3,8 +3,10 @@ import type { GameText } from "genshin-text";
 
 import MenuGlyph from "#src/components/Menu/Glyph/Index.vue";
 import MenuScrollTrack from "#src/components/Menu/ScrollTrack/Index.vue";
+import MenuWorldLevelPrompt from "#src/components/Menu/WorldLevelPrompt/Index.vue";
 import { MenuDialogIcon } from "#src/models/menu/MenuDialogIcon";
 import { MenuPromptIcon } from "#src/models/menu/MenuPromptIcon";
+import { computeWorldLevelAdjustPrompt } from "#src/services/adventureRank/computeWorldLevelAdjustPrompt";
 import { computeWorldLevelCooldown } from "#src/services/adventureRank/computeWorldLevelCooldown";
 import { WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS } from "#src/services/adventureRank/constants";
 import { MENU_DIALOG_CORNER_SCALES } from "#src/services/menu/constants";
@@ -21,6 +23,8 @@ interface Props {
   // It can
   isWorldLevelAdjustable: boolean;
   isWorldLevelLowered: boolean;
+  // The World Level the world plays at, which the prompt's change is set against
+  worldLevel: number;
   // The server's clock minus this machine's, which the cooldown is read against
   serverClockOffsetMs?: number;
   // When the World Level last changed, which holds the button until its cooldown has run
@@ -32,12 +36,23 @@ const {
   isWorldLevelAdjustable,
   isWorldLevelLowered,
   serverClockOffsetMs = 0,
+  worldLevel,
   worldLevelChangedAt,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; toggleWorldLevel: [] }>();
 const frame = useTemplateRef("frame");
 const body = useTemplateRef("body");
 const info = useTemplateRef("info");
+// The Change World Level prompt the button opens over the dialog, which its Confirm makes the change through. The World
+// Level unlocked is the one played at, one higher while it is lowered
+const isAdjustPromptOpen = ref(false);
+const adjustPrompt = computed(() =>
+  computeWorldLevelAdjustPrompt(worldLevel + Number(isWorldLevelLowered), { isLowered: isWorldLevelLowered }),
+);
+const confirmAdjustment = () => {
+  isAdjustPromptOpen.value = false;
+  emit("toggleWorldLevel");
+};
 // The dividers above and below the body, each a hairline ending in a star and a diamond at either side
 const dividerTops = [74, 582];
 const infoSegments = computed(() => splitGameTextColors(gameText[GameTextKey.WorldLevelInfo]));
@@ -86,7 +101,7 @@ onMounted(() => {
     @keydown.esc.stop="emit('close')"
   >
     <div class="backdrop" />
-    <div ref="frame" class="frame" tabindex="-1">
+    <div ref="frame" class="frame" :inert="isAdjustPromptOpen" tabindex="-1">
       <div v-for="scale of MENU_DIALOG_CORNER_SCALES" :key="scale" class="corner" :style="{ scale }">
         <MenuGlyph :glyph="MenuDialogGlyphMap[MenuDialogIcon.Corner]" class="corner-glyph" />
       </div>
@@ -135,7 +150,7 @@ onMounted(() => {
         class="adjust"
         :disabled="isCoolingDown"
         :kind="GameButtonKind.Pill"
-        @click="emit('toggleWorldLevel')"
+        @click="isAdjustPromptOpen = true"
       >
         <span class="disc" />
         <MenuGlyph
@@ -148,6 +163,13 @@ onMounted(() => {
         }}</span>
       </GameButton>
     </div>
+    <MenuWorldLevelPrompt
+      v-if="isAdjustPromptOpen"
+      :adjust-prompt
+      :game-text
+      @close="isAdjustPromptOpen = false"
+      @confirm="confirmAdjustment()"
+    />
   </GameScreen>
 </template>
 

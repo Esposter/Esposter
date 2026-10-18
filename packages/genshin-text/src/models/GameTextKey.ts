@@ -92,6 +92,8 @@ export enum GameTextKey {
   CandlecapMushroom = "767225220",
   Carrot = "3407195260",
   Cecilia = "3828726124",
+  // The Change World Level prompt over the World Level dialog: its title, the World Level now and the one the change sets
+  ChangeWorldLevel = "UI_WORLDLEVEL_ADJUST_TITLE",
   Character = "UI_STC_GAMEENTRYPAGE_PLAYER",
   CharacterArchive = "UI_PLAYER_PROFILE_CHARACTER_NEW",
   // The character screen's tabs
@@ -670,7 +672,16 @@ export enum GameTextKey {
   // Their colour tags, and its button lowering the World Level by one or restoring it once lowered
   WorldLevelInfo = "UI_WORLDLEVEL_INFO",
   WorldLevelLower = "UI_WORLDLEVEL_DOWN_BUTTON",
+  // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
+  // the restoring's tips and label
+  WorldLevelAdjustedTo = "UI_WORLDLEVEL_ADJUST_HINT",
+  WorldLevelCurrent = "UI_WORLDLEVEL_ADJUST_CURRENT_INFO",
+  WorldLevelLowered = "UI_WORLDLEVEL_ADJUST_DOWN_AIM_INFO",
+  WorldLevelLowerQuestion = "UI_WORLDLEVEL_ADJUST_HINT_GETEASY_",
+  WorldLevelLowerTips = "UI_WORLDLEVEL_ADJUST_DOWN_TIPS",
   WorldLevelRevert = "UI_WORLDLEVEL_UP_BUTTON",
+  WorldLevelReverted = "UI_WORLDLEVEL_ADJUST_UP_AIM_INFO",
+  WorldLevelRevertTips = "UI_WORLDLEVEL_ADJUST_UP_TIPS",
   ZaytunPeach = "492153948",
   // The map's zoom slider, named by the game's own word for Zoom
   Zoom = "UI_BUTTON_ZOOM",
