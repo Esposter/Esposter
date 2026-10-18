@@ -120,6 +120,11 @@ const getPartyAdditiveBonus = (context: KitContext, nicole: Combatant, strike: K
   NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
     ?.additiveBaseDamageBonus ?? 0;
 
+// The share of its enemy's defence Nicole's kit has a strike of a deployed member ignore, zero when it ignores none
+const getPartyDefenceIgnored = (context: KitContext, nicole: Combatant, strike: KitStrike, enemy: Enemy): number =>
+  NICOLE_KIT.getPartyStrikeBonus?.(nicole, strike, enemy, context.party, context.kitEffectState.effects)
+    ?.defenseIgnored ?? 0;
+
 describe(createNicoleKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -645,5 +650,89 @@ describe(createNicoleKitBehaviour, () => {
     expect(
       NICOLE_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects),
     ).toBe(700);
+  });
+
+  test("her sixth constellation ignores 40% of an upgraded character's defence on its hits, and none before the upgrade", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole, traveler } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 6,
+    });
+    const strike = createTravelerStrike(context, traveler, AttackTag.NormalAttack);
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    expect(getPartyDefenceIgnored(context, nicole, strike, enemy)).toBe(0);
+
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    expect(getPartyDefenceIgnored(context, nicole, strike, enemy)).toBe(0.4);
+  });
+
+  test("her sixth constellation ignores 40% of defence on her own upgraded hits", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 6,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+    const strike: KitStrike = {
+      attackTag: AttackTag.ElementalSkill,
+      body: context.body,
+      combatant: nicole,
+      hit: TRAVELER_HIT,
+    };
+
+    expect(NICOLE_KIT.getStrikeDefenceIgnored?.(strike, enemy, context.party, context.kitEffectState.effects)).toBe(
+      0.4,
+    );
+  });
+
+  test("her sixth constellation holds her fourth ascension's buff on herself as long as her skill's buff stands", () => {
+    expect.hasAssertions();
+    const { context, enemy, nicole } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 4,
+      constellationCount: 6,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+    stepKitSeconds(context, 10);
+
+    expect(getBuffs(context, NICOLE_CHARACTER_ID).map(({ source }) => source)).toContain("nicole-a1");
+  });
+
+  test("her sixth constellation upgrades each other member for as long as her skill's buff stands when she is upgraded", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 6,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+
+    const buffs = getBuffs(context, TRAVELER_CHARACTER_ID);
+    const skill = buffs.find(({ source }) => source === "grace-of-kenosis");
+    const upgrade = buffs.find(({ source }) => source === "nicole-a1");
+    expect(upgrade?.secondsRemaining).toBeCloseTo(skill?.secondsRemaining ?? Number.NaN);
+  });
+
+  test("her sixth constellation keeps the ascension buff on the character she swaps away from", () => {
+    expect.hasAssertions();
+    const { context } = createProjectionScene(vi.fn<NonNullable<Kit["onKitEvent"]>>(), {
+      ascension: 1,
+      constellationCount: 6,
+    });
+    NICOLE_KIT.elementalSkill.onStart?.(context);
+    stepKitSeconds(context, 8 / 60);
+    emitSwap(context, TRAVELER_CHARACTER_ID, NICOLE_CHARACTER_ID);
+    stepKitSeconds(context, 3);
+
+    emitSwap(context, NICOLE_CHARACTER_ID, TRAVELER_CHARACTER_ID);
+    expect(getBuffs(context, TRAVELER_CHARACTER_ID).map(({ source }) => source)).toContain("nicole-a1");
   });
 });

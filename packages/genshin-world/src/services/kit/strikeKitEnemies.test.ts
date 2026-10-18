@@ -427,6 +427,25 @@ describe(strikeKitEnemies, () => {
     );
   });
 
+  test("a deployed member's party defence ignore lowers the enemy's defence against another member's strike", () => {
+    expect.hasAssertions();
+    const member = createMember(() => ({ defenseIgnored: 0.5 }));
+
+    expect(
+      takeStrikeHealth(createCombatant(undefined), [member], [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    ).toBeGreaterThan(takeStrikeHealth(createCombatant(undefined), [], [TRAVELER_CHARACTER_ID]));
+  });
+
+  test("a strike's own defence ignore hook lowers the enemy's defence against its own strike", () => {
+    expect.hasAssertions();
+    const striker = createCombatant(undefined);
+    const ignoringStriker = { ...striker, kit: { ...TRAVELER_KIT, getStrikeDefenceIgnored: () => 0.5 } };
+
+    expect(takeStrikeHealth(ignoringStriker, [], [TRAVELER_CHARACTER_ID])).toBeGreaterThan(
+      takeStrikeHealth(striker, [], [TRAVELER_CHARACTER_ID]),
+    );
+  });
+
   test("the party strike bonus is handed the member whose kit gives it", () => {
     expect.hasAssertions();
     const getPartyStrikeBonus = vi.fn<NonNullable<Kit["getPartyStrikeBonus"]>>(() => ({}));

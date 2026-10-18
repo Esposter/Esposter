@@ -49,6 +49,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
     getStrikeCriticalDamageBonus,
     getStrikeCriticalRateBonus,
     getStrikeDamageBonus,
+    getStrikeDefenceIgnored,
     keepsNormalAttackCombo,
     moonsignBenediction,
     normalAttacks = [],
@@ -75,6 +76,7 @@ export const applyKitBehaviour = (kit: Kit, behaviour: KitBehaviour): Kit => {
   if (getStrikeCriticalDamageBonus) kit.getStrikeCriticalDamageBonus = getStrikeCriticalDamageBonus;
   if (getStrikeCriticalRateBonus) kit.getStrikeCriticalRateBonus = getStrikeCriticalRateBonus;
   if (getStrikeDamageBonus) kit.getStrikeDamageBonus = getStrikeDamageBonus;
+  if (getStrikeDefenceIgnored) kit.getStrikeDefenceIgnored = getStrikeDefenceIgnored;
   if (keepsNormalAttackCombo) kit.keepsNormalAttackCombo = keepsNormalAttackCombo;
   if (onKitEvent) kit.onKitEvent = onKitEvent;
   if (onSprint) kit.onSprint = onSprint;

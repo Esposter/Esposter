@@ -258,12 +258,36 @@ Her fourth constellation SHALL give an upgraded character 0.7 of Nicole's attack
 - **WHEN** an upgraded character lands a hit
 - **THEN** its flat base damage gains nothing
 
-### Requirement: Nicole's sixth constellation not yet built
+### Requirement: Nicole's sixth constellation
 
-Nicole's sixth constellation's defence ignore and self buff SHALL NOT take effect yet.
+Her sixth constellation SHALL ignore 40% of the defence an upgraded character's hit is dealt against, her own hits and the team's, and SHALL hold her upgrades for as long as her skill's buff stands, her own and each one she gives the team.
 
-#### Scenario: The sixth constellation does nothing for now
+#### Scenario: An upgraded character's hit ignores 40% of defence
 
-- **GIVEN** Nicole has constellation 6 unlocked
-- **WHEN** an upgraded character lands a hit
-- **THEN** no defence is ignored on the hit
+- **GIVEN** Nicole is at least constellation 6 and a character holds her first ascension's buff
+- **WHEN** that character lands a hit
+- **THEN** 40% of the enemy's defence is ignored on the hit
+
+#### Scenario: Her own upgraded hit ignores the same
+
+- **GIVEN** Nicole is at least constellation 6 and holds her first ascension's buff
+- **WHEN** she lands a hit
+- **THEN** 40% of the enemy's defence is ignored on it
+
+#### Scenario: Her fourth ascension holds for her skill's remaining time
+
+- **GIVEN** Nicole is at least constellation 6 and holds her fourth ascension's buff
+- **WHEN** its eight seconds would run out while her skill's buff still stands
+- **THEN** her buff stays for as long as her skill's buff does
+
+#### Scenario: Her upgrade gives each other member the same buff
+
+- **GIVEN** Nicole is at least constellation 6
+- **WHEN** she is upgraded
+- **THEN** each other deployed member is upgraded too, for as long as her skill's buff stands
+
+#### Scenario: A swap away keeps the buff on the character it leaves
+
+- **GIVEN** Nicole is at least constellation 6 and a character holds her first ascension's buff
+- **WHEN** she swaps away from that character
+- **THEN** the character keeps the buff
