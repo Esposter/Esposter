@@ -10,6 +10,7 @@ The [original resin](../../specs/genshin/original-resin/design.md) page holds th
 - **The offers are Original Resin and Condensed Resin.** Fragile Resin is not a claim, and Transient Resin is left out until it is carried. The game's claim text also names Fragile and Transient Resin as claim items; they are left out for now.
 - **A short Original Resin offers the restore first.** When the held Original Resin covers no resin offer, the claim's offer list shows a restore prompt: one Fragile Resin restores sixty, through `refillOriginalResinWithFragileResin`, after which the claims are offered again, as the game's claim dialog does.
 - **The bag's Use action is left out.** Another agent is building it, so the offers and the restore are services until it lands.
+- **One claim service takes a cost and a reward list.** `claimResinReward` pays a claim in Original Resin, or in Condensed Resin where its cost names it, and takes in the reward list the challenge drew. A blossom, a domain's Petrified Tree and a boss's Trounce Blossom each pass their own cost and list. `claimBlossom` and `spendCondensedResin` are retired, and the rule that refuses a boss Condensed Resin now lives in `computeBlossomClaimOffers`.
 
 ## How it works
 
@@ -17,7 +18,7 @@ The [original resin](../../specs/genshin/original-resin/design.md) page holds th
 flowchart TD
   CLEAR["Challenge cleared"] --> BLOSSOM["Its blossom appears"]
   BLOSSOM -->|"F"| OFFER["Offers the claims, the ones the resin held affords"]
-  OFFER -->|"one chosen"| CLAIM["claimBlossom spends the resin and draws the rewards"]
+  OFFER -->|"one chosen"| CLAIM["claimResinReward spends the cost and takes the rewards in"]
   CLAIM --> BAG["Into the bag and the wallet"]
 ```
 
@@ -25,7 +26,7 @@ flowchart TD
 
 **This still adds:** the claim's offer on F, its one step left. It waits on the ley line outcrops' blossom, which the world does not place yet.
 
-1. **The claim's offer on F**, with the first blossom a challenge places ([ley line outcrops](../genshin-ley-line-outcrops/design.md) or [bosses](../genshin-bosses/design.md)): its prompt row through `computeInteractionPrompts`, its offers from `computeAffordableBlossomClaimOffers` shown to choose from, Condensed Resin's among them at a ley line or a domain, and `claimBlossom` on the one chosen.
+1. **The claim's offer on F**, with the first blossom a challenge places ([ley line outcrops](../genshin-ley-line-outcrops/design.md) or [bosses](../genshin-bosses/design.md)): its prompt row through `computeInteractionPrompts`, its offers from `computeAffordableBlossomClaimOffers` shown to choose from, Condensed Resin's among them at a ley line or a domain, and `claimResinReward` on the one chosen.
 
 ## Key files
 
