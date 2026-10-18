@@ -17,11 +17,21 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { takeOne } from "@esposter/shared";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
+import { toKitSeconds } from "#src/services/kit/toKitSeconds";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
+const { record: ittoRecord, toParameter } = await readCharacterKitRecord(ITTO_CHARACTER_ID);
+// A parameter of his record, resolved off its talent's table at the level the talent plays at, as his kit resolves it
+const readRecordParameter = (name: string): number => {
+  const parameter = ittoRecord.parameters?.[name];
+  if (parameter === undefined || Array.isArray(parameter))
+    throw new InvalidOperationError(Operation.Read, name, "is not a single parameter of his record");
+  return toParameter(parameter);
+};
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -171,7 +181,7 @@ describe(createIttoKitBehaviour, () => {
 
     expect(ushi?.kind === "taunt" && [ushi.health, ushi.secondsRemaining]).toStrictEqual([
       combatant.attributes.maxHealth,
-      14 / 60 + 6,
+      toKitSeconds(takeOne(ittoRecord.skill.hits).hitmarkFrames) + readRecordParameter("ushiSeconds"),
     ]);
 
     const hit = takeOne(ITTO_KIT.elementalSkill.hits);

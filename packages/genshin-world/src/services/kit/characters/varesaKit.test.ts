@@ -4,6 +4,7 @@ import type { KitEvent } from "#src/models/kit/KitEvent";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -12,10 +13,12 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { createVaresaKitBehaviour, VARESA_CHARACTER_ID } from "#src/services/kit/characters/varesaKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const VARESA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VARESA_CHARACTER_ID);
+const { record: varesaRecord } = await readCharacterKitRecord(VARESA_CHARACTER_ID);
 
 const createVaresaCombatant = (): Combatant => ({
   ascension: 0,
@@ -67,11 +70,15 @@ describe(createVaresaKitBehaviour, () => {
     expect(VARESA_KIT.burstEnergyCost).toBe(70);
   });
 
-  test("the low plunge lands at 37 frames and the high plunge at 38, with the collision at 31", () => {
+  test("the plunges land at their record's hitmarks, and the collision at its record's", () => {
     expect.hasAssertions();
-    expect(Math.round(takeOne(VARESA_KIT.lowPlunge.hits).hitmarkSeconds * 60)).toBe(37);
-    expect(Math.round(takeOne(VARESA_KIT.highPlunge.hits).hitmarkSeconds * 60)).toBe(38);
-    expect(Math.round(VARESA_KIT.plungeCollision.hitmarkSeconds * 60)).toBe(31);
+    expect(Math.round(takeOne(VARESA_KIT.lowPlunge.hits).hitmarkSeconds * 60)).toBe(
+      takeOne(varesaRecord.plunges[KitPlunge.Low].hits).hitmarkFrames,
+    );
+    expect(Math.round(takeOne(VARESA_KIT.highPlunge.hits).hitmarkSeconds * 60)).toBe(
+      takeOne(varesaRecord.plunges[KitPlunge.High].hits).hitmarkFrames,
+    );
+    expect(Math.round(VARESA_KIT.plungeCollision.hitmarkSeconds * 60)).toBe(varesaRecord.plungeCollision.hitmarkFrames);
   });
 
   test("the skill's press gains 20 Nightsoul points, which stop at 40", () => {

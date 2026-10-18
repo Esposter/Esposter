@@ -9,12 +9,14 @@ import { createSigewinneKitBehaviour, SIGEWINNE_CHARACTER_ID } from "#src/servic
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
+const { record: sigewinneRecord, toParameter } = await readCharacterKitRecord(SIGEWINNE_CHARACTER_ID);
 const createSigewinneCombatant = (health: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: health }]),
@@ -56,19 +58,22 @@ describe(createSigewinneKitBehaviour, () => {
         frames: toFrames(action.seconds),
         hitmarks: action.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds)),
       })),
-    ).toStrictEqual([
-      { frames: 33, hitmarks: [12] },
-      { frames: 40, hitmarks: [14] },
-      { frames: 82, hitmarks: [38] },
-    ]);
+    ).toStrictEqual(
+      sigewinneRecord.normalAttacks.map((action) => ({
+        frames: action.animationFrames,
+        hitmarks: action.hits.map(({ hitmarkFrames }) => hitmarkFrames),
+      })),
+    );
   });
 
-  test("fires the Fully-Charged Aimed Shot at 86 frames of its 94, with no stamina", () => {
+  test("fires the Fully-Charged Aimed Shot at its record's hitmark and costs its record's stamina", () => {
     expect.hasAssertions();
 
-    expect(toFrames(SIGEWINNE_KIT.chargedAttack.seconds)).toBe(94);
-    expect(toFrames(takeOne(SIGEWINNE_KIT.chargedAttack.hits).hitmarkSeconds)).toBe(86);
-    expect(SIGEWINNE_KIT.chargedAttackStamina).toBe(0);
+    expect(toFrames(SIGEWINNE_KIT.chargedAttack.seconds)).toBe(sigewinneRecord.chargedAttack.animationFrames);
+    expect(toFrames(takeOne(SIGEWINNE_KIT.chargedAttack.hits).hitmarkSeconds)).toBe(
+      takeOne(sigewinneRecord.chargedAttack.hits).hitmarkFrames,
+    );
+    expect(SIGEWINNE_KIT.chargedAttackStamina).toBe(toParameter(sigewinneRecord.chargedAttackStamina));
   });
 
   test("the press casts five bubbles 107 frames apart from 35 frames, each a share of her Max HP", () => {

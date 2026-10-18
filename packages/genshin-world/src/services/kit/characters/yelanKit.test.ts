@@ -20,12 +20,14 @@ import { castKitAction, createKitTestContext } from "#src/services/kit/createKit
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
+const { record: yelanRecord, toParameter } = await readCharacterKitRecord(YELAN_CHARACTER_ID);
 // The seconds stepped as a step runs them: the team's effects, then each deployed kit's clock
 const stepYelanSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
@@ -66,14 +68,14 @@ describe(createYelanKitBehaviour, () => {
     expect(Math.round(YELAN_KIT.chargedAttack.seconds * 60)).toBe(96);
   });
 
-  test("lingering Lifeline's damage is a share of the caster's Max HP, and its cooldown is 10 seconds", () => {
+  test("lingering Lifeline's damage is a share of the caster's Max HP, on its record's hitmark and cooldown", () => {
     expect.hasAssertions();
     const lifelineHit = takeOne(YELAN_KIT.elementalSkill.hits);
 
     expect(lifelineHit.talentMultiplier).toBe(0);
     expect(lifelineHit.additiveBaseDamageBonus?.(createYelanCombatant())).toBeCloseTo(0.226136 * 10_000);
-    expect(Math.round(lifelineHit.hitmarkSeconds * 60)).toBe(36);
-    expect(YELAN_KIT.skillCooldownSeconds).toBe(10);
+    expect(Math.round(lifelineHit.hitmarkSeconds * 60)).toBe(takeOne(yelanRecord.skill.hits).hitmarkFrames);
+    expect(YELAN_KIT.skillCooldownSeconds).toBe(toParameter(yelanRecord.skillCooldownSeconds));
   });
 
   test("depth-Clarion Dice lasts 15 seconds from its hit, costs 70 energy and waves each second of it", () => {

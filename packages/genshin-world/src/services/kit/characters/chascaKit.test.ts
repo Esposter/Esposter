@@ -19,15 +19,18 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
+const { record: chascaRecord, toParameter } = await readCharacterKitRecord(CHASCA_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 
 const createPartyMember = (characterId: number, element: Element): Combatant => ({
@@ -119,12 +122,14 @@ describe(createChascaKitBehaviour, () => {
     ]);
   });
 
-  test("the fully-charged Aimed Shot lands at 86 frames of 96 and spends no stamina", () => {
+  test("the fully-charged Aimed Shot lands at its record's hitmark and costs its record's stamina", () => {
     expect.hasAssertions();
 
-    expect(toFrames(CHASCA_KIT.chargedAttack.seconds)).toBe(96);
-    expect(toFrames(CHASCA_KIT.chargedAttack.hits[0]?.hitmarkSeconds ?? 0)).toBe(86);
-    expect(CHASCA_KIT.chargedAttackStamina).toBe(0);
+    expect(toFrames(CHASCA_KIT.chargedAttack.seconds)).toBe(chascaRecord.chargedAttack.animationFrames);
+    expect(toFrames(CHASCA_KIT.chargedAttack.hits[0]?.hitmarkSeconds ?? 0)).toBe(
+      takeOne(chascaRecord.chargedAttack.hits).hitmarkFrames,
+    );
+    expect(CHASCA_KIT.chargedAttackStamina).toBe(toParameter(chascaRecord.chargedAttackStamina));
   });
 
   test("plunges land at gcsim's hitmarks, the collision at 44 frames and the low plunge at 50 of 80", () => {
