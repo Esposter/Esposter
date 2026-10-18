@@ -6,7 +6,7 @@ The [expeditions](../../specs/genshin/expeditions/design.md) page holds the send
 
 - **Katheryne sends, at any branch of the Adventurers' Guild.** A talk with her opens the expedition screen, where a character, a place and one of its durations are chosen. A send is refused by the rules the [expeditions](../../specs/genshin/expeditions/design.md) page holds.
 - **Any character but the Traveler stays usable in the party while away.** The game sends them in name only, so the party reads nothing from an expedition.
-- **The expedition bonus is a chance by level, not a talent.** `ExpeditionBonusExcelConfigData` gives a chance per level of the sent character: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table does not say what a bonus gives, so the payload is open.
+- **The expedition bonus is a character's Utility Passive, and its chance follows the sent character's level.** `ExpeditionBonusExcelConfigData` gives the chance by level: 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. The table is read as the chance for a sent character who holds the bonus, which the dump does not state outright. The wiki's [Exploration Talents](https://genshin-impact.fandom.com/wiki/Exploration_Talents) page, in its Expedition Bonuses section, says a character whose Utility Passive is an expedition bonus either takes less time to complete an expedition or receives additional materials from one. Neither source names those materials or their counts, so the bonus is built as its chance and its kind, and no item is paid until a source names it.
 - **A character's expedition talent adds to a send or to a reward.** A passive that shortens an expedition or adds to its reward applies when its character is sent. Which passives do this is read from the characters' kits once the [character kits](../genshin-character-kits/design.md) are built, not from the bonus table.
 - **The expedition screen is drawn from a public clip.** Its layout is read off a published walkthrough of Katheryne's expedition screen, [How to Complete an Expedition and Send Characters Out on One](https://www.youtube.com/watch?v=fxIjhlV3vUA) (107 seconds), and its comparison is queued for the user's eyes. No recording is owed for it first; one of the English PC client re-measures it later without gating the build.
 - **Until Katheryne stands in the world, the screen is reached through its fixture.** The game's menus hold no expeditions entry, so none is added. The residents' join writes no Katheryne into Mondstadt's region data, since the dump's births hold none of her, so her talk is wired once her place is in region data, estimated from the wiki and marked provisional.
@@ -29,13 +29,13 @@ packages/
    - The proof: a `ParityReferenceMap` entry naming the chosen frame for `ExpeditionScreen`, which `ParityReferenceMap.test.ts` requires of every fixture, and a `compare` run whose comparison goes under the roadmap's Manual verification.
 2. **Katheryne's talk**, once the residents' join places her in Mondstadt's region data; it opens the screen.
 3. **Each other nation's places**, as their statues join the region data, with the reward items of each named in the game text.
-4. **The bonus and the expedition talents.** The bonus's payload is read from the game's own data once it is found, and the talents join the kits.
+4. **The bonus and the expedition talents.** The bonus's items and counts are read from the game's own data once they are found, and the talents join the kits.
 
 ## Data and measures
 
 - **Read from the game's tables:** `ExpeditionBonusExcelConfigData`, whose chance by level is the bonus above; and the characters' passives, once the kits name which of them shorten an expedition or add to its reward.
 - **Not read:** `ExpeditionPathExcelConfigData` names the Adventurers' Guild's expedition missions, such as Swarm of Specters, each with its team's elements and a difficulty. A mission is not a place to send a character, so it has its own page if it is built.
-- **Read from the wiki:** where the bonus's payload is described, if the tables do not give it.
+- **Read from the wiki:** the bonus's kind, on the Exploration Talents page the decision above cites. Its items and counts are not on any page read so far.
 
 ## Key files
 
@@ -47,5 +47,6 @@ packages/
 
 ## Sources
 
-- [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: Katheryne's talk that opens the screen, and the bonus, its payload where the tables do not give it.
+- [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: Katheryne's talk that opens the screen, and the rules the sends follow.
+- [Exploration Talents](https://genshin-impact.fandom.com/wiki/Exploration_Talents), Genshin Impact Wiki: the kind of expedition bonus, in its Expedition Bonuses section.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition bonus table and the characters' passives.
