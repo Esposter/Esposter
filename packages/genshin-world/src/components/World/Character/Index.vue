@@ -28,6 +28,8 @@ import { drownParty } from "#src/services/party/drownParty";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getImpetuousWindsLocomotion } from "#src/services/party/getImpetuousWindsLocomotion";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
+import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
 import { stepPartyElementalStates } from "#src/services/party/stepPartyElementalStates";
 import { stepPartyFall } from "#src/services/party/stepPartyFall";
 import { WINDRISE_START_POINT } from "#src/services/windrise/constants";
@@ -40,7 +42,6 @@ import {
   createFollowCamera,
   createGroundQuery,
   findSkinnedMesh,
-  FOLLOW_CAMERA_DEFAULT_SETTINGS,
   FOLLOW_CAMERA_PIVOT_SHARE,
   InputAction,
   LocomotionState,
@@ -216,7 +217,7 @@ onBeforeRender(({ delta }) => {
       camera: activeCamera,
       ground,
       landmarkCollider,
-      settings: FOLLOW_CAMERA_DEFAULT_SETTINGS,
+      settings: getFollowCameraSettings(getStoredGenshinSettings()),
     });
     followCamera.look(inputState, characterController.facing);
     if (!isHeld) {

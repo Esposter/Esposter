@@ -60,4 +60,19 @@ describe("menuSettings", () => {
     await expect.element(fps).toBeDisabled();
     await expect.element(fps).toHaveTextContent("60");
   });
+
+  // The Default Camera Distance row is one the world backs: an arrow key steps it by its range's step, and the row reads the
+  // New distance to one decimal place, from the 5.0 the follow camera starts at
+  test("the default camera distance steps from the keyboard", async () => {
+    expect.hasAssertions();
+
+    render(SettingsHost);
+    await page.getByRole("tab", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsControls] }).click();
+    const distance = page.getByRole("slider", { name: ENGLISH_GAME_TEXT[GameTextKey.SettingsDefaultCameraDistance] });
+
+    await expect.element(distance).toBeInTheDocument();
+    distance.element().dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key: "ArrowRight" }));
+
+    await expect.element(page.getByText("5.1", { exact: true })).toBeInTheDocument();
+  });
 });

@@ -1,11 +1,14 @@
+import type { SettingRange } from "#src/models/menu/SettingRange";
 import type { SettingsRow } from "#src/models/menu/SettingsRow";
 import type { SettingsSection } from "#src/models/menu/SettingsSection";
 import type { SettingsTab } from "#src/models/menu/SettingsTab";
 import type { GameText } from "genshin-text";
 
+import { RangeSetting } from "#src/models/menu/RangeSetting";
 import { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 import { SettingsTab as Tab } from "#src/models/menu/SettingsTab";
 import { VolumeSetting } from "#src/models/menu/VolumeSetting";
+import { CAMERA_DISTANCE_RANGE, CAMERA_SENSITIVITY_RANGE, VOLUME_RANGE } from "#src/services/menu/constants";
 import { fillGameTextValues, GameLanguage, GameTextKey, getLanguageDisplayName } from "genshin-text";
 
 const getChoice = (labelKey: GameTextKey, valueKey: GameTextKey): SettingsRow => ({
@@ -13,21 +16,36 @@ const getChoice = (labelKey: GameTextKey, valueKey: GameTextKey): SettingsRow =>
   kind: SettingsRowKind.Choice,
   labelKey,
 });
+// A key the world does not rebind, drawn as its key cap
+const getKey = (labelKey: GameTextKey, key: string): SettingsRow => ({
+  getValue: () => key,
+  kind: SettingsRowKind.Choice,
+  labelKey,
+});
+const getRange = (labelKey: GameTextKey, setting: RangeSetting, range: SettingRange): SettingsRow => ({
+  kind: SettingsRowKind.Range,
+  labelKey,
+  range,
+  setting,
+});
 const getVolume = (labelKey: GameTextKey, setting: VolumeSetting): SettingsRow => ({
   kind: SettingsRowKind.Volume,
   labelKey,
+  range: VOLUME_RANGE,
   setting,
 });
-// A volume the world does not back, drawn at the level the English PC client's audio shows it at
-const getUnbackedVolume = (labelKey: GameTextKey): SettingsRow => ({
+// A slider the world does not back, drawn at the value the English PC client's settings show it at
+const getUnbackedSlider = (labelKey: GameTextKey, range: SettingRange, value: number): SettingsRow => ({
   kind: SettingsRowKind.Slider,
   labelKey,
-  volume: 10,
+  range,
+  value,
 });
 // The rows of each tab built, in the game's order under its headings, with the values the English PC client's settings
-// Show in `yt-5EmJX_RyuY8-menu-settings`: the Graphics tab at 144.5 seconds and scrolled to its end at 170, the Audio
-// Tab at 178, and the Language tab at 190. The world backs the graphics quality, the game language and the three volume
-// Settings the Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it stands
+// Show in `yt-5EmJX_RyuY8-menu-settings`: the Controls tab at 13 seconds, its Key Bindings at 30, the Graphics tab at
+// 144.5 seconds and scrolled to its end at 170, the Audio tab at 178, and the Language tab at 190. The world backs the
+// Camera's sensitivities and default distance, the graphics quality, the game language and the three volume settings the
+// Audio tab names with the overall Volume; every other row is the clip's, drawn disabled as it stands
 export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, SettingsSection[]>>> = {
   [Tab.Audio]: [
     { headingKey: GameTextKey.SettingsAudioTitle, rows: [getVolume(GameTextKey.SettingsVolume, VolumeSetting.Master)] },
@@ -35,7 +53,7 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
       headingKey: GameTextKey.SettingsAudioBalance,
       rows: [
         getVolume(GameTextKey.SettingsMusicVolume, VolumeSetting.Music),
-        getUnbackedVolume(GameTextKey.SettingsDialogueVolume),
+        getUnbackedSlider(GameTextKey.SettingsDialogueVolume, VOLUME_RANGE, VOLUME_RANGE.max),
         getVolume(GameTextKey.SettingsSfxVolume, VolumeSetting.Sfx),
       ],
     },
@@ -45,6 +63,48 @@ export const SettingsTabSectionsMap: Readonly<Partial<Record<SettingsTab, Settin
         getChoice(GameTextKey.SettingsDynamicRange, GameTextKey.SettingsFull),
         getChoice(GameTextKey.SettingsOutputSettings, GameTextKey.SettingsStereoSound),
         getChoice(GameTextKey.SettingsMuteWhenMinimized, GameTextKey.SettingsOff),
+      ],
+    },
+  ],
+  [Tab.Controls]: [
+    {
+      headingKey: GameTextKey.SettingsControlsTitle,
+      rows: [getChoice(GameTextKey.SettingsControlType, GameTextKey.SettingsInputTypeKeyboard)],
+    },
+    {
+      headingKey: GameTextKey.SettingsCameraTitle,
+      rows: [
+        getRange(
+          GameTextKey.SettingsHorizontalSensitivity,
+          RangeSetting.HorizontalSensitivity,
+          CAMERA_SENSITIVITY_RANGE,
+        ),
+        getRange(GameTextKey.SettingsVerticalSensitivity, RangeSetting.VerticalSensitivity, CAMERA_SENSITIVITY_RANGE),
+        getUnbackedSlider(GameTextKey.SettingsAimedHorizontalSensitivity, CAMERA_SENSITIVITY_RANGE, 3),
+        getUnbackedSlider(GameTextKey.SettingsAimedVerticalSensitivity, CAMERA_SENSITIVITY_RANGE, 3),
+        getChoice(GameTextKey.SettingsCameraYAxisReset, GameTextKey.SettingsOn),
+        getChoice(GameTextKey.SettingsCombatCamera, GameTextKey.SettingsOn),
+        getRange(GameTextKey.SettingsDefaultCameraDistance, RangeSetting.DefaultDistance, CAMERA_DISTANCE_RANGE),
+        getChoice(GameTextKey.SettingsBoatCameraCorrection, GameTextKey.SettingsOnlyWhenNotInCombat),
+      ],
+    },
+  ],
+  [Tab.KeyBindings]: [
+    {
+      headingKey: GameTextKey.SettingsKeyBindingActions,
+      rows: [
+        getKey(GameTextKey.MoveForward, "W"),
+        getKey(GameTextKey.MoveBackward, "S"),
+        getKey(GameTextKey.MoveLeft, "A"),
+        getKey(GameTextKey.MoveRight, "D"),
+        getKey(GameTextKey.SwitchToWalkRun, "Left Ctrl"),
+        getKey(GameTextKey.NormalAttack, "Left Click"),
+        getKey(GameTextKey.ElementalSkill, "E"),
+        getKey(GameTextKey.ElementalBurst, "Q"),
+        getKey(GameTextKey.Sprint, "Left Shift"),
+        getKey(GameTextKey.Sprint, "Right Click"),
+        getKey(GameTextKey.SwitchAimingMode, "R"),
+        getKey(GameTextKey.JumpOrMoveUpward, "Space"),
       ],
     },
   ],

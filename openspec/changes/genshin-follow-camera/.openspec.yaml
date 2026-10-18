@@ -9,4 +9,4 @@ x-touches:
     "packages/genshin-world/src/components/World/Character/**",
     "packages/genshin-world/src/components/Menu/Settings/**",
   ]
-x-waiting: "the Settings Controls tab, which waits on the interface export"
+x-waiting: "the camera's slope pitch: createFollowCamera has no slope pitch yet, so 3.1's pitch scenarios cannot pass; the sensitivities and default distance are read from Settings"
