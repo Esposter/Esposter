@@ -57,6 +57,9 @@ export const NAVIA_CHARACTER_ID = 10_000_091;
 // Three stacks are not built, as the kit does not read the team's effects in a passive or a strike's DMG and no step
 // Gives a shard's reach to a hit. Constellation 4 is built, Constellation 6 keeps its excess Shrapnel, and the rest of her
 // Constellations are not
+// Constellation 1 needs Energy and skill cooldown cuts per Shrapnel consumed, which the kit does not build yet
+// Constellation 2 needs the CRIT Rate per Shrapnel on the shot and the burst's extra Cannon shot, not built
+// Constellation 6's CRIT DMG per Shrapnel past three needs a strike CRIT DMG hook, which the kit cannot apply
 export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shrapnelSeconds = readParameter("crystalShrapnelSeconds");
   const arkheIcdSeconds = readParameter("surgingBladeCooldownSeconds");
