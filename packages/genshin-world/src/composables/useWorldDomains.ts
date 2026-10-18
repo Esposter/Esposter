@@ -8,6 +8,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { Party } from "#src/models/party/Party";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
@@ -32,6 +34,7 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
+import { applyDomainDisorder, clearDomainDisorders } from "#src/services/domains/applyDomainDisorders";
 import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
@@ -78,6 +81,8 @@ export const useWorldDomains = ({
   events,
   gameDataBaseUrl,
   getWorldNow,
+  kitEffectState,
+  party,
   inventory,
   jumpTo,
   materialDataMap,
@@ -104,6 +109,8 @@ export const useWorldDomains = ({
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   random: () => number;
+  kitEffectState: KitEffectState;
+  party: Party;
   rank: Ref<number>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
@@ -213,11 +220,13 @@ export const useWorldDomains = ({
       elapsedMilliseconds: 0,
       waveIndex: 0,
     };
+    applyDomainDisorder(kitEffectState, party, scheduledLevel.disorder, level.timeLimitSeconds);
     jumpTo(scenePose);
   };
   // The player leaves the arena for the entrance: the tree they have not claimed is forfeited with it
   const leaveDomain = () => {
     const entrance = domainEntrance.value;
+    clearDomainDisorders(kitEffectState);
     domainArena.value = undefined;
     domainChallenge.value = undefined;
     isDomainTreeRaised.value = false;
