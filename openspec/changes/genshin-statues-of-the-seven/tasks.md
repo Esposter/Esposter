@@ -8,7 +8,7 @@
 ## 2. Statues' levels
 
 - [x] 2.1 Start a region at level one on its first resonance and pay that level once. Verify: tests named after 'The first resonance starts the region at level one' and 'A second resonance pays no reward again'.
-- [ ] 2.2 Pay each level's rewards for its region. Verify: tests named after 'Every region's level pays Adventure EXP, Primogems and Sigils' and 'Liyue's level also pays its Stones of Remembrance'.
+- [x] 2.2 Pay each level's rewards for its region. Verify: tests named after 'Every region's level pays Adventure EXP, Primogems and Sigils' and 'Liyue's level also pays its Stones of Remembrance'.
 - [ ] 2.3 Change the Traveler's element on resonance, once the character kits hold the element. Verify: a test named after 'Resonating with a Liyue statue makes the Traveler Geo'.
 
 ## 3. Statue's Blessing
