@@ -77,4 +77,46 @@ describe(toGcgDeck, () => {
       ],
     });
   });
+
+  test("should leave out an empty cost slot, which the dump writes with no cost type", () => {
+    expect.hasAssertions();
+
+    const deckRow: ExcelGcgDeckRow = { cardList: [], characterList: [CHARACTER_ID], id: DECK_ID };
+    const characterRow: ExcelGcgCharRow = {
+      descTextMapHash: CHARACTER_DESCRIPTION_TEXT_ID,
+      hp: 10,
+      id: CHARACTER_ID,
+      maxEnergy: 3,
+      nameTextMapHash: CHARACTER_NAME_TEXT_ID,
+      skillList: [SKILL_ID],
+      tagList: ["GCG_TAG_ELEMENT_PYRO"],
+    };
+    const skillRow: ExcelGcgSkillRow = {
+      costList: [{ count: 0 }],
+      energyRecharge: 1,
+      id: SKILL_ID,
+      skillJson: "Effect_Damage_Fire_1",
+      skillTagList: ["GCG_SKILL_TAG_A"],
+    };
+
+    expect(toGcgDeck(deckRow, [characterRow], [skillRow], [], [], [])).toStrictEqual({
+      cardIds: [],
+      cards: [],
+      characterIds: [CHARACTER_ID],
+      characters: [
+        {
+          descriptionTextId: CHARACTER_DESCRIPTION_TEXT_ID,
+          element: Element.Pyro,
+          hp: 10,
+          id: CHARACTER_ID,
+          maxEnergy: 3,
+          nameTextId: CHARACTER_NAME_TEXT_ID,
+          skills: [
+            { costs: [], effect: "Effect_Damage_Fire_1", energyGain: 1, id: SKILL_ID, kind: GcgSkillKind.NormalAttack },
+          ],
+          weapon: "",
+        },
+      ],
+    });
+  });
 });

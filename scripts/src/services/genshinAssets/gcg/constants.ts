@@ -45,3 +45,6 @@ export const GcgCostTableElementMap: Map<string, Element> = new Map<string, Elem
   ["GCG_COST_DICE_HYDRO", Element.Hydro],
   ["GCG_COST_DICE_PYRO", Element.Pyro],
 ]);
+// The invalid cost type, which the dump's empty cost slots hold at its default: the table's first value, so the dump
+// Leaves the field out of each such slot
+export const GCG_COST_TYPE_INVALID = "GCG_COST_INVALID";

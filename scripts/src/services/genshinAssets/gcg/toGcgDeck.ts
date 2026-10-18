@@ -11,7 +11,7 @@ import type {
 } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
 import type { Element, GcgCost } from "genshin-world";
 
-import { GcgCostTableElementMap } from "#src/services/genshinAssets/gcg/constants";
+import { GCG_COST_TYPE_INVALID, GcgCostTableElementMap } from "#src/services/genshinAssets/gcg/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GcgCardKind, GcgCostKind, GcgSkillKind } from "genshin-world";
 
@@ -82,10 +82,11 @@ const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTyp
 });
 
 // The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
-// Energy. The dump's empty rows are left out
+// Energy. The dump's empty slots, which hold the invalid cost at its default, are left out
 const toCosts = (costRows: ExcelGcgSkillRow["costList"], rowId: number, costTypes: Set<string>): GcgCost[] =>
   costRows
-    .filter(({ costType }) => costType !== "GCG_COST_INVALID")
+    .map(({ costType = GCG_COST_TYPE_INVALID, count }) => ({ costType, count }))
+    .filter(({ costType }) => costType !== GCG_COST_TYPE_INVALID)
     .map(({ costType, count }): GcgCost => {
       if (!costTypes.has(costType)) throw invalidRead(`the cost table names no cost type ${costType} of row ${rowId}`);
       if (costType === "GCG_COST_DICE_SAME") return { count, kind: GcgCostKind.Matching };

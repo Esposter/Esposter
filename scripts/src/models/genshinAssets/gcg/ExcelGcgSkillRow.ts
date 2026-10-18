@@ -1,5 +1,6 @@
+// One cost line of a skill or a card. An empty slot leaves its type out, the table's default, which is the invalid cost
 export interface ExcelGcgCostEntry {
-  costType: string;
+  costType?: string;
   count: number;
 }
 // One skill of the card game's skill table, as the dump names its fields. skillJson is the effect's name the duel reads:
