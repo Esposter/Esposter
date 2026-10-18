@@ -280,8 +280,10 @@ const { achievementData } = useWorldAchievements({
 // The drops and the gathering points the character picks up, taken into the bag or the wallet
 const {
   bagFullHint,
+  materialSources,
   pickUpGatheringPlace,
   pickUpInteractables,
+  pickUpMaterialSourcePlace,
   pickUpWorldDrop,
   placeWorldDrops,
   strikeGatheringOres,
@@ -645,8 +647,11 @@ defineExpose({ jumpTo, readCameraPosition });
           if (!isPaused && screenKind === ScreenKind.World) {
             const interactable = readInteraction(inputState, context.delta);
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
+            const materialSource = materialSources.value.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
+            else if (interactable?.kind === InteractionKind.PickUp && materialSource)
+              pickUpMaterialSourcePlace(materialSource.id);
             else if (interactable?.kind === InteractionKind.PickUp) pickUpGatheringPlace(interactable.id);
             else if (interactable?.kind === InteractionKind.Open) openChestById(interactable.id, kitContext.random);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)

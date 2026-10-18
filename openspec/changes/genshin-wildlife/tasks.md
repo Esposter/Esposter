@@ -10,7 +10,7 @@
 
 ## 3. Material sources
 
-- [ ] 3.1 Pick up a material source as an item and remove it. Verify: a test named after 'A crystalfly picked up gives its item and vanishes'.
+- [x] 3.1 Pick up a material source as an item and remove it. Verify: a test named after 'A crystalfly picked up gives its item and vanishes'.
 
 ## 4. Boars and wildlife that fights back
 
