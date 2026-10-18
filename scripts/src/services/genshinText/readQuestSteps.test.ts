@@ -118,6 +118,29 @@ describe(readQuestSteps, () => {
     });
   });
 
+  test("reads the shown steps of a quest whose one sub quest holds no condition, noting that one", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [
+        { B: 100, C: 1, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] }] },
+        { B: 101, C: 2, D: TEXT_HASH },
+      ],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText)).toStrictEqual({
+      notes: ["1's step 101 asks nothing of the Traveler its conditions name"],
+      offerTalkIds: [],
+      steps: [
+        {
+          id: "100",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetId: "0" }],
+          textId: String(TEXT_HASH),
+        },
+      ],
+    });
+  });
+
   test("reads the talks a first step with no words finishes on as the talks offering the quest", () => {
     expect.hasAssertions();
 

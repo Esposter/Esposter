@@ -12,23 +12,26 @@ import { QuestObjectiveKind } from "genshin-world";
 // Conditions ask nothing of the Traveler is left out and noted. A step's objectives are every condition that asks
 // Something, all of which the step needs done. A quest a talk offers opens on such a hidden step finishing on that talk,
 // So the talks the first step finishes on offer the quest when that step has no words
+// Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do
+const hasCondition = (subQuest: Record<string, unknown>) =>
+  Object.values(subQuest).some((value) => readQuestConditions(value).length > 0);
+const countConditioned = (subQuestList: Record<string, unknown>[]) =>
+  subQuestList.filter((subQuest) => hasCondition(subQuest)).length;
 export const readQuestSteps = (
   questBinary: Record<string, unknown>,
   questId: number,
   checkIsText: (hash: number) => boolean,
   checkIsPlayableTalk: (talkId: string) => boolean = () => true,
 ): { notes: string[]; offerTalkIds: string[]; steps: QuestStep[] } => {
-  const subQuests = Object.values(questBinary).find(
-    (field): field is Record<string, unknown>[] =>
-      Array.isArray(field) &&
-      field.length > 0 &&
-      field.every(
-        (item) =>
-          typeof item === "object" &&
-          item !== null &&
-          Object.values(item).some((value) => readQuestConditions(value).length > 0),
-      ),
-  );
+  // The sub quests are the list holding the most sub quests that hold a condition, so one sub quest with none, a step the
+  // Game finishes by script, does not hide the rest; that one is left out below as asking nothing
+  const [subQuests] = Object.values(questBinary)
+    .filter(
+      (field): field is Record<string, unknown>[] =>
+        Array.isArray(field) && field.every((item) => typeof item === "object" && item !== null),
+    )
+    .filter((subQuestList) => countConditioned(subQuestList) > 0)
+    .toSorted((first, second) => countConditioned(second) - countConditioned(first));
   if (!subQuests) return { notes: [`${questId} has no sub quests`], offerTalkIds: [], steps: [] };
   const conditionKeys = subQuests.flatMap((subQuest) =>
     Object.keys(subQuest).filter((key) => readQuestConditions(subQuest[key]).length > 0),

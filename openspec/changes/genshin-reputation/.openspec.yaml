@@ -36,6 +36,8 @@ x-touches:
     "scripts/src/services/genshinText/readCarriedQuestBinaryPaths.test.ts",
     "scripts/src/services/genshinText/readGitHubHeaders.ts",
     "scripts/src/services/genshinText/readGitHubHeaders.test.ts",
+    "scripts/src/services/genshinText/readQuestSteps.ts",
+    "scripts/src/services/genshinText/readQuestSteps.test.ts",
     ".agents/skills/genshin-text/SKILL.md",
     ".agents/skills/genshin-parity/references/data-sources.md",
   ]
