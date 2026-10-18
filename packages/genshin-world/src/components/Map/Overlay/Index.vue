@@ -258,13 +258,22 @@ onMounted(() => {
       <span>{{ originalResin }}/{{ ORIGINAL_RESIN_CAP }}</span>
     </p>
     <section v-if="chosenLandmark" class="teleport-panel">
-      <h2 class="teleport-name">{{ chosenArea?.name }}</h2>
-      <p class="teleport-kind">{{ gameText[computeJumpLandmarkTextKey(chosenLandmark)] }}</p>
+      <header class="teleport-header">
+        <h2 class="teleport-title">{{ gameText[computeJumpLandmarkTextKey(chosenLandmark)] }}</h2>
+        <button
+          class="teleport-close"
+          type="button"
+          :aria-label="gameText[GameTextKey.Back]"
+          @click="chosenLandmark = undefined"
+        >
+          <svg viewBox="-1 -1 2 2" aria-hidden="true">
+            <path d="M -0.7 -0.7 L 0.7 0.7 M 0.7 -0.7 L -0.7 0.7" />
+          </svg>
+        </button>
+      </header>
+      <p class="teleport-place">{{ chosenArea?.name }} - {{ chosenArea?.subregion }}</p>
       <GameButton class="teleport" :kind="GameButtonKind.Pill" @click="emit('jump', computeJumpPose(chosenLandmark))">
         {{ gameText[GameTextKey.Teleport] }}
-      </GameButton>
-      <GameButton class="teleport-back" :kind="GameButtonKind.Plain" @click="chosenLandmark = undefined">
-        {{ gameText[GameTextKey.Back] }}
       </GameButton>
     </section>
     <button
@@ -365,12 +374,12 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-/* Provisional: the region tag's place, bottom right, and its type, until a recording of the English PC client's map
-   measures them */
+/* Provisional: the region tag's place, bottom right, and its sizes, measured off the captured PC waypoint clip's frame at
+   1080 high (the name 134 units off the right edge and 51 off the bottom); its words are the client's own */
 .region-tag {
   position: absolute;
-  right: calc(var(--unit) * 130);
-  bottom: calc(var(--unit) * 60);
+  right: calc(var(--unit) * 134);
+  bottom: calc(var(--unit) * 51);
   margin: 0;
   color: #ece5d7;
   text-align: end;
@@ -378,40 +387,65 @@ onMounted(() => {
 
 .region-name {
   display: block;
-  font-size: calc(var(--unit) * 36);
+  font-size: calc(var(--unit) * 28);
 }
 
 .region-progress {
   display: block;
-  font-size: calc(var(--unit) * 24);
+  font-size: calc(var(--unit) * 22);
 }
 
-/* Provisional: the teleport panel's place, on the map's right under the top bar, and its size, until a recording of the
-   English PC client's map, where a waypoint is chosen, measures them */
+/* Provisional: the teleport panel as the game's right-hand sidebar, measured off the captured PC waypoint clip
+   (`captures/yt-Mhw53PsdhKI-waypoint.webm`, the Indonesian client): its header of 72 units, its place strip and its
+   Teleport button 40 units off the bottom. The colours are estimated off that frame */
 .teleport-panel {
   position: absolute;
-  top: calc(var(--unit) * 120);
-  right: calc(var(--unit) * 130);
+  top: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
-  width: calc(var(--unit) * 420);
+  width: calc(var(--unit) * 490);
   flex-direction: column;
-  gap: calc(var(--unit) * 16);
-  padding: calc(var(--unit) * 24);
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(0 0 0 / 0.6);
-  color: #ece5d7;
+  background: #efe9db;
+  color: #3d4152;
 }
 
-.teleport-name {
+.teleport-header {
+  display: flex;
+  height: calc(var(--unit) * 72);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 calc(var(--unit) * 18) 0 calc(var(--unit) * 46);
+  background: #3d4152;
+  color: #f1e8cf;
+}
+
+.teleport-title {
   margin: 0;
-  font-size: calc(var(--unit) * 36);
+  font-size: calc(var(--unit) * 30);
   font-weight: normal;
 }
 
-.teleport-kind {
-  margin: 0;
+.teleport-close {
+  display: grid;
+  width: calc(var(--unit) * 36);
+  height: calc(var(--unit) * 36);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+
+.teleport-place {
+  margin: calc(var(--unit) * 24) calc(var(--unit) * 14) 0;
+  padding: calc(var(--unit) * 10) calc(var(--unit) * 16);
+  border-radius: calc(var(--unit) * 4);
+  background: #e0d4b6;
   font-size: calc(var(--unit) * 22);
-  opacity: 0.7;
+}
+
+.teleport {
+  margin: auto calc(var(--unit) * 14) calc(var(--unit) * 40);
 }
 
 /* Provisional: the resin counter's place, left of the close button, and its type, until a recording of the English PC

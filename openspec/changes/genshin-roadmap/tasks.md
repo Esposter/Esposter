@@ -265,6 +265,9 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](../genshin-archive/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md).
 - [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md).
+- [x] `teleport-panel.mkv` — **Teleport panel**, found as `captures/yt-Mhw53PsdhKI-waypoint.webm` (https://www.youtube.com/watch?v=Mhw53PsdhKI, about 120–135 s), a near one: the PC client in Indonesian at 60 frames a second, uploaded 2026-07-03. Read by [map](../../specs/genshin/map/design.md).
+- [ ] `zoom-ends.mkv` — **Zoom slider ends**: the English PC map's thumb fully zoomed in and fully out at 1080 high, still sought, so the ends ship as estimates. Read by [map](../../specs/genshin/map/design.md).
+- [ ] `region-tag.mkv` — **Region tag**: the English PC map's bottom-right line at 1080 high, still sought (the Indonesian clip reads `Kemajuan Eksplorasi`). Read by [map](../../specs/genshin/map/design.md).
 
 ## Opening
 
@@ -309,7 +312,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Windrise's ground detail, and every region's ground layers.** Every surface's detail is drawn at its own texture's metres per texel; [ground detail](../genshin-ground-detail/design.md) needs the Ground's structure read with its layers, then each layer's own texture's detail at its repeat, and each other region's layers once its base maps are exported.
 - [ ] **Each region's render pass, in build order.** [Recreation passes](../genshin-recreation-passes/design.md) runs each region's compare and rank over its references once they are named in `ParityReferenceMap`, Inazuma's first.
 - [ ] **The Change World Level prompt.** [Adventure rank](../genshin-adventure-rank/design.md) needs the prompt's layout, measured from `world-level-dialog-2024.mkv`, its Confirm state and its text ids from the dump.
-- [ ] **Map: the zoom slider, the teleport panel and the region tag.** [Exploring](../../specs/genshin/exploring/design.md) needs the map to zoom and pan, the teleport panel's reference (`world-map.mkv`), and the region tag's text.
+- [x] **Map: the zoom slider, the teleport panel and the region tag.** [Exploring](../../specs/genshin/exploring/design.md) needs the map to zoom and pan, the teleport panel's reference (`world-map.mkv`), and the region tag's text.
 - [x] **A locked waypoint's F prompt, named by its own text.** [Exploring](../../specs/genshin/exploring/design.md) offers each locked jump landmark under the Statue of The Seven's name, so a Teleport Waypoint's prompt reads as a statue's. Its name needs reading from the game's text.
 - [ ] **A waypoint's first-unlock reward.** [Exploring](../../specs/genshin/exploring/design.md) unlocks a waypoint and pays nothing, as `LandmarkIdStatuePointIdMap` names only Windrise's statue's point. Each waypoint's point needs naming there, and its reward checking against the open world's transport point rewards.
 - [ ] **Each region's ground held to its shape pass, then frozen.** [Scene derivation](../../specs/genshin/scene-derivation/design.md) needs each fitted ground's outline and depth, drawn at each reference's camera, judged against the exports' within the reference's noise, and a test freezing the fitted parameters' error once the gate and that measure both hold.
