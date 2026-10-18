@@ -22,6 +22,10 @@ export const MAIN_QUEST_TABLE_NAME = "MainQuestExcelConfigData";
 // The quest type of an Archon quest, the table's enum's first value: 7.1 leaves a row at its default out, so a row
 // With no type is an Archon quest
 export const MAIN_QUEST_DEFAULT_TYPE = "AQ";
+// The sub quest table, each sub quest of a world quest by its own id, and the giving table, the items a delivery asks
+// For under the id its Reputation request names
+export const SUB_QUEST_TABLE_NAME = "QuestExcelConfigData";
+export const GIVING_TABLE_NAME = "GivingExcelConfigData";
 export const DIALOG_TABLE_NAME = "DialogExcelConfigData";
 // The talk table, every talk with the characters it is begun on and what it waits on, which the dump splits into
 // Numbered parts
