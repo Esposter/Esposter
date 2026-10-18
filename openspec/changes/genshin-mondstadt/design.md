@@ -4,7 +4,7 @@ This region is built on [terrain](../../specs/genshin/terrain/design.md) and its
 
 ## Decisions
 
-- **The strongest wind in the world.** Mondstadt's base wind is the highest of any region, and gusts visibly roll across the meadows. This is the [vegetation](../../specs/genshin/vegetation/design.md)'s wind field at its most visible, and Stormterror's Lair raises it to a gale.
+- **The strongest wind in the world.** Mondstadt's base wind is meant to be the highest of any region, provisional until it is fitted against the meadows' and the other regions' references (the next decision), and gusts visibly roll across the meadows. This is the [vegetation](../../specs/genshin/vegetation/design.md)'s wind field at its most visible, and Stormterror's Lair raises it to a gale.
 - **The meadows wear Mondstadt's breeze until their reference is fitted.** Their base wind and gusts are the breeze Windrise is set with, so the rolling waves are built while the claim that it is the highest of any region is not yet fitted against the meadows' or the other regions' references. `computeWindGust`, in the engine's `nodes/`, is the gust's reference, and `createWindNode` is its GPU form: a change to the gust lands in both.
 - **A bright, cool palette.** Saturated spring greens, white limestone, slate and terracotta roofs under a clear high blue. Dandelions and windwheel asters in the meadows, and cecilia flowers on Starsnatch Cliff. Its display transform and its light are solved against references at noon and at dusk, each in its pass.
 - **The Mondstadt building kit's dressing** (window boxes, shutters, lanterns, banners) is not built yet, on [Mondstadt buildings](../../specs/genshin/mondstadt-buildings/design.md).
