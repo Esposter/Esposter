@@ -51,6 +51,7 @@ import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
+import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
@@ -231,4 +232,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2711925235": createSkyPiercingFangPassiveModule,
   // Sky-ripping Dragon Spine (Skyward Pride)
   "3265578323": createSkyRippingDragonSpinePassiveModule,
+  // Wandering Clouds (Skyward Atlas)
+  "2012979451": createWanderingCloudsPassiveModule,
 };
