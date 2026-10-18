@@ -1,6 +1,6 @@
 ## Purpose
 
-Yaoyao's kit as built, with her four strikes, charged attack and plunges, and Moonjade Descent's initial hit, her Yuegui and radishes from both her skill and burst, her riders, and her constellations 2, 4 and 6, and what is left to build: her Constellation 1 stamina restore and her Ascension 1 passive.
+Yaoyao's kit as built, with her four strikes, charged attack and plunges, and Moonjade Descent's initial hit, her Yuegui and radishes from both her skill and burst, her riders, her constellations 1, 2, 4 and 6, and her Ascension 1 passive.
 
 ## Requirements
 
