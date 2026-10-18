@@ -300,6 +300,7 @@
     "stats/weaponGrowCurves": "f4327c1e523f869582066c02b4224d8e8ffe61b371acb5a039aeadfa3a487bcb",
     "stats/weaponLevelRequiredExps": "5eba0c9efb4af69a4defcb2ca4d54b8c6c90a8d0e0a9b3fd78971d5471d20cf2",
     "stats/weapons": "aa3b79b899e4fe5314737300cbb29a4e76b8e6ce02455c385bb2b32bc06d3cf8",
+    "statueLevels/liyue": "fcee7ae34c954b3383befe36a0f77a938ec7ad47c3d42d400f6c610a714b25d2",
     "statueLevels/mondstadt": "7278dd3b97c7759b7306265d919a4de83ff851a835f0e68a2a3a73b39832d9eb",
     "transPoints/scene3": "d06ceab423d9696fde9641bd151a52c57530678213e1cb4b59f3ef58b546e284",
     "wildlife/fontaine": "379a322c223c2ae109848c042ed6c4b2bd50549cbe36c2dc58ff5960d22f7e85",
