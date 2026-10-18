@@ -19,6 +19,7 @@ import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShield
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
@@ -259,12 +260,13 @@ export const createLaylaKitBehaviour = ({
       }
     },
     skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         const curtainBonus =
           combatant.constellationCount >= CONSTELLATION_1 ? 1 + CONSTELLATION_1_SHIELD_ABSORPTION_BONUS : 1;
+        const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
         castKitShield(kitEffectState, combatant.characterId, {
           element: Element.Cryo,
-          health: (shieldFlatHealth + shieldMaxHealthShare * combatant.attributes.maxHealth) * curtainBonus,
+          health: (shieldFlatHealth + shieldMaxHealthShare * maxHealth) * curtainBonus,
           secondsRemaining: shieldSeconds,
         });
         startNightStarTick(kitEffectState, combatant);

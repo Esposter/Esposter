@@ -24,13 +24,14 @@ describe(chargePartyMember, () => {
     kit: TRAVELER_KIT,
     level: 1,
   };
+  const characterIdCombatantMap = new Map([[1, combatant]]);
 
   test("a boar's charge takes its share of the member's Max HP", () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
 
-    chargePartyMember(party, combatant, { effects: [] });
+    chargePartyMember(party, combatant, { effects: [] }, characterIdCombatantMap);
 
     expect(getPartyMember(party, 1).healthShare).toBeCloseTo(1 - WILDLIFE_CHARGE_DAMAGE);
   });

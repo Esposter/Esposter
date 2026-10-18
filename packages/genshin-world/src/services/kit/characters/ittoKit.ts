@@ -14,6 +14,7 @@ import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -218,12 +219,12 @@ export const createIttoKitBehaviour = ({
           },
         },
       ],
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }, target) => {
+      onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }, target) => {
         for (const effect of kitEffectState.effects)
           if (effect.kind === "taunt" && effect.combatant.characterId === combatant.characterId)
             effect.secondsRemaining = 0;
         castKitTaunt(kitEffectState, { ...body, position: target?.position ?? body.position }, combatant, {
-          health: ushiHealthShare * combatant.attributes.maxHealth,
+          health: ushiHealthShare * getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap),
           secondsRemaining: skillHitmarkSeconds + ushiSeconds,
         });
       },

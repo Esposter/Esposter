@@ -381,8 +381,9 @@ describe("constellation 4 and 6", () => {
     const combatant = { ...createHuTaoCombatant(), constellationCount };
     const party = createParty([HU_TAO_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
+    const characterIdCombatantMap = new Map([[HU_TAO_CHARACTER_ID, combatant]]);
     return Array.from({ length: hits }, () => {
-      hitPartyMember(party, combatant, kitEffectState, combatant.attributes.maxHealth);
+      hitPartyMember(party, combatant, kitEffectState, characterIdCombatantMap, combatant.attributes.maxHealth);
       return getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare;
     });
   };

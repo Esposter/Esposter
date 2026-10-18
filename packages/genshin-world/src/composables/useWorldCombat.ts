@@ -30,6 +30,7 @@ import { getEnemyDroppedItems } from "#src/services/enemy/getEnemyDroppedItems";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getSkillReadySeconds } from "#src/services/kit/getSkillReadySeconds";
 import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
@@ -166,27 +167,6 @@ export const useWorldCombat = ({
   });
   const activeCombatant = computed(() => characterIdCombatantMap.value.get(getActiveCharacterId(party)));
   const activePartyMember = computed(() => getPartyMember(party, getActiveCharacterId(party)));
-  // The field member's figures the HUD's health and skill buttons show, none until the character on the field is known.
-  // A skill with charges counts down only while none of them stands
-  const hudMember = computed<HudMember | undefined>(() => {
-    const combatant = activeCombatant.value;
-    if (!combatant) return undefined;
-    const partyMember = activePartyMember.value;
-    return {
-      burstCooldown: partyMember.burstCooldownSeconds,
-      burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
-      characterId: getActiveCharacterId(party),
-      element: combatant.element,
-      energy: partyMember.energy,
-      energyCost: combatant.kit.burstEnergyCost,
-      health: partyMember.healthShare * combatant.attributes.maxHealth,
-      level: combatant.level,
-      maxHealth: combatant.attributes.maxHealth,
-      skillCooldown: getSkillReadySeconds(combatant.kit, combatant, partyMember.skillCooldownSeconds),
-      skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
-      weaponType: combatant.weaponType,
-    };
-  });
   // The deployed team's skill and burst icons the HUD's buttons carry, by character id, each carried by its kit
   const characterIdSkillGlyphsMap = computed(
     () =>
@@ -227,6 +207,33 @@ export const useWorldCombat = ({
     strikes: [],
     wildlifeList: wildlifePlaces.map((wildlifePlace) => createWildlife(wildlifePlace)),
   };
+  // The field member's figures the HUD's health and skill buttons show, none until the character on the field is known.
+  // A skill with charges counts down only while none of them stands
+  const hudMember = computed<HudMember | undefined>(() => {
+    const combatant = activeCombatant.value;
+    if (!combatant) return undefined;
+    const partyMember = activePartyMember.value;
+    const maxHealth = getKitMaxHealth(
+      combatant,
+      kitContext.kitEffectState.effects,
+      party,
+      kitContext.characterIdCombatantMap,
+    );
+    return {
+      burstCooldown: partyMember.burstCooldownSeconds,
+      burstCooldownSeconds: combatant.kit.burstCooldownSeconds,
+      characterId: getActiveCharacterId(party),
+      element: combatant.element,
+      energy: partyMember.energy,
+      energyCost: combatant.kit.burstEnergyCost,
+      health: partyMember.healthShare * maxHealth,
+      level: combatant.level,
+      maxHealth,
+      skillCooldown: getSkillReadySeconds(combatant.kit, combatant, partyMember.skillCooldownSeconds),
+      skillCooldownSeconds: combatant.kit.skillCooldownSeconds,
+      weaponType: combatant.weaponType,
+    };
+  });
   // Mora the character on the field picks up is an event of combat for the next step, which an artifact set answers
   events.on("pickUpMora", () => {
     kitContext.outbox.push({ characterId: getActiveCharacterId(party), kind: KitEventKind.MoraPickedUp });
@@ -271,14 +278,23 @@ export const useWorldCombat = ({
       return;
     }
 
-    kitContext.outbox.push(...strikePartyMember(enemyTables, party, enemy, combatant, kitContext.kitEffectState));
+    kitContext.outbox.push(
+      ...strikePartyMember(
+        enemyTables,
+        party,
+        enemy,
+        combatant,
+        kitContext.kitEffectState,
+        kitContext.characterIdCombatantMap,
+      ),
+    );
     respawnParty();
   };
   // A boar's charge lands on the character on the field through the team's shields, and a team it fells respawns
   const chargeParty = () => {
     const combatant = activeCombatant.value;
     if (!combatant) return;
-    chargePartyMember(party, combatant, kitContext.kitEffectState);
+    chargePartyMember(party, combatant, kitContext.kitEffectState, kitContext.characterIdCombatantMap);
     respawnParty();
   };
   // The sheer cold's damage lands on the character on the field the way a boar's charge does, through the team's shields,
@@ -286,7 +302,7 @@ export const useWorldCombat = ({
   const coldDamageParty = (damage: number) => {
     const combatant = activeCombatant.value;
     if (!combatant) return;
-    hitPartyMember(party, combatant, kitContext.kitEffectState, damage);
+    hitPartyMember(party, combatant, kitContext.kitEffectState, kitContext.characterIdCombatantMap, damage);
     respawnParty();
   };
   return {
