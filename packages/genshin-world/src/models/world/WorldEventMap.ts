@@ -33,8 +33,8 @@ export interface WorldEventMap {
   parentQuestFinish: [mainId: string];
   partyHealthChanged: [change: PartyHealthChange];
   pickUpMora: [];
-  // An enemy whose poise a hit broke, emitted once for each time its poise breaks
-  poiseBreak: [enemy: Enemy];
+  // An enemy whose shield a hit broke, emitted once for each time its shield breaks
+  shieldBreak: [enemy: Enemy];
   questEvent: [QuestEvent];
   // A reaction a hit or a tick triggered on an enemy, which the Spiral Abyss's period blessings answer
   reactionTriggered: [enemy: Enemy, reactions: Reaction[]];

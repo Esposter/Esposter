@@ -1725,7 +1725,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @defeat="(enemy, enemyDrops) => defeatEnemy(enemy, enemyDrops)"
         @enter-combat="events.emit('enterCombat')"
         @leave-combat="events.emit('leaveCombat')"
-        @poise-break="(enemy) => events.emit('poiseBreak', enemy)"
+        @shield-break="(enemy) => events.emit('shieldBreak', enemy)"
         @ready="emit('ready')"
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
