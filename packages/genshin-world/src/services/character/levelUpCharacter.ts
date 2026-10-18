@@ -12,7 +12,7 @@ import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
 
 // The Character EXP materials a level's EXP is taken from, the largest first, each as many as covers what is left or as
 // The bag holds. Undefined when the bag cannot cover it all, and otherwise the EXP taken, which may overshoot the level
-const getExpMaterialPlan = (expNeeded: number, items: readonly InventoryItem[]) => {
+const getExpMaterialPlan = (expNeeded: number, items: InventoryItem[]) => {
   const takes: ItemCount[] = [];
   let remaining = expNeeded;
   for (const { exp, id } of CHARACTER_EXP_MATERIALS) {
