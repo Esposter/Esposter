@@ -34,6 +34,13 @@ This page links them and does not restate them.
   - A read that still needs judgement is the other machine's claim on the feature's unit.
   - A disassembler is a tool, not a capability, so an item that needs Windows or needs vkd3d says so in its text.
   - _Rejected: handing a read over by message alone._ A message holds no claim, so two machines can run the same read, and nothing records that it is owed once the session ends.
+- **A table is read only at the install's build, and its revision is measured before it is trusted.**
+  - The install's build is the one its own files name (`game_version`), and the community dump's tables are fetched from the branch at that build.
+  - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md)).
+  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0.
+- **A value's role is a candidate until a field name confirms it.**
+  - A scrambled object with no type data gives its values offsets and shapes only, so a role such as fog density or sun intensity is written as a candidate, and its page lists it as open.
+  - _Rejected: naming a value from how it moves over the day alone._ A curve that rises at dusk could be a light, a blend or a fog, and a fit assigns it whichever the rest of the frame allows.
 - **What a read finds is written where its feature is owned.**
   - An investigation goes in its component's reference topic.
   - A format goes on the formats page once it is one.
@@ -104,6 +111,8 @@ Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac
 | A DXIL program's assembly                                     | `vkd3d-compiler`            | Not read: `D3DDisassemble` reads DXBC only |
 | HLSL                                                          | None: the assembly stands   | 3Dmigoto's `cmd_Decompiler` 1.3.16, pinned |
 | The parity page, witness and passes                           | Yes                         | Yes                                        |
+
+The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` ([fleet](../../../../.agents/skills/throughput/references/fleet.md)). The Mac cannot pull from the PC.
 
 `vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH`; the Mac's is a vkd3d 2.1 build, named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly.
 

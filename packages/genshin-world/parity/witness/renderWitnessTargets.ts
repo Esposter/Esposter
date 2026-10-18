@@ -153,7 +153,8 @@ export const renderWitnessTargets = async (
     const albedo = mesh.material instanceof NodeMaterial ? (mesh.material.colorNode as Node<"vec3"> | null) : null;
     // The part's own normal map bends the normal the target writes, as the G-buffer the game lights holds it, taken
     // From the view into the world as `normalWorld` takes the geometry's. A face drawn from behind writes its geometry's
-    // Own normal, never the flip `normalWorld` gives a back face: a leaf card's normal is its crown's from either side
+    // Own normal, never the flip `normalWorld` gives a back face, unless a map bends it: a leaf card's normal is its
+    // Crown's from either side
     const sourceNormal =
       mesh.material instanceof NodeMaterial ? (mesh.material.normalNode as Node<"vec3"> | null) : null;
     const geometryNormal = material.side === DoubleSide ? normalWorldGeometry : normalWorld;
