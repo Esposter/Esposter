@@ -22,11 +22,11 @@ describe(createBaizhuKitBehaviour, () => {
     return kitEffectState;
   };
 
-  const createBaizhuCombatant = (): Combatant => ({
+  const createBaizhuCombatant = (constellationCount = 0): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
     characterId: BAIZHU_CHARACTER_ID,
-    constellationCount: 0,
+    constellationCount,
     elementalResonances: [],
     kit: BAIZHU_KIT,
     level: 90,
@@ -34,6 +34,35 @@ describe(createBaizhuKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 10_000;
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = createBaizhuCombatant(4);
+    const kitEffectState: KitEffectState = { effects: [] };
+    BAIZHU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const elementalMasteryBuff = kitEffectState.effects.find(
+      (effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
+    );
+
+    expect(BAIZHU_KIT.getSkillChargeBonus?.(combatant)).toBe(1);
+    expect(
+      elementalMasteryBuff?.kind === "buff" && [elementalMasteryBuff.amount, elementalMasteryBuff.secondsRemaining],
+    ).toStrictEqual([80, 15]);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = createBaizhuCombatant(3);
+    const kitEffectState: KitEffectState = { effects: [] };
+    BAIZHU_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(BAIZHU_KIT.getSkillChargeBonus?.(createBaizhuCombatant(0))).toBe(0);
+    expect(
+      kitEffectState.effects.some(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
+      ),
+    ).toBe(false);
+  });
 
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from his proud skill groups", () => {
     expect.hasAssertions();
