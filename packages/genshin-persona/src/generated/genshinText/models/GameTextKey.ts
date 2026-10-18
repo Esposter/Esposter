@@ -563,6 +563,10 @@ export enum GameTextKey {
   Uid = "UI_PLAYER_PROFILE_UID",
   Valberry = "2722402356",
   Viparyas = "3570846172",
+  // The weapon screen's three actions, the equipment page's buttons: the weapon's level, its ascension and its refinement
+  WeaponAscend = "UI_EQUIP_PAGE_STARUP_BUTTON",
+  WeaponEnhance = "UI_EQUIP_PAGE_LEVELUP_BUTTON",
+  WeaponRefine = "UI_EQUIP_PAGE_AWAKEN_BUTTON",
   WhisperingWoods = "2498537973",
   WhiteIronChunk = "1747175596",
   Windrise = "3796215893",
