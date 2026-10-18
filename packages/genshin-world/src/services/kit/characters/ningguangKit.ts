@@ -13,6 +13,7 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { endPartyMemberSkillCooldown } from "#src/services/party/endPartyMemberSkillCooldown";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
@@ -72,8 +73,7 @@ const castShockEffect = (kitEffectState: KitEffectState, characterId: number, ce
   const shockEffect = castKitField(kitEffectState, characterId, centre, {
     nextTickSeconds: 0,
     onTick: ({ party }) => {
-      const partyMember = getPartyMember(party, characterId);
-      if (partyMember.skillCooldownSeconds > 0) partyMember.skillCooldownSeconds = 0;
+      if (getPartyMember(party, characterId).skillCooldownSeconds > 0) endPartyMemberSkillCooldown(party, characterId);
       else shockEffect.secondsRemaining = 0;
     },
     secondsRemaining: SHOCK_EFFECT_SECONDS,

@@ -15,6 +15,7 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { endPartyMemberSkillCooldown } from "#src/services/party/endPartyMemberSkillCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getImpetuousWindsSkillCooldownMultiplier } from "#src/services/party/getImpetuousWindsSkillCooldownMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -147,7 +148,7 @@ export const createTartagliaKitBehaviour = ({
         const havocAnnihilation = findKitStatus(kitEffectState.effects, characterId, HAVOC_ANNIHILATION_STATUS_ID);
         if (havocAnnihilation) {
           havocAnnihilation.secondsRemaining = 0;
-          partyMember.skillCooldownSeconds = 0;
+          endPartyMemberSkillCooldown(party, characterId);
           return;
         }
 
