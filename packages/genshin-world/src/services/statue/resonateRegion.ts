@@ -9,4 +9,4 @@ import { offerItems } from "#src/services/offering/offerItems";
 export const resonateRegion = (
   progress: OfferingProgress<StatueLevel>,
 ): { gainedLevels: StatueLevel[]; progress: OfferingProgress<StatueLevel> } =>
-  progress.level === 0 ? offerItems(progress, 0) : { gainedLevels: [], progress };
+  progress.level === 0 ? offerItems(progress, []) : { gainedLevels: [], progress };

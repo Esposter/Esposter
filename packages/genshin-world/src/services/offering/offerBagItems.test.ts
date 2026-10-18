@@ -17,10 +17,9 @@ describe(offerBagItems, () => {
   const offeringItemId = 112_005;
   const definition = getItemDefinition(offeringItemId, englishNameText, materialDataMap);
   const levels: OfferingLevel[] = [
-    { itemCount: 0, itemId: 0, level: 1, rewards: [] },
+    { items: [], level: 1, rewards: [] },
     {
-      itemCount: 1,
-      itemId: offeringItemId,
+      items: [{ itemCount: 1, itemId: offeringItemId }],
       level: 2,
       rewards: [
         { itemCount: 1, itemId: ADVENTURE_EXP_ITEM_ID },
@@ -28,7 +27,7 @@ describe(offerBagItems, () => {
         { itemCount: 1, itemId: MORA_ITEM_ID },
       ],
     },
-    { itemCount: 2, itemId: offeringItemId, level: 3, rewards: [] },
+    { items: [{ itemCount: 2, itemId: offeringItemId }], level: 3, rewards: [] },
   ];
 
   test("every offering item the bag holds is offered and taken out of it, reaching the levels it covers and paying their rewards", () => {
@@ -40,7 +39,7 @@ describe(offerBagItems, () => {
       offerBagItems(
         { items, nextId: 1 },
         EMPTY_WALLET,
-        { heldCount: 0, level: 1, levels },
+        { heldCounts: {}, level: 1, levels },
         englishNameText,
         materialDataMap,
       ),
@@ -48,7 +47,7 @@ describe(offerBagItems, () => {
       adventureExp: 1,
       inventory: { items: [], nextId: 1 },
       overflowItems: [],
-      progress: { heldCount: 1, level: 3, levels },
+      progress: { heldCounts: { [offeringItemId]: 1 }, level: 3, levels },
       wallet: { ...EMPTY_WALLET, [Currency.AcquaintFate]: 1, [Currency.Mora]: 1 },
     });
   });
@@ -60,15 +59,19 @@ describe(offerBagItems, () => {
     const rewardDefinition = getItemDefinition(rewardItemId, englishNameText, materialDataMap);
     const fullStack: InventoryItem = { definition: rewardDefinition, id: 1, quantity: rewardDefinition.stackLimit };
     const rewardLevels: OfferingLevel[] = [
-      { itemCount: 0, itemId: 0, level: 1, rewards: [] },
-      { itemCount: 1, itemId: offeringItemId, level: 2, rewards: [{ itemCount: 2, itemId: rewardItemId }] },
+      { items: [], level: 1, rewards: [] },
+      {
+        items: [{ itemCount: 1, itemId: offeringItemId }],
+        level: 2,
+        rewards: [{ itemCount: 2, itemId: rewardItemId }],
+      },
     ];
 
     expect(
       offerBagItems(
         { items: [{ definition, id: 0, quantity: 1 }, fullStack], nextId: 2 },
         EMPTY_WALLET,
-        { heldCount: 0, level: 1, levels: rewardLevels },
+        { heldCounts: {}, level: 1, levels: rewardLevels },
         englishNameText,
         materialDataMap,
       ).overflowItems,
@@ -84,7 +87,7 @@ describe(offerBagItems, () => {
       offerBagItems(
         { items, nextId: 1 },
         EMPTY_WALLET,
-        { heldCount: 0, level: 3, levels },
+        { heldCounts: {}, level: 3, levels },
         englishNameText,
         materialDataMap,
       ),
@@ -92,7 +95,7 @@ describe(offerBagItems, () => {
       adventureExp: 0,
       inventory: { items: [], nextId: 1 },
       overflowItems: [],
-      progress: { heldCount: 3, level: 3, levels },
+      progress: { heldCounts: { [offeringItemId]: 3 }, level: 3, levels },
       wallet: EMPTY_WALLET,
     });
   });

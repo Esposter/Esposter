@@ -2,8 +2,8 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
+import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { Ref, ShallowRef } from "vue";
 
@@ -13,6 +13,7 @@ import { findOculus } from "#src/services/statue/findOculus";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { readStatueLevels } from "#src/services/statue/readStatueLevels";
 import { resonateRegion } from "#src/services/statue/resonateRegion";
+import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/services/statue/statueRegionProgress";
 import { getResultAsync } from "@esposter/shared";
 
 // The statues' state the world holds: each region's level and held count, and the Oculi found. A touch collects an Oculus
@@ -38,18 +39,18 @@ export const useWorldStatues = ({
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
-  regionStatueProgressMap: ShallowRef<ReadonlyMap<string, OfferingProgressSave>>;
+  regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
 }) => {
   // The levels of the region's statues are read from the game's table as a statue is touched or resonated with, and the
   // Region's progress is kept as the save holds it, its levels left to the table
-  const setRegionProgress = (regionId: string, progress: OfferingProgressSave) => {
+  const setRegionProgress = (regionId: string, progress: StatueRegionProgressSave) => {
     regionStatueProgressMap.value = new Map([...regionStatueProgressMap.value, [regionId, progress]]);
   };
   // A region's progress as the save holds it, which a region no save holds yet starts from at none
-  const getRegionProgress = (regionId: string): OfferingProgressSave =>
+  const getRegionProgress = (regionId: string): StatueRegionProgressSave =>
     regionStatueProgressMap.value.get(regionId) ?? { heldCount: 0, level: 0 };
   const payLevels = (gainedLevels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const paid = payOfferingLevels(gainedLevels, inventory.value, wallet.value, nameText, materialDataMap);
@@ -73,10 +74,10 @@ export const useWorldStatues = ({
       (levels) => {
         collectingOculusIds.delete(source.id);
         const progress = getRegionProgress(regionId);
-        const found = findOculus(foundOculusIds.value, source.id, { ...progress, levels });
+        const found = findOculus(foundOculusIds.value, source.id, toStatueRegionProgress(progress, levels));
         foundOculusIds.value = found.foundOculusIds;
         gainWorldAdventureExp(found.adventureExp + payLevels(found.gainedLevels, source));
-        setRegionProgress(regionId, { heldCount: found.progress.heldCount, level: found.progress.level });
+        setRegionProgress(regionId, toStatueRegionProgressSave(found.progress));
       },
       (error) => {
         collectingOculusIds.delete(source.id);
@@ -91,9 +92,9 @@ export const useWorldStatues = ({
     getResultAsync(() => readRegionStatueLevels(regionId)).match(
       (levels) => {
         const progress = getRegionProgress(regionId);
-        const resonated = resonateRegion({ ...progress, levels });
+        const resonated = resonateRegion(toStatueRegionProgress(progress, levels));
         gainWorldAdventureExp(payLevels(resonated.gainedLevels, source));
-        setRegionProgress(regionId, { heldCount: resonated.progress.heldCount, level: resonated.progress.level });
+        setRegionProgress(regionId, toStatueRegionProgressSave(resonated.progress));
       },
       (error) => {
         console.error(error);
