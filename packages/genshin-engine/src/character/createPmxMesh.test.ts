@@ -1,6 +1,7 @@
 import type { PmxMaterial } from "#src/models/character/PmxMaterial";
 import type { PmxModel } from "#src/models/character/PmxModel";
 
+import { PMX_UNIT_METRES } from "#src/character/constants";
 import { createPmxMesh } from "#src/character/createPmxMesh";
 import { PmxSphereMode } from "#src/models/character/PmxSphereMode";
 import { Matrix4, MeshBasicMaterial, Vector3 } from "three";
@@ -75,5 +76,31 @@ describe(createPmxMesh, () => {
       new Matrix4().elements.map((element) => roundToTen(element)),
       new Matrix4().elements.map((element) => roundToTen(element)),
     ]);
+  });
+
+  test("scales the mesh by the metres each unit stands for, and by the reckoned unit where none is given", () => {
+    expect.hasAssertions();
+
+    const pmxModel: PmxModel = {
+      bones: [],
+      indices: new Uint32Array(),
+      joints: [],
+      materials: [],
+      morphs: [],
+      name: "",
+      rigidBodies: [],
+      textures: [],
+      vertices: {
+        normals: new Float32Array(),
+        positions: new Float32Array(),
+        skinIndices: new Uint16Array(),
+        skinWeights: new Float32Array(),
+        subUvs: new Float32Array(),
+        uvs: new Float32Array(),
+      },
+    };
+
+    expect(createPmxMesh(pmxModel, []).scale.x).toBe(PMX_UNIT_METRES);
+    expect(createPmxMesh(pmxModel, [], 0.0909).scale.x).toBe(0.0909);
   });
 });

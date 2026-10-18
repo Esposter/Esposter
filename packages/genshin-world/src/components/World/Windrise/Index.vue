@@ -663,6 +663,7 @@ onUnmounted(() => {
         <CharacterModel
           v-if="characterPackReader && characterDrawing !== CharacterDrawing.None"
           :key="characterPackReader.key"
+          :character-id="activeCharacterId"
           :character-pack-reader
           :light-uniforms
           :ramp-texture
