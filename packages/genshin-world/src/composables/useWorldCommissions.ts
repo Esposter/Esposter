@@ -9,6 +9,7 @@ import { advanceCommissionForQuest } from "#src/services/commission/advanceCommi
 import { computeCommissionDay } from "#src/services/commission/computeCommissionDay";
 import { joinCommissionPool } from "#src/services/commission/joinCommissionPool";
 import { readCommissionSlices } from "#src/services/commission/readCommissionSlices";
+import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -72,5 +73,9 @@ export const useWorldCommissions = ({
     if (commissionSlice.value)
       commissionDay.value = advanceCommissionForQuest(commissionDay.value, commissionSlice.value, questId);
   });
-  return { commissionDay };
+  // The day's four as the Adventurer Handbook's Commissions tab lists them, none while no region's tasks are read
+  const handbookDayCommissions = computed(() =>
+    commissionSlice.value ? toHandbookDayCommissions(commissionDay.value, commissionSlice.value) : [],
+  );
+  return { commissionDay, commissionSlice, handbookDayCommissions };
 };

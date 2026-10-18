@@ -217,7 +217,7 @@ const {
 });
 // The day's commissions, dealt again as the world opens when the day saved was dealt before the daily reset, and finished by
 // The quests in progress that finish
-const { commissionDay } = useWorldCommissions({
+const { commissionDay, handbookDayCommissions } = useWorldCommissions({
   events,
   finishedMainQuestIds,
   gameDataBaseUrl,
@@ -936,8 +936,10 @@ defineExpose({ jumpTo, readCameraPosition });
         <HandbookScreen
           :commissions="[]"
           :completed-count="0"
+          :day-commissions="handbookDayCommissions"
           :game-text
           :investigation-rewards="[]"
+          :name-text="nameText"
           :total-count="0"
           @close="screenKind = ScreenKind.World"
         />
