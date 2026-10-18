@@ -4,4 +4,4 @@ affected_areas: [genshin]
 x-model: claude-haiku-5-5
 x-needs: [game-exports]
 x-touches: ["scripts/src/services/genshinAssets/stats/**", "scripts/src/models/genshinAssets/stats/**"]
-x-waiting: "the passive's effect waits on the character kits (openspec/changes/genshin-character-kits, 0 of 12 tasks done), whose shared effects each passive module acts through; its name and rank descriptions wait on the game text publishing the passive's text ids in a reader-language record (genshin:text names publishes materials only)"
+x-waiting: "the game names publish carrying each passive's name and rank text ids (genshin:text names, run by the main session); the passives without a module wait on no change, they are written one by one"
