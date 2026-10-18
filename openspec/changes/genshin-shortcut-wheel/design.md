@@ -21,6 +21,7 @@ The default entries are the wiki's, in its order clockwise from the top. An 8-di
 - **Gadgets are not on the wheel.** The wiki's Shortcut Wheel lists menus only. Gadgets are used from Z, which `genshin-gadgets` builds, so the wheel does not take `quickSwapItemIds`.
 - **Customization is not gated by this change.** The wiki gates customizing the entries on Adventure Rank 20, not the wheel, so the wheel is open from the start with its defaults.
 - **Hold to open, release to choose** is provisional. The wiki gives no hold length, so the wheel opens on a press and the choice is read on release; the same hold rule as the quick swap's is not reused.
+- **The wheel's layout is provisional.** The wiki's eight-direction screenshot sits on a CDN that refused the download from this machine, so the wheel is drawn from the wiki's description: eight entries clockwise from the top, four on the other layout. The parity trace of the game's own wheel replaces the drawing. The Tab and bumper hold that opens it is not wired yet (task 2.1).
 
 ## Key files
 
@@ -29,6 +30,7 @@ The work adds new files only, so the wheel's layout is a tree, not a table:
 ```text
 packages/genshin-world/src/services/shortcutWheel/   ← the entries and the direction, pure and tested
 packages/genshin-world/src/models/shortcutWheel/     ← the direction count, as an enum
+packages/genshin-world/src/components/Hud/ShortcutWheel/ ← the wheel drawn from the picked direction count, with its browser test
 ```
 
 ## Notes
