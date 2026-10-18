@@ -29,6 +29,7 @@ describe(ascendWeapon, () => {
     id: 1,
     nameTextId: "1",
     passiveNameTextId: "",
+    passiveRankAttributeLines: [],
     passiveRankDescriptionTextIds: [],
     passiveRankParams: [],
     rarity: 3,

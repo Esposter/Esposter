@@ -5,11 +5,13 @@ import type { StatTables } from "#src/models/character/StatTables";
 import { getArtifactSetAttributeLines } from "#src/services/artifact/getArtifactSetAttributeLines";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { getWeaponPassiveAttributeLines } from "#src/services/weapon/getWeaponPassiveAttributeLines";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Every attribute line a character carries: its own at its level and phase and those every level of it starts with,
-// Its weapon's at the weapon's, each artifact's main affix at its rarity and level and its minor affixes, and the
-// Bonuses of the sets its artifacts make, and for the Traveler the bonuses of the elements it holds
+// Its weapon's at the weapon's and its passive's stats at the rank it holds, each artifact's main affix at its rarity
+// And level and its minor affixes, the bonuses of the sets its artifacts make, and for the Traveler the bonuses of the
+// Elements it holds
 export const getCharacterAttributeLines = (
   { artifacts, ascension, id, level, weapon }: Character,
   {
@@ -32,6 +34,7 @@ export const getCharacterAttributeLines = (
     ...getGrownAttributeLines(characterData, characterGrowCurveMap, level, ascension),
     ...characterData.attributeLines,
     ...getGrownAttributeLines(weaponData, weaponGrowCurveMap, weapon.level, weapon.ascension),
+    ...getWeaponPassiveAttributeLines(weapon, weaponData),
     ...artifacts.flatMap((artifact) => {
       const value = artifactMainAffixCurves.find(
         ({ attribute, rarity }) => attribute === artifact.mainAffix && rarity === artifact.rarity,
