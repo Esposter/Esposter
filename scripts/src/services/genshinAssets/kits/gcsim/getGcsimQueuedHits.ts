@@ -14,7 +14,10 @@ export const findQueuedAttack = (
   attacks: readonly GcsimAttack[],
   { attackLine, attackName, file, iterations, line }: GcsimQueuedAttack,
 ): GcsimAttack | undefined => {
-  if (attackLine !== undefined) return attacks.find((attack) => attack.file === file && attack.line === attackLine);
+  if (attackLine !== undefined)
+    return attacks.find(
+      (attack) => attack.file === file && attack.line === attackLine && checkIsInIteration(attack, iterations),
+    );
   if (attackName === undefined) return undefined;
   const namedAttacks = attacks.filter(
     (attack) => attack.file === file && attack.variableName === attackName && checkIsInIteration(attack, iterations),

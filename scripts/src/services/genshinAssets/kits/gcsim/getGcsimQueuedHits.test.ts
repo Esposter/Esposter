@@ -21,4 +21,39 @@ describe(findQueuedAttack, () => {
       69, 66, 66, 76,
     ]);
   });
+
+  test("fires an inline literal's attack from the call of the loop iteration it is in, its element that iteration's", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package varka",
+          "",
+          "var burstHitmark = []int{112, 131}",
+          "",
+          "func (c *char) burst() {",
+          "\tele := []attributes.Element{attributes.Cryo, attributes.Anemo}",
+          "\tfor i, hitmark := range burstHitmark {",
+          "\t\tc.Core.QueueAttack(",
+          "\t\t\tinfo.AttackInfo{AttackTag: attacks.AttackTagElementalBurst, Element: ele[i]},",
+          "\t\t\tcombat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 6),",
+          "\t\t\thitmark,",
+          "\t\t\thitmark,",
+          "\t\t)",
+          "\t}",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const constantMap = evaluateGoConstants(sources);
+    const attacks = readGcsimAttacks(sources, constantMap);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+
+    expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.element)).toStrictEqual([
+      "attributes.Cryo",
+      "attributes.Anemo",
+    ]);
+  });
 });

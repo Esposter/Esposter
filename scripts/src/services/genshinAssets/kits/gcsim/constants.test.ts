@@ -6,6 +6,7 @@ export const GCSIM_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtur
 
 // Odette's Dance Double ticker, an excerpt of the same version
 export const GCSIM_ODETTE_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "odette");
+export const GCSIM_VARKA_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "varka");
 
 // Fixtures only: a suite here would run again in every file that imports them
 describe.todo("constants");

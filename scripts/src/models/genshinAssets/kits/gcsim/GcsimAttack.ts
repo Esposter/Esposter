@@ -17,8 +17,9 @@ export interface GcsimAttack {
   fieldLineMap: Partial<Record<string, number>>;
   file: string;
   internalCooldownTag?: string;
-  // The loop iteration this variant applies to, where an if on a constant loop's variable sets a field on a copy: a call
-  // Takes it only in that iteration, and the copy's own attack in the others
+  // The loop iteration this variant applies to, where an if on a constant loop's variable sets a field on a copy, or a
+  // Literal's element is a slice entry its loop variable indexes: a call takes it only in that iteration, and the copy's
+  // Own attack, or the literal's other iterations, in the others
   iteration?: GcsimAttackIteration;
   line: number;
   poiseDamage?: number;

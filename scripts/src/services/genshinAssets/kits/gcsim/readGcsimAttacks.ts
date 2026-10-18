@@ -16,6 +16,7 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
 import { readGoBranchAt } from "#src/services/genshinAssets/kits/gcsim/readGoBranchAt";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
+import { readGoLocalSlice } from "#src/services/genshinAssets/kits/gcsim/readGoLocalSlice";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -147,6 +148,36 @@ export const readGcsimAttacks = (
     const stringMap = readGoStringConstants(tokens);
     const readBranchAt = readGoBranchAt(tokens);
     const loops = readConstantLoops(tokens, createGoScope(tokens, constantMap));
+    // An `Element` a constant loop's variable indexes into a local slice, `ele[i]`, is each iteration's own: the slice's
+    // Entry at that index, with the line the slice is declared on, so the literal is one attack per iteration
+    const readIndexedElements = (position: number, expression: GoExpression | undefined) => {
+      if (
+        expression?.kind !== GoExpressionKind.Index ||
+        expression.target.kind !== GoExpressionKind.Identifier ||
+        expression.index.kind !== GoExpressionKind.Identifier
+      )
+        return undefined;
+      const variable = expression.index.name;
+      const loop = loops.find(
+        ({ bodyEnd, bodyStart, iterations }) =>
+          bodyStart < position && position < bodyEnd && iterations[0]?.has(variable),
+      );
+      const slice = readGoLocalSlice(tokens, expression.target.name, position);
+      if (loop === undefined || slice === undefined) return undefined;
+      return {
+        values: loop.iterations.flatMap((iteration) => {
+          const index = iteration.get(variable);
+          if (index === undefined) return [];
+          const entry = slice.elements[index];
+          const element =
+            entry?.kind === GoExpressionKind.Identifier && entry.name.startsWith("attributes.")
+              ? entry.name
+              : undefined;
+          return [{ element, index, line: slice.line }];
+        }),
+        variable,
+      };
+    };
     // The attack placed at a position with the branch that position sits in, its key left out when there is none, so a
     // Copy's branch from its source does not carry over
     const withBranch = (attack: GcsimAttack, position: number): GcsimAttack => {
@@ -184,37 +215,45 @@ export const readGcsimAttacks = (
         const poiseDamage = evaluateNumber("PoiseDMG");
         const poiseField = fieldMap.get("PoiseDMG");
         const abilExpression = fieldMap.get("Abil")?.expression;
-        attacks.push(
-          withBranch(
-            {
-              abil:
-                abilExpression?.kind === GoExpressionKind.String
-                  ? abilExpression.value
-                  : getName(abilExpression) === undefined
-                    ? undefined
-                    : stringMap.get(getName(abilExpression) ?? ""),
-              attackTag: getName(fieldMap.get("AttackTag")?.expression),
-              durability: evaluateNumber("Durability"),
-              element: getName(fieldMap.get("Element")?.expression),
-              fieldLineMap: Object.fromEntries(Array.from(fieldMap, ([key, { line }]) => [key, line])),
-              file,
-              internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
-              line: token.line,
-              poiseDamage,
-              poiseDamageVariable:
-                poiseDamage === undefined && poiseField !== undefined
-                  ? getGoRootName(poiseField.expression)
-                  : undefined,
-              siteLine: token.line,
-              talentVariable:
-                multiplierField === undefined
-                  ? undefined
-                  : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
-              variableName: readVariableName(tokens, position),
-            },
-            position,
-          ),
-        );
+        const base: GcsimAttack = {
+          abil:
+            abilExpression?.kind === GoExpressionKind.String
+              ? abilExpression.value
+              : getName(abilExpression) === undefined
+                ? undefined
+                : stringMap.get(getName(abilExpression) ?? ""),
+          attackTag: getName(fieldMap.get("AttackTag")?.expression),
+          durability: evaluateNumber("Durability"),
+          element: getName(fieldMap.get("Element")?.expression),
+          fieldLineMap: Object.fromEntries(Array.from(fieldMap, ([key, { line }]) => [key, line])),
+          file,
+          internalCooldownTag: getName(fieldMap.get("ICDTag")?.expression),
+          line: token.line,
+          poiseDamage,
+          poiseDamageVariable:
+            poiseDamage === undefined && poiseField !== undefined ? getGoRootName(poiseField.expression) : undefined,
+          siteLine: token.line,
+          talentVariable:
+            multiplierField === undefined
+              ? undefined
+              : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
+          variableName: readVariableName(tokens, position),
+        };
+        const indexedElements = readIndexedElements(position, fieldMap.get("Element")?.expression);
+        if (indexedElements === undefined) attacks.push(withBranch(base, position));
+        else
+          for (const { element, index, line } of indexedElements.values)
+            attacks.push(
+              withBranch(
+                {
+                  ...base,
+                  element,
+                  fieldLineMap: { ...base.fieldLineMap, Element: line },
+                  iteration: { value: index, variable: indexedElements.variable },
+                },
+                position,
+              ),
+            );
       } else if (
         token.text === "Mult" &&
         checkIsGoPunctuation(tokens[position - 1], ".") &&
