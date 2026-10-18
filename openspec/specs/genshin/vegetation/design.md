@@ -29,27 +29,28 @@ flowchart TD
 
 ## What it costs to run
 
-- **A draw per ring, of the blades in view.** Each ring is one instanced draw with no per-blade data. A compute pass tests every cell of the ring's grid against the view, the fade and whether it grows at all, and writes the cells it keeps into the draw's indirect instance count (`createGrassCulling`, `createInstanceCulling`), so a blade out of view is not drawn and the CPU never sees the count. A cell's root and its top are both tested, widened by a tenth of the clip space, so a blade whose root lies just outside the view is kept while its top shows.
+- **A draw per ring, of the blades in view.** Each ring is one instanced draw with no per-blade data. A compute pass tests every cell of the ring's grid against the view, the fade and whether it grows at all, and writes the cells it keeps into the draw's indirect instance count (`createGrassCulling`, `createInstanceCulling`), so a blade out of view is not drawn and the CPU never sees the count. A cell's root, its top as it stands and its tip as the wind and the trail bend it are each tested, widened by a tenth of the clip space, so a blade whose root lies just outside the view is kept while its top shows, and one whose bent tip comes into view is kept while its root and top do not. The tip is the same point the blade is drawn at (`createGrassBladePoint`), so the test cannot drift from the draw.
 - **Blade density is the first thing a tier lowers** (`QualityTierSettingsMap`), since the look survives thinner grass better than it survives lost shadows.
 - **The ground capture is one small render of the terrain's tiles**, only when it is owed.
 
 ## Key files
 
-| File                                                            | Role                                                                        |
-| :-------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/nodes/createWindNode.ts`           | The wind at a point on the ground: breeze, gusts and turbulence             |
-| `packages/genshin-engine/src/nodes/computeWindGust.ts`          | The gust band at a point on the CPU, the reference for the wind node's gust |
-| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` | A ring's blades placed, grown, bent and shaded in the vertex stage          |
-| `packages/genshin-engine/src/vegetation/createGrassCell.ts`     | A grid cell's place, jitter, turn, size and whether it grows                |
-| `packages/genshin-engine/src/vegetation/createGrassCulling.ts`  | The cells a ring's compute pass keeps in view                               |
-| `packages/genshin-engine/src/culling/createInstanceCulling.ts`  | The per-instance compute pass and its indirect draw                         |
-| `packages/genshin-engine/src/vegetation/stepGrassTrail.ts`      | The trail of bends the character leaves, stepped each fixed step            |
-| `packages/genshin-engine/src/nodes/sampleGrassTrail.ts`         | The trail's bend at a point of the ground, read in the vertex stage         |
-| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`   | The one blade shape every blade is                                          |
-| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts` | The ground's colour and height under the camera, from above                 |
-| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`       | Leaf cards that lean and flutter in the wind                                |
-| `packages/genshin-world/src/components/World/Grass/Index.vue`   | The rings, their tier's density, and when the capture is redrawn            |
-| `packages/genshin-world/src/services/windrise/constants.ts`     | Mondstadt's wind and Windrise's grass rings                                 |
+| File                                                              | Role                                                                        |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/nodes/createWindNode.ts`             | The wind at a point on the ground: breeze, gusts and turbulence             |
+| `packages/genshin-engine/src/nodes/computeWindGust.ts`            | The gust band at a point on the CPU, the reference for the wind node's gust |
+| `packages/genshin-engine/src/vegetation/createGrassMaterial.ts`   | A ring's blades placed, grown, bent and shaded in the vertex stage          |
+| `packages/genshin-engine/src/vegetation/createGrassBladePoint.ts` | A blade's point, bent by the wind and the trail, drawn and tested alike     |
+| `packages/genshin-engine/src/vegetation/createGrassCell.ts`       | A grid cell's place, jitter, turn, size and whether it grows                |
+| `packages/genshin-engine/src/vegetation/createGrassCulling.ts`    | The cells a ring's compute pass keeps in view                               |
+| `packages/genshin-engine/src/culling/createInstanceCulling.ts`    | The per-instance compute pass and its indirect draw                         |
+| `packages/genshin-engine/src/vegetation/stepGrassTrail.ts`        | The trail of bends the character leaves, stepped each fixed step            |
+| `packages/genshin-engine/src/nodes/sampleGrassTrail.ts`           | The trail's bend at a point of the ground, read in the vertex stage         |
+| `packages/genshin-engine/src/vegetation/computeGrassBlade.ts`     | The one blade shape every blade is                                          |
+| `packages/genshin-engine/src/vegetation/renderGroundCapture.ts`   | The ground's colour and height under the camera, from above                 |
+| `packages/genshin-engine/src/nodes/createLeafMaterial.ts`         | Leaf cards that lean and flutter in the wind                                |
+| `packages/genshin-world/src/components/World/Grass/Index.vue`     | The rings, their tier's density, and when the capture is redrawn            |
+| `packages/genshin-world/src/services/windrise/constants.ts`       | Mondstadt's wind and Windrise's grass rings                                 |
 
 ## Notes
 

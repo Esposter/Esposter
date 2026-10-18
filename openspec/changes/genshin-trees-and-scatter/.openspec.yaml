@@ -13,5 +13,12 @@ x-touches:
     "packages/genshin-world/src/services/world/composeHeadingMatrix.ts",
     "packages/genshin-world/src/services/world/composePlantPlaceMatrix.ts",
     "packages/genshin-world/src/services/world/composePlantPlaceMatrix.test.ts",
+    "packages/genshin-engine/src/vegetation/createGrassBladePoint.ts",
+    "packages/genshin-engine/src/vegetation/createGrassCulling.ts",
+    "packages/genshin-engine/src/vegetation/createGrassMaterial.ts",
+    "packages/genshin-engine/src/vegetation/constants.ts",
+    "packages/genshin-engine/src/models/vegetation/GrassCullingOptions.ts",
+    "packages/genshin-world/src/components/World/Grass/Index.vue",
+    "openspec/specs/genshin/vegetation/design.md",
     "scripts/src/services/genshinAssets/scene/WindrisePlantArrangementFamilies.ts",
   ]
