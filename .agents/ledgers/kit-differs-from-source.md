@@ -7,126 +7,131 @@ grep -n '"DiffersFromSource"' packages/genshin-world/src/data/kits/<kit>.json
 grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<kit>/design.md
 ```
 
-| Unit                 | Swept                  | Notes              |
-| -------------------- | ---------------------- | ------------------ |
-| `aino`               | —                      |                    |
-| `albedo`             | —                      |                    |
-| `alhaitham`          | —                      |                    |
-| `aloy`               | —                      |                    |
-| `alyosha`            | —                      |                    |
-| `amber`              | —                      |                    |
-| `arataki-itto`       | —                      |                    |
-| `arlecchino`         | —                      |                    |
-| `baizhu`             | —                      |                    |
-| `barbara`            | —                      |                    |
-| `beidou`             | —                      |                    |
-| `bennett`            | —                      |                    |
-| `candace`            | —                      |                    |
-| `charlotte`          | —                      |                    |
-| `chasca`             | —                      |                    |
-| `chevreuse`          | —                      |                    |
-| `chiori`             | —                      |                    |
-| `chongyun`           | —                      |                    |
-| `citlali`            | 2026-10-19 · Haiku 5.5 |                    |
-| `clorinde`           | —                      |                    |
-| `collei`             | —                      |                    |
-| `columbina`          | —                      |                    |
-| `cyno`               | 2026-10-19 · Haiku 5.5 |                    |
-| `dahlia`             | —                      |                    |
-| `dehya`              | —                      |                    |
-| `diluc`              | —                      |                    |
-| `diona`              | —                      |                    |
-| `dori`               | 2026-10-19 · Haiku 5.5 |                    |
-| `durin`              | —                      |                    |
-| `emilie`             | —                      |                    |
-| `escoffier`          | —                      |                    |
-| `eula`               | 2026-10-19 · Haiku 5.5 |                    |
-| `faruzan`            | —                      |                    |
-| `fischl`             | —                      |                    |
-| `flins`              | —                      |                    |
-| `freminet`           | —                      |                    |
-| `furina`             | —                      |                    |
-| `gaming`             | —                      |                    |
-| `ganyu`              | —                      |                    |
-| `gorou`              | —                      |                    |
-| `hu-tao`             | —                      |                    |
-| `iansan`             | 2026-10-19 · Haiku 5.5 |                    |
-| `ifa`                | —                      |                    |
-| `illuga`             | —                      |                    |
-| `ineffa`             | —                      |                    |
-| `jahoda`             | 2026-10-19 · Haiku 5.5 |                    |
-| `jean`               | —                      |                    |
-| `kachina`            | —                      |                    |
-| `kaedehara-kazuha`   | —                      | design is `kazuha` |
-| `kaeya`              | —                      |                    |
-| `kamisato-ayaka`     | —                      |                    |
-| `kamisato-ayato`     | —                      |                    |
-| `kaveh`              | —                      |                    |
-| `keqing`             | 2026-10-19 · Haiku 5.5 |                    |
-| `kinich`             | —                      |                    |
-| `kirara`             | 2026-10-19 · Haiku 5.5 |                    |
-| `klee`               | —                      |                    |
-| `kujou-sara`         | —                      |                    |
-| `kuki-shinobu`       | —                      | design is `kuki`   |
-| `lan-yan`            | —                      |                    |
-| `lauma`              | —                      |                    |
-| `layla`              | —                      |                    |
-| `linnea`             | —                      |                    |
-| `lisa`               | —                      |                    |
-| `lohen`              | —                      |                    |
-| `lynette`            | —                      |                    |
-| `lyney`              | —                      |                    |
-| `mavuika`            | —                      |                    |
-| `mika`               | —                      |                    |
-| `mona`               | —                      |                    |
-| `mualani`            | —                      |                    |
-| `nahida`             | —                      |                    |
-| `navia`              | —                      |                    |
-| `nefer`              | —                      |                    |
-| `neuvillette`        | —                      |                    |
-| `nicole`             | —                      |                    |
-| `nilou`              | —                      |                    |
-| `ningguang`          | —                      |                    |
-| `noelle`             | —                      |                    |
-| `odette`             | —                      |                    |
-| `ororon`             | —                      |                    |
-| `prune`              | —                      |                    |
-| `qiqi`               | —                      |                    |
-| `raiden-shogun`      | 2026-10-19 · Haiku 5.5 |                    |
-| `razor`              | —                      |                    |
-| `rosaria`            | —                      |                    |
-| `sandrone`           | —                      |                    |
-| `sangonomiya-kokomi` | —                      |                    |
-| `sayu`               | 2026-10-19 · Haiku 5.5 |                    |
-| `sethos`             | —                      |                    |
-| `shenhe`             | —                      |                    |
-| `shikanoin-heizou`   | —                      | design is `heizou` |
-| `sigewinne`          | —                      |                    |
-| `skirk`              | —                      |                    |
-| `sucrose`            | —                      |                    |
-| `tartaglia`          | —                      |                    |
-| `thoma`              | —                      |                    |
-| `tighnari`           | —                      |                    |
-| `traveler`           | —                      |                    |
-| `varesa`             | —                      |                    |
-| `varka`              | —                      |                    |
-| `venti`              | —                      |                    |
-| `vesna`              | —                      |                    |
-| `vodyanitsa`         | —                      |                    |
-| `wanderer`           | —                      |                    |
-| `wriothesley`        | —                      |                    |
-| `xiangling`          | —                      |                    |
-| `xianyun`            | —                      |                    |
-| `xiao`               | —                      |                    |
-| `xilonen`            | —                      |                    |
-| `xingqiu`            | —                      |                    |
-| `xinyan`             | 2026-10-19 · Haiku 5.5 |                    |
-| `yae-miko`           | —                      |                    |
-| `yanfei`             | —                      |                    |
-| `yaoyao`             | —                      |                    |
-| `yelan`              | —                      |                    |
-| `yoimiya`            | —                      |                    |
-| `yumemizuki-mizuki`  | —                      |                    |
-| `yun-jin`            | —                      |                    |
-| `zhongli`            | —                      |                    |
-| `zibai`              | —                      |                    |
+Reopened 2026-10-19: the convention covers table and wiki candidates as well as gcsim, so a kit with an open table or wiki
+`DiffersFromSource` entry is open until a pass reviews those entries. Each reopened row is marked `reopened` in Notes, and its
+date is cleared by a `Reopens:` trailer. The gcsim-era passes that dated these kits predate the wider convention, so the coverage
+tool would otherwise re-date them. A pass that reviews a kit's open entries closes it with its own `Ledger:` trailer.
+
+| Unit                 | Swept                  | Notes                        |
+| -------------------- | ---------------------- | ---------------------------- |
+| `aino`               | —                      | reopened                     |
+| `albedo`             | —                      |                              |
+| `alhaitham`          | —                      |                              |
+| `aloy`               | —                      | reopened                     |
+| `alyosha`            | —                      |                              |
+| `amber`              | —                      |                              |
+| `arataki-itto`       | —                      | reopened                     |
+| `arlecchino`         | —                      |                              |
+| `baizhu`             | —                      |                              |
+| `barbara`            | —                      |                              |
+| `beidou`             | —                      |                              |
+| `bennett`            | —                      |                              |
+| `candace`            | —                      |                              |
+| `charlotte`          | —                      |                              |
+| `chasca`             | —                      |                              |
+| `chevreuse`          | —                      |                              |
+| `chiori`             | —                      | reopened                     |
+| `chongyun`           | —                      |                              |
+| `citlali`            | —                      | reopened                     |
+| `clorinde`           | —                      | reopened                     |
+| `collei`             | —                      |                              |
+| `columbina`          | —                      | reopened                     |
+| `cyno`               | —                      | reopened                     |
+| `dahlia`             | —                      | reopened                     |
+| `dehya`              | —                      | reopened                     |
+| `diluc`              | —                      |                              |
+| `diona`              | —                      | reopened                     |
+| `dori`               | —                      | reopened                     |
+| `durin`              | —                      |                              |
+| `emilie`             | —                      | reopened                     |
+| `escoffier`          | —                      | reopened                     |
+| `eula`               | —                      | reopened                     |
+| `faruzan`            | —                      |                              |
+| `fischl`             | —                      |                              |
+| `flins`              | —                      |                              |
+| `freminet`           | —                      | reopened                     |
+| `furina`             | —                      |                              |
+| `gaming`             | —                      | reopened                     |
+| `ganyu`              | —                      | reopened                     |
+| `gorou`              | —                      |                              |
+| `hu-tao`             | —                      |                              |
+| `iansan`             | 2026-10-19 · Haiku 5.5 |                              |
+| `ifa`                | —                      |                              |
+| `illuga`             | —                      |                              |
+| `ineffa`             | —                      | reopened                     |
+| `jahoda`             | —                      | reopened                     |
+| `jean`               | —                      |                              |
+| `kachina`            | —                      |                              |
+| `kaedehara-kazuha`   | —                      | design is `kazuha`; reopened |
+| `kaeya`              | —                      |                              |
+| `kamisato-ayaka`     | —                      |                              |
+| `kamisato-ayato`     | —                      |                              |
+| `kaveh`              | —                      | reopened                     |
+| `keqing`             | 2026-10-19 · Haiku 5.5 |                              |
+| `kinich`             | —                      |                              |
+| `kirara`             | —                      | reopened                     |
+| `klee`               | —                      |                              |
+| `kujou-sara`         | —                      |                              |
+| `kuki-shinobu`       | —                      | design is `kuki`; reopened   |
+| `lan-yan`            | —                      |                              |
+| `lauma`              | —                      | reopened                     |
+| `layla`              | —                      |                              |
+| `linnea`             | —                      |                              |
+| `lisa`               | —                      |                              |
+| `lohen`              | —                      |                              |
+| `lynette`            | —                      |                              |
+| `lyney`              | —                      |                              |
+| `mavuika`            | —                      | reopened                     |
+| `mika`               | —                      | reopened                     |
+| `mona`               | —                      |                              |
+| `mualani`            | —                      |                              |
+| `nahida`             | —                      | reopened                     |
+| `navia`              | —                      |                              |
+| `nefer`              | —                      |                              |
+| `neuvillette`        | —                      |                              |
+| `nicole`             | —                      |                              |
+| `nilou`              | —                      |                              |
+| `ningguang`          | —                      |                              |
+| `noelle`             | —                      |                              |
+| `odette`             | —                      |                              |
+| `ororon`             | —                      | reopened                     |
+| `prune`              | —                      |                              |
+| `qiqi`               | —                      |                              |
+| `raiden-shogun`      | —                      | reopened                     |
+| `razor`              | —                      |                              |
+| `rosaria`            | —                      |                              |
+| `sandrone`           | —                      |                              |
+| `sangonomiya-kokomi` | —                      |                              |
+| `sayu`               | —                      | reopened                     |
+| `sethos`             | —                      | reopened                     |
+| `shenhe`             | —                      |                              |
+| `shikanoin-heizou`   | —                      | design is `heizou`; reopened |
+| `sigewinne`          | —                      | reopened                     |
+| `skirk`              | —                      |                              |
+| `sucrose`            | —                      |                              |
+| `tartaglia`          | —                      |                              |
+| `thoma`              | —                      | reopened                     |
+| `tighnari`           | —                      | reopened                     |
+| `traveler`           | —                      |                              |
+| `varesa`             | —                      | reopened                     |
+| `varka`              | —                      |                              |
+| `venti`              | —                      |                              |
+| `vesna`              | —                      |                              |
+| `vodyanitsa`         | —                      |                              |
+| `wanderer`           | —                      | reopened                     |
+| `wriothesley`        | —                      | reopened                     |
+| `xiangling`          | —                      |                              |
+| `xianyun`            | —                      | reopened                     |
+| `xiao`               | —                      |                              |
+| `xilonen`            | —                      | reopened                     |
+| `xingqiu`            | —                      |                              |
+| `xinyan`             | —                      | reopened                     |
+| `yae-miko`           | —                      |                              |
+| `yanfei`             | —                      |                              |
+| `yaoyao`             | —                      | reopened                     |
+| `yelan`              | —                      | reopened                     |
+| `yoimiya`            | —                      | reopened                     |
+| `yumemizuki-mizuki`  | —                      | reopened                     |
+| `yun-jin`            | —                      |                              |
+| `zhongli`            | —                      |                              |
+| `zibai`              | —                      |                              |
