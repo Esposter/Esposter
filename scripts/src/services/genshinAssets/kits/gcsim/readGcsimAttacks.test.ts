@@ -121,6 +121,32 @@ describe(readGcsimAttacks, () => {
     ]);
   });
 
+  test("gives a Mult a loop sets after its literal one attack under the variable it names, its site the literal's line", () => {
+    expect.hasAssertions();
+
+    const source = `package navia
+
+func (c *char) Skill() {
+	ai := info.AttackInfo{
+		Abil: "Rosula Shardshot",
+	}
+	for _, t := range targets {
+		ai.Mult = skillshotgun[c.TalentLvlSkill()] * skillMultiplier[hits]
+		c.Core.QueueAttackWithSnap(ai, snap, combat.NewSingleTargetHit(t.Key()), travelDelay)
+	}
+}
+`;
+
+    expect(
+      readGcsimAttacks([{ path: "skill.go", source }], new Map()).map(
+        ({ line, siteLine, talentVariable, variableName }) => ({ line, siteLine, talentVariable, variableName }),
+      ),
+    ).toStrictEqual([
+      { line: 4, siteLine: 4, talentVariable: undefined, variableName: "ai" },
+      { line: 8, siteLine: 4, talentVariable: "skillshotgun", variableName: "ai" },
+    ]);
+  });
+
   test("reads a struct copy as its source as of the copy, with the sets it gets after, its site the copy's own line", () => {
     expect.hasAssertions();
 

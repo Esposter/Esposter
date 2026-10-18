@@ -1,3 +1,4 @@
+import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
@@ -11,7 +12,7 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
-import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import {
   findClosingParenthesis,
   readGoEnclosingFunction,
@@ -246,6 +247,65 @@ const readCallVariants = (
   return [...variants.values()];
 };
 
+// The callee of an area query whose enemies a loop reads, `c.Core.Combat.EnemiesWithinArea(area, filter)`: a loop over
+// Its enemies fires at each one in the area, so a single-target hit it fires lands on every enemy there. A random subset
+// Of the area, `RandomEnemiesWithinArea`, reaches only some of them, so it is no such query
+const ENEMIES_WITHIN_AREA_CALLEE = "EnemiesWithinArea";
+
+// A loop over an area query's enemies, `for _, t := range targets {` with `targets` the query or the query written in
+// Place: where its body starts and ends, and the hitbox of the area the query is made over, read where the query is written
+interface EnemyQueryLoop {
+  bodyEnd: number;
+  bodyStart: number;
+  hitbox: GcsimHitbox | undefined;
+}
+
+// The `{` a `range` header's expression is followed by, the first at no parenthesis depth so a `func` filter's own body
+// Is passed over, else undefined
+const readRangeBodyStart = (tokens: readonly GoToken[], start: number): number | undefined => {
+  let depth = 0;
+  for (let position = start; position < tokens.length; position++)
+    if (checkIsGoPunctuation(tokens[position], "(")) depth++;
+    else if (checkIsGoPunctuation(tokens[position], ")")) depth--;
+    else if (depth === 0 && checkIsGoPunctuation(tokens[position], "{")) return position;
+  return undefined;
+};
+
+// Each loop over an area query's enemies in a file, read at its `range` token
+const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: string): EnemyQueryLoop[] =>
+  tokens.flatMap((token, position) => {
+    if (token.kind !== GoTokenKind.Identifier || token.text !== "range") return [];
+    const bodyStart = readRangeBodyStart(tokens, position + 1);
+    if (bodyStart === undefined) return [];
+    // A bare local the loop ranges over, `range targets {`, is the query its assignment gives, else the query in place
+    const isLocalRange =
+      tokens[position + 1]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 2], "{");
+    const queryStart = isLocalRange
+      ? scope.resolveAssignment(tokens[position + 1]?.text ?? "", position)
+      : position + 1;
+    if (queryStart === undefined) return [];
+    const query = parseGoExpression(tokens, queryStart).expression;
+    const bodyEnd = findClosingBrace(tokens, bodyStart);
+    if (
+      query.kind !== GoExpressionKind.Call ||
+      query.callee.split(".").at(-1) !== ENEMIES_WITHIN_AREA_CALLEE ||
+      bodyEnd === undefined
+    )
+      return [];
+    const areaStart = query.parameterStarts[0];
+    const areaValueStart = areaStart === undefined ? undefined : readHitboxStart(tokens, areaStart, queryStart, scope);
+    return [
+      {
+        bodyEnd,
+        bodyStart,
+        hitbox:
+          areaValueStart === undefined
+            ? undefined
+            : readGoHitbox(tokens, areaValueStart, (name) => scope.resolveName(name, queryStart), file),
+      },
+    ];
+  });
+
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
 // Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and the
 // Locals its own function gives one value resolve to a number (see `createGoScope`). A call in a loop of constant bounds
@@ -260,6 +320,7 @@ export const readGcsimQueuedAttacks = (
     const scope = createGoScope(tokens, constantMap);
     const loops = readConstantLoops(tokens, scope);
     const taskClosures = readTaskClosures(tokens);
+    const enemyQueryLoops = readEnemyQueryLoops(tokens, scope, file);
     const returnedClosures = readReturnedClosures(tokens);
     const namedFunctions = readGoNamedFunctions(tokens);
     const queuedAttacks: GcsimQueuedAttack[] = [];
@@ -275,10 +336,16 @@ export const readGcsimQueuedAttacks = (
       const hitboxStart = argumentStarts[HITBOX_ARGUMENT_INDEX_MAP.get(token.text) ?? -1];
       const hitboxValueStart =
         hitboxStart === undefined ? undefined : readHitboxStart(tokens, hitboxStart, position, scope);
-      const hitbox =
+      const ownHitbox =
         hitboxValueStart === undefined
           ? undefined
           : readGoHitbox(tokens, hitboxValueStart, (name) => scope.resolveName(name, position), file);
+      // A single-target hit fired in the innermost area query's loop takes that query's area, as it lands on each enemy in it
+      const queryHitbox = enemyQueryLoops.findLast(
+        ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
+      )?.hitbox;
+      const hitbox =
+        ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
         inlineAttackPosition === undefined
@@ -287,9 +354,7 @@ export const readGcsimQueuedAttacks = (
       const enclosingTasks = taskClosures.filter(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       );
-      const taskDelayExpressions = enclosingTasks.map(
-        ({ delayStart }) => parseGoExpression(tokens, delayStart).expression,
-      );
+      const taskDelayExpressions = enclosingTasks.map((task) => parseGoExpression(tokens, task.delayStart).expression);
       const [firstTask] = enclosingTasks;
       const parameterIterations = scope.readParameterIterations(position);
       // A method's queue call runs once per call of the method, at the delay of the closures that call is in and with the

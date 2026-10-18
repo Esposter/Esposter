@@ -36,7 +36,7 @@ export const createKinichKitBehaviour = ({
   readFramesList,
   readHitFields,
 }: KitRecordReader): KitBehaviour => {
-  const dragonBreathFields = readHitFields("dragonBreath", ["hitmarkSeconds"]);
+  const dragonBreathFields = readHitFields("dragonBreath", []);
   const dragonBreathFirstHitmarkFrames = readFrames("dragonBreathFirstHitmark");
   const dragonBreathIntervalFramesList = readFramesList("dragonBreathInterval");
   // The Ajaw's lasers, each landing the interval drawn for it after the one before
