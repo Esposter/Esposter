@@ -91,8 +91,8 @@ export const createZibaiKitBehaviour = ({ readParameter, readStance }: KitRecord
     },
   };
   return {
+    checkIsSkillCooldownWaived: checkIsInLunarPhaseShift,
     getSkillCooldownMultiplier: (context) => (checkIsInLunarPhaseShift(context) ? 0 : 1),
-    isSkillCooldownWaived: checkIsInLunarPhaseShift,
     onKitEvent: (event, context, combatant) => {
       const { characterId } = combatant;
       const { kitEffectState } = context;
