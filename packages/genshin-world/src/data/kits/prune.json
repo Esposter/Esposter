@@ -1,6 +1,15 @@
 {
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 30 },
+  "frames.burstDuration": { "cause": "Unsourced", "value": 813 },
   "frames.burstFirstTick": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 137 },
   "frames.burstTickInterval": { "file": "burst.go", "line": 104, "source": "Gcsim", "value": 117 },
+  "hits.witchlureBell.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.6 }
+  },
+  "hits.witchlureBell.element": { "cause": "Unsourced", "value": "Wind" },
+  "hits.witchlureBell.hitmarkFrames": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 137 },
+  "hits.witchlureBell.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13239 } },
+  "hits.witchlureBell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 50 }
 }
