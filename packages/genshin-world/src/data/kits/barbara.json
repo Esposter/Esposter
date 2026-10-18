@@ -63,5 +63,9 @@
   "parameters.burstHealthShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 1439 } },
   "parameters.regenerationFlatHeal": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 1432 } },
   "parameters.regenerationHealthShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 1432 } },
-  "parameters.melodyLoopSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 1432 } }
+  "parameters.melodyLoopSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 1432 } },
+  "hits.droplet.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
+  }
 }
