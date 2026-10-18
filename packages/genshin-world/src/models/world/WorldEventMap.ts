@@ -20,6 +20,8 @@ export interface WorldEventMap {
   finishQuest: [quest: Quest, progress: QuestProgress, nextProgress: QuestProgress];
   parentQuestFinish: [];
   pickUpMora: [];
+  // An enemy whose poise a hit broke, emitted once for each time its poise breaks
+  poiseBreak: [enemy: Enemy];
   questEvent: [QuestEvent];
   // The player jumping to a waypoint, a landmark or a map point, with the pose the character is placed at
   teleport: [pose: WorldJumpPose];

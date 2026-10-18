@@ -10,6 +10,7 @@ import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLan
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
+import type { StormterrorFight } from "#src/services/bosses/stepStormterrorFight";
 import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
 import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
 import type { GroundPoint } from "genshin-engine";
@@ -19,6 +20,7 @@ import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutco
 import { DomainKind } from "#src/models/domains/DomainKind";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
+import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
@@ -37,6 +39,7 @@ import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossF
 import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
 import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
 import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
+import { STORMTERROR_FIGHT_START, stepStormterrorFight } from "#src/services/bosses/stepStormterrorFight";
 import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getResultAsync } from "@esposter/shared";
@@ -64,6 +67,10 @@ interface DomainChallengeRun {
   defeats: number;
   defeatsInWave: number;
   elapsedMilliseconds: number;
+  // The poise breaks the arena's enemy took since the last step, which Stormterror's fight counts as shield breaks
+  pendingShieldBreaks: number;
+  // Stormterror's fight, held only by a run whose arena holds Stormterror
+  stormterrorFight?: StormterrorFight;
   waveIndex: number;
 }
 
@@ -182,6 +189,13 @@ export const useWorldDomains = ({
       waveIndex,
     };
   });
+  // A poise break on the arena's enemy counts toward Stormterror's shield breaks, which the next step takes in. The break
+  // Stands in for the shield, a non-elemental pool the hit does not yet carry an element to count against (PROVISIONAL)
+  events.on("poiseBreak", (enemy) => {
+    const challenge = domainChallenge.value;
+    if (!challenge?.stormterrorFight || enemy.campId !== challenge.camp.id) return;
+    domainChallenge.value = { ...challenge, pendingShieldBreaks: challenge.pendingShieldBreaks + 1 };
+  });
 
   // A level entered from the screen fades into its stand-in arena beside the entrance, where its first wave spawns. A level
   // With no challenge data does not enter, and an arena already entered is not entered again
@@ -207,11 +221,16 @@ export const useWorldDomains = ({
       treeRewards: scheduledLevel.treeRewards,
     };
     domainArena.value = arena;
+    const isStormterrorArena = level.waves
+      .flat()
+      .some(({ enemyKindId }) => enemyKindId === EnemyKindId.StormterrorDvalin);
     domainChallenge.value = {
       camp: spawnWaveCamp(arena, 0),
       defeats: 0,
       defeatsInWave: 0,
       elapsedMilliseconds: 0,
+      pendingShieldBreaks: 0,
+      stormterrorFight: isStormterrorArena ? STORMTERROR_FIGHT_START : undefined,
       waveIndex: 0,
     };
     jumpTo(scenePose);
@@ -235,19 +254,27 @@ export const useWorldDomains = ({
     deltaMilliseconds: number;
     isPlaying: boolean;
     partyDown: boolean;
-  }) => {
+  }): string[] => {
     const arena = domainArena.value;
-    if (!arena) return;
+    if (!arena) return [];
     const challenge = domainChallenge.value;
     if (!challenge) {
       if (partyDown) leaveDomain();
-      return;
+      return [];
     }
     const elapsedMilliseconds = computeDomainChallengeElapsed(
       challenge.elapsedMilliseconds,
       deltaMilliseconds,
       isPlaying,
     );
+    // Stormterror's fight counts the same clock as the level, and takes in the shield breaks counted since the last step
+    const stormterrorStep = challenge.stormterrorFight
+      ? stepStormterrorFight(
+          challenge.stormterrorFight,
+          (elapsedMilliseconds - challenge.elapsedMilliseconds) / 1000,
+          challenge.pendingShieldBreaks,
+        )
+      : undefined;
     const outcome = resolveDomainChallenge(
       {
         defeatTarget: arena.level.defeatTarget,
@@ -258,8 +285,13 @@ export const useWorldDomains = ({
       { partyDown },
     );
     if (outcome === DomainChallengeOutcome.Running) {
-      domainChallenge.value = { ...challenge, elapsedMilliseconds };
-      return;
+      domainChallenge.value = {
+        ...challenge,
+        elapsedMilliseconds,
+        pendingShieldBreaks: 0,
+        stormterrorFight: stormterrorStep?.fight,
+      };
+      return stormterrorStep?.transitionAttacks ?? [];
     }
     if (outcome === DomainChallengeOutcome.Cleared) {
       domainChallenge.value = undefined;
@@ -268,9 +300,10 @@ export const useWorldDomains = ({
       isDomainTreeRaised.value = arena.domainKind !== DomainKind.Trounce;
       if (arena.domainKind === DomainKind.Trounce && arena.isTopTier)
         clearedDomainIds.value = markWeeklyBossTopClear(clearedDomainIds.value, arena.entryId);
-      return;
+      return [];
     }
     leaveDomain();
+    return [];
   };
 
   // A weekly boss's first clear, claimed once from the handbook: its talent materials go into the bag, and the claim is recorded
