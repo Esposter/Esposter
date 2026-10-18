@@ -13,6 +13,7 @@ export enum MaterialType {
   FurnitureFormula = "MATERIAL_FURNITURE_FORMULA",
   Namecard = "MATERIAL_NAMECARD",
   NoticeAddHp = "MATERIAL_NOTICE_ADD_HP",
+  Talent = "MATERIAL_TALENT",
   WeaponExpStone = "MATERIAL_WEAPON_EXP_STONE",
   Widget = "MATERIAL_WIDGET",
 }

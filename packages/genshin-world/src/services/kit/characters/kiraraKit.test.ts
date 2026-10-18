@@ -141,6 +141,7 @@ const readStrikeDamageBonus = (ascension: number, attackTag: AttackTag): number 
       },
       createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
       createParty([KIRARA_CHARACTER_ID]),
+      [],
     ) ?? 0
   );
 };

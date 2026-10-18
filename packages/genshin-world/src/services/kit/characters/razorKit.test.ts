@@ -46,7 +46,7 @@ const readCriticalRateBonus = (constellationCount: number, healthShare: number):
         hit: takeOne(takeOne(RAZOR_KIT.normalAttacks).hits),
       },
       { ...enemy, health: healthShare * enemy.maxHealth },
-      createKitTestContext(combatant).party,
+      createParty([RAZOR_CHARACTER_ID]),
       [],
     ) ?? 0
   );

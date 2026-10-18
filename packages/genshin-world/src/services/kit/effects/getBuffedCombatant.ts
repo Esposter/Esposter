@@ -29,8 +29,8 @@ export const getBuffedCombatant = (
     combatant.kit.getPassiveBonuses?.(
       combatant,
       getPartyMember(party, combatant.characterId).healthShare,
-      effects,
       getDeployedCombatants(party, characterIdCombatantMap),
+      effects,
     ) ?? [];
   const enduringRockBonuses = checkIsEnduringRock(combatant, effects, party.lunarCrystallize.moondrifts, position)
     ? DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: ENDURING_ROCK_DAMAGE_BONUS, attribute }))

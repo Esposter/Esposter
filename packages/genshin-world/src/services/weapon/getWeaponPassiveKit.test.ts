@@ -6,17 +6,34 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { addKitHold } from "#src/services/kit/effects/addKitHold";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getWeaponPassiveKit } from "#src/services/weapon/getWeaponPassiveKit";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+// Adds a passive whose strike damage bonus is gated on the team's effects being passed, keeping the real passives as they are
+vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (importOriginal) => {
+  const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal<{
+    WeaponPassiveNameTextIdCreateModuleMap: Record<string, unknown>;
+  }>();
+  return {
+    WeaponPassiveNameTextIdCreateModuleMap: {
+      ...WeaponPassiveNameTextIdCreateModuleMap,
+      GATED: () => ({ getStrikeDamageBonus: (_strike, _enemy, _party, effects) => (effects ? 0.1 : 0) }),
+    },
+  };
+});
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -110,7 +127,155 @@ describe(getWeaponPassiveKit, () => {
         },
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
+        [],
       ),
     ).toBe(0.12);
+  });
+
+  test("a passive is given the wielder's HP share second and the deployed team third, as the contract names them", () => {
+    expect.hasAssertions();
+
+    // A base kit whose one line counts the deployed team it is given, beside Full HP Critic Up's line at full HP
+    const teamCountKit: Kit = {
+      ...KIT,
+      getPassiveBonuses: (_combatant, _healthShare, deployedCombatants) => [
+        { amount: deployedCombatants.length, attribute: Attribute.CriticalRate },
+      ],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      teamCountKit,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      WEAPON_DATA,
+    );
+    const OTHER_CHARACTER_ID = 1;
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+    const characterIdCombatantMap = new Map([
+      [TRAVELER_CHARACTER_ID, combatant],
+      [OTHER_CHARACTER_ID, { ...combatant, characterId: OTHER_CHARACTER_ID, kit: KIT }],
+    ]);
+    const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(
+      weaponKit.getPassiveBonuses?.(combatant, 1, getDeployedCombatants(party, characterIdCombatantMap), []),
+    ).toStrictEqual([
+      { amount: 2, attribute: Attribute.CriticalRate },
+      { amount: 0.14, attribute: Attribute.CriticalRate },
+    ]);
+  });
+
+  test("a kit's own passive is given the team's effects fourth, as the contract names them", () => {
+    expect.hasAssertions();
+
+    // A base kit whose one line counts the team's effects it is given, beside Full HP Critic Up's line at full HP
+    const effectCountKit: Kit = {
+      ...KIT,
+      getPassiveBonuses: (_combatant, _healthShare, _deployedCombatants, effects) => [
+        { amount: effects.length, attribute: Attribute.CriticalRate },
+      ],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      effectCountKit,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      WEAPON_DATA,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+    const context = createKitTestContext(combatant);
+    addKitHold(context.kitEffectState, TRAVELER_CHARACTER_ID, {
+      id: "test",
+      maximum: 1,
+      seconds: Number.POSITIVE_INFINITY,
+    });
+
+    expect(weaponKit.getPassiveBonuses?.(combatant, 1, [], context.kitEffectState.effects)).toStrictEqual([
+      { amount: 1, attribute: Attribute.CriticalRate },
+      { amount: 0.14, attribute: Attribute.CriticalRate },
+    ]);
+  });
+
+  test("forwards the team's effects to a weapon passive's strike damage bonus, as the kit's own bonus reads them", () => {
+    expect.hasAssertions();
+    const weaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement: 1 },
+      { ...WEAPON_DATA, passiveNameTextId: "GATED", passiveRankParams: [[]] },
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+
+    expect(
+      weaponKit.getStrikeDamageBonus?.(
+        {
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant,
+          hit: takeOne(takeOne(KIT.normalAttacks).hits),
+        },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        createParty([TRAVELER_CHARACTER_ID]),
+        [],
+      ),
+    ).toBe(0.1);
+  });
+
+  test("the Samurai Conduct of Katsuragikiri Nagamasa raises its wielder's Elemental Skill DMG at rank one", () => {
+    expect.hasAssertions();
+
+    // Katsuragikiri Nagamasa, whose name's text id and rank parameters its table gives
+    const samuraiWeaponData: WeaponData = {
+      ...WEAPON_DATA,
+      id: 12414,
+      passiveNameTextId: "1828182147",
+      passiveRankParams: [[0.06, 3, 3, 6, 10]],
+    };
+    const weaponKit = getWeaponPassiveKit(
+      KIT,
+      { ascension: 0, experience: 0, id: 12414, level: 1, refinement: 1 },
+      samuraiWeaponData,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+
+    expect(
+      weaponKit.getStrikeDamageBonus?.(
+        {
+          attackTag: AttackTag.ElementalSkill,
+          body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+          combatant,
+          hit: takeOne(takeOne(KIT.normalAttacks).hits),
+        },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        createParty([TRAVELER_CHARACTER_ID]),
+        [],
+      ),
+    ).toBe(0.06);
   });
 });

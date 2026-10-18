@@ -5,8 +5,9 @@ import { ArchiveSection } from "#src/models/archive/ArchiveSection";
 import { ItemCategory } from "genshin-interface";
 
 // The section a bag item opens an entry of, by its tab: a weapon opens its Equipment entry, and every other item its
-// Materials entry. An artifact opens none, since an artifact set waits on the set its bag entries are not yet kept with
-const getItemArchiveSection = (category: ItemCategory): ArchiveSection | undefined => {
+// Materials entry, one the bag draws in no tab among them. An artifact opens none, since an artifact set waits on the set
+// Its bag entries are not yet kept with
+const getItemArchiveSection = (category: ItemCategory | undefined): ArchiveSection | undefined => {
   if (category === ItemCategory.Artifact) return undefined;
   return category === ItemCategory.Weapon ? ArchiveSection.Equipment : ArchiveSection.Materials;
 };

@@ -34,7 +34,7 @@ export const compareKitRecord = (
   isTagPredated: boolean,
   committedOverlay: KitOverlay,
   namedHitCandidateMap: NamedHitCandidateMap,
-  talentGroupIdMap: KitTables["talentGroupIdMap"],
+  tables: KitTables,
 ): KitComparison => {
   const publishedValueMap = flattenKitValues(publishedRecord);
   const overlay: KitOverlay = {};
@@ -92,15 +92,17 @@ export const compareKitRecord = (
   };
   const candidateMap = mergeKitCandidateSources({
     namedHitCandidateMap: getNamedHitKitCandidates(publishedValueMap, namedHitCandidateMap),
-    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, talentGroupIdMap),
-    ruleCandidateMap: getRuleKitCandidates(publishedValueMap),
+    namedListCandidateMap: getNamedListKitCandidates(publishedValueMap, tables.talentGroupIdMap),
+    ruleCandidateMap: getRuleKitCandidates(publishedValueMap, tables.element),
     sourceCandidateMap,
   });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap);
+  const resolved = resolveKitValues(sourceCandidateMap, overlay, namedHitCandidateMap, tables, !isTagPredated);
   for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
     if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
-  return getResult(() => buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, talentGroupIdMap)).match(
+  return getResult(() =>
+    buildKitRecord(sourceCandidateMap, overlay, namedHitCandidateMap, tables, !isTagPredated),
+  ).match(
     (built): KitComparison => ({ built, failures: getMismatchedKitPaths(built.record, publishedRecord), overlay }),
     (error): KitComparison => ({ failures: [error.message], overlay }),
   );

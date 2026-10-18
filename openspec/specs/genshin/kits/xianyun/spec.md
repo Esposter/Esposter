@@ -73,9 +73,31 @@ From Constellation 1, White Clouds at Dawn SHALL have one more charge than its b
 - **WHEN** her skill's charges are read
 - **THEN** no charge is added
 
+### Requirement: Constellation 2 ATK buff
+
+From Constellation 2, each White Clouds at Dawn press SHALL give Xianyun 20% ATK for 15 seconds, and a later press SHALL restart that buff rather than stack a second one.
+
+#### Scenario: Constellation 2 press gives the buff
+
+- **GIVEN** Xianyun has Constellation 2
+- **WHEN** the player presses her skill
+- **THEN** she gains 20% ATK for 15 seconds
+
+#### Scenario: Constellation 1 press gives no ATK
+
+- **GIVEN** Xianyun has Constellation 1
+- **WHEN** the player presses her skill
+- **THEN** she gains no ATK
+
+#### Scenario: A second press restarts the buff
+
+- **GIVEN** a press's buff stands with 10 seconds left
+- **WHEN** the player presses her skill again
+- **THEN** the buff runs 15 seconds again, and only one buff stands
+
 ### Requirement: Unbuilt effects
 
-Xianyun's heals, Starwicker, her passives and her Constellations 2, 4 and 6 SHALL have no effect in the world yet.
+Xianyun's heals, Starwicker, her passives and her Constellations 4 and 6 SHALL have no effect in the world yet.
 
 #### Scenario: Burst heals are absent
 

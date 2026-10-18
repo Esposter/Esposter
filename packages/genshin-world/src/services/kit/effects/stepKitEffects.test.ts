@@ -1,9 +1,12 @@
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
@@ -50,4 +53,34 @@ describe("stepKitEffects", () => {
       expect(context.kitEffectState.effects).toStrictEqual([]);
     },
   );
+
+  describe("a status's five seconds", () => {
+    const STATUS_ID = "five-second-status";
+    // The status a combatant carries for five seconds, stepped the way the world steps it, at the fixed step
+    const createStatusContext = () => {
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(COMBATANT, { kitEffectState });
+      addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 5 });
+      return { context, kitEffectState };
+    };
+
+    test("reads active at four seconds of steps", () => {
+      expect.hasAssertions();
+      const { context, kitEffectState } = createStatusContext();
+      stepKitSeconds(context, 4);
+
+      expect(checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID)).toBe(true);
+    });
+
+    test("reads inactive and is dropped at exactly five seconds of steps", () => {
+      expect.hasAssertions();
+      const { context, kitEffectState } = createStatusContext();
+      stepKitSeconds(context, 5);
+
+      expect([
+        checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
+        kitEffectState.effects,
+      ]).toStrictEqual([false, []]);
+    });
+  });
 });

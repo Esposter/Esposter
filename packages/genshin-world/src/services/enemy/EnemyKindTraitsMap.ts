@@ -5,6 +5,7 @@ import { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { PoiseType } from "#src/models/enemy/PoiseType";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
+import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/stormterror";
 
 // What the wiki gives of each kind the world places, its energy drops in falling order with the drop on its defeat last
 export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
@@ -236,7 +237,12 @@ export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
   },
   [EnemyKindId.SetekhWenut]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.SolitarySuanni]: { energyDrops: [], poiseType: PoiseType.Boss },
-  [EnemyKindId.StormterrorDvalin]: { element: Element.Anemo, energyDrops: [], poiseType: PoiseType.Boss },
+  [EnemyKindId.StormterrorDvalin]: {
+    element: Element.Anemo,
+    energyDrops: [],
+    poiseType: PoiseType.Boss,
+    shieldHealthFraction: STORMTERROR_SHIELD_HP_FRACTION,
+  },
   [EnemyKindId.ThunderManifestation]: { element: Element.Electro, energyDrops: [], poiseType: PoiseType.Boss },
   [EnemyKindId.TreasureHoarderScout]: {
     energyDrops: [

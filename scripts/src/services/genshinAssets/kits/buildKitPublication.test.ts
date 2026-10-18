@@ -1,4 +1,5 @@
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitActionRecord, KitHitRecord, KitRecord } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -41,25 +42,27 @@ describe(buildKitPublication, () => {
     [CombatTalent.NormalAttack]: 1,
   };
   // A kit built from those values with no overlay, published as they build it or yet to be published
-  const createInput = (characterId: number, isPublished: boolean): KitInput => ({
+  const createTables = (characterId: number): KitTables => ({
     characterId,
+    labelMap: new Map(),
     name: String(characterId),
-    namedHitCandidateMap: new Map(),
-    notes: [],
-    overlayName: "",
-    ...(isPublished && {
-      publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), talentGroupIdMap).record,
-    }),
-    sourceCandidateMap: SOURCE_CANDIDATE_MAP,
-    tables: {
-      characterId,
-      labelMap: new Map(),
-      name: String(characterId),
-      talentGroupIdMap,
-      talentMultiplierMap: {},
-      weaponType: WeaponType.Sword,
-    },
+    talentGroupIdMap,
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Sword,
   });
+  const createInput = (characterId: number, isPublished: boolean): KitInput => {
+    const tables = createTables(characterId);
+    return {
+      characterId,
+      name: String(characterId),
+      namedHitCandidateMap: new Map(),
+      notes: [],
+      overlayName: "",
+      ...(isPublished && { publishedRecord: buildKitRecord(SOURCE_CANDIDATE_MAP, {}, new Map(), tables, true).record }),
+      sourceCandidateMap: SOURCE_CANDIDATE_MAP,
+      tables,
+    };
+  };
 
   test("builds a kit yet to be published that the publish names, beside the published ones", () => {
     expect.hasAssertions();

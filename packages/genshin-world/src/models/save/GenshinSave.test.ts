@@ -25,6 +25,7 @@ import {
   MAX_ARCHIVE_ENTRY_COUNT,
   MAX_ARCHIVE_KILL_COUNT,
   MAX_CHARACTER_COUNT,
+  MAX_CHARACTER_TRIAL_STAGE_COUNT,
   MAX_CLEARED_CAMP_COUNT,
   MAX_CLEARED_DOMAIN_COUNT,
   MAX_COOKING_RECIPE_COUNT,
@@ -129,6 +130,9 @@ describe("genshinSaveSchema", () => {
           refinement: MAX_WEAPON_REFINEMENT,
         },
       })),
+      characterTrials: {
+        claimedStageIds: Array.from({ length: MAX_CHARACTER_TRIAL_STAGE_COUNT }, (_value, index) => index + 1),
+      },
       clearedCamps: Array.from({ length: MAX_CLEARED_CAMP_COUNT }, (_value, index) => ({
         id: String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
         position: { x: maxNumber, z: maxNumber },

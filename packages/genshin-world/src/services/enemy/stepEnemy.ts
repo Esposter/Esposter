@@ -21,6 +21,7 @@ import {
 } from "#src/services/enemy/constants";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
+import { runDownSeconds } from "#src/services/runDownSeconds";
 import { exhaustiveGuard } from "@esposter/shared";
 
 const computeDistance = (from: GroundPoint, to: GroundPoint): number => Math.hypot(to.x - from.x, to.z - from.z);
@@ -47,7 +48,7 @@ const walkToward = (enemy: Enemy, point: GroundPoint, distance: number): boolean
 const stepPoise = (enemy: Enemy, stepSeconds: number): void => {
   const { length, refillPerSecond } = PoiseTypeSettingsMap[enemy.traits.poiseType];
   if (enemy.poiseBrokenSeconds > 0) {
-    enemy.poiseBrokenSeconds = Math.max(0, enemy.poiseBrokenSeconds - stepSeconds);
+    enemy.poiseBrokenSeconds = Math.max(0, runDownSeconds(enemy.poiseBrokenSeconds, stepSeconds));
     if (enemy.poiseBrokenSeconds === 0) enemy.poise = length;
   } else enemy.poise = Math.min(length, enemy.poise + refillPerSecond * stepSeconds);
 };
@@ -64,9 +65,9 @@ export const stepEnemy = (
 ): EnemyEvent | undefined => {
   enemy.hitSeconds += stepSeconds;
   enemy.stateSeconds += stepSeconds;
-  for (const status of enemy.statuses) status.secondsRemaining -= stepSeconds;
+  for (const status of enemy.statuses) status.secondsRemaining = runDownSeconds(status.secondsRemaining, stepSeconds);
   enemy.statuses = enemy.statuses.filter(({ secondsRemaining }) => secondsRemaining > 0);
-  enemy.attackCooldownSeconds = Math.max(0, enemy.attackCooldownSeconds - stepSeconds);
+  enemy.attackCooldownSeconds = Math.max(0, runDownSeconds(enemy.attackCooldownSeconds, stepSeconds));
   if (enemy.state !== EnemyState.Dead) stepPoise(enemy, stepSeconds);
 
   switch (enemy.state) {
@@ -114,16 +115,20 @@ export const stepEnemy = (
       }
       return undefined;
     case EnemyState.Return:
-      // Home, it is healed and its poise restored, as the game heals an enemy that gives up
+      // Home, it is healed, and its shield and poise restored, as the game heals an enemy that gives up
       if (walkToward(enemy, enemy.home, ENEMY_RUN_SPEED * stepSeconds)) {
         enemy.health = enemy.maxHealth;
+        if (enemy.shield) enemy.shield.health = enemy.shield.maxHealth;
         enemy.poise = PoiseTypeSettingsMap[enemy.traits.poiseType].length;
         enemy.poiseBrokenSeconds = 0;
         setEnemyState(enemy, EnemyState.Idle);
       }
       return undefined;
     case EnemyState.Stagger:
-      if (enemy.stateSeconds >= ENEMY_STAGGER_SECONDS) setEnemyState(enemy, EnemyState.Chase);
+      if (enemy.stateSeconds >= ENEMY_STAGGER_SECONDS) {
+        if (enemy.shield) enemy.shield.health = enemy.shield.maxHealth;
+        setEnemyState(enemy, EnemyState.Chase);
+      }
       return undefined;
     case EnemyState.Windup:
       if (target) face(enemy, target);

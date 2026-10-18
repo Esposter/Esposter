@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
+import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -19,7 +20,13 @@ const BURST_OFFSET_METRES = 2;
 const BURST_ASCENSION = 1;
 const BURST_CRYO_DAMAGE_BONUS = 0.15;
 const BURST_CRYO_DAMAGE_BONUS_SOURCE = "shenhe-burst-cryo";
+// Constellation 2: the active character inside the field gains 15% CRIT DMG on her Cryo attacks, as gcsim's c2buff does
+const BURST_CONSTELLATION_2_CRIT_DAMAGE = 0.15;
+const BURST_CONSTELLATION_2_CRIT_DAMAGE_SOURCE = "shenhe-burst-constellation-2";
 const CONSTELLATION_1 = 1;
+// Constellation 2 adds six seconds to the field, as gcsim (MIT) shenhe/burst.go's burstDuration does at 2 constellations
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_FIELD_SECONDS = 6;
 
 export const SHENHE_CHARACTER_ID = 10_000_063;
 
@@ -27,7 +34,7 @@ export const SHENHE_CHARACTER_ID = 10_000_063;
 // The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her Quill is not built:
 // The kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to the hits of whoever carries it, which no
 // Kit step reads. Constellation 1's charge is built; her other passives and Constellations 2, 4 and 6 are not
-// Constellation 2 needs the field's extra 6 seconds and a Cryo CRIT DMG bonus, which no strike hook carries
+// Constellation 2's field runs six seconds longer, and its active character gains Cryo CRIT DMG inside it
 // Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill, which the kit does not build
 // Constellation 6 needs the Icy Quill's trigger quota, which the kit does not build
 export const createShenheKitBehaviour = ({
@@ -70,6 +77,15 @@ export const createShenheKitBehaviour = ({
         castKitField(kitEffectState, combatant.characterId, centreBody.position, {
           nextTickSeconds: burstFirstTickSeconds,
           onTick: ({ activeCombatant, kitEffectState: tickEffectState }, tickIndex) => {
+            if (combatant.constellationCount >= CONSTELLATION_2)
+              addKitEffect(tickEffectState, {
+                amount: BURST_CONSTELLATION_2_CRIT_DAMAGE,
+                characterId: activeCombatant.characterId,
+                element: Element.Cryo,
+                kind: "elementCriticalDamage",
+                secondsRemaining: fieldTickIntervalSeconds,
+                source: BURST_CONSTELLATION_2_CRIT_DAMAGE_SOURCE,
+              });
             if (combatant.ascension >= BURST_ASCENSION)
               buffKitMember(tickEffectState, activeCombatant.characterId, {
                 amount: BURST_CRYO_DAMAGE_BONUS,
@@ -80,7 +96,11 @@ export const createShenheKitBehaviour = ({
             castKitSummon(tickEffectState, centreBody, combatant, takeOne(burstTicks, tickIndex % burstTicks.length));
           },
           radius: burstTickFields.hitArea.radius,
-          secondsRemaining: burstDurationSeconds + burstStartSeconds + 0.1,
+          secondsRemaining:
+            burstDurationSeconds +
+            burstStartSeconds +
+            0.1 +
+            (combatant.constellationCount >= CONSTELLATION_2 ? CONSTELLATION_2_FIELD_SECONDS : 0),
           tickIntervalSeconds: fieldTickIntervalSeconds,
         });
       },

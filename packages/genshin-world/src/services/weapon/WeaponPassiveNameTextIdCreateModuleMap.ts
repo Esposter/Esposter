@@ -5,9 +5,11 @@ import { Element } from "#src/models/Element";
 import { createArchersMessagePassiveModule } from "#src/services/weapon/passives/createArchersMessagePassiveModule";
 import { createBaneOfElementsPassiveModule } from "#src/services/weapon/passives/createBaneOfElementsPassiveModule";
 import { createBaneOfTheSoftPassiveModule } from "#src/services/weapon/passives/createBaneOfTheSoftPassiveModule";
+import { createBenthicPulsePassiveModule } from "#src/services/weapon/passives/createBenthicPulsePassiveModule";
 import { createBlackWingPassiveModule } from "#src/services/weapon/passives/createBlackWingPassiveModule";
 import { createBluntConclusionPassiveModule } from "#src/services/weapon/passives/createBluntConclusionPassiveModule";
 import { createBoltOfPerceptionPassiveModule } from "#src/services/weapon/passives/createBoltOfPerceptionPassiveModule";
+import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
 import { createCouragePassiveModule } from "#src/services/weapon/passives/createCouragePassiveModule";
@@ -17,13 +19,20 @@ import { createCullTheWeakPassiveModule } from "#src/services/weapon/passives/cr
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
+import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
+import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
+import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
+import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
+import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
+import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
 import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passives/createGuerillaTacticsPassiveModule";
+import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
 import { createInfusionArrowPassiveModule } from "#src/services/weapon/passives/createInfusionArrowPassiveModule";
@@ -34,20 +43,34 @@ import { createInfusionStingerPassiveModule } from "#src/services/weapon/passive
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
+import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passives/createLawsEquilibriumPassiveModule";
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
+import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
+import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
+import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon/passives/createRepentanceAndRedemptionPassiveModule";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
+import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
+import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
+import { createSkyRippingDragonSpinePassiveModule } from "#src/services/weapon/passives/createSkyRippingDragonSpinePassiveModule";
 import { createSmashedStonePassiveModule } from "#src/services/weapon/passives/createSmashedStonePassiveModule";
+import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
+import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
+import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives/createSongOfTheVigilPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
+import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
+import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
+import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
 import { createUndyingAdmirationPassiveModule } from "#src/services/weapon/passives/createUndyingAdmirationPassiveModule";
 import { createUnreturningPassiveModule } from "#src/services/weapon/passives/createUnreturningPassiveModule";
+import { createWanderingCloudsPassiveModule } from "#src/services/weapon/passives/createWanderingCloudsPassiveModule";
 import { createWolfishTrackerPassiveModule } from "#src/services/weapon/passives/createWolfishTrackerPassiveModule";
 
 // Each passive whose module is built, by the text id of its name, which a weapon's record holds, so a weapon's passive is
@@ -222,4 +245,52 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2421341659": createBlackWingPassiveModule,
   // Echoing Ballad (Skyward Harp)
   "2971867387": createEchoingBalladPassiveModule,
+  // Falcon's Defiance (Aquila Favonia)
+  "1362579531": createFalconsDefiancePassiveModule,
+  // Sky-Piercing Fang (Skyward Blade)
+  "2711925235": createSkyPiercingFangPassiveModule,
+  // Sky-ripping Dragon Spine (Skyward Pride)
+  "3265578323": createSkyRippingDragonSpinePassiveModule,
+  // Wandering Clouds (Skyward Atlas)
+  "2012979451": createWanderingCloudsPassiveModule,
+  // Boundless Blessing (Lost Prayer to the Sacred Winds)
+  "483941803": createBoundlessBlessingPassiveModule,
+  // Eagle Spear of Justice (Primordial Jade Winged-Spear)
+  "3835416843": createEagleSpearOfJusticePassiveModule,
+  // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
+  "641137867": createSmokeAndMirrorMysteryPassiveModule,
+  // Pact of Flowing Springs (Footprint of the Rainbow)
+  "4067649747": createPactOfFlowingSpringsPassiveModule,
+  // The Law's Equilibrium (Covenant of Frost and Snow)
+  "1419973003": createLawsEquilibriumPassiveModule,
+  // White Cruising Wave (Tidal Shadow)
+  "4049199251": createTidalShadowPassiveModule,
+  // Benthic Pulse (Song of Stillness)
+  "369700907": createBenthicPulsePassiveModule,
+  // Tip of the Spear (Rightful Reward)
+  "2803637475": createTipOfTheSpearPassiveModule,
+  // Fall Into Place (Master Key)
+  "706623635": createFallIntoPlacePassiveModule,
+  // Phantom Flash (Snare Hook)
+  "3123029499": createPhantomFlashPassiveModule,
+  // Solemn Silence (Serenity's Call)
+  "2280400315": createSolemnSilencePassiveModule,
+  // Full Draw (Hamayumi)
+  "3099408603": createHamayumiPassiveModule,
+  // Cadence of Days Gone By (Song of the Vigil)
+  "385807483": createSongOfTheVigilPassiveModule,
+  // Repentance and Redemption (Blade of Atonement)
+  "2270410107": createRepentanceAndRedemptionPassiveModule,
+  // An End Sublime (Finale of the Deep)
+  "2548633643": createFinaleOfTheDeepPassiveModule,
+  // Unfinished Masterpiece (Flowing Purity)
+  "3335241819": createFlowingPurityPassiveModule,
+  // Starfire Upon the Snowplains (Emberwell)
+  "953016699": createStarfireUponTheSnowplainsPassiveModule,
+  // Echo of a Vow (Echoes of the Heart)
+  "2626267635": createEchoOfAVowPassiveModule,
+  // Samurai Conduct (Kitain Cross Spear)
+  "1395787867": createSamuraiConductPassiveModule,
+  // Samurai Conduct (Katsuragikiri Nagamasa)
+  "1828182147": createSamuraiConductPassiveModule,
 };

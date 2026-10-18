@@ -39,7 +39,7 @@ describe(createPrecisePassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      precisePassiveModule.getStrikeDamageBonus?.(createStrike(true), enemy, createParty([TRAVELER_CHARACTER_ID])),
+      precisePassiveModule.getStrikeDamageBonus?.(createStrike(true), enemy, createParty([TRAVELER_CHARACTER_ID]), []),
     ).toBeCloseTo(0.24);
   });
 
@@ -47,7 +47,7 @@ describe(createPrecisePassiveModule, () => {
     expect.hasAssertions();
 
     expect(
-      precisePassiveModule.getStrikeDamageBonus?.(createStrike(false), enemy, createParty([TRAVELER_CHARACTER_ID])),
+      precisePassiveModule.getStrikeDamageBonus?.(createStrike(false), enemy, createParty([TRAVELER_CHARACTER_ID]), []),
     ).toBe(0);
   });
 });

@@ -61,7 +61,7 @@ From Constellation 1, Tighnari's charged attacks SHALL have 15% more CRIT Rate.
 
 ### Requirement: Constellation 4's team Elemental Mastery
 
-From Constellation 4, the burst's start SHALL give every deployed member 60 Elemental Mastery for 8 seconds.
+From Constellation 4, the burst's start SHALL give every deployed member 60 Elemental Mastery for 8 seconds, which a burst reaction raises to 120.
 
 #### Scenario: Burst gives the team Elemental Mastery
 
@@ -75,9 +75,21 @@ From Constellation 4, the burst's start SHALL give every deployed member 60 Elem
 - **WHEN** the player casts his burst
 - **THEN** no member gains Elemental Mastery from the burst
 
+#### Scenario: A burst reaction raises the team Elemental Mastery to 120
+
+- **GIVEN** Tighnari has Constellation 4
+- **WHEN** his burst triggers a Burning reaction
+- **THEN** every deployed member's Elemental Mastery is raised to 120 for 8 seconds, refreshing the buff
+
+#### Scenario: A reaction the burst does not raise leaves the 60
+
+- **GIVEN** Tighnari has Constellation 4
+- **WHEN** his burst triggers an Electro-Charged reaction, or his normal attack triggers a Burning reaction
+- **THEN** every deployed member keeps its 60 Elemental Mastery
+
 ### Requirement: Unbuilt Tighnari effects
 
-Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, Tighnari's Ascension 1 passive, the reaction raise of Constellation 4 and Constellations 2 and 6 SHALL NOT take effect.
+Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a separate shot while the suffusion lasts, Tighnari's Ascension 1 passive and Constellations 2 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
