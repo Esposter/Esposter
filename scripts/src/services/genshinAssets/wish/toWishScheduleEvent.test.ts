@@ -14,7 +14,14 @@ describe(toWishScheduleEvent, () => {
     expect(
       toWishScheduleEvent(
         "a",
-        { endTime: 0, fiveStarNames: ["b"], fourStarNames: ["c"], kind: WishEventKind.WeaponEvent, startTime: 0 },
+        {
+          endTime: 0,
+          fiveStarNames: ["b"],
+          fourStarNames: ["c"],
+          kind: WishEventKind.WeaponEvent,
+          kindNumber: 1,
+          startTime: 0,
+        },
         idsByName,
       ),
     ).toStrictEqual({
@@ -23,6 +30,7 @@ describe(toWishScheduleEvent, () => {
       fourStarIds: [2],
       id: "a",
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: 0,
     });
   });
@@ -33,7 +41,14 @@ describe(toWishScheduleEvent, () => {
     expect(() =>
       toWishScheduleEvent(
         "a",
-        { endTime: 0, fiveStarNames: ["b"], fourStarNames: [], kind: WishEventKind.WeaponEvent, startTime: 0 },
+        {
+          endTime: 0,
+          fiveStarNames: ["b"],
+          fourStarNames: [],
+          kind: WishEventKind.WeaponEvent,
+          kindNumber: 1,
+          startTime: 0,
+        },
         new Map(),
       ),
     ).toThrowErrorMatchingInlineSnapshot(
@@ -47,7 +62,14 @@ describe(toWishScheduleEvent, () => {
     expect(
       toWishScheduleEvent(
         "a",
-        { endTime: 0, fiveStarNames: ["b"], fourStarNames: [], kind: WishEventKind.WeaponEvent, startTime: 0 },
+        {
+          endTime: 0,
+          fiveStarNames: ["b"],
+          fourStarNames: [],
+          kind: WishEventKind.WeaponEvent,
+          kindNumber: 1,
+          startTime: 0,
+        },
         new Map([["b", [1, 2]]]),
       ),
     ).toStrictEqual({
@@ -56,6 +78,7 @@ describe(toWishScheduleEvent, () => {
       fourStarIds: [],
       id: "a",
       kind: WishEventKind.WeaponEvent,
+      kindNumber: 1,
       startTime: 0,
     });
   });

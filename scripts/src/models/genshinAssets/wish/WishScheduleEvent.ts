@@ -8,5 +8,6 @@ export interface WishScheduleEvent {
   fourStarIds: number[];
   id: string;
   kind: WishEventKind;
+  kindNumber: number;
   startTime: number;
 }

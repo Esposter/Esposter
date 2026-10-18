@@ -7,5 +7,7 @@ export interface WishEventPage {
   fiveStarNames: string[];
   fourStarNames: string[];
   kind: WishEventKind;
+  // The banner's number among the banners of its kind running in its window, the second of a pair being 2
+  kindNumber: number;
   startTime: number;
 }

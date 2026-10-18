@@ -16,7 +16,7 @@ const joinItemIds = (name: string, idsByName: ReadonlyMap<string, readonly numbe
 // The ids of the items it names
 export const toWishScheduleEvent = (
   title: string,
-  { endTime, fiveStarNames, fourStarNames, kind, startTime }: WishEventPage,
+  { endTime, fiveStarNames, fourStarNames, kind, kindNumber, startTime }: WishEventPage,
   idsByName: ReadonlyMap<string, readonly number[]>,
 ): WishScheduleEvent => ({
   endTime,
@@ -24,5 +24,6 @@ export const toWishScheduleEvent = (
   fourStarIds: fourStarNames.flatMap((name) => joinItemIds(name, idsByName)),
   id: title,
   kind,
+  kindNumber,
   startTime,
 });
