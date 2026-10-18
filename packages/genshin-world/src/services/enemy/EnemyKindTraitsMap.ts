@@ -4,8 +4,8 @@ import { Element } from "#src/models/Element";
 import { EnemyDropFamily } from "#src/models/enemy/EnemyDropFamily";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { PoiseType } from "#src/models/enemy/PoiseType";
-import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/stormterror";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
+import { STORMTERROR_SHIELD_HP_FRACTION } from "#src/services/bosses/stormterror";
 
 // What the wiki gives of each kind the world places, its energy drops in falling order with the drop on its defeat last
 export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
