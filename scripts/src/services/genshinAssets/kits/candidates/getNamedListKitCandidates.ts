@@ -5,9 +5,12 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { CombatTalent, kitParameterSchema } from "genshin-world";
 
-const NAMED_HIT_MULTIPLIER_REGEX = /^hits\.[^.]+\.\d+\.multiplier$/u;
+// A named list's hit path, `hits.<name>.<index>`: a list a module spawns of its own, with no prefix. A slot's list,
+// `burst.hits.<index>`, or a skill hold's, `skillHolds.0.hits.<index>`, is not one
+const NAMED_HIT_PATH_REGEX = /^hits\.[^.]+\.\d+$/u;
 
 // The slot each combat talent with one of its own holds its hits list in, which a named list of its hits leaves empty
 const TALENT_SLOTS: [CombatTalent, string][] = [
@@ -24,8 +27,9 @@ export const getNamedListKitCandidates = (
   const candidateMap = new Map<string, KitCandidate[]>();
   const namedGroupIds = new Set<number>();
   for (const [path, value] of valueMap) {
+    const hitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
     const parameter = kitParameterSchema.safeParse(value).data;
-    if (NAMED_HIT_MULTIPLIER_REGEX.test(path) && typeof parameter === "object")
+    if (hitPath !== undefined && NAMED_HIT_PATH_REGEX.test(hitPath) && typeof parameter === "object")
       namedGroupIds.add(parameter.proudSkillGroupId);
   }
   for (const [combatTalent, slot] of TALENT_SLOTS) {

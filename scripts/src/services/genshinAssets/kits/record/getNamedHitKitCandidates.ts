@@ -1,9 +1,9 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
+import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { kitParameterSchema } from "genshin-world";
 
-const HIT_MULTIPLIER_REGEX = /^(?<hitPath>(?:.+\.)?hits\.(?:\d+|[^.]+(?:\.\d+)?))\.multiplier$/u;
 const INDEXED_HIT_REGEX = /^(?<group>.+)\.(?<index>\d+)$/u;
 
 // A hit's list and its place in it: `hits.fatalBlossoms.1` is the second hit of `hits.fatalBlossoms`, and a hit with no
@@ -26,7 +26,7 @@ export const getNamedHitKitCandidates = (
   const listLengthMap = new Map<string, number>();
   const joinedHits: { group: string; hitPath: string; index: number; namedHit: NamedHitCandidate }[] = [];
   for (const [path, value] of valueMap) {
-    const hitPath = HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
+    const hitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
     const parameter = kitParameterSchema.safeParse(value).data;
     if (hitPath === undefined || typeof parameter !== "object") continue;
     const { group, index } = splitHitPath(hitPath);
