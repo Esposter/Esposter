@@ -32,6 +32,11 @@ export const AchievementTriggerEventKindMap: Readonly<Record<string, Achievement
     levelSlot: 1,
     targetSlot: 0,
   },
-  TRIGGER_OPEN_WORLD_CHEST: { countsQuantity: false, kind: AchievementEventKind.ChestOpened, targetSlot: 0 },
+  TRIGGER_OPEN_WORLD_CHEST: {
+    countsQuantity: false,
+    kind: AchievementEventKind.ChestOpened,
+    scopeSlot: 1,
+    targetSlot: 0,
+  },
   TRIGGER_UNLOCK_TRANS_POINT: { countsQuantity: false, kind: AchievementEventKind.TransPointUnlocked, targetSlot: 2 },
 };
