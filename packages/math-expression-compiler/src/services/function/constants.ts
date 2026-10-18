@@ -2,8 +2,6 @@
 // Two numbers that differ by less than the absolute tolerance are equal too
 export const MATH_EXPRESSION_RELATIVE_TOLERANCE = 1e-12;
 export const MATH_EXPRESSION_ABSOLUTE_TOLERANCE = 1e-15;
-// The quotient past which the relative tolerance is half a unit, so the nearly-integer snap would take every quotient that large for a multiple
-export const MAXIMUM_SNAP_QUOTIENT: number = 0.5 / MATH_EXPRESSION_RELATIVE_TOLERANCE;
 // The square root of pi, which the error function and its inverse both divide by
 export const SQRT_PI: number = Math.sqrt(Math.PI);
 // The first even index whose zeta is one to double precision, two to its minus power being under half the spacing of

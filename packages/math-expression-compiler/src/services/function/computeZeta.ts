@@ -13,7 +13,7 @@ export const computeZeta = (value: number): number => {
   // Every negative even integer is a trivial zero
   if (Number.isInteger(value) && value % 2 === 0) return 0;
   // Past the gamma overflow the terms are multiplied as logs, so a finite zeta is not lost to the gamma's infinity
-  if (1 - value > OVERFLOW_ARGUMENT) {
+  if (1 - value >= OVERFLOW_ARGUMENT) {
     const sine = Math.sin((Math.PI * value) / 2);
     const logMagnitude =
       value * Math.LN2 +

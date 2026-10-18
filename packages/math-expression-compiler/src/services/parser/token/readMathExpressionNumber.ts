@@ -16,12 +16,12 @@ export const readMathExpressionNumber = (state: MathExpressionParserState): void
     return;
   }
 
-  let text = takeMathExpressionMatching(state, checkIsDigitCharacter);
+  const start = state.index;
+  takeMathExpressionMatching(state, checkIsDigitCharacter);
   if (getMathExpressionCharacter(state, 0) === ".") {
-    text += ".";
     state.index++;
-    text += takeMathExpressionMatching(state, checkIsDigitCharacter);
+    takeMathExpressionMatching(state, checkIsDigitCharacter);
   }
-  state.token = takeExponent(state, text);
+  state.token = takeExponent(state, state.source.slice(start, state.index));
   state.tokenType = MathExpressionTokenType.Number;
 };
