@@ -1,22 +1,11 @@
 import type { OfferingProgress } from "#src/models/offering/OfferingProgress";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 
+import { LEVELS, OCULUS_ITEM_ID } from "#src/services/statue/constants.test";
 import { offerStatueOculi } from "#src/services/statue/offerStatueOculi";
 import { describe, expect, test } from "vitest";
 
 describe(offerStatueOculi, () => {
-  const OCULUS_ITEM_ID = 1;
-  // A region's levels: level one takes no Oculi, and level two takes the one Oculus offered
-  const LEVELS: StatueLevel[] = [
-    { items: [], level: 1, rewards: [{ itemCount: 1, itemId: 2 }], staminaShare: 0 },
-    {
-      items: [{ itemCount: 1, itemId: OCULUS_ITEM_ID }],
-      level: 2,
-      rewards: [{ itemCount: 1, itemId: 2 }],
-      staminaShare: 0,
-    },
-  ];
-
   test("an offer reaches each level the Oculi held complete", () => {
     expect.hasAssertions();
     const progress: OfferingProgress<StatueLevel> = { heldCounts: { [OCULUS_ITEM_ID]: 1 }, level: 1, levels: LEVELS };
