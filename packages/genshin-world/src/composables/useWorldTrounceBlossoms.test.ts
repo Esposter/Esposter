@@ -1,5 +1,6 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -12,7 +13,6 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
 import { NORMAL_BOSS_ADVENTURE_EXP } from "#src/services/bosses/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { createParty } from "#src/services/party/createParty";
@@ -22,8 +22,6 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { InteractionKind } from "genshin-interface";
 import { describe, expect, test, vi } from "vitest";
 import { ref, shallowRef } from "vue";
-
-vi.mock(import("#src/services/friendship/readFriendshipLevels"));
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const SPAWN_KEY = "spawn";
@@ -36,7 +34,6 @@ const nextWeek = epoch.add({ hours: 4 * 24 });
 describe(useWorldTrounceBlossoms, () => {
   test("a weekly boss's Trounce Blossom is offered again once the weekly reset passes, with no write", () => {
     expect.hasAssertions();
-    vi.mocked(readFriendshipLevels).mockResolvedValue([]);
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       adventureExp: ref(0),
@@ -45,8 +42,8 @@ describe(useWorldTrounceBlossoms, () => {
       completedMainQuestIds: shallowRef(new Set<string>()),
       enemyKindMap: new Map(),
       events: createWorldEvents(),
+      friendshipLevels: ref<FriendshipLevel[]>([]),
       gainWorldAdventureExp: vi.fn(),
-      gameDataBaseUrl: "",
       gameText: {},
       getGroundHeight: () => 0,
       getWorldNow: clock.getWorldNow,
@@ -73,7 +70,6 @@ describe(useWorldTrounceBlossoms, () => {
 
   test("a normal boss's claim pays its Adventure EXP once, the resin's own EXP not written back", async () => {
     expect.hasAssertions();
-    vi.mocked(readFriendshipLevels).mockResolvedValue([{ exp: 0, level: 1 }]);
     const adventureExp = ref(0);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       adventureExp,
@@ -82,10 +78,10 @@ describe(useWorldTrounceBlossoms, () => {
       completedMainQuestIds: shallowRef(new Set<string>()),
       enemyKindMap: new Map(),
       events: createWorldEvents(),
+      friendshipLevels: ref<FriendshipLevel[]>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
         adventureExp.value += amount;
       },
-      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
       gameText: {},
       getGroundHeight: () => 0,
       getWorldNow: () => epoch,

@@ -27,16 +27,14 @@ import {
   WEEKLY_BOSS_ADVENTURE_EXP,
   WEEKLY_BOSS_COMPANIONSHIP_EXP,
 } from "#src/services/bosses/constants";
-import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { EnemyKindTraitsMap } from "#src/services/enemy/EnemyKindTraitsMap";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
-import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
-import { getResultAsync, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
@@ -50,8 +48,8 @@ export const useWorldTrounceBlossoms = ({
   completedMainQuestIds,
   enemyKindMap,
   events,
+  friendshipLevels,
   gainWorldAdventureExp,
-  gameDataBaseUrl,
   gameText,
   getGroundHeight,
   getWorldNow,
@@ -70,8 +68,8 @@ export const useWorldTrounceBlossoms = ({
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
   events: WorldEvents;
+  friendshipLevels: Readonly<Ref<FriendshipLevel[]>>;
   gainWorldAdventureExp: (amount: number) => void;
-  gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
@@ -88,18 +86,6 @@ export const useWorldTrounceBlossoms = ({
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
   const lastTeleportAt = shallowRef<Temporal.Instant>();
   const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; spawnKey: string }>();
-  // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits until
-  // They are loaded, since the EXP has no top to stop at without them
-  const friendshipLevels = shallowRef<FriendshipLevel[]>([]);
-  if (checkIsGameDataKey("friendship/friendship"))
-    getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
-      (levels) => {
-        friendshipLevels.value = levels;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
   const trounceBlossomInteractables = computed(() =>
     computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, worldNow.value),
   );

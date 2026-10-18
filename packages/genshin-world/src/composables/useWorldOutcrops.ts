@@ -22,7 +22,6 @@ import { OutcropStage } from "#src/models/leyLine/OutcropStage";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
-import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { advanceOutcrop } from "#src/services/leyLine/advanceOutcrop";
 import { advanceOutcropFight } from "#src/services/leyLine/advanceOutcropFight";
 import { checkIsOutcropDayCurrent } from "#src/services/leyLine/checkIsOutcropDayCurrent";
@@ -56,6 +55,7 @@ export const useWorldOutcrops = ({
   completedMainQuestIds,
   enemyMap,
   events,
+  friendshipLevels,
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
@@ -77,6 +77,7 @@ export const useWorldOutcrops = ({
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
+  friendshipLevels: Readonly<Ref<FriendshipLevel[]>>;
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
@@ -99,18 +100,6 @@ export const useWorldOutcrops = ({
     getResultAsync(() => readOutcropRegion(gameDataBaseUrl, regionKey)).match(
       ({ kinds }) => {
         kindRules.value = kinds;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
-  // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits until
-  // They are loaded, since the EXP has no top to stop at without them
-  const friendshipLevels = shallowRef<FriendshipLevel[]>([]);
-  if (checkIsGameDataKey("friendship/friendship"))
-    getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
-      (levels) => {
-        friendshipLevels.value = levels;
       },
       (error) => {
         console.error(error);
@@ -247,7 +236,6 @@ export const useWorldOutcrops = ({
     claimPrompt,
     closeOutcropClaim,
     drawDayOutcrops,
-    friendshipLevels,
     kindRules,
     openOutcropClaim,
     outcropCamps,

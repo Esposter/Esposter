@@ -61,6 +61,7 @@ const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
   const events = createWorldEvents();
   const adventureExp = ref(0);
+  const friendshipLevels = ref(FRIENDSHIP_LEVELS);
   const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
   const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
   const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
@@ -72,6 +73,7 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
     completedMainQuestIds: ref(new Set<string>()),
     enemyMap: new Map(),
     events,
+    friendshipLevels,
     gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
     gameText: {},
     getGroundHeight: () => 0,
@@ -91,12 +93,11 @@ const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) =
     wallet,
   });
   outcrops.kindRules.value = KIND_RULES;
-  outcrops.friendshipLevels.value = FRIENDSHIP_LEVELS;
   outcrops.drawDayOutcrops(epoch, () => 0);
   outcrops.touchOutcropsNear(0, 0, () => 0);
   // The defeat of the camp's only enemy, which reveals the blossom
   events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-  return { adventureExp, characters, events, inventory, outcrops, wallet };
+  return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, wallet };
 };
 
 describe("useWorldOutcrops", () => {
@@ -148,8 +149,8 @@ describe("useWorldOutcrops", () => {
   test("a claim waits until the friendship levels are loaded, and keeps its prompt and its resin", () => {
     expect.hasAssertions();
 
-    const { characters, outcrops, wallet } = createOutcrops();
-    outcrops.friendshipLevels.value = [];
+    const { characters, friendshipLevels, outcrops, wallet } = createOutcrops();
+    friendshipLevels.value = [];
     outcrops.openOutcropClaim(1, epoch);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value?.offers ?? [], 0), epoch, 0, () => 0);
 
