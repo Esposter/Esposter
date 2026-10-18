@@ -40,6 +40,10 @@ const checkIsRazorBuff = (effect: KitEffect, characterId: number, source: string
 
 export const RAZOR_CHARACTER_ID = 10_000_020;
 
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_CRIT_RATE_BONUS = 0.1;
+const CONSTELLATION_2_HEALTH_SHARE = 0.3;
+
 // Razor's behaviour: Claw and Thunder's press gives him an Electro Sigil, up to three, and its hold clears them into
 // Energy at its hit. Lightning Fang clears them too and casts the Wolf Within, which stands while he stays on the field,
 // Resets the skill's cooldown from Ascension 1 and casts a strike's Soul Companion beside it. Awakening cuts the skill's
@@ -117,6 +121,11 @@ export const createRazorKitBehaviour = ({
         effect.hits.some((hit) => lupusFulgurisHits.includes(hit)),
     );
   return {
+    // Suppression, from Constellation 2: his strikes crit 10% more often against an enemy below 30% HP
+    getStrikeCriticalRateBonus: ({ combatant }, enemy) =>
+      combatant.constellationCount >= CONSTELLATION_2 && enemy.health / enemy.maxHealth < CONSTELLATION_2_HEALTH_SHARE
+        ? CONSTELLATION_2_CRIT_RATE_BONUS
+        : 0,
     // Its sigils are cleared into energy after the burst's cost is spent, and the Wolf Within stands from its hit
     burst: {
       onStart: ({ activeCombatant: combatant, body: { position }, kitEffectState }) => {
