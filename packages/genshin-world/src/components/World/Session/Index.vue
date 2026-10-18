@@ -20,6 +20,7 @@ import type { ReputationRequest } from "#src/models/reputation/ReputationRequest
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
+import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Trial } from "#src/models/trial/Trial";
@@ -40,6 +41,7 @@ import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
 import StatueScreen from "#src/components/Statue/Screen/Index.vue";
+import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
@@ -205,6 +207,7 @@ import {
 import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
+import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
 import { getTravelerElementBonusLines } from "#src/services/statue/getTravelerElementBonusLines";
 import { readOculusPlaces } from "#src/services/statue/readOculusPlaces";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
@@ -636,10 +639,8 @@ const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, 
   gameDataBaseUrl,
   inventory,
 });
-// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
-// Whose rewards the bag has no room for drop at the tree
 // The statues' Oculi and resonances, which pay their levels as the bag's offers do
-const { collectOculus, resonateStatue } = useWorldStatues({
+const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLevels, resonateStatue } = useWorldStatues({
   events,
   foundOculusIds,
   gainWorldAdventureExp,
@@ -653,6 +654,39 @@ const { collectOculus, resonateStatue } = useWorldStatues({
   setWallet,
   wallet,
 });
+// The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which its
+// offer and claim act on
+const worshipLandmarkId = ref<string>();
+const worshipLevels = shallowRef<StatueLevel[]>([]);
+const worshipRegionId = computed(() =>
+  worshipLandmarkId.value === undefined ? undefined : getStatueRegionId(worshipLandmarkId.value),
+);
+// F on a resonated statue opens its Worship Statue, its levels read first so the screen shows each level and its rewards
+const openWorship = (landmarkId: string) => {
+  const regionId = getStatueRegionId(landmarkId);
+  if (regionId === undefined) return;
+  readRegionLevels(regionId, (levels) => {
+    worshipLandmarkId.value = landmarkId;
+    worshipLevels.value = levels;
+    screenKind.value = ScreenKind.Worship;
+  });
+};
+const offerWorship = () => {
+  if (worshipRegionId.value !== undefined) offerOculi(worshipRegionId.value, worshipLevels.value);
+};
+// A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
+// has no room for them
+const claimWorship = () => {
+  if (worshipRegionId.value === undefined || worshipLandmarkId.value === undefined) return;
+  claimLevel(worshipRegionId.value, worshipLevels.value, {
+    id: worshipLandmarkId.value,
+    position: characterBody.position,
+  });
+};
+// The name of a reward's item in the reader's language, which a level pays by its material
+const getWorshipItemName = (itemId: number) => nameText[materialDataMap.get(itemId)?.nameTextId ?? ""] ?? "";
+// The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
+// Whose rewards the bag has no room for drop at the tree
 const { offerFrostbearingTree } = useWorldOfferings({
   events,
   frostbearingTreeProgress,
@@ -1362,7 +1396,7 @@ const interactables = computed<Interactable[]>(() => {
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
     abyssEntrance,
-    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueBlessing], getGroundHeight),
+    ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueWorship], getGroundHeight),
     ...lockedJumpLandmarks.value.map((landmark) =>
       toLandmarkInteractable(landmark, computeJumpLandmarkTextKey(landmark)),
     ),
@@ -1722,7 +1756,7 @@ defineExpose({ jumpTo, readCameraPosition });
             ) {
               screenKind = ScreenKind.Processing;
             } else if (interactable?.kind === InteractionKind.Activate && unlockedLandmarkIds.has(interactable.id)) {
-              screenKind = ScreenKind.Blessing;
+              openWorship(interactable.id);
             } else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === DOMAIN_LEAVE_INTERACTABLE_ID
@@ -1763,7 +1797,7 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind = ScreenKind.Shop;
             } else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
-              resonateStatue(interactable.id, { id: interactable.id, position: characterBody.position });
+              resonateStatue(interactable.id);
             } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
               openFishingPoint(interactable.id);
               screenKind = ScreenKind.Fishing;
@@ -2321,6 +2355,18 @@ defineExpose({ jumpTo, readCameraPosition });
       :party
       :statue-count="resonatedRegionIds.length"
       @close="screenKind = ScreenKind.World"
+      @worship="screenKind = ScreenKind.Worship"
+    />
+    <StatueWorshipScreen
+      v-if="screenKind === ScreenKind.Worship && worshipRegionId"
+      :game-text
+      :get-item-name="getWorshipItemName"
+      :levels="worshipLevels"
+      :progress="getRegionProgress(worshipRegionId)"
+      @blessing="screenKind = ScreenKind.Blessing"
+      @claim="claimWorship"
+      @close="screenKind = ScreenKind.World"
+      @offer="offerWorship"
     />
     <CookingScreen
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"

@@ -668,25 +668,68 @@ describe(mergeGenshinSave, () => {
     const account = { ...EMPTY_GENSHIN_SAVE, statues: { foundOculusIds: [], regions: {} } };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 2, level: 1 } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 } } },
     };
 
-    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({ [REGION_ID]: { heldCount: 2, level: 1 } });
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: 0, heldCount: 2, level: 1 },
+    });
   });
 
   test("a region both saves hold is the save further on", () => {
     expect.hasAssertions();
     const account = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 4, level: ACCOUNT_LEVEL } } },
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 4, level: ACCOUNT_LEVEL } },
+      },
     };
     const guest = {
       ...EMPTY_GENSHIN_SAVE,
-      statues: { foundOculusIds: [], regions: { [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL } } },
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL } } },
     };
 
     expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
-      [REGION_ID]: { heldCount: 1, level: GUEST_LEVEL },
+      [REGION_ID]: { claimedLevel: 0, heldCount: 1, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a level claimed in the copy behind is kept when the copy further on has claimed none", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 0, level: ACCOUNT_LEVEL } },
+      },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 0, heldCount: 3, level: GUEST_LEVEL } } },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: ACCOUNT_LEVEL, heldCount: 3, level: GUEST_LEVEL },
+    });
+  });
+
+  test("a region both saves hold on the same level keeps the copy with more Oculi held, and the larger claim", () => {
+    expect.hasAssertions();
+    const account = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: { foundOculusIds: [], regions: { [REGION_ID]: { claimedLevel: 1, heldCount: 4, level: GUEST_LEVEL } } },
+    };
+    const guest = {
+      ...EMPTY_GENSHIN_SAVE,
+      statues: {
+        foundOculusIds: [],
+        regions: { [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 0, level: GUEST_LEVEL } },
+      },
+    };
+
+    expect(mergeGenshinSave(account, guest).statues.regions).toStrictEqual({
+      [REGION_ID]: { claimedLevel: GUEST_LEVEL, heldCount: 4, level: GUEST_LEVEL },
     });
   });
 
