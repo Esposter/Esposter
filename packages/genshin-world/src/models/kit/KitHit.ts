@@ -68,8 +68,8 @@ export interface KitHit {
   poiseDamage: number;
   // The talent multiplier and poise the hit deals set by the stacks of a status on each enemy it strikes, if it has one
   stackedHit?: KitStackedHit;
-  // The Stellar Glimmer reaction the hit deals its damage as, if it is a direct Stellar hit, priced by the Glimmer formula
-  // Rather than as a talent's hit, as a talent or constellation alone deals Stellar-Conduct DMG
+  // The Stellar Glimmer reaction the hit deals its damage as, if it is a direct Stellar hit, priced by the Glimmer
+  // Formula rather than as a talent's hit, as a talent or constellation alone deals Stellar-Conduct DMG
   stellarReactionType?: StellarReactionType;
   talentMultiplier: number;
   // The index of the one enemy the hit strikes among those its area reaches, wrapped to their count, instead of each of
