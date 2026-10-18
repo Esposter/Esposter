@@ -127,7 +127,7 @@ export const readGoHitbox = (
   const offset = offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName);
   if (center === undefined || offset === undefined) return undefined;
   // A circle on the player or the target takes its offset, which moves its centre as a body circle's does; a box on the
-  // target keeps none
+  // Target keeps none
   if (
     center === GcsimHitboxCenter.PrimaryTarget
       ? offset !== null && shape === GcsimHitboxShape.Box
