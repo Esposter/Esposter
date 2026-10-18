@@ -1,6 +1,6 @@
 # Deep equality
 
-`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaced `fast-deep-equal`, which thirteen call sites in `apps/web` and `azure-mock` imported. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, since the callers relied on the upstream's default entry and that entry compared a Map or Set as an object with no keys.
+`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaced `fast-deep-equal`, which the call sites in `apps/web` and `azure-mock` imported. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, since the callers relied on the upstream's default entry and that entry compared a Map or Set as an object with no keys.
 
 ## How a comparison is decided
 
@@ -14,7 +14,7 @@ flowchart TD
   constructor{"Same constructor?"}
   array{"Arrays on both sides?"}
   bytes{"Binary views or buffers?"}
-  pattern{"RegExp, weak collection<br/>or Promise?"}
+  pattern{"RegExp, weak collection,<br/>Promise or Blob?"}
   valueOf{"Own valueOf on both?"}
   collection{"Map or Set on both?"}
   keys{"Same enumerable keys,<br/>each deep-equal?"}
@@ -30,7 +30,7 @@ flowchart TD
   bytes -->|yes| byteRange["Byte by byte over the view's own range"]
   bytes -->|no| pattern
   pattern -->|"RegExp: source and flags"| equal
-  pattern -->|"weak collection or Promise"| unequal
+  pattern -->|"weak collection, Promise or Blob"| unequal
   pattern -->|no| valueOf
   valueOf -->|yes| sameValueZero
   valueOf -->|no| collection
