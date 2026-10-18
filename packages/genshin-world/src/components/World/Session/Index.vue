@@ -1772,7 +1772,11 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
             ) {
               screenKind = ScreenKind.Processing;
-            } else if (interactable?.kind === InteractionKind.Activate && unlockedLandmarkIds.has(interactable.id)) {
+            } else if (
+              interactable?.kind === InteractionKind.Activate &&
+              unlockedLandmarkIds.has(interactable.id) &&
+              getStatueRegionId(interactable.id) !== undefined
+            ) {
               openWorship(interactable.id);
             } else if (
               interactable?.kind === InteractionKind.Activate &&
