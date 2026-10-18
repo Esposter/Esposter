@@ -26,6 +26,7 @@ import { createDeathlyPactPassiveModule } from "#src/services/weapon/passives/cr
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
+import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
@@ -393,4 +394,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2378883547": createManyOathsOfDawnAndDuskPassiveModule,
   // Crown of the Final Scion (Angelos' Heptades)
   "788659619": createCrownOfTheFinalScionPassiveModule,
+  // Diffusing Boundary (Calamity of Eshu)
+  "2988769779": createDiffusingBoundaryPassiveModule,
 };

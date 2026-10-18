@@ -2,7 +2,7 @@ import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
+import { checkIsKitShielded } from "#src/services/kit/effects/checkIsKitShielded";
 import { takeOne } from "@esposter/shared";
 
 // Retracing Bolide's four-piece bonus: the Normal and Charged Attack DMG its wearer gains while a shield is live
@@ -11,9 +11,8 @@ import { takeOne } from "@esposter/shared";
 export const createRetracingBolideSetModule = ({ params }: ArtifactSetBonus): PassiveModule => {
   const amount = takeOne(params, 0);
   return {
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants, effects) =>
-      deployedCombatants.some(({ characterId, isOnField }) => isOnField && characterId === combatant.characterId) &&
-      effects.some(checkIsKitShieldLive)
+    getPassiveBonuses: ({ characterId }, _healthShare, deployedCombatants, effects) =>
+      checkIsKitShielded(effects, characterId, deployedCombatants.find(({ isOnField }) => isOnField)?.characterId)
         ? [
             { amount, attribute: Attribute.NormalAttackDamageBonus },
             { amount, attribute: Attribute.ChargedAttackDamageBonus },
