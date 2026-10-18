@@ -22,8 +22,9 @@ const wielder: Combatant = createWielderCombatant([
   { attribute: Attribute.BaseDefense, value: 800 },
   { attribute: Attribute.Defense, value: 100 },
 ]);
-// Spotless Heart at its first rank: forty per cent of the wielder's DEF
-const spotlessHeartPassiveModule = createSpotlessHeartPassiveModule([0.4, 4000, 1.5, 0.1]);
+// Synthetic params, not the weapon's row: half of the wielder's DEF, an unread second value, a one-second cooldown and
+// A clear of two tenths of a second
+const spotlessHeartPassiveModule = createSpotlessHeartPassiveModule([0.5, 1, 1, 0.2]);
 const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const createSkillDamageTaken = () => ({
   attackTag: AttackTag.ElementalSkill,
@@ -56,7 +57,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toBe(0.4 * wielder.attributes.defense);
+    ).toBe(0.5 * wielder.attributes.defense);
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
         createStrike(AttackTag.NormalAttack),
@@ -68,7 +69,7 @@ describe(createSpotlessHeartPassiveModule, () => {
     ).toBe(0);
   });
 
-  test("the effect stands until 0.1 seconds after the skill's last hit", () => {
+  test("the effect stands until 0.2 seconds after the skill's last hit", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
@@ -84,7 +85,7 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toBe(0.4 * wielder.attributes.defense);
+    ).toBe(0.5 * wielder.attributes.defense);
 
     stepKitSeconds(context, 0.2);
 
@@ -129,6 +130,6 @@ describe(createSpotlessHeartPassiveModule, () => {
         context.kitEffectState.effects,
         context.characterIdCombatantMap,
       ),
-    ).toBe(0.4 * wielder.attributes.defense);
+    ).toBe(0.5 * wielder.attributes.defense);
   });
 });

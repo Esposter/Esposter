@@ -17,8 +17,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Song of the Vigil at its first rank: four Energy for an elemental reaction once every nine seconds, and twenty per cent ATK for twelve seconds after a Stellar Glimmer reaction
-const songOfTheVigilPassiveModule = createSongOfTheVigilPassiveModule([4, 0.2, 9, 12]);
+// Synthetic params, not the weapon's row: three Energy for an elemental reaction once every two seconds, and a quarter
+// ATK for three seconds after a Stellar Glimmer reaction
+const songOfTheVigilPassiveModule = createSongOfTheVigilPassiveModule([3, 0.25, 2, 3]);
 
 describe(createSongOfTheVigilPassiveModule, () => {
   test("an elemental reaction the wielder triggers regenerates the rank's Energy to it", () => {
@@ -31,7 +32,7 @@ describe(createSongOfTheVigilPassiveModule, () => {
       wielder,
     );
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(3);
   });
 
   test("the Energy comes once in the rank's cooldown, and again after it", () => {
@@ -48,16 +49,16 @@ describe(createSongOfTheVigilPassiveModule, () => {
       context,
       wielder,
     );
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(4);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(3);
 
-    stepKitSeconds(context, 9.5);
+    stepKitSeconds(context, 2.5);
     songOfTheVigilPassiveModule.onKitEvent?.(
       createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
       context,
       wielder,
     );
 
-    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(8);
+    expect(getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy).toBe(6);
   });
 
   test("a Stellar Glimmer reaction raises the wielder's ATK by the rank's percentage for the rank's seconds", () => {
@@ -72,11 +73,11 @@ describe(createSongOfTheVigilPassiveModule, () => {
 
     expect(context.kitEffectState.effects.filter(({ kind }) => kind === "buff")).toStrictEqual([
       {
-        amount: 0.2,
+        amount: 0.25,
         attribute: Attribute.AttackPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "songOfTheVigil",
       },
     ]);

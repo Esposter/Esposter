@@ -23,8 +23,9 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Serenity's Call, Solemn Silence at its first rank: sixteen per cent Max HP for twelve seconds after a reaction, sixteen more under Ascendant Gleam
-const solemnSilencePassiveModule = createSolemnSilencePassiveModule([0.16, 12, 0.16, 0]);
+// Synthetic params, not the weapon's row: a quarter Max HP for three seconds after a reaction, and half more under
+// Ascendant Gleam
+const solemnSilencePassiveModule = createSolemnSilencePassiveModule([0.25, 3, 0.5, 0]);
 const createReaction = (striker: Combatant) => ({
   enemy,
   kind: KitEventKind.ReactionTriggered as const,
@@ -41,11 +42,11 @@ describe(createSolemnSilencePassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.25,
         attribute: Attribute.HealthPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "solemnSilence",
       },
     ]);
@@ -66,11 +67,11 @@ describe(createSolemnSilencePassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.32,
+        amount: 0.75,
         attribute: Attribute.HealthPercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 12,
+        secondsRemaining: 3,
         source: "solemnSilence",
       },
     ]);

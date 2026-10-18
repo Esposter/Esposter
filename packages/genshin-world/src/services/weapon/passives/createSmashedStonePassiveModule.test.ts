@@ -19,8 +19,8 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant();
-// Smashed Stone at its first rank, which reads its per-stack percentage from the affix row's first number
-const smashedStonePassiveModule = createSmashedStonePassiveModule([0.04]);
+// A synthetic per-stack percentage of a tenth, not the weapon's row
+const smashedStonePassiveModule = createSmashedStonePassiveModule([0.1]);
 const createDamageTaken = (attackTag: AttackTag) => ({
   attackTag,
   enemy,
@@ -38,8 +38,8 @@ describe(createSmashedStonePassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.04);
-    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBe(0.04);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.1);
+    expect(getBuff(kitEffectState, Attribute.DefensePercent)?.amount).toBe(0.1);
   });
 
   test("a hit inside the rank's cooldown adds no stack, and one after it stacks to two", () => {
@@ -50,12 +50,12 @@ describe(createSmashedStonePassiveModule, () => {
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.04);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.1);
 
     stepKitSeconds(context, 0.35);
     smashedStonePassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.08);
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)?.amount).toBe(0.2);
   });
 
   test("a skill hit adds no stack", () => {

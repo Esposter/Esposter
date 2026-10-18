@@ -6,18 +6,19 @@ import { createStaffOfHomaPassiveModule } from "#src/services/weapon/passives/cr
 import { describe, expect, test } from "vitest";
 
 describe(createStaffOfHomaPassiveModule, () => {
-  // Staff of Homa at its first rank: 20% HP, 0.8% ATK of Max HP, and 1% more of Max HP while HP is under half
-  const staffOfHomaPassiveModule = createStaffOfHomaPassiveModule([0.2, 0.008, 0.01]);
+  // Synthetic params, not the weapon's row: 30% HP, a quarter ATK of Max HP, and half more of Max HP
+  // While HP is under half
+  const staffOfHomaPassiveModule = createStaffOfHomaPassiveModule([0.3, 0.25, 0.5]);
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 10000 }]);
 
   test("the wielder's HP is raised by the rank's percentage and its ATK by the rank's share of Max HP at full HP", () => {
     expect.hasAssertions();
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 1, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
+      { amount: 0.3, attribute: Attribute.HealthPercent },
     ]);
     expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 1)).toStrictEqual([
-      { amount: 0.008 * 10000, attribute: Attribute.Attack },
+      { amount: 0.25 * 10000, attribute: Attribute.Attack },
     ]);
   });
 
@@ -25,10 +26,10 @@ describe(createStaffOfHomaPassiveModule, () => {
     expect.hasAssertions();
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.4, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
+      { amount: 0.3, attribute: Attribute.HealthPercent },
     ]);
     expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 0.4)).toStrictEqual([
-      { amount: (0.008 + 0.01) * 10000, attribute: Attribute.Attack },
+      { amount: (0.25 + 0.5) * 10000, attribute: Attribute.Attack },
     ]);
   });
 
@@ -36,10 +37,10 @@ describe(createStaffOfHomaPassiveModule, () => {
     expect.hasAssertions();
 
     expect(staffOfHomaPassiveModule.getPassiveBonuses?.(wielder, 0.5, [], [])).toStrictEqual([
-      { amount: 0.2, attribute: Attribute.HealthPercent },
+      { amount: 0.3, attribute: Attribute.HealthPercent },
     ]);
     expect(staffOfHomaPassiveModule.getConversionBonuses?.(wielder, 0.5)).toStrictEqual([
-      { amount: 0.008 * 10000, attribute: Attribute.Attack },
+      { amount: 0.25 * 10000, attribute: Attribute.Attack },
     ]);
   });
 });

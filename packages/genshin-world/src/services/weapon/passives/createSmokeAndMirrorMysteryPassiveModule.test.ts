@@ -10,8 +10,8 @@ import { describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 1;
 const wielder: Combatant = createWielderCombatant();
-// Flute of Ezpitzal at its first rank: sixteen per cent DEF for fifteen seconds after an Elemental Skill
-const smokeAndMirrorMysteryPassiveModule = createSmokeAndMirrorMysteryPassiveModule([0.16, 15, 0, 0]);
+// A synthetic DEF raise of a fifth for three seconds after an Elemental Skill, not the weapon's row
+const smokeAndMirrorMysteryPassiveModule = createSmokeAndMirrorMysteryPassiveModule([0.2, 3, 0, 0]);
 
 describe(createSmokeAndMirrorMysteryPassiveModule, () => {
   test("the wielder's Elemental Skill raises its DEF by the rank's percentage for the rank's seconds", () => {
@@ -26,11 +26,11 @@ describe(createSmokeAndMirrorMysteryPassiveModule, () => {
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
-        amount: 0.16,
+        amount: 0.2,
         attribute: Attribute.DefensePercent,
         characterId: TRAVELER_CHARACTER_ID,
         kind: "buff",
-        secondsRemaining: 15,
+        secondsRemaining: 3,
         source: "smokeAndMirrorMystery",
       },
     ]);

@@ -19,9 +19,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
-// Sky-ripping Dragon Spine at its first rank: a vacuum blade of 80% of ATK for each of eight Normal or Charged Attack hits
-// After a burst, for twenty seconds
-const skyRippingDragonSpinePassiveModule = createSkyRippingDragonSpinePassiveModule([0.08, 0.8, 20, 8]);
+// Synthetic params, not the weapon's row: a vacuum blade of half of ATK for each of three Normal or Charged Attack hits
+// After a burst, for two seconds
+const skyRippingDragonSpinePassiveModule = createSkyRippingDragonSpinePassiveModule([0.1, 0.5, 2, 3]);
 const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
 const createAttackDamageTaken = (attackTag: AttackTag): KitEvent => ({
   attackTag,
@@ -41,7 +41,7 @@ describe(createSkyRippingDragonSpinePassiveModule, () => {
     skyRippingDragonSpinePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
     skyRippingDragonSpinePassiveModule.onKitEvent?.(createAttackDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.8]);
+    expect(context.strikes.map(({ hit }) => hit.talentMultiplier)).toStrictEqual([0.5]);
   });
 
   test("a hit before a burst, or an elemental skill's hit after one, queues no blade", () => {
@@ -59,27 +59,27 @@ describe(createSkyRippingDragonSpinePassiveModule, () => {
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("the blades stop at the rank's count of eight", () => {
+  test("the blades stop at the rank's count of three", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     skyRippingDragonSpinePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
-    for (let hitIndex = 0; hitIndex < 9; hitIndex++)
+    for (let hitIndex = 0; hitIndex < 4; hitIndex++)
       skyRippingDragonSpinePassiveModule.onKitEvent?.(
         createAttackDamageTaken(AttackTag.ChargedAttack),
         context,
         wielder,
       );
 
-    expect(context.strikes).toHaveLength(8);
+    expect(context.strikes).toHaveLength(3);
   });
 
-  test("the blades stop once the rank's twenty seconds run out", () => {
+  test("the blades stop once the rank's two seconds run out", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
     skyRippingDragonSpinePassiveModule.onKitEvent?.(BURST_USED, context, wielder);
-    stepKitSeconds(context, 21);
+    stepKitSeconds(context, 3);
     skyRippingDragonSpinePassiveModule.onKitEvent?.(createAttackDamageTaken(AttackTag.NormalAttack), context, wielder);
 
     expect(context.strikes).toStrictEqual([]);
