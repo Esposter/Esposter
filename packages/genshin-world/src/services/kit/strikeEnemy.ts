@@ -11,6 +11,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { getDamage } from "#src/services/combat/damage/getDamage";
@@ -19,6 +20,7 @@ import { DEFAULT_INTERNAL_COOLDOWN_GROUP } from "#src/services/combat/internalCo
 import { InternalCooldownTagGroupMap } from "#src/services/combat/internalCooldown/InternalCooldownTagGroupMap";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
+import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
 import { damageEnemy } from "#src/services/enemy/damageEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
@@ -35,7 +37,8 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // A kit hit landing on an enemy, written into it in place: a blunt hit first shatters a Freeze, then an elemental hit
 // Is applied at the gauge its internal cooldown leaves of it. The hit's damage takes its own additive base DMG Bonus
 // And what its reactions amplify, catalyze or add as priceEnemyReactions prices them, before the enemy takes it with its
-// Reactions' own poise through damageEnemy, against the enemy's RES as its statuses leave it. Its element reacts as the
+// Reactions' own poise through damageEnemy, against the enemy's RES as its statuses leave it, and a launching hit that
+// Staggers it leaves it launched. Its element reacts as the
 // Party's Moonsign turns its reactions Lunar, and a direct Lunar hit is priced by the Lunar formula from the Moonsign's
 // Bonuses instead. It returns the energy the hit dropped, whether it was a CRIT hit, the reactions it triggered and
 // Those of them that landed and reach round the enemy, and the element it applied at a gauge its cooldown let through
@@ -158,6 +161,14 @@ export const strikeEnemy = (
     damage: damage + transformativeDamage,
     poiseDamage: poiseDamage + reactionPoiseDamage,
   });
+  // A launching hit that staggers the enemy throws it airborne for as long as the stagger holds it, as the wiki's Air
+  // Stagger level does an enemy whose poise is broken
+  if (kitHit.isLaunching && enemy.state === EnemyState.Stagger)
+    addEnemyStatus(enemy, {
+      damageTakenBonus: 0,
+      id: ENEMY_LAUNCHED_STATUS_ID,
+      secondsRemaining: ENEMY_STAGGER_SECONDS,
+    });
   // A status that follows the damage lands after it, and only when the hit dealt some, as gcsim's attack callbacks read it
   const afterDamageStatus = damage > 0 ? kitHit.enemyStatusAfterDamage?.(combatant) : undefined;
   if (afterDamageStatus) addEnemyStatus(enemy, { ...afterDamageStatus });

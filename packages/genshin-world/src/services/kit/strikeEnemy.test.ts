@@ -21,6 +21,7 @@ import { getResistanceMultiplier } from "#src/services/combat/damage/getResistan
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { computeEnemyStats } from "#src/services/enemy/computeEnemyStats";
+import { ENEMY_LAUNCHED_STATUS_ID, ENEMY_STAGGER_SECONDS } from "#src/services/enemy/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
@@ -588,6 +589,36 @@ describe(strikeEnemy, () => {
     strikeEnemy(enemy, hit, combatant, context);
 
     expect(enemy.statuses).toStrictEqual([{ damageTakenBonus: 0.42, id: "omen", secondsRemaining: 4 }]);
+  });
+
+  test("a launching hit that staggers an enemy leaves it launched while the stagger lasts", () => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const hit: KitHit = { ...TRAVELER_KIT.plungeCollision, isLaunching: true, poiseDamage: STURDY_HEALTH };
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+
+    strikeEnemy(enemy, hit, combatant, context);
+
+    expect(enemy.statuses).toStrictEqual([
+      { damageTakenBonus: 0, id: ENEMY_LAUNCHED_STATUS_ID, secondsRemaining: ENEMY_STAGGER_SECONDS },
+    ]);
+  });
+
+  test.each<[string, Pick<KitHit, "isLaunching" | "poiseDamage">]>([
+    ["a launching hit that leaves its poise standing", { isLaunching: true, poiseDamage: 0 }],
+    ["a hit that staggers it without launching", { poiseDamage: STURDY_HEALTH }],
+  ])("%s leaves an enemy unlaunched", (_title, launch) => {
+    expect.hasAssertions();
+
+    const enemy = createSturdyEnemy();
+    const combatant = createCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+
+    strikeEnemy(enemy, { ...TRAVELER_KIT.plungeCollision, ...launch }, combatant, context);
+
+    expect(enemy.statuses).toStrictEqual([]);
   });
 
   test("adds a hit's additive base DMG bonus, read from its striker, to the base damage it is priced at", () => {

@@ -67,6 +67,22 @@ An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHA
 - **THEN** the enemy chases
 - **AND** a shield it holds stands again at its maximum
 
+### Requirement: A launching hit that staggers an enemy launches it
+
+A hit whose stagger level is Air SHALL leave an enemy it staggers launched while the stagger lasts, and a hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched.
+
+#### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
+
+- **GIVEN** a launching hit whose poise damage breaks an enemy's poise
+- **WHEN** the hit lands
+- **THEN** the enemy carries the launched status for the stagger's seconds
+
+#### Scenario: A hit that leaves its poise standing, or staggers it without launching, leaves an enemy unlaunched
+
+- **GIVEN** a launching hit that leaves an enemy's poise standing, or a hit that staggers it without launching
+- **WHEN** the hit lands
+- **THEN** the enemy carries no launched status
+
 ### Requirement: An enemy past its leash returns home healed and immune on the way
 
 An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its shield and poise restored.

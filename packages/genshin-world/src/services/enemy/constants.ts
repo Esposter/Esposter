@@ -24,6 +24,9 @@ export const ENEMY_LEASH_DISTANCE = 30;
 // And is gone, in seconds, measured off the Hilichurl's hit and death clips
 export const ENEMY_STAGGER_SECONDS = 0.5;
 export const ENEMY_DEATH_SECONDS = 2;
+// The status a launching hit leaves on an enemy it staggers, which it carries while it is airborne, as long as the
+// Stagger holds it, and which a kit reads by its id
+export const ENEMY_LAUNCHED_STATUS_ID = "launched";
 // How near a point an enemy walking to it has arrived, in metres
 export const ENEMY_ARRIVAL_DISTANCE = 0.1;
 // The states in which an enemy is fighting, so its idle camp-mates are woken

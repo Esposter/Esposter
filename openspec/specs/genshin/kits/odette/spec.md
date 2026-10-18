@@ -38,7 +38,7 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 
 ### Requirement: A Polestar Field on a Stellar-Conduct
 
-A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds.
+A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field SHALL be refreshed rather than doubled. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds. While the body stands inside it, every deployed member SHALL be in Radiance: Stellar-Conduct, and SHALL stay in it for 4 seconds after the body leaves.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
@@ -64,6 +64,11 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 
 - **WHEN** a Cryo is applied to an enemy outside the field, or a Pyro is applied to an enemy inside it, and a tick passes with the body inside
 - **THEN** the body's Cryo and Electro DMG Bonus stays at 20% for the 4 seconds that follow
+
+#### Scenario: the body inside the field puts every deployed member in Radiance: Stellar-Conduct
+
+- **WHEN** a Polestar Field stands and the body stands inside it
+- **THEN** every deployed member is in Radiance: Stellar-Conduct, and a member is in it only while the body stands inside or for 4 seconds after
 
 ### Requirement: A Stellar Vortex on a Stellar Swirl
 
