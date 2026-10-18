@@ -10,10 +10,10 @@
 
 ## 3. Bait and points
 
-- [ ] 3.1 Draw each bait's fish from the dump's pools and feature tags, with the crafting recipes, the rod's multiplier and accuracy. Verify: tests named after the scenarios 'A fish is drawn only by its own bait' and 'A cast with another bait draws none of a fish's kind' written first and seen failing.
+- [x] 3.1 Draw each bait's fish from the dump's pools and feature tags, with the crafting recipes, the rod's multiplier and accuracy. Verify: tests named after the scenarios 'A fish is drawn only by its own bait' and 'A cast with another bait draws none of a fish's kind' written first and seen failing.
 - [x] 3.2 Draw each point's fish from every pool of its region. Verify: tests named after the scenarios 'A point draws from its region's pools' and 'A point in a region with no pool draws nothing' written first and seen failing.
 
 ## 4. Screen and exchanges
 
-- [ ] 4.1 Build the fishing view with its prompt in reach and the cast, strike and reel inputs. Verify: a test named after the scenario 'Fishing opens at a point once the Serenitea Pot is owned' written first and seen failing.
+- [x] 4.1 Build the fishing view with its prompt in reach and the cast, strike and reel inputs. Verify: a test named after the scenario 'Fishing opens at a point once the Serenitea Pot is owned' written first and seen failing.
 - [ ] 4.2 Exchange proficiency at the Fishing Association's shop. Verify: a test named after the scenario 'Proficiency exchanges for a reward at the association' written first and seen failing.

@@ -24,6 +24,7 @@ import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
 import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
@@ -50,6 +51,7 @@ import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
+import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
@@ -63,6 +65,7 @@ import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
+import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
@@ -193,6 +196,7 @@ const characterCopyCountMap = shallowRef<ReadonlyMap<number, number>>(savedState
 const {
   finishedMainQuestIds,
   questProgressMap,
+  quests,
   questsInProgress,
   questsOffered,
   questTargetId,
@@ -202,6 +206,20 @@ const {
 } = useWorldQuests({ events, gameDataBaseUrl, language, savedQuestProgressMap: savedState.quests });
 // Every saved timer is read against the server's clock, which this machine's own runs behind or ahead of by the offset
 const getWorldNow = () => Temporal.Now.instant().add({ milliseconds: serverClockOffsetMs });
+// The fishing points in reach, whether fishing is open at them, and the cast held while a point is fished
+const { castView, closeFishing, fishingPointPlaces, isFishingOpen, isFishingPoint, openFishingPoint, stepFishing } =
+  useWorldFishing({
+    gameDataBaseUrl,
+    getRegionIds: () => [...(windrise.value?.regionDataMap.keys() ?? [])],
+    getWorldNow,
+    inventory,
+    materialDataMap,
+    names: nameText,
+    questProgressMap,
+    quests,
+    random: () => kitContext.random(),
+    setInventory,
+  });
 // The Adventure EXP the session holds live, and the rank and the World Level the camps spawn at from it and the main quests
 const {
   adventureExp,
@@ -255,6 +273,7 @@ watch(
 // The press that closes a screen is spent with it, so the F, Space or click that ended it never reaches the world as an
 // Interact, a jump or an attack
 watch(screenKind, (newScreenKind) => {
+  if (newScreenKind !== ScreenKind.Fishing) closeFishing();
   if (newScreenKind === ScreenKind.World) input.readInput(0);
 });
 // Left Alt shows the cursor, as the game's Show Cursor does, letting the lock go without opening the Paimon menu
@@ -567,6 +586,7 @@ const interactables = computed<Interactable[]>(() => {
       toLandmarkInteractable(landmark, GameTextKey.DomainEntrance),
     ),
     ...computeCraftingBenchInteractables(craftingBenchPlace, gameText[GameTextKey.CraftingTitle], getGroundHeight),
+    ...computeFishingInteractables(fishingPointPlaces.value, isFishingOpen.value, gameText, getGroundHeight),
   ];
 });
 const { interactionPrompts, readInteraction, selectInteractable } = useInteraction(
@@ -717,6 +737,12 @@ defineExpose({ jumpTo, readCameraPosition });
             );
           else elementalSight.isOn = false;
           if (!isPaused && screenKind === ScreenKind.World) stepWorldPuzzles(context.delta, characterBody.position);
+          if (!isPaused && screenKind === ScreenKind.Fishing)
+            stepFishing({
+              isReeling: inputState.heldActions.has(InputAction.NormalAttack),
+              isStruck: inputState.pressedActions.has(InputAction.NormalAttack),
+              seconds: context.delta,
+            });
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.QuickUseGadget))
             quickUseEquippedGadget(getWorldNow());
@@ -751,6 +777,9 @@ defineExpose({ jumpTo, readCameraPosition });
               offerFrostbearingTree(frostbearingTreePlace);
             else if (interactable?.kind === InteractionKind.Activate) {
               activateLandmark(interactable.id);
+            } else if (interactable?.kind === InteractionKind.Use && isFishingPoint(interactable.id)) {
+              openFishingPoint(interactable.id);
+              screenKind = ScreenKind.Fishing;
             } else if (interactable?.kind === InteractionKind.Use) {
               screenKind = ScreenKind.Crafting;
             } else if (interactable?.kind === InteractionKind.Talk) {
@@ -1103,6 +1132,7 @@ defineExpose({ jumpTo, readCameraPosition });
         screenKind = ScreenKind.World;
       "
     />
+    <FishingScreen v-if="screenKind === ScreenKind.Fishing" :view="castView" />
     <CraftingScreen
       v-if="screenKind === ScreenKind.Crafting"
       v-model:crafted-count-map="craftedCountMap"

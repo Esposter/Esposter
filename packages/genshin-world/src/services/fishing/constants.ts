@@ -10,3 +10,8 @@ export const FISH_STOCK_REFILL_DURATION = Temporal.Duration.from({ hours: 72 });
 export const REEL_BAR_MAX = 100;
 // Provisional: the same recording sets how many seconds the line may lie out of its zone before it breaks
 export const REEL_LOST_OUT_OF_ZONE_SECONDS = 3;
+// The Serenitea Pot as the bag holds it: the widget material the game names by its own text. Fishing needs one owned
+export const SERENITEA_POT_ITEM_ID = 220026;
+// The main quest the wiki names beside the Pot for the unlock, Exploding Population, by the id its progress is saved under.
+// The save carries a quest only once it is in the carried quests, which holds it out for now
+export const SERENITEA_POT_QUEST_ID = "70661";

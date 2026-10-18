@@ -1,4 +1,5 @@
 import type { FishingZone } from "#src/models/fishing/FishingZone";
+import type { FishingZoneTravel } from "#src/models/fishing/FishingZoneTravel";
 
 import { REEL_BAR_MAX } from "#src/services/fishing/constants";
 
@@ -6,7 +7,7 @@ import { REEL_BAR_MAX } from "#src/services/fishing/constants";
 // That leaves it, and it is kept within the bar at its width. The offset, speed and duration are drawn by the caller
 // From the fish's ranges, as the nibble is, and the travel is provisional until the reel's recording sets it
 export const computeFishingZone = (
-  { duration, offset, speed, width }: { duration: number; offset: number; speed: number; width: number },
+  { duration, offset, speed, width }: FishingZoneTravel,
   seconds: number,
 ): FishingZone => {
   const start = offset + speed * Math.min(seconds, duration);
