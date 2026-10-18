@@ -42,7 +42,11 @@ export const TALK_CONFIG_TABLE_NAME = "TalkExcelConfigData";
 export const TRIGGER_TABLE_NAME = "TriggerExcelConfigData";
 export const NPC_TABLE_NAME = "NpcExcelConfigData";
 export const BIN_OUTPUT_DIRECTORY = "BinOutput";
-export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY, "Quest");
+// The quest binaries' folder under the dump, by its path from the dump's root, which the fetch lists to bring each carried
+// Quest's binary the dump lacks
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
+export const QUEST_BINARY_DIRECTORY_PATH: string = `${BIN_OUTPUT_DIRECTORY}/Quest`;
+export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, QUEST_BINARY_DIRECTORY_PATH);
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
 // Text map is split across the chunks of its kind's folder, numbered from its range's first to its last
 export const EXCEL_BIN_OUTPUT_PATH = "Data/_ExcelBinOutput";

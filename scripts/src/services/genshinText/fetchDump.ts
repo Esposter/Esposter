@@ -1,3 +1,5 @@
+import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
+import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
 import type { DumpFile } from "#src/models/genshinText/DumpFile";
 import type { Tree } from "#src/models/genshinText/Tree";
 
@@ -11,17 +13,23 @@ import {
   DUMP_FILE_DOWNLOAD_TIMEOUT_MS,
   GAME_TEXT_DIRECTORY,
   GameLanguageCodeMap,
+  MAIN_QUEST_TABLE_NAME,
+  QUEST_BINARY_DIRECTORY_PATH,
   SCENE_NPC_BORN_DIRECTORY,
   SCENE_NPC_BORN_FILE_NAME,
   SCENE_WORLD_AREA_DIRECTORY,
   SCENE_WORLD_AREA_FILE_NAME,
+  SUB_QUEST_TABLE_NAME,
   TEXT_MAP_DIRECTORY_NAME,
 } from "#src/services/genshinText/constants";
+import { readCarriedQuestBinaryPaths } from "#src/services/genshinText/readCarriedQuestBinaryPaths";
+import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
 import { publishFile } from "#src/services/shared/publishFile";
 import { chunk, InvalidOperationError, Operation } from "@esposter/shared";
+import { QuestIds, ReputationRequestQuestIds } from "genshin-world";
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
@@ -102,10 +110,9 @@ const downloadDumpFile = async ({ path }: DumpFile): Promise<void> => {
   await publishFile(localPath, new Uint8Array(await response.arrayBuffer()));
 };
 
-// Every readable text, table, text map and held binary the dump lacks, or holds at another size, fetched from
-// AnimeGameData. Returns a note of the count fetched and the count kept
-export const fetchDump = async (): Promise<string[]> => {
-  const remoteFiles = await listDumpFiles();
+// Downloads each of the remote files the dump lacks or holds at another size, and returns the count fetched and the count
+// Kept
+const fetchRemoteFiles = async (remoteFiles: readonly DumpFile[]): Promise<{ fetched: number; held: number }> => {
   const localSizeMap = new Map(
     remoteFiles.flatMap(({ path }) => {
       const localPath = join(GAME_TEXT_DIRECTORY, ...path.split("/"));
@@ -118,5 +125,37 @@ export const fetchDump = async (): Promise<string[]> => {
     await previousBatch;
     await Promise.all(batch.map((file) => downloadDumpFile(file)));
   }, Promise.resolve());
-  return [`${selectedFiles.length} dump files fetched, ${remoteFiles.length - selectedFiles.length} already held`];
+  return { fetched: selectedFiles.length, held: remoteFiles.length - selectedFiles.length };
+};
+
+// The binary each quest the reader carries reads, listed from its folder. The main and sub quest tables it is named by
+// Are the ones the first pass brought down, so this runs after it. A binary the folder lacks is named in the error
+const listCarriedQuestBinaryFiles = async (): Promise<DumpFile[]> => {
+  const requestedPaths = new Set(
+    readCarriedQuestBinaryPaths(
+      QuestIds.filter((questId) => !ReputationRequestQuestIds.includes(questId)),
+      readExcelTable<DumpedMainQuest>(MAIN_QUEST_TABLE_NAME),
+      readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME),
+    ),
+  );
+  const listedFiles = await listRemoteDirectory(QUEST_BINARY_DIRECTORY_PATH);
+  const listedPaths = new Set(listedFiles.map(({ path }) => path));
+  const missingPaths = [...requestedPaths].filter((path) => !listedPaths.has(path));
+  if (missingPaths.length > 0)
+    throw new InvalidOperationError(
+      Operation.Read,
+      QUEST_BINARY_DIRECTORY_PATH,
+      `has no binary for ${missingPaths.join(", ")} in AnimeGameData`,
+    );
+  return listedFiles.filter(({ path }) => requestedPaths.has(path));
+};
+
+// Every readable text, table, text map and held binary the dump lacks, or holds at another size, and each binary a carried
+// Quest reads, fetched from AnimeGameData. Returns a note of the count fetched and the count kept
+export const fetchDump = async (): Promise<string[]> => {
+  const dumpFiles = await fetchRemoteFiles(await listDumpFiles());
+  const questFiles = await fetchRemoteFiles(await listCarriedQuestBinaryFiles());
+  return [
+    `${dumpFiles.fetched + questFiles.fetched} dump files fetched, ${dumpFiles.held + questFiles.held} already held`,
+  ];
 };
