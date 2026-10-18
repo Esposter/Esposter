@@ -1,7 +1,7 @@
 ## 1. Cooking talents
 
-- [ ] 1.1 Record each recipe's food type and the ten cooking talents, and draw a talent in hand cooking and in Auto Cook. Verify: a test named after the scenario 'A perfect cook doubles a delicious dish' written first and seen failing.
-- [ ] 1.2 Count the talent's extra dish in the bag's room check. Verify: a test named after the scenario 'A talent's extra dish is refused when the bag has no room for it' written first and seen failing.
+- [x] 1.1 Record each recipe's food type and the ten cooking talents, and draw a talent in hand cooking and in Auto Cook. Verify: a test named after the scenario 'A perfect cook doubles a delicious dish' written first and seen failing.
+- [x] 1.2 Count the talent's extra dish in the bag's room check. Verify: a test named after the scenario 'A talent's extra dish is refused when the bag has no room for it' written first and seen failing.
 
 ## 2. Cooking screen
 

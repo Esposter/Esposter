@@ -1,6 +1,7 @@
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 
+import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
 import { learnCookingRecipe } from "#src/services/cooking/learnCookingRecipe";
 import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
@@ -20,6 +21,7 @@ describe(learnCookingRecipe, () => {
   const INSTRUCTION_ID = 109_101;
   const OTHER_ITEM_ID = 109_102;
   const recipe: CookingRecipe = {
+    foodType: CookingFoodType.Heal,
     id: 1001,
     ingredients: [{ count: 1, id: 100_011 }],
     isDefaultUnlocked: false,
