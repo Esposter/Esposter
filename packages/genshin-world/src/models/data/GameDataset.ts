@@ -55,4 +55,5 @@ export enum GameDataset {
   TransPoints = "transPoints",
   Wildlife = "wildlife",
   Windrise = "windrise",
+  WishSchedule = "wishSchedule",
 }
