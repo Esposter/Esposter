@@ -2,7 +2,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { pyronadoField } from "#src/services/gcg/cards/pyronadoField";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { PYRONADO_FIELD_ID } from "#src/services/gcg/cards/constants";
@@ -12,7 +11,7 @@ const PYRONADO_DAMAGE = 3;
 
 export const pyronado: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(PYRONADO_FIELD_ID, pyronadoField));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, PYRONADO_FIELD_ID, pyronadoField);
   },
   getDamage: () => ({ damageType: Element.Pyro, value: PYRONADO_DAMAGE }),
 };

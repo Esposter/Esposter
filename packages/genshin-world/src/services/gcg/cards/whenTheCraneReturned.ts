@@ -1,6 +1,5 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
@@ -18,6 +17,6 @@ export const whenTheCraneReturned: GcgCardModule = {
   },
   play: ({ duel, sideIndex }) => {
     const side = takeOne(duel.sides, sideIndex);
-    side.onstages.push(createGcgZoneCard(WHEN_THE_CRANE_RETURNED_ID, whenTheCraneReturned));
+    placeGcgZoneCard(side.onstages, WHEN_THE_CRANE_RETURNED_ID, whenTheCraneReturned);
   },
 };

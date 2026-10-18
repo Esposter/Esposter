@@ -5,7 +5,7 @@ import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
 import { TENKO_THUNDERBOLTS_ID } from "#src/services/gcg/cards/constants";
 import { THE_SHRINES_SACRED_SHADE_ID } from "#src/services/gcg/cards/constants";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const TENKO_KENSHIN_DAMAGE = 4;
@@ -19,7 +19,7 @@ export const tenkoKenshin: GcgSkillModule = {
     const sesshou = side.summons.find(({ cardId }) => cardId === SESSHOU_SAKURA_ID);
     if (!sesshou) return;
     sesshou.usages = 0;
-    side.onstages.push(createGcgZoneCard(TENKO_THUNDERBOLTS_ID, tenkoThunderbolts));
+    placeGcgZoneCard(side.onstages, TENKO_THUNDERBOLTS_ID, tenkoThunderbolts);
     const yae = side.characters.at(side.activeIndex);
     const shrine = yae?.equipments.find(({ cardId }) => cardId === THE_SHRINES_SACRED_SHADE_ID);
     if (shrine) shrine.counter = duel.round;

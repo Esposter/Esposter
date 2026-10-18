@@ -3,7 +3,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplication";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { RAIN_SWORD_ID } from "#src/services/gcg/cards/constants";
@@ -17,7 +16,7 @@ export const fatalRainscreen: GcgSkillModule = {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
     if (user) applyGcgApplication(duel, sideIndex, user, Element.Hydro);
-    side.onstages.push(createGcgZoneCard(RAIN_SWORD_ID, rainSword));
+    placeGcgZoneCard(side.onstages, RAIN_SWORD_ID, rainSword);
   },
   getDamage: () => ({ damageType: Element.Hydro, value: FATAL_RAINSCREEN_DAMAGE }),
 };

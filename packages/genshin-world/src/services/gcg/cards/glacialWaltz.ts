@@ -2,7 +2,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { icicle } from "#src/services/gcg/cards/icicle";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { ICICLE_ID } from "#src/services/gcg/cards/constants";
@@ -13,7 +12,7 @@ const GLACIAL_WALTZ_DAMAGE = 1;
 
 export const glacialWaltz: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(ICICLE_ID, icicle));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, ICICLE_ID, icicle);
   },
   getDamage: () => ({ damageType: Element.Cryo, value: GLACIAL_WALTZ_DAMAGE }),
 };

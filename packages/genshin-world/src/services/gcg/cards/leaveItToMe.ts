@@ -1,7 +1,6 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { takeOne } from "@esposter/shared";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 
@@ -13,6 +12,6 @@ export const leaveItToMe: GcgCardModule = {
     zoneCard.usages = 0;
   },
   play: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(LEAVE_IT_TO_ME_ID, leaveItToMe));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, LEAVE_IT_TO_ME_ID, leaveItToMe);
   },
 };

@@ -2,7 +2,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { INSPIRATION_FIELD_ID } from "#src/services/gcg/cards/constants";
@@ -13,7 +12,7 @@ const FANTASTIC_VOYAGE_DAMAGE = 2;
 
 export const fantasticVoyage: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).onstages.push(createGcgZoneCard(INSPIRATION_FIELD_ID, inspirationField));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, INSPIRATION_FIELD_ID, inspirationField);
   },
   getDamage: () => ({ damageType: Element.Pyro, value: FANTASTIC_VOYAGE_DAMAGE }),
 };

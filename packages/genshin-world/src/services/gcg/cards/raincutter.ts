@@ -3,7 +3,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplication";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { RAINBOW_BLADEWORK_ID } from "#src/services/gcg/cards/constants";
@@ -17,7 +16,7 @@ export const raincutter: GcgSkillModule = {
     const side = takeOne(duel.sides, sideIndex);
     const user = side.characters.at(side.activeIndex);
     if (user) applyGcgApplication(duel, sideIndex, user, Element.Hydro);
-    side.onstages.push(createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework));
+    placeGcgZoneCard(side.onstages, RAINBOW_BLADEWORK_ID, rainbowBladework);
   },
   getDamage: () => ({ damageType: Element.Hydro, value: RAINCUTTER_DAMAGE }),
 };
