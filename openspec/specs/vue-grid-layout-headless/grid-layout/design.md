@@ -75,4 +75,4 @@ flowchart TD
 ## Sources
 
 - [Pointer Events, W3C](https://www.w3.org/TR/pointerevents/): pointer capture and the cancel path a gesture follows.
-- [react-grid-layout](https://github.com/react-grid-layout/react-grid-layout): the names of `compactType`, `containerPadding` and dropping from outside, which the options follow.
+- [react-grid-layout](https://github.com/react-grid-layout/react-grid-layout): the names of `compactType` and dropping from outside, which the options follow. The grid's outer padding is `spacing.padding`, the option react-grid-layout calls `containerPadding`.
