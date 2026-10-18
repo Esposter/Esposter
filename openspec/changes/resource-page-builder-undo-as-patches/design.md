@@ -6,7 +6,7 @@ The page builder's undo and redo, built once the [document model](../resource-pa
 
 An edit is a list of operations in JSON Patch's add, remove and replace, each addressed by a JSON Pointer from the document root. `applyPatches`, the one JSON Patch applier, which the [agent content tools](../../specs/architecture/agent-content-tools/design.md) also apply on the server, lives in `@esposter/shared` and copies the path to each changed node, so the new document shares every untouched subtree with the old one and a canvas node whose object did not change does not re-render. As it applies each operation it records the inverse, so undo is the inverse list applied in reverse and redo is the forward list again. A move is a remove and an add.
 
-The core already applies an edit whole and bounds the stack: `applyBlockEdit` returns the new document with its inverses, and `pushHistory` clears the future and drops the oldest entry. This change owns neither again. It keeps one history per open resource in the page builder's store, names each entry for the command bar, decides what one interaction is, and coalesces within one: the core left coalescing to the first consumer that needs it, and a slider drag is that consumer.
+The core already applies an edit whole: `applyBlockEdit` returns the new document with its inverses, and the [bounded history](../../specs/shared/bounded-history/design.md) in `@esposter/shared` clears the future and drops the oldest entry. This change owns neither again. It keeps one history per open resource in the page builder's store, names each entry for the command bar, decides what one interaction is, and coalesces within one: the core left coalescing to the first consumer that needs it, and a slider drag is that consumer.
 
 ```mermaid
 flowchart TD
@@ -37,7 +37,7 @@ flowchart TD
 
 | File                                                         | Role after the change                                                        |
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `packages/headless-block-editor/src/services/pushHistory.ts` | the bounded history, moved to the shared package with its tests              |
+| `packages/shared/src/services/history/pushHistory.ts`        | the bounded history, moved to the shared package with its tests              |
 | `apps/web/app/store/resource/sheet/history/index.ts`         | the sheet's history over the shared bounded history, its commands as entries |
 | `apps/web/app/composables/resource/sheet/useSheetHistory.ts` | unchanged callers of the sheet's undo and redo                               |
 | `apps/web/app/composables/ui/useCommands.ts`                 | Undo and Redo registered as commands named by the entry's label              |

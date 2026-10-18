@@ -1,6 +1,6 @@
 # Headless block editor core
 
-The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a removal needs, a bounded history, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model change](../../../changes/resource-page-builder-document-model/); the package's own tests run in the plain Node environment.
+The editing model of a block editor: a registry-checked document whose root declares its own content and props, commands that return JSON Patch operations, the navigation a removal needs, and a fold that renders a checked document from its leaves up. It is built for the page builder's editors, which are its planned consumers in [the document model change](../../../changes/resource-page-builder-document-model/); the package's own tests run in the plain Node environment.
 
 ## How an edit runs
 
@@ -14,9 +14,6 @@ flowchart TD
   GATE -->|yes| OPS["JSON Patch operations"]
   COPIES -->|yes| OPS
   OPS --> APPLY["applyBlockEdit: the new document and its inverses, or an error"]
-  APPLY --> PUSH["pushHistory: the future dropped, the past bounded"]
-  PUSH -->|"undoHistory"| INV["the entry's inverses applied in order"]
-  PUSH -->|"redoHistory"| REDO["the entry's operations applied again"]
   SCHEMA -->|"a document it accepts"| FOLD["renderBlockNodes: each node after its slots, through the consumer's render"]
 ```
 
@@ -32,7 +29,7 @@ flowchart TD
 - **Refusals are empty operation lists, and an edit that cannot apply is an error.** A command refuses by returning nothing, so a history never records it. `applyBlockEdit` wraps `applyPatches` in `getResult`, so an operation that cannot apply, such as a prop update on a node no longer in the document, refuses the whole edit and leaves the document as it was.
 - **A paste re-mints every id.** `remintBlockNode` gives a copy and every node in its slots fresh ids, so a copy shares none with the original and a copy of a node from another editor is refused by the registry.
 - **Removal names the focus target in post-removal coordinates.** The next sibling takes the removed node's index, so its pointer is the same index; otherwise the previous sibling; otherwise the parent, and the root is the empty pointer.
-- **History is a value, generic over its entry.** `pushHistory` clears the future and bounds the past; `undoHistory` and `redoHistory` return the entry moved and the history after it, and a redo keeps the rest of the future.
+- **The undo history is not the core's.** The bounded history that undoes a document's edits lives in `@esposter/shared`, [as its own capability](../../shared/bounded-history/design.md), so the core keeps no copy of it.
 - **A document folds from its leaves up.** `renderBlockNodes` renders each node of a slot in order, after each of the node's slots has rendered, and hands the consumer's render function the node, its type's definition and each slot's output. A node whose type the registry lacks renders nothing, so a fold over a document that skipped its parse still renders what the registry knows. Each renderer walks the tree through this one fold rather than its own recursion.
 
 ## Key files
@@ -51,7 +48,6 @@ flowchart TD
 | `packages/headless-block-editor/src/services/renderBlockNodes.ts`          | the fold from the leaves up, through a consumer's render function               |
 | `packages/headless-block-editor/src/services/getFocusAfterRemoval.ts`      | the node that takes focus after a removal                                       |
 | `packages/headless-block-editor/src/services/applyBlockEdit.ts`            | an edit applied as one, or refused whole                                        |
-| `packages/headless-block-editor/src/services/pushHistory.ts`               | the bounded past and the cleared future                                         |
 | `apps/web/shared/models/db/resource/JsonPatchOperation.ts`                 | the app's wire schema for an operation, beside its one consumer                 |
 
 ## Notes

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The editor core checks, edits and reverses a block document in a runtime with no document object model and no UI framework: the registry-checked document, commands that return reversible JSON Patch operations, and a bounded undo history.
+The editor core checks, edits and reverses a block document in a runtime with no document object model and no UI framework: the registry-checked document and commands that return reversible JSON Patch operations.
 
 ## Requirements
 
@@ -104,22 +104,6 @@ Pasting nodes SHALL give every pasted node a fresh id, SHALL refuse nodes whose 
 - **GIVEN** a registry whose root accepts only sections, and a copied heading
 - **WHEN** the heading is pasted into a section's slot that accepts headings
 - **THEN** the heading is added to that slot
-
-### Requirement: The history undoes and redoes edits in order within its bound
-
-The editor core's history SHALL undo edits newest first and redo them last undone first, so a redo reverses the undo order, SHALL drop the redo entries when a new edit is made, and SHALL drop its oldest entry when a new entry would take it past the consumer's limit.
-
-#### Scenario: A new edit after undo
-
-- **GIVEN** a history with one undone edit
-- **WHEN** a new edit is pushed
-- **THEN** there is nothing to redo
-
-#### Scenario: The bound is reached
-
-- **GIVEN** a history holding as many entries as its limit
-- **WHEN** one more edit is pushed
-- **THEN** the oldest entry can no longer be undone
 
 ### Requirement: The core runs where there is no document object model
 

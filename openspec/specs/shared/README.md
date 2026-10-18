@@ -9,4 +9,5 @@
 - [IndexedDB](indexed-db/design.md) — the typed IndexedDB wrapper, replacing `idb`.
 - [Media types](mime-types/design.md) — the extension and media type lookup over `mime-db`, replacing `mime-types`.
 - [HTML sanitiser](sanitize-html/design.md) — `sanitizeHtml` over parse5, replacing `sanitize-html`.
+- [Bounded history](bounded-history/design.md) — the undo and redo stack the editor core's documents and the sheet's commands share.
 - [Roadmap](../../changes/shared-roadmap/tasks.md) — open decisions in the shared utilities, each linked to its proposal.

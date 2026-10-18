@@ -11,7 +11,7 @@
 
 ## 3. Shared primitive
 
-- [ ] 3.1 Move the core's bounded history into `@esposter/shared`, and build the core's history and the sheet's history store on it. Verify: the sheet's existing history tests pass unchanged, and the core's history tests pass from the shared package.
+- [x] 3.1 Move the core's bounded history into `@esposter/shared`, and build the core's history and the sheet's history store on it. Verify: the sheet's existing history tests pass unchanged, and the core's history tests pass from the shared package.
 
 ## 4. Saving
 
