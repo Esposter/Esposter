@@ -21,8 +21,6 @@ import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/g
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { keepCommittedKitCause } from "#src/services/genshinAssets/kits/record/keepCommittedKitCause";
-import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
-import { unflattenKitValues } from "#src/services/genshinAssets/kits/record/unflattenKitValues";
 import { getResult } from "@esposter/shared";
 
 // The overlay a kit's published record needs for its sources to reproduce it, each entry classified: every value the
@@ -122,16 +120,6 @@ export const compareKitRecord = (
     sourceCandidateMap,
   });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
-  const resolved = resolveKitValues(
-    sourceCandidateMap,
-    overlay,
-    getDonorKitCandidates(overlay, donorRecordMap),
-    namedHitCandidateMap,
-    tables,
-    !isTagPredated,
-  );
-  for (const path of flattenKitValues(unflattenKitValues(resolved.valueMap)).keys())
-    if (!publishedValueMap.has(path)) classify(path, undefined, resolved.candidateMap);
   // A committed entry for a path the published record lacks and the classification never reached is a hand-written value the
   // Build still reads, so it stays in the overlay the build and the report hold
   for (const [path, entry] of Object.entries(committedOverlay))
