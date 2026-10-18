@@ -10,5 +10,6 @@ x-touches:
     "scripts/src/models/genshinAssets/shops/**",
     "packages/genshin-world/src/services/shop/**",
     "packages/genshin-world/src/models/shop/**",
+    "packages/genshin-world/src/components/Shop/Screen/**",
     "scripts/src/services/genshinAssets/commands/shopsCommand.ts",
   ]

@@ -583,6 +583,16 @@ export enum GameTextKey {
   RawMeat = "2492759196",
   Ready = "ONLINE_DUNGEON_GUEST_IS_READY",
   RealmCurrency = "1255754076",
+  // The Realm Depot's tab of furnishing blueprints
+  RealmDepotBlueprints = "2594539160",
+  // The Realm Depot's tab of creatures of the realm
+  RealmDepotCreatures = "346464176",
+  // The Realm Depot's tab of riches of the realm
+  RealmDepotRiches = "3882361568",
+  // The Realm Depot's tab of realm treasures
+  RealmDepotTreasures = "2009922312",
+  // The Realm Depot's tab of wood
+  RealmDepotWood = "2474820128",
   // A domain level's recommended Adventure Rank, filled with the rank
   RecommendedLevel = "UI_QUEST_RECOMMEND_LEVEL",
   RedBerryshroom = "1096616044",
