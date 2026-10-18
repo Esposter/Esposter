@@ -76,7 +76,7 @@ describe(createTighnariKitBehaviour, () => {
     expect(Math.round(takeOne(TIGHNARI_KIT.elementalSkill.hits).hitmarkSeconds * 60)).toBe(20);
   });
 
-  describe("Ascension 4's damage bonus", () => {
+  describe("ascension 4's damage bonus", () => {
     const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const party = createParty([TIGHNARI_CHARACTER_ID]);
