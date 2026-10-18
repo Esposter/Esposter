@@ -10,8 +10,9 @@ interface ArtifactStatLine {
   value: string;
 }
 
-// A worn artifact's stats: its main stat with its value, and its minor affixes
+// A worn artifact's stats: its main stat with its value, its minor affixes, and whether it is locked
 interface ArtifactSlotStats {
+  isLocked: boolean;
   mainStat: ArtifactStatLine;
   subStats: ArtifactStatLine[];
 }
@@ -23,6 +24,8 @@ interface Props {
   equipDisabledSlots: boolean[];
   // The Equip button's label, shown while the picked slot is empty
   equipLabel: string;
+  // The Lock button's label, shown while the picked worn artifact is unlocked
+  lockLabel: string;
   // The words the set bonus block shows while no bonus is active
   noSetBonusLabel: string;
   // The set bonus block's heading, the game's word for its bonuses
@@ -35,21 +38,30 @@ interface Props {
   slotStats: (ArtifactSlotStats | undefined)[];
   // The Unequip button's label, shown while the picked slot holds a worn artifact
   unequipLabel: string;
+  // The Unlock button's label, shown while the picked worn artifact is locked
+  unlockLabel: string;
 }
 
 const {
   enhanceLabel,
   equipDisabledSlots,
   equipLabel,
+  lockLabel,
   noSetBonusLabel,
   setBonusHeading,
   setBonusLines,
   slotNames,
   slotStats,
   unequipLabel,
+  unlockLabel,
 } = defineProps<Props>();
 // Each action names the slot it is taken on by its index
-const emit = defineEmits<{ enhance: [index: number]; equip: [index: number]; unequip: [index: number] }>();
+const emit = defineEmits<{
+  enhance: [index: number];
+  equip: [index: number];
+  lock: [index: number];
+  unequip: [index: number];
+}>();
 // The slot the details, stats and buttons are for, the first until a disc is picked
 const selectedIndex = ref(0);
 const selectedStats = computed(() => slotStats[selectedIndex.value]);
@@ -117,6 +129,9 @@ const isSelectedWorn = computed(() => selectedStats.value !== undefined);
         @click="emit('equip', selectedIndex)"
       >
         {{ equipLabel }}
+      </GameButton>
+      <GameButton v-if="selectedStats" class="button" :kind="GameButtonKind.Pill" @click="emit('lock', selectedIndex)">
+        {{ selectedStats.isLocked ? unlockLabel : lockLabel }}
       </GameButton>
     </CharacterMenuButtons>
   </div>

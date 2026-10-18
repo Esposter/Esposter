@@ -25,6 +25,18 @@ describe(getArtifactDetailStats, () => {
     { attribute: Attribute.HealthPercent, rarity: 5, values: [0.0466] },
   ];
 
+  test("a locked artifact's stats say it is locked", () => {
+    expect.hasAssertions();
+
+    expect(
+      getArtifactDetailStats(
+        { ...createArtifact(Attribute.Health, []), isLocked: true },
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ).isLocked,
+    ).toBe(true);
+  });
+
   test("the main stat is named and its value reads its curve, a flat attribute whole", () => {
     expect.hasAssertions();
 
@@ -32,6 +44,7 @@ describe(getArtifactDetailStats, () => {
       getArtifactDetailStats(createArtifact(Attribute.Health, []), ENGLISH_GAME_TEXT, artifactMainAffixCurves),
     ).toStrictEqual({
       mainStat: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeMaxHealth], value: "+717" },
+      isLocked: false,
       subStats: [],
     });
   });

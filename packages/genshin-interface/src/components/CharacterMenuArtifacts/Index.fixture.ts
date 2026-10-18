@@ -4,12 +4,14 @@ export const props = {
   enhanceLabel: "Enhance",
   equipDisabledSlots: [true, true, true, true, true],
   equipLabel: "Equip",
+  lockLabel: "Lock",
   noSetBonusLabel: "No Set Bonus",
   setBonusHeading: "Set Bonus",
   setBonusLines: [],
   slotNames: ["Flower of Life", "Plume of Death", "Sands of Eon", "Goblet of Eonothem", "Circlet of Logos"],
   slotStats: [undefined, undefined, undefined, undefined, undefined],
   unequipLabel: "Unequip",
+  unlockLabel: "Unlock",
 };
 
 // Her Flower of Life worn and picked, so Unequip is offered in place of Equip, with its stats drawn under the details pill
@@ -19,6 +21,7 @@ export const variants = {
     setBonusLines: ["2-Piece Set: Attack +18%"],
     slotStats: [
       {
+        isLocked: false,
         mainStat: { label: "Max HP", value: "+4780" },
         subStats: [
           { label: "ATK", value: "+19" },
