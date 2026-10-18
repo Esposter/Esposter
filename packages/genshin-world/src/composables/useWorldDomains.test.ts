@@ -33,10 +33,10 @@ vi.mock(import("#src/services/domains/readWeeklyBossDomains"), () => ({
 // A weekly boss's trounce entrance, with the made-up placement a test needs and the production entry id
 const domainEntrance: DomainEntranceLandmark = {
   areaId: "mondstadt",
-  arrival: { heightOffset: 0, position: { x: 600, z: 0 }, rotation: 0 },
+  arrival: { heightOffset: 1, position: { x: 600, z: 0 }, rotation: 0 },
   domainKind: DomainKind.Trounce,
   entryId: 1006,
-  heightOffset: 0,
+  heightOffset: 1,
   id: "weekly-boss-domain-entrance",
   kind: LandmarkKind.DomainEntrance,
   position: { x: 600, z: 0 },
