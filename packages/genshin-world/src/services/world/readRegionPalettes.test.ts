@@ -10,40 +10,47 @@ import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+// A palette's hex colour as the number a material is coloured with
+const parseHexColour = (hex: string): number => Number.parseInt(hex.slice(1), 16);
+// The Mondstadt palette the mirror holds, as the publish wrote it
+const readMondstadtPalette = async (): Promise<{ stone: { hex: string }; timber: { hex: string } }> =>
+  JSON.parse(await readMirroredGameDataObject(takeOne(gameDataLock.objects, "regions/mondstadt/palette")));
+
 describe(readRegionPalettes, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  test.each([
-    ["Mondstadt", mondstadtRegionJson, { [BuildingKit.Mondstadt]: { stone: 0x797b7e, timber: 0x725f58 } }],
-    ["Snezhnaya", snezhnayaRegionJson, {}],
-  ])(
-    "reads %s's palette alone, for the kits its buildings are built by, as the hex numbers its kit is coloured with",
-    async (_name, regionJson, expectedRegionPalettes) => {
-      expect.hasAssertions();
+  test("reads Mondstadt's palette from the mirror, as the hex numbers its kit is coloured with", async () => {
+    expect.hasAssertions();
 
-      const { landmarks } = regionDataSchema.parse(regionJson);
-      const regionPalettes = await readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks);
+    const { landmarks } = regionDataSchema.parse(mondstadtRegionJson);
+    const palette = await readMondstadtPalette();
 
-      expect(regionPalettes).toStrictEqual(expectedRegionPalettes);
-    },
-  );
+    expect(await readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).toStrictEqual({
+      [BuildingKit.Mondstadt]: { stone: parseHexColour(palette.stone.hex), timber: parseHexColour(palette.timber.hex) },
+    });
+  });
+
+  test("reads Snezhnaya's palette as none, since its kit has no record", async () => {
+    expect.hasAssertions();
+
+    const { landmarks } = regionDataSchema.parse(snezhnayaRegionJson);
+
+    expect(await readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).toStrictEqual({});
+  });
 
   // Reads are memoized by URL, so this test names a base that no other test reads
   test("a palette missing one field reads the others and keeps that field's constant", async () => {
     expect.hasAssertions();
 
-    // The mirror's Mondstadt palette without its timber, which a publish leaves out when it samples none of the kit's textures
-    const palette: Record<string, unknown> = JSON.parse(
-      await readMirroredGameDataObject(takeOne(gameDataLock.objects, "regions/mondstadt/palette")),
-    );
-    delete palette.timber;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json(palette));
+    const palette = await readMondstadtPalette();
+    // The Mondstadt palette without its timber, which a publish leaves out when it samples none of the kit's textures
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ stone: palette.stone }));
     const { landmarks } = regionDataSchema.parse(mondstadtRegionJson);
 
     expect(await readRegionPalettes("game-data-without-timber", landmarks)).toStrictEqual({
-      [BuildingKit.Mondstadt]: { stone: 0x797b7e, timber: MONDSTADT_TIMBER_COLOR },
+      [BuildingKit.Mondstadt]: { stone: parseHexColour(palette.stone.hex), timber: MONDSTADT_TIMBER_COLOR },
     });
   });
 });
