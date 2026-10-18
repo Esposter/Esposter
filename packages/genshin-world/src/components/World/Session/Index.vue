@@ -315,9 +315,14 @@ const { chestInteractables, openChestById } = useWorldChests({
   gameDataBaseUrl,
   gameText,
   getGroundHeight,
+  inventory,
+  materialDataMap,
+  nameText,
   openedChestIds,
   placeWorldDrops,
+  setInventory,
   setWallet,
+  waterLevel: windriseData.water.level,
   wallet,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready

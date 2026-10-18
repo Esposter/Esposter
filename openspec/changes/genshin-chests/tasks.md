@@ -1,6 +1,6 @@
 ## 1. Drops, bag and wallet
 
-- [ ] 1.1 Pour weapons, artifacts and materials out as drops, or send them to the bag where a drop would fall away. Verify: tests named after the scenarios 'an opened chest pours its drops out on open ground' and 'an opened chest sends its drops to the bag where a drop would fall away', seen failing first.
+- [x] 1.1 Pour weapons, artifacts and materials out as drops, or send them to the bag where a drop would fall away. Verify: tests named after the scenarios 'an opened chest pours its drops out on open ground' and 'an opened chest sends its drops to the bag where a drop would fall away', seen failing first.
 - [x] 1.2 Add Adventure EXP and Sigils to the wallet on opening. Verify: a test named after the scenario 'opening a chest adds its Adventure EXP and Sigils to the wallet', seen failing first.
 
 ## 2. Other tiers
