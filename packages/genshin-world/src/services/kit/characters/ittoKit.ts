@@ -40,6 +40,11 @@ const USHI_STRUCK_STATUS_ID = "itto-ushi-struck";
 const USHI_DAMAGED_COOLDOWN_STATUS_ID = "itto-ushi-damaged-cooldown";
 const USHI_DAMAGED_COOLDOWN_SECONDS = 2;
 
+// Bloodline of the Crimson Oni, as gcsim v2.47.2 (MIT) itto/asc.go gives it: from Ascension 4, each Arataki Kesagiri hit
+// Adds 35% of Itto's DEF to its DMG
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/asc.go
+const ASCENSION_4 = 4;
+const BLOODLINE_DEFENSE_SHARE = 0.35;
 // Royal Descent's 0.1 Normal ATK SPD, as gcsim v2.47.2 (MIT) itto/burst.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/burst.go
 const BURST_NORMAL_ATTACK_SPEED_BONUS = 0.1;
@@ -58,8 +63,8 @@ export const ITTO_CHARACTER_ID = 10_000_057;
 
 // Itto's behaviour: his normal attacks and Ushi give him Superlative Superstrength, whose stacks turn his charged attack
 // Into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal Descent adds
-// His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field. His passives and
-// Constellations are not built
+// His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field. Bloodline of the
+// Crimson Oni is built; Arataki Ichiban's ATK SPD, which no attribute holds, and his constellations are not
 export const createIttoKitBehaviour = ({
   kit,
   readActions,
@@ -75,12 +80,17 @@ export const createIttoKitBehaviour = ({
   // Starts, and its stance lasts as long as it plays, so its slashes stay its charged attack's to the last. Each start
   // Reads its own seconds, which one behaviour given every action of the list cannot
   const kesagiris = readActions("kesagiris");
-  for (const kesagiri of kesagiris)
+  // Bloodline of the Crimson Oni: each slash of the Kesagiri adds its DEF share, from Ascension 4
+  const addBloodlineDamage = (striker: Combatant): number =>
+    striker.ascension < ASCENSION_4 ? 0 : BLOODLINE_DEFENSE_SHARE * striker.attributes.defense;
+  for (const kesagiri of kesagiris) {
+    for (const hit of kesagiri.hits) hit.additiveBaseDamageBonus = addBloodlineDamage;
     kesagiri.onStart = ({ activeCombatant: combatant, kitEffectState }) => {
       const stance = findKitStance(kitEffectState.effects, combatant.characterId);
       if (stance) stance.secondsRemaining = kesagiri.seconds;
       spendKitResource(kitEffectState, combatant.characterId, SUPERSTRENGTH_RESOURCE_ID);
     };
+  }
   // Itto's stance while he holds stacks, whose charged attack is the Arataki Kesagiri for them at no stamina, held
   // Until a charged attack starts it. The Arataki Kesagiri slashes are Charged Attack DMG, gcsim's AttackTagExtra in
   // Itto/charge.go's ChargeAttack
