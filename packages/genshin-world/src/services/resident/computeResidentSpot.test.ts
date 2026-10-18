@@ -3,6 +3,7 @@ import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 
 import { computeResidentSpot } from "#src/services/resident/computeResidentSpot";
 import { DAY_END_MINUTES, DAY_START_MINUTES } from "#src/services/resident/constants";
+import { computeShownResidentSpot } from "#src/services/resident/computeShownResidentSpot";
 import { describe, expect, test } from "vitest";
 
 describe(computeResidentSpot, () => {
@@ -24,13 +25,27 @@ describe(computeResidentSpot, () => {
     expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_START_MINUTES - 1)).toStrictEqual(DAY_SPOT);
   });
 
-  test("is absent at night only where the data says the resident is absent then", () => {
+  test("setting the time moves residents", () => {
+    expect.hasAssertions();
+    const shownByDay = computeShownResidentSpot(undefined, computeResidentSpot(RESIDENT, DAY_START_MINUTES), false);
+    const shownByNight = computeShownResidentSpot(shownByDay, computeResidentSpot(RESIDENT, DAY_END_MINUTES), false);
+    expect(shownByDay).toStrictEqual(DAY_SPOT);
+    expect(shownByNight).toStrictEqual(NIGHT_SPOT);
+  });
+
+  test("a resident marked absent at night is not drawn after dark", () => {
     expect.hasAssertions();
     expect(
       computeResidentSpot({ ...RESIDENT, absentAtNight: true, night: undefined }, DAY_END_MINUTES),
     ).toBeUndefined();
     expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES - 1)).toBeUndefined();
     expect(computeResidentSpot({ ...RESIDENT, absentAtNight: true }, DAY_START_MINUTES)).toStrictEqual(DAY_SPOT);
+  });
+
+  test("a resident not marked absent stays in the world at night", () => {
+    expect.hasAssertions();
+    expect(computeResidentSpot(RESIDENT, DAY_END_MINUTES)).toStrictEqual(NIGHT_SPOT);
+    expect(computeResidentSpot({ ...RESIDENT, night: undefined }, DAY_END_MINUTES)).toStrictEqual(DAY_SPOT);
   });
 
   test("is absent in the day when the resident keeps no day spot", () => {

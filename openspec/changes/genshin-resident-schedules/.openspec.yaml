@@ -3,5 +3,12 @@ created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
-x-touches: ["scripts/src/services/genshinAssets/residents/**", "packages/genshin-world/src/data/regions/**"]
-x-waiting: "the scene-group export's NPC placements for Nod-Krai's residents, and the wiki's night spots outside Nod-Krai (its NPC pages give them as pictures, not text); the vendors' hours (task 3.1) and the scenario tests of tasks 1.2 to 1.4 sit in the shop and resident services and the Session, outside x-touches, so they wait on this change's x-touches being widened; the runtime rule and its per-frame placement are built"
+x-touches:
+  [
+    "scripts/src/services/genshinAssets/residents/**",
+    "packages/genshin-world/src/data/regions/**",
+    "packages/genshin-world/src/services/resident/**",
+    "packages/genshin-world/src/services/shop/**",
+    "packages/genshin-world/src/components/World/Session/Index.vue",
+  ]
+x-waiting: "task 1.1's night-spot clause, which needs the wiki's night spots outside Nod-Krai (its NPC pages give them as pictures, not text); task 2.1, the scene-group export's NPC placements for Nod-Krai's residents; and the placements of Draff, Brook, Flora, Shiliu and Chloris, which the births and the scene's building points do not hold, so they wait on the scene-group export"
