@@ -1,6 +1,6 @@
 ## Purpose
 
-Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 4, and what is left waiting on the Moonsign, Lunar and member-hit hooks.
+Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 4, and Constellation 4's skill energy, and what is left waiting on the Moonsign, Lunar and member-hit hooks.
 
 ## Requirements
 
@@ -87,3 +87,25 @@ At Ascension 4 each Water Ball SHALL add half of Aino's Elemental Mastery to its
 - **GIVEN** Aino is at Ascension 4 with Elemental Mastery
 - **WHEN** a Water Ball strikes
 - **THEN** its damage includes half of her Elemental Mastery
+
+### Requirement: Constellation 4 gives Aino energy on her skill's hits
+
+From Constellation 4, each of Aino's skill hits that strikes an enemy SHALL give her 10 energy, at most once every ten seconds.
+
+#### Scenario: A skill hit gives energy
+
+- **GIVEN** Aino has Constellation 4
+- **WHEN** a skill hit strikes an enemy
+- **THEN** she gains 10 energy
+
+#### Scenario: Energy is limited to once every ten seconds
+
+- **GIVEN** a skill hit gave Aino energy less than ten seconds ago
+- **WHEN** another skill hit strikes an enemy
+- **THEN** she gains no energy
+
+#### Scenario: Below Constellation 4 no energy is gained
+
+- **GIVEN** Aino has Constellation 3
+- **WHEN** a skill hit strikes an enemy
+- **THEN** she gains no energy
