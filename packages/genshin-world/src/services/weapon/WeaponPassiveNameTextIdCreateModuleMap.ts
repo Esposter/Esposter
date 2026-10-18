@@ -30,6 +30,7 @@ import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapo
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createEssenceOfFalsityPassiveModule } from "#src/services/weapon/passives/createEssenceOfFalsityPassiveModule";
+import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
 import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passives/createFinaleOfTheDeepPassiveModule";
@@ -353,4 +354,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1173973395": createAtTheEndOfTheBeastPathsPassiveModule,
   // Byakuya Kougetsu (Everlasting Moonglow)
   "1301139739": createByakuyaKougetsuPassiveModule,
+  // Extinguishing Precept (Calamity Queller)
+  "131958235": createExtinguishingPreceptPassiveModule,
 };

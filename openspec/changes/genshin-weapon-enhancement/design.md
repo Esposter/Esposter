@@ -80,6 +80,7 @@ Levelling, ascension and refinement are built, as the [weapon enhancement](../..
 - **Exaiphanes Blade (Traveler's Path).** Only while the Traveler wields it: a hit it deals raises its ATK by the rank's amount for the rank's seconds and regenerates the rank's Energy, once every cooldown, on the field or not. The Traveler-only reading is provisional until the game's text is checked.
 - **Hunter's Path (At the End of the Beast-Paths).** Its All Elemental DMG Bonus is a passive bonus. A Charged Attack obtains Tireless Hunt, once every cooldown, adding the rank's share of Elemental Mastery to the Charged Attacks it is obtained with, ended after the rank's Charged Attacks or seconds. It is the shared attack-instance factory's shape with the Charged Attack tag.
 - **Everlasting Moonglow (Byakuya Kougetsu).** Its Healing Bonus is the table's. Normal Attack DMG rises by 1% of the wielder's Max HP, with its buffs on, as base damage. For 12 seconds after an Elemental Burst, each Normal Attack that hits restores 0.6 Energy to the wielder, once every 0.1 seconds, through gainPartyMemberEnergy.
+- **Calamity Queller (Extinguishing Precept).** All Elemental DMG Bonus is a passive bonus. After an Elemental Skill, Consummation runs for 20 seconds, and the ATK it raises is read from the seconds it has left: 3.2% for each second passed, up to six, doubled off the field. The stacks come from the status's remaining seconds, so no clock is kept, and the reading is provisional on the game's own stepping.
 
 ## How it works
 
