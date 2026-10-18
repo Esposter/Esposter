@@ -1,6 +1,6 @@
 ## Purpose
 
-Raiden Shogun's kit as built: five strikes, a charged attack, the Eye of Stormy Judgment with its coordinated attacks and Musou Shinsetsu with the Musou Isshin stance, with Resolve's gains from bursts and particles, and her Constellation 2 left unbuilt.
+Raiden Shogun's kit as built: five strikes, a charged attack, the Eye of Stormy Judgment with its coordinated attacks and Musou Shinsetsu with the Musou Isshin stance, with Resolve's gains from bursts and particles, and her Constellations 1, 2, 4 and 6 built.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ While the Eye stands, Raiden Shogun's own burst hits SHALL gain the Eye's Elemen
 
 ### Requirement: Constellations and Ascensions
 
-Raiden Shogun's Ascension 1 and 4, Constellations 1, 4 and 6 SHALL take effect, and her Constellation 2 SHALL NOT take effect.
+Raiden Shogun's Ascension 1 and 4, and Constellations 1, 2, 4 and 6 SHALL take effect.
 
 #### Scenario: Built constellations apply
 
@@ -85,11 +85,12 @@ Raiden Shogun's Ascension 1 and 4, Constellations 1, 4 and 6 SHALL take effect, 
 - **WHEN** the player fights with Raiden Shogun
 - **THEN** that constellation's effect applies
 
-#### Scenario: Constellation 2 does nothing
+#### Scenario: Constellation 2 ignores DEF while Musou Isshin stands
 
 - **GIVEN** Raiden Shogun has Constellation 2 unlocked
-- **WHEN** the player fights with Raiden Shogun
-- **THEN** no DEF ignored effect applies
+- **WHEN** one of her strikes lands while the Musou Isshin stance stands
+- **THEN** 60% of the enemy's DEF is ignored for that strike
+- **AND** with no stance standing, no DEF ignored applies
 
 ### Requirement: Unbuilt Raiden Shogun effects
 

@@ -3,8 +3,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
+import { LUCKY_DOGS_SILVER_CIRCLET_ID } from "#src/services/gcg/cards/constants";
 
-const LUCKY_DOGS_SILVER_CIRCLET_ID = 312_002;
 const HEAL_VALUE = 2;
 
 // Lucky Dog's Silver Circlet, an artifact: once a Round, after the character it is equipped to uses an Elemental Skill, that

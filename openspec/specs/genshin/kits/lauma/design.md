@@ -1,6 +1,6 @@
 # Lauma
 
-Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, on avatar 10000119: her three strikes, a charged attack, a plunge collision and two plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, and the Moonsign Benediction that turns the party's Bloom into [Lunar-Bloom](../../combat/design.md#lunar-reactions). Her multipliers are read from proud skill groups 11931, 11932 and 11939, and match gcsim's values to six decimal places. The press's cooldown of 12 seconds, the burst's cooldown of 15 and energy cost of 60 are read from the same groups. Her burst lands no hit of its own, so its action has none, and its Pale Hymn is listed below.
+Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, on avatar 10000119: her three strikes, a charged attack, a plunge collision and two plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, and the Moonsign Benediction that turns the party's Bloom into [Lunar-Bloom](../../combat/design.md#lunar-reactions). Her multipliers are read from proud skill groups 11931, 11932 and 11939, and match gcsim's values to six decimal places. The press's cooldown of 12 seconds, the burst's cooldown of 15 and energy cost of 60 are read from the same groups. Her burst lands no hit of its own, so its action has none; the Pale Hymn it gives is described below.
 
 ## Decisions
 
@@ -13,17 +13,24 @@ Lauma's kit is its record and one behaviour module, `createLaumaKitBehaviour`, o
 - **Her Moonsign Benediction turns Bloom into Lunar-Bloom.** As gcsim's ascension file gives it, it adds 0.0175% Base DMG Bonus to the party's Lunar-Bloom for each point of her Elemental Mastery, at most 14%, read as the team's buffs leave her.
 - **Her plunges are provisional.** gcsim has no plunge file for Lauma either, so her plunges borrow Bennett's timings and poise as the builder gives them to every kit with no plunge file, on the reach every kit shares and with multipliers from her table; the [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks about it.
 
+## Pale Hymn
+
+Her burst starts a 96-frame timer as a status, and when the timer runs out the party gains 18 Pale Hymn for 15 seconds and her burst is up for 15 seconds, as gcsim (MIT) `lauma/burst.go` sets them. The timer's expiry is the gain, so the 96 frames run on the kit's own clock. A Dew Hymn of Eternal Rest spends as it is cast gives Moon Song six Pale Hymn a Dew while the burst is up, and only once in each burst, as gcsim's internal cooldown does. A Dew spent before the burst waits 15 seconds for it, and is given when the gain lands. Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction spends one stack, Moon Song's before the burst's, from the reaction event, as gcsim spends one on each Bloom hit.
+
+While the party holds any Pale Hymn, each Bloom, Hyperbloom, Burgeon and Lunar-Bloom reaction the party makes takes base damage of her Elemental Mastery times the burst's table value: 2.7776 at talent level 1 for Bloom, Hyperbloom and Burgeon, and 2.2224 for Lunar-Bloom, as gcsim (MIT) `lauma/burst.go` gives them in `bloomDmgIncrease` and `lunarBloomDmgIncrease`. The values are parameters 3 and 4 of the burst's proud skill group 11939, read at her burst's talent level as `paleHymnBloomDamageIncrease` and `paleHymnLunarBloomDamageIncrease`, and the bonus comes through the party reaction hook from her kit, on her own Elemental Mastery. From Constellation 2 each Bloom, Hyperbloom and Burgeon takes 5 more of that ratio, and each Lunar-Bloom 4 more, as gcsim (MIT) `lauma/cons.go` gives them. Those two constants stay in the kit, cited here, rather than in the record.
+
+Two differences from gcsim are named here. The kit spends one stack for each reaction on each enemy from the reaction event, after the hit is priced, where gcsim spends one for each enemy hit with a Bloom tag, so Bountiful Core's hits, which are not reaction types here, spend none. And the Dew is spent as the hold starts, where gcsim spends it at 29 frames, as the hold's own note says.
+
 ## Not built
 
-- **Pale Hymn waits on the reaction hooks.** Her burst adds Pale Hymn stacks, which add Elemental Mastery to each Bloom, Hyperbloom, Burgeon and Lunar-Bloom hit that follows and are spent by them, and Hymn of Eternal Rest's Dew gives Moon Song stacks to it. No hook lets a buff read and spend itself on a reaction's hit, so the burst's hit list is empty until one does.
 - **The Spirit Envoy state waits on a stance that drains stamina.** Her charged attack's first press, when the state is ready, enters a deer state that drains 25 stamina a second, blocks dashing and ends on any other action. The kit has no stance that drains stamina or ends on an action, so that first press is not built, and the charged attack is always Spiritcall Prayer.
 - **Her Ascension 4 passive, Cleansing for the Spring, is built on her Elemental Skill, its press and the Frostgrove Sanctuary's ticks alike, as the sanctuary's summon strikes as her Elemental Skill, as gcsim tags its ticks. Its Spirit Envoy cooldown cut waits on the Spirit Envoy state. Her other passives and constellations are not built.** Each reads the Pale Hymn, the Spirit Envoy or the Moonsign's level, or the Frostgrove Sanctuary's own timing.
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                                                                |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/laumaKit.ts` | `createLaumaKitBehaviour`, Lauma's strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with its Frostgrove Sanctuary, RES shred and Lunar-Bloom hit, and her Moonsign Benediction |
+| File                                                             | Role                                                                                                                                                                                                                                                                        |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/laumaKit.ts` | `createLaumaKitBehaviour`, Lauma's strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with its Frostgrove Sanctuary, RES shred and Lunar-Bloom hit, her Moonsign Benediction and her Pale Hymn stacks and their spending |
 
 ## Sources
 

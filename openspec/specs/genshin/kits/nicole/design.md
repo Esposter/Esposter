@@ -1,6 +1,6 @@
 # Nicole
 
-Nicole's kit is its record and one behaviour module, `createNicoleKitBehaviour`, avatar 10000131: her three strikes, the charged attack, the collision, the two plunges, the skill's hit and the burst's hit. Both her skill and her burst are Pyro.
+Nicole's kit is its record and one behaviour module, `createNicoleKitBehaviour`, avatar 10000131: her three strikes, the charged attack, the collision, the two plunges, the skill's hit, shield and team buff, the burst's hit and its projections. Both her skill and her burst are Pyro.
 
 Her cooldowns are 16 and 15 seconds, her energy cost 60 and her charged stamina 50, all read from the table, and her skill and burst take their talent multipliers from proud skill groups.
 
@@ -9,19 +9,36 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 ## Decisions
 
 - **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as gcsim's target-centred area.
-- **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list, and Nicole's overlay is empty, so it names no cause for it.
+- **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list, so it names no cause for it.
+- **The skill's shield and team buff come on at frame 8, one frame before its hitmark.** gcsim queues both on her task at `skillHitmark-1`, so they land together, and a recast removes the buff it gave at cast, before its own snapshot, as gcsim deletes it there.
+- **The shield is cast by Nicole and covers the team.** gcsim's shield targets the whole team, and a kit's shield carries its caster, which `castKitShield` takes as Nicole.
+- **The buff reaches each deployed member, Nicole included.** gcsim applies it to every character in the party, so it goes to each member `getDeployedCharacterIds` returns.
+- **The burst starts its status one frame after its hit.** gcsim's task at `burstHitmark+1` starts `burstKey` and clears the projections, so a hit before frame 109 projects nothing, and a recast removes the status it gave at cast.
+- **A projection copies each hit the active character lands, at its own element and hitbox.** It is dealt as the projected character's own element, reaches the enemies inside the projected character's hitbox anchored on the enemy the hit struck, and lands 30 frames after the hit. The hitbox is gcsim's `projectionHitbox` table, with the default circle for a character the table does not name.
+- **A projection reaches by its hitbox alone.** Its hit has no area of its own, since its target and its hitbox decide what it reaches.
+- **The projections follow every hit of the active character, physical included.** gcsim's enemy-hit event fires for each hit on an enemy, and the kit raises its `EnemyHit` event for each one, carrying the element the hit was dealt as where it deals one. A physical hit projects too, dealt at the projected character's element.
+- **The Hexerei bonus is priced at the projection's tick.** gcsim's `hexereiOnProjection` adds three times her attack when she and the projected character are Hexerei and two or more Hexerei are deployed. The set is the wiki's Hexerei Characters category (`countKitHexereiMembers.ts`), so the bonus follows it.
+- **The ascension buff is an upgrade bounded by her skill's buff.** gcsim's `a1UpgradeBuff` (`asc.go`) gives the character the upgrade for as long as the skill's buff on it stands at most, and a repeat upgrade replaces the mod with the same key, so `upgradeAscensionBuff` removes the old buff before it adds the new one. Her skill's cast takes every upgrade off, as `a1OnSkillRemoveBuff` does at `skill.go`'s cast.
+- **A swap's upgrade is a pending field, so a later swap cancels it.** gcsim's `a1Src` token makes a queued upgrade return when a newer swap has set it. The kit keeps the pending upgrade as a field with the id `nicole-a1-swap` and removes it before a swap schedules its own. A Hexerei swapped in gets a task with no delay, as gcsim's `delay = 0` for `char.IsHexerei` does.
+- **A swap away takes the upgrade off the character it leaves before the sixth constellation.** gcsim's OnCharacterSwap subscriber deletes `a1Key` on the previous character unless `c6DeleteA1OnSwap` holds.
+- **The fourth ascension reads the element of the active character's hit.** gcsim's `a4Init` (`asc.go`) upgrades her own buff on each elemental hit by the active character. A physical hit carries no element in the kit, so it is excluded.
+- **The first constellation projects from each hit of the active character, on a cooldown of its own.** gcsim's `c1Init` (`cons.go`) takes any hit of the active character with no element filter, so a physical hit projects at the striker's element. Its six-second cooldown is Nicole's own (`nicole-c1-icd`), separate from the burst's three-second one, and it shares the burst's scheduling and Hexerei bonus, with multiplier six and a 4.5-metre circle about the enemy in place of the burst's own.
+- **The second constellation's team buff is at the skill's snapshot, and its RES reduction is a ticker per upgraded character.** gcsim's `c2OnSkillAddBuff` (`cons.go`) adds ATK 300 to every party member in the skill's queued task (`skill.go`, the same task as the skill's buff), and `c2OnSkillRemoveBuff` takes it off at cast. Its `c2OnUpgrade` starts `c2Ticker` on each A1 upgrade of a character that holds an A1 buff, every 0.3 seconds: each enemy within 10 metres of the player takes a quarter off its RES for the character's element for one second. The kit keeps one field per upgraded character (`nicole-c2-ticker-<id>`), which a newer upgrade of that character replaces, and each enemy's status has an id per element, so `addEnemyStatus` refreshes it.
+- **The fourth constellation's stacks are a status on the striker, spent by the hits that land.** gcsim's `c4OnUpgrade` (`cons.go`) gives the upgraded character a 16-second cooldown, then a 20-second status with eight tags, and its `c4Init` takes one tag on each `OnEnemyHit` whose attack tag is a burst, skill, normal, charged or plunging attack. The kit keeps the status with its stacks and takes one in its enemy-hit handler. The enemy-hit event now carries the attack tag of the strike that landed it, so a projection, which has none, neither gets the bonus nor spends a stack.
+- **The fourth constellation's flat damage is a striker-side hook, read by each strike.** The bonus is 0.7 of Nicole's attack. Another member's strike takes it through her `getPartyStrikeBonus`, and her own strikes through `getStrikeAdditiveBaseDamageBonus`, which is now a kit behaviour hook like the other strike hooks, since weapon passives were its only source. Each enemy struck prices with the stacks left after the enemy before it lands, as gcsim's `OnEnemyHit` does one hit at a time.
+- **The sixth constellation's defence ignore is a striker-side hook, as the fourth's damage is.** gcsim's `c6Init` (`cons.go`) adds 0.4 to the hit's `IgnoreDefPercent` on each `OnEnemyHit` by a character holding the first ascension's mod. The kit reads the striker's upgrade: `getStrikeDefenceIgnored` for her own strikes and the deployed party hook's `defenseIgnored` for the team's. `strikeKitEnemies` sums both with the hit's own into the priced hit, and `strikeEnemy` hands it to `getDamage` as its `defenseIgnored`.
+- **Her upgrades reach the team, and her own buff lasts the skill's time, from the sixth constellation.** gcsim's `a1UpgradeBuff` (`asc.go`) calls `c6OnUpgrade`, which upgrades each other character with duration -1 when Nicole is the one upgraded, and `c6SelfBuffDur` gives her own fourth-ascension upgrade -1 too, so each lasts as long as the skill's buff on its character. The swap's removal of the buff already stops at the sixth, as `c6DeleteA1OnSwap` does.
 
 ## Not built
 
-- **The burst's projections wait on the projection hook.** Each projection is a copy of a character's skill that Nicole's burst asks of that character, which a kit cannot read yet. The record holds her burst's own hit alone.
-- **Her passives wait on their hooks.** Each one reads her projections or the party's Elemental Resonance, so none is built.
+- **The third and fifth constellations raise her skill and burst levels, which this kit does not own.**
 
 ## Key files
 
-| File                                                              | Role                                                                                       |
-| :---------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module; it reads her record and adds no behaviour yet |
-| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: empty, so her hitboxes name no cause                                     |
+| File                                                              | Role                                                                                                                                                                                                 |
+| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/nicoleKit.ts` | `createNicoleKitBehaviour`, Nicole's module: her skill's shield and team buff, her burst's projections, and her first and fourth ascension buffs, her first, second, fourth and sixth constellations |
+| `packages/genshin-world/src/data/kits/nicole.json`                | Nicole's overlay: her skill's shield and buff parameters (talent table group 13132) and her projection multiplier (group 13139)                                                                      |
 
 ## Sources
 

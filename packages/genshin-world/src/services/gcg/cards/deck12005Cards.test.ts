@@ -26,9 +26,11 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { KEQING_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const FULL_HP = 10;
-const KEQING_ID = 1403;
 const OTHER_CHARACTER_ID = 1401;
 const OPPOSING_CHARACTER_ID = 1203;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -82,6 +84,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,

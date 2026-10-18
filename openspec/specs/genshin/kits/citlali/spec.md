@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm and her plunges. Itzpapa, the Opal Shield, the Spirit Vessel skulls and her passives wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. The Opal Shield, the Spirit Vessel skulls and her passives wait on their hooks.
 
 ## Requirements
 
@@ -84,6 +84,49 @@ Citlali's skill press SHALL enter the Nightsoul Blessing for 20 seconds with its
 - **GIVEN** Citlali holds no Nightsoul points
 - **WHEN** the player casts Ice Storm
 - **THEN** she holds 24 Nightsoul points
+
+#### Scenario: The burst's points raise a generation event
+
+- **GIVEN** a field on the team is listening for kit events
+- **WHEN** the player casts Ice Storm
+- **THEN** the field hears a Nightsoul points gained event of 24 points for Citlali
+
+### Requirement: Opal Fire and Itzpapa's Frostfall Storm
+
+The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points or more and SHALL drain eight points a second until none is left. While it is on, Itzpapa SHALL strike every enemy within 6 metres of the active character every 59 frames, from the first 59 frames after it takes effect.
+
+#### Scenario: The Opal Fire takes effect at 50 points in the Blessing, not below
+
+- **GIVEN** Citlali's skill press has entered the Blessing with 24 points
+- **WHEN** she casts Ice Storm, giving 48 points, and casts it again, giving 72
+- **THEN** the Opal Fire takes effect on the second cast and not on the first
+
+#### Scenario: The Opal Fire takes no effect outside the Blessing
+
+- **GIVEN** Citlali is out of the Blessing
+- **WHEN** she casts Ice Storm three times
+- **THEN** no Frostfall Storm strike lands
+
+#### Scenario: The Opal Fire drains eight points a second and ends at none
+
+- **GIVEN** the Opal Fire is on with 72 points
+- **WHEN** one second passes
+- **THEN** she holds 64 points
+- **AND** when her points run out the Opal Fire ends while the Blessing lasts on
+
+#### Scenario: Frostfall Storm strikes every 59 frames within 6 metres
+
+- **GIVEN** the Opal Fire is on, with one enemy 3 metres away and another 8 metres away
+- **WHEN** 59 frames pass, then 59 more
+- **THEN** the enemy 3 metres away takes a Frostfall Storm strike at each 59 frames
+- **AND** the enemy 8 metres away takes none
+
+#### Scenario: Frostfall Storm's Cryo applies on every other hit within its cooldown
+
+- **GIVEN** the Opal Fire is on and an enemy stands 3 metres away
+- **WHEN** Frostfall Storm strikes it twice within 1.5 seconds, then once more after the cooldown ends
+- **THEN** the first and third strikes apply Cryo to it and the second applies none
+- **AND** every strike deals its damage
 
 ### Requirement: Strikes and charged attack deal no poise
 

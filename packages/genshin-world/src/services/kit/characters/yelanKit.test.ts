@@ -1,4 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
@@ -6,16 +8,31 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYelanKitBehaviour, YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
+// The seconds stepped as a step runs them: the team's effects, then each deployed kit's clock
+const stepYelanSeconds = (context: KitContext, seconds: number): void => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    stepDeployedKits(context, FIXED_STEP_SECONDS);
+  }
+};
 const createYelanCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -81,7 +98,11 @@ describe(createYelanKitBehaviour, () => {
       const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects };
       const context = createKitTestContext(combatant, { kitEffectState });
-      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
+      lifelineHit.onStrike?.(
+        context,
+        { body: context.body, combatant, hit: lifelineHit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
       return kitEffectState.effects;
     };
     const field = castKitAction(YELAN_KIT.elementalBurst, createYelanCombatant()).effects.find(
@@ -99,7 +120,11 @@ describe(createYelanKitBehaviour, () => {
       const combatant = createYelanCombatant();
       const kitEffectState: KitEffectState = { effects: [] };
       const context = createKitTestContext(combatant, { kitEffectState, random: () => random });
-      lifelineHit.onStrike?.(context, { body: context.body, combatant, hit: lifelineHit });
+      lifelineHit.onStrike?.(
+        context,
+        { body: context.body, combatant, hit: lifelineHit },
+        createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      );
       return countKitResource(kitEffectState.effects, YELAN_CHARACTER_ID, "yelan-breakthrough-barb");
     };
 
@@ -116,5 +141,69 @@ describe(createYelanKitBehaviour, () => {
     expect.hasAssertions();
 
     expect(YELAN_KIT.getSkillChargeBonus?.({ ...createYelanCombatant(), constellationCount: 0 })).toBe(0);
+  });
+
+  test("a passive takes effect at its ascension phase: the active character's DMG rises each second", () => {
+    expect.hasAssertions();
+    const combatant = { ...createYelanCombatant(), ascension: 4 };
+    const kitEffectState = castKitAction(YELAN_KIT.elementalBurst, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    const readDamageBonus = (): number | undefined =>
+      kitEffectState.effects.find(
+        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AllDamageBonus,
+      )?.amount;
+    stepYelanSeconds(context, takeOne(YELAN_KIT.elementalBurst.hits).hitmarkSeconds + 0.5);
+    const firstSecond = readDamageBonus();
+    stepYelanSeconds(context, 1);
+    const secondSecond = readDamageBonus();
+    stepYelanSeconds(context, 1);
+    const thirdSecond = readDamageBonus();
+    stepYelanSeconds(context, 12);
+    const cappedSecond = readDamageBonus();
+
+    expect(firstSecond).toBeCloseTo(0.01, 5);
+    expect(secondSecond).toBeCloseTo(0.045, 5);
+    expect(thirdSecond).toBeCloseTo(0.08, 5);
+    expect(cappedSecond).toBeCloseTo(0.5, 5);
+  });
+
+  test("a passive does not take effect below its ascension phase: no DMG bonus at Ascension 3", () => {
+    expect.hasAssertions();
+    const combatant = { ...createYelanCombatant(), ascension: 3 };
+    const kitEffectState = castKitAction(YELAN_KIT.elementalBurst, combatant);
+    const context = createKitTestContext(combatant, { kitEffectState });
+    stepYelanSeconds(context, takeOne(YELAN_KIT.elementalBurst.hits).hitmarkSeconds + 2.5);
+
+    expect(kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
+  });
+});
+
+describe("ascension 1", () => {
+  // Yelan's passive bonuses at an ascension, on a team of her (Hydro) and members of the given elements
+  const readPassiveBonuses = (
+    ascension: number,
+    teamElements: Element[],
+  ): { amount: number; attribute: Attribute }[] | undefined => {
+    const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
+    const deployedCombatants = [
+      { ...combatant, isOnField: true },
+      ...teamElements.map((element) => ({ ...createYelanCombatant(), element, isOnField: false })),
+    ];
+    return YELAN_KIT.getPassiveBonuses?.(combatant, 0.5, deployedCombatants, []);
+  };
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPassiveBonuses(1, [Element.Pyro])).toStrictEqual([{ amount: 0.12, attribute: Attribute.HealthPercent }]);
+    expect(readPassiveBonuses(1, [Element.Pyro, Element.Electro, Element.Cryo])).toStrictEqual([
+      { amount: 0.3, attribute: Attribute.HealthPercent },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readPassiveBonuses(0, [Element.Pyro])).toStrictEqual([]);
   });
 });

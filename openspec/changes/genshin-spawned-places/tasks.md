@@ -1,7 +1,7 @@
 ## 1. Fitted places into region data
 
 - [x] 1.1 Write each kind's fitted places into its region's data, with only fitted places kept. Verify: a test named after the scenario 'Only fitted places are written', written first and seen failing.
-- [ ] 1.2 Stand each place on its ground, its landmark's top or its layer's floor, and report a place with no ground. Verify: tests named after 'A fitted place stands on the ground beneath it' and 'A place whose ground cannot be found is reported'.
+- [ ] 1.2 Stand each place on its ground, its landmark's top or its layer's floor, and report a place with no ground. Ground built, unticked for the two open parts: `getPlaceGroundHeight` stands a place on the ground its region's catalogue outlines hold and returns none for one outside every outline, tested by 'A fitted place stands on the ground beneath it' and 'A place whose ground cannot be found is reported'. Open, as the design's Stood on what is beneath and Enemies stand on the ground say: the landmark top waits on a collision top on the landmark model, and the layer floor on the underground layers' ground data, which neither the catalogue nor the dump holds. Nothing reads it yet, since no fitted place reaches the world.
 
 ## 2. Enemy camps
 

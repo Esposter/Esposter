@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -15,7 +15,7 @@ const INFUSION_SCROLL_SECONDS = 10;
 
 // Infusion Scroll's Elemental DMG Bonus at its rank, which each reaction its wielder triggers adds a stack of, up to two,
 // Given to its wielder on every element
-export const createInfusionScrollPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createInfusionScrollPassiveModule = (params: number[]): PassiveModule => {
   const bonusPerStack = takeOne(params, 0);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {

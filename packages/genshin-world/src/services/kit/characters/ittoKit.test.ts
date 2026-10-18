@@ -9,13 +9,18 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIttoKitBehaviour, ITTO_CHARACTER_ID } from "#src/services/kit/characters/ittoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ITTO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ITTO_CHARACTER_ID);
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
@@ -67,6 +72,52 @@ describe(createIttoKitBehaviour, () => {
         secondsRemaining: 13.25,
       },
     ]);
+  });
+
+  test("the burst's ATK per DEF reads Itto's DEF as buffed at the cast", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createIttoCombatant());
+    buffKitMember(context.kitEffectState, ITTO_CHARACTER_ID, {
+      amount: 100,
+      attribute: Attribute.Defense,
+      secondsRemaining: 1,
+    });
+
+    ITTO_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects).toStrictEqual([
+      { amount: 100, attribute: Attribute.Defense, characterId: ITTO_CHARACTER_ID, kind: "buff", secondsRemaining: 1 },
+      {
+        amount: 0.576 * 100,
+        attribute: Attribute.Attack,
+        characterId: ITTO_CHARACTER_ID,
+        isEndedOnSwap: true,
+        kind: "buff",
+        secondsRemaining: 13.25,
+      },
+      {
+        characterId: ITTO_CHARACTER_ID,
+        element: Element.Geo,
+        isConverted: true,
+        isEndedOnSwap: true,
+        kind: "infusion",
+        normalAttackSpeedBonus: 0.1,
+        secondsRemaining: 13.25,
+      },
+    ]);
+  });
+
+  test("constellation 1's Royal Descent gives two Superlative Superstrength stacks at 1.25 seconds, then one every half second from 2.25", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext({ ...createIttoCombatant(), constellationCount: 1 });
+
+    ITTO_KIT.elementalBurst.onStart?.(context);
+
+    const stacksAfterEachStep = [1.25, 0.75, 0.25, 0.5, 0.5].map((seconds) => {
+      stepKitSeconds(context, seconds);
+      return readSuperstrengthStacks(context.kitEffectState);
+    });
+    expect(stacksAfterEachStep).toStrictEqual([2, 2, 3, 4, 5]);
   });
 
   test("his strikes give Superlative Superstrength as they land, the first and third too as the Raging Oni King", () => {
@@ -124,7 +175,8 @@ describe(createIttoKitBehaviour, () => {
     ]);
 
     const hit = takeOne(ITTO_KIT.elementalSkill.hits);
-    for (let index = 0; index < 2; index++) hit.onStrike?.(context, { body: context.body, combatant, hit });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    for (let index = 0; index < 2; index++) hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
 
     expect(readSuperstrengthStacks(kitEffectState)).toBe(1);
 

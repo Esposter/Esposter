@@ -1,6 +1,5 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2439 } },
-  "burst.hits.0.poiseDamage": { "cause": "Unclassified", "value": 400 },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
@@ -14,7 +13,6 @@
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 2431 } },
-  "chargedAttackStamina": { "cause": "DiffersFromSource", "value": 0 },
   "frames.baneOfEvil": { "cause": "Unclassified", "value": 90 },
   "hitFields.lightningDischarge.element": { "cause": "Unclassified", "value": "Electric" },
   "hitFields.lightningDischarge.gauge": { "cause": "Unclassified", "value": 1 },

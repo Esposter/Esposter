@@ -7,21 +7,26 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
 import {
+  BOUNTIFUL_CORE_SECONDS,
   DENDRO_CORE_DROP_SECONDS,
   DENDRO_CORE_LIFETIME_SECONDS,
   MAX_DENDRO_CORE_COUNT,
 } from "#src/services/combat/dendroCore/constants";
 import { getEnemyDropPoint } from "#src/services/enemy/getEnemyDropPoint";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
 
 const checkIsBloomCore = (effect: KitEffect): effect is KitDendroCore =>
   effect.kind === "dendroCore" && effect.reactionType === TransformativeReactionType.Bloom;
 
 // The Dendro Cores the Blooms a combatant triggered on an enemy leave, added to the team's effects: each drops out from
 // The enemy's edge, stands half a second on and bursts as Bloom six seconds after that, priced from the combatant. A
-// Lunar-Bloom leaves the same core, whose burst is a Bloom's and no Lunar damage. Every core past the newest five bursts
-// As the newest stands
+// Lunar-Bloom leaves the same core, whose burst is a Bloom's and no Lunar damage. A combatant under Golden Chalice's
+// Bounty leaves a Bountiful Core in its place, which bursts 0.4 seconds after it is made. Every core past the newest
+// Five bursts as the newest stands
 export const addDendroCores = (
   kitEffectState: KitEffectState,
   { position }: Enemy,
@@ -31,12 +36,14 @@ export const addDendroCores = (
 ): void => {
   for (const { reactionType } of reactions) {
     if (reactionType !== ReactionType.Bloom && reactionType !== ReactionType.LunarBloom) continue;
+    const isBountiful = checkIsKitStatusActive(kitEffectState.effects, characterId, GOLDEN_CHALICE_BOUNTY_STATUS_ID);
     addKitEffect(kitEffectState, {
       characterId,
+      coreKind: isBountiful ? DendroCoreKind.Bountiful : DendroCoreKind.Bloom,
       kind: "dendroCore",
       position: getEnemyDropPoint(position, random),
       reactionType: TransformativeReactionType.Bloom,
-      secondsRemaining: DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
+      secondsRemaining: isBountiful ? BOUNTIFUL_CORE_SECONDS : DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
     });
     for (const core of kitEffectState.effects
       .filter((effect) => checkIsBloomCore(effect))

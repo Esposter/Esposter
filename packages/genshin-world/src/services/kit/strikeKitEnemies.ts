@@ -5,6 +5,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,6 +15,7 @@ import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
+import { checkIsInKitHitbox } from "#src/services/kit/checkIsInKitHitbox";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getElementCriticalDamageBonus } from "#src/services/kit/effects/getElementCriticalDamageBonus";
@@ -21,6 +23,7 @@ import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { healKitStriker } from "#src/services/kit/effects/healKitStriker";
 import { strikeKitBubble } from "#src/services/kit/effects/strikeKitBubble";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
+import { getDeployedStrikeBonuses } from "#src/services/kit/getDeployedStrikeBonuses";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { selectKitHitTarget } from "#src/services/kit/selectKitHitTarget";
@@ -30,31 +33,32 @@ import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
+import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
 import { startPartyLunarReactions } from "#src/services/party/startPartyLunarReactions";
 import { strikeKitWildlife } from "#src/services/wildlife/strikeKitWildlife";
 
+// Whether a strike's reach misses an enemy: its target's hitbox, its target alone, or else its hit's area about the body
+const checkIsOutOfStrikeReach = (strike: KitStrike, target: Enemy | undefined, enemy: Enemy): boolean => {
+  if (target === undefined) return !checkIsInAttackArea(strike.hit.hitArea, strike.body, enemy);
+  if (strike.hitbox === undefined) return target !== enemy;
+  return !checkIsInKitHitbox(strike.hitbox, target.position, enemy.position);
+};
+
 // A step's strikes landed on the standing enemies each reaches, its one target or every one within its area, each
-// Priced by its combatant as its buffs and the kit's own DMG Bonus against that enemy raise it, its Electro or Pyro
-// First setting off the Dendro Cores in its area. Its element reacts, and a direct Lunar hit is priced, as the deployed
-// Team's Moonsign gives. Each enemy struck drops its energy to the team, collected by the member on the field, and the
-// Strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores, the party's Lunar answers and reactions
-// Follow, the reactions it triggered and the damage the enemy took sent to the deployed team's kits. Once the strike
-// Has landed on every enemy it reaches, each reaction that landed with a reach reaches the enemies round its own, whose
-// Energy and reactions follow in turn. The strikes given keep only those that struck an enemy, written in place
+// Priced by its combatant as its buffs, the kit's own DMG Bonus and the deployed team's party strike bonuses raise it
+// Against that enemy, its Electro or Pyro First setting off the Dendro Cores in its area. Its element reacts, and a
+// Direct Lunar hit is priced as the deployed team's Moonsign gives. Each enemy struck drops its energy to the team,
+// Collected by the member on the field, and the strike's bubbles, heals, Crystallize shards, Moondrifts, Dendro Cores,
+// The party's Lunar answers and reactions follow, the reactions it triggered and the damage the enemy took sent to the
+// Deployed team's kits. Once the strike has landed on every enemy it reaches, each reaction that landed with a reach
+// Reaches the enemies round its own, whose energy and reactions follow in turn. The strikes given keep only those that
+// Struck an enemy, written in place
 export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): void => {
-  const {
-    characterIdCombatantMap,
-    enemyMap,
-    enemyTables,
-    kitEffectState,
-    party,
-    placeWildlifeDrops,
-    random,
-    wildlifeList,
-  } = context;
+  const { characterIdCombatantMap, enemyMap, kitEffectState, party, placeWildlifeDrops, random, wildlifeList } =
+    context;
   let struckCount = 0;
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
@@ -68,6 +72,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       characterIdCombatantMap,
       context.body.position,
     );
+    const deployedCombatants = getDeployedCombatants(party, characterIdCombatantMap);
     let isStruck = false;
     // A hit's party heal rolls on each enemy it strikes until one roll passes
     let isPartyHealed = false;
@@ -75,10 +80,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     const reaches: [Enemy, TransformativeReaction][] = [];
     strikeKitDendroCores(kitEffectState, party, { ...strike, target }, pricedCombatant);
     for (const enemy of enemyMap.values()) {
-      if (
-        [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
-        (target ? target !== enemy : !checkIsInAttackArea(hit.hitArea, body, enemy))
-      )
+      if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(strike, target, enemy))
         continue;
       isStruck = true;
       addEnduringRockStatus(
@@ -92,9 +94,23 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       const enemyHit = strike.isAimed && hasEnemyWeakPoints(enemy) ? { ...hit, weakPoint: true } : hit;
       // The kit's per-strike hooks read the striker as it is priced, with the buffs on it
       const pricedStrike = { ...strike, combatant: pricedCombatant, hit: enemyHit };
+      const deployedBonuses = getDeployedStrikeBonuses(
+        pricedStrike,
+        deployedCombatants,
+        enemy,
+        party,
+        kitEffectState.effects,
+        characterIdCombatantMap,
+      );
       const { additiveBaseDamageBonus } = enemyHit;
       const flatDamage =
-        combatant.kit.getStrikeAdditiveBaseDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0;
+        (combatant.kit.getStrikeAdditiveBaseDamageBonus?.(
+          pricedStrike,
+          enemy,
+          party,
+          kitEffectState.effects,
+          characterIdCombatantMap,
+        ) ?? 0) + deployedBonuses.additiveBaseDamageBonus;
       const pricedHit = {
         ...enemyHit,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
@@ -104,20 +120,27 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
             kitEffectState.effects,
             combatant.characterId,
             getKitHitElement(enemyHit, combatant),
-          ),
+          ) +
+          (combatant.kit.getStrikeCriticalDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.criticalDamageBonus,
         criticalRateBonus:
           (enemyHit.criticalRateBonus ?? 0) +
-          (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeCriticalRateBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.criticalRateBonus,
         damageBonus:
           (enemyHit.damageBonus ?? 0) +
-          (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0),
+          (combatant.kit.getStrikeDamageBonus?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.damageBonus,
+        defenseIgnored:
+          (enemyHit.defenseIgnored ?? 0) +
+          (combatant.kit.getStrikeDefenceIgnored?.(pricedStrike, enemy, party, kitEffectState.effects) ?? 0) +
+          deployedBonuses.defenseIgnored,
       };
       const { appliedElement, energyDrops, isCritical, reachingReactions, reactions } = strikeEnemy(
-        enemyTables,
         enemy,
         pricedHit,
         pricedCombatant,
-        random,
+        context,
         moonsign,
         stellarReactionTypes,
       );
@@ -150,6 +173,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
           new Set([combatant.characterId]),
           combatant,
           context,
+          StellarReactionType.StellarSwirl,
         );
       if (reactions.length > 0) {
         context.reactionTriggers.push({ enemy, reactions });
@@ -159,8 +183,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         );
       }
       const element = getKitHitElement(enemyHit, combatant);
-      if (element !== undefined)
-        emitKitEvent({ element, enemy, kind: KitEventKind.ElementalHit, striker: combatant }, context);
+      emitKitEvent({ attackTag, element, enemy, kind: KitEventKind.EnemyHit, striker: combatant }, context);
       if (enemyHit.weakPoint) emitKitEvent({ enemy, kind: KitEventKind.WeakPointHit, striker: combatant }, context);
       emitKitEvent(
         {

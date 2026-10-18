@@ -7,6 +7,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createRosariaKitBehaviour, ROSARIA_CHARACTER_ID } from "#src/services/kit/characters/rosariaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -14,6 +17,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ROSARIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ROSARIA_CHARACTER_ID);
 const TEAMMATE_CHARACTER_ID = 90_001;
 const createRosariaCombatant = (constellationCount: number, ascension = 0, criticalRate = 0): Combatant => ({
@@ -46,7 +50,7 @@ const strikeFirstSkillHit = (ascension: number) => {
   const context = createKitTestContext(combatant);
   ROSARIA_KIT.elementalSkill.onStart?.(context);
   const hit = takeOne(ROSARIA_KIT.elementalSkill.hits);
-  hit.onStrike?.(context, { body: context.body, combatant, hit });
+  hit.onStrike?.(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
   return context.kitEffectState.effects.filter((effect) => effect.kind === "buff");
 };
 

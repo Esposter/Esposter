@@ -19,6 +19,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createHuTaoKitBehaviour, HU_TAO_CHARACTER_ID } from "#src/services/kit/characters/huTaoKit";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";
@@ -207,7 +208,11 @@ const createSpiritSooterContext = (healthShare: number) =>
 // One enemy struck by the given hit of Spirit Soother
 const strikeEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => {
   if (!hit?.onStrike) throw new Error("Spirit Soother's hit has no strike to land");
-  hit.onStrike(context, { body: context.body, combatant: context.activeCombatant, hit });
+  hit.onStrike(
+    context,
+    { body: context.body, combatant: context.activeCombatant, hit },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  );
 };
 // Spirit Soother's heal shares of Max HP at her first level, as gcsim v2.47.2 (MIT) hutao's proud skill group 4639 gives
 // The share above half of her HP, and the larger one at or under it
@@ -255,6 +260,38 @@ describe("spirit Soother", () => {
     strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
+  });
+
+  test("Spirit Soother's heal is priced from Hu Tao's buffed Max HP", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+    const party = createHuTaoParty(0.6);
+    const kitEffectState: KitEffectState = {
+      effects: [
+        {
+          amount: 10_000,
+          attribute: Attribute.Health,
+          characterId: HU_TAO_CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 10,
+        },
+      ],
+    };
+    const context = createKitTestContext(combatant, { kitEffectState, party });
+
+    HU_TAO_KIT.elementalBurst.onStart?.(context);
+    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+
+    expect(party.healthChanges).toStrictEqual([
+      {
+        bondOfLifeShare: 0,
+        characterId: HU_TAO_CHARACTER_ID,
+        // The shares are summed and subtracted as floats, so they are compared to the digits the game gives
+        healthShare: expect.closeTo(SPIRIT_SOOTHER_REGEN_SHARE, 10),
+        overflowHealthShare: expect.closeTo(0, 10),
+        sourceCharacterId: HU_TAO_CHARACTER_ID,
+      },
+    ]);
   });
 });
 
@@ -369,5 +406,55 @@ describe("constellation 4 and 6", () => {
     expect.hasAssertions();
 
     expect(drainHuTao(5, 0.2)).toStrictEqual([]);
+  });
+
+  // Hu Tao's share of her Max HP after each of the given lethal hits, from full HP, at the given constellation
+  const takeLethalHits = (constellationCount: number, hits: number) => {
+    const combatant = { ...createHuTaoCombatant(), constellationCount };
+    const party = createParty([HU_TAO_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const characterIdCombatantMap = new Map([[HU_TAO_CHARACTER_ID, combatant]]);
+    return Array.from({ length: hits }, () => {
+      hitPartyMember(party, combatant, kitEffectState, characterIdCombatantMap, combatant.attributes.maxHealth);
+      return getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare;
+    });
+  };
+
+  test("at constellation 6, a lethal hit leaves Hu Tao at 1 HP, and a second within a minute takes her down", () => {
+    expect.hasAssertions();
+
+    const { attributes } = createHuTaoCombatant();
+
+    expect(takeLethalHits(6, 2)).toStrictEqual([1 / attributes.maxHealth, 0]);
+  });
+
+  test("below constellation 6, a lethal hit takes Hu Tao down", () => {
+    expect.hasAssertions();
+
+    expect(takeLethalHits(5, 1)).toStrictEqual([0]);
+  });
+
+  test("at constellation 6, a refused fall gives Hu Tao CRIT Rate of 100% for 10 seconds", () => {
+    expect.hasAssertions();
+
+    const combatant = { ...createHuTaoCombatant(), constellationCount: 6 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(1) });
+    HU_TAO_KIT.onKitEvent?.({ characterId: HU_TAO_CHARACTER_ID, kind: KitEventKind.FallRefused }, context, combatant);
+
+    expect(
+      kitEffectState.effects.filter(
+        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
+      ),
+    ).toStrictEqual([
+      {
+        amount: 1,
+        attribute: Attribute.CriticalRate,
+        characterId: HU_TAO_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+        source: "hu-tao-c6",
+      },
+    ]);
   });
 });

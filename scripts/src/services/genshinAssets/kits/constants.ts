@@ -1,3 +1,5 @@
+import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
+
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { CACHE_ROOT } from "@esposter/shared-node/cache";
 import { join } from "node:path";
@@ -24,10 +26,12 @@ export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+(?:-\d+)?|[A-Za-z][A-Za-z0-9]*))*$/u;
 export const KIT_LENGTH_KEY = "length";
-// A hit's multiplier path, `hits.fatalBlossoms.1.multiplier` or `skillHolds.0.hits.0.multiplier`, with the path of the hit
-// List it sits in as `hitPath`: the one matcher every hit list's multiplier is read by
+// A hit's multiplier path, `hits.fatalBlossoms.1.multiplier`, `skillHolds.0.hits.0.multiplier` or a single hit's own,
+// `hitFields.hymnOfEternalRestLunarBloom.multiplier`, with the path of the hit as `hitPath`. Every hit's multiplier is
+// Read by this one matcher
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
-export const KIT_HIT_MULTIPLIER_REGEX: RegExp = /^(?<hitPath>(?:.+\.)?hits\.(?:\d+|[^.]+(?:\.\d+)?))\.multiplier$/u;
+export const KIT_HIT_MULTIPLIER_REGEX: RegExp =
+  /^(?<hitPath>(?:.+\.)?(?:hits\.(?:\d+|[^.]+(?:\.\d+)?)|hitFields\.[^.]+))\.multiplier$/u;
 // Where gcsim's tag is cloned and the wiki's answers are kept between runs, outside the repository: the tag never
 // Moves, and a wiki page is read again only once its cached answer is deleted
 export const GCSIM_CACHE_DIRECTORY: string = join(CACHE_ROOT, `gcsim-${GCSIM_TAG}`);
@@ -59,5 +63,10 @@ export const GCSIM_PLUNGE_FILE = "plunge.go";
 // Next, as the kits without one share Diluc's
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES: readonly number[] = [30, 60];
 export const NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES = 72;
+// The normal attacks a character's stance gives, by the character's folder: Wriothesley's Chilling Penalty, whose enhanced
+// Normal attacks gcsim reads at attack state 1 and multiplies by the Enhanced Repelling Fist table
+export const GCSIM_STANCE_NORMAL_ATTACKS: Partial<Record<string, GcsimStanceNormalAttack>> = {
+  wriothesley: { factorLabel: "Enhanced Repelling Fist DMG", path: "stances.chillingPenalty.normalAttacks", state: 1 },
+};
 // Each character's authored overlay, `<character>.json` by its English name in kebab case
 export const KIT_OVERLAY_DIRECTORY: string = join(WORLD_DATA_DIRECTORY, "kits");

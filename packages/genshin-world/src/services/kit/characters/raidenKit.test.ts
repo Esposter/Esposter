@@ -4,6 +4,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEnergyParticleCollectedEvent } from "#src/models/kit/KitEnergyParticleCollectedEvent";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStatus } from "#src/models/kit/KitStatus";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -156,5 +157,28 @@ describe(createRaidenKitBehaviour, () => {
     RAIDEN_KIT.onKitEvent?.(event, context, combatant);
 
     expect(kitEffectState.effects.filter((effect) => effect.kind === "summon")).toHaveLength(1);
+  });
+});
+
+describe("constellation 2", () => {
+  test("her strikes ignore 60% of an enemy's DEF while Musou Isshin stands, and none outside it", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const party = createParty([RAIDEN_CHARACTER_ID]);
+    const combatant = { ...createRaidenCombatant(), constellationCount: 2 };
+    const { kitEffectState } = castBurst(0);
+    const summon = takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
+    const strike = { body: summon.body, combatant, hit: takeOne(summon.hits) };
+
+    expect(RAIDEN_KIT.getStrikeDefenceIgnored?.(strike, enemy, party, kitEffectState.effects)).toBe(0.6);
+    expect(
+      RAIDEN_KIT.getStrikeDefenceIgnored?.(
+        { ...strike, combatant: { ...combatant, constellationCount: 1 } },
+        enemy,
+        party,
+        kitEffectState.effects,
+      ),
+    ).toBe(0);
+    expect(RAIDEN_KIT.getStrikeDefenceIgnored?.(strike, enemy, party, [])).toBe(0);
   });
 });

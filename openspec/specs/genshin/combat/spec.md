@@ -81,6 +81,22 @@ An enemy's resistance SHALL cut damage by its share, up to three quarters, and b
 - **WHEN** a hit of that element lands
 - **THEN** the damage is cut to one over four times the resistance plus one
 
+### Requirement: The primary target
+
+The enemy an action turns to as it starts SHALL be the primary target until another action targets, and a primary target that dies or leaves the world SHALL be let go.
+
+#### Scenario: An action that starts makes the enemy it turns to the primary target, which outlasts the action
+
+- **GIVEN** an enemy inside the targeting area of a normal attack
+- **WHEN** the attack starts and plays out
+- **THEN** the enemy is the primary target, during the attack and after it
+
+#### Scenario: A primary target that dies, or leaves the world, is let go
+
+- **GIVEN** an enemy is the primary target
+- **WHEN** it dies or leaves the world
+- **THEN** the next step holds no primary target
+
 ### Requirement: A hit
 
 A hit SHALL apply its element only on the hits its internal cooldown group lets through.
@@ -135,6 +151,71 @@ Ascendant Gleam's reaction bonus SHALL be capped at 36 percent, and a skill or b
 - **THEN** that character's Ascendant Gleam lasts 20 seconds
 - **AND** it replaces the Ascendant Gleam lit before
 
+### Requirement: A reaction's Elevation
+
+A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction's damage and a direct Lunar hit's by its Elevation, a multiplier of its own applied last, apart from the Base DMG Bonus and the DMG Bonus.
+
+#### Scenario: A Lunar contributor's damage is multiplied by its Elevation last
+
+- **GIVEN** a deployed member's kit gives a Lunar contributor an Elevation of 20 percent
+- **WHEN** the contributor's share of the Lunar reaction is priced
+- **THEN** its share, CRIT and all, is multiplied by 1.2
+
+#### Scenario: A Stellar reaction's damage, its flat base among it, is multiplied by its creator's Elevation last
+
+- **GIVEN** a deployed member's kit gives the reaction's creator a flat base and an Elevation of 20 percent
+- **WHEN** a Stellar Swirl it makes is priced
+- **THEN** its damage with the flat base is multiplied by 1.2
+
+#### Scenario: A direct Lunar hit takes the party reaction bonuses its Lunar reaction takes, and its Elevation last
+
+- **GIVEN** a deployed member's kit gives a Lunar-Bloom a DMG Bonus, a CRIT Rate, a CRIT DMG and an Elevation
+- **WHEN** a direct Lunar-Bloom hit is priced on an enemy
+- **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
+- **AND** the whole is multiplied by one plus the Elevation
+
+### Requirement: A Stellar Jubilee's Base DMG Bonus
+
+A Stellar reaction's damage SHALL take the Base DMG Bonus each deployed Stellar Jubilee gives from its holder's stats, the bonuses of two Jubilees adding up.
+
+#### Scenario: A Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up
+
+- **GIVEN** two deployed members whose Stellar Jubilees each give a Base DMG Bonus of 7 percent
+- **WHEN** a Stellar Swirl is priced
+- **THEN** its base damage is raised by 14 percent
+
+### Requirement: An enemy's strike's element
+
+An enemy's strike SHALL be resisted by the struck member's RES to its kind's attack element, and a kind with no attack element's by the member's Physical RES.
+
+#### Scenario: An elemental enemy's strike is priced against the member's RES to its element
+
+- **GIVEN** a member with 50 percent Pyro RES
+- **WHEN** an enemy whose attacks carry Pyro strikes it
+- **THEN** the strike's damage is resisted by the 50 percent, and not by the member's Physical RES
+
+#### Scenario: A physical enemy's strike is priced against the member's Physical RES
+
+- **GIVEN** a member with 50 percent Physical RES
+- **WHEN** an enemy whose attacks carry no element strikes it
+- **THEN** the strike's damage is resisted by the 50 percent
+
+### Requirement: A party member's DMG Reduction
+
+An enemy's strike on a party member SHALL be priced against the member as the team's buffs leave it, its DMG Bonus lowered by the member's DMG Reduction, and a DMG Reduction past the whole SHALL leave it no damage.
+
+#### Scenario: A member's DMG Reduction lowers an enemy's strike on it, as its buffs leave it
+
+- **GIVEN** a buff gives the member on the field a DMG Reduction of 35 percent
+- **WHEN** an enemy strikes it
+- **THEN** it loses 65 percent of the damage the strike would deal it without the buff
+
+#### Scenario: A DMG Reduction past the whole leaves an enemy's strike no damage
+
+- **GIVEN** a buff gives the member on the field a DMG Reduction of 120 percent
+- **WHEN** an enemy strikes it
+- **THEN** it loses no HP
+
 ### Requirement: A shield
 
 A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.
@@ -145,6 +226,48 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **WHEN** damage exceeds what the shield can absorb
 - **THEN** the shield absorbs what it can
 - **AND** the excess passes to the character
+
+#### Scenario: An elemental shield absorbs an enemy's strike of its own element 250% as effectively
+
+- **GIVEN** the member on the field holds a Cryo shield
+- **WHEN** an enemy whose attacks carry Cryo strikes it
+- **THEN** each point of the shield's health absorbs 2.5 points of the strike
+
+#### Scenario: A Shield Strength buff raises what a shield absorbs
+
+- **GIVEN** the member on the field holds a shield and carries a buff of 25% Shield Strength
+- **WHEN** an enemy's strike lands on it
+- **THEN** each point of the shield's health absorbs 1.25 points of the strike
+
+#### Scenario: A shield that takes a strike reports the health it has left
+
+- **GIVEN** the member on the field holds a shield another member cast
+- **WHEN** an enemy's strike lands on it
+- **THEN** the shield's owner is told the damage the shield absorbed, the health it has left and the member the strike was on
+
+#### Scenario: A Crystallize shard picked up is told to the party
+
+- **GIVEN** a Crystallize shard lies within reach of the member on the field, and may be picked up
+- **WHEN** the member's step picks it up
+- **THEN** the team holds the shard's Crystallize shield
+- **AND** every deployed member's kit is told that member picked up a shard of that element
+
+### Requirement: A kit's pick-up
+
+A pick-up a kit leaves in the world SHALL be picked up by the member on the field within its radius once it may be, and SHALL then do what its kit gives it to do. One never picked up SHALL run out as an effect expiring.
+
+#### Scenario: A pick-up in reach is picked up once it may be
+
+- **GIVEN** a kit's pick-up lies within its radius of the member on the field, and may be picked up
+- **WHEN** the member's step runs
+- **THEN** the pick-up does what picking it up does
+- **AND** it is taken off the team's effects with no effect expiring
+
+#### Scenario: A pick-up too new or out of reach is left where it lies
+
+- **GIVEN** a kit's pick-up that may not yet be picked up, or lies past its radius
+- **WHEN** the member's step runs
+- **THEN** the pick-up stays where it lies
 
 ### Requirement: A normal or charged attack's hit
 

@@ -9,6 +9,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { DILUC_CHARACTER_ID } from "#src/services/kit/characters/dilucKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeEnemy } from "#src/services/kit/strikeEnemy";
@@ -81,6 +82,41 @@ describe(getBuffedCombatant, () => {
     expect(buffed.attributes.defense).toBeCloseTo(250);
   });
 
+  test("a buff on Max HP raises the buffed combatant's max health, as a percentage of it does", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: DILUC_KIT,
+      level: 90,
+    };
+    const flatBuffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 500, attribute: Attribute.Health, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+    expect(flatBuffed.attributes.maxHealth).toStrictEqual(1500);
+    const percentBuffed = getBuffedCombatant(
+      combatant,
+      [
+        {
+          amount: 0.5,
+          attribute: Attribute.HealthPercent,
+          characterId: CHARACTER_ID,
+          kind: "buff",
+          secondsRemaining: 1,
+        },
+      ],
+      party,
+      new Map(),
+    );
+    expect(percentBuffed.attributes.maxHealth).toStrictEqual(1500);
+  });
+
   test("raises a Geo team's hits by 15% while a shield holds it, so a hit deals 1.15 times its damage", () => {
     expect.hasAssertions();
 
@@ -101,7 +137,8 @@ describe(getBuffedCombatant, () => {
         health: ENDURING_ROCK_HEALTH,
         maxHealth: ENDURING_ROCK_HEALTH,
       };
-      strikeEnemy(enemyTables, enemy, DILUC_KIT.plungeCollision, buffed, () => 1);
+      const context = createKitTestContext(buffed, { enemyTables, random: () => 1 });
+      strikeEnemy(enemy, DILUC_KIT.plungeCollision, buffed, context);
       return enemy.maxHealth - enemy.health;
     };
 
@@ -161,5 +198,61 @@ describe(getBuffedCombatant, () => {
       getBuffedCombatant(combatant, [], createParty([CHARACTER_ID, OTHER_CHARACTER_ID]), characterIdCombatantMap)
         .attributes.attributeTotalMap[Attribute.CriticalRate],
     ).toStrictEqual(combatant.attributes.attributeTotalMap[Attribute.CriticalRate] + 0.2);
+  });
+
+  test("a stat converted from Max HP reads the Max HP a buff on the combatant raised, not its base", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 1000 }]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getConversionBonuses: (buffed) => [{ amount: 0.1 * buffed.attributes.maxHealth, attribute: Attribute.Attack }],
+      },
+      level: 90,
+    };
+
+    const buffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 500, attribute: Attribute.Health, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+
+    expect(buffed.attributes.attack).toBeCloseTo(150);
+  });
+
+  test("a conversion reads the attack from before the conversions, so one conversion's ATK is not in another's amount", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseAttack, value: 100 },
+        { attribute: Attribute.BaseHealth, value: 1000 },
+      ]),
+      characterId: CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: {
+        ...DILUC_KIT,
+        getConversionBonuses: (buffed) => [
+          { amount: 0.5 * buffed.attributes.maxHealth, attribute: Attribute.Attack },
+          { amount: 0.001 * buffed.attributes.attack, attribute: Attribute.CriticalRate },
+        ],
+      },
+      level: 90,
+    };
+
+    const buffed = getBuffedCombatant(
+      combatant,
+      [{ amount: 50, attribute: Attribute.Attack, characterId: CHARACTER_ID, kind: "buff", secondsRemaining: 1 }],
+      party,
+      new Map(),
+    );
+
+    expect(buffed.attributes.attributeTotalMap[Attribute.CriticalRate]).toBeCloseTo(0.15);
   });
 });

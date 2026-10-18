@@ -16,10 +16,10 @@ describe(getPaimonsBargainsGoods, () => {
       [9, 10],
       [11, 12],
     ],
-    characterPrice: { buyLimit: 1, priceCount: 3, priceItemId: 221, refresh: ShopRefresh.Monthly },
+    characterPrice: { buyLimit: 1, costs: [{ count: 3, itemId: 221 }], refresh: ShopRefresh.Monthly },
     royalWeaponIds: [31, 32, 33, 34, 35],
     weaponGoodIds: [51, 52, 53, 54, 55],
-    weaponPrice: { buyLimit: 2, priceCount: 4, priceItemId: 221, refresh: ShopRefresh.Monthly },
+    weaponPrice: { buyLimit: 2, costs: [{ count: 4, itemId: 221 }], refresh: ShopRefresh.Monthly },
   };
 
   test("each offered character and weapon is the good of its slot at its rotation's price", () => {
@@ -37,8 +37,7 @@ describe(getPaimonsBargainsGoods, () => {
         goodsId: 41,
         itemCount: 1,
         itemId: 7,
-        priceCount: 3,
-        priceItemId: 221,
+        costs: [{ count: 3, itemId: 221 }],
         refresh: ShopRefresh.Monthly,
       },
       {
@@ -46,8 +45,7 @@ describe(getPaimonsBargainsGoods, () => {
         goodsId: 42,
         itemCount: 1,
         itemId: 8,
-        priceCount: 3,
-        priceItemId: 221,
+        costs: [{ count: 3, itemId: 221 }],
         refresh: ShopRefresh.Monthly,
       },
     ]);

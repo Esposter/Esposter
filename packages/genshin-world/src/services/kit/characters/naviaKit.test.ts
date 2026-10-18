@@ -12,12 +12,18 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createNaviaKitBehaviour, NAVIA_CHARACTER_ID } from "#src/services/kit/characters/naviaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const NAVIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NAVIA_CHARACTER_ID);
 const createNaviaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
@@ -56,6 +62,10 @@ const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(crea
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
   action.onStart?.(createKitTestContext(combatant, { kitEffectState }));
 
+// The summons a shot left, in the order they were cast: the blade first, then any cannon shot the blade fired
+const readSummons = (kitEffectState: KitEffectState): KitSummon[] =>
+  kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon");
+
 // The infusions Rosula Shardshot's press leaves on Navia at the ascension
 const castShotInfusions = (ascension: number): KitInfusion[] => {
   const kitEffectState: KitEffectState = { effects: [] };
@@ -79,14 +89,49 @@ describe(createNaviaKitBehaviour, () => {
   const readShrapnel = (kitEffectState: KitEffectState): number =>
     getStatus(kitEffectState, SHRAPNEL_STATUS_ID)?.stacks ?? 0;
 
+  // The state after a press that follows the shrapnel the given cannon hits gain, from a constellation count
+  const pressAfterShrapnel = (constellationCount: number, shrapnelStacks: number): KitEffectState => {
+    const combatant = createNaviaCombatant(constellationCount);
+    const kitEffectState: KitEffectState = { effects: [] };
+    for (let strike = 0; strike < shrapnelStacks; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+    startAction(NAVIA_KIT.elementalSkill, kitEffectState, combatant);
+    return kitEffectState;
+  };
+
+  // The CRIT Rate a press's blade carries after the shrapnel the press consumes, from a constellation count
+  const readBladeCriticalRateBonus = (constellationCount: number, shrapnelStacks: number): number | undefined =>
+    takeOne(takeOne(readSummons(pressAfterShrapnel(constellationCount, shrapnelStacks))).hits).criticalRateBonus;
+
   // A hit landing on one enemy from the team's effects
   const strikeHit = (hit: KitHit, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>
-    hit.onStrike?.(createKitTestContext(combatant, { kitEffectState }), { body: kitBody, combatant, hit });
+    hit.onStrike?.(
+      createKitTestContext(combatant, { kitEffectState }),
+      { body: kitBody, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
   const kitBody = { facing: 0, height: 0, position: { x: 0, z: 0 } };
   const SHRAPNEL_STATUS_ID = "navia-crystal-shrapnel";
   const BURST_SHRAPNEL_ICD_STATUS_ID = "navia-burst-shrapnel-icd";
   const ARKHE_ICD_STATUS_ID = "navia-arkhe-icd";
+
+  // The team's Energy and burst cooldown after a press that spends the shrapnel the given cannon hits gain
+  const readAfterPress = (constellationCount: number, shrapnelStacks: number) => {
+    const combatant = createNaviaCombatant(constellationCount);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty([NAVIA_CHARACTER_ID]);
+    getPartyMember(party, NAVIA_CHARACTER_ID).burstCooldownSeconds = 10;
+    for (let strike = 0; strike < shrapnelStacks; strike++) {
+      strikeHit(getBlastHit(), kitEffectState, combatant);
+      endCooldown(kitEffectState, BURST_SHRAPNEL_ICD_STATUS_ID);
+    }
+    NAVIA_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState, party }));
+    const { burstCooldownSeconds, energy } = getPartyMember(party, NAVIA_CHARACTER_ID);
+    return { burstCooldownSeconds, energy };
+  };
 
   test("reads her strikes', charged attack's, plunges', and burst's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
@@ -177,6 +222,57 @@ describe(createNaviaKitBehaviour, () => {
     }).toStrictEqual({ bladeCount: 1, bladeCountAfterCooldown: 2, bladeFrames: 75 });
   });
 
+  test("constellation 2 gives a press's blade 12% CRIT Rate for each shrapnel the press consumes, up to 36%, and nothing before it", () => {
+    expect.hasAssertions();
+    expect({
+      base: readBladeCriticalRateBonus(0, 2),
+      constellation2One: readBladeCriticalRateBonus(2, 1),
+      constellation2Six: readBladeCriticalRateBonus(2, 6),
+      constellation2Two: readBladeCriticalRateBonus(2, 2),
+    }).toStrictEqual({ base: undefined, constellation2One: 0.12, constellation2Six: 0.36, constellation2Two: 0.24 });
+  });
+
+  test("constellation 2's blade fires one cannon shot at the first enemy it strikes, and a second strike in the same use fires none", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    // The summon count after the blade strikes the enemy twice, and the position of the cannon shot it fired
+    const readStrikes = (constellationCount: number): { count: number; shotPosition: unknown } => {
+      const combatant = createNaviaCombatant(constellationCount);
+      const kitEffectState = pressAfterShrapnel(constellationCount, 0);
+      const blade = takeOne(takeOne(readSummons(kitEffectState)).hits);
+      const context = createKitTestContext(combatant, { kitEffectState });
+      blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+      blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+      const summons = readSummons(kitEffectState);
+      return {
+        count: summons.length,
+        shotPosition: summons.length > 1 ? takeOne(summons.slice(1)).body.position : undefined,
+      };
+    };
+
+    expect({ base: readStrikes(0), constellation2: readStrikes(2) }).toStrictEqual({
+      base: { count: 1, shotPosition: undefined },
+      constellation2: { count: 2, shotPosition: enemy.position },
+    });
+  });
+
+  test("constellation 2's cannon shot lands at most 1.2 metres from the enemy it struck, at the bearing and distance its random source draws", () => {
+    expect.hasAssertions();
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    // The bearing is drawn first, then the distance: a bearing of 0 and a distance of the full 1.2 metres
+    const draws = [0, 1];
+    const combatant = createNaviaCombatant(2);
+    const kitEffectState = pressAfterShrapnel(2, 0);
+    const blade = takeOne(takeOne(readSummons(kitEffectState)).hits);
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => draws.shift() ?? 0 });
+    blade.onStrike?.(context, { body: kitBody, combatant, hit: blade }, enemy);
+
+    expect(takeOne(readSummons(kitEffectState).slice(1)).body.position).toStrictEqual({
+      x: enemy.position.x,
+      z: enemy.position.z + 1.2,
+    });
+  });
+
   test("constellation 4 cuts geo RES by 20% for eight seconds on what a burst hits, and nothing before it", () => {
     expect.hasAssertions();
     expect({ base: shredAt(0), constellation4: shredAt(4) }).toStrictEqual({
@@ -187,6 +283,19 @@ describe(createNaviaKitBehaviour, () => {
         resistanceReduction: { Rock: 0.2 },
         secondsRemaining: 8,
       },
+    });
+  });
+
+  test("constellation 1 gives Navia 3 Energy and cuts her burst cooldown a second for each shrapnel a press spends, up to three", () => {
+    expect.hasAssertions();
+    expect({
+      constellation0: readAfterPress(0, 2),
+      constellation1Five: readAfterPress(1, 5),
+      constellation1Two: readAfterPress(1, 2),
+    }).toStrictEqual({
+      constellation0: { burstCooldownSeconds: 10, energy: 0 },
+      constellation1Five: { burstCooldownSeconds: 7, energy: 9 },
+      constellation1Two: { burstCooldownSeconds: 8, energy: 6 },
     });
   });
 });

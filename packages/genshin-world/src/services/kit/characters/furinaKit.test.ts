@@ -66,7 +66,7 @@ describe(createFurinaKitBehaviour, () => {
     const beforeSwitch = getFieldIds(kitEffectState).filter(Boolean);
     stepFrames(10, context);
 
-    expect(beforeSwitch).toStrictEqual(["furina-salon-member", "furina-salon-member", "furina-salon-member"]);
+    expect(beforeSwitch).toStrictEqual(["furina-salon-member-0", "furina-salon-member-1", "furina-salon-member-2"]);
     expect(getFieldIds(kitEffectState).filter(Boolean)).toStrictEqual(["furina-singer"]);
   });
 
@@ -221,7 +221,8 @@ describe(createFurinaKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     const { kitEffectState } = context;
     const hit = takeOne(takeOne(FURINA_KIT.normalAttacks).hits);
-    const strike = (): void => hit.onStrike?.(context, { body: context.body, combatant, hit });
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const strike = (): void => hit.onStrike?.(context, { body: context.body, combatant, hit }, enemy);
     const countArkheHits = (): number =>
       kitEffectState.effects.filter((effect) => effect.kind === "summon" && effect.attackTag === AttackTag.NormalAttack)
         .length;

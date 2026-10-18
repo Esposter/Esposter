@@ -1,5 +1,5 @@
 import type { Attribute } from "#src/models/character/Attribute";
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/createReactionBuffPassiveModule";
 import { createStellarGlimmerBuffPassiveModule } from "#src/services/weapon/passives/createStellarGlimmerBuffPassiveModule";
@@ -23,7 +23,7 @@ export const createReactionStellarBuffPassiveModule = ({
   stellarAmount: number;
   stellarAttribute: Attribute;
   stellarSeconds: number;
-}): WeaponPassiveModule => {
+}): PassiveModule => {
   const reactionBuffPassiveModule = createReactionBuffPassiveModule([reactionAmount, reactionSeconds, 0], {
     attribute: reactionAttribute,
     source,

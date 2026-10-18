@@ -13,6 +13,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelayedKitEnergy";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -99,14 +100,20 @@ const gainProsecutionEdictStack = (context: KitContext, combatant: Combatant, ev
 // An enhanced strike of his normal attacks: Chilling Penalty drains him once every 6 frames, and a particle comes every 2
 // Seconds. The strike's enhanced damage multiplier and hitbox are not built, as the record does not hold them
 const strikeEnhanced: NonNullable<KitHitBehaviour["onStrike"]> = (context, { combatant }) => {
-  const { attributes, characterId } = combatant;
+  const { characterId } = combatant;
   if (!checkIsEnhanced(context, characterId)) return;
   if (!checkIsKitStatusActive(context.kitEffectState.effects, characterId, CHILLING_PENALTY_COOLDOWN_ID)) {
     addKitStatus(context.kitEffectState, characterId, {
       id: CHILLING_PENALTY_COOLDOWN_ID,
       secondsRemaining: CHILLING_PENALTY_COOLDOWN_SECONDS,
     });
-    changeKitMemberHealth(context, combatant, characterId, -CHILLING_PENALTY_SHARE * attributes.maxHealth);
+    const maxHealth = getKitMaxHealth(
+      combatant,
+      context.kitEffectState.effects,
+      context.party,
+      context.characterIdCombatantMap,
+    );
+    changeKitMemberHealth(context, combatant, characterId, -CHILLING_PENALTY_SHARE * maxHealth);
   }
   if (checkIsKitStatusActive(context.kitEffectState.effects, characterId, PARTICLE_COOLDOWN_ID)) return;
   addKitStatus(context.kitEffectState, characterId, {

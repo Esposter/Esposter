@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { ActiveKitControls } from "#src/models/kit/ActiveKitControls";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
@@ -15,12 +16,14 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
@@ -37,6 +40,7 @@ import {
   createCharacterController,
   createGroundQuery,
   createLandmarkCollider,
+  createStamina,
   LocomotionState,
   STAMINA_MAX,
 } from "genshin-engine";
@@ -75,12 +79,13 @@ const createStrikeContext = (combatants: Combatant[], kitEffectState?: KitEffect
 });
 
 // The controls of a body standing at the origin on flat ground, its camera aiming along no yaw
-const createControls = (): ActiveKitControls => ({
+const createControls = (stamina = createStamina(STAMINA_MAX)): ActiveKitControls => ({
   aimYaw: 0,
   characterController: createCharacterController({
     ground: createGroundQuery(() => 0, -1),
     landmarkCollider: createLandmarkCollider(),
     position: new Vector3(),
+    stamina,
     staminaMaximum: STAMINA_MAX,
   }),
   isAimHeld: false,
@@ -117,7 +122,55 @@ describe(stepActiveKit, () => {
     expect(kitState).toStrictEqual(createKitState());
   });
 
-  test("sends the team's kits a swap, an effect that runs out and a normal attack that lands", () => {
+  test("gives the context the stamina pool the character controller holds", () => {
+    expect.hasAssertions();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const controls = createControls();
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+
+    expect(context.stamina).toBe(controls.characterController.stamina);
+  });
+
+  test("keeps a restore the kit makes to the party's stamina into the next step", () => {
+    expect.hasAssertions();
+    const stamina = createStamina(STAMINA_MAX);
+    stamina.value = 50;
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const controls = createControls(stamina);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+    context.stamina.restore(15);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
+
+    expect([context.stamina.value, stamina.value]).toStrictEqual([65, 65]);
+  });
+
+  test("counts the Hexerei characters of the deployed team into the context", () => {
+    expect.hasAssertions();
+    // The count reads each member's id alone, so the Fischl member is given the Traveler's kit, which only the active one plays
+    const context = createContext([
+      createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT),
+      createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT),
+    ]);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(context.hexereiCount).toBe(1);
+  });
+
+  test("gives the context the locomotion state the input steps in", () => {
+    expect.hasAssertions();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    stepActiveKit(
+      createKitState(),
+      { ...IDLE_INPUT, locomotionState: LocomotionState.Dash },
+      0.1,
+      context,
+      createControls(),
+    );
+
+    expect(context.locomotionState).toBe(LocomotionState.Dash);
+  });
+
+  test("sends the team's kits a swap, an effect that runs out and a normal attack that starts and lands", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const offFieldCombatant = createCombatant(FISCHL_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent });
@@ -138,6 +191,7 @@ describe(stepActiveKit, () => {
         previousCharacterId: FISCHL_CHARACTER_ID,
       },
       { effect: status, kind: KitEventKind.EffectExpired },
+      { action: takeOne(TRAVELER_KIT.normalAttacks), isFirstStrike: true, kind: KitEventKind.NormalAttackStarted },
       { action: takeOne(TRAVELER_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded },
     ]);
   });
@@ -238,6 +292,29 @@ describe(stepActiveKit, () => {
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
       },
+    ]);
+  });
+
+  test("sends the team's kits a fall a kit refused just after the change that left its member standing", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })], {
+      effects: [],
+      fieldCharacterId: TRAVELER_CHARACTER_ID,
+    });
+    damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 1, undefined, { healthShare: 0.1, refuses: () => true });
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
+      {
+        bondOfLifeShare: 0,
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare: -0.9,
+        isFallRefused: true,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.FallRefused },
     ]);
   });
 
@@ -396,5 +473,32 @@ describe(stepActiveKit, () => {
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, { ...createControls(), landedHits: [hit], strikePuzzle });
 
     expect(strikePuzzle.mock.calls).toStrictEqual([[context.body, readPuzzleHit(combatant, hit)]]);
+  });
+
+  test("an action that starts makes the enemy it turns to the primary target, which outlasts the action", () => {
+    expect.hasAssertions();
+    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    const kitState = createKitState();
+    const controls = createControls();
+    stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, 0.1, context, controls);
+    const startedTarget = context.primaryTarget;
+    for (let step = 0; step < 30; step++) stepActiveKit(kitState, IDLE_INPUT, 0.1, context, controls);
+
+    expect([startedTarget, context.primaryTarget]).toStrictEqual([enemy, enemy]);
+  });
+
+  test.each<[string, (context: KitContext, enemy: Enemy) => void]>([
+    ["dies", (_context, enemy) => setEnemyState(enemy, EnemyState.Dead)],
+    ["leaves the world", (context) => context.enemyMap.clear()],
+  ])("a primary target that %s is let go", (_title, leave) => {
+    expect.hasAssertions();
+    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const enemy = takeOne([...context.enemyMap.values()]);
+    context.primaryTarget = enemy;
+    leave(context, enemy);
+    stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
+
+    expect(context.primaryTarget).toBeUndefined();
   });
 });

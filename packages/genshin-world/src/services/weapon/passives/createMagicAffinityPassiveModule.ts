@@ -1,4 +1,4 @@
-import type { WeaponPassiveModule } from "#src/models/weapon/WeaponPassiveModule";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -10,7 +10,7 @@ const MAGIC_AFFINITY_SECONDS = 12;
 
 // Magic Affinity at its rank: after its wielder uses an elemental skill, its normal and charged attacks deal the rank's DMG
 // More per stack, up to two stacks for twelve seconds
-export const createMagicAffinityPassiveModule = (params: number[]): WeaponPassiveModule => {
+export const createMagicAffinityPassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {

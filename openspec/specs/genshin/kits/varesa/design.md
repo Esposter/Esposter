@@ -6,6 +6,7 @@ Varesa's kit is its record and one behaviour module, `createVaresaKitBehaviour`,
 
 Her Fiery Passion forms, the apex state that opens Volcanic Kablam and the Follow-Up Strike wait on a skill variant and a Rush follow-up hook the kit lacks. Her Nightsoul points and the timed Blessing a full set enters are built (see Decisions).
 
+- **Flying Kick's area is its circle on the target.** Its circle of radius 7.5 sits a metre ahead of the target and is priced at the targeting area's 15 metres plus both, 23.5 metres from her, as the one queue call firing its multiplier's variable gives it (`burst.go`, line 76).
 - **The Fiery Passion forms need a skill variant.** Inside the blessing Rush is Fiery Passion Rush, a different multiplier and a 2-frame hitmark, and Flying Kick is Fiery Passion Flying Kick. The burst's form fits the kit's burst variant, which the kit can hold; Rush's needs a skill variant, which the record has no slot for.
 - **Her plunge chain's apex state waits on the apex hook.** gcsim's plunges set an apex state, which opens Volcanic Kablam, the short burst that follows a plunge. The plunges built here give the Nightsoul points but not the apex state, so Volcanic Kablam is not built.
 - **The Follow-Up Strike waits on a Rush follow-up hook.** After Rush, her charged attack lands at 11 frames and costs no stamina, from a status Rush sets. A kit holds no charged attack variant to swap in, so the charged attack built here is the one without the follow-up.

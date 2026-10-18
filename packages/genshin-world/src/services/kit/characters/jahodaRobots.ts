@@ -8,15 +8,19 @@ import type { GroundPoint } from "genshin-engine";
 
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
+import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemies";
 import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // The robots' timings and the strike they deal, as the record gives them. A robot checks its circle for an aura from its
 // First check, then every interval while it finds none, and the next robot checks a spacing after the one before. Once a
 // Robot absorbs an element it strikes the nearest enemies from the first strike after the absorb, then every strike
 // Interval, until the burst's seconds end
-type JahodaRobotSettings = {
+interface JahodaRobotSettings {
   absorbArea: AttackArea;
+  // The energy each absorb gives her, from Constellation 4
+  absorbEnergy: number;
   absorbFirstSeconds: number;
   absorbIntervalSeconds: number;
   absorbSpacingSeconds: number;
@@ -25,12 +29,9 @@ type JahodaRobotSettings = {
   strikeHit: KitHit;
   strikeIntervalSeconds: number;
   strikeTargetCount: number;
-};
+}
 
 const absorbedBody = (position: GroundPoint): KitBody => ({ facing: 0, height: 0, position });
-
-const squaredDistance = (point: GroundPoint, other: GroundPoint): number =>
-  (point.x - other.x) ** 2 + (point.z - other.z) ** 2;
 
 // The nearest live enemies to the body, up to the count, each struck once with the element the robot absorbed
 const strikeNearest = (
@@ -40,10 +41,7 @@ const strikeNearest = (
   { strikeHit, strikeTargetCount }: JahodaRobotSettings,
 ): void => {
   const { body, enemyMap } = context;
-  const nearest = [...enemyMap.values()]
-    .filter(({ health }) => health > 0)
-    .sort((a, b) => squaredDistance(a.position, body.position) - squaredDistance(b.position, body.position))
-    .slice(0, strikeTargetCount);
+  const nearest = getNearestLivingEnemies(enemyMap.values(), body.position, strikeTargetCount);
   for (const enemy of nearest) queueKitPassiveHit(context, combatant, { ...strikeHit, element }, enemy);
 };
 
@@ -72,6 +70,7 @@ export const startJahodaRobots = (
         const element = findAbsorbedElement(reachedEnemies);
         if (element === undefined) return;
         isAbsorbed = true;
+        if (settings.absorbEnergy > 0) gainPartyMemberEnergy(checkContext.party, combatant, settings.absorbEnergy);
         // The absorb happens on this check, so the strikes run out with the burst, from the absorb's own seconds
         const absorbSeconds = absorbFirstSeconds + tickIndex * settings.absorbIntervalSeconds;
         schedulePeriodicKitTask(

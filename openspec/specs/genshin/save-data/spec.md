@@ -23,7 +23,7 @@ A signed-in player's save SHALL be held as one record under the session that mos
 
 ### Requirement: The save holds what the player did and nothing derived
 
-The save SHALL hold the player's characters with their copies, wallet, bag, carried quest progress, unlocked landmarks, opened chests, achievement progress, learned recipes, wish counters, Adventure EXP, Reputation, Companionship EXP, World Level setting and chosen name, and SHALL hold nothing that is derived on load.
+The save SHALL hold the player's characters with their copies, wallet, bag, carried quest progress, unlocked landmarks, opened chests, achievement progress, learned recipes, wish counters, Adventure EXP, Reputation, the bounty taken, the week's bounty claims and the week's request claims, Companionship EXP, World Level setting and chosen name, and SHALL hold nothing that is derived on load.
 
 #### Scenario: Items bought before a reload are still in the bag
 
@@ -173,6 +173,19 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 - **GIVEN** a guest and an account each hold a bag and a wallet
 - **WHEN** the guest signs in
 - **THEN** the account's bag and wallet are kept
+
+#### Scenario: A statue region's claimed level is the account's
+
+- **GIVEN** the guest has claimed a level of a statue region that the account has not claimed, its rewards paid into the guest's bag
+- **WHEN** the guest signs in
+- **THEN** the account claims that level again, and is paid for it once from its own bag
+- **AND** the rewards the guest's copy paid are lost with the guest's bag
+
+#### Scenario: A rank reward claimed only in the guest's copy is claimed again on the account
+
+- **GIVEN** the guest has claimed a rank's Katheryne reward, paid into the guest's bag, and the account has not claimed it
+- **WHEN** the guest signs in
+- **THEN** the account claims that rank's reward again, and is paid for it once from its own bag and wallet
 
 #### Scenario: A mail is kept once by its id, and read or claimed on either copy stays so
 

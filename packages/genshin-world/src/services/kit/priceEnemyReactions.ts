@@ -5,6 +5,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { EnemyReactionPricing } from "#src/models/kit/EnemyReactionPricing";
+import type { KitContext } from "#src/models/kit/KitContext";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
@@ -13,6 +14,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { applyBluntHit } from "#src/services/combat/aura/applyBluntHit";
 import { getAmplifyingMultiplier } from "#src/services/combat/damage/getAmplifyingMultiplier";
 import { getCatalyzeBonus } from "#src/services/combat/damage/getCatalyzeBonus";
+import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
 import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { TransformativeReactionPoiseDamageMap } from "#src/services/combat/damage/TransformativeReactionPoiseDamageMap";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
@@ -20,11 +22,14 @@ import { applySimultaneousReactionInternalCooldown } from "#src/services/combat/
 import { TransformativeReactionReachRadiusMap } from "#src/services/combat/reach/TransformativeReactionReachRadiusMap";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
+import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 
 // The reactions an element of the combatant's triggered on an enemy, priced from the combatant, written into the enemy
-// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them,
-// Aggravate and Spread add to its base, and each transformative reaction that lands deals its own damage at the share
-// Its source's internal cooldown on the enemy deals, against the enemy's RES as its statuses leave it, and its own hit's
+// In place. A Superconduct takes its Physical RES down first. Melt and Vaporize amplify the damage that triggered them, and
+// Aggravate and Spread add to its base, each raised by the deployed team's party reaction DMG Bonus inside its Elemental
+// Mastery term, as gcsim (MIT) pkg/enemy/damage.go and pkg/core/combat/reaction.go read it. Each transformative reaction
+// That lands deals its own damage at the share its source's internal cooldown on the enemy deals, with the deployed team's
+// Party reaction bonuses to it, against the enemy's RES as its statuses leave it, and its own hit's
 // Poise damage, an Overloaded's explosion's
 export const priceEnemyReactions = (
   kind: EnemyKind,
@@ -32,6 +37,7 @@ export const priceEnemyReactions = (
   reactions: readonly Reaction[],
   combatant: Combatant,
   element: Element | undefined,
+  context: KitContext,
 ): EnemyReactionPricing => {
   const { characterId, level } = combatant;
   const elementalMastery = combatant.attributes.attributeTotalMap[Attribute.ElementalMastery];
@@ -49,13 +55,17 @@ export const priceEnemyReactions = (
   const pendingReactions = [...reactions];
   for (const reaction of pendingReactions) {
     const { element: reactionElement, reactionType } = reaction;
+    const partyBonus = getDeployedReactionBonuses(
+      { combatant, element: reactionElement, enemy, reactionType },
+      context,
+    );
     if (
       (reactionType === AmplifyingReactionType.Melt || reactionType === AmplifyingReactionType.Vaporize) &&
       element !== undefined
     )
-      amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery);
+      amplifyingMultiplier = getAmplifyingMultiplier(reactionType, element, elementalMastery, partyBonus.damageBonus);
     else if (reactionType === CatalyzeReactionType.Aggravate || reactionType === CatalyzeReactionType.Spread)
-      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, level, elementalMastery);
+      additiveBaseDamageBonus += getCatalyzeBonus(reactionType, level, elementalMastery, partyBonus.damageBonus);
     else if (
       (reactionType === TransformativeReactionType.Overloaded ||
         reactionType === TransformativeReactionType.Superconduct ||
@@ -70,14 +80,11 @@ export const priceEnemyReactions = (
       poiseDamage += reactionPoiseDamage;
       if (reactionType === TransformativeReactionType.Overloaded)
         pendingReactions.push(...applyBluntHit(enemy.elementalState, reactionPoiseDamage));
+      const resistance = getEnemyResistance(kind, enemy, reactionElement);
       transformativeDamage +=
         applyReactionInternalCooldown(enemy.internalCooldownMap, characterId, reactionType, reactionElement, seconds) *
-        getTransformativeDamage(
-          reactionType,
-          level,
-          elementalMastery,
-          getEnemyResistance(kind, enemy, reactionElement),
-        );
+        (getTransformativeDamage(reactionType, level, elementalMastery, resistance, partyBonus.damageBonus) +
+          partyBonus.additiveBaseDamageBonus * getResistanceMultiplier(resistance));
     }
   }
   return { additiveBaseDamageBonus, amplifyingMultiplier, poiseDamage, reachingReactions, transformativeDamage };

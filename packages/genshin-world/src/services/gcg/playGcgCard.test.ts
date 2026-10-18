@@ -9,8 +9,13 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { wagner } from "#src/services/gcg/cards/wagner";
+import { WAGNER_ID } from "#src/services/gcg/cards/constants";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
+import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const EVENT_ID = 332_003;
 
@@ -64,6 +69,8 @@ const createSide = (): GcgSideState => ({
 });
 
 const createDuel = (): GcgDuel => ({
+  cardModules: GcgCardIdModuleMap,
+  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
@@ -77,6 +84,30 @@ const createDuel = (): GcgDuel => ({
 describe(playGcgCard, () => {
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  test("a support played again takes its own slot, and the one already on the field keeps its counter", () => {
+    expect.hasAssertions();
+
+    const duel = createDuel();
+    const side = takeOne(duel.sides, 0);
+    side.cards.push({
+      costs: [],
+      descriptionTextId: 2,
+      effects: [],
+      id: WAGNER_ID,
+      isLocation: false,
+      kind: GcgCardKind.Support,
+      nameTextId: 1,
+    });
+    side.hand = [WAGNER_ID];
+    side.supports.push({ ...createGcgZoneCard(WAGNER_ID, wagner), counter: 3 });
+
+    expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
+    expect(side.supports).toStrictEqual([
+      { ...createGcgZoneCard(WAGNER_ID, wagner), counter: 3 },
+      createGcgZoneCard(WAGNER_ID, wagner),
+    ]);
   });
 
   test("should hand the card's play the choice it is played with as its third argument", () => {

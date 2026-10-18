@@ -6,7 +6,10 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { castKitField } from "#src/services/kit/effects/castKitField";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
@@ -81,6 +84,45 @@ describe("stepKitEffects", () => {
         checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
         kitEffectState.effects,
       ]).toStrictEqual([false, []]);
+    });
+
+    test("reads a field a tick adds with the status's seconds gone with it at 360 frames", () => {
+      expect.hasAssertions();
+      const kitEffectState: KitEffectState = { effects: [] };
+      const context = createKitTestContext(COMBATANT, { kitEffectState });
+      addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 6 });
+      scheduleKitTask(kitEffectState, TRAVELER_CHARACTER_ID, 221 / 60, (tick) => {
+        const status = findKitStatus(tick.kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID);
+        castKitField(
+          tick.kitEffectState,
+          TRAVELER_CHARACTER_ID,
+          { x: 0, z: 0 },
+          {
+            id: "copy",
+            nextTickSeconds: Number.POSITIVE_INFINITY,
+            onTick: () => {},
+            secondsRemaining: status?.secondsRemaining ?? 0,
+            tickIntervalSeconds: Number.POSITIVE_INFINITY,
+          },
+        );
+      });
+      const checkIsCopyPresent = () =>
+        kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === "copy");
+
+      stepKitSeconds(context, 359 / 60);
+      const presentAt359 = [
+        checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
+        checkIsCopyPresent(),
+      ];
+      stepKitSeconds(context, 1 / 60);
+
+      expect([
+        presentAt359,
+        [checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID), checkIsCopyPresent()],
+      ]).toStrictEqual([
+        [true, true],
+        [false, false],
+      ]);
     });
   });
 });

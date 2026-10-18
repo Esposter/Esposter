@@ -1,6 +1,6 @@
 ## Purpose
 
-Kinich's kit as built, with his three strikes outside the Nightsoul Blessing, his skill's press entering the blessing with its points,
+Kinich's kit as built: his three strikes outside the Nightsoul Blessing, his skill's press entering the blessing with its points, and the blessing's Loop Shots and blind spot.
 
 ## Requirements
 
@@ -86,7 +86,7 @@ Kinich's burst SHALL summon the Ajaw, which fires six Dendro lasers at the prima
 
 ### Requirement: Nightsoul effects not yet built
 
-Kinich's Loop Shots, Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
+Kinich's Scalespiker Cannon, his Ascension 1 and 4 and Constellations 1, 2, 4 and 6 SHALL NOT take effect until the Nightsoul hook is built.
 
 #### Scenario: Nightsoul-dependent effects do nothing
 
@@ -104,3 +104,42 @@ Kinich's blessing SHALL gain two Nightsoul points a second up to 20, and SHALL e
 - **WHEN** five seconds pass
 - **THEN** he holds 10 points
 - **AND** after a further six seconds he is no longer in the blessing
+
+### Requirement: Loop Shots in the blessing
+
+Kinich's Loop Shots SHALL replace his normal attacks while the Nightsoul Blessing lasts. Each Loop Shot SHALL strike twice on the enemies within a circle of radius 0.5 metres round him, and SHALL gain him three Nightsoul points as it starts, up to the blessing's maximum of twenty.
+
+#### Scenario: A Loop Shot strikes twice and gains three points
+
+- **GIVEN** Kinich has entered the Nightsoul Blessing with no points
+- **WHEN** the player uses normal attack once in the blessing
+- **THEN** the Loop Shot's two strikes land 30 and 38 frames after it starts
+- **AND** Kinich holds three points
+
+#### Scenario: Loop Shots end with the blessing
+
+- **GIVEN** Kinich is in the Nightsoul Blessing
+- **WHEN** the blessing ends or Kinich leaves the field
+- **THEN** his normal attacks are his own again
+
+### Requirement: The blind spot
+
+When Kinich's skill press enters the Nightsoul Blessing with an enemy in reach, a blind spot SHALL appear 30 frames after the press, a quarter turn either side of his bearing from that enemy, on a side drawn at random. Kinich standing within its thirty-five degree window SHALL gain four Nightsoul points once, and only his own body fills it.
+
+#### Scenario: Standing in the blind spot gains four points
+
+- **GIVEN** Kinich pressed his skill at an enemy and the blind spot has appeared
+- **WHEN** his body stands in the blind spot on a frame it is due
+- **THEN** he gains four points on top of the blessing's
+
+#### Scenario: Outside the blind spot gains nothing
+
+- **GIVEN** the blind spot has appeared
+- **WHEN** Kinich's body stands outside its window
+- **THEN** it gives no points
+
+#### Scenario: A blind spot gives its points once
+
+- **GIVEN** Kinich has filled the blind spot
+- **WHEN** his body stands in its place again
+- **THEN** it gives no further points

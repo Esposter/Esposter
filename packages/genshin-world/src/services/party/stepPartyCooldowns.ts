@@ -4,9 +4,10 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { runDownSeconds } from "#src/services/runDownSeconds";
 
-// Lowers the skill and burst cooldowns of every member of the deployed team by the step's seconds, none below zero. The
-// Cooldowns run off the field too, as the game's do. A cooldown is written only while it runs, so a team at rest writes
-// Nothing, where the world's reactive party would pay a reactive write for each unchanged zero every step
+// Lowers the skill and burst cooldowns of every member of the deployed team by the step's seconds, none below zero, and the
+// Team's own cooldowns, its particles' and its Nightsoul burst's, in the same step. The cooldowns run off the field too, as
+// The game's do. A cooldown is written only while it runs, so a team at rest writes nothing, where the world's reactive party
+// Would pay a reactive write for each unchanged zero every step
 export const stepPartyCooldowns = (party: Party, stepSeconds: number): void => {
   for (const characterId of getDeployedCharacterIds(party)) {
     const partyMember = getPartyMember(party, characterId);
@@ -19,4 +20,6 @@ export const stepPartyCooldowns = (party: Party, stepSeconds: number): void => {
   for (const [particleSource, cooldownSeconds] of party.particleCooldownSecondsMap)
     if (cooldownSeconds > 0)
       party.particleCooldownSecondsMap.set(particleSource, Math.max(0, runDownSeconds(cooldownSeconds, stepSeconds)));
+  if (party.nightsoulBurstCooldownSeconds > 0)
+    party.nightsoulBurstCooldownSeconds = Math.max(0, runDownSeconds(party.nightsoulBurstCooldownSeconds, stepSeconds));
 };
