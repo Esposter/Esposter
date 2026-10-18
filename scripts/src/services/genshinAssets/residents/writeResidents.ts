@@ -8,6 +8,7 @@ import { toCraftingKeeperPlace } from "#src/services/genshinAssets/crafting/toCr
 import { classifyPlacementRegion } from "#src/services/genshinAssets/residents/classifyPlacementRegion";
 import {
   BUILDING_NPC_ID_MAP,
+  CRAFTING_BENCH_NPC_ID_MAP,
   REPUTATION_KEEPER_NPC_ID_MAP,
   RESIDENT_DUEL_GAME_ID_MAP,
 } from "#src/services/genshinAssets/residents/constants";
@@ -50,6 +51,11 @@ export const writeResidents = async ({ isDryRun }: { isDryRun: boolean }): Promi
       return keeperNpcId === undefined ? [] : [[keeperNpcId, place]];
     }),
     ...craftingKeeperPlaces,
+    // An NPC who stands beside a bench is placed beside the bench's building point, as Mondstadt's keeper is beside his bench
+    ...Object.entries(sceneGroups.buildings).flatMap(([buildingId, { place }]): [number, SceneGroupPlace][] => {
+      const benchNpcId = CRAFTING_BENCH_NPC_ID_MAP.get(buildingId);
+      return benchNpcId === undefined ? [] : [[benchNpcId, toCraftingKeeperPlace(place)]];
+    }),
   ];
   const reputationKeeperIds = new Set(Array.from(REPUTATION_KEEPER_NPC_ID_MAP.values(), String));
   const placements = npcPlaces.flatMap(([npcId, place]) => {

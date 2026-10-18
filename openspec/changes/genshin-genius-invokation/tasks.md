@@ -5,7 +5,7 @@
 
 ## 2. Seating the challengers
 
-- [ ] 2.1 Seat Marjorie and Ellin at their estimated seats once the region holding their residents is written. Verify: a test named after the scenario "A seated challenger's talk opens the duel", written first and seen failing.
+- [x] 2.1 Seat Marjorie and Ellin at their estimated seats once the region holding their residents is written. Verify: a test named after the scenario "A seated challenger's talk opens the duel", written first and seen failing. Built: Marjorie's duel (game 1021) sits on her Souvenir shop row, NPC 1435, and Ellin (NPC 9704, game 1031) stands at the Knights' headquarters point; the rows land when the main session runs `genshin:assets residents`, which the dry run reports (one Mondstadt resident and one Sumeru resident more, nothing else moved).
 - [x] 2.2 Offer each challenger's games by the Player Level. Verify: tests named after the scenarios "A game opens once the Player Level reaches its level" and "A game above the Player Level is not offered".
 
 ## 3. The other opponents' decks
