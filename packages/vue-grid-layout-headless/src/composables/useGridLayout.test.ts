@@ -2,7 +2,7 @@
 import type { GridItem } from "#src/models/GridItem";
 
 import { useGridLayout } from "#src/composables/useGridLayout";
-import { GridGestureType } from "#src/models/GridGestureType";
+import { ResizeEdge } from "#src/models/ResizeEdge";
 import { getCellPosition, getColumnPitch } from "#src/placement";
 import { mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
@@ -17,8 +17,9 @@ describe(useGridLayout, () => {
   const spacing = { gap: 10, padding: 10 };
   const cellPitch = getColumnPitch(gridWidth, columnNumber, spacing);
 
-  // Mounts a grid whose tiles carry their geometry as inline styles, so a test reads where each one is drawn
-  const mountGrid = (items: GridItem[]) => {
+  // Mounts a grid whose tiles carry their geometry as inline styles, and whose handle resizes from the given edge, so a
+  // Test reads where each one is drawn
+  const mountGrid = (items: GridItem[], edge = ResizeEdge.SouthEast) => {
     const onCommit = vi.fn<(changes: GridItem[]) => void>();
     const wrapper = mount(
       defineComponent({
@@ -37,16 +38,28 @@ describe(useGridLayout, () => {
           return () =>
             h("div", { class: "grid", ref: "root" }, [
               ...tiles.value.map(({ geometry, item }) =>
-                h("div", {
-                  class: "tile",
-                  onPointerdown: (event: PointerEvent) => startGesture(event, item, GridGestureType.Move),
-                  style: {
-                    height: `${geometry.height}px`,
-                    left: `${geometry.left}px`,
-                    top: `${geometry.top}px`,
-                    width: `${geometry.width}px`,
+                h(
+                  "div",
+                  {
+                    class: "tile",
+                    onPointerdown: (event: PointerEvent) => startGesture(event, item),
+                    style: {
+                      height: `${geometry.height}px`,
+                      left: `${geometry.left}px`,
+                      top: `${geometry.top}px`,
+                      width: `${geometry.width}px`,
+                    },
                   },
-                }),
+                  [
+                    h("span", {
+                      class: "handle",
+                      onPointerdown: (event: PointerEvent) => {
+                        event.stopPropagation();
+                        startGesture(event, item, edge);
+                      },
+                    }),
+                  ],
+                ),
               ),
               placeholder.value
                 ? h("div", {
@@ -167,6 +180,35 @@ describe(useGridLayout, () => {
     await wrapper.get(".grid").trigger("pointerup", { clientX: cellPitch * 2, clientY: 0, pointerId });
 
     expect(onCommit.mock.calls).toStrictEqual([[[{ h: 2, id: "a", w: 2, x: 2, y: 0 }]]]);
+  });
+
+  test("#38 #51 Resizing from the left edge", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 2, y: 0 }], ResizeEdge.West);
+    const handle = wrapper.get(".handle");
+    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { clientX: -cellPitch, clientY: 0, pointerId });
+    await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
+
+    expect(onCommit.mock.calls).toStrictEqual([[[{ h: 2, id: "a", w: 3, x: 1, y: 0 }]]]);
+  });
+
+  test("a resize past the grid's edge", async () => {
+    expect.hasAssertions();
+
+    const { onCommit, wrapper } = mountGrid([{ h: 2, id: "a", w: 2, x: 0, y: 0 }], ResizeEdge.West);
+    const handle = wrapper.get(".handle");
+    await handle.trigger("pointerdown", { clientX: 0, clientY: 0, pointerId });
+    await handle.trigger("pointermove", { clientX: -cellPitch, clientY: 0, pointerId });
+
+    expect(wrapper.get(".placeholder").attributes("style")).toContain(
+      `left: ${getCellPosition(0, cellPitch, spacing.padding)}px`,
+    );
+
+    await handle.trigger("pointerup", { clientX: -cellPitch, clientY: 0, pointerId });
+
+    expect(onCommit).not.toHaveBeenCalled();
   });
 
   test("a text selection elsewhere on the page does not stop a press from starting a drag", async () => {

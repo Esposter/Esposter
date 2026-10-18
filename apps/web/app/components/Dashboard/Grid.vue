@@ -4,7 +4,7 @@ import type { GridGeometry, GridItem } from "vue-grid-layout-headless";
 
 import { DASHBOARD_GRID_MARGIN } from "@/services/dashboard/constants";
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
-import { GridGestureType, useGridLayout } from "vue-grid-layout-headless";
+import { ResizeEdge, useGridLayout } from "vue-grid-layout-headless";
 
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
 
@@ -51,7 +51,7 @@ const getBoxStyle = (geometry: GridGeometry) => ({
         transform: isDragged ? `translate(${offset.x}px, ${offset.y}px)` : undefined,
         zIndex: isDragged ? 1 : undefined,
       }"
-      @pointerdown="(event) => startGesture(event, item, GridGestureType.Move)"
+      @pointerdown="(event) => startGesture(event, item)"
     >
       <slot :visual="item.visual" />
       <span
@@ -62,7 +62,7 @@ const getBoxStyle = (geometry: GridGeometry) => ({
         right-0
         size-4
         cursor="nwse-resize"
-        @pointerdown.stop="(event) => startGesture(event, item, GridGestureType.Resize)"
+        @pointerdown.stop="(event) => startGesture(event, item, ResizeEdge.SouthEast)"
       />
     </div>
     <div v-if="placeholder" class="dashboard-grid-placeholder" absolute :style="getBoxStyle(placeholder)" />

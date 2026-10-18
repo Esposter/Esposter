@@ -5,9 +5,9 @@ import type { GridItem } from "#src/models/GridItem";
 import type { GridLayout } from "#src/models/GridLayout";
 import type { GridLayoutOptions } from "#src/models/GridLayoutOptions";
 import type { GridTile } from "#src/models/GridTile";
+import type { ResizeEdge } from "#src/models/ResizeEdge";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
-import { GridGestureType } from "#src/models/GridGestureType";
 import { checkIsSameCell } from "#src/placement/checkIsSameCell";
 import { compactLayout } from "#src/placement/compactLayout";
 import { fitLayout } from "#src/placement/fitLayout";
@@ -38,9 +38,7 @@ export const useGridLayout = <T extends GridItem>(
   const layout = computed(() => fitLayout(getOptions().items, getOptions().columnNumber));
   const savedItemMap = computed(() => new Map(getOptions().items.map((item): [string, T] => [item.id, item])));
   const previewItemMap = computed(() => new Map((preview.value ?? []).map((item): [string, T] => [item.id, item])));
-  const draggedGesture = computed(() =>
-    gesture.value?.kind === GridGestureType.Move && gesture.value.isStarted ? gesture.value : undefined,
-  );
+  const draggedGesture = computed(() => (gesture.value?.isStarted && !gesture.value.edge ? gesture.value : undefined));
   const getGeometry = (cell: GridCell): GridGeometry => {
     const { gap, padding } = getOptions().spacing;
     return {
@@ -78,16 +76,16 @@ export const useGridLayout = <T extends GridItem>(
   };
 
   // A press starts a gesture, which becomes a drag only past the start distance, so a press that barely moves stays a click
-  const startGesture = (event: PointerEvent, item: T, kind: GridGestureType) => {
+  const startGesture = (event: PointerEvent, item: T, edge?: ResizeEdge) => {
     if (!getOptions().isEditable || checkIsNestedControl(event)) return;
     // A held gesture belongs to the pointer that began it, so another pointer's press waits for its release
     if (gesture.value && gesture.value.pointerId !== event.pointerId) return;
     if (!(event.currentTarget instanceof Element)) return;
 
     gesture.value = {
+      edge,
       element: event.currentTarget,
       isStarted: false,
-      kind,
       offset: { x: 0, y: 0 },
       origin: item,
       pointerId: event.pointerId,
@@ -106,7 +104,7 @@ export const useGridLayout = <T extends GridItem>(
     const cell = getGestureCell({
       columnNumber: getOptions().columnNumber,
       columnPitch: columnPitch.value,
-      kind: activeGesture.kind,
+      edge: activeGesture.edge,
       offset,
       origin: activeGesture.origin,
       rowPitch: rowPitch.value,
