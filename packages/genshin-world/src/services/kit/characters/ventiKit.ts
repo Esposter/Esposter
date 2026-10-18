@@ -47,7 +47,8 @@ export const VENTI_CHARACTER_ID = 10_000_022;
 // Press and hold take Breeze of Reminiscence's Anemo RES. Wind's Grand Ode casts the Stormeye ahead of him, its ticks
 // Taking Storm of Defiance's Anemo RES from six constellations, and from Ascension 4 a task as its seconds end gives him
 // Its energy
-// Constellation 2 needs a Physical RES cut, which EnemyStatus cannot key, and a launched state, not built
+// Constellation 2 needs a Physical RES cut, which EnemyStatus keys as physicalResistanceReduction and the kit does not set yet, and
+// A launched state, not built
 // Constellation 6's RES cut on an absorbed element, which the kit does not build
 // Constellation 4 needs the Elemental Orb or Particle pickup and the team's buff after his skill and burst, not built
 export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {

@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew and her passives and constellations left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew, Constellation 4 and her Ascension 4 left waiting on their hooks.
 
 ## Requirements
 
@@ -37,6 +37,28 @@ Gravity Interference SHALL deal damage scaled to Columbina's max HP and SHALL se
 - **GIVEN** the damage-over-time field is running
 - **WHEN** the player presses Gravity Interference again
 - **THEN** the field's duration restarts and no second field starts
+
+### Requirement: Gravity builds from Lunar reactions and fires a Gravity Ripple
+
+Gravity Interference SHALL build gravity while it stands from the Lunar reactions in the team, and a Gravity Ripple SHALL fire when the gravity reaches 60, clearing it.
+
+#### Scenario: A Lunar reaction builds gravity for two seconds
+
+- **GIVEN** Gravity Interference's field is standing
+- **WHEN** a Lunar reaction forms in the team
+- **THEN** gravity builds at 10 a second for the reaction's type for the next two seconds
+
+#### Scenario: Gravity at 60 fires a Gravity Ripple
+
+- **GIVEN** the gravity built has reached 60
+- **WHEN** the step ends
+- **THEN** a Gravity Ripple fires and the gravity clears
+
+#### Scenario: Constellation 1's press fires a Gravity Ripple once every 15 seconds
+
+- **GIVEN** Columbina has Constellation 1 and has not pressed Gravity Interference in the last 15 seconds
+- **WHEN** the player presses Gravity Interference
+- **THEN** a Gravity Ripple fires at once
 
 ### Requirement: Damage-over-time reach
 
@@ -111,3 +133,31 @@ Columbina SHALL count toward the Moonsign level, turn her team's Electro-Charged
 - **GIVEN** Columbina's max HP is 10,000 and a party member's Lunar reaction deals damage
 - **WHEN** the damage is priced
 - **THEN** its Base DMG carries a 2% bonus, and at 35,000 max HP or more the bonus is 7%
+
+### Requirement: Constellation 6 adds CRIT DMG to strikes after a Lunar reaction in the burst's window
+
+Columbina at Constellation 6 SHALL give each party member's strikes of the elements a Lunar reaction covers 80% CRIT DMG for 8 seconds, once that reaction forms within the 1.2 seconds her burst's window holds open.
+
+#### Scenario: A Lunar-Charged reaction in the burst's window buffs the team's Electro and Hydro strikes
+
+- **GIVEN** Columbina is at Constellation 6 and has just cast her burst
+- **WHEN** a party member's Lunar-Charged reaction forms within the 1.2 seconds
+- **THEN** every party member's Electro and Hydro strikes gain 80% CRIT DMG for 8 seconds, Columbina's own included, and a Geo strike gains none
+
+#### Scenario: A Lunar reaction after the window does not buff
+
+- **GIVEN** Columbina is at Constellation 6 and 1.2 seconds have passed since her burst
+- **WHEN** a Lunar-Charged reaction forms
+- **THEN** no party member gains the buff
+
+#### Scenario: A Lunar-Charged and a Lunar-Crystallize reaction add on a Hydro strike
+
+- **GIVEN** Columbina is at Constellation 6, and within her burst's window a Lunar-Charged and a Lunar-Crystallize reaction both form
+- **WHEN** a party member's Hydro strike is priced
+- **THEN** it gains 160% CRIT DMG, as each reaction's buff adds
+
+#### Scenario: Below Constellation 6 nothing buffs
+
+- **GIVEN** Columbina is at Constellation 5 and casts her burst
+- **WHEN** a Lunar-Charged reaction forms within the window
+- **THEN** no party member gains the buff
