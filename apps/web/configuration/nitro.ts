@@ -9,7 +9,11 @@ import {
   GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
   GENSHIN_REGION_DATA_BASE_URL,
 } from "../shared/services/genshin/constants.ts";
-import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "../app/services/pdf/constants.ts";
+import {
+  PDF_CMAP_BASE_URL,
+  PDF_STANDARD_FONT_DATA_BASE_URL,
+  PDF_WASM_BASE_URL,
+} from "../app/services/pdf/constants.ts";
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
 
 // The world package's own folder, found through its manifest, which is there before any build

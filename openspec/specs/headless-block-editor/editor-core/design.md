@@ -10,7 +10,7 @@ flowchart TD
   CMD["a command: insert, remove, move, move into the previous sibling, update props or paste"] --> GATE{"getAcceptedTypes: does the slot the command fills accept the node?"}
   GATE -->|no| NONE["no operations, and the document is unchanged"]
   GATE -->|yes| OPS["JSON Patch operations"]
-  OPS --> APPLY["applyBlockEdit: the new document and its inverses, or an error when an operation cannot apply"]
+  OPS --> APPLY["applyBlockEdit: the new document and its inverses, or an error"]
   APPLY --> PUSH["pushHistory: the future dropped, the past bounded"]
   PUSH -->|"undoHistory"| INV["the entry's inverses applied in order"]
   PUSH -->|"redoHistory"| REDO["the entry's operations applied again"]
