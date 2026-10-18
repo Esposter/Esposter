@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(checkIsAbyssChallengeFailed, () => {
   const challenge: AbyssChallenge = { defeatedHalfCount: 0, halfCount: 1, monolithPercent: undefined, secondsLeft: 1 };
 
-  test("should fail a chamber whose clock has run out", () => {
+  test("a chamber not cleared before its clock runs out fails", () => {
     expect.hasAssertions();
 
     expect(checkIsAbyssChallengeFailed({ ...challenge, secondsLeft: 0 })).toBe(true);

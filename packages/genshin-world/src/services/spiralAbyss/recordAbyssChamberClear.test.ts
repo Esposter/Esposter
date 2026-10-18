@@ -76,6 +76,15 @@ describe(recordAbyssChamberClear, () => {
     expect(secondChamberClear.givenRewardIds).toStrictEqual([102]);
   });
 
+  test("clearing a chamber with time left earns its stars", () => {
+    expect.hasAssertions();
+
+    const oneStarChallenge: AbyssChallenge = { ...threeStarChallenge, secondsLeft: 120 };
+
+    const { progress } = recordAbyssChamberClear(emptyProgress, floor, firstChamber, oneStarChallenge, reward);
+    expect(progress.chamberIdProgressMap.get(FIRST_CHAMBER_ID)).toStrictEqual({ isCleared: true, stars: 1 });
+  });
+
   test("should keep the most stars any clear of a chamber has earned", () => {
     expect.hasAssertions();
 

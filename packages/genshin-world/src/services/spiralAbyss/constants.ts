@@ -1,12 +1,10 @@
-// The floors that run on the short clock, the first four of the Abyss Corridor. Every floor above them gives its chambers
-// The long clock
+// The last floor on the short clock, the fourth of the Abyss Corridor. Every floor above it gives its chambers the long clock
 export const ABYSS_SHORT_CLOCK_LAST_FLOOR_INDEX = 4;
-// The seconds a chamber of a short-clock floor gives its clock, and of any other floor, as the game sets them
-// Provisional: the wiki refused the read, so the clock is the proposal's statement; a recording of a floor one chamber's
-// Clock at its clear measures it (the roadmap's Recordings owed)
+// The seconds a chamber's clock runs on a short-clock floor and on any other, as the wiki's Spiral Abyss page gives them.
+// Provisional until a recording measures a chamber's clock at its clear
 export const ABYSS_SHORT_CLOCK_SECONDS = 300;
 export const ABYSS_LONG_CLOCK_SECONDS = 600;
-// The Adventure Rank the Abyss opens at, as the proposal settles it from the wiki, which the read could not reach
+// The Adventure Rank the Abyss opens at, as the wiki's Spiral Abyss page gives it
 export const ABYSS_OPEN_ADVENTURE_RANK = 20;
 // A Ley Line Monolith starts at full health, and a chamber with none has no percent at all
 export const ABYSS_MONOLITH_FULL_PERCENT = 100;
