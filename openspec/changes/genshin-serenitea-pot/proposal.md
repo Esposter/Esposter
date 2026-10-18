@@ -20,8 +20,7 @@ The player gets a realm to furnish and live in, entered from the Serenitea Pot o
 
 ## Waiting on
 
-- The load each realm area holds. No table read names it, and the placement editor waits on it.
-- Recordings the page lists as not yet found: the realm stores' fill rate, the Trust Rank queues and an area's load.
+- Recordings the page lists as not yet found: the realm stores' fill rate and the Trust Rank queues.
 - Game data: `game-exports` (per the change's needs).
 
 ## Impact
