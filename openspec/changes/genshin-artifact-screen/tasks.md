@@ -56,8 +56,8 @@ Each built task names the test it was written first in, and each test is a scena
       was rolled as".
 - [x] 6.2 Equipping from the bag, unequipping to it and taking fodder from it. Built: the Artifacts tab's Equip opens the
       bag's pieces for the slot, listed highest rarity first and then highest level, and the player chooses one; the piece
-      worn goes back to the bag. Unequip returns the worn piece to the bag, and with a full bag it shows the game's
-      Inventory full notice and leaves the piece worn. Equip is disabled where the bag holds no piece for the slot. The
+      worn goes back to the bag. Unequip returns the worn piece to the bag, and with a full bag it shows the artifact
+      inventory's full notice and leaves the piece worn. Equip is disabled where the bag holds no piece for the slot. The
       fodder service `takeFodderArtifacts` takes unlocked artifacts out of the bag. The Enhance picker lists the bag's unlocked artifacts and the EXP ores, takes
       Auto Add (provisional, see the design), shows the level reached at the base EXP bonus and the Mora, and on Confirm
       enhances the worn piece and takes the chosen fodder and ores out of the bag. Tests: `getBagArtifactsForSlot.test.ts`,

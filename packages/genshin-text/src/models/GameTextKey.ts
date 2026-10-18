@@ -44,6 +44,7 @@ export enum GameTextKey {
   // The set bonus block's heading, each bonus's line with its piece count and effect, and the words it shows while no bonus
   // Is active
   ArtifactAutoAdd = "UI_FAST_ADD_BUTTON",
+  ArtifactInventoryFull = "BAG_FULL_EQUIPMENT_TIPS",
   ArtifactLevelMax = "EQUIP_RELIC_LEVEL_MAX",
   ArtifactSetBonusHeading = "UI_RELIC_SUITE_DESC",
   ArtifactSetBonusLine = "EQUIP_RELIC_SET_NUM",
@@ -393,7 +394,6 @@ export enum GameTextKey {
   InventoryDestroyWeaponThreeStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_3",
   InventoryDestroyWeaponTwoStar = "UI_STC_BAGPAGE_DESTROY_WEAPON_2",
   InventoryFood = "ITEM_FOOD",
-  InventoryFull = "INFO_BAG_FULL",
   InventoryFurnishings = "ITEM_FURNITURE",
   InventoryGadget = "ITEM_CITY_REPUTATION",
   InventoryMaterials = "ITEM_MATERIAL",

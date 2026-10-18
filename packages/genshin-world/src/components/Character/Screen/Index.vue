@@ -499,7 +499,7 @@ const unequipArtifactAt = (index: number) => {
   if (!character.value || !slot) return;
   const unequipped = unequipArtifactToBag(inventory.value, character.value, slot, { names: nameText, reliquarySets });
   if (unequipped.isBagFull) {
-    artifactNotice.value = gameText[GameTextKey.InventoryFull];
+    artifactNotice.value = gameText[GameTextKey.ArtifactInventoryFull];
     return;
   }
   artifactNotice.value = undefined;

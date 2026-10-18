@@ -18,7 +18,7 @@ export const props = {
 // And a two-piece bonus active. The piece's values and the bonus's effect are provisional samples, not the game's
 export const variants = {
   // The bag is full, so the Unequip the player pressed left the piece worn and the game's card says why
-  bagFull: { notice: "Inventory full" },
+  bagFull: { notice: "No space left in Artifact Inventory. Please free up some space and try again." },
   worn: {
     setBonusLines: ["2-Piece Set: Attack +18%"],
     slotStats: [
