@@ -5,6 +5,10 @@
 // Prints the id of any English text
 export enum GameTextKey {
   // The screens the world opens are named as the Paimon menu names their entries, or as a screen titles its own page
+  // The Spiral Abyss's fixed words the Abyss's screens show, named as the game's manual text map files them
+  AbyssBenedictionHint = "UI_TOWER_HINT_BATTLEBUFF",
+  AbyssCorridor = "UI_TOWER_CORRIDOR",
+  AbyssMoonSpire = "UI_TOWER_SPIRAL",
   Achievements = "UI_ACHIEVEMENT_TITLE",
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
   // Wishes return, Mora and Primogems
