@@ -36,7 +36,7 @@ export const createDahliaKitBehaviour = ({ readParameter, readSeconds }: KitReco
             tick.party,
             tick.characterIdCombatantMap,
           );
-          castKitShield(tick.kitEffectState, combatant.characterId, {
+          castKitShield(tick, combatant.characterId, {
             element: Element.Hydro,
             health: burstShieldShare * maxHealth + burstShieldFlat,
             secondsRemaining:

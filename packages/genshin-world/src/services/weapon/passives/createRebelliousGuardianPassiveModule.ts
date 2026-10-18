@@ -39,7 +39,7 @@ export const createRebelliousGuardianPassiveModule = (params: number[]): Passive
         context.party,
         context.characterIdCombatantMap,
       );
-      castKitShield(context.kitEffectState, combatant.characterId, {
+      castKitShield(context, combatant.characterId, {
         health: shareOfMaxHealth * maxHealth,
         secondsRemaining: REBELLIOUS_GUARDIAN_SECONDS,
       });

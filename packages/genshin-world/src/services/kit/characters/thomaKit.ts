@@ -96,7 +96,8 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
         striker.ascension >= FLAMING_ASSAULT_ASCENSION
           ? FLAMING_ASSAULT_MAX_HEALTH_SHARE * striker.attributes.maxHealth
           : 0,
-      onStrike: ({ characterIdCombatantMap, kitEffectState, party }, { combatant }) => {
+      onStrike: (context, { combatant }) => {
+        const { characterIdCombatantMap, kitEffectState, party } = context;
         if (isShielded) return;
         isShielded = true;
         const { characterId } = combatant;
@@ -107,7 +108,7 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
               checkIsKitShieldLive(effect) && !effect.isCrystallize && effect.characterId === characterId,
           )?.health ?? 0;
         const maxHealth = maxShieldMaxHealthShare * combatantMaxHealth + maxShieldFlatHealth;
-        castKitShield(kitEffectState, characterId, {
+        castKitShield(context, characterId, {
           element: Element.Pyro,
           health: Math.min(
             standingHealth + fieryCollapseShieldMaxHealthShare * combatantMaxHealth + fieryCollapseShieldFlatHealth,
@@ -155,9 +156,10 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {
-      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
         const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-        castKitShield(kitEffectState, combatant.characterId, {
+        castKitShield(context, combatant.characterId, {
           element: Element.Pyro,
           health: blazingBlessingShieldMaxHealthShare * maxHealth + blazingBlessingShieldFlatHealth,
           secondsRemaining: blazingBlessingShieldSeconds,

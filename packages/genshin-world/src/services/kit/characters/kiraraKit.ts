@@ -89,9 +89,10 @@ export const createKiraraKitBehaviour = ({
   }));
   // The shield is a share of her Max HP and a flat amount, capped at its maximum's share and flat amount, as gcsim caps it
   const skillStart: KitActionBehaviour = {
-    onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+    onStart: (context) => {
+      const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
       const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-      castKitShield(kitEffectState, combatant.characterId, {
+      castKitShield(context, combatant.characterId, {
         element: Element.Dendro,
         health: Math.min(
           shieldMaxHealthShare * maxHealth + shieldFlatHealth,

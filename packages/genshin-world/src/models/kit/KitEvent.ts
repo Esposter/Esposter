@@ -19,6 +19,7 @@ import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttack
 import type { KitNormalAttackStartedEvent } from "#src/models/kit/KitNormalAttackStartedEvent";
 import type { KitReactionTriggeredEvent } from "#src/models/kit/KitReactionTriggeredEvent";
 import type { KitShieldAbsorbedEvent } from "#src/models/kit/KitShieldAbsorbedEvent";
+import type { KitShieldCastEvent } from "#src/models/kit/KitShieldCastEvent";
 import type { KitSkillUsedEvent } from "#src/models/kit/KitSkillUsedEvent";
 import type { KitStatusTickedEvent } from "#src/models/kit/KitStatusTickedEvent";
 import type { KitTauntDamagedEvent } from "#src/models/kit/KitTauntDamagedEvent";
@@ -48,6 +49,7 @@ export type KitEvent =
   | KitNormalAttackStartedEvent
   | KitReactionTriggeredEvent
   | KitShieldAbsorbedEvent
+  | KitShieldCastEvent
   | KitSkillUsedEvent
   | KitStatusTickedEvent
   | KitTauntDamagedEvent

@@ -260,11 +260,12 @@ export const createLaylaKitBehaviour = ({
       }
     },
     skill: {
-      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
         const curtainBonus =
           combatant.constellationCount >= CONSTELLATION_1 ? 1 + CONSTELLATION_1_SHIELD_ABSORPTION_BONUS : 1;
         const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-        castKitShield(kitEffectState, combatant.characterId, {
+        castKitShield(context, combatant.characterId, {
           element: Element.Cryo,
           health: (shieldFlatHealth + shieldMaxHealthShare * maxHealth) * curtainBonus,
           secondsRemaining: shieldSeconds,

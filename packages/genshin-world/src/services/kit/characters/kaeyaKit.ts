@@ -142,7 +142,7 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
       )
         return;
       const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-      castKitShield(kitEffectState, combatant.characterId, {
+      castKitShield(context, combatant.characterId, {
         element: Element.Cryo,
         health: CONSTELLATION_4_SHIELD_HEALTH_SHARE * maxHealth,
         secondsRemaining: CONSTELLATION_4_SHIELD_SECONDS,

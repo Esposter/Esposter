@@ -196,7 +196,8 @@ export const createNoelleKitBehaviour = ({
         ? COMBAT_MAID_CHARGED_ATTACK_DAMAGE_BONUS
         : 0,
     normalAttacks: kit.normalAttacks.map(({ hits }) => createCountedAttack(breastplateHealBehaviour, hits.length)),
-    onKitEvent: (event, { activeCombatant, characterIdCombatantMap, kitEffectState, party }, combatant) => {
+    onKitEvent: (event, context, combatant) => {
+      const { activeCombatant, characterIdCombatantMap, kitEffectState, party } = context;
       if (event.kind === KitEventKind.EnemyDefeated) {
         if (
           combatant.constellationCount >= MUST_BE_SPOTLESS_CONSTELLATION &&
@@ -219,7 +220,7 @@ export const createNoelleKitBehaviour = ({
         !startKitCooldown(kitEffectState, combatant.characterId, DEVOTION_COOLDOWN_STATUS_ID, DEVOTION_COOLDOWN_SECONDS)
       )
         return;
-      castKitShield(kitEffectState, combatant.characterId, {
+      castKitShield(context, combatant.characterId, {
         element: Element.Cryo,
         health:
           DEVOTION_DEFENSE_MULTIPLIER *
@@ -229,11 +230,12 @@ export const createNoelleKitBehaviour = ({
     },
     skill: {
       hits: [breastplateHealBehaviour],
-      onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+      onStart: (context) => {
+        const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
         // A skill restarts Ascension 4's count, as gcsim's skill does
         if (combatant.ascension >= ASCENSION_4) resetAscension4Count(kitEffectState, combatant.characterId);
         const defense = getKitDefense(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-        castKitShield(kitEffectState, combatant.characterId, {
+        castKitShield(context, combatant.characterId, {
           element: Element.Geo,
           // To Be Cleaned's explosion is priced by Noelle as she stood when she cast the shield, and lands on the character
           // On the field as the shield ends, whoever holds it then

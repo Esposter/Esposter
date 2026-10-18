@@ -120,7 +120,7 @@ describe(createGoldenMajestyPassiveModule, () => {
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
-    castKitShield(context.kitEffectState, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
+    castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(wielder, 1, deployedOnField, context.kitEffectState.effects),
@@ -135,7 +135,7 @@ describe(createGoldenMajestyPassiveModule, () => {
 
     const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID]) });
     goldenMajestyPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
-    castKitShield(context.kitEffectState, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
+    castKitShield(context, TRAVELER_CHARACTER_ID, { health: 1, secondsRemaining: 10 });
 
     expect(
       goldenMajestyPassiveModule.getPassiveBonuses?.(

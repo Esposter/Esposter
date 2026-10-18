@@ -218,7 +218,7 @@ An enemy's strike on a party member SHALL be priced against the member as the te
 
 ### Requirement: A shield
 
-A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.
+A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character. A shield cast SHALL be told to every deployed member's kit once it stands, its owner the character that cast it, a Crystallize shard's the character whose reaction left the shard.
 
 #### Scenario: Damage past what a shield can absorb reaches the character
 
@@ -251,6 +251,18 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 - **WHEN** the member's step picks it up
 - **THEN** the team holds the shard's Crystallize shield
 - **AND** every deployed member's kit is told that member picked up a shard of that element
+
+#### Scenario: A shield cast is told to every deployed member's kit once it stands
+
+- **GIVEN** two members are deployed
+- **WHEN** a kit casts a shield onto the team
+- **THEN** each member's kit is told the shield is cast, with the shield already among the team's effects
+
+#### Scenario: Tells the team's kits the shard's Crystallize shield is cast, owned by the character whose reaction left it
+
+- **GIVEN** a Crystallize shard another member's reaction left lies within reach of the member on the field
+- **WHEN** the member's step picks it up
+- **THEN** the team's kits are told its Crystallize shield is cast, owned by the member whose reaction left the shard
 
 ### Requirement: A kit's pick-up
 

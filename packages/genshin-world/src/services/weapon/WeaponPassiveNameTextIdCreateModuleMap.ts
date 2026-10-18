@@ -63,6 +63,7 @@ import { createParticleHealPassiveModule } from "#src/services/weapon/passives/c
 import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/createPhantomFlashPassiveModule";
 import { createPrecisePassiveModule } from "#src/services/weapon/passives/createPrecisePassiveModule";
 import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passives/createPressTheAdvantagePassiveModule";
+import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
 import { createReactionAttackPassiveModule } from "#src/services/weapon/passives/createReactionAttackPassiveModule";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
@@ -362,4 +363,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2056241443": createDeathlyPactPassiveModule,
   // Sunken Song of the Sands (Key of Khaj-Nisut)
   "1054220683": createSunkenSongOfTheSandsPassiveModule,
+  // Primordial Jade Regalia (Jadefall's Splendor)
+  "2612600955": createPrimordialJadeRegaliaPassiveModule,
 };

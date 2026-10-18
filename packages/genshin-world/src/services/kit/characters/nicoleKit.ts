@@ -380,7 +380,7 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
             (effect.source === SKILL_BUFF_SOURCE || effect.source === A1_SOURCE || effect.source === C2_SOURCE),
         );
         scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(SKILL_SNAPSHOT_FRAMES), (tick) => {
-          castKitShield(tick.kitEffectState, combatant.characterId, {
+          castKitShield(tick, combatant.characterId, {
             element: Element.Pyro,
             health: skillShieldAtk * combatant.attributes.attack + skillShieldFlat,
             secondsRemaining: SKILL_SECONDS,
