@@ -3,11 +3,17 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import {
+  createZibaiKitBehaviour,
+  PHASE_SHIFT_RADIANCE_STATUS_ID,
+  ZIBAI_CHARACTER_ID,
+} from "#src/services/kit/characters/zibaiKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
-import { createZibaiKitBehaviour, ZIBAI_CHARACTER_ID } from "#src/services/kit/characters/zibaiKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -58,5 +64,47 @@ describe(createZibaiKitBehaviour, () => {
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
     expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
     expect(stance?.secondsRemaining).toBeGreaterThan(0);
+  });
+
+  test("her Lunar Phase Shift gains 10 Radiance a second, and 5 for a normal attack's hit once every half second, up to 100", () => {
+    expect.hasAssertions();
+    const combatant = createZibaiCombatant();
+    const context = createKitTestContext(combatant);
+    const radiance = () =>
+      countKitResource(context.kitEffectState.effects, ZIBAI_CHARACTER_ID, PHASE_SHIFT_RADIANCE_STATUS_ID);
+    const normalAttackLanded = { action: takeOne(ZIBAI_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded };
+
+    ZIBAI_KIT.elementalSkill.onStart?.(context);
+    ZIBAI_KIT.onStep?.(context, combatant, 2);
+    expect(radiance()).toBe(20);
+    ZIBAI_KIT.onKitEvent?.(normalAttackLanded, context, combatant);
+    expect(radiance()).toBe(25);
+    ZIBAI_KIT.onKitEvent?.(normalAttackLanded, context, combatant);
+    expect(radiance()).toBe(25);
+    ZIBAI_KIT.onStep?.(context, combatant, 10);
+    expect(radiance()).toBe(100);
+  });
+
+  test("spirit steed's stride spends 70 radiance, and the fourth stride ends lunar phase shift", () => {
+    expect.hasAssertions();
+    const combatant = createZibaiCombatant();
+    const context = createKitTestContext(combatant);
+    const isShiftActive = () => findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID) !== undefined;
+    const playStride = () =>
+      findKitStance(context.kitEffectState.effects, ZIBAI_CHARACTER_ID)?.combatant.kit.elementalSkill.onStart?.(
+        context,
+      );
+
+    ZIBAI_KIT.elementalSkill.onStart?.(context);
+    ZIBAI_KIT.onStep?.(context, combatant, 8);
+    playStride();
+    expect(countKitResource(context.kitEffectState.effects, ZIBAI_CHARACTER_ID, PHASE_SHIFT_RADIANCE_STATUS_ID)).toBe(
+      10,
+    );
+    playStride();
+    playStride();
+    expect(isShiftActive()).toBe(true);
+    playStride();
+    expect(isShiftActive()).toBe(false);
   });
 });
