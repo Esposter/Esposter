@@ -82,18 +82,20 @@ export const buildFishingTables = (): GameDataBuild => {
     }
     regionPools[region] = [...(regionPools[region] ?? []), toFishingPool(row, stocks)];
   }
-  const poolFishIds = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
+  const poolIdFishIdsMap = new Map(poolRows.map((row) => [row.id, toFishingPoolFishIds(row, stocks)]));
   const fishRows = readExcelTable<ExcelFishRow>("FishExcelConfigData");
   const fish = fishRows.map((row) => toFish(row));
-  const groupTags = new Map(
+  const groupIdTagsMap = new Map(
     readExcelTable<ExcelFeatureTagGroupRow>("FeatureTagGroupExcelConfigData").map((group) => [
       group.groupID,
       new Set(group.tagIDs.filter((tag) => tag !== 0)),
     ]),
   );
-  const fishTags = new Map(fishRows.map((row) => [row.id, groupTags.get(row.monsterId) ?? new Set<number>()]));
+  const fishIdTagsMap = new Map(
+    fishRows.map((row) => [row.id, groupIdTagsMap.get(row.monsterId) ?? new Set<number>()]),
+  );
   const baits = readExcelTable<ExcelFishBaitRow>("FishBaitExcelConfigData").map((row) =>
-    toFishingBait(row, fishTags, poolFishIds),
+    toFishingBait(row, fishIdTagsMap, poolIdFishIdsMap),
   );
   const joinedFishCount = new Set(baits.flatMap((bait) => bait.fishIds)).size;
   const rods = readExcelTable<ExcelFishRodRow>("FishRodExcelConfigData").map((row) => toFishRod(row));

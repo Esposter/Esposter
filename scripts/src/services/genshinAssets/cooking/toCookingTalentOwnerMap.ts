@@ -3,11 +3,12 @@
 export const toCookingTalentOwnerMap = (
   characterTalentKits: { characterId: number; passives: { proudSkillGroupId: number }[] }[],
 ): Map<number, number> => {
-  const ownerMap = new Map<number, number>();
+  const proudSkillGroupIdCharacterIdMap = new Map<number, number>();
   for (const { characterId, passives } of characterTalentKits)
     for (const { proudSkillGroupId } of passives) {
-      const ownerId = ownerMap.get(proudSkillGroupId);
-      if (ownerId === undefined || characterId < ownerId) ownerMap.set(proudSkillGroupId, characterId);
+      const ownerId = proudSkillGroupIdCharacterIdMap.get(proudSkillGroupId);
+      if (ownerId === undefined || characterId < ownerId)
+        proudSkillGroupIdCharacterIdMap.set(proudSkillGroupId, characterId);
     }
-  return ownerMap;
+  return proudSkillGroupIdCharacterIdMap;
 };
