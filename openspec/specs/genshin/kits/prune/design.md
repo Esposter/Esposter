@@ -18,10 +18,10 @@ gcsim sources: Prune's attack, charge, skill and burst files, with the table dat
 
 ## Key files
 
-| File                                                             | Role                                                                            |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------ |
-| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now |
-| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits, each set to 0 |
+| File                                                             | Role                                                                                                                           |
+| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now                                                |
+| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: two entries, the poise of her skill's and burst's first hits, each 0; her hits and areas come from the record |
 
 ## Sources
 

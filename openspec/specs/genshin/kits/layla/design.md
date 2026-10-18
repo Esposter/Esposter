@@ -8,9 +8,9 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                     |
-| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/laylaKit.ts` | `createLaylaKitBehaviour`, Layla's kit with her strikes, charged attack and plunges, Nights of Formal Focus's hit and shield, and Starlight Slug's field and its strikes |
+| File                                                             | Role                                                                                                                                                                                           |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/laylaKit.ts` | `createLaylaKitBehaviour`, Layla's kit with her strikes, charged attack, Nights of Formal Focus's hit and shield, and Starlight Slug's field and its strikes; her plunges come from the record |
 
 ## Sources
 
