@@ -14,7 +14,7 @@ const findSourceCandidate = (candidates: readonly KitCandidate[], source: KitSou
 // The overlay entry a module's value needs for one path, none where the path's default already is it. A value gcsim's
 // Current branch gives and its tag does not was read past the licence line, unless the tag predates the character,
 // When it is unclassified. Otherwise a value another source gives is that source chosen, a value every source
-// Disagrees with differs from them, and a value no source gives is unclassified. A value the module lacks is removed
+// Disagrees with differs from them, and a value no source gives is unclassified.
 export const classifyKitValue = (
   value: unknown,
   candidates: readonly KitCandidate[],
@@ -24,8 +24,7 @@ export const classifyKitValue = (
 ): KitOverlayEntry | undefined => {
   const isEqual = (candidateValue: unknown) => checkIsKitValueResolvedEqual(candidateValue, value, talentMultiplierMap);
   if (candidates.length > 0 && isEqual(candidates[0]?.value)) return undefined;
-  const withValue = (cause: KitProvisionalCause): KitOverlayEntry =>
-    value === undefined ? { cause } : { cause, value };
+  const withValue = (cause: KitProvisionalCause): KitOverlayEntry => ({ cause, value });
   const tagCandidate = findSourceCandidate(candidates, KitSource.Gcsim);
   const mainCandidate = findSourceCandidate(mainCandidates, KitSource.Gcsim);
   if (

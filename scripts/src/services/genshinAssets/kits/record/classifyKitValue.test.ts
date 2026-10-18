@@ -50,7 +50,6 @@ describe(classifyKitValue, () => {
       { cause: KitProvisionalCause.DiffersFromSource, value: 20 },
     ],
     ["only a rule disagrees", 20, [rule], [], false, { cause: KitProvisionalCause.Unclassified, value: 20 }],
-    ["the module lacks it", undefined, [createGcsim(12)], [], false, { cause: KitProvisionalCause.DiffersFromSource }],
   ])("classifies a value when %s", (_case, value, candidates, mainCandidates, isTagPredated, expected) => {
     expect.hasAssertions();
 
