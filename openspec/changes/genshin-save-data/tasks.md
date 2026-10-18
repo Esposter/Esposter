@@ -17,4 +17,4 @@
 
 ## 4. Session sync
 
-- [ ] 4.1 Hand the session's copy counts from the saved counts and write the roster and copy counts on sync. Verify: a test named after the scenario 'A held character survives a reload' run through the session's sync.
+- [x] 4.1 Hand the session's copy counts from the saved counts and write the roster and copy counts on sync. Verify: a test named after the scenario 'A held character survives a reload' run through the session's sync.
