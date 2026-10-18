@@ -22,7 +22,7 @@ Touching an outcrop fights it, and its blossom pays its reward by the reader's W
 
 ## Waiting on
 
-- Original Resin, whose claim the blossoms spawn: `openspec/changes/genshin-original-resin/`.
+- Original Resin, whose claim the blossoms spawn: `openspec/specs/genshin/original-resin/`.
 - Adventure Rank, which opens the outcrops and sets their level: `openspec/changes/genshin-adventure-rank/`.
 - The character kits, which fight the outcrops' enemies: `openspec/changes/genshin-character-kits/`.
 - The regions the dump does not yet cover: Fontaine, Natlan, Snezhnaya, and Nod-Krai, whose refresh rows the dump does not name.

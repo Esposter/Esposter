@@ -1,6 +1,6 @@
 # Ley line outcrops
 
-Ley line outcrops are the open world's resin challenges: a column of light at a known place, enemies when touched, and a blossom that gives Character EXP materials or Mora when claimed. They wait on [Original Resin](../genshin-original-resin/design.md), whose claim they spawn, on the [Adventure Rank](../genshin-adventure-rank/design.md) that opens them and sets their level, and on the [character kits](../genshin-character-kits/design.md) that fight them.
+Ley line outcrops are the open world's resin challenges: a column of light at a known place, enemies when touched, and a blossom that gives Character EXP materials or Mora when claimed. They wait on [Original Resin](../../specs/genshin/original-resin/design.md), whose claim they spawn, on the [Adventure Rank](../genshin-adventure-rank/design.md) that opens them and sets their level, and on the [character kits](../genshin-character-kits/design.md) that fight them.
 
 The [ley line outcrops](../../specs/genshin/ley-line-outcrops/design.md) page holds the rules. This proposal keeps what is unbuilt: the touch, the fight, the reveal, the claim and its rewards.
 

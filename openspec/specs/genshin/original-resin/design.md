@@ -1,8 +1,8 @@
 # Original Resin
 
-The game keeps its energy for claiming challenge rewards as Original Resin. The wallet holds it as a count and the moment it last changed, so its regeneration is read to the present rather than run on a timer, and the page can be closed for a day and still show the resin filled. The map's top bar counts it. The claim's price, its Adventure EXP and the Primogem refill are pure services in `genshin-world`, read off the rules the [proposal](../../../changes/genshin-original-resin/design.md) settles.
+The game keeps its energy for claiming challenge rewards as Original Resin. The wallet holds it as a count and the moment it last changed, so its regeneration is read to the present rather than run on a timer, and the page can be closed for a day and still show the resin filled. The map's top bar counts it. The claim's price, its Adventure EXP and the Primogem refill are pure services in `genshin-world`, read off the rules the [proposal](../../../changes/archive/2026-10-18-genshin-original-resin/design.md) settled.
 
-The claim's ways to pay are pure services too: a blossom's offers, and a Condensed Resin spent for three rewards at a ley line or a domain. No challenge leaves a blossom to claim yet, so no offer is shown and the claims' rewards are the proposal's still.
+Pressing F at a cleared challenge's blossom offers its claims, the ones the held resin affords, and choosing one spends its resin and grants its rewards into the bag and the wallet. The challenges that leave a blossom are the [ley line outcrops](../ley-line-outcrops/design.md), the [domains](../domains/design.md)' Petrified Tree and the [bosses](../bosses/design.md)' Trounce Blossom, each calling the one claim service with its own cost and reward list.
 
 ## How it works
 
@@ -25,20 +25,18 @@ flowchart TD
 - **A claim's offers.** `computeBlossomClaimOffers` lists how a blossom's claim is paid: one claim at its price; at a ley line or a domain also two claims at twice the price, and a Condensed Resin for three claims. A boss offers its one claim only.
 - **Condensed Resin's claim.** `claimResinReward` takes its cost's Condensed Resin out of the bag, one for a ley line's or a domain's three claims. `computeBlossomClaimOffers` offers that cost only at a ley line or a domain, so a boss is refused it. It spends no Original Resin, so it gives no Adventure EXP.
 - **Five Adventure EXP a point.** `claimOriginalResin` spends the resin, then gives five Adventure EXP a point through `gainAdventureExp`, so the EXP past rank 60 is paid into the wallet as Mora. A claim the resin does not cover returns undefined and spends nothing.
+- **The claim's offer on F.** `useWorldOutcrops` opens the prompt at a cleared outcrop's blossom from `computeBlossomClaimPrompt`, which lists the offers the holdings pay. A blossom whose offers the holdings cannot pay, and that no Fragile Resin can restore, opens no prompt. A challenge cleared but not claimed gives nothing.
+- **A short Original Resin restores first.** Where the Original Resin covers no resin claim and the bag holds a Fragile Resin, the prompt's restore row spends one for sixty Original Resin through `refillOriginalResinWithFragileResin`, then offers the claims again from the restored holdings. The row reads the game's own "Can use Fragile Resin to restore" (`GameTextKey.FragileResinRestore`). Its place among the rows is provisional until a recording measures it.
 - **Settled calls.** A new player holds the full 200. The resin's rarity is 3, the game's material table's `rankLevel`. Its name is the game's own text, `GameTextKey.OriginalResin`. Both the starting amount and the 04:00 reset are settled from the game's own design rather than checked against the wiki.
 
 ## Data
 
 - **The item's row.** Original Resin is item 106 in the game's material table, with the rarity above. Its name's text id is the one `GameTextKey.OriginalResin` holds.
-- **The other resins' rows.** Fragile Resin is item 107009, whose use adds 60 of item 106, the restore the refill uses. Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built. Neither is read by a page yet.
+- **The other resins' rows.** Fragile Resin is item 107009 in the published material table (`items/materials`), whose use adds 60 of item 106, the restore the refill uses, and whose use the bag reaches through `useInventoryEntry`. Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built.
 
 ## Not built yet
 
-- **The blossoms.** No challenge leaves a blossom, so no F prompt offers a claim. The prices are ready for the [ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md), [domains](../../../changes/genshin-domains/design.md) and [bosses](../../../changes/genshin-bosses/design.md) to call.
-- **The claims' rewards.** Not read yet: a ley line blossom's are its refresh row's reward previews, one a World Level ([ley line outcrops](../../../changes/genshin-ley-line-outcrops/design.md)), and a normal boss's the wiki's world boss rewards ([bosses](../../../changes/genshin-bosses/design.md)).
-- **Fragile Resin's refill.** `refillOriginalResinWithFragileResin` restores the sixty it gives and takes one from the bag, and the bag's Use reaches it through `useInventoryEntry`, routed by the item's id. The published material table (`items/materials`) carries item 107009 once `genshin:assets items` publishes the consumable source the builder now reads, so a bag holds one only after that publish; the refill's test holds it in the meantime.
-- **Condensed Resin's claim is not wired.** Its spend is ready, but no offer is shown until a blossom is placed. Its crafting from 60 is the [crafting](../crafting/design.md) bench's.
-- **The dialogs.** The refill and claim dialogs, and the top bar's plus for refilling, are unbuilt. The top bar shows the count only.
+- **The top bar's refill.** The plus on the top bar that opens a refill is unbuilt. The top bar shows the count only.
 
 The top bar's place and type are provisional until a recording measures them. The line is on the [roadmap](../../../changes/genshin-roadmap/tasks.md)'s References sought list.
 
@@ -53,6 +51,9 @@ The top bar's place and type are provisional until a recording measures them. Th
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts`    | A refill for the day's next price, the day's count restarting at the game's day                |
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithFragileResin.ts` | A Fragile Resin used from the bag: sixty restored, one taken out, undefined where none is held |
 | `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts`            | A claim's price by its blossom kind and the weekly boss's claims that week                     |
+| `packages/genshin-world/src/services/originalResin/computeBlossomClaimPrompt.ts`           | The F prompt's offers from the holdings, and whether a Fragile Resin restores                  |
+| `packages/genshin-world/src/composables/useWorldOutcrops.ts`                               | The prompt at a cleared outcrop's blossom: opened, restored and chosen                         |
+| `packages/genshin-world/src/components/Interaction/OfferChoice/Index.vue`                  | The claim's rows on F: one per offer, the restore row and the row that leaves it               |
 | `packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`                  | A claim: the resin spent, the Adventure EXP gained and the Mora past rank 60                   |
 | `packages/genshin-world/src/services/originalResin/claimResinReward.ts`                    | The one resin claim: a cost paid in Original or Condensed Resin, the reward list taken in      |
 | `packages/genshin-world/src/services/reward/drawRewardItems.ts`                            | A reward's items drawn to a count in their range, shared by commissions and expeditions        |
