@@ -34,7 +34,7 @@ describe(getFinishedReputationRewards, () => {
     expect(getFinishedReputationRewards(quest, progress, nextProgress, BINDINGS)).toStrictEqual([REWARD]);
   });
 
-  test("a group delivery request pays on completion, whichever of its items is collected", () => {
+  test("a group delivery request pays on completion", () => {
     expect.hasAssertions();
 
     const quest: Quest = {
