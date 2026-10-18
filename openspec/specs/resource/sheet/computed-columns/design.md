@@ -1,32 +1,33 @@
 # Computed Columns
 
-Computed columns derive their values from other columns instead of storing data — a `ComputedColumn` carries a `transformation` describing how to compute each cell from its source column(s), evaluated lazily at read time.
+Computed columns derive their values from other columns instead of storing data — a `ComputedColumn` carries a `transformation` describing how to compute each cell from its source column(s), and the sheet compiles those transformations once per column list and binds them once per row list, so a read is a lookup.
 
 ## How it works
 
 A `ComputedColumn` is an ordinary column (`ColumnType.Computed`) whose `transformation` field is a discriminated union keyed by `ColumnTransformationType`: `Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`, `StringPattern`, or `StringSplit`. Values are never written to `row.data` — computed columns are read-only. Every cell write of a row already in the sheet goes through `writeCellValue`, which drops a write to a computed column; a new row — an empty one, or one made from a pasted line (`createPastedRowData`) — carries no key for one; and `alignRowDataToColumns`, which rebuilds rows after a column is moved, renamed or retyped, keeps only stored columns' keys, so a column turned computed loses its values and one turned stored starts empty. The cell-scoped commands walk cells through `collectAffectedCells`, which skips a computed column whatever it is handed; `NullStrategy.DropRow` works on whole rows through `getNullAffectedRows` instead, which leaves computed columns out on its own, so a null an older row still carries under one never drops that row.
 
-All reads go through one resolver, `computeValue(rows, row, columns, column, rowIndex?, transformationReaderMap?, visited?)`. For a non-computed column it simply returns `row.data[column.name]`. For a computed column it dispatches to `ColumnTransformationComputeMap[transformation.type]`, handing the computer a context with:
+Every read goes through one pipeline, `compileSheetColumns(columns)(rows)(row, column, rowIndex?)`, in three steps:
 
-- `computeSource(sourceColumnId)` — resolves a source column's value by calling `computeValue` recursively, so a computed column can source another computed column (chaining). A `visited` set holds the columns on the current path and guards against cycles: revisiting one of them short-circuits to `null`, while a column two sources both read is computed once per source.
-- `findSource(sourceColumnId)` — looks up the source `Column` definition (used when the computer needs column metadata, e.g. a date column's format).
-- `rows` and `rowIndex` — the full filtered dataset and the current row's position, consumed only by aggregation transformations.
-- `transformationReaderMap` — optional, and passed only by a caller walking rows nothing can edit mid-walk: export and range copy, statistics, the outlier sweep, and the server's dataset read (`dataSourceToDataset`). An aggregation walks its source column once into a per-row reader and keeps it there, so a pass over every row costs one walk per aggregation rather than one per cell. The grid's own cell reads pass none, since nothing would invalidate it ([computed-value cache](../../../../deferred/resource/sheet/computed-value-cache/design.md)).
+- **Compile** — once per column list. Each computed column's transformation is turned into a binder by `ColumnTransformationCompileMap[transformation.type]`: a mathjs expression is parsed once, a regex is built once, and a DatePart checks once that its source is a `Date` column. The source ids of every computed column are gathered (`ColumnTransformationSourceIdsMap`), and a Tarjan strongly-connected-components pass (`getCyclicColumnIds`) finds every column on a cycle up front.
+- **Bind** — once per row list, by the caller's `rows`. A column's reader is built from its binder: a binder reads its sources through `readSource`, which resolves each source's reader the same way, so a source two columns share is bound once. An aggregation builds its whole-column result (the total, the descending ranks, the running sums) at this point. A cyclic column binds to a reader that answers `null`, so a cycle never recurses.
+- **Read** — per cell. A stored column's reader is `row.data[column.name]`; a computed column's reader looks up what its binding already built. An aggregation answers by `rowIndex`, so a read with no row index answers `null`.
 
-The read sites are: the row store's table headers (each header's `value` function calls `computeValue`, so `UiDataTable`'s sorting and search operate on computed values), the cell renderer (`ResourceSheetRowField`), export and range copy (`filterDataSourceColumns` materializes computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](../copy-computed-values/design.md)), and statistics (`computeColumnStatisticsForColumn`, plus the outlier store reading the same values back per cell).
+Each caller binds the rows it reads from, and nothing is cached across row lists: a binding lives as long as the caller that made it.
+
+The read sites are: the row store's cell reads (`getCellValue`, which the table's sorting, global search and cell renderer all go through, so `UiDataTable` operates on computed values — the binding is held in a `computed`, so Vue tracks the source cells an aggregation read at bind time), export and range copy (`filterDataSourceColumns` binds every row once and materializes the computed values into plain row data before the serializers or the clipboard run, so exported CSV/JSON and a copied range include them — [copy computed values](../copy-computed-values/design.md)), and statistics (`computeColumnStatisticsForColumn` takes the column's values, which the caller reads once from one binding, plus the outlier store reading the same binding per cell).
 
 ```mermaid
 flowchart TD
-  headers["Row store table headers<br/>(sort / global search)"] -->|value fn| CV[computeValue]
-  cell["Row/Field/Index.vue<br/>(cell render)"] --> CV
-  export["ExportDialog → filterDataSourceColumns<br/>(materialize before serialize)"] --> CV
-  stats["computeColumnStatisticsForColumn<br/>(stats · charts · outliers)"] --> CV
-  CV -->|"type ≠ Computed"| raw["row.data[column.name]"]
-  CV -->|"already visited (cycle)"| cyc["null"]
-  CV -->|"type = Computed"| map["ColumnTransformationComputeMap[transformation.type]"]
-  map -->|"computeSource(sourceColumnId)<br/>recurse for chained computed sources"| CV
-  map -->|"Aggregation"| agg["computeAggregationValue<br/>→ AggregationTransformationComputeMap"]
-  map --> computer["the type's own computer<br/>one per transformation type"]
+  headers["Row store cell reads<br/>(table sort · global search · cell render)"] --> compile
+  export["ExportDialog → filterDataSourceColumns"] --> compile
+  stats["useColumnStatistics · Table.vue · outlier store"] --> compile
+  compile["compileSheetColumns(columns)"] -->|"once per column list"| CM["ColumnTransformationCompileMap<br/>+ getCyclicColumnIds"]
+  compile -->|"(rows): bind, once per row list"| bind["a column's reader"]
+  bind -->|"stored column"| raw["row.data[column.name]"]
+  bind -->|"cyclic column"| cyc["null"]
+  bind -->|"computed column"| CM
+  CM -->|"readSource(sourceColumnId)<br/>bound once, shared"| bind
+  CM -->|"Aggregation"| agg["AggregationTransformationComputeMap<br/>builds the whole-column result at bind"]
 ```
 
 Computed columns are created and edited through the same [schema form](../../../architecture/schema-forms/design.md) column dialog as every other column type — `computedColumnFormSchema` renders the transformation as a form, with per-transformation Zod validation surfacing errors before save.
@@ -44,7 +45,7 @@ A [mathjs](https://mathjs.org) expression string with column values bound as var
 - `expression` — e.g. `col0 * (1 - col1)`; supports the full mathjs operator set (`+ - * / ^ %`, comparisons) and built-in functions (`abs`, `round`, `sqrt`, …).
 - `variables` — an ordered list of `{ name, sourceColumnId }` bindings. Names are auto-generated `col0`, `col1`, … — valid mathjs identifiers that never collide with built-ins; users insert them via the form rather than typing them.
 
-Evaluation coerces `null` source values to `0` and returns `null` for non-finite results (`NaN`, `Infinity`). The schema validates the expression at edit time by running mathjs `parse` inside a `superRefine`, so the exact parser message (e.g. "Unexpected end of expression") surfaces as the form error.
+The expression is compiled once (mathjs `compile`) and evaluated per row (`evaluate` with the row's variable scope). Evaluation coerces `null` source values to `0` and returns `null` for non-finite results (`NaN`, `Infinity`). The schema validates the expression at edit time by running mathjs `parse` inside a `superRefine`, so the exact parser message (e.g. "Unexpected end of expression") surfaces as the form error.
 
 ### String operations
 
@@ -61,11 +62,11 @@ Three string-producing variants:
 
 ### RegexMatch
 
-Extracts a capture group from a string source: `pattern` plus `groupIndex` (e.g. `@(.+)` with group 1 pulls the domain out of an email column).
+Extracts a capture group from a string source: `pattern` plus `groupIndex` (e.g. `@(.+)` with group 1 pulls the domain out of an email column). The pattern is built once; a non-string value reads `null`.
 
 ### Aggregation
 
-Dataset-level aggregates — the only category that consumes the whole row set (`rows` + `rowIndex` from the compute context). `computeAggregationValue` resolves the numeric values of the source column across all filtered rows, then dispatches on `AggregationTransformationType` to a computer that does its whole-column work once (the total, the descending ranks, the running sums) and returns the reader that answers each row:
+Dataset-level aggregates — the only category that consumes the whole row set. `compileAggregationTransformation` reads the numeric values of the source column across every row at bind time, then `AggregationTransformationComputeMap` does the type's whole-column work once (the total, the descending ranks, the running sums) and returns the reader that answers each row by its `rowIndex`. An aggregation with no source column in the sheet binds to a reader that answers `null`.
 
 | Type               | Result per row                                          |
 | ------------------ | ------------------------------------------------------- |
@@ -83,27 +84,29 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 Paths relative to `apps/web`.
 
-| File                                                                                          | Role                                                            |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                       |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants              |
-| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                               |
-| `shared/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
-| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the resolved values                  |
-| `shared/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
-| `shared/services/resource/sheet/column/transformation/computeAggregationValue.ts`             | Aggregation entry point (source resolution + numeric filtering) |
-| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
-| `shared/services/resource/sheet/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
-| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |
-| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                  |
-| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                         |
-| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                         |
+| File                                                                                          | Role                                                                 |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                       | Column class + Zod schema                                            |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`                  | Discriminated union of all transformation variants                   |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`              | Discriminant enum                                                    |
+| `shared/services/resource/sheet/column/compileSheetColumns.ts`                                | Compile once per column list, bind per row list, read per cell       |
+| `shared/services/resource/sheet/column/getCyclicColumnIds.ts`                                 | Tarjan strongly-connected components over source ids: the cycle set  |
+| `app/services/resource/sheet/column/computeColumnStatisticsForColumn.ts`                      | Per-column statistics over the column's read values                  |
+| `shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap.ts`      | Dispatch map: transformation type → compiler                         |
+| `shared/services/resource/sheet/column/transformation/compileAggregationTransformation.ts`    | Aggregation compiler (source resolution + numeric filtering at bind) |
+| `shared/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type whole-column computers                          |
+| `shared/services/resource/sheet/column/transformation/compileMathTransformation.ts`           | mathjs `compile` once, `evaluate` per row with variable scope        |
+| `shared/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                            |
+| `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                       |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                              |
+| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                              |
 
 ## Datasets
 
-A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed columns like any other, so a Dashboard can bind and chart them. The compute lives in `shared/`, so the server runs the same `computeValue` the grid does: `dataSourceToDataset` types each computed column by `getEffectiveColumnType` and values it over every row of the Sheet, then serves the first rows up to the dataset cap. An aggregation therefore reads the whole Sheet, where the grid reads the rows its filters leave.
+A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed columns like any other, so a Dashboard can bind and chart them. The compile lives in `shared/`, so the server runs the same `compileSheetColumns` the grid does: `dataSourceToDataset` types each computed column by `getEffectiveColumnType`, binds every row of the Sheet once, then reads and serves the first rows up to the dataset cap. An aggregation therefore reads the whole Sheet, where the grid reads the rows its filters leave.
 
 ## Notes
 
-- Values are recomputed on every read — there is no cache. Row data are plain objects with no dirty-tracking, so a cache would need an invalidation story spanning every mutation path ([computed-value cache](../../../../deferred/resource/sheet/computed-value-cache/design.md)).
-- Cycle handling is deliberately inline (the `visited` set) rather than a separate pre-validation pass; a cycle renders as empty cells instead of an error.
+- Nothing is cached across row lists. Each caller binds the rows it reads, so a binding is rebuilt when the caller binds again with new rows, and recomputing is cheap next to the walks a cache would need to invalidate ([computed-value cache](../../../../deferred/resource/sheet/computed-value-cache/design.md)).
+- Cycles are found up front by the Tarjan pass over source ids, not guarded on each read. Every column on a cycle, and every column that reads one, reads empty instead of an error.
+- The rejected direction was a per-read guard: a `visited` set that short-circuited a revisited column to `null` on each read. It let a cycle show a number instead of empty — `a = b + 1` and `b = a + 1` each read as 2 — and an aggregation re-walked every row for each cell it was read from, so a grid pass over `n` rows cost `n` walks. Binding once per row list removes both, and the cycle set is decided before any read.

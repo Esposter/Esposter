@@ -21,7 +21,7 @@ Sorting is then pulled back off that text by a `compare` per column, which the d
 
 ```mermaid
 flowchart TD
-  V[computeValue per cell] --> G[getCellText]
+  V[compiled cell read per cell] --> G[getCellText]
   V --> S[compare compareColumnValues]
   G --> R[Cell renderer]
   G --> F[Data table getValue]
@@ -29,7 +29,7 @@ flowchart TD
   S --> O[Column sort]
 ```
 
-Both branches start at `computeValue`, which matters for computed columns: a computed column writes nothing into `row.data`, so a display path that read the row would render every one of its cells blank. Resolving the value first and formatting second means a computed column renders, searches and sorts like any other — it simply has no format to apply.
+Both branches start at the compiled cell read (`compileSheetColumns`), which matters for computed columns: a computed column writes nothing into `row.data`, so a display path that read the row would render every one of its cells blank. Resolving the value first and formatting second means a computed column renders, searches and sorts like any other — it simply has no format to apply.
 
 ## Key files
 
