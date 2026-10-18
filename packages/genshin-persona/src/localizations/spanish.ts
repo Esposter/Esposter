@@ -537,6 +537,18 @@ const spanish: Localization = {
     upcomingBirthdays: (list) => `Cumpleaños de esta semana: ${list}.`,
     usage: (verbs) => `Uso: genshin.mjs <${verbs}> [nombre]`,
     usingInSession: "Hablando como este personaje desde esta respuesta, solo en esta sesión.",
+    viewerAddressInvalid: (address) => `${address} no es una dirección WebSocket, como ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "El modelo debe ser un número entero desde 0.",
+    viewerMomentInvalid: (moments) => `El momento debe ser uno de: ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} ya no reproduce ningún movimiento en el visor.`,
+    viewerMotionSet: (moment, motion) => `${moment} reproduce ${motion} en el visor.`,
+    viewerNone: "No hay ningún visor configurado; las respuestas se leen en el reproductor del sistema.",
+    viewerNotAnswering: (address) => `Ningún visor respondió en ${address}; no se configuró nada.`,
+    viewerProof:
+      "El visor está listo; las líneas habladas de una respuesta se muestran en el modelo desde la próxima sesión.",
+    viewerSet: (address) =>
+      `El visor en ${address} muestra las líneas habladas; ha aparecido un globo en el modelo como prueba.`,
+    viewerStatus: (address, modelId) => `Visor en ${address}, modelo ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Existe un doblaje ${dub}; instálalo con el comando voice para oír las respuestas en él.`,
     voiceLanguageMustBeOneOf: (dubs) => `El doblaje debe ser uno de: ${dubs}.`,

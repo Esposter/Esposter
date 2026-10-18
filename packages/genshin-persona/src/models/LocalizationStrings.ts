@@ -31,6 +31,16 @@ export interface LocalizationStrings {
   upcomingBirthdays: (list: string) => string;
   usage: (verbs: string) => string;
   usingInSession: string;
+  viewerAddressInvalid: (address: string) => string;
+  viewerModelInvalid: string;
+  viewerMomentInvalid: (moments: string) => string;
+  viewerMotionCleared: (moment: string) => string;
+  viewerMotionSet: (moment: string, motion: string) => string;
+  viewerNone: string;
+  viewerNotAnswering: (address: string) => string;
+  viewerProof: string;
+  viewerSet: (address: string) => string;
+  viewerStatus: (address: string, modelId: number) => string;
   voiceLanguageAvailable: (dub: string) => string;
   voiceLanguageMustBeOneOf: (dubs: string) => string;
   voiceLanguageUnavailable: string;

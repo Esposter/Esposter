@@ -509,6 +509,18 @@ const german: Localization = {
     upcomingBirthdays: (list) => `Geburtstage diese Woche: ${list}.`,
     usage: (verbs) => `Verwendung: genshin.mjs <${verbs}> [Name]`,
     usingInSession: "Spricht ab dieser Antwort als dieser Charakter, nur in dieser Sitzung.",
+    viewerAddressInvalid: (address) => `${address} ist keine WebSocket-Adresse, etwa ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Das Modell muss eine ganze Zahl ab 0 sein.",
+    viewerMomentInvalid: (moments) => `Der Moment muss einer von ${moments} sein.`,
+    viewerMotionCleared: (moment) => `${moment} spielt auf dem Viewer keine Bewegung mehr.`,
+    viewerMotionSet: (moment, motion) => `${moment} spielt ${motion} auf dem Viewer.`,
+    viewerNone: "Kein Viewer eingerichtet; Antworten werden über den Standardplayer vorgelesen.",
+    viewerNotAnswering: (address) => `Unter ${address} hat kein Viewer geantwortet; nichts wurde eingerichtet.`,
+    viewerProof:
+      "Der Viewer ist eingerichtet; ab der nächsten Sitzung werden die gesprochenen Zeilen einer Antwort am Modell angezeigt.",
+    viewerSet: (address) =>
+      `Der Viewer unter ${address} zeigt die gesprochenen Zeilen der Antworten; zum Nachweis ist eine Sprechblase am Modell erschienen.`,
+    viewerStatus: (address, modelId) => `Viewer unter ${address}, Modell ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Eine ${dub}-Synchronisation gibt es; installiere sie mit dem voice-Befehl, um Antworten darin zu hören.`,
     voiceLanguageMustBeOneOf: (dubs) => `Die Synchronisation muss eine von diesen sein: ${dubs}.`,

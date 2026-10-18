@@ -534,6 +534,18 @@ const portuguese: Localization = {
     upcomingBirthdays: (list) => `Aniversários desta semana: ${list}.`,
     usage: (verbs) => `Uso: genshin.mjs <${verbs}> [nome]`,
     usingInSession: "Falando como este personagem a partir desta resposta, só nesta sessão.",
+    viewerAddressInvalid: (address) => `${address} não é um endereço WebSocket, como ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "O modelo deve ser um número inteiro a partir de 0.",
+    viewerMomentInvalid: (moments) => `O momento deve ser um de: ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} não toca mais movimento no visualizador.`,
+    viewerMotionSet: (moment, motion) => `${moment} toca ${motion} no visualizador.`,
+    viewerNone: "Nenhum visualizador definido; as respostas são lidas pelo player padrão.",
+    viewerNotAnswering: (address) => `Nenhum visualizador respondeu em ${address}; nada foi definido.`,
+    viewerProof:
+      "O visualizador está configurado; as falas de uma resposta aparecem no modelo a partir da próxima sessão.",
+    viewerSet: (address) =>
+      `O visualizador em ${address} mostra as falas das respostas; um balão apareceu no modelo como prova.`,
+    viewerStatus: (address, modelId) => `Visualizador em ${address}, modelo ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Existe uma dublagem ${dub}; instale-a com o comando voice para ouvir as respostas nela.`,
     voiceLanguageMustBeOneOf: (dubs) => `A dublagem deve ser uma destas: ${dubs}.`,

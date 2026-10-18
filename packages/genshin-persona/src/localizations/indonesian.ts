@@ -514,6 +514,17 @@ const indonesian: Localization = {
     upcomingBirthdays: (list) => `Ulang tahun minggu ini: ${list}.`,
     usage: (verbs) => `Penggunaan: genshin.mjs <${verbs}> [nama]`,
     usingInSession: "Berbicara sebagai karakter ini mulai balasan ini, hanya di sesi ini.",
+    viewerAddressInvalid: (address) => `${address} bukan alamat WebSocket, misalnya ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Model harus berupa bilangan bulat mulai dari 0.",
+    viewerMomentInvalid: (moments) => `Momen harus salah satu dari ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} tidak lagi memutar gerakan di viewer.`,
+    viewerMotionSet: (moment, motion) => `${moment} memutar ${motion} di viewer.`,
+    viewerNone: "Belum ada viewer yang diatur; balasan dibacakan lewat pemutar bawaan.",
+    viewerNotAnswering: (address) => `Tidak ada viewer yang menjawab di ${address}; tidak ada yang diatur.`,
+    viewerProof: "Viewer sudah diatur, dan baris ucapan balasan ditampilkan di model mulai sesi berikutnya.",
+    viewerSet: (address) =>
+      `Viewer di ${address} menampilkan baris ucapan balasan; gelembung telah muncul di model sebagai bukti.`,
+    viewerStatus: (address, modelId) => `Viewer di ${address}, model ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Dub ${dub} tersedia; pasang lewat perintah voice untuk mendengar balasan dibacakan dengannya.`,
     voiceLanguageMustBeOneOf: (dubs) => `Dub harus salah satu dari: ${dubs}.`,

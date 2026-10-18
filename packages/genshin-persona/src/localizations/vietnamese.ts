@@ -544,6 +544,17 @@ const vietnamese: Localization = {
     upcomingBirthdays: (list) => `Sinh nhật tuần này: ${list}.`,
     usage: (verbs) => `Cách dùng: genshin.mjs <${verbs}> [tên]`,
     usingInSession: "Nói với vai nhân vật này từ phản hồi này, chỉ trong phiên này.",
+    viewerAddressInvalid: (address) => `${address} không phải địa chỉ WebSocket, ví dụ ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Mô hình phải là số nguyên từ 0 trở lên.",
+    viewerMomentInvalid: (moments) => `Thời điểm phải là một trong: ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} không còn phát chuyển động trên trình xem.`,
+    viewerMotionSet: (moment, motion) => `${moment} phát ${motion} trên trình xem.`,
+    viewerNone: "Chưa đặt trình xem; câu trả lời được đọc bằng trình phát mặc định.",
+    viewerNotAnswering: (address) => `Không có trình xem nào phản hồi tại ${address}; chưa đặt gì cả.`,
+    viewerProof: "Trình xem đã được thiết lập; lời thoại của câu trả lời sẽ hiện trên mô hình từ phiên sau.",
+    viewerSet: (address) =>
+      `Trình xem tại ${address} hiển thị lời thoại của câu trả lời; một bong bóng đã hiện trên mô hình để xác nhận.`,
+    viewerStatus: (address, modelId) => `Trình xem tại ${address}, mô hình ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Có bản lồng tiếng ${dub}; cài bằng lệnh voice để nghe phản hồi được đọc bằng giọng đó.`,
     voiceLanguageMustBeOneOf: (dubs) => `Bản lồng tiếng phải là một trong: ${dubs}.`,

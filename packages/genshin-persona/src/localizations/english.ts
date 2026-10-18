@@ -56,11 +56,22 @@ const english: ResolvedLocalization = {
         `Replies ${isMuted ? "muted" : `unmuted at volume ${volume}`}.`,
       ].join("\n"),
     teardownDone:
-      "The voice's runtime, weights, references and dub are removed; the pick records, the pin and the languages stay.",
+      "The voice's runtime, weights, references and dub, and the viewer, are removed; the pick records, the pin and the languages stay.",
     unmuted: "Spoken replies unmuted.",
     upcomingBirthdays: (list) => `Birthdays this week: ${list}.`,
     usage: (verbs) => `Usage: genshin.mjs <${verbs}> [name]`,
     usingInSession: "Speaking as this character from this reply, in this session alone.",
+    viewerAddressInvalid: (address) => `${address} is not a WebSocket address, such as ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "The model must be a whole number from 0.",
+    viewerMomentInvalid: (moments) => `The moment must be one of ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} plays no motion on the viewer.`,
+    viewerMotionSet: (moment, motion) => `${moment} plays ${motion} on the viewer.`,
+    viewerNone: "No viewer is set; replies are read aloud on the stock player.",
+    viewerNotAnswering: (address) => `No viewer answered at ${address}; nothing was set.`,
+    viewerProof: "The viewer is set up, and a reply's spoken lines are shown on the model from the next session on.",
+    viewerSet: (address) =>
+      `The viewer at ${address} shows replies' spoken lines; a bubble has appeared on the model to prove it.`,
+    viewerStatus: (address, modelId) => `Viewer at ${address}, model ${modelId}.`,
     voiceLanguageAvailable: (dub) => `A ${dub} dub exists; install it with the voice verb to hear replies read in it.`,
     voiceLanguageMustBeOneOf: (dubs) => `The dub must be one of ${dubs}.`,
     voiceLanguageUnavailable:

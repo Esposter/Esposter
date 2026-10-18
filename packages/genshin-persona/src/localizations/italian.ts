@@ -546,6 +546,18 @@ const italian: Localization = {
     upcomingBirthdays: (list) => `Compleanni di questa settimana: ${list}.`,
     usage: (verbs) => `Uso: genshin.mjs <${verbs}> [nome]`,
     usingInSession: "Parla come questo personaggio da questa risposta, solo in questa sessione.",
+    viewerAddressInvalid: (address) => `${address} non è un indirizzo WebSocket, ad esempio ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Il modello deve essere un numero intero a partire da 0.",
+    viewerMomentInvalid: (moments) => `Il momento deve essere uno tra ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} non riproduce più un movimento sul visualizzatore.`,
+    viewerMotionSet: (moment, motion) => `${moment} riproduce ${motion} sul visualizzatore.`,
+    viewerNone: "Nessun visualizzatore impostato; le risposte sono lette dal lettore predefinito.",
+    viewerNotAnswering: (address) => `Nessun visualizzatore ha risposto a ${address}; non è stato impostato nulla.`,
+    viewerProof:
+      "Il visualizzatore è pronto; le battute parlate di una risposta compaiono sul modello dalla prossima sessione.",
+    viewerSet: (address) =>
+      `Il visualizzatore a ${address} mostra le battute parlate delle risposte; sul modello è comparso un fumetto a prova.`,
+    viewerStatus: (address, modelId) => `Visualizzatore a ${address}, modello ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Esiste un doppiaggio ${dub}; installalo con il comando voice per sentire le risposte lette con esso.`,
     voiceLanguageMustBeOneOf: (dubs) => `Il doppiaggio deve essere uno tra: ${dubs}.`,

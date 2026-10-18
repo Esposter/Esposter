@@ -535,6 +535,18 @@ const turkish: Localization = {
     upcomingBirthdays: (list) => `Bu haftanın doğum günleri: ${list}.`,
     usage: (verbs) => `Kullanım: genshin.mjs <${verbs}> [ad]`,
     usingInSession: "Bu yanıttan itibaren yalnızca bu oturumda bu karakter olarak konuşuyor.",
+    viewerAddressInvalid: (address) => `${address} bir WebSocket adresi değil, örneğin ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Model 0'dan başlayan bir tam sayı olmalı.",
+    viewerMomentInvalid: (moments) => `An ${moments} değerlerinden biri olmalı.`,
+    viewerMotionCleared: (moment) => `${moment} artık görüntüleyicide hareket oynatmaz.`,
+    viewerMotionSet: (moment, motion) => `${moment} görüntüleyicide ${motion} oynatır.`,
+    viewerNone: "Görüntüleyici ayarlı değil; yanıtlar varsayılan oynatıcıda okunur.",
+    viewerNotAnswering: (address) => `${address} adresinde görüntüleyici yanıt vermedi; hiçbir şey ayarlanmadı.`,
+    viewerProof:
+      "Görüntüleyici ayarlandı; bir yanıtın konuşulan satırları bir sonraki oturumdan itibaren modelde gösterilir.",
+    viewerSet: (address) =>
+      `${address} adresindeki görüntüleyici yanıtların konuşma satırlarını gösterir; kanıt olarak modelde bir balon belirdi.`,
+    viewerStatus: (address, modelId) => `${address} adresindeki görüntüleyici, model ${modelId}.`,
     voiceLanguageAvailable: (dub) => `Bir ${dub} dublajı var; yanıtları onunla duymak için voice komutuyla kur.`,
     voiceLanguageMustBeOneOf: (dubs) => `Dublaj şunlardan biri olmalı: ${dubs}.`,
     voiceLanguageUnavailable: "Bu dilde dublaj yok, bu yüzden yanıtlar zaten ayarlı olan sesle okunmaya devam eder.",

@@ -511,6 +511,18 @@ const french: Localization = {
     upcomingBirthdays: (list) => `Anniversaires de la semaine : ${list}.`,
     usage: (verbs) => `Utilisation : genshin.mjs <${verbs}> [nom]`,
     usingInSession: "Parle en tant que ce personnage dès cette réponse, dans cette session seulement.",
+    viewerAddressInvalid: (address) => `${address} n'est pas une adresse WebSocket, comme ws://127.0.0.1:10086.`,
+    viewerModelInvalid: "Le modèle doit être un nombre entier à partir de 0.",
+    viewerMomentInvalid: (moments) => `Le moment doit être l'un de : ${moments}.`,
+    viewerMotionCleared: (moment) => `${moment} ne joue plus aucune animation sur le visualiseur.`,
+    viewerMotionSet: (moment, motion) => `${moment} joue ${motion} sur le visualiseur.`,
+    viewerNone: "Aucun visualiseur n'est défini ; les réponses sont lues par le lecteur par défaut.",
+    viewerNotAnswering: (address) => `Aucun visualiseur n'a répondu à ${address} ; rien n'a été défini.`,
+    viewerProof:
+      "Le visualiseur est prêt ; les répliques parlées d'une réponse s'affichent sur le modèle dès la prochaine session.",
+    viewerSet: (address) =>
+      `Le visualiseur à ${address} affiche les répliques parlées ; une bulle est apparue sur le modèle pour le prouver.`,
+    viewerStatus: (address, modelId) => `Visualiseur à ${address}, modèle ${modelId}.`,
     voiceLanguageAvailable: (dub) =>
       `Un doublage ${dub} existe ; installe-le avec la commande voice pour entendre les réponses lues dans cette langue.`,
     voiceLanguageMustBeOneOf: (dubs) => `Le doublage doit être l'un de : ${dubs}.`,

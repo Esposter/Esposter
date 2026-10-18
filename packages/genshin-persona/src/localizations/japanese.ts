@@ -335,6 +335,17 @@ const japanese: Localization = {
     upcomingBirthdays: (list) => `今週の誕生日：${list}。`,
     usage: (verbs) => `使い方：genshin.mjs <${verbs}> [名前]`,
     usingInSession: "このセッションに限り、この返信からこのキャラクターとして話します。",
+    viewerAddressInvalid: (address) => `${address} は WebSocket のアドレスではありません（例: ws://127.0.0.1:10086）。`,
+    viewerModelInvalid: "モデルは 0 以上の整数である必要があります。",
+    viewerMomentInvalid: (moments) => `タイミングは ${moments} のいずれかである必要があります。`,
+    viewerMotionCleared: (moment) => `${moment} ではビューアーでモーションを再生しません。`,
+    viewerMotionSet: (moment, motion) => `${moment} でビューアーが ${motion} を再生します。`,
+    viewerNone: "ビューアーは設定されていません。返信は標準のプレーヤーで読み上げられます。",
+    viewerNotAnswering: (address) => `${address} でビューアーが応答しませんでした。何も設定されていません。`,
+    viewerProof: "ビューアーの設定が完了しました。次のセッションから、返信のセリフがモデルに表示されます。",
+    viewerSet: (address) =>
+      `${address} のビューアーで返信のセリフを表示します。確認のため、モデルに吹き出しが表示されました。`,
+    viewerStatus: (address, modelId) => `ビューアー: ${address}、モデル ${modelId}。`,
     voiceLanguageAvailable: (dub) =>
       `この言語の吹き替え（${dub}）があります。voiceコマンドで導入すると返信がその声で読み上げられます。`,
     voiceLanguageMustBeOneOf: (dubs) => `吹き替えは次のいずれかを指定してください：${dubs}。`,
