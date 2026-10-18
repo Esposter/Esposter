@@ -2,7 +2,20 @@ import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongb
 
 import { fillGameTextValues } from "genshin-text";
 
-// A Mystic Offering word with the counts of the picked strongbox filled in, its artifacts' count and their star rank, and
-// Zero for each where no strongbox is picked
-export const computeMysticOfferingText = (text: string, strongbox: CraftingStrongboxData | undefined): string =>
-  fillGameTextValues(text, strongbox?.needCount ?? 0, strongbox?.rarity ?? 0);
+// The strongboxes one Mystic Offering makes, the count the confirm names
+const STRONGBOX_COUNT_PER_OFFERING = 1;
+
+// A Mystic Offering word with the picked strongbox filled in: its artifacts' count and star rank, the count it makes and its
+// Name in the reader's language. With no strongbox picked, the artifact counts are zero and the name is empty
+export const computeMysticOfferingText = (
+  text: string,
+  strongbox: CraftingStrongboxData | undefined,
+  names: Readonly<Record<string, string>>,
+): string =>
+  fillGameTextValues(
+    text,
+    strongbox?.needCount ?? 0,
+    strongbox?.rarity ?? 0,
+    STRONGBOX_COUNT_PER_OFFERING,
+    strongbox === undefined ? "" : (names[strongbox.nameTextId] ?? ""),
+  );

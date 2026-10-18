@@ -15,7 +15,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createTestEnemy = () => createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 describe(pulseElementalNode, () => {
-  test("an unbuffed enemy gains the node's full gauge, which does not decay", () => {
+  test("An unbuffed enemy gains the node's full gauge, which does not decay", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();
@@ -31,7 +31,7 @@ describe(pulseElementalNode, () => {
     expect(enemy.statuses[0]?.secondsRemaining).toBe(Infinity);
   });
 
-  test("a buffed enemy gains a further 1.2 gauge, up to the buff's most", () => {
+  test("A buffed enemy gains 1.2 more gauge, up to 3.6", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();
@@ -48,7 +48,7 @@ describe(pulseElementalNode, () => {
     );
   });
 
-  test("a buffed enemy resists more to its node's element, and to every other, while the buff lasts", () => {
+  test("A buffed enemy resists more to its node's element and to every other while the buff lasts", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();
@@ -68,7 +68,7 @@ describe(pulseElementalNode, () => {
     );
   });
 
-  test("a pulse on an enemy cooling down from a depleted buff spends the pulse and lays nothing", () => {
+  test("A pulse on an enemy cooling down spends the pulse and lays nothing", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();

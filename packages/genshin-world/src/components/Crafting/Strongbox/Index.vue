@@ -9,11 +9,11 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
+import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbox";
 import { computeMysticOfferingText } from "#src/services/crafting/computeMysticOfferingText";
 import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
-import { getStrongboxCandidates } from "#src/services/crafting/getStrongboxCandidates";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
-import { GameTextKey } from "genshin-text";
+import { GameTextKey, splitGameTextColors } from "genshin-text";
 import { computed, ref } from "vue";
 
 interface Props {
@@ -42,17 +42,25 @@ const pickedStrongboxId = ref(props.strongboxes[0]?.id ?? 0);
 const pickedIds = ref<number[]>([]);
 const isConfirming = ref(false);
 const pickedStrongbox = computed(() => props.strongboxes.find((strongbox) => strongbox.id === pickedStrongboxId.value));
-const candidates = computed(() =>
-  pickedStrongbox.value === undefined
+// The bag's entries the Mystic Offering lists for the picked strongbox, in the bag's order
+const candidates = computed(() => {
+  const strongbox = pickedStrongbox.value;
+  return strongbox === undefined
     ? []
-    : getStrongboxCandidates(props.inventory.items, pickedStrongbox.value.rarity),
-);
+    : props.inventory.items.filter((item) => canOfferForStrongbox(item, strongbox.rarity));
+});
 const isReady = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length === pickedStrongbox.value.needCount,
 );
 // Whether the picks already take the strongbox's count, so an artifact not yet picked is held back from the offering
 const isOfferingFull = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length >= pickedStrongbox.value.needCount,
+);
+// The confirm is the game's own words, in the colours their tags give the counts and the strongbox's name
+const confirmSegments = computed(() =>
+  splitGameTextColors(
+    computeMysticOfferingText(props.gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox.value, props.names),
+  ),
 );
 </script>
 
@@ -62,7 +70,7 @@ const isOfferingFull = computed(
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.MysticOffering]">
     <h2>{{ gameText[GameTextKey.MysticOffering] }}</h2>
     <p>
-      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox) }}
+      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox, names) }}
     </p>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
@@ -102,7 +110,7 @@ const isOfferingFull = computed(
     </GameButton>
     <template v-if="isConfirming">
       <p>
-        {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox) }}
+        <span v-for="({ color, text }, index) of confirmSegments" :key="index" :style="{ color }">{{ text }}</span>
       </p>
       <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]

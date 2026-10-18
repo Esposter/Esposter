@@ -4,7 +4,7 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
-const CHALLENGE_LEVEL = { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "Pyro Slime" }]] };
+const CHALLENGE_LEVEL = { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "" }]] };
 
 describe(computeDomainLevelRows, () => {
   // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday
@@ -25,7 +25,7 @@ describe(computeDomainLevelRows, () => {
               dungeonId: 1,
               enemyLevel: 60,
               recommendedRank: 20,
-              disorder: "LevelEntity_ElementAddHurt_Fire",
+              disorder: "",
               resinCost: 20,
               scheduledDaysOfWeek: [1, 4],
               treeArtifacts: [],
@@ -35,7 +35,7 @@ describe(computeDomainLevelRows, () => {
               dungeonId: 2,
               enemyLevel: 70,
               recommendedRank: 35,
-              disorder: "LevelEntity_ElementAddHurt_Fire",
+              disorder: "",
               resinCost: 20,
               scheduledDaysOfWeek: [1, 4],
               treeArtifacts: [],
@@ -45,7 +45,7 @@ describe(computeDomainLevelRows, () => {
               dungeonId: 3,
               enemyLevel: 60,
               recommendedRank: 20,
-              disorder: "LevelEntity_ElementAddHurt_Fire",
+              disorder: "",
               resinCost: 20,
               scheduledDaysOfWeek: [2, 5],
               treeArtifacts: [],
@@ -77,7 +77,7 @@ describe(computeDomainLevelRows, () => {
               dungeonId: 4,
               enemyLevel: 60,
               recommendedRank: 45,
-              disorder: "LevelEntity_ElementAddHurt_Fire",
+              disorder: "",
               resinCost: 20,
               scheduledDaysOfWeek: [],
               treeArtifacts: [],

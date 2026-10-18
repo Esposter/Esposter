@@ -62,12 +62,25 @@ describe(rollStrongboxArtifact, () => {
   test("a strongbox rolls a piece of its chosen set at five stars", () => {
     expect.hasAssertions();
 
-    const { artifact, itemId } = rollStrongboxArtifact(STRONGBOX, () => 0.5, TABLES);
-    const piece = PIECES.find((candidate) => candidate.itemId === itemId);
+    // Every draw takes 0.5, which picks the sixth of the ten pieces: the Goblet with four starting minor affixes. Its minor
+    // Affixes are the four groups the weights favour in turn, each at its one tier
+    const { artifact } = rollStrongboxArtifact(STRONGBOX, () => 0.5, TABLES);
 
-    expect(STRONGBOX.pieceItemIds).toContain(itemId);
-    expect(artifact?.setId).toBe(SET_ID);
-    expect(artifact?.rarity).toBe(RARITY);
-    expect(artifact?.slot).toBe(piece?.slot);
+    expect(artifact).toStrictEqual({
+      experience: 0,
+      isLocked: false,
+      itemId: 100_024,
+      level: 0,
+      mainAffix: Attribute.PhysicalDamageBonus,
+      minorAffixes: [
+        { attribute: Attribute.Defense, value: 20 },
+        { attribute: Attribute.ElementalMastery, value: 30 },
+        { attribute: Attribute.EnergyRecharge, value: 40 },
+        { attribute: Attribute.Attack, value: 10 },
+      ],
+      rarity: RARITY,
+      setId: SET_ID,
+      slot: ArtifactSlot.GobletOfEonothem,
+    });
   });
 });

@@ -7,7 +7,6 @@ import type { DumpedScenePoint } from "#src/models/genshinAssets/world/DumpedSce
 import type { DomainLevel, DomainSchedule } from "genshin-world";
 
 import {
-  ALL_DAYS_OF_WEEK,
   BLESSING_TREE_ARTIFACT_ROWS,
   DOMAIN_DAY_PAIRS,
   DOMAIN_LEVEL_TYPE,
@@ -21,7 +20,7 @@ import { getDungeon } from "#src/services/genshinAssets/domains/getDungeon";
 import { toBookRewards } from "#src/services/genshinAssets/domains/toBookRewards";
 import { toDomainLevel } from "#src/services/genshinAssets/domains/toDomainLevel";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { DomainKind } from "genshin-world";
+import { ALL_DAYS_OF_WEEK, DomainKind } from "genshin-world";
 
 // A Domain of Blessing's levels are its entrance point's dungeons, which are open every day. A Domain of Forgery's or
 // Mastery's level is a daily fight whose reward preview names its entry's materials: the day list holding one names the

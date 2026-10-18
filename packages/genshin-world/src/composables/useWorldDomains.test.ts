@@ -1,3 +1,4 @@
+import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -40,15 +41,26 @@ vi.mock(import("#src/services/domains/readWeeklyBossDomains"), () => ({
 // A weekly boss's trounce entrance, with the made-up placement a test needs and the production entry id
 const domainEntrance: DomainEntranceLandmark = {
   areaId: "mondstadt",
-  arrival: { heightOffset: 0, position: { x: 600, z: 0 }, rotation: 0 },
+  arrival: { heightOffset: 1, position: { x: 600, z: 0 }, rotation: 0 },
   domainKind: DomainKind.Trounce,
   entryId: 1006,
-  heightOffset: 0,
+  heightOffset: 1,
   id: "weekly-boss-domain-entrance",
   kind: LandmarkKind.DomainEntrance,
   position: { x: 600, z: 0 },
   rotation: 0,
   titleTextKey: GameTextKey.DomainEntrance24,
+};
+
+// The Stormterror level a rank of 40 enters, made up with the one enemy its fight needs
+const domainChallengeLevels: DomainChallengeLevelMap = {
+  "1006": {
+    "40": {
+      defeatTarget: 1,
+      timeLimitSeconds: Number.POSITIVE_INFINITY,
+      waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+    },
+  },
 };
 
 // A boss in the arena's camp, staggered by its shield's break, with every other field made up
@@ -92,6 +104,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     artifactRarityDataMap: new Map(),
     clearedDomainIds: shallowRef(new Set<string>()),
     completedMainQuestIds: shallowRef(new Set<string>()),
+    domainChallengeLevels,
     events,
     gameDataBaseUrl: "",
     getWorldNow: clock.getWorldNow,

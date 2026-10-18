@@ -2,6 +2,10 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { ArtifactMainAffixPool } from "#src/models/artifact/ArtifactMainAffixPool";
 import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData";
 import type { StormterrorFight } from "#src/models/bosses/StormterrorFight";
+import type { DomainChallengeLevel } from "#src/models/domains/DomainChallengeLevel";
+import type { DomainChallengeLevelMap } from "#src/models/domains/DomainChallengeLevelMap";
+import type { DomainDisorderTrigger } from "#src/models/domains/DomainDisorderTrigger";
+import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
@@ -19,9 +23,6 @@ import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLan
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
-import type { DomainLevelRow } from "#src/services/domains/computeDomainLevelRows";
-import type { DomainChallengeLevel } from "#src/services/domains/domainChallengeLevels";
-import type { DomainDisorderTrigger } from "#src/services/domains/applyDomainDisorders";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
@@ -40,12 +41,9 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
-import {
-  applyDomainDisorder,
-  clearDomainDisorders,
-  triggerDomainDisorder,
-} from "#src/services/domains/applyDomainDisorders";
-import { DOMAIN_CHALLENGE_LEVELS } from "#src/services/domains/domainChallengeLevels";
+import { applyDomainDisorder } from "#src/services/domains/applyDomainDisorder";
+import { clearDomainDisorders } from "#src/services/domains/clearDomainDisorders";
+import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisorder";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
@@ -105,6 +103,7 @@ export const useWorldDomains = ({
   artifactRarityDataMap,
   clearedDomainIds,
   completedMainQuestIds,
+  domainChallengeLevels,
   events,
   gameDataBaseUrl,
   getWorldNow,
@@ -131,6 +130,7 @@ export const useWorldDomains = ({
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   clearedDomainIds: Ref<ReadonlySet<string>>;
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
+  domainChallengeLevels: DomainChallengeLevelMap;
   events: WorldEvents;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
@@ -162,7 +162,7 @@ export const useWorldDomains = ({
     domainSchedule.value && domainEntrance.value
       ? computeDomainLevelRows(
           domainSchedule.value,
-          DOMAIN_CHALLENGE_LEVELS[domainEntrance.value.entryId] ?? {},
+          domainChallengeLevels[domainEntrance.value.entryId] ?? {},
           rank.value,
           worldNow.value,
         )
@@ -263,7 +263,7 @@ export const useWorldDomains = ({
     const schedule = domainSchedule.value;
     if (domainArena.value || !entrance || !schedule) return;
     const scheduledLevel = schedule.levels.find((level) => level.dungeonId === dungeonId);
-    const level = scheduledLevel && DOMAIN_CHALLENGE_LEVELS[entrance.entryId]?.[scheduledLevel.recommendedRank];
+    const level = scheduledLevel && domainChallengeLevels[entrance.entryId]?.[scheduledLevel.recommendedRank];
     if (!scheduledLevel || !level) return;
     const now = getWorldNow();
     // The row the player pressed was read at the world's clock, which can be a minute behind a reset that has passed since

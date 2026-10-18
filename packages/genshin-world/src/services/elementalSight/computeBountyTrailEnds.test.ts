@@ -17,7 +17,7 @@ describe(computeBountyTrailEnds, () => {
   test("A bounty with no placed target draws no trail", () => {
     expect.hasAssertions();
 
-    expect(computeBountyTrailEnds([])).toStrictEqual([]);
+    expect(computeBountyTrailEnds([{ areaId: "", id: "", members: [] }])).toStrictEqual([]);
   });
 
   test("a placed bounty target is the end its trail runs to, at its spawn point", () => {

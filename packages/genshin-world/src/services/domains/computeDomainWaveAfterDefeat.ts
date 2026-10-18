@@ -1,4 +1,4 @@
-import type { DomainChallengeEnemy } from "#src/services/domains/domainChallengeLevels";
+import type { DomainChallengeEnemy } from "#src/models/domains/DomainChallengeEnemy";
 
 // The wave in play after a defeat: a wave holds until its last enemy falls, and then the next wave spawns, while the last
 // Wave holds the challenge to its end

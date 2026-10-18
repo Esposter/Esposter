@@ -1,6 +1,7 @@
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { OutcropPlacement } from "#src/models/leyLine/OutcropPlacement";
 
+import { placeCampRing } from "#src/services/enemy/placeCampRing";
 import { computeOutcropCampId } from "#src/services/leyLine/computeOutcropCampId";
 import {
   OUTCROP_CAMP_ENEMY_KIND_IDS,
@@ -20,15 +21,12 @@ export const createOutcropCamp = (
 ): EnemyCamp => ({
   areaId,
   id: computeOutcropCampId(id),
-  members: Array.from({ length: OUTCROP_CAMP_SIZE }, (_value, index) => {
-    const angle = (index / OUTCROP_CAMP_SIZE) * 2 * Math.PI;
-    const spreadRadius = OUTCROP_FIGHT_RADIUS / 2;
-    return {
+  members: placeCampRing(
+    position,
+    OUTCROP_FIGHT_RADIUS / 2,
+    Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({
       enemyKindId: takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
-      id: String(index),
       level: OUTCROP_CAMP_LEVEL,
-      patrol: [],
-      position: { x: position.x + Math.cos(angle) * spreadRadius, z: position.z + Math.sin(angle) * spreadRadius },
-    };
-  }),
+    })),
+  ),
 });

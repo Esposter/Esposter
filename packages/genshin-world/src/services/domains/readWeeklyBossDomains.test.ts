@@ -1,22 +1,29 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { weeklyBossDomainsSchema } from "#src/models/domains/WeeklyBossDomain";
+import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
 
 describe(readWeeklyBossDomains, () => {
-  test("the weekly bosses' trounce domains are read from the game data the publish wrote", async () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("the weekly bosses' trounce domains are read from the game data by their key", async () => {
     expect.hasAssertions();
 
-    const domains = await readWeeklyBossDomains(GAME_DATA_LOCAL_BASE_URL);
+    const weeklyBossDomains = { "1006": { levels: [level] } };
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json(weeklyBossDomains));
 
-    expect(domains).toHaveProperty(["1006", "levels"]);
-    expect(domains["1006"]?.levels.length).toBeGreaterThan(0);
+    await expect(readWeeklyBossDomains("weekly-boss-domains-read")).resolves.toStrictEqual(weeklyBossDomains);
+    expect(fetch.mock.calls.map(([url]) => url)).toStrictEqual([
+      `weekly-boss-domains-read/${gameDataLock.objects["domains/weeklyBosses"]}.json`,
+    ]);
   });
 });
 
 describe("weeklyBossDomainsSchema", () => {
-  const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
-
   test("a weekly boss's levels are read as the domains dataset writes them", () => {
     expect.hasAssertions();
 
