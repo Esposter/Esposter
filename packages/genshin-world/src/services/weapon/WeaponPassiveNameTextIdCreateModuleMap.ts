@@ -17,6 +17,7 @@ import { createDebutPassiveModule } from "#src/services/weapon/passives/createDe
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
+import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
@@ -201,4 +202,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1092738259": createJusticePassiveModule,
   // Itinerant Hero (The Alley Flash)
   "3197835587": createItinerantHeroPassiveModule,
+  // Focus (Royal Longsword)
+  "2129974699": createFocusPassiveModule,
 };
