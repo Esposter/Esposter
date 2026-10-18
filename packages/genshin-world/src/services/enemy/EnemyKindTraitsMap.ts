@@ -7,6 +7,8 @@ import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 
 // What the wiki gives of each kind the world places, its energy drops in falling order with the drop on its defeat last
 export const EnemyKindTraitsMap: Record<EnemyKindId, EnemyKindTraits> = {
+  // Provisional: the wiki's Hilichurl Fighter page gives its damage type and every attack in its Attacks section as
+  // Physical DMG, so the kind has no attack element
   [EnemyKindId.HilichurlFighter]: {
     enemyDropFamily: EnemyDropFamily.Hilichurls,
     energyDrops: [

@@ -40,6 +40,9 @@ export const TARGET_ANGLE_WEIGHT = 0.3;
 // Provisional: an enemy's strike is its ATK at this multiple, which no table gives
 // Until a recording of an enemy's attack measures it
 export const ENEMY_STRIKE_TALENT_MULTIPLIER = 1;
+// Provisional: the gauge an enemy's elemental strike applies, one of the 1, 1.5, 2 and 4 units the Elemental Gauge Theory
+// Page says most enemy attacks apply, until each attack's own gauge is authored
+export const ENEMY_STRIKE_GAUGE = 1;
 // A summon lives this many seconds past its last hitmark, so the step that lands its last hit still has it on the field
 // However its clock and its seconds left round
 export const SUMMON_LINGER_SECONDS = 0.1;
