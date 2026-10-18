@@ -1,6 +1,7 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitEnemyHitEvent } from "#src/models/kit/KitEnemyHitEvent";
 import type { KitHitbox } from "#src/models/kit/KitHitbox";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
@@ -88,6 +89,51 @@ const A1_SWAP_SECONDS = 3;
 const A1_SWAP_ID = "nicole-a1-swap";
 const A4_SECONDS = 8;
 
+// Her first constellation projects Arcane Projection: Unity from each hit of the active character, at six times the hit's
+// Damage with a 6-second internal cooldown of its own, in a circle of 4.5 metres about the enemy it struck, as gcsim's cons.go does
+const CONSTELLATION_1 = 1;
+const C1_MULTIPLIER = 6;
+const C1_ICD_SECONDS = 6;
+const C1_ICD_ID = "nicole-c1-icd";
+const C1_HITBOX: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: PROJECTION_RADIUS } };
+
+// Schedules a projection of a hit onto the enemy it struck, landing 30 frames on as gcsim's projectionHitmark does. It deals
+// The striker's element and prices the Hexerei bonus at its tick
+const scheduleProjection = (
+  kitEffectState: KitEffectState,
+  nicole: Combatant,
+  { enemy, striker }: KitEnemyHitEvent,
+  talentMultiplier: number,
+  hitbox: KitHitbox,
+): void =>
+  scheduleKitTask(kitEffectState, nicole.characterId, PROJECTION_SECONDS, (tick) => {
+    // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack when she and the projected character are
+    // Hexerei and two or more Hexerei are deployed
+    const flatDamage =
+      checkIsKitHexerei(nicole.characterId) && checkIsKitHexerei(striker.characterId) && tick.hexereiCount >= 2
+        ? nicole.attributes.attack * 3
+        : 0;
+    strikeKitEnemies(
+      [
+        {
+          body: tick.body,
+          combatant: striker,
+          hit: {
+            additiveBaseDamageBonus: () => flatDamage,
+            element: striker.element,
+            hitArea: PROJECTION_HIT_AREA,
+            hitmarkSeconds: 0,
+            poiseDamage: 0,
+            talentMultiplier,
+          },
+          hitbox,
+          target: enemy,
+        },
+      ],
+      tick,
+    );
+  });
+
 // Upgrades a member's ascension buff for the seconds given, or, when none is given, for as long as her skill's buff on the
 // Member stands, and never longer than that skill's buff. A repeat upgrade restarts the buff rather than stacking it, as
 // Gcsim's mod with the same key does
@@ -162,39 +208,24 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
       // Her fourth ascension upgrades her own buff on each elemental hit of the active character, as gcsim's a4Init does
       if (combatant.ascension >= ASCENSION_4 && event.element !== undefined)
         upgradeAscensionBuff(context.kitEffectState, combatant.characterId, A4_SECONDS);
+      // Her first constellation projects each hit of the active character on a cooldown of its own, with no burst's status needed
+      if (
+        combatant.constellationCount >= CONSTELLATION_1 &&
+        startKitCooldown(context.kitEffectState, combatant.characterId, C1_ICD_ID, C1_ICD_SECONDS)
+      )
+        scheduleProjection(context.kitEffectState, combatant, event, C1_MULTIPLIER, C1_HITBOX);
       const burst = findKitStatus(context.kitEffectState.effects, combatant.characterId, BURST_STATUS_ID);
       if (!burst || burst.secondsRemaining <= 0 || (burst.stacks ?? 0) >= PROJECTION_LIMIT) return;
       if (!startKitCooldown(context.kitEffectState, combatant.characterId, PROJECTION_ICD_ID, PROJECTION_ICD_SECONDS))
         return;
       burst.stacks = (burst.stacks ?? 0) + 1;
-      const { enemy, striker } = event;
-      scheduleKitTask(context.kitEffectState, combatant.characterId, PROJECTION_SECONDS, (tick) => {
-        // The Hexerei projection bonus, gcsim's hexereiOnProjection: three times her attack, when she and the projected character
-        // Are Hexerei and two or more Hexerei are deployed
-        const flatDamage =
-          checkIsKitHexerei(combatant.characterId) && checkIsKitHexerei(striker.characterId) && tick.hexereiCount >= 2
-            ? combatant.attributes.attack * 3
-            : 0;
-        strikeKitEnemies(
-          [
-            {
-              body: tick.body,
-              combatant: striker,
-              hit: {
-                additiveBaseDamageBonus: () => flatDamage,
-                element: striker.element,
-                hitArea: PROJECTION_HIT_AREA,
-                hitmarkSeconds: 0,
-                poiseDamage: 0,
-                talentMultiplier: burstProjection,
-              },
-              hitbox: PROJECTION_HITBOXES.get(striker.characterId) ?? DEFAULT_PROJECTION_HITBOX,
-              target: enemy,
-            },
-          ],
-          tick,
-        );
-      });
+      scheduleProjection(
+        context.kitEffectState,
+        combatant,
+        event,
+        burstProjection,
+        PROJECTION_HITBOXES.get(event.striker.characterId) ?? DEFAULT_PROJECTION_HITBOX,
+      );
     },
     skill: {
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an

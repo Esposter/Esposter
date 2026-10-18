@@ -1,6 +1,6 @@
 ## Purpose
 
-Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs. Her constellations wait on their hooks.
+Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs, and her first constellation's projection. Her later constellations wait on their hooks.
 
 ## Requirements
 
@@ -150,12 +150,46 @@ Her first ascension SHALL give the character swapped in ATK 300 for as long as h
 - **WHEN** a character is swapped in
 - **THEN** no ascension buff applies
 
-### Requirement: Nicole's constellations not yet built
+### Requirement: Nicole's first constellation
 
-Nicole's constellations SHALL NOT take effect yet.
+Her first constellation SHALL project each hit of the active character at six times the hit's damage, 30 frames after the hit, on a 6-second cooldown of its own.
 
-#### Scenario: Constellations do nothing for now
+#### Scenario: A hit of the active character is projected at six times
 
-- **GIVEN** Nicole has a constellation unlocked
+- **GIVEN** Nicole is at least constellation 1
+- **WHEN** the active character lands a hit on an enemy
+- **THEN** 30 frames later the enemy takes a projected hit at six times the multiplier
+
+#### Scenario: A physical hit is projected too
+
+- **GIVEN** Nicole is at least constellation 1
+- **WHEN** the active character lands a physical hit
+- **THEN** the projection still lands, dealt at the character's element
+
+#### Scenario: The projections cool for six seconds
+
+- **GIVEN** a projection has just been made
+- **WHEN** another hit of the active character lands within six seconds
+- **THEN** that hit makes no projection
+
+#### Scenario: Only the active character's hits project
+
+- **GIVEN** Nicole is at least constellation 1
+- **WHEN** a character other than the active one lands a hit
+- **THEN** no projection lands
+
+#### Scenario: Below the first constellation nothing projects
+
+- **GIVEN** Nicole is constellation 0
+- **WHEN** the active character lands a hit
+- **THEN** no projection lands
+
+### Requirement: Nicole's second and later constellations not yet built
+
+Nicole's second and later constellations SHALL NOT take effect yet.
+
+#### Scenario: Later constellations do nothing for now
+
+- **GIVEN** Nicole has constellation 2 or later unlocked
 - **WHEN** the player fights with Nicole
-- **THEN** no constellation effect applies
+- **THEN** no constellation effect beyond the first applies

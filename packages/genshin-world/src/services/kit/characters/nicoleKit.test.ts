@@ -76,6 +76,12 @@ const createEnemyHit = (enemy: Enemy, striker: Combatant): KitEvent => ({
 const countDamageTaken = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number =>
   onKitEvent.mock.calls.filter(([event]) => event.kind === KitEventKind.DamageTaken).length;
 
+// The talent multipliers of the hits a team's kit heard land, one for each damage its enemy takes
+const getDamageTakenMultipliers = (onKitEvent: Mock<NonNullable<Kit["onKitEvent"]>>): number[] =>
+  onKitEvent.mock.calls.flatMap(([event]) =>
+    event.kind === KitEventKind.DamageTaken ? [event.hit.talentMultiplier] : [],
+  );
+
 // The buffs a character holds among the kit's effects, in the order they were given
 const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
   context.kitEffectState.effects.filter(
@@ -358,5 +364,61 @@ describe(createNicoleKitBehaviour, () => {
     emitKitEvent({ ...createEnemyHit(enemy, nicole), element: undefined }, context);
 
     expect(getBuffs(context, NICOLE_CHARACTER_ID)).toHaveLength(1);
+  });
+
+  test("her first constellation projects each hit of the active character at six times, 30 frames on", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent, { constellationCount: 1 });
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 29 / 60);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([]);
+    stepKitSeconds(context, 1 / 60);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([6]);
+  });
+
+  test("her first constellation projects a physical hit of the active character too", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent, { constellationCount: 1 });
+    emitKitEvent({ ...createEnemyHit(enemy, nicole), element: undefined }, context);
+
+    stepKitSeconds(context, 30 / 60);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([6]);
+  });
+
+  test("her first constellation's projections cool for six seconds", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent, { constellationCount: 1 });
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+    stepKitSeconds(context, 1);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+    stepKitSeconds(context, 5.5);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 30 / 60);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([6, 6]);
+  });
+
+  test("her first constellation projects only the active character's hits", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, traveler } = createProjectionScene(onKitEvent, { constellationCount: 1 });
+    emitKitEvent(createEnemyHit(enemy, traveler), context);
+
+    stepKitSeconds(context, 1);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([]);
+  });
+
+  test("her first constellation gives no projection below it", () => {
+    expect.hasAssertions();
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const { context, enemy, nicole } = createProjectionScene(onKitEvent);
+    emitKitEvent(createEnemyHit(enemy, nicole), context);
+
+    stepKitSeconds(context, 1);
+    expect(getDamageTakenMultipliers(onKitEvent)).toStrictEqual([]);
   });
 });
