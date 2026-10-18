@@ -163,7 +163,7 @@ export const toDomainLevels = (
 
   const familyEntries = entries.flatMap((entry) => {
     const kind = DungeonEntryTypeDomainKindMap[entry.type];
-    return kind === undefined || kind === DomainKind.Blessing ? [] : [{ entry, kind }];
+    return kind === DomainKind.Forgery || kind === DomainKind.Mastery ? [{ entry, kind }] : [];
   });
   for (const dungeon of dungeons) {
     if (dungeon.type !== DOMAIN_LEVEL_TYPE) continue;
@@ -186,16 +186,12 @@ export const toDomainLevels = (
     const isOnePair = matches.every((other) => other.pair === match.pair);
     const counterpartPair = Math.min(...matches.map(({ pair }) => pair));
     const scheduledDaysOfWeek = isOnePair ? (DOMAIN_DAY_PAIRS[match.pair] ?? []) : SUNDAY_DAYS_OF_WEEK;
-    // A Trounce level pays no books: the books belong to the Forgery and Mastery domains alone
-    const bookRewards =
-      match.kind === DomainKind.Trounce
-        ? []
-        : toBookRewards(
-            match.kind,
-            takeOne(match.entry.descriptionCycleRewardList, counterpartPair),
-            rarities,
-            dungeon.limitLevel,
-          );
+    const bookRewards = toBookRewards(
+      match.kind,
+      takeOne(match.entry.descriptionCycleRewardList, counterpartPair),
+      rarities,
+      dungeon.limitLevel,
+    );
     addLevel(
       match.entry.id,
       match.kind,
