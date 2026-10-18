@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { CRYO_ELEMENTAL_INFUSION_ROUNDS, cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 
@@ -27,8 +27,6 @@ export const kamisatoArtSenho: GcgCardModule = {
     side.usedCardIds.push(SENHO_STATUS_ID);
     zoneCard.usages = 1;
     const character = takeOne(side.characters, characterIndex);
-    const infusion = character.statuses.find(({ cardId }) => cardId === CRYO_ELEMENTAL_INFUSION_ID);
-    if (infusion) infusion.rounds = CRYO_ELEMENTAL_INFUSION_ROUNDS;
-    else character.statuses.push(createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion));
+    placeGcgZoneCard(character.statuses, CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion);
   },
 };

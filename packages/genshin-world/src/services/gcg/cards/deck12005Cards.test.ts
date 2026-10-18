@@ -26,7 +26,7 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { KEQING_ID } from "#src/services/gcg/cards/constants";
+import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
@@ -183,6 +183,24 @@ describe("stellar Restoration", () => {
       hand: side.hand,
       keqingStatuses: takeOne(side.characters, 1).statuses.map(({ cardId }) => cardId),
     }).toStrictEqual({ hand: [], keqingStatuses: [114_032] });
+  });
+
+  test("a second grant while Electro Infusion still stands refreshes it, rather than stacking a second copy", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      createSideState([createCharacterState(OTHER_CHARACTER_ID), createCharacterState(KEQING_ID)]),
+      createSideState([createCharacterState(OPPOSING_CHARACTER_ID)]),
+    ]);
+    const side = takeOne(duel.sides, 0);
+    side.activeIndex = 1;
+    side.hand.push(LIGHTNING_STILETTO_ID);
+    runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+    takeOne(takeOne(side.characters, 1).statuses, 0).rounds = 1;
+    side.hand.push(LIGHTNING_STILETTO_ID);
+    runGcgSkillUse({ duel, sideIndex: 0 }, NORMAL_SKILL);
+    expect(takeOne(side.characters, 1).statuses).toStrictEqual([
+      { cardId: ELECTRO_INFUSION_ID, counter: 0, rounds: 2, usages: 0 },
+    ]);
   });
 });
 

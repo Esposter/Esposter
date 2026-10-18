@@ -3,7 +3,6 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 

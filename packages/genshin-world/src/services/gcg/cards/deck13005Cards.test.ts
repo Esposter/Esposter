@@ -245,6 +245,23 @@ describe("kamisato Art: Senho", () => {
 
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([2]);
   });
+
+  test("a second switch to her in the Round refreshes the infusion she holds rather than adding one", () => {
+    expect.hasAssertions();
+    const duel = createAyakaDuel();
+    const switchTo = (characterIndex: number) => switchGcgActiveCharacter(duel, 0, characterIndex);
+
+    switchTo(1);
+    // The infusion's rounds are spent, so only the refresh brings them back
+    takeOne(takeOne(takeOne(duel.sides, 0).characters, 1).statuses, 1).rounds = 0;
+    switchTo(0);
+    switchTo(1);
+
+    expect(takeOne(takeOne(duel.sides, 0).characters, 1).statuses).toStrictEqual([
+      { cardId: SENHO_STATUS_ID, counter: 0, rounds: 0, usages: 1 },
+      { cardId: CRYO_ELEMENTAL_INFUSION_ID, counter: 0, rounds: 1, usages: 0 },
+    ]);
+  });
 });
 
 describe("the skills whose damage is parsed from the dump's effect", () => {
