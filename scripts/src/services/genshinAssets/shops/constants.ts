@@ -92,4 +92,3 @@ export const SOUVENIR_SIGIL_ITEM_IDS = {
 // Is priced in Lucky Coins, the card game's currency, which the bag holds as a material
 export const GCG_CARD_SHOP_TYPE = 2000;
 export const GCG_CARD_SHOP_ID = 217;
-export const GCG_LUCKY_COIN_ITEM_ID = 107_021;
