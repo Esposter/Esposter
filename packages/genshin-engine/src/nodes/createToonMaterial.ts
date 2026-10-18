@@ -11,7 +11,7 @@ import { createSurfaceDetailNode } from "#src/nodes/createSurfaceDetailNode";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
 import { createWetSheenNode } from "#src/nodes/createWetSheenNode";
 import { Color } from "three";
-import { uniform } from "three/tsl";
+import { normalGeometry, positionGeometry, transformNormal, transformNormalToView, uniform, vec4 } from "three/tsl";
 
 // The colour as a uniform of the material's own, not `materialColor`, which reads the colour of whichever material is drawn.
 // A witness target drawn with its own material read white where the stone's colour stands, so no family's colour was ever measured.
@@ -37,6 +37,7 @@ const createMaterialSurfaceNode = (
 export const createToonMaterial = ({
   color,
   detail,
+  instanceMatrix,
   isObjectSurface = false,
   isOutlined = true,
   isVertexColors = false,
@@ -51,5 +52,10 @@ export const createToonMaterial = ({
   const surfaceNode = isObjectSurface ? createObjectSurfaceNode() : createMaterialSurfaceNode(color, detail);
   toonMaterial.colorNode = surfaceNode.mul(createWetDarkeningNode(lightUniforms));
   toonMaterial.emissiveNode = createRimNode(lightUniforms).add(createWetSheenNode(lightUniforms));
+  if (instanceMatrix) {
+    // The geometry's own place and normal, carried by each instance's matrix, its normal turned by the same matrix
+    toonMaterial.positionNode = instanceMatrix.mul(vec4(positionGeometry, 1)).xyz;
+    toonMaterial.normalNode = transformNormalToView(transformNormal(normalGeometry, instanceMatrix)).normalize();
+  }
   return toonMaterial;
 };

@@ -550,7 +550,15 @@ onUnmounted(() => {
       :visible="checkIsOwnFamilyDrawn(WindrisePartFamily.Grass)"
       :user-data="{ [SCENE_FAMILY_KEY]: WindrisePartFamily.Grass }"
     >
-      <WorldPlants :get-ground-height :light-uniforms :plants :ramp-texture :surfaces :tree-species-options-map />
+      <WorldPlants
+        :get-ground-height
+        :light-uniforms
+        :origin
+        :plants
+        :ramp-texture
+        :surfaces
+        :tree-species-options-map
+      />
     </TresGroup>
     <!-- Enemies wander where the references show none, so a witness render, judged against them, draws none -->
     <WorldEnemies

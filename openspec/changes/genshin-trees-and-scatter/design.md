@@ -27,7 +27,7 @@ flowchart TD
 
 **This adds:**
 
-1. **Instancing and GPU culling**, over the placed stand-ins: each prefab's stand-in is one instanced draw until its species lands, so the culling pass has its consumers before any species is fitted.
+1. **Instancing and GPU culling**, over the placed stand-ins: each kind of stand-in (the domes, the tree cards) is one culled draw until its species lands, so the culling pass has its consumers before any species is fitted.
 2. **The trail**, the texture the grass parts around, as the decisions above give it.
 3. **Every placed plant's species**, from the layout pass, each fitted to its export. The oak's species comes last: its outline is still short of its floor, and the roadmap's `windrise-oak-shape` row holds it open, so this step waits on that row alone.
 
