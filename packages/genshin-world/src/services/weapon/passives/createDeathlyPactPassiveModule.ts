@@ -8,9 +8,9 @@ import { takeOne } from "@esposter/shared";
 const DEATHLY_PACT_ID = "deathlyPact";
 const DEATHLY_PACT_MAXIMUM_STACKS = 3;
 
-// Deathly Pact at its rank: each increase of the wielder's Bond of Life adds a stack of the rank's DMG bonus, up to three, each
-// Stack running the rank's seconds. The rank's CRIT DMG line is a table line the weapon carries whatever its conditions,
-// So this passive does not repeat it
+// Deathly Pact at its rank: each increase of the wielder's Bond of Life adds a stack of the rank's DMG bonus, up to
+// Three, and every stack runs the rank's seconds from the latest increase, so the stacks end together. The rank's CRIT
+// DMG line is a table line the weapon carries whatever its conditions, so this passive does not repeat it
 export const createDeathlyPactPassiveModule = (params: number[]): PassiveModule => {
   const damageBonusPerStack = takeOne(params, 1);
   const seconds = takeOne(params, 2);
