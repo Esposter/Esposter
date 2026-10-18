@@ -1,7 +1,7 @@
 ## 1. Gadgets in the bag
 
 - [x] 1.1 Make each gadget a bag item of the widget material type, filed under the gadget category. Verify: a test named after the scenario 'A gadget appears in the gadget tab' written first and seen failing.
-- [ ] 1.2 Equip an equipable gadget from its tab and refuse one the game does not mark equipable. Verify: tests named after the scenarios 'An equipable gadget is equipped from its tab' and 'A gadget the game does not mark equipable is refused' written first and seen failing.
+- [x] 1.2 Equip an equipable gadget from its tab and refuse one the game does not mark equipable. Verify: tests named after the scenarios 'An equipable gadget is equipped from its tab' and 'A gadget the game does not mark equipable is refused' written first and seen failing.
 
 ## 2. The quick-use slot
 

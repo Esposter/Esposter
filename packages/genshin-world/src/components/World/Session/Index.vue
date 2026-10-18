@@ -320,7 +320,7 @@ const { chestInteractables, openChestById } = useWorldChests({
   wallet,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
+const { gadgetRows, quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
 // The Seelies of Mondstadt, each led to its court by the player following it, and settled where the save names it settled
 const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(seelies, savedState.settledSeelieIds);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
@@ -968,6 +968,7 @@ defineExpose({ jumpTo, readCameraPosition });
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
           :game-text
+          :gadget-rows="gadgetRows"
           :initial-category="ItemCategory.Weapon"
           :inventory
           :material-data-map
@@ -975,6 +976,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :wallet
           @close="screenKind = ScreenKind.World"
           @destroy="(destruction) => applyDestruction(destruction)"
+          @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
       <template #[ScreenKind.Wish]>

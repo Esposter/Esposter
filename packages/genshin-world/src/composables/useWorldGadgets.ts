@@ -35,5 +35,5 @@ export const useWorldGadgets = ({
     if (equippedGadget.value)
       cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, equippedGadget.value, now);
   };
-  return { quickUseEquippedGadget };
+  return { gadgetRows, quickUseEquippedGadget };
 };

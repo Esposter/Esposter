@@ -54,6 +54,8 @@ interface Props {
   orderLabel: string;
   // The destroy mode's quick selects on the open tab, each choosing every entry the bag may destroy of its rarity
   quickSelects: InventoryQuickSelect[];
+  // The gadget action that equips the detail's gadget to the quick-use slot, in the reader's language
+  quickUseLabel: string;
   sortLabels: Record<InventorySort, string>;
   tabLabels: Record<ItemCategory, string>;
   title: string;
@@ -89,6 +91,7 @@ const {
   isSortable,
   orderLabel,
   quickSelects,
+  quickUseLabel,
   sortLabels,
   tabLabels,
   title,
@@ -100,6 +103,7 @@ const emit = defineEmits<{
   confirmDestroy: [];
   destroy: [];
   quickSelect: [rarity: number];
+  quickUse: [id: string];
   toggleDestroy: [];
 }>();
 const selectedCell = computed(() => cells.find(({ id }) => id === selectedId.value) ?? cells[0]);
@@ -213,6 +217,16 @@ watch(
           <span v-if="isTopUp" class="top-up" />
         </li>
       </ul>
+      <!-- The gadget's action under the detail panel, which equips the gadget to the quick-use slot. Provisional: its place
+           is where the controller recording shows a gadget's action, the bottom bar's X, until the keyboard's is read -->
+      <button
+        v-if="selectedCell?.isEquipable && !isDestroying"
+        class="quick-use"
+        type="button"
+        @click="emit('quickUse', selectedCell.id)"
+      >
+        {{ quickUseLabel }}
+      </button>
     </div>
     <!-- The dialog the Destroy button opens over the bag: the entries to be destroyed, and the warning that it cannot be
          undone, in the game's own wording. Provisional until the dialog is recorded -->
@@ -469,6 +483,7 @@ watch(
 }
 
 .quick-select,
+.quick-use,
 .destroy-button,
 .confirm-button {
   padding: calc(var(--unit) * 10) calc(var(--unit) * 20);
@@ -481,6 +496,12 @@ watch(
 
 .destroy-button:disabled {
   opacity: 0.4;
+}
+
+.quick-use {
+  position: absolute;
+  top: calc(var(--unit) * 960);
+  left: calc(var(--unit) * 1298);
 }
 
 .confirm {
