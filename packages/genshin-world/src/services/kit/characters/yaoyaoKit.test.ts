@@ -1,10 +1,76 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitField } from "#src/models/kit/KitField";
+import type { KitSummon } from "#src/models/kit/KitSummon";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+// Measured: the dump's table for Raphanus Sky Cluster at level 1 (proud skill group 7732), the share of Yaoyao's Max HP
+// And the flat HP a radish heals the active character by
+const SKILL_RADISH_HEAL_SHARE = 0.017143;
+const SKILL_RADISH_FLAT_HEAL = 165.07991;
+const MAX_HEALTH = 10_000;
+// Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the throw.
+// The engine's field counts down its ticks by summing steps of a frame, which leaves a countdown of an exact frame count
+// A hair above zero, so each tick lands in the step after its frame; the tests bracket each timing by the steps either side
+const YUEGUI_SPAWN_FRAMES = 63;
+const YUEGUI_FIRST_THROW_FRAMES = 29;
+const RADISH_HITMARK_FRAMES = 13;
+
+const createYaoyaoCombatant = (): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+  characterId: YAOYAO_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: YAOYAO_KIT,
+  level: 90,
+  weaponType: WeaponType.Polearm,
+});
+
+// Yaoyao alone on the field at the given share of her Max HP, standing at the origin facing along the negative z axis
+const createYaoyaoContext = (healthShare: number, context: Partial<KitContext> = {}): KitContext => {
+  const party = createParty([YAOYAO_CHARACTER_ID]);
+  getPartyMember(party, YAOYAO_CHARACTER_ID).healthShare = healthShare;
+  return createKitTestContext(createYaoyaoCombatant(), { party, ...context });
+};
+
+const createEnemyAt = (x: number, z: number) => ({
+  ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+  position: { x, z },
+});
+
+// The team stepped the given frames, one fixed step each, as the world's step runs
+const stepFrames = (context: KitContext, frames: number): void => {
+  for (let frame = 0; frame < frames; frame++) stepKitEffects(FIXED_STEP_SECONDS, context);
+};
+
+// The Yuegui her skill spawns: the field whose throws repeat on an interval
+const findYuegui = (context: KitContext): KitField | undefined =>
+  context.kitEffectState.effects.find(
+    (effect): effect is KitField => effect.kind === "field" && Number.isFinite(effect.tickIntervalSeconds),
+  );
+
+const findRadish = (context: KitContext): KitSummon | undefined =>
+  context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
 describe(createYaoyaoKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
@@ -48,5 +114,64 @@ describe(createYaoyaoKitBehaviour, () => {
     expect(hit.hitArea.radius).toBe(3);
     expect(hit.poiseDamage).toBe(0);
     expect(Math.round(hit.hitmarkSeconds * 60)).toBe(16);
+  });
+
+  test("raphanus sky cluster spawns the Yuegui two metres ahead of her 63 frames after the cast", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES - 1);
+    expect(findYuegui(context)).toBeUndefined();
+    stepFrames(context, 1);
+    const yuegui = findYuegui(context);
+    expect(yuegui?.centre.z).toBeCloseTo(-2);
+    expect(yuegui?.centre.x).toBeCloseTo(0);
+  });
+
+  test("the Yuegui's first radish lands 29 frames after the spawn and heals the active character from her Max HP and a flat amount", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES - 1);
+    expect(findRadish(context)).toBeUndefined();
+    stepFrames(context, 2);
+    expect(findRadish(context)).toBeDefined();
+    stepFrames(context, RADISH_HITMARK_FRAMES - 1);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBe(0.5);
+    stepFrames(context, 2);
+    const healedShare = (SKILL_RADISH_HEAL_SHARE * MAX_HEALTH + SKILL_RADISH_FLAT_HEAL) / MAX_HEALTH;
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBeCloseTo(0.5 + healedShare, 4);
+  });
+
+  test("a radish heals only while the body stands within its circle as it lands", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.5);
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + 1);
+    context.body.position = { x: 5, z: 0 };
+    stepFrames(context, RADISH_HITMARK_FRAMES + 1);
+    expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).healthShare).toBe(0.5);
+  });
+
+  test("a radish lands on a random enemy within 8 metres of the Yuegui while the active character stands above 70% of her Max HP", () => {
+    expect.hasAssertions();
+    const enemy = createEnemyAt(0, -4);
+    const context = createYaoyaoContext(0.8, { enemyMap: new Map([["enemy", enemy]]) });
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + 1);
+    expect(findRadish(context)?.body.position.z).toBeCloseTo(-4);
+  });
+
+  test("a radish lands on her own position once the active character stands at or below 70% of her Max HP", () => {
+    expect.hasAssertions();
+    const context = createYaoyaoContext(0.7, { enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]) });
+    YAOYAO_KIT.elementalSkill.onStart?.(context);
+
+    stepFrames(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + 1);
+    expect(findRadish(context)?.body.position.z).toBeCloseTo(0);
   });
 });
