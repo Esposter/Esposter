@@ -908,9 +908,18 @@ watch(mapCamera, (newCamera, oldCamera) => {
     events.emit("questEvent", questEvent);
 });
 const cameraEuler = new Euler();
+// The locomotion phase of the character on the field, which Windrise's Sheer Cold gauge reads its swimming off
+const getCharacterPhase = () => character.value?.phase;
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
-const hudFrame = reactive<HudFrame>({ gadgetCooldown: 0, pivotX: 0, pivotY: 0, seconds: 0, stamina: STAMINA_MAX });
+const hudFrame = reactive<HudFrame>({
+  gadgetCooldown: 0,
+  pivotX: 0,
+  pivotY: 0,
+  seconds: 0,
+  sheerCold: 0,
+  stamina: STAMINA_MAX,
+});
 const pivot = new Vector3();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
@@ -1152,6 +1161,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"
+        :get-character-phase="getCharacterPhase"
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
         :kit-effect-state="kitContext.kitEffectState"
@@ -1188,6 +1198,7 @@ defineExpose({ jumpTo, readCameraPosition });
         @ready="emit('ready')"
         @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
+        @sheer-cold="(value) => (hudFrame.sheerCold = value)"
         @strike="(enemy, taunt) => strikeParty(enemy, taunt)"
       />
     </TresCanvas>
