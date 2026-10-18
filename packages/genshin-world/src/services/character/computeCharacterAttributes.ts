@@ -3,6 +3,7 @@ import type { CharacterAttributes } from "#src/models/character/CharacterAttribu
 import type { ElementalResonance } from "#src/models/party/ElementalResonance";
 
 import { Attribute, Attributes } from "#src/models/character/Attribute";
+import { computeStatTotal } from "#src/services/character/computeStatTotal";
 import { ElementalResonanceAttributeLinesMap } from "#src/services/party/ElementalResonanceAttributeLinesMap";
 
 // A character's attributes from every line it carries, as the game sums them: each attribute's lines added together,
@@ -20,13 +21,9 @@ export const computeCharacterAttributes = (
   for (const { attribute, value } of [...attributeLines, ...resonanceAttributeLines])
     attributeTotalMap[attribute] += value;
   return {
-    attack:
-      attributeTotalMap[Attribute.BaseAttack] * (1 + attributeTotalMap[Attribute.AttackPercent]) +
-      attributeTotalMap[Attribute.Attack],
+    attack: computeStatTotal(attributeTotalMap, Attribute.BaseAttack, Attribute.AttackPercent, Attribute.Attack),
     attributeTotalMap,
-    defense:
-      attributeTotalMap[Attribute.BaseDefense] * (1 + attributeTotalMap[Attribute.DefensePercent]) +
-      attributeTotalMap[Attribute.Defense],
+    defense: computeStatTotal(attributeTotalMap, Attribute.BaseDefense, Attribute.DefensePercent, Attribute.Defense),
     maxHealth:
       attributeTotalMap[Attribute.BaseHealth] * (1 + attributeTotalMap[Attribute.HealthPercent]) +
       attributeTotalMap[Attribute.Health],
