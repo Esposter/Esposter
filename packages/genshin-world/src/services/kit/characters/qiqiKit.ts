@@ -7,9 +7,11 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
+import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
@@ -34,6 +36,12 @@ const TALISMAN_HEAL_COOLDOWN_SECONDS = 1;
 // Seconds on a 50% roll, at most once every 30 seconds, unless it holds a longer one. Measured: gcsim v2.47.2 (MIT)
 // Qiqi/burst.go. https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/burst.go
 const A_GLIMPSE_INTO_ARCANUM_ASCENSION = 4;
+// From Ascension 1, a reaction the character on the field triggers gives her 20% Healing Bonus for 8 seconds, unless Herald
+// Of Frost stands, as gcsim v2.47.2 (MIT) qiqi/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/qiqi/asc.go
+const ASCENSION_1 = 1;
+const ASCENSION_1_HEALING_BONUS = 0.2;
+const ASCENSION_1_SECONDS = 8;
 const A_GLIMPSE_INTO_ARCANUM_CHANCE = 0.5;
 const A_GLIMPSE_INTO_ARCANUM_TALISMAN_SECONDS = 6;
 const A_GLIMPSE_INTO_ARCANUM_COOLDOWN_STATUS_ID = "qiqi-a-glimpse-into-arcanum-cooldown";
@@ -86,7 +94,7 @@ export const QIQI_CHARACTER_ID = 10_000_035;
 // Frost casts the Herald, a summon whose swipes follow her, and its continuous regeneration, which snapshots her ATK on
 // Cast and heals the character on the field. Fortune-Preserving Talisman marks each enemy it strikes with the Talisman
 // Before its damage, and from six constellations revives the fallen. The Talisman's heal, A Glimpse into Arcanum and the
-// Constellations answer the kit's events. Life-Prolonging Methods is not built
+// Constellations answer the kit's events, and Life-Prolonging Methods from Ascension 1 is built as a passive
 export const createQiqiKitBehaviour = ({
   kit,
   readHits,
@@ -135,6 +143,19 @@ export const createQiqiKitBehaviour = ({
     // One constellation
     onKitEvent: (event, context, combatant) => {
       const { activeCombatant, kitEffectState, party, random } = context;
+      if (event.kind === KitEventKind.ReactionTriggered) {
+        if (
+          combatant.ascension >= ASCENSION_1 &&
+          event.striker.characterId === activeCombatant.characterId &&
+          !checkIsHeraldStanding(combatant.characterId, kitEffectState.effects)
+        )
+          buffKitMember(kitEffectState, activeCombatant.characterId, {
+            amount: ASCENSION_1_HEALING_BONUS,
+            attribute: Attribute.HealingBonus,
+            secondsRemaining: ASCENSION_1_SECONDS,
+          });
+        return;
+      }
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, striker } = event;
       const { ascension, characterId, constellationCount } = combatant;

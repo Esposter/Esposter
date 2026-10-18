@@ -8,6 +8,7 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 - **The Talisman goes on with the burst's damage.** gcsim applies it 40 frames in by a hit of no damage; here the burst's own hit gives it before its damage, so that hit heals, as the wiki notes. The heal answers the character on the field's own hits alone, at most once a second for each enemy, as the wiki's notes give it, and reads Qiqi's ATK as she stands, unbuffed.
 - **A Glimpse into Arcanum keeps a longer Talisman.** A Talisman with 6 seconds or more left is not replaced and spends no cooldown, as gcsim's check does.
 - **Frozen to the Bone reads Cryo or a Freeze on the enemy**, as gcsim's aura check does.
+- **Life-Prolonging Methods is Ascension 1's passive.** A reaction the character on the field triggers gives her 20% Healing Bonus for 8 seconds, unless Herald of Frost stands, as gcsim's qiqi/asc.go gives it; the bonus goes on the character on the field, as the heal it answers reads its own.
 - **Herald of Frost's initial damage shares the swipes' internal cooldown.** The wiki tags it Elemental Skill New, which has no `InternalCooldownTag` member here.
 - **Rite of Resurrection revives on the step after the burst starts**, through a task, and its 15-minute interval is a status a drown or a jump clears with the rest of the team's effects.
 
