@@ -1,6 +1,7 @@
 import {
   GCSIM_FIXTURE_DIRECTORY,
   GCSIM_ODETTE_FIXTURE_DIRECTORY,
+  GCSIM_VARKA_FIXTURE_DIRECTORY,
 } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
@@ -232,6 +233,25 @@ func (c *char) Burst() {
         talentVariable: "burstFinal",
         variableName: "aiFinal",
       },
+    ]);
+  });
+
+  test("reads a constant loop's literal once per iteration, its element the local slice's entry the loop variable indexes", () => {
+    expect.hasAssertions();
+
+    const name = "burst.go";
+    const sources = [{ path: name, source: readFileSync(join(GCSIM_VARKA_FIXTURE_DIRECTORY, name), "utf8") }];
+
+    expect(
+      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ element, fieldLineMap, iteration, line }) => ({
+        element,
+        elementLine: fieldLineMap.Element,
+        iteration,
+        line,
+      })),
+    ).toStrictEqual([
+      { element: undefined, elementLine: 30, iteration: { value: 0, variable: "i" }, line: 36 },
+      { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
     ]);
   });
 });

@@ -69,17 +69,21 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
     // A hit is joined to a multiplier and a hitbox by its place only where the slot has one of each for every hitmark
     const isLeafJoined = slotLeaves.length === hitmarkValues.length;
     // Where the leaves and hitmarks differ in number, a hit is the attack of the one queue call firing at its hitmark,
-    // And takes its talent variable's leaf only where that variable has a single multiplier
+    // And takes its talent variable's leaf only where that variable has a single multiplier, and its hitbox where the
+    // Ability has none
     const queuedHits = getGcsimQueuedHits(gcsim, attackTags, hitmarks.file);
-    const readQueuedAttack = (hitmark: number) => {
+    const readQueuedHit = (hitmark: number) => {
       const queuedAttacks = queuedHits.filter(({ delay }) => delay === hitmark);
-      return queuedAttacks.length === 1 ? takeOne(queuedAttacks).attack : undefined;
+      return queuedAttacks.length === 1 ? takeOne(queuedAttacks) : undefined;
     };
     const hitboxes = config.abilityHitboxesMap.get(slot) ?? [];
     const isHitboxJoined = hitboxes.length === hitmarkValues.length;
     add(`${slot}.hits.length`, hitmarkValues.length, toFile(hitmarks.file), hitmarks.line);
     for (const [hitIndex, hitmark] of hitmarkValues.entries()) {
-      const queuedAttack = isLeafJoined ? undefined : readQueuedAttack(hitmark);
+      const queuedHit = readQueuedHit(hitmark);
+      // A hit whose leaves are joined by place takes the slot's attack, unless its queue call fires an iteration's own
+      // Attack, whose element is that iteration's
+      const queuedAttack = isLeafJoined && queuedHit?.attack.iteration === undefined ? undefined : queuedHit?.attack;
       const queuedLeaves = config.talentVariables.find(({ name }) => name === queuedAttack?.talentVariable)?.leaves;
       const talentLeaf = isLeafJoined ? slotLeaves[hitIndex] : queuedLeaves?.length === 1 ? queuedLeaves[0] : undefined;
       const variable =
@@ -90,12 +94,14 @@ export const addGcsimSkillAndBurstCandidates = (writer: GcsimKitCandidateWriter,
       addHit(
         `${slot}.hits.${hitIndex}`,
         {
+          // A hit's area is its ability's hitbox where the ability has one per hitmark, else the one hitbox the ability has
+          // For a single hit, else the hitbox of the queue call firing the hit at its hitmark
           areaHitbox: isHitboxJoined
             ? hitboxes[hitIndex]
-            : hitmarkValues.length === 1
-              ? (findGcsimHitbox(config, slot, ...pressHitboxNames) ??
-                findGcsimVariableHitbox(queuedHits, attack?.talentVariable))
-              : undefined,
+            : ((hitmarkValues.length === 1
+                ? (findGcsimHitbox(config, slot, ...pressHitboxNames) ??
+                  findGcsimVariableHitbox(queuedHits, attack?.talentVariable))
+                : undefined) ?? queuedHit?.hitbox),
           attack,
           hitmark: {
             file: hitmarks.file,
