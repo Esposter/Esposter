@@ -12,11 +12,11 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const AMBER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AMBER_CHARACTER_ID);
-const createAmberCombatant = (): Combatant => ({
+const createAmberCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
   characterId: AMBER_CHARACTER_ID,
-  constellationCount: 0,
+  constellationCount,
   elementalResonances: [],
   kit: AMBER_KIT,
   level: 90,
@@ -43,6 +43,22 @@ describe("amber kit", () => {
     expect(multipliers).toHaveLength(expectedMultipliers.length);
     for (const [index, expectedMultiplier] of expectedMultipliers.entries())
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = createAmberCombatant(4);
+
+    expect(AMBER_KIT.getSkillChargeBonus?.(combatant)).toBe(1);
+    expect(AMBER_KIT.getSkillCooldownMultiplier?.(createKitTestContext(combatant))).toBe(0.8);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = createAmberCombatant(3);
+
+    expect(AMBER_KIT.getSkillChargeBonus?.(combatant)).toBe(0);
+    expect(AMBER_KIT.getSkillCooldownMultiplier?.(createKitTestContext(combatant))).toBe(1);
   });
 
   test("its Baron Bunny strikes nothing while it stands, then explodes once when its seconds run out", () => {

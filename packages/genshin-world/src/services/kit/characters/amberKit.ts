@@ -13,6 +13,9 @@ import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 const EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION = 1;
 const EVERY_ARROW_FINDS_ITS_TARGET_CRITICAL_RATE = 0.1;
 const EVERY_ARROW_FINDS_ITS_TARGET_RADIUS_SHARE = 0.3;
+// Constellation 4, It's Not Just Any Doll: Explosive Puppet's cooldown is cut by 20% and it gains a charge
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER = 0.8;
 
 // Ascension 1's CRIT Rate on Fiery Rain, priced by the combatant that cast it
 const addEveryArrowCriticalRate = (combatant: Combatant): Combatant => {
@@ -42,7 +45,9 @@ export const AMBER_CHARACTER_ID = 10_000_021;
 // Amber's behaviour: Explosive Puppet's Baron Bunny, which draws the enemies' strikes and explodes, and Fiery Rain's
 // Arrows, a summon's hits landing from where Amber cast it, with Ascension 1's CRIT Rate and wider arrows. The aimed shot's
 // Unlit form, the bow's aim binding and Amber's Ascension 4 weak-point ATK bonus are not built, so the charged attack is
-// The full shot
+// The full shot. Constellations 1, 2 and 6 are not built: 1's second arrow is an extra hit on the charged attack, which the
+// Kit does not hold; 2's manual detonation needs a charged attack that strikes the bunny's foot; and 6's Movement SPD has no
+// Attribute the kit reads, so its ATK half waits with it
 export const createAmberKitBehaviour = ({
   readHit,
   readHits,
@@ -57,6 +62,9 @@ export const createAmberKitBehaviour = ({
   const everyArrowFindsItsTargetFieryRainArrows = widenFieryRainArrows(fieryRainArrows);
 
   return {
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_4 ? 1 : 0),
+    getSkillCooldownMultiplier: ({ activeCombatant }) =>
+      activeCombatant.constellationCount >= CONSTELLATION_4 ? CONSTELLATION_4_SKILL_COOLDOWN_MULTIPLIER : 1,
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const hasEveryArrowFindsItsTarget = combatant.ascension >= EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION;
