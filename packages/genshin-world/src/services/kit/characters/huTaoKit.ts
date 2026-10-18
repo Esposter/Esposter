@@ -9,6 +9,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
+import { findKitStance } from "#src/services/kit/effects/findKitStance";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -25,7 +26,11 @@ export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
-// Under. Spirit Soother's heal, her passives and her constellations are not built
+// Under. Spirit Soother's heal, her passives, and Constellations 2, 4 and 6, are not built
+// Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her
+// Constellation 2 needs Blood Blossom's DMG by 10% of her Max HP, and Spirit Soother applying it, not built
+// Constellation 4 needs the defeat of an enemy her Blood Blossom marked, which no kit event reports
+// Constellation 6 needs the lethal-strike check and the 10 seconds of RES, which the kit does not build
 export const createHuTaoKitBehaviour = ({
   readHit,
   readParameter,
@@ -98,5 +103,10 @@ export const createHuTaoKitBehaviour = ({
         });
       },
     },
+    // Constellation 1, Crimson Bouquet: her charged attacks cost no stamina while Paramita Papilio holds her
+    getChargedAttackStaminaMultiplier: ({ activeCombatant, kitEffectState }) =>
+      activeCombatant.constellationCount >= 1 && findKitStance(kitEffectState.effects, activeCombatant.characterId)
+        ? 0
+        : 1,
   };
 };

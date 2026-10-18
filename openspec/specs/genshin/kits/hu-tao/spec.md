@@ -90,3 +90,19 @@ Hu Tao's plunge frames and poise SHALL stay provisional until a recording settle
 - **GIVEN** a recording of Hu Tao's plunges exists
 - **WHEN** its frames and poise are compared with the kit's
 - **THEN** the plunges stay provisional until the comparison settles them
+
+### Requirement: First constellation makes charged attacks free of stamina while Paramita Papilio holds her
+
+From constellation 1, Hu Tao's charged attacks SHALL cost no stamina while a stance is on her.
+
+#### Scenario: A charged attack during the Paramita stance costs no stamina
+
+- **GIVEN** Hu Tao is at constellation 1 and holds a stance
+- **WHEN** her charged attack's stamina multiplier is read
+- **THEN** it is zero
+
+#### Scenario: Below constellation 1 the multiplier is unchanged
+
+- **GIVEN** Hu Tao is at constellation 0 and holds a stance
+- **WHEN** her charged attack's stamina multiplier is read
+- **THEN** it is one

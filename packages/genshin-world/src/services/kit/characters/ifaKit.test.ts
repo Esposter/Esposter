@@ -1,10 +1,27 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { WeaponType } from "#src/models/weapon/WeaponType";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createIfaKitBehaviour, IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
+import { castKitAction } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IFA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IFA_CHARACTER_ID);
+
+const createIfaCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+  characterId: IFA_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: IFA_KIT,
+  level: 90,
+  weaponType: WeaponType.Catalyst,
+});
 
 describe(createIfaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -46,5 +63,33 @@ describe(createIfaKitBehaviour, () => {
     expect.hasAssertions();
     expect(Math.round(takeOne(IFA_KIT.lowPlunge.hits).hitmarkSeconds * 60)).toBe(38);
     expect(Math.round(IFA_KIT.plungeCollision.hitmarkSeconds * 60)).toBe(32);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const kitEffectState = castKitAction(IFA_KIT.elementalBurst, createIfaCombatant(4));
+
+    expect(
+      kitEffectState.effects.find(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
+      ),
+    ).toStrictEqual({
+      amount: 100,
+      attribute: Attribute.ElementalMastery,
+      characterId: IFA_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 15,
+    });
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const kitEffectState = castKitAction(IFA_KIT.elementalBurst, createIfaCombatant(3));
+
+    expect(
+      kitEffectState.effects.find(
+        (effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery,
+      ),
+    ).toBeUndefined();
   });
 });
