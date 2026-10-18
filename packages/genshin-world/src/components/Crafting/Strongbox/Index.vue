@@ -84,7 +84,7 @@ const create = () => {
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.MysticOffering]">
     <h2>{{ gameText[GameTextKey.MysticOffering] }}</h2>
     <p>
-      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox) }}
+      {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingRequirement], pickedStrongbox, names) }}
     </p>
     <ul>
       <li v-for="strongbox in strongboxes" :key="strongbox.id">
@@ -107,7 +107,7 @@ const create = () => {
     </GameButton>
     <template v-if="isConfirming">
       <p>
-        {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox) }}
+        {{ computeMysticOfferingText(gameText[GameTextKey.MysticOfferingConfirm], pickedStrongbox, names) }}
       </p>
       <GameButton :kind="GameButtonKind.Row" @click="isConfirming = false">{{
         gameText[GameTextKey.Cancel]
