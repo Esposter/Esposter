@@ -6,6 +6,7 @@ import type { HudFrame } from "#src/models/hud/HudFrame";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { InventoryDestruction } from "#src/models/inventory/InventoryDestruction";
 import type { MapCamera } from "#src/models/map/MapCamera";
+import type { GenshinSettings } from "#src/models/menu/GenshinSettings";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { ReputationCity } from "#src/models/reputation/ReputationCity";
@@ -35,6 +36,7 @@ import InteractionPromptList from "#src/components/Interaction/PromptList/Index.
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
 import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
+import MenuSettings from "#src/components/Menu/Settings/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
@@ -84,6 +86,8 @@ import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#s
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { GENSHIN_SETTINGS_DEFAULTS, GENSHIN_SETTINGS_STORAGE_KEY } from "#src/services/menu/constants";
+import { readGenshinSettings } from "#src/services/menu/readGenshinSettings";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -103,7 +107,7 @@ import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { createWorldHeight } from "#src/services/world/createWorldHeight";
 import { getResultAsync } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
-import { useEventListener, useMediaQuery, useRafFn } from "@vueuse/core";
+import { useEventListener, useLocalStorage, useMediaQuery, useRafFn } from "@vueuse/core";
 import {
   createGenshinRenderer,
   createGrassTrail,
@@ -165,7 +169,15 @@ const {
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
 // Which the host saves on its own cadence
 const emit = defineEmits<{ grant: []; quit: []; ready: []; save: [save: GenshinSave] }>();
-const { maxPixelRatio } = QualityTierSettingsMap[qualityTier];
+// The settings the device keeps, read over the host's defaults. The world renders at the quality tier it started with,
+// Since its renderer and grass take the tier at setup, so a tier chosen in Settings is kept for the next start
+const settingsDefaults = { ...GENSHIN_SETTINGS_DEFAULTS, language, qualityTier };
+const settings = useLocalStorage<GenshinSettings>(GENSHIN_SETTINGS_STORAGE_KEY, settingsDefaults, {
+  serializer: { read: (raw) => readGenshinSettings(raw, settingsDefaults), write: (value) => JSON.stringify(value) },
+  writeDefaults: false,
+});
+const worldQualityTier = settings.value.qualityTier;
+const { maxPixelRatio } = QualityTierSettingsMap[worldQualityTier];
 const canvas = useTemplateRef<TresCanvasInstance>("canvas");
 const windrise = useTemplateRef<InstanceType<typeof WorldWindrise>>("windrise");
 // The bends the character leaves as it walks through the grass, written by the character and read by the grass
@@ -938,7 +950,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :is-tuning="Boolean(isTuning)"
         :landmark-collider
         :origin
-        :quality-tier
+        :quality-tier="worldQualityTier"
         :quest-target-id
         :region-data-base-url
         :scene-export-base-url
@@ -1170,6 +1182,15 @@ defineExpose({ jumpTo, readCameraPosition });
               screenKind = ScreenKind.World;
             }
           "
+        />
+      </template>
+      <template #[ScreenKind.Settings]>
+        <MenuSettings
+          v-model:settings="settings"
+          :default-quality-tier="qualityTier"
+          :game-text
+          :language
+          @close="screenKind = ScreenKind.World"
         />
       </template>
       <template #[ScreenKind.PartySetup]>
