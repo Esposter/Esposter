@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitNormalAttackLandedEvent } from "#src/models/kit/KitNormalAttackLandedEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -72,7 +73,10 @@ describe(createZibaiKitBehaviour, () => {
     const context = createKitTestContext(combatant);
     const radiance = () =>
       countKitResource(context.kitEffectState.effects, ZIBAI_CHARACTER_ID, PHASE_SHIFT_RADIANCE_STATUS_ID);
-    const normalAttackLanded = { action: takeOne(ZIBAI_KIT.normalAttacks), kind: KitEventKind.NormalAttackLanded };
+    const normalAttackLanded: KitNormalAttackLandedEvent = {
+      action: takeOne(ZIBAI_KIT.normalAttacks),
+      kind: KitEventKind.NormalAttackLanded,
+    };
 
     ZIBAI_KIT.elementalSkill.onStart?.(context);
     ZIBAI_KIT.onStep?.(context, combatant, 2);
