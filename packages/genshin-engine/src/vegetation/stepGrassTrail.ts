@@ -19,7 +19,7 @@ const encodeBend = (bend: number): number => Math.round((Math.min(Math.max(bend,
 export const stepGrassTrail = (trail: GrassTrail, position: Vector2, velocity: Vector2, delta: number): void => {
   const { bends, cells, data, texture } = trail;
   const decay = Math.exp(-delta / GRASS_TRAIL_FADE_SECONDS);
-  for (let index = 0; index < bends.length; index++) bends[index] *= decay;
+  for (let index = 0; index < bends.length; index++) bends[index] = (bends[index] ?? 0) * decay;
   const centreCellX = computeGrassTrailCell(position.x, GRASS_TRAIL_TEXEL_SIZE);
   const centreCellZ = computeGrassTrailCell(position.y, GRASS_TRAIL_TEXEL_SIZE);
   trail.center.value.set((centreCellX + 0.5) * GRASS_TRAIL_TEXEL_SIZE, (centreCellZ + 0.5) * GRASS_TRAIL_TEXEL_SIZE);
@@ -53,8 +53,8 @@ export const stepGrassTrail = (trail: GrassTrail, position: Vector2, velocity: V
       }
   }
   for (let index = 0; index < bends.length / 2; index++) {
-    data[index * 4] = encodeBend(bends[index * 2]);
-    data[index * 4 + 1] = encodeBend(bends[index * 2 + 1]);
+    data[index * 4] = encodeBend(bends[index * 2] ?? 0);
+    data[index * 4 + 1] = encodeBend(bends[index * 2 + 1] ?? 0);
   }
   texture.needsUpdate = true;
 };
