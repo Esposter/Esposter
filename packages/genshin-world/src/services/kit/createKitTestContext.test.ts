@@ -3,9 +3,11 @@ import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
+import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { createParty } from "#src/services/party/createParty";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe } from "vitest";
@@ -40,6 +42,15 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
 export const stepKitSeconds = (context: KitContext, seconds: number) => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++)
     stepKitEffects(FIXED_STEP_SECONDS, context);
+};
+
+// The given seconds stepped as the world steps them, one fixed step at a time, each step's expired effects sent to the
+// Team's kits as the world sends them
+export const stepKitSecondsSendingExpiries = (context: KitContext, seconds: number) => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
 };
 
 // The effects an action's start adds to the kit's state, which the action is run in and returned

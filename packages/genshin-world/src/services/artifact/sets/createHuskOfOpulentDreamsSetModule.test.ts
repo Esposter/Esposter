@@ -14,13 +14,11 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -64,13 +62,6 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
     bonuses.filter((bonus) => bonus.attribute === attribute).reduce((sum, bonus) => sum + bonus.amount, 0);
   return { defense: sumOf(Attribute.DefensePercent), geo: sumOf(Attribute.GeoDamageBonus) };
 };
-// The kit's steps as the world runs them: the team's effects step and their expiries are heard, one step at a time
-const stepHuskSeconds = (context: KitContext, seconds: number) => {
-  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-  }
-};
 const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
   emitKitEvent(
     { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
@@ -89,7 +80,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     expect(getBonuses(wearer, kitEffectState)).toEqual({ defense: expect.closeTo(0.06), geo: expect.closeTo(0.06) });
 
     for (const stacks of [2, 3, 4, 4]) {
-      stepHuskSeconds(context, 0.35);
+      stepKitSecondsSendingExpiries(context, 0.35);
       hitEnemy(wearer, Element.Geo, context);
       expect(getBonuses(wearer, kitEffectState)).toEqual({
         defense: expect.closeTo(0.06 * stacks),
@@ -109,7 +100,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     hitEnemy(wearer, Element.Geo, context);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06);
 
-    stepHuskSeconds(context, 0.35);
+    stepKitSecondsSendingExpiries(context, 0.35);
     hitEnemy(wearer, Element.Hydro, context);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06);
 
@@ -125,19 +116,19 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     const context = createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID]) });
 
     hitEnemy(wearer, Element.Geo, context);
-    stepHuskSeconds(context, 0.35);
+    stepKitSecondsSendingExpiries(context, 0.35);
     hitEnemy(wearer, Element.Geo, context);
 
-    stepHuskSeconds(context, 5.9);
+    stepKitSecondsSendingExpiries(context, 5.9);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.12);
 
-    stepHuskSeconds(context, 0.2);
+    stepKitSecondsSendingExpiries(context, 0.2);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06);
 
-    stepHuskSeconds(context, 5.8);
+    stepKitSecondsSendingExpiries(context, 5.8);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06);
 
-    stepHuskSeconds(context, 0.2);
+    stepKitSecondsSendingExpiries(context, 0.2);
     expect(getBonuses(wearer, kitEffectState).defense).toBe(0);
   });
 
@@ -157,7 +148,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
 
     swapOff(wearer, context);
     for (const stacks of [1, 2, 3, 4, 4]) {
-      stepHuskSeconds(context, 3.1);
+      stepKitSecondsSendingExpiries(context, 3.1);
       expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06 * stacks);
     }
   });
@@ -177,10 +168,10 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     });
 
     emitKitEvent({ characterId: OTHER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped }, context);
-    stepHuskSeconds(context, 2.9);
+    stepKitSecondsSendingExpiries(context, 2.9);
     expect(getBonuses(wearer, kitEffectState).defense).toBe(0);
 
-    stepHuskSeconds(context, 0.2);
+    stepKitSecondsSendingExpiries(context, 0.2);
     expect(getBonuses(wearer, kitEffectState).defense).toBeCloseTo(0.06);
   });
 
@@ -206,7 +197,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     });
 
     swapOff(wearer, awayContext);
-    stepHuskSeconds(awayContext, 1);
+    stepKitSecondsSendingExpiries(awayContext, 1);
     emitKitEvent(
       {
         characterId: TRAVELER_CHARACTER_ID,
@@ -215,7 +206,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
       },
       backContext,
     );
-    stepHuskSeconds(backContext, 3.1);
+    stepKitSecondsSendingExpiries(backContext, 3.1);
     expect(getBonuses(wearer, kitEffectState).defense).toBe(0);
   });
 });
