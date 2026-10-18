@@ -96,6 +96,8 @@ const onKitEvent = (
 // Ororon's behaviour: Dark Voices' Echo casts its soundwave field where he stands, each tick a summon landing the
 // Soundwave from where it was cast. Constellations 2 and 4 and Ascension 4 are built. The Spirit Orb's bounce, Ascension 1
 // And Constellations 1 and 6 wait on Hypersense and a chained hit, and Constellation 4's Energy restore on the ritual's hit
+// Constellation 1 needs the Spirit Orb's extra bounces and Nighttide, which wait on a chained hit and Hypersense
+// Constellation 6 needs the ATK stacks after Hypersense, which wait on Hypersense and a chained hit
 export const createOroronKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const soundwave = readHit("soundwave", { onStrike: addConstellation2Stack });
   const darkVoicesEchoSeconds = readParameter("darkVoicesEchoSeconds");
