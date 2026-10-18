@@ -122,16 +122,14 @@ const loadedCampIds = new Set<string>();
 // The camps' locks as last emitted, by each camp's done flag in order, cleared on every load so the next step
 // Emits them
 let emittedCampLocksKey = "";
-const getCampLocks = (): ChestLockSource[] =>
-  computeCampLockSources(
-    [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps),
-    enemyMap,
-  );
+// Every camp of every region whose data has arrived
+const getEnemyCamps = () => [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps);
+const getCampLocks = (): ChestLockSource[] => computeCampLockSources(getEnemyCamps(), enemyMap);
 // A camp spawns as its region's data arrives, each member whose respawn time has come, and is dropped as it leaves,
 // So an enemy comes back only on a load, never in view
 let spawnedWorldLevel = worldLevel;
 watchImmediate(
-  () => [worldLevel, [...regionDataMap.values()].flatMap(({ enemyCamps }) => enemyCamps), outcropCamps] as const,
+  () => [worldLevel, getEnemyCamps(), outcropCamps] as const,
   ([currentWorldLevel, enemyCamps, fightingCamps]) => {
     emittedCampLocksKey = "";
     if (currentWorldLevel !== spawnedWorldLevel) {
@@ -195,9 +193,7 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
         computeEnemyDrops(enemyKind, enemy.level, () => Math.random()),
       );
       // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
-      const camp = [...regionDataMap.values()]
-        .flatMap(({ enemyCamps }) => enemyCamps)
-        .find(({ id }) => id === enemy.campId);
+      const camp = getEnemyCamps().find(({ id }) => id === enemy.campId);
       // A camp with no boss brings each defeated member back at an instant the save keeps
       const respawnAt = camp && computeEnemyRespawnTime(getCampEnemyTypes(camp.members), defeatedAt);
       if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toString());
