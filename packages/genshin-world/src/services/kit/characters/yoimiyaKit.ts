@@ -3,6 +3,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -26,11 +27,15 @@ const CONSTELLATION_1_ATTACK_BONUS = 0.2;
 const CONSTELLATION_1_ATTACK_SECONDS = 20;
 const CONSTELLATION_1_AUROUS_BLAZE_SECONDS = 4;
 const CONSTELLATION_1_SOURCE = "yoimiya-constellation-1";
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_PYRO_DAMAGE_BONUS = 0.25;
+const CONSTELLATION_2_SECONDS = 6;
+const CONSTELLATION_2_SOURCE = "yoimiya-constellation-2";
 
 // Yoimiya's behaviour: Niwabi Fire-Dance's stance of Blazing Arrows for the table's seconds, ending as she leaves the
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
-// Member's hits set off, and Constellation 1 extends it and raises her ATK on a defeat. Her passives and
-// Constellations 2, 4 and 6 are not built yet
+// Member's hits set off. Constellation 1 extends it and raises her ATK on a defeat, and Constellation 2 raises her
+// Pyro DMG on a CRIT. Her passives and Constellations 4 and 6 are not built yet
 // Constellation 4 needs Aurous Blaze's explosions to cut Niwabi Fire-Dance's cooldown, which the kit does not build
 // Constellation 6 needs the Niwabi Fire-Dance Normal Attacks' extra arrow chance, which the kit does not build
 export const createYoimiyaKitBehaviour = ({
@@ -60,7 +65,7 @@ export const createYoimiyaKitBehaviour = ({
     onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind !== KitEventKind.DamageTaken) return;
-      const { attackTag, enemy, hit, isDefeated, striker } = event;
+      const { attackTag, enemy, hit, isCritical, isDefeated, striker } = event;
       // Agate Ryuukin, from Constellation 1: a marked enemy defeated within Aurous Blaze raises Yoimiya's ATK by 20%
       if (
         isDefeated &&
@@ -72,6 +77,19 @@ export const createYoimiyaKitBehaviour = ({
           attribute: Attribute.AttackPercent,
           secondsRemaining: CONSTELLATION_1_ATTACK_SECONDS,
           source: CONSTELLATION_1_SOURCE,
+        });
+      // A Procession of Bonfires, from Constellation 2: her Pyro CRIT gives her 25% Pyro DMG Bonus for 6 seconds
+      if (
+        isCritical &&
+        combatant.constellationCount >= CONSTELLATION_2 &&
+        striker.characterId === characterId &&
+        (hit.element ?? Element.Pyro) === Element.Pyro
+      )
+        buffKitMember(kitEffectState, characterId, {
+          amount: CONSTELLATION_2_PYRO_DAMAGE_BONUS,
+          attribute: Attribute.PyroDamageBonus,
+          secondsRemaining: CONSTELLATION_2_SECONDS,
+          source: CONSTELLATION_2_SOURCE,
         });
       if (striker.characterId === characterId) {
         if (hit !== burstHit || !checkHasKitStatus(kitEffectState.effects, characterId, AUROUS_BLAZE_PENDING_STATUS_ID))
