@@ -1,9 +1,11 @@
+import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { getSurveySummaryCards } from "@/services/survey/summary/getSurveySummaryCards";
 import { Model } from "survey-core";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveySummaryCards, () => {
+  const checkboxAnswers = ["a", "b"].join(CHECKBOX_ANSWER_SEPARATOR);
   const rowKey = "rowKey";
   const questions = new Model({
     elements: [
@@ -15,6 +17,31 @@ describe(getSurveySummaryCards, () => {
       { name: "text", type: "text" },
     ],
   }).getAllQuestions();
+  const checkboxQuestions = new Model({
+    elements: [{ choices: ["a", "b"], name: "checkbox", type: "checkbox" }],
+  }).getAllQuestions();
+
+  test("counts each text choice of a checkbox answer", () => {
+    expect.hasAssertions();
+
+    expect(
+      getSurveySummaryCards(checkboxQuestions, [
+        { checkbox: checkboxAnswers, rowKey },
+      ]),
+    ).toStrictEqual([
+      {
+        answeredCount: 1,
+        average: undefined,
+        choices: [
+          { count: 1, label: "a" },
+          { count: 1, label: "b" },
+        ],
+        name: "checkbox",
+        title: "checkbox",
+        type: SurveySummaryCardType.Choice,
+      },
+    ]);
+  });
 
   // A skipped question is left out of its own count, and a question taking several choices counts each one it holds
   test("counts each choice by its label, summarises numbers and lists written answers", () => {
@@ -22,8 +49,16 @@ describe(getSurveySummaryCards, () => {
 
     expect(
       getSurveySummaryCards(questions, [
-        { boolean: true, checkbox: '["a","b"]', number: 1, radiogroup: "a", rating: 1, rowKey, text: "text" },
-        { boolean: false, checkbox: '["a"]', number: 3, radiogroup: null, rating: 2, rowKey, text: "" },
+        {
+          boolean: true,
+          checkbox: checkboxAnswers,
+          number: 1,
+          radiogroup: "a",
+          rating: 1,
+          rowKey,
+          text: "text",
+        },
+        { boolean: false, checkbox: "a", number: 3, radiogroup: null, rating: 2, rowKey, text: "" },
       ]),
     ).toStrictEqual([
       {

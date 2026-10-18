@@ -4,6 +4,7 @@ import type { SurveySummaryCard } from "@/models/resource/survey/SurveySummaryCa
 import type { Question } from "survey-core";
 
 import { getAverage } from "#shared/services/resource/sheet/column/getAverage";
+import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { SURVEY_SUMMARY_ANSWER_LIMIT } from "@/services/survey/summary/constants";
 import {
@@ -14,13 +15,10 @@ import {
   QuestionTextModel,
 } from "survey-core";
 
-// A question taking several choices is stored as its JSON array, and every other answer as the value itself
+// A question taking several choices arrives as its choices joined by the separator, every other answer as its value
 const getAnsweredValues = (question: Question, value: ColumnValue): unknown[] => {
-  if (question instanceof QuestionCheckboxModel && typeof value === "string") {
-    // oxlint-disable-next-line no-restricted-properties -- a choice value is text its author names, so an ISO-shaped one must stay the string its choice is matched by
-    const values: unknown = JSON.parse(value);
-    return Array.isArray(values) ? values : [values];
-  }
+  if (question instanceof QuestionCheckboxModel && typeof value === "string")
+    return value.split(CHECKBOX_ANSWER_SEPARATOR);
   return [value];
 };
 const getChoices = (question: Question): { label: string; value: unknown }[] => {
