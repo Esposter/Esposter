@@ -73,6 +73,7 @@
   "1737243758": "À LIRE AVANT TOUTE UTILISATION DU JEU",
   "1747175596": "Morceau de fer blanc",
   "1761418508": "Fleur funéraire",
+  "1809596508": "Commencer l'usinage",
   "1823058028": "Fleur lampe-de-givre",
   "1859043748": "Conque de béryl",
   "1860729186": "Cliquez pour ouvrir",
@@ -379,6 +380,7 @@
   "UI_MAPMARK_MarkGoddess_TITLE": "Statue des Sept",
   "UI_MAPMARK_MarkTransPoint_TITLE": "Point de téléportation",
   "UI_MAP_AREA1_TITLE_7": "Cité de Mondstadt",
+  "UI_PC_Quick_Switch": "Changer",
   "UI_PIC_MAIN_PCPS_C": "Photos",
   "UI_PLAYER_PROFILE_CHARACTER_NEW": "Archives des personnages",
   "UI_PLAYER_PROFILE_MAIL": "Messages",
@@ -530,5 +532,6 @@
   "UI_WORLDLEVEL_TITLE": "Niv. du monde",
   "UI_WORLDLEVEL_UP_BUTTON": "Restaurer le Niv. du monde initial",
   "VIDEO_RETREAT": "Retour",
+  "WIDGET_QUICK_SWITCH_GUIDE2_2": "Sélectionnez un gadget pour échanger rapidement",
   "tips_enter_game": "Bienvenue, %s."
 }
