@@ -23,6 +23,7 @@ describe(usePageBuilderHistoryStore, () => {
   };
   const TEST_MOVE_LABEL = "Move block";
   const TEST_LABEL_LABEL = "Change label";
+  const TEST_OTHER_LANG = "fr";
   const setupDocument = async () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -260,5 +261,74 @@ describe(usePageBuilderHistoryStore, () => {
       content: [createButton(TEST_ID), createButton("d"), createButton(TEST_OTHER_ID)],
       root: TEST_ROOT,
     });
+  });
+
+  test("edits over a path and a path under it in one interaction stay two entries, and redo restores both", async () => {
+    expect.hasAssertions();
+
+    const resourceId = await setupDocument();
+    const interactionId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, redo, undo } = pageBuilderHistoryStore;
+    applyEdit(
+      resourceId,
+      [
+        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton("c"), createButton("d")] },
+        { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("e") },
+      ],
+      TEST_MOVE_LABEL,
+      interactionId,
+    )._unsafeUnwrap();
+    applyEdit(
+      resourceId,
+      [
+        { op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("f") },
+        { op: JsonPatchOperationType.Replace, path: "/content", value: [createButton("c"), createButton("g")] },
+      ],
+      TEST_LABEL_LABEL,
+      interactionId,
+    )._unsafeUnwrap();
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("e")], root: TEST_ROOT });
+
+    undo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
+
+    redo(resourceId);
+    redo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("g")], root: TEST_ROOT });
+  });
+
+  test("a test after a replace in one interaction stays its own entry, and redo restores the replace", async () => {
+    expect.hasAssertions();
+
+    const resourceId = await setupDocument();
+    const interactionId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument } = pageBuilderDocumentStore;
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, redo, undo } = pageBuilderHistoryStore;
+    applyEdit(
+      resourceId,
+      [{ op: JsonPatchOperationType.Replace, path: "/root/props/lang", value: TEST_OTHER_LANG }],
+      TEST_LABEL_LABEL,
+      interactionId,
+    )._unsafeUnwrap();
+    applyEdit(
+      resourceId,
+      [{ op: JsonPatchOperationType.Test, path: "/root/props/lang", value: TEST_OTHER_LANG }],
+      TEST_LABEL_LABEL,
+      interactionId,
+    )._unsafeUnwrap();
+    undo(resourceId);
+    undo(resourceId);
+    redo(resourceId);
+
+    expect(getDocument(resourceId)).toStrictEqual({ ...TEST_DOCUMENT, root: { props: { lang: TEST_OTHER_LANG } } });
   });
 });
