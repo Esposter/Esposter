@@ -62,6 +62,7 @@ import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/p
 import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
 import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives/createSongOfTheVigilPassiveModule";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
+import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weapon/passives/createStarfireUponTheSnowplainsPassiveModule";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
 import { createUnbendingPassiveModule } from "#src/services/weapon/passives/createUnbendingPassiveModule";
@@ -282,4 +283,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2548633643": createFinaleOfTheDeepPassiveModule,
   // Unfinished Masterpiece (Flowing Purity)
   "3335241819": createFlowingPurityPassiveModule,
+  // Starfire Upon the Snowplains (Emberwell)
+  "953016699": createStarfireUponTheSnowplainsPassiveModule,
 };
