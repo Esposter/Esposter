@@ -6,7 +6,7 @@
 
 ## 2. Constellation effects
 
-- [ ] 2.1 Write each constellation's switch in its character's kit module, applying only when active. Verify: tests named after the scenarios 'an active constellation's switch changes its character's kit' and 'an inactive constellation changes nothing', seen failing first.
+- [x] 2.1 Write each constellation's switch in its character's kit module, applying only when active. Verify: tests named after the scenarios 'an active constellation's switch changes its character's kit' and 'an inactive constellation changes nothing', seen failing first.
 
 ## 3. Traveler's sets
 
