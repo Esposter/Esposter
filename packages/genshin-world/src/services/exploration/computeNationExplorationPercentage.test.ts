@@ -14,9 +14,15 @@ describe(computeNationExplorationPercentage, () => {
     {
       areaId: FIRST_AREA_ID,
       doings: [{ id: "40", kind: ExplorationKind.Waypoint, weight: WAYPOINT_WEIGHT }],
+      reputationRatio: 0,
       total: 100,
     },
-    { areaId: SECOND_AREA_ID, doings: [{ id: "50", kind: ExplorationKind.Waypoint, weight: 10 }], total: 300 },
+    {
+      areaId: SECOND_AREA_ID,
+      doings: [{ id: "50", kind: ExplorationKind.Waypoint, weight: 10 }],
+      reputationRatio: 0,
+      total: 300,
+    },
   ];
   const statue: StatueLandmark = {
     areaId: FIRST_AREA_ID,
@@ -31,6 +37,30 @@ describe(computeNationExplorationPercentage, () => {
     expect.hasAssertions();
 
     expect(computeNationExplorationPercentage(areas, [statue])).toBe(10);
+  });
+
+  test("liyue's percentage weighs each area by its ratio", () => {
+    expect.hasAssertions();
+
+    // The first area is 40 percent done and counts for three quarters of the nation, the second is 50 percent done and
+    // Counts for a quarter, so the nation reads 42.5 percent, which rounds down to 42. Summed totals would read 47
+    const ratioAreas: ExplorationArea[] = [
+      {
+        areaId: FIRST_AREA_ID,
+        doings: [{ id: "40", kind: ExplorationKind.Waypoint, weight: 40 }],
+        reputationRatio: 0.75,
+        total: 100,
+      },
+      {
+        areaId: SECOND_AREA_ID,
+        doings: [{ id: "50", kind: ExplorationKind.Waypoint, weight: 150 }],
+        reputationRatio: 0.25,
+        total: 300,
+      },
+    ];
+    const secondStatue: StatueLandmark = { ...statue, areaId: SECOND_AREA_ID };
+
+    expect(computeNationExplorationPercentage(ratioAreas, [statue, secondStatue])).toBe(42);
   });
 
   test("should read zero while no statue is unlocked", () => {

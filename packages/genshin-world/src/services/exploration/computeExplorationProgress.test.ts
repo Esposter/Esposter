@@ -13,6 +13,7 @@ describe(computeExplorationProgress, () => {
       { id: "40", kind: ExplorationKind.Waypoint, weight: WEIGHT },
       { id: "41", kind: ExplorationKind.Chest, weight: WEIGHT },
     ],
+    reputationRatio: 0,
     total: TOTAL,
   };
 

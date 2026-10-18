@@ -1,6 +1,6 @@
 ## 1. Mondstadt's thresholds
 
-- [x] 1.1 Compute a nation's percentage from its areas by the rule for each area's ratio and for summed totals. Verify: computeNationExplorationPercentage.test.ts written first and seen failing, named after the scenario 'Mondstadt's percentage uses summed totals when every ratio is zero'.
+- [x] 1.1 Compute a nation's percentage from its areas by the rule for each area's ratio and for summed totals. Verify: computeNationExplorationPercentage.test.ts written first and seen failing, named after the scenarios 'Mondstadt's percentage uses summed totals when every ratio is zero' and 'Liyue's percentage weighs each area by its ratio'.
 - [x] 1.2 Pay each threshold a statue's unlock reaches, once, through the Reputation experience and the item rewards. Verify: tests named after the scenarios 'Crossing a threshold pays its reward once' and 'An unlock before the reads settle pays its threshold once', written first and seen failing.
 
 ## 2. Doings

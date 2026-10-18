@@ -16,6 +16,7 @@ describe(computeExploredDoingIds, () => {
       { id: WAYPOINT_ID, kind: ExplorationKind.Waypoint, weight: 10 },
       { id: CHEST_ID, kind: ExplorationKind.Chest, weight: 10 },
     ],
+    reputationRatio: 0,
     total: 146,
   };
 
