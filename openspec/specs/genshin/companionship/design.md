@@ -23,7 +23,7 @@ flowchart LR
 - **The grant is whole, not split.** Every deployed member but the Traveler gets the full amount, a fallen one included, since the grant reads the team rather than their health.
 - **Past the top, nothing is kept.** The total stops at the top level's, so a character there gains nothing and a claim that would pass it is cut short.
 - **Provisional amounts.** Each claim kind is given the low end of the wiki's range for it, and two clips on the roadmap's References sought list, one per pair of kinds, measure what a claim gives.
-- **A namecard is held by its level.** A namecard is in the held list once its character's total EXP reaches level 10, read from the same levels, so no save keeps it. Its art is the game's texture and is never served, so the profile sets its name on a plate of its own, and its description is the [proposal](../../../changes/genshin-companionship/design.md)'s.
+- **A namecard is held by its level.** A namecard is in the held list once its character's total EXP reaches level 10, read from the same levels, so no save keeps it, and the profile's held list adds each finished category's namecard beside it. Its art is the game's texture and is never served, so the profile sets its name on a plate of its own, and its description is the [proposal](../../../changes/genshin-companionship/design.md)'s.
 - **Not built.** The Serenitea Pot dialogue and the namecard's description and art, which the [proposal](../../../changes/genshin-companionship/design.md) keeps; the stories and voice-overs are on the [character profile](../character-profile/design.md). The claim is a rule with no claim screen calling it yet.
 
 ## Key files
@@ -34,7 +34,7 @@ flowchart LR
 | `packages/genshin-world/src/services/shared/computeLevelReached.ts`               | The level a total EXP has reached, read over any table of levels                            |
 | `packages/genshin-world/src/services/friendship/readFriendshipLevels.ts`          | The levels, fetched by their key from the friendship record and checked against their shape |
 | `packages/genshin-world/src/services/friendship/readFriendshipNamecards.ts`       | The namecards, fetched by their key from the same record and checked against their shape    |
-| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    | The namecards whose character has reached level 10                                          |
+| `packages/genshin-world/src/services/friendship/computeHeldNamecardItemIds.ts`    |
 | `packages/genshin-world/src/models/friendship/FriendshipLevel.ts`                 | A level's number and total EXP, with its schema                                             |
 | `packages/genshin-world/src/models/friendship/FriendshipNamecard.ts`              | A character's namecard item and its name text id, with its schema                           |
 | `packages/genshin-world/src/components/Character/Profile/Index.vue`               | Passes the namecard's name, from the hosted `nameText` record, to the profile panel         |

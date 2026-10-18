@@ -64,6 +64,7 @@ export const genshinSaveSchema = z
     // The statues' progress in each region, and the Oculi found
     statues: statueProgressSaveSchema,
     // The name the player chose for the Traveler, empty while none is chosen
+    namecardItemId: z.number().int().nonnegative(),
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,

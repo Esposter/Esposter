@@ -204,6 +204,7 @@ describe("genshinSaveSchema", () => {
           ]),
         ),
       },
+      namecardItemId: maxNumber,
       travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

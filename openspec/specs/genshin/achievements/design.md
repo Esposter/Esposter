@@ -45,7 +45,7 @@ A trigger type the map does not name is not watched, and its achievements never 
 ## Notes
 
 - **Only quest triggers move yet.** The [quests](../quests/design.md) page emits each finished sub-quest and each finished main quest, so the quest triggers count; the other trigger types wait on the pages that record their doings, as the [proposal](../../../changes/genshin-achievements/design.md) names.
-- **A namecard is not granted yet.** `computeAchievementNamecardItemIds` lists the namecard item of every category whose completion is finished, read from the progress each time, and a category with no end lists none. Nothing yet adds it to the profile's namecards; that is the [companionship](../../../changes/genshin-companionship/design.md) page's, which holds no namecard list yet.
+- **A finished category's namecard is held, never stored.** `computeAchievementNamecardItemIds` lists the namecard item of every category whose completion is finished, read from the progress each time, and a category with no end lists none. `computeProfileNamecardItemIds` joins it with each character's Friendship namecard into the profile's held namecards, so the held list reads from progress and stores nothing.
 - **The quest ids the table names are not all in the dump.** About two-thirds of the sub-quest ids the quest triggers name are in the dump's quest table; the rest name quests the dump does not carry, so their achievements stay at zero until that data is read.
 - **The screen's look is provisional.** Its places follow the quest screen's grid, not the English client, and its category icons, its Primogem glyph and its tab shapes are not built.
 
@@ -55,24 +55,25 @@ The Achievements screen has no parity measure yet. Its look waits on `achievemen
 
 ## Key files
 
-| File                                                                                    | Role                                                                                   |
-| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/achievement/Achievement.ts`                          | One achievement as the table holds it, with its schema                                 |
-| `packages/genshin-world/src/models/achievement/AchievementCategory.ts`                  | One category, with the namecard its completion pays                                    |
-| `packages/genshin-world/src/models/achievement/AchievementEvent.ts`                     | The doing an achievement's trigger may be waiting on                                   |
-| `packages/genshin-world/src/models/achievement/AchievementProgress.ts`                  | How far an achievement has come and when it was finished                               |
-| `packages/genshin-world/src/services/achievement/advanceAchievements.ts`                | Counts a doing against the watched achievements, paying the finished                   |
-| `packages/genshin-world/src/services/achievement/AchievementTriggerEventKindMap.ts`     | The trigger types watched and the kind of doing each counts                            |
-| `packages/genshin-world/src/services/achievement/checkIsAchievementCategoryComplete.ts` | Whether every achievement of a category is finished                                    |
-| `packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts`  | The namecard item of each finished category that pays one                              |
-| `packages/genshin-world/src/services/achievement/readAchievements.ts`                   | The slices fetched by their keys, checked against their schemas                        |
-| `packages/genshin-world/src/services/achievement/AchievementTextLoaderMap.ts`           | The words in each language, fetched by their key                                       |
-| `packages/genshin-world/src/components/Achievement/Screen/Index.vue`                    | The Achievements screen the Paimon menu opens                                          |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                         | Loads the slices and words when the screen opens, and shows it                         |
-| `packages/genshin-world/src/data/achievements/achievementCount.json`                    | The count of the achievements kept, which the save's achievement slice is bounded by   |
-| `scripts/src/services/genshinAssets/achievements/buildAchievements.ts`                  | The builder: the table's rows, mapped and checked, into the two records, and the count |
-| `scripts/src/services/genshinAssets/achievements/buildAchievementText.ts`               | The builder of every title and description in each language                            |
-| `scripts/src/services/genshinAssets/achievements/toAchievement.ts`                      | One row mapped to an achievement, its trigger's ids split                              |
+| File                                                                                    | Role                                                                                               |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/achievement/Achievement.ts`                          | One achievement as the table holds it, with its schema                                             |
+| `packages/genshin-world/src/models/achievement/AchievementCategory.ts`                  | One category, with the namecard its completion pays                                                |
+| `packages/genshin-world/src/models/achievement/AchievementEvent.ts`                     | The doing an achievement's trigger may be waiting on                                               |
+| `packages/genshin-world/src/models/achievement/AchievementProgress.ts`                  | How far an achievement has come and when it was finished                                           |
+| `packages/genshin-world/src/services/achievement/advanceAchievements.ts`                | Counts a doing against the watched achievements, paying the finished                               |
+| `packages/genshin-world/src/services/achievement/AchievementTriggerEventKindMap.ts`     | The trigger types watched and the kind of doing each counts                                        |
+| `packages/genshin-world/src/services/achievement/checkIsAchievementCategoryComplete.ts` | Whether every achievement of a category is finished                                                |
+| `packages/genshin-world/src/services/achievement/computeAchievementNamecardItemIds.ts`  | The namecard item of each finished category that pays one                                          |
+| `packages/genshin-world/src/services/profile/computeProfileNamecardItemIds.ts`          | The profile's held namecards: each character's at Friendship Level 10 and each finished category's |
+| `packages/genshin-world/src/services/achievement/readAchievements.ts`                   | The slices fetched by their keys, checked against their schemas                                    |
+| `packages/genshin-world/src/services/achievement/AchievementTextLoaderMap.ts`           | The words in each language, fetched by their key                                                   |
+| `packages/genshin-world/src/components/Achievement/Screen/Index.vue`                    | The Achievements screen the Paimon menu opens                                                      |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                         | Loads the slices and words when the screen opens, and shows it                                     |
+| `packages/genshin-world/src/data/achievements/achievementCount.json`                    | The count of the achievements kept, which the save's achievement slice is bounded by               |
+| `scripts/src/services/genshinAssets/achievements/buildAchievements.ts`                  | The builder: the table's rows, mapped and checked, into the two records, and the count             |
+| `scripts/src/services/genshinAssets/achievements/buildAchievementText.ts`               | The builder of every title and description in each language                                        |
+| `scripts/src/services/genshinAssets/achievements/toAchievement.ts`                      | One row mapped to an achievement, its trigger's ids split                                          |
 
 ## Sources
 

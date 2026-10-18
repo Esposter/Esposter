@@ -107,11 +107,11 @@ A category SHALL list its namecard as earned once every achievement of it is fin
 - **WHEN** all of its achievements are finished
 - **THEN** no namecard is listed
 
-#### Scenario: Earned namecard is not yet on the profile
+#### Scenario: Earned namecard is on the profile
 
 - **GIVEN** a namecard is listed as earned
 - **WHEN** the player's profile is shown
-- **THEN** the namecard is not yet among the profile's namecards
+- **THEN** the namecard is among the profile's held namecards, the ones the player may equip
 
 ### Requirement: The Achievements screen lists category progress
 
