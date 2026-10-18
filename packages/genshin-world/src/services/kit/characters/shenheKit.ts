@@ -19,13 +19,14 @@ const BURST_OFFSET_METRES = 2;
 const BURST_ASCENSION = 1;
 const BURST_CRYO_DAMAGE_BONUS = 0.15;
 const BURST_CRYO_DAMAGE_BONUS_SOURCE = "shenhe-burst-cryo";
+const CONSTELLATION_1 = 1;
 
 export const SHENHE_CHARACTER_ID = 10_000_063;
 
 // Shenhe's behaviour: Divine Maiden's Deliverance casts its field ahead of her, whose DoT ticks give the enemies within it
 // The burst's RES Decrease and, from Ascension 1, give the active character its Cryo DMG Bonus. Her Quill is not built:
 // The kit prices a hit from its striker alone, and a Quill adds Shenhe's ATK to the hits of whoever carries it, which no
-// Kit step reads. Her other passives and constellations are not built
+// Kit step reads. Constellation 1's charge is built; her other passives and Constellations 2, 4 and 6 are not
 // Constellation 2 needs the field's extra 6 seconds and a Cryo CRIT DMG bonus, which no strike hook carries
 // Constellation 4 needs the Skyfrost Mantra stacks from the Icy Quill, which the kit does not build
 // Constellation 6 needs the Icy Quill's trigger quota, which the kit does not build
@@ -61,6 +62,8 @@ export const createShenheKitBehaviour = ({
     createBurstTickHit(burstTickSecondHitSeconds + offsetSeconds),
   ]);
   return {
+    // Clarity of Heart, from Constellation 1, lets Spring Spirit Summoning be used one more time
+    getSkillChargeBonus: (combatant) => (combatant.constellationCount >= CONSTELLATION_1 ? 1 : 0),
     burst: {
       // The field is cast ahead of the body, as far across as its DoT reaches, and its DoT and buff are summoned there, so
       // It stands where gcsim places it
