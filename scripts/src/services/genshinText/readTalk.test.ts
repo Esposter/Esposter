@@ -25,7 +25,9 @@ describe(readTalk, () => {
         { dialog: { nextDialogs: [101], talkContentTextMapHash: 0, talkRole: { type: "TALK_ROLE_PLAYER" } }, id: 100 },
         { dialog: { nextDialogs: [-1], talkContentTextMapHash: 0, talkRole: { id: NPC_ID } }, id: 101 },
       ]),
-      talkConfigMap: new Map([[TALK_ID, { beginCond: [], id: TALK_ID, npcId: [Number(NPC_ID)] }]]),
+      talkConfigMap: new Map([
+        [TALK_ID, { beginCond: [], id: TALK_ID, initDialog: 100, npcId: [Number(NPC_ID)], questId: 0 }],
+      ]),
     });
 
     expect(talk).toStrictEqual({
@@ -59,8 +61,8 @@ describe(readTalk, () => {
     const talk = readTalk(
       TALK_ID,
       createTalkTables([
-        { dialog: { nextDialogs: [], talkContentTextMapHash: 0 }, id: 101 },
-        { dialog: { nextDialogs: [], talkContentTextMapHash: 0 }, id: 100 },
+        { dialog: { nextDialogs: [], talkContentTextMapHash: 0, talkRole: {} }, id: 101 },
+        { dialog: { nextDialogs: [], talkContentTextMapHash: 0, talkRole: {} }, id: 100 },
       ]),
     );
 
