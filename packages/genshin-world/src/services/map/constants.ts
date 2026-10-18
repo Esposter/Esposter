@@ -5,6 +5,13 @@ export const JUMP_LANDMARK_KINDS: readonly LandmarkKind[] = [LandmarkKind.Statue
 // Provisional: the game's own arrival point for each statue, its scene point's transport place. How far in front of a
 // Landmark a jump lands, in metres, clear of a statue's plinth
 export const JUMP_STANDOFF_DISTANCE = 8;
+// How near a locked jump landmark the HUD points to it, and how far it stays pointed to once the player is past the
+// Show distance, in metres, as the wiki gives the two. The gap between them keeps the pointer from flickering at the show distance
+export const NAVIGATION_POINTER_SHOW_DISTANCE = 30;
+export const NAVIGATION_POINTER_HIDE_DISTANCE = 40;
+// Provisional: how far in from the screen's edge the navigation mark is held, as a share of the screen, so the mark sits
+// Inside the screen. Not yet read off the game's pointer at the edge
+export const NAVIGATION_MARK_INSET_SHARE = 0.04;
 // Provisional: the metres from the minimap's centre to its rim, not yet read off the game's minimap against the world
 export const MINIMAP_RADIUS = 120;
 // Provisional: the ground the map's drawing stands on where the game paints its terrain, which is not drawn here, read

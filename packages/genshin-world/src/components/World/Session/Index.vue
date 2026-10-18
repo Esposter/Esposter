@@ -7,6 +7,7 @@ import type { MapCamera } from "#src/models/map/MapCamera";
 import type { QuestMark } from "#src/models/quest/QuestMark";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
+import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
@@ -20,6 +21,7 @@ import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
+import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
@@ -51,6 +53,7 @@ import { stepElementalSight } from "#src/services/elementalSight/stepElementalSi
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
+import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#src/services/party/constants";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
@@ -391,6 +394,8 @@ useWorldSaveSync({
     worldLevelAdjustment: worldLevelAdjustment.value,
   }),
 });
+// The jump landmarks the player has yet to unlock, which the prompt list offers to resonate with and the HUD points to
+const lockedJumpLandmarks = computed(() => jumpLandmarks.value.filter(({ id }) => !unlockedLandmarkIds.value.has(id)));
 // What the character can act on in the world: each drop, named by its item, each resident of the regions in reach
 // Whose talk the world holds, named by its text, and each jump landmark still locked, which it resonates with. Each
 // Stands on the ground beneath its point
@@ -403,14 +408,12 @@ const interactables = computed<Interactable[]>(() => {
     name: gameText[GameTextKey.FrostbearingTree],
     position: { x, y: getGroundHeight(x, z), z },
   }));
-  const statues = jumpLandmarks.value
-    .filter(({ id }) => !unlockedLandmarkIds.value.has(id))
-    .map(({ id, position: { x, z } }) => ({
-      id,
-      kind: InteractionKind.Activate,
-      name: gameText[GameTextKey.StatueOfTheSeven],
-      position: { x, y: getGroundHeight(x, z), z },
-    }));
+  const statues = lockedJumpLandmarks.value.map(({ id, position: { x, z } }) => ({
+    id,
+    kind: InteractionKind.Activate,
+    name: gameText[GameTextKey.StatueOfTheSeven],
+    position: { x, y: getGroundHeight(x, z), z },
+  }));
   return [
     ...pickUpInteractables.value,
     ...residentInteractables.value,
@@ -441,11 +444,22 @@ const endTalk = () => {
 const character = useTemplateRef("character");
 // Whether the backslash has hidden the HUD, as the game's Hide UI does, apart from the screens that hide it
 const isHudHidden = ref(false);
+// Whether the HUD is drawn over the world, which a reference's held camera, a witness render, the pause and the screens
+// That hide it all keep off
+const isHudShown = computed(
+  () => !cameraPose && !witness && !isPaused && !isHudHidden.value && !screenBehaviour.value.isHudHidden,
+);
 // Whether the device's main pointer is a finger, which the HUD draws the touch layout for
 const isTouch = useMediaQuery("(pointer: coarse)");
 // The character's ground point in world metres, the yaw the view faces and the yaw the character faces, for the map and
 // The minimap, read each frame and handed on only when one moved, so a still player re-renders nothing
 const mapCamera = shallowRef<MapCamera>({ facing: 0, x: 0, yaw: 0, z: 0 });
+// The locked jump landmark the HUD points to, re-read as the character moves and as a landmark unlocks, so unlocking the
+// One it points to lets the pointer go at once
+const pointedLandmark = shallowRef<Landmark>();
+watch([mapCamera, lockedJumpLandmarks], ([{ x, z }, lockedLandmarks]) => {
+  pointedLandmark.value = findPointedLandmark(lockedLandmarks, { x, z }, pointedLandmark.value?.id);
+});
 const cameraEuler = new Euler();
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
@@ -669,8 +683,15 @@ defineExpose({ jumpTo, readCameraPosition });
       :origin
     />
     <!-- No HUD over a reference's held camera or a witness render, which the game's recordings show bare -->
+    <HudNavigation
+      v-if="isHudShown && pointedLandmark"
+      :get-camera
+      :get-ground-height
+      :landmark="pointedLandmark"
+      :origin
+    />
     <HudScreen
-      v-if="!cameraPose && !witness && !isPaused && !isHudHidden && !screenBehaviour.isHudHidden"
+      v-if="isHudShown"
       :camera="mapCamera"
       :catalogue
       :character-data-map="statTables.characterDataMap"
