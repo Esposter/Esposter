@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 
 // Disenchantment in Deep Shadow's four-piece. It raises the DMG the wearer's own Superconduct reactions deal by the first param,
 // And the wearer's attacks on an enemy under Superconduct gain the second param of CRIT Rate. The third param, the Stellar-Conduct
-// DMG bonus, is not read: stellar reactions are not priced, so it is the blocker the set names
+// DMG bonus, is not read: a Stellar-Conduct deals no damage here yet, so it is the blocker the set names
 export const createDisenchantmentInDeepShadowSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const superconductDamageBonus = takeOne(bonus.params, 0);
   const criticalRateBonus = takeOne(bonus.params, 1);
