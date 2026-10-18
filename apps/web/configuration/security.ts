@@ -41,8 +41,6 @@ export const security: NuxtConfig["security"] = {
         "'unsafe-inline'",
         // Nuxt vite client
         "'self'",
-        // @vue-pdf-viewer/viewer
-        "data:",
         // Desmos
         BASE_URL,
         // `grapesjs`
@@ -78,7 +76,7 @@ export const security: NuxtConfig["security"] = {
       // Every copy button, the sheet's copy and a resource's link
       "clipboard-write": ["self"],
       "display-capture": ["self"],
-      // @vue-pdf-viewer/viewer
+      // The call view's stage, which `requestFullscreen`s its own element
       fullscreen: ["self"],
       // The Genshin world's controller input, `navigator.getGamepads`
       gamepad: ["self"],

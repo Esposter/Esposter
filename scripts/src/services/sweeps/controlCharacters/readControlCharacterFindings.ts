@@ -11,12 +11,10 @@ import { resolve } from "node:path";
 // Generated files are read too, where a scan over source skips them — this one asks what a committed file holds
 // Rather than what a source vouches for, which is the carve-out the `runtime-efficiency` skill names.
 const BINARY_BYTE = 0;
-// The CMap tables `pdf.js` ships are `.bcmap`, a compiled binary format that happens to hold no NUL — the one
-// Thing in the tree the heuristic above cannot see through. `.claude` is the symlink to `.agents`, which this
-// Scan already walks, and reading it throws rather than returning bytes. Both are excluded as pathspecs so that
-// Git never lists them: testing every entry of the tree for a directory costs a `stat` each, a quarter of
-// This scan's whole running time, to catch the one entry named here.
-const EXCLUDED_PATHSPECS = [":(exclude)apps/web/public/cmaps", ":(exclude).claude"];
+// `.claude` is the symlink to `.agents`, which this scan already walks, and reading it throws rather than returning
+// Bytes. It is excluded as a pathspec so that Git never lists it: testing every entry of the tree for a directory
+// Costs a `stat` each, to catch the one entry named here.
+const EXCLUDED_PATHSPECS = [":(exclude).claude"];
 // Every tracked file in the repository but a vendored skill's (`readSweepFilePaths`), scanned, one `path:line: U+XXXX`
 // Per character that renders as nothing.
 export const readControlCharacterFindings = (): string[] =>

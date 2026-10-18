@@ -9,10 +9,13 @@ import {
   GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
   GENSHIN_REGION_DATA_BASE_URL,
 } from "../shared/services/genshin/constants.ts";
+import { PDF_CMAP_BASE_URL, PDF_STANDARD_FONT_DATA_BASE_URL, PDF_WASM_BASE_URL } from "../app/services/pdf/constants.ts";
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
 
 // The world package's own folder, found through its manifest, which is there before any build
 const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));
+// The PDF renderer's own folder of character maps, fonts and decoders, served from its install rather than a copy
+const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
 
 export const nitro: NuxtConfig["nitro"] = {
   // Railway's edge passes responses through uncompressed, so the build writes a brotli copy of each asset for the
@@ -64,6 +67,21 @@ export const nitro: NuxtConfig["nitro"] = {
       baseURL: GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
       // oxlint-disable-next-line id-denylist -- as above
       dir: join(genshinWorldDirectory, "src/data/login/recordings"),
+    },
+    {
+      baseURL: PDF_CMAP_BASE_URL,
+      // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
+      dir: join(pdfjsDistDirectory, "cmaps"),
+    },
+    {
+      baseURL: PDF_STANDARD_FONT_DATA_BASE_URL,
+      // oxlint-disable-next-line id-denylist -- as above
+      dir: join(pdfjsDistDirectory, "standard_fonts"),
+    },
+    {
+      baseURL: PDF_WASM_BASE_URL,
+      // oxlint-disable-next-line id-denylist -- as above
+      dir: join(pdfjsDistDirectory, "wasm"),
     },
     {
       baseURL: TEMPORAL_POLYFILL_BASE_URL,

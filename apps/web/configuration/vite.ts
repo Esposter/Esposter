@@ -12,8 +12,6 @@ export const vite: NuxtConfig["vite"] = {
   mode: process.env.APP_ENV,
   optimizeDeps: {
     exclude: [
-      // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
-      "@vue-pdf-viewer/viewer",
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
       "three/examples/jsm/inspector/Inspector.js",
     ],
@@ -23,6 +21,8 @@ export const vite: NuxtConfig["vite"] = {
       "@jsonforms/core > ajv",
       "@jsonforms/core > ajv-formats",
       "pdfjs-dist",
+      // The PDF viewer's components, which a dialog loads mid-session
+      "pdfjs-dist/web/pdf_viewer.mjs",
       // The world's and the login's imports, which Vite finds only as their components mount. Left out, each is found
       // Mid-session and the optimiser re-runs, so the chunks the loaded modules name answer 504 until a reload
       "@better-auth/api-key/client",
