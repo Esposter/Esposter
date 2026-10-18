@@ -25,6 +25,8 @@ export interface Enemy {
   // The combatant whose Electro or Hydro last left it Electro-Charged, as its hit priced it, which the ticks are priced
   // From, none until one has
   electroChargedCombatant?: Combatant;
+  // The pulses an enemy waits before a node's buff can return, set when a reaction depletes the buff, none while it can
+  elementalNodePulsesLeft: number;
   // The reactions its elements brought on their own as they aged, held until the kit on the field prices them
   elementalReactions: Reaction[];
   elementalState: ElementalState;

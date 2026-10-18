@@ -33,6 +33,7 @@ export const createEnemy = (
     attackCooldownSeconds: 0,
     campId,
     droppedThresholdCount: 0,
+    elementalNodePulsesLeft: 0,
     elementalReactions: [],
     elementalState: createElementalState(),
     enemyFamily: enemyKind.enemyFamily,
