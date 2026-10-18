@@ -10,6 +10,7 @@ import {
   INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
 } from "#src/services/genshinAssets/points/constants";
 import { matchPairs } from "#src/services/genshinAssets/points/matchPairs";
+import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { computeOutlineDistance } from "genshin-engine";
@@ -21,14 +22,7 @@ const findAreaId = (
   areas: readonly { id: string; outline: readonly GroundPoint[] }[],
   position: GroundPoint,
 ): string => {
-  const distanceAreas = areas.map(({ id, outline }) => ({
-    distance: computeOutlineDistance(outline, position.x, position.z),
-    id,
-  }));
-  const nearest = distanceAreas.reduce<(typeof distanceAreas)[number] | undefined>(
-    (found, area) => (found === undefined || area.distance < found.distance ? area : found),
-    undefined,
-  );
+  const nearest = findNearest(areas, ({ outline }) => computeOutlineDistance(outline, position.x, position.z));
   if (nearest === undefined) throw new InvalidOperationError(Operation.Read, findAreaId.name, "a region with no area");
   return nearest.id;
 };

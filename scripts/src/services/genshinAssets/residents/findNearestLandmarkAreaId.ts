@@ -1,5 +1,6 @@
 import type { GroundPoint } from "genshin-engine";
 
+import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The catalogue area of the landmark nearest a place in its region, which a resident is filed under, since the game's
@@ -9,11 +10,9 @@ export const findNearestLandmarkAreaId = (
   landmarks: readonly { areaId: string; position: GroundPoint }[],
   position: GroundPoint,
 ): string => {
-  let nearest: undefined | { areaId: string; distance: number };
-  for (const landmark of landmarks) {
-    const distance = Math.hypot(landmark.position.x - position.x, landmark.position.z - position.z);
-    if (!nearest || distance < nearest.distance) nearest = { areaId: landmark.areaId, distance };
-  }
+  const nearest = findNearest(landmarks, (landmark) =>
+    Math.hypot(landmark.position.x - position.x, landmark.position.z - position.z),
+  );
   if (!nearest) throw new InvalidOperationError(Operation.Read, region, "has no landmark to file a resident under");
   return nearest.areaId;
 };
