@@ -262,6 +262,7 @@ const emit = defineEmits<{
   respawn: [spawnKey: string];
   saveRespawn: [spawnKey: string, respawnAt: string];
   sheerCold: [value: number];
+  shieldBreak: [enemy: Enemy];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 // The witness render's parts, drawn in place of ours of each family it names when the parity page provides them, beside
@@ -618,6 +619,7 @@ onUnmounted(() => {
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
       @save-respawn="(spawnKey, respawnAt) => emit('saveRespawn', spawnKey, respawnAt)"
+      @shield-break="(enemy) => emit('shieldBreak', enemy)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"
     />
     <!-- The animals run from the character where the references show none, so a witness render draws none of them -->
