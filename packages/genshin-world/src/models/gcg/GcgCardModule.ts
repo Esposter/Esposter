@@ -5,6 +5,7 @@ import type { GcgDamage } from "#src/models/gcg/GcgDamage";
 import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
+import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
@@ -22,6 +23,9 @@ export interface GcgCardModule {
   initialUsages?: number;
   // Whether playing the card is a combat action, which passes the turn once it resolves, rather than a fast action, which does not
   isCombatAction?: boolean;
+  // Whether a card on a side's field is spent by what the side holds now, for a card that lasts while another card or a shield
+  // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
+  isSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
   isSwitchFast?: (context: GcgEffectContext) => boolean;
   modifyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   // The damage the active character takes, as a number, and the element or kind of it, which a card reads when it reduces one kind alone
