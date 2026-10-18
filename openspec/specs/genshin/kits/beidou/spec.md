@@ -109,3 +109,25 @@ From constellation six, the Targe SHALL lower the Electro RES of each enemy with
 - **WHEN** an enemy is within 5 metres of the body on the field
 - **THEN** that enemy's Electro RES is lowered by 15%
 - **AND** the cut is renewed every half second while the enemy stays within 5 metres, lasting 1.5 seconds after each renewal
+
+### Requirement: Fourth constellation adds an Electro hit to normal attacks after she takes damage
+
+From constellation four, a hit Beidou takes while she is on the field SHALL give her normal attacks an extra Electro hit of 20% of her ATK after each hit they land, for 10 seconds.
+
+#### Scenario: A normal attack hit gains the extra hit after damage is taken
+
+- **GIVEN** Beidou is at constellation four and is on the field
+- **WHEN** an enemy's strike costs her HP and then a normal attack hit lands within 10 seconds
+- **THEN** an Electro hit of 20% of her ATK follows that hit
+
+#### Scenario: Damage taken off the field gives no extra hit
+
+- **GIVEN** Beidou is at constellation four and another character is on the field
+- **WHEN** an enemy's strike costs her HP
+- **THEN** no extra hit is given to her normal attacks
+
+#### Scenario: Below the fourth constellation no extra hit is given
+
+- **GIVEN** Beidou is at constellation three
+- **WHEN** an enemy's strike costs her HP and a normal attack hit lands
+- **THEN** no extra hit follows that hit
