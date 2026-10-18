@@ -1,18 +1,6 @@
-import type { StatueLandmark } from "#src/models/world/StatueLandmark";
-
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
+import { createStatue } from "#src/services/shared/createStatue.test";
 import { describe, expect, test } from "vitest";
-
-// A Statue of The Seven standing at a point on the ground, which is what a jump lands at today
-const createStatue = (id: string, x: number): StatueLandmark => ({
-  areaId: "",
-  heightOffset: 0,
-  id,
-  kind: LandmarkKind.StatueOfTheSeven,
-  position: { x, z: 0 },
-  rotation: 0,
-});
 
 describe(findPointedLandmark, () => {
   test("a locked waypoint 29 metres away is pointed to", () => {
