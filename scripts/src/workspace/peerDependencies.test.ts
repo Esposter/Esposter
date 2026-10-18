@@ -4,9 +4,9 @@ import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackage
 import { describe, expect, test } from "vitest";
 
 /**
- * pnpm's `auto-install-peers` installs every required peer for the package's own build and tests, so a required peer
- * listed under a second field is a second specifier for one install, free to drift from the first. An optional peer is
- * the one kind pnpm leaves out, so a package whose own tests import it also lists it under `devDependencies`.
+ * Every required peer is installed for the package's own build and tests by pnpm's `auto-install-peers`, so a required
+ * peer listed under a second field is a second specifier for one install, free to drift from the first. An optional
+ * peer is the one kind pnpm leaves out, so a package whose own tests import it also lists it under `devDependencies`.
  */
 describe("peerDependencies", () => {
   const workspacePackages = readWorkspacePackages(REPOSITORY_ROOT);
