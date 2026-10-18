@@ -88,6 +88,7 @@ const createControls = (): ActiveKitControls => ({
   strikeOre: noop,
   strikePuzzle: noop,
   triggerReaction: noop,
+  triggerHealthChange: noop,
 });
 
 describe(stepActiveKit, () => {

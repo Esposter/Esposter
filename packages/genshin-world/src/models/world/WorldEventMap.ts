@@ -6,6 +6,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 
 // Every reaction one world system has to another, by its name, with the payload its listeners are handed. A system emits
@@ -28,6 +29,7 @@ export interface WorldEventMap {
   // The first collection of an Oculus, which the save keeps as found
   oculusFound: [];
   parentQuestFinish: [];
+  partyHealthChanged: [change: PartyHealthChange];
   pickUpMora: [];
   questEvent: [QuestEvent];
   // A reaction a hit or a tick triggered on an enemy, which the Spiral Abyss's period blessings answer
