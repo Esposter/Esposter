@@ -8,6 +8,8 @@ import { Currency } from "#src/models/inventory/Currency";
 import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
+import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
+import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
@@ -200,6 +202,13 @@ describe("genshinSaveSchema", () => {
           ]),
         ),
       },
+      mails: Array.from({ length: MAX_MAIL_COUNT }, (_value, index) => ({
+        deliveredAt: maxInstant,
+        id: maxNumber - index,
+        isClaimed: false,
+        isRead: false,
+      })),
+      travelerBirthday: { day: 31, month: 12 },
       travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -276,6 +285,29 @@ describe("genshinSaveSchema", () => {
   });
 
   // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
+  // A save from before the mail list has no list, and is refused rather than read as an empty mailbox
+  test("a save without its mails is refused", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, mails: undefined };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
+  test("a save past the mail limit is refused", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      mails: Array.from({ length: MAX_MAIL_COUNT + 1 }, (_value, index) => ({
+        deliveredAt: new Date(0).toISOString(),
+        id: index + 1,
+        isClaimed: false,
+        isRead: false,
+      })),
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
   test("a save without quick swap slots is refused", () => {
     expect.hasAssertions();
     const save = { ...EMPTY_GENSHIN_SAVE, inventory: { items: [], nextId: 0 } };
