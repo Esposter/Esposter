@@ -6,6 +6,8 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 // Again
 export interface PartyMember {
   burstCooldownSeconds: number;
+  // The Bond of Life it carries, as a share of its Max HP, which a heal takes down before it restores the HP, absent when none
+  bondOfLifeShare?: number;
   // Its elements on it, moved on each step and never saved, so a team reloaded holds none
   elementalState: ElementalState;
   energy: number;
