@@ -13,6 +13,7 @@ import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
+import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { WorldTables } from "#src/models/world/WorldTables";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
@@ -35,6 +36,7 @@ import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
 import PartyScreen from "#src/components/Party/Screen/Index.vue";
 import QuestScreen from "#src/components/Quest/Screen/Index.vue";
+import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
@@ -63,6 +65,7 @@ import { readConstellationTables } from "#src/services/character/readConstellati
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
+import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
 import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
@@ -134,6 +137,7 @@ const {
   sceneExportBaseUrl,
   seelies,
   serverClockOffsetMs = 0,
+  shopGoodMap,
   startingCharacterIdKitMap,
   statTables,
   talentUpgradeMap,
@@ -433,6 +437,8 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
 const reputation = shallowRef<ReputationProgress>(savedState.reputation);
 // Mondstadt's levels and their rewards, which the keeper's Reputation screen draws, and the level it is picked at
 const reputationCity = shallowRef<ReputationCity>();
+const shopId = shallowRef(0);
+const shopPurchases = shallowRef<ShopPurchase[]>([]);
 const reputationLevel = shallowRef(reputation.value.level);
 // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
 getResultAsync(() => readMondstadtReputation(gameDataBaseUrl)).match(
@@ -718,6 +724,7 @@ defineExpose({ jumpTo, readCameraPosition });
               talk = talkMap.get(interactable.id);
               talkDuelGameId = getTalkDuelGameId(interactable.id);
               screenKind = getTalkScreenKind(interactable.id, getResidents());
+              shopId = getTalkVendorShopId(interactable.id, getResidents()) ?? 0;
               reputationLevel = reputation.level;
             }
           }
@@ -1070,6 +1077,21 @@ defineExpose({ jumpTo, readCameraPosition });
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
+      :wallet
+      @close="screenKind = ScreenKind.World"
+      @update:inventory="(nextInventory) => setInventory(nextInventory)"
+      @update:wallet="(nextWallet) => setWallet(nextWallet)"
+    />
+    <ShopScreen
+      v-if="screenKind === ScreenKind.Shop"
+      v-model:purchases="shopPurchases"
+      :adventure-rank="rank"
+      :game-text
+      :goods="shopGoodMap.get(shopId) ?? []"
+      :inventory
+      :material-data-map
+      :name-text
+      :reputation-level="reputation.level"
       :wallet
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

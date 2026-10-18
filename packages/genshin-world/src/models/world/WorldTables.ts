@@ -10,6 +10,7 @@ import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Kit } from "#src/models/kit/Kit";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
+import type { ShopGood } from "#src/models/shop/ShopGood";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
@@ -54,4 +55,6 @@ export interface WorldTables {
   windriseData: WindriseData;
   // The wish schedule's event banners, each offered by the wish screen only inside its window
   wishSchedule: WishScheduleEvent[];
+  // Each city vendor's shop's goods, by the shop's id, which a vendor's talk opens the shop of
+  shopGoodMap: ReadonlyMap<number, ShopGood[]>;
 }

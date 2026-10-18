@@ -20,6 +20,7 @@ import { readMondstadtFrostbearingTreePlaces } from "#src/services/offering/read
 import { pairSeelieCourts } from "#src/services/puzzle/pairSeelieCourts";
 import { readMondstadtPuzzlePlaces } from "#src/services/puzzle/readMondstadtPuzzlePlaces";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
+import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
 import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
 import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
@@ -59,6 +60,7 @@ getResultAsync(() =>
       measureLoadStep("crafting-bench-place", readMondstadtCraftingBenchPlace(props.gameDataBaseUrl)),
       measureLoadStep("puzzle-places", readMondstadtPuzzlePlaces(props.gameDataBaseUrl)),
       measureLoadStep("wish-schedule", readWishSchedule(props.gameDataBaseUrl)),
+      measureLoadStep("shop-goods", readShopGoodMap(props.gameDataBaseUrl)),
     ]),
   ),
 ).match(
@@ -79,6 +81,7 @@ getResultAsync(() =>
     craftingBenchPlace,
     puzzlePlaces,
     wishSchedule,
+    shopGoodMap,
   ]) => {
     tables.value = {
       adventureRankTables,
@@ -95,6 +98,7 @@ getResultAsync(() =>
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.Seelie),
         puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.SeelieCourt).map(({ position }) => position),
       ),
+      shopGoodMap,
       startingCharacterIdKitMap,
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,

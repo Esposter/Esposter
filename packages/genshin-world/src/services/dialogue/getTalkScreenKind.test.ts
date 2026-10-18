@@ -26,3 +26,11 @@ describe(getTalkScreenKind, () => {
     expect(getTalkScreenKind(TALK_ID, [])).toStrictEqual(ScreenKind.Dialogue);
   });
 });
+
+describe("a vendor's talk", () => {
+  test("talking to a vendor opens their shop", () => {
+    expect.hasAssertions();
+    const VENDOR: Resident = { areaId: "areaId", id: "vendorId", nameTextId: "nameTextId", talkId: "vendorTalkId" };
+    expect(getTalkScreenKind("vendorTalkId", [VENDOR], { vendorId: 1 })).toBe(ScreenKind.Shop);
+  });
+});

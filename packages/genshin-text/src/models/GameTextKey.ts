@@ -456,6 +456,14 @@ export enum GameTextKey {
   SettingsVolumetricFog = "UI_SETTING_GRAPHICS_VOLUMETRIC_FOG",
   SettingsVSync = "UI_SETTING_GRAPHICS_VSYNC",
   Shop = "UI_STC_GAMEENTRYPAGE_SHOP",
+  // The Left Today, Left This Week and Left This Month lines a shop's good shows, its count filled in
+  ShopLimitDaily = "UI_MALL_LIMIT_BUY_INFO_DAILY",
+  ShopLimitMonthly = "UI_MALL_LIMIT_BUY_INFO",
+  ShopLimitWeekly = "UI_MALL_LIMIT_BUY_INFO_WEEKLY",
+  // The shop's Buy button, which purchases the picked good
+  ShopPurchase = "UI_MALL_PAGE_BTN_BUY",
+  // The Refreshes in line a shop's good shows, its countdown filled in
+  ShopRefresh = "UI_MALL_REFRESH_COUNTDOWN",
   SilkFlower = "1404683740",
   // The dialogue's button that runs on to the next reply or the end
   Skip = "UI_SKIP_BUTTON",
