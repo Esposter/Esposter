@@ -47,6 +47,7 @@ import { createGuerillaTacticsPassiveModule } from "#src/services/weapon/passive
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
 import { createHeavyPassiveModule } from "#src/services/weapon/passives/createHeavyPassiveModule";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
+import { createHonedFlowPassiveModule } from "#src/services/weapon/passives/createHonedFlowPassiveModule";
 import { createInfusionArrowPassiveModule } from "#src/services/weapon/passives/createInfusionArrowPassiveModule";
 import { createInfusionBladePassiveModule } from "#src/services/weapon/passives/createInfusionBladePassiveModule";
 import { createInfusionNeedlePassiveModule } from "#src/services/weapon/passives/createInfusionNeedlePassiveModule";
@@ -362,4 +363,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2056241443": createDeathlyPactPassiveModule,
   // Sunken Song of the Sands (Key of Khaj-Nisut)
   "1054220683": createSunkenSongOfTheSandsPassiveModule,
+  // Honed Flow (Haran Geppaku Futsu)
+  "2204995987": createHonedFlowPassiveModule,
 };
