@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Character } from "#src/models/character/Character";
+import type { Constellation } from "#src/models/character/Constellation";
 import type { StatTables } from "#src/models/character/StatTables";
 import type { GameText } from "genshin-text";
 
@@ -8,6 +9,7 @@ import CharacterProfile from "#src/components/Character/Profile/Index.vue";
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { activateConstellation } from "#src/services/character/activateConstellation";
 import { CharacterMenuTabGameTextKeyMap } from "#src/services/character/CharacterMenuTabGameTextKeyMap";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import {
@@ -16,6 +18,7 @@ import {
   TRAVELER_CHARACTER_ID,
   WHOLE_ATTRIBUTES,
 } from "#src/services/character/constants";
+import { getConstellationActivationRefusal } from "#src/services/character/getConstellationActivationRefusal";
 import { getGrownAttributeLines } from "#src/services/character/getGrownAttributeLines";
 import { LOGIN_TRAVELER_GENDER } from "#src/services/login/constants";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
@@ -34,8 +37,8 @@ import { fillGameTextValues, fillLinePlaceholders, GameLanguage, GameTextKey } f
 interface Props {
   // The character the screen opens on, the one on the field
   activeCharacterId: number;
-  // The player's characters, across the screen's top in the order given
-  characters: Character[];
+  // The constellations each character's set holds, by its id, the ones its Activate button presses the next of
+  characterIdConstellationsMap: ReadonlyMap<number, Constellation[]>;
   // The Companionship EXP each character has earned, by its id, from which its Friendship Level is read
   companionshipExpMap?: ReadonlyMap<number, number>;
   // Where the host serves the game's published data, which the Profile tab reads its character's record from
@@ -60,9 +63,11 @@ defineSlots<{
   default?: (props: { characterId: number }) => unknown;
   scene?: (props: { tab: CharacterMenuTab }) => unknown;
 }>();
+// The player's characters, across the screen's top in the order given, a character's activated constellation written back
+const characters = defineModel<Character[]>("characters", { required: true });
 const {
   activeCharacterId,
-  characters,
+  characterIdConstellationsMap,
   companionshipExpMap = new Map<number, number>(),
   gameDataBaseUrl,
   gameText,
@@ -75,10 +80,10 @@ const {
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);
 const tab = ref(initialTab);
-const character = computed(() => characters.find(({ id }) => id === characterId.value));
+const character = computed(() => characters.value.find(({ id }) => id === characterId.value));
 // The Traveler's name is the game's own, and every other character's is the name its table cites
 const menuEntries = computed(() =>
-  characters.map(({ id }) => ({
+  characters.value.map(({ id }) => ({
     id,
     name:
       id === TRAVELER_CHARACTER_ID
@@ -130,6 +135,17 @@ const artifactsEquipped = computed(() =>
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < (character.value?.constellationCount ?? 0)),
 );
+// The set the Activate button presses the next of, and whether that is refused now, a character with no set refused too
+const constellations = computed(() => characterIdConstellationsMap.get(characterId.value) ?? []);
+const isActivateDisabled = computed(
+  () => !character.value || getConstellationActivationRefusal(character.value, constellations.value) !== undefined,
+);
+// The next constellation activated, the character written back in its place
+const activate = () => {
+  characters.value = characters.value.map((item) =>
+    item.id === characterId.value ? activateConstellation(item, constellations.value) : item,
+  );
+};
 // Each combat talent's level in the order the Talents tab lists them
 const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => character.value?.talentLevels[talent] ?? 0));
 </script>
@@ -155,7 +171,10 @@ const talentLevels = computed(() => COMBAT_TALENT_ORDER.map((talent) => characte
       />
       <CharacterMenuConstellation
         v-else-if="character && tab === CharacterMenuTab.Constellation"
+        :activate-label="gameText[GameTextKey.Activate]"
         :activated="constellationsActivated"
+        :is-activate-disabled="isActivateDisabled"
+        @activate="activate()"
       />
       <CharacterMenuTalents v-else-if="character && tab === CharacterMenuTab.Talents" :levels="talentLevels" />
       <CharacterProfile

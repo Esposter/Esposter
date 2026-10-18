@@ -1,4 +1,5 @@
 import type { Character } from "#src/models/character/Character";
+import type { Constellation } from "#src/models/character/Constellation";
 import type { TalentLevels } from "#src/models/character/TalentLevels";
 import type { Weapon } from "#src/models/weapon/Weapon";
 
@@ -60,8 +61,10 @@ const roster: Character[] = ROSTER_IDS.map((id) => ({
   weapon: id === XILONEN_ID ? XILONEN_WEAPON : DULL_BLADE,
 }));
 
+// No set is read here, so Activate is refused with no set to press, as it is for a character the table does not hold
 export const props = {
   activeCharacterId: XILONEN_ID,
+  characterIdConstellationsMap: new Map<number, Constellation[]>(),
   characters: roster,
   gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
   gameText: ENGLISH_GAME_TEXT,

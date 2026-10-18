@@ -9,6 +9,7 @@ The table, the activation, the talent levels the third and fifth add, and the St
 - **The Constellation tab activates from the character screen.** It lists the six with their state and presses the activation. Its look is the character screen's.
 - **The tab asks before it presses.** As the Talents tab does, one function names why the next constellation cannot be activated now (all six active, or no Stella Fortuna held), and `activateConstellation` throws on that same answer, so no refusal is ever caught. The alternative, pressing and catching the throw, is rejected: a refusal would come back as an error the tab must tell apart from a fault, while the pre-check hands the reason over as a value the tab can show.
 - **The wish hands its Stella Fortuna over where it adds new characters.** `Wish/Screen` already appends a wish's new characters; the same step adds `stellaFortunaCountMap`'s counts to the characters they belong to, so a duplicate's Stella Fortuna reaches its character the moment it is drawn.
+- **Only a character with one set is read before a statue gives the Traveler its element.** `World/Session` reads the constellation table into a map by character id, and takes a character's set only where its table entry holds exactly one. The Traveler's several sets wait on the element a statue gives, so until then the Traveler has no set to press, and its Activate is refused with none.
 
 ## How it works
 

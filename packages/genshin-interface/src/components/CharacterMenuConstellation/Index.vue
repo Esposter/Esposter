@@ -2,11 +2,16 @@
 import { CONSTELLATION_NODE_PLACES } from "#src/services/constants";
 
 interface Props {
+  // The button's words, which press the next constellation's activation
+  activateLabel: string;
   // Each of the character's six constellations in the order it takes them, true where it is activated
   activated: boolean[];
+  // Whether activation is refused now, every constellation being active or no Stella Fortuna held
+  isActivateDisabled: boolean;
 }
 
-const { activated } = defineProps<Props>();
+const { activateLabel, activated, isActivateDisabled } = defineProps<Props>();
+const emit = defineEmits<{ activate: [] }>();
 const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   left: `calc(var(--unit) * ${left})`,
   top: `calc(var(--unit) * ${top})`,
@@ -14,8 +19,9 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
 </script>
 
 <template>
-  <!-- The Constellation tab's panel: the six constellations down its right, each a ring lit once activated. The
-       game's star map is its own art and its names are not decoded yet, so neither is drawn -->
+  <!-- The Constellation tab's panel: the six constellations down its right, each a ring lit once activated, and the
+       button that activates the next under them. The game's star map is its own art and its names are not decoded yet,
+       so neither is drawn -->
   <div class="constellations">
     <ul class="nodes">
       <li
@@ -26,6 +32,9 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
         :style="nodeStyles[index]"
       />
     </ul>
+    <button class="activate" :disabled="isActivateDisabled" type="button" @click="emit('activate')">
+      {{ activateLabel }}
+    </button>
   </div>
 </template>
 
@@ -61,5 +70,28 @@ const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   box-shadow:
     inset 0 0 0 calc(var(--unit) * 2) #fff8dc,
     0 0 calc(var(--unit) * 6) rgb(255 180 40 / 0.6);
+}
+
+/* Placed under the lowest ring, which ends near 744 units, its place and colours provisional until the Constellation
+   tab's frame is measured against the button */
+.activate {
+  position: absolute;
+  top: calc(var(--unit) * 800);
+  left: calc(var(--unit) * 0);
+  height: calc(var(--unit) * 56);
+  padding: 0 calc(var(--unit) * 32);
+  border: none;
+  border-radius: calc(var(--unit) * 28);
+  background: #ece5d8;
+  color: #3b4255;
+  cursor: pointer;
+  font: inherit;
+  font-size: calc(var(--unit) * 26);
+  font-weight: 600;
+}
+
+.activate:disabled {
+  cursor: default;
+  opacity: 0.4;
 }
 </style>

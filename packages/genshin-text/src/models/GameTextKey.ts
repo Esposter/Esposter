@@ -9,6 +9,8 @@ export enum GameTextKey {
   // The currencies by their item names: the two Fates, Genesis Crystals, the Masterless Starglitter and Stardust
   // Wishes return, Mora and Primogems
   AcquaintFate = "1444439468",
+  // The Constellation tab's button that activates the next constellation
+  Activate = "UI_TALENT_UNLOCK",
   // The Paimon menu's profile card, its experience and rank, the world level and the player's UID with its copy
   AdventureExp = "UI_PLAYER_PROFILE_PLAYEREXP",
   AdventureRank = "UI_PLAYER_PROFILE_PLAYERLV",
