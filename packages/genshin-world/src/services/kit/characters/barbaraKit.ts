@@ -2,14 +2,18 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
+import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
@@ -17,6 +21,13 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 // Wiki's Let the Show Begin♪ notes give, as gcsim v2.47.2 (MIT) barbara/skill.go ticks it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/skill.go
 const MELODY_LOOP_TICK_INTERVAL_SECONDS = 5;
+// Encore, from Ascension 4, lengthens the Melody Loop a second for each particle the character on the field collects, up to
+// Five seconds, as gcsim v2.47.2 (MIT) barbara/asc.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/barbara/asc.go
+const ASCENSION_4 = 4;
+const ENCORE_MAX_EXTENSION_SECONDS = 5;
+const ENCORE_SECONDS_PER_PARTICLE = 1;
+const ENCORE_STATUS_ID = "barbara-encore";
 // Vitality Burst, from two constellations, cuts the skill's cooldown by 15% and gives a 15% Hydro DMG Bonus for the
 // Melody Loop's duration, as the wiki's constellation page gives it, to each party member but Barbara, as the bonus of
 // Gcsim v2.47.2 (MIT) barbara/cons.go does
@@ -25,16 +36,18 @@ const VITALITY_BURST_CONSTELLATION = 2;
 const VITALITY_BURST_COOLDOWN_MULTIPLIER = 0.85;
 const VITALITY_BURST_HYDRO_DAMAGE_BONUS = 0.15;
 
-// Whether the striker's Melody Loop stands on the team: a field it cast that ticks on the loop's interval, which its
+// The Melody Loop the striker cast that stands on the team: a field it cast that ticks on the loop's interval, which its
 // Burst's single heal does not
-const checkIsMelodyLoopLive = (striker: Combatant, effects: readonly KitEffect[]): boolean =>
-  effects.some(
-    (effect) =>
+const findLiveMelodyLoop = (striker: Combatant, effects: readonly KitEffect[]): KitField | undefined =>
+  effects.find(
+    (effect): effect is KitField =>
       effect.kind === "field" &&
       effect.characterId === striker.characterId &&
       effect.tickIntervalSeconds === MELODY_LOOP_TICK_INTERVAL_SECONDS &&
       effect.secondsRemaining > 0,
   );
+const checkIsMelodyLoopLive = (striker: Combatant, effects: readonly KitEffect[]): boolean =>
+  findLiveMelodyLoop(striker, effects) !== undefined;
 
 // The Melody Loop's tick, written for Barbara as she cast it, with its heal in HP. Each heals the character on the
 // Field by the regeneration, and the first gives every other member of the team Vitality Burst's Hydro DMG Bonus from
@@ -91,11 +104,32 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= VITALITY_BURST_CONSTELLATION ? VITALITY_BURST_COOLDOWN_MULTIPLIER : 1,
     normalAttacks: [strikeBehaviour, strikeBehaviour, strikeBehaviour, strikeBehaviour],
+    // Encore lengthens the Melody Loop as particles are collected, up to its maximum extension
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.EnergyParticleCollected || combatant.ascension < ASCENSION_4) return;
+      const melodyLoop = findLiveMelodyLoop(combatant, kitEffectState.effects);
+      const encore = findKitStatus(kitEffectState.effects, combatant.characterId, ENCORE_STATUS_ID);
+      if (!melodyLoop || !encore) return;
+      const encoreSeconds = encore.stacks ?? 0;
+      const extensionSeconds = Math.min(
+        event.count * ENCORE_SECONDS_PER_PARTICLE,
+        ENCORE_MAX_EXTENSION_SECONDS - encoreSeconds,
+      );
+      melodyLoop.secondsRemaining += extensionSeconds;
+      encore.secondsRemaining += extensionSeconds;
+      encore.stacks = encoreSeconds + extensionSeconds;
+    },
     // The droplets are a summon and the Melody Loop a field, both cast where Barbara stands and priced by her as she
     // Stood then
     skill: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         castKitSummon(kitEffectState, { facing, height, position }, combatant, droplets);
+        if (combatant.ascension >= ASCENSION_4)
+          addKitStatus(kitEffectState, combatant.characterId, {
+            id: ENCORE_STATUS_ID,
+            secondsRemaining: melodyLoopStartSeconds + melodyLoopSeconds,
+            stacks: 0,
+          });
         castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: melodyLoopStartSeconds,
           onTick: createMelodyLoopTick(
