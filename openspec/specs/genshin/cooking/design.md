@@ -1,6 +1,6 @@
 # Cooking
 
-The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the [cooking](../../../changes/genshin-cooking/design.md) proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing and campfires. The stove's place in Mondstadt, the cooking screen and its indicator, what a dish does once eaten, and the characters' passives that bonus a kind of dish are not built and stay in the proposal.
+The dishes and processings of the game's cooking are rules over the game's own tables, and a campfire's lit state follows the elements and the weather. This page is the first build of the [cooking](../../../changes/genshin-cooking/design.md) proposal, covering its recipes, cooking by hand, proficiency, Auto Cook, specialties, processing, campfires, the characters' passives that bonus a kind of dish, and a dish's use once eaten. The stove's place in Mondstadt and the cooking screen and its indicator are not built and stay in the proposal.
 
 ## How it works
 

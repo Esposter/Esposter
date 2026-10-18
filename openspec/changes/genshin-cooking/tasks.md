@@ -11,4 +11,4 @@
 ## 3. Eating and passives
 
 - [x] 3.1 Apply a dish's heal, revive or bonus when it is eaten, once the inventory's using of food is built. Verify: tests named after the scenarios 'A heal dish heals the one who eats it', 'A revive dish revives a fallen party member' and 'A bonus dish lasts as its description says' written first and seen failing.
-- [ ] 3.2 Apply each passive's bonus to the dishes of its food type. Verify: tests named after the scenarios 'A dish of the passive's food type is bonused' and 'A dish of another food type is left unbonused' written first and seen failing.
+- [x] 3.2 Apply each passive's bonus to the dishes of its food type. Verify: tests named after the scenarios 'A dish of the passive's food type is bonused' and 'A dish of another food type is left unbonused' written first and seen failing.
