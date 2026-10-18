@@ -18,6 +18,15 @@ describe(readDomainChallengeLevels, () => {
     ).toStrictEqual([]);
   });
 
+  test("no enemy's name opens with the wiki's wave separator", async () => {
+    expect.hasAssertions();
+
+    const names = Object.values(await readDomainChallengeLevels(GAME_DATA_LOCAL_BASE_URL))
+      .flatMap((ranks) => Object.values(ranks))
+      .flatMap(({ waves }) => waves.flat().map(({ name }) => name));
+    expect(names.filter((name) => name.startsWith("/"))).toStrictEqual([]);
+  });
+
   test("ridge watch's levels run from the lowest rank to the highest", async () => {
     expect.hasAssertions();
 
