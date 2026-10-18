@@ -4,3 +4,4 @@ affected_areas: [genshin]
 x-model: claude-opus-5-5
 x-needs: [game-exports]
 x-touches: ["scripts/src/services/genshinAssets/residents/**", "packages/genshin-world/src/data/regions/**"]
+x-waiting: "the scene-group export's NPC placements for Nod-Krai's residents, the wiki's night spots outside Nod-Krai (its NPC pages give them as pictures, not text), and the genshin-shops change for the vendors' hours; the runtime rule and its per-frame placement are built"
