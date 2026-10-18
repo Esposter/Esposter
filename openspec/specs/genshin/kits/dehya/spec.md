@@ -43,7 +43,7 @@ Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, la
 
 ### Requirement: Dehya's constellations
 
-Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 waits on her Max HP being raised by 20%, Constellation 2 on the Sanctum that Molten Inferno: Ranging Flame recreates, and Constellations 4 and 6 on the Flame-Mane's Fist and Incineration Drive hits of Leonine Bite.
+Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 needs Molten Inferno's DMG, whose DoT share waits on the Sanctum; Constellation 2 on the Sanctum that Molten Inferno: Ranging Flame recreates, and Constellations 4 and 6 on the Flame-Mane's Fist and Incineration Drive hits of Leonine Bite.
 
 #### Scenario: Constellations do nothing
 
