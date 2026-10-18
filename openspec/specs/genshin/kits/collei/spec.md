@@ -1,6 +1,6 @@
 ## Purpose
 
-Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with her passives and constellations left unbuilt.
+Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with her passives and constellations 1, 2 and 6 left unbuilt.
 
 ## Requirements
 
@@ -81,3 +81,20 @@ Collei's arrows, Floral Brush and Trump-Card Kitty SHALL deal no poise.
 - **GIVEN** Collei is the character on the field
 - **WHEN** one of her arrows hits an enemy
 - **THEN** the enemy takes no poise damage
+
+### Requirement: Fourth constellation raises the other members' Elemental Mastery from Trump-Card Kitty
+
+From her fourth constellation, Trump-Card Kitty SHALL raise the Elemental Mastery of each other deployed member by 60 for 12 seconds.
+
+#### Scenario: Trump-Card Kitty raises the other members from the fourth constellation
+
+- **GIVEN** Collei has four constellations and a teammate is deployed
+- **WHEN** the player casts Trump-Card Kitty
+- **THEN** the teammate gains 60 Elemental Mastery for 12 seconds
+- **AND** Collei gains none
+
+#### Scenario: Below the fourth constellation Trump-Card Kitty raises no Elemental Mastery
+
+- **GIVEN** Collei has three constellations and a teammate is deployed
+- **WHEN** the player casts Trump-Card Kitty
+- **THEN** no member gains Elemental Mastery from it
