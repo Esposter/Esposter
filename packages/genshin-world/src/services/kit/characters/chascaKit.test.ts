@@ -188,11 +188,14 @@ describe(createChascaKitBehaviour, () => {
     );
   });
 
-  test("each Pyro, Hydro, Electro or Cryo party member's element is a Radiant shell twice over, in party order, and the rest are Anemo", () => {
+  test("each Pyro, Hydro, Electro or Cryo party member's element is a Radiant shell twice over, shuffled by the kit's random source, and the rest are Anemo", () => {
     expect.hasAssertions();
     const chasca = createChascaCombatant();
     const pyro = createPartyMember(YOIMIYA_CHARACTER_ID, Element.Pyro);
     const hydro = createPartyMember(XINGQIU_CHARACTER_ID, Element.Hydro);
+    // The four bullets' keys are 0.9, 0.1, 0.5 and 0.2 in the order they are dealt, so they sort Hydro, Hydro, Pyro, Pyro
+    const draws = [0.9, 0.1, 0.5, 0.2];
+    let drawIndex = 0;
     const context = createKitTestContext(chasca, {
       characterIdCombatantMap: new Map([
         [CHASCA_CHARACTER_ID, chasca],
@@ -200,13 +203,14 @@ describe(createChascaKitBehaviour, () => {
         [hydro.characterId, hydro],
       ]),
       party: createParty([CHASCA_CHARACTER_ID, pyro.characterId, hydro.characterId]),
+      random: () => draws[drawIndex++] ?? 0,
     });
     CHASCA_KIT.elementalBurst.onStart?.(context);
     expect(readShells(context).map(({ element }) => element)).toStrictEqual([
-      Element.Pyro,
+      Element.Hydro,
       Element.Hydro,
       Element.Pyro,
-      Element.Hydro,
+      Element.Pyro,
       Element.Anemo,
       Element.Anemo,
     ]);

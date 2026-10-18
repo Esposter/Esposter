@@ -11,6 +11,7 @@ import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNig
 import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { shuffleWithRandom } from "#src/services/shared/shuffleWithRandom";
 
 export const CHASCA_CHARACTER_ID = 10_000_104;
 
@@ -23,15 +24,14 @@ const NIGHTSOUL_SPRINT_DRAIN = 13.3;
 // The elements a Radiant shell takes from the team, as gcsim's Pyro, Hydro, Electro and Cryo bullet types do
 const RADIANT_ELEMENTS = new Set<Element>([Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo]);
 
-// The elements of the team's Radiant shells in order: each Pyro, Hydro, Electro or Cryo member's element once, the list
-// Twice over, as galesplitting's bullets are the team's types twice (burst.go:70-71). gcsim shuffles the bullets at random,
-// Which the kit does not, so the shells take them in the order the team is deployed in
-const readRadiantElements = ({ characterIdCombatantMap, party }: KitContext): Element[] => {
+// The team's Radiant shells in the order the world's random source deals them: each Pyro, Hydro, Electro or Cryo member's
+// Element twice over, as galesplitting's bullets are (burst.go:69-74), shuffled by that source as gcsim shuffles them
+const readRadiantElements = ({ characterIdCombatantMap, party, random }: KitContext): Element[] => {
   const elements = getDeployedCharacterIds(party).flatMap((characterId) => {
     const element = characterIdCombatantMap.get(characterId)?.element;
     return element !== undefined && RADIANT_ELEMENTS.has(element) ? [element] : [];
   });
-  return [...elements, ...elements];
+  return shuffleWithRandom([...elements, ...elements], random);
 };
 
 // Chasca's behaviour: her skill's press enters the Nightsoul Blessing, which drains its points as gcsim does, and a press
