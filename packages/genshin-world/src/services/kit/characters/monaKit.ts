@@ -237,12 +237,12 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
       if (combatant.constellationCount >= CONSTELLATION_6) stepConstellation6Sprint(context);
       if (combatant.ascension < ASCENSION_1 || kitState.sprintSeconds < A1_PHANTOM_SECONDS) return;
       kitState.sprintSeconds -= A1_PHANTOM_SECONDS;
-      castKitSummon(kitEffectState, body, combatant, sprintPhantomHits);
+      castKitSummon(kitEffectState, body, combatant, sprintPhantomHits, { attackTag: AttackTag.ElementalSkill });
     },
     // The phantom is cast where Mona stands, its hits the summon's, and lasts until its explosion
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, mirrorReflectionHits),
+        castKitSummon(kitEffectState, body, combatant, mirrorReflectionHits, { attackTag: AttackTag.ElementalSkill }),
     },
   };
 };

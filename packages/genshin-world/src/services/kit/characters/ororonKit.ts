@@ -120,7 +120,9 @@ export const createOroronKitBehaviour = ({ readHit, readParameter, readSeconds }
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: tickSeconds,
           onTick: ({ kitEffectState: tickEffectState }) => {
-            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [soundwave]);
+            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [soundwave], {
+              attackTag: AttackTag.ElementalBurst,
+            });
           },
           radius: FIELD_RADIUS,
           secondsRemaining: darkVoicesEchoSeconds,

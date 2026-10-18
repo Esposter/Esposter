@@ -9,6 +9,7 @@ import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -117,6 +118,7 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
       body,
       combatant,
       stormclusterTicks.flatMap((tick) => Array.from({ length: directions }, () => tick)),
+      { attackTag: AttackTag.ElementalBurst },
     );
   };
   return {
@@ -134,7 +136,7 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
         const cover = findKitStatus(kitEffectState.effects, combatant.characterId, COVER_ID);
         if (cover === undefined || cover.secondsRemaining <= 0) return;
         cover.secondsRemaining = 0;
-        castKitSummon(kitEffectState, body, combatant, [ambushHit]);
+        castKitSummon(kitEffectState, body, combatant, [ambushHit], { attackTag: AttackTag.ElementalSkill });
       },
     },
     skill: {
@@ -148,7 +150,9 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
         };
         addKitEffect(kitEffectState, cover);
         if (combatant.constellationCount >= C2_CONSTELLATION)
-          castKitSummon(kitEffectState, body, combatant, [constellationAmbushHit]);
+          castKitSummon(kitEffectState, body, combatant, [constellationAmbushHit], {
+            attackTag: AttackTag.ElementalSkill,
+          });
       },
     },
     // Constellation 6's mark gives Sara's own Electro strikes CRIT DMG while she holds it, and gives the party's Electro strikes

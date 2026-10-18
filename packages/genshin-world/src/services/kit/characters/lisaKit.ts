@@ -3,6 +3,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
@@ -64,7 +65,10 @@ export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReade
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, discharges, { secondsRemaining: lightningRoseSeconds }),
+        castKitSummon(kitEffectState, body, combatant, discharges, {
+          attackTag: AttackTag.ElementalBurst,
+          secondsRemaining: lightningRoseSeconds,
+        }),
     },
     // A1: each enemy a charged attack hits gains a stack of Conductive
     chargedAttack: {

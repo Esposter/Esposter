@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -146,6 +147,7 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
           },
           strike.combatant,
           [constellation2CannonHit],
+          { attackTag: AttackTag.ElementalBurst },
         );
       },
     };
@@ -184,18 +186,24 @@ export const createNaviaKitBehaviour = ({ readHits, readParameter }: KitRecordRe
         );
       }
       if (!startKitCooldown(kitEffectState, characterId, ARKHE_ICD_STATUS_ID, arkheIcdSeconds)) return;
-      castKitSummon(kitEffectState, createAheadBody(body, SURGING_BLADE_AHEAD_METRES), combatant, [
-        combatant.constellationCount >= CONSTELLATION_2
-          ? addConstellation2(surgingBladeHit, stacks - keptShrapnel)
-          : surgingBladeHit,
-      ]);
+      castKitSummon(
+        kitEffectState,
+        createAheadBody(body, SURGING_BLADE_AHEAD_METRES),
+        combatant,
+        [
+          combatant.constellationCount >= CONSTELLATION_2
+            ? addConstellation2(surgingBladeHit, stacks - keptShrapnel)
+            : surgingBladeHit,
+        ],
+        { attackTag: AttackTag.ElementalSkill },
+      );
     };
 
   return {
     burst: {
       hits: [cannonHitBehaviour],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, cannonHits),
+        castKitSummon(kitEffectState, body, combatant, cannonHits, { attackTag: AttackTag.ElementalBurst }),
     },
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       const stacks = Math.min(
