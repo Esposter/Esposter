@@ -9,6 +9,7 @@ export const createWorldEvents = (): WorldEvents => {
     campCleared: [],
     chestOpened: [],
     defeatEnemy: [],
+    domainEntryUnlocked: [],
     enterCombat: [],
     finishQuest: [],
     gatheringPickedUp: [],

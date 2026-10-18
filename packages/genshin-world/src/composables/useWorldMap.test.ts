@@ -493,4 +493,32 @@ describe(useWorldMap, () => {
     expect(wallet.value).toStrictEqual(EMPTY_WALLET);
     expect(gainWorldAdventureExp).not.toHaveBeenCalled();
   });
+
+  test("the first unlock of a domain entrance emits its entry id, and a later unlock emits nothing", async () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const domainEntryUnlocked = vi.fn<(entryId: number) => void>();
+    events.on("domainEntryUnlocked", domainEntryUnlocked);
+    const { activateLandmark } = createWorldMap(new Set(), events);
+    await waitForReads();
+
+    activateLandmark(domainEntrance.id);
+    activateLandmark(domainEntrance.id);
+
+    expect(domainEntryUnlocked).toHaveBeenCalledTimes(1);
+    expect(domainEntryUnlocked).toHaveBeenCalledWith(domainEntrance.entryId);
+  });
+
+  test("the first unlock of a waypoint emits no domain entry", async () => {
+    expect.hasAssertions();
+    const events = createWorldEvents();
+    const domainEntryUnlocked = vi.fn<(entryId: number) => void>();
+    events.on("domainEntryUnlocked", domainEntryUnlocked);
+    const { activateLandmark } = createWorldMap(new Set(), events);
+    await waitForReads();
+
+    activateLandmark(waypoint.id);
+
+    expect(domainEntryUnlocked).not.toHaveBeenCalled();
+  });
 });
