@@ -69,4 +69,22 @@ describe(createKavehKitBehaviour, () => {
       secondsRemaining: 12,
     });
   });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKavehCombatant(), constellationCount: 2 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KAVEH_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(KAVEH_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0.15);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const combatant = { ...createKavehCombatant(), constellationCount: 1 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    KAVEH_KIT.elementalBurst.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+
+    expect(KAVEH_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
+  });
 });

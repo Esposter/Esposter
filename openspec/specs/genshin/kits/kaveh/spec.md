@@ -82,3 +82,19 @@ While Painted Dome's stance lasts, Kaveh's strikes SHALL use wider fans, and the
 - **WHEN** Kaveh leaves the field
 - **THEN** the stance ends
 - **AND** his strikes return to their normal fans
+
+### Requirement: Second constellation raises Normal Attack SPD during Painted Dome
+
+From constellation 2, Kaveh's Normal Attack SPD SHALL be raised by 15% while Painted Dome holds him.
+
+#### Scenario: A Kaveh at constellation 2 in Painted Dome gets the speed bonus
+
+- **GIVEN** Kaveh is at constellation 2 and Painted Dome holds him
+- **WHEN** his Normal Attack SPD bonus is read
+- **THEN** it is 15%
+
+#### Scenario: A Kaveh below constellation 2 gets no speed bonus
+
+- **GIVEN** Kaveh is at constellation 1 and Painted Dome holds him
+- **WHEN** his Normal Attack SPD bonus is read
+- **THEN** it is zero
