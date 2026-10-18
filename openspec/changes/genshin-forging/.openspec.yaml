@@ -2,6 +2,7 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
+x-waiting: "the English PC client recording forge-order-queue.mkv the layout check (task 2.3) is measured against, which is the user's to record"
 x-needs: [game-exports]
 x-touches:
   [
