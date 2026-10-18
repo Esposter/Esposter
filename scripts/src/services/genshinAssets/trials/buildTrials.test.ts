@@ -4,6 +4,8 @@ import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/Excel
 import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarTemplateRow";
 import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
 
+import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
+
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import { describe, expect, test } from "vitest";
 
@@ -13,6 +15,7 @@ const RELIQUARY_IDS = [91, 92, 93, 94, 95];
 const REWARD_ID = 480_001;
 const STAGE_ID = 51_001;
 const TRIAL_AVATAR_ID = 1022;
+const WEAPON_ID = 11_301;
 
 const avatarRows: ExcelTrialAvatarRow[] = [
   { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },
@@ -32,6 +35,17 @@ const templateRows: ExcelTrialAvatarTemplateRow[] = [
 const reliquaryRows: ExcelTrialReliquaryRow[] = [
   { AppendPropList: [201_053], Id: RELIQUARY_IDS[0], Level: 5, MainPropId: 15_004, ReliquaryId: 60_211 },
 ];
+const wikiBuilds: WikiTrialBuild[] = [
+  {
+    characterId: CHARACTER_ID,
+    characterName: "Venti",
+    constellation: 0,
+    page: "Test Run - Character Trial Event",
+    refinement: 1,
+    weaponId: WEAPON_ID,
+    weaponName: "Skyward Harp",
+  },
+];
 const rewardMap = new Map<number, ExcelRewardRow>([
   [REWARD_ID, { rewardId: REWARD_ID, rewardItemList: [{ itemCount: 5, itemId: 201 }] }],
 ]);
@@ -39,9 +53,12 @@ const rewardMap = new Map<number, ExcelRewardRow>([
 describe(buildTrials, () => {
   test("a trial stage pays its first-clear reward, and its character is kept at its level", () => {
     expect.hasAssertions();
-    expect(buildTrials({ avatarRows, reliquaryRows, rewardMap, stageRows, templateRows })).toStrictEqual({
+    expect(buildTrials({ avatarRows, reliquaryRows, rewardMap, stageRows, templateRows, wikiBuilds })).toStrictEqual({
       "characterTrials/avatars": {
         [TRIAL_AVATAR_ID]: { characterId: CHARACTER_ID, level: 90, trialAvatarId: TRIAL_AVATAR_ID },
+      },
+      "characterTrials/builds": {
+        [CHARACTER_ID]: { characterId: CHARACTER_ID, constellation: 0, refinement: 1, weaponId: WEAPON_ID },
       },
       "characterTrials/reliquaries": {
         [RELIQUARY_IDS[0]]: {
