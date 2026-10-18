@@ -16,4 +16,4 @@
 ## 4. Screen and exchanges
 
 - [x] 4.1 Build the fishing view with its prompt in reach and the cast, strike and reel inputs. Verify: a test named after the scenario 'Fishing opens at a point once the Serenitea Pot is owned' written first and seen failing.
-- [ ] 4.2 Exchange proficiency at the Fishing Association's shop. Verify: a test named after the scenario 'Proficiency exchanges for a reward at the association' written first and seen failing.
+- [ ] 4.2 Exchange fish for a good at the Fishing Association's shop. Built: the purchase pays a fish price from the bag (`buyShopGood`, tested by 'a good priced in a fish is paid from the bag and gives its item'). Open: the shop opens from a resident, which shops 4.4 owns, so the scenario test is written there. Verify: a test named after the scenario 'Fish exchange for a good at the association' written first and seen failing.
