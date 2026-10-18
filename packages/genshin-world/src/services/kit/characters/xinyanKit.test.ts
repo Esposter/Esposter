@@ -11,6 +11,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createXinyanKitBehaviour, XINYAN_CHARACTER_ID } from "#src/services/kit/characters/xinyanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -18,6 +21,7 @@ import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const XINYAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINYAN_CHARACTER_ID);
 const createXinyanCombatant = (ascension = 0): Combatant => ({
   ascension,
@@ -58,8 +62,9 @@ describe(createXinyanKitBehaviour, () => {
   const castSkill = (combatant: Combatant, strikeCount: number): KitEffectState => {
     const context = createKitTestContext(combatant);
     XINYAN_KIT.elementalSkill.onStart?.(context);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     for (let strike = 0; strike < strikeCount; strike++)
-      skillHit.onStrike?.(context, { body: context.body, combatant, hit: skillHit });
+      skillHit.onStrike?.(context, { body: context.body, combatant, hit: skillHit }, enemy);
     return context.kitEffectState;
   };
 

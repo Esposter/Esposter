@@ -40,13 +40,15 @@ const createEnemyUnder = (auraType?: AuraType) => {
 };
 
 describe(createBaneOfElementsPassiveModule, () => {
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+
   test("a bane passive raises a strike on an enemy under either of its elements", () => {
     expect.hasAssertions();
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], [0.12]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Hydro), [], [])).toBe(0.12);
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Cryo), [], [])).toBe(0.12);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Hydro), party, [])).toBe(0.12);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Cryo), party, [])).toBe(0.12);
   });
 
   test("a bane passive gives nothing to an enemy under neither of its elements", () => {
@@ -54,8 +56,8 @@ describe(createBaneOfElementsPassiveModule, () => {
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Cryo], [0.12]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), [], [])).toBe(0);
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(), [], [])).toBe(0);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), party, [])).toBe(0);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(), party, [])).toBe(0);
   });
 
   test("a bane passive takes the bonus of the rank it is at", () => {
@@ -63,6 +65,6 @@ describe(createBaneOfElementsPassiveModule, () => {
 
     const module = createBaneOfElementsPassiveModule([Element.Hydro, Element.Pyro], [0.24]);
 
-    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), [], [])).toBe(0.24);
+    expect(module.getStrikeDamageBonus?.(strike, createEnemyUnder(AuraType.Pyro), party, [])).toBe(0.24);
   });
 });

@@ -13,9 +13,9 @@ vi.mock(import("#src/services/gameData/readGameDataLock"), () => ({
 }));
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
-  readPublishedGameData: (key: string) => {
+  readPublishedGameData: <T>(key: string): Promise<T> => {
     readKeys.push(key);
-    return Promise.resolve(records[key]);
+    return Promise.resolve(records[key] as T);
   },
 }));
 

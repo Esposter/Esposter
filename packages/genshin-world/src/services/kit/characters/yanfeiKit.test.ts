@@ -107,7 +107,7 @@ describe(createYanfeiKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(combatant, { kitEffectState });
 
-    hit.onStrike(context, { body: context.body, combatant, hit });
+    hit.onStrike(context, { body: context.body, combatant, hit }, createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""));
 
     expect(countSealStatuses(kitEffectState.effects)).toBe(4);
   });

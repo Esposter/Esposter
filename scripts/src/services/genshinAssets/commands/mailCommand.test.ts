@@ -1,5 +1,6 @@
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { mailCommand } from "#src/services/genshinAssets/commands/mailCommand";
+import { runCommand } from "citty";
 import { GameDataset } from "genshin-world";
 import { describe, expect, test, vi } from "vitest";
 
@@ -18,7 +19,7 @@ describe("mailCommand", () => {
   test("names the mail text scope beside the mail's, so the texts publish", async () => {
     expect.hasAssertions();
 
-    await mailCommand.run?.({ args: { "dry-run": true }, cmd: mailCommand, rawArgs: [] });
+    await runCommand(mailCommand, { rawArgs: ["--dry-run"] });
 
     expect(vi.mocked(publishGameDataStep).mock.calls[0]?.[0].scopes).toStrictEqual([
       GameDataset.Mail,

@@ -1626,8 +1626,8 @@ defineExpose({ jumpTo, readCameraPosition });
             seconds: context.delta,
           });
           // The Serenitea Pot used from the gadget slot is set down at the player's feet, unless the open world already holds one
-          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit.value)
-            homePotPoint.value = placeHomePot(usedGadget, homePotPoint.value, characterBody.position);
+          if (usedGadget?.id === HOME_POT_GADGET_ID && !homeRealmVisit)
+            homePotPoint = placeHomePot(usedGadget, homePotPoint, characterBody.position);
           hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(

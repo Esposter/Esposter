@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -37,7 +38,8 @@ const createReaction = (reactionType: ReactionType, element: Element) => ({
   reactions: [{ element, reactionType }],
   striker: wielder,
 });
-const getBuffs = (effects: readonly KitEffect[]) => effects.filter(({ kind }) => kind === "buff");
+const getBuffs = (effects: readonly KitEffect[]) =>
+  effects.filter((effect): effect is KitBuff => effect.kind === "buff");
 
 describe(createRepentanceAndRedemptionPassiveModule, () => {
   test("an Elemental Reaction the wielder triggers raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
