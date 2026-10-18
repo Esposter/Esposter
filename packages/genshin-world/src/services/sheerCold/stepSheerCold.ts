@@ -17,7 +17,7 @@ import {
 // Returning the damage it deals. Heat near the character drains it wherever it stands; otherwise the subzero Climate
 // Fills it, faster while swimming or in a snowstorm and less under an anti-cold, which stops it at none, and outside
 // The Climate it drains at the rate of leaving an area. Full at the step's end, it deals its share of max HP and the
-// Flat amount for each Interval it has stayed full, the time short of the next carried over, and anything else clears it
+// Flat amount for each Interval it has stayed full, carrying the time short of the next over and clearing it otherwise
 export const stepSheerCold = (
   sheerCold: SheerCold,
   { antiColdRatio, isHeated, isInCold, isSnowstorm, isSwimming, maxHealth }: SheerColdStep,
