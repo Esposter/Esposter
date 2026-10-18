@@ -6,13 +6,13 @@ The [language design](../../specs/math-expression-compiler/language/design.md) h
 
 The package's built output against mathjs at the version the parity record was taken from, each formula parsed and compiled once and evaluated once:
 
-| Formula                                              | Against mathjs                                                                                                               |
-| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Groups nested tens deep, plain or behind a division  | Level, both well under a millisecond                                                                                         |
-| Groups nested behind a percent sign                  | Ahead: under a millisecond at any depth, where mathjs doubles per level and takes over a tenth of a second by the high teens |
-| `sum` or `hypot` of a few hundred thousand arguments | Ahead: mathjs overflows its stack and gives no answer                                                                        |
-| `count` or `max` of a few hundred thousand arguments | About a fifth slower, each a few tenths of a second                                                                          |
-| The parse alone, of a few hundred thousand arguments | About a tenth slower                                                                                                         |
+| Formula                                              | Against mathjs                                                                                                             |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Groups nested tens deep, plain or behind a division  | Level, both well under a millisecond                                                                                       |
+| Groups nested behind a percent sign                  | Ahead: under a millisecond at any depth, where mathjs doubles per level and takes a large part of a second by sixteen deep |
+| `sum` or `hypot` of a few hundred thousand arguments | Ahead: mathjs overflows its stack and gives no answer                                                                      |
+| `count` or `max` of a few hundred thousand arguments | About a fifth slower, each a few tenths of a second                                                                        |
+| The parse alone, of a few hundred thousand arguments | About a tenth slower                                                                                                       |
 
 A sheet formula is rarely long, so no reader waits on the gap today. It is closed because the package was written to shed mathjs's costs, and this is the one row where it carries more than mathjs does.
 
@@ -32,7 +32,7 @@ Options considered:
 2. **Per-level recursion, kept and shaved**: the dispatcher inlined, a `Set` per level, the levels calling each other directly. Rejected: the twenty calls per operand are the cost, and inlining them means rule files importing each other, which is the cycle the map exists to break.
 3. **One function per level written as a hand-tuned switch.** Rejected: it is the same chain with the table moved into code, and it breaks one function per file.
 
-`parseLeftAssociative` is left with nullish coalescing as its only caller, so it folds into `parseNullish`, as a helper with one caller does. `MathExpressionOperatorMap` keeps the unary, power and nullish entries that the remaining rules and `checkIsUnaryStart` read, and the binary entries move into the climbing table, so each operator is still written once.
+`parseLeftAssociative` is left with nullish coalescing as its only caller, so it folds into `parseNullish`, as a helper with one caller does. `MathExpressionOperatorMap` keeps the unary, power and nullish entries that the remaining rules and `checkIsUnaryStart` read, and the binary entries move into the climbing table, so each operator is still written once. The [parser names change](../math-expression-compiler-parser-names/design.md) has the implicit product and the divided product read `multiply` and `divide` from the operator map's multiplicative entries; whichever of the two changes ships second reads them from where the first left them, which after this one is the climbing table.
 
 ## Decision: the tokenizer compares characters
 
