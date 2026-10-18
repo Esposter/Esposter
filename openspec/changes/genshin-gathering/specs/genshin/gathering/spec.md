@@ -2,18 +2,18 @@
 
 ### Requirement: Mining outcrops come daily from Adventure Rank 30
 
-From Adventure Rank 30 a region's mining outcrops SHALL stand at the places drawn for the day, arriving at 06:00 in UTC+8.
+From Adventure Rank 30 a region's mining outcrops SHALL stand at the places drawn for the day, arriving at the 04:00 reset in UTC+8.
 
-#### Scenario: Outcrops appear at 06:00 with the day's draw
+#### Scenario: Outcrops appear at 04:00 with the day's draw
 
 - **GIVEN** the player's Adventure Rank is 30 or higher
-- **WHEN** the day's draw arrives at 06:00 in UTC+8
+- **WHEN** the day's draw arrives at 04:00 in UTC+8
 - **THEN** the region's mining outcrops stand at the places drawn for the day
 
 #### Scenario: No outcrops appear below Adventure Rank 30
 
 - **GIVEN** the player's Adventure Rank is below 30
-- **WHEN** the day's draw arrives at 06:00 in UTC+8
+- **WHEN** the day's draw arrives at 04:00 in UTC+8
 - **THEN** no mining outcrop stands in the region
 
 ### Requirement: A mined outcrop stays gone until the next draw

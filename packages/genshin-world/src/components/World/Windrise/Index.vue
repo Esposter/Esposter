@@ -8,6 +8,7 @@ import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
+import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
@@ -29,6 +30,7 @@ import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
+import WorldMiningOutcrops from "#src/components/World/MiningOutcrops/Index.vue";
 import WorldOculi from "#src/components/World/Oculi/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
@@ -162,6 +164,8 @@ interface Props {
   // What the character's body and the camera collide with, which the landmarks are given to as they arrive
   landmarkCollider: LandmarkCollider;
   // The Oculi not yet found, each stood in at its place
+  // The mining outcrops standing now, each stood in as a rock at its place
+  miningOutcropPlaces: GatheringPlace[];
   oculusPlaces: OculusPlace[];
   // The world coordinate the scene's origin stands on, which the screen's free camera reads the ground through
   origin: Vector3;
@@ -209,6 +213,7 @@ const {
   jumpPose,
   kitEffectState,
   landmarkCollider,
+  miningOutcropPlaces,
   oculusPlaces,
   origin,
   outcropCamps,
@@ -581,6 +586,14 @@ onUnmounted(() => {
       :get-ground-height
       :light-uniforms
       :places="oculusPlaces"
+      :ramp-texture
+    />
+    <WorldMiningOutcrops
+      v-if="!witness && miningOutcropPlaces.length > 0"
+      :key="miningOutcropPlaces.length"
+      :get-ground-height
+      :light-uniforms
+      :places="miningOutcropPlaces"
       :ramp-texture
     />
     <!-- The drops and the residents in the world are stood in as well, which a witness render draws none of either -->
