@@ -21,7 +21,7 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **Work is an entry with an id and its needs:** a compute-queue item on its area's design under `openspec/specs/genshin/compute/`, or an open change. An entry names what it writes, which is also its touch set.
 - **A change carries the same three fields a queue item does, in its `.openspec.yaml`** (the `openspec` skill, `references/change-metadata.md`), each optional:
   - `x-needs: [<capability>, ...]`, the same vocabulary as a queue item's needs;
-  - `x-waiting: "<blocker>"`, set while a blocker holds the change or any part of it, such as on another unit or on data that is not extracted, naming only the open tasks it blocks; a waiting change is never offered whole, and `pnpm ai:fleet:status` lists it with its blocker;
+  - `x-waiting: "<blocker>"`, set while a blocker holds the change or any part of it, such as on another unit or on data that is not extracted, naming only the open tasks it blocks; a waiting change is not offered at all, its unblocked tasks included, and `pnpm ai:fleet:status` lists it with its blocker;
   - `x-touches: [<glob>, ...]`, added to its Key files paths. A glob names the directory it opens in, so `dir/*` and `dir/**` both overlap anything under `dir`. It is cut at its first wildcard, so a glob names whole folders: `Forge*/**` names a `Forge` folder and misses the sibling "ForgeScreen". A long list may wrap over the lines below its key, as the formatter writes it.
 - **A machine takes its own next entry.** Its session runs `pnpm ai:fleet:next --lane <lane>`, its lane as the runner names it. That returns, and claims, the first entry that meets all of these:
   - its needs are within the machine's capabilities;
