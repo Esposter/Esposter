@@ -2,7 +2,7 @@
 
 ### Requirement: A struck bird or beast falls and gives its drops once
 
-A bird or beast struck down SHALL fall, give its item drops once, and stay where it fell, and a fallen animal struck again SHALL give nothing.
+A bird or beast struck down SHALL give its item drops once, where it fell, and SHALL vanish from the world, and an animal struck again after it has given its drops SHALL give nothing.
 
 #### Scenario: A Crimson Fox gives two Raw Meat when struck
 

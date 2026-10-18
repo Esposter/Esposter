@@ -8,7 +8,7 @@ The world is lived in by animals: birds that scatter, boars that charge, crystal
 
 The world's animals give what the game gives them, and react to the player as the game's do.
 
-- A bird or beast struck down falls once and gives its item drops; struck again it gives nothing, and it stays where it fell.
+- A bird or beast struck down gives its item drops once, where it fell, and vanishes; struck again it gives nothing.
 - Animals are struck by the same hits that strike enemies, and a hit on wildlife triggers a weapon's passive but never an artifact set's.
 - Material sources, such as crystalflies and butterflies, are picked up as an item and vanish, and a fish in shallow water can be struck or picked up.
 - Boars charge at a player in their way, and Sumeru's beasts fight back.
