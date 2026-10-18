@@ -153,16 +153,17 @@ describe("rainbow Bladework", () => {
   });
 });
 
+const FATAL_RAINSCREEN_SKILL: GcgSkill = {
+  costs: [],
+  effect: "Char_Skill_12022",
+  energyGain: 1,
+  id: 12_022,
+  kind: GcgSkillKind.ElementalSkill,
+};
+
 describe("fatal Rainscreen", () => {
   test("the skill deals 2 Hydro DMG, puts Hydro on its character, and creates a Rain Sword onstage", () => {
     expect.hasAssertions();
-    const FATAL_RAINSCREEN_SKILL: GcgSkill = {
-      costs: [],
-      effect: "Char_Skill_12022",
-      energyGain: 1,
-      id: 12_022,
-      kind: GcgSkillKind.ElementalSkill,
-    };
     const RAIN_SWORD_ID = 112_021;
     const duel = createDuel([
       createSideState([createCharacterState(1202)]),
@@ -173,6 +174,29 @@ describe("fatal Rainscreen", () => {
     expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
     expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAIN_SWORD_ID]);
   });
+
+  test.each([
+    [Element.Cryo, GcgAura.None, true],
+    [Element.Dendro, GcgAura.None, false],
+    [Element.Electro, GcgAura.None, false],
+    [Element.Hydro, Element.Hydro, false],
+    [Element.Pyro, GcgAura.None, false],
+  ])(
+    "Hydro Application on its character holding %s leaves the aura %s and Frozen %s, and deals no reaction DMG",
+    (aura, expectedAura, isFrozen) => {
+      expect.hasAssertions();
+      const duel = createDuel([
+        createSideState([{ ...createCharacterState(1202), aura }]),
+        createSideState([createCharacterState(1203), createCharacterState(1204)]),
+      ]);
+      runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
+      const user = takeOne(duel.sides, 0).characters.at(0);
+      expect(user?.aura).toBe(expectedAura);
+      expect(user?.isFrozen).toBe(isFrozen);
+      expect(user?.hp).toBe(10);
+      expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8, 10]);
+    },
+  );
 });
 
 describe("raincutter", () => {
