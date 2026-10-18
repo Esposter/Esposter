@@ -830,6 +830,18 @@ describe(stepKit, () => {
     expect(step({ locomotionState: LocomotionState.Glide })).toBeUndefined();
   });
 
+  test("starts a queued jump the body has landed on foot by the skill's end", () => {
+    expect.hasAssertions();
+
+    const jump: KitAction = { hits: [], seconds: 0.5, targetingArea: STRIKE_TARGETING_AREA };
+    const { step } = createSkillJumpFixture(jump);
+
+    step({ isSkillPressed: true });
+    step({ locomotionState: LocomotionState.Jump });
+
+    expect(step({ locomotionState: LocomotionState.Walk })).toBe(jump);
+  });
+
   test("clears a queued jump its start gate refuses as the skill ends, starting none after", () => {
     expect.hasAssertions();
 
