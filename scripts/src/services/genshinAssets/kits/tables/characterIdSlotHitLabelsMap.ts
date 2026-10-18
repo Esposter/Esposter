@@ -50,6 +50,7 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         skill: { combatTalent: SKILL, labels: ["Skill DMG"] },
       },
       values: {
+        "parameters.phantasmPerformanceCharges": { combatTalent: SKILL, label: "Phantasm Performance Charges" },
         "parameters.shadowDanceSeconds": { combatTalent: SKILL, label: "Shadow Dance Duration" },
         "stances.phantasmPerformance.chargedAttackStamina": {
           combatTalent: NORMAL_ATTACK,
@@ -58,7 +59,8 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
-  // Zibai. Her fourth strike's extra hit is Moonsign Ascendant Gleam's, not the stance's, so it is left out
+  // Zibai. Her fourth strike's second hit is the extra hit Moonsign gates, which the stance's behaviour plays at the
+  // Moonsign level it reads, as Columbina's are
   [
     10_000_126,
     {
@@ -71,7 +73,10 @@ export const characterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
         "stances.lunarPhaseShift.normalAttacks.0": { combatTalent: SKILL, labels: ["Lunar Phase Shift 1-Hit DMG"] },
         "stances.lunarPhaseShift.normalAttacks.1": { combatTalent: SKILL, labels: ["Lunar Phase Shift 2-Hit DMG"] },
         "stances.lunarPhaseShift.normalAttacks.2": { combatTalent: SKILL, labels: ["Lunar Phase Shift 3-Hit DMG"] },
-        "stances.lunarPhaseShift.normalAttacks.3": { combatTalent: SKILL, labels: ["Lunar Phase Shift 4-Hit DMG"] },
+        "stances.lunarPhaseShift.normalAttacks.3": {
+          combatTalent: SKILL,
+          labels: ["Lunar Phase Shift 4-Hit DMG", "Lunar Phase Shift 4-Hit Additional DMG"],
+        },
         "stances.lunarPhaseShift.skill": {
           combatTalent: SKILL,
           labels: ["Spirit Steed's Stride 1-Hit DMG", "Spirit Steed's Stride 2-Hit DMG"],
