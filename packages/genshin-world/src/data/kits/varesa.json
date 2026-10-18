@@ -26,5 +26,11 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.5 }
   },
-  "burstVariant.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 }
+  "burstVariant.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11139 } },
+  "plunges.low.hits.0.area": {
+    "cause": "Unclassified",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+  },
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11132 } }
 }
