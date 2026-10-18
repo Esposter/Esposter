@@ -5,15 +5,18 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { BluntActionMap } from "#src/services/gathering/BluntActionMap";
 
 const MELEE_ACTION_ATTACK_TAGS = new Set<AttackTag>([AttackTag.ChargedAttack, AttackTag.NormalAttack]);
 const MELEE_WEAPON_TYPES = new Set<WeaponType>([WeaponType.Claymore, WeaponType.Polearm, WeaponType.Sword]);
 
-// A hit is blunt by the wiki's Blunt Attacks, read off the attributes it carries: a claymore's normal or charged attack, a
-// Plunge by a sword, claymore or polearm, and Geo damage. The wiki's ability exceptions and its explosions carry no
-// Attribute of their own, so they read as the rest do
-const checkIsBlunt = ({ element, weaponType }: Combatant, hit: KitHit): boolean => {
+// A hit is blunt by the wiki's Blunt Attacks. The BluntActionMap's rows for its character and action come first.
+// Otherwise it is blunt as a claymore's normal or charged attack, as a plunge by a sword, claymore or polearm, or as Geo
+// Damage the hit itself deals: a hit with no element of its own is physical, whatever its character's element
+const checkIsBlunt = ({ characterId, weaponType }: Combatant, hit: KitHit): boolean => {
   const { actionAttackTag } = hit;
+  const mappedIsBlunt = actionAttackTag === undefined ? undefined : BluntActionMap[characterId]?.[actionAttackTag];
+  if (mappedIsBlunt !== undefined) return mappedIsBlunt;
   if (
     weaponType === WeaponType.Claymore &&
     actionAttackTag !== undefined &&
@@ -22,7 +25,7 @@ const checkIsBlunt = ({ element, weaponType }: Combatant, hit: KitHit): boolean 
     return true;
   if (actionAttackTag === AttackTag.PlungingAttack && weaponType !== undefined && MELEE_WEAPON_TYPES.has(weaponType))
     return true;
-  return (hit.element ?? element) === Element.Geo;
+  return hit.element === Element.Geo;
 };
 
 // The hit an ore takes from a hit a step landed for the character on the field, read before an infusion copies it. A
