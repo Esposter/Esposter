@@ -148,6 +148,21 @@ describe("kamisato Art: Soumetsu", () => {
     expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([6]);
     expect(takeOne(duel.sides, 0).summons.map(({ cardId }) => cardId)).toStrictEqual([FROSTFLAKE_SEKI_NO_TO_ID]);
   });
+
+  test("a Frostflake Seki no To already on its side is refreshed rather than doubled", () => {
+    expect.hasAssertions();
+    const duel = createDuel([
+      {
+        ...createSideState([createCharacterState(1105)]),
+        summons: [{ ...createGcgZoneCard(FROSTFLAKE_SEKI_NO_TO_ID, frostflakeSekiNoTo), usages: 1 }],
+      },
+      createSideState([createCharacterState(1202)]),
+    ]);
+
+    runGcgSkillUse({ duel, sideIndex: 0 }, SOUMETSU);
+
+    expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([2]);
+  });
 });
 
 describe("cryo Elemental Infusion", () => {

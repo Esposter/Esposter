@@ -124,4 +124,62 @@ describe(getWikiKitCandidates, () => {
       source: KitSource.Wiki,
     });
   });
+
+  test("names a skill row's tag by the member its wiki name is given, where the wiki names a character's own", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getWikiKitCandidates(
+      [
+        {
+          combatTalent: CombatTalent.ElementalSkill,
+          properties: [{ internalCooldownTag: "Vesna Elemental Skill Start", poise: 0, row: 1, title: "Skill DMG" }],
+          revisionId: 1,
+          title: "Vesna",
+        },
+      ],
+      { weaponType: WeaponType.Claymore },
+      new Map([["skill.hits.0", "Skill DMG"]]),
+    );
+
+    expect(candidateMap.get("skill.hits.0.internalCooldownTag")?.map(({ value }) => value)).toStrictEqual([
+      InternalCooldownTag.VesnaElementalSkillStart,
+    ]);
+  });
+
+  test("joins a stance's hit and a hold's hit to their rows by the words their labels share, as the skill's own hits are", () => {
+    expect.hasAssertions();
+
+    const candidateMap = getWikiKitCandidates(
+      [
+        {
+          combatTalent: CombatTalent.ElementalSkill,
+          properties: [
+            {
+              gauge: 1,
+              internalCooldownTag: "none",
+              poise: 0,
+              row: 1,
+              title: "Phantasm Performance 1-Hit DMG (Nefer)",
+            },
+            { poise: 20, row: 2, title: "Hold DMG" },
+          ],
+          revisionId: 1,
+          title: "Nefer",
+        },
+      ],
+      { weaponType: WeaponType.Catalyst },
+      new Map([
+        ["stances.phantasmPerformance.chargedAttack.hits.0", "Phantasm Performance 1-Hit DMG (Nefer)"],
+        ["skillHolds.0.action.hits.0", "Hold DMG"],
+      ]),
+    );
+
+    expect(
+      candidateMap.get("stances.phantasmPerformance.chargedAttack.hits.0.poiseDamage")?.map(({ value }) => value),
+    ).toStrictEqual([0]);
+    expect(
+      candidateMap.get("stances.phantasmPerformance.chargedAttack.hits.0.gauge")?.map(({ value }) => value),
+    ).toStrictEqual([1]);
+    expect(candidateMap.get("skillHolds.0.action.hits.0.poiseDamage")?.map(({ value }) => value)).toStrictEqual([20]);
+  });
 });

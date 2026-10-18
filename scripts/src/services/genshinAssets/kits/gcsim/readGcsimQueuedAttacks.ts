@@ -3,7 +3,7 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
-import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
+import type { ConstantLoop, GoScope } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
@@ -12,6 +12,12 @@ import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluat
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import {
+  readGoEnclosingFunction,
+  readGoMethodCallSites,
+  readGoNamedFunctions,
+} from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import { findClosingBrace, readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
@@ -22,18 +28,16 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
   ["QueueAttack", 1],
   ["QueueAttackWithSnap", 2],
 ]);
-// The most iterations a constant loop may take before its calls are read once, as a loop too long to expand
-const MAX_LOOP_ITERATIONS = 100;
-
-type GoScope = ReturnType<typeof createGoScope>;
-
-// A `for` loop of constant bounds, `for delay := burstStart; delay < 12*60+burstStart; delay += 90 {`, its variable's
-// Values and the braces of its body
-interface ConstantLoop {
-  bodyEnd: number;
-  bodyStart: number;
-  values: number[];
-  variable: string;
+// The delay a call of a method adds to the queue calls it runs, from the closures it is in, and the line of the
+// Innermost one's delay. A call outside every closure adds none, and has no line
+interface CallTiming {
+  delay: number | undefined;
+  line?: number;
+}
+// One way a method's queue call is run, by one call of the method: the delay its call adds, and the values its call
+// Gives the method's parameters
+interface CallVariant extends CallTiming {
+  parameters: Map<string, number>;
 }
 
 // The position a queue call's attack pattern is read from: the argument itself, or where its bare local was assigned in
@@ -65,106 +69,6 @@ const getPassedName = (expression: GoExpression): string | undefined => {
   if (expression.kind === GoExpressionKind.Identifier) return expression.name.split(".").at(-1);
   else if (expression.kind === GoExpressionKind.Call) return expression.callee.split(".").at(-1);
   else return undefined;
-};
-
-// The position of the brace closing the one opening at the position, else Undefined
-const findClosingBrace = (tokens: readonly GoToken[], openingPosition: number): number | undefined => {
-  let depth = 0;
-  for (let position = openingPosition; position < tokens.length; position++)
-    if (checkIsGoPunctuation(tokens[position], "{")) depth++;
-    else if (checkIsGoPunctuation(tokens[position], "}") && --depth === 0) return position;
-  return undefined;
-};
-
-// The `for` loop opening at the position when it ranges over a constant count, `for i := range 19 {` or `for range 2 {`,
-// Its values the counts from zero, and its body's braces, else Undefined
-const readRangeLoop = (
-  tokens: readonly GoToken[],
-  forPosition: number,
-  resolveName: (name: string) => GoValue | undefined,
-): ConstantLoop | undefined => {
-  const isNamed = checkIsGoPunctuation(tokens[forPosition + 2], ":=") && tokens[forPosition + 3]?.text === "range";
-  const variable = isNamed ? tokens[forPosition + 1] : undefined;
-  if (isNamed ? variable?.kind !== GoTokenKind.Identifier : tokens[forPosition + 1]?.text !== "range") return undefined;
-  const boundStart = forPosition + (isNamed ? 4 : 2);
-  const bound = parseGoExpression(tokens, boundStart);
-  const boundValue = evaluateGoNumber(bound.expression, resolveName);
-  if (
-    !checkIsGoPunctuation(tokens[bound.end], "{") ||
-    typeof boundValue !== "number" ||
-    boundValue > MAX_LOOP_ITERATIONS
-  )
-    return undefined;
-  const bodyEnd = findClosingBrace(tokens, bound.end);
-  return bodyEnd === undefined
-    ? undefined
-    : {
-        bodyEnd,
-        bodyStart: bound.end,
-        values: Array.from({ length: Math.max(0, boundValue) }, (_, value) => value),
-        variable: variable?.text ?? "",
-      };
-};
-
-// The `for` loop opening at the position when it counts a variable from a constant start up to a constant bound in
-// Constant steps, its values and its body's braces, else Undefined
-const readConstantLoop = (
-  tokens: readonly GoToken[],
-  forPosition: number,
-  resolveName: (name: string) => GoValue | undefined,
-): ConstantLoop | undefined => {
-  const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
-  if (rangeLoop !== undefined) return rangeLoop;
-  const variable = tokens[forPosition + 1];
-  if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))
-    return undefined;
-  const start = parseGoExpression(tokens, forPosition + 3);
-  if (
-    !checkIsGoPunctuation(tokens[start.end], ";") ||
-    tokens[start.end + 1]?.text !== variable.text ||
-    !(checkIsGoPunctuation(tokens[start.end + 2], "<") || checkIsGoPunctuation(tokens[start.end + 2], "<="))
-  )
-    return undefined;
-  const isBoundInclusive = checkIsGoPunctuation(tokens[start.end + 2], "<=");
-  const bound = parseGoExpression(tokens, start.end + 3);
-  const stepStart = bound.end + 1;
-  if (!checkIsGoPunctuation(tokens[bound.end], ";") || tokens[stepStart]?.text !== variable.text) return undefined;
-  // `i++` steps by one, `i += 90` by its expression
-  const isIncrement = checkIsGoPunctuation(tokens[stepStart + 1], "++");
-  const isAddAssign =
-    checkIsGoPunctuation(tokens[stepStart + 1], "+") && checkIsGoPunctuation(tokens[stepStart + 2], "=");
-  if (!isIncrement && !isAddAssign) return undefined;
-  const step = isIncrement ? undefined : parseGoExpression(tokens, stepStart + 3);
-  const stepEnd = step === undefined ? stepStart + 2 : step.end;
-  if (!checkIsGoPunctuation(tokens[stepEnd], "{")) return undefined;
-  const startValue = evaluateGoNumber(start.expression, resolveName);
-  const boundValue = evaluateGoNumber(bound.expression, resolveName);
-  const stepValue = step === undefined ? 1 : evaluateGoNumber(step.expression, resolveName);
-  if (
-    typeof startValue !== "number" ||
-    typeof boundValue !== "number" ||
-    typeof stepValue !== "number" ||
-    stepValue <= 0
-  )
-    return undefined;
-  const values: number[] = [];
-  for (let value = startValue; isBoundInclusive ? value <= boundValue : value < boundValue; value += stepValue) {
-    if (values.length === MAX_LOOP_ITERATIONS) return undefined;
-    values.push(value);
-  }
-  const bodyEnd = findClosingBrace(tokens, stepEnd);
-  return bodyEnd === undefined ? undefined : { bodyEnd, bodyStart: stepEnd, values, variable: variable.text };
-};
-
-// Each constant loop of a file, read at its `for` keyword
-const readConstantLoops = (tokens: readonly GoToken[], scope: GoScope): ConstantLoop[] => {
-  const loops: ConstantLoop[] = [];
-  for (const [position, token] of tokens.entries()) {
-    if (token.kind !== GoTokenKind.Identifier || token.text !== "for") continue;
-    const loop = readConstantLoop(tokens, position, (name) => scope.resolveName(name, position));
-    if (loop !== undefined) loops.push(loop);
-  }
-  return loops;
 };
 
 // A `Tasks.Add` or `QueueCharTask` closure's body and the delay written after it, `c.Core.Tasks.Add(func() {` ... `}, delay)`: the task runs
@@ -203,65 +107,115 @@ const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
   return closures;
 };
 
-// A closure a function returns, `return func() {` ... `}`: its body's braces and the name of the function returning it
-interface ReturnedClosure {
-  bodyEnd: number;
-  bodyStart: number;
-  functionName?: string;
-}
-
-// Each closure a function returns in a file, read at its `return` token
-const readReturnedClosures = (tokens: readonly GoToken[], scope: GoScope): ReturnedClosure[] => {
-  const closures: ReturnedClosure[] = [];
-  for (const [position, token] of tokens.entries()) {
-    if (token.kind !== GoTokenKind.Identifier || token.text !== "return" || tokens[position + 1]?.text !== "func")
-      continue;
-    let bodyStart = position + 2;
-    while (bodyStart < tokens.length && !checkIsGoPunctuation(tokens[bodyStart], "{")) bodyStart++;
-    const bodyEnd = findClosingBrace(tokens, bodyStart);
-    if (bodyEnd !== undefined) closures.push({ bodyEnd, bodyStart, functionName: scope.functionName(position) });
-  }
-  return closures;
-};
-
-// A `Tasks.Add` or `QueueCharTask` call that schedules a function's returned closure, as in
-// `Tasks.Add(c.tick(src), delay)`: its Call's token, the start of its delay, and the name of the function its first
-// argument calls
-interface ClosureSchedule {
-  delayStart: number;
-  functionName: string;
-  position: number;
-}
-
-// Each call of a file that schedules a call's result, read at its `Tasks` or `QueueCharTask` token
-const readClosureSchedules = (tokens: readonly GoToken[]): ClosureSchedule[] => {
-  const schedules: ClosureSchedule[] = [];
-  for (const [position, token] of tokens.entries()) {
-    const isScheduler =
-      (token.text === "Tasks" &&
-        checkIsGoPunctuation(tokens[position + 1], ".") &&
-        tokens[position + 2]?.text === "Add") ||
-      token.text === "QueueCharTask";
-    if (token.kind !== GoTokenKind.Identifier || !isScheduler) continue;
-    const call = parseGoExpression(tokens, position).expression;
-    if (call.kind !== GoExpressionKind.Call || call.parameterStarts.length < 2) continue;
-    const [attackStart, delayStart] = call.parameterStarts;
-    const attack = parseGoExpression(tokens, attackStart ?? position).expression;
-    if (attack.kind !== GoExpressionKind.Call || delayStart === undefined) continue;
-    schedules.push({ delayStart, functionName: attack.callee.split(".").at(-1) ?? "", position });
-  }
-  return schedules;
-};
-
 // The variable values of every iteration a position is in, one map each, of its enclosing constant loops taken together
 const readIterations = (loops: readonly ConstantLoop[], position: number): Map<string, number>[] =>
   loops
     .filter(({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd)
     .reduce<Map<string, number>[]>(
-      (iterations, { values, variable }) =>
-        iterations.flatMap((iteration) => values.map((value) => new Map(iteration).set(variable, value))),
+      (iterations, { iterations: loopIterations }) =>
+        iterations.flatMap((iteration) =>
+          loopIterations.map((loopIteration) => new Map([...iteration, ...loopIteration])),
+        ),
       [new Map()],
     );
+
+// The values a method's parameters take at one call of it, each a number its call's argument gives at the call's position
+const readCallParameters = (
+  tokens: readonly GoToken[],
+  scope: GoScope,
+  site: number,
+  parameters: readonly string[],
+): Map<string, number> => {
+  const call = parseGoExpression(tokens, site).expression;
+  if (call.kind !== GoExpressionKind.Call) return new Map();
+  return new Map(
+    parameters.flatMap((name, index) => {
+      const argumentStart = call.parameterStarts[index];
+      const value =
+        argumentStart === undefined
+          ? undefined
+          : evaluateGoNumber(parseGoExpression(tokens, argumentStart).expression, (inner) =>
+              scope.resolveName(inner, site),
+            );
+      return value === undefined ? [] : [[name, value] as const];
+    }),
+  );
+};
+
+// The delay a method's call gives when it is the function a `Tasks.Add` runs, `c.Core.Tasks.Add(c.burstTick(), 137)`, read
+// From its receiver through the call to the delay after its comma, else undefined
+const readTaskArgumentDelayStart = (tokens: readonly GoToken[], site: number): number | undefined => {
+  const receiver = site - 2;
+  const isTaskAdd =
+    checkIsGoPunctuation(tokens[site - 1], ".") &&
+    checkIsGoPunctuation(tokens[receiver - 1], "(") &&
+    tokens[receiver - 2]?.text === "Add" &&
+    checkIsGoPunctuation(tokens[receiver - 3], ".") &&
+    tokens[receiver - 4]?.text === "Tasks";
+  if (!isTaskAdd) return undefined;
+  const callEnd = parseGoExpression(tokens, receiver).end;
+  return checkIsGoPunctuation(tokens[callEnd], ",") ? callEnd + 1 : undefined;
+};
+
+// The delay one call of a method adds, from the `Tasks.Add` or `QueueCharTask` closures around the call, once per
+// Iteration of the constant loops and parameter values it is in. A call in no closure adds none
+const readCallSiteDelays = (
+  tokens: readonly GoToken[],
+  scope: GoScope,
+  loops: readonly ConstantLoop[],
+  taskClosures: readonly TaskClosure[],
+  site: number,
+): CallTiming[] => {
+  const siteTasks = taskClosures.filter(({ bodyEnd, bodyStart }) => bodyStart < site && site < bodyEnd);
+  const argumentDelayStart = readTaskArgumentDelayStart(tokens, site);
+  if (siteTasks.length === 0 && argumentDelayStart === undefined) return [{ delay: 0 }];
+  const closureDelayExpressions = siteTasks.map(({ delayStart }) => parseGoExpression(tokens, delayStart).expression);
+  const argumentDelayExpression =
+    argumentDelayStart === undefined ? undefined : parseGoExpression(tokens, argumentDelayStart).expression;
+  const [firstTask] = siteTasks;
+  const parameterIterations = scope.readParameterIterations(site);
+  return readIterations(loops, site)
+    .flatMap((loopIteration) =>
+      parameterIterations.map((parameterIteration) => new Map([...loopIteration, ...parameterIteration])),
+    )
+    .map((iteration) => {
+      const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, site);
+      const closureDelay = closureDelayExpressions
+        .map((expression) => evaluateGoNumber(expression, resolveIteration))
+        .reduce<number | undefined>(
+          (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
+          0,
+        );
+      // A `Tasks.Add` delay the reader cannot evaluate gives the call its own delay alone, as a call it reads no delay for
+      const argumentDelay =
+        argumentDelayExpression === undefined ? undefined : evaluateGoNumber(argumentDelayExpression, resolveIteration);
+      if (argumentDelay !== undefined)
+        return {
+          delay: closureDelay === undefined ? undefined : closureDelay + argumentDelay,
+          line: tokens[argumentDelayStart ?? site]?.line,
+        };
+      return { delay: closureDelay, line: firstTask === undefined ? undefined : tokens[firstTask.delayStart]?.line };
+    });
+};
+
+// The ways a method's queue call is run by the calls made of the method in this file, each call's parameter values and
+// The delay its closures add, one variant per distinct pair
+const readCallVariants = (
+  tokens: readonly GoToken[],
+  scope: GoScope,
+  loops: readonly ConstantLoop[],
+  taskClosures: readonly TaskClosure[],
+  sites: readonly number[],
+  parameters: readonly string[],
+): CallVariant[] => {
+  const variants = new Map<string, CallVariant>();
+  for (const site of sites) {
+    const callParameters = readCallParameters(tokens, scope, site, parameters);
+    for (const { delay, line } of readCallSiteDelays(tokens, scope, loops, taskClosures, site))
+      variants.set(JSON.stringify([delay, line, [...callParameters]]), { delay, line, parameters: callParameters });
+  }
+  return [...variants.values()];
+};
 
 // Each `QueueAttack` and `QueueAttackWithSnap` call of a gcsim character's action files, its `AttackInfo` read from its
 // Inline literal or from the name it passes, and its damage delay read as the fourth argument, where the constants and the
@@ -277,35 +231,7 @@ export const readGcsimQueuedAttacks = (
     const scope = createGoScope(tokens, constantMap);
     const loops = readConstantLoops(tokens, scope);
     const taskClosures = readTaskClosures(tokens);
-    const returnedClosures = readReturnedClosures(tokens, scope);
-    const closureSchedules = readClosureSchedules(tokens);
-    const readAllIterations = (position: number): Map<string, number>[] => {
-      const parameterIterations = scope.readParameterIterations(position);
-      return readIterations(loops, position).flatMap((loopIteration) =>
-        parameterIterations.map((parameterIteration) => new Map([...loopIteration, ...parameterIteration])),
-      );
-    };
-    // The delays a closure a function returns takes from the schedules of that function outside every returned closure,
-    // each schedule's delay read at its own iterations. A schedule inside a returned closure runs again at each of the
-    // closure's own times, so it is not read; no schedule at all leaves the delay unread
-    const readClosureDelays = (functionName: string | undefined): (number | undefined)[] => {
-      const schedules = closureSchedules.filter(
-        (schedule) =>
-          schedule.functionName === functionName &&
-          !returnedClosures.some(
-            ({ bodyEnd, bodyStart }) => bodyStart < schedule.position && schedule.position < bodyEnd,
-          ),
-      );
-      if (schedules.length === 0) return [undefined];
-      return schedules.flatMap(({ delayStart, position }) =>
-        readAllIterations(position).map((iteration) =>
-          evaluateGoNumber(
-            parseGoExpression(tokens, delayStart).expression,
-            (name) => iteration.get(name) ?? scope.resolveName(name, position),
-          ),
-        ),
-      );
-    };
+    const namedFunctions = readGoNamedFunctions(tokens);
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
@@ -335,32 +261,45 @@ export const readGcsimQueuedAttacks = (
         ({ delayStart }) => parseGoExpression(tokens, delayStart).expression,
       );
       const [firstTask] = enclosingTasks;
-      const enclosingClosure = returnedClosures.find(
-        ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
-      );
-      const closureDelays = enclosingClosure === undefined ? [0] : readClosureDelays(enclosingClosure.functionName);
-      for (const iteration of readAllIterations(position)) {
-        const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
-        const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
-          expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
-        );
-        const ownDelay = delayValues.reduce<number | undefined>(
-          (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
-          0,
-        );
-        const holdValue = iteration.get("hold");
-        for (const closureDelay of closureDelays)
+      const parameterIterations = scope.readParameterIterations(position);
+      // A method's queue call runs once per call of the method, at the delay of the closures that call is in and with the
+      // Parameter values it passes. A method never called in this file keeps its own delay and parameter values alone
+      const enclosingFunction = readGoEnclosingFunction(namedFunctions, position);
+      // A call from the method's own body is its next repeat, a tick's next, which is no call of the queue call anew
+      const sites =
+        enclosingFunction === undefined
+          ? []
+          : readGoMethodCallSites(tokens, enclosingFunction.name).filter(
+              (site) => !(enclosingFunction.bodyStart < site && site < enclosingFunction.bodyEnd),
+            );
+      const callVariants: CallVariant[] =
+        enclosingFunction === undefined || sites.length === 0
+          ? parameterIterations.map((parameters) => ({ delay: 0, parameters }))
+          : readCallVariants(tokens, scope, loops, taskClosures, sites, enclosingFunction.parameters);
+      for (const callVariant of callVariants)
+        for (const loopIteration of readIterations(loops, position)) {
+          const iteration = new Map([...loopIteration, ...callVariant.parameters]);
+          const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
+          const delayValues = [delayExpression, ...taskDelayExpressions].map((expression) =>
+            expression === undefined ? undefined : evaluateGoNumber(expression, resolveIteration),
+          );
+          const delay = delayValues.reduce<number | undefined>(
+            (sum, value) => (sum === undefined || value === undefined ? undefined : sum + value),
+            0,
+          );
+          const holdValue = iteration.get("hold");
           queuedAttacks.push({
             attackLine,
             attackName,
-            delay: ownDelay === undefined || closureDelay === undefined ? undefined : ownDelay + closureDelay,
-            delayLine: tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
+            delay: delay === undefined || callVariant.delay === undefined ? undefined : delay + callVariant.delay,
+            delayLine: callVariant.line ?? tokens[firstTask?.delayStart ?? delayStart ?? position]?.line ?? token.line,
             file,
             hitbox,
+            ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
             line: token.line,
             ...(holdValue !== undefined && { holdValue }),
           });
-      }
+        }
     }
     return queuedAttacks;
   });

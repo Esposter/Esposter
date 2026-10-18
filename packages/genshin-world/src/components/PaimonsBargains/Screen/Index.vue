@@ -20,6 +20,7 @@ import { toWeaponDefinition } from "#src/services/inventory/toWeaponDefinition";
 import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargainsCharacter";
 import { buyPaimonsBargainsWeapon } from "#src/services/shop/buyPaimonsBargainsWeapon";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
+import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
 import { computeNextShopRefreshTime } from "#src/services/shop/computeNextShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
@@ -39,10 +40,10 @@ interface Bought {
   wallet: Wallet;
 }
 
-// A good on offer with the currency it is paid in: a Fate the shop's dataset gives, or a character or weapon of the rotation
+// A good on offer: a Fate the shop's dataset gives, or a character or weapon of the rotation
 type Offer =
-  | { good: PaimonsBargainsGood; kind: ShopOfferKind.Character | ShopOfferKind.Weapon; priceCurrency: Currency }
-  | { good: ShopGood; kind: ShopOfferKind.Fate; priceCurrency: Currency };
+  | { good: PaimonsBargainsGood; kind: ShopOfferKind.Character | ShopOfferKind.Weapon }
+  | { good: ShopGood; kind: ShopOfferKind.Fate };
 interface Props {
   // The Adventure Rank the player has reached, which opens the Fates the shop sells from it
   adventureRank: number;
@@ -73,28 +74,24 @@ const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
 const count = ref(1);
 const goodId = ref(0);
 const now = computed(() => Temporal.Now.instant());
-const priceCurrencyOf = (good: PaimonsBargainsGood): Currency => {
-  const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
-  if (priceCurrency === undefined)
-    throw new InvalidOperationError(Operation.Read, String(good.priceItemId), "is not a currency the shop trades in");
-  return priceCurrency;
+// The currency a cost is paid in; a cost the wallet does not trade is a bad row, as nothing here could pay for it
+const currencyOf = (itemId: number): Currency => {
+  const currency = ShopItemCurrencyMap[itemId];
+  if (currency === undefined)
+    throw new InvalidOperationError(Operation.Read, String(itemId), "is not a currency the shop trades in");
+  return currency;
 };
 const offers = computed<Offer[]>(() => {
-  const fates = goods.flatMap((good): Offer[] => {
-    const priceCurrency = ShopItemCurrencyMap[good.priceItemId];
-    return priceCurrency !== undefined && checkIsShopGoodOffered(good, adventureRank, now.value)
-      ? [{ good, kind: ShopOfferKind.Fate, priceCurrency }]
-      : [];
-  });
+  const fates = goods.flatMap((good): Offer[] =>
+    checkIsCurrencyOnlyGood(good) && checkIsShopGoodOffered(good, adventureRank, now.value)
+      ? [{ good, kind: ShopOfferKind.Fate }]
+      : [],
+  );
   const { characterGoods, weaponGoods } = getPaimonsBargainsGoods(rotation, now.value);
   return [
     ...fates,
-    ...characterGoods.map((good): Offer => ({
-      good,
-      kind: ShopOfferKind.Character,
-      priceCurrency: priceCurrencyOf(good),
-    })),
-    ...weaponGoods.map((good): Offer => ({ good, kind: ShopOfferKind.Weapon, priceCurrency: priceCurrencyOf(good) })),
+    ...characterGoods.map((good): Offer => ({ good, kind: ShopOfferKind.Character })),
+    ...weaponGoods.map((good): Offer => ({ good, kind: ShopOfferKind.Weapon })),
   ];
 });
 const nameOfCharacter = (characterId: number): string =>
@@ -106,15 +103,18 @@ const getWeaponDefinition = (weaponId: number): ItemDefinition => {
 };
 const pickedOffer = computed(() => offers.value.find(({ good }) => good.goodsId === goodId.value));
 const balances = computed<CurrencyCount[]>(() =>
-  Array.from(new Set(offers.value.map(({ priceCurrency }) => priceCurrency)), (currency) => ({
-    id: currency,
-    name: gameText[takeOne(CurrencyGameTextKeyMap, currency)],
-    quantity: wallet.value[currency],
-  })),
+  Array.from(
+    new Set(offers.value.flatMap(({ good }) => good.costs.map(({ itemId }) => currencyOf(itemId)))),
+    (currency) => ({
+      id: currency,
+      name: gameText[takeOne(CurrencyGameTextKeyMap, currency)],
+      quantity: wallet.value[currency],
+    }),
+  ),
 );
 const goodCells = computed<ShopGoodCell[]>(() =>
   offers.value.map((offer) => {
-    const { good, priceCurrency } = offer;
+    const { good } = offer;
     const left = computeShopGoodLeft(good, purchases.value, now.value);
     const limitKey = ShopRefreshLimitGameTextKeyMap[good.refresh];
     const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now.value);
@@ -128,8 +128,10 @@ const goodCells = computed<ShopGoodCell[]>(() =>
           : offer.kind === ShopOfferKind.Character
             ? nameOfCharacter(good.itemId)
             : getWeaponDefinition(good.itemId).name,
-      price: good.priceCount,
-      priceName: gameText[takeOne(CurrencyGameTextKeyMap, priceCurrency)],
+      costs: good.costs.map((cost) => ({
+        count: cost.count,
+        name: gameText[takeOne(CurrencyGameTextKeyMap, currencyOf(cost.itemId))],
+      })),
       refreshLabel:
         nextRefreshTime === undefined
           ? undefined
@@ -144,10 +146,12 @@ const goodCells = computed<ShopGoodCell[]>(() =>
 // Weapon of the rotation is bought one at a time
 const countMaximum = computed(() => {
   if (!pickedOffer.value) return 0;
-  const { good, kind, priceCurrency } = pickedOffer.value;
+  const { good, kind } = pickedOffer.value;
   if (kind !== ShopOfferKind.Fate) return 1;
   const left = computeShopGoodLeft(good, purchases.value, now.value) ?? Number.POSITIVE_INFINITY;
-  const affordable = good.priceCount > 0 ? Math.floor(wallet.value[priceCurrency] / good.priceCount) : 1;
+  const affordable = Math.min(
+    ...good.costs.map((cost) => (cost.count > 0 ? Math.floor(wallet.value[currencyOf(cost.itemId)] / cost.count) : 1)),
+  );
   return Math.min(left, affordable);
 });
 // What buying an offer the count asks for leaves, or undefined where nothing is bought
@@ -202,7 +206,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
 
 <template>
   <!-- Paimon's Bargains, opened from the Paimon menu's Shop entry: the Fates the shop sells, and the characters and weapons of
-       the month's rotation, each with its price, limit and refresh, the count the player buys and the Buy button -->
+       the month's rotation, each with its costs, limit and refresh, the count the player buys and the Buy button -->
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.PaimonsBargains]">
     <ShopScreen
       v-model:count="count"

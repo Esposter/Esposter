@@ -12,6 +12,7 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT, main) kirara/skill.go, Tail-Flicking Flying Kick's shield lasting 12 seconds
@@ -88,8 +89,8 @@ export const createKiraraKitBehaviour = ({
   }));
   // The shield is a share of her Max HP and a flat amount, capped at its maximum's share and flat amount, as gcsim caps it
   const skillStart: KitActionBehaviour = {
-    onStart: ({ activeCombatant: combatant, kitEffectState, party }) => {
-      const { maxHealth } = combatant.attributes;
+    onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
+      const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
       castKitShield(kitEffectState, combatant.characterId, {
         element: Element.Dendro,
         health: Math.min(

@@ -9,6 +9,7 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { burstKitDendroCores } from "#src/services/kit/burstKitDendroCores";
 import { checkKitActionLanded } from "#src/services/kit/checkKitActionLanded";
 import { copyKitBody } from "#src/services/kit/copyKitBody";
+import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { coordinateKitSummons } from "#src/services/kit/effects/coordinateKitSummons";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -65,6 +66,10 @@ export const stepActiveKit = (
     triggerReaction,
   }: ActiveKitControls,
 ): void => {
+  context.locomotionState = input.locomotionState;
+  context.isSkillHeld = input.isSkillHeld;
+  context.stamina = characterController.stamina;
+  context.hexereiCount = countKitHexereiMembers(context.characterIdCombatantMap.keys());
   const {
     body,
     characterIdCombatantMap,
@@ -158,8 +163,11 @@ export const stepActiveKit = (
     for (const normalAttack of kit.normalAttacks)
       if (checkKitActionLanded(normalAttack, landedHits, strikes))
         emitKitEvent({ action: normalAttack, kind: KitEventKind.NormalAttackLanded }, context);
-  if (checkKitActionLanded(kit.chargedAttack, landedHits, strikes))
-    emitKitEvent({ action: kit.chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
+  for (const chargedAttack of kit.chargedAttackVariant
+    ? [kit.chargedAttack, kit.chargedAttackVariant.action]
+    : [kit.chargedAttack])
+    if (checkKitActionLanded(chargedAttack, landedHits, strikes))
+      emitKitEvent({ action: chargedAttack, kind: KitEventKind.ChargedAttackLanded }, context);
   // The summons' hits land from their own bodies, priced by the combatants that cast them and infused by their
   // Infusions, and the step's own hits from the turned body and the character on the field, infused by the infusion it
   // Started with

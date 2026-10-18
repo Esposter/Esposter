@@ -133,7 +133,9 @@ describe("lisa kit", () => {
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), health: 1e9, maxHealth: 1e9 };
     const press = takeOne(LISA_KIT.elementalSkill.hits);
 
-    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemyTables, enemy, press, createLisaCombatant(), () => 1);
+    const combatant = createLisaCombatant();
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 1 });
+    for (let strike = 0; strike < 4; strike++) strikeEnemy(enemy, press, combatant, context);
 
     expect(enemy.statuses.map(({ id, stacks }) => [id, stacks])).toStrictEqual([["conductive", 3]]);
   });

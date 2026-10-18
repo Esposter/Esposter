@@ -20,9 +20,9 @@ A skill whose effect is named by its damage SHALL deal the stated amount of the 
 - **WHEN** the skill is used
 - **THEN** the damage is Electro
 
-### Requirement: A skill's damage passes the field's bonuses before any doubling
+### Requirement: Every damage a side deals passes the field's bonuses before any doubling
 
-A skill's damage SHALL pass every additive bonus on the field before any doubling is applied.
+Every damage a side deals SHALL pass every additive bonus on its field before any doubling is applied, a skill's hit, a Swirl's spread, a piercing, an End Phase DMG and a switch's DMG alike.
 
 #### Scenario: Doubling applies after the field's bonus
 
@@ -112,6 +112,50 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 - **WHEN** the dice are rolled
 - **THEN** the two guaranteed dice are set
 
+### Requirement: A summon or combat status placed again is refreshed or stacks, and a support or onstage takes a slot of its own
+
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most. A support or onstage SHALL NOT be refreshed: a second copy SHALL take a slot of its own, and the copy already there SHALL keep its counter and usages.
+
+#### Scenario: A summon placed again refreshes the one on the field
+
+- **GIVEN** a Frostflake Seki no To is on a side with one usage left
+- **WHEN** Kamisato Art: Soumetsu summons a Frostflake again
+- **THEN** the one Frostflake on the field is refreshed to its starting usages, and no second copy appears
+
+#### Scenario: A summon that stacks adds its usages up to its most
+
+- **GIVEN** a Bake-Kurage is on a side with three usages, and its most is four
+- **WHEN** Kurage's Oath summons a Bake-Kurage again
+- **THEN** the one Bake-Kurage on the field has four usages, and no second copy appears
+
+#### Scenario: A support played again takes its own slot
+
+- **GIVEN** a Wagner is on a side's supports with its counter at three
+- **WHEN** a second Wagner is played
+- **THEN** the second Wagner takes a slot of its own, and the first keeps its counter
+
+### Requirement: A card hears the turn's start, a declared round's end and a summon's leaving
+
+A side handed its choice of action SHALL run its field's before-action hooks before the choice, and a side declaring its round's end SHALL run its round-end hooks before the declaration counts. The damage such a hook returns SHALL be dealt by its side through the damage seam. Each summon that leaves a side's field SHALL tell that side's supports once.
+
+#### Scenario: A before-action card deals its damage before the side chooses
+
+- **GIVEN** a side holds Tenko Thunderbolts, which deals 3 Electro before its choice
+- **WHEN** the turn passes to that side
+- **THEN** the opposing active character takes 3 Electro DMG before the side chooses its action, and the card leaves the field
+
+#### Scenario: Hanachirusato gains Progress when a summon disappears
+
+- **GIVEN** a side holds Hanachirusato with no Progress and a Bake-Kurage with one usage
+- **WHEN** the End Phase spends the Bake-Kurage's last usage
+- **THEN** Hanachirusato gains one Cleansing Ritual Progress
+
+#### Scenario: A Summon a card's play destroys counts for Progress
+
+- **GIVEN** a side holds Hanachirusato with no Progress and a Bake-Kurage on its field
+- **WHEN** the side plays Guardian's Oath, which destroys every Summon
+- **THEN** Hanachirusato gains one Cleansing Ritual Progress
+
 ### Requirement: The Oceanic Mimics are summoned by the kind fewest on the field
 
 The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the earliest kind winning a tie.
@@ -121,6 +165,12 @@ The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the e
 - **GIVEN** a side holds more copies of one Mimic kind than of another
 - **WHEN** Mimics are summoned
 - **THEN** the kind it holds fewest of is summoned
+
+#### Scenario: A further Mimic refreshes a kind already held
+
+- **GIVEN** a side holds one Mimic of each kind
+- **WHEN** a Mimic is summoned
+- **THEN** the earliest kind's Mimic is refreshed to its usages, and no second copy appears
 
 ### Requirement: A character eats one food a round
 

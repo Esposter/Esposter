@@ -11,6 +11,8 @@ export interface GcgCharacter {
   id: number;
   maxEnergy: number;
   nameTextId: number;
+  // The nation a character names, as the dump's nation tag gives it, and absent for a character with no nation tag
+  nation?: string;
   skills: GcgSkill[];
   weapon: string;
 }

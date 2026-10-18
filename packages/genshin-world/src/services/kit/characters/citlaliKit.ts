@@ -3,7 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
+import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 
 export const CITLALI_CHARACTER_ID = 10_000_107;
 
@@ -25,16 +25,7 @@ const NIGHTSOUL_BLESSING_SECONDS = 20;
 // Constellation 4 needs Itzpapa's Frostfall Storm hits, which are not built, to summon the Obsidian Spiritvein
 // Constellation 6 needs Itzpapa's Opal Fire state and the Nightsoul points, which wait on the Opal Fire state
 export const createCitlaliKitBehaviour = (): KitBehaviour => ({
-  burst: {
-    onStart: ({ activeCombatant, kitEffectState }) =>
-      gainKitResource(
-        kitEffectState,
-        activeCombatant.characterId,
-        NIGHTSOUL_POINTS_ID,
-        NIGHTSOUL_BURST_POINTS,
-        NIGHTSOUL_MAXIMUM,
-      ),
-  },
+  burst: { onStart: (context) => generateKitNightsoulPoints(context, NIGHTSOUL_BURST_POINTS, NIGHTSOUL_MAXIMUM) },
   skill: {
     onStart: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;

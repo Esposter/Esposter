@@ -15,5 +15,8 @@
   },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 50 },
   "skill.animationFrames": { "cause": "DiffersFromSource", "value": 6 },
-  "chargedAttack.isAimed": { "cause": "DiffersFromSource" }
+  "chargedAttack.isAimed": { "cause": "DiffersFromSource" },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10439 } },
+  "hits.soulseekerShell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.radiantShell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
 }

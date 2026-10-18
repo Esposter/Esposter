@@ -124,4 +124,30 @@ describe(getNamedHitKitCandidates, () => {
 
     expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).size).toBe(0);
   });
+
+  test("takes the call that fires at a hit's own hitmark, past a call of another delay its site also makes", () => {
+    expect.hasAssertions();
+
+    // A summon's two hits and its melody's zero-damage tick, all fired from one attack of the variable at one site
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "1|0",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [call("skill.go:41", 0), call("skill.go:41", 42), call("skill.go:41", 78)],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([
+      ["hits.droplet.0.hitmarkFrames", 42],
+      ["hits.droplet.0.multiplier", { index: 0, proudSkillGroupId: 1 }],
+      ["hits.droplet.1.hitmarkFrames", 78],
+      ["hits.droplet.1.multiplier", { index: 0, proudSkillGroupId: 1 }],
+    ]);
+
+    const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+
+    expect(hitmarks(candidateMap, "hits.droplet.0.hitmarkFrames")).toStrictEqual([42]);
+    expect(hitmarks(candidateMap, "hits.droplet.1.hitmarkFrames")).toStrictEqual([78]);
+  });
 });

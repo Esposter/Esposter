@@ -11,6 +11,9 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";
+import { notifyGcgSummonsDisappeared } from "#src/services/gcg/effects/notifyGcgSummonsDisappeared";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
@@ -43,13 +46,17 @@ export const playGcgCard = (
     return GcgActionResult.Unpayable;
   side.hand = side.hand.filter((_cardId, index) => index !== handIndex);
   placeGcgCard(side, card, targetIndex, module);
+  const summonsBeforePlay = duel.sides.map(({ summons }) => [...summons]);
   module.play?.(context, targetIndex, choice);
+  for (const [index, summons] of summonsBeforePlay.entries()) notifyGcgSummonsDisappeared(duel, index, summons);
+  for (const zoneCard of listGcgFieldCards(side, undefined))
+    GcgCardIdModuleMap.get(zoneCard.cardId)?.onCardPlayed?.(context, card, zoneCard);
   const switchIndex = module.switchOnPlay?.(context);
   if (switchIndex !== undefined) switchGcgActiveCharacter(duel, sideIndex, switchIndex);
   const skill = module.skillOnPlay?.(context, targetIndex);
   if (skill) runGcgSkillUse(context, skill);
   if (module.isCombatAction) passGcgTurn(duel, sideIndex);
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
   return GcgActionResult.Done;
 };
 

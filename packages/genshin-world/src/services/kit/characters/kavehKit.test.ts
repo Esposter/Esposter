@@ -89,22 +89,30 @@ describe(createKavehKitBehaviour, () => {
     expect(KAVEH_KIT.getNormalAttackSpeedBonus?.(createKitTestContext(combatant, { kitEffectState }))).toBe(0);
   });
 
-  test("a Constellation 4 Kaveh's Bloom reaction DMG is raised by 60%, and nothing else's", () => {
+  test("a Constellation 4 Kaveh's Bloom DMG bonus is 60% on the Bloom he makes, and none on another reaction", () => {
     expect.hasAssertions();
+    const bloomDamageBonus = (member: Combatant, reactionType: TransformativeReactionType) =>
+      KAVEH_KIT.getPartyReactionBonus?.(member, { combatant: member, reactionType }, createKitTestContext(member))
+        ?.damageBonus ?? 0;
     expect([
-      KAVEH_KIT.getReactionDamageBonus?.(
-        { ...createKavehCombatant(), constellationCount: 3 },
-        TransformativeReactionType.Bloom,
-      ),
-      KAVEH_KIT.getReactionDamageBonus?.(
-        { ...createKavehCombatant(), constellationCount: 4 },
-        TransformativeReactionType.Bloom,
-      ),
-      KAVEH_KIT.getReactionDamageBonus?.(
-        { ...createKavehCombatant(), constellationCount: 4 },
-        TransformativeReactionType.Overloaded,
-      ),
+      bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 3 }, TransformativeReactionType.Bloom),
+      bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 4 }, TransformativeReactionType.Bloom),
+      bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 4 }, TransformativeReactionType.Overloaded),
     ]).toStrictEqual([0, 0.6, 0]);
+  });
+
+  test("a teammate's Bloom takes none of Kaveh's Constellation 4 DMG bonus", () => {
+    expect.hasAssertions();
+    const kaveh: Combatant = { ...createKavehCombatant(), constellationCount: 4 };
+    const teammate: Combatant = { ...createKavehCombatant(), characterId: KAVEH_CHARACTER_ID + 1 };
+
+    expect(
+      KAVEH_KIT.getPartyReactionBonus?.(
+        kaveh,
+        { combatant: teammate, reactionType: TransformativeReactionType.Bloom },
+        createKitTestContext(kaveh),
+      )?.damageBonus ?? 0,
+    ).toBe(0);
   });
 
   test("a Constellation 1 Kaveh's Artistic Ingenuity gives him 50% Dendro RES and 25% Incoming Healing Bonus for three seconds", () => {

@@ -96,9 +96,71 @@ A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the c
 - **WHEN** the player presses the skill
 - **THEN** the press is refused by the cooldown
 
+### Requirement: Golden Chalice's Bounty from Ascension 1
+
+From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and no member that is neither Dendro nor Hydro. A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
+
+#### Scenario: A Dendro and Hydro team gains the Bounty
+
+- **GIVEN** Nilou is at Ascension 1 and the team holds a Dendro member and Hydro members
+- **WHEN** Pirouette's third sword dance lands
+- **THEN** every deployed member gains the Bounty for 30 seconds
+
+#### Scenario: A team with a Pyro member gains no Bounty
+
+- **GIVEN** Nilou is at Ascension 1 and the team holds a Pyro member
+- **WHEN** Pirouette's third sword dance lands
+- **THEN** no member gains the Bounty
+
+#### Scenario: A Dendro hit on a member under the Bounty
+
+- **GIVEN** a member holds the Bounty
+- **WHEN** that member takes a Dendro hit
+- **THEN** every deployed member gains 100 Elemental Mastery for 10 seconds
+
+#### Scenario: A Bloom under the Bounty leaves a Bountiful Core
+
+- **GIVEN** a member holds the Bounty
+- **WHEN** that member's Bloom lands on an enemy
+- **THEN** a Bountiful Core is left in place of the Dendro Core, and it bursts 0.4 seconds after it is made over 6.5 metres
+
+#### Scenario: A strike leaves a Bountiful Core standing
+
+- **GIVEN** a Bountiful Core stands on the field
+- **WHEN** an Electro or Pyro hit reaches it
+- **THEN** the core is not sent off and bursts as it was
+
+### Requirement: Ascension 4 raises Bountiful Core DMG
+
+From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG for each 1,000 of Nilou's Max HP above 30,000, up to 400%, and a Bloom's damage SHALL NOT take the bonus.
+
+#### Scenario: A Bountiful Core bursts under Ascension 4
+
+- **GIVEN** Nilou is at Ascension 4 with 40,000 Max HP
+- **WHEN** a Bountiful Core made by any deployed member bursts
+- **THEN** its reaction damage takes a 90% bonus
+
+#### Scenario: The bonus caps at 400%
+
+- **GIVEN** Nilou is at Ascension 4 with 100,000 Max HP
+- **WHEN** a Bountiful Core bursts
+- **THEN** its reaction damage takes a 400% bonus
+
+#### Scenario: Max HP at or below 30,000 gives no bonus
+
+- **GIVEN** Nilou is at Ascension 4 with 30,000 Max HP
+- **WHEN** a Bountiful Core bursts
+- **THEN** its reaction damage takes no Ascension 4 bonus
+
+#### Scenario: A Bloom or a lower Ascension gives no bonus
+
+- **GIVEN** Nilou is at Ascension 3 with 40,000 Max HP, or a Bloom's core bursts at Ascension 4
+- **WHEN** the core bursts
+- **THEN** its reaction damage takes no Ascension 4 bonus
+
 ### Requirement: Unbuilt Nilou effects
 
-Nilou's Ascension 1 and 4, Constellations 2 and 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
+Nilou's Constellations 2 and 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

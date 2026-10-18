@@ -2,17 +2,19 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { switchGcgSideActive } from "#src/services/gcg/effects/switchGcgSideActive";
 import { pruneGcgZoneCards } from "#src/services/gcg/pruneGcgZoneCards";
 import { takeOne } from "@esposter/shared";
 
 // The switch itself, with no die paid and no turn passed: the character at characterIndex on a side becomes its active one,
+// Switched in, so its next Normal Attack this round is a Plunging Attack,
 // Each card on the field then hears the switch, named with the character it is attached to, and the damage it deals after
 // it is dealt. The combat switch and a card that
 // Switches a character in when played both take this path, so a switch to the active character is no switch at all
 export const switchGcgActiveCharacter = (duel: GcgDuel, sideIndex: number, characterIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   if (characterIndex === side.activeIndex) return;
-  side.activeIndex = characterIndex;
+  switchGcgSideActive(side, characterIndex);
   const heard = [
     ...side.characters.flatMap((character, index) =>
       [...character.equipments, ...character.statuses].map((zoneCard) => ({ characterIndex: index, zoneCard })),
@@ -29,5 +31,5 @@ export const switchGcgActiveCharacter = (duel: GcgDuel, sideIndex: number, chara
     );
     if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
   }
-  for (const sideState of duel.sides) pruneGcgZoneCards(sideState);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
 };

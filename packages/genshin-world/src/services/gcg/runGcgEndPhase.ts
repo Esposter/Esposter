@@ -13,13 +13,13 @@ export const runGcgEndPhase = (duel: GcgDuel): void => {
     for (const zoneCard of listGcgFieldCards(side, undefined)) {
       const module = GcgCardIdModuleMap.get(zoneCard.cardId);
       if (module?.endPhaseStandbyPiercing) applyGcgStandbyPiercing(duel, sideIndex, module.endPhaseStandbyPiercing);
-      const characterIndex = findGcgZoneCardOwner(side.characters, zoneCard);
-      const damage = module?.onEndPhase?.({ characterIndex, duel, sideIndex }, zoneCard);
-      if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule);
+      const context = { characterIndex: findGcgZoneCardOwner(side.characters, zoneCard), duel, sideIndex };
+      const damage = module?.onEndPhase?.(context, zoneCard);
+      if (damage) applyGcgDamage(duel, sideIndex, damage, duel.rule, context);
     }
   for (const side of duel.sides)
     for (const zoneCard of listGcgFieldCards(side, undefined))
       if (GcgCardIdModuleMap.get(zoneCard.cardId)?.initialRounds !== undefined && zoneCard.rounds > 0)
         zoneCard.rounds -= 1;
-  for (const side of duel.sides) pruneGcgZoneCards(side);
+  for (const sideIndex of duel.sides.keys()) pruneGcgZoneCards(duel, sideIndex);
 };

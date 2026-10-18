@@ -37,6 +37,7 @@ export interface KitRecord {
   burstVariant?: KitActionRecord;
   chargedAttack: KitActionRecord;
   chargedAttackStamina: KitParameter;
+  chargedAttackVariant?: KitActionRecord;
   frames?: Record<string, number | number[]>;
   hitFields?: Record<string, Partial<KitHitRecord>>;
   hits?: Record<string, KitHitRecord | KitHitRecord[]>;
@@ -44,6 +45,8 @@ export interface KitRecord {
   normalAttacks: KitActionRecord[];
   parameters?: Record<string, KitParameter | KitParameter[]>;
   plungeCollision: KitHitRecord;
+  // The plunges a skill state turns the plunge into, the first holding one playing, each as its record's own action
+  plungeVariants?: KitActionRecord[];
   plunges: Record<KitPlunge, KitActionRecord>;
   skill: KitActionRecord;
   skillChain?: KitSkillChainRecord;
@@ -64,6 +67,7 @@ export const kitRecordSchema = z.strictObject({
   burstVariant: kitActionRecordSchema.optional(),
   chargedAttack: kitActionRecordSchema,
   chargedAttackStamina: kitParameterSchema,
+  chargedAttackVariant: kitActionRecordSchema.optional(),
   frames: createNamedSchema(z.number().nonnegative()).optional(),
   hitFields: z.record(z.string(), kitHitRecordSchema.partial()).optional(),
   hits: createNamedSchema(kitHitRecordSchema).optional(),
@@ -71,6 +75,7 @@ export const kitRecordSchema = z.strictObject({
   normalAttacks: z.array(kitActionRecordSchema),
   parameters: createNamedSchema(kitParameterSchema).optional(),
   plungeCollision: kitHitRecordSchema,
+  plungeVariants: z.array(kitActionRecordSchema).optional(),
   plunges: z.strictObject({ [KitPlunge.High]: kitActionRecordSchema, [KitPlunge.Low]: kitActionRecordSchema }),
   skill: kitActionRecordSchema,
   skillChain: kitSkillChainRecordSchema.optional(),

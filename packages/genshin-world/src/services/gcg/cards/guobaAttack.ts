@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { guoba } from "#src/services/gcg/cards/guoba";
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 
 const GUOBA_ID = 113_021;
@@ -10,6 +10,6 @@ const GUOBA_ID = 113_021;
 // Skill) and the card's text)
 export const guobaAttack: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
-    takeOne(duel.sides, sideIndex).summons.push(createGcgZoneCard(GUOBA_ID, guoba));
+    placeGcgZoneCard(takeOne(duel.sides, sideIndex).summons, GUOBA_ID, guoba);
   },
 };

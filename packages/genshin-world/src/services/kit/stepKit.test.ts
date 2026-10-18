@@ -10,16 +10,21 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { CHARGED_ATTACK_HOLD_SECONDS } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { startKitAction } from "#src/services/kit/startKitAction";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
 
 describe(stepKit, () => {
   const TRAVELER_COMBATANT: Combatant = {
@@ -44,7 +49,7 @@ describe(stepKit, () => {
   };
 
   // One character's kit, its party member and the stamina it spends, stepped by its input at the fixed step
-  const createFixture = () => {
+  const createFixture = (kit: Kit = TRAVELER_KIT) => {
     const kitState = createKitState();
     const landedHits: KitHit[] = [];
     const partyMember = createPartyMember();
@@ -53,7 +58,7 @@ describe(stepKit, () => {
       landedHits.length = 0;
       return stepKit(
         kitState,
-        TRAVELER_KIT,
+        kit,
         { ...IDLE_INPUT, ...input },
         partyMember,
         stamina,
@@ -126,6 +131,40 @@ describe(stepKit, () => {
     expect(lowStaminaFixture.stamina.value).toBe(19);
   });
 
+  test("starts a charged attack variant in place of the charged attack while its check holds", () => {
+    expect.hasAssertions();
+
+    const variant: KitAction = { ...TRAVELER_KIT.chargedAttack };
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttackVariant: { action: variant, checkIsActive: () => true } };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    step(heldInput);
+    step(heldInput);
+    step(heldInput);
+
+    expect(step(heldInput)).toBe(variant);
+  });
+
+  test("keeps the charged attack while a charged attack variant's check fails", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      chargedAttackVariant: { action: { ...TRAVELER_KIT.chargedAttack }, checkIsActive: () => false },
+    };
+    const { step } = createFixture(kit);
+    const heldInput = { isAttackHeld: true };
+
+    step({ isAttackHeld: true, isAttackPressed: true });
+    step(heldInput);
+    step(heldInput);
+    step(heldInput);
+
+    expect(step(heldInput)).toBe(TRAVELER_KIT.chargedAttack);
+  });
+
   test("holds a charged attack at its stamina times the kit's multiplier, so none starts it on an empty pool", () => {
     expect.hasAssertions();
 
@@ -153,6 +192,59 @@ describe(stepKit, () => {
     expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
 
     for (let index = 0; index < 11; index++) step();
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+  });
+
+  test("a press that ends the state plays none of the skill's hits, and sets no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { landedHits, partyMember, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+
+    step({ isSkillPressed: true });
+    landed.push(...landedHits);
+    for (let index = 0; index < Math.ceil(kit.elementalSkill.seconds / STEP_SECONDS); index++) {
+      step();
+      landed.push(...landedHits);
+    }
+
+    expect(landed).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("a press that ends the state starts the skill off its cooldown, which it leaves as it was", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
+    };
+    const { partyMember, step } = createFixture(kit);
+    partyMember.skillCooldownSeconds = TRAVELER_KIT.skillCooldownSeconds;
+
+    expect(step({ isSkillPressed: true })?.hits).toStrictEqual([]);
+    expect(partyMember.skillCooldownSeconds).toBe(TRAVELER_KIT.skillCooldownSeconds);
+  });
+
+  test("starts a skill whose cooldown its kit waives while the cooldown runs", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture({ ...TRAVELER_KIT, isSkillCooldownWaived: () => true });
+    partyMember.skillCooldownSeconds = 5;
+
+    expect(step({ isSkillPressed: true })).toBe(TRAVELER_KIT.elementalSkill);
+  });
+
+  test("keeps a skill's cooldown while its kit does not waive it", () => {
+    expect.hasAssertions();
+
+    const { partyMember, step } = createFixture();
+    partyMember.skillCooldownSeconds = 5;
 
     expect(step({ isSkillPressed: true })).toBeUndefined();
   });
@@ -221,6 +313,120 @@ describe(stepKit, () => {
     expect(partyMember.burstCooldownSeconds).toBe(TRAVELER_KIT.burstCooldownSeconds);
   });
 
+  test("a kit that cannot start an attack starts no normal attack on a press, and no charged attack once a strike ends", () => {
+    expect.hasAssertions();
+
+    let canStartAttack = false;
+    const kit: Kit = { ...TRAVELER_KIT, checkCanStartAttack: () => canStartAttack };
+    const { step } = createFixture(kit);
+
+    expect(step({ isAttackPressed: true })).toBeUndefined();
+
+    canStartAttack = true;
+    expect(step({ isAttackHeld: true, isAttackPressed: true })).toBe(kit.normalAttacks[0]);
+
+    canStartAttack = false;
+    const started: (KitAction | undefined)[] = [];
+    for (let index = 0; index < 60; index++) started.push(step({ isAttackHeld: true }));
+
+    expect(started).not.toContain(kit.chargedAttack);
+  });
+
+  test("a kit that cannot start an attack strikes no plunge collision, and lands no plunge", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, checkCanStartAttack: () => false };
+    const { landedHits, step } = createFixture(kit);
+    const landed: KitHit[] = [];
+    const plungeInput = { height: 5, locomotionState: LocomotionState.Plunge };
+
+    for (let index = 0; index < 3; index++) {
+      step(plungeInput);
+      landed.push(...landedHits);
+    }
+
+    expect(landed).toStrictEqual([]);
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBeUndefined();
+  });
+
+  // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
+  const startChargedAttack = (kit: Kit, stamina: { value: number }) =>
+    startNextKitAction(
+      { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
+      kit,
+      { ...IDLE_INPUT, isAttackHeld: true },
+      createPartyMember(),
+      stamina as ReturnType<typeof createStamina>,
+      true,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+  test("starts a charged attack whose start gate holds, spending its stamina", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => true } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBe(kit.chargedAttack);
+    expect(stamina.value).toBe(STAMINA_MAX - TRAVELER_KIT.chargedAttackStamina);
+  });
+
+  test("refuses a charged attack whose start gate fails, spending no stamina and starting none", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => false } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBeUndefined();
+    expect(stamina.value).toBe(STAMINA_MAX);
+  });
+
+  test("refuses a normal attack whose start gate fails, keeping its place in the string", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      normalAttacks: TRAVELER_KIT.normalAttacks.map((action) => ({ ...action, canStart: () => false })),
+    };
+    const kitState = createKitState();
+    const started = startNextKitAction(
+      kitState,
+      kit,
+      { ...IDLE_INPUT, isAttackPressed: true },
+      createPartyMember(),
+      createStamina(STAMINA_MAX),
+      false,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+    expect(started).toBeUndefined();
+    expect(kitState.comboIndex).toBe(0);
+  });
+
+  test("refuses a skill whose start gate fails, setting no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("refuses a burst whose start gate fails, keeping its energy", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalBurst: { ...TRAVELER_KIT.elementalBurst, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    partyMember.energy = TRAVELER_KIT.burstEnergyCost;
+
+    expect(step({ isBurstPressed: true })).toBeUndefined();
+    expect(partyMember.energy).toBe(TRAVELER_KIT.burstEnergyCost);
+  });
+
   test("strikes its collision every 0.3 seconds of a plunge", () => {
     expect.hasAssertions();
 
@@ -232,6 +438,47 @@ describe(stepKit, () => {
     step(plungeInput);
 
     expect(landedHits).toStrictEqual([TRAVELER_KIT.plungeCollision]);
+  });
+
+  test("a plunge variant plays in place of the standard plunge while its check holds", () => {
+    expect.hasAssertions();
+    const variant: KitAction = { ...TRAVELER_KIT.highPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: variant, checkIsActive: () => true }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(variant);
+  });
+
+  test("keeps the standard plunge while every plunge variant's check fails", () => {
+    expect.hasAssertions();
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [{ action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false }],
+    });
+
+    step({ height: 5, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(TRAVELER_KIT.highPlunge);
+  });
+
+  test("plays the first plunge variant whose check holds", () => {
+    expect.hasAssertions();
+    const second: KitAction = { ...TRAVELER_KIT.lowPlunge };
+    const { step } = createFixture({
+      ...TRAVELER_KIT,
+      plungeVariants: [
+        { action: { ...TRAVELER_KIT.highPlunge }, checkIsActive: () => false },
+        { action: second, checkIsActive: () => true },
+      ],
+    });
+
+    step({ height: 2, locomotionState: LocomotionState.Plunge });
+
+    expect(step({ height: 0, locomotionState: LocomotionState.Idle })).toBe(second);
   });
 
   test("lands a high plunge from a drop past 2.4 metres and a low one from less", () => {
@@ -464,5 +711,64 @@ describe(stepKit, () => {
     expect(kitState.action).toBe(action);
     stepFor(2);
     expect(kitState.action).toBeUndefined();
+  });
+  // Bennett's kit, whose skill has holds, for a hold on it: its character, the kit's skill held for the steps given and then
+  // Released. The kit completes its charge after the hold's step given, or before the hold begins when asked to
+  const BENNETT_COMBATANT: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: BENNETT_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: BENNETT_KIT,
+    level: 90,
+  };
+  const CHARGED_BENNETT_ACTION = BENNETT_KIT.elementalSkillHolds?.at(-1)?.action;
+  const releaseBennettHold = (
+    heldSteps: number,
+    { completeAt, completeBefore = false }: { completeAt?: number; completeBefore?: boolean } = {},
+  ) => {
+    const kitState = createKitState();
+    const partyMember = createPartyMember();
+    const stamina = createStamina(STAMINA_MAX);
+    const context = createKitTestContext(BENNETT_COMBATANT);
+    if (completeBefore) completeKitSkillCharge(context.kitEffectState, BENNETT_CHARACTER_ID);
+    for (let stepIndex = 0; stepIndex < heldSteps; stepIndex++) {
+      stepKit(
+        kitState,
+        BENNETT_KIT,
+        { ...IDLE_INPUT, isSkillHeld: true },
+        partyMember,
+        stamina,
+        STEP_SECONDS,
+        [],
+        context,
+      );
+      if (stepIndex === completeAt) completeKitSkillCharge(context.kitEffectState, BENNETT_CHARACTER_ID);
+    }
+    return stepKit(kitState, BENNETT_KIT, IDLE_INPUT, partyMember, stamina, STEP_SECONDS, [], context);
+  };
+
+  test("a held skill whose charge a kit completes mid-hold releases at its highest level, however short it was held", () => {
+    expect.hasAssertions();
+
+    expect(CHARGED_BENNETT_ACTION).toBeDefined();
+    expect(releaseBennettHold(2, { completeAt: 0 })).toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("a held skill short of its highest level, with no charge completed, releases below it", () => {
+    expect.hasAssertions();
+
+    const action = releaseBennettHold(2);
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_BENNETT_ACTION);
+  });
+
+  test("a charge completed before its skill is held does not carry into the hold", () => {
+    expect.hasAssertions();
+
+    const action = releaseBennettHold(2, { completeBefore: true });
+    expect(action).toBeDefined();
+    expect(action).not.toBe(CHARGED_BENNETT_ACTION);
   });
 });

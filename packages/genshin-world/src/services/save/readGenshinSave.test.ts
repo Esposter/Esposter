@@ -56,7 +56,7 @@ describe(readGenshinSave, () => {
   // A region's statues offered to: the Oculi held toward its next level and the level it has reached, and one Oculus
   // Found in it
   const STATUE_REGION_ID = "1";
-  const STATUE_REGION_PROGRESS = { heldCount: 1, level: 2 };
+  const STATUE_REGION_PROGRESS = { claimedLevel: 0, heldCount: 1, level: 2 };
   const FOUND_OCULUS_ID = "2";
   // A Seelie settled in its court and a puzzle solved, each by its id
   const SETTLED_SEELIE_ID = "seelie-1";
@@ -480,5 +480,23 @@ describe(readGenshinSave, () => {
     const save: GenshinSave = { ...EMPTY_GENSHIN_SAVE, wallet: { ...EMPTY_GENSHIN_SAVE.wallet, currencies } };
 
     expect(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()).wallet[Currency.AnemoSigil]).toBe(0);
+  });
+
+  test("a bounty taken and the week's bounty and request claims survive a reload", () => {
+    expect.hasAssertions();
+    const save: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      reputationBountyClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString()],
+      reputationRequestClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
+      reputationBountyHunt: {
+        bountyId: 1,
+        isTargetDefeated: true,
+        regionId: 101,
+        spawn: [1, 2, 3],
+        targetEnemyKindId: 20_101,
+      },
+    };
+
+    expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);
   });
 });

@@ -1,0 +1,63 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
+
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { NOBLESSE_OBLIGE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
+import { createNoblesseObligeSetModule } from "#src/services/artifact/sets/createNoblesseObligeSetModule";
+import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { readStatTables } from "#src/services/character/readStatTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { assert, describe, expect, test } from "vitest";
+
+const OTHER_CHARACTER_ID = 2;
+const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
+const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const wearer: Combatant = {
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: TRAVELER_CHARACTER_ID,
+  constellationCount: 0,
+  elementalResonances: [],
+  kit: TRAVELER_KIT,
+  level: 1,
+};
+const bonusOf = (pieceCount: number) => {
+  const bonus = statTables.artifactSetDataMap
+    .get(NOBLESSE_OBLIGE_ARTIFACT_SET_ID)
+    ?.bonuses.find((b) => b.pieceCount === pieceCount);
+  assert.exists(bonus);
+  return bonus;
+};
+
+describe(createNoblesseObligeSetModule, () => {
+  test("gives every deployed member 20% more ATK for 12 seconds when its wearer uses its Elemental Burst from four pieces", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    createNoblesseObligeSetModule(bonusOf(4)).onKitEvent?.(
+      { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed },
+      createKitTestContext(wearer, { kitEffectState, party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) }),
+      wearer,
+    );
+    expect(
+      kitEffectState.effects
+        .filter((effect): effect is KitBuff => effect.kind === "buff")
+        .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
+    ).toStrictEqual([
+      { amount: 0.2, attribute: Attribute.AttackPercent, secondsRemaining: 12 },
+      { amount: 0.2, attribute: Attribute.AttackPercent, secondsRemaining: 12 },
+    ]);
+  });
+
+  test("prices nothing from two pieces until a burst damage attribute exists to carry its Elemental Burst DMG bonus", () => {
+    expect.hasAssertions();
+
+    expect(createNoblesseObligeSetModule(bonusOf(2))).toStrictEqual({});
+  });
+});

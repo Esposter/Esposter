@@ -5,6 +5,7 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
+import { runGcgSideDamageHook } from "#src/services/gcg/runGcgSideDamageHook";
 import { takeOne } from "@esposter/shared";
 
 // A side's one reroll of its dice in the roll phase, and any extra reroll a card grants it: any dice it names are thrown
@@ -25,6 +26,7 @@ export const rerollGcgDice = (duel: GcgDuel, sideIndex: number, diceIndices: num
     duel.phase = GcgPhase.Action;
     duel.actingSideIndex = duel.firstSideIndex;
     runGcgActionPhase(duel);
+    runGcgSideDamageHook(duel, duel.firstSideIndex, "onBeforeAction");
   }
   return GcgActionResult.Done;
 };

@@ -120,6 +120,10 @@ export const compareKitRecord = (
     sourceCandidateMap,
   });
   for (const [path, value] of publishedValueMap) classify(path, value, candidateMap);
+  // A committed entry for a path the published record lacks and the classification never reached is a hand-written value the
+  // Build still reads, so it stays in the overlay the build and the report hold
+  for (const [path, entry] of Object.entries(committedOverlay))
+    if (!publishedValueMap.has(path) && !(path in overlay)) overlay[path] = entry;
   return getResult(() =>
     buildKitRecord(sourceCandidateMap, overlay, donorRecordMap, namedHitCandidateMap, tables, !isTagPredated),
   ).match(

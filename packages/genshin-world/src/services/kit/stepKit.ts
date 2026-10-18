@@ -15,6 +15,7 @@ import {
   PLUNGE_COLLISION_SECONDS,
 } from "#src/services/kit/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { clearKitSkillCharge } from "#src/services/kit/effects/clearKitSkillCharge";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { getKitInfusion } from "#src/services/kit/effects/getKitInfusion";
 import { endKitAction } from "#src/services/kit/endKitAction";
@@ -47,6 +48,8 @@ export const stepKit = (
   const previousHeldSeconds = kitState.skillHeldSeconds;
   const maximumHeldSeconds = kit.elementalSkillMaximumHeldSeconds ?? Infinity;
   if (isSkillHeld) {
+    // A hold that starts uncharged, whatever a kit completed before it
+    if (previousHeldSeconds === 0) clearKitSkillCharge(context.kitEffectState, context.activeCombatant.characterId);
     kitState.skillHeldSeconds = Math.min(previousHeldSeconds + stepSeconds, maximumHeldSeconds);
     kitState.skillReleasedSeconds =
       previousHeldSeconds < maximumHeldSeconds && kitState.skillHeldSeconds === maximumHeldSeconds
@@ -62,6 +65,8 @@ export const stepKit = (
   if (kit.elementalSkillChain && kitState.skillChainSeconds >= kit.elementalSkillChain.windowSeconds)
     kitState.skillChainCount = 0;
 
+  // A state the kit holds can restrict a plunge as an attack, so its collisions and its landing strike nothing then
+  const canStartAttack = kit.checkCanStartAttack?.(context) !== false;
   if (locomotionState === LocomotionState.Plunge) {
     if (!wasPlunging) {
       endKitAction(kitState, kit, false);
@@ -71,14 +76,17 @@ export const stepKit = (
     kitState.actionSeconds += stepSeconds;
     while (kitState.actionSeconds >= PLUNGE_COLLISION_SECONDS) {
       kitState.actionSeconds -= PLUNGE_COLLISION_SECONDS;
-      landedHits.push(kit.plungeCollision);
+      if (canStartAttack) landedHits.push(kit.plungeCollision);
     }
     return undefined;
   }
 
-  if (wasPlunging && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
+  if (wasPlunging && canStartAttack && ON_FOOT_LOCOMOTION_STATES.includes(locomotionState)) {
     const drop = kitState.plungeStartHeight - height;
-    return startKitAction(kitState, drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge, landedHits);
+    // The first plunge variant whose check holds on the landing plays in place of the standard plunge
+    const plungeVariant = kit.plungeVariants?.find((variant) => variant.checkIsActive(context));
+    const standardPlunge = drop > HIGH_PLUNGE_MIN_HEIGHT ? kit.highPlunge : kit.lowPlunge;
+    return startKitAction(kitState, plungeVariant?.action ?? standardPlunge, landedHits);
   }
 
   let isStrikeEnded = false;

@@ -110,3 +110,32 @@ Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, w
 - **GIVEN** Ifa is in the Nightsoul Blessing
 - **WHEN** the player presses Ifa's skill
 - **THEN** she is no longer in the blessing and her points are gone
+
+### Requirement: First ascension's Rescue Essentials add to the party's reactions
+
+From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swirl and Electro-Charged reaction her party makes, and 0.2% to each Lunar-Charged, for each of her Nightsoul points up to 150. The points SHALL be the ones she holds, and they SHALL be cleared when her blessing ends. Below her first ascension they SHALL add nothing. Stellar Swirl SHALL NOT take them yet.
+
+#### Scenario: Swirl and Electro-Charged take 1.5% a point, up to 150 points
+
+- **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 80 points
+- **WHEN** a Swirl or Electro-Charged the party makes is priced
+- **THEN** it takes a DMG Bonus of 1.2
+- **AND** with 200 points it takes the DMG Bonus of 150 points, 2.25
+
+#### Scenario: Lunar-Charged takes 0.2% a point
+
+- **GIVEN** Ifa is at her first ascension and in the Nightsoul Blessing with 80 points
+- **WHEN** a Lunar-Charged is priced for each contributor
+- **THEN** each contributor's Lunar-Charged takes a DMG Bonus of 0.16
+
+#### Scenario: Below her first ascension it adds nothing
+
+- **GIVEN** Ifa is at her base ascension and in the Nightsoul Blessing
+- **WHEN** a Swirl or Lunar-Charged the party makes is priced
+- **THEN** it takes no DMG Bonus from her
+
+#### Scenario: Leaving the blessing clears the points
+
+- **GIVEN** Ifa is at her first ascension in the Nightsoul Blessing
+- **WHEN** the player presses her skill to leave it
+- **THEN** a Swirl the party makes takes no DMG Bonus from her

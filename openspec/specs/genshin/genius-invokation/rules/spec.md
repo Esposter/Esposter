@@ -142,6 +142,52 @@ A normal attack or an elemental skill SHALL gain its character one energy, and a
 - **WHEN** the player uses the burst
 - **THEN** the burst is refused
 
+### Requirement: A normal attack after a switch is a plunging attack
+
+A normal attack SHALL be a plunging attack when its character was switched in to be the active character this round and no skill of hers has been used since the switch, the first skill used after the switch spending it whatever that skill is.
+
+A switch an effect makes SHALL count as a switch, and a defeat's replacement SHALL NOT. Both are provisional, as the wiki's Plunging Attack page is the open-world action and does not settle the TCG case (see the rules design).
+
+#### Scenario: A switched-in character's next Normal Attack is a plunge
+
+- **GIVEN** a character is switched in to be the active character this round
+- **WHEN** her next skill is a normal attack
+- **THEN** that normal attack is a plunging attack
+
+#### Scenario: An elemental skill spends the switch
+
+- **GIVEN** a character is switched in to be the active character this round
+- **WHEN** she uses an elemental skill, then a normal attack
+- **THEN** the normal attack is no plunging attack
+
+#### Scenario: A switch an effect makes is a switch
+
+- **GIVEN** an Overloaded active character is forced to the next standing character
+- **WHEN** that character's next skill is a normal attack
+- **THEN** that normal attack is a plunging attack
+
+#### Scenario: A defeat's replacement is no switch
+
+- **GIVEN** the active character is defeated and a standing character takes her place
+- **WHEN** the replacement's next skill is a normal attack
+- **THEN** that normal attack is no plunging attack
+
+### Requirement: A normal attack is a charged attack when the side's dice are even before its action phase
+
+A normal attack SHALL be a charged attack when its side held an even number of Elemental Dice as its Action Phase began. That number SHALL be settled then and SHALL hold for the round, so a die added later does not change it.
+
+#### Scenario: An even number of dice makes the Normal Attacks charged
+
+- **GIVEN** a side holds two Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is a charged attack
+
+#### Scenario: An odd number of dice leaves them plain
+
+- **GIVEN** a side holds three Elemental Dice as its Action Phase begins
+- **WHEN** its character uses a normal attack that round
+- **THEN** the normal attack is no charged attack
+
 ### Requirement: Elements apply an aura and Anemo and Geo set none
 
 Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, and Anemo and Geo damage SHALL set no aura.
@@ -212,7 +258,7 @@ A shield SHALL take damage before the character's health, and piercing damage SH
 
 ### Requirement: Swirl spreads damage to the other opposing characters without an aura
 
-A Swirl SHALL spread one of its aura's elements to each other opposing character as damage only, setting no aura and reacting with none.
+A Swirl SHALL spread one of its aura's elements to each other opposing character as damage only, setting no aura and reacting with none. The spread SHALL be one damage of the side that made the Swirl, passing that side's damage modifiers once however many characters it reaches.
 
 #### Scenario: Swirl spread sets no aura on the others
 

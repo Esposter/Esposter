@@ -296,8 +296,6 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
         [new Map()],
       );
     },
-    // The name of the top-level function a position is in, which names a closure it returns
-    functionName: (position: number): string | undefined => findScope(position)?.name,
     resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0),
     // The first token of a local's value at a position, where one assignment dominates it, as a call passing `ap` reads
     // The constructor `ap := combat.NewCircleHitOnTarget(...)` gave it

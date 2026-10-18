@@ -24,8 +24,6 @@ export const computeCharacterAttributes = (
     attack: computeStatTotal(attributeTotalMap, Attribute.BaseAttack, Attribute.AttackPercent, Attribute.Attack),
     attributeTotalMap,
     defense: computeStatTotal(attributeTotalMap, Attribute.BaseDefense, Attribute.DefensePercent, Attribute.Defense),
-    maxHealth:
-      attributeTotalMap[Attribute.BaseHealth] * (1 + attributeTotalMap[Attribute.HealthPercent]) +
-      attributeTotalMap[Attribute.Health],
+    maxHealth: computeStatTotal(attributeTotalMap, Attribute.BaseHealth, Attribute.HealthPercent, Attribute.Health),
   };
 };

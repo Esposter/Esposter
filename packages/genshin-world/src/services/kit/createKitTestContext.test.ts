@@ -4,8 +4,10 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { countKitHexereiMembers } from "#src/services/kit/countKitHexereiMembers";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
+import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe } from "vitest";
 
 // The combat state a kit's suite runs it in: the combatant on the field, alone in the deployed team, standing at the
@@ -19,6 +21,10 @@ export const createKitTestContext = (combatant: Combatant, context: Partial<KitC
   enemyTables: { enemyKindMap: new Map(), enemyLevelCurves: {} },
   expiredEffects: [],
   kitEffectState: { effects: [] },
+  locomotionState: LocomotionState.Idle,
+  isSkillHeld: false,
+  hexereiCount: countKitHexereiMembers([combatant.characterId]),
+  stamina: createStamina(STAMINA_MAX),
   oreStrikes: [],
   reactionTriggers: [],
   outbox: [],
