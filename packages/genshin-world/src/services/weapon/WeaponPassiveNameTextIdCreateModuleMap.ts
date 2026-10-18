@@ -346,6 +346,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3573861603": createGoldenMajestyPassiveModule,
   // Golden Majesty (The Unforged)
   "1405856115": createGoldenMajestyPassiveModule,
+  // Golden Majesty (Memory of Dust)
+  "2253836555": createGoldenMajestyPassiveModule,
   // Gokadaiou Otogibanashi (Redhorn Stonethresher)
   "372854075": createGokadaiouOtogibanashiPassiveModule,
   // Whitemoon Bristle (Light of Foliar Incision)
