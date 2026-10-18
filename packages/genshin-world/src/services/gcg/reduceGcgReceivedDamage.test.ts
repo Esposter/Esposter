@@ -91,7 +91,6 @@ describe(reduceGcgReceivedDamage, () => {
 
   test("a status on the active character reduces the damage it takes", () => {
     expect.hasAssertions();
-    const LOTUS_FLOWER_CRISP_ID = 333_003;
     const character = {
       ...createCharacterState(1701),
       statuses: [createGcgZoneCard(LOTUS_FLOWER_CRISP_ID, lotusFlowerCrisp)],
@@ -103,7 +102,6 @@ describe(reduceGcgReceivedDamage, () => {
 
   test("a status on a standby character does not reduce the damage the active one takes", () => {
     expect.hasAssertions();
-    const LOTUS_FLOWER_CRISP_ID = 333_003;
     const standby = {
       ...createCharacterState(1403),
       statuses: [createGcgZoneCard(LOTUS_FLOWER_CRISP_ID, lotusFlowerCrisp)],
