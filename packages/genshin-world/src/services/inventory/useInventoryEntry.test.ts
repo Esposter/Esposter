@@ -2,18 +2,25 @@ import type { CookingProgress } from "#src/models/cooking/CookingProgress";
 import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
+import type { ShopGood } from "#src/models/shop/ShopGood";
 
 import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
 import { CookingQuality } from "#src/models/cooking/CookingQuality";
 import { DishTarget } from "#src/models/cooking/DishTarget";
 import { Currency } from "#src/models/inventory/Currency";
-import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { MaterialType } from "#src/models/inventory/MaterialType";
+import { ShopRefresh } from "#src/models/shop/ShopRefresh";
+import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { FRAGILE_RESIN_ITEM_ID, FRAGILE_RESIN_RESTORE } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { grantQuestRewards } from "#src/services/quest/grantQuestRewards";
+import { buyShopGood } from "#src/services/shop/buyShopGood";
 import { ItemCategory } from "genshin-interface";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useInventoryEntry, () => {
   const DISH_ID = 108_011;
@@ -109,6 +116,72 @@ describe(useInventoryEntry, () => {
       ENTRY_ID,
       createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, recipe]])),
     );
+
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
+  });
+
+  // The instruction's materials row as the dump gives it: a Consume material of stack limit 2000, read by its name's text id
+  const STARGLITTER_ITEM_ID = 221;
+  const INSTRUCTION_NAME_TEXT_ID = "3664176372";
+  const instructionMaterial: MaterialData = {
+    id: INSTRUCTION_ITEM_ID,
+    materialType: MaterialType.Consume,
+    nameTextId: INSTRUCTION_NAME_TEXT_ID,
+    rank: 1,
+    rarity: 1,
+    stackLimit: 2000,
+  };
+  const instructionNames = { [INSTRUCTION_NAME_TEXT_ID]: "Instructions" };
+  const instructionMaterialDataMap = new Map([[INSTRUCTION_ITEM_ID, instructionMaterial]]);
+  const createInstructionContext = () =>
+    createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, recipe]]));
+
+  test("an instruction the shop sells teaches its dish once it is in the bag", () => {
+    expect.hasAssertions();
+    const good: ShopGood = {
+      beginTime: NOW.subtract({ hours: 1 }).toString(),
+      buyLimit: 0,
+      costs: [{ count: 5, itemId: STARGLITTER_ITEM_ID }],
+      endTime: NOW.add({ hours: 24 * 365 }).toString(),
+      goodsId: 3001,
+      itemCount: 1,
+      itemId: INSTRUCTION_ITEM_ID,
+      minPlayerLevel: 1,
+      refresh: ShopRefresh.None,
+    };
+    const bought = buyShopGood(
+      { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: 5 },
+      EMPTY_INVENTORY,
+      (itemId) => getItemDefinition(itemId, instructionNames, instructionMaterialDataMap),
+      [],
+      good,
+      1,
+      NOW,
+    );
+    assert.exists(bought);
+    const [entry] = bought.inventory.items;
+    assert.exists(entry);
+
+    const use = useInventoryEntry(bought.inventory, entry.id, createInstructionContext());
+
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
+  });
+
+  test("an instruction a quest rewards teaches its dish once it is in the bag", () => {
+    expect.hasAssertions();
+    const granted = grantQuestRewards(
+      [{ count: 1, itemId: INSTRUCTION_ITEM_ID }],
+      EMPTY_INVENTORY,
+      EMPTY_WALLET,
+      instructionNames,
+      instructionMaterialDataMap,
+    );
+    const [entry] = granted.inventory.items;
+    assert.exists(entry);
+
+    const use = useInventoryEntry(granted.inventory, entry.id, createInstructionContext());
 
     expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
     expect(use?.inventory.items).toStrictEqual([]);
