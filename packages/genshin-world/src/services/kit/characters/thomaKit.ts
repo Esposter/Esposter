@@ -25,6 +25,10 @@ export const THOMA_CHARACTER_ID = 10_000_050;
 // Ooyoroi stands for its seconds, setting off a Fiery Collapse from each normal attack the character on the field starts,
 // At most once in the table's seconds, whose first strike stacks Thoma's shield up to the most Blazing Blessing's may
 // Hold. His passives and his constellations are not built yet
+// Constellation 1 needs the Blazing Barrier's protected-ally attacks and the cooldown cuts they give, not built
+// Constellation 2 needs Crimson Ooyoroi's duration extended by 3s, which the kit does not build
+// Constellation 4 needs Crimson Ooyoroi's cast to restore 15 Energy to Thoma, which the kit does not build
+// Constellation 6 needs a party-wide DMG bonus on each Blazing Barrier refresh, which the kit does not build
 export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const blazingBlessingShieldMaxHealthShare = readParameter("blazingBlessingShieldMaxHealthShare");
   const blazingBlessingShieldFlatHealth = readParameter("blazingBlessingShieldFlatHealth");

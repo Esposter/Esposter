@@ -12,6 +12,10 @@ export const SKIRK_CHARACTER_ID = 10_000_114;
 // Skill is blocked by the cooldown the press set. Havoc: Extinction's normal attacks' bonus and the void rifts' absorption
 // Are not built, nor is Serpent's Subtlety, which gates her burst in place of Energy. An early end of the stance, by a
 // Swap, is not counted toward the skill's cooldown, as the cooldown is set at the press
+// Constellation 1 needs the Ascension talent Reason Beyond Reason's enhancement, which the kit does not build
+// Constellation 2 needs the Serpent's Subtlety gained after Havoc: Warp, which the kit does not build
+// Constellation 4 needs the Ascension talent Return to Oblivion's enhancement, which the kit does not build
+// Constellation 6 needs the Void Rifts absorbed through Reason Beyond Reason, which the kit does not build
 export const createSkirkKitBehaviour = ({ readSeconds, readStance }: KitRecordReader): KitBehaviour => {
   const sevenPhaseFlashSeconds = readSeconds("sevenPhaseFlash");
   const skillDelaySeconds = readSeconds("sevenPhaseFlashDelay");
