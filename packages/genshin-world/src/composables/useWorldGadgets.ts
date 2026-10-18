@@ -4,6 +4,7 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Ref } from "vue";
 
 import { quickUseGadget } from "#src/services/gadget/quickUseGadget";
+import { getGadgetCooldownSeconds } from "#src/services/gadget/getGadgetCooldownSeconds";
 import { readGadgetRows } from "#src/services/gadget/readGadgetRows";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
@@ -35,5 +36,8 @@ export const useWorldGadgets = ({
     if (equippedGadget.value)
       cooldownGroupReadyAtMap.value = quickUseGadget(cooldownGroupReadyAtMap.value, equippedGadget.value, now);
   };
-  return { gadgetRows, quickUseEquippedGadget };
+  // The seconds left of the equipped gadget's cooldown at `now`, none when no gadget is equipped
+  const getEquippedGadgetCooldown = (now: Temporal.Instant) =>
+    equippedGadget.value ? getGadgetCooldownSeconds(cooldownGroupReadyAtMap.value, equippedGadget.value, now) : 0;
+  return { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedGadget };
 };

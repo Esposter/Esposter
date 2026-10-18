@@ -39,6 +39,8 @@ interface Props {
   characterIdSkillGlyphsMap: ReadonlyMap<number, SkillGlyphs>;
   // The world's frame: the stamina the meter fills by, where the follow camera's pivot stands, and the world's clock
   frame: HudFrame;
+  // The whole cooldown of the equipped gadget, none while no gadget is equipped
+  gadgetCooldownSeconds?: number;
   // The game's words in the reader's language
   gameText: GameText;
   input: Input;
@@ -79,6 +81,7 @@ const {
   characterDataMap,
   characterIdSkillGlyphsMap,
   frame,
+  gadgetCooldownSeconds,
   gameText,
   input,
   interfaceRects,
@@ -165,6 +168,8 @@ const emit = defineEmits<{ map: []; menu: [] }>();
           :energy="member.energy"
           :energy-cost="member.energyCost"
           :game-text
+          :gadget-cooldown="frame.gadgetCooldown"
+          :gadget-cooldown-seconds="gadgetCooldownSeconds"
           :input
           :is-touch
           :skill-cooldown="member.skillCooldown"

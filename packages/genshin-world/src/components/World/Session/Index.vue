@@ -333,7 +333,10 @@ const { chestInteractables, digChestById, openChestById } = useWorldChests({
   wallet,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
-const { gadgetRows, quickUseEquippedGadget } = useWorldGadgets({ gameDataBaseUrl, inventory });
+const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, quickUseEquippedGadget } = useWorldGadgets({
+  gameDataBaseUrl,
+  inventory,
+});
 // The Seelies of Mondstadt, each led to its court by the player following it, and settled where the save names it settled
 const { puzzleSeelies, settledSeelieIds, stepWorldPuzzles } = useWorldPuzzles(seelies, savedState.settledSeelieIds);
 // The Frostbearing Tree the bag is offered to, whose levels are read from the game's table as it is offered to, and
@@ -600,7 +603,7 @@ watch(mapCamera, (newCamera, oldCamera) => {
 const cameraEuler = new Euler();
 // What the HUD's pieces read each frame. The stamina meter's pivot is projected only while the pool is spent or
 // Refilling, and once it is full the meter fades out where it stood
-const hudFrame = reactive<HudFrame>({ pivotX: 0, pivotY: 0, seconds: 0, stamina: STAMINA_MAX });
+const hudFrame = reactive<HudFrame>({ gadgetCooldown: 0, pivotX: 0, pivotY: 0, seconds: 0, stamina: STAMINA_MAX });
 const pivot = new Vector3();
 useRafFn(() => {
   const activeCamera = canvas.value?.context?.camera.activeCamera.value;
@@ -704,6 +707,7 @@ defineExpose({ jumpTo, readCameraPosition });
           if (inputState.pressedActions.has(InputAction.ShowCursor)) showCursor();
           if (!isPaused && screenKind === ScreenKind.World && inputState.pressedActions.has(InputAction.QuickUseGadget))
             quickUseEquippedGadget(getWorldNow());
+          hudFrame.gadgetCooldown = getEquippedGadgetCooldown(getWorldNow());
           // A switch with a burst switches as a plain one does, so its member is on the field when the kit reads the burst
           const partyMemberIndex = PARTY_MEMBER_INPUT_ACTIONS.findIndex(
             (action, index) =>
@@ -849,6 +853,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :character-id-skill-glyphs-map
       :frame="hudFrame"
       :game-text
+      :gadget-cooldown-seconds="equippedGadget?.cooldownSeconds"
       :input
       :interface-rects="hudInterfaceRects"
       :is-touch

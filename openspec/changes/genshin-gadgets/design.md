@@ -13,6 +13,7 @@ Gadgets are the game's tools: the Wind Catcher, the Treasure Compasses and Oculu
 - **A gadget is a bag item of the widget material type.** Each of the slice's gadgets (the `gadgets/gadgets` record, about a dozen) has a `MaterialExcelConfigData` row of type `MATERIAL_WIDGET`, so the bag holds it as any material, filed under `ItemCategory.Gadget`, and `writeItems` writes its row beside the drops' and the forge's items.
 - **The equipped gadget is the bag's.** The bag's save holds the gadget equipped to the quick-use slot as `equippedGadgetItemId`, the gadget's item id, optional, so a bag saved before a gadget could be equipped holds none and no backfill is owed. The quick swap is not saved.
 - **The bag's quick-use action is provisional in place.** A gadget the game marks equipable shows the game's "Quick-Use Gadget" (`UI_BEYOND_HALL_WIDGET_USE_BUTTON_SET`) under its detail panel, and equipping it adds nothing else. The controller recording shows the equipped gadget's action at the bottom bar's X slot as "Remove", which the game words as "Gadget Unequipped"; the slot is the only reference for a gadget's action, so the button's place is estimated from it until the keyboard's bag is recorded.
+- **The equipped gadget shows at the keys' bottom right, provisionally.** Its disc stands above the burst's with its cooldown counted on it as the skill's is, and its Z key cap under it, placed from the keyboard world HUD still (`hud-world-keys.png` in the parity references) and bare, since no gadget's icon is read yet. Only the keys layout draws it: the touch layout's place is not recorded. The number the still shows under the disc is not read.
 
 ## How it works
 
@@ -47,12 +48,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role after the change                        |
-| :----------------------------------------------------------------- | :------------------------------------------- |
-| `packages/genshin-engine/src/input/InputActionBindingMap.ts`       | `Z` and the quick swap's hold                |
-| `packages/genshin-world/src/models/inventory/Inventory.ts`         | Gains the equipped gadget and the quick swap |
-| `packages/genshin-world/src/components/Inventory/Screen/Index.vue` | Equips a gadget from its tab                 |
-| `packages/genshin-world/src/components/Hud/Screen/Index.vue`       | Shows the equipped gadget and its cooldown   |
+| File                                                               | Role after the change                               |
+| :----------------------------------------------------------------- | :-------------------------------------------------- |
+| `packages/genshin-engine/src/input/InputActionBindingMap.ts`       | `Z` and the quick swap's hold                       |
+| `packages/genshin-world/src/models/inventory/Inventory.ts`         | Gains the equipped gadget and the quick swap        |
+| `packages/genshin-world/src/components/Inventory/Screen/Index.vue` | Equips a gadget from its tab                        |
+| `packages/genshin-world/src/components/Hud/Screen/Index.vue`       | Shows the equipped gadget and its cooldown          |
+| `packages/genshin-world/src/components/Hud/Skills/Index.vue`       | Draws the gadget's disc, its cooldown and its Z key |
 
 ## Sources
 
