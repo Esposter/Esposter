@@ -5,6 +5,7 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
 import type { RegionData } from "#src/models/world/RegionData";
@@ -91,6 +92,7 @@ const {
 } = defineProps<Props>();
 // A strike for combat to land on the active character, and a defeated enemy's drops for the bag and the party
 const emit = defineEmits<{
+  campCleared: [camp: ClearedCamp];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
@@ -186,6 +188,13 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
         enemy,
         computeEnemyDrops(enemyKind, enemy.level, () => Math.random()),
       );
+      // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
+      const camp = [...regionDataMap.values()]
+        .flatMap(({ enemyCamps }) => enemyCamps)
+        .find(({ id }) => id === enemy.campId);
+      const [firstMember] = camp?.members ?? [];
+      if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))
+        emit("campCleared", { id: camp.id, position: firstMember.position });
     }
   }
 

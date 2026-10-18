@@ -2,6 +2,7 @@ import type { AchievementProgress } from "#src/models/achievement/AchievementPro
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
@@ -28,6 +29,7 @@ export const useWorldSave = ({
     | "achievementProgressMap"
     | "archiveKillsMap"
     | "archiveProgressMap"
+    | "clearedCamps"
     | "craftedCountMap"
     | "craftingProgress"
     | "foundOculusIds"
@@ -49,6 +51,8 @@ export const useWorldSave = ({
   );
   const archiveKillsMap = shallowRef<ArchiveKills>(savedState.archiveKillsMap);
   const archiveProgressMap = shallowRef<ArchiveProgress>(savedState.archiveProgressMap);
+  // The camps cleared, each once: a camp whose last enemy falls is kept, and one cleared again is not added twice
+  const clearedCamps = shallowRef<readonly ClearedCamp[]>(savedState.clearedCamps);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
@@ -65,6 +69,7 @@ export const useWorldSave = ({
       achievementProgressMap,
       archiveKillsMap,
       archiveProgressMap,
+      clearedCamps,
       craftedCountMap,
       craftingProgress,
       foundOculusIds,
@@ -85,10 +90,15 @@ export const useWorldSave = ({
   const setWallet = (nextWallet: Wallet) => {
     wallet.value = nextWallet;
   };
+  events.on("campCleared", (camp) => {
+    if (clearedCamps.value.some(({ id }) => id === camp.id)) return;
+    clearedCamps.value = [...clearedCamps.value, camp];
+  });
   return {
     achievementProgressMap,
     archiveKillsMap,
     archiveProgressMap,
+    clearedCamps,
     craftedCountMap,
     craftingProgress,
     foundOculusIds,

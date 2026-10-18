@@ -44,6 +44,8 @@ export const MAX_OPENED_CHEST_COUNT = 4096;
 // The Oculi a player finds once each, across every region the game has, so the bound is the whole map's with room to
 // Spare
 export const MAX_FOUND_OCULUS_COUNT = 4096;
+// The camps a player clears once each, bounded by the enemy camps the regions' data holds: 4795 of them, counted on 2026-10-18
+export const MAX_CLEARED_CAMP_COUNT = 4795;
 // The Seelies a player settles in their courts once each, so the bound is the map's 547 Seelie marks on the ground in the
 // Mapped regions, counted from the official map's point list the puzzles build places on 2026-10-18
 export const MAX_SETTLED_SEELIE_COUNT = 547;
@@ -142,6 +144,7 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   adventureExp: MAX_SAVE_NUMBER,
   adventureRankRewardsClaimed: [],
   characters: [],
+  clearedCamps: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
@@ -204,6 +207,8 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     }) +
   MAX_UNLOCKED_LANDMARK_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_OPENED_CHEST_COUNT * getListEntryLength(MAX_SAVE_ID) +
+  MAX_CLEARED_CAMP_COUNT *
+    getListEntryLength({ id: MAX_SAVE_ID, position: { x: MAX_SAVE_NUMBER, z: MAX_SAVE_NUMBER } }) +
   MAX_SETTLED_SEELIE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   MAX_SOLVED_PUZZLE_COUNT * getListEntryLength(MAX_SAVE_ID) +
   PARTY_TEAM_MAX_COUNT *
@@ -249,6 +254,7 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
   characters: [],
+  clearedCamps: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: "1970-01-01T00:00:00Z", dealtCommissions: [] },
   companionshipExp: {},
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },

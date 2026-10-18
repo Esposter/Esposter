@@ -20,6 +20,7 @@ export const toGenshinSave = ({
   archiveProgressMap,
   characterCopyCountMap,
   characters,
+  clearedCamps,
   commissionDay,
   companionshipExpMap,
   craftedCountMap,
@@ -48,6 +49,7 @@ export const toGenshinSave = ({
   adventureRankRewardsClaimed,
   archive: { kills: Object.fromEntries(archiveKillsMap), progress: toArchiveProgressSave(archiveProgressMap) },
   characters: toCharacterSaves(characters, characterCopyCountMap),
+  clearedCamps: [...clearedCamps],
   commissionDay: toCommissionDaySave(commissionDay),
   companionshipExp: Object.fromEntries([
     ...companionshipExpMap,

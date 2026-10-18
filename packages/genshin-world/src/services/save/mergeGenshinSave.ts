@@ -3,6 +3,7 @@ import type { WorldLevelAdjustmentSave } from "#src/models/adventureRank/WorldLe
 import type { ArchiveSave } from "#src/models/archive/ArchiveSave";
 import type { CharacterSave } from "#src/models/character/CharacterSave";
 import type { CommissionDaySave } from "#src/models/commission/CommissionDaySave";
+import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
 import type { QuestProgressSave } from "#src/models/quest/QuestProgressSave";
 import type { ReputationProgress } from "#src/models/reputation/ReputationProgress";
@@ -135,8 +136,12 @@ const checkIsLaterWorldLevelAdjustment = (
 const checkIsLaterCommissionDay = (day: CommissionDaySave, than: CommissionDaySave): boolean =>
   Temporal.Instant.compare(Temporal.Instant.from(day.dealtAt), Temporal.Instant.from(than.dealtAt)) > 0;
 
-// A guest's save merged into the account's one when both exist. The landmarks, the learned recipes and achievements are
-// Grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
+// The camps both copies cleared, each once, since a camp cleared stays cleared
+const mergeClearedCamps = (account: ClearedCamp[], guest: ClearedCamp[]): ClearedCamp[] => [
+  ...new Map([...account, ...guest].map((camp) => [camp.id, camp])).values(),
+];
+// A guest's save merged into the account's one when both exist. The landmarks, the cleared camps, the learned recipes and
+// Achievements are grow-only, so they union, and an achievement keeps the larger count. The Archive's opened entries union by section,
 // And each Living Being's defeat count keeps the larger. Each recipe's crafted count keeps the larger. A quest keeps
 // The further of the two steps, since a step is never undone, and on the same step each objective's count takes the
 // Larger. Each character's Companionship EXP and the Adventure EXP keep the larger, as a counter only grows. Each kind
@@ -182,6 +187,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     ].toSorted((firstRank, secondRank) => firstRank - secondRank),
     archive: mergeArchive(account.archive, guest.archive),
     characters: mergeCharacters(account.characters, guest.characters),
+    clearedCamps: mergeClearedCamps(account.clearedCamps, guest.clearedCamps),
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,

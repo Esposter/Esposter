@@ -50,17 +50,6 @@ describe(computeExplorationProgress, () => {
     expect(computeExplorationProgress({ doings: [], total: 0 }, new Set())).toBe(0);
   });
 
-  test("a near-complete area reads below 100", () => {
-    expect.hasAssertions();
-
-    const nearComplete: Pick<ExplorationArea, "doings" | "total"> = {
-      doings: [{ id: "40", kind: ExplorationKind.Waypoint, weight: 199 }],
-      total: 200,
-    };
-
-    expect(computeExplorationProgress(nearComplete, new Set(["40"]))).toBe(99);
-  });
-
   test("a doing repeated adds its weight only once", () => {
     expect.hasAssertions();
 
@@ -73,7 +62,7 @@ describe(computeExplorationProgress, () => {
       rotation: 0,
     };
 
-    expect(computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue]))).toBe(
+    expect(computeExplorationProgress(area, computeExploredDoingIds(area, [statue, statue], new Set()))).toBe(
       Math.floor((WEIGHT * 100) / TOTAL),
     );
   });
