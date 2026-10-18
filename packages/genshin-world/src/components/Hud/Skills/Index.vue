@@ -208,7 +208,8 @@ onUnmounted(() => {
 }
 
 /* The gadget's disc and its key cap stand above the burst's, measured from the same edge as the burst's cap, in the
-   Keys' recording: the disc about 72 across centred 250 up, its cap 30 by 25 at 190 up */
+   Keys' recording: the disc about 72 across centred 250 up, its cap 30 by 25 at 190 up. The 2026 PC clip's countdown
+   Centres 3 up from that centre, and its medallion sits 5.5 left and 6 up of it, which the disc's icon will take */
 .gadget-key {
   bottom: calc(var(--unit) * 190);
   right: calc(var(--unit) * 86.5);

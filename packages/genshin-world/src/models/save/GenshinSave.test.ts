@@ -9,8 +9,8 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
+import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { MAX_HOME_PLACEMENT_COUNT } from "#src/services/home/constants";
-import { MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import {
@@ -149,6 +149,7 @@ describe("genshinSaveSchema", () => {
           quantity: MAX_ITEM_QUANTITY,
         })),
         nextId: maxNumber,
+        quickSwapItemIds: Array.from({ length: QUICK_SWAP_GADGET_LIMIT }, () => maxNumber),
       },
       offerings: {
         frostbearingTree: {
@@ -256,6 +257,28 @@ describe("genshinSaveSchema", () => {
         settledSeelieIds: Array.from({ length: MAX_SETTLED_SEELIE_COUNT + 1 }, (_value, index) => String(index)),
       },
     };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
+  // A save whose bag holds a fifth quick swap slot is refused, as the quick swap holds up to four gadgets
+  test("a save with a fifth quick swap slot is refused", () => {
+    expect.hasAssertions();
+    const save = {
+      ...EMPTY_GENSHIN_SAVE,
+      inventory: {
+        ...EMPTY_GENSHIN_SAVE.inventory,
+        quickSwapItemIds: Array.from({ length: QUICK_SWAP_GADGET_LIMIT + 1 }, (_value, index) => index + 1),
+      },
+    };
+
+    expect(genshinSaveSchema.safeParse(save).success).toBe(false);
+  });
+
+  // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
+  test("a save without quick swap slots is refused", () => {
+    expect.hasAssertions();
+    const save = { ...EMPTY_GENSHIN_SAVE, inventory: { items: [], nextId: 0 } };
 
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });

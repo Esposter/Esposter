@@ -26,7 +26,7 @@ export const startProcessing = (
   const idleStartedAt = now.subtract({ seconds: queuedCount * recipe.costTime });
   const startedAt = job && Temporal.Instant.compare(job.startedAt, idleStartedAt) > 0 ? job.startedAt : idleStartedAt;
   return {
-    inventory: { items: takeItemCounts(inventory.items, recipe.ingredients, count), nextId: inventory.nextId },
+    inventory: { ...inventory, items: takeItemCounts(inventory.items, recipe.ingredients, count) },
     job: { count: queuedCount + count, startedAt },
   };
 };

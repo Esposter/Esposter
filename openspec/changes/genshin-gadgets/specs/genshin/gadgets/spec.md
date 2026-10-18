@@ -93,3 +93,31 @@ Placing a device SHALL be refused once the scene holds as many of that device as
 - **GIVEN** the scene holds as many of a device as its scene limit, or the player has placed as many as its player limit
 - **WHEN** the player places another of that device
 - **THEN** the placement is refused and no device is added
+
+### Requirement: The bag keeps the quick swap's slots in the save and through every change to the bag
+
+The bag SHALL hold the gadgets the quick swap holds by their item ids, at most four, in the save as well, and a change to the bag SHALL keep them. A save with no quick swap slots SHALL be refused, with no fallback to an empty set.
+
+#### Scenario: A save with a fifth quick swap slot is refused
+
+- **GIVEN** a save's bag holds five quick swap slots
+- **WHEN** the save is read
+- **THEN** the save is refused
+
+#### Scenario: A save without quick swap slots is refused
+
+- **GIVEN** a save's bag holds no quick swap slots field
+- **WHEN** the save is read
+- **THEN** the save is refused
+
+#### Scenario: Taking an item into the bag keeps the quick swap slots
+
+- **GIVEN** the bag holds quick swap slots
+- **WHEN** an item is taken into the bag
+- **THEN** the quick swap slots are unchanged
+
+#### Scenario: A merge keeps the account's quick swap slots
+
+- **GIVEN** the account and the guest each hold quick swap slots
+- **WHEN** the two saves merge
+- **THEN** the account's quick swap slots are kept

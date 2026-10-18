@@ -17,3 +17,18 @@
 ## 4. Collectors and placed devices
 
 - [x] 4.1 Build the collector and placed-device kinds one at a time, each as its own module, with a scenario for each kind added to this change's specs before its module is built. Verify: the new scenario written first and seen failing.
+
+## 5. The quick swap's slots in the bag and the save
+
+- [x] 5.1 Hold the quick swap's slots in the bag and the save, required and at most four, and count them in the save's size ceiling. Verify: tests named after the scenarios 'A save with a fifth quick swap slot is refused' and 'A save without quick swap slots is refused' in `models/save/GenshinSave.test.ts` written first and seen failing; the cap save holds four ids and is accepted.
+- [x] 5.2 Keep the bag's quick swap slots, and its equipped gadget, through every change that rebuilds the bag. Verify: test named after the scenario 'Taking an item into the bag keeps the quick swap slots' in `services/inventory/addInventoryItem.test.ts` written first and seen failing; the other rebuilds (eating, cooking, forging, offering, destroying, learning and talents) spread the bag and are checked by their suites.
+- [x] 5.3 Keep the account's quick swap slots on a merge. Verify: test named after the scenario 'A merge keeps the account's quick swap slots' in `services/save/mergeGenshinSave.test.ts`. It passes on the bag the merge already takes whole, so it guards the bag from a rebuild rather than failing first.
+
+## 6. The equipped gadget's disc
+
+- [ ] 6.1 Draw the equipped gadget's icon on its disc. Blocked: no gadget's icon is read. Each gadget's icon is one traced glyph from a clean frame of its own (the `genshin-parity` glyph process), which the PC's export and the main session's publish supply. Verify: `Hud/Skills/Index.vue` draws the glyph in the disc once one is read, checked in the main session's browser run.
+- [x] 6.2 Measure the disc's place and its countdown from the reference frames, and keep the place they confirm. Verify: the measured place is recorded in `design.md` Decisions; the place is CSS, so no unit test checks it, and the main session's browser run is its check.
+
+## 7. The save's backfill, owed to the main session
+
+- [ ] 7.1 Set the quick swap slots of every saved bag to none, dev then prod, with the rule in `design.md`. Blocked: the session does not run a backfill or publish from this worktree; the main session runs it. Verify: the backfill's dry run prints no changed document on its second pass.

@@ -17,7 +17,7 @@ export const learnByDiagram = (
   )
     return undefined;
   return {
-    inventory: { items: takeInventoryItems(inventory.items, diagramItemId, 1), nextId: inventory.nextId },
+    inventory: { ...inventory, items: takeInventoryItems(inventory.items, diagramItemId, 1) },
     learnedIds: [...learnedIds, id],
   };
 };
