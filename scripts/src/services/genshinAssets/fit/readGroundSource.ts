@@ -1,8 +1,10 @@
 import type { GroundSource } from "#src/models/genshinAssets/fit/GroundSource";
+import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { Landmark } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
+import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { readWorldTerrainHeight } from "#src/services/genshinAssets/world/readWorldTerrainHeight";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -30,5 +32,6 @@ export const readGroundSource = async (region: DerivedAssetComponent): Promise<G
     readWorldOrigin(DerivedAssetComponent.Windrise),
     readRegionLandmarks(),
   ]);
-  return { getGameHeight, landmarks, origin };
+  let cityAreas: Promise<CityArea[]> | undefined;
+  return { getCityAreas: () => (cityAreas ??= readCityAreas()), getGameHeight, landmarks, origin };
 };

@@ -7,7 +7,6 @@ import { GroundFootprintSource } from "#src/models/genshinAssets/fit/GroundFootp
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
-import { readCityAreas } from "#src/services/genshinAssets/world/readCityAreas";
 import { selectCapitalCityArea } from "#src/services/genshinAssets/world/selectCapitalCityArea";
 import { toCapitalWorldPlace } from "#src/services/genshinAssets/world/toCapitalWorldPlace";
 import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
@@ -17,9 +16,9 @@ import { toPointExtent } from "#src/services/genshinAssets/world/toPointExtent";
 // On it, another building's the half diagonal of the footprint its kit's options give, and any other the bar's radius.
 // Beside them, each capital's city, whose buildings and plazas own the ground's height inside it: the city areas its
 // Place stands in and every one within the bar's radius of those, since a capital is laid out across several (Inazuma
-// City's lower town, upper town and keep). The city areas are read only when a capital needs them
+// City's lower town, upper town and keep). The city areas are read only when a capital needs them, once for the region
 export const readGroundFootprints = async (
-  { landmarks, origin }: GroundSource,
+  { getCityAreas, landmarks, origin }: GroundSource,
   centre: GroundPoint,
   halfSide: number,
   barRadius: number,
@@ -27,7 +26,6 @@ export const readGroundFootprints = async (
   const squareLandmarks = landmarks.filter(
     ({ position }) => Math.abs(position.x - centre.x) <= halfSide && Math.abs(position.z - centre.z) <= halfSide,
   );
-  let cityAreas: Promise<CityArea[]> | undefined;
   const capitalCityAreas = new Set<CityArea>();
   const footprints = await Promise.all(
     squareLandmarks.map(async (landmark): Promise<GroundFootprint> => {
@@ -37,8 +35,7 @@ export const readGroundFootprints = async (
       } = landmark;
       const isCapital = Object.values(RegionCapitalMap).some(({ landmarkId }) => landmarkId === id);
       if (isCapital) {
-        cityAreas ??= readCityAreas();
-        const areas = await cityAreas;
+        const areas = await getCityAreas();
         const place = toCapitalWorldPlace({ x, z }, origin);
         const placeExtent = toPointExtent(place);
         const standingAreas = areas.filter(({ extent }) => computeExtentGap(extent, placeExtent) === 0);
