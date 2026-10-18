@@ -22,6 +22,7 @@ import { EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { findNearestLandmark } from "#src/services/map/findNearestLandmark";
 import { findPointedLandmark } from "#src/services/map/findPointedLandmark";
 import { advanceQuest } from "#src/services/quest/advanceQuest";
+import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import { readMondstadtReputation } from "#src/services/reputation/readMondstadtReputation";
 import { readOpenWorldTransPointRewards } from "#src/services/transPoint/readOpenWorldTransPointRewards";
 import { readOpenWorldTransPointUnlocks } from "#src/services/transPoint/readOpenWorldTransPointUnlocks";
@@ -191,6 +192,7 @@ describe(useWorldMap, () => {
     unlockedLandmarkIds: ReadonlySet<string> = new Set<string>(),
     events = createWorldEvents(),
     questStepTargets = shallowRef({ named: new Set<string>(), reached: new Set<string>() }),
+    savedRequestClaimedAts: readonly Temporal.Instant[] = [],
   ) => {
     const gainWorldAdventureExp = vi.fn<(amount: number) => void>();
     const reputation = shallowRef({ exp: 0, level: 1 });
@@ -213,7 +215,7 @@ describe(useWorldMap, () => {
         recordedDoingIds,
         regionDataBaseUrl: "region-data",
         reputation,
-        savedRequestClaimedAts: [],
+        savedRequestClaimedAts,
         setReputation: (nextReputation) => {
           reputation.value = nextReputation;
         },
@@ -256,6 +258,25 @@ describe(useWorldMap, () => {
     expect.hasAssertions();
 
     const { events, reputation, wallet } = createWorldMap();
+    await waitForReads();
+
+    events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
+    events.emit("finishQuest", requestQuest, requestFinishedProgress, requestFinishedProgress);
+
+    expect(reputation.value).toStrictEqual({ exp: REQUEST_EXP, level: 1 });
+    expect(wallet.value).toStrictEqual({ ...EMPTY_WALLET, [Currency.Mora]: REQUEST_MORA });
+  });
+
+  test("a request taken before the week's limit pays past it", async () => {
+    expect.hasAssertions();
+
+    const now = Temporal.Now.instant();
+    const { events, reputation, wallet } = createWorldMap(
+      undefined,
+      undefined,
+      undefined,
+      Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => now),
+    );
     await waitForReads();
 
     events.emit("finishQuest", requestQuest, { objectiveCounts: [0], stepIndex: 0 }, requestFinishedProgress);
