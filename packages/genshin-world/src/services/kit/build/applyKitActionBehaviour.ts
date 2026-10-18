@@ -11,7 +11,8 @@ export const applyKitActionBehaviour = (
   behaviour: KitActionBehaviour | undefined,
   path: string,
 ): KitAction => {
-  const { chargeSeconds, decideLength, hits = [], onStart } = behaviour ?? {};
+  const { canStart, chargeSeconds, decideLength, hits = [], onStart } = behaviour ?? {};
+  if (canStart) action.canStart = canStart;
   if (chargeSeconds !== undefined) action.chargeSeconds = chargeSeconds;
   if (decideLength) action.decideLength = decideLength;
   if (hits.length > action.hits.length)

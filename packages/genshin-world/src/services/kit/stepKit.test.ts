@@ -12,10 +12,12 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
 import { createKitState } from "#src/services/kit/createKitState";
+import { CHARGED_ATTACK_HOLD_SECONDS } from "#src/services/kit/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { startKitAction } from "#src/services/kit/startKitAction";
+import { startNextKitAction } from "#src/services/kit/startNextKitAction";
 import { stepKit } from "#src/services/kit/stepKit";
 import { createPartyMember } from "#src/services/party/createPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -256,6 +258,84 @@ describe(stepKit, () => {
     expect(step({ isBurstPressed: true })).toBe(TRAVELER_KIT.elementalBurst);
     expect(partyMember.energy).toBe(0);
     expect(partyMember.burstCooldownSeconds).toBe(TRAVELER_KIT.burstCooldownSeconds);
+  });
+
+  // A charged attack started with its hold reached and its strike ended, read off the start alone, so no strike's timing decides it
+  const startChargedAttack = (kit: Kit, stamina: { value: number }) =>
+    startNextKitAction(
+      { ...createKitState(), attackHeldSeconds: CHARGED_ATTACK_HOLD_SECONDS },
+      kit,
+      { ...IDLE_INPUT, isAttackHeld: true },
+      createPartyMember(),
+      stamina as ReturnType<typeof createStamina>,
+      true,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+  test("starts a charged attack whose start gate holds, spending its stamina", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => true } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBe(kit.chargedAttack);
+    expect(stamina.value).toBe(STAMINA_MAX - TRAVELER_KIT.chargedAttackStamina);
+  });
+
+  test("refuses a charged attack whose start gate fails, spending no stamina and starting none", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, chargedAttack: { ...TRAVELER_KIT.chargedAttack, canStart: () => false } };
+    const stamina = createStamina(STAMINA_MAX);
+
+    expect(startChargedAttack(kit, stamina)).toBeUndefined();
+    expect(stamina.value).toBe(STAMINA_MAX);
+  });
+
+  test("refuses a normal attack whose start gate fails, keeping its place in the string", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = {
+      ...TRAVELER_KIT,
+      normalAttacks: TRAVELER_KIT.normalAttacks.map((action) => ({ ...action, canStart: () => false })),
+    };
+    const kitState = createKitState();
+    const started = startNextKitAction(
+      kitState,
+      kit,
+      { ...IDLE_INPUT, isAttackPressed: true },
+      createPartyMember(),
+      createStamina(STAMINA_MAX),
+      false,
+      [],
+      createKitTestContext(TRAVELER_COMBATANT),
+    );
+
+    expect(started).toBeUndefined();
+    expect(kitState.comboIndex).toBe(0);
+  });
+
+  test("refuses a skill whose start gate fails, setting no cooldown", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalSkill: { ...TRAVELER_KIT.elementalSkill, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    expect(step({ isSkillPressed: true })).toBeUndefined();
+    expect(partyMember.skillCooldownSeconds).toBe(0);
+  });
+
+  test("refuses a burst whose start gate fails, keeping its energy", () => {
+    expect.hasAssertions();
+
+    const kit: Kit = { ...TRAVELER_KIT, elementalBurst: { ...TRAVELER_KIT.elementalBurst, canStart: () => false } };
+    const { partyMember, step } = createFixture(kit);
+
+    partyMember.energy = TRAVELER_KIT.burstEnergyCost;
+
+    expect(step({ isBurstPressed: true })).toBeUndefined();
+    expect(partyMember.energy).toBe(TRAVELER_KIT.burstEnergyCost);
   });
 
   test("strikes its collision every 0.3 seconds of a plunge", () => {
