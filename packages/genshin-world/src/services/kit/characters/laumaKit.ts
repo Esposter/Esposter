@@ -53,7 +53,6 @@ export const LAUMA_CHARACTER_ID = 10_000_119;
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
   const sanctuaryTickElementalMasteryShare = readParameter("frostgroveSanctuaryElementalMasteryShare");
-  const holdLunarBloomMultiplier = readParameter("hymnOfEternalRestLunarBloomMultiplier");
   // The RES Dendro and Hydro enemies lose to a hit of the skill's, for its seconds
   const createShredStatus = (): EnemyStatus => ({
     damageTakenBonus: 0,
@@ -69,11 +68,11 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
     enemyStatus: createShredStatus,
   });
   // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
-  const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", ["talentMultiplier"]);
+  const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", []);
   const createHoldLunarBloomHit = (dewCount: number): KitHit => ({
     ...holdLunarBloomFields,
     enemyStatus: createShredStatus,
-    talentMultiplier: holdLunarBloomMultiplier * dewCount,
+    talentMultiplier: holdLunarBloomFields.talentMultiplier * dewCount,
   });
   // The Frostgrove Sanctuary the press and the hold each plant where she stands, its ticks striking as her Elemental Skill,
   // As gcsim v2.47.2 (MIT) lauma/skill.go tags them, so Cleansing for the Spring reaches them
