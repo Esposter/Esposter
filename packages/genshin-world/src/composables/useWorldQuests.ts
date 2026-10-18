@@ -67,8 +67,17 @@ export const useWorldQuests = ({
       ? getQuestTargetId(trackerQuest.value, questProgressMap.value.get(trackerQuest.value.id))
       : "",
   );
+  // A chapter read that fails is logged and leaves the series unlisted, so the quests still load without them
+  const readQuestChaptersOrEmpty = () =>
+    getResultAsync(() => readQuestChapters(gameDataBaseUrl)).match(
+      (newQuestChapters) => newQuestChapters,
+      (error) => {
+        console.error(error);
+        return [];
+      },
+    );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-  getResultAsync(() => Promise.all([readQuests(gameDataBaseUrl), readQuestChapters(gameDataBaseUrl)])).match(
+  getResultAsync(() => Promise.all([readQuests(gameDataBaseUrl), readQuestChaptersOrEmpty()])).match(
     ([newQuests, newQuestChapters]) => {
       quests.value = newQuests;
       questChapters.value = newQuestChapters;
