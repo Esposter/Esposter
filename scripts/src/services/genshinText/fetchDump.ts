@@ -24,6 +24,7 @@ import {
 } from "#src/services/genshinText/constants";
 import { readCarriedQuestBinaryPaths } from "#src/services/genshinText/readCarriedQuestBinaryPaths";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
+import { readGitHubHeaders } from "#src/services/genshinText/readGitHubHeaders";
 import { selectDumpFiles } from "#src/services/genshinText/selectDumpFiles";
 import { fetchJson } from "#src/services/shared/fetchJson";
 import { fetchOk } from "#src/services/shared/fetchOk";
@@ -34,10 +35,12 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 // A directory of the AnimeGameData repository listed as its files, each with its path from the repository root and its
-// Size. A tree the API cut short throws, so a listing is never silently missing files
+// Size. A tree the API cut short throws, so a listing is never silently missing files. The listing is authorized by
+// GITHUB_TOKEN when one is set, since the API's anonymous limit is 60 requests an hour
 const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
   const { tree, truncated } = await fetchJson<Tree>(
     `${ANIME_GAME_DATA_TREES_URL}/${ANIME_GAME_DATA_BRANCH}:${directory}`,
+    readGitHubHeaders(process.env.GITHUB_TOKEN),
   );
   if (truncated) throw new InvalidOperationError(Operation.Read, directory, "its tree listing was truncated");
   return tree.flatMap(({ path, size, type }) =>
