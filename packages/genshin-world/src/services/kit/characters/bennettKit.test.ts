@@ -25,6 +25,19 @@ import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { describe, expect, test } from "vitest";
 
 const BENNETT_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BENNETT_CHARACTER_ID);
+
+// Fantastic Voyage's field as Bennett casts it, of a radius of 6 metres around its centre
+const createFantasticVoyageField = (centre: GroundPoint): KitEffect => ({
+  centre,
+  characterId: BENNETT_CHARACTER_ID,
+  kind: "field",
+  nextTickSeconds: 1,
+  onTick: () => {},
+  radius: 6,
+  secondsRemaining: 10,
+  tickIndex: 0,
+  tickIntervalSeconds: 1,
+});
 const readFirstFieldTick = (
   combatant: Combatant,
   fieldCharacterId: number,
@@ -246,17 +259,7 @@ describe("bennett kit", () => {
   test("ascension 1 cuts every passion overload's cooldown by 20%, and ascension 4 halves it in fantastic voyage's field", () => {
     expect.hasAssertions();
     const body = { x: 0, z: 0 };
-    const field: KitEffect = {
-      centre: body,
-      characterId: BENNETT_CHARACTER_ID,
-      kind: "field",
-      nextTickSeconds: 1,
-      onTick: () => {},
-      radius: 6,
-      secondsRemaining: 10,
-      tickIndex: 0,
-      tickIntervalSeconds: 1,
-    };
+    const field = createFantasticVoyageField(body);
 
     expect(releaseSkill(0.1, { ascension: 1, body, effects: [] }).partyMember.skillCooldownSeconds).toBeCloseTo(4, 5);
     expect(releaseSkill(0.1, { ascension: 4, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
@@ -271,17 +274,7 @@ describe("bennett kit", () => {
   test("under its own field at Ascension 4, the Level 2 hold plays without the launch, in 175 frames, and otherwise in 343", () => {
     expect.hasAssertions();
     const body = { x: 0, z: 0 };
-    const field: KitEffect = {
-      centre: body,
-      characterId: BENNETT_CHARACTER_ID,
-      kind: "field",
-      nextTickSeconds: 1,
-      onTick: () => {},
-      radius: 6,
-      secondsRemaining: 10,
-      tickIndex: 0,
-      tickIntervalSeconds: 1,
-    };
+    const field = createFantasticVoyageField(body);
 
     expect(releaseSkill(1.2, { ascension: 4, body, effects: [field] }).action?.seconds).toBeCloseTo(175 / 60, 5);
     expect(releaseSkill(1.2, { ascension: 3, body, effects: [field] }).action?.seconds).toBeCloseTo(343 / 60, 5);
@@ -289,5 +282,47 @@ describe("bennett kit", () => {
       343 / 60,
       5,
     );
+  });
+
+  describe("the Ascension 1 passive, Rekindle", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(
+        releaseSkill(0.1, { ascension: 1, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
+      ).toBeCloseTo(4, 5);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+
+      expect(
+        releaseSkill(0.1, { ascension: 0, body: { x: 0, z: 0 }, effects: [] }).partyMember.skillCooldownSeconds,
+      ).toBeCloseTo(5, 5);
+    });
+  });
+
+  describe("the Ascension 4 passive, Fearnaught", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const body = { x: 0, z: 0 };
+      const field = createFantasticVoyageField(body);
+
+      expect(releaseSkill(0.1, { ascension: 4, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
+        2,
+        5,
+      );
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const body = { x: 0, z: 0 };
+      const field = createFantasticVoyageField(body);
+
+      expect(releaseSkill(0.1, { ascension: 3, body, effects: [field] }).partyMember.skillCooldownSeconds).toBeCloseTo(
+        4,
+        5,
+      );
+    });
   });
 });
