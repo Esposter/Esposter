@@ -5,4 +5,4 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 export const getDirectMessageName = (
   room: RoomInMessage,
   participants: (Pick<PublicUser, "name"> & { displayName?: string })[],
-) => room.name || participants.map(({ displayName, name }) => displayName ?? name).join(", ");
+) => room.name || participants.map(({ displayName, name }) => displayName || name).join(", ");
