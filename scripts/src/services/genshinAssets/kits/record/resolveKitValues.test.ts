@@ -21,7 +21,12 @@ const sourceCandidateMap = new Map<string, KitCandidate[]>([
   ["burst.hits.length", [{ provenance: { file: "burst.go", line: 60, source: KitSource.Gcsim }, value: 3 }]],
   [
     "hits.fieryRainArrows.0.multiplier",
-    [{ provenance: { source: KitSource.Tables }, value: { index: 0, proudSkillGroupId: 2139 } }],
+    [
+      {
+        provenance: { index: 0, label: " ", proudSkillGroupId: 2139, source: KitSource.Tables },
+        value: { index: 0, proudSkillGroupId: 2139 },
+      },
+    ],
   ],
 ]);
 
@@ -57,12 +62,12 @@ describe(resolveKitValues, () => {
   test("empties the burst's hits list when a named list's hit joins to the burst's group through a Tables multiplier", () => {
     expect.hasAssertions();
 
-    const { provenanceMap, valueMap } = resolveKitValues(sourceCandidateMap, {}, new Map(), tables);
+    const { provenanceMap, valueMap } = resolveKitValues(sourceCandidateMap, {}, new Map(), new Map(), tables, false);
 
     expect(valueMap.get("burst.hits.length")).toBe(0);
     expect(provenanceMap.get("burst.hits.length")).toStrictEqual({
       cause: KitProvisionalCause.NamedHitList,
-      rule: "NamedHitList",
+      rule: KitRule.NamedHitList,
       source: KitSource.Rule,
     });
   });
@@ -74,7 +79,9 @@ describe(resolveKitValues, () => {
       sourceCandidateMap,
       { "burst.hits.length": { cause: "Unclassified", value: 2 } },
       new Map(),
+      new Map(),
       tables,
+      false,
     );
 
     expect(valueMap.get("burst.hits.length")).toBe(2);
