@@ -277,11 +277,11 @@ export const usePdfViewer = ({
     removePrint();
     if (!pdfViewer) return;
 
-    // Clearing the document first lets the renderer cancel what it draws, and aborting then releases its listeners
+    // Clearing the document first cancels what the renderer draws and drops its pages, and aborting then releases its
+    // Listeners
     pdfViewer.setDocument(null);
     abortController?.abort();
     resizeObserver?.disconnect();
-    pdfViewer.cleanup();
   });
 
   return {

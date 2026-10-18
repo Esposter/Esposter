@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change architecture-pdf-viewer-package. Update Purpose after archive.
+A loaded PDF's drawing and the viewer's state as the headless package `vue-pdfjs-headless` states them: sharp pages, zoom within bounds, search, the outline and thumbnails, fullscreen, download and print, with no styling and no controls of its own.
 
 ## Requirements
 

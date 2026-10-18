@@ -8,7 +8,7 @@ The app supplies the renderer, its worker and its folders, and the look. `loadPd
 
 The attachment loads its document once with the package's `usePdfDocument`, and passes it to both views: the thumbnail, and the viewer in the dialog. Each view used to parse the file for itself.
 
-The thumbnail draws the first page with `usePdfPage` into its canvas, and a click on it opens the dialog. The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its toolbar is the app's own controls: page, zoom and fit, search with the match count, rotate, download and print. The password field is the app's, shown while the document asks for one, and a load that fails says so in place of the pages.
+The thumbnail draws the first page with `usePdfPage` into its canvas, and a click on it opens the dialog. The viewer mounts in the dialog over `usePdfViewer` on the app's container. Its toolbar is the app's own controls: page, zoom and fit, search with the match count, rotate, download and print. The password field is the app's, shown while the document asks for one, and a load that fails says so in place of the pages, whether the document failed or the viewer's own module never came.
 
 ```mermaid
 flowchart TD

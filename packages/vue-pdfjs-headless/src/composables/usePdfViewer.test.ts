@@ -77,7 +77,6 @@ const createPdfViewerStub = ({ eventBus }: { eventBus: EventBusStub }) => {
   let currentScaleValue: string | null = "auto";
   let pagesRotation = 0;
   const viewer = {
-    cleanup: vi.fn<() => void>(),
     get currentScaleValue() {
       return currentScaleValue;
     },

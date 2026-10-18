@@ -22,6 +22,7 @@ const emit = defineEmits<{ submitPassword: [password: string] }>();
 const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
 const viewerApi = shallowRef<PdfViewerApi>();
+const isViewerFailed = ref(false);
 const pageInput = ref("");
 const passwordInput = ref("");
 const {
@@ -68,6 +69,7 @@ onMounted(async () => {
       viewerApi.value = loaded;
     },
     (error) => {
+      isViewerFailed.value = true;
       console.error(error);
     },
   );
@@ -137,7 +139,8 @@ watch(currentPageNumber, (pageNumber) => {
       />
       <UiButton type="submit" :variant="UiButtonVariant.Accent">Open</UiButton>
     </UiForm>
-    <p v-if="isFailed" p-3 text-muted>The PDF could not be loaded.</p>
+    <!-- The document's failure or the viewer's own, since a viewer whose module never came draws no page either -->
+    <p v-if="isFailed || isViewerFailed" p-3 text-muted>The PDF could not be loaded.</p>
     <div relative flex-1 min-h-0>
       <div ref="container" absolute inset-0 of-auto>
         <div ref="viewer" class="pdfViewer" />

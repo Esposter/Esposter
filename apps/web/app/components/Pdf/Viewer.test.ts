@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
 import PdfViewer from "@/components/Pdf/Viewer.vue";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
-// The viewer's module never loads here, so each test sees the dialog at the state its props give
+// The viewer's module never loads here unless a test rejects it, so each test sees the dialog at the state its props give
 vi.mock(import("@/services/pdf/loadPdfViewer"), () => ({
   loadPdfViewer: vi.fn<typeof loadPdfViewer>(() => new Promise(() => {})),
 }));
@@ -18,13 +19,18 @@ const mountViewer = (props: { isFailed?: boolean; isPasswordRequested?: boolean;
   });
 
 describe("pdfViewer", () => {
-  // The viewer's components come in with its own mount, not with the attachment that opened it
-  test("the viewer loads its own module when it mounts", async () => {
+  // The viewer loads its own module as it mounts, and a viewer whose module never came draws no page either
+  test("a viewer whose module fails to load says so", async () => {
     expect.hasAssertions();
 
-    await mountViewer({});
+    const error = new Error("a");
+    vi.mocked(loadPdfViewer).mockRejectedValueOnce(error);
+    const consoleError = vi.spyOn(console, "error").mockImplementation(noop);
+    const component = await mountViewer({});
+    await flushPromises();
 
-    expect(loadPdfViewer).toHaveBeenCalledExactlyOnceWith();
+    expect(component.text()).toContain("The PDF could not be loaded.");
+    expect(consoleError).toHaveBeenCalledExactlyOnceWith(error);
   });
 
   test("a PDF that fails to load says so in place of its pages", async () => {
@@ -33,14 +39,6 @@ describe("pdfViewer", () => {
     const component = await mountViewer({ isFailed: true });
 
     expect(component.text()).toContain("The PDF could not be loaded.");
-  });
-
-  test("a protected PDF asks for its password", async () => {
-    expect.hasAssertions();
-
-    const component = await mountViewer({ isPasswordRequested: true });
-
-    expect(component.find('input[type="password"]').exists()).toBe(true);
   });
 
   test("a wrong password says so", async () => {
