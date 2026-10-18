@@ -139,12 +139,36 @@ describe(createCynoKitBehaviour, () => {
     }).toStrictEqual({ endseer: true, nextTickFrames: 328 });
   });
 
-  test("ascension 4 adds 150% of Elemental Mastery to a Pactsworn normal attack, and none before it", () => {
-    expect.hasAssertions();
-    const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
-    const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+  describe("the Ascension 1 passive, Featherfall Judgment", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 1 })))?.id).toBe(
+        "cyno-judication",
+      );
+    });
 
-    expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      expect(findField(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 0 })))).toBeUndefined();
+    });
+  });
+
+  describe("the Ascension 4 passive, Authority Over the Nine Bows", () => {
+    test("a passive takes effect at its ascension phase", () => {
+      expect.hasAssertions();
+      const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 4 })));
+      const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+
+      expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 4 }))).toBe(ELEMENTAL_MASTERY * 1.5);
+    });
+
+    test("a passive does not take effect below its ascension phase", () => {
+      expect.hasAssertions();
+      const stance = findStance(castAction(CYNO_KIT.elementalBurst, createCynoCombatant({ ascension: 3 })));
+      const hit = takeOne(takeOne(stance?.combatant.kit.normalAttacks ?? []).hits);
+
+      expect(hit.additiveBaseDamageBonus?.(createCynoCombatant({ ascension: 3 }))).toBe(0);
+    });
   });
 
   test("constellation 2 raises Electro DMG by 10% a stack for each normal attack's strike, once every 0.1 seconds", () => {
