@@ -10,12 +10,17 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { createRosariaKitBehaviour, ROSARIA_CHARACTER_ID } from "#src/services/kit/characters/rosariaKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const ROSARIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ROSARIA_CHARACTER_ID);
-const createRosariaCombatant = (constellationCount: number): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+const TEAMMATE_CHARACTER_ID = 90_001;
+const createRosariaCombatant = (constellationCount: number, ascension = 0, criticalRate = 0): Combatant => ({
+  ascension,
+  attributes: computeCharacterAttributes([
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+    { attribute: Attribute.CriticalRate, value: criticalRate },
+  ]),
   characterId: ROSARIA_CHARACTER_ID,
   constellationCount,
   elementalResonances: [],
@@ -50,5 +55,34 @@ describe(createRosariaKitBehaviour, () => {
     const tickSummon = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(tickSummon?.body.position).toStrictEqual({ x: 0, z: 0 });
+  });
+
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+    // Ascension 4: the cast gives each other member of the team 15% of Rosaria's Crit Rate (0.15 * 0.4 = 0.06) for 10 seconds
+    const context = createKitTestContext(createRosariaCombatant(0, 4, 0.4), {
+      party: createParty([ROSARIA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    ROSARIA_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([
+      {
+        amount: 0.06,
+        attribute: Attribute.CriticalRate,
+        characterId: TEAMMATE_CHARACTER_ID,
+        kind: "buff",
+        secondsRemaining: 10,
+      },
+    ]);
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createRosariaCombatant(0, 3, 0.4), {
+      party: createParty([ROSARIA_CHARACTER_ID, TEAMMATE_CHARACTER_ID]),
+    });
+    ROSARIA_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects.filter((effect) => effect.kind === "buff")).toStrictEqual([]);
   });
 });
