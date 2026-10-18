@@ -189,12 +189,20 @@ describe(createAyakaKitBehaviour, () => {
     const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
 
-    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
     stepKitEffects(0.5, context);
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
-    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
     stepKitEffects(9.5, context);
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
     stepKitEffects(0.5, context);
@@ -207,7 +215,11 @@ describe(createAyakaKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
 
-    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+    chargedHit.onStrike?.(
+      context,
+      { body: context.body, combatant, hit: chargedHit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
 
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
   });
