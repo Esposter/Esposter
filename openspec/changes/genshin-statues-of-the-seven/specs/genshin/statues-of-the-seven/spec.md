@@ -144,4 +144,4 @@ The statues' levels, held counts and found Oculi SHALL be kept with the world, a
 - **GIVEN** a region started in one save and not in the other, with Oculi found in the region by either save
 - **WHEN** the two saves are merged
 - **THEN** the started region offers those Oculi from level one
-- **AND** the merge reaches no level and pays no reward
+- **AND** any level the offered Oculi reach pays no reward
