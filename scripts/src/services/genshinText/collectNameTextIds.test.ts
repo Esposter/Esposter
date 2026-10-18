@@ -13,4 +13,14 @@ describe(collectNameTextIds, () => {
 
     expect([...textIds].toSorted()).toStrictEqual(["1", "2", "3"]);
   });
+
+  test("should collect a weapon's passive name and each rank's description, and no empty passive name", () => {
+    expect.hasAssertions();
+
+    const textIds = new Set<string>();
+    collectNameTextIds({ passiveNameTextId: "4", passiveRankDescriptionTextIds: ["5", "6"] }, textIds);
+    collectNameTextIds({ passiveNameTextId: "", passiveRankDescriptionTextIds: [] }, textIds);
+
+    expect([...textIds].toSorted()).toStrictEqual(["4", "5", "6"]);
+  });
 });
