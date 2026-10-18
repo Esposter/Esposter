@@ -11,6 +11,9 @@
   "frames.pursuitFirstFill": { "cause": "Unsourced", "value": 37 },
   "frames.filledDrainHit": { "cause": "Unsourced", "value": 6 },
   "frames.fillInterval": { "file": "skill.go", "line": 23, "source": "Gcsim", "value": 30 },
+  "frames.burstDuration": { "file": "burst.go", "line": 20, "source": "Gcsim", "value": 790 },
+  "frames.firstHealTick": { "file": "burst.go", "line": 28, "source": "Gcsim", "value": 12 },
+  "frames.healInterval": { "file": "burst.go", "line": 29, "source": "Gcsim", "value": 87 },
   "frames.filledPressHit": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 2 },
   "hitFields.flaskDrain.area": {
     "cause": "Unsourced",
@@ -33,6 +36,13 @@
     "value": { "index": 1, "proudSkillGroupId": 12432 }
   },
   "parameters.flaskFillValue": { "cause": "DiffersFromSource", "value": { "index": 3, "proudSkillGroupId": 12432 } },
+  "parameters.burstAdditionalAttackHealShare": {
+    "cause": "Unsourced",
+    "value": { "index": 5, "proudSkillGroupId": 12439 }
+  },
+  "parameters.burstAdditionalFlatHeal": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12439 } },
+  "parameters.burstAttackHealShare": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12439 } },
+  "parameters.burstFlatHeal": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12439 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

@@ -1,6 +1,6 @@
 ## Purpose
 
-Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with her robots, Meowball and the rest of her Moonsign kit not yet built.
+Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit and heals, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with her robots, Meowball and the rest of her Moonsign kit not yet built.
 
 ## Requirements
 
@@ -63,6 +63,28 @@ Hidden Aces SHALL deal its first hit when Jahoda casts it.
 - **GIVEN** Hidden Aces is cooling down
 - **WHEN** the player casts Hidden Aces again
 - **THEN** nothing happens
+
+### Requirement: Hidden Aces heals on its own clock
+
+Hidden Aces SHALL heal the active character every 87 frames from its 12th frame for the burst's 790 frames, and while the active character has over 70% of her health SHALL heal the member with the lowest share of health as well.
+
+#### Scenario: The active character is healed on each of nine ticks
+
+- **GIVEN** Jahoda is the character on the field and her health is at 10%
+- **WHEN** the player casts Hidden Aces
+- **THEN** she is healed on frames 12, 99, 186, 273, 360, 447, 534, 621 and 708, and on no frame after
+
+#### Scenario: Above 70% of her health, the lowest member is healed on the first tick
+
+- **GIVEN** Jahoda is at 90% of her health and a partner at 40%
+- **WHEN** the player casts Hidden Aces
+- **THEN** the partner is healed on frame 12
+
+#### Scenario: At 70% of her health or below, only the active character is healed
+
+- **GIVEN** Jahoda is at 50% of her health and a partner at 40%
+- **WHEN** the player casts Hidden Aces
+- **THEN** the partner's health does not change
 
 ### Requirement: Plunges land at once with the shared reach
 
