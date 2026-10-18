@@ -10,7 +10,7 @@ import type {
   TreeOptions,
 } from "genshin-engine";
 import type { BufferGeometry, DataTexture } from "three";
-import type { Node, UniformNode, WebGPURenderer } from "three/webgpu";
+import type { Node, UniformNode } from "three/webgpu";
 
 import { TreeSpecies } from "#src/models/world/TreeSpecies";
 import {
@@ -24,9 +24,10 @@ import { getWindrisePartColor } from "#src/services/windrise/getWindrisePartColo
 import { bakeTreeImpostor } from "#src/services/world/bakeTreeImpostor";
 import { composePlantPlaceMatrix } from "#src/services/world/composePlantPlaceMatrix";
 import { withFinalizer } from "@esposter/shared";
-import { isWebGPURenderer, useLoop, useTres } from "@tresjs/core";
+import { useLoop, useTres } from "@tresjs/core";
 import {
   createImpostorMaterial,
+  createInstancedGeometry,
   createInstanceMatrixBuffer,
   createInstanceMatrixNode,
   createPlantCulling,
@@ -35,6 +36,7 @@ import {
 } from "genshin-engine";
 import { Group, Matrix4, Mesh, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
+import { WebGPURenderer } from "three/webgpu";
 
 interface Props {
   // The world's ground at a point in its own coordinates, which each plant stands on
@@ -96,9 +98,11 @@ const addPlantBatch = (
     eye,
     indexCount: geometry.getIndex()?.count ?? 0,
   });
-  geometry.setIndirect(culling.indirect);
+  // Drawn once for every place, so a draw that runs no pass, as on WebGL, takes them all
+  const instancedGeometry = createInstancedGeometry(geometry, matrices.length);
+  instancedGeometry.setIndirect(culling.indirect);
   const material = createMaterial(createInstanceMatrixNode(attribute, culling.survivor));
-  const mesh = new Mesh(geometry, material);
+  const mesh = new Mesh(instancedGeometry, material);
   mesh.frustumCulled = false;
   plantsGroup.add(mesh);
   batches.push({ clipFromModel, culling, material, mesh });
@@ -152,7 +156,7 @@ const bakeOakImpostor = (webGPURenderer: WebGPURenderer): void => {
 
 // Every batch's pass runs each frame, its clip matrix taken from the camera the frame draws with, as the grass's is
 onBeforeRender(() => {
-  if (!isWebGPURenderer(renderer)) return;
+  if (!(renderer instanceof WebGPURenderer)) return;
   if (!oakImpostor) bakeOakImpostor(renderer);
   const activeCamera = camera.value;
   if (!activeCamera) return;
