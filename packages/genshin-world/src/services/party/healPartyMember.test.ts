@@ -70,4 +70,20 @@ describe(healPartyMember, () => {
       healthShare: 0.5,
     });
   });
+
+  test("a Bond of Life counts the share it clears, toward the amount a clear is priced at", () => {
+    expect.hasAssertions();
+
+    const party = createParty([1]);
+    const partyMember = getPartyMember(party, 1);
+    partyMember.healthShare = 0.5;
+    partyMember.bondOfLifeShare = 0.5;
+    healPartyMember(party, 1, 0.25);
+    healPartyMember(party, 1, 0.25);
+
+    expect({
+      bondOfLifeClearedShare: partyMember.bondOfLifeClearedShare,
+      bondOfLifeShare: partyMember.bondOfLifeShare,
+    }).toStrictEqual({ bondOfLifeClearedShare: 0.5, bondOfLifeShare: 0 });
+  });
 });
