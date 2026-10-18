@@ -5,6 +5,7 @@ import type { CharacterData } from "genshin-world";
 import {
   AssociationRegionIdMap,
   ElementNameSet,
+  EMPTY_ITEM_ID,
   QualityTypeRarityMap,
 } from "#src/services/genshinAssets/stats/constants";
 import { readPlayableAvatarRows } from "#src/services/genshinAssets/stats/readPlayableAvatarRows";
@@ -42,9 +43,12 @@ export const getCharacterDatas = (notes: string[]): CharacterData[] => {
       [Attribute.BaseHealth]: row.hpBase,
     };
     return characterDataSchema.parse({
-      ascensionPhases: promoteRows.map(({ addProps, unlockMaxLevel }) => ({
+      ascensionPhases: promoteRows.map(({ addProps, costItems, requiredPlayerLevel, scoinCost, unlockMaxLevel }) => ({
         attributeLines: toAttributeLines(addProps, notes),
+        coinCost: scoinCost,
+        costItems: costItems.filter(({ id }) => id !== EMPTY_ITEM_ID).map(({ count, id }) => ({ count, id })),
         maxLevel: unlockMaxLevel,
+        requiredPlayerLevel,
       })),
       attributeLines: [
         { attribute: Attribute.CriticalRate, value: row.critical },
