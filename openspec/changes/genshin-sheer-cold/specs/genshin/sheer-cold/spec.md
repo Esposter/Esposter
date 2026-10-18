@@ -98,6 +98,12 @@ A full gauge SHALL deal its share of the character's max HP and a flat amount fo
 - **WHEN** time passes to complete the interval
 - **THEN** the character loses its share of max HP and the flat amount, once
 
+#### Scenario: Lose the share of max HP each interval
+
+- **GIVEN** the gauge is full and a shield on the team is live
+- **WHEN** an interval passes
+- **THEN** the shield takes the damage first, and the character loses the share of max HP the shield does not absorb
+
 #### Scenario: Deal no damage while the gauge is not full
 
 - **GIVEN** the gauge is not full

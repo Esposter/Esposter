@@ -12,7 +12,7 @@
 
 ## 3. Left open
 
-- [ ] 3.1 Apply the cold damage to the party's HP. Waits on the session's health path: Windrise emits `coldDamage` and no world code applies it. Verify: a test named after the scenario 'Lose the share of max HP each interval' written first and seen failing.
+- [x] 3.1 Apply the cold damage to the party's HP through the team's shields, as a boar's charge is taken. Verify: a test named after the scenario 'Lose the share of max HP each interval' written first and seen failing; `hitPartyMember.test.ts` 'should lose the share of max HP the shields do not absorb'.
 - [ ] 3.2 Place campfires in the world, so the lit ones heat the character. Waits on campfire placement, which the cooking rules do not yet do. Verify: a test named after the scenario 'Heat the character beside a lit campfire' runs against a placed campfire.
 - [ ] 3.3 Let a snowstorm quicken the fill. Waits on a snowstorm in `WeatherKind`, which holds only Snow. Verify: a test named after the scenario 'Fill the gauge faster in a snowstorm' written first and seen failing.
 - [ ] 3.4 Read the bar's placement, its look and the heat's reach off a recording, replacing the provisional constants. Waits on the recording. Verify: checked by eye against the recording.

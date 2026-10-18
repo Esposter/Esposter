@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "the cold damage to the party's health (task 3.1) waits on the session's health path, which no world code calls yet; the campfire drain (task 3.2) waits on campfires placed in the world; the bar's placement and look and the heat's reach (task 3.4) wait on a recording"
+x-waiting: "the campfire drain (task 3.2) waits on campfires placed in the world; the bar's placement and look and the heat's reach (task 3.4) wait on a recording"
