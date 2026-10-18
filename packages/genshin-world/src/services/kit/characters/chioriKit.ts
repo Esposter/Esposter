@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
 
@@ -16,7 +17,7 @@ const createDefenseShareBehaviour = (defenseShare: number): KitHitBehaviour => (
 const castTamoto =
   (hits: KitHit[], secondsRemaining: number): NonNullable<KitAction["onStart"]> =>
   ({ activeCombatant: combatant, body, kitEffectState }) => {
-    castKitSummon(kitEffectState, body, combatant, hits, { secondsRemaining });
+    castKitSummon(kitEffectState, body, combatant, hits, { attackTag: AttackTag.ElementalSkill, secondsRemaining });
   };
 
 export const CHIORI_CHARACTER_ID = 10_000_094;

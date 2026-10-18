@@ -52,9 +52,16 @@ const HYDROSPOUT_INTERVAL_SECONDS = 3.9;
 const HAVOC_ANNIHILATION_CONSTELLATION = 6;
 const HAVOC_ANNIHILATION_STATUS_ID = "tartaglia-havoc-annihilation";
 
-// A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands
-const strikeRiptide = (kitEffectState: KitEffectState, enemy: Enemy, combatant: Combatant, hits: KitHit[]): void => {
-  castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, hits);
+// A strike Riptide sets off on an enemy, landing round it from Tartaglia as he stands, dealt as the kind of attack
+// Given, or as none
+const strikeRiptide = (
+  kitEffectState: KitEffectState,
+  enemy: Enemy,
+  combatant: Combatant,
+  hits: KitHit[],
+  attackTag?: AttackTag,
+): void => {
+  castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, hits, { ...(attackTag && { attackTag }) });
 };
 
 export const TARTAGLIA_CHARACTER_ID = 10_000_033;
@@ -129,6 +136,7 @@ export const createTartagliaKitBehaviour = ({
           { facing: body.facing, height: body.height, position: target?.position ?? body.position },
           combatant,
           [flashOfHavocHit],
+          { attackTag: AttackTag.ElementalBurst },
         );
         scheduleKitTask(kitEffectState, combatant.characterId, flashOfHavocEnergySeconds, ({ party }) =>
           gainPartyMemberEnergy(party, combatant, flashOfHavocEnergy),
@@ -165,7 +173,13 @@ export const createTartagliaKitBehaviour = ({
       if (event.kind === KitEventKind.StatusTicked) {
         const { enemy, status } = event;
         if (status.id === RIPTIDE_STATUS_ID && constellationCount >= HYDROSPOUT_CONSTELLATION)
-          strikeRiptide(kitEffectState, enemy, combatant, meleeStance ? [riptideSlashHit] : hydrospoutFlashHits);
+          strikeRiptide(
+            kitEffectState,
+            enemy,
+            combatant,
+            meleeStance ? [riptideSlashHit] : hydrospoutFlashHits,
+            meleeStance ? AttackTag.ElementalSkill : AttackTag.NormalAttack,
+          );
         return;
       }
 
@@ -180,7 +194,7 @@ export const createTartagliaKitBehaviour = ({
         if (hit === lightOfObliterationHit && hasRiptide && !checkHasEnemyStatus(RIPTIDE_SLASH_COOLDOWN_STATUS_ID)) {
           enemy.statuses = enemy.statuses.filter(({ id }) => id !== RIPTIDE_STATUS_ID);
           hasRiptide = false;
-          strikeRiptide(kitEffectState, enemy, combatant, [riptideBlastHit]);
+          strikeRiptide(kitEffectState, enemy, combatant, [riptideBlastHit], AttackTag.ElementalBurst);
         }
 
         const isAimedShot = !meleeStance && attackTag === AttackTag.ChargedAttack && hit.element === Element.Hydro;
@@ -193,7 +207,7 @@ export const createTartagliaKitBehaviour = ({
             id: RIPTIDE_FLASH_COOLDOWN_STATUS_ID,
             secondsRemaining: riptideFlashCooldownSeconds,
           });
-          strikeRiptide(kitEffectState, enemy, combatant, riptideFlashHits);
+          strikeRiptide(kitEffectState, enemy, combatant, riptideFlashHits, AttackTag.NormalAttack);
         }
 
         if (
@@ -213,13 +227,13 @@ export const createTartagliaKitBehaviour = ({
             id: RIPTIDE_SLASH_COOLDOWN_STATUS_ID,
             secondsRemaining: riptideSlashCooldownSeconds,
           });
-          strikeRiptide(kitEffectState, enemy, combatant, [riptideSlashHit]);
+          strikeRiptide(kitEffectState, enemy, combatant, [riptideSlashHit], AttackTag.ElementalSkill);
         }
       }
       // An enemy defeated holding Riptide, or by the hit that gave it Riptide, bursts, and gives energy from two
       // Constellations
       if (!isDefeated || (!hadRiptide && !isRiptideApplied)) return;
-      strikeRiptide(kitEffectState, enemy, combatant, [riptideBurstHit]);
+      strikeRiptide(kitEffectState, enemy, combatant, [riptideBurstHit], AttackTag.NormalAttack);
       if (constellationCount >= UNDERSTREAM_CONSTELLATION) gainPartyMemberEnergy(party, combatant, UNDERSTREAM_ENERGY);
     },
     // The stance change's hit lands round the body, and the Melee Stance holds from the press

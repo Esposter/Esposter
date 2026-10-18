@@ -4,6 +4,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -103,6 +104,7 @@ export const createAmberKitBehaviour = ({
           body,
           hasEveryArrowFindsItsTarget ? addEveryArrowCriticalRate(combatant) : combatant,
           hasEveryArrowFindsItsTarget ? everyArrowFindsItsTargetFieryRainArrows : fieryRainArrows,
+          { attackTag: AttackTag.ElementalBurst },
         );
         // Constellation 6: each deployed member gains Movement SPD and ATK while Fiery Rain falls
         if (combatant.constellationCount >= CONSTELLATION_6) {

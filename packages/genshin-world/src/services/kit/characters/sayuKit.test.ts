@@ -4,16 +4,19 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createSayuKitBehaviour, SAYU_CHARACTER_ID } from "#src/services/kit/characters/sayuKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -82,6 +85,20 @@ describe(createSayuKitBehaviour, () => {
 
     expect(kick?.hitmarkSeconds).toBeCloseTo((67 + 600) / 60);
     expect(maximumRoll.cooldownSeconds).toBeCloseTo(11);
+  });
+
+  test("a Muji-Muji Daruma tick strikes as Elemental Burst DMG, the kind gcsim tags it", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createSayuCombatant(0));
+    SAYU_KIT.elementalBurst.onStart?.(context);
+    const strikeAttackTags: (AttackTag | undefined)[] = [];
+    for (let seconds = 0; seconds < 15; seconds += FIXED_STEP_SECONDS) {
+      stepKitEffects(FIXED_STEP_SECONDS, context);
+      strikeAttackTags.push(...context.strikes.map(({ attackTag }) => attackTag));
+    }
+
+    expect(strikeAttackTags.length).toBeGreaterThan(0);
+    expect(new Set(strikeAttackTags)).toStrictEqual(new Set([AttackTag.ElementalBurst]));
   });
 
   test("a passive takes effect at its ascension phase", () => {

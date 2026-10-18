@@ -222,7 +222,10 @@ export const createDilucKitBehaviour = ({
           },
           combatant,
           [...dawnPhoenixTicks, dawnPhoenixExplosion],
-          { travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: launchSeconds } },
+          {
+            attackTag: AttackTag.ElementalBurst,
+            travel: { metresPerSecond: DAWN_METRES_PER_SECOND, startSeconds: launchSeconds },
+          },
         );
       },
     },

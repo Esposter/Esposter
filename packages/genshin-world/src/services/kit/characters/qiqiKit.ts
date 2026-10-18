@@ -199,6 +199,7 @@ export const createQiqiKitBehaviour = ({
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         castKitSummon(kitEffectState, body, combatant, heraldHits, {
+          attackTag: AttackTag.ElementalSkill,
           isFollowing: true,
           secondsRemaining: skillSeconds,
         });

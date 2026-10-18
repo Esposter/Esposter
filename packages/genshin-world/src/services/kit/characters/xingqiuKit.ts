@@ -9,6 +9,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -187,7 +188,10 @@ export const createXingqiuKitBehaviour = ({
       { facing, height, position },
       combatant,
       Array.from({ length: swordCount }, () => swordHit),
-      { secondsRemaining: Math.max(raincutter.secondsRemaining, swordHit.hitmarkSeconds + 0.1) },
+      {
+        attackTag: AttackTag.ElementalBurst,
+        secondsRemaining: Math.max(raincutter.secondsRemaining, swordHit.hitmarkSeconds + 0.1),
+      },
     );
     if (swordCount < HENCE_CALL_THEM_MY_OWN_VERSES_SWORD_COUNT) return;
     scheduleKitTask(kitEffectState, combatant.characterId, swordHit.hitmarkSeconds, ({ party }) =>
@@ -245,7 +249,7 @@ export const createXingqiuKitBehaviour = ({
           combatant.constellationCount >= EVILSOOTHER_CONSTELLATION &&
           kitEffectState.effects.some((effect) => checkIsRaincutter(effect, combatant.characterId));
         const hits = isEvilsoothed ? evilsootherRainscreenHits : rainscreenHits;
-        castKitSummon(kitEffectState, body, combatant, hits);
+        castKitSummon(kitEffectState, body, combatant, hits, { attackTag: AttackTag.ElementalSkill });
         standRainSwords(context, body, combatant, rainSwordsSeconds, rainSwordsSkillFirstTickSeconds);
       },
     },

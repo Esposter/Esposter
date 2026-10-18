@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -67,7 +68,9 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
           id: DEPTH_CLARION_DICE_ID,
           nextTickSeconds: burstHitmarkSeconds + EXQUISITE_THROW_WAVE_SECONDS,
           onTick: ({ kitEffectState: tickKitEffectState }) =>
-            castKitSummon(tickKitEffectState, { facing, height, position }, combatant, exquisiteThrows),
+            castKitSummon(tickKitEffectState, { facing, height, position }, combatant, exquisiteThrows, {
+              attackTag: AttackTag.ElementalBurst,
+            }),
           secondsRemaining: burstHitmarkSeconds + depthClarionDiceSeconds + FIELD_LINGER_SECONDS,
           tickIntervalSeconds: EXQUISITE_THROW_WAVE_SECONDS,
         });
@@ -128,7 +131,7 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
               !kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === DEPTH_CLARION_DICE_ID)
             )
               return;
-            castKitSummon(kitEffectState, body, combatant, exquisiteThrows);
+            castKitSummon(kitEffectState, body, combatant, exquisiteThrows, { attackTag: AttackTag.ElementalBurst });
           },
         },
       ],

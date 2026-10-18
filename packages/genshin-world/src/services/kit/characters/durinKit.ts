@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -39,6 +40,7 @@ const createDragonOnStart =
       )
         effect.secondsRemaining = 0;
     castKitSummon(kitEffectState, target ? createKitBody(target.position) : body, combatant, hits, {
+      attackTag: AttackTag.ElementalBurst,
       id: DRAGON_SUMMON_ID,
     });
   };

@@ -8,6 +8,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createKitBody } from "#src/services/kit/createKitBody";
@@ -149,7 +150,10 @@ export const createXinyanKitBehaviour = ({
       nextTickSeconds: SHIELD_DOT_INTERVAL_SECONDS,
       onTick: ({ kitEffectState: tickState }) => {
         if (findShieldLevel(tickState.effects, characterId) !== SHIELD_LEVEL_THREE) return;
-        castKitSummon(tickState, createKitBody(centre), combatant, [shieldDotHit], { isFollowing: true });
+        castKitSummon(tickState, createKitBody(centre), combatant, [shieldDotHit], {
+          attackTag: AttackTag.ElementalSkill,
+          isFollowing: true,
+        });
       },
       secondsRemaining: shieldSeconds + FIELD_LINGER_SECONDS,
       tickIntervalSeconds: SHIELD_DOT_INTERVAL_SECONDS,
@@ -171,6 +175,7 @@ export const createXinyanKitBehaviour = ({
         const hasShieldOnBurst = combatant.constellationCount >= SHIELD_ON_BURST_CONSTELLATION;
         if (hasShieldOnBurst) setShield(context, combatant, body, SHIELD_LEVEL_THREE);
         castKitSummon(kitEffectState, body, combatant, hasShieldOnBurst ? constellationDotHits : riffDotHits, {
+          attackTag: AttackTag.ElementalBurst,
           isFollowing: true,
         });
       },

@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 import type { GroundPoint } from "genshin-engine";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -122,6 +123,7 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
           body,
           combatant,
           Array.from({ length: STRIKE_GEM_COUNT }, () => strikeGem),
+          { attackTag: AttackTag.NormalAttack },
         );
       },
     };
@@ -152,9 +154,12 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
     burst: {
       onStart: (context) => {
         const { activeCombatant: combatant, body, kitEffectState } = context;
-        castKitSummon(kitEffectState, body, combatant, burstGems);
+        castKitSummon(kitEffectState, body, combatant, burstGems, { attackTag: AttackTag.ElementalBurst });
         const jadeScreen = shatterJadeScreen(context);
-        if (jadeScreen !== undefined) castKitSummon(kitEffectState, body, jadeScreen.combatant, jadeScreenGems);
+        if (jadeScreen !== undefined)
+          castKitSummon(kitEffectState, body, jadeScreen.combatant, jadeScreenGems, {
+            attackTag: AttackTag.ElementalBurst,
+          });
         if (combatant.constellationCount < GRANDEUR_CONSTELLATION) return;
         removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
         for (let index = 0; index < GRANDEUR_STAR_JADE_COUNT; index++)
@@ -168,7 +173,9 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
         const starJades = kitEffectState.effects.filter((effect) => checkIsStarJade(effect, combatant.characterId));
         removeKitEffects(kitEffectState, (effect) => checkIsStarJade(effect, combatant.characterId));
         const shot = starJades.length === GRANDEUR_STAR_JADE_COUNT ? grandeurStarJadeShot : starJadeShot;
-        castKitSummon(kitEffectState, body, combatant, [chargedAttackGem, ...starJades.map(() => shot)]);
+        castKitSummon(kitEffectState, body, combatant, [chargedAttackGem, ...starJades.map(() => shot)], {
+          attackTag: AttackTag.ChargedAttack,
+        });
       },
     },
     getChargedAttackStaminaMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
@@ -201,7 +208,10 @@ export const createNingguangKitBehaviour = ({ readHit, readHits, readSeconds }: 
             z: position.z - Math.cos(facing) * JADE_SCREEN_OFFSET,
           },
         };
-        castKitSummon(kitEffectState, screenBody, combatant, [jadeScreenHit], { secondsRemaining: jadeScreenSeconds });
+        castKitSummon(kitEffectState, screenBody, combatant, [jadeScreenHit], {
+          attackTag: AttackTag.ElementalSkill,
+          secondsRemaining: jadeScreenSeconds,
+        });
       },
     },
   };

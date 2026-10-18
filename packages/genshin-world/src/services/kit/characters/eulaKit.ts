@@ -8,6 +8,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -158,7 +159,7 @@ export const createEulaKitBehaviour = ({
           body,
           combatant,
           [createLightfallExplosion(startingStacks, lightfallExplosionSeconds)],
-          { id: LIGHTFALL_SUMMON_ID },
+          { attackTag: AttackTag.ElementalBurst, id: LIGHTFALL_SUMMON_ID },
         );
       },
     },
@@ -178,7 +179,7 @@ export const createEulaKitBehaviour = ({
       const stacks = spendKitResource(kitEffectState, characterId, LIGHTFALL_STACKS_RESOURCE_ID);
       const hit = createLightfallExplosion(stacks, lightfallTriggerDelaySeconds);
       removeKitEffects(kitEffectState, (effect) => effect === summon);
-      castKitSummon(kitEffectState, summon.body, summon.combatant, [hit]);
+      castKitSummon(kitEffectState, summon.body, summon.combatant, [hit], { attackTag: AttackTag.ElementalBurst });
     },
     skill: {
       hits: [
@@ -221,10 +222,12 @@ export const createEulaKitBehaviour = ({
               poiseDamage: 0,
               talentMultiplier: icewhirlMultiplier,
             }));
-          castKitSummon(kitEffectState, body, combatant, icewhirls);
+          castKitSummon(kitEffectState, body, combatant, icewhirls, { attackTag: AttackTag.ElementalSkill });
           // Two stacks raise a Shattered Lightfall Sword at Ascension 1, which explodes on its own once the hold has begun
           if (stacks === GRIMHEART_MAX_STACKS && combatant.ascension >= ASCENSION_1)
-            castKitSummon(kitEffectState, body, combatant, [shatteredLightfall]);
+            castKitSummon(kitEffectState, body, combatant, [shatteredLightfall], {
+              attackTag: AttackTag.ElementalBurst,
+            });
           // Constellation 1's bonus lasts six seconds plus six for each stack consumed
           if (combatant.constellationCount >= 1)
             buffKitMember(kitEffectState, characterId, {

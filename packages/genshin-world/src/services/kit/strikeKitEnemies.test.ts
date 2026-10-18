@@ -387,6 +387,34 @@ describe(strikeKitEnemies, () => {
     ]).toStrictEqual([true, damageOf(Element.Pyro, [])]);
   });
 
+  test("a summon's strike takes its attack tag's DMG Bonus on a hit that carries no tag", () => {
+    expect.hasAssertions();
+    const untaggedHit: KitHit = { ...KIT_HIT, attackTag: undefined };
+    const damageOf = (normalAttackDamageBonus: number): number => {
+      const combatant = {
+        ...createCombatant(undefined),
+        attributes: computeCharacterAttributes([
+          { attribute: Attribute.Attack, value: 1000 },
+          { attribute: Attribute.NormalAttackDamageBonus, value: normalAttackDamageBonus },
+        ]),
+      };
+      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+      enemy.health = SURVIVING_HEALTH;
+      const context = createKitTestContext(combatant, {
+        enemyMap: new Map([[enemy.id, enemy]]),
+        enemyTables,
+        random: () => 1,
+      });
+      strikeKitEnemies(
+        [{ attackTag: AttackTag.NormalAttack, body: context.body, combatant, hit: untaggedHit, target: enemy }],
+        context,
+      );
+      return SURVIVING_HEALTH - enemy.health;
+    };
+
+    expect(damageOf(0.5)).toBeGreaterThan(damageOf(0));
+  });
+
   test("a strike's flat base damage hook adds to the hit, which can defeat an enemy it would not otherwise", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();

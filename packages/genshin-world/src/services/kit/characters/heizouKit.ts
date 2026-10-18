@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -75,7 +76,9 @@ export const createHeizouKitBehaviour = ({ kit, readHit }: KitRecordReader): Kit
       tags.stacks = (tags.stacks ?? 0) + 1;
       const element = findAbsorbedElement([enemy]);
       if (element === undefined) return;
-      castKitSummon(kitEffectState, createKitBody(enemy.position), striker, [createIrisHit(element)]);
+      castKitSummon(kitEffectState, createKitBody(enemy.position), striker, [createIrisHit(element)], {
+        attackTag: AttackTag.ElementalBurst,
+      });
     },
     skill: { hits: [{ onStrike: addPenetrativeReasoning }] },
     skillHolds: [{ hits: [{ onStrike: addPenetrativeReasoning }] }],

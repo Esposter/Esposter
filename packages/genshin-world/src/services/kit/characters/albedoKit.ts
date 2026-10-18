@@ -6,6 +6,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createKitBody } from "#src/services/kit/createKitBody";
@@ -143,7 +144,9 @@ export const createAlbedoKitBehaviour = ({
         const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
         // A field whose seconds have run out casts no blossoms, though the step has not dropped it yet
         if (solarIsotoma && solarIsotoma.secondsRemaining > 0)
-          castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, blossoms);
+          castKitSummon(kitEffectState, solarIsotoma.body, solarIsotoma.combatant, blossoms, {
+            attackTag: AttackTag.ElementalBurst,
+          });
         if (combatant.ascension < TECTONIC_TIDE_ASCENSION) return;
         buffKitTeam(kitEffectState, party, {
           amount: TECTONIC_TIDE_ELEMENTAL_MASTERY,
@@ -180,7 +183,9 @@ export const createAlbedoKitBehaviour = ({
         )
       )
         return;
-      castKitSummon(kitEffectState, createKitBody(position), solarIsotoma.combatant, [transientBlossom]);
+      castKitSummon(kitEffectState, createKitBody(position), solarIsotoma.combatant, [transientBlossom], {
+        attackTag: AttackTag.ElementalSkill,
+      });
       if (combatant.constellationCount >= ALBEDO_CONSTELLATION_2) addFatalReckoningStack(kitEffectState, combatant);
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_1) return;
       const member = getPartyMember(party, characterId);
@@ -233,6 +238,7 @@ export const createAlbedoKitBehaviour = ({
             secondsRemaining: solarIsotomaHit.hitmarkSeconds + CONSTELLATION_4_CHECK_SECONDS,
           });
         castKitSummon(kitEffectState, createAheadBody(body, solarIsotomaAheadMetres), combatant, [solarIsotomaHit], {
+          attackTag: AttackTag.ElementalSkill,
           id: SOLAR_ISOTOMA_ID,
           secondsRemaining: solarIsotomaSeconds,
           spawnSeconds: solarIsotomaHit.hitmarkSeconds,

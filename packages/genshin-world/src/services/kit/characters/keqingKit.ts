@@ -5,6 +5,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -79,16 +80,22 @@ const addConstellation1Hits = (
   { activeCombatant: combatant, body, kitEffectState }: KitContext,
   recastHit: KitHit,
 ): void => {
-  castKitSummon(kitEffectState, body, combatant, [
-    {
-      ...recastHit,
-      element: Element.Electro,
-      hitmarkSeconds: toKitSeconds(CONSTELLATION_1_START_FRAMES),
-      poiseDamage: 0,
-      talentMultiplier: CONSTELLATION_1_TALENT_MULTIPLIER,
-    },
-    { ...recastHit, element: Element.Electro, poiseDamage: 0, talentMultiplier: CONSTELLATION_1_TALENT_MULTIPLIER },
-  ]);
+  castKitSummon(
+    kitEffectState,
+    body,
+    combatant,
+    [
+      {
+        ...recastHit,
+        element: Element.Electro,
+        hitmarkSeconds: toKitSeconds(CONSTELLATION_1_START_FRAMES),
+        poiseDamage: 0,
+        talentMultiplier: CONSTELLATION_1_TALENT_MULTIPLIER,
+      },
+      { ...recastHit, element: Element.Electro, poiseDamage: 0, talentMultiplier: CONSTELLATION_1_TALENT_MULTIPLIER },
+    ],
+    { attackTag: AttackTag.ElementalSkill },
+  );
 };
 
 export const KEQING_CHARACTER_ID = 10_000_042;

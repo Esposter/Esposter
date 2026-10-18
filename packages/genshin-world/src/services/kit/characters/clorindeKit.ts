@@ -69,13 +69,13 @@ export const createClorindeKitBehaviour = ({
     const { bondOfLifeShare } = getPartyMember(party, activeCombatant.characterId);
     if (Math.abs(bondOfLifeShare) < BOND_OF_LIFE_TOLERANCE) {
       castKitSummon(kitEffectState, body, activeCombatant, [impaleTheNightNoHit], {
-        attackTag: AttackTag.ElementalSkill,
+        attackTag: AttackTag.NormalAttack,
       });
       return;
     }
     const isFull = bondOfLifeShare >= BOND_OF_LIFE_FULL_SHARE;
     castKitSummon(kitEffectState, body, activeCombatant, isFull ? impaleTheNightFullHits : [impaleTheNightLowHit], {
-      attackTag: AttackTag.ElementalSkill,
+      attackTag: AttackTag.NormalAttack,
     });
     changeKitMemberHealth(
       context,

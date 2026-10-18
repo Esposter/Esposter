@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -189,6 +190,7 @@ export const createGorouKitBehaviour = ({
           tickIntervalSeconds: bannerTickSeconds,
         });
         castKitSummon(kitEffectState, body, combatant, crystalCollapseHits, {
+          attackTag: AttackTag.ElementalBurst,
           isFollowing: true,
           secondsRemaining: burstHitmarkSeconds + juugaSeconds,
         });

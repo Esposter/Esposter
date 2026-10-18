@@ -7,6 +7,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -192,7 +193,9 @@ export const createLaylaKitBehaviour = ({
         if (combatant.constellationCount >= CONSTELLATION_2) gainPartyMemberEnergy(party, combatant, 1);
       },
     };
-    castKitSummon(kitEffectState, createKitBody(target.position), combatant, [hit]);
+    castKitSummon(kitEffectState, createKitBody(target.position), combatant, [hit], {
+      attackTag: AttackTag.ElementalSkill,
+    });
   };
 
   // Restarts the tick that adds a Night Star each 1.5 seconds while the shield lasts, as gcsim's tickNightStar re-arms it
@@ -225,17 +228,23 @@ export const createLaylaKitBehaviour = ({
           onTick: ({ kitEffectState: tickEffectState }) => {
             // The tick's first enemy strike adds a Night Star, as gcsim's burst callback does, once per tick
             let isStruck = false;
-            castKitSummon(tickEffectState, { facing, height, position: field.centre }, combatant, [
-              {
-                ...starlightSlugStrike,
-                onStrike: ({ kitEffectState: strikeEffectState }) => {
-                  if (isStruck) return;
-                  isStruck = true;
-                  if (checkIsLaylaShieldLive(strikeEffectState.effects))
-                    addNightStars(strikeEffectState, combatant, 1, BURST_NIGHT_STAR_ICD);
+            castKitSummon(
+              tickEffectState,
+              { facing, height, position: field.centre },
+              combatant,
+              [
+                {
+                  ...starlightSlugStrike,
+                  onStrike: ({ kitEffectState: strikeEffectState }) => {
+                    if (isStruck) return;
+                    isStruck = true;
+                    if (checkIsLaylaShieldLive(strikeEffectState.effects))
+                      addNightStars(strikeEffectState, combatant, 1, BURST_NIGHT_STAR_ICD);
+                  },
                 },
-              },
-            ]);
+              ],
+              { attackTag: AttackTag.ElementalBurst },
+            );
           },
           radius: STARLIGHT_SLUG_RADIUS,
           secondsRemaining: starlightSlugSeconds,

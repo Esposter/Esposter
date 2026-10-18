@@ -140,7 +140,7 @@ export const createCandaceKitBehaviour = ({
           secondsRemaining: waves.secondsRemaining,
           stacks: (waves.stacks ?? 0) + 1,
         });
-        castKitSummon(kitEffectState, body, combatant, [wave]);
+        castKitSummon(kitEffectState, body, combatant, [wave], { attackTag: AttackTag.ElementalBurst });
         return;
       }
       if (
@@ -152,7 +152,7 @@ export const createCandaceKitBehaviour = ({
         getKitHitElement(event.hit, event.striker) !== undefined &&
         startKitCooldown(kitEffectState, characterId, CONSTELLATION_6_STATUS_ID, CONSTELLATION_6_COOLDOWN_SECONDS)
       )
-        castKitSummon(kitEffectState, body, combatant, [constellation6Wave]);
+        castKitSummon(kitEffectState, body, combatant, [constellation6Wave], { attackTag: AttackTag.ElementalBurst });
     },
     skill: { onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds) },
     skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, chargedHitmarkSeconds) }],

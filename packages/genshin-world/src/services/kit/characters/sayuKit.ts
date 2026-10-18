@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
@@ -78,6 +79,7 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
           body,
           combatant,
           combatant.ascension >= ASCENSION_4 ? darumaTicks.map((hit) => withAscension4Radius(hit)) : darumaTicks,
+          { attackTag: AttackTag.ElementalBurst },
         );
         const ahead = createAheadBody(body, BURST_FIELD_CENTRE_METRES);
         castKitField(kitEffectState, combatant.characterId, ahead.position, {

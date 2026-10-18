@@ -7,6 +7,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -112,6 +113,7 @@ export const createBeidouKitBehaviour = ({
       )
         continue;
       castKitSummon(kitEffectState, { facing, height, position }, combatant, [discharge], {
+        attackTag: AttackTag.ElementalBurst,
         secondsRemaining: hit.hitmarkSeconds + DISCHARGE_INTERVAL_SECONDS,
       });
     }

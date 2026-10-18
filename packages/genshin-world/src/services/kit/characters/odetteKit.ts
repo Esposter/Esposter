@@ -7,6 +7,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { STELLAR_VORTEX_MAX_STACKS } from "#src/services/kit/constants";
@@ -78,6 +79,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
     for (const effect of kitEffectState.effects)
       if (effect.kind === "summon" && effect.id === DANCE_DOUBLE_ID) effect.secondsRemaining = 0;
     castKitSummon(kitEffectState, body, combatant, createDanceDoubleHits(firstAttack, firstTickSeconds, spawnSeconds), {
+      attackTag: AttackTag.ElementalSkill,
       id: DANCE_DOUBLE_ID,
       secondsRemaining: spawnSeconds + danceDoubleDurationSeconds,
       spawnSeconds,

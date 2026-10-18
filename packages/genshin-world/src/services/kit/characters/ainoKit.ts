@@ -3,6 +3,7 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -113,9 +114,13 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
           isFollowing: true,
           nextTickSeconds: burstFirstTickSeconds,
           onTick: ({ kitEffectState: tickKitEffectState }) =>
-            castKitSummon(tickKitEffectState, { facing, height, position: burstField.centre }, combatant, [
-              isAscendantBurst ? ascendantWaterBall : waterBall,
-            ]),
+            castKitSummon(
+              tickKitEffectState,
+              { facing, height, position: burstField.centre },
+              combatant,
+              [isAscendantBurst ? ascendantWaterBall : waterBall],
+              { attackTag: AttackTag.ElementalBurst },
+            ),
           id: BURST_FIELD_ID,
           radius: burstRadius,
           secondsRemaining: burstFirstTickSeconds + burstSeconds,

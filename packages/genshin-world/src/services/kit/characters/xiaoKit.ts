@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
@@ -66,13 +67,16 @@ export const createXiaoKitBehaviour = ({ readHits, readParameter, readSeconds }:
   // Stands as long as its Heaven Fall stack, so a dash reads its stacks off those standing and restarts them
   const castDash = ({ activeCombatant: combatant, body, kitEffectState }: KitContext): void => {
     if (combatant.ascension < HEAVEN_FALL_ASCENSION) {
-      castKitSummon(kitEffectState, body, combatant, [dashHit]);
+      castKitSummon(kitEffectState, body, combatant, [dashHit], { attackTag: AttackTag.ElementalSkill });
       return;
     }
     const dashes = kitEffectState.effects.filter((effect) => checkIsDash(effect, combatant.characterId));
     for (const dash of dashes) dash.secondsRemaining = heavenFallSeconds;
     const hit = takeOne(dashHits, Math.min(dashes.length, HEAVEN_FALL_MAX_STACKS));
-    castKitSummon(kitEffectState, body, combatant, [hit], { secondsRemaining: heavenFallSeconds });
+    castKitSummon(kitEffectState, body, combatant, [hit], {
+      attackTag: AttackTag.ElementalSkill,
+      secondsRemaining: heavenFallSeconds,
+    });
   };
   // Bane of All Evil: an Anemo infusion converting Xiao's attacks, each carrying the table's DMG Bonus, until the burst
   // Ends or he leaves the field, which the infusion ends as a swap does. Fields drain his current HP each second and give

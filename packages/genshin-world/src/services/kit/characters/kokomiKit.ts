@@ -8,6 +8,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -128,7 +129,10 @@ export const createKokomiKitBehaviour = ({
   const createBakeKurage = (ripples: KitHit[]): KitActionBehaviour => ({
     onStart: ({ activeCombatant: combatant, body, characterIdCombatantMap, kitEffectState, party }) => {
       const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-      castKitSummon(kitEffectState, body, combatant, ripples, { secondsRemaining: SKILL_DURATION_SECONDS });
+      castKitSummon(kitEffectState, body, combatant, ripples, {
+        attackTag: AttackTag.ElementalSkill,
+        secondsRemaining: SKILL_DURATION_SECONDS,
+      });
       const centre = createAheadBody(body, SKILL_CENTRE_METRES).position;
       castKitField(kitEffectState, combatant.characterId, centre, {
         nextTickSeconds: bakeKurageFirstTickSeconds,

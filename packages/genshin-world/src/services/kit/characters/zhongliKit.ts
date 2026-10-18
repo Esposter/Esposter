@@ -8,6 +8,7 @@ import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element, Elements } from "#src/models/Element";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
@@ -139,7 +140,9 @@ export const createZhongliKitBehaviour = ({
         const { activeCombatant: combatant, body, kitEffectState } = context;
         const { constellationCount } = combatant;
         const hit = constellationCount >= TOPAZ_UNBREAKABLE_AND_FEARLESS_CONSTELLATION ? topazMeteor : meteor;
-        castKitSummon(kitEffectState, createAheadBody(body, METEOR_OFFSET), combatant, [hit]);
+        castKitSummon(kitEffectState, createAheadBody(body, METEOR_OFFSET), combatant, [hit], {
+          attackTag: AttackTag.ElementalBurst,
+        });
         if (constellationCount >= STONE_THE_CRADLE_OF_JADE_CONSTELLATION) castJadeShield(context, body, combatant);
       },
     },
@@ -156,6 +159,7 @@ export const createZhongliKitBehaviour = ({
         if (newestStele && steles.length >= getMaxSteleCount(combatant))
           newestStele.secondsRemaining = Math.min(newestStele.secondsRemaining, pressSteleLandingSeconds);
         castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, pressSteleHits, {
+          attackTag: AttackTag.ElementalSkill,
           secondsRemaining: pressSteleSeconds,
         });
       },
@@ -169,6 +173,7 @@ export const createZhongliKitBehaviour = ({
           const steles = kitEffectState.effects.filter((effect) => checkIsStele(effect, combatant.characterId));
           if (steles.length < getMaxSteleCount(combatant))
             castKitSummon(kitEffectState, createAheadBody(body, STELE_OFFSET), combatant, holdSteleHits, {
+              attackTag: AttackTag.ElementalSkill,
               secondsRemaining: holdSteleSeconds,
             });
           scheduleKitTask(kitEffectState, combatant.characterId, holdHitmarkSeconds, (tick) =>

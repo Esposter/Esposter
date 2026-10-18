@@ -5,6 +5,7 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createKitBody } from "#src/services/kit/createKitBody";
@@ -155,13 +156,19 @@ export const createRaidenKitBehaviour = ({
           (effect) => effect.kind === "status" && effect.characterId === characterId && effect.id === RESTORE_COUNT_ID,
         );
         const damageBonus = checkHasEye(kitEffectState.effects, characterId) ? eyeBurstDamageBonus : 0;
-        castKitSummon(kitEffectState, body, combatant, [
-          {
-            ...musouNoHitotachi,
-            damageBonus,
-            talentMultiplier: musouNoHitotachi.talentMultiplier + resolveBurstBonus * stacks,
-          },
-        ]);
+        castKitSummon(
+          kitEffectState,
+          body,
+          combatant,
+          [
+            {
+              ...musouNoHitotachi,
+              damageBonus,
+              talentMultiplier: musouNoHitotachi.talentMultiplier + resolveBurstBonus * stacks,
+            },
+          ],
+          { attackTag: AttackTag.ElementalBurst },
+        );
         enterKitStance(
           kitEffectState,
           combatant,
@@ -293,13 +300,15 @@ export const createRaidenKitBehaviour = ({
         !startKitCooldown(kitEffectState, characterId, COORDINATED_ATTACK_ICD_ID, COORDINATED_ATTACK_ICD_SECONDS)
       )
         return;
-      castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, [coordinatedAttack]);
+      castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, [coordinatedAttack], {
+        attackTag: AttackTag.ElementalSkill,
+      });
     },
     // The skill's hit lands from a summon at the body, and the Eye reaches every member of the deployed team from a task
     // That gives it as it runs
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
-        castKitSummon(kitEffectState, body, combatant, [skillHit]);
+        castKitSummon(kitEffectState, body, combatant, [skillHit], { attackTag: AttackTag.ElementalSkill });
         scheduleKitTask(
           kitEffectState,
           combatant.characterId,

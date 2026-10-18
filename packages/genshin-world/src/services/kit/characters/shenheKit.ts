@@ -239,7 +239,9 @@ export const createShenheKitBehaviour = ({
                 secondsRemaining: fieldTickIntervalSeconds,
                 source: BURST_CRYO_DAMAGE_BONUS_SOURCE,
               });
-            castKitSummon(tickEffectState, centreBody, combatant, takeOne(burstTicks, tickIndex % burstTicks.length));
+            castKitSummon(tickEffectState, centreBody, combatant, takeOne(burstTicks, tickIndex % burstTicks.length), {
+              attackTag: AttackTag.ElementalBurst,
+            });
           },
           radius: burstTickFields.hitArea.radius,
           secondsRemaining:

@@ -115,6 +115,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         ) ?? 0) + deployedBonuses.additiveBaseDamageBonus;
       const pricedHit = {
         ...enemyHit,
+        // The strike's attack tag, which a summon's hits leave untagged, falls back to the hit's own
+        attackTag: attackTag ?? enemyHit.attackTag,
         additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
         criticalDamageBonus:
           (enemyHit.criticalDamageBonus ?? 0) +

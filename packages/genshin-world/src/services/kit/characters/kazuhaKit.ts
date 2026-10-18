@@ -2,6 +2,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -75,7 +76,9 @@ export const createKazuhaKitBehaviour = ({
       onStart: (context) => {
         addInfusion(context);
         const { activeCombatant: combatant, body, kitEffectState } = context;
-        const whirlwind = castKitSummon(kitEffectState, body, combatant, tickHits);
+        const whirlwind = castKitSummon(kitEffectState, body, combatant, tickHits, {
+          attackTag: AttackTag.ElementalBurst,
+        });
         let isAbsorbed = false;
         castKitField(kitEffectState, combatant.characterId, whirlwind.body.position, {
           nextTickSeconds: absorbCheckFirstSeconds,

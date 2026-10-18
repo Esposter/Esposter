@@ -7,6 +7,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createKitBody } from "#src/services/kit/createKitBody";
@@ -217,6 +218,7 @@ export const createHuTaoKitBehaviour = ({
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
       castKitSummon(kitEffectState, createKitBody(event.enemy.position), combatant, [bloodBlossomHit], {
+        attackTag: AttackTag.ElementalSkill,
         target: event.enemy,
       });
     },

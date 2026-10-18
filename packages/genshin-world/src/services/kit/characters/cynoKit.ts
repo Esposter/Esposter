@@ -11,6 +11,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -166,7 +167,7 @@ export const createCynoKitBehaviour = ({
         startKitCooldown(kitEffectState, characterId, C6_ICD_STATUS_ID, C6_ICD_SECONDS)
       ) {
         day.stacks = (day.stacks ?? 0) - 1;
-        castKitSummon(kitEffectState, body, combatant, [duststalkerBolt]);
+        castKitSummon(kitEffectState, body, combatant, [duststalkerBolt], { attackTag: AttackTag.ElementalSkill });
       }
     }
   };
@@ -232,7 +233,9 @@ export const createCynoKitBehaviour = ({
               (findKitStatus(kitEffectState.effects, characterId, C6_STATUS_ID)?.stacks ?? 0) + C6_STACKS_PER_TRIGGER,
             ),
           );
-        castKitSummon(kitEffectState, body, combatant, mortuaryRiteDuststalkerBolts);
+        castKitSummon(kitEffectState, body, combatant, mortuaryRiteDuststalkerBolts, {
+          attackTag: AttackTag.ElementalSkill,
+        });
       },
     },
   });

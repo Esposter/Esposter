@@ -5,6 +5,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
@@ -65,11 +66,15 @@ export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecor
     getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [miracleParadePyrotechnicStrike]),
+        castKitSummon(kitEffectState, body, combatant, [miracleParadePyrotechnicStrike], {
+          attackTag: AttackTag.ChargedAttack,
+        }),
     },
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
-        castKitSummon(kitEffectState, body, combatant, [propArrowPyrotechnicStrike]),
+        castKitSummon(kitEffectState, body, combatant, [propArrowPyrotechnicStrike], {
+          attackTag: AttackTag.ChargedAttack,
+        }),
     },
   };
 };

@@ -89,7 +89,9 @@ export const createYaeMikoKitBehaviour = ({
             member.skillCooldownSeconds - standingTotems.length * kit.skillCooldownSeconds,
           );
         }
-        castKitSummon(kitEffectState, body, combatant, thunderbolts.slice(0, standingTotems.length));
+        castKitSummon(kitEffectState, body, combatant, thunderbolts.slice(0, standingTotems.length), {
+          attackTag: AttackTag.ElementalBurst,
+        });
       },
     },
     // Constellation 6 ignores a share of each enemy's DEF on Sesshou Sakura's strikes, which are Elemental Skill DMG

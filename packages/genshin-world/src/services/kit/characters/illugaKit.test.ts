@@ -6,6 +6,7 @@ import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
@@ -14,6 +15,7 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import {
   createIllugaKitBehaviour,
   ILLUGA_CHARACTER_ID,
@@ -24,6 +26,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -249,6 +252,18 @@ describe(createIllugaKitBehaviour, () => {
     expect(summonCount()).toBe(0);
     emitKitEvent(createEnemyGeoHit(traveler), context);
     expect(summonCount()).toBe(1);
+  });
+
+  test("constellation 2's Aedon hit strikes as Elemental Burst DMG, the kind its talent text gives it", () => {
+    expect.hasAssertions();
+    const illuga = { ...createIllugaCombatant(), constellationCount: 2 };
+    const { context, traveler } = createTeamContext(illuga);
+    ILLUGA_KIT.elementalBurst.onStart?.(context);
+    context.activeCombatant = traveler;
+    for (let hit = 0; hit < 7; hit++) emitKitEvent(createEnemyGeoHit(context, traveler), context);
+
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    expect(context.strikes.map(({ attackTag }) => attackTag)).toStrictEqual([AttackTag.ElementalBurst]);
   });
 
   test("lightkeeper's oath gives 50 Elemental Mastery under ascendant gleam, and 80 from constellation 6", () => {

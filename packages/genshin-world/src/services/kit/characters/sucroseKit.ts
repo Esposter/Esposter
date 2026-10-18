@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
@@ -100,11 +101,15 @@ export const createSucroseKitBehaviour = ({
         castKitField(kitEffectState, combatant.characterId, centre, {
           nextTickSeconds: burstFirstTickSeconds,
           onTick: ({ kitEffectState: tickState }) => {
-            castKitSummon(tickState, centreBody, combatant, [burstTickHit]);
+            castKitSummon(tickState, centreBody, combatant, [burstTickHit], { attackTag: AttackTag.ElementalBurst });
             if (absorbedElement !== undefined)
-              castKitSummon(tickState, centreBody, combatant, [
-                { ...burstTickHit, element: absorbedElement, talentMultiplier: absorbedHitMultiplier },
-              ]);
+              castKitSummon(
+                tickState,
+                centreBody,
+                combatant,
+                [{ ...burstTickHit, element: absorbedElement, talentMultiplier: absorbedHitMultiplier }],
+                { attackTag: AttackTag.ElementalBurst },
+              );
           },
           secondsRemaining,
           tickIntervalSeconds: burstTickIntervalSeconds,

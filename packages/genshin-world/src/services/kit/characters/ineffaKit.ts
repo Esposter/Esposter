@@ -204,6 +204,7 @@ export const createIneffaKitBehaviour = ({
     for (const effect of kitEffectState.effects)
       if (effect.kind === "summon" && effect.id === BIRGITTA_ID) effect.secondsRemaining = 0;
     castKitSummon(kitEffectState, body, combatant, discharges, {
+      attackTag: AttackTag.ElementalSkill,
       id: BIRGITTA_ID,
       secondsRemaining: spawnSeconds + birgittaSeconds,
       spawnSeconds,

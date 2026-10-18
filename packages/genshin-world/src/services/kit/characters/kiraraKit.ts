@@ -112,7 +112,9 @@ export const createKiraraKitBehaviour = ({
     // The Cardamoms are a summon cast at her body
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
-        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms]);
+        castKitSummon(kitEffectState, body, combatant, [...detonatedCardamoms, ...expiredCardamoms], {
+          attackTag: AttackTag.ElementalBurst,
+        });
         buffTeamElementalDamage(kitEffectState, party, combatant);
       },
     },
