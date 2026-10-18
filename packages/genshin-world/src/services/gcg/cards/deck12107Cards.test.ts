@@ -10,10 +10,14 @@ import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
+import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
+import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
@@ -70,7 +74,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
-describe(rainSword, () => {
+describe("rain Sword", () => {
   test("the active character takes one less DMG when it receives at least 3, for two usages", () => {
     expect.hasAssertions();
     const RAIN_SWORD_ID = 112_021;
@@ -88,7 +92,7 @@ describe(rainSword, () => {
   });
 });
 
-describe(rainbowBladework, () => {
+describe("rainbow Bladework", () => {
   const NORMAL_ATTACK: GcgSkill = {
     costs: [],
     effect: "Char_Skill_12021",
@@ -133,5 +137,49 @@ describe(rainbowBladework, () => {
     const zoneCard = createGcgZoneCard(RAINBOW_BLADEWORK_ID, rainbowBladework);
     expect(rainbowBladework.onSkillUsed?.(context, ELEMENTAL_SKILL, zoneCard, [])).toBeUndefined();
     expect(zoneCard.usages).toBe(3);
+  });
+});
+
+describe("fatal Rainscreen", () => {
+  test("the skill deals 2 Hydro DMG, puts Hydro on its character, and creates a Rain Sword onstage", () => {
+    expect.hasAssertions();
+    const FATAL_RAINSCREEN_SKILL: GcgSkill = {
+      costs: [],
+      effect: "Char_Skill_12022",
+      energyGain: 1,
+      id: 12_022,
+      kind: GcgSkillKind.ElementalSkill,
+    };
+    const RAIN_SWORD_ID = 112_021;
+    const duel = createDuel([
+      createSideState([createCharacterState(1202)]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, FATAL_RAINSCREEN_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
+    expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
+    expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAIN_SWORD_ID]);
+  });
+});
+
+describe("raincutter", () => {
+  test("the skill deals 2 Hydro DMG, puts Hydro on its character, and creates a Rainbow Bladework onstage", () => {
+    expect.hasAssertions();
+    const RAINCUTTER_SKILL: GcgSkill = {
+      costs: [],
+      effect: "Char_Skill_12023",
+      energyGain: 0,
+      id: 12_023,
+      kind: GcgSkillKind.ElementalBurst,
+    };
+    const RAINBOW_BLADEWORK_ID = 112_022;
+    const duel = createDuel([
+      createSideState([createCharacterState(1202)]),
+      createSideState([createCharacterState(1203)]),
+    ]);
+    runGcgSkillUse({ duel, sideIndex: 0 }, RAINCUTTER_SKILL);
+    expect(takeOne(duel.sides, 1).characters.map(({ hp }) => hp)).toStrictEqual([8]);
+    expect(takeOne(duel.sides, 0).characters.map(({ aura }) => aura)).toStrictEqual([Element.Hydro]);
+    expect(takeOne(duel.sides, 0).onstages.map(({ cardId }) => cardId)).toStrictEqual([RAINBOW_BLADEWORK_ID]);
   });
 });

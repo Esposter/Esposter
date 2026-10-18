@@ -8,6 +8,7 @@ import { dandelionBreeze } from "#src/services/gcg/cards/dandelionBreeze";
 import { dawn } from "#src/services/gcg/cards/dawn";
 import { elementalSedimentation } from "#src/services/gcg/cards/elementalSedimentation";
 import { fantasticVoyage } from "#src/services/gcg/cards/fantasticVoyage";
+import { fatalRainscreen } from "#src/services/gcg/cards/fatalRainscreen";
 import { floralBrush } from "#src/services/gcg/cards/floralBrush";
 import { flowfireEdgeSkill } from "#src/services/gcg/cards/flowfireEdgeSkill";
 import { forbiddenCreation } from "#src/services/gcg/cards/forbiddenCreation";
@@ -26,6 +27,7 @@ import { nightrider } from "#src/services/gcg/cards/nightrider";
 import { niwabiFireDance } from "#src/services/gcg/cards/niwabiFireDance";
 import { oceanidMimicSummoning } from "#src/services/gcg/cards/oceanidMimicSummoning";
 import { pyronado } from "#src/services/gcg/cards/pyronado";
+import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { ryuukinSaxifrage } from "#src/services/gcg/cards/ryuukinSaxifrage";
 import { searingOnslaught } from "#src/services/gcg/cards/searingOnslaught";
 import { signatureMix } from "#src/services/gcg/cards/signatureMix";
@@ -43,6 +45,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_11032", frostgnaw],
   ["Char_Skill_11033", glacialWaltz],
   ["Char_Skill_11042", chonghuasLayeredFrost],
+  ["Char_Skill_12022", fatalRainscreen],
+  ["Char_Skill_12023", raincutter],
   ["Char_Skill_12032", mirrorReflectionOfDoom],
   ["Char_Skill_12033", stellarisPhantasm],
   ["Char_Skill_12034", illusoryTorrent],
