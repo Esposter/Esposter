@@ -264,7 +264,7 @@ export const useWorldCombat = ({
       return;
     }
 
-    strikePartyMember(enemyTables, party, enemy, combatant, kitContext.kitEffectState);
+    kitContext.outbox.push(...strikePartyMember(enemyTables, party, enemy, combatant, kitContext.kitEffectState));
     respawnParty();
   };
   // A boar's charge lands on the character on the field through the team's shields, and a team it fells respawns
