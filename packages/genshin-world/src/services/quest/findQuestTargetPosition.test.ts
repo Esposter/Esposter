@@ -28,6 +28,7 @@ const regionData: RegionData = {
   landmarks: [],
   outcropPlaces: [],
   residents: [],
+  rivers: [],
   waterfalls: [],
 };
 

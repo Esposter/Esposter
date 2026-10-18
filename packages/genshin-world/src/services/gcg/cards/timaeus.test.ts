@@ -10,6 +10,7 @@ import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { timaeus } from "#src/services/gcg/cards/timaeus";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TIMAEUS_ID = 322_003;
@@ -66,12 +67,12 @@ const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
 });
 
 const createArtifactSubject = (): GcgCostSubject => ({
-  card: createCard(ARTIFACT_IDS[0], GcgCardKind.Artifact),
+  card: createCard(takeOne(ARTIFACT_IDS, 0), GcgCardKind.Artifact),
   costs: [{ count: ARTIFACT_COST, kind: GcgCostKind.Unaligned }],
   element: Element.Hydro,
 });
 
-describe(timaeus, () => {
+describe("timaeus", () => {
   test("should come with two materials", () => {
     expect.hasAssertions();
     expect(createGcgZoneCard(TIMAEUS_ID, timaeus)).toStrictEqual({
@@ -92,20 +93,23 @@ describe(timaeus, () => {
 
   test("should draw a random artifact on play when the deck holds at least six artifacts", () => {
     expect.hasAssertions();
-    const side = createSide(ARTIFACT_IDS, [ACTION_ID, ARTIFACT_IDS[1], ARTIFACT_IDS[2]]);
+    const side = createSide(ARTIFACT_IDS, [ACTION_ID, takeOne(ARTIFACT_IDS, 1), takeOne(ARTIFACT_IDS, 2)]);
     const duel = createDuel(side, () => 0);
     timaeus.play?.({ duel, sideIndex: 0 }, undefined);
     expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
-      drawPile: [ACTION_ID, ARTIFACT_IDS[2]],
-      hand: [ARTIFACT_IDS[1]],
+      drawPile: [ACTION_ID, takeOne(ARTIFACT_IDS, 2)],
+      hand: [takeOne(ARTIFACT_IDS, 1)],
     });
   });
 
   test("should draw nothing on play when the deck holds fewer than six artifacts", () => {
     expect.hasAssertions();
-    const side = createSide(ARTIFACT_IDS.slice(0, 5), [ARTIFACT_IDS[1]]);
+    const side = createSide(ARTIFACT_IDS.slice(0, 5), [takeOne(ARTIFACT_IDS, 1)]);
     timaeus.play?.({ duel: createDuel(side, () => 0), sideIndex: 0 }, undefined);
-    expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({ drawPile: [ARTIFACT_IDS[1]], hand: [] });
+    expect({ drawPile: side.drawPile, hand: side.hand }).toStrictEqual({
+      drawPile: [takeOne(ARTIFACT_IDS, 1)],
+      hand: [],
+    });
   });
 
   test("should equip an artifact for free by spending materials equal to its cost, once per round", () => {

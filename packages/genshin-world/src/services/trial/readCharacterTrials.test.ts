@@ -1,3 +1,5 @@
+import type { readGameData } from "#src/services/data/readGameData";
+
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { describe, expect, test, vi } from "vitest";
 
@@ -19,7 +21,8 @@ const { TABLES } = vi.hoisted(() => ({
 }));
 
 vi.mock(import("#src/services/data/readGameData"), () => ({
-  readGameData: (_gameDataBaseUrl: string, key: keyof typeof TABLES) => Promise.resolve(TABLES[key]),
+  readGameData: ((_gameDataBaseUrl: string, key: string) =>
+    Promise.resolve(TABLES[key as keyof typeof TABLES])) as typeof readGameData,
 }));
 
 describe(readCharacterTrials, () => {

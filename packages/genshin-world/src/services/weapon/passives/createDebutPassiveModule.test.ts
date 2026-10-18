@@ -40,7 +40,7 @@ describe(createDebutPassiveModule, () => {
 
     expect(
       context.kitEffectState.effects
-        .filter(({ kind }) => kind === "buff")
+        .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining })),
     ).toStrictEqual([{ amount: 0.6, attribute: Attribute.AttackPercent, secondsRemaining: 10 }]);
   });
@@ -53,7 +53,7 @@ describe(createDebutPassiveModule, () => {
 
     expect(
       context.kitEffectState.effects
-        .filter(({ kind }) => kind === "buff")
+        .filter((effect) => effect.kind === "buff")
         .map(({ amount, attribute }) => ({ amount, attribute })),
     ).toStrictEqual(ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES.map((attribute) => ({ amount: 0.48, attribute })));
   });
@@ -66,7 +66,7 @@ describe(createDebutPassiveModule, () => {
     debutPassiveModule.onKitEvent?.(createTakeField(), context, wielder);
 
     expect(
-      context.kitEffectState.effects.filter(({ kind }) => kind === "buff").map(({ attribute }) => attribute),
+      context.kitEffectState.effects.filter((effect) => effect.kind === "buff").map(({ attribute }) => attribute),
     ).toStrictEqual([Attribute.AttackPercent]);
   });
 });
