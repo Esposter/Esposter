@@ -98,7 +98,7 @@ describe(createBloodstainedChivalrySetModule, () => {
     expect.hasAssertions();
 
     const { getStrikeDamageBonus, onKitEvent } = createBloodstainedChivalrySetModule(bonusOf(4));
-    const benchParty = createParty([2, TRAVELER_CHARACTER_ID]);
+    const benchParty = createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
     const benchKitEffectState: KitEffectState = { effects: [] };
     const benchContext = createKitTestContext(wearer, { kitEffectState: benchKitEffectState, party: benchParty });
 
@@ -107,7 +107,7 @@ describe(createBloodstainedChivalrySetModule, () => {
       getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, benchParty, benchKitEffectState.effects),
     ).toBe(0);
 
-    const party = createParty([TRAVELER_CHARACTER_ID, 2]);
+    const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
     const charged = createStrike(AttackTag.ChargedAttack);
@@ -117,7 +117,11 @@ describe(createBloodstainedChivalrySetModule, () => {
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
     expect(getStrikeDamageBonus?.(charged, enemy, party, kitEffectState.effects)).toBe(0.5);
     onKitEvent?.(
-      { characterId: 2, kind: KitEventKind.CharacterSwapped, previousCharacterId: TRAVELER_CHARACTER_ID },
+      {
+        characterId: OTHER_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: TRAVELER_CHARACTER_ID,
+      },
       context,
       wearer,
     );
