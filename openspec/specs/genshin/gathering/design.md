@@ -11,7 +11,7 @@ flowchart TD
   I --> L
   L --> C{"Which category?"}
   C -->|"Local Specialties"| S["Specialty: back 46 hours after the pick"]
-  C -->|"Inventory / Materials"| D["Daily: back at the game's midnight after the pick"]
+  C -->|"Inventory / Materials"| D["Daily: back at the first daily reset after the pick"]
   P["The official map's points, fitted to the scene"] --> PL["Each point of a labelled item, placed by its region"]
   L --> PL
   PL --> SLICE["One record per region, and the items record beside them"]
@@ -33,9 +33,9 @@ The slices and the items are published by `pnpm -C scripts genshin:assets gather
 The gather table's refresh ids do not name a policy in the dump. The ground rows that carry a refresh name ids the policy table lacks, and the rest carry none, so the policy cannot be read off the row. The category settles it instead, as the wiki gives each:
 
 - **A local specialty comes back 46 hours after it is picked**, the wiki's own figure for specialties.
-- **A cooking ingredient comes back at the game's midnight that follows the pick.** The wiki says the common overworld ingredients spawn at 0:00 server time each day, and a picked point is read as back at the next such midnight. The game's time zone is UTC+8, as the [Original Resin](../original-resin/design.md) page reads it.
+- **A cooking ingredient comes back at the first daily reset after the pick.** The daily reset is the 04:00 reset the shops and commissions use, read in the game's time zone, UTC+8, as the [Original Resin](../original-resin/design.md) page reads it. The wiki reads the common overworld ingredients as spawning at 0:00 server time, four hours before that reset; the change settles the reset, and the recording owed decides which the game keeps.
 
-An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the game's midnight, a White Iron Chunk or Starsilver two days after the break, and a Crystal Chunk, Amethyst Lump or Condessence Crystal three days after. Those labels are keyed by the map's label id, since a plant's category does not settle them.
+An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the daily reset, a White Iron Chunk or Starsilver two days after the break, and a Crystal Chunk, Amethyst Lump or Condessence Crystal three days after. Those labels are keyed by the map's label id, since a plant's category does not settle them.
 
 A point is kept as picked with the instant of the pick, and stands again once its respawn has come. Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks once a minute while it is open.
 
@@ -84,7 +84,7 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 
 - **Four cooking ingredients and one specialty are left out.** Apple, Starshroom, Bulle Fruit and Candlecap Mushroom are typed as a notice-restoring material the world's material type does not name yet, and Rukkhashava Mushrooms has its map label in the singular. Each is one line to add when its type or name lands.
 - **The stand-ins are the drops' stand-ins, and they cap at 64.** The world draws each PickUp row as a sphere up to the stand-in capacity, in list order, so most of Mondstadt's points are not drawn yet. Prompts still come from every standing point in reach. A distance cull of the stand-ins is the open part.
-- **The respawns are the wiki's, not measured.** The 46 hours is the wiki's figure, and the midnight is the wiki's reading of the daily spawn. Both wait on a recording of a point picked and watched (see the [roadmap](../../../changes/genshin-roadmap/tasks.md)).
+- **The respawns are the wiki's, not measured.** The 46 hours is the wiki's figure, and the daily point's clock is the shared daily reset, where the wiki reads the daily spawn at midnight. Both wait on a recording of a point picked and watched (see the [roadmap](../../../changes/genshin-roadmap/tasks.md)).
 
 ## Sources
 
