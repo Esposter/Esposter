@@ -381,7 +381,6 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
-  // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
   // A save from before the mail list has no list, and is refused rather than read as an empty mailbox
   test("a save without its mails is refused", () => {
     expect.hasAssertions();
@@ -406,6 +405,7 @@ describe("genshinSaveSchema", () => {
     expect(genshinSaveSchema.safeParse(save).success).toBe(false);
   });
 
+  // A save whose bag has no quick swap slots is refused: the field is required, so no save is read without it
   test("a save without quick swap slots is refused", () => {
     expect.hasAssertions();
     const save = { ...EMPTY_GENSHIN_SAVE, inventory: { items: [], nextId: 0 } };
