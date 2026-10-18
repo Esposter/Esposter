@@ -275,7 +275,7 @@ export const createCynoKitBehaviour = ({
         !counter ||
         (counter.stacks ?? 0) >= C4_STACKS_MAX ||
         !findKitStance(kitEffectState.effects, characterId) ||
-        !event.reactions.some(checkIsC4Reaction)
+        !event.reactions.some((reaction) => checkIsC4Reaction(reaction))
       )
         return;
       counter.stacks = (counter.stacks ?? 0) + 1;

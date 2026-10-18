@@ -130,7 +130,7 @@ const readEnergies = (ascension: number, energyRecharge: number): number[] => {
   });
   SARA_KIT.elementalSkill.onStart?.(context);
   SARA_KIT.chargedAttack.onStart?.(context);
-  const hit = takeOne(takeOne(kitEffectState.effects.filter(checkIsSummon)).hits);
+  const hit = takeOne(takeOne(kitEffectState.effects.filter((effect) => checkIsSummon(effect))).hits);
   hit.onStrike?.(context, { body: { facing: 0, height: 0, position: { x: 0, z: 0 } }, combatant, hit });
   return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) => getPartyMember(party, characterId).energy);
 };

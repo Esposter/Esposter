@@ -38,7 +38,9 @@ export const addDendroCores = (
       reactionType: TransformativeReactionType.Bloom,
       secondsRemaining: DENDRO_CORE_DROP_SECONDS + DENDRO_CORE_LIFETIME_SECONDS,
     });
-    for (const core of kitEffectState.effects.filter(checkIsBloomCore).slice(0, -MAX_DENDRO_CORE_COUNT))
+    for (const core of kitEffectState.effects
+      .filter((effect) => checkIsBloomCore(effect))
+      .slice(0, -MAX_DENDRO_CORE_COUNT))
       core.secondsRemaining = Math.min(core.secondsRemaining, DENDRO_CORE_DROP_SECONDS);
   }
 };

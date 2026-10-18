@@ -126,7 +126,7 @@ const cells = computed((): InventoryCell[] => {
   return [...currencyCells, ...itemCells];
 });
 // The destroy mode's counts and names: the chosen entries across the bag, and the bag's entries it may destroy
-const destroyableCount = computed(() => inventory.items.filter(checkIsInventoryItemDestroyable).length);
+const destroyableCount = computed(() => inventory.items.filter((item) => checkIsInventoryItemDestroyable(item)).length);
 const destroySelectedLabel = computed(() =>
   fillGameTextValues(gameText[GameTextKey.InventoryDestroySelected], chosenIds.value.length, destroyableCount.value),
 );

@@ -61,7 +61,9 @@ export const computeSurfaceStatistics = async ({
   const encoder = device.createCommandEncoder();
   const recorder = createRecorder(device, encoder);
   recorder.combine(valueBuffer, maskBuffer, maskBuffer, weightedBuffer, count, CombineMode.Product);
+  // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
   recorder.reduce(maskBuffer, partialBuffer, count, Slot.Count);
+  // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
   recorder.reduce(weightedBuffer, partialBuffer, count, Slot.Sum);
   for (const [level, sigma] of sigmas.entries()) {
     const radius = Math.ceil(3 * sigma);
@@ -76,6 +78,7 @@ export const computeSurfaceStatistics = async ({
     const finer = band === 0 ? valueBuffer : takeOne(levelBuffers, band - 1);
     const coarser = takeOne(levelBuffers, band);
     recorder.combine(finer, coarser, maskBuffer, termBuffer, count, CombineMode.SquaredDifference);
+    // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
     recorder.reduce(termBuffer, partialBuffer, count, Slot.FirstBand + band);
   }
   const [firstSlots = new Float32Array()] = await submitAndReadBuffers(device, encoder, [
@@ -92,6 +95,7 @@ export const computeSurfaceStatistics = async ({
   const varianceEncoder = device.createCommandEncoder();
   const varianceRecorder = createRecorder(device, varianceEncoder);
   varianceRecorder.combine(valueBuffer, maskBuffer, maskBuffer, termBuffer, count, CombineMode.SquaredDeviation, mean);
+  // eslint-disable-next-line no-restricted-syntax -- the GPU recorder's own reduce, not an array method: its first argument is a buffer
   varianceRecorder.reduce(termBuffer, partialBuffer, count, Slot.Count);
   const [varianceSlots = new Float32Array()] = await submitAndReadBuffers(device, varianceEncoder, [
     { buffer: partialBuffer, length: SURFACE_STATISTICS_PARTIAL_COUNT },

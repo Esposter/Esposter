@@ -27,7 +27,9 @@ export const readCharacterMesh = (
     if (modelBlob === undefined)
       throw new InvalidOperationError(Operation.Read, CHARACTER_MODEL_PATH, "is no file of the pack");
     const pmxModel = parsePmx(await modelBlob.arrayBuffer());
-    const drawnTextureIndices = new Set(pmxModel.materials.flatMap(getCharacterMaterialTextureIndices));
+    const drawnTextureIndices = new Set(
+      pmxModel.materials.flatMap((material) => getCharacterMaterialTextureIndices(material)),
+    );
     const toonTextureIndices = new Set(
       pmxModel.materials.filter(({ isToonShared }) => !isToonShared).map(({ toonIndex }) => toonIndex),
     );

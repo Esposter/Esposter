@@ -44,7 +44,9 @@ export const addCrystallizeShards = (
       position: getEnemyDropPoint(position, random),
       secondsRemaining: CRYSTALLIZE_SHARD_DROP_SECONDS + CRYSTALLIZE_SHARD_SECONDS,
     });
-    for (const shard of kitEffectState.effects.filter(checkIsKitCrystallizeShard).slice(0, -CRYSTALLIZE_SHARD_LIMIT))
+    for (const shard of kitEffectState.effects
+      .filter((effect) => checkIsKitCrystallizeShard(effect))
+      .slice(0, -CRYSTALLIZE_SHARD_LIMIT))
       shard.secondsRemaining = Math.min(shard.secondsRemaining, CRYSTALLIZE_EXCESS_SHARD_SECONDS);
   }
 };

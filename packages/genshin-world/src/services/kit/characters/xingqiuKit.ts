@@ -164,7 +164,7 @@ export const createXingqiuKitBehaviour = ({
     raincutter: KitSummon,
     { body: { facing, height, position }, kitEffectState }: KitContext,
   ): void => {
-    const waves = kitEffectState.effects.filter(checkIsSwordRainWave);
+    const waves = kitEffectState.effects.filter((effect) => checkIsSwordRainWave(effect));
     if (waves.some(({ elapsedSeconds }) => elapsedSeconds < SWORD_RAIN_INTERVAL_SECONDS)) return;
     const { combatant } = raincutter;
     const waveSizes =
