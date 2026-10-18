@@ -4,34 +4,38 @@ import { describe, expect, test } from "vitest";
 describe(toAbyssEnemyKinds, () => {
   const DESCRIBE_ID = 1;
   const OTHER_DESCRIBE_ID = 2;
-  const PLACED_ENEMY_KIND_ID = 32;
   const monsterRows = [
+    { describeId: DESCRIBE_ID, id: 32 },
     { describeId: DESCRIBE_ID, id: 31 },
-    { describeId: DESCRIBE_ID, id: PLACED_ENEMY_KIND_ID },
     { describeId: OTHER_DESCRIBE_ID, id: 41 },
   ];
 
-  test("a describe is fought as the one monster of it that the regions place", () => {
+  test("a describe is fought as its base variant, the monster of it with the lowest id", () => {
     expect.hasAssertions();
 
-    expect(toAbyssEnemyKinds([DESCRIBE_ID, OTHER_DESCRIBE_ID], monsterRows, [PLACED_ENEMY_KIND_ID])).toStrictEqual({
-      [DESCRIBE_ID]: PLACED_ENEMY_KIND_ID,
+    expect(toAbyssEnemyKinds([DESCRIBE_ID, OTHER_DESCRIBE_ID], monsterRows)).toStrictEqual({
+      [DESCRIBE_ID]: 31,
+      [OTHER_DESCRIBE_ID]: 41,
     });
   });
 
-  test("a describe none of whose monsters the regions place is left out", () => {
+  test("every Corridor chamber's enemies resolve to kinds", () => {
     expect.hasAssertions();
-
-    expect(toAbyssEnemyKinds([OTHER_DESCRIBE_ID], monsterRows, [PLACED_ENEMY_KIND_ID])).toStrictEqual({});
+    const corridorChambers = [
+      { halfMonsterDescribeIds: [[DESCRIBE_ID], [OTHER_DESCRIBE_ID]] },
+      { halfMonsterDescribeIds: [[OTHER_DESCRIBE_ID], [DESCRIBE_ID]] },
+    ];
+    const enemyKinds = toAbyssEnemyKinds(
+      corridorChambers.flatMap(({ halfMonsterDescribeIds }) => halfMonsterDescribeIds.flat()),
+      monsterRows,
+    );
+    for (const { halfMonsterDescribeIds } of corridorChambers)
+      for (const describeId of halfMonsterDescribeIds.flat()) expect(enemyKinds).toHaveProperty([String(describeId)]);
   });
 
-  test("a describe with two monsters the regions place is refused", () => {
+  test("a describe with no monster row is left out, as the world has no kind to fight it as", () => {
     expect.hasAssertions();
 
-    expect(() =>
-      toAbyssEnemyKinds([DESCRIBE_ID], monsterRows, [31, PLACED_ENEMY_KIND_ID]),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: 1, is placed as 2 kinds]`,
-    );
+    expect(toAbyssEnemyKinds([3], monsterRows)).toStrictEqual({});
   });
 });

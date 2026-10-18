@@ -14,7 +14,7 @@ describe("collectEnemyKindIds", () => {
     expect(kindIds).toStrictEqual([21010101, 21010401, 26010101]);
   });
 
-  test("every kind a bounty hunts is published once, beside the camps' kinds", () => {
+  test("every kind a bounty or a Spiral Abyss chamber fights is published once, beside the camps' kinds", () => {
     expect.hasAssertions();
     const kindIds = collectEnemyKindIds(
       [{ enemyCamps: [{ members: [{ enemyKindId: 21010101 }] }] }],
