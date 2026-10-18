@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { CraftingProgress } from "#src/models/crafting/CraftingProgress";
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 import type { Inventory } from "#src/models/inventory/Inventory";
@@ -11,6 +12,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { checkIsRecipeOpen } from "#src/services/crafting/checkIsRecipeOpen";
 import { CombineTypeGameTextKeyMap } from "#src/services/crafting/CombineTypeGameTextKeyMap";
 import { computeCraftableCount } from "#src/services/crafting/computeCraftableCount";
+import { computeCraftAchievementEvent } from "#src/services/crafting/computeCraftAchievementEvent";
 import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearnedRecipeCells";
 import { ORIGINAL_RESIN_ITEM_ID } from "#src/services/crafting/constants";
 import { craftRecipe } from "#src/services/crafting/craftRecipe";
@@ -46,7 +48,7 @@ interface Props {
 
 const { adventureRank, crafters, gameText, initialCrafterId, materialDataMap, nameText, progress, random, recipes } =
   defineProps<Props>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 // How many of each recipe the player has crafted, by the recipe's id, which the Crafting Performed line counts
@@ -134,6 +136,7 @@ const craft = () => {
   wallet.value = crafted.wallet;
   const craftedCount = craftedCountMap.value.get(recipe.id) ?? 0;
   craftedCountMap.value = new Map(craftedCountMap.value).set(recipe.id, craftedCount + craftCount);
+  emit("achievementEvents", [computeCraftAchievementEvent(recipe, craftCount)]);
 };
 </script>
 
