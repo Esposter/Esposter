@@ -4,7 +4,7 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { buildItems } from "#src/services/genshinAssets/items/buildItems";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { EnemyDropFamilyDropTableMap, GameDataset } from "genshin-world";
+import { EnemyDropFamilyDropTableMap, GadgetKind, GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
@@ -21,6 +21,8 @@ describe(buildItems, () => {
   const TREE_REWARD_ITEM_ID = 2000;
 
   const REPUTATION_REWARD_ITEM_ID = 140004;
+
+  const GADGET_ITEM_ID = 1001;
 
   const ADVENTURE_EXP_ID = 102;
 
@@ -65,6 +67,16 @@ describe(buildItems, () => {
       rankLevel: 4,
       stackLimit: 1,
     },
+    {
+      foodQuality: "",
+      id: GADGET_ITEM_ID,
+      itemUse: [],
+      materialType: "MATERIAL_WIDGET",
+      nameTextMapHash: 5,
+      rank: 1,
+      rankLevel: 1,
+      stackLimit: 1,
+    },
   ] satisfies MaterialRow[];
 
   beforeEach(() => {
@@ -77,6 +89,17 @@ describe(buildItems, () => {
         return Promise.resolve([
           { itemCount: 0, itemId: TREE_ITEM_ID, level: 1, rewards: [{ itemCount: 1, itemId: ADVENTURE_EXP_ID }] },
           { itemCount: 10, itemId: TREE_ITEM_ID, level: 2, rewards: [{ itemCount: 5, itemId: TREE_REWARD_ITEM_ID }] },
+        ]);
+      if (key === "gadgets/gadgets")
+        return Promise.resolve([
+          {
+            cooldownGroup: 0,
+            cooldownOnFailSeconds: 0,
+            cooldownSeconds: 0,
+            id: GADGET_ITEM_ID,
+            isEquipable: true,
+            kind: GadgetKind.Detector,
+          },
         ]);
       if (key === "reputation/mondstadt")
         return Promise.resolve({
@@ -107,6 +130,18 @@ describe(buildItems, () => {
 
     expect(ids.map(({ id }) => id)).toStrictEqual(expect.arrayContaining([TREE_ITEM_ID, TREE_REWARD_ITEM_ID]));
     expect(ids.map(({ id }) => id)).not.toContain(ADVENTURE_EXP_ID);
+  });
+
+  test("a gadget appears in the gadget tab", async () => {
+    expect.hasAssertions();
+
+    const built = await buildItems();
+
+    const items = built[`${GameDataset.Items}/materials`] as { id: number }[];
+
+    expect(items.filter(({ id }) => id === GADGET_ITEM_ID)).toStrictEqual([
+      { id: GADGET_ITEM_ID, materialType: "MATERIAL_WIDGET", nameTextId: "5", rank: 1, rarity: 1, stackLimit: 1 },
+    ]);
   });
 
   test("publishes every item a Reputation level pays", async () => {
