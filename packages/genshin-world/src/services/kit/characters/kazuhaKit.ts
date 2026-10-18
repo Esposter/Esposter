@@ -107,14 +107,14 @@ export const createKazuhaKitBehaviour = ({
         event.striker.characterId !== combatant.characterId
       )
         return;
-      const { attributeTotalMap } = getBuffedCombatant(
-        combatant,
-        kitEffectState.effects,
-        party,
-        characterIdCombatantMap,
-      ).attributes;
       for (const { element, reactionType } of event.reactions) {
         if (reactionType !== ReactionType.Swirl || element === undefined) continue;
+        const { attributeTotalMap } = getBuffedCombatant(
+          combatant,
+          kitEffectState.effects,
+          party,
+          characterIdCombatantMap,
+        ).attributes;
         buffKitTeam(kitEffectState, party, {
           amount: POETICS_ELEMENTAL_DAMAGE_BONUS_SHARE * attributeTotalMap[Attribute.ElementalMastery],
           attribute: ElementDamageBonusAttributeMap[element],
