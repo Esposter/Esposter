@@ -24,8 +24,8 @@ const NESTED_INTERACTION_SELECTOR = [
   "[role='tab']",
 ].join(", ");
 // Whether a click on a control of its own sits inside what opens on a click, rather than being the click on that
-// Container. A press asks this when it must leave a control alone, and a click asks checkIsNestedInteraction, which adds
-// The end of a text selection
+// Container. A press asks this when it must leave a control alone, and a click asks checkIsNestedInteraction,
+// Which adds the end of a text selection
 export const checkIsNestedControl = (event: MouseEvent): boolean => {
   const { currentTarget, target } = event;
   if (!(currentTarget instanceof Element) || !(target instanceof Element)) return false;
