@@ -19,6 +19,7 @@ Every open resource adopts another device's save, and an unsaved edit is present
 ## Capabilities
 
 - **architecture/ai-native-resources/live-edits** (new)
+- **resource/resource-page-parity** (modified: its stale-save requirement becomes the choice)
 
 ## Waiting on
 

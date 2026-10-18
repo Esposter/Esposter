@@ -8,7 +8,7 @@ Every key created before scopes was made for the follow-ups, the only tools ther
 
 ## The owner's alone
 
-`Meta` gains `humanOnly`, the reason a procedure is never served to a key, and the bridge skips any procedure declaring it. The rule is reversibility: an agent may do whatever a revision, the recycle bin or an unpublish can undo, publishing and moving to the bin included, and what nothing can undo stays with the owner's own hand.
+`Meta` carries `humanOnly`, the reason a procedure is never served to a key, and the bridge skips any procedure declaring it. The rule is reversibility: an agent may do whatever a revision, the recycle bin or an unpublish can undo, publishing and moving to the bin included, and what nothing can undo stays with the owner's own hand.
 
 | Procedure                                                                                 | Why it stays the owner's                                                                                                                                          |
 | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
