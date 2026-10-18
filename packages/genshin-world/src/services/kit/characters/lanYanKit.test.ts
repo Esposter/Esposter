@@ -85,3 +85,27 @@ describe(createLanYanKitBehaviour, () => {
     ]);
   });
 });
+
+// Lustrous Moonrise's hits' flat damage from Elemental Mastery, with Lan Yan at the given ascension
+const readBurstBonuses = (ascension: number): number[] => {
+  const combatant = {
+    ...createLanYanCombatant(0),
+    ascension,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: 1000 }]),
+  };
+  return LAN_YAN_KIT.elementalBurst.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant) ?? 0);
+};
+
+describe("skyfeather Evil-Subduing Charm", () => {
+  test("a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readBurstBonuses(4)).toStrictEqual(LAN_YAN_KIT.elementalBurst.hits.map(() => 7.74 * 1000));
+  });
+
+  test("a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
+
+    expect(readBurstBonuses(3)).toStrictEqual(LAN_YAN_KIT.elementalBurst.hits.map(() => 0));
+  });
+});
