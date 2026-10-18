@@ -1,20 +1,12 @@
 // @vitest-environment nuxt
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
 
+import { press } from "@/components/Ui/press.test";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import UiTree from "@/components/Ui/Tree/Index.vue";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { flushPromises } from "@vue/test-utils";
-import { assert, describe, expect, test } from "vitest";
-
-const getFocusedId = () => document.activeElement?.getAttribute("data-item-id");
-const press = async (key: string) => {
-  assert.exists(document.activeElement);
-  document.activeElement.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, key }));
-  await flushPromises();
-  return getFocusedId();
-};
+import { describe, expect, test } from "vitest";
 
 describe("uiTree", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
