@@ -128,17 +128,21 @@ export const createGorouKitBehaviour = ({
   const warBannerNextTickSeconds = readSeconds("generalsWarBannerFirstTick");
   const juugaFieldNextTickSeconds = readSeconds("generalsGloryFirstTick");
   const bannerTickSeconds = readSeconds("bannerTick");
-  const crystalCollapseFirstSeconds = readSeconds("crystalCollapseFirst");
   const crystalCollapseIntervalSeconds = readSeconds("crystalCollapseInterval");
   const burstDefenseDamageBonus = createDefenseDamageBonus(BURST_DEFENSE_SHARE);
   const crystalCollapseHit = readHit("crystalCollapse", { additiveBaseDamageBonus: burstDefenseDamageBonus });
-  // Crystal Collapse ticks for as long as the field lasts, each its interval after the last from the first's seconds
-  // After the burst's hit
+  // Crystal Collapse ticks from its own hitmark, the burst's hit with its task's 90 frames and its own 1, each its
+  // Interval after the last, while the field stands: gcsim's task finds the field spent on its end frame, so a tick that
+  // Falls there or past it is not set out
   const crystalCollapseHits = Array.from(
-    { length: Math.floor(juugaSeconds / crystalCollapseIntervalSeconds) },
+    {
+      length: Math.ceil(
+        (burstHitmarkSeconds + juugaSeconds - crystalCollapseHit.hitmarkSeconds) / crystalCollapseIntervalSeconds,
+      ),
+    },
     (_value, index) => ({
       ...crystalCollapseHit,
-      hitmarkSeconds: burstHitmarkSeconds + (crystalCollapseFirstSeconds + crystalCollapseIntervalSeconds * index),
+      hitmarkSeconds: crystalCollapseHit.hitmarkSeconds + crystalCollapseIntervalSeconds * index,
     }),
   );
 

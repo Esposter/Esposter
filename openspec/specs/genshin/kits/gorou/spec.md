@@ -62,12 +62,12 @@ Juuga SHALL raise a field that follows Gorou's body and gives the active charact
 
 ### Requirement: Crystal Collapse follows Gorou's body
 
-Crystal Collapse SHALL follow Gorou's body and strike on six ticks, ending nine seconds from its hit.
+Crystal Collapse SHALL follow Gorou's body and strike on five ticks, ending nine seconds from its hit.
 
-#### Scenario: Crystal Collapse strikes on six ticks
+#### Scenario: Crystal Collapse strikes on five ticks
 
 - **GIVEN** Juuga's Crystal Collapse is cast
-- **WHEN** its six ticks come due
+- **WHEN** its five ticks come due
 - **THEN** each tick strikes while Crystal Collapse follows Gorou's body
 - **AND** it ends nine seconds from the hit, as the field does
 
