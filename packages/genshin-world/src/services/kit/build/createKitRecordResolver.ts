@@ -56,9 +56,13 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
     return getTalentMultiplier(talentMultiplierMap, proudSkillGroupId, level, index);
   };
   const toHitFields = (hitRecord: Partial<KitHitRecord>): Partial<KitHit> => {
-    const { bubble, healParty, lunarReactionType, multiplier, scalingAttribute, stackedHit } = hitRecord;
+    const { bubble, healParty, lunarReactionType, multiplier, multiplierFactor, scalingAttribute, stackedHit } =
+      hitRecord;
     const additiveScalingAttribute = getAdditiveScalingAttribute(hitRecord);
-    const multiplierValue = multiplier === undefined ? undefined : toParameter(multiplier);
+    const multiplierValue =
+      multiplier === undefined
+        ? undefined
+        : toParameter(multiplier) * (multiplierFactor === undefined ? 1 : toParameter(multiplierFactor));
     return {
       ...(additiveScalingAttribute !== undefined &&
         multiplierValue !== undefined && {
