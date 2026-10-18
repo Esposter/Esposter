@@ -3,6 +3,7 @@ import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expedition
 
 import { toExpeditionPlaceRow } from "#src/services/genshinAssets/expeditions/toExpeditionPlaceRow";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
+import { ExpeditionRegion } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(toExpeditionPlaceRow, () => {
@@ -39,12 +40,13 @@ describe(toExpeditionPlaceRow, () => {
 
   test("should read the rank, statue and durations of a place with its reward preview's items", () => {
     expect.hasAssertions();
-    expect(toExpeditionPlaceRow(row, previews)).toStrictEqual({
+    expect(toExpeditionPlaceRow(row, previews, ExpeditionRegion.Mondstadt)).toStrictEqual({
       durations: [{ hours: HOURS, items: [{ itemId: ITEM_ID, maxCount: 5, minCount: 4 }] }],
       id: PLACE_ID,
       nameTextId: String(NAME_TEXT_HASH),
       questId: "",
       rankLevel: RANK_LEVEL,
+      region: ExpeditionRegion.Mondstadt,
       statuePointId: STATUE_POINT_ID,
     });
   });
@@ -52,13 +54,13 @@ describe(toExpeditionPlaceRow, () => {
   test("should read a rank condition the dump leaves untyped as the rank", () => {
     expect.hasAssertions();
     const untypedRow: ExcelExpeditionDataRow = { ...row, MOOEHHLEOOB: [{ AOCOBPPBOOL: RANK_LEVEL, OLDPDBIPNHD: 0 }] };
-    expect(toExpeditionPlaceRow(untypedRow, previews).rankLevel).toBe(RANK_LEVEL);
+    expect(toExpeditionPlaceRow(untypedRow, previews, ExpeditionRegion.Mondstadt).rankLevel).toBe(RANK_LEVEL);
   });
 
   test("should read an empty condition as the rank at zero, so a rank beside it stays a number", () => {
     expect.hasAssertions();
     const emptyRow: ExcelExpeditionDataRow = { ...row, MOOEHHLEOOB: [{ AOCOBPPBOOL: RANK_LEVEL }, {}] };
-    expect(toExpeditionPlaceRow(emptyRow, previews).rankLevel).toBe(RANK_LEVEL);
+    expect(toExpeditionPlaceRow(emptyRow, previews, ExpeditionRegion.Mondstadt).rankLevel).toBe(RANK_LEVEL);
   });
 
   test("should refuse a statue named in another scene", () => {
@@ -67,7 +69,9 @@ describe(toExpeditionPlaceRow, () => {
       ...row,
       MOOEHHLEOOB: [{ AOCOBPPBOOL: STATUE_POINT_ID, OLDPDBIPNHD: 4, type: "EXP_OPEN_COND_POINT" }],
     };
-    expect(() => toExpeditionPlaceRow(otherSceneRow, previews)).toThrowErrorMatchingInlineSnapshot(
+    expect(() =>
+      toExpeditionPlaceRow(otherSceneRow, previews, ExpeditionRegion.Mondstadt),
+    ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: 101, names a point in scene 4]`,
     );
   });

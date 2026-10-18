@@ -2,6 +2,7 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { ExpeditionContext } from "#src/models/expedition/ExpeditionContext";
 import type { ExpeditionLimitAdd } from "#src/models/expedition/ExpeditionLimitAdd";
+import type { ExpeditionPassive } from "#src/models/expedition/ExpeditionPassive";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -14,6 +15,7 @@ import { checkIsExpeditionPlaceOpen } from "#src/services/expedition/checkIsExpe
 import { checkIsExpeditionReturned } from "#src/services/expedition/checkIsExpeditionReturned";
 import { claimExpedition } from "#src/services/expedition/claimExpedition";
 import { computeExpeditionLimit } from "#src/services/expedition/computeExpeditionLimit";
+import { computeExpeditionPassives } from "#src/services/expedition/computeExpeditionPassives";
 import { recallExpedition } from "#src/services/expedition/recallExpedition";
 import { sendExpedition } from "#src/services/expedition/sendExpedition";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
@@ -40,6 +42,8 @@ interface Props {
   now: Temporal.Instant;
   // Each place's pin at 1080 high in the frame, by its id; a place with no position is not drawn
   pinPositions: ReadonlyMap<number, { x: number; y: number }>;
+  // The expedition talents each character has unlocked, by character id, which shorten its expeditions and add to their rewards
+  characterExpeditionPassives: ReadonlyMap<number, readonly ExpeditionPassive[]>;
   // Mondstadt's expedition places as the game's tables hold them
   places: ExpeditionPlace[];
   // The world's seeded random source, which each claim's counts are drawn from
@@ -53,6 +57,7 @@ const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const {
   adventureRank,
+  characterExpeditionPassives,
   characters,
   completedQuestIds,
   downCharacterIds,
@@ -88,9 +93,17 @@ const getExpeditionAt = (placeId: number): Expedition | undefined =>
 const pickedPlace = computed(() => openPlaces.value.find(({ id }) => id === place.value));
 const pickedExpedition = computed(() => (pickedPlace.value ? getExpeditionAt(pickedPlace.value.id) : undefined));
 // An expedition returned is claimed and one still out is recalled, while a place with none out is sent to
-const getActionKind = (expedition: Expedition | undefined): ExpeditionActionKind => {
+// The talents of the character sent shorten the time it takes in the place's region, so the return is read with them
+const getActionKind = (expeditionPlace: ExpeditionPlace, expedition: Expedition | undefined): ExpeditionActionKind => {
   if (!expedition) return ExpeditionActionKind.Send;
-  return checkIsExpeditionReturned(expedition, now) ? ExpeditionActionKind.Claim : ExpeditionActionKind.Recall;
+  const { timeReductionPercent } = computeExpeditionPassives(
+    characterExpeditionPassives.get(expedition.characterId) ?? [],
+    expeditionPlace.region,
+    expedition.hours,
+  );
+  return checkIsExpeditionReturned(expedition, now, timeReductionPercent)
+    ? ExpeditionActionKind.Claim
+    : ExpeditionActionKind.Recall;
 };
 const actionLabels: Record<ExpeditionActionKind, string> = {
   [ExpeditionActionKind.Claim]: gameText[GameTextKey.ExpeditionClaim],
@@ -110,7 +123,7 @@ const detail = computed<ExpeditionPlaceDetail | undefined>(() => {
   const picked = pickedPlace.value;
   if (!picked) return undefined;
   const expedition = pickedExpedition.value;
-  const actionKind = getActionKind(expedition);
+  const actionKind = getActionKind(picked, expedition);
   const duration = picked.durations.find(({ hours: durationHours }) => durationHours === hours.value);
   return {
     actionKind,
@@ -167,6 +180,7 @@ const claim = (placeId: number) => {
     materialDataMap,
     now,
     random,
+    characterExpeditionPassives.get(expedition.characterId) ?? [],
   );
   if (!claimed) return;
   expeditions.value = claimed.expeditions;

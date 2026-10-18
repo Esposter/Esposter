@@ -1,6 +1,7 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { ExpeditionContext } from "#src/models/expedition/ExpeditionContext";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { EXPEDITION_UNLOCK_RANK } from "#src/services/expedition/constants";
@@ -19,6 +20,7 @@ describe(sendExpedition, () => {
     nameTextId: GameTextKey.Windrise,
     questId: "",
     rankLevel: EXPEDITION_UNLOCK_RANK,
+    region: ExpeditionRegion.Mondstadt,
     statuePointId: 0,
   };
   const context: ExpeditionContext = {

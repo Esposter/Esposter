@@ -1,6 +1,7 @@
 import type { ExcelExpeditionDataRow } from "#src/models/genshinAssets/expeditions/ExcelExpeditionDataRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { ExpeditionPlaceRow } from "#src/models/genshinAssets/expeditions/ExpeditionPlaceRow";
+import type { ExpeditionRegion } from "genshin-world";
 
 import {
   EXPEDITION_POINT_CONDITION,
@@ -14,10 +15,11 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // One place as the world reads it. Its Adventure Rank is the highest rank condition it names, its statue a point of the
 // Overworld, its quest a quest id, and each duration's items are its reward preview's, with a count drawn from its range.
 // A condition of another kind, a statue in another scene or a preview the table lacks is an error, since the rule would
-// Otherwise open the place wrongly
+// Otherwise open the place wrongly. The place is in the region the caller names
 export const toExpeditionPlaceRow = (
   row: ExcelExpeditionDataRow,
   rewardPreviews: ReadonlyMap<number, ExcelRewardPreviewRow>,
+  region: ExpeditionRegion,
 ): ExpeditionPlaceRow => {
   let rankLevel = 0;
   let statuePointId = 0;
@@ -48,6 +50,7 @@ export const toExpeditionPlaceRow = (
     nameTextId: String(row.nameTextMapHash),
     questId,
     rankLevel,
+    region,
     statuePointId,
   };
 };

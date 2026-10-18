@@ -33,6 +33,7 @@ export const props = {
   // Kaeya is out to a place the Mondstadt map does not pin, an hour into a twelve-hour expedition
   expeditions: [{ characterId: 3, hours: 12, leftAt: now.subtract({ hours: 1 }), placeId: 0 }],
   gameText: ENGLISH_GAME_TEXT,
+  characterExpeditionPassives: new Map(),
   hours: 4,
   inventory: { items: [], nextId: 1 },
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),

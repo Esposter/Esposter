@@ -9,4 +9,9 @@ x-touches:
     "packages/genshin-world/src/components/Expedition/**",
     "packages/genshin-world/src/services/expedition/**",
     "packages/genshin-world/src/components/World/Session/Index.vue",
+    "packages/genshin-world/src/models/expedition/**",
+    "scripts/src/services/genshinAssets/expeditions/**",
+    "scripts/src/services/genshinAssets/commands/expeditionsCommand.ts",
+    "scripts/src/models/genshinAssets/expeditions/**",
+    "scripts/src/models/genshinAssets/stats/ExcelProudSkillRow.ts",
   ]

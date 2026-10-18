@@ -908,6 +908,24 @@ const expeditionCharacters = computed(() =>
     name: nameText[statTables.characterDataMap.get(id)?.nameTextId ?? ""] || "",
   })),
 );
+// Each character's passives it has unlocked at its ascension, by their proud skill groups, which the expedition talents are
+// Read from. A character with no talent kit has none
+const characterPassiveGroupIdMap = computed(
+  () =>
+    new Map(
+      characters.value.map(
+        ({ ascension, id }) =>
+          [
+            id,
+            new Set(
+              (characterTalentKits.find((kit) => kit.characterId === id)?.passives ?? [])
+                .filter(({ phase }) => phase <= ascension)
+                .map(({ proudSkillGroupId }) => proudSkillGroupId),
+            ),
+          ] as const,
+      ),
+    ),
+);
 const downCharacterIds = computed(
   () => new Set(characters.value.filter(({ id }) => checkIsCharacterDown(party, id)).map(({ id }) => id)),
 );
@@ -2046,6 +2064,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:expeditions="expeditions"
       :adventure-rank="rank"
       :characters="expeditionCharacters"
+      :character-passive-group-id-map="characterPassiveGroupIdMap"
       :completed-quest-ids="completedMainQuestIds"
       :down-character-ids="downCharacterIds"
       :game-data-base-url="gameDataBaseUrl"

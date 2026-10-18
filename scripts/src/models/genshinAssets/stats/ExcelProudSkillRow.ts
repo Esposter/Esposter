@@ -5,6 +5,7 @@ export interface ExcelProudSkillRow {
   breakLevel: number;
   coinCost: number;
   costItems: { count: number; id: number }[];
+  descTextMapHash: number;
   level: number;
   paramDescList: number[];
   paramList: number[];
