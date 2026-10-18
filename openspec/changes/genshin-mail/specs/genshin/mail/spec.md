@@ -75,3 +75,31 @@ The Mail screen SHALL offer Delete Read, which removes every read mail whose att
 - **GIVEN** the player holds a read pinned mail
 - **WHEN** the player presses Delete Read
 - **THEN** the mail is kept
+
+### Requirement: A starred mail is kept in the Gift Mail Box
+
+The Mail screen SHALL let the player star a held mail into the Gift Mail Box, which lists the starred mails and the birthday mails already claimed, apart from the Mailbox. A mail in the Gift Mail Box SHALL NOT expire and SHALL NOT be removed by Delete Read.
+
+#### Scenario: Starring a mail moves it to the Gift Mail Box
+
+- **GIVEN** the player holds a mail in the Mailbox
+- **WHEN** the player stars it
+- **THEN** the mail is listed under the Gift Mail Box tab and no longer under the Mailbox tab
+
+#### Scenario: Unstarring a mail returns it to the Mailbox
+
+- **GIVEN** the player has starred a mail
+- **WHEN** the player removes its star
+- **THEN** the mail is listed under the Mailbox tab again
+
+#### Scenario: A starred mail is kept past its expiry
+
+- **GIVEN** the player has starred a mail that is past its expiry
+- **WHEN** the mailbox loads
+- **THEN** the mail is kept
+
+#### Scenario: Delete Read keeps a starred mail
+
+- **GIVEN** the player has starred a read mail whose attachment is claimed
+- **WHEN** the player presses Delete Read
+- **THEN** the mail is kept

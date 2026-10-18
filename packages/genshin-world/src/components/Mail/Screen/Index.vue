@@ -13,6 +13,7 @@ import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
+import { isGiftBoxed } from "#src/services/mail/isGiftBoxed";
 import { MailExpiryGameTextKeyMap } from "#src/services/mail/MailExpiryGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { GameButton, GameButtonKind } from "genshin-interface";
@@ -50,6 +51,7 @@ const emit = defineEmits<{
   close: [];
   deleteRead: [];
   read: [mailId: number];
+  star: [mailId: number];
 }>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
@@ -59,8 +61,13 @@ const sortedEntries = computed<MailEntry[]>(() =>
   }),
 );
 const selectedMailId = ref<number>();
+// The Mailbox tab lists the mails outside the Gift Mail Box, and the Gift Mail Box tab the mails inside it
+const isGiftBoxTab = ref(false);
+const visibleEntries = computed(() =>
+  sortedEntries.value.filter(({ mail }) => isGiftBoxed(mail, birthdayMailIds) === isGiftBoxTab.value),
+);
 const selectedEntry = computed(
-  () => sortedEntries.value.find(({ mail }) => mail.id === selectedMailId.value) ?? sortedEntries.value[0],
+  () => visibleEntries.value.find(({ mail }) => mail.id === selectedMailId.value) ?? visibleEntries.value[0],
 );
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),
@@ -77,9 +84,9 @@ const getItemName = (itemId: number): string => {
   const materialData = materialDataMap.get(itemId);
   return materialData ? toItemDefinition(materialData, names).name : String(itemId);
 };
-// A claimed birthday mail sits in the Gift Mail Box, which keeps it; any other mail shows its time left
+// A mail in the Gift Mail Box is kept there and says so; any other mail shows its time left
 const getStatusText = ({ mail, row }: MailEntry): string => {
-  if (birthdayMailIds.has(mail.id) && mail.isClaimed) return gameText[GameTextKey.MailGiftBox];
+  if (isGiftBoxed(mail, birthdayMailIds)) return gameText[GameTextKey.MailGiftBox];
   const { count, unit } = getMailExpiry(mail.deliveredAt, row.expireDays, now);
   return fillGameTextValues(gameText[MailExpiryGameTextKeyMap[unit]], count);
 };
@@ -88,10 +95,27 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 <template>
   <!-- The game's mailbox, which the Paimon menu opens: its mails down the left, pinned first and each with its sender and
        time left, and the selected mail on the right with its text and the items it gives, claimed once. Claim All claims
-       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. Not yet
-       built: the Gift Mail Box's own list, the mail's Date line, and the look the English client draws -->
+       every mail's items the bag can take, and Delete Read removes every read mail with nothing left to claim. A star
+       puts a mail in the Gift Mail Box, the tab beside the Mailbox. Not yet built: the mail's Date line, and the look the
+       English client draws -->
   <MenuListScreen :game-text :title="gameText[GameTextKey.Mail]" @close="emit('close')">
     <template #tabs>
+      <GameButton
+        class="mailbox-tab"
+        :aria-pressed="!isGiftBoxTab"
+        :kind="GameButtonKind.Pill"
+        @click="isGiftBoxTab = false"
+      >
+        {{ gameText[GameTextKey.MailBox] }}
+      </GameButton>
+      <GameButton
+        class="gift-box-tab"
+        :aria-pressed="isGiftBoxTab"
+        :kind="GameButtonKind.Pill"
+        @click="isGiftBoxTab = true"
+      >
+        {{ gameText[GameTextKey.MailGiftBox] }}
+      </GameButton>
       <GameButton class="claim-all" :disabled="!hasClaimable" :kind="GameButtonKind.Pill" @click="emit('claimAll')">
         {{ gameText[GameTextKey.MailClaimAll] }}
       </GameButton>
@@ -107,9 +131,9 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
     <template #list>
       <p v-if="isBagFull" class="notice">{{ gameText[GameTextKey.BagFull] }}</p>
       <p v-if="mails.length >= MAX_MAIL_COUNT" class="notice">{{ gameText[GameTextKey.MailFull] }}</p>
-      <div v-if="sortedEntries.length > 0" class="list" role="tablist" aria-orientation="vertical">
+      <div v-if="visibleEntries.length > 0" class="list" role="tablist" aria-orientation="vertical">
         <MenuListScreenTab
-          v-for="entry of sortedEntries"
+          v-for="entry of visibleEntries"
           :key="entry.mail.id"
           :aria-selected="entry.mail.id === selectedEntry?.mail.id"
           :data-read="entry.mail.isRead || undefined"
@@ -147,6 +171,9 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
           @click="emit('claim', selectedEntry.mail.id)"
         >
           {{ gameText[GameTextKey.MailClaim] }}
+        </GameButton>
+        <GameButton class="star" :kind="GameButtonKind.Pill" @click="emit('star', selectedEntry.mail.id)">
+          {{ gameText[selectedEntry.mail.isStarred ? GameTextKey.MailCancelStar : GameTextKey.MailStar] }}
         </GameButton>
       </MenuListScreenDetail>
     </template>
@@ -186,7 +213,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 }
 
 .claim-all,
-.claim {
+.claim,
+.star {
   margin-top: calc(var(--unit) * 20);
 }
 </style>

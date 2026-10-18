@@ -455,6 +455,8 @@ export enum GameTextKey {
   LuxuriousChest = "94050446",
   MagicalCrystalChunk = "2057452708",
   Mail = "UI_PLAYER_PROFILE_MAIL",
+  MailBox = "UI_MAIL_TITLE",
+  MailCancelStar = "UI_MAIL_CANCEL_STAR",
   MailClaim = "UI_MAIL_GET_BUTTON",
   MailClaimAll = "UI_MAIL_GET_ALL_BUTTON",
   MailClaimed = "UI_MAIL_HAS_GET_TIP",
@@ -468,6 +470,7 @@ export enum GameTextKey {
   MailNoMail = "UI_MAIL_NO_MAIL_TIP_TITLE",
   MailNoMailDescription = "UI_MAIL_NO_MAIL_TIP_DESC",
   MailSender = "MAIL_DETAIL_SENDER",
+  MailStar = "UI_MAIL_STAR",
 
   Map = "UI_STC_MAP_TITLE",
   Marcotte = "1070567836",

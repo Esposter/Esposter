@@ -116,13 +116,16 @@ export const useWorldMail = ({
     applyMailboxState(nextState);
   };
   const deleteRead = () => {
-    const mailRows = mailData.value?.mailRows;
-    if (!mailRows) return;
-    mails.value = deleteReadMails(mails.value, mailRows);
+    if (!mailData.value) return;
+    const { birthdayMailIds, mailRows } = mailData.value;
+    mails.value = deleteReadMails(mails.value, mailRows, birthdayMailIds);
   };
   const markMailRead = (mailId: number) => {
     mails.value = mails.value.map((mail) => (mail.id === mailId && !mail.isRead ? { ...mail, isRead: true } : mail));
   };
+  const toggleMailStar = (mailId: number) => {
+    mails.value = mails.value.map((mail) => (mail.id === mailId ? { ...mail, isStarred: !mail.isStarred } : mail));
+  };
 
-  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead };
+  return { claim, claimAll, deleteRead, isBagFull, mailData, mails, markMailRead, toggleMailStar };
 };
