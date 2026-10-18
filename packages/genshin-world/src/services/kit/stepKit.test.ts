@@ -280,6 +280,32 @@ describe(stepKit, () => {
     expect(kitState.actionSeconds).toBeCloseTo(0.1 * 1.2);
   });
 
+  test("plays a normal attack faster by a Normal ATK SPD buff its character carries", () => {
+    expect.hasAssertions();
+    const kitState = createKitState();
+    const context = createKitTestContext(TRAVELER_COMBATANT, {
+      kitEffectState: {
+        effects: [
+          {
+            amount: 0.2,
+            attribute: Attribute.NormalAttackSpeed,
+            characterId: TRAVELER_CHARACTER_ID,
+            kind: "buff",
+            secondsRemaining: 1,
+          },
+        ],
+      },
+    });
+    const stepWith = (input: KitInput, stepSeconds: number): void => {
+      stepKit(kitState, TRAVELER_KIT, input, createPartyMember(), createStamina(STAMINA_MAX), stepSeconds, [], context);
+    };
+
+    stepWith({ ...IDLE_INPUT, isAttackPressed: true }, 0);
+    stepWith(IDLE_INPUT, 0.1);
+
+    expect(kitState.actionSeconds).toBeCloseTo(0.1 * 1.2);
+  });
+
   test("plays a normal attack faster by the Normal ATK SPD its character's infusion raises", () => {
     expect.hasAssertions();
     const [firstHit] = TRAVELER_KIT.normalAttacks[0]?.hits ?? [];

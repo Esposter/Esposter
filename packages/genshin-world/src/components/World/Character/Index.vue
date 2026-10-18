@@ -21,6 +21,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { CAMERA_FRAME_PRIORITY, FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitState } from "#src/services/kit/createKitState";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { stepActiveKit } from "#src/services/kit/stepActiveKit";
 import { getFollowCameraSettings } from "#src/services/menu/getFollowCameraSettings";
 import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSettings";
@@ -151,6 +152,12 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
   const isBurstPressed =
     heldPresses.has(InputAction.ElementalBurst) || (burstSwitchIndex !== -1 && burstSwitchIndex === party.activeIndex);
   const isSkillPressed = heldPresses.has(InputAction.ElementalSkill);
+  const activeCombatant = kitContext.characterIdCombatantMap.get(getActiveCharacterId(party));
+  const movementSpeed = activeCombatant
+    ? getBuffedCombatant(activeCombatant, kitContext.kitEffectState.effects, party).attributes.attributeTotalMap[
+        Attribute.MovementSpeed
+      ]
+    : 0;
   // Impetuous Winds raises the speeds the controller moves the body by, read from the character on the field before the
   // Controller steps
   characterController.step(
@@ -158,9 +165,7 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
     followCamera?.yaw ?? 0,
     getMovementSpeedLocomotion(
       checkIsImpetuousWinds() ? getImpetuousWindsLocomotion(locomotion) : locomotion,
-      kitContext.characterIdCombatantMap.get(getActiveCharacterId(party))?.attributes.attributeTotalMap[
-        Attribute.MovementSpeed
-      ] ?? 0,
+      movementSpeed,
     ),
     FIXED_STEP_SECONDS,
   );
