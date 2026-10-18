@@ -11,6 +11,7 @@ import {
   ORE_ID,
   oreName,
   props,
+  rankedWeaponData,
   variants,
   weaponData,
 } from "#src/components/Weapon/Screen/Index.fixture";
@@ -275,5 +276,26 @@ describe("weaponScreen", () => {
     });
 
     expect(container.querySelector(".passive")).toBeNull();
+  });
+
+  // The held rank's description is the one the game gives that rank, its value filled in as the weapon's record gives it
+  test("a weapon's rank descriptions read the values their rank gives", async () => {
+    expect.hasAssertions();
+
+    const { container } = await render(WeaponScreenContainer, {
+      props: {
+        ...props,
+        weaponDataMap: new Map<number, WeaponData>([
+          ...props.weaponDataMap,
+          [weaponData.id, { ...rankedWeaponData, id: weaponData.id }],
+        ]),
+      },
+    });
+    const heldDescription = props.nameText[rankedWeaponData.passiveRankDescriptionTextIds[0] ?? ""] ?? "";
+    const heldValue = Math.round((rankedWeaponData.passiveRankParams[0]?.[0] ?? 0) * 100);
+
+    await expect.element(page.getByText(heldDescription, { exact: true })).toBeVisible();
+    expect(heldDescription).toContain(`${heldValue}%`);
+    expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe(heldDescription);
   });
 });
