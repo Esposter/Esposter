@@ -27,32 +27,6 @@ The cutover SHALL delete the stored files of each removed webpage or email and r
 - **THEN** the email's stored files are gone
 - **AND** its owner's storage usage falls by their total size
 
-### Requirement: A Blueprint's webpage and email entries deploy as fresh documents
-
-The cutover SHALL remove the editor content from each Blueprint entry of webpage or email type, so that deploying the entry creates an empty document.
-
-#### Scenario: A Blueprint's webpage entry deploys as a fresh document
-
-- **GIVEN** a Blueprint whose captured entry is a webpage
-- **WHEN** an owner deploys the Blueprint after the cutover
-- **THEN** the deployed webpage starts as an empty document
-
-#### Scenario: A Blueprint revision from before the cutover is refused
-
-- **GIVEN** a Blueprint revision saved before the cutover that holds a webpage entry with editor content
-- **WHEN** an owner deploys that revision
-- **THEN** the deploy fails for that entry with the parse error
-
-### Requirement: A program keeps the reference to a deleted email
-
-A program whose invite email is removed by the cutover SHALL keep its reference to that email and SHALL read the reference as missing.
-
-#### Scenario: A program keeps its reference to a deleted email
-
-- **GIVEN** a program whose invite is bound to an email removed by the cutover
-- **WHEN** the owner opens the program
-- **THEN** the invite shows that its email is missing
-
 ### Requirement: The cutover keeps earned achievements
 
 The cutover SHALL keep every achievement a user has already earned.

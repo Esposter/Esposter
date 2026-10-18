@@ -13,11 +13,13 @@ The new editors ship, every existing webpage and email is deleted, and the old e
 - A program bound to a deleted email keeps its invite reference and reads it as missing. Earned achievements stay.
 - The editor's dependencies, security origins, skill and ledger for the old engine are removed, and the server compiles email markup.
 - The affected specs are rewritten as built.
-- **Capabilities:** `resource/page-builder/cutover` (new).
+- **Capabilities:** `resource/page-builder/cutover` (new), `resource/blueprint-resource` and `resource/program-resource` (changed).
 
 ## Capabilities
 
 - **resource/page-builder/cutover** (new)
+- **resource/blueprint-resource** (changed: a Blueprint's webpage and email entries and the revisions saved before the cutover)
+- **resource/program-resource** (changed: a program bound to a deleted email)
 
 ## Waiting on
 
