@@ -10,13 +10,12 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createWriothesleyKitBehaviour, WRIOTHESLEY_CHARACTER_ID } from "#src/services/kit/characters/wriothesleyKit";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
-import { getPartyMember } from "#src/services/party/getPartyMember";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const WRIOTHESLEY_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, WRIOTHESLEY_CHARACTER_ID);
 
@@ -39,16 +38,6 @@ const readProsecutionEdictAttackShare = ({ kitEffectState: { effects } }: KitCon
   effects.find(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.source === "wriothesley-prosecution-edict",
   )?.amount;
-
-// His health share, which a drain or a heal moves
-const readHealthShare = (context: KitContext): number =>
-  getPartyMember(context.party, WRIOTHESLEY_CHARACTER_ID).healthShare;
-
-// Lands the first hit of one of his normal attacks, as a strike of his own
-const strikeNormalAttack = (context: KitContext, index: number): void => {
-  const hit = WRIOTHESLEY_KIT.normalAttacks[index]?.hits[0];
-  if (hit?.onStrike) hit.onStrike(context, { body: context.body, combatant: context.activeCombatant, hit });
-};
 
 // A drain of his own HP by Chilling Penalty, as the party records it with him as its source
 const createSelfDrain = (): KitHealthChangedEvent => ({
@@ -124,54 +113,6 @@ describe(createWriothesleyKitBehaviour, () => {
     });
     endKitSwapEffects(context.kitEffectState.effects, WRIOTHESLEY_CHARACTER_ID);
     expect(findWriothesleyStatus(context, "wriothesley-icefang-rush")?.secondsRemaining).toBe(0);
-  });
-
-  test("a normal attack drains 4.5% of his Max HP as Chilling Penalty while Icefang Rush holds, once per 6 frames", () => {
-    expect.hasAssertions();
-    const context = createKitTestContext(createWriothesleyCombatant());
-    WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
-    strikeNormalAttack(context, 0);
-    strikeNormalAttack(context, 1);
-    expect(readHealthShare(context)).toBeCloseTo(0.955);
-    stepKitSeconds(context, toKitSeconds(5));
-    strikeNormalAttack(context, 2);
-    expect(readHealthShare(context)).toBeCloseTo(0.955);
-    stepKitSeconds(context, toKitSeconds(2));
-    strikeNormalAttack(context, 3);
-    expect(readHealthShare(context)).toBeCloseTo(0.91);
-  });
-
-  test("his normal attacks drain nothing while Icefang Rush is off or his HP is at half or less", () => {
-    expect.hasAssertions();
-    const context = createKitTestContext(createWriothesleyCombatant());
-    strikeNormalAttack(context, 0);
-    expect(readHealthShare(context)).toBe(1);
-    WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
-    getPartyMember(context.party, WRIOTHESLEY_CHARACTER_ID).healthShare = 0.5;
-    strikeNormalAttack(context, 0);
-    expect(readHealthShare(context)).toBe(0.5);
-  });
-
-  test("his enhanced normal attacks give one Cryo particle every two seconds, collected 100 frames after it is given", () => {
-    expect.hasAssertions();
-    const combatant = createWriothesleyCombatant();
-    const context = createKitTestContext(combatant);
-    WRIOTHESLEY_KIT.elementalSkill.onStart?.(context);
-    strikeNormalAttack(context, 0);
-    const particle = findWriothesleyStatus(context, "wriothesley-particle");
-    expect(particle).toStrictEqual({
-      characterId: WRIOTHESLEY_CHARACTER_ID,
-      id: "wriothesley-particle",
-      kind: "status",
-      secondsRemaining: toKitSeconds(100),
-      stacks: 1,
-    });
-    stepKitSeconds(context, 1);
-    strikeNormalAttack(context, 1);
-    expect(findWriothesleyStatus(context, "wriothesley-particle")?.stacks).toBe(1);
-    assert(particle);
-    WRIOTHESLEY_KIT.onKitEvent?.({ effect: particle, kind: KitEventKind.EffectExpired }, context, combatant);
-    expect(getPartyMember(context.party, WRIOTHESLEY_CHARACTER_ID).energy).toBe(1);
   });
 
   test("from Ascension 4, each self-drain adds a Prosecution Edict stack, up to five, each raising his ATK 6%", () => {

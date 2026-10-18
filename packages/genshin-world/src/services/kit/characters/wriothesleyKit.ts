@@ -1,8 +1,11 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
+import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStanceActions } from "#src/models/kit/KitStanceActions";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -12,7 +15,9 @@ import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMember
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { collectDelayedKitEnergy } from "#src/services/kit/effects/collectDelayedKitEnergy";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
+import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
@@ -46,11 +51,6 @@ const ASCENSION_4 = 4;
 const PROSECUTION_EDICT_ID = "wriothesley-prosecution-edict";
 const PROSECUTION_EDICT_MAX_STACKS = 5;
 const PROSECUTION_EDICT_ATTACK_SHARE = 0.06;
-
-// Whether Icefang Rush holds on him and his strikes are enhanced, which needs his HP above half
-const checkIsEnhanced = ({ kitEffectState: { effects }, party }: KitContext, characterId: number): boolean =>
-  checkIsKitStatusActive(effects, characterId, ICEFANG_RUSH_ID) &&
-  getPartyMember(party, characterId).healthShare > ENHANCEMENT_HEALTH_SHARE;
 
 // Sets the stacks Prosecution Edict holds and the ATK share its buff gives for them, both lasting as long as the edict does
 const setProsecutionEdictStacks = (context: KitContext, characterId: number, stacks: number): void => {
@@ -96,11 +96,10 @@ const gainProsecutionEdictStack = (context: KitContext, combatant: Combatant, ev
   if (stacks < PROSECUTION_EDICT_MAX_STACKS) setProsecutionEdictStacks(context, characterId, stacks + 1);
 };
 
-// An enhanced strike of his normal attacks: Chilling Penalty drains him once every 6 frames, and a particle comes every 2
-// Seconds. The strike's enhanced damage multiplier and hitbox are not built, as the record does not hold them
+// An enhanced strike, one of the normal attacks Chilling Penalty plays: it drains him once every 6 frames, and a particle
+// Comes every 2 seconds
 const strikeEnhanced: NonNullable<KitHitBehaviour["onStrike"]> = (context, { combatant }) => {
   const { attributes, characterId } = combatant;
-  if (!checkIsEnhanced(context, characterId)) return;
   if (!checkIsKitStatusActive(context.kitEffectState.effects, characterId, CHILLING_PENALTY_COOLDOWN_ID)) {
     addKitStatus(context.kitEffectState, characterId, {
       id: CHILLING_PENALTY_COOLDOWN_ID,
@@ -120,18 +119,42 @@ const strikeEnhanced: NonNullable<KitHitBehaviour["onStrike"]> = (context, { com
   });
 };
 
-// Wriothesley's behaviour: Icefang Rush holds for ten seconds, and while his HP is above half each of his normal attacks'
-// Strikes drains him by Chilling Penalty and gives a particle, and from Ascension 4 his Prosecution Edict stacks and ATK.
-// Not built yet: the enhanced strikes' damage multiplier and larger hitboxes, which the record does not hold (gcsim's
-// Snapshot multiplies a normal attack by the skill's own table, and skill.go's enhanced boxes differ from the base ones),
-// Darkgold Wolfbite's Surging Blade, which hits past the burst's animation with a multiplier the record does not hold, and
-// The charged attack's Ascension 1 Gracious Rebuke, which needs a charged attack variant and a damage bonus that reads an
-// Effect, where the strike damage bonus reads none. Constellation 1, 2, 4 and 6 all build on that Rebuke or on Prosecution
-// Edict's stacks in a damage bonus, and wait on the same pieces
-export const createWriothesleyKitBehaviour = (): KitBehaviour => {
-  // The five normal attacks, each strike enhanced as the skill's state allows, with the fourth attack's two strikes
+// Chilling Penalty, the stance Icefang Rush holds, is held for as long as the skill holds and his HP is above half, as
+// Skill.go's skillBuffActive reads it. While it holds his normal attacks play its actions, each enhanced strike draining him
+// And giving a particle. At half or less they play his base actions, which drain nothing. Not built yet: Darkgold Wolfbite's
+// Surging Blade, which hits past the burst's animation with a multiplier the record does not hold, and the charged attack's
+// Ascension 1 Gracious Rebuke, which needs a charged attack variant and a damage bonus that reads an effect, where the strike
+// Damage bonus reads none. Constellation 1, 2, 4 and 6 all build on that Rebuke or on Prosecution Edict's stacks in a damage
+// Bonus, and wait on the same pieces
+const checkIsChillingPenaltyStance =
+  (characterId: number) =>
+  (effect: KitEffect): boolean =>
+    effect.kind === "stance" && effect.characterId === characterId;
+
+// Holds Chilling Penalty while Icefang Rush holds and his HP is above half, and drops it otherwise. A recast of the skill
+// Restarts it with the status's full seconds, as the status restarts
+const syncChillingPenalty = (
+  context: KitContext,
+  combatant: Combatant,
+  chillingPenalty: KitStanceActions,
+  isRecast = false,
+): void => {
+  const { characterId } = combatant;
+  const { kitEffectState } = context;
+  const icefangRush = findKitStatus(kitEffectState.effects, characterId, ICEFANG_RUSH_ID);
+  if (!icefangRush || getPartyMember(context.party, characterId).healthShare <= ENHANCEMENT_HEALTH_SHARE) {
+    removeKitEffects(kitEffectState, checkIsChillingPenaltyStance(characterId));
+    return;
+  }
+  if (isRecast) removeKitEffects(kitEffectState, checkIsChillingPenaltyStance(characterId));
+  if (kitEffectState.effects.some(checkIsChillingPenaltyStance(characterId))) return;
+  enterKitStance(kitEffectState, combatant, chillingPenalty, icefangRush.secondsRemaining, { isEndedOnSwap: true });
+};
+
+export const createWriothesleyKitBehaviour = ({ readStance }: KitRecordReader): KitBehaviour => {
+  // The five normal attacks Chilling Penalty plays, each strike of them enhanced, the fourth attack's two strikes too
   const enhancedStrike = { onStrike: strikeEnhanced };
-  return {
+  const chillingPenalty = readStance("chillingPenalty", {
     normalAttacks: [
       { hits: [enhancedStrike] },
       { hits: [enhancedStrike] },
@@ -139,10 +162,19 @@ export const createWriothesleyKitBehaviour = (): KitBehaviour => {
       { hits: [enhancedStrike, enhancedStrike] },
       { hits: [enhancedStrike] },
     ],
+  });
+  return {
     onKitEvent: (event, context, combatant) => {
       collectDelayedKitEnergy(event, context, combatant, PARTICLE_DELAY_ID);
-      if (event.kind === KitEventKind.HealthChanged) gainProsecutionEdictStack(context, combatant, event);
+      if (event.kind !== KitEventKind.HealthChanged) return;
+      gainProsecutionEdictStack(context, combatant, event);
+      syncChillingPenalty(context, combatant, chillingPenalty);
     },
-    skill: { onStart: startIcefangRush },
+    skill: {
+      onStart: (context) => {
+        startIcefangRush(context);
+        syncChillingPenalty(context, context.activeCombatant, chillingPenalty, true);
+      },
+    },
   };
 };
