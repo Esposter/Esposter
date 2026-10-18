@@ -4,7 +4,7 @@ import { GAME_TIME_ZONE } from "#src/services/time/constants";
 // It. An item has no recorded end, so a dump read months on keeps its last item rather than none, and undefined only when no
 // Item has begun yet
 export const findLatestBegun = <TItem>(
-  items: TItem[],
+  items: readonly TItem[],
   getStartsAt: (item: TItem) => string,
   now: Temporal.Instant,
 ): TItem | undefined =>

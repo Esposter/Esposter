@@ -23,14 +23,20 @@ const createPeriod = (id: number, startsAt: Temporal.PlainDateTime, closesAt: Te
 const periods = [createPeriod(1, FIRST_OPENS, FIRST_CLOSES), createPeriod(2, SECOND_OPENS, SECOND_CLOSES)];
 
 describe(findAbyssPeriodAt, () => {
-  test("the period whose opening covers the instant is offered, its last second included", () => {
+  test("the period that began latest before the instant is offered", () => {
     expect.hasAssertions();
 
     expect(findAbyssPeriodAt(periods, instantAt(FIRST_CLOSES.add({ milliseconds: 900 })))?.id).toBe(1);
     expect(findAbyssPeriodAt(periods, instantAt(SECOND_OPENS))?.id).toBe(2);
   });
 
-  test("no period is offered at an instant none covers", () => {
+  test("the period that began latest is kept once every period has closed", () => {
+    expect.hasAssertions();
+
+    expect(findAbyssPeriodAt(periods, instantAt(SECOND_CLOSES.add({ days: 1 })))?.id).toBe(2);
+  });
+
+  test("no period is offered before the first one begins", () => {
     expect.hasAssertions();
 
     expect(findAbyssPeriodAt(periods, instantAt(GAME_EPOCH.subtract({ seconds: 1 })))).toBeUndefined();
