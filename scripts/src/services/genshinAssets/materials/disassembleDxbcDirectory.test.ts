@@ -11,7 +11,7 @@ describe.skipIf(process.platform === "win32")(disassembleDxbcDirectory, () => {
     directory = await mkdtemp(join(tmpdir(), "dxbc-"));
     // A stand-in compiler that prints assembly for the program named good and fails on any other
     const compiler = join(directory, "compiler.sh");
-    await writeFile(compiler, '#!/bin/sh\ncase "$5" in *good*) echo ASM ;; *) exit 1 ;; esac\n');
+    await writeFile(compiler, '#!/bin/sh\ncase "$3" in *good*) echo ASM ;; *) exit 1 ;; esac\n');
     await chmod(compiler, 0o755);
     process.env.VKD3D_COMPILER = compiler;
     await writeFile(join(directory, "good.dxbc"), "");

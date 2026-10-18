@@ -39,8 +39,9 @@ foreach ($file in Get-ChildItem -LiteralPath '${directory.replaceAll("'", "''")}
 $count
 `;
 // Where a machine without Windows' compiler library gets its disassembler: `vkd3d-compiler` from Wine's vkd3d project,
-// Named by VKD3D_COMPILER or found on PATH
-const VKD3D_ARGUMENTS = ["-x", "dxbc-tpf", "-b", "d3d-asm"];
+// Named by VKD3D_COMPILER or found on PATH. Its source type is left to its own detection, which reads a shader model 6
+// DXIL program as it does a DXBC one, where D3DDisassemble reads only the latter
+const VKD3D_ARGUMENTS = ["-b", "d3d-asm"];
 // A program's disassembly past this is a failure the run should stop on, not a program to skip
 const VKD3D_MAX_BUFFER = 64 * 1024 ** 2;
 // Every DXBC program in a folder disassembled beside it, returning how many were. Windows reads them through

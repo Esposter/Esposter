@@ -5,9 +5,10 @@ const REGISTER_BYTES = 16;
 const COMPONENT_BYTES = 4;
 const COMPONENTS = "xyzw";
 // The first constant buffer's size as an assembly declares it, or as decompiled HLSL does where the program carries no
-// Names of its own
-const BUFFER_SIZE_REGEX = /(?:dcl_constantbuffer cb0|float4 cb0)\[(?<size>\d+)\]/iu;
-const REGISTER_REGEX = /cb0\[(?<register>\d+)\]/gu;
+// Names of its own. A shader model 6 program's assembly declares the buffer's binding range first and reads each
+// Register under the range's index, `cb0[0:0][size]` and `cb0[0][register]`
+const BUFFER_SIZE_REGEX = /(?:dcl_constantbuffer cb0(?:\[\d+:\d+\])?|float4 cb0)\[(?<size>\d+)\]/iu;
+const REGISTER_REGEX = /cb0(?:\[\d+\])?\[(?<register>\d+)\]/gu;
 // The registers a constant spans: its offset, over its rows (a matrix's four, a vector's one) and its array's length
 const computeRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): number[] => {
   const count = Math.max(rows, 1) * Math.max(arrayLength, 1);

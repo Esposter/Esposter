@@ -59,7 +59,7 @@ The uber's 1,553 compiled programs, by their own output signatures (Exact):
 | No colour           | programs with no colour target (vertex-only or depth) |      390 |
 | MotionVectors       | a two-channel target                                  |        0 |
 
-Of the 1,553, 693 are DXBC and 860 are DXIL. The DXIL programs are read by the same compiler in "d3d-asm" mode, which the DXBC ones use in "dxbc-tpf" mode.
+Of the 1,553, 693 are DXBC and 860 are DXIL. `vkd3d-compiler` disassembles both, detecting each program's type, where `d3dcompiler_47` reads only the DXBC ones.
 
 ## The body's Deferred pass
 
