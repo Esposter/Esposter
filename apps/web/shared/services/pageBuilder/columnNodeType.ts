@@ -2,15 +2,14 @@ import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefi
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { z } from "zod";
-
-const columnPropsSchema = z.strictObject({ children: z.array(z.unknown()), id: z.string() });
 
 // One column of a Columns node, holding any placeable content
 export const columnNodeType = {
   css: ".column { flex: 1 1 0; min-width: 0; }",
   formSchema: z.strictObject({}),
-  propsSchema: columnPropsSchema,
+  propsSchema: containerPropsSchema,
   render: (node, slots) => ({ attributes: { class: "column" }, children: slots.children ?? [], tag: "div" }),
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },
   type: WebpageNodeType.Column,
