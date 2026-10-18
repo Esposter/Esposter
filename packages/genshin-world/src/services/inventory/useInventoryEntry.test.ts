@@ -1,6 +1,10 @@
+import type { CookingProgress } from "#src/models/cooking/CookingProgress";
+import type { CookingRecipe } from "#src/models/cooking/CookingRecipe";
 import type { DishUse } from "#src/models/cooking/DishUse";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
+import { CookingFoodType } from "#src/models/cooking/CookingFoodType";
+import { CookingQuality } from "#src/models/cooking/CookingQuality";
 import { DishTarget } from "#src/models/cooking/DishTarget";
 import { Currency } from "#src/models/inventory/Currency";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
@@ -18,6 +22,24 @@ describe(useInventoryEntry, () => {
   const MAX_HEALTH = 1000;
   const NOW = Temporal.Instant.fromEpochMilliseconds(0);
   const dishUse: DishUse = { heal: { flat: 0, healthShare: 0.2 }, target: DishTarget.Selected };
+  const INSTRUCTION_ITEM_ID = 109_101;
+  const recipe: CookingRecipe = {
+    foodType: CookingFoodType.Heal,
+    id: 1,
+    ingredients: [],
+    isDefaultUnlocked: false,
+    maxProficiency: 2,
+    nameTextId: "1",
+    qteParam: [0.5, 0.4],
+    rankLevel: 1,
+    resultItemIds: {
+      [CookingQuality.Delicious]: DISH_ID,
+      [CookingQuality.Regular]: DISH_ID,
+      [CookingQuality.Suspicious]: DISH_ID,
+    },
+    specialties: [],
+    unlockItemIds: [INSTRUCTION_ITEM_ID],
+  };
   const createInventory = (category: ItemCategory): Inventory => ({
     items: [
       {
@@ -32,8 +54,12 @@ describe(useInventoryEntry, () => {
     dishUseMap: ReadonlyMap<number, DishUse>,
     party = createParty([EATER_ID]),
     wallet = EMPTY_WALLET,
+    cookingProgress: CookingProgress = { learnedRecipeIds: [], proficiencies: {} },
+    instructionRecipeMap: ReadonlyMap<number, CookingRecipe> = new Map(),
   ) => ({
+    cookingProgress,
     dishUseMap,
+    instructionRecipeMap,
     eaterId: EATER_ID,
     getMaxHealth: () => MAX_HEALTH,
     kitEffectState: { effects: [] },
@@ -55,6 +81,35 @@ describe(useInventoryEntry, () => {
 
     expect(use?.inventory.items).toStrictEqual([]);
     expect(getPartyMember(party, EATER_ID).healthShare).toBeCloseTo(0.7);
+  });
+
+  test("using an instruction teaches its dish", () => {
+    expect.hasAssertions();
+    const inventory: Inventory = {
+      items: [
+        {
+          definition: {
+            category: ItemCategory.Material,
+            id: INSTRUCTION_ITEM_ID,
+            name: "",
+            rank: 0,
+            rarity: 0,
+            stackLimit: 99,
+          },
+          id: ENTRY_ID,
+          quantity: 1,
+        },
+      ],
+      nextId: 2,
+    };
+    const use = useInventoryEntry(
+      inventory,
+      ENTRY_ID,
+      createContext(new Map(), undefined, undefined, undefined, new Map([[INSTRUCTION_ITEM_ID, recipe]])),
+    );
+
+    expect(use?.cookingProgress?.learnedRecipeIds).toStrictEqual([recipe.id]);
+    expect(use?.inventory.items).toStrictEqual([]);
   });
 
   test("a kind with no use yet is refused", () => {

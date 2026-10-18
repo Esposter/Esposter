@@ -87,7 +87,7 @@ import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { readConstellationTables } from "#src/services/character/readConstellationTables";
 import { computeCookingStoveInteractables } from "#src/services/cooking/computeCookingStoveInteractables";
 import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } from "#src/services/cooking/constants";
-import { openCookingStove } from "#src/services/cooking/openCookingStove";
+import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
 import { computeCraftingBenchInteractables } from "#src/services/crafting/computeCraftingBenchInteractables";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
@@ -550,13 +550,18 @@ useWorldQuestRewards({
 const { dishUseMap } = useWorldDishes(gameDataBaseUrl);
 // The cooking recipes and the stove's place as the world starts. A used stove opens the cooking screen on a recipe, which
 // Is held here while the screen is open
-const { cookingRecipes, cookingStovePlace, cookingTalents, processingRecipes } = useWorldCooking(gameDataBaseUrl);
+const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes } =
+  useWorldCooking(gameDataBaseUrl);
 const cookingRecipe = shallowRef<CookingRecipe>();
+// The dishes the cook knows at the stove, the one on the screen being the first of them when it opens
+const openCookingRecipes = shallowRef<CookingRecipe[]>([]);
 const useBagEntry = (entryId: number) => {
   const use = useInventoryEntry(inventory.value, entryId, {
+    cookingProgress: cookingProgress.value,
     dishUseMap: dishUseMap.value,
     eaterId: getActiveCharacterId(party),
     getMaxHealth: (characterId) => kitContext.characterIdCombatantMap.get(characterId)?.attributes.maxHealth ?? 0,
+    instructionRecipeMap: instructionRecipeMap.value,
     kitEffectState: kitContext.kitEffectState,
     now: getWorldNow(),
     party,
@@ -565,6 +570,7 @@ const useBagEntry = (entryId: number) => {
   if (!use) return;
   setInventory(use.inventory);
   if (use.wallet) setWallet(use.wallet);
+  if (use.cookingProgress) cookingProgress.value = use.cookingProgress;
 };
 // The constellation table, read as the world starts, and the constellations each character's one set holds, by its id. A
 // Traveler's form has a set for each element, which a statue picks, so it has none here until one does
@@ -1067,8 +1073,9 @@ defineExpose({ jumpTo, readCameraPosition });
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_STOVE_INTERACTABLE_ID
             ) {
-              cookingRecipe = openCookingStove(cookingRecipes.value);
-              if (cookingRecipe) screenKind = ScreenKind.Cooking;
+              openCookingRecipes.value = listOpenCookingRecipes(cookingRecipes.value, cookingProgress.value);
+              cookingRecipe.value = openCookingRecipes.value[0];
+              if (cookingRecipe.value) screenKind = ScreenKind.Cooking;
             } else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_PROCESSING_INTERACTABLE_ID
@@ -1388,10 +1395,12 @@ defineExpose({ jumpTo, readCameraPosition });
       </template>
       <template #[ScreenKind.Inventory]>
         <InventoryScreen
+          :cooking-progress="cookingProgress"
           :dish-use-map
           :game-text
           :gadget-rows
           :initial-category="ItemCategory.Weapon"
+          :instruction-recipe-map="instructionRecipeMap"
           :inventory
           :material-data-map
           :names="nameText"
@@ -1522,13 +1531,14 @@ defineExpose({ jumpTo, readCameraPosition });
     <CookingScreen
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
       v-model:progress="cookingProgress"
+      v-model:recipe="cookingRecipe"
       :avatar-id="getActiveCharacterId(party)"
       :game-text
       :inventory
       :material-data-map
       :name-text
       :random="kitContext.random"
-      :recipe="cookingRecipe"
+      :recipes="openCookingRecipes"
       :talent="cookingTalents[getActiveCharacterId(party)]"
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

@@ -6,6 +6,8 @@ import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GameText } from "genshin-text";
 
+import { autoCookRecipe } from "#src/services/cooking/autoCookRecipe";
+import { checkCanAutoCook } from "#src/services/cooking/checkCanAutoCook";
 import { cookRecipeByHand } from "#src/services/cooking/cookRecipeByHand";
 import { getCookingPointerPosition } from "#src/services/cooking/getCookingPointerPosition";
 import { readCookingZones } from "#src/services/cooking/readCookingZones";
@@ -24,17 +26,25 @@ interface Props {
   nameText: Readonly<Record<string, string>>;
   // The world's seeded random source, which the dish's quality and the talent's roll draw from
   random: () => number;
-  // The recipe cooked by hand, whose zone parameters lay out the indicator
-  recipe: CookingRecipe;
+  // The dishes the cook knows, the one on the screen chosen from them
+  recipes: readonly CookingRecipe[];
   // The cook's talent, if the character has one
   talent?: CookingTalent;
 }
 
-const { avatarId, gameText, materialDataMap, nameText, random, recipe, talent } = defineProps<Props>();
+const { avatarId, gameText, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const progress = defineModel<CookingProgress>("progress", { required: true });
-const zones = readCookingZones(recipe.qteParam);
+// The recipe on the screen, whose zone parameters lay out the indicator, and the dishes the list offers
+const recipe = defineModel<CookingRecipe>("recipe", { required: true });
+const zones = computed(() => readCookingZones(recipe.value.qteParam));
+const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] })));
+const canAutoCook = computed(() => checkCanAutoCook(recipe.value, progress.value, avatarId));
+const selectDish = (id: number) => {
+  const selected = recipes.find((dish) => dish.id === id);
+  if (selected) recipe.value = selected;
+};
 // The indicator's pointer swings from the moment the screen opens, and its place at a press is the one shown then
 const openedAt = Temporal.Now.instant();
 const pointer = ref(0);
@@ -52,7 +62,7 @@ onBeforeUnmount(() => {
 // Stop cooks one dish where the pointer stands at the press, spending its ingredients and adding its results to the
 // Bag and progress, or nothing where the dish cannot be cooked, and the screen closes either way
 const stopCooking = () => {
-  const cooked = cookRecipeByHand(recipe, {
+  const cooked = cookRecipeByHand(recipe.value, {
     avatarId,
     getDefinition: (itemId) => getItemDefinition(itemId, nameText, materialDataMap),
     inventory: inventory.value,
@@ -68,16 +78,36 @@ const stopCooking = () => {
   }
   emit("close");
 };
+// Auto Cook makes a whole batch of Delicious dishes from the bag, once the dish's proficiency is full, and the screen closes
+// As Stop does, whether or not a batch was made
+const autoCook = () => {
+  const made = autoCookRecipe(recipe.value, {
+    avatarId,
+    getDefinition: (itemId) => getItemDefinition(itemId, nameText, materialDataMap),
+    inventory: inventory.value,
+    progress: progress.value,
+    random,
+    talent,
+  });
+  if (made) inventory.value = made;
+  emit("close");
+};
 </script>
 
 <template>
   <GameScreen role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CookingTitle]">
     <CookingScreen
+      :auto-cook-label="gameText[GameTextKey.CookingAutoCook]"
+      :can-auto-cook="canAutoCook"
+      :dishes
       :pointer
+      :selected-id="recipe.id"
       :stop-label="gameText[GameTextKey.CookingStop]"
       :title="gameText[GameTextKey.CookingTitle]"
       :zones
+      @auto-cook="autoCook"
       @close="emit('close')"
+      @select="selectDish"
       @stop="stopCooking"
     />
   </GameScreen>

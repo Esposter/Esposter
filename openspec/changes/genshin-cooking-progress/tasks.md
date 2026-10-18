@@ -7,12 +7,12 @@
 
 ## 2. The dishes the cook knows
 
-- [ ] 2.1 List the dishes the stove offers as the known ones, from the start and learned, in place of the first known pick. Verify: `services/cooking/openCookingStove.test.ts` named after 'The stove lists the dishes known from the start and the learned ones'.
-- [ ] 2.2 Using an instruction item in the bag teaches its dish and takes the item out, and an instruction the dish has taught is not usable. Verify: `services/inventory/useInventoryEntry.test.ts` named after 'Using an instruction teaches its dish', and `services/inventory/checkIsInventoryItemUsable.test.ts` named after 'An instruction item is usable until its dish is learned'.
-- [ ] 2.3 Name the instruction items in the items table so the bag holds them. Verify: `scripts/src/services/genshinAssets/items/buildItems.test.ts` named after 'Every instruction item a cook recipe unlocks is an item'. Waits on a publish of the items table, which the main session runs.
-- [ ] 2.4 Shop recipe goods and quest rewards deliver their instructions into the bag, so the use in 2.2 reaches them. Verify: the scenario 'Using an instruction teaches its dish' in 2.2 with the bag filled by the shop and quest paths. Waits on the data in 2.3.
+- [x] 2.1 List the dishes the stove offers as the known ones, from the start and learned, on the cooking screen, which opens on the first and lets the cook choose. Verify: `services/cooking/listOpenCookingRecipes.test.ts` named after 'the stove lists the dishes known from the start and the learned ones'.
+- [x] 2.2 Using an instruction item in the bag teaches its dish and takes the item out, and an instruction the dish has taught is not usable. Verify: `services/inventory/useInventoryEntry.test.ts` named after 'using an instruction teaches its dish', and `services/inventory/checkIsInventoryItemUsable.test.ts` named after 'an instruction item is usable until its dish is learned'.
+- [x] 2.3 Name the instruction items in the items table so the bag holds them. Verify: `scripts/src/services/genshinAssets/items/buildItems.test.ts` named after 'every instruction item a cook recipe unlocks is an item'. The publish of the items table is the main session's.
+- [ ] 2.4 Shop recipe goods and quest rewards deliver their instructions into the bag, so the use in 2.2 reaches them. Verify: the scenario 'using an instruction teaches its dish' in 2.2, with the bag filled by the shop and quest paths. Blocked: the dump's shop goods sell 141 instruction items, and both paths add the item by its definition, so 2.4 needs the items table published with them (2.3).
 
 ## 3. Auto Cook at full proficiency
 
-- [ ] 3.1 Offer Auto Cook on the cooking screen once the dish's proficiency is full, and make the batch through `autoCookRecipe`. Verify: `services/cooking/checkCanAutoCook.test.ts` named after 'Auto Cook is offered at full proficiency' and 'Auto Cook is not offered before full proficiency'.
-- [ ] 3.2 Add the `CookingAutoCook` text key for `UI_COOKING_QTE_AUTO_MAKE_BUTTON`. Verify: the key is named in the report; `genshin:text write` is the main session's.
+- [x] 3.1 Offer Auto Cook on the cooking screen once the dish's proficiency is full, and make the batch through `autoCookRecipe`. Verify: `services/cooking/checkCanAutoCook.test.ts` named after 'auto cook is offered at full proficiency' and 'auto cook is not offered before full proficiency'.
+- [x] 3.2 Add the `CookingAutoCook` text key for `UI_COOKING_QTE_AUTO_MAKE_BUTTON`. Verify: the key is named in the report; the text write is the main session's, so the button shows its key until then.

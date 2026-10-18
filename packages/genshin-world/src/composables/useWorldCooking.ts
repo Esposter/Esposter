@@ -8,7 +8,7 @@ import { readCookingTalents } from "#src/services/cooking/readCookingTalents";
 import { readMondstadtCookingStovePlace } from "#src/services/cooking/readMondstadtCookingStovePlace";
 import { readProcessingRecipes } from "#src/services/cooking/readProcessingRecipes";
 import { getResultAsync } from "@esposter/shared";
-import { shallowRef } from "vue";
+import { computed, shallowRef } from "vue";
 
 // The cooking recipes, the processing recipes, the cooks' talents by character id and the stove's place in Mondstadt as
 // The world starts, each read from the hosted game data
@@ -53,5 +53,14 @@ export const useWorldCooking = (gameDataBaseUrl: string) => {
       console.error(error);
     },
   );
-  return { cookingRecipes, cookingStovePlace, cookingTalents, processingRecipes };
+  // The dish each instruction item teaches, by the item's id, read off the dishes' unlock items
+  const instructionRecipeMap = computed(
+    () =>
+      new Map(
+        cookingRecipes.value.flatMap((recipe) =>
+          recipe.unlockItemIds.map((itemId): [number, CookingRecipe] => [itemId, recipe]),
+        ),
+      ),
+  );
+  return { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap, processingRecipes };
 };
