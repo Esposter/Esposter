@@ -24,4 +24,4 @@
 ## 6. The game's systems
 
 - [ ] 6.1 Build the character kits first, then the game's systems in phase four's order, each page re-read against the engine when its turn comes. Verify: each page's own scenarios pass, and each page's pass is accepted under the scenario "A pass is accepted when its frame scores within its gate" before it is frozen.
-- [x] 6.2 Keep the world single-player with no payment or branding. Verify: tests named after the scenarios "Another player is not shown in the world" and "The world's chrome shows no payment or HoYoverse mark", written first and seen failing. Done without tests: absence with nothing that could add it earns no test.
+- [ ] 6.2 Keep the world single-player with no payment or branding. Verify: tests named after the scenarios "Another player is not shown in the world" and "The world's chrome shows no payment or HoYoverse mark", written first and seen failing. Open: neither test exists, and the owner has yet to rule whether absence with nothing that could add it earns no test, and whether the opening's publisher splash and the Paimon menu's disabled Battle Pass entry count as chrome.
