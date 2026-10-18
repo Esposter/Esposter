@@ -158,4 +158,59 @@ describe(createAyakaKitBehaviour, () => {
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.NormalAttack, normalHit)).toBe(0);
     expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
   });
+
+  test("a constellation takes effect at its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(6) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+
+    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+    stepKitEffects(0.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+    stepKitEffects(9.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+    stepKitEffects(0.5, context);
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(2.98);
+  });
+
+  test("a constellation does not take effect below its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(5) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, { kitEffectState, random: () => 1 });
+
+    chargedHit.onStrike?.(context, { body: context.body, combatant, hit: chargedHit });
+
+    expect(readStrikeDamageBonus(combatant, kitEffectState, AttackTag.ChargedAttack, chargedHit)).toBe(0);
+  });
+
+  test("a constellation's DEF cut takes effect at its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(4) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant)?.defenseReduction)).toStrictEqual(
+      strikes.map(() => 0.3),
+    );
+    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant)?.secondsRemaining)).toStrictEqual(
+      strikes.map(() => 6),
+    );
+  });
+
+  test("a constellation's DEF cut does not take effect below its constellation phase", () => {
+    expect.hasAssertions();
+    const combatant: Combatant = { ...createAyakaCombatant(3) };
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] } });
+    AYAKA_KIT.elementalBurst.onStart?.(context);
+    const strikes = stepKitTestEffects(7, context);
+
+    expect(strikes.map(({ hit }) => hit.enemyStatus?.(combatant))).toStrictEqual(strikes.map(() => undefined));
+  });
 });
