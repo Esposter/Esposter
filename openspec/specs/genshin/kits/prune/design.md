@@ -1,6 +1,6 @@
 # Prune
 
-Prune's kit is its record and one behaviour module, `createPruneKitBehaviour`, avatar 10000132: her normal attacks, charged attack, collision and plunges, her skill's Ring-A-Ding-Ding press, and the burst's initial hit. Her skill and burst are Anemo.
+Prune's kit is its record and one behaviour module, `createPruneKitBehaviour`, avatar 10000132: her normal attacks, charged attack, collision and plunges, her skill's Ring-A-Ding-Ding press, the burst's initial hit and the Witchlure Bell's DoT. Her skill and burst are Anemo.
 
 Her skill and burst are read from proud skill groups 13232 and 13239 as their talent multipliers. Her cooldowns and energy cost are read from the table: 15 seconds for the skill, 18 seconds for the burst and 70 energy.
 
@@ -9,19 +9,20 @@ gcsim sources: Prune's attack, charge, skill and burst files, with the table dat
 ## Decisions
 
 - **The skill and burst's hitboxes are circles by hand.** The skill's press is a circle of 2.5 metres offset 1.4 metres ahead, priced at 3.9 metres, and the burst's initial hit is a circle of 6.5 metres. gcsim names neither in a form the builder matches, so each is recorded by hand, and Prune's overlay names no cause for either hitbox's geometry.
+- **The Witchlure Bell's DoT ticks on the nearest enemy within 10 metres.** Each tick takes the standing enemy nearest Prune, found by `selectNearestEnemy` (the selector Hyperbloom's homing reads), within the 10-metre detection area (`burst.go:90`), and lands the DoT's 1.6-metre circle on that enemy alone (`burst.go:97-103`). The first tick falls 137 frames after the cast and the ticks repeat every 117 frames (`burst.go:56` and `burst.go:104`), recorded as cited Gcsim frames. The bell lasts the burst's 813 frames (`burst.go:27`), which the constellation 6 bonus would add to. The DoT's multiplier is index 1 of proud skill group 13239, 0.7044 at level 1 (`zz_prune.dm.go:217`), recorded as Unsourced since the builder does not read it from the literal, as is its Anemo element.
 
 ## Not built
 
 - **The Clang Clang convert waits on the convert hook.** A second press of her skill converts it into Clang Clang! Witch-tribution Comes!, a hit that needs the state the press left behind. The kit holds the press alone.
-- **The Witchlure Bell DoT waits on a closest-enemy hit.** Its first tick falls 137 frames after the cast and its ticks repeat every 117 frames (`burst.go:56` and `burst.go:104`), both recorded in the overlay. Each tick lands on the closest enemy within 10 metres of Prune (`burst.go:88`, `ClosestEnemyWithinArea`), a 1.6-metre circle around that enemy, and no tick falls while none is in reach. No kit selects an enemy by distance, so the DoT is not built and the burst is its initial hit alone.
 - **Her passives wait on their hooks.** Each reads her convert state, her burst's bell or the party's Elemental Resonance, so none is built.
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                            |
-| :--------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which reads her record alone for now                                                                                                                 |
-| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits, each 0 (Wiki), and the Witchlure Bell's first tick and interval, cited to `burst.go`; her hits and areas come from the record |
+| File                                                             | Role                                                                                                                                                                                                     |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which casts the Witchlure Bell's DoT on the shared nearest-enemy selector                                                                                     |
+| `packages/genshin-world/src/services/kit/selectNearestEnemy.ts`  | `selectNearestEnemy`, the standing enemy nearest a point within a radius, which the Witchlure Bell and Hyperbloom's homing both read                                                                     |
+| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits (Wiki), the Witchlure Bell's hit, duration, first tick and interval, cited to `burst.go`; her other hits and areas come from the record |
 
 ## Sources
 
