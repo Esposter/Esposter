@@ -24,6 +24,10 @@ export const props = {
   ],
   detailsLabel: "Details",
   fatePoints: FATE_POINTS,
+  history: [
+    { bannerLabel: "Character Event Wish", name: "Sample Character", rarity: 5, time: "2026-10-18T14:02" },
+    { bannerLabel: "Standard Wish", name: "Sample Weapon", rarity: 3, time: "2026-10-17T09:30" },
+  ],
   historyLabel: "History",
   pathLabel: PATH_LABEL,
   pool: POOL,
