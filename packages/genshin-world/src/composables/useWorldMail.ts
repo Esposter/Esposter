@@ -9,11 +9,12 @@ import type { GameLanguage } from "genshin-text";
 import type { Ref } from "vue";
 
 import { GameDataset } from "#src/models/data/GameDataset";
-import { birthdayMailRowsSchema, mailDataSchema } from "#src/models/mail/MailData";
+import { birthdayMailRowsSchema } from "#src/models/mail/MailData";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
 import { claimMail } from "#src/services/mail/claimMail";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
+import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
 import { getResultAsync } from "@esposter/shared";
@@ -65,15 +66,10 @@ export const useWorldMail = ({
     );
     const birthdayMailIds = new Set(birthdayMailRows.map(({ mailId }) => mailId));
     const mailIds = new Set([...savedMails.map(({ id }) => id), ...birthdayMailIds]);
-    const [mailRowEntries, textMap] = await Promise.all([
-      Promise.all(
-        [...mailIds].map(
-          async (id) => [id, await readGameDataEntry(gameDataBaseUrl, indexKey, String(id), mailDataSchema)] as const,
-        ),
-      ),
+    const [mailRows, textMap] = await Promise.all([
+      readMailRows(gameDataBaseUrl, [...mailIds]),
       readMailText(gameDataBaseUrl, language),
     ]);
-    const mailRows = new Map<number, Mail>(mailRowEntries);
     const now = getWorldNow();
     const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
     mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
