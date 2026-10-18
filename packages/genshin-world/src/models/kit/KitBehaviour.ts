@@ -13,7 +13,6 @@ import type { KitPlunge } from "#src/models/kit/record/KitPlunge";
 export interface KitBehaviour extends Partial<
   Pick<
     Kit,
-    | "checkCanStartAttack"
     | "getChargedAttackStaminaMultiplier"
     | "getNormalAttackExtraHit"
     | "getNormalAttackSpeedBonus"

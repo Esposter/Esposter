@@ -42,9 +42,6 @@ export interface Kit {
   elementalSkillHolds?: KitSkillHold[];
   // The seconds a skill may be held before it is released by itself, if it has a maximum, as Violet Arc's hold is
   elementalSkillMaximumHeldSeconds?: number;
-  // Whether the character may start a normal attack, a charged attack or a plunge as it stands, which a state it holds
-  // Can restrict, as gcsim's ActionReady does for Mizuki's Dreamdrifter; a kit without the hook may start all of them
-  checkCanStartAttack?: (context: KitContext) => boolean;
   // The factor a charged attack's stamina is multiplied by as it starts, if a passive lowers it
   getChargedAttackStaminaMultiplier?: (context: KitContext) => number;
   // The hit a kit's own normal attack adds after each of its hits that lands, if a constellation gives one, given the
@@ -100,7 +97,7 @@ export interface Kit {
   getStrikeCriticalRateBonus?: (strike: KitStrike, enemy: Enemy, party: Party, effects: readonly KitEffect[]) => number;
   // The share of a Dendro Core's burst that a deployed member's kit adds to its reaction damage, given the member whose
   // Kit it is, the core's kind and the context it bursts in. A Bountiful Core's burst takes every deployed kit's share,
-  // and a Bloom's takes none of them
+  // And a Bloom's takes none of them
   getPartyDendroCoreDamageBonus?: (member: Combatant, coreKind: DendroCoreKind, context: KitContext) => number;
   // The CRIT DMG a strike of the kit's own adds as it lands on an enemy, if a constellation raises it on the strike, given the
   // Enemy as it stands, the deployed team and the effects on it
