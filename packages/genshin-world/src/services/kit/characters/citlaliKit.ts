@@ -3,7 +3,6 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
-import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
@@ -18,6 +17,7 @@ import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKi
 import { hasKitNightsoulBlessing } from "#src/services/kit/effects/hasKitNightsoulBlessing";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { toKitSeconds } from "#src/services/kit/toKitSeconds";
 
@@ -49,8 +49,8 @@ export const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 // The flat base damage a hit adds from a share of its striker's Elemental Mastery, from Ascension 4
 const createElementalMasteryFlatDamage =
   (share: number) =>
-  ({ ascension, attributes }: Combatant): number =>
-    ascension >= ASCENSION_4 ? share * attributes.attributeTotalMap[Attribute.ElementalMastery] : 0;
+  (combatant: Combatant): number =>
+    combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, share) : 0;
 
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
@@ -153,9 +153,7 @@ export const createCitlaliKitBehaviour = ({ readHit, readParameter, readSeconds 
           if (combatant === undefined) return;
           castKitShield(tickContext.kitEffectState, characterId, {
             element: Element.Cryo,
-            health:
-              opalShieldElementalMasteryShare * combatant.attributes.attributeTotalMap[Attribute.ElementalMastery] +
-              opalShieldFlatHealth,
+            health: elementalMasteryMultiplier(combatant, opalShieldElementalMasteryShare) + opalShieldFlatHealth,
             secondsRemaining: opalShieldSeconds,
           });
         });
