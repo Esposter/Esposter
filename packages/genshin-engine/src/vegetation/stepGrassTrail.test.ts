@@ -15,9 +15,9 @@ describe(stepGrassTrail, () => {
     stepGrassTrail(trail, new Vector2(0, 0), new Vector2(1, 0), FRAME_SECONDS);
 
     const stampedIndex = computeGrassTrailTexelIndex(0, 0);
-    expect([...trail.bends.slice(stampedIndex * 2, stampedIndex * 2 + 2)]).toStrictEqual([1, 0]);
+    expect(trail.bends.slice(stampedIndex * 2, stampedIndex * 2 + 2)).toStrictEqual(new Float32Array([1, 0]));
     const farIndex = computeGrassTrailTexelIndex(3, 0);
-    expect([...trail.bends.slice(farIndex * 2, farIndex * 2 + 2)]).toStrictEqual([0, 0]);
+    expect(trail.bends.slice(farIndex * 2, farIndex * 2 + 2)).toStrictEqual(new Float32Array([0, 0]));
   });
 
   test("a stamp fades over the trail's fade time", () => {
@@ -40,6 +40,6 @@ describe(stepGrassTrail, () => {
 
     expect(trail.center.value.toArray()).toStrictEqual([100.125, 100.125]);
     const formerIndex = computeGrassTrailTexelIndex(0, 0);
-    expect([...trail.bends.slice(formerIndex * 2, formerIndex * 2 + 2)]).toStrictEqual([0, 0]);
+    expect(trail.bends.slice(formerIndex * 2, formerIndex * 2 + 2)).toStrictEqual(new Float32Array([0, 0]));
   });
 });

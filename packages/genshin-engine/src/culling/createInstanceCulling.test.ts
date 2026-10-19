@@ -7,7 +7,7 @@ describe(createInstanceCulling, () => {
     expect.hasAssertions();
 
     const culling = createInstanceCulling({ count: 2, indexCount: 3, isVisible: () => float(1) });
-    const onDispose = vi.fn();
+    const onDispose = vi.fn<() => void>();
     culling.indirect.addEventListener("dispose", onDispose);
 
     culling.dispose();
