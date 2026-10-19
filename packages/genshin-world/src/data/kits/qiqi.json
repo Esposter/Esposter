@@ -27,7 +27,6 @@
   },
   "hits.herald.0.hitmarkFrames": { "file": "skill.go", "line": 15, "source": "Gcsim", "value": 32 },
   "hits.herald.0.multiplier": { "source": "Gcsim", "value": { "index": 7, "proudSkillGroupId": 3532 } },
-  "hits.herald.0.poiseDamage": { "cause": "Unsourced", "value": 40 },
   "hits.herald.1.area": {
     "file": "skill.go",
     "line": 128,
