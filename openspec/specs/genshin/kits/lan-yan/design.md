@@ -25,3 +25,4 @@ Lan Yan's kit is its record and one behaviour module, `createLanYanKitBehaviour`
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lanyan), MIT: the hitmark, animation and reach of each strike, the charged attack, the plunges' hitmarks and radii, the burst's hits and animation, and the skill's animation, read from its attack, charge, plunge, burst, skill and constellation files.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists the multipliers, cooldowns and costs beside each group.
+- [Black Pheasant Strides on Water](https://genshin-impact.fandom.com/wiki/Black_Pheasant_Strides_on_Water) and [Lustrous Moonrise](https://genshin-impact.fandom.com/wiki/Lustrous_Moonrise), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges and burst.

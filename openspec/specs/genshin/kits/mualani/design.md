@@ -26,3 +26,4 @@ Mualani's kit is its record and one behaviour module, `createMualaniKitBehaviour
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mualani), MIT: the hitmarks, animations and reach of the kit, the charged attack's windup and Boomsharka-laka's travel, and the proud group indices behind each multiplier.
 - [Hosted game data](../../hosted-game-data/design.md): the avatar's talent groups 10231, 10232 and 10239 and her skill depot, read from the talent and skill kit tables.
+- [Cooling Treatment](https://genshin-impact.fandom.com/wiki/Cooling_Treatment) and [Boomsharka-laka](https://genshin-impact.fandom.com/wiki/Boomsharka-laka), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges and burst.

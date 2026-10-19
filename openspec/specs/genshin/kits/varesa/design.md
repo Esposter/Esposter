@@ -32,3 +32,4 @@ Her Fiery Passion forms, the apex state that opens Volcanic Kablam and the Follo
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/varesa), MIT, at v2.47.2: the three strikes' hitmarks, cancels and reaches, the charged attack and its frames, the plunges' frames and reaches, Rush, Flying Kick, and the Nightsoul points and blessing (`varesa.go`, `skill.go`, `burst.go`, `plunge.go`).
+- [By the Horns](https://genshin-impact.fandom.com/wiki/By_the_Horns), Genshin Impact Wiki: the poise of her three strikes, collision and plunges.
