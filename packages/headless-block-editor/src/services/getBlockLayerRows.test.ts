@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import {
   TEST_DOCUMENT,
@@ -26,7 +26,7 @@ describe(getBlockLayerRows, () => {
   test("a node's row comes before the rows of its slots, in document order", () => {
     expect.hasAssertions();
 
-    const document: BlockDocument = {
+    const document: LooseBlockDocument = {
       content: [
         {
           props: {

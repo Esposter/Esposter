@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
@@ -9,7 +9,7 @@ import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shar
 // Pastes a copy of the node into its own slot straight after it, so the copy and every node in its slots get fresh ids
 // No operations for a pointer naming no node
 export const duplicateBlockNode = (
-  document: BlockDocument,
+  document: LooseBlockDocument,
   registry: BlockRegistry,
   nodePointer: string,
 ): JsonPatchOperation[] => {

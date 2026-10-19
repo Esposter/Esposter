@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
@@ -27,7 +27,7 @@ const getSlotPointerAfterRemoval = (nodePointer: string, slotPointer: string): s
 // The index is in the target slot once the node is removed.
 // Moving the first of two siblings to the end of their slot is index 1
 export const moveBlockNode = (
-  document: BlockDocument,
+  document: LooseBlockDocument,
   registry: BlockRegistry,
   nodePointer: string,
   slotPointer: string,

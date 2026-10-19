@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import { TEST_DOCUMENT, TEST_HEADING_ID, TEST_REGISTRY, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
 import { moveBlockNode } from "#src/services/moveBlockNode";
@@ -33,7 +33,7 @@ describe(moveBlockNode, () => {
   test("moving a node into a later sibling", () => {
     expect.hasAssertions();
 
-    const document: BlockDocument = {
+    const document: LooseBlockDocument = {
       content: [
         { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
         { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },

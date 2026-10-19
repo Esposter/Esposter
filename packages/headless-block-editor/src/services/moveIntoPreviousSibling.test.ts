@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import { TEST_HEADING_ID, TEST_LIST_ID, TEST_REGISTRY, TEST_SECTION_ID } from "#src/services/constants.test";
 import { moveIntoPreviousSibling } from "#src/services/moveIntoPreviousSibling";
@@ -6,7 +6,7 @@ import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(moveIntoPreviousSibling, () => {
-  const sectionAndHeadingDocument: BlockDocument = {
+  const sectionAndHeadingDocument: LooseBlockDocument = {
     content: [
       { props: { children: [], id: TEST_SECTION_ID }, type: "section" },
       { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
@@ -17,7 +17,7 @@ describe(moveIntoPreviousSibling, () => {
   test("moving into a sibling that refuses the node", () => {
     expect.hasAssertions();
 
-    const document: BlockDocument = {
+    const document: LooseBlockDocument = {
       content: [
         { props: { id: TEST_LIST_ID, items: [] }, type: "list" },
         { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },

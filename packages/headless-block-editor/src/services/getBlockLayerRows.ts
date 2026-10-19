@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockLayerRow } from "#src/models/BlockLayerRow";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
@@ -29,5 +29,5 @@ const getChildRows = (
   });
 
 // Every node of a document in document order: a node's row comes before the rows of its slots, and the root's content is depth 0
-export const getBlockLayerRows = (document: BlockDocument, registry: BlockRegistry): BlockLayerRow[] =>
+export const getBlockLayerRows = (document: LooseBlockDocument, registry: BlockRegistry): BlockLayerRow[] =>
   getChildRows(registry, document.content, "/content", 0);
