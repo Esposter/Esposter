@@ -1551,6 +1551,7 @@ const stepShortcutWheel = (isHeld: boolean, x: number, y: number): void => {
 // A screen that takes the world closes the wheel without opening the entry its key was let go on, so the wheel does not
 // Open on the world's first frame after the screen
 const closeShortcutWheel = (): void => {
+  if (!shortcutWheelStep.isOpen) return;
   shortcutWheelStep = {
     isOpen: false,
     move: shortcutWheelStep.move,
