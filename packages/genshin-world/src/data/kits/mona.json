@@ -87,14 +87,14 @@
     "value": { "index": 1, "proudSkillGroupId": 4132 }
   },
   "hits.mirrorReflectionPhantom.4.poiseDamage": { "cause": "Unsourced", "value": 150 },
-  "hits.sprintPhantom.length": { "cause": "Unclassified", "value": 1 },
+  "hits.sprintPhantom.length": { "cause": "Unsourced", "value": 1 },
   "hits.sprintPhantom.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.sprintPhantom.0.element": { "cause": "Unclassified", "value": "Water" },
   "hits.sprintPhantom.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.sprintPhantom.0.hitmarkFrames": { "cause": "Unclassified", "value": 120 },
+  "hits.sprintPhantom.0.hitmarkFrames": { "file": "asc.go", "line": 58, "source": "Gcsim", "value": 120 },
   "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
   "hits.sprintPhantom.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" },
