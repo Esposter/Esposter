@@ -20,4 +20,3 @@ export const PEERS_FILE_PATH: string = join(homedir(), `.${SITE_NAME.toLowerCase
 export const SUCCESS_EXIT_CODE = 0;
 export const FAILURE_EXIT_CODE = 1;
 export const MEBIBYTE: number = 2 ** 20;
-export const MILLISECONDS_PER_SECOND: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");

@@ -1,4 +1,5 @@
-import { MEBIBYTE, MILLISECONDS_PER_SECOND } from "#src/services/fleet/data/constants";
+import { MEBIBYTE } from "#src/services/fleet/data/constants";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 
 // The line a transfer ends with: its file count, its bytes in mebibytes, its duration and its throughput
 export const formatTransferSummary = (fileCount: number, bytes: number, milliseconds: number): string => {

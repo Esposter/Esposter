@@ -3,9 +3,9 @@ import type { FileEntry } from "#src/models/fleet/data/FileEntry";
 import type { Dirent } from "node:fs";
 
 import { checkIsDirectory } from "#src/services/fleet/data/checkIsDirectory";
-import { MILLISECONDS_PER_SECOND, STAT_CONCURRENCY } from "#src/services/fleet/data/constants";
+import { STAT_CONCURRENCY } from "#src/services/fleet/data/constants";
 import { checkIsNotFound } from "#src/services/shared/checkIsNotFound";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { opendir, stat } from "node:fs/promises";
 import { join } from "node:path";
 

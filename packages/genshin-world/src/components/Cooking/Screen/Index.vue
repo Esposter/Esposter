@@ -8,11 +8,11 @@ import type { GameText } from "genshin-text";
 
 import { autoCookRecipe } from "#src/services/cooking/autoCookRecipe";
 import { checkCanAutoCook } from "#src/services/cooking/checkCanAutoCook";
-import { MILLISECONDS_PER_SECOND } from "#src/services/cooking/constants";
 import { cookRecipeByHand } from "#src/services/cooking/cookRecipeByHand";
 import { getCookingPointerPosition } from "#src/services/cooking/getCookingPointerPosition";
 import { readCookingZones } from "#src/services/cooking/readCookingZones";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
+import { MILLISECONDS_PER_SECOND } from "@esposter/shared";
 import { CookingScreen, GameScreen } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
