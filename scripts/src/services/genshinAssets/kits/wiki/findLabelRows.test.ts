@@ -72,7 +72,29 @@ describe(findLabelRows, () => {
     expect(findLabelRows("Slash DMG", properties)).toStrictEqual([properties[0], properties[1]]);
   });
 
-  test("finds no row for `1-Hit DMG`, a label with no words", () => {
+  test("finds only its own row for `Skill 1-Hit DMG`, not the `Skill 2-Hit DMG` row that shares its words", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "Skill 1-Hit DMG" },
+      { row: 2, title: "Skill 2-Hit DMG" },
+    ];
+
+    expect(findLabelRows("Skill 1-Hit DMG", properties)).toStrictEqual([properties[0]]);
+  });
+
+  test("finds only its own row for `Skill 2-Hit DMG`, not the `Skill 1-Hit DMG` row that shares its words", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "Skill 1-Hit DMG" },
+      { row: 2, title: "Skill 2-Hit DMG" },
+    ];
+
+    expect(findLabelRows("Skill 2-Hit DMG", properties)).toStrictEqual([properties[1]]);
+  });
+
+  test("finds the row titled `1-Hit DMG` for that label, which has no words for the word tiers to match", () => {
     expect.hasAssertions();
 
     const properties: WikiAdvancedProperty[] = [
@@ -80,6 +102,6 @@ describe(findLabelRows, () => {
       { row: 2, title: "Press DMG" },
     ];
 
-    expect(findLabelRows("1-Hit DMG", properties)).toStrictEqual([]);
+    expect(findLabelRows("1-Hit DMG", properties)).toStrictEqual([properties[0]]);
   });
 });
