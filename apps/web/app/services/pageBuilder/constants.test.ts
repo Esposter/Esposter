@@ -1,5 +1,6 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { describe } from "vitest";
@@ -17,7 +18,7 @@ export const TEST_WEBPAGE: WebpageDocument = {
       props: {
         children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_NESTED_TEXT_ID }, type: WebpageNodeType.Text }],
         id: TEST_SECTION_ID,
-        tag: "section",
+        tag: HtmlTag.Section,
       },
       type: WebpageNodeType.Section,
     },

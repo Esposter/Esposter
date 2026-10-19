@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { sanitizeHtml } from "@esposter/shared";
 import { z } from "zod";
@@ -14,7 +16,11 @@ export const customHtmlNodeType = {
   propsSchema: customHtmlPropsSchema,
   render: (node) => {
     const { html } = customHtmlPropsSchema.parse(node.props);
-    return { attributes: { class: "custom-html" }, children: [{ html: sanitizeHtml(html) }], tag: "div" };
+    return {
+      attributes: { [HtmlAttributeName.Class]: "custom-html" },
+      children: [{ html: sanitizeHtml(html) }],
+      tag: HtmlTag.Div,
+    };
   },
   slots: {},
   type: WebpageNodeType.CustomHtml,

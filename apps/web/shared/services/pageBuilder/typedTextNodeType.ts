@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { takeOne } from "@esposter/shared";
 import { z } from "zod";
@@ -54,15 +56,15 @@ export const typedTextNodeType = {
   render: (node) => {
     const { texts } = typedTextPropsSchema.parse(node.props);
     return {
-      attributes: { "aria-label": texts.join(", "), class: "typed-text" },
+      attributes: { [HtmlAttributeName.AriaLabel]: texts.join(", "), [HtmlAttributeName.Class]: "typed-text" },
       children: [
         {
-          attributes: { "aria-hidden": "true", "data-texts": JSON.stringify(texts) },
+          attributes: { [HtmlAttributeName.AriaHidden]: "true", [HtmlAttributeName.DataTexts]: JSON.stringify(texts) },
           children: [takeOne(texts, 0)],
-          tag: "span",
+          tag: HtmlTag.Span,
         },
       ],
-      tag: "span",
+      tag: HtmlTag.Span,
     };
   },
   script: typedTextScript,

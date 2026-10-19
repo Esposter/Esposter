@@ -1,5 +1,6 @@
 import type { VNode } from "vue";
 
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_CONTEXT, TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
@@ -19,7 +20,7 @@ describe(renderCanvasVNodes, () => {
               props: {
                 children: [{ props: { content, id: TEST_OTHER_ID }, type: WebpageNodeType.Text }],
                 id: TEST_ID,
-                tag: "section",
+                tag: HtmlTag.Section,
               },
               type: WebpageNodeType.Section,
             },

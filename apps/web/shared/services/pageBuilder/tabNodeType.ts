@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { z } from "zod";
@@ -15,9 +17,13 @@ export const tabNodeType = {
   render: (node, slots) => {
     const { id } = tabPropsSchema.parse(node.props);
     return {
-      attributes: { "aria-labelledby": `${id}-tab`, id: `${id}-panel`, role: "tabpanel" },
+      attributes: {
+        [HtmlAttributeName.AriaLabelledBy]: `${id}-tab`,
+        [HtmlAttributeName.Id]: `${id}-panel`,
+        [HtmlAttributeName.Role]: "tabpanel",
+      },
       children: slots.children ?? [],
-      tag: "div",
+      tag: HtmlTag.Div,
     };
   },
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },

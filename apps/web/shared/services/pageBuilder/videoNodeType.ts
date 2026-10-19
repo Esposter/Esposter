@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
@@ -16,9 +18,16 @@ export const videoNodeType = {
   render: (node) => {
     const { src, title } = videoPropsSchema.parse(node.props);
     return {
-      attributes: { "aria-label": title, class: "video", controls: "", preload: "metadata", src, title },
+      attributes: {
+        [HtmlAttributeName.AriaLabel]: title,
+        [HtmlAttributeName.Class]: "video",
+        [HtmlAttributeName.Controls]: "",
+        [HtmlAttributeName.Preload]: "metadata",
+        [HtmlAttributeName.Src]: src,
+        [HtmlAttributeName.Title]: title,
+      },
       children: [],
-      tag: "video",
+      tag: HtmlTag.Video,
     };
   },
   slots: {},

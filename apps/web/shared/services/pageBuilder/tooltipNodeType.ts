@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { z } from "zod";
 
@@ -16,12 +18,20 @@ export const tooltipNodeType = {
   render: (node) => {
     const { id, label, text } = tooltipPropsSchema.parse(node.props);
     return {
-      attributes: { class: "tooltip" },
+      attributes: { [HtmlAttributeName.Class]: "tooltip" },
       children: [
-        { attributes: { "aria-describedby": `${id}-tip`, type: "button" }, children: [label], tag: "button" },
-        { attributes: { id: `${id}-tip`, role: "tooltip" }, children: [text], tag: "span" },
+        {
+          attributes: { [HtmlAttributeName.AriaDescribedBy]: `${id}-tip`, [HtmlAttributeName.Type]: "button" },
+          children: [label],
+          tag: HtmlTag.Button,
+        },
+        {
+          attributes: { [HtmlAttributeName.Id]: `${id}-tip`, [HtmlAttributeName.Role]: "tooltip" },
+          children: [text],
+          tag: HtmlTag.Span,
+        },
       ],
-      tag: "span",
+      tag: HtmlTag.Span,
     };
   },
   slots: {},

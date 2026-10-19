@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
@@ -15,7 +17,11 @@ export const textNodeType = {
   propsSchema: textPropsSchema,
   render: (node) => {
     const { content } = textPropsSchema.parse(node.props);
-    return { attributes: { class: "text" }, children: [{ html: renderNoteHtml(content) }], tag: "div" };
+    return {
+      attributes: { [HtmlAttributeName.Class]: "text" },
+      children: [{ html: renderNoteHtml(content) }],
+      tag: HtmlTag.Div,
+    };
   },
   slots: {},
   type: WebpageNodeType.Text,

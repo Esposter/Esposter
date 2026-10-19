@@ -1,6 +1,8 @@
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { getResult } from "@esposter/shared";
 import { z } from "zod";
@@ -86,9 +88,12 @@ const countdownScript = () => {
 };
 
 const createCountdownUnit = (name: string): HtmlElement => ({
-  attributes: { class: "countdown-unit", "data-unit": name },
-  children: [{ attributes: { class: "countdown-value" }, children: [], tag: "span" }, ` ${name}s`],
-  tag: "span",
+  attributes: { [HtmlAttributeName.Class]: "countdown-unit", [HtmlAttributeName.DataUnit]: name },
+  children: [
+    { attributes: { [HtmlAttributeName.Class]: "countdown-value" }, children: [], tag: HtmlTag.Span },
+    ` ${name}s`,
+  ],
+  tag: HtmlTag.Span,
 });
 
 export const countdownNodeType = {
@@ -103,18 +108,22 @@ export const countdownNodeType = {
     const { endsAt, endText } = countdownPropsSchema.parse(node.props);
     return {
       attributes: {
-        "aria-atomic": "false",
-        "aria-live": "off",
-        class: "countdown",
-        "data-end-text": endText,
-        "data-ends-at": endsAt,
-        role: "timer",
+        [HtmlAttributeName.AriaAtomic]: "false",
+        [HtmlAttributeName.AriaLive]: "off",
+        [HtmlAttributeName.Class]: "countdown",
+        [HtmlAttributeName.DataEndsAt]: endsAt,
+        [HtmlAttributeName.DataEndText]: endText,
+        [HtmlAttributeName.Role]: "timer",
       },
       children: [
         ...["day", "hour", "minute", "second"].map((unit) => createCountdownUnit(unit)),
-        { attributes: { class: "countdown-end", hidden: "" }, children: [], tag: "span" },
+        {
+          attributes: { [HtmlAttributeName.Class]: "countdown-end", [HtmlAttributeName.Hidden]: "" },
+          children: [],
+          tag: HtmlTag.Span,
+        },
       ],
-      tag: "div",
+      tag: HtmlTag.Div,
     };
   },
   script: countdownScript,

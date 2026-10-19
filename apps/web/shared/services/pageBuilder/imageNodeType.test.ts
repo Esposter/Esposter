@@ -1,3 +1,5 @@
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { imageNodeType } from "#shared/services/pageBuilder/imageNodeType";
@@ -25,9 +27,14 @@ describe("imageNodeType", () => {
         type: WebpageNodeType.Image,
       }),
     ).toStrictEqual({
-      attributes: { alt: "", class: "image", role: "presentation", src: TEST_URL },
+      attributes: {
+        [HtmlAttributeName.Alt]: "",
+        [HtmlAttributeName.Class]: "image",
+        [HtmlAttributeName.Role]: "presentation",
+        [HtmlAttributeName.Src]: TEST_URL,
+      },
       children: [],
-      tag: "img",
+      tag: HtmlTag.Img,
     });
   });
 });
