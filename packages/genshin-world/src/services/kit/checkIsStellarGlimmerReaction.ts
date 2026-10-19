@@ -2,7 +2,7 @@ import type { Reaction } from "#src/models/combat/Reaction";
 
 import { ReactionType } from "#src/models/combat/ReactionType";
 
-const STELLAR_GLIMMER_REACTION_TYPES: readonly ReactionType[] = new Set([
+const STELLAR_GLIMMER_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
   ReactionType.StellarConduct,
   ReactionType.StellarSwirl,
 ]);
