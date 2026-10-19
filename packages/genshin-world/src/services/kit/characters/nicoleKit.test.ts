@@ -110,7 +110,7 @@ const emitEnemyHits = (
 
 // A field of the strike bonus Nicole's kit gives a strike of a deployed member, zero when it gives none
 const getPartyStrikeBonus = (
-  field: "additiveBaseDamageBonus" | "defenseIgnored",
+  field: keyof ReturnType<NonNullable<Kit["getPartyStrikeBonus"]>>,
   context: KitContext,
   nicole: Combatant,
   strike: KitStrike,

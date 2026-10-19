@@ -14,7 +14,6 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createEscoffierKitBehaviour, ESCOFFIER_CHARACTER_ID } from "#src/services/kit/characters/escoffierKit";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -37,6 +36,41 @@ const castScoringCutsFieldIds = (ascension: number): (string | undefined)[] => {
   ESCOFFIER_KIT.elementalBurst.onStart?.(context);
   return context.kitEffectState.effects.flatMap((effect) => (effect.kind === "field" ? [effect.id] : []));
 };
+
+// The RES Low-Temperature Cooking's first Frosty Parfait tick shreds from the enemy it hits, as the team stands
+const getShred = (ascension: number, deployedElements: (Element | undefined)[]): number | undefined => {
+  const combatant = { ...createEscoffierCombatant(ascension), deployedElements };
+  const kitEffectState: KitEffectState = { effects: [] };
+  ESCOFFIER_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+  return summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction?.[Element.Cryo];
+};
+
+const createTeamCombatant = (
+  ascension: number,
+  constellationCount: number,
+  deployedElements: Element[],
+): Combatant => ({ ...createEscoffierCombatant(ascension), constellationCount, deployedElements });
+
+// A normal attack's first hit, of the element given
+const readNormalAttackHit = (element: Element): KitHit => ({
+  ...takeOne(takeOne(ESCOFFIER_KIT.normalAttacks).hits),
+  element,
+});
+
+// The CRIT DMG her kit adds to a strike of her own, read as the context stands after her skill
+const readOwnCriticalDamageBonus = (context: KitContext, element: Element): number =>
+  ESCOFFIER_KIT.getStrikeCriticalDamageBonus?.(
+    {
+      attackTag: AttackTag.NormalAttack,
+      body: context.body,
+      combatant: context.activeCombatant,
+      hit: readNormalAttackHit(element),
+    },
+    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    context.party,
+    context.kitEffectState.effects,
+  ) ?? 0;
 
 describe(createEscoffierKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -93,15 +127,6 @@ describe(createEscoffierKitBehaviour, () => {
     expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
   });
   describe("ascension 4's Hydro and Cryo RES shred", () => {
-    // The RES Low-Temperature Cooking's first Frosty Parfait tick shreds from the enemy it hits, as the team stands
-    const getShred = (ascension: number, deployedElements: (Element | undefined)[]): number | undefined => {
-      const combatant = { ...createEscoffierCombatant(ascension), deployedElements };
-      const kitEffectState: KitEffectState = { effects: [] };
-      ESCOFFIER_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
-      const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-      return summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction?.[Element.Cryo];
-    };
-
     test("a passive takes effect at its ascension phase", () => {
       expect.hasAssertions();
 
@@ -126,32 +151,6 @@ describe("escoffier kit constellation 1", () => {
   const TEAMMATE_CHARACTER_ID = 10_000_001;
   const CRYO_HYDRO_TEAM = [Element.Cryo, Element.Hydro];
   const CONSTELLATION_1_BONUS = 0.6;
-
-  const createTeamCombatant = (
-    ascension: number,
-    constellationCount: number,
-    deployedElements: Element[],
-  ): Combatant => ({ ...createEscoffierCombatant(ascension), constellationCount, deployedElements });
-
-  // A normal attack's first hit, of the element given
-  const readNormalAttackHit = (element: Element): KitHit => ({
-    ...takeOne(takeOne(ESCOFFIER_KIT.normalAttacks).hits),
-    element,
-  });
-
-  // The CRIT DMG her kit adds to a strike of her own, read as the context stands after her skill
-  const readOwnCriticalDamageBonus = (context: KitContext, element: Element): number =>
-    ESCOFFIER_KIT.getStrikeCriticalDamageBonus?.(
-      {
-        attackTag: AttackTag.NormalAttack,
-        body: context.body,
-        combatant: context.activeCombatant,
-        hit: readNormalAttackHit(element),
-      },
-      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-      context.party,
-      context.kitEffectState.effects,
-    ) ?? 0;
 
   // The CRIT DMG her kit adds to a strike of a teammate's, of the element given, read once her skill is pressed
   const readTeammateCriticalDamageBonus = (combatant: Combatant, element: Element): number => {

@@ -64,6 +64,16 @@ const createNormalAttackDamageTaken = (striker: Combatant): KitDamageTakenEvent 
   striker,
 });
 
+// An enemy's strike that takes a share of a member's HP
+const strikeOn = (characterId: number): KitEvent => ({
+  bondOfLifeShare: 0,
+  characterId,
+  healthShare: -0.1,
+  isFallRefused: false,
+  kind: KitEventKind.HealthChanged,
+  overflowHealthShare: 0,
+});
+
 describe(createCandaceKitBehaviour, () => {
   // The seconds the Prayer of the Crimson Crown stands once the burst is cast by a combatant of the given constellations
   const getPrayerSeconds = (constellationCount: number): number | undefined =>
@@ -259,15 +269,6 @@ describe(createCandaceKitBehaviour, () => {
     stepKit(kitState, CANDACE_KIT, hold, partyMember, stamina, STEP_SECONDS, [], context);
     return stepKit(kitState, CANDACE_KIT, IDLE_INPUT, partyMember, stamina, STEP_SECONDS, [], context);
   };
-  // An enemy's strike that takes a share of a member's HP
-  const strikeOn = (characterId: number): KitEvent => ({
-    bondOfLifeShare: 0,
-    characterId,
-    healthShare: -0.1,
-    isFallRefused: false,
-    kind: KitEventKind.HealthChanged,
-    overflowHealthShare: 0,
-  });
 
   test("the Ascension 1 passive, Aegis of Crossed Arrows, takes effect at its ascension phase", () => {
     expect.hasAssertions();

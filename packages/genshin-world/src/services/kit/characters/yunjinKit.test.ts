@@ -84,6 +84,13 @@ const readReactionBuffs = (constellationCount: number, reactions: Reaction[]) =>
   return readBuffTuples(kitEffectState.effects);
 };
 
+const strikeOf = (combatant: Combatant, hit: KitHit, attackTag: AttackTag): KitStrike => ({
+  attackTag,
+  body: createKitTestContext(combatant).body,
+  combatant,
+  hit,
+});
+
 describe(createYunjinKitBehaviour, () => {
   test("reads each talent multiplier from her proud skill groups", () => {
     expect.hasAssertions();
@@ -278,12 +285,6 @@ describe("cliffbreaker's Banner's DMG Increase", () => {
     characterIdCombatantMap = new Map([[strike.combatant.characterId, strike.combatant]]),
   ) =>
     YUNJIN_KIT.getStrikeAdditiveBaseDamageBonus?.(strike, enemy, team, kitEffectState.effects, characterIdCombatantMap);
-  const strikeOf = (combatant: Combatant, hit: KitHit, attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: createKitTestContext(combatant).body,
-    combatant,
-    hit,
-  });
   const teamParty = createParty([YUNJIN_CHARACTER_ID, OTHER_CHARACTER_ID]);
   // The flat base damage a teammate's normal attack adds from the team's party strike hooks, as a strike of the
   // Team takes it
@@ -450,11 +451,15 @@ describe("cliffbreaker's Banner's DMG Increase", () => {
     };
   };
   // The flat base damage a normal attack of Yun Jin's adds while the banner stands, on the team given
-  const getTeamIncrease = ({ characterIdCombatantMap, combatant, party }: ReturnType<typeof createYunjinTeam>) =>
+  const getTeamIncrease = ({
+    characterIdCombatantMap,
+    combatant,
+    party: createdTeamParty,
+  }: ReturnType<typeof createYunjinTeam>) =>
     getIncrease(
       strikeOf(combatant, NORMAL_ATTACK_HIT, AttackTag.NormalAttack),
       castStart(YUNJIN_KIT.elementalBurst, combatant),
-      party,
+      createdTeamParty,
       characterIdCombatantMap,
     );
 

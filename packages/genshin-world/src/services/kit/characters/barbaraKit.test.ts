@@ -20,7 +20,6 @@ import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/servic
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
-import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createParty } from "#src/services/party/createParty";

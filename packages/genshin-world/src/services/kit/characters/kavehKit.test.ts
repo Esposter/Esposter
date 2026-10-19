@@ -19,6 +19,18 @@ import { describe, expect, test } from "vitest";
 const KAVEH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAVEH_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
+const bloomDamageBonus = (member: Combatant, reactionType: TransformativeReactionType) =>
+  KAVEH_KIT.getPartyReactionBonus?.(
+    member,
+    {
+      combatant: member,
+      element: Element.Dendro,
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      reactionType,
+    },
+    createKitTestContext(member),
+  )?.damageBonus ?? 0;
+
 describe(createKavehKitBehaviour, () => {
   // The effects the burst's start adds to the team's, which its owner holds
   const castBurst = (): KitEffectState => {
@@ -96,17 +108,6 @@ describe(createKavehKitBehaviour, () => {
 
   test("a Constellation 4 Kaveh's Bloom DMG bonus is 60% on the Bloom he makes, and none on another reaction", () => {
     expect.hasAssertions();
-    const bloomDamageBonus = (member: Combatant, reactionType: TransformativeReactionType) =>
-      KAVEH_KIT.getPartyReactionBonus?.(
-        member,
-        {
-          combatant: member,
-          element: Element.Dendro,
-          enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-          reactionType,
-        },
-        createKitTestContext(member),
-      )?.damageBonus ?? 0;
     expect([
       bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 3 }, TransformativeReactionType.Bloom),
       bloomDamageBonus({ ...createKavehCombatant(), constellationCount: 4 }, TransformativeReactionType.Bloom),

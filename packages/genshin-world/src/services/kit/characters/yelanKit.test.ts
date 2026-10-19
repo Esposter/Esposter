@@ -53,6 +53,21 @@ const createYelanCombatant = (): Combatant => ({
   weaponType: WeaponType.Bow,
 });
 
+// Yelan's passive bonuses at an ascension, on a team of her (Hydro) and members of the given elements
+const readPassiveBonuses = (
+  ascension: number,
+  teamElements: Element[],
+): { amount: number; attribute: Attribute }[] | undefined => {
+  const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
+  const deployedCombatants = [
+    createDeployedCombatant(combatant, { isOnField: true }),
+    ...teamElements.map((element) =>
+      createDeployedCombatant({ ...createYelanCombatant(), element }, { isOnField: false }),
+    ),
+  ];
+  return YELAN_KIT.getPassiveBonuses?.(combatant, 0.5, deployedCombatants, []);
+};
+
 describe(createYelanKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -198,21 +213,6 @@ describe(createYelanKitBehaviour, () => {
 });
 
 describe("ascension 1", () => {
-  // Yelan's passive bonuses at an ascension, on a team of her (Hydro) and members of the given elements
-  const readPassiveBonuses = (
-    ascension: number,
-    teamElements: Element[],
-  ): { amount: number; attribute: Attribute }[] | undefined => {
-    const combatant = { ...createYelanCombatant(), ascension, element: Element.Hydro };
-    const deployedCombatants = [
-      createDeployedCombatant(combatant, { isOnField: true }),
-      ...teamElements.map((element) =>
-        createDeployedCombatant({ ...createYelanCombatant(), element }, { isOnField: false }),
-      ),
-    ];
-    return YELAN_KIT.getPassiveBonuses?.(combatant, 0.5, deployedCombatants, []);
-  };
-
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
