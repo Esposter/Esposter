@@ -5,7 +5,7 @@ Raiden Shogun's kit is its record and one behaviour module, `createRaidenKitBeha
 ## Decisions
 
 - **Constellation 2's DEF ignored is read off her Musou Isshin stance.** gcsim gives it while her burst's status stands or the burst's animation plays. The kit has no such status, so the hook reads the stance the burst takes at its cast, and prices only the strikes her own kit deals while it stands.
-- **The Raiden Shogun's Musou Isshin strikes, skill, coordinated attack and burst deal 0 poise, while her polearm strikes take the wiki's 36.88, 36.96, 46.4, 26.96 (both hits of the fourth) and 60.88, her charged attack the wiki's 120 and her collision the wiki's 25.** Provisional, as gcsim gives none for the skill, the coordinated attack and the Musou Isshin strikes, so the kit sets each at 0; gcsim gives none for the polearm strikes, the charged attack or the collision either, so each takes its wiki row.
+- **The Raiden Shogun's poise is the wiki's.** Her polearm strikes take 36.88, 36.96, 46.4, 26.96 for each of the fourth's two hits and 60.88, her charged attack 120 and her collision 25; the Musou Isshin stance's strikes take the same five, its charged attack's two hits 60 each, Musou no Hitotachi 150, Eye of Stormy Judgment's hit 80 and its coordinated attacks 30. gcsim gives her plunges theirs and none of the rest any.
 
 ## Key files
 
