@@ -20,6 +20,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { IFA_CHARACTER_ID } from "#src/services/kit/characters/ifaKit";
+import { RESCUE_ESSENTIALS_CAP, RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
@@ -177,7 +178,7 @@ describe(strikeLunarCharged, () => {
         takeOne(CharacterLevelMultiplierMap, LEVEL),
         elementalMastery,
         baseDamageBonusMap[LunarReactionType.LunarCharged] ?? 0,
-        reactionBonus + 150 * 0.002,
+        reactionBonus + RESCUE_ESSENTIALS_CAP * RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS,
       );
 
     strikeLunarCharged(enemy, context);

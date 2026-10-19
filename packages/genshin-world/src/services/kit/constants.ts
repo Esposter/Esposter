@@ -120,3 +120,9 @@ export const SOURCEWATER_DROPLET_SECONDS = 878 / KIT_FRAMES_PER_SECOND;
 // The fewest Hexerei members a team holds Hexerei: Secret Rite with, as gcsim reads its GetHexereiCount against two
 // (internal/weapons/spear/disasterandremorse/disasterandremorse.go:49)
 export const HEXEREI_SECRET_RITE_MINIMUM = 2;
+
+// Ifa's Rescue Essentials, her A1, are the Nightsoul points of her party, up to 150, held while her blessing lasts.
+// The wiki's passive text and gcsim's team sum give them. Each one adds 0.2% to the party's Lunar-Charged DMG, as the
+// Description of the proud skill 1132101 (TextMap 2399084529) gives it.
+export const RESCUE_ESSENTIALS_CAP = 150;
+export const RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS = 0.002;
