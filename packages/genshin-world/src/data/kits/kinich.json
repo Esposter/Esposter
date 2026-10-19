@@ -9,7 +9,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 20.024937810560445 }
   },
   "hitFields.dragonBreath.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10139 } },
-  "hitFields.dragonBreath.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }

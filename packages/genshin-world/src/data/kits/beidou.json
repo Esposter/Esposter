@@ -17,7 +17,6 @@
   "hitFields.lightningDischarge.gauge": { "file": "burst.go", "line": 66, "source": "Gcsim", "value": 1 },
   "hitFields.lightningDischarge.hitmarkFrames": { "file": "burst.go", "line": 143, "source": "Gcsim", "value": 1 },
   "hitFields.lightningDischarge.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2439 } },
-  "hitFields.lightningDischarge.poiseDamage": { "cause": "Unsourced", "value": 50 },
   "hits.baneOfEvilTicks.length": { "cause": "Unsourced", "value": 30 },
   "hits.baneOfEvilTicks.0-29.area": {
     "file": "burst.go",
