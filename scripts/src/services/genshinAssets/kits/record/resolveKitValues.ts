@@ -62,7 +62,7 @@ export const resolveKitValues = (
       ({ provenance, value }) =>
         provenance.source === entry.source &&
         (entry.value === undefined || checkIsKitValueResolvedEqual(value, entry.value, tables.talentMultiplierMap)) &&
-        (!("file" in entry) || checkIsCitedBy(provenance, entry)),
+        (!("file" in entry || "page" in entry) || checkIsCitedBy(provenance, entry)),
     );
     if (candidate !== undefined) choose(path, candidate);
     return candidate !== undefined;

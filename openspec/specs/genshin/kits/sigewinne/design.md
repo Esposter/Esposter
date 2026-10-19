@@ -9,7 +9,7 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 - **Super Saturated Syringing is six waves from her.** Each wave is a box 4 metres wide and 10 long, at 99 frames and then every 25 frames, through its 241-frame animation, each a share of her Max HP. Its cooldown is 18 seconds on 70 energy.
 - **The charged shot is the Fully-Charged Aimed Shot, the charge's first level.** It is gcsim's default, hitting at 86 frames of its 94, in a box as her first strike is, and costs no stamina, as Ganyu's does not.
 - **Plunges use the shared plunge reaches, with provisional talent indices.** gcsim names no plunge group for her, so the collision, low and high plunges read attack group indices 3, 4 and 5, inferred from their values' ratios (0.568, 1.136 and 1.419), and land at the start of their 0.4-second action.
-- **Her strikes, shot and plunges take the wiki's poise, provisionally.** gcsim gives them none, so her strikes take 18.354, 17.816 and 27.311, her shot 20, her collision 10, and her high and low plunges 100 and 50.
+- **Her strikes, shot and plunges take their poise from the wiki.** gcsim gives them none, so her strikes take 18.354, 17.816 and 27.311, her shot 20, her collision 10, and her high and low plunges 100 and 50.
 - **Semi-Strict Bedrest is her Ascension 1 Hydro DMG Bonus.** From Ascension 1, each press of Rebound Hydrotherapy gives her an 8% Hydro DMG Bonus for 18 seconds, as a buff on herself, as gcsim's a1Self gives it.
 
 ## Not built
@@ -31,3 +31,4 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sigewinne), MIT: the kit's hitmarks and animations, the strikes' and shot's boxes and circles, the bubbles' radius and interval, the waves' box and ticks, and the proud group indices behind each multiplier and share.
+- [Targeted Treatment](https://genshin-impact.fandom.com/wiki/Targeted_Treatment) and [Super Saturated Syringing](https://genshin-impact.fandom.com/wiki/Super_Saturated_Syringing), Genshin Impact Wiki: the poise of her strikes, shot, collision, plunges and six waves.

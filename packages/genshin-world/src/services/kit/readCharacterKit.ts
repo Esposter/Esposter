@@ -5,7 +5,8 @@ import { CharacterIdCreateKitBehaviourMap } from "#src/generated/characterKitMap
 import { SkillGlyphsLoaderMap } from "#src/generated/skillGlyphs/SkillGlyphsLoaderMap";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { kitRecordSchema } from "#src/models/kit/record/KitRecord";
-import { COMBAT_TALENT_ORDER, TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createTalentLevelMap } from "#src/services/character/createTalentLevelMap";
 import { readCharacterTalentKits } from "#src/services/character/readCharacterTalentKits";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { buildKit } from "#src/services/kit/buildKit";
@@ -37,9 +38,7 @@ export const readCharacterKit = async (
     ({ characterId: talentKitCharacterId }) => talentKitCharacterId === kitCharacterId,
   )?.talentGroupIds;
   if (!talentGroupIds) throw new InvalidOperationError(Operation.Read, `${kitCharacterId}`, "no talent groups");
-  const talentLevelMap = Object.fromEntries(
-    COMBAT_TALENT_ORDER.map((talent) => [talentGroupIds[talent], talentLevels[talent]]),
-  );
+  const talentLevelMap = createTalentLevelMap(talentGroupIds, talentLevels);
   const kit = buildKit(record, talentMultiplierMap, talentLevelMap, createBehaviour);
   if (skillGlyphs) kit.skillGlyphs = skillGlyphs;
   return kit;

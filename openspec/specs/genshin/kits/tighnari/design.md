@@ -21,3 +21,4 @@ Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged s
 ## Sources
 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/tighnari), MIT: Tighnari's strikes' hitmarks and cancels, the fully charged shot's frames, Vijnana-Phala Mine's hitmark and radius, and Tanglevine Shaft's hits and their timings.
+- [Khanda Barrier-Buster](https://genshin-impact.fandom.com/wiki/Khanda_Barrier-Buster), [Vijnana-Phala Mine](https://genshin-impact.fandom.com/wiki/Vijnana-Phala_Mine) and [Fashioner's Tanglevine Shaft](https://genshin-impact.fandom.com/wiki/Fashioner%27s_Tanglevine_Shaft), Genshin Impact Wiki: the poise of his strikes, his fully charged shot, mine and Tanglevine Shaft's hits.

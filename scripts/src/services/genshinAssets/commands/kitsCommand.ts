@@ -58,7 +58,7 @@ export const kitsCommand: SubCommandsDef[string] = defineCommand({
     console.log(
       await publishGameDataStep({
         isDryRun: args["dry-run"],
-        publication: buildKitPublication(inputs, characterIds),
+        publication: await buildKitPublication(inputs, characterIds),
         scopes: [GameDataset.Kits, GameDataset.KitSources],
       }),
     );

@@ -6,7 +6,7 @@ The burst lands an aura check just before its hit, with no damage, element or po
 
 ## Decisions
 
-- **Heizou's hold is gcsim's full charge.** gcsim's Heartstopper hold charges its four Declension stacks over 180 frames, so the kit's hold is one level at three seconds, and a shorter hold reads as the press. His skill and burst give no poise, as neither gcsim nor the wiki gives one; his strikes take the wiki's 42.16, 41.46 and 57.44 for the first three, 16.63, 18.29 and 21.62 for the fourth's three hits, and 69.13 for the fifth, his charged attack the wiki's 120, his collision the wiki's 5, his plunges the wiki's 100 high and 50 low, and his Windmuster Iris the wiki's 25.
+- **Heizou's hold is gcsim's full charge.** gcsim's Heartstopper hold charges its four Declension stacks over 180 frames, so the kit's hold is one level at three seconds, and a shorter hold reads as the press. His skill gives no poise, as neither gcsim nor the wiki gives one, and his burst takes the wiki's 100 on its hit and none on its aura check; his strikes take the wiki's 42.16, 41.46 and 57.44 for the first three, 16.63, 18.29 and 21.62 for the fourth's three hits, and 69.13 for the fifth, his charged attack the wiki's 120, his collision the wiki's 5, his plunges the wiki's 100 high and 50 low, and his Windmuster Iris the wiki's 25.
 - **Windmuster Iris reads the aura from a hit of its own, ahead of the burst's Anemo.** gcsim queues a no-damage aura check on the burst's frame ahead of its Anemo hit, so the Swirl the hit triggers does not take the aura first. The kit's burst holds the same check as its first hit, and the kit reads the aura of each enemy it strikes as the damage it took reaches it. The Iris is a summon on the enemy as the check found it, where gcsim's circle follows the enemy over the 40 frames.
 
 ## Key files
@@ -18,3 +18,4 @@ The burst lands an aura check just before its hit, with no damage, element or po
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/heizou), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames and box, the plunges' frames and circles, Heartstopper Strike's hit, box and frames, its full hold's 180 frames and Declension and Conviction bonuses, Fudou Style Vacuum Slugger's circle and hitmark, Windmuster Iris's aura check, its four tags, the order it takes an aura in, its 40-frame delay and its circle, and the Durability of every hit.
+- [Fudou Style Martial Arts](https://genshin-impact.fandom.com/wiki/Fudou_Style_Martial_Arts) and [Windmuster Kick](https://genshin-impact.fandom.com/wiki/Windmuster_Kick), Genshin Impact Wiki: the poise of his burst's hit and Windmuster Iris, and of his plunges, collision, strikes and charged attack.
