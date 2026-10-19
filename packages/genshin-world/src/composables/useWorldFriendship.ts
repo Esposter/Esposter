@@ -1,7 +1,6 @@
 import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
 import type { FriendshipNamecard } from "#src/models/friendship/FriendshipNamecard";
 
-import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { readFriendshipLevels } from "#src/services/friendship/readFriendshipLevels";
 import { readFriendshipNamecards } from "#src/services/friendship/readFriendshipNamecards";
 import { getResultAsync } from "@esposter/shared";
@@ -13,16 +12,15 @@ export const useWorldFriendship = (gameDataBaseUrl: string) => {
   const friendshipNamecards = shallowRef<FriendshipNamecard[]>([]);
   // The Friendship Levels a claim's Companionship EXP is kept under, read from the friendship record. A claim waits until
   // They are loaded, since the EXP has no top to stop at without them
-  if (checkIsGameDataKey("friendship/friendship"))
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
-    getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
-      (levels) => {
-        friendshipLevels.value = levels;
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
+  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
+  getResultAsync(() => readFriendshipLevels(gameDataBaseUrl)).match(
+    (levels) => {
+      friendshipLevels.value = levels;
+    },
+    (error) => {
+      console.error(error);
+    },
+  );
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readFriendshipNamecards(gameDataBaseUrl)).match(
     (namecards) => {
