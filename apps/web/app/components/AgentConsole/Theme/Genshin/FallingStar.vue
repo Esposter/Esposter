@@ -28,7 +28,7 @@ onRender(({ elapsed }) => {
 </script>
 
 <template>
-  <div absolute inset-0 pointer-events-none>
+  <div pointer-events-none inset-0 absolute>
     <TresCanvas :clear-alpha="0" :window-size="false">
       <TresPerspectiveCamera :fov="FALLING_STAR_FOV_DEGREES" :position="[0, 0, FALLING_STAR_CAMERA_DISTANCE]" />
       <TresGroup :position="[0, starY, 0]">

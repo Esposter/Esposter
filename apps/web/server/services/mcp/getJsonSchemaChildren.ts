@@ -1,4 +1,5 @@
 import type { JSONSchema } from "zod/v4/core";
+
 import { APPEND_SEGMENT, parseArrayIndex } from "@esposter/shared";
 
 // The schemas the member a pointer's segment names may be described by, inside a value `schema` describes: an object's

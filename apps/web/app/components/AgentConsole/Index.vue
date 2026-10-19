@@ -62,7 +62,7 @@ const isOpeningShown = ref(true);
             :is="themeScene"
             v-if="isLoaded && themeScene"
             :key="currentSessionId"
-            :avatar="avatar"
+            :avatar
             :session-start-context="themeSessionStartContext"
           />
           <AgentConsoleSheet v-if="isLoaded" />

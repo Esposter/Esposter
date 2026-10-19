@@ -13,11 +13,11 @@ export interface GenerateCharacterPackUploadSasUrlsInput {
 }
 
 export const generateCharacterPackUploadSasUrlsInputSchema = z.object({
-  keepId: z.uuid(),
   files: z
     .array(
       z.object({ sha256: z.string().regex(SHA256_REGEX), size: z.int().positive().max(MAX_CHARACTER_PACK_FILE_SIZE) }),
     )
     .min(1)
     .max(MAX_CHARACTER_PACK_FILE_COUNT),
+  keepId: z.uuid(),
 }) satisfies z.ZodType<GenerateCharacterPackUploadSasUrlsInput>;

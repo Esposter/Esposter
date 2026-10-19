@@ -26,7 +26,7 @@ onClickExceptDrag(
   <div ref="container" size-full>
     <!-- The chart is drawn as it is published, but takes no pointer: a press on it is the tile's drag, and its click
       opens the edit form. The corner's actions and the error state's Retry sit above it again -->
-    <div pointer-events-none size-full>
+    <div size-full pointer-events-none>
       <DashboardVisual :visual>
         <template #actions>
           <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts a visual's

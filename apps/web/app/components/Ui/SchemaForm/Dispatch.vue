@@ -31,5 +31,5 @@ const renderer = computed(() => {
 
 <!-- One node of a schema form, drawn by whichever renderer ranks it highest -->
 <template>
-  <component v-if="component" :is="component" :="renderer" :form />
+  <component :is="component" v-if="component" :="renderer" :form />
 </template>

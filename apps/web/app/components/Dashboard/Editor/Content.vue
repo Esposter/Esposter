@@ -27,8 +27,8 @@ const { updateVisual } = visualStore;
       <template #default="{ visual }">
         <DashboardVisualPreviewContainer
           size-full
-          ui-frame
           cursor-pointer
+          ui-frame
           active="not-focus-within:[background-image:var(--ui-pressed-overlay)]"
           :visual
         />

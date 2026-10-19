@@ -1,6 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
@@ -42,12 +43,11 @@ import {
   ID_SEPARATOR,
   InvalidOperationError,
   jsonDateParse,
+  JsonPatchOperationType,
   Operation,
   takeOne,
   waitForSynchronizedFunctions,
-  JsonPatchOperationType,
 } from "@esposter/shared";
-import type { JsonPatchOperation } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 

@@ -15,8 +15,8 @@ usePdfPage({ canvas: () => canvas.value ?? undefined, pageNumber: 1, pdfDocument
 </script>
 
 <template>
-  <div of-hidden w-full>
-    <canvas v-show="!isFailed" ref="canvas" block w-full />
-    <p v-if="isFailed" p-3 text-sm text-muted>The PDF could not be loaded.</p>
+  <div w-full of-hidden>
+    <canvas v-show="!isFailed" ref="canvas" w-full block />
+    <p v-if="isFailed" text-sm text-muted p-3>The PDF could not be loaded.</p>
   </div>
 </template>

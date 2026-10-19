@@ -59,10 +59,10 @@ const getBoxStyle = (geometry: GridGeometry) => ({
       <span
         v-if="isEditable"
         class="dashboard-grid-handle"
-        absolute
+        size-4
         bottom-0
         right-0
-        size-4
+        absolute
         cursor="nwse-resize"
         @pointerdown.stop="(event) => startGesture(event, item, ResizeEdge.SouthEast)"
       />

@@ -26,19 +26,19 @@ const isRatesShown = ref(false);
 </script>
 
 <template>
-  <div absolute inset-0 pointer-events-none>
+  <div pointer-events-none inset-0 absolute>
     <AgentConsoleThemeGenshinFallingStar v-if="isFalling && !isLanded" :color="starColor" @land="isLanded = true" />
-    <div v-if="isLanded" absolute inset-x-0 class="bottom-1/4" flex flex-col items-center gap-2 pointer-events-auto>
-      <ul v-if="isRatesShown" w-64 flex flex-col gap-2 bg-background p-3 rounded>
+    <div v-if="isLanded" class="bottom-1/4" flex flex-col gap-2 pointer-events-auto items-center inset-x-0 absolute>
+      <ul v-if="isRatesShown" rounded p-3 bg-background flex flex-col gap-2 w-64>
         <li v-for="{ displayName, name, probability } in loreRates" :key="name" flex flex-col gap-1>
-          <span flex items-center gap-2>
+          <span flex gap-2 items-center>
             <UiItemContent is-markless :title="displayName">
               <template #append>
                 <span text-muted>{{ PERCENT_FORMAT.format(probability) }}</span>
               </template>
             </UiItemContent>
           </span>
-          <span block h-1 rounded-full bg-accent :style="{ width: `${(probability / maxProbability) * 100}%` }" />
+          <span rounded-full bg-accent h-1 block :style="{ width: `${(probability / maxProbability) * 100}%` }" />
         </li>
       </ul>
       <span :style="{ color: starColor }">{{ stars }}</span>

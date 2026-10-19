@@ -9,9 +9,9 @@ export interface AgentConsoleTheme {
   // Theme's, so a session is presented by the theme whose plugin started it
   getAvatar: (sessionStartContext: string) => string;
   getPalette: (sessionStartContext: string) => Partial<Record<UiToken, string>>;
+  // What the theme does on top of the console's own notification when the tab is hidden
+  reactions: Partial<Record<AgentConsoleReaction, (title: string, body: string) => void>>;
   // What the theme adds to the world: a component the console mounts over the world for the session it presents,
   // Handed that session's avatar and session-start context. Only a theme with a scene sets it
   scene?: Component;
-  // What the theme does on top of the console's own notification when the tab is hidden
-  reactions: Partial<Record<AgentConsoleReaction, (title: string, body: string) => void>>;
 }

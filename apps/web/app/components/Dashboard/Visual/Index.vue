@@ -57,7 +57,7 @@ const { copy } = clipboardStore;
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
-      <div flex gap-1 right-1 top-1 absolute pointer-events-auto>
+      <div flex gap-1 pointer-events-auto right-1 top-1 absolute>
         <slot name="actions" />
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->

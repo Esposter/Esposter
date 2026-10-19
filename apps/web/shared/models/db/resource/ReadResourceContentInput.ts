@@ -1,5 +1,5 @@
-import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { jsonPointerSchema } from "#shared/models/db/resource/JsonPointer";
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { z } from "zod";
 
