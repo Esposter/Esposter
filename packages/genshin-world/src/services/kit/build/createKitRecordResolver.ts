@@ -180,7 +180,8 @@ export const createKitRecordResolver = (talentMultiplierMap: TalentMultiplierMap
       moonsignBenediction: { lunarReactionTypes: record.moonsignBenediction.lunarReactionTypes },
     }),
     normalAttacks: record.normalAttacks.map((actionRecord) => toAction(actionRecord)),
-    plungeCollision: toHit(record.plungeCollision),
+    // An infusion deals a collision's element at 0U, with no aura
+    plungeCollision: { ...toHit(record.plungeCollision), infusedGauge: 0 },
     skillCooldownSeconds: toParameter(record.skillCooldownSeconds),
     ...(record.stellarJubilee && {
       stellarJubilee: { stellarReactionTypes: record.stellarJubilee.stellarReactionTypes },
