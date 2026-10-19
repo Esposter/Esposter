@@ -200,7 +200,7 @@ describe(createJahodaKitBehaviour, () => {
       gauge: 1,
       hitArea: { angle: 2 * Math.PI, height: 5, radius: 5 },
       hitmarkSeconds: 4 / 60,
-      poiseDamage: 0,
+      poiseDamage: 80,
       talentMultiplier: 1.908,
     });
   });

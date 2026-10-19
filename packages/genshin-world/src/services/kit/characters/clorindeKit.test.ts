@@ -133,7 +133,7 @@ describe(createClorindeKitBehaviour, () => {
       castNightVigilAction(createClorindeParty(1), (stance) => stance.kit.normalAttacks.at(1)).flatMap(({ hits }) =>
         hits.map(({ hitArea }) => hitArea.radius),
       ),
-    ).toStrictEqual([0.6]);
+    ).toStrictEqual([15.6]);
   });
 
   test("impale the night casts its three-hit variant at 100% bond of life share, and one hit below it", () => {

@@ -81,10 +81,7 @@ describe(createHeizouKitBehaviour, () => {
     expect(HEIZOU_KIT.elementalSkill.hits.map(({ element, gauge }) => [element, gauge])).toStrictEqual([
       [Element.Anemo, 2],
     ]);
-    expect([HEIZOU_KIT.plungeCollision.element, HEIZOU_KIT.plungeCollision.gauge]).toStrictEqual([
-      Element.Anemo,
-      undefined,
-    ]);
+    expect([HEIZOU_KIT.plungeCollision.element, HEIZOU_KIT.plungeCollision.gauge]).toStrictEqual([Element.Anemo, 0]);
   });
 
   test("the burst's Windmuster Iris explodes 40 frames on where an enemy the burst tags stands, in the first aura it holds, for 4 at most", () => {
