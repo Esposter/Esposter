@@ -4,13 +4,13 @@ Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones 
 
 ## Scope
 
-**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized and vocoded in token chunks, each chunk played as its speech is made, so the first sound follows the first chunk rather than the whole line.
+**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized whole and then played, so the first sound follows the whole line's synthesis.
 
 **This adds:**
 
 1. **The model** — Chatterbox Multilingual, the 0.5B checkpoint trained on 23 languages including `ja`, `zh` and `ko`, the three dubs beside English the wiki hosts. Its ONNX export exists; what does not yet exist is a Transformers.js release that loads it. That release is the gate, below.
 2. **The input** — the text's language detected from its script and handed to the model as its language token, sentence terminators of every script the roster speaks, and a sentence in a script no model reads dropped before it can be mistaken for a broken device.
-3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the multilingual checkpoint is the 0.5B architecture, several times Nano's size, and the reading faster than real time that keeps the token-chunk streaming cheap will not survive the swap.
+3. **The output** — the sentence synthesized in clauses so playback starts before the whole sentence is synthesized, because a line synthesized whole already takes longer than it plays on the current engine, and the multilingual checkpoint is the 0.5B architecture, several times Nano's size.
 4. **The measurement** — every precision choice and every reference likeness re-measured against the new engine, since all of them were measured against Nano.
 
 Nothing here touches what the dub means to the user: `voice ja` still says whose voice, and the `VoiceLanguage` codes stay the ISO ones because the model's language tokens are spelled the same way.
@@ -37,7 +37,7 @@ flowchart TD
     Ko --> Engine
     Clip --> Engine
     Engine --> Clauses[Clause by clause<br/>synthesize, vocode, check]
-    Clauses --> Player[Player fed as chunks arrive]
+    Clauses --> Player[Player fed as clauses arrive]
 ```
 
 The two inputs that were one are now two: the dub decides the clip, the text decides the token. English prose in the Japanese actor's voice — today's behaviour — is `[en]` with the `ja` clip, and stays the default, since replies are English unless asked otherwise. A Japanese reply is `[ja]` with the same clip, and native.
@@ -57,8 +57,8 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The output
 
-- **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md) page's streaming cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because each clause is its own synthesis where a token chunk is one more vocoder pass over everything before it — a price that pays only while the engine outruns real time, which the larger checkpoint will not.
-- **The opening-chunk audibility check, the device ladder it moves, the player that takes a stream and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of them.
+- **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's synthesis rather than the last sentence's. Each clause is its own synthesis, so no pass re-renders what came before it.
+- **The speech check, the device ladder it moves, the player and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of the synthesis.
 
 ### The measurement
 
@@ -86,9 +86,9 @@ The existing files the work touches, with the role each plays after the change.
 | `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                                |
 | `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                      |
 | `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a whole line at a time                                           |
-| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-turn rule                         |
+| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer, each line synthesized whole, under the one-pending-turn rule            |
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                                   |
-| `openspec/specs/infra/claude-interface/spoken-replies/design.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not"     |
+| `openspec/specs/infra/claude-interface/spoken-replies/design.md`  | Rewritten as-built: the engine section, the ladder's memory, the whole-line synthesis             |
 
 ## Notes
 
