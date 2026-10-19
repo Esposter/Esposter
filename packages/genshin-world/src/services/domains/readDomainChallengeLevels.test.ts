@@ -31,7 +31,7 @@ describe(readDomainChallengeLevels, () => {
     expect.hasAssertions();
 
     expect(
-      Object.values(takeOne(await readDomainChallengeLevels(GAME_DATA_LOCAL_BASE_URL), 13)).map(
+      Object.values(takeOne(await readDomainChallengeLevels(GAME_DATA_LOCAL_BASE_URL), "13")).map(
         ({ defeatTarget, waves }) => ({
           defeatTarget,
           enemies: waves.flat().reduce((total, { count }) => total + count, 0),
@@ -49,7 +49,7 @@ describe(readDomainChallengeLevels, () => {
     expect.hasAssertions();
 
     expect(
-      Object.values(takeOne(await readDomainChallengeLevels(GAME_DATA_LOCAL_BASE_URL), 1006)).map(
+      Object.values(takeOne(await readDomainChallengeLevels(GAME_DATA_LOCAL_BASE_URL), "1006")).map(
         ({ defeatTarget, timeLimitSeconds, waves }) => ({ defeatTarget, timeLimitSeconds, waves }),
       ),
     ).toStrictEqual(
