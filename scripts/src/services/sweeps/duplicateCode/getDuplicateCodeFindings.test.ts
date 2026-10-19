@@ -3,14 +3,14 @@ import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/get
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
+// A clone covering its lines whole, from the first column of its first line past the end of its last
 const createClone = (startLine: number, endLine: number, sourceIdA = "a", sourceIdB = "b") => {
   const duplication = (sourceId: string) => ({
-    end: { line: endLine },
-    range: [0, 0] as [number, number],
+    end: { column: Number.POSITIVE_INFINITY, line: endLine },
     sourceId: join(REPOSITORY_ROOT, sourceId),
-    start: { line: startLine },
+    start: { column: 0, line: startLine },
   });
-  return { duplicationA: duplication(sourceIdA), duplicationB: duplication(sourceIdB), format: "typescript" };
+  return { duplicationA: duplication(sourceIdA), duplicationB: duplication(sourceIdB) };
 };
 
 describe(getDuplicateCodeFindings, () => {
@@ -76,6 +76,25 @@ describe(getDuplicateCodeFindings, () => {
 };`,
       ),
     ).toStrictEqual([]);
+  });
+
+  test("reads a clone whose code is only the tokens it shares with its edge lines as no finding", () => {
+    expect.hasAssertions();
+
+    const sourceIdA = join(REPOSITORY_ROOT, "a");
+    const sourceA = `const first = useFirst();\nconst a = defineModel<A>("a");\n// Note\nconst b = defineModel<B>("b");\n// About c\nconst c = 0;`;
+    const sourceB = `const second = compute(1);\nconst a = defineModel<A>("a");\n// Note\nconst b = defineModel<B>("b");\n// About d\nconst d = 1;`;
+    const clone = {
+      duplicationA: { end: { column: 5, line: 6 }, sourceId: sourceIdA, start: { column: 23, line: 1 } },
+      duplicationB: {
+        end: { column: 5, line: 6 },
+        sourceId: join(REPOSITORY_ROOT, "b"),
+        start: { column: 24, line: 1 },
+      },
+    };
+    expect(getDuplicateCodeFindings([clone], (sourceId) => (sourceId === sourceIdA ? sourceA : sourceB))).toStrictEqual(
+      [],
+    );
   });
 
   test("reads a clone across two Claude plugins as no finding", () => {
