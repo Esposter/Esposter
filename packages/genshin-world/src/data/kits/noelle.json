@@ -30,10 +30,15 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
-  "hits.toBeCleaned.element": { "cause": "Unclassified", "value": "Rock" },
+  "hits.toBeCleaned.element": { "file": "skill.go", "line": 136, "source": "Gcsim", "value": "Rock" },
   "hits.toBeCleaned.gauge": { "file": "skill.go", "line": 137, "source": "Gcsim", "value": 2 },
   "hits.toBeCleaned.hitmarkFrames": { "file": "skill.go", "line": 145, "source": "Gcsim", "value": 0 },
-  "hits.toBeCleaned.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
+  "hits.toBeCleaned.internalCooldownTag": {
+    "file": "skill.go",
+    "line": 132,
+    "source": "Gcsim",
+    "value": "ElementalSkill"
+  },
   "hits.toBeCleaned.multiplier": { "file": "skill.go", "line": 138, "source": "Gcsim", "value": 4 },
   "hits.toBeCleaned.poiseDamage": { "file": "skill.go", "line": 135, "source": "Gcsim", "value": 100 },
   "normalAttacks.0.hits.0.convertedPoiseDamage": {
