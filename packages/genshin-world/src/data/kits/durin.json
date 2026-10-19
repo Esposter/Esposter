@@ -24,7 +24,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "burstVariant.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "burstVariant.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 121 },
   "burstVariant.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.2.area": {
@@ -32,7 +31,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "burstVariant.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.2.gauge": { "cause": "Unsourced", "value": 1 },
   "burstVariant.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 154 },
   "burstVariant.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 12339 } },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 12331 } },
