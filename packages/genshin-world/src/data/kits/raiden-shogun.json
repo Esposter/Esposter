@@ -2,15 +2,11 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.eyeDelay": { "cause": "Unsourced", "value": 66 },
   "hits.skill.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5232 } },
-  "hits.skill.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.coordinatedAttack.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
-  },
+  "hits.skill.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.coordinatedAttack.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5232 } },
-  "hits.coordinatedAttack.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.coordinatedAttack.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.musouNoHitotachi.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5239 } },
-  "hits.musouNoHitotachi.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.musouNoHitotachi.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "parameters.resolveAttackBonus": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5239 } },
   "parameters.eyeBurstDamageBonus": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 5232 } },
@@ -29,30 +25,28 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.744855630597913 }
   },
-  "stances.musouIsshin.chargedAttack.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.chargedAttack.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.chargedAttack.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.musouIsshin.chargedAttack.hits.0-1.attackTag": {
+    "file": "charge.go",
+    "line": 80,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "stances.musouIsshin.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 24 },
-  "stances.musouIsshin.chargedAttack.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.chargedAttack.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 10, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.chargedAttack.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.chargedAttack.hits.1.area": {
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.744855630597913 }
   },
-  "stances.musouIsshin.chargedAttack.hits.1.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.chargedAttack.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 32 },
-  "stances.musouIsshin.chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.chargedAttack.hits.1.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 11, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.chargedAttack.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.chargedAttack.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.musouIsshin.chargedAttackStamina": {
     "cause": "Unsourced",
@@ -65,16 +59,18 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.06951674225463 }
   },
-  "stances.musouIsshin.normalAttacks.0.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.0.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.musouIsshin.normalAttacks.0-4.hits.0.attackTag": {
+    "file": "attack.go",
+    "line": 128,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "stances.musouIsshin.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
-  "stances.musouIsshin.normalAttacks.0.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.normalAttacks.0.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.musouIsshin.normalAttacks.1.animationFrames": { "cause": "Unsourced", "value": 26 },
   "stances.musouIsshin.normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
@@ -82,16 +78,12 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.860029154456998 }
   },
-  "stances.musouIsshin.normalAttacks.1.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.1.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 13 },
-  "stances.musouIsshin.normalAttacks.1.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.1.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.normalAttacks.1.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.normalAttacks.1.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.musouIsshin.normalAttacks.2.animationFrames": { "cause": "Unsourced", "value": 34 },
   "stances.musouIsshin.normalAttacks.2.hits.length": { "cause": "Unsourced", "value": 1 },
@@ -99,16 +91,12 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.494441010848846 }
   },
-  "stances.musouIsshin.normalAttacks.2.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.2.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 11 },
-  "stances.musouIsshin.normalAttacks.2.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.2.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.normalAttacks.2.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.musouIsshin.normalAttacks.3.animationFrames": { "cause": "Unsourced", "value": 67 },
   "stances.musouIsshin.normalAttacks.3.hits.length": { "cause": "Unsourced", "value": 2 },
@@ -116,13 +104,9 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9.2633687176966 }
   },
-  "stances.musouIsshin.normalAttacks.3.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.3.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.3.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 22 },
-  "stances.musouIsshin.normalAttacks.3.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.3.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 5239 }
   },
   "stances.musouIsshin.normalAttacks.3.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
@@ -130,13 +114,15 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.45 }
   },
-  "stances.musouIsshin.normalAttacks.3.hits.1.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.3.hits.1.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.3.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.musouIsshin.normalAttacks.3.hits.1.attackTag": {
+    "file": "attack.go",
+    "line": 128,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "stances.musouIsshin.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 33 },
-  "stances.musouIsshin.normalAttacks.3.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.3.hits.1.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 8, "proudSkillGroupId": 5239 }
   },
   "stances.musouIsshin.normalAttacks.3.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
@@ -147,16 +133,12 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.707788269017255 }
   },
-  "stances.musouIsshin.normalAttacks.4.hits.0.attackTag": { "cause": "Unclassified", "value": "ElementalBurst" },
-  "stances.musouIsshin.normalAttacks.4.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "stances.musouIsshin.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.musouIsshin.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 33 },
-  "stances.musouIsshin.normalAttacks.4.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.musouIsshin.normalAttacks.4.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 9, "proudSkillGroupId": 5239 }
   },
-  "stances.musouIsshin.normalAttacks.4.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "stances.musouIsshin.normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "stances.musouIsshin.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
   "chargedAttack.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

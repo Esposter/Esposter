@@ -21,7 +21,6 @@
   },
   "hits.bloomwaterBlade.hitmarkFrames": { "cause": "Unsourced", "value": 38 },
   "hits.bloomwaterBlade.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6639 } },
-  "hits.bloomwaterBlade.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 47.05 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 49.35 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 61.34 },
@@ -35,11 +34,7 @@
   "parameters.namisenShare": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 6632 } },
   "parameters.gardenOfPuritySeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6639 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 } },
   "skill.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
-  "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skill.hits.0.element": { "cause": "Unsourced", "value": "Water" },
-  "skill.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 6632 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 6632 } }
 }
