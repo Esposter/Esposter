@@ -1,8 +1,12 @@
+import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
+
 // A local name in a constructor's arguments, bound in the function it is used in. The name is the identifier that is not
 // The field or call of another name, and not the left side of an assignment
 const LOCAL_NAME_REGEX = /(?<!\.)\b(?<name>[A-Za-z_]\w*)\b(?!\s*\()/gu;
 // An operator of any precedence in Go's binary set, so a bound expression holding one is wrapped to stay one operand
 const OPERATOR_REGEX = /[-!%&*+/<=>^|]/u;
+// The compound assignment operators a rebinding's `=` follows, as an alternation of their escaped text
+const COMPOUND_OPERATOR_PATTERN = GO_COMPOUND_ASSIGNMENT_OPERATORS.map((operator) => RegExp.escape(operator)).join("|");
 
 // The first and last line of the top-level function a line is in, or undefined where it is in none
 const readFunctionLines = (lines: readonly string[], lineIndex: number): [number, number] | undefined => {
@@ -26,7 +30,7 @@ interface GoBinding {
 const readBindings = (lines: readonly string[], [start, end]: [number, number], name: string): GoBinding[] => {
   const bindings: GoBinding[] = [];
   const assignmentRegex = new RegExp(
-    `(?<![.\\w])${name}\\s*(?<operator>:=|(?:[-+*/%&|^]|<<|>>)?=(?!=))\\s*(?<expression>[^\\n]*)`,
+    `(?<![.\\w])${name}\\s*(?<operator>:=|(?:${COMPOUND_OPERATOR_PATTERN})?=(?!=))\\s*(?<expression>[^\\n]*)`,
     "u",
   );
   const declarationRegex = new RegExp(`\\bvar\\s+${name}\\b[^=\\n]*=\\s*(?<expression>[^\\n]*)`, "u");

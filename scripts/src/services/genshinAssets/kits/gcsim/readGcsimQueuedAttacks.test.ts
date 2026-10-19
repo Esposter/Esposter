@@ -332,7 +332,7 @@ describe(readGcsimQueuedAttacks, () => {
       {
         path: "burst.go",
         source: [
-          "package aino",
+          GO_PACKAGE_CLAUSE,
           "",
           "func (c *char) burst() {",
           "\ttickrate, radius := c.a1BurstEnhance()",

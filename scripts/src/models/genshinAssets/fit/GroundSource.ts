@@ -1,4 +1,5 @@
 import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
+import type { WorldOrigin } from "#src/models/genshinAssets/world/WorldOrigin";
 import type { Landmark } from "genshin-world";
 
 // What a region's ground is fitted from, read once for the region and handed to each of its pieces and quarters: the
@@ -8,5 +9,5 @@ export interface GroundSource {
   getCityAreas: () => Promise<CityArea[]>;
   getGameHeight: (x: number, z: number) => number;
   landmarks: Landmark[];
-  origin: [number, number, number];
+  origin: WorldOrigin;
 }

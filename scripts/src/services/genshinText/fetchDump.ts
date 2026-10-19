@@ -51,7 +51,7 @@ const listRemoteDirectory = async (directory: string): Promise<DumpFile[]> => {
 // Each BinOutput file the dump already holds, listed from its folder's remote listing. A reader names the binaries it
 // Reads, a quest or a scene's points, and the fetch keeps those at the install's build rather than listing the tens of
 // Thousands of the whole folder
-const listHeldBinaryFiles = async (): Promise<DumpFile[]> => {
+const listHeldBinaryFiles = async (questListing: readonly DumpFile[]): Promise<DumpFile[]> => {
   const binaryDirectory = join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY);
   if (!existsSync(binaryDirectory)) return [];
   const heldPaths = new Set(
@@ -60,7 +60,11 @@ const listHeldBinaryFiles = async (): Promise<DumpFile[]> => {
     ),
   );
   const directories = new Set(Array.from(heldPaths, (path) => path.slice(0, path.lastIndexOf("/"))));
-  const listings = await Promise.all(Array.from(directories, (directory) => listRemoteDirectory(directory)));
+  const listings = await Promise.all(
+    Array.from(directories, (directory) =>
+      directory === QUEST_BINARY_DIRECTORY_PATH ? questListing : listRemoteDirectory(directory),
+    ),
+  );
   return listings.flat().filter(({ path }) => heldPaths.has(path));
 };
 
@@ -68,7 +72,7 @@ const listHeldBinaryFiles = async (): Promise<DumpFile[]> => {
 // Whole or in its numbered parts, every language's text maps, the scene's NPC births and area outlines, every talent
 // Config, and each other binary the dump already holds, each at its path under the dump's folder. Everything is held at the install's build, so a
 // Reader never takes a row, a text or a step from an older patch
-const listDumpFiles = async (): Promise<DumpFile[]> => {
+const listDumpFiles = async (questListing: readonly DumpFile[]): Promise<DumpFile[]> => {
   const tableFiles = (await listRemoteDirectory("ExcelBinOutput")).filter(({ path }) => path.endsWith(".json"));
   const textMapFiles = (await listRemoteDirectory(TEXT_MAP_DIRECTORY_NAME)).filter(({ path }) =>
     path.endsWith(".json"),
@@ -85,7 +89,7 @@ const listDumpFiles = async (): Promise<DumpFile[]> => {
     ),
   );
   const talentFiles = (await listRemoteDirectory(AVATAR_TALENT_DIRECTORY)).filter(({ path }) => path.endsWith(".json"));
-  const heldBinaryFiles = await listHeldBinaryFiles();
+  const heldBinaryFiles = await listHeldBinaryFiles(questListing);
   // A held binary is also a scene file or a talent config, each listed once
   return [
     ...new Map(
@@ -131,9 +135,10 @@ const fetchRemoteFiles = async (remoteFiles: readonly DumpFile[]): Promise<{ fet
   return { fetched: selectedFiles.length, held: remoteFiles.length - selectedFiles.length };
 };
 
-// The binary each quest the reader carries reads, listed from its folder. The main and sub quest tables it is named by
-// Are the ones the first pass brought down, so this runs after it. A binary the folder lacks is named in the error
-const listCarriedQuestBinaryFiles = async (): Promise<DumpFile[]> => {
+// The binary each quest the reader carries reads, found in the folder's listing. The main and sub quest tables it is
+// Named by are the ones the first pass brought down, so this runs after it. A binary the folder lacks is named in
+// The error
+const listCarriedQuestBinaryFiles = (questListing: readonly DumpFile[]): DumpFile[] => {
   const requestedPaths = new Set(
     readCarriedQuestBinaryPaths(
       QuestIds.filter((questId) => !ReputationRequestQuestIds.includes(questId)),
@@ -141,8 +146,7 @@ const listCarriedQuestBinaryFiles = async (): Promise<DumpFile[]> => {
       readExcelTable<DumpedSubQuest>(SUB_QUEST_TABLE_NAME),
     ),
   );
-  const listedFiles = await listRemoteDirectory(QUEST_BINARY_DIRECTORY_PATH);
-  const listedPaths = new Set(listedFiles.map(({ path }) => path));
+  const listedPaths = new Set(questListing.map(({ path }) => path));
   const missingPaths = [...requestedPaths].filter((path) => !listedPaths.has(path));
   if (missingPaths.length > 0)
     throw new InvalidOperationError(
@@ -150,18 +154,19 @@ const listCarriedQuestBinaryFiles = async (): Promise<DumpFile[]> => {
       QUEST_BINARY_DIRECTORY_PATH,
       `has no binary for ${missingPaths.join(", ")} in AnimeGameData`,
     );
-  return listedFiles.filter(({ path }) => requestedPaths.has(path));
+  return questListing.filter(({ path }) => requestedPaths.has(path));
 };
 
 // Every readable text, table, text map and held binary the dump lacks, or holds at another size, and each binary a carried
 // Quest reads, fetched from AnimeGameData. Returns a note of the count fetched and the count kept
 export const fetchDump = async (): Promise<string[]> => {
-  const remoteFiles = await listDumpFiles();
+  const questListing = await listRemoteDirectory(QUEST_BINARY_DIRECTORY_PATH);
+  const remoteFiles = await listDumpFiles(questListing);
   const dumpFiles = await fetchRemoteFiles(remoteFiles);
   // A carried binary the first pass listed is fetched or kept there, so the second pass leaves it out
   const remotePaths = new Set(remoteFiles.map(({ path }) => path));
   const questFiles = await fetchRemoteFiles(
-    (await listCarriedQuestBinaryFiles()).filter(({ path }) => !remotePaths.has(path)),
+    listCarriedQuestBinaryFiles(questListing).filter(({ path }) => !remotePaths.has(path)),
   );
   return [
     `${dumpFiles.fetched + questFiles.fetched} dump files fetched, ${dumpFiles.held + questFiles.held} already held`,

@@ -1,3 +1,4 @@
+import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
@@ -190,4 +191,28 @@ describe(readConstantLoops, () => {
 
     expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
   });
+
+  // The bound is a local a compound assignment updates after its declaration, so its value is not the declared 2
+  test.each(GO_COMPOUND_ASSIGNMENT_OPERATORS)(
+    "reads no loop from a bound a later `%s=` update changes, not as its declaration's value",
+    (operator) => {
+      expect.hasAssertions();
+
+      const source = [
+        "package xiangling",
+        "",
+        "func (c *char) burst() {",
+        "\tx := 2",
+        `\tx ${operator}= 4`,
+        "\tfor i := 0; i < x; i++ {",
+        "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
+        "\t}",
+        "}",
+      ].join("\n");
+      const tokens = tokenizeGo(source);
+      const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
+
+      expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
+    },
+  );
 });

@@ -3,7 +3,7 @@ import type { TreeCountRow } from "#src/models/genshinAssets/domains/TreeCountRo
 import type { ScenePointExemplar } from "#src/models/genshinAssets/world/ScenePointExemplar";
 
 import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
-import { DomainKind, GameDataset } from "genshin-world";
+import { DomainKind, GameDataset, SUNDAY_DAY_OF_WEEK } from "genshin-world";
 
 // The game's dungeon entry table in the dump, read by its name
 export const DUNGEON_ENTRY_TABLE_NAME = "DungeonEntryExcelConfigData";
@@ -50,7 +50,7 @@ export const DOMAIN_DAY_PAIRS: number[][] = [
   [3, 6],
 ];
 // The Sunday every stage of a Domain of Forgery or Mastery is open on, in the same numbering
-export const SUNDAY_DAYS_OF_WEEK: number[] = [7];
+export const SUNDAY_DAYS_OF_WEEK: number[] = [SUNDAY_DAY_OF_WEEK];
 
 // The counts a Domain of Forgery's or Mastery's claim draws, from the wiki's Template:Domain_Levels/Forgery (Adventure
 // Ranks 16, 21, 30 and 40, weapon ascension materials of two to five stars) and Template:Domain_Levels/Mastery (Adventure
