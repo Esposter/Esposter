@@ -34,8 +34,9 @@ const toTitleWords = (title: string): string =>
 // Every value the wiki's talent pages give a character's kit, by its path in the record, from each page's Advanced
 // Properties: a normal attack's rows by their titles, `Normal Attack 3-Hit B` the third strike's second hit, the
 // Charged attack's and the plunges' by theirs, and each hit by the row titled as its multiplier's table label on the page
-// Of the talent that label's proud skill group belongs to, `Swing DMG` for `1-Hit Swing DMG`, a named hit's on the normal
-// Attack's page. Each row gives its hit's poise, its ICD tag and, where the hit is elemental, its gauge
+// Of the talent that label's proud skill group belongs to, `Swing DMG` for `1-Hit Swing DMG`. A named hit takes no row a
+// Slot hit on the same page takes, as a row describes one attack. Each row gives its hit's poise, its ICD tag and, where
+// The hit is elemental, its gauge
 export const getWikiKitCandidates = (
   pages: readonly WikiTalentPage[],
   { talentGroupIdMap, weaponType }: Pick<KitTables, "talentGroupIdMap" | "weaponType">,
@@ -87,10 +88,18 @@ export const getWikiKitCandidates = (
         } else if (plungePath !== undefined)
           addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
       }
-    for (const [hitPath, { label, proudSkillGroupId }] of hitLabelMap) {
-      if (proudSkillGroupId !== talentGroupIdMap[page.combatTalent]) continue;
-      const property = page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label));
-      if (property !== undefined)
+    const talentHitLabels = [...hitLabelMap].filter(
+      ([, { proudSkillGroupId }]) => proudSkillGroupId === talentGroupIdMap[page.combatTalent],
+    );
+    const findLabelRow = ({ label }: KitHitLabel) =>
+      page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label));
+    // The rows a slot hit on this page joins, which a named hit reusing one of their labels does not take
+    const slotHitRows = new Set(
+      talentHitLabels.filter(([hitPath]) => !hitPath.startsWith("hits.")).map(([, hitLabel]) => findLabelRow(hitLabel)),
+    );
+    for (const [hitPath, hitLabel] of talentHitLabels) {
+      const property = findLabelRow(hitLabel);
+      if (property !== undefined && !(hitPath.startsWith("hits.") && slotHitRows.has(property)))
         addRow(hitPath, property, page, page.combatTalent !== CombatTalent.NormalAttack || isCatalyst);
     }
   }

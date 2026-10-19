@@ -221,4 +221,29 @@ describe(getWikiKitCandidates, () => {
       ),
     ).toStrictEqual({ "hits.judgement.0.poiseDamage": [25] });
   });
+
+  test("gives a named hit no row a slot hit on its page takes, where the named hit reuses that slot hit's label", () => {
+    expect.hasAssertions();
+
+    const chongyun: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [{ poise: 2, row: 1, title: "Blade DMG" }],
+      revisionId: 1,
+      title: "Chongyun",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [chongyun],
+      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      new Map([
+        ["hits.rimechaserBlade.0", { label: "Blade DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        ["skill.hits.0", { label: "Blade DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+      ]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "skill.hits.0.poiseDamage": [2] });
+  });
 });

@@ -27,6 +27,7 @@ export interface BaseKitHitRecord {
   // The DMG Bonus the hit carries of its own
   damageBonus?: KitParameter;
   element?: Element;
+  // The gauge the hit applies in units, where the wiki gives some hits 1.5 units, as Tri-Karma Purification's
   gauge?: number;
   healParty?: KitPartyHealRecord;
   hitmarkFrames: number;
@@ -50,7 +51,7 @@ export const baseKitHitRecordSchema = z.strictObject({
   convertedPoiseDamage: z.number().nonnegative().optional(),
   damageBonus: kitParameterSchema.optional(),
   element: z.enum(Element).optional(),
-  gauge: z.literal([0, 1, 2, 4]).optional(),
+  gauge: z.literal([0, 1, 1.5, 2, 4]).optional(),
   healParty: kitPartyHealRecordSchema.optional(),
   hitmarkFrames: z.number().nonnegative(),
   internalCooldownTag: z.enum(InternalCooldownTag).optional(),
