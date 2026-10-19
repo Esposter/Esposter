@@ -10,8 +10,6 @@ import { partySaveSchema } from "#src/models/party/PartySave";
 import { genshinSaveSchema } from "#src/models/save/GenshinSave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
@@ -20,10 +18,11 @@ import {
   MAX_HOME_COMPANION_COUNT,
   MAX_HOME_ORDER_COUNT,
   MAX_HOME_PLACEMENT_COUNT,
-  MAX_HOME_PLANTING_COUNT,
   MAX_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
+import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
+import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { PARTY_TEAM_MAX_COUNT, PARTY_TEAM_SIZE } from "#src/services/party/constants";
 import { REPUTATION_WEEKLY_CLAIM_LIMIT } from "#src/services/reputation/constants";
 import {
@@ -115,8 +114,6 @@ describe("genshinSaveSchema", () => {
         ]),
       ),
       adventureExp: maxNumber,
-      cardGameExp: maxNumber,
-      cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT }, (_value, index) => maxNumber - index),
       adventureRankRewardsClaimed: Array.from({ length: MAX_ADVENTURE_RANK - 1 }, (_value, index) => index + 2),
       archive: {
         kills: Object.fromEntries(
@@ -132,6 +129,8 @@ describe("genshinSaveSchema", () => {
           ]),
         ),
       },
+      cardGameExp: maxNumber,
+      cardGameRewardedGameIds: Array.from({ length: GCG_REWARDABLE_GAME_COUNT }, (_value, index) => maxNumber - index),
       characters: Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => ({
         artifacts: Object.values(ArtifactSlot).map((slot) => ({
           experience: maxNumber,
@@ -162,6 +161,7 @@ describe("genshinSaveSchema", () => {
           refinement: MAX_WEAPON_REFINEMENT,
         },
       })),
+      characterTrials: { claimedStageIds: [] },
       clearedCamps: Array.from({ length: MAX_CLEARED_CAMP_COUNT }, (_value, index) => ({
         id: String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
         position: { x: maxNumber, z: maxNumber },
@@ -179,7 +179,6 @@ describe("genshinSaveSchema", () => {
         })),
         isBonusClaimed: false,
       },
-      investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: maxInstant },
       companionshipExp: Object.fromEntries(
         Array.from({ length: MAX_CHARACTER_COUNT }, (_value, index) => [String(maxNumber - index), maxNumber]),
       ),
@@ -202,7 +201,6 @@ describe("genshinSaveSchema", () => {
         learnedRecipeIds: Array.from({ length: MAX_CRAFTING_RECIPE_COUNT }, (_value, index) => maxNumber - index),
       },
       encounterPoints: { earnedOn: maxInstant, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
-      longTermEncounterPoints: { halfPoints: maxNumber, majorVersion: maxNumber },
       enemyRespawns: Object.fromEntries(
         Array.from({ length: MAX_ENEMY_RESPAWN_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -216,8 +214,7 @@ describe("genshinSaveSchema", () => {
         rotation: -Number.MAX_VALUE,
         sceneId: maxNumber,
       })),
-      characterTrials: { claimedStageIds: [] },
-      homePlantings: Array.from({ length: MAX_HOME_PLANTING_COUNT }, (_value, index) => ({
+      homePlantings: Array.from({ length: MAX_HOME_PLACEMENT_COUNT }, (_value, index) => ({
         plantedAt: maxInstant,
         plotId: maxNumber - index,
         seedItemId: maxNumber,
@@ -248,6 +245,16 @@ describe("genshinSaveSchema", () => {
         nextId: maxNumber,
         quickSwapItemIds: Array.from({ length: QUICK_SWAP_GADGET_LIMIT }, () => maxNumber),
       },
+      investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: maxInstant },
+      longTermEncounterPoints: { halfPoints: maxNumber, majorVersion: maxNumber },
+      mails: Array.from({ length: MAX_MAIL_COUNT }, (_value, index) => ({
+        deliveredAt: maxInstant,
+        id: maxNumber - index,
+        isClaimed: false,
+        isPinned: false,
+        isRead: false,
+      })),
+      namecardItemId: maxNumber,
       offerings: {
         frostbearingTree: {
           heldCounts: Object.fromEntries(
@@ -288,6 +295,11 @@ describe("genshinSaveSchema", () => {
       reputation: { exp: maxNumber, level: maxNumber },
       reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
       reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => maxInstant),
+      shopPurchases: Array.from({ length: MAX_SHOP_PURCHASE_COUNT }, (_value, index) => ({
+        count: maxNumber,
+        goodsId: maxNumber - index,
+        lastPurchasedAt: maxInstant,
+      })),
       spiralAbyss: Object.fromEntries(
         Array.from({ length: MAX_ABYSS_CYCLE_COUNT }, (_value, index) => [
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -302,11 +314,6 @@ describe("genshinSaveSchema", () => {
           },
         ]),
       ),
-      shopPurchases: Array.from({ length: MAX_SHOP_PURCHASE_COUNT }, (_value, index) => ({
-        count: maxNumber,
-        goodsId: maxNumber - index,
-        lastPurchasedAt: maxInstant,
-      })),
       statues: {
         foundOculusIds: Array.from({ length: MAX_FOUND_OCULUS_COUNT }, (_value, index) =>
           String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),
@@ -318,16 +325,8 @@ describe("genshinSaveSchema", () => {
           ]),
         ),
       },
-      mails: Array.from({ length: MAX_MAIL_COUNT }, (_value, index) => ({
-        deliveredAt: maxInstant,
-        id: maxNumber - index,
-        isClaimed: false,
-        isPinned: false,
-        isRead: false,
-      })),
       tips: { queued: [], shown: Array.from({ length: MAX_SHOWN_TIP_COUNT }, (_value, index) => maxNumber - index) },
       travelerBirthday: { day: 31, month: 12 },
-      namecardItemId: maxNumber,
       travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
       unlockedLandmarks: Array.from({ length: MAX_UNLOCKED_LANDMARK_COUNT }, (_value, index) =>
         String(index).padStart(MAX_SAVE_ID_LENGTH, "0"),

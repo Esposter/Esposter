@@ -12,7 +12,6 @@ import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
-import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
 import { QUICK_SWAP_GADGET_LIMIT } from "#src/services/gadget/constants";
 import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
@@ -21,13 +20,13 @@ import {
   MAX_HOME_COMPANION_COUNT,
   MAX_HOME_ORDER_COUNT,
   MAX_HOME_PLACEMENT_COUNT,
-  MAX_HOME_PLANTING_COUNT,
   MAX_HOME_REWARD_CLAIM_COUNT,
 } from "#src/services/home/constants";
 import { INVENTORY_KIND_LIMIT, MAX_ITEM_QUANTITY } from "#src/services/inventory/bagLimits";
 import { EMPTY_CURRENCIES } from "#src/services/inventory/constants";
 import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap";
 import { INVESTIGATION_DAILY_CAP } from "#src/services/investigation/constants";
+import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import {
   DEFAULT_PARTY_TEAM_COUNT,
   PARTY_TEAM_MAX_COUNT,
@@ -219,20 +218,18 @@ const LONGEST_ABYSS_CYCLE_SAVE = {
 const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   achievements: {},
   adventureExp: MAX_SAVE_NUMBER,
+  adventureRankRewardsClaimed: [],
   cardGameExp: MAX_SAVE_NUMBER,
   cardGameRewardedGameIds: [],
-  adventureRankRewardsClaimed: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
   clearedDomains: [],
   commissionDay: { claimedCommissionIds: [], dealtAt: MAX_SAVE_INSTANT, dealtCommissions: [], isBonusClaimed: false },
-  investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: MAX_SAVE_INSTANT },
-  encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
-  longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
   companionshipExp: {},
   cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  encounterPoints: { earnedOn: MAX_SAVE_INSTANT, halfPoints: MAX_ENCOUNTER_HALF_POINTS },
   enemyRespawns: {},
   homePlacements: [],
   homePlantings: [],
@@ -249,6 +246,10 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
     trustExp: MAX_SAVE_NUMBER,
   },
   inventory: { equippedGadgetItemId: MAX_SAVE_NUMBER, items: [], nextId: MAX_SAVE_NUMBER, quickSwapItemIds: [] },
+  investigationDay: { count: INVESTIGATION_DAILY_CAP, dayKey: MAX_SAVE_INSTANT },
+  longTermEncounterPoints: { halfPoints: Number.MAX_SAFE_INTEGER, majorVersion: Number.MAX_SAFE_INTEGER },
+  mails: [],
+  namecardItemId: 0,
   offerings: { frostbearingTree: { heldCounts: {}, level: MAX_SAVE_NUMBER } },
   openedChests: [],
   party: { activeIndex: MAX_SAVE_NUMBER, deployedTeamIndex: MAX_SAVE_NUMBER, downCharacterIds: [], teams: [] },
@@ -256,7 +257,6 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
   quests: {},
   reputation: { exp: MAX_SAVE_NUMBER, level: MAX_SAVE_NUMBER },
   reputationBountyClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
-  reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
   reputationBountyHunt: {
     bountyId: MAX_SAVE_NUMBER,
     isTargetDefeated: true,
@@ -264,11 +264,10 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
     spawn: [-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE],
     targetEnemyKindId: MAX_SAVE_NUMBER,
   },
-  namecardItemId: 0,
+  reputationRequestClaimedAts: Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => MAX_SAVE_INSTANT),
   shopPurchases: [],
   spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
-  mails: [],
   travelerBirthday: { day: MAX_SAVE_NUMBER, month: MAX_SAVE_NUMBER },
   travelerName: "x".repeat(MAX_TRAVELER_NAME_LENGTH),
   unlockedLandmarks: [],
@@ -329,7 +328,7 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
-  MAX_HOME_PLANTING_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
+  MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
   MAX_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +
   MAX_HOME_ORDER_COUNT * getListEntryLength({ blueprintId: MAX_SAVE_NUMBER, startedAt: MAX_SAVE_INSTANT }) +
   MAX_HOME_BLUEPRINT_COUNT * 2 * getListEntryLength(MAX_SAVE_NUMBER) +
@@ -385,10 +384,10 @@ export const EMPTY_PARTY_SAVE: PartySave = {
 export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   achievements: {},
   adventureExp: 0,
-  cardGameExp: 0,
-  cardGameRewardedGameIds: [],
   adventureRankRewardsClaimed: [],
   archive: { kills: {}, progress: toArchiveProgressSave(new Map()) },
+  cardGameExp: 0,
+  cardGameRewardedGameIds: [],
   characters: [],
   characterTrials: { claimedStageIds: [] },
   clearedCamps: [],
@@ -399,12 +398,10 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
     dealtCommissions: [],
     isBonusClaimed: false,
   },
-  investigationDay: { count: 0, dayKey: "" },
-  encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
-  longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
   companionshipExp: {},
   cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },
   crafting: { craftedCounts: {}, learnedRecipeIds: [] },
+  encounterPoints: { earnedOn: "1970-01-01T00:00:00Z", halfPoints: 0 },
   enemyRespawns: {},
   homePlacements: [],
   homePlantings: [],
@@ -421,7 +418,10 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
     trustExp: 0,
   },
   inventory: EMPTY_INVENTORY_SAVE,
+  investigationDay: { count: 0, dayKey: "" },
+  longTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },
   mails: [],
+  namecardItemId: 0,
   offerings: { frostbearingTree: { heldCounts: {}, level: 0 } },
   openedChests: [],
   party: EMPTY_PARTY_SAVE,
@@ -430,7 +430,6 @@ export const EMPTY_GENSHIN_SAVE: GenshinSave = {
   reputation: EMPTY_REPUTATION_SAVE,
   reputationBountyClaimedAts: [],
   reputationRequestClaimedAts: [],
-  namecardItemId: 0,
   shopPurchases: [],
   spiralAbyss: {},
   statues: { foundOculusIds: [], regions: {} },
