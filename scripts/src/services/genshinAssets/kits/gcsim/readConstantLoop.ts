@@ -1,4 +1,5 @@
 import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
+import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
@@ -21,10 +22,11 @@ export const readConstantLoop = (
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
   resolveBoundName: (name: string) => GoValue | undefined,
+  config: GcsimConfig,
 ): ConstantLoop | undefined => {
   const rangeLoop = readRangeLoop(tokens, forPosition, resolveName);
   if (rangeLoop !== undefined) return rangeLoop;
-  const sliceLoop = readSliceRangeLoop(tokens, forPosition, resolveName);
+  const sliceLoop = readSliceRangeLoop(tokens, forPosition, resolveName, config);
   if (sliceLoop !== undefined) return sliceLoop;
   const variable = tokens[forPosition + 1];
   if (variable?.kind !== GoTokenKind.Identifier || !checkIsGoPunctuation(tokens[forPosition + 2], ":="))

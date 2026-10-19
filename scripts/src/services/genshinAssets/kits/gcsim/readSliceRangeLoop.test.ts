@@ -1,4 +1,6 @@
+import { GCSIM_EMPTY_CONFIG } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
+import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
 import { readSliceRangeLoop } from "#src/services/genshinAssets/kits/gcsim/readSliceRangeLoop";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
@@ -26,6 +28,7 @@ describe(readSliceRangeLoop, () => {
         tokens,
         tokens.findIndex(({ text }) => text === "for"),
         (name) => constantMap.get(name)?.value,
+        GCSIM_EMPTY_CONFIG,
       )?.iterations,
     ).toStrictEqual([new Map([["i", 0]]), new Map([["i", 1]]), new Map([["i", 2]])]);
   });
@@ -52,6 +55,7 @@ describe(readSliceRangeLoop, () => {
         tokens,
         tokens.findIndex(({ text }) => text === "for"),
         (name) => constantMap.get(name)?.value,
+        GCSIM_EMPTY_CONFIG,
       )?.iterations,
     ).toStrictEqual([new Map([["i", 0]]), new Map([["i", 1]]), new Map([["i", 2]])]);
   });
@@ -78,7 +82,43 @@ describe(readSliceRangeLoop, () => {
         tokens,
         tokens.findIndex(({ text }) => text === "for"),
         (name) => constantMap.get(name)?.value,
+        GCSIM_EMPTY_CONFIG,
       ),
     ).toBeUndefined();
+  });
+
+  test("runs a range over a talent table once per row", () => {
+    expect.hasAssertions();
+
+    const source = [
+      "package durin",
+      "",
+      "func (c *char) burst() {",
+      "\tfor i, mult := range burstWhiteInitial {",
+      "\t\tc.Core.QueueAttack(ai, ap, burstInitHitmark[i], burstInitHitmark[i])",
+      "\t}",
+      "}",
+    ].join("\n");
+    const tokens = tokenizeGo(source);
+    const config = readGcsimConfig(
+      [
+        "names:",
+        "  - durin",
+        "talents:",
+        "  - burstWhiteInitial:",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG)'",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG|1)'",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG|2)'",
+      ].join("\n"),
+    );
+
+    expect(
+      readSliceRangeLoop(
+        tokens,
+        tokens.findIndex(({ text }) => text === "for"),
+        () => undefined,
+        config,
+      )?.iterations,
+    ).toStrictEqual([new Map([["i", 0]]), new Map([["i", 1]]), new Map([["i", 2]])]);
   });
 });

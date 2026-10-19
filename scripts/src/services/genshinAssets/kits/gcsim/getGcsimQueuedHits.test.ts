@@ -1,4 +1,7 @@
-import { GCSIM_ODETTE_FIXTURE_DIRECTORY } from "#src/services/genshinAssets/kits/gcsim/constants.test";
+import {
+  GCSIM_EMPTY_CONFIG,
+  GCSIM_ODETTE_FIXTURE_DIRECTORY,
+} from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
@@ -14,8 +17,8 @@ describe(findQueuedAttack, () => {
     const name = "burst.go";
     const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
     const constantMap = evaluateGoConstants(sources);
-    const attacks = readGcsimAttacks(sources, constantMap);
-    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+    const attacks = readGcsimAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.line)).toStrictEqual([
       59, 56, 56, 66,
@@ -48,8 +51,8 @@ describe(findQueuedAttack, () => {
       },
     ];
     const constantMap = evaluateGoConstants(sources);
-    const attacks = readGcsimAttacks(sources, constantMap);
-    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+    const attacks = readGcsimAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.element)).toStrictEqual([
       "attributes.Cryo",
@@ -79,8 +82,8 @@ describe(findQueuedAttack, () => {
       },
     ];
     const constantMap = evaluateGoConstants(sources);
-    const attacks = readGcsimAttacks(sources, constantMap);
-    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+    const attacks = readGcsimAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.line)).toStrictEqual([
       4,
@@ -117,8 +120,8 @@ describe(findQueuedAttack, () => {
       },
     ];
     const constantMap = evaluateGoConstants(sources);
-    const attacks = readGcsimAttacks(sources, constantMap);
-    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+    const attacks = readGcsimAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap, GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.talentVariable)).toStrictEqual([
       "skillDot",

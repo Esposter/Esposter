@@ -1,3 +1,5 @@
+import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
+
 import { join } from "node:path";
 import { describe } from "vitest";
 
@@ -13,6 +15,9 @@ export const GCSIM_NOELLE_FIXTURE_DIRECTORY: string = join(import.meta.dirname, 
 export const GCSIM_ROSARIA_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "rosaria");
 // Kujou Sara's burst, a whole file of the same version, whose cluster is a loop of repeated calls of a Mult set's copy
 export const GCSIM_SARA_FIXTURE_DIRECTORY: string = join(import.meta.dirname, "fixtures", "sara");
+
+// A character with no talent variables, for the readers whose suites read no talent table
+export const GCSIM_EMPTY_CONFIG: GcsimConfig = { abilityHitboxesMap: new Map(), names: [], talentVariables: [] };
 
 // Fixtures only: a suite here would run again in every file that imports them
 describe.todo("constants");

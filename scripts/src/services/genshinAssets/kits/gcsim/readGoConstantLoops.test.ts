@@ -1,4 +1,5 @@
 import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_EMPTY_CONFIG } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
@@ -24,7 +25,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([
       [
         new Map([
@@ -61,7 +64,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[new Map([["hitmark", 50]]), new Map([["hitmark", 59]]), new Map([["hitmark", 67]])]]);
   });
 
@@ -81,7 +86,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
   });
 
@@ -105,7 +112,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[new Map([["delay", 0]]), new Map([["delay", 4]]), new Map([["delay", 8]])]]);
   });
 
@@ -125,7 +134,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[new Map([["i", 0]])]]);
   });
 
@@ -145,7 +156,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[]]);
   });
 
@@ -166,7 +179,9 @@ describe(readConstantLoops, () => {
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
     expect(
-      readConstantLoops(tokens, createGoScope(tokens, constantMap)).map(({ iterations }) => iterations),
+      readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG).map(
+        ({ iterations }) => iterations,
+      ),
     ).toStrictEqual([[new Map([["i", 0]]), new Map([["i", 2]]), new Map([["i", 4]])]]);
   });
 
@@ -189,7 +204,7 @@ describe(readConstantLoops, () => {
     const tokens = tokenizeGo(source);
     const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-    expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
+    expect(readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG)).toStrictEqual([]);
   });
 
   // The bound is a local a compound assignment updates after its declaration, so its value is not the declared 2
@@ -212,7 +227,7 @@ describe(readConstantLoops, () => {
       const tokens = tokenizeGo(source);
       const constantMap = evaluateGoConstants([{ path: "burst.go", source }]);
 
-      expect(readConstantLoops(tokens, createGoScope(tokens, constantMap))).toStrictEqual([]);
+      expect(readConstantLoops(tokens, createGoScope(tokens, constantMap), GCSIM_EMPTY_CONFIG)).toStrictEqual([]);
     },
   );
 });

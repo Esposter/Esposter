@@ -1,4 +1,5 @@
 import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
+import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
@@ -14,13 +15,36 @@ const GO_BLANK_IDENTIFIER = "_";
 const checkIsNumberSlice = (value: GoValue): boolean =>
   Array.isArray(value) && value.every((element) => typeof element === "number");
 
+// The rows of a talent variable's table: one more than the highest row any of its leaves names. A variable the config
+// Names as one reference is one row of levels rather than a list of rows, so it has none
+const readTalentRowCount = (config: GcsimConfig, name: string): number | undefined => {
+  const leaves = config.talentVariables.find((variable) => variable.name === name)?.leaves;
+  if (leaves === undefined || leaves.length === 0 || leaves.some(({ path }) => path.length === 0)) return undefined;
+  return Math.max(...leaves.map(({ path: [row = 0] }) => row + 1));
+};
+
+// The elements a range runs once each over: a constant slice of numbers or of number slices, else the rows of a talent
+// Table, which no constant gives and whose rows are not numbers. Undefined where the range is neither
+const readRangedElements = (
+  slice: GoValue | undefined,
+  rowCount: number | undefined,
+): readonly unknown[] | undefined => {
+  if (Array.isArray(slice))
+    return slice.every((element) => typeof element === "number") || slice.every((row) => checkIsNumberSlice(row))
+      ? slice
+      : undefined;
+  return rowCount === undefined ? undefined : Array.from({ length: rowCount });
+};
+
 // The `for` loop opening at the position when it ranges over a constant slice, `for i, delay := range burstHitmarks {`,
-// Or `for i := range burstRows {` over a slice of number slices, a row at a time. Its iterations are the indexes,
-// With its elements as the value variable when it is a slice of numbers, and its body's braces, else Undefined
+// Or `for i := range burstRows {` over a slice of number slices, a row at a time, or over a talent table, which the
+// Config gives one row per entry it lists. Its iterations are the indexes, with its elements as the value variable when
+// They are numbers, and its body's braces, else Undefined
 export const readSliceRangeLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
+  config: GcsimConfig,
 ): ConstantLoop | undefined => {
   const indexToken = tokens[forPosition + 1];
   const isValueNamed = checkIsGoPunctuation(tokens[forPosition + 2], ",");
@@ -35,13 +59,15 @@ export const readSliceRangeLoop = (
     return undefined;
   // The slice is named alone, its brace opening the body rather than a composite literal
   const sliceToken = tokens[operatorPosition + 2];
-  const slice = sliceToken?.kind === GoTokenKind.Identifier ? resolveName(sliceToken.text) : undefined;
+  const sliceName = sliceToken?.kind === GoTokenKind.Identifier ? sliceToken.text : undefined;
+  const slice = sliceName === undefined ? undefined : resolveName(sliceName);
+  const rowCount = slice === undefined && sliceName !== undefined ? readTalentRowCount(config, sliceName) : undefined;
   const bodyStart = operatorPosition + 3;
+  const elements = readRangedElements(slice, rowCount);
   if (
     !checkIsGoPunctuation(tokens[bodyStart], "{") ||
-    !Array.isArray(slice) ||
-    slice.length > GO_MAX_LOOP_ITERATIONS ||
-    !(slice.every((element) => typeof element === "number") || slice.every((row) => checkIsNumberSlice(row)))
+    elements === undefined ||
+    elements.length > GO_MAX_LOOP_ITERATIONS
   )
     return undefined;
   const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
@@ -50,7 +76,7 @@ export const readSliceRangeLoop = (
     : {
         bodyEnd,
         bodyStart,
-        iterations: slice.map((element, index) => {
+        iterations: elements.map((element, index) => {
           const iteration = new Map<string, number>();
           if (indexToken.text !== GO_BLANK_IDENTIFIER) iteration.set(indexToken.text, index);
           // A row is no number, so a range over rows binds its index alone

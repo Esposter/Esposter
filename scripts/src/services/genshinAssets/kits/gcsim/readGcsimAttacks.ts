@@ -1,6 +1,7 @@
 import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
+import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
@@ -146,6 +147,7 @@ const readIterationAt = (
 export const readGcsimAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
+  config: GcsimConfig,
 ): GcsimAttack[] => {
   const resolveName = (name: string) => constantMap.get(name)?.value;
   return sources.flatMap(({ path: file, source }) => {
@@ -154,7 +156,7 @@ export const readGcsimAttacks = (
     const aliasMap = readGoAliases(tokens);
     const stringMap = readGoStringConstants(tokens);
     const readBranchAt = readGoBranchAt(tokens);
-    const loops = readConstantLoops(tokens, createGoScope(tokens, constantMap));
+    const loops = readConstantLoops(tokens, createGoScope(tokens, constantMap), config);
     // An `Element` a constant loop's variable indexes into a local slice, `ele[i]`, is each iteration's own: the slice's
     // Entry at that index, with the line the slice is declared on, so the literal is one attack per iteration
     const readIndexedElements = (position: number, expression: GoExpression | undefined) => {

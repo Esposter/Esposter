@@ -1,5 +1,6 @@
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
+import { GCSIM_EMPTY_CONFIG } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
@@ -52,7 +53,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         attackLine: undefined,
         attackName: "ai",
@@ -111,7 +112,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         attackLine: 5,
         attackName: undefined,
@@ -150,7 +151,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         attackLine: undefined,
         attackName: "ai",
@@ -191,7 +192,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         attackLine: undefined,
         attackName: "ai",
@@ -233,7 +234,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         attackLine: undefined,
         attackName: "ai",
@@ -269,9 +270,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("reads no loop bound from a local a branch adds to, `dur += 240` in the branch, so its loop is not repeated", () => {
@@ -296,9 +297,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("repeats a queue call in a loop bounded by a local a constellation branch raises, once per value at the base bound", () => {
@@ -327,9 +328,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      5, 9, 13,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([5, 9, 13]);
   });
 
   test("reads a loop whose step is a local a call gives as its first iteration alone, its variable at the initial value", () => {
@@ -353,7 +354,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([9]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([9]);
   });
 
   test("repeats a queue call at a constellation in a loop bounded by a local the constellation branch raises, up to that constellation's value", () => {
@@ -382,9 +385,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), 4).map(({ delay }) => delay)).toStrictEqual([
-      5, 9, 13, 17,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG, 4).map(({ delay }) => delay),
+    ).toStrictEqual([5, 9, 13, 17]);
   });
 
   test("reads a parameter's delay from each call's argument, and none where a caller's argument is a local a branch may change", () => {
@@ -416,10 +419,14 @@ describe(readGcsimQueuedAttacks, () => {
     const valuesSources = [{ path: "charge.go", source: createChargeSource(["0", "14"]).join("\n") }];
 
     expect(
-      readGcsimQueuedAttacks(branchSources, evaluateGoConstants(branchSources)).map(({ delay }) => delay),
+      readGcsimQueuedAttacks(branchSources, evaluateGoConstants(branchSources), GCSIM_EMPTY_CONFIG).map(
+        ({ delay }) => delay,
+      ),
     ).toStrictEqual([undefined]);
     expect(
-      readGcsimQueuedAttacks(valuesSources, evaluateGoConstants(valuesSources)).map(({ delay }) => delay),
+      readGcsimQueuedAttacks(valuesSources, evaluateGoConstants(valuesSources), GCSIM_EMPTY_CONFIG).map(
+        ({ delay }) => delay,
+      ),
     ).toStrictEqual([27, 41]);
   });
 
@@ -444,9 +451,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("repeats a queue call in a loop of constant bounds once per iteration, its delay with the loop's variable", () => {
@@ -477,7 +484,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
       [11, 114],
@@ -511,7 +518,9 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox?.radius),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ hitbox }) => hitbox?.radius,
+      ),
     ).toStrictEqual([2, 3, 4]);
   });
 
@@ -538,7 +547,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map(({ delay, delayLine, line }) => [line, delayLine, delay])).toStrictEqual([
       [6, 7, 106],
@@ -572,9 +581,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("reads a queue call's delay written in terms of a local its declaration gives no number, from the constant it is defaulted to", () => {
@@ -602,7 +611,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([78]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([78]);
   });
 
   test("reads a queue call's delay in terms of a local a branch defaults to a literal, and repeats it in a loop bounded by that local", () => {
@@ -636,7 +647,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([
       [17, 31],
       [17, 37],
@@ -669,9 +683,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      31, 37,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([31, 37]);
   });
 
   test("repeats a queue call in a loop whose bound is inclusive, `i <= 120`, once per value up to it", () => {
@@ -694,9 +708,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      64, 88,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([64, 88]);
   });
 
   test("repeats a queue call in a loop ranging over a constant count, `for i := range 3` and `for range 2`, once per count", () => {
@@ -722,7 +736,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map(({ delay, line }) => [line, delay])).toStrictEqual([
       [7, 104],
@@ -753,7 +767,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map(({ attackName, delay, line }) => [attackName, delay, line])).toStrictEqual([
       ["aiCopy", 112, 7],
@@ -782,7 +796,7 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources));
+    const queuedAttacks = readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG);
 
     expect(queuedAttacks.map(({ iterations }) => iterations)).toStrictEqual([
       { delay: 112, i: 0 },
@@ -813,7 +827,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[8, 93]]);
   });
 
@@ -834,7 +851,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([30]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([30]);
   });
 
   test("reads both indexes of a named array a delay takes from a local clamped to 0 and 1 from the action's hold parameter", () => {
@@ -865,11 +884,9 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, holdValue, line }) => [
-        line,
-        delay,
-        holdValue,
-      ]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ delay, holdValue, line }) => [line, delay, holdValue],
+      ),
     ).toStrictEqual([
       [14, 21, 0],
       [14, 37, 1],
@@ -902,7 +919,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([
       [13, 114],
       [13, 40],
@@ -934,7 +954,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[12, 68]]);
   });
 
@@ -959,7 +982,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[8, 0]]);
   });
 
@@ -986,7 +1012,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[9, 137]]);
   });
 
@@ -1012,7 +1041,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[8, 138]]);
   });
 
@@ -1037,7 +1069,10 @@ describe(readGcsimQueuedAttacks, () => {
     ];
 
     expect(
-      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay, line }) => [line, delay]),
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
     ).toStrictEqual([[8, 1]]);
   });
 
@@ -1063,9 +1098,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("reads no delay from a returned closure no Tasks.Add schedules, an attack callback run by its hit", () => {
@@ -1086,9 +1121,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ delay }) => delay)).toStrictEqual([
-      undefined,
-    ]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([undefined]);
   });
 
   test("gives a single-target hit fired in a loop over an area query the query's area, at the query's line", () => {
@@ -1116,7 +1151,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ hitbox }) => hitbox),
+    ).toStrictEqual([
       {
         center: GcsimHitboxCenter.Player,
         file: "skill.go",
@@ -1149,7 +1186,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ hitbox }) => hitbox),
+    ).toStrictEqual([
       {
         center: GcsimHitboxCenter.PrimaryTarget,
         file: "skill.go",
@@ -1181,7 +1220,9 @@ describe(readGcsimQueuedAttacks, () => {
       },
     ];
 
-    expect(readGcsimQueuedAttacks(sources, evaluateGoConstants(sources)).map(({ hitbox }) => hitbox)).toStrictEqual([
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ hitbox }) => hitbox),
+    ).toStrictEqual([
       {
         center: GcsimHitboxCenter.PrimaryTarget,
         file: "skill.go",

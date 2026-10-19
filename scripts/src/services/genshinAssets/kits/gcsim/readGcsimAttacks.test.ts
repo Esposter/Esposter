@@ -1,4 +1,5 @@
 import {
+  GCSIM_EMPTY_CONFIG,
   GCSIM_FIXTURE_DIRECTORY,
   GCSIM_ODETTE_FIXTURE_DIRECTORY,
   GCSIM_VARKA_FIXTURE_DIRECTORY,
@@ -16,7 +17,7 @@ describe(readGcsimAttacks, () => {
     const name = "attack.go";
     const sources = [{ path: name, source: readFileSync(join(GCSIM_FIXTURE_DIRECTORY, name), "utf8") }];
 
-    expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       {
         abil: undefined,
         attackTag: "attacks.AttackTagNormal",
@@ -69,7 +70,9 @@ describe(readGcsimAttacks, () => {
     ];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ variableName }) => variableName,
+      ),
     ).toStrictEqual(["a1AttackInfo", "skillAttackInfo"]);
   });
 
@@ -90,7 +93,9 @@ describe(readGcsimAttacks, () => {
     ];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ variableName }) => variableName),
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ variableName }) => variableName,
+      ),
     ).toStrictEqual([undefined]);
   });
 
@@ -112,7 +117,7 @@ describe(readGcsimAttacks, () => {
     const sources = [{ path: "burst.go", source }];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
         ({ element, line, talentVariable, variableName }) => ({ element, line, talentVariable, variableName }),
       ),
     ).toStrictEqual([
@@ -138,7 +143,7 @@ func (c *char) Skill() {
 `;
 
     expect(
-      readGcsimAttacks([{ path: "skill.go", source }], new Map()).map(
+      readGcsimAttacks([{ path: "skill.go", source }], new Map(), GCSIM_EMPTY_CONFIG).map(
         ({ line, siteLine, talentVariable, variableName }) => ({ line, siteLine, talentVariable, variableName }),
       ),
     ).toStrictEqual([
@@ -165,7 +170,7 @@ func (c *char) Burst() {
 `;
 
     expect(
-      readGcsimAttacks([{ path: "burst.go", source }], new Map()).map(
+      readGcsimAttacks([{ path: "burst.go", source }], new Map(), GCSIM_EMPTY_CONFIG).map(
         ({ line, siteLine, talentVariable, variableName }) => ({ line, siteLine, talentVariable, variableName }),
       ),
     ).toStrictEqual([
@@ -183,11 +188,9 @@ func (c *char) Burst() {
     const sources = [{ path: name, source: readFileSync(join(GCSIM_ODETTE_FIXTURE_DIRECTORY, name), "utf8") }];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ branch, line, talentVariable }) => ({
-        branch,
-        line,
-        talentVariable,
-      })),
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ branch, line, talentVariable }) => ({ branch, line, talentVariable }),
+      ),
     ).toStrictEqual([
       { branch: undefined, line: 12, talentVariable: undefined },
       {
@@ -235,7 +238,7 @@ func (c *char) Burst() {
       variableName: "ai",
     };
 
-    expect(readGcsimAttacks(sources, evaluateGoConstants(sources))).toStrictEqual([
+    expect(readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG)).toStrictEqual([
       literal,
       { ...literal, line: 56, siteLine: 56, variableName: "aiCopy" },
       {
@@ -277,12 +280,14 @@ func (c *char) Burst() {
     const sources = [{ path: name, source: readFileSync(join(GCSIM_VARKA_FIXTURE_DIRECTORY, name), "utf8") }];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(({ element, fieldLineMap, iteration, line }) => ({
-        element,
-        elementLine: fieldLineMap.Element,
-        iteration,
-        line,
-      })),
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
+        ({ element, fieldLineMap, iteration, line }) => ({
+          element,
+          elementLine: fieldLineMap.Element,
+          iteration,
+          line,
+        }),
+      ),
     ).toStrictEqual([
       { element: undefined, elementLine: 30, iteration: { value: 0, variable: "i" }, line: 36 },
       { element: "attributes.Anemo", elementLine: 30, iteration: { value: 1, variable: "i" }, line: 36 },
@@ -308,7 +313,7 @@ func (c *char) Burst() {
     const sources = [{ path: "burst.go", source }];
 
     expect(
-      readGcsimAttacks(sources, evaluateGoConstants(sources)).map(
+      readGcsimAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(
         ({ element, iteration, line, talentVariable, variableName }) => ({
           element,
           iteration,

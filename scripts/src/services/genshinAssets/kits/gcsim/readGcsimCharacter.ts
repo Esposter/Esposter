@@ -31,17 +31,18 @@ export const readGcsimCharacter = (folder: string, fileMap: ReadonlyMap<string, 
     [...fileMap].find(([path]) => posix.basename(path).startsWith(TALENT_FILE_PREFIX) && path.endsWith(".go")) ?? [];
   const [configFile = GCSIM_CONFIG_FILE, configSource = ""] =
     [...fileMap].find(([path]) => posix.basename(path) === GCSIM_CONFIG_FILE) ?? [];
+  const config = readGcsimConfig(configSource);
   return {
     animationFrameNameMap: readGcsimAnimationFrameNames(goSources),
-    attacks: readGcsimAttacks(goSources, constantMap),
-    config: readGcsimConfig(configSource),
+    attacks: readGcsimAttacks(goSources, constantMap, config),
+    config,
     configFile,
     constantMap,
     filePaths: [...fileMap.keys()],
     folder,
     goSources,
     holdCooldowns: readGcsimHoldCooldowns(goSources, constantMap),
-    queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap),
+    queuedAttacks: readGcsimQueuedAttacks(goSources, constantMap, config),
     talentArrayMap: readGcsimTalentArrays(talentSource),
     talentFile,
     talentParameterMap: readGcsimTalentParameters(talentSource),

@@ -1,4 +1,5 @@
 import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
+import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
@@ -343,12 +344,13 @@ const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: s
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
+  config: GcsimConfig,
   constellation = 0,
 ): GcsimQueuedAttack[] =>
   sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
     const scope = createGoScope(tokens, constantMap);
-    const loops = readConstantLoops(tokens, scope, constellation);
+    const loops = readConstantLoops(tokens, scope, config, constellation);
     const taskClosures = readTaskClosures(tokens);
     const enemyQueryLoops = readEnemyQueryLoops(tokens, scope, file);
     const returnedClosures = readReturnedClosures(tokens);

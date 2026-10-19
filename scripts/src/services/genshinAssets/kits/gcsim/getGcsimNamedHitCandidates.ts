@@ -60,7 +60,7 @@ export const getGcsimNamedHitCandidates = (
   const namedHitCandidateMap: NamedHitCandidateMap = new Map();
   const constellationQueuedAttacks = constellations.map((constellation) => ({
     constellation,
-    queuedAttacks: readGcsimQueuedAttacks(gcsim.goSources, gcsim.constantMap, constellation),
+    queuedAttacks: readGcsimQueuedAttacks(gcsim.goSources, gcsim.constantMap, gcsim.config, constellation),
   }));
   const variables = new Set(
     [...config.talentVariables.map(({ name }) => name), ...attacks.map(({ talentVariable }) => talentVariable)].filter(
