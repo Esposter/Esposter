@@ -7,7 +7,7 @@ import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { describe, expect, test } from "vitest";
 
 describe(getWebpageCss, () => {
-  test("the page css holds each type's css once and then the style rules", () => {
+  test("the page css joins the css of the definitions it is given, then the style rules", () => {
     expect.hasAssertions();
 
     const css = getWebpageCss(
