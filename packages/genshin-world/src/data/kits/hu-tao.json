@@ -18,7 +18,6 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.bloodBlossom.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.bloodBlossom.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4632 } },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 35.76 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 36.88 },
@@ -42,7 +41,7 @@
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "plunges.high.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 45 },
   "plunges.low.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 44 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.paramita.chargedAttack.animationFrames": { "file": "charge.go", "line": 32, "source": "Gcsim", "value": 42 },
   "stances.paramita.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.chargedAttack.hits.0.area": {
@@ -61,7 +60,6 @@
     "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 4631 }
   },
-  "stances.paramita.chargedAttack.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.paramita.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.paramita.normalAttacks.length": { "file": "attack.go", "line": 32, "source": "Gcsim", "value": 6 },
   "stances.paramita.normalAttacks.0.animationFrames": {
