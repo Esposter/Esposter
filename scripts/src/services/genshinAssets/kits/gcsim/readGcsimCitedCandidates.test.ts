@@ -238,10 +238,10 @@ describe("readGcsimCitedCandidates", () => {
   test("a cited line inside a queued block gives its value plus the block's delay", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
-      "burst.hits.0.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
+      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
     };
     const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-      "burst.hits.0.hitmarkFrames",
+      "hits.burst.hitmarkFrames",
     )?.[0];
     expect(candidate?.value).toBe(145);
     expect(candidate?.provenance).toStrictEqual({
@@ -254,11 +254,11 @@ describe("readGcsimCitedCandidates", () => {
   test("a cited hitmark the queued block does not give reads as DiffersFromSource, with the block's own hitmark", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
-      "burst.hits.0.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 150 },
+      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 150 },
     };
     const candidates =
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
-        "burst.hits.0.hitmarkFrames",
+        "hits.burst.hitmarkFrames",
       ) ?? [];
     expect(candidates[0]?.value).toBe(145);
     expect(classifyKitValue(150, candidates, [], false, {})).toStrictEqual({
@@ -587,6 +587,28 @@ describe("readGcsimCitedCandidates", () => {
       "hits.x.hitmarkFrames",
     )?.[0];
     expect(candidate?.value).toBe(2);
+  });
+
+  test("a cited hitmark on a named hit's queue call that is the queued hitmark gives that hitmark", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 115 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+      "hits.x.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(115);
+  });
+
+  test("a cited hitmark on a named hit's queue call that neither value equals gives the queued hitmark first", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 999 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+      "hits.x.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(115);
   });
 
   test("a cited hitmark on an action's hit line gives the hitmark its queue call reads, with the tasks' delay", () => {

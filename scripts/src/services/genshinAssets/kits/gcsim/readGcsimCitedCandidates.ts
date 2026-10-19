@@ -209,8 +209,8 @@ const readQueuedHitmarks = (
 
 // The value a cited line gives, in the record's units: its one value equal to the cited value, or its first where none
 // Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. A seconds field gives its
-// Frames over the frame rate, with those converted values first and its frames after them. An action's hit on a queue
-// Call's line is the hitmark readGcsimQueuedAttacks reads for that call. Otherwise a line gives its literal numbers,
+// Frames over the frame rate, with those converted values first and its frames after them. A queue call's line gives
+// First the hitmark readGcsimQueuedAttacks reads for that call, the run's index picking it, then its literal numbers,
 // And the value of each expression that starts on it, with its locals, constants and loop index resolved. In a `for`
 // Loop, an array of that line's value at each index of the loop, taken at the one expression position whose values
 // Equal the cited array, or at the first position where none does; a scalar citation takes the equal value, as outside
@@ -234,12 +234,11 @@ const readCitedValue = (
   const isSeconds = field.endsWith(SECONDS_FIELD_SUFFIX);
   const toRecordValue = (value: number) => (field === GAUGE_FIELD ? value / GCSIM_DURABILITY_PER_GAUGE : value + shift);
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
-  // An action's hit takes its queue call's hitmark; a named hit is spawned at its own time, so its line gives it
-  if (field === HITMARK_FIELD && isActionHit) {
-    const queuedHitmarks = readQueuedHitmarks(gcsim.queuedAttacks, fileName, lineIndex + 1, hitIndex, loop?.index);
-    if (queuedHitmarks.length > 0)
-      return queuedHitmarks.find((value) => checkIsKitValueEqual(value, citedValue)) ?? queuedHitmarks[0];
-  }
+  // A queue call's line offers the hitmark its call queues before its own values, for named and action hits alike
+  const queuedHitmarks =
+    field === HITMARK_FIELD
+      ? readQueuedHitmarks(gcsim.queuedAttacks, fileName, lineIndex + 1, hitIndex, loop?.index)
+      : [];
   // A name resolves to the loop's index first, then to the scope of the position it is read at, the file's assignment
   // And the package's constant, and the action's frame last
   const readExpressionValues = (overrides: (name: string) => GoValue | undefined): number[] =>
@@ -263,7 +262,7 @@ const readCitedValue = (
     return isSeconds ? [...values.map((value) => toKitSeconds(value)), ...values] : values;
   };
   if (loop === undefined) {
-    const values = readRecordValues(() => undefined);
+    const values = [...queuedHitmarks, ...readRecordValues(() => undefined)];
     return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
   }
   if (loop.count === 0) return undefined;
@@ -271,12 +270,16 @@ const readCitedValue = (
     readRecordValues((name) => (name === loop.index ? index : undefined)),
   );
   if (hitIndex !== undefined) {
-    const hitValues = valuesByIndex[hitIndex] ?? [];
+    const hitValues = [...queuedHitmarks, ...(valuesByIndex[hitIndex] ?? [])];
     return hitValues.find((value) => checkIsKitValueEqual(value, citedValue)) ?? hitValues[0];
   }
   // A scalar citation takes the loop's value equal to it, as outside a loop does, else the first index's first value
-  if (!Array.isArray(citedValue))
-    return valuesByIndex.flat().find((value) => checkIsKitValueEqual(value, citedValue)) ?? valuesByIndex[0]?.[0];
+  if (!Array.isArray(citedValue)) {
+    const values = [...queuedHitmarks, ...valuesByIndex.flat()];
+    return (
+      values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? queuedHitmarks[0] ?? valuesByIndex[0]?.[0]
+    );
+  }
   const positions = Array.from(
     { length: Math.min(...valuesByIndex.map((values) => values.length)) },
     (_value, position) => position,
