@@ -1,6 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitBuff } from "#src/models/kit/KitBuff";
-import type { KitEffect } from "#src/models/kit/KitEffect";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -10,17 +8,15 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// The Hydro DMG Bonus the effects' buff gives, none if no buff gives it
-const readHydroDamageBonus = (effects: KitEffect[]): number =>
-  effects.find((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.HydroDamageBonus)
-    ?.amount ?? 0;
 
 describe(createPrimordialJadeRegaliaPassiveModule, () => {
   // Primordial Jade Regalia at its first rank: for 3 seconds after its wielder's burst or a shield it casts, 0.3% of
@@ -34,7 +30,7 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
     constellationCount: 0,
     element: Element.Hydro,
     elementalResonances: [],
-    kit: { ...TRAVELER_KIT, onKitEvent: passiveModule.onKitEvent },
+    kit: getPassiveKit(TRAVELER_KIT, [passiveModule]),
     level: 1,
   });
   const createContext = (wielder: Combatant) => {
@@ -52,7 +48,7 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
     const context = createContext(createWielder(20000));
     castKitShield(context, casterCharacterId, { health: 1, secondsRemaining: 10 });
 
-    expect(readHydroDamageBonus(context.kitEffectState.effects)).toBeCloseTo(damageBonus);
+    expect(getBuff(context.kitEffectState, Attribute.HydroDamageBonus)?.amount ?? 0).toBeCloseTo(damageBonus);
   });
 
   test.each([
@@ -69,7 +65,7 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
       wielder,
     );
 
-    expect(readHydroDamageBonus(context.kitEffectState.effects)).toBeCloseTo(damageBonus);
+    expect(getBuff(context.kitEffectState, Attribute.HydroDamageBonus)?.amount ?? 0).toBeCloseTo(damageBonus);
   });
 
   test("the energy is restored once, 142 frames after", () => {
