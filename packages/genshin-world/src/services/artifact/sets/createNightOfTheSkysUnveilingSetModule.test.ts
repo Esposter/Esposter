@@ -12,6 +12,7 @@ import { NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID } from "#src/services/artif
 import { createNightOfTheSkysUnveilingSetModule } from "#src/services/artifact/sets/createNightOfTheSkysUnveilingSetModule";
 import { createReactionTrigger } from "#src/services/artifact/sets/createReactionTrigger.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
+import { getBuffAmounts } from "#src/services/artifact/sets/getBuffAmounts.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -21,7 +22,6 @@ import { OTHER_CHARACTER_ID, THIRD_CHARACTER_ID } from "#src/services/kit/consta
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
-import { getBuffAmounts } from "#src/services/kit/getBuffAmounts.test";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
