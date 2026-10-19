@@ -5,7 +5,7 @@ import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { throwCollectedFailures } from "#src/services/shared/throwCollectedFailures";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // A multiplier's constellation is the join key its build reads a talent variable at, which the published shape omits
@@ -34,17 +34,12 @@ export const buildKitPublication = (
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
   for (const { characterId, name, publishedRecord, tables } of inputs) {
-    let built: BuiltKit;
-    try {
-      built = buildKitRecordWithDonors(characterId, inputMap, builtMap);
-    } catch (error) {
-      throw new InvalidOperationError(
-        Operation.Create,
-        name,
-        `its record cannot be built: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-    const { record, sources } = built;
+    const { record, sources } = getResult(() => buildKitRecordWithDonors(characterId, inputMap, builtMap)).match(
+      (built) => built,
+      (error) => {
+        throw new InvalidOperationError(Operation.Create, name, `its record cannot be built: ${error.message}`);
+      },
+    );
     kits[String(characterId)] = omitConstellation(record);
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;

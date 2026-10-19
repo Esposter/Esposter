@@ -79,14 +79,16 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       continue;
     }
     // A borrowed value is seeded from its donor's record, so a kit whose donor fails to build is reported, not seeded
-    const donorRecordResult = getResult(() => readDonorRecordMap(characterId, committedOverlay, inputMap, builtMap));
-    if (donorRecordResult.isErr()) {
-      failureLines.push(
-        `  ${name}: a donor of its committed overlay fails to build: ${donorRecordResult.error.message.split("\n")[0]}`,
-      );
-      continue;
-    }
-    const donorRecordMap = donorRecordResult.value;
+    const donorRecordMap = getResult(() => readDonorRecordMap(characterId, committedOverlay, inputMap, builtMap)).match(
+      (recordMap) => recordMap,
+      (error) => {
+        failureLines.push(
+          `  ${name}: a donor of its committed overlay fails to build: ${error.message.split("\n")[0]}`,
+        );
+        return undefined;
+      },
+    );
+    if (!donorRecordMap) continue;
     const { gapPaths, overlayFailures } = getResult(() =>
       buildKitRecordWithDonors(characterId, inputMap, builtMap),
     ).match(
