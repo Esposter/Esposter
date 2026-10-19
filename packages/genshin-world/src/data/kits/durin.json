@@ -1,38 +1,34 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "burst.hits.0-2.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "burst.hits.0.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 97 },
-  "burst.hits.0.multiplier": { "file": "zz_durin.dm.go", "line": 233, "source": "Gcsim", "value": 1.1896 },
+  "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 12339 } },
   "burst.hits.1.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 121 },
-  "burst.hits.1.multiplier": { "file": "zz_durin.dm.go", "line": 250, "source": "Gcsim", "value": 0.964 },
+  "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12339 } },
   "burst.hits.2.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 154 },
-  "burst.hits.2.multiplier": { "file": "zz_durin.dm.go", "line": 267, "source": "Gcsim", "value": 1.1184 },
+  "burst.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 12339 } },
   "burstVariant.animationFrames": { "cause": "Unsourced", "value": 104 },
   "burstVariant.hits.length": { "cause": "Unsourced", "value": 3 },
   "burstVariant.hits.0.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 97 },
-  "burstVariant.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.0.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 97 },
+  "burstVariant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.1.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 121 },
-  "burstVariant.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.1.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 121 },
+  "burstVariant.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.2.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "burstVariant.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 154 },
-  "burstVariant.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 12339 } },
+  "burstVariant.hits.2.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 154 },
+  "burstVariant.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 12339 } },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 12331 } },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "hits.blackDragonTicks.length": { "file": "burst.go", "line": 21, "source": "Gcsim", "value": 16 },
@@ -136,40 +132,22 @@
   "stances.recastWindow.normalAttacks.length": { "cause": "Unsourced", "value": 1 },
   "stances.recastWindow.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 67 },
   "stances.recastWindow.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 3 },
-  "stances.recastWindow.normalAttacks.0.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
-  },
   "stances.recastWindow.normalAttacks.0.hits.0-2.attackTag": {
     "file": "skill.go",
     "line": 113,
     "source": "Gcsim",
     "value": "ElementalSkill"
   },
-  "stances.recastWindow.normalAttacks.0.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 32 },
   "stances.recastWindow.normalAttacks.0.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 12332 }
   },
-  "stances.recastWindow.normalAttacks.0.hits.1.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
-  },
-  "stances.recastWindow.normalAttacks.0.hits.1.element": { "cause": "Unsourced", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
   "stances.recastWindow.normalAttacks.0.hits.1.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 12332 }
   },
-  "stances.recastWindow.normalAttacks.0.hits.2.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.272001872658765 }
-  },
-  "stances.recastWindow.normalAttacks.0.hits.2.element": { "cause": "Unsourced", "value": "Fire" },
-  "stances.recastWindow.normalAttacks.0.hits.2.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "stances.recastWindow.normalAttacks.0.hits.2.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 12332 }
   },
   "stances.recastWindow.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Skill" }
