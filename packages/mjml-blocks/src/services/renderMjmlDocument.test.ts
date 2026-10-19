@@ -21,6 +21,23 @@ import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+// A section of one column holding one text, with the props given set on that text
+const createTextSection = (textProps: Record<string, unknown> = {}): BlockNode => ({
+  props: {
+    children: [
+      {
+        props: {
+          children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: "mj-text" }],
+          id: TEST_COLUMN_ID,
+        },
+        type: "mj-column",
+      },
+    ],
+    id: TEST_SECTION_ID,
+  },
+  type: "mj-section",
+});
+
 describe(renderMjmlDocument, () => {
   const EMAIL_DOCUMENT: BlockDocument = {
     content: [
@@ -49,23 +66,6 @@ describe(renderMjmlDocument, () => {
     ],
     root: { props: {} },
   };
-
-  // A section of one column holding one text, with the props given set on that text
-  const createTextSection = (textProps: Record<string, unknown> = {}): BlockNode => ({
-    props: {
-      children: [
-        {
-          props: {
-            children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: "mj-text" }],
-            id: TEST_COLUMN_ID,
-          },
-          type: "mj-column",
-        },
-      ],
-      id: TEST_SECTION_ID,
-    },
-    type: "mj-section",
-  });
 
   test("rendering where there is no document object model", () => {
     expect.hasAssertions();

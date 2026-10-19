@@ -7,7 +7,7 @@ export const mjmlRootPropsSchema: z.ZodObject<
     attributes: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodRecord<z.ZodString, z.ZodString>>>;
     body: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodString>>;
     breakpoint: z.ZodOptional<z.ZodObject<{ width: z.ZodString }, z.core.$strict>>;
-    dir: z.ZodOptional<z.ZodEnum<typeof MjmlDirection>>;
+    direction: z.ZodOptional<z.ZodEnum<typeof MjmlDirection>>;
     fonts: z.ZodOptional<z.ZodArray<z.ZodObject<{ href: z.ZodString; name: z.ZodString }, z.core.$strict>>>;
     lang: z.ZodOptional<z.ZodString>;
     preview: z.ZodOptional<z.ZodString>;
@@ -19,7 +19,7 @@ export const mjmlRootPropsSchema: z.ZodObject<
   attributes: z.record(z.string(), z.record(z.string(), z.string())).optional(),
   body: z.record(z.string(), z.string()).optional(),
   breakpoint: z.strictObject({ width: z.string() }).optional(),
-  dir: z.enum(MjmlDirection).optional(),
+  direction: z.enum(MjmlDirection).optional(),
   fonts: z.array(z.strictObject({ href: z.string(), name: z.string() })).optional(),
   lang: z.string().optional(),
   preview: z.string().optional(),

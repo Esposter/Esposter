@@ -11,6 +11,14 @@ const createNode = (type: string, props: Record<string, unknown> = {}): BlockNod
   props: { id: crypto.randomUUID(), ...props },
   type,
 });
+// A read mints each node's id fresh, so the structure is compared with every id swapped for one placeholder
+const replaceIds = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map((item: unknown) => replaceIds(item));
+  if (typeof value !== "object" || value === null) return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, child]) => [key, key === "id" ? "<id>" : replaceIds(child)]),
+  );
+};
 
 describe(parseMjmlDocument, () => {
   // Every built-in block type, each with an attribute set, every content kind and a decorative image, with
@@ -88,7 +96,7 @@ describe(parseMjmlDocument, () => {
         attributes: { "mj-all": { "font-family": "Arial" }, "mj-text": { color: "#000000" } },
         body: { "background-color": "#ffffff", width: "600px" },
         breakpoint: { width: "480px" },
-        dir: "ltr",
+        direction: "ltr",
         fonts: [{ href: "https://fonts.example.com/a.css", name: "Test" }],
         lang: "en",
         preview: "Preview",
@@ -161,7 +169,7 @@ describe(parseMjmlDocument, () => {
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(result.data).toStrictEqual({
+    expect(replaceIds(result.data)).toStrictEqual({
       content: [
         {
           props: {
@@ -169,15 +177,15 @@ describe(parseMjmlDocument, () => {
               {
                 props: {
                   children: [
-                    { props: { alt: "A", id: expect.any(String), src: "https://example.com/a.png" }, type: "mj-image" },
-                    { props: { content: "After", id: expect.any(String) }, type: "mj-text" },
+                    { props: { alt: "A", id: "<id>", src: "https://example.com/a.png" }, type: "mj-image" },
+                    { props: { content: "After", id: "<id>" }, type: "mj-text" },
                   ],
-                  id: expect.any(String),
+                  id: "<id>",
                 },
                 type: "mj-column",
               },
             ],
-            id: expect.any(String),
+            id: "<id>",
           },
           type: "mj-section",
         },

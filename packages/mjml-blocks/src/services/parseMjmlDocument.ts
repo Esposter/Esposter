@@ -5,7 +5,7 @@ import type { BlockNode, BlockRegistry, BlockTypeDefinition } from "headless-blo
 import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
 
-import { MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
+import { DIRECTION_ATTRIBUTE_KEY, MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
@@ -20,10 +20,10 @@ const readMjmlRoot = <TContent>(
   registry: BlockRegistry,
   richText: MjmlRichTextDefinition<TContent>,
 ): { content: BlockNode[]; root: { props: Record<string, unknown> } } => {
-  const { dir, lang, ...refusedAttributes } = mjml.attributes;
+  const { [DIRECTION_ATTRIBUTE_KEY]: direction, lang, ...refusedAttributes } = mjml.attributes;
   const props: Record<string, unknown> = {
     ...readMjmlStrayText(mjml),
-    ...(dir === undefined ? {} : { dir }),
+    ...(direction === undefined ? {} : { direction }),
     ...(lang === undefined ? {} : { lang }),
   };
   if (Object.keys(refusedAttributes).length > 0) props[getMjmlRefusalKey("mjml")] = refusedAttributes;

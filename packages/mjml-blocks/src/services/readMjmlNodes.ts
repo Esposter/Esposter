@@ -16,7 +16,7 @@ const readMjmlNode = <TContent>(
   richText: MjmlRichTextDefinition<TContent>,
 ): BlockNode => {
   const type = element.rawTagName;
-  const specification = MJML_COMPONENT_SPECIFICATIONS.find((specification) => specification.type === type);
+  const specification = MJML_COMPONENT_SPECIFICATIONS.find((candidate) => candidate.type === type);
   const { alt, id: idAttribute, ...attributes } = element.attributes;
   const isDecorative = specification?.hasAlternativeText === true && alt === "";
   const props: Record<string, unknown> = {
