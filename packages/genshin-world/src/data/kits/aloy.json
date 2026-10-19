@@ -1,5 +1,5 @@
 {
-  "skill.hits.length": { "cause": "Unsourced", "value": 3 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 3 },
   "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 76, "source": "Gcsim", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6232 } },
   "skill.hits.1.hitmarkFrames": { "file": "skill.go", "line": 101, "source": "Gcsim", "value": 31 },
