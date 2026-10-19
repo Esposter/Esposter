@@ -1,5 +1,6 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
@@ -12,11 +13,16 @@ const surveyInviteFormSchema = z.strictObject({
   label: z.string().min(1),
   surveyId: createResourceLinkSchema(ResourceLinkType.Survey),
 });
-const surveyInvitePropsSchema = z.strictObject({ ...surveyInviteFormSchema.shape, id: z.string() });
+const surveyInvitePropsSchema = z.strictObject({
+  ...surveyInviteFormSchema.shape,
+  id: z.string(),
+  style: nodeStyleSchema.optional(),
+});
 
 export const surveyInviteNodeType = {
   css: `.survey-invite { display: inline-block; padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: ${SURVEY_INVITE_BUTTON_COLOR}; color: #fff; text-decoration: none; }`,
   formSchema: surveyInviteFormSchema,
+  isFocusable: false,
   propsSchema: surveyInvitePropsSchema,
   // The link is absolute, against the origin the page is published from, so it works from any page that holds it
   render: (node, _slots, context) => {

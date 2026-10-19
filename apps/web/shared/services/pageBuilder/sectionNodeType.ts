@@ -1,5 +1,6 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { SectionTag } from "#shared/models/pageBuilder/SectionTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
@@ -10,12 +11,14 @@ const sectionPropsSchema = z.strictObject({
   ...sectionFormSchema.shape,
   children: z.array(z.unknown()),
   id: z.string(),
+  style: nodeStyleSchema.optional(),
 });
 
 // A block of the page under a semantic tag, holding any placeable content
 export const sectionNodeType = {
   css: "",
   formSchema: sectionFormSchema,
+  isFocusable: false,
   propsSchema: sectionPropsSchema,
   render: (node, slots) => ({
     attributes: { class: "section" },

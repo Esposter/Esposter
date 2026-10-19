@@ -7,6 +7,8 @@ import type { z } from "zod";
 export interface NodeTypeDefinition extends BlockTypeDefinition {
   // Structural CSS emitted once per document holding the type, or empty when it has none
   css: string;
+  // Whether a reader can focus the node with the keyboard, so its hover style also shows on focus
+  isFocusable: boolean;
   // The editable content props, which the editor draws as a form
   formSchema: z.ZodType;
   // Pure: the node and its rendered slots in, one element out, folded by the core's renderBlockNodes

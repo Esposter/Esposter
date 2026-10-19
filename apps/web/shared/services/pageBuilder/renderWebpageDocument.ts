@@ -2,6 +2,9 @@ import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { getNodeStyleClass } from "#shared/services/pageBuilder/getNodeStyleClass";
+import { getNodeStyleCss } from "#shared/services/pageBuilder/getNodeStyleCss";
+import { getWebpageStyleCss } from "#shared/services/pageBuilder/getWebpageStyleCss";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpageNodeTypeDefinitionMap";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
@@ -14,12 +17,23 @@ export const renderWebpageDocument = (document: WebpageDocument, context: Render
   const presentTypes = new Set<string>();
   const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, definition, slots) => {
     presentTypes.add(definition.type);
-    return definition.render(node, slots, context);
+    const rendered = definition.render(node, slots, context);
+    if (getNodeStyleCss(node, definition) === "" || typeof rendered === "string" || !("tag" in rendered))
+      return rendered;
+
+    return {
+      ...rendered,
+      attributes: {
+        ...rendered.attributes,
+        class: `${rendered.attributes.class ?? ""} ${getNodeStyleClass(node)}`.trim(),
+      },
+    };
   });
   const definitions = Object.values(webpageNodeTypeDefinitionMap).filter((definition) =>
     presentTypes.has(definition.type),
   );
-  const css = definitions.map(({ css }) => css).join("\n");
+  const structuralCss = definitions.map((definition) => definition.css).join("\n");
+  const css = [structuralCss, getWebpageStyleCss(document)].filter((part) => part !== "").join("\n");
   const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script})()</script>`] : []));
 
   return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${css}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;

@@ -8,6 +8,7 @@ import { z } from "zod";
 export const columnsNodeType = {
   css: ".columns { display: flex; flex-wrap: wrap; gap: 1rem; }",
   formSchema: z.strictObject({}),
+  isFocusable: false,
   propsSchema: containerPropsSchema,
   render: (_node, slots) => ({ attributes: { class: "columns" }, children: slots.children ?? [], tag: "div" }),
   slots: { children: [WebpageNodeType.Column] },

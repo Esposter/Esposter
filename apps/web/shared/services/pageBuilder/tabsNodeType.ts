@@ -57,6 +57,7 @@ export const tabsNodeType = {
 .tabs [role="tab"] { padding: 0.5rem 1rem; border: 0; background: none; cursor: pointer; }
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
   formSchema: z.strictObject({}),
+  isFocusable: true,
   propsSchema: containerPropsSchema,
   render: (node, slots) => {
     const tabs = tabLabelsSchema.parse(containerPropsSchema.parse(node.props).children).map(({ props }) => props);

@@ -1,5 +1,6 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
@@ -15,11 +16,14 @@ const refineImageAlternative = (
 
 const imageShape = { alt: z.string(), decorative: z.boolean(), src: webpageUrlSchema };
 const imageFormSchema = z.strictObject(imageShape).superRefine(refineImageAlternative);
-const imagePropsSchema = z.strictObject({ ...imageShape, id: z.string() }).superRefine(refineImageAlternative);
+const imagePropsSchema = z
+  .strictObject({ ...imageShape, id: z.string(), style: nodeStyleSchema.optional() })
+  .superRefine(refineImageAlternative);
 
 export const imageNodeType = {
   css: ".image { max-width: 100%; height: auto; }",
   formSchema: imageFormSchema,
+  isFocusable: false,
   propsSchema: imagePropsSchema,
   render: (node) => {
     const { alt, decorative, src } = imagePropsSchema.parse(node.props);

@@ -9,6 +9,7 @@ import { z } from "zod";
 export const columnNodeType = {
   css: ".column { flex: 1 1 0; min-width: 0; }",
   formSchema: z.strictObject({}),
+  isFocusable: false,
   propsSchema: containerPropsSchema,
   render: (node, slots) => ({ attributes: { class: "column" }, children: slots.children ?? [], tag: "div" }),
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },

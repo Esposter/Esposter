@@ -1,16 +1,22 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
 
 // An uploaded video with no default source, so a new video never points at a file its author did not choose
 const videoFormSchema = z.strictObject({ src: webpageUrlSchema, title: z.string().min(1) });
-const videoPropsSchema = z.strictObject({ ...videoFormSchema.shape, id: z.string() });
+const videoPropsSchema = z.strictObject({
+  ...videoFormSchema.shape,
+  id: z.string(),
+  style: nodeStyleSchema.optional(),
+});
 
 export const videoNodeType = {
   css: ".video { max-width: 100%; }",
   formSchema: videoFormSchema,
+  isFocusable: false,
   propsSchema: videoPropsSchema,
   // The title is the video's accessible name, since a video has no alternative text of its own
   render: (node) => {

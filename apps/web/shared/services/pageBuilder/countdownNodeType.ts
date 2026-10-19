@@ -1,6 +1,7 @@
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { getResult } from "@esposter/shared";
 import { z } from "zod";
@@ -20,7 +21,11 @@ const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
   endText: z.string(),
 });
-const countdownPropsSchema = z.strictObject({ ...countdownFormSchema.shape, id: z.string() });
+const countdownPropsSchema = z.strictObject({
+  ...countdownFormSchema.shape,
+  id: z.string(),
+  style: nodeStyleSchema.optional(),
+});
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
 // Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space form
@@ -97,6 +102,7 @@ export const countdownNodeType = {
 .countdown-value { font-size: 2rem; font-variant-numeric: tabular-nums; }
 .countdown-end { font-size: 2rem; }`,
   formSchema: countdownFormSchema,
+  isFocusable: false,
   propsSchema: countdownPropsSchema,
   // The timer's live region stays off, so a screen reader is not told each tick; the script fills in the values
   render: (node) => {
