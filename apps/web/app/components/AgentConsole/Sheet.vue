@@ -29,7 +29,8 @@ const { currentSessionId, isTurnRunning, pendingPermissionRequests, themeStyle }
   storeToRefs(agentConsoleSessionStore);
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { isPaneOpen, paneWidth } = storeToRefs(agentConsolePaneStore);
-const { isSideChatOpen } = storeToRefs(useAgentConsoleSideChatStore());
+const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+const { isSideChatOpen } = storeToRefs(agentConsoleSideChatStore);
 useAgentConsoleCommands();
 // A question from the agent is never left waiting where nobody looks
 watch(

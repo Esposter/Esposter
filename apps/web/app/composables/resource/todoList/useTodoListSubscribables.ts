@@ -3,7 +3,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 
 // Saves from other devices stream in over onSaveResourceContent, so the item table and calendar
 // Stay live without any polling or manual refresh

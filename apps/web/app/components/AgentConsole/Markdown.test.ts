@@ -68,10 +68,13 @@ describe(AgentConsoleMarkdown, () => {
     expect.hasAssertions();
 
     const path = "src/index.ts";
-    useAgentConsoleFileStore().storeFiles([path]);
-    useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();
+    const agentConsoleFileStore = useAgentConsoleFileStore();
+    agentConsoleFileStore.storeFiles([path]);
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    agentConsoleSessionStore.currentSessionId = crypto.randomUUID();
     const sideChatSessionId = crypto.randomUUID();
-    const sendCommand = vi.spyOn(useAgentConsoleConnectionStore(), "sendCommand");
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    const sendCommand = vi.spyOn(agentConsoleConnectionStore, "sendCommand");
     const component = await mountSuspended(AgentConsoleMarkdown, {
       global: { provide: { [AGENT_CONSOLE_SESSION_KEY]: { sessionId: ref(sideChatSessionId) } } },
       props: { source: path },

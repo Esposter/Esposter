@@ -5,19 +5,22 @@ import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/p
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe("pageBuilderLayers", () => {
   test("arrow keys walk the layers tree and select the focused node", async () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await expect(press("ArrowDown")).resolves.toBe(TEST_NESTED_TEXT_ID);
-    expect(usePageBuilderCanvasStore().getSelectedNodeId(resourceId)).toBe(TEST_NESTED_TEXT_ID);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+
+    expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe(TEST_NESTED_TEXT_ID);
 
     component.unmount();
   });
@@ -26,7 +29,8 @@ describe("pageBuilderLayers", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 

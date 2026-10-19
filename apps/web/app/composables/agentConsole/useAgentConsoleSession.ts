@@ -10,8 +10,10 @@ export const useAgentConsoleSession = (): AgentConsoleSession =>
   inject(
     AGENT_CONSOLE_SESSION_KEY,
     () => {
-      const { composerText } = storeToRefs(useAgentConsolePanelStore());
-      const { currentSessionId: sessionId, ...reads } = storeToRefs(useAgentConsoleSessionStore());
+      const agentConsolePanelStore = useAgentConsolePanelStore();
+      const { composerText } = storeToRefs(agentConsolePanelStore);
+      const agentConsoleSessionStore = useAgentConsoleSessionStore();
+      const { currentSessionId: sessionId, ...reads } = storeToRefs(agentConsoleSessionStore);
       return { ...reads, composerText, sessionId };
     },
     true,
