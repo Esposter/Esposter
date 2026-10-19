@@ -1,9 +1,5 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
-  "burst.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23.267156809750926 }
-  },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 6039 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.exquisiteThrow.length": { "cause": "Unsourced", "value": 3 },
