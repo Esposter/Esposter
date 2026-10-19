@@ -1,8 +1,8 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeSquaredDistance } from "#src/services/genshinAssets/fit/computeSquaredDistance";
+import { ORIGIN } from "#src/services/genshinAssets/fit/constants";
 
-const ORIGIN: Vector = [0, 0, 0];
 // The means k-means starts from: the first a random point, then each next one drawn with a chance in proportion to its
 // Squared distance from the means already drawn (k-means++), so the means start spread across the points rather than
 // Bunched in one of them
