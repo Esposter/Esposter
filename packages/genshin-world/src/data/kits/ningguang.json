@@ -1,7 +1,7 @@
 {
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
-  "frames.jadeScreen": { "cause": "Unclassified", "value": 1800 },
-  "hits.piercingFragmentsStrikeGem.length": { "cause": "Unclassified", "value": 2 },
+  "chargedAttack.hits.length": { "cause": "NamedHitList", "value": 0 },
+  "frames.jadeScreen": { "file": "skill.go", "line": 64, "source": "Gcsim", "value": 1800 },
+  "hits.piercingFragmentsStrikeGem.length": { "file": "attack.go", "line": 107, "source": "Gcsim", "value": 2 },
   "hits.piercingFragmentsStrikeGem.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.5 }
@@ -20,7 +20,7 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 2731 }
   },
-  "hits.strikeGem.length": { "cause": "Unclassified", "value": 2 },
+  "hits.strikeGem.length": { "file": "attack.go", "line": 107, "source": "Gcsim", "value": 2 },
   "hits.strikeGem.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
@@ -35,86 +35,86 @@
   "hits.strikeGem.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2731 } },
   "hits.starshatterGem.length": { "cause": "Unclassified", "value": 6 },
   "hits.starshatterGem.0.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.0.hitmarkFrames": { "cause": "Unclassified", "value": 62 },
+  "hits.starshatterGem.0.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 62 },
   "hits.starshatterGem.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.starshatterGem.1.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.1.hitmarkFrames": { "cause": "Unclassified", "value": 97 },
+  "hits.starshatterGem.1.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 97 },
   "hits.starshatterGem.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.starshatterGem.2.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.2.hitmarkFrames": { "cause": "Unclassified", "value": 106 },
+  "hits.starshatterGem.2.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 106 },
   "hits.starshatterGem.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.starshatterGem.3.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.3.hitmarkFrames": { "cause": "Unclassified", "value": 110 },
+  "hits.starshatterGem.3.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 110 },
   "hits.starshatterGem.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.starshatterGem.4.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.4.hitmarkFrames": { "cause": "Unclassified", "value": 116 },
+  "hits.starshatterGem.4.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 116 },
   "hits.starshatterGem.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.starshatterGem.5.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starshatterGem.5.hitmarkFrames": { "cause": "Unclassified", "value": 124 },
+  "hits.starshatterGem.5.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 124 },
   "hits.starshatterGem.5.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.length": { "cause": "Unclassified", "value": 6 },
   "hits.jadeScreenGem.0.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.0.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.1.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.1.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.2.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.2.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.3.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.3.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.4.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.4.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.jadeScreenGem.5.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.jadeScreenGem.5.hitmarkFrames": { "cause": "Unclassified", "value": 154 },
   "hits.jadeScreenGem.5.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
   "hits.grandeurStarJadeShot.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.grandeurStarJadeShot.hitmarkFrames": { "cause": "Unclassified", "value": 35 },
+  "hits.grandeurStarJadeShot.hitmarkFrames": { "file": "charge.go", "line": 29, "source": "Gcsim", "value": 35 },
   "hits.grandeurStarJadeShot.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 2731 } },
   "hits.starJadeShot.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
   "hits.starJadeShot.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
@@ -126,8 +126,8 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.jadeScreen.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2732 } },
-  "normalAttacks.length": { "cause": "Unclassified", "value": 2 },
-  "normalAttacks.0.hits.length": { "cause": "Unclassified", "value": 0 },
-  "normalAttacks.1.hits.length": { "cause": "Unclassified", "value": 0 },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 }
+  "normalAttacks.length": { "cause": "DiffersFromSource", "value": 2 },
+  "normalAttacks.0.hits.length": { "cause": "NamedHitList", "value": 0 },
+  "normalAttacks.1.hits.length": { "cause": "NamedHitList", "value": 0 },
+  "skill.hits.length": { "cause": "NamedHitList", "value": 0 }
 }
