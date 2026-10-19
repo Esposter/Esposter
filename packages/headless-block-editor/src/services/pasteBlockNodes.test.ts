@@ -14,7 +14,7 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(pasteBlockNodes, () => {
   const TEST_IMAGE_ID: string = crypto.randomUUID();
-  const TEST_HEADING_COPY_ID: string = crypto.randomUUID();
+  const TEST_HEADING_COPY_ID = crypto.randomUUID();
 
   test("pasting a node twice", () => {
     expect.hasAssertions();

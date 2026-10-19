@@ -17,11 +17,12 @@ import { DataTexture, Texture } from "three";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("genshin-engine"), async (importOriginal) => {
-  const actual = await importOriginal<typeof import("genshin-engine")>();
+  const actual = await importOriginal();
   return {
     ...actual,
     createCharacterMaterial: vi.fn<typeof createCharacterMaterial>(),
-    createPmxMesh: vi.fn<typeof createPmxMesh>(),
+    // oxlint-disable-next-line vitest/require-mock-type-parameters -- a typed mock takes one signature, which the generic export does not accept, so its untyped procedure stands in
+    createPmxMesh: vi.fn(),
     createPmxTexture: vi.fn<typeof createPmxTexture>(),
     createPmxToonTexture: vi.fn<typeof createPmxToonTexture>(),
     parsePmx: vi.fn<typeof parsePmx>(),
