@@ -99,7 +99,7 @@
   "parameters.impaleTheNightLowBondOfLifeHealing": { "source": "Tables" },
   "parameters.nightVigilSeconds": { "source": "Tables" },
   "parameters.swiftHuntBondOfLifeGain": { "source": "Tables" },
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "stances.nightVigil.normalAttacks.length": { "cause": "Unsourced", "value": 3 },
   "stances.nightVigil.normalAttacks.0.animationFrames": {
     "file": "attack.go",
