@@ -12,7 +12,7 @@
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "skill.hits.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_DEFENSE" },
-  "skillHolds.length": { "cause": "Unsourced", "value": 2 },
+  "skillHolds.length": { "cause": "Unclassified", "value": 2 },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 31, "source": "Gcsim", "value": 97 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.area": {
