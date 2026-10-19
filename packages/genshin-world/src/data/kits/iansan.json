@@ -1,7 +1,7 @@
 {
   "chargedAttackStamina": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 11031 } },
   "chargedAttackVariant.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
   },
   "normalAttacks.2.hits.0.area": {
