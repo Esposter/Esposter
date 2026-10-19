@@ -8,6 +8,6 @@ export const createSkillAndBurstDamagePassiveModule = (params: number[]): Passiv
   const damageBonus = takeOne(params, 0);
   return {
     getStrikeDamageBonus: (strike) =>
-      [AttackTag.ElementalSkill, AttackTag.ElementalBurst].includes(strike.attackTag) ? damageBonus : 0,
+      strike.attackTag === AttackTag.ElementalSkill || strike.attackTag === AttackTag.ElementalBurst ? damageBonus : 0,
   };
 };
