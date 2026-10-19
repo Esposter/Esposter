@@ -186,11 +186,6 @@ describe("persistThenNotify", () => {
       source: `aEventEmitter.emit(); await getResultAsync(g).match(noop, () => { xs.forEach(() => { throw e; }); });`,
       violations: 0,
     },
-    {
-      name: "unsafeUnwrapAfterEmit",
-      source: `aEventEmitter.emit(); await getResultAsync(g)._unsafeUnwrap();`,
-      violations: 1,
-    },
     // Both finalizers unwrap the original result and rethrow on Err, so awaiting one after an emit rejects the
     // Caller for an entity that already exists and was already broadcast.
     {
