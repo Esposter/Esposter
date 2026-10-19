@@ -4,7 +4,7 @@ Xinyan's kit is its record and one behaviour module, `createXinyanKitBehaviour`,
 
 ## Decisions
 
-- **Riff Revolution's Pyro DoT is seven hits, where gcsim counts nine.** gcsim's nine add the two pulses Constellation 2 gives (`burst.go:14`), which the impromptu list holds with the seven, so the base list `riffDot` keeps the seven.
+- **Riff Revolution's Pyro DoT is seven hits, and the impromptu list adds Constellation 2's two pulses.** gcsim's DoT lands seven times, at 57 frames and every 17 after, and Constellation 2 queues two pulses of the shield's DoT inside its own block (`burst.go:14`), which the impromptu list holds after the seven. The impromptu list's DoT hitmarks are gcsim's, each a choice of the call landing at it, as the builder takes no call by its place for a list whose hits join two keys.
 - **Ascension 4's Physical DMG Bonus is given to every deployed member, where gcsim raises the character on the field's.** Only the character on the field strikes in the world, so the two differ only for a member's off-field summon.
 - **Sweeping Fervor's shield steps up on a count its hit keeps, and its level lives beside the shield.** The hit counts each enemy it strikes on a status that carries `KitStatus.stacks` for the hit's window, and each count raises the shield to the level it reaches, Lead-In at 2 and Rave at 3, Ascension 1 lowering each by one. The level is a status that lasts as long as the shield, so a shield that breaks takes it with it. Rave's Pyro DoT is a field that strikes every 2 seconds while the shield stands at level 3. The shield is set at the press when none stands. gcsim queues each level 13 frames after the hit, and here the level is decided at the strike.
 

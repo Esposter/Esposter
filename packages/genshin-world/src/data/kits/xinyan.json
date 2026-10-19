@@ -37,7 +37,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.1.hitmarkFrames": { "cause": "Unsourced", "value": 74 },
+  "hits.impromptuOpeningRiffRevolutionDots.1.hitmarkFrames": { "source": "Gcsim", "value": 74 },
   "hits.impromptuOpeningRiffRevolutionDots.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -46,7 +46,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.2.hitmarkFrames": { "cause": "Unsourced", "value": 91 },
+  "hits.impromptuOpeningRiffRevolutionDots.2.hitmarkFrames": { "source": "Gcsim", "value": 91 },
   "hits.impromptuOpeningRiffRevolutionDots.2.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -55,7 +55,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.3.hitmarkFrames": { "cause": "Unsourced", "value": 108 },
+  "hits.impromptuOpeningRiffRevolutionDots.3.hitmarkFrames": { "source": "Gcsim", "value": 108 },
   "hits.impromptuOpeningRiffRevolutionDots.3.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -64,7 +64,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.4.hitmarkFrames": { "cause": "Unsourced", "value": 125 },
+  "hits.impromptuOpeningRiffRevolutionDots.4.hitmarkFrames": { "source": "Gcsim", "value": 125 },
   "hits.impromptuOpeningRiffRevolutionDots.4.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -73,7 +73,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.5.hitmarkFrames": { "cause": "Unsourced", "value": 142 },
+  "hits.impromptuOpeningRiffRevolutionDots.5.hitmarkFrames": { "source": "Gcsim", "value": 142 },
   "hits.impromptuOpeningRiffRevolutionDots.5.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -82,7 +82,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.6.hitmarkFrames": { "cause": "Unsourced", "value": 159 },
+  "hits.impromptuOpeningRiffRevolutionDots.6.hitmarkFrames": { "source": "Gcsim", "value": 159 },
   "hits.impromptuOpeningRiffRevolutionDots.6.multiplier": {
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4439 }
@@ -115,7 +115,6 @@
     "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 4432 }
   },
-  "hits.riffDot.length": { "cause": "DiffersFromSource", "value": 7 },
   "hits.riffDot.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
@@ -126,37 +125,31 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.1.hitmarkFrames": { "cause": "Unsourced", "value": 74 },
   "hits.riffDot.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "hits.riffDot.2.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.2.hitmarkFrames": { "cause": "Unsourced", "value": 91 },
   "hits.riffDot.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "hits.riffDot.3.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.3.hitmarkFrames": { "cause": "Unsourced", "value": 108 },
   "hits.riffDot.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "hits.riffDot.4.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.4.hitmarkFrames": { "cause": "Unsourced", "value": 125 },
   "hits.riffDot.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "hits.riffDot.5.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.5.hitmarkFrames": { "cause": "Unsourced", "value": 142 },
   "hits.riffDot.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "hits.riffDot.6.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.riffDot.6.hitmarkFrames": { "cause": "Unsourced", "value": 159 },
   "hits.riffDot.6.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4439 } },
   "parameters.shieldDefenseShares.length": { "cause": "Unsourced", "value": 3 },
   "parameters.shieldDefenseShares.0": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 4432 } },
