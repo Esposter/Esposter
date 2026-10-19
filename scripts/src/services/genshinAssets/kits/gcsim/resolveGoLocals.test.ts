@@ -1,7 +1,8 @@
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
+import { GCSIM_CONFIG_FILE, GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
+import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -21,6 +22,15 @@ describe("readGcsimCitedCandidates local aliases", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "burst.go"), source);
     return directory;
   };
+
+  const createCharacter = (source: string) =>
+    readGcsimCharacter(
+      FOLDER,
+      new Map([
+        ["burst.go", source],
+        [GCSIM_CONFIG_FILE, "name: aino\n"],
+      ]),
+    );
   // The alias is bound once, `player := c.Core.Combat.Player()`, before the constructor that reads it
   const SINGLE_GO = [
     "package aino",
@@ -54,8 +64,11 @@ describe("readGcsimCitedCandidates local aliases", () => {
   test("a single-assignment alias reads as its right-hand side, and the constructor's line is cited", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("burst.area"), createGcsimDirectory(SINGLE_GO), FOLDER).get("burst.area") ??
-      [];
+      readGcsimCitedCandidates(
+        overlayFor("burst.area"),
+        createGcsimDirectory(SINGLE_GO),
+        createCharacter(SINGLE_GO),
+      ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([
       {
         provenance: { file: "internal/characters/aino/burst.go", line: 5, source: KitSource.Gcsim },
@@ -88,7 +101,7 @@ describe("readGcsimCitedCandidates local aliases", () => {
           },
         },
         createGcsimDirectory(SUM_GO),
-        FOLDER,
+        createCharacter(SUM_GO),
       ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([
       {
@@ -134,9 +147,11 @@ describe("readGcsimCitedCandidates local aliases", () => {
   test("an alias assigned more than once gives no area, so nothing is guessed", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("burst.area"), createGcsimDirectory(REASSIGNED_GO), FOLDER).get(
-        "burst.area",
-      ) ?? [];
+      readGcsimCitedCandidates(
+        overlayFor("burst.area"),
+        createGcsimDirectory(REASSIGNED_GO),
+        createCharacter(REASSIGNED_GO),
+      ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([]);
   });
 });

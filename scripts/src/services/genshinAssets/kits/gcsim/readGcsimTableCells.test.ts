@@ -1,6 +1,8 @@
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
+import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -39,12 +41,23 @@ describe("readGcsimCitedCandidates table cells", () => {
     return directory;
   };
 
+  const createCharacter = (source: string) =>
+    readGcsimCharacter(
+      FOLDER,
+      new Map([
+        ["attack.go", source],
+        [GCSIM_CONFIG_FILE, "name: aino\n"],
+      ]),
+    );
+
   test("a table cell read at the action's counter is cited by the line of its row", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("normalAttacks.1.hits.0.area"), createGcsimDirectory(TABLE_GO), FOLDER).get(
-        "normalAttacks.1.hits.0.area",
-      ) ?? [];
+      readGcsimCitedCandidates(
+        overlayFor("normalAttacks.1.hits.0.area"),
+        createGcsimDirectory(TABLE_GO),
+        createCharacter(TABLE_GO),
+      ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([
       {
         provenance: { file: "internal/characters/aino/attack.go", line: 5, source: KitSource.Gcsim },
@@ -56,9 +69,11 @@ describe("readGcsimCitedCandidates table cells", () => {
   test("the counter selects the row, so the first action's row is the one cited", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("normalAttacks.0.hits.0.area"), createGcsimDirectory(TABLE_GO), FOLDER).get(
-        "normalAttacks.0.hits.0.area",
-      ) ?? [];
+      readGcsimCitedCandidates(
+        overlayFor("normalAttacks.0.hits.0.area"),
+        createGcsimDirectory(TABLE_GO),
+        createCharacter(TABLE_GO),
+      ).get("normalAttacks.0.hits.0.area") ?? [];
     expect(candidates[0]).toStrictEqual({
       provenance: { file: "internal/characters/aino/attack.go", line: 4, source: KitSource.Gcsim },
       value: { angle: 2 * Math.PI, height: 2, radius: 2.5 },
@@ -71,7 +86,7 @@ describe("readGcsimCitedCandidates table cells", () => {
       readGcsimCitedCandidates(
         overlayFor("normalAttacks.1.hits.0.area"),
         createGcsimDirectory(UNEVALUABLE_GO),
-        FOLDER,
+        createCharacter(UNEVALUABLE_GO),
       ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([]);
   });
