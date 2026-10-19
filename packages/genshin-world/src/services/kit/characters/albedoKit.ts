@@ -44,8 +44,8 @@ const TECTONIC_TIDE_SOURCE = "albedo-tectonic-tide";
 // Albedo, and his Solar Isotoma raises his DEF by 50% for 20 seconds
 const ALBEDO_CONSTELLATION_1 = 1;
 // Constellation 4: the active party member within the standing Solar Isotoma's field has its Plunging Attack DMG raised 30%
-// for a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the skill's
-// hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it runs out. A
+// For a second, as gcsim v2.47.2 (MIT) albedo/cons.go gives it. gcsim checks the field every 0.3 seconds from the skill's
+// Hitmark, when the Solar Isotoma is made, and a status here counts those 0.3 seconds, so a check runs as it runs out. A
 // Check that finds the field standing gives the active member the bonus for a second
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
 const ALBEDO_CONSTELLATION_4 = 4;
@@ -112,7 +112,7 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
 // Blossom at that enemy, priced by the DEF of the Albedo who cast the field, once every 2 seconds, and Rite of Progeniture:
 // Tectonic Tide casts its Fatal Blossoms at the standing Solar Isotoma, and from Ascension 4 raises the Elemental Mastery of
 // The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellation 1's energy
-// and Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
+// And Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
 // Damage to each Fatal Blossom, though not to its own first hit, which the record plays and the kit cannot change per cast.
 // Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6 is
 // Not built: it needs the shield a Crystallize gives a member read at a strike, which the kit does not yet hold. The Silver

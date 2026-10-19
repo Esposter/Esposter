@@ -4,7 +4,7 @@ import { now, weeklyReset } from "#src/services/reputation/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(addWeeklyReputationClaim, () => {
-  test("A fourth claim of a kind in the week is refused", () => {
+  test("a fourth claim of a kind in the week is refused", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
       weeklyReset.add({ minutes: index + 1 }),
@@ -13,7 +13,7 @@ describe(addWeeklyReputationClaim, () => {
     expect(addWeeklyReputationClaim(claimedAts, now)).toBeUndefined();
   });
 
-  test("The weekly reset restarts the count", () => {
+  test("the weekly reset restarts the count", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
       weeklyReset.subtract({ hours: index + 1 }),
@@ -22,7 +22,7 @@ describe(addWeeklyReputationClaim, () => {
     expect(addWeeklyReputationClaim(claimedAts, now)).toStrictEqual([now]);
   });
 
-  test("A claim at the reset counts toward the new week", () => {
+  test("a claim at the reset counts toward the new week", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, () => weeklyReset);
 

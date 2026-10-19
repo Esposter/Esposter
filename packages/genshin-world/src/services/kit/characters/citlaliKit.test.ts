@@ -168,7 +168,7 @@ describe(createCitlaliKitBehaviour, () => {
     ]);
   });
 
-  test("Opal Fire takes effect at 50 points in the Blessing, not below: the skill's 24 and a burst's 24 leave it off, and the next burst starts it", () => {
+  test("opal Fire takes effect at 50 points in the Blessing, not below: the skill's 24 and a burst's 24 leave it off, and the next burst starts it", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createCitlaliCombatant());
     CITLALI_KIT.elementalSkill.onStart?.(context);
@@ -180,7 +180,7 @@ describe(createCitlaliKitBehaviour, () => {
     expect(countPoints(context)).toBeCloseTo(64);
   });
 
-  test("Opal Fire takes no effect outside the Blessing: points past 50 from bursts alone start no Itzpapa strike", () => {
+  test("opal Fire takes no effect outside the Blessing: points past 50 from bursts alone start no Itzpapa strike", () => {
     expect.hasAssertions();
     const enemy = createSturdyEnemy(3);
     const context = createKitTestContext(createCitlaliCombatant(), { enemyMap: new Map([["0", enemy]]), enemyTables });
@@ -189,7 +189,7 @@ describe(createCitlaliKitBehaviour, () => {
     expect(enemy.health).toBe(ENEMY_HEALTH);
   });
 
-  test("Opal Fire drains eight points a second and ends once none is left, while the Blessing lasts on", () => {
+  test("opal Fire drains eight points a second and ends once none is left, while the Blessing lasts on", () => {
     expect.hasAssertions();
     const context = createOpalFireContext([]);
     stepFrames(context, 60);
@@ -201,7 +201,7 @@ describe(createCitlaliKitBehaviour, () => {
     );
   });
 
-  test("Itzpapa's Frostfall Storm strikes the enemies within 6 metres every 59 frames, the first 59 frames after Opal Fire takes effect", () => {
+  test("itzpapa's Frostfall Storm strikes the enemies within 6 metres every 59 frames, the first 59 frames after Opal Fire takes effect", () => {
     expect.hasAssertions();
     const near = createSturdyEnemy(3);
     const far = createSturdyEnemy(8);
@@ -218,7 +218,7 @@ describe(createCitlaliKitBehaviour, () => {
     expect(near.health).toBeLessThan(afterFirstStorm);
   });
 
-  test("Frostfall Storm's damage lands on every hit, but its Cryo gauge applies only on the first of two hits within its 1.5-second cooldown", () => {
+  test("frostfall Storm's damage lands on every hit, but its Cryo gauge applies only on the first of two hits within its 1.5-second cooldown", () => {
     expect.hasAssertions();
     const enemy = createSturdyEnemy(3);
     const context = createOpalFireContext([enemy]);

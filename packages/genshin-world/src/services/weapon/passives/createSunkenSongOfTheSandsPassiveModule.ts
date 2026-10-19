@@ -28,7 +28,7 @@ export const createSunkenSongOfTheSandsPassiveModule = (params: number[]): Passi
   const teamSeconds = takeOne(params, 5);
   return {
     // The stack reads the Max HP the Wielder's own lines give, not the buffed one: getBuffedCombatant prices the passive's
-    // bonuses, so a buffed Max HP read here would call back into this function without end
+    // Bonuses, so a buffed Max HP read here would call back into this function without end
     getPassiveBonuses: (combatant, _healthShare, _deployedCombatants, effects) => [
       {
         amount:

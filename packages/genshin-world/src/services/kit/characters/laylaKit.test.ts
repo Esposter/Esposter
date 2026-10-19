@@ -251,7 +251,7 @@ describe(createLaylaKitBehaviour, () => {
     expect(countNightStars(shielded.kitEffectState)).toBe(2);
   });
 
-  test("Starlight Slug's first enemy hit in each tick adds a Night Star while the shield lasts", () => {
+  test("starlight Slug's first enemy hit in each tick adds a Night Star while the shield lasts", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(0, 0);
     const context = createLaylaContext({ effects: [] }, {}, [enemy]);

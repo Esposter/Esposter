@@ -602,7 +602,7 @@ describe(createColumbinaKitBehaviour, () => {
       expect(readSpentStamina()).toStrictEqual(COLUMBINA_KIT.chargedAttackStamina);
 
       context.party.moonridgeDew = 1;
-      expect(readSpentStamina()).toStrictEqual(0);
+      expect(readSpentStamina()).toBe(0);
     });
 
     test("a Moondew Cleanse spends one Dew, from the verdant first", () => {

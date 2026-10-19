@@ -14,7 +14,7 @@ const CONSTELLATION_2_SECONDS = 5;
 // Dance's strike are his record's alone. Bestial Ascent's Charmed Cloudstrider plunge, which the kit has no plunge variant
 // To hold, Suanni's Gilded Dance's heal, his Ascension 1 passive, and Constellations 1, 4 and 6 are not built.
 // Air of Prosperity's Incoming Healing Bonus under half his HP is built from Ascension 4, as a passive bonus; its
-// plunge clause waits on that plunge Variant, and the bonus reads his HP share as the party holds it
+// Plunge clause waits on that plunge Variant, and the bonus reads his HP share as the party holds it
 // Constellation 1 needs the Man Chai's heal on meeting his special plunge, which waits on the plunge variant
 // Constellation 4 needs the energy each plunge hit restores, on a 0.2-second cooldown, not built
 // Constellation 6 needs the Charmed Cloudstrider plunge's CRIT Rate, CRIT DMG and radius, not built

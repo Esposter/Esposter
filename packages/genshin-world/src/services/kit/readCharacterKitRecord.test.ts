@@ -13,8 +13,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe } from "vitest";
 
 // A character's hosted kit record read through the local mirror, with readers for its frames, hits and parameters, and
-// the Resolver its kit resolves the record's parameters with: each parameter read off its talent's table at the level
-// the Talent starts at, as `readCharacterKit` plays it
+// The Resolver its kit resolves the record's parameters with: each parameter read off its talent's table at the level
+// The Talent starts at, as `readCharacterKit` plays it
 export const readCharacterKitRecord = async (characterId: number) => {
   const [record, talentMultiplierMap, characterTalentKits] = await Promise.all([
     readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, GameDataset.Kits, String(characterId), kitRecordSchema),

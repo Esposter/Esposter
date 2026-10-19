@@ -266,7 +266,7 @@ describe("spirit Soother", () => {
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
   });
 
-  test("Spirit Soother's heal is priced from Hu Tao's buffed Max HP", () => {
+  test("spirit Soother's heal is priced from Hu Tao's buffed Max HP", () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();
     const party = createHuTaoParty(0.6);

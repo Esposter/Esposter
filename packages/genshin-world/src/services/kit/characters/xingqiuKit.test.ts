@@ -88,7 +88,7 @@ describe(createXingqiuKitBehaviour, () => {
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
   });
 
-  test("Raincutter's wave is cast 7 frames on from the first normal attack of a string starts, its swords 20 frames after", () => {
+  test("raincutter's wave is cast 7 frames on from the first normal attack of a string starts, its swords 20 frames after", () => {
     expect.hasAssertions();
     const combatant = createXingqiuCombatant(0, 0);
     const travelerCombatant = createTravelerCombatant();
@@ -105,7 +105,7 @@ describe(createXingqiuKitBehaviour, () => {
     expect(swordsAtLanding).toHaveLength(2);
   });
 
-  test("Raincutter's wave is cast as a later normal attack of a string starts, its swords 20 frames after", () => {
+  test("raincutter's wave is cast as a later normal attack of a string starts, its swords 20 frames after", () => {
     expect.hasAssertions();
     const combatant = createXingqiuCombatant(0, 0);
     const travelerCombatant = createTravelerCombatant();

@@ -28,7 +28,7 @@ describe(getWeaponActions, () => {
     weaponType: WeaponType.Sword,
   };
 
-  test("Ascend is offered only at the level cap", () => {
+  test("ascend is offered only at the level cap", () => {
     expect.hasAssertions();
     expect(
       getWeaponActions({ ascension: 0, experience: 0, id: 1, level: 19, refinement: 1 }, WEAPON_DATA),
@@ -38,21 +38,21 @@ describe(getWeaponActions, () => {
     ).toStrictEqual({ canAscend: true, canRefine: true });
   });
 
-  test("Ascend is not offered at the last phase's cap", () => {
+  test("ascend is not offered at the last phase's cap", () => {
     expect.hasAssertions();
     expect(
       getWeaponActions({ ascension: 1, experience: 0, id: 1, level: 40, refinement: 1 }, WEAPON_DATA),
     ).toStrictEqual({ canAscend: false, canRefine: true });
   });
 
-  test("Refine is not offered at rank five", () => {
+  test("refine is not offered at rank five", () => {
     expect.hasAssertions();
     expect(
       getWeaponActions({ ascension: 0, experience: 0, id: 1, level: 1, refinement: 5 }, WEAPON_DATA),
     ).toStrictEqual({ canAscend: false, canRefine: false });
   });
 
-  test("Refine is not offered for a weapon with no refinement costs", () => {
+  test("refine is not offered for a weapon with no refinement costs", () => {
     expect.hasAssertions();
     expect(
       getWeaponActions(

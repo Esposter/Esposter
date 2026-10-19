@@ -7,7 +7,7 @@ describe(recordWeeklyReputationClaim, () => {
   const toEpochs = (claimedAts: readonly Temporal.Instant[]) =>
     claimedAts.map(({ epochMilliseconds }) => epochMilliseconds);
 
-  test("A claim past the limit is still recorded, and the list keeps the newest claims of the week", () => {
+  test("a claim past the limit is still recorded, and the list keeps the newest claims of the week", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
       weeklyReset.add({ minutes: index + 1 }),

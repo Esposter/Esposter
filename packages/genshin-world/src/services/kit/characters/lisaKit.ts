@@ -56,7 +56,7 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 // Ascension 1, and its hold strikes each enemy at the multiplier and poise of its stacks, consuming them. Lightning Rose
 // Is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of the enemy it hits.
 // Constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts, which the skill holds do
-// not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
+// Not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
 export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const discharges = readHits("discharges", { enemyStatus: getLightningRoseStatus });
   const lightningRoseSeconds = readSeconds("lightningRose");

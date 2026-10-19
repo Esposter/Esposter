@@ -52,7 +52,7 @@ export const DIONA_CHARACTER_ID = 10_000_039;
 // Constellation 2 raises. Signature Mix casts its field, healing the character on the field, and its ticks, a summon at
 // The cast's body; from Constellation 1 she regains energy as the field ends, and from Ascension 4 the burst's hits cut
 // The ATK of the enemies they strike. Her Ascension 1 passive and other constellations are not built, as the kit events
-// do not reach them
+// Do not reach them
 // Constellation 4 needs the aimed shot's charge time read within Signature Mix's radius, not read by the charged attack
 // Constellation 6 needs Signature Mix's field to buff each member inside it by its HP share, not built
 export const createDionaKitBehaviour = ({ kit, readHits, readParameter }: KitRecordReader): KitBehaviour => {

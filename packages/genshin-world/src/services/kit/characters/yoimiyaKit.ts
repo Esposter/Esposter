@@ -69,7 +69,7 @@ const CONSTELLATION_2_SOURCE = "yoimiya-constellation-2";
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
 // Member's hits set off, and Constellation 1 extends it and raises her ATK on a defeat. Constellation 2 raises her
 // Pyro DMG on a CRIT. Ascension 1's Pyro DMG Bonus count is built. Her Ascension 4 passive and Constellations 4 and 6
-// are not built yet
+// Are not built yet
 // Constellation 4 needs Aurous Blaze's explosions to cut Niwabi Fire-Dance's cooldown, which the kit does not build
 // Constellation 6 needs the Niwabi Fire-Dance Normal Attacks' extra arrow chance, which the kit does not build
 export const createYoimiyaKitBehaviour = ({

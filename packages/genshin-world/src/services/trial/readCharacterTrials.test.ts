@@ -9,7 +9,7 @@ describe(readCharacterTrials, () => {
   test("reads each character trial table under its own published key", async () => {
     expect.hasAssertions();
 
-    expect(await readCharacterTrials(GAME_DATA_LOCAL_BASE_URL)).toStrictEqual({
+    await expect(readCharacterTrials(GAME_DATA_LOCAL_BASE_URL)).resolves.toStrictEqual({
       avatars: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/avatars", z.unknown()),
       builds: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/builds", z.unknown()),
       reliquaries: await readGameData(GAME_DATA_LOCAL_BASE_URL, "characterTrials/reliquaries", z.unknown()),

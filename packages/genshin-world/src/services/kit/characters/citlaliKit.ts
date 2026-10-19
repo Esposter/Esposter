@@ -25,7 +25,7 @@ const NIGHTSOUL_SKILL_POINTS = 24;
 const NIGHTSOUL_BLESSING_SECONDS = 20;
 
 // The Opal Fire takes effect in the Blessing at 50 points or more and drains 0.8 points every 6 frames, eight a second,
-// until none is left, as gcsim (MIT) citlali/skill.go tryEnterOpalFireState and nightsoulPointReduceTask do. Itzpapa's
+// Until none is left, as gcsim (MIT) citlali/skill.go tryEnterOpalFireState and nightsoulPointReduceTask do. Itzpapa's
 // Frostfall Storm strikes every 59 frames from when it takes effect, as skill.go's itzpapaInterval and itzpapaHitTask do
 const OPAL_FIRE_POINTS = 50;
 const OPAL_FIRE_DRAIN_POINTS = 0.8;
@@ -54,8 +54,8 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
   };
 
   // Puts the Opal Fire on the team's effects once Citlali is in the Blessing with 50 points or more and it is not on already,
-  // as gcsim's tryEnterOpalFireState does. It is a field ticking every frame, so its drain and its storms fall on the frames
-  // gcsim queues them on, from the frame it takes effect
+  // As gcsim's tryEnterOpalFireState does. It is a field ticking every frame, so its drain and its storms fall on the frames
+  // Gcsim queues them on, from the frame it takes effect
   const enterOpalFire = (context: KitContext) => {
     const { activeCombatant, kitEffectState } = context;
     const { characterId } = activeCombatant;

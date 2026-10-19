@@ -151,7 +151,7 @@ describe(createKinichKitBehaviour, () => {
     expect(countKinichPoints(context)).toBe(3);
   });
 
-  test("Kinich standing in the blind spot at its thirtieth frame gains four points on top of the Blessing's", () => {
+  test("kinich standing in the blind spot at its thirtieth frame gains four points on top of the Blessing's", () => {
     expect.hasAssertions();
     const context = createBlessingContext(() => 0.9);
     stepKitSeconds(context, toKitSeconds(15));
@@ -160,7 +160,7 @@ describe(createKinichKitBehaviour, () => {
     expect(countKinichPoints(context)).toBeCloseTo(6);
   });
 
-  test("Kinich outside the blind spot at its thirtieth frame gains none of its four points", () => {
+  test("kinich outside the blind spot at its thirtieth frame gains none of its four points", () => {
     expect.hasAssertions();
     const context = createBlessingContext(() => 0.9);
     stepKitSeconds(context, toKitSeconds(60));

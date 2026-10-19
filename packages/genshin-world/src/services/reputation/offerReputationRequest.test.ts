@@ -24,6 +24,7 @@ describe(offerReputationRequest, () => {
       { groupId: 2, questId: 903, requestId: 1003, reward: REWARD, weight: 3 },
     ],
   };
+
   test("a request is not offered before level two", () => {
     expect.hasAssertions();
 
@@ -45,7 +46,7 @@ describe(offerReputationRequest, () => {
     expect(offerReputationRequest(CITY, 2, 0.5, OFFERABLE_QUEST_IDS, [], now)).toStrictEqual(CITY.requests[2]);
   });
 
-  test("A fourth claim of a kind in the week is refused", () => {
+  test("a fourth claim of a kind in the week is refused", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>
       weeklyReset.add({ minutes: index + 1 }),

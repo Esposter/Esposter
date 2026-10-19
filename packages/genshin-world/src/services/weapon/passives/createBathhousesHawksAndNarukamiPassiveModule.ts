@@ -34,7 +34,7 @@ export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]):
           secondsRemaining: swirlSeconds,
           source: "bathhousesSwirl",
         });
-      else if (event.kind === KitEventKind.DamageTaken && event.striker.characterId === characterId) {
+      else if (event.kind === KitEventKind.DamageTaken && event.striker.characterId === characterId)
         if (event.attackTag === AttackTag.ElementalSkill)
           buffKitMember(kitEffectState, characterId, {
             amount: skillMastery,
@@ -49,7 +49,6 @@ export const createBathhousesHawksAndNarukamiPassiveModule = (params: number[]):
             secondsRemaining: burstSeconds,
             source: "bathhousesBurst",
           });
-      }
     },
   };
 };

@@ -31,7 +31,7 @@ const NIGHTSOUL_POINTS_PER_SECOND = 2;
 // Each Loop Shot gains three points as it starts, as gcsim (MIT) kinich/skill.go loopShotGenerateNSPoints does (line 176)
 const LOOP_SHOT_POINTS = 3;
 // The blind spot appears thirty frames after the press, as gcsim kinich/skill.go blindSpotAppearanceDelays does (line 32),
-// and Kinich standing in it gives four points, as attack.go does (line 153). Its window is thirty-five degrees either side
+// And Kinich standing in it gives four points, as attack.go does (line 153). Its window is thirty-five degrees either side
 // Of its centre, as attack.go's blindSpotBoundary has it (line 38)
 const BLIND_SPOT_APPEARANCE_FRAMES = 30;
 const BLIND_SPOT_POINTS = 4;

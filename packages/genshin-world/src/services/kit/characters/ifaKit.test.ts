@@ -192,6 +192,7 @@ describe(createIfaKitBehaviour, () => {
     IFA_KIT.elementalSkill.onStart?.(context);
     expect(partyDamageBonusOf(combatant, TransformativeReactionType.Swirl, context)).toBe(0);
   });
+
   test("a passive takes effect at its constellation: Constellation 2 counts the party's points above 60 three times over, so 80 points give Ifa 140 for her Swirl DMG", () => {
     expect.hasAssertions();
     const combatant = createIfaCombatant(2, 1);

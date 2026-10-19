@@ -10,7 +10,7 @@ import { takeOne } from "@esposter/shared";
 import { VERMILLION_HEREAFTER_ID, VERMILLION_HEREAFTER_STATUS_ID } from "#src/services/gcg/cards/constants";
 
 // Vermillion Hereafter, an artifact: a Normal Attack or a Talent card spends one die less, once per Round, and a character
-// switched to the active character deals 1 more Normal Attack DMG for the Round (the wiki's Vermillion Hereafter (Equipment Card))
+// Switched to the active character deals 1 more Normal Attack DMG for the Round (the wiki's Vermillion Hereafter (Equipment Card))
 export const vermillionHereafter: GcgCardModule = {
   ...createGcgOncePerRoundCostReduction(VERMILLION_HEREAFTER_ID, (context, subject) =>
     checkIsGcgActiveHolder(context) &&

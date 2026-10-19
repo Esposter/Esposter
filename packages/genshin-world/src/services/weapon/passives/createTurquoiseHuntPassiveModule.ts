@@ -38,25 +38,24 @@ export const createTurquoiseHuntPassiveModule = (params: number[]): PassiveModul
         event.striker.characterId === characterId &&
         event.attackTag === AttackTag.ElementalSkill &&
         startKitCooldown(kitEffectState, characterId, SKILL_COOLDOWN_ID, skillCooldownSeconds)
-      ) {
+      )
         addKitHold(kitEffectState, characterId, {
           id: CANOPYS_FAVOR_ID,
           maximum: maximumStacks,
           seconds: stackSeconds,
         });
-      } else if (
+      else if (
         event.kind === KitEventKind.ReactionTriggered &&
         event.striker.characterId !== characterId &&
         checkIsReactionNamed(event.reactions, CANOPY_REACTIONS) &&
         startKitCooldown(kitEffectState, characterId, REACTION_COOLDOWN_ID, reactionCooldownSeconds)
-      ) {
+      )
         for (let stack = 0; stack < REACTION_STACKS; stack++)
           addKitHold(kitEffectState, characterId, {
             id: CANOPYS_FAVOR_ID,
             maximum: maximumStacks,
             seconds: stackSeconds,
           });
-      }
     },
   };
 };

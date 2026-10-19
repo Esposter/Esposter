@@ -40,12 +40,12 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
 
 // Neuvillette's behaviour: his strikes, his plunges, O Tears, I Shall Repay with its Spiritbreath Thorn and O Tides, I
 // Have Returned with its Waterfalls are his record's alone. His charged attack is Equitable Judgment, held: its legal
-// evaluation decides its length from the Sourcewater Droplets in its pick-up area, and its waves and HP drains are
-// queued as it runs. It spends no stamina. The burst's three ticks spawn the droplets the judgement picks up.
+// Evaluation decides its length from the Sourcewater Droplets in its pick-up area, and its waves and HP drains are
+// Queued as it runs. It spends no stamina. The burst's three ticks spawn the droplets the judgement picks up.
 // Spiritbreath Thorn's aligned 10-second Cooldown is not built, as the skill's own twelve seconds always outlast it.
 // Ascension 4's Hydro DMG Bonus is built. Not built yet: Ascension 1, which raises the judgement by the reactions it
-// counts; the waves' internal cooldown, which the enum has no tag for; the end lag of the action the charge is
-// cancelled into (the default is used); and his constellations. Constellation 1 needs Past Draconic Glories from the
+// Counts; the waves' internal cooldown, which the enum has no tag for; the end lag of the action the charge is
+// Cancelled into (the default is used); and his constellations. Constellation 1 needs Past Draconic Glories from the
 // Ascension talent Heir to the Ancient Sea's Authority, Constellation 2 needs that talent's CRIT DMG per Past Draconic
 // Glories, Constellation 4 needs Sourcewater Droplets generated when he is healed, and Constellation 6 needs
 // Sourcewater Droplets and the judgement's currents.

@@ -173,7 +173,7 @@ describe(createYunjinKitBehaviour, () => {
   });
 });
 
-describe("Ascension 1's counter window", () => {
+describe("ascension 1's counter window", () => {
   const FRAME_SECONDS = 1 / KIT_FRAMES_PER_SECOND;
   const IDLE_INPUT: KitInput = {
     height: 0,
@@ -204,7 +204,7 @@ describe("Ascension 1's counter window", () => {
     );
 
   // Her skill held for the frames given and let go on the frame after, each frame's effects stepped as the world steps
-  // them, so the window runs out in the time it would; the action the release starts is returned
+  // Them, so the window runs out in the time it would; the action the release starts is returned
   const holdAndRelease = (context: KitContext, heldFrames: number): KitAction | undefined => {
     const kitState = createKitState();
     const partyMember = createPartyMember();
@@ -260,7 +260,7 @@ describe("Ascension 1's counter window", () => {
   });
 });
 
-describe("Cliffbreaker's Banner's DMG Increase", () => {
+describe("cliffbreaker's Banner's DMG Increase", () => {
   // A teammate of Yun Jin's in the element given, with Yun Jin's kit standing in for its own, which none of
   // These tests reads
   const OTHER_CHARACTER_ID = 1;
@@ -424,7 +424,7 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     expect(getPartyIncrease(teammate, characterIdCombatantMap, context.kitEffectState)).toBe(0);
   });
 
-  test("Constellations 1, 2 and 6 give no increase, which stays 0.3216 of her DEF", () => {
+  test("constellations 1, 2 and 6 give no increase, which stays 0.3216 of her DEF", () => {
     expect.hasAssertions();
     for (const constellationCount of [1, 2, 6]) {
       const combatant = { ...createYunjinCombatant(), constellationCount };

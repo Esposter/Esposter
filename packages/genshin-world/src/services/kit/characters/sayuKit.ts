@@ -101,7 +101,7 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
       if (event.kind !== KitEventKind.ReactionTriggered) return;
       const { activeCombatant, kitEffectState, party } = context;
       // Skiving: New and Improved, from Constellation 4: a Swirl Sayu triggers on the field restores 1.2 Energy to her,
-      // once every 2 seconds
+      // Once every 2 seconds
       if (
         combatant.constellationCount >= CONSTELLATION_4 &&
         event.striker.characterId === combatant.characterId &&

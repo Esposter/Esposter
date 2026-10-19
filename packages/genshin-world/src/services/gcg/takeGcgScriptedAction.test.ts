@@ -54,8 +54,8 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
 });
 
 describe(takeGcgScriptedAction, () => {
-  const EREMITE_ID = 2_303;
-  const HYDRO_ID = 2_101;
+  const EREMITE_ID = 2303;
+  const HYDRO_ID = 2101;
 
   test("should use its active character's Technique when no card is in hand and no skill is listed", () => {
     expect.hasAssertions();

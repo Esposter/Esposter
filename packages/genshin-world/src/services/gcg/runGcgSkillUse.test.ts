@@ -12,7 +12,7 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
-import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
+import { YAKSHAS_MASK_ID, XIAO_ID } from "#src/services/gcg/cards/constants";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
@@ -28,7 +28,6 @@ import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { XIAO_ID } from "#src/services/gcg/cards/constants";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 describe("a skill's on-use hooks", () => {
@@ -166,7 +165,7 @@ describe("a skill's any-side hooks", () => {
 const PLUNGE_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 describe("a Plunging Attack", () => {
-  const CHONGYUN_ID = 1_104;
+  const CHONGYUN_ID = 1104;
   const KABUKI: GcgSkill = {
     costs: [],
     effect: "Effect_Damage_Physic_2",
@@ -196,7 +195,7 @@ describe("a Plunging Attack", () => {
     const duel = createDuel(
       [
         createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
-        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+        createSide([createGcgCharacterState({ character: { id: 1202 } })]),
       ],
       PLUNGE_RULE,
     );
@@ -212,7 +211,7 @@ describe("a Plunging Attack", () => {
     const duel = createDuel(
       [
         createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()], 1),
-        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+        createSide([createGcgCharacterState({ character: { id: 1202 } })]),
       ],
       PLUNGE_RULE,
     );
@@ -227,7 +226,7 @@ describe("a Plunging Attack", () => {
     const duel = createDuel(
       [
         createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
-        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+        createSide([createGcgCharacterState({ character: { id: 1202 } })]),
       ],
       PLUNGE_RULE,
     );
@@ -244,7 +243,7 @@ describe("a Plunging Attack", () => {
     const duel = createDuel(
       [
         createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
-        createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
+        createSide([createGcgCharacterState({ character: { id: 1202 } })]),
       ],
       PLUNGE_RULE,
     );

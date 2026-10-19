@@ -21,8 +21,8 @@ const countDeckWeaponKinds = (side: GcgSideState): number =>
   ).size;
 
 // Wagner, a support companion: comes with 2 Forging Billets and gains 1 at each End Phase. When played, if the deck
-// originally includes at least 3 different weapon kinds, a random Weapon card is drawn from the deck. Playing a Weapon
-// card spends Billets equal to its total cost and equips it for free, once per Round (the wiki's Wagner (Support Card))
+// Originally includes at least 3 different weapon kinds, a random Weapon card is drawn from the deck. Playing a Weapon
+// Card spends Billets equal to its total cost and equips it for free, once per Round (the wiki's Wagner (Support Card))
 export const wagner: GcgCardModule = {
   initialCounter: WAGNER_INITIAL_BILLETS,
   onCostPaid: ({ duel, sideIndex }, subject, zoneCard) => {

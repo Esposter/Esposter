@@ -22,7 +22,7 @@ export const GCG_ROUND_LIMIT = 15;
 export const GCG_SHIELD_LIMIT = 2;
 
 // The games the card game names with a reward, which the save holds once each: the 535 the week rows name and the 407 the dump
-// rewards a victory of, none the same
+// Rewards a victory of, none the same
 export const GCG_REWARDABLE_GAME_COUNT = 942;
 // The Adventure Rank the card game opens at: its tutorial quest is offered from it, and no duel of it is offered below
 export const GCG_OPEN_ADVENTURE_RANK = 32;

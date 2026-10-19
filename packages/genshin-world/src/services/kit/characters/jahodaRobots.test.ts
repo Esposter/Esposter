@@ -115,7 +115,7 @@ describe(startJahodaRobots, () => {
   });
 });
 
-describe("Jahoda's robots and Constellation 4", () => {
+describe("jahoda's robots and Constellation 4", () => {
   const FRAME_SECONDS = 1 / 60;
   const BURST_SECONDS = 790 / 60;
   const SETTINGS = {

@@ -99,7 +99,7 @@ describe(getBuffedCombatant, () => {
       party,
       new Map(),
     );
-    expect(flatBuffed.attributes.maxHealth).toStrictEqual(1500);
+    expect(flatBuffed.attributes.maxHealth).toBe(1500);
     const percentBuffed = getBuffedCombatant(
       combatant,
       [
@@ -114,7 +114,7 @@ describe(getBuffedCombatant, () => {
       party,
       new Map(),
     );
-    expect(percentBuffed.attributes.maxHealth).toStrictEqual(1500);
+    expect(percentBuffed.attributes.maxHealth).toBe(1500);
   });
 
   test("raises a Geo team's hits by 15% while a shield holds it, so a hit deals 1.15 times its damage", () => {

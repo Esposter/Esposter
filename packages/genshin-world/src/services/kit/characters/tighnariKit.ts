@@ -39,7 +39,7 @@ export const TIGHNARI_CHARACTER_ID = 10_000_069;
 // Elemental Mastery rises. A1's Elemental Mastery on each Wreath Arrow waits on Vijnana Suffusion's Wreath Arrow, which
 // Turns the charged shot into a shot of its own and is not built, as the kit offers no charged variant yet. His
 // Constellation 1's charged CRIT Rate and Constellation 4's team Elemental Mastery, raised by his burst's reactions, are built;
-// his other Constellations are not
+// His other Constellations are not
 // Constellation 2 needs the Vijnana-Phala Mine's field, centred on the primary target, which the kit context does not name
 // Constellation 6 needs the Wreath Arrow's shorter charge and its Clusterbloom Arrow, which the kit does not build
 export const createTighnariKitBehaviour = (): KitBehaviour => ({

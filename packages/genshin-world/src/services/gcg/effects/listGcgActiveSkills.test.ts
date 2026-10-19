@@ -29,7 +29,7 @@ describe(listGcgActiveSkills, () => {
     expect.hasAssertions();
 
     const character = createGcgCharacterState({
-      character: { skills: [NORMAL_ATTACK, PASSIVE], element: Element.Pyro, id: 2_303 },
+      character: { skills: [NORMAL_ATTACK, PASSIVE], element: Element.Pyro, id: 2303 },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
 
@@ -42,7 +42,7 @@ describe(listGcgActiveSkills, () => {
     expect(
       listGcgActiveSkills(
         createGcgCharacterState({
-          character: { skills: [NORMAL_ATTACK], element: Element.Pyro, id: 2_303 },
+          character: { skills: [NORMAL_ATTACK], element: Element.Pyro, id: 2303 },
           equipments: [],
         }),
       ),

@@ -11,14 +11,14 @@ import { takeOne } from "@esposter/shared";
 const ASHEN_NIGHTSTAR_ID = "ashenNightstar";
 const ASHEN_NIGHTSTAR_MAXIMUM_STACKS = 4;
 
-const STACKING_ATTACK_TAGS = [
+const STACKING_ATTACK_TAGS = new Set([
   AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
   AttackTag.ElementalSkill,
   AttackTag.ElementalBurst,
-];
+]);
 const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
-  attackTag !== undefined && STACKING_ATTACK_TAGS.includes(attackTag);
+  attackTag !== undefined && STACKING_ATTACK_TAGS.has(attackTag);
 
 // Daylight's Augury at its rank: its wielder's Elemental Skill and Burst DMG rise by the rank's percentage, and each normal,
 // Charged, Elemental Skill or Elemental Burst hit it deals gains a stack of Ashen Nightstar for the rank's seconds. Each stack

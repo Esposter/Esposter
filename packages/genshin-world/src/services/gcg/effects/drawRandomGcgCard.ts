@@ -6,7 +6,7 @@ import { takeRandom } from "@esposter/shared";
 
 // Draws one card of a kind, picked at random from a side's draw pile, into its hand, and takes it out of the pile. A card
 // Drawn with the hand full is discarded, as drawGcgCards does, and a pile with no card of the kind draws none. The filter,
-// when given, narrows the candidates further, to a companion for instance
+// When given, narrows the candidates further, to a companion for instance
 export const drawRandomGcgCard = (
   side: GcgSideState,
   kind: GcgCardKind,

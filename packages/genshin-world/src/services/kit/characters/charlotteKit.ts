@@ -22,7 +22,7 @@ import { takeOne } from "@esposter/shared";
 export const CHARLOTTE_CHARACTER_ID = 10_000_088;
 
 // Ascension 4's bonus per other member, Healing Bonus for each from Fontaine and Cryo DMG Bonus for each from outside it, as
-// gcsim (MIT) charlotte/asc.go gives it. The region a member is from is the catalogue region its association names
+// Gcsim (MIT) charlotte/asc.go gives it. The region a member is from is the catalogue region its association names
 const ASCENSION_4 = 4;
 const ASCENSION_4_BONUS_PER_MEMBER = 0.05;
 const FONTAINE_REGION_ID = "fontaine";

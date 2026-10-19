@@ -348,7 +348,7 @@ describe(createNilouKitBehaviour, () => {
     expect(findBuffs(context.kitEffectState)).toStrictEqual([]);
   });
 
-  test("Ascension 4 raises a Bountiful Core's DMG by 9% per 1,000 Max HP above 30,000, up to 400%", () => {
+  test("ascension 4 raises a Bountiful Core's DMG by 9% per 1,000 Max HP above 30,000, up to 400%", () => {
     expect.hasAssertions();
     const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
       const combatant = createNilouCombatant(0, ascension, maxHealth);

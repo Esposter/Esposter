@@ -32,8 +32,8 @@ const { GATED_EFFECTS } = vi.hoisted(() => ({
 }));
 
 // Adds a passive whose strike damage bonus is gated on the team's effects being the list the test passes, keeping the
-// real passives as they are
-vi.mock("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap", async (importOriginal) => {
+// Real passives as they are
+vi.mock(import("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap"), async (importOriginal) => {
   const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal<{
     WeaponPassiveNameTextIdCreateModuleMap: Record<string, unknown>;
   }>();
@@ -279,7 +279,7 @@ describe(getWeaponPassiveKit, () => {
     ).toBe(readPassiveParam(samuraiWeaponData, 1, 0));
   });
 
-  test("Staff of Homa's ATK follows a teammate's Max HP buff on its wielder, from the buffed Max HP", () => {
+  test("staff of Homa's ATK follows a teammate's Max HP buff on its wielder, from the buffed Max HP", () => {
     expect.hasAssertions();
 
     // Staff of Homa at its first rank, as its record in the stats table gives it

@@ -24,7 +24,7 @@ export const ushi: GcgCardModule = {
   initialCounter: 1,
   initialRounds: 1,
   // Its usage is counted into usages, which a refresh resets, so a Ushi placed again reduces once more. Its once-while-present
-  // trigger is counter, which a refresh leaves alone, so the Superlative attach does not arm again
+  // Trigger is counter, which a refresh leaves alone, so the Superlative attach does not arm again
   modifyDamageReceived: ({ duel, sideIndex }, value, zoneCard) => {
     if (value <= 0 || zoneCard.usages >= USHI_USAGES) return value;
     zoneCard.usages += 1;
