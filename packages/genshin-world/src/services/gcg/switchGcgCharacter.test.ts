@@ -23,9 +23,6 @@ describe("switching characters under the field's cards", () => {
   const PLAYER_DECK_ID = 7;
   const DILUC_INDEX = 0;
   const KAEYA_INDEX = 1;
-  const DAWN_WINERY_ID = 321_004;
-  const ICICLE_ID = 111_031;
-  const LEAVE_IT_TO_ME_ID = 332_006;
 
   // A duel of two copies of the player's deck, both sides prepared and rolled, with the first side to act holding the given dice
   const openDuel = async (dice: Element[]): Promise<GcgDuel> => {

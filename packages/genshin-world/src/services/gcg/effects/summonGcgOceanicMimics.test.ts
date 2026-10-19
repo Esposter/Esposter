@@ -1,6 +1,5 @@
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { summonGcgOceanicMimics } from "#src/services/gcg/effects/summonGcgOceanicMimics";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

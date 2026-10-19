@@ -2,6 +2,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgSideDamageHook } from "#src/models/gcg/GcgSideDamageHook";
 import { checkIsGcgIndexSelection } from "#src/services/gcg/checkIsGcgIndexSelection";
 import { rethrowGcgDice } from "#src/services/gcg/effects/rethrowGcgDice";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
@@ -28,7 +29,7 @@ export const rerollGcgDice = (duel: GcgDuel, sideIndex: number, diceIndices: num
     duel.actingSideIndex = duel.firstSideIndex;
     runGcgActionPhase(duel);
     runGcgPreparedSkills(duel, duel.firstSideIndex);
-    runGcgSideDamageHook(duel, duel.firstSideIndex, "onBeforeAction");
+    runGcgSideDamageHook(duel, duel.firstSideIndex, GcgSideDamageHook.OnBeforeAction);
   }
   return GcgActionResult.Done;
 };

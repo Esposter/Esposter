@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 describe("gcgDeckLoaderMap", () => {
   const publishedDeckIds = Object.keys(gameDataLock.objects).flatMap((key) => {
-    const deckId = /^gcg\/deck(\d+)$/u.exec(key)?.[1];
+    const deckId = /^gcg\/deck(?<deckId>\d+)$/u.exec(key)?.groups?.deckId;
     return deckId === undefined ? [] : [Number(deckId)];
   });
 
