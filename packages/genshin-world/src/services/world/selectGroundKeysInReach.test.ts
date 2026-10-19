@@ -11,18 +11,18 @@ const createSquare = (x: number, z: number): GroundPoint[] => [
   { x: x - 10, z: z + 10 },
 ];
 
-// Area b lies ten kilometres off, far beyond the reach of a point at the origin
-const regions = [
-  {
-    areas: [
-      { id: "area-a", outline: createSquare(0, 0) },
-      { id: "area-b", outline: createSquare(10000, 10000) },
-    ],
-    id: "fontaine",
-  },
-];
-
 describe(selectGroundKeysInReach, () => {
+  // Area b lies ten kilometres off, far beyond the reach of a point at the origin
+  const regions = [
+    {
+      areas: [
+        { id: "area-a", outline: createSquare(0, 0) },
+        { id: "area-b", outline: createSquare(10000, 10000) },
+      ],
+      id: "fontaine",
+    },
+  ];
+
   test("does not select a piece of an area out of reach", () => {
     expect.hasAssertions();
 

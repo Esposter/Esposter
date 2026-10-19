@@ -10,15 +10,15 @@ import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passi
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// Iwakura Succession with synthetic params: seeds last twenty-four seconds, two at most, and a seed on a
-// Three-second cooldown, and four Energy a seed
-const iwakuraSuccessionPassiveModule = createIwakuraSuccessionPassiveModule([24, 2, 3, 4]);
-const SEED_ID = "succession";
-const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
-const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
-
 describe(createIwakuraSuccessionPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Iwakura Succession with synthetic params: seeds last twenty-four seconds, two at most, and a seed on a
+  // Three-second cooldown, and four Energy a seed
+  const iwakuraSuccessionPassiveModule = createIwakuraSuccessionPassiveModule([24, 2, 3, 4]);
+  const SEED_ID = "succession";
+  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+
   test("a skill use gains a seed, and a second use inside the cooldown gains none", () => {
     expect.hasAssertions();
 

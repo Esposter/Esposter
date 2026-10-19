@@ -15,13 +15,14 @@ import { createSongOfTheVigilPassiveModule } from "#src/services/weapon/passives
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: three Energy for an elemental reaction once every two seconds, and a quarter
-// ATK for three seconds after a Stellar Glimmer reaction
-const songOfTheVigilPassiveModule = createSongOfTheVigilPassiveModule([3, 0.25, 2, 3]);
 
 describe(createSongOfTheVigilPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: three Energy for an elemental reaction once every two seconds, and a
+  // Quarter ATK for three seconds after a Stellar Glimmer reaction
+  const songOfTheVigilPassiveModule = createSongOfTheVigilPassiveModule([3, 0.25, 2, 3]);
+
   test("an elemental reaction the wielder triggers regenerates the rank's Energy to it", () => {
     expect.hasAssertions();
 

@@ -8,10 +8,6 @@ import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant();
-// Itinerant Hero with synthetic params: 15% DMG, disabled for five seconds by taking DMG
-const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.15]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
@@ -22,6 +18,11 @@ const createEnemyStrikeLoss = () => ({
 });
 
 describe(createItinerantHeroPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant();
+  // Itinerant Hero with synthetic params: 15% DMG, disabled for five seconds by taking DMG
+  const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.15]);
+
   test("the DMG bonus is priced on the wielder as a passive", () => {
     expect.hasAssertions();
 

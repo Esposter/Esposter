@@ -18,22 +18,23 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a quarter ATK for the wielder, and half for the team on a weak hit
-const wolfishTrackerPassiveModule = createWolfishTrackerPassiveModule([0.25, 0.5]);
-const weakEnemy: Enemy = { ...enemy, health: enemy.maxHealth * 0.2 };
-const createNormalAttackDamageTaken = (target: Enemy): KitEvent => ({
-  attackTag: AttackTag.NormalAttack,
-  enemy: target,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker: wielder,
-});
 
 describe(createWolfishTrackerPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a quarter ATK for the wielder, and half for the team on a weak hit
+  const wolfishTrackerPassiveModule = createWolfishTrackerPassiveModule([0.25, 0.5]);
+  const weakEnemy: Enemy = { ...enemy, health: enemy.maxHealth * 0.2 };
+  const createNormalAttackDamageTaken = (target: Enemy): KitEvent => ({
+    attackTag: AttackTag.NormalAttack,
+    enemy: target,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker: wielder,
+  });
+
   test("the rank's ATK share is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 

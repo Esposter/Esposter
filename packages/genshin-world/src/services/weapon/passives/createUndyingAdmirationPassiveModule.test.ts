@@ -15,19 +15,20 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const party = createParty([TRAVELER_CHARACTER_ID]);
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a quarter DMG and a tenth CRIT Rate for an Elemental Skill
-const undyingAdmirationPassiveModule = createUndyingAdmirationPassiveModule([0.25, 0.1]);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 
 describe(createUndyingAdmirationPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a quarter DMG and a tenth CRIT Rate for an Elemental Skill
+  const undyingAdmirationPassiveModule = createUndyingAdmirationPassiveModule([0.25, 0.1]);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   test("an elemental skill's strike gains the rank's DMG Bonus, and a normal attack's gains none", () => {
     expect.hasAssertions();
 

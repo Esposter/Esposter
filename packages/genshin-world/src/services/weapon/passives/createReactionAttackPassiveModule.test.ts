@@ -18,14 +18,15 @@ import { createReactionAttackPassiveModule } from "#src/services/weapon/passives
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// A passive naming Overloaded and a Pyro Swirl, at a synthetic half ATK percentage, not the weapon's row
-const reactionAttackPassiveModule = createReactionAttackPassiveModule(
-  [{ reactionType: ReactionType.Overloaded }, { element: Element.Pyro, reactionType: ReactionType.Swirl }],
-  [0.5],
-);
 describe(createReactionAttackPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // A passive naming Overloaded and a Pyro Swirl, at a synthetic half ATK percentage, not the weapon's row
+  const reactionAttackPassiveModule = createReactionAttackPassiveModule(
+    [{ reactionType: ReactionType.Overloaded }, { element: Element.Pyro, reactionType: ReactionType.Swirl }],
+    [0.5],
+  );
+
   test("a reaction the wielder triggers from the ones it names raises ATK by the rank's percentage", () => {
     expect.hasAssertions();
 

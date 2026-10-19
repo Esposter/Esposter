@@ -17,23 +17,24 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { createSolemnSilencePassiveModule } from "#src/services/weapon/passives/createSolemnSilencePassiveModule";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a quarter Max HP for three seconds after a reaction, and half more under
-// Ascendant Gleam
-const solemnSilencePassiveModule = createSolemnSilencePassiveModule([0.25, 3, 0.5, 0]);
-const createReaction = (striker: Combatant) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
-  striker,
-});
 
 describe(createSolemnSilencePassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a quarter Max HP for three seconds after a reaction, and half more under
+  // Ascendant Gleam
+  const solemnSilencePassiveModule = createSolemnSilencePassiveModule([0.25, 3, 0.5, 0]);
+  const createReaction = (striker: Combatant) => ({
+    enemy,
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
+    striker,
+  });
+
   test("a reaction the wielder causes raises its Max HP by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

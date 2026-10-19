@@ -8,11 +8,11 @@ import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/pa
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// A synthetic DEF raise of half for two seconds after an Elemental Skill, not the weapon's row
-const pactOfFlowingSpringsPassiveModule = createPactOfFlowingSpringsPassiveModule([0.5, 2, 0, 0]);
-
 describe(createPactOfFlowingSpringsPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // A synthetic DEF raise of half for two seconds after an Elemental Skill, not the weapon's row
+  const pactOfFlowingSpringsPassiveModule = createPactOfFlowingSpringsPassiveModule([0.5, 2, 0, 0]);
+
   test("the wielder's Elemental Skill raises its DEF by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

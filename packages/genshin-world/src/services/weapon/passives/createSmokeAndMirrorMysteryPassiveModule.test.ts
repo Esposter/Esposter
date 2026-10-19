@@ -8,12 +8,12 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant();
-// A synthetic DEF raise of a fifth for three seconds after an Elemental Skill, not the weapon's row
-const smokeAndMirrorMysteryPassiveModule = createSmokeAndMirrorMysteryPassiveModule([0.2, 3, 0, 0]);
-
 describe(createSmokeAndMirrorMysteryPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant();
+  // A synthetic DEF raise of a fifth for three seconds after an Elemental Skill, not the weapon's row
+  const smokeAndMirrorMysteryPassiveModule = createSmokeAndMirrorMysteryPassiveModule([0.2, 3, 0, 0]);
+
   test("the wielder's Elemental Skill raises its DEF by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

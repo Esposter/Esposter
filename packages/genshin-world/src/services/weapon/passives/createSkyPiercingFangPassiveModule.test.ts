@@ -18,21 +18,22 @@ import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passive
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
-// Synthetic params, not the weapon's row: a burst gives Movement SPD of a fifth and Normal Attack SPD of three tenths,
-// And Normal and Charged hits deal half of ATK more as base damage, for four seconds
-const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.1, 0.2, 0.3, 0.5, 4]);
-const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
-const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 
 describe(createSkyPiercingFangPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
+  // Synthetic params, not the weapon's row: a burst gives Movement SPD of a fifth and Normal Attack SPD of three
+  // Tenths, and Normal and Charged hits deal half of ATK more as base damage, for four seconds
+  const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.1, 0.2, 0.3, 0.5, 4]);
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+  const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   test("a burst raises the wielder's Movement SPD and Normal Attack SPD for four seconds", () => {
     expect.hasAssertions();
 

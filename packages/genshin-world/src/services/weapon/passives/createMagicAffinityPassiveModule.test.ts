@@ -9,11 +9,12 @@ import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/
 import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// The per-stack normal and charged attack DMG bonus, a synthetic value rather than the weapon's row
-const magicAffinityPassiveModule = createMagicAffinityPassiveModule([0.1]);
 const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
 describe(createMagicAffinityPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // The per-stack normal and charged attack DMG bonus, a synthetic value rather than the weapon's row
+  const magicAffinityPassiveModule = createMagicAffinityPassiveModule([0.1]);
+
   test("an elemental skill raises normal and charged attack DMG by the rank's amount at one stack", () => {
     expect.hasAssertions();
 

@@ -17,20 +17,21 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Infusion Arrow with synthetic params, which reads its ATK and Normal ATK SPD per stack from the first two numbers
-const infusionArrowPassiveModule = createInfusionArrowPassiveModule([0.05, 0.02, 0.2]);
-const createDamageTaken = (attackTag: AttackTag) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 describe(createInfusionArrowPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Infusion Arrow with synthetic params, which reads its ATK and Normal ATK SPD per stack from the first two numbers
+  const infusionArrowPassiveModule = createInfusionArrowPassiveModule([0.05, 0.02, 0.2]);
+  const createDamageTaken = (attackTag: AttackTag) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a normal attack hit raises ATK and Normal ATK SPD by the rank's numbers at one stack", () => {
     expect.hasAssertions();
 

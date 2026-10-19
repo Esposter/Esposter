@@ -15,18 +15,19 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// A synthetic DMG percentage of half, not the weapon's row
-const sharpPassiveModule = createSharpPassiveModule([0.5]);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 
 describe(createSharpPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // A synthetic DMG percentage of half, not the weapon's row
+  const sharpPassiveModule = createSharpPassiveModule([0.5]);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   test("a normal attack its wielder deals is raised by the rank's percentage", () => {
     expect.hasAssertions();
 

@@ -17,7 +17,6 @@ import { createTravelersPathPassiveModule } from "#src/services/weapon/passives/
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const readBuffs = (effects: readonly KitEffect[]) =>
   effects
@@ -25,6 +24,8 @@ const readBuffs = (effects: readonly KitEffect[]) =>
     .map(({ amount, attribute, secondsRemaining }) => ({ amount, attribute, secondsRemaining }));
 
 describe(createTravelersPathPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Synthetic params, not the weapon's row, on the Traveler: a hit raises ATK by a quarter for three seconds, and
   // It regenerates two Energy, once every two seconds
   const travelersPathPassiveModule = createTravelersPathPassiveModule([0.25, 3, 0, 2, 2]);

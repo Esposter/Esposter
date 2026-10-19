@@ -17,22 +17,23 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a fifth Elemental DMG Bonus, a quarter chance, 200% ATK, and a two-second
-// Cooldown
-const wanderingCloudsPassiveModule = createWanderingCloudsPassiveModule([0.2, 0.25, 2, 2]);
-const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker: wielder,
-});
 
 describe(createWanderingCloudsPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a fifth Elemental DMG Bonus, a quarter chance, 200% ATK, and a two-second
+  // Cooldown
+  const wanderingCloudsPassiveModule = createWanderingCloudsPassiveModule([0.2, 0.25, 2, 2]);
+  const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker: wielder,
+  });
+
   test("the rank's Elemental DMG Bonus is a passive bonus on every element", () => {
     expect.hasAssertions();
 

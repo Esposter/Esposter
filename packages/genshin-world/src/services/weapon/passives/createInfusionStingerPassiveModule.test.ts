@@ -14,17 +14,18 @@ import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/c
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Infusion Stinger with synthetic params: its All DMG Bonus per stack, its maximum stacks and its seconds
-const infusionStingerPassiveModule = createInfusionStingerPassiveModule([0.05, 3, 5]);
-const createEnemyHit = (element: Element | undefined) => ({
-  element,
-  enemy,
-  kind: KitEventKind.EnemyHit as const,
-  striker: wielder,
-});
 describe(createInfusionStingerPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Infusion Stinger with synthetic params: its All DMG Bonus per stack, its maximum stacks and its seconds
+  const infusionStingerPassiveModule = createInfusionStingerPassiveModule([0.05, 3, 5]);
+  const createEnemyHit = (element: Element | undefined) => ({
+    element,
+    enemy,
+    kind: KitEventKind.EnemyHit as const,
+    striker: wielder,
+  });
+
   test("a physical hit the wielder deals raises no all DMG stack", () => {
     expect.hasAssertions();
     const context = createKitTestContext(wielder);

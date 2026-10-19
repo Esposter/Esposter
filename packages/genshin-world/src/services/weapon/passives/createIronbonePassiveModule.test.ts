@@ -18,25 +18,26 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const party = createParty([TRAVELER_CHARACTER_ID]);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 
 describe(createIronbonePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   // Ironbone at its first rank: 8% more CRIT Rate for an Elemental Skill, and 16% Energy Recharge for five seconds
   // After one
   const passiveModule = createIronbonePassiveModule([0.08, 0.16, 5]);

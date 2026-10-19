@@ -11,15 +11,16 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = createWielderCombatant();
-// Heavy with synthetic params: the multiplier and the cooldown in seconds
-const heavyPassiveModule = createHeavyPassiveModule([1.4, 8]);
 const createNormalAttackLanded = () => ({
   action: takeOne(TRAVELER_KIT.normalAttacks, 0),
   kind: KitEventKind.NormalAttackLanded as const,
 });
 
 describe(createHeavyPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Heavy with synthetic params: the multiplier and the cooldown in seconds
+  const heavyPassiveModule = createHeavyPassiveModule([1.4, 8]);
+
   test("a normal attack the active wielder lands queues one extra hit at the rank's multiplier", () => {
     expect.hasAssertions();
 

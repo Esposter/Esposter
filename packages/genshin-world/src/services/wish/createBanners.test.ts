@@ -12,29 +12,30 @@ import { takeOne } from "@esposter/shared";
 import { BannerKind } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const LIMITED_FEATURED_CHARACTER_ID = 10_000_051;
 const createItemDataMap = (ids: readonly number[]) =>
   new Map(ids.map((id) => [id, { nameTextId: String(id), rarity: 5 }]));
-const statTables = {
-  characterDataMap: createItemDataMap([
-    ...STANDARD_WISH_CHARACTER_IDS,
-    ...BEGINNERS_WISH_CHARACTER_IDS,
-    BEGINNERS_WISH_FEATURED_CHARACTER_ID,
-    LIMITED_FEATURED_CHARACTER_ID,
-  ]),
-  weaponDataMap: createItemDataMap(STANDARD_WISH_WEAPON_IDS),
-};
-const event: WishScheduleEvent = {
-  endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds,
-  fiveStarIds: [LIMITED_FEATURED_CHARACTER_ID],
-  fourStarIds: [],
-  id: "Test Event",
-  kind: BannerKind.CharacterEvent,
-  kindNumber: 1,
-  startTime: Temporal.Instant.fromEpochMilliseconds(0).epochMilliseconds,
-};
 
 describe(createBanners, () => {
+  const LIMITED_FEATURED_CHARACTER_ID = 10_000_051;
+  const statTables = {
+    characterDataMap: createItemDataMap([
+      ...STANDARD_WISH_CHARACTER_IDS,
+      ...BEGINNERS_WISH_CHARACTER_IDS,
+      BEGINNERS_WISH_FEATURED_CHARACTER_ID,
+      LIMITED_FEATURED_CHARACTER_ID,
+    ]),
+    weaponDataMap: createItemDataMap(STANDARD_WISH_WEAPON_IDS),
+  };
+  const event: WishScheduleEvent = {
+    endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).epochMilliseconds,
+    fiveStarIds: [LIMITED_FEATURED_CHARACTER_ID],
+    fourStarIds: [],
+    id: "Test Event",
+    kind: BannerKind.CharacterEvent,
+    kindNumber: 1,
+    startTime: Temporal.Instant.fromEpochMilliseconds(0).epochMilliseconds,
+  };
+
   test("a scheduled event banner's non-featured pool is the Standard pool", () => {
     expect.hasAssertions();
 

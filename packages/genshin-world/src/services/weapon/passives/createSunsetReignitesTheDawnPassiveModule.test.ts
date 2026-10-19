@@ -21,24 +21,25 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
 const enterBlessing = (context: KitContext) =>
   enterKitNightsoulBlessing(context.kitEffectState, TRAVELER_CHARACTER_ID, { points: 0, secondsRemaining: 100 });
 
-const createContext = (): KitContext =>
-  createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) });
-
 describe(createSunsetReignitesTheDawnPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
+  const createContext = (): KitContext =>
+    createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) });
+
   // Sunset Reignites the Dawn at its first rank: a skill or burst gives Scorching Brilliance, 20% CRIT DMG and 28% ATK
   // For six seconds, once every ten; an elemental normal or charged attack hit extends it by two seconds, once a second,
   // Three times at most; and in Nightsoul's Blessing its effects rise by 75%

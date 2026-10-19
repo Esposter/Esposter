@@ -15,14 +15,15 @@ import { createStarfireUponTheSnowplainsPassiveModule } from "#src/services/weap
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a quarter ATK for three seconds after a reaction, and half Stellar
-// Glimmer reaction DMG for two seconds after a Stellar Glimmer reaction
-const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.25, 3, 0.5, 2]);
 const getBuffs = (effects: readonly KitEffect[]) => effects.filter(({ kind }) => kind === "buff");
 
 describe(createStarfireUponTheSnowplainsPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a quarter ATK for three seconds after a reaction, and half Stellar
+  // Glimmer reaction DMG for two seconds after a Stellar Glimmer reaction
+  const starfireUponTheSnowplainsPassiveModule = createStarfireUponTheSnowplainsPassiveModule([0.25, 3, 0.5, 2]);
+
   test("an Elemental Reaction the wielder causes raises its ATK by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

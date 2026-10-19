@@ -18,10 +18,11 @@ import { createWhitemoonBristlePassiveModule } from "#src/services/weapon/passiv
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createWhitemoonBristlePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Synthetic params, not the weapon's row: a tenth for an unread CRIT Rate line, and half of Elemental Mastery as
   // Foliar Incision's base damage to the Normal Attack and Elemental Skill DMG it is obtained with, ending after 3 DMG
   // Instances or 2 seconds, once every 2 seconds

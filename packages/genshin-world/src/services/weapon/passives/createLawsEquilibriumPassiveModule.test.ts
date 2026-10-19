@@ -8,11 +8,11 @@ import { createLawsEquilibriumPassiveModule } from "#src/services/weapon/passive
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// Covenant of Frost and Snow with synthetic params: 100 Elemental Mastery for eight seconds after an Elemental Skill
-const lawsEquilibriumPassiveModule = createLawsEquilibriumPassiveModule([100, 8, 0, 0]);
-
 describe(createLawsEquilibriumPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Covenant of Frost and Snow with synthetic params: 100 Elemental Mastery for eight seconds after an Elemental Skill
+  const lawsEquilibriumPassiveModule = createLawsEquilibriumPassiveModule([100, 8, 0, 0]);
+
   test("the wielder's Elemental Skill raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 

@@ -10,21 +10,22 @@ import { createHeritagePassiveModule } from "#src/services/weapon/passives/creat
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 10_000_066;
-const wielder: Combatant = createWielderCombatant();
-// Heritage with synthetic params: the ATK percentage, its seconds and the cooldown on its wielder
-const heritagePassiveModule = createHeritagePassiveModule([0.2, 8, 15]);
-const createCharacterSwapped = () => ({
-  characterId: OTHER_CHARACTER_ID,
-  kind: KitEventKind.CharacterSwapped as const,
-  previousCharacterId: TRAVELER_CHARACTER_ID,
-});
 const getAttackBuffs = (kitEffectState: KitEffectState): KitBuff[] =>
   kitEffectState.effects.filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
   );
 
 describe(createHeritagePassiveModule, () => {
+  const OTHER_CHARACTER_ID = 10_000_066;
+  const wielder: Combatant = createWielderCombatant();
+  // Heritage with synthetic params: the ATK percentage, its seconds and the cooldown on its wielder
+  const heritagePassiveModule = createHeritagePassiveModule([0.2, 8, 15]);
+  const createCharacterSwapped = () => ({
+    characterId: OTHER_CHARACTER_ID,
+    kind: KitEventKind.CharacterSwapped as const,
+    previousCharacterId: TRAVELER_CHARACTER_ID,
+  });
+
   test("a character swapped onto the field gains the rank's ATK percentage for its seconds", () => {
     expect.hasAssertions();
 

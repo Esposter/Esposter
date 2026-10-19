@@ -20,13 +20,14 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 1;
 const createEnemyAt = (id: string, x: number): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, id),
   position: { x, z: 0 },
 });
 
 describe(createLabyrinthLordsInstructionPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+
   // Labyrinth Lord's Instruction at its first rank: an Elemental Skill or Burst gives Teachings of the Forest, 60
   // Elemental Mastery for twelve seconds, once every twenty, and its end deals 100% ATK
   const passiveModule = createLabyrinthLordsInstructionPassiveModule([60, 12, 1, 20]);

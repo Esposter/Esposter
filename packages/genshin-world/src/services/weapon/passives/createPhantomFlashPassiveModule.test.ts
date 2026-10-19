@@ -15,13 +15,14 @@ import { createPhantomFlashPassiveModule } from "#src/services/weapon/passives/c
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds after a reaction, three more under
-// Ascendant Gleam
-const phantomFlashPassiveModule = createPhantomFlashPassiveModule([5, 2, 3, 0]);
 
 describe(createPhantomFlashPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: five Elemental Mastery for two seconds after a reaction, three more under
+  // Ascendant Gleam
+  const phantomFlashPassiveModule = createPhantomFlashPassiveModule([5, 2, 3, 0]);
+
   test("a reaction the wielder causes raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 

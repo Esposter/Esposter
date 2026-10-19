@@ -17,23 +17,24 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
-// Synthetic params, not the weapon's row: a vacuum blade of half of ATK for each of three Normal or Charged Attack hits
-// After a burst, for two seconds
-const skyRippingDragonSpinePassiveModule = createSkyRippingDragonSpinePassiveModule([0.1, 0.5, 2, 3]);
-const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
-const createAttackDamageTaken = (attackTag: AttackTag): KitEvent => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker: wielder,
-});
 
 describe(createSkyRippingDragonSpinePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseAttack, value: 1000 }]);
+  // Synthetic params, not the weapon's row: a vacuum blade of half of ATK for each of three Normal or Charged Attack
+  // Hits after a burst, for two seconds
+  const skyRippingDragonSpinePassiveModule = createSkyRippingDragonSpinePassiveModule([0.1, 0.5, 2, 3]);
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+  const createAttackDamageTaken = (attackTag: AttackTag): KitEvent => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker: wielder,
+  });
+
   test("a normal attack hit after a burst queues a vacuum blade at the rank's multiplier of ATK", () => {
     expect.hasAssertions();
 

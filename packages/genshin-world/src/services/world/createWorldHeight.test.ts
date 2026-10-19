@@ -15,36 +15,37 @@ const { baseGrounds } = await readWindriseData(GAME_DATA_LOCAL_BASE_URL);
 const regionGrounds = await Promise.all(
   selectLaidGroundKeys(gameDataLockKeys).map((key) => readGameData(GAME_DATA_LOCAL_BASE_URL, key, regionGroundSchema)),
 );
-// Four made-up quarters of a disc split at the origin, each with its own base, a hill or two and a feature, one cliff
-// Crossing the seam at x = 0. Their heights must read the same from either side of each seam
-const quarters: [RegionGround, ...RegionGround[]] = [
-  {
-    base: 12,
-    features: [
-      {
-        endX: 60,
-        endZ: 200,
-        falloff: 6,
-        height: 8,
-        kind: TerrainFeatureKind.Cliff,
-        startX: -60,
-        startZ: 200,
-        width: 40,
-      },
-    ],
-    hills: [{ height: 30, width: 200, x: 350, z: 350 }],
-    residual: { amplitude: 3, octaves: 2, scale: 32, seed: 1 },
-  },
-  { base: 9, features: [], hills: [{ height: -15, width: 120, x: -400, z: 300 }] },
-  {
-    base: 11,
-    features: [{ falloff: 6, height: 5, kind: TerrainFeatureKind.Plateau, radius: 60, x: -100, z: -100 }],
-    hills: [{ height: 22, width: 200, x: -300, z: -350 }],
-  },
-  { base: 14, features: [], hills: [{ height: 10, width: 70, x: 420, z: -300 }] },
-];
 
 describe(createWorldHeight, () => {
+  // Four made-up quarters of a disc split at the origin, each with its own base, a hill or two and a feature, one cliff
+  // Crossing the seam at x = 0. Their heights must read the same from either side of each seam
+  const quarters: [RegionGround, ...RegionGround[]] = [
+    {
+      base: 12,
+      features: [
+        {
+          endX: 60,
+          endZ: 200,
+          falloff: 6,
+          height: 8,
+          kind: TerrainFeatureKind.Cliff,
+          startX: -60,
+          startZ: 200,
+          width: 40,
+        },
+      ],
+      hills: [{ height: 30, width: 200, x: 350, z: 350 }],
+      residual: { amplitude: 3, octaves: 2, scale: 32, seed: 1 },
+    },
+    { base: 9, features: [], hills: [{ height: -15, width: 120, x: -400, z: 300 }] },
+    {
+      base: 11,
+      features: [{ falloff: 6, height: 5, kind: TerrainFeatureKind.Plateau, radius: 60, x: -100, z: -100 }],
+      hills: [{ height: 22, width: 200, x: -300, z: -350 }],
+    },
+    { base: 14, features: [], hills: [{ height: 10, width: 70, x: 420, z: -300 }] },
+  ];
+
   test("raises every region no fit has drawn at its plateaus, within the heights every tile is bounded by", () => {
     expect.hasAssertions();
 

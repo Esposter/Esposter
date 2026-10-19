@@ -1,15 +1,16 @@
 import { getPlaceGroundHeight } from "#src/services/world/getPlaceGroundHeight";
 import { describe, expect, test } from "vitest";
 
-const outline = [
-  { x: 0, z: 0 },
-  { x: 10, z: 0 },
-  { x: 10, z: 10 },
-  { x: 0, z: 10 },
-];
 const getGroundHeight = (x: number, z: number) => x + z;
 
 describe(getPlaceGroundHeight, () => {
+  const outline = [
+    { x: 0, z: 0 },
+    { x: 10, z: 0 },
+    { x: 10, z: 10 },
+    { x: 0, z: 10 },
+  ];
+
   test("a fitted place stands on the ground beneath it", () => {
     expect.hasAssertions();
 

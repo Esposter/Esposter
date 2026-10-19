@@ -12,17 +12,18 @@ import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/pass
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
 
 describe(createRadianceOnTheWaterPassiveModule, () => {
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
   // Radiance on the Water at its first rank: each Elemental Skill adds a stack of 52 Elemental Mastery for twelve
   // Seconds, up to two, each running its own seconds
   const passiveModule = createRadianceOnTheWaterPassiveModule([52, 12, 2]);
