@@ -10,23 +10,23 @@ import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetB
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 2;
 const createTeam = (characterIds: number[]) =>
   createReactionSetTeam(
     createFlowerOfParadiseLostSetModule(getArtifactSetBonus(statTables, FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID, 4)),
     characterIds,
   );
 
-const BLOOM_TYPE_REACTION_TYPES: ReactionType[] = [
-  TransformativeReactionType.Bloom,
-  TransformativeReactionType.Hyperbloom,
-  TransformativeReactionType.Burgeon,
-];
-
 describe(createFlowerOfParadiseLostSetModule, () => {
+  const BLOOM_TYPE_REACTION_TYPES: ReactionType[] = [
+    TransformativeReactionType.Bloom,
+    TransformativeReactionType.Hyperbloom,
+    TransformativeReactionType.Burgeon,
+  ];
+
   test("the wearer's own Bloom, Hyperbloom and Burgeon DMG is raised by 40%, and its Lunar-Bloom DMG by 10%, while another member's is not", () => {
     expect.hasAssertions();
 

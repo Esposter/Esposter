@@ -11,34 +11,35 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 2;
-const SKILL_COOLDOWN_SECONDS = 5;
-// The team with the wearer's skill cooled for SKILL_COOLDOWN_SECONDS seconds
-const createTeam = (characterIds: number[]) => {
-  const team = createReactionSetTeam(
-    createThunderingFurySetModule(getArtifactSetBonus(statTables, THUNDERING_FURY_ARTIFACT_SET_ID, 4)),
-    characterIds,
-  );
-  getPartyMember(team.context.party, TRAVELER_CHARACTER_ID).skillCooldownSeconds = SKILL_COOLDOWN_SECONDS;
-  const getSkillCooldownSeconds = () => getPartyMember(team.context.party, TRAVELER_CHARACTER_ID).skillCooldownSeconds;
-  return { ...team, getSkillCooldownSeconds };
-};
-
-const CUT_REACTION_TYPES: ReactionType[] = [
-  TransformativeReactionType.Overloaded,
-  TransformativeReactionType.ElectroCharged,
-  TransformativeReactionType.Superconduct,
-  TransformativeReactionType.Hyperbloom,
-  CatalyzeReactionType.Aggravate,
-  LunarReactionType.LunarCharged,
-  ReactionType.StellarConduct,
-  ReactionType.Quicken,
-];
-
 describe(createThunderingFurySetModule, () => {
+  const SKILL_COOLDOWN_SECONDS = 5;
+  // The team with the wearer's skill cooled for SKILL_COOLDOWN_SECONDS seconds
+  const createTeam = (characterIds: number[]) => {
+    const team = createReactionSetTeam(
+      createThunderingFurySetModule(getArtifactSetBonus(statTables, THUNDERING_FURY_ARTIFACT_SET_ID, 4)),
+      characterIds,
+    );
+    getPartyMember(team.context.party, TRAVELER_CHARACTER_ID).skillCooldownSeconds = SKILL_COOLDOWN_SECONDS;
+    const getSkillCooldownSeconds = () =>
+      getPartyMember(team.context.party, TRAVELER_CHARACTER_ID).skillCooldownSeconds;
+    return { ...team, getSkillCooldownSeconds };
+  };
+
+  const CUT_REACTION_TYPES: ReactionType[] = [
+    TransformativeReactionType.Overloaded,
+    TransformativeReactionType.ElectroCharged,
+    TransformativeReactionType.Superconduct,
+    TransformativeReactionType.Hyperbloom,
+    CatalyzeReactionType.Aggravate,
+    LunarReactionType.LunarCharged,
+    ReactionType.StellarConduct,
+    ReactionType.Quicken,
+  ];
+
   test("the wearer's own Overloaded, Electro-Charged, Superconduct and Hyperbloom DMG is raised by 40%, and another member's is not", () => {
     expect.hasAssertions();
 

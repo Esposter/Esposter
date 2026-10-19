@@ -24,17 +24,13 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const THIRD_CHARACTER_ID = 3;
-const FOURTH_CHARACTER_ID = 4;
-// A Moonsign character's kit, which counts toward the team's Moonsign level
-const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
 // A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party in the
 // Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's Moonsign level
 const createWearer = () =>
@@ -46,27 +42,32 @@ const createWearer = () =>
       ),
     ]),
   );
-const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
-  const wearer = createWearer();
-  const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
-  const createMember = (characterId: number) =>
-    createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
-  const other = createMember(OTHER_CHARACTER_ID);
-  characterIdCombatantMap.set(OTHER_CHARACTER_ID, other);
-  for (const characterId of [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
-    characterIdCombatantMap.set(characterId, createMember(characterId));
-  const kitEffectState: KitEffectState = { effects: [] };
-  const party = createParty(characterIds);
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
-  // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
-  const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
-    getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  const trigger = createReactionTrigger(enemy, context);
-  return { context, enemy, other, teamReactionDamageBonus, trigger, wearer };
-};
-
 describe(createNightOfTheSkysUnveilingSetModule, () => {
+  const THIRD_CHARACTER_ID = 3;
+  const FOURTH_CHARACTER_ID = 4;
+  // A Moonsign character's kit, which counts toward the team's Moonsign level
+  const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+
+  const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
+    const wearer = createWearer();
+    const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
+    const createMember = (characterId: number) =>
+      createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
+    const other = createMember(OTHER_CHARACTER_ID);
+    characterIdCombatantMap.set(OTHER_CHARACTER_ID, other);
+    for (const characterId of [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
+      characterIdCombatantMap.set(characterId, createMember(characterId));
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty(characterIds);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+    // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
+    const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
+      getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
+    const trigger = createReactionTrigger(enemy, context);
+    return { context, enemy, other, teamReactionDamageBonus, trigger, wearer };
+  };
+
   test("a Lunar Reaction the team triggers while the wearer is on the field gives it 15% CRIT Rate for four seconds at Nascent Gleam", () => {
     expect.hasAssertions();
 

@@ -23,48 +23,48 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const THIRD_CHARACTER_ID = 3;
-const FOURTH_CHARACTER_ID = 4;
-// A Moonsign character's kit, which counts toward the team's Moonsign level
-const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-// The wearer, who wears four pieces, and the other members in the map, the ones in benedictedIds carrying a Moonsign benediction
-const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
-  const wearer = createKitCombatant(
-    TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [
-      createSilkenMoonsSerenadeSetModule(getArtifactSetBonus(statTables, SILKEN_MOON_SERENADE_ARTIFACT_SET_ID, 4)),
-    ]),
-  );
-  const createMember = (characterId: number) =>
-    createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
-  const other = createMember(OTHER_CHARACTER_ID);
-  const characterIdCombatantMap = new Map<number, Combatant>([
-    [FOURTH_CHARACTER_ID, createMember(FOURTH_CHARACTER_ID)],
-    [OTHER_CHARACTER_ID, other],
-    [THIRD_CHARACTER_ID, createMember(THIRD_CHARACTER_ID)],
-    [TRAVELER_CHARACTER_ID, wearer],
-  ]);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const party = createParty(characterIds);
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
-  // A hit the striker lands on the enemy, dealt as the element given, if it deals one
-  const hit = (striker: Combatant, element: Element | undefined) =>
-    emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker }, context);
-  // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
-  const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
-    getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  return { context, hit, other, teamReactionDamageBonus, wearer };
-};
-
 describe(createSilkenMoonsSerenadeSetModule, () => {
+  const THIRD_CHARACTER_ID = 3;
+  const FOURTH_CHARACTER_ID = 4;
+  // A Moonsign character's kit, which counts toward the team's Moonsign level
+  const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  // The wearer, who wears four pieces, and the other members in the map, the ones in benedictedIds carrying a Moonsign benediction
+  const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
+    const wearer = createKitCombatant(
+      TRAVELER_CHARACTER_ID,
+      getPassiveKit(KIT, [
+        createSilkenMoonsSerenadeSetModule(getArtifactSetBonus(statTables, SILKEN_MOON_SERENADE_ARTIFACT_SET_ID, 4)),
+      ]),
+    );
+    const createMember = (characterId: number) =>
+      createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
+    const other = createMember(OTHER_CHARACTER_ID);
+    const characterIdCombatantMap = new Map<number, Combatant>([
+      [FOURTH_CHARACTER_ID, createMember(FOURTH_CHARACTER_ID)],
+      [OTHER_CHARACTER_ID, other],
+      [THIRD_CHARACTER_ID, createMember(THIRD_CHARACTER_ID)],
+      [TRAVELER_CHARACTER_ID, wearer],
+    ]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty(characterIds);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+    // A hit the striker lands on the enemy, dealt as the element given, if it deals one
+    const hit = (striker: Combatant, element: Element | undefined) =>
+      emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker }, context);
+    // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
+    const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
+      getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
+    return { context, hit, other, teamReactionDamageBonus, wearer };
+  };
+
   test("an Elemental DMG hit the wearer deals gives every party member 60 Elemental Mastery for eight seconds at Nascent Gleam, restarted rather than stacked", () => {
     expect.hasAssertions();
 

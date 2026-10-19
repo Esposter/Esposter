@@ -21,44 +21,44 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const THIRD_CHARACTER_ID = 3;
-const WEARER_KIT = getPassiveKit(KIT, [
-  createHeartOfTheFurnaceSetModule(getArtifactSetBonus(statTables, HEART_OF_THE_FURNACE_ARTIFACT_SET_ID, 4)),
-]);
-// The traveller and two other members, the given ones wearing four pieces, with the party in the order given
-const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHARACTER_ID]) => {
-  const createMember = (characterId: number) =>
-    createKitCombatant(characterId, wearerIds.includes(characterId) ? WEARER_KIT : KIT);
-  const wearer = createMember(TRAVELER_CHARACTER_ID);
-  const other = createMember(OTHER_CHARACTER_ID);
-  const secondWearer = createMember(THIRD_CHARACTER_ID);
-  const characterIdCombatantMap = new Map<number, Combatant>([
-    [OTHER_CHARACTER_ID, other],
-    [THIRD_CHARACTER_ID, secondWearer],
-    [TRAVELER_CHARACTER_ID, wearer],
-  ]);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const context = createKitTestContext(wearer, {
-    characterIdCombatantMap,
-    kitEffectState,
-    party: createParty(characterIds),
-  });
-  const trigger = createReactionTrigger(enemy, context);
-  // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
-  const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
-    getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  return { context, other, reactionDamageBonus, secondWearer, trigger, wearer };
-};
-
 describe(createHeartOfTheFurnaceSetModule, () => {
+  const THIRD_CHARACTER_ID = 3;
+  const WEARER_KIT = getPassiveKit(KIT, [
+    createHeartOfTheFurnaceSetModule(getArtifactSetBonus(statTables, HEART_OF_THE_FURNACE_ARTIFACT_SET_ID, 4)),
+  ]);
+  // The traveller and two other members, the given ones wearing four pieces, with the party in the order given
+  const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHARACTER_ID]) => {
+    const createMember = (characterId: number) =>
+      createKitCombatant(characterId, wearerIds.includes(characterId) ? WEARER_KIT : KIT);
+    const wearer = createMember(TRAVELER_CHARACTER_ID);
+    const other = createMember(OTHER_CHARACTER_ID);
+    const secondWearer = createMember(THIRD_CHARACTER_ID);
+    const characterIdCombatantMap = new Map<number, Combatant>([
+      [OTHER_CHARACTER_ID, other],
+      [THIRD_CHARACTER_ID, secondWearer],
+      [TRAVELER_CHARACTER_ID, wearer],
+    ]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const context = createKitTestContext(wearer, {
+      characterIdCombatantMap,
+      kitEffectState,
+      party: createParty(characterIds),
+    });
+    const trigger = createReactionTrigger(enemy, context);
+    // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
+    const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
+      getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
+    return { context, other, reactionDamageBonus, secondWearer, trigger, wearer };
+  };
+
   test("a Stellar Swirl the wearer triggers gives it 12% ATK for twelve seconds", () => {
     expect.hasAssertions();
 
