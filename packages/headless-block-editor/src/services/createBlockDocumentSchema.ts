@@ -10,7 +10,7 @@ import { z } from "zod";
 
 // The document's content as the typed node schema over the root's accepted types, with the root's props parsed by the root's own schema,
 // Then one refinement over the parsed tree: ids unique across every slot and the node count staying within the limit the consumer passes
-export const createBlockDocumentSchema = <TNode extends BlockNode, TRootProps extends Record<string, unknown>>(
+export const createBlockDocumentSchema = <TNode extends BlockNode, TRootProps extends object>(
   registry: BlockRegistry<TNode, TRootProps>,
   maxNodes: number,
 ): z.ZodType<BlockDocument<TNode, TRootProps>> =>

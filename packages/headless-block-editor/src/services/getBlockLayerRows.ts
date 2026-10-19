@@ -4,6 +4,7 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
 // The rows of a list of children one depth down: each child's row, then the rows of its slots in the order its type declares them
@@ -21,7 +22,7 @@ const getChildRows = (
     const { data: node } = result;
     const nodePointer = `${listPointer}/${index}`;
     const slotRows = Object.keys(getBlockTypeDefinition(registry, node.type)?.slots ?? {}).flatMap((slot) => {
-      const slotChildren: unknown = node.props[slot];
+      const slotChildren = getBlockPropValue(node.props, slot);
       const slotPointer = getBlockPropPointer(nodePointer, slot);
       return Array.isArray(slotChildren) ? getChildRows(registry, slotChildren, slotPointer, depth + 1) : [];
     });

@@ -1,6 +1,7 @@
 import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { TEST_DOCUMENT, TEST_HEADING_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { duplicateBlockNode } from "#src/services/duplicateBlockNode";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { assert, describe, expect, test } from "vitest";
 
@@ -25,7 +26,7 @@ describe(duplicateBlockNode, () => {
     );
     assert.exists(edited);
 
-    expect(edited.content[0]?.props.children).toStrictEqual([
+    expect(getBlockPropValue(edited.content[0]?.props ?? {}, "children")).toStrictEqual([
       { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
       { props: { id: expect.not.stringMatching(TEST_HEADING_ID), text: "copied" }, type: "heading" },
     ]);

@@ -1,6 +1,7 @@
 import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import { TEST_DOCUMENT, TEST_HEADING_ID, TEST_REGISTRY, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -18,7 +19,7 @@ describe(moveBlockNode, () => {
     );
     const { document: movedDocument, inverses } = applyPatches(TEST_DOCUMENT, operations);
 
-    expect(movedDocument.content[1]?.props.children).toStrictEqual([
+    expect(getBlockPropValue(movedDocument.content[1]?.props ?? {}, "children")).toStrictEqual([
       { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
     ]);
     expect(applyPatches(movedDocument, inverses).document).toStrictEqual(TEST_DOCUMENT);

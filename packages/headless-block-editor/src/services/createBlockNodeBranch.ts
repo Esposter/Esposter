@@ -1,6 +1,7 @@
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getSlotTypes } from "#src/services/getSlotTypes";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
@@ -33,8 +34,8 @@ export const createBlockNodeBranch = <TNode extends BlockNode>(
   // Zod runs a refinement past a field's issue unless told not to, so the gate is no issue at all
   const declaredKeys = Object.keys(propsSchema.shape);
   const props = z.strictObject({ ...propsSchema.shape, id: z.string(), ...slotShapes }).superRefine(
-    (value: Record<string, unknown>, context) => {
-      const declaredProps = Object.fromEntries(declaredKeys.map((key) => [key, value[key]]));
+    (value, context) => {
+      const declaredProps = Object.fromEntries(declaredKeys.map((key) => [key, getBlockPropValue(value, key)]));
       for (const { message, path } of propsSchema.safeParse(declaredProps).error?.issues ?? [])
         context.addIssue({ code: "custom", message, path });
     },

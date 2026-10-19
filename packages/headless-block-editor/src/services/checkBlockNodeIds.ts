@@ -3,6 +3,7 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { z } from "zod";
 
 import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
 // Counts each node of a parsed tree and refuses a node whose id an earlier node holds, in any slot, naming the repeated node's id
@@ -22,14 +23,14 @@ export const checkBlockNodeIds = (
     const nodeSegments = [...segments, index];
     collection.count++;
 
-    const { id } = node.props;
+    const id = getBlockPropValue(node.props, "id");
     if (typeof id === "string" && collection.ids.has(id))
       context.addIssue({ code: "custom", message: "repeats an id", path: [...nodeSegments, "props", "id"] });
     else if (typeof id === "string") collection.ids.add(id);
 
     const slots = getBlockTypeDefinition(registry, node.type)?.slots ?? {};
     for (const slot of Object.keys(slots)) {
-      const children: unknown = node.props[slot];
+      const children = getBlockPropValue(node.props, slot);
       if (Array.isArray(children))
         checkBlockNodeIds(context, registry, children, [...nodeSegments, "props", slot], collection);
     }

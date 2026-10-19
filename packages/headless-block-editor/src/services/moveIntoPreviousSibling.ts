@@ -4,6 +4,7 @@ import type { JsonPatchOperation } from "@esposter/shared";
 
 import { getBlockNode } from "#src/services/getBlockNode";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getSlotTypes } from "#src/services/getSlotTypes";
 import { moveBlockNode } from "#src/services/moveBlockNode";
@@ -28,7 +29,7 @@ export const moveIntoPreviousSibling = (
   const slot = Object.keys(slots).find((key) => getSlotTypes(slots, key).includes(node.type));
   if (slot === undefined) return [];
 
-  const children = previous.props[slot];
+  const children = getBlockPropValue(previous.props, slot);
   const childCount = Array.isArray(children) ? children.length : 0;
   const slotPointer = getBlockPropPointer(previousPointer, slot);
   return moveBlockNode(document, registry, nodePointer, slotPointer, childCount);

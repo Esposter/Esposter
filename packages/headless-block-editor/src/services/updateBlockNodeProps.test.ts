@@ -1,4 +1,5 @@
 import { TEST_DOCUMENT, TEST_HEADING_ID } from "#src/services/constants.test";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -12,7 +13,7 @@ describe(updateBlockNodeProps, () => {
       updateBlockNodeProps("/content/0/props/children/0", { text: "x" }),
     );
 
-    expect(document.content[0]?.props.children).toStrictEqual([
+    expect(getBlockPropValue(document.content[0]?.props ?? {}, "children")).toStrictEqual([
       { props: { id: TEST_HEADING_ID, text: "x" }, type: "heading" },
     ]);
   });
