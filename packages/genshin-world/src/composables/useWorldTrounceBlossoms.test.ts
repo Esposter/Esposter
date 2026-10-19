@@ -205,7 +205,7 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       enemyKindMap: new Map(),
       events,
-      friendshipLevels: ref<FriendshipLevel[]>([{ exp: 0, level: 1 }]),
+      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: adventureRank.gainWorldAdventureExp,
       gameText: {},
       getGroundHeight: () => 0,
@@ -266,7 +266,7 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       enemyKindMap: new Map(),
       events: createWorldEvents(),
-      friendshipLevels: ref<FriendshipLevel[]>([{ exp: 0, level: 1 }]),
+      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
         adventureExp.value += amount;
       },
