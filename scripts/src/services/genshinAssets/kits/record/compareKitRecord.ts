@@ -8,6 +8,7 @@ import type { KitRecord } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { checkIsNoActionFileCandidate } from "#src/services/genshinAssets/kits/candidates/checkIsNoActionFileCandidate";
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
@@ -83,13 +84,13 @@ export const compareKitRecord = (
         overlay[path] = committedEntry;
         return;
       }
-      // A value the borrowed plunge's donor gives, where the kit holds no reason of its own, takes the donor's value,
-      // So the published one a rule gave is replaced rather than pinned
-      const donor = candidateMap.get(path)?.[0]?.provenance;
+      // A path the borrowed plunge's donor stands in at, where the kit holds no reason of its own, takes its default:
+      // The kit's own wiki row's where it gives one, else the donor's. So a published value a rule gave is replaced
+      // Rather than pinned
       const isUnreasonedDonorValue =
-        donor?.source === KitSource.Gcsim &&
-        "cause" in donor &&
-        donor.cause === KitProvisionalCause.NoActionFile &&
+        (candidateMap.get(path) ?? []).some(
+          (candidate) => candidate.provenance.source === KitSource.Gcsim && checkIsNoActionFileCandidate(candidate),
+        ) &&
         (committedEntry === undefined ||
           !("cause" in committedEntry) ||
           committedEntry.cause === KitProvisionalCause.Unclassified);
