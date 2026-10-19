@@ -5,7 +5,7 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
-import { expandKitOverlay } from "genshin-world";
+import { AttackTag, Attribute, Element, expandKitOverlay, InternalCooldownTag } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -22,6 +22,8 @@ describe("readGcsimCitedCandidates", () => {
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const MULTILINE_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
+  const FIELDS_GO =
+    "package aino\n\nfunc burst() {\n\tai := info.AttackInfo{\n\t\tElement: attributes.Cryo,\n\t\tUseDef: true,\n\t\tAttackTag: attacks.AttackTagElementalBurst,\n\t}\n\tai.ICDTag = attacks.ICDTagNormalAttack\n\tai.Element = attributes.NoElement\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
@@ -30,6 +32,7 @@ describe("readGcsimCitedCandidates", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "loop.go"), LOOP_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "queue.go"), QUEUE_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "fields.go"), FIELDS_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "multiline.go"), MULTILINE_GO);
     return directory;
   };
@@ -229,5 +232,65 @@ describe("readGcsimCitedCandidates", () => {
     expect(
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.blossom.1.poiseDamage")?.[0]?.value,
     ).toBe(15);
+  });
+
+  test("a cited struct field's element gives the element its gcsim name maps to, with that line", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.element": { file: "fields.go", line: 5, source: KitSource.Gcsim, value: Element.Cryo },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.burst.element")?.[0];
+    expect(candidate?.value).toStrictEqual(Element.Cryo);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/fields.go",
+      line: 5,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited assignment's internal cooldown tag gives the tag its gcsim name maps to", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.internalCooldownTag": {
+        file: "fields.go",
+        line: 9,
+        source: KitSource.Gcsim,
+        value: InternalCooldownTag.NormalAttack,
+      },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "hits.burst.internalCooldownTag",
+    )?.[0];
+    expect(candidate?.value).toStrictEqual(InternalCooldownTag.NormalAttack);
+  });
+
+  test("a cited struct field's attack tag gives the kit's attack tag its gcsim name maps to", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.attackTag": { file: "fields.go", line: 7, source: KitSource.Gcsim, value: AttackTag.ElementalBurst },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "hits.burst.attackTag",
+    )?.[0];
+    expect(candidate?.value).toStrictEqual(AttackTag.ElementalBurst);
+  });
+
+  test("a cited UseDef gives the Defense scaling attribute, the stat the hit scales by", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.scalingAttribute": { file: "fields.go", line: 6, source: KitSource.Gcsim, value: Attribute.Defense },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get(
+      "hits.burst.scalingAttribute",
+    )?.[0];
+    expect(candidate?.value).toStrictEqual(Attribute.Defense);
+  });
+
+  test("a cited line naming attributes.NoElement writes no candidate, as a hit of no element has no element", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.burst.element": { file: "fields.go", line: 10, source: KitSource.Gcsim, value: Element.Cryo },
+    };
+    expect(readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.burst.element")).toBeUndefined();
   });
 });

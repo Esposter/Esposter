@@ -7,12 +7,17 @@ import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/add
 import { GCSIM_CHARACTERS_PATH, GCSIM_DURABILITY_PER_GAUGE } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
 import { readGcsimEnclosingLoop } from "#src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop";
+import { readGcsimFieldIdentifier } from "#src/services/genshinAssets/kits/gcsim/readGcsimFieldIdentifier";
 import { createGcsimFileResolver } from "#src/services/genshinAssets/kits/gcsim/readGcsimFileConstant";
 import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/readGcsimLineValues";
 import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableCells";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
+import { toGcsimAttackTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimAttackTag";
+import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
+import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { Attribute } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -22,6 +27,18 @@ const HITMARK_FIELD = "hitmarkFrames";
 
 // The record's hit field in units of U, which gcsim writes as a durability of GCSIM_DURABILITY_PER_GAUGE to the unit
 const GAUGE_FIELD = "gauge";
+
+// A named field of a kit record, by its last key, with the gcsim field its citing line names and the kit value that
+// Field's identifier gives, through the same mapping the writer maps a hit's values by
+const NamedFieldCitationMap: Partial<Record<string, { field: string; toValue: (identifier: string) => unknown }>> = {
+  attackTag: { field: "AttackTag", toValue: toGcsimAttackTag },
+  element: { field: "Element", toValue: toGcsimElement },
+  internalCooldownTag: { field: "ICDTag", toValue: toGcsimInternalCooldownTag },
+  scalingAttribute: {
+    field: "UseDef",
+    toValue: (identifier) => (identifier === "true" ? Attribute.Defense : undefined),
+  },
+};
 
 // The most lines an area's constructor may run across, its arguments on the lines under its opening line
 const MAX_CONSTRUCTOR_LINES = 12;
@@ -140,9 +157,9 @@ const readCitedValue = (
   return array.every((value) => value !== undefined) ? array : undefined;
 };
 
-// The candidates of the overlay's cited values: each cited line of a gcsim character's folder gives a Gcsim candidate with
-// That file and line, its value the one the line evaluates to that equals the cited value, or its first value where none
-// Does, so a citation the line does not give reads as a difference
+// The candidates of the overlay's cited values: each cited line of a gcsim character's folder gives a Gcsim candidate
+// With that file and line, its value a number the line evaluates to that equals the cited value, or its first value
+// Where none does, an area, or a named field's mapped value, so a citation the line does not give reads as a difference
 export const readGcsimCitedCandidates = (
   overlay: KitOverlay,
   gcsimDirectory: string,
@@ -164,6 +181,17 @@ export const readGcsimCitedCandidates = (
       continue;
     }
     const field = path.slice(path.lastIndexOf(".") + 1);
+    const namedField = NamedFieldCitationMap[field];
+    if (namedField !== undefined) {
+      const identifier = readGcsimFieldIdentifier(lines[entry.line - 1] ?? "", namedField.field);
+      const namedValue = identifier === undefined ? undefined : namedField.toValue(identifier);
+      if (namedValue !== undefined)
+        addKitCandidate(candidateMap, path, {
+          provenance: { file, line: entry.line, source: KitSource.Gcsim },
+          value: namedValue,
+        });
+      continue;
+    }
     const value = readCitedValue(lines, entry.line - 1, entry.value, file, entry.index, field);
     if (value === undefined) continue;
     addKitCandidate(candidateMap, path, { provenance: { file, line: entry.line, source: KitSource.Gcsim }, value });
