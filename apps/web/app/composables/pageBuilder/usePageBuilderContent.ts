@@ -8,7 +8,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { getNodePointerById } from "@/services/pageBuilder/getNodePointerById";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { checkIsDeepEqual, noop } from "@esposter/shared";
 import { getBlockNode, getBlockTypeDefinition, updateBlockNodeProps } from "headless-block-editor";
 
@@ -26,7 +26,7 @@ interface ContentTarget {
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
 const getContentTarget = (document: BlockDocument, nodeId: string): ContentTarget | undefined => {
-  const nodePointer = getNodePointerById(document, nodeId);
+  const nodePointer = getNodePointer(document, nodeId);
   if (nodePointer === undefined)
     return {
       formSchema: webpageRootPropsSchema,
