@@ -151,11 +151,13 @@ ${greeting}`,
       getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE),
     );
 
-    expect(withRates.additionalContext).toBe(
-      `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}\n${LORE_RATES_LINE_PREFIX}${JSON.stringify(loreRates)}`,
-    );
-    expect(withoutRates.additionalContext).toBe(
-      `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}`,
-    );
+    expect(withRates).toStrictEqual({
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}\n${LORE_RATES_LINE_PREFIX}${JSON.stringify(loreRates)}`,
+      hookEventName: "SessionStart",
+    });
+    expect(withoutRates).toStrictEqual({
+      additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}`,
+      hookEventName: "SessionStart",
+    });
   });
 });
