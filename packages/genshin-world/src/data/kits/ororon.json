@@ -3,7 +3,7 @@
     "file": "burst.go",
     "line": 44,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.8 }
   },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10539 } },
   "frames.constellation4SoundwaveTick": { "cause": "Unclassified", "value": 45 },
@@ -12,7 +12,7 @@
     "file": "burst.go",
     "line": 44,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.8 }
   },
   "hits.soundwave.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10539 } },
   "hits.soundwave.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
