@@ -62,7 +62,7 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 | `packages/genshin-world/src/services/home/collectHomeOrder.ts`       | A finished furnishing taken into the bag, with the first making's EXP     |
 | `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`   | The Trust Rank a total of Trust EXP reaches                               |
 | `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts` | The Adeptal Energy rank a realm's comfort reaches                         |
-| `packages/genshin-world/src/services/home/computeHomeAccrued.ts`     | A store's Realm Currency or Realm Bounty after a span, capped             |
+| `packages/genshin-world/src/services/home/computeHomeAccrued.ts`     | The amount a store holds at `now`, capped, and the instant it accrued to  |
 | `packages/genshin-world/src/services/home/learnHomeBlueprint.ts`     | A blueprint learned by using its diagram                                  |
 | `packages/genshin-world/src/services/shared/learnByDiagram.ts`       | The one diagram-learning rule the forge's recipes share                   |
 | `packages/genshin-world/src/services/home/readHomeBlueprints.ts`     | The furnishings Tubby makes, fetched by their `home/blueprints` key       |

@@ -151,7 +151,6 @@ const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Eve
 // A companion Support Card, with no cost of its own
 const createCompanion = (id: number): GcgCard => ({ ...TALENT_CARD, id, isCompanion: true, kind: GcgCardKind.Support });
 
-// A character of the element named
 describe("spring Spirit Summoning", () => {
   test("it deals 2 Cryo DMG, then creates an Icy Quill on its side", () => {
     expect.hasAssertions();

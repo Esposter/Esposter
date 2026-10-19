@@ -48,7 +48,7 @@ export const walkNode = (node: MathExpressionNode, bound: Set<string>, free: Set
     }
     case MathExpressionNodeType.Logical:
       walkNode(node.left, bound, free);
-      // A nullish takes its left side over numbers, so its right side is never read
+      // A nullish's right side is skipped, as compileLogical skips it
       if (node.operator !== MathExpressionLogicalOperator.Nullish) walkNode(node.right, new Set(bound), free);
       return;
     case MathExpressionNodeType.Name:

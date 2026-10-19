@@ -30,7 +30,7 @@ flowchart LR
 - **Equipped is not a bag state.** A character's worn artifact is not in the bag, so the bag's artifacts are unequipped and the offering checks only the lock.
 - **The gate is the wiki's rank.** `MYSTIC_OFFERING_ADVENTURE_RANK` is 45 from the wiki. The dump's tables here do not carry the unlock, so the constant is provisional until the unlock is found.
 - **The offering is the bench's last tab.** From the gate, the bench lists the Mystic Offering after its recipe tabs. Picking it takes the bench's screen with the panel, and the panel's Back returns to the bench's first recipe tab, or closes the bench while no recipe tab is open. Provisional: the game's place for the tab, and the panel taking the screen over the bench, are not measured, so both wait on a clip.
-- **The piece roll is shared.** `rollPieceArtifact` is the step the chest drop already runs after it picks a piece. The chest calls it unchanged.
+- **The piece roll is shared.** `rollPieceArtifact` is the step the chest drop already runs after it picks a piece. The chest reaches it through `drawSetArtifact`.
 - **The drop pickup takes the artifact in.** The offering removes the three, then `pickUpDroppedItem` takes the rolled artifact in, so room and overflow behave as they do for a drop.
 - **The reader reads only locked keys.** `readGameData` takes only keys in `gameDataLock.json`, which holds `crafting/strongboxes`, so the reader's key type-checks.
 

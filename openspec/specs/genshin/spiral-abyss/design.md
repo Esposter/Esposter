@@ -38,7 +38,7 @@ flowchart TD
 - **Rewards once a cycle.** A chamber's first clear gives its own reward, and each star milestone a floor's stars reach gives its reward. Each reward is given only the first time in its cycle, and a clear returns the rewards it gives now for the caller to hand out.
 - **Cycles.** The Corridor is one cycle that never resets. Each Moon Spire period is a cycle of its own, so its chambers, stars and rewards start again when the next period begins.
 - **Opening.** The Abyss is open from Adventure Rank 20, a constant the proposal settles.
-- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none. The search is `findLatestBegun`, the one the [Imaginarium Theater](../imaginarium-theater/design.md)'s season runs, and nothing in the Abyss calls it yet.
+- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none. The search is `findLatestBegun`, the one the [Imaginarium Theater](../imaginarium-theater/design.md)'s season runs, and `findAbyssPeriodAt` calls it.
 
 ## Decisions
 

@@ -9,7 +9,8 @@ import { takeOne } from "@esposter/shared";
 // One, switched in, so its next Normal Attack this round is a Plunging Attack. Each card on the field then hears the
 // Switch, named with the character it is attached to, and the damage it deals after it is dealt. Every switch takes
 // This path, a combat switch and a card's or an effect's alike, so a switch to the active character is no switch at
-// All. A defeat's replacement does not, since it names the new active character without flagging it
+// All. A defeat's replacement does not, since it names the new active character without flagging it. An effect's switch
+// Counts as one provisionally, as the wiki's Plunging Attack page, the open-world action, does not settle the TCG case
 export const switchGcgActiveCharacter = (duel: GcgDuel, sideIndex: number, characterIndex: number): void => {
   const side = takeOne(duel.sides, sideIndex);
   if (characterIndex === side.activeIndex) return;

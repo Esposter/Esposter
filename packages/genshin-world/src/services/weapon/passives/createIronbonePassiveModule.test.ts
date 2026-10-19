@@ -38,7 +38,6 @@ const createStrike = (attackTag: AttackTag): KitStrike => ({
 
 describe(createIronbonePassiveModule, () => {
   // Ironbone at its first rank: 8% more CRIT Rate for an Elemental Skill, and 16% Energy Recharge for five seconds
-  // After one
   const passiveModule = createIronbonePassiveModule([0.08, 0.16, 5]);
 
   test.each([
