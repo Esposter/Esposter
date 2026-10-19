@@ -81,8 +81,7 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 | `packages/genshin-world/src/models/world/LandmarkKind.ts`                      | Gains the offering                                                                                             |
 | `packages/genshin-world/src/models/data/GameDataset.ts`                        | Gains the `offeringPlaces` dataset beside the tree's                                                           |
 | `packages/genshin-world/src/services/offering/readFrostbearingTreeLevels.ts`   | Reads the tree's levels as the published list of items, each with its count, as the rule holds                 |
-| `packages/genshin-world/src/services/offering/countHeldItems.ts`               | The count of items an offering holds across every kind, which its progress is compared by                      |
-| `packages/genshin-world/src/services/statue/statueRegionProgress.ts`           | A statue region's saved progress as the rule holds it, and back                                                |
+| `packages/genshin-world/src/services/statue/statueRegionProgress.ts`           | Converts a statue region's `heldCount` at the boundary, and back                                               |
 | `scripts/src/models/genshinAssets/offerings/OfferingKind.ts`                   | Each offering's kind, the key its levels and places publish under                                              |
 | `scripts/src/models/genshinAssets/offerings/OfferingLevelRow.ts`               | One published level: the items it takes as a list, and its reward, fixed or a pool                             |
 | `scripts/src/services/genshinAssets/offerings/OfferingIdKindMap.ts`            | Each level-up table id's kind                                                                                  |
@@ -93,8 +92,6 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 | `scripts/src/services/genshinAssets/offerings/getConsumedItems.ts`             | The item slots a level names, the zeroed empty slots dropped                                                   |
 | `scripts/src/services/genshinAssets/offerings/toLevelItems.ts`                 | Every item a level takes, as its item and its count                                                            |
 | `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`           | One level's row: every item it takes, and the reward it pays, fixed or drawn from a pool                       |
-| `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts`  | Builds the tree's place from the official map's point and the fit                                              |
-| `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                  | The reward table keyed by reward id, shared by the level builders                                              |
 
 `StatueLevelRow` keeps its own flat shape: the statues' levels are published flat and read by the world's statue levels, so the offering row's widening does not reach them.
 
@@ -103,5 +100,5 @@ The published set is the page's eleven offerings (Primal Flame Resonance from th
 - [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System), Genshin Impact Wiki: the rule's wording, and the sections checked above. The page itself refused scripted fetches (HTTP 402), so the text is the wiki's API's `wikitext` for the same title. The page `Offering` redirects to it.
 - The sub-pages the table cites, read the same way: Frostbearing Tree's Gratitude, Sacred Sakura's Favor, Enhance the Lumenstone Adjuvant, Vanarana's Favor, The Gift of Amrita, Fountain of Lucine's Accolades, Rainjade's Benediction, Tona's Flame's Restitution, Primal Flame Resonance, Temple of Space: Memory Core, Shadow Realm Analyzer.
 - The pages the twelve kinds are checked against: Three Realms Gateway Offering (and its Part I page), Meeting Point, Meeting Point/Nod-Krai and Meeting Point/Snezhnaya.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the offering level-up table, the offering open-state table, the version table and the reward table the rewards are joined from.
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the map's labels and points for the offerings, read into the references folder and carried through the fit.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump, as the [offering systems](../../specs/genshin/offering-systems/design.md) page lists it, with the version table added.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the map's labels and points for the offerings, as the [offering systems](../../specs/genshin/offering-systems/design.md) page reads them.

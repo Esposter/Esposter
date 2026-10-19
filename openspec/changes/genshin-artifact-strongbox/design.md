@@ -52,7 +52,7 @@ flowchart LR
 | `packages/genshin-world/src/services/crafting/canOfferForStrongbox.ts`        | An unlocked five-star artifact of the bag                                           |
 | `packages/genshin-world/src/services/crafting/craftStrongbox.ts`              | Removes the three artifacts and takes in the rolled one                             |
 | `packages/genshin-world/src/services/crafting/constants.ts`                   | `MYSTIC_OFFERING_ADVENTURE_RANK`, from the wiki                                     |
-| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`     | The bench's tab list: the recipe tabs, then the Mystic Offering from its gate       |
+| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`     | The bench's tab list, with the Mystic Offering's tab after the recipe tabs          |
 | `packages/genshin-world/src/components/Crafting/Screen/Index.vue`             | The bench's screen, which takes the Mystic Offering's panel while its tab is picked |
 | `packages/genshin-world/src/components/Crafting/Strongbox/Index.vue`          | The Mystic Offering panel                                                           |
 | `packages/genshin-text/src/models/GameTextKey.ts`                             | The panel's words by their text ids                                                 |

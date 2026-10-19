@@ -41,7 +41,7 @@ References are found for each of these first, published recordings searched befo
 | File                                                                           | Role after the change                                                            |
 | :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/mondstadt/createMondstadtWindUniforms.ts` | The meadows' wind uniforms, Mondstadt's breeze with its gusts                    |
-| `packages/genshin-engine/src/nodes/computeWindGust.ts`                         | The gust at a point on the CPU, the reference for the engine's wind node         |
+| `packages/genshin-engine/src/nodes/computeWindGust.ts`                         | The CPU gust the engine's wind node is checked against                           |
 | `packages/genshin-world/src/services/mondstadt/computeWindmillSailAngle.ts`    | The windmill's sail angle, turning at the rate of the wind that reaches the mill |
 | `packages/genshin-engine/src/noise/createSimplexNoise.ts`                      | The detail noise Mondstadt's meadow and hill biomes tune                         |
 

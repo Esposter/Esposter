@@ -19,7 +19,7 @@ Mail is how the game hands a player rewards and messages: a letter from a charac
 
 - Which mails a player receives, and when: the game's delivery rules sit in its scripts, which only the PC export holds. Until then the screen lists the mails the save holds, and no mail is delivered.
 - The mails' text, sender and title, as game text ids: the main session writes those strings into `genshin-text`.
-- The screen's layout, which the parity loop traces from the game's own still.
+- The screen's layout, traced by the parity loop from the game's own still.
 
 ## Impact
 

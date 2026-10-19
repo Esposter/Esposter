@@ -50,8 +50,6 @@ mathjs is no longer a dependency, so the comparison runs against a copy outside 
 
 ## Key files
 
-Every path starts at the repository root.
-
 | File                                                                                         | Role                                                                       |
 | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | `packages/math-expression-compiler/src/services/parser/rule`                                 | The rules: ten binary levels go, the climbing rule comes                   |

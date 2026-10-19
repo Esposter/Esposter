@@ -16,4 +16,4 @@
 
 ## 4. The record
 
-- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
+- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../resource-page-builder-performance-and-proof/tasks.md) names pass.

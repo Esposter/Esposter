@@ -9,7 +9,7 @@
 
 - [x] 2.1 Start a region at level one on its first resonance, reaching that level with its rewards left to claim. Verify: resonateRegion.test.ts, named after 'the first resonance starts the region at level one, and keeps the Oculi it holds for an offer' and 'a second resonance changes nothing'.
 - [x] 2.2 Pay each level's rewards for its region when a claim takes it, one level an action. Verify: claimStatueLevel.test.ts, named after 'each claim pays the next level reached, one level an action' and 'a claim with every reached level already claimed claims none', and offerStatueOculi.test.ts, named after 'an offer reaches each level the Oculi held complete'.
-- [x] 2.3 Change the Traveler's element on resonance, once the character kits hold the element. Verify: computeTravelerElement.test.ts, named after 'the traveler takes the element of the statue it resonates with'.
+- [x] 2.3 Change the Traveler's element on resonance, once the character kits hold the element. Verify: computeTravelerElement.test.ts, named after the resonance scenario of task 5.1 in the [character screen](../genshin-character-screen/tasks.md).
 
 ## 3. Statue's Blessing
 
