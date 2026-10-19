@@ -45,8 +45,8 @@ describe(createBlockNodeSchema, () => {
       root: { content: ["heading"], propsSchema: z.object({}) },
       types: [
         {
-          propsSchema: z.object({ text: z.string() }).superRefine((props, context) => {
-            if (props.text === "") context.addIssue({ code: "custom", message: "needs text", path: ["text"] });
+          propsSchema: z.object({ text: z.string().min(2) }).superRefine((props, context) => {
+            if (props.text !== "ok") context.addIssue({ code: "custom", message: "needs ok", path: ["text"] });
           }),
           slots: {},
           type: "heading",
@@ -54,14 +54,15 @@ describe(createBlockNodeSchema, () => {
       ],
     };
     const schema = createBlockNodeSchema(refinedRegistry, ["heading"]);
-    const empty = schema.safeParse({ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" });
-    const wrongType = schema.safeParse({ props: { id: TEST_HEADING_ID, text: 1 }, type: "heading" });
+    const refused = schema.safeParse({ props: { id: TEST_HEADING_ID, text: "no" }, type: "heading" });
+    const tooShort = schema.safeParse({ props: { id: TEST_HEADING_ID, text: "a" }, type: "heading" });
 
-    expect(empty.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
-      { message: "needs text", path: ["props", "text"] },
+    expect(refused.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: "needs ok", path: ["props", "text"] },
     ]);
-    expect(wrongType.error?.issues.map(({ code, path }) => ({ code, path }))).toStrictEqual([
-      { code: "invalid_type", path: ["props", "text"] },
+    // The refinement does not repeat the field's own issue, which is the only one reported
+    expect(tooShort.error?.issues.map(({ code, path }) => ({ code, path }))).toStrictEqual([
+      { code: "too_small", path: ["props", "text"] },
     ]);
   });
 

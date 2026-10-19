@@ -26,14 +26,16 @@ export const createBlockNodeBranch = (
       z.array(z.lazy(() => createNodeSchema(registry, slotTypes))),
     ]),
   );
-  // The type's own refinements run once the shape passes, over the keys it declares, so an issue is reported once and at its own path
+  // The type's own refinements run over the keys it declares, once the shape passes, so each issue is reported once
+  // Zod runs a refinement past a field's issue unless told not to, so the gate is no issue at all
   const declaredKeys = Object.keys(definition.propsSchema.shape);
-  const props = z
-    .strictObject({ ...definition.propsSchema.shape, id: z.string(), ...slotShapes })
-    .superRefine((value: Record<string, unknown>, context) => {
+  const props = z.strictObject({ ...definition.propsSchema.shape, id: z.string(), ...slotShapes }).superRefine(
+    (value: Record<string, unknown>, context) => {
       const declaredProps = Object.fromEntries(declaredKeys.map((key) => [key, value[key]]));
       for (const { message, path } of definition.propsSchema.safeParse(declaredProps).error?.issues ?? [])
         context.addIssue({ code: "custom", message, path });
-    });
+    },
+    { when: ({ issues }) => issues.length === 0 },
+  );
   return z.object({ props, type: z.literal(definition.type) });
 };
