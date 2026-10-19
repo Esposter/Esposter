@@ -1,6 +1,7 @@
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -111,20 +112,24 @@ describe("readGcsimCitedCandidates local aliases", () => {
     expect(resolveGoLocals("r*2", lines, 4)).toBe("(1 | 2)*2");
   });
 
-  // The alias is updated by `+=` after its declaration, so its value is not the declared 2 and reads as unknown
-  test("a local a later update changes reads as unknown, not as its declaration's value", () => {
-    expect.hasAssertions();
-    const lines = [
-      "package aino",
-      "",
-      "func burst() {",
-      "\tr := 2",
-      "\tr += 1",
-      "\tap := combat.NewCircleHit(c.Core.Combat.Player(), nil, nil, r*2)",
-      "}",
-    ];
-    expect(resolveGoLocals("r*2", lines, 5)).toBeUndefined();
-  });
+  // The alias is updated by a compound assignment after its declaration, so its value is not the declared 2
+  // And reads as unknown
+  test.each(GO_COMPOUND_ASSIGNMENT_OPERATORS)(
+    "a local a later `%s=` update changes reads as unknown, not as its declaration's value",
+    (operator) => {
+      expect.hasAssertions();
+      const lines = [
+        "package aino",
+        "",
+        "func burst() {",
+        "\tr := 2",
+        `\tr ${operator}= 1`,
+        "\tap := combat.NewCircleHit(c.Core.Combat.Player(), nil, nil, r*2)",
+        "}",
+      ];
+      expect(resolveGoLocals("r*2", lines, 5)).toBeUndefined();
+    },
+  );
 
   test("an alias assigned more than once gives no area, so nothing is guessed", () => {
     expect.hasAssertions();

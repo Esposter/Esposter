@@ -6,6 +6,7 @@ import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNam
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
@@ -132,17 +133,20 @@ const findOkDefault = (
   return isOkDeclared ? defaultStart : undefined;
 };
 
-// The operators an update such as `+=` is split into before its `=`, `++` and `--` being tokens of their own
-const UPDATE_OPERATORS = new Set(["%", "*", "+", "-", "/"]);
+// The most tokens a compound assignment's operator and `=` are split into: `&^=` is three, where `<<=` is two
+const COMPOUND_OPERATOR_TOKEN_COUNT = 3;
 
-// Whether the name token at a position is set to a value by `:=` or `=`, or updated by `+=`, `*=`, `++` and the like
+// Whether the name token at a position is set to a value by `:=` or `=`, or updated by `+=`, `<<=`, `++` and the like
 const readAssignmentKind = (tokens: readonly GoToken[], position: number): "update" | "value" | undefined => {
   const next = tokens[position + 1];
   if (checkIsGoPunctuation(next, ":=") || checkIsGoPunctuation(next, "=")) return "value";
   if (checkIsGoPunctuation(next, "++") || checkIsGoPunctuation(next, "--")) return "update";
-  return next?.kind === GoTokenKind.Punctuation &&
-    UPDATE_OPERATORS.has(next.text) &&
-    checkIsGoPunctuation(tokens[position + 2], "=")
+  // The tokens spelled back together, so a split operator reads as the operator it is
+  const spelling = tokens
+    .slice(position + 1, position + 1 + COMPOUND_OPERATOR_TOKEN_COUNT)
+    .map(({ text }) => text)
+    .join("");
+  return GO_COMPOUND_ASSIGNMENT_OPERATORS.some((operator) => spelling.startsWith(`${operator}=`))
     ? "update"
     : undefined;
 };

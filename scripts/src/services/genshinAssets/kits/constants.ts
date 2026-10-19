@@ -19,6 +19,21 @@ export const GCSIM_NORMAL_FRAMES_CALLEE = "frames.InitNormalCancelSlice";
 // The frames a second of game time is, the unit a gcsim cooldown is written in and the table gives it in seconds
 export const GCSIM_FRAMES_PER_SECOND = 60;
 export const GCSIM_ABILITY_FRAMES_CALLEE = "frames.InitAbilSlice";
+// The operators of Go's compound assignments, each written before its `=`, `&^` the AND NOT one. The tokenizer splits a
+// Shift's `<<=` into `<` and `<=`, so a reader matches the operator's characters rather than one token
+export const GO_COMPOUND_ASSIGNMENT_OPERATORS: readonly string[] = [
+  "+",
+  "-",
+  "*",
+  "/",
+  "%",
+  "&",
+  "|",
+  "^",
+  "<<",
+  ">>",
+  "&^",
+];
 // The charge level a bow's aimed shot is fired at when its config sets none, gcsim's `attacks.AimParamLv1`, the fully
 // Charged shot
 export const GCSIM_AIM_CHARGE_LEVEL = 1;
