@@ -6,4 +6,4 @@ import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShield
 // Every shield protects the character on the field whoever cast it, which gcsim's CharacterIsShielded reads of a shield
 // With no target of its own
 export const checkIsKitShielded = (effects: readonly KitEffect[], isOnField: boolean): boolean =>
-  isOnField && effects.some(checkIsKitShieldLive);
+  isOnField && effects.some((effect) => checkIsKitShieldLive(effect));

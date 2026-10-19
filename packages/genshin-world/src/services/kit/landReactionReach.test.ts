@@ -311,7 +311,6 @@ describe(landReactionReach, () => {
     landReactionReach(natlanContext, origin, [origin, wet], swirl, natlanCombatant);
 
     expect(wet.maxHealth - wet.health).toBeGreaterThan(0);
-    expect(bursts).toHaveLength(1);
-    expect(bursts[0]).toMatchObject({ kind: KitEventKind.NightsoulBurst, striker: natlanCombatant });
+    expect(bursts).toStrictEqual([{ enemy: wet, kind: KitEventKind.NightsoulBurst, striker: natlanCombatant }]);
   });
 });

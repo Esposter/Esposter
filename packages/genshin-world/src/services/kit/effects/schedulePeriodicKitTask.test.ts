@@ -54,6 +54,7 @@ describe(schedulePeriodicKitTask, () => {
   };
 
   test("ticks on its first frame and every interval after, the last before its end, as Jahoda's heals fall", () => {
+    expect.hasAssertions();
     // Jahoda's heals: the first 12 frames in, then every 87, through her burst's 790
     expect(
       runTickFrames({ firstSeconds: 12 / 60, intervalSeconds: 87 / 60, untilSeconds: 790 / 60 }, 800),
@@ -61,6 +62,7 @@ describe(schedulePeriodicKitTask, () => {
   });
 
   test("passes over a tick that falls at its end exactly", () => {
+    expect.hasAssertions();
     // Ticks at frames 12 and 99 only: the one at 186 is the end, so it is not run
     expect(
       runTickFrames({ firstSeconds: 12 / 60, intervalSeconds: 87 / 60, untilSeconds: 186 / 60 }, 220),
@@ -68,6 +70,7 @@ describe(schedulePeriodicKitTask, () => {
   });
 
   test("runs wherever the body stands, as it is not a field the body must stand in", () => {
+    expect.hasAssertions();
     expect(
       runTickFrames({ firstSeconds: 12 / 60, intervalSeconds: 87 / 60, untilSeconds: 300 / 60 }, 320, 500),
     ).toStrictEqual(runTickFrames({ firstSeconds: 12 / 60, intervalSeconds: 87 / 60, untilSeconds: 300 / 60 }, 320));

@@ -1,4 +1,3 @@
-import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitReaction } from "#src/models/kit/KitReaction";
 import type { Except } from "type-fest";
