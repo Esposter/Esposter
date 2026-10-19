@@ -20,16 +20,16 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const ELEMENTAL_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Made_Up_Skill",
-  energyGain: 0,
-  id: 1,
-  kind: GcgSkillKind.ElementalSkill,
-};
 
 // Plays a weapon on a character of the element, deals a hit, then uses an elemental skill twice in one round
 const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
+  const ELEMENTAL_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Made_Up_Skill",
+    energyGain: 0,
+    id: 1,
+    kind: GcgSkillKind.ElementalSkill,
+  };
   const side: GcgSideState = {
     activeIndex: 0,
     cards: [],

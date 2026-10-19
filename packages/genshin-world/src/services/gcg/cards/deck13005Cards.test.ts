@@ -50,22 +50,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-// The hp a character starts at, and the damage and bonuses the skills and weapons below deal: each is a fixture input,
-// And the hp the tests expect is derived from it
-const STARTING_HP = 10;
-const SOUMETSU_DAMAGE = 4;
-const KABUKI_DAMAGE = 2;
-const HYOUKA_DAMAGE = 3;
-const FLARE_UP_DAMAGE = 2;
-const CRYO_INFUSION_BONUS = 1;
-const AQUILA_BONUS = 1;
-const KANTEN_BONUS = 1;
-// The hp a character is wounded to, so a heal has room to land, and the heals the two weapons below give
-const WOUNDED_HP = 5;
-const BANDANA_HEAL = 1;
-const BANDANA_HEALS_PER_ROUND = 3;
-const AQUILA_HEAL = 1;
-const AQUILA_HEALS_PER_ROUND = 2;
 // The name the game's shared damage effects spell an element or Physical DMG by, read off the parser's own name map
 const findDamageEffectName = (damageType: Element | GcgDamageKind): string =>
   takeOne([...GcgEffectDamageNameMap].filter(([, mapped]) => mapped === damageType))[0];
@@ -110,29 +94,6 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
-// The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
-const KABUKI: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
-  energyGain: 1,
-  id: 1,
-  kind: GcgSkillKind.NormalAttack,
-};
-const HYOUKA: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
-  energyGain: 1,
-  id: 2,
-  kind: GcgSkillKind.ElementalSkill,
-};
-const FIREWORK_FLARE_UP: GcgSkill = {
-  costs: [],
-  effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
-  energyGain: 1,
-  id: 3,
-  kind: GcgSkillKind.NormalAttack,
-};
-
 // A character of the given id, who wields the weapon kind named
 const createWielder = (id: number, weapon: string): GcgCharacterState =>
   createGcgCharacterState({ character: { element: Element.Cryo, id, weapon } });
@@ -149,6 +110,11 @@ describe("frostflake Seki no To", () => {
 });
 
 describe("kamisato Art: Soumetsu", () => {
+  // The hp a character starts at, and the damage and bonuses the skills and weapons below deal: each is a fixture
+  // Input, and the hp the tests expect is derived from it
+  const STARTING_HP = 10;
+  const SOUMETSU_DAMAGE = 4;
+
   const SOUMETSU: GcgSkill = {
     costs: [],
     effect: findSkillEffectName(kamisatoArtSoumetsu),
@@ -200,6 +166,18 @@ describe("cryo Elemental Infusion", () => {
 });
 
 describe("kamisato Art: Senho", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  // The skills' ids are synthetic, each only needing an id of its own that no other skill of the suite has
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const CRYO_INFUSION_BONUS = 1;
+
   const SENHO_PASSIVE: GcgSkill = {
     costs: [],
     effect: findSkillEffectName(kamisatoArtSenhoSkill),
@@ -285,6 +263,31 @@ describe("kamisato Art: Senho", () => {
 });
 
 describe("the skills whose damage is parsed from their effect name", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  const FLARE_UP_DAMAGE = 2;
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const FIREWORK_FLARE_UP: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
+    energyGain: 1,
+    id: 3,
+    kind: GcgSkillKind.NormalAttack,
+  };
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -326,6 +329,27 @@ describe("the skills whose damage is parsed from their effect name", () => {
 });
 
 describe("adventurer's Bandana", () => {
+  // The hp a character is wounded to, so a heal has room to land, and the heals the two weapons below give
+  const WOUNDED_HP = 5;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const BANDANA_HEAL = 1;
+  const BANDANA_HEALS_PER_ROUND = 3;
+
   test("after its character uses a Normal Attack, it heals that character 1 HP, up to three times per Round", () => {
     expect.hasAssertions();
     const bandanaed = {
@@ -362,6 +386,28 @@ describe("adventurer's Bandana", () => {
 });
 
 describe("aquila Favonia", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  const WOUNDED_HP = 5;
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const AQUILA_BONUS = 1;
+  const AQUILA_HEAL = 1;
+  const AQUILA_HEALS_PER_ROUND = 2;
+
   const AQUILA_FAVONIA_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -457,6 +503,22 @@ describe("aquila Favonia", () => {
 });
 
 describe("parametric Transformer", () => {
+  const HYOUKA_DAMAGE = 3;
+  const FLARE_UP_DAMAGE = 2;
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const FIREWORK_FLARE_UP: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, FLARE_UP_DAMAGE),
+    energyGain: 1,
+    id: 3,
+    kind: GcgSkillKind.NormalAttack,
+  };
   test("it gains 1 Qualitative Progress when either side's Skill deals Elemental DMG, and not for Physical DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -490,6 +552,25 @@ describe("parametric Transformer", () => {
 });
 
 describe("kanten Senmyou Blessing", () => {
+  const STARTING_HP = 10;
+  const KABUKI_DAMAGE = 2;
+  const HYOUKA_DAMAGE = 3;
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(GcgDamageKind.Physical, KABUKI_DAMAGE),
+    energyGain: 1,
+    id: 1,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: createDamageEffect(Element.Cryo, HYOUKA_DAMAGE),
+    energyGain: 1,
+    id: 2,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const KANTEN_BONUS = 1;
+
   const createKantened = (statuses: GcgCharacterState["statuses"]): GcgCharacterState => ({
     ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
     equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],

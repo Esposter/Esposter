@@ -6,11 +6,11 @@ import { clearDomainDisorders } from "#src/services/domains/clearDomainDisorders
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const SECONDS = 300;
-const FIRE = "LevelEntity_ElementAddHurt_Fire";
-
 describe(clearDomainDisorders, () => {
+  const CHARACTER_ID = 1;
+  const SECONDS = 300;
+  const FIRE = "LevelEntity_ElementAddHurt_Fire";
+
   test("clearing ends the disorders' bonuses and keeps every other buff", () => {
     expect.hasAssertions();
 

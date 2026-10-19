@@ -31,36 +31,7 @@ import { CUILEIN_ANBAR_ID, KEQING_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const FULL_HP = 10;
-const COLLEI_ID = 1701;
-const LIBEN_ID = 322_008;
-const KNIGHTS_OF_FAVONIUS_LIBRARY_ID = 321_002;
-const OTHER_CHARACTER_ID = 1401;
-const OPPOSING_CHARACTER_ID = 1203;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const TRUMP_CARD_KITTY_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_17013",
-  energyGain: 0,
-  id: 17_013,
-  kind: GcgSkillKind.ElementalBurst,
-};
-
-const STARWARD_SWORD_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_14033",
-  energyGain: 0,
-  id: 14_033,
-  kind: GcgSkillKind.ElementalBurst,
-};
-
-const FLORAL_BRUSH_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_17012",
-  energyGain: 1,
-  id: 17_012,
-  kind: GcgSkillKind.ElementalSkill,
-};
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -97,6 +68,10 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
 });
 
 describe("cuilein-Anbar", () => {
+  const FULL_HP = 10;
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+
   test("the end phase deals 2 Dendro to the opposing active character, and spends a usage", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(CUILEIN_ANBAR_ID, cuileinAnbar);
@@ -115,6 +90,17 @@ describe("cuilein-Anbar", () => {
 });
 
 describe("floral Brush", () => {
+  const FULL_HP = 10;
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("the skill deals 3 Dendro", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -127,6 +113,17 @@ describe("floral Brush", () => {
 });
 
 describe("gambler's Earrings", () => {
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const OTHER_CHARACTER_ID = 1401;
+
   test("after an opposing character is defeated while the equipped character is active, two Omni dice are created", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -189,6 +186,17 @@ describe("gambler's Earrings", () => {
 });
 
 describe("instructor's Cap", () => {
+  const FULL_HP = 10;
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+  const FLORAL_BRUSH_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17012",
+    energyGain: 1,
+    id: 17_012,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("after the equipped character's skill triggers a reaction, an Elemental Die of its element is created", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -249,6 +257,18 @@ describe("instructor's Cap", () => {
 });
 
 describe("starward Sword", () => {
+  const FULL_HP = 10;
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+
+  const STARWARD_SWORD_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_14033",
+    energyGain: 0,
+    id: 14_033,
+    kind: GcgSkillKind.ElementalBurst,
+  };
+
   test("the burst deals 4 Electro to the opposing active character and 3 Piercing to each one on standby", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -264,6 +284,18 @@ describe("starward Sword", () => {
 });
 
 describe("trump-Card Kitty", () => {
+  const FULL_HP = 10;
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+
+  const TRUMP_CARD_KITTY_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_17013",
+    energyGain: 0,
+    id: 17_013,
+    kind: GcgSkillKind.ElementalBurst,
+  };
+
   test("the burst deals 2 Dendro, and summons a Cuilein-Anbar on its side", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -277,6 +309,11 @@ describe("trump-Card Kitty", () => {
 });
 
 describe("liben", () => {
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+
+  const LIBEN_ID = 322_008;
+
   test("the end phase collects one unused Elemental Die of each type, and leaves the rest in the dice", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(LIBEN_ID, liben);
@@ -334,6 +371,11 @@ describe("liben", () => {
 });
 
 describe("knights of Favonius Library", () => {
+  const COLLEI_ID = 1701;
+  const OPPOSING_CHARACTER_ID = 1203;
+
+  const KNIGHTS_OF_FAVONIUS_LIBRARY_ID = 321_002;
+
   // A random source that throws the Cryo face for every die it rolls
   const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
 

@@ -11,12 +11,13 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { describe, expect, test } from "vitest";
 
 const { enemyKindMap } = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const UNPLACED_ENEMY_KIND_ID = 21010201;
-// The Pyro Abyss Mage a Mondstadt bounty names, the monster the wiki's list resolves to
-const PYRO_ABYSS_MAGE_ENEMY_KIND_ID = 22010101;
-const hilichurlFighter = getEnemyKind(enemyKindMap, EnemyKindId.HilichurlFighter);
 
 describe(getEnemyKindTraits, () => {
+  const UNPLACED_ENEMY_KIND_ID = 21010201;
+  // The Pyro Abyss Mage a Mondstadt bounty names, the monster the wiki's list resolves to
+  const PYRO_ABYSS_MAGE_ENEMY_KIND_ID = 22010101;
+  const hilichurlFighter = getEnemyKind(enemyKindMap, EnemyKindId.HilichurlFighter);
+
   test("a kind with hand-written traits keeps them", () => {
     expect.hasAssertions();
 

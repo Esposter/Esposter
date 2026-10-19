@@ -40,31 +40,6 @@ const readShells = ({ kitEffectState }: KitContext) => {
   return summon?.kind === "summon" ? summon.hits : [];
 };
 
-const SKILL_INPUT: KitInput = {
-  height: 0,
-  isAttackHeld: false,
-  isAttackPressed: false,
-  isBurstPressed: false,
-  isSkillHeld: false,
-  isSkillPressed: true,
-  locomotionState: LocomotionState.Idle,
-};
-
-// The skill pressed as the world presses it: the action its gates start, with the cooldown it sets and its start run
-const pressSkill = (context: KitContext): void => {
-  const action = startNextKitAction(
-    createKitState(),
-    CHASCA_KIT,
-    SKILL_INPUT,
-    getPartyMember(context.party, CHASCA_CHARACTER_ID),
-    createStamina(STAMINA_MAX),
-    true,
-    [],
-    context,
-  );
-  action?.onStart?.(context);
-};
-
 // The seconds stepped as the world steps them: the team's cooldowns, then its effects, then each deployed kit's own step
 const stepWorldSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
@@ -85,6 +60,31 @@ const createChascaCombatant = (): Combatant => ({
 });
 
 describe(createChascaKitBehaviour, () => {
+  const SKILL_INPUT: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillHeld: false,
+    isSkillPressed: true,
+    locomotionState: LocomotionState.Idle,
+  };
+
+  // The skill pressed as the world presses it: the action its gates start, with the cooldown it sets and its start run
+  const pressSkill = (context: KitContext): void => {
+    const action = startNextKitAction(
+      createKitState(),
+      CHASCA_KIT,
+      SKILL_INPUT,
+      getPartyMember(context.party, CHASCA_CHARACTER_ID),
+      createStamina(STAMINA_MAX),
+      true,
+      [],
+      context,
+    );
+    action?.onStart?.(context);
+  };
+
   test("reads her normal attacks and fully-charged Aimed Shot from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

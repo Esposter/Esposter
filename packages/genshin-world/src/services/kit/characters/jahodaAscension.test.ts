@@ -5,9 +5,9 @@ import {
 } from "#src/services/kit/characters/jahodaAscension";
 import { describe, expect, test } from "vitest";
 
-const NO_EFFECTS = { damageMultiplier: 1, extraRobots: 0, healMultiplier: 1, intervalMultiplier: 1 };
-
 describe("jahoda's Ascension 1", () => {
+  const NO_EFFECTS = { damageMultiplier: 1, extraRobots: 0, healMultiplier: 1, intervalMultiplier: 1 };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
     // The team's most common element picks the effect: Electro adds a robot, Pyro scales the robots' damage, Hydro the
@@ -45,6 +45,8 @@ describe("jahoda's Ascension 1", () => {
 });
 
 describe("jahoda's Constellation 2", () => {
+  const NO_EFFECTS = { damageMultiplier: 1, extraRobots: 0, healMultiplier: 1, intervalMultiplier: 1 };
+
   test("at Ascendant Gleam, the team's second-highest element's effect joins Ascension 1's", () => {
     expect.hasAssertions();
     // Pyro is highest, and Hydro and Electro tie for second, where gcsim ranks Hydro first

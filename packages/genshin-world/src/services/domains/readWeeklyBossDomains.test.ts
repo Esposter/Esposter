@@ -3,9 +3,9 @@ import { gameDataLock } from "#src/services/data/gameDataLock";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
-
 describe(readWeeklyBossDomains, () => {
+  const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -24,6 +24,8 @@ describe(readWeeklyBossDomains, () => {
 });
 
 describe("weeklyBossDomainsSchema", () => {
+  const level = { dungeonId: 2020, enemyLevel: 39, recommendedRank: 25 };
+
   test("a weekly boss's levels are read as the domains dataset writes them", () => {
     expect.hasAssertions();
 

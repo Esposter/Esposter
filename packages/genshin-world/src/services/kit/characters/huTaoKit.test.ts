@@ -217,12 +217,13 @@ const strikeEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => 
     createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
   );
 };
-// Spirit Soother's heal shares of Max HP at her first level, as gcsim v2.47.2 (MIT) hutao's proud skill group 4639 gives
-// The share above half of her HP, and the larger one at or under it
-const SPIRIT_SOOTHER_REGEN_SHARE = 0.062625;
-const SPIRIT_SOOTHER_LOW_REGEN_SHARE = 0.0835;
 
 describe("spirit Soother", () => {
+  // Spirit Soother's heal shares of Max HP at her first level, as gcsim v2.47.2 (MIT) hutao's proud skill group 4639
+  // Gives the share above half of her HP, and the larger one at or under it
+  const SPIRIT_SOOTHER_REGEN_SHARE = 0.062625;
+  const SPIRIT_SOOTHER_LOW_REGEN_SHARE = 0.0835;
+
   test("the Spirit Soother heals Hu Tao above half HP", () => {
     expect.hasAssertions();
     const context = createSpiritSootherContext(0.6);
@@ -322,7 +323,8 @@ describe("constellation 4 and 6", () => {
     return getCriticalRateBuffs(kitEffectState);
   };
 
-  // The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of her Max HP
+  // The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of
+  // Her Max HP
   const drainHuTao = (constellationCount: number, healthShare: number, drains = 1) => {
     const combatant = { ...createHuTaoCombatant(), constellationCount };
     const kitEffectState: KitEffectState = { effects: [] };

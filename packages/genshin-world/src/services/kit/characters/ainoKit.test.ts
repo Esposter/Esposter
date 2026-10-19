@@ -29,7 +29,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AINO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AINO_CHARACTER_ID);
-const AINO_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 const createAinoCombatant = (ascension: number): Combatant => ({
   ascension,
@@ -51,64 +50,65 @@ const getFirstWaterBallBonus = (combatant: Combatant): number => {
   return hit.additiveBaseDamageBonus?.(combatant) ?? 0;
 };
 
-// Two other members whose kits hold a Moonsign Benediction, declared here, to make a team at Ascendant Gleam with her
-const MOONSIGN_KIT: Kit = { ...AINO_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const MOONSIGN_CHARACTER_IDS = [1, 2];
-const ASCENDANT_TEAM = [AINO_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS];
-
-// Casts the burst at the ascension in the team the characters make, and returns its field with the context it was cast in
-const castBurstInTeam = (ascension: number, characterIds: number[]) => {
-  const combatant = createAinoCombatant(ascension);
-  const characterIdCombatantMap = new Map<number, Combatant>(
-    characterIds.map((characterId): [number, Combatant] => [
-      characterId,
-      characterId === AINO_CHARACTER_ID ? combatant : { ...combatant, characterId, kit: MOONSIGN_KIT },
-    ]),
-  );
-  const kitEffectState: KitEffectState = { effects: [] };
-  const context = createKitTestContext(combatant, {
-    characterIdCombatantMap,
-    kitEffectState,
-    party: createParty(characterIds),
-  });
-  AINO_KIT.elementalBurst.onStart?.(context);
-  const [field] = kitEffectState.effects as KitField[];
-  return { context, field, kitEffectState };
-};
-
-// Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in,
-// And the zone her burst leaves standing, unless the test skips the burst
-const createTeammateTeam = (constellationCount: number, { isBurstCast = true }: { isBurstCast?: boolean } = {}) => {
-  const aino = { ...createAinoCombatant(0), constellationCount };
-  const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
-  const kitEffectState: KitEffectState = { effects: [] };
-  const context = createKitTestContext(aino, {
-    characterIdCombatantMap: new Map<number, Combatant>([
-      [aino.characterId, aino],
-      [teammate.characterId, teammate],
-    ]),
-    kitEffectState,
-    party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
-  });
-  if (isBurstCast) AINO_KIT.elementalBurst.onStart?.(context);
-  return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
-};
-// The kit reads a hit of the striker's on the enemy, as the party's kits take each event. The hit defaults to the
-// Skill's first hit
-const strikeEnemy = (
-  context: KitContext,
-  striker: Combatant,
-  combatant: Combatant,
-  hit: KitHit = takeOne(AINO_KIT.elementalSkill.hits),
-): void => {
-  AINO_KIT.onKitEvent?.(
-    { enemy: AINO_ENEMY, hit, isCritical: false, isDefeated: false, kind: KitEventKind.DamageTaken, striker },
-    context,
-    combatant,
-  );
-};
-
 describe(createAinoKitBehaviour, () => {
+  // Two other members whose kits hold a Moonsign Benediction, declared here, to make a team at Ascendant Gleam with her
+  const MOONSIGN_KIT: Kit = { ...AINO_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  const MOONSIGN_CHARACTER_IDS = [1, 2];
+  const ASCENDANT_TEAM = [AINO_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS];
+  // Casts the burst at the ascension in the team the characters make, and returns its field with the context
+  // It was cast in
+  const castBurstInTeam = (ascension: number, characterIds: number[]) => {
+    const combatant = createAinoCombatant(ascension);
+    const characterIdCombatantMap = new Map<number, Combatant>(
+      characterIds.map((characterId): [number, Combatant] => [
+        characterId,
+        characterId === AINO_CHARACTER_ID ? combatant : { ...combatant, characterId, kit: MOONSIGN_KIT },
+      ]),
+    );
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap,
+      kitEffectState,
+      party: createParty(characterIds),
+    });
+    AINO_KIT.elementalBurst.onStart?.(context);
+    const [field] = kitEffectState.effects as KitField[];
+    return { context, field, kitEffectState };
+  };
+  // Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in,
+  // And the zone her burst leaves standing, unless the test skips the burst
+  const createTeammateTeam = (constellationCount: number, { isBurstCast = true }: { isBurstCast?: boolean } = {}) => {
+    const aino = { ...createAinoCombatant(0), constellationCount };
+    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(aino, {
+      characterIdCombatantMap: new Map<number, Combatant>([
+        [aino.characterId, aino],
+        [teammate.characterId, teammate],
+      ]),
+      kitEffectState,
+      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
+    });
+    if (isBurstCast) AINO_KIT.elementalBurst.onStart?.(context);
+    return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
+  };
+  const AINO_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  // The kit reads a hit of the striker's on the enemy, as the party's kits take each event. The hit defaults to the
+  // Skill's first hit
+  const strikeEnemy = (
+    context: KitContext,
+    striker: Combatant,
+    combatant: Combatant,
+    hit: KitHit = takeOne(AINO_KIT.elementalSkill.hits),
+  ): void => {
+    AINO_KIT.onKitEvent?.(
+      { enemy: AINO_ENEMY, hit, isCritical: false, isDefeated: false, kind: KitEventKind.DamageTaken, striker },
+      context,
+      combatant,
+    );
+  };
+
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -323,6 +323,25 @@ const getBuffedMastery = (combatant: Combatant, context: KitContext): number =>
     .attributes.attributeTotalMap[Attribute.ElementalMastery];
 
 describe("constellation 1's Elemental Mastery", () => {
+  const MOONSIGN_CHARACTER_IDS = [1, 2];
+  // Aino and a teammate in the team, with the teammate on the field: the context her kit reads the teammate's hits in,
+  // And the zone her burst leaves standing, unless the test skips the burst
+  const createTeammateTeam = (constellationCount: number, { isBurstCast = true }: { isBurstCast?: boolean } = {}) => {
+    const aino = { ...createAinoCombatant(0), constellationCount };
+    const teammate = { ...aino, characterId: takeOne(MOONSIGN_CHARACTER_IDS) };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(aino, {
+      characterIdCombatantMap: new Map<number, Combatant>([
+        [aino.characterId, aino],
+        [teammate.characterId, teammate],
+      ]),
+      kitEffectState,
+      party: createParty([AINO_CHARACTER_ID, teammate.characterId]),
+    });
+    if (isBurstCast) AINO_KIT.elementalBurst.onStart?.(context);
+    return { aino, context: { ...context, activeCombatant: teammate }, kitEffectState, teammate };
+  };
+
   test("aino gets 80 Elemental Mastery for 15 seconds after her skill, and none below Constellation 1", () => {
     expect.hasAssertions();
     const combatant = { ...createAinoCombatant(0), constellationCount: 1 };

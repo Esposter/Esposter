@@ -25,8 +25,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const AYAKA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, AYAKA_CHARACTER_ID);
-const normalHit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
-const chargedHit = takeOne(AYAKA_KIT.chargedAttack.hits);
 const createAyakaCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([
@@ -51,20 +49,7 @@ const strikeWithFirstNormalAttack = (constellationCount: number, random: () => n
   return partyMember.skillCooldownSeconds;
 };
 
-const STURDY_HEALTH = 1e9;
 const NEVER_CRITICAL = (): number => 1;
-
-// A Frostflake strike on a sturdy enemy, which the hit lands on with the statuses it leaves
-const strikeFrostflake = (hit: KitHit, combatant: Combatant): Enemy => {
-  const enemy: Enemy = {
-    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-    health: STURDY_HEALTH,
-    maxHealth: STURDY_HEALTH,
-  };
-  const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
-  strikeEnemy(enemy, hit, combatant, context);
-  return enemy;
-};
 
 // The DEF each status on the enemy takes off it, which a constellation's DEF cut leaves as one
 const readDefenceReductions = (enemy: Enemy): number[] =>
@@ -89,6 +74,23 @@ const readStrikeDamageBonus = (
 };
 
 describe(createAyakaKitBehaviour, () => {
+  const normalHit = takeOne(takeOne(AYAKA_KIT.normalAttacks).hits);
+  const chargedHit = takeOne(AYAKA_KIT.chargedAttack.hits);
+
+  const STURDY_HEALTH = 1e9;
+
+  // A Frostflake strike on a sturdy enemy, which the hit lands on with the statuses it leaves
+  const strikeFrostflake = (hit: KitHit, combatant: Combatant): Enemy => {
+    const enemy: Enemy = {
+      ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      health: STURDY_HEALTH,
+      maxHealth: STURDY_HEALTH,
+    };
+    const context = createKitTestContext(combatant, { enemyTables, random: NEVER_CRITICAL });
+    strikeEnemy(enemy, hit, combatant, context);
+    return enemy;
+  };
+
   test("an active constellation's switch changes its character's kit", () => {
     expect.hasAssertions();
 

@@ -9,27 +9,27 @@ import { ItemCategoryRoomMap } from "#src/services/inventory/ItemCategoryRoomMap
 import { ItemCategory } from "genshin-interface";
 import { assert, describe, expect, test } from "vitest";
 
-const definition: ItemDefinition = {
-  category: ItemCategory.Artifact,
-  id: 90_001,
-  name: "",
-  rank: 0,
-  rarity: 1,
-  stackLimit: 1,
-};
-const artifact: Artifact = {
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [{ attribute: Attribute.Attack, value: 10 }],
-  rarity: 1,
-  setId: 90_001,
-  slot: ArtifactSlot.FlowerOfLife,
-};
-
 describe(addInventoryArtifact, () => {
+  const definition: ItemDefinition = {
+    category: ItemCategory.Artifact,
+    id: 90_001,
+    name: "",
+    rank: 0,
+    rarity: 1,
+    stackLimit: 1,
+  };
+  const artifact: Artifact = {
+    experience: 0,
+    isLocked: false,
+    itemId: 101,
+    level: 0,
+    mainAffix: Attribute.Health,
+    minorAffixes: [{ attribute: Attribute.Attack, value: 10 }],
+    rarity: 1,
+    setId: 90_001,
+    slot: ArtifactSlot.FlowerOfLife,
+  };
+
   const emptyInventory: Inventory = { items: [], nextId: 0, quickSwapItemIds: [] };
 
   test("takes each artifact in as an entry of its own holding the artifact it was rolled as", () => {

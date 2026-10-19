@@ -10,46 +10,46 @@ import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const MAX_HP = 10;
-const WOUNDED_HP = 5;
-const TARGET_INDEX = 1;
-const LOTUS_FLOWER_CRISP_STATUS_ID = 333_003;
-
-const createSide = (): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters: [0, 1].map((id) =>
-    createGcgCharacterState({ character: { id }, hp: id === TARGET_INDEX ? WOUNDED_HP : MAX_HP }),
-  ),
-  deckCardIds: [],
-  dice: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (side: GcgSideState): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
-  sides: [side, createSide()],
-});
-
 describe("mushroomPizza", () => {
+  const MAX_HP = 10;
+  const WOUNDED_HP = 5;
+  const TARGET_INDEX = 1;
+  const LOTUS_FLOWER_CRISP_STATUS_ID = 333_003;
+
+  const createSide = (): GcgSideState => ({
+    activeIndex: 0,
+    cards: [],
+    characters: [0, 1].map((id) =>
+      createGcgCharacterState({ character: { id }, hp: id === TARGET_INDEX ? WOUNDED_HP : MAX_HP }),
+    ),
+    deckCardIds: [],
+    dice: [],
+    drawPile: [],
+    hand: [],
+    hasDeclaredEnd: false,
+    hasPrepared: true,
+    hasRolled: true,
+    isReplacementPending: false,
+    onstages: [],
+    summons: [],
+    supports: [],
+    usedCardIds: [],
+    usedSkillIds: [],
+  });
+
+  const createDuel = (side: GcgSideState): GcgDuel => ({
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
+    actingSideIndex: 0,
+    firstSideIndex: 0,
+    nextFirstSideIndex: 0,
+    phase: GcgPhase.Action,
+    random: () => 0,
+    round: 1,
+    rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
+    sides: [side, createSide()],
+  });
+
   test("should heal the target character for one HP on play", () => {
     expect.hasAssertions();
     const side = createSide();

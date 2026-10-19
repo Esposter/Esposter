@@ -51,16 +51,16 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
   usedSkillIds: [],
 });
 
-// A prepared Elemental Skill that deals 3 Electro DMG, as the Rock-Paper-Scissors Combo's Paper does
-const PREPARED_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Elec_3",
-  energyGain: 0,
-  id: 24_016,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
 describe(passGcgTurn, () => {
+  // A prepared Elemental Skill that deals 3 Electro DMG, as the Rock-Paper-Scissors Combo's Paper does
+  const PREPARED_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Elec_3",
+    energyGain: 0,
+    id: 24_016,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("should keep a side's prepared skill for its next turn while the opponent has declared its end", () => {
     expect.hasAssertions();
 

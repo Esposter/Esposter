@@ -8,13 +8,13 @@ import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisord
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const WATER = "LevelBuff_LoopDungeon_ElementAddHurt_Water";
-const HP = "LevelBuff_LoopDungeon_HpUpOrDown_CriticalHurtUp";
-const SWIRL = "LevelEntity_LoopDungeon_MasteryUp_WindDamageUp_V3.3";
-const VAPORIZE = { kind: "reaction" as const, reactions: [{ reactionType: ReactionType.Vaporize }] };
-
 describe(triggerDomainDisorder, () => {
+  const CHARACTER_ID = 1;
+  const WATER = "LevelBuff_LoopDungeon_ElementAddHurt_Water";
+  const HP = "LevelBuff_LoopDungeon_HpUpOrDown_CriticalHurtUp";
+  const SWIRL = "LevelEntity_LoopDungeon_MasteryUp_WindDamageUp_V3.3";
+  const VAPORIZE = { kind: "reaction" as const, reactions: [{ reactionType: ReactionType.Vaporize }] };
+
   test("a reaction disorder changes the fight", () => {
     expect.hasAssertions();
 

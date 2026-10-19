@@ -45,84 +45,6 @@ const createColumbinaCombatant = (): Combatant => ({
   weaponType: WeaponType.Catalyst,
 });
 
-const OTHER_CHARACTER_ID = 10_000_052;
-const kitBody = createKitBody({ x: 0, z: 0 });
-const c6Enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-// Columbina and another member at the given constellation, with her burst's window just started
-const createBurstContext = (constellationCount: number) => {
-  const columbina = { ...createColumbinaCombatant(), constellationCount };
-  const other = { ...createColumbinaCombatant(), characterId: OTHER_CHARACTER_ID };
-  const context = createKitTestContext(columbina, {
-    characterIdCombatantMap: new Map([
-      [COLUMBINA_CHARACTER_ID, columbina],
-      [OTHER_CHARACTER_ID, other],
-    ]),
-    kitEffectState: { effects: [] },
-    party: createParty([COLUMBINA_CHARACTER_ID, OTHER_CHARACTER_ID]),
-  });
-  COLUMBINA_KIT.elementalBurst.onStart?.(context);
-  return { columbina, context, other };
-};
-// A Lunar reaction the striker triggers on the enemy, which the kit reads as an event
-const triggerLunarReaction = (
-  context: KitContext,
-  columbina: Combatant,
-  striker: Combatant,
-  reactionType: ReactionType,
-): void =>
-  COLUMBINA_KIT.onKitEvent?.(
-    { enemy: c6Enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker },
-    context,
-    columbina,
-  );
-// The CRIT DMG a hit of the given element adds to a striker's strike, as Columbina's hook gives it to a party member
-const readPartyCriticalDamage = (
-  context: KitContext,
-  columbina: Combatant,
-  striker: Combatant,
-  element: Element,
-): number =>
-  COLUMBINA_KIT.getPartyStrikeBonus?.(
-    columbina,
-    { body: kitBody, combatant: striker, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
-    c6Enemy,
-    context.party,
-    context.kitEffectState.effects,
-    context.characterIdCombatantMap,
-  )?.criticalDamageBonus ?? 0;
-// The CRIT DMG a hit of the given element adds to Columbina's own strike, as her own hook gives it
-const readOwnCriticalDamage = (context: KitContext, columbina: Combatant, element: Element): number =>
-  COLUMBINA_KIT.getStrikeCriticalDamageBonus?.(
-    { body: kitBody, combatant: columbina, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
-    c6Enemy,
-    context.party,
-    context.kitEffectState.effects,
-  ) ?? 0;
-
-// The seconds of Lunar gravity a Gravity Ripple takes to build, at ten a second
-const GRAVITY_SECONDS_PER_RIPPLE = 6;
-// The Lunacy CRIT Rate her charged attack gains from the stacks the effects hold, for the combatant
-const readLunacyCriticalRate = (combatant: Combatant, effects: readonly KitEffect[]): number =>
-  COLUMBINA_KIT.getStrikeCriticalRateBonus?.(
-    { body: kitBody, combatant, hit: takeOne(COLUMBINA_KIT.chargedAttack.hits) },
-    c6Enemy,
-    createParty([COLUMBINA_CHARACTER_ID]),
-    effects,
-  ) ?? 0;
-// A second in which the team triggers the reaction, which the skill's field reads, and then steps it
-const feedGravitySecond = (
-  field: KitField | undefined,
-  context: KitContext,
-  striker: Combatant,
-  reactionType: ReactionType,
-): void => {
-  if (!field) return;
-  field.onEvent?.(
-    { enemy: c6Enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker },
-    field,
-  );
-  field.onStep?.(context, field, 1);
-};
 // A second with no Lunar reaction on the field, stepped as the world steps it
 const stepGravitySecond = (field: KitField | undefined, context: KitContext): void => {
   if (field) field.onStep?.(context, field, 1);
@@ -138,6 +60,85 @@ const readTeamBuffs = (kitEffectState: KitEffectState) =>
     .map(({ amount, attribute, characterId }) => ({ amount, attribute, characterId }));
 
 describe(createColumbinaKitBehaviour, () => {
+  const OTHER_CHARACTER_ID = 10_000_052;
+  const kitBody = createKitBody({ x: 0, z: 0 });
+  const c6Enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // Columbina and another member at the given constellation, with her burst's window just started
+  const createBurstContext = (constellationCount: number) => {
+    const columbina = { ...createColumbinaCombatant(), constellationCount };
+    const other = { ...createColumbinaCombatant(), characterId: OTHER_CHARACTER_ID };
+    const context = createKitTestContext(columbina, {
+      characterIdCombatantMap: new Map([
+        [COLUMBINA_CHARACTER_ID, columbina],
+        [OTHER_CHARACTER_ID, other],
+      ]),
+      kitEffectState: { effects: [] },
+      party: createParty([COLUMBINA_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+    COLUMBINA_KIT.elementalBurst.onStart?.(context);
+    return { columbina, context, other };
+  };
+  // A Lunar reaction the striker triggers on the enemy, which the kit reads as an event
+  const triggerLunarReaction = (
+    context: KitContext,
+    columbina: Combatant,
+    striker: Combatant,
+    reactionType: ReactionType,
+  ): void =>
+    COLUMBINA_KIT.onKitEvent?.(
+      { enemy: c6Enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker },
+      context,
+      columbina,
+    );
+  // The CRIT DMG a hit of the given element adds to a striker's strike, as Columbina's hook gives it to a party member
+  const readPartyCriticalDamage = (
+    context: KitContext,
+    columbina: Combatant,
+    striker: Combatant,
+    element: Element,
+  ): number =>
+    COLUMBINA_KIT.getPartyStrikeBonus?.(
+      columbina,
+      { body: kitBody, combatant: striker, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
+      c6Enemy,
+      context.party,
+      context.kitEffectState.effects,
+      context.characterIdCombatantMap,
+    )?.criticalDamageBonus ?? 0;
+  // The CRIT DMG a hit of the given element adds to Columbina's own strike, as her own hook gives it
+  const readOwnCriticalDamage = (context: KitContext, columbina: Combatant, element: Element): number =>
+    COLUMBINA_KIT.getStrikeCriticalDamageBonus?.(
+      { body: kitBody, combatant: columbina, hit: { ...takeOne(COLUMBINA_KIT.elementalBurst.hits), element } },
+      c6Enemy,
+      context.party,
+      context.kitEffectState.effects,
+    ) ?? 0;
+
+  // The seconds of Lunar gravity a Gravity Ripple takes to build, at ten a second
+  const GRAVITY_SECONDS_PER_RIPPLE = 6;
+  // The Lunacy CRIT Rate her charged attack gains from the stacks the effects hold, for the combatant
+  const readLunacyCriticalRate = (combatant: Combatant, effects: readonly KitEffect[]): number =>
+    COLUMBINA_KIT.getStrikeCriticalRateBonus?.(
+      { body: kitBody, combatant, hit: takeOne(COLUMBINA_KIT.chargedAttack.hits) },
+      c6Enemy,
+      createParty([COLUMBINA_CHARACTER_ID]),
+      effects,
+    ) ?? 0;
+  // A second in which the team triggers the reaction, which the skill's field reads, and then steps it
+  const feedGravitySecond = (
+    field: KitField | undefined,
+    context: KitContext,
+    striker: Combatant,
+    reactionType: ReactionType,
+  ): void => {
+    if (!field) return;
+    field.onEvent?.(
+      { enemy: c6Enemy, kind: KitEventKind.ReactionTriggered, reactions: [{ reactionType }], striker },
+      field,
+    );
+    field.onStep?.(context, field, 1);
+  };
+
   const combatant = createColumbinaCombatant();
   // The CRIT Rate her charged attack gains after the given Gravity Ripples, each built by six seconds of Lunar-Charged gravity
   const getCriticalRateBonus = (ascension: number, ripples: number): number => {

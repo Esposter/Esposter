@@ -3,11 +3,11 @@ import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardO
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { describe, expect, test } from "vitest";
 
-const EQUIPMENT_ID = 301;
-const STATUS_ID = 302;
-const SUPPORT_ID = 303;
-
 describe(findGcgZoneCardOwner, () => {
+  const EQUIPMENT_ID = 301;
+  const STATUS_ID = 302;
+  const SUPPORT_ID = 303;
+
   test("should find the character an equipment is attached to", () => {
     expect.hasAssertions();
     const equipment = createGcgZoneCard(EQUIPMENT_ID, {});

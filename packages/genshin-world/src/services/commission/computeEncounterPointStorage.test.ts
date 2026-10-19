@@ -23,25 +23,26 @@ const createCommission = (id: number): Commission => ({
   questId: "",
   rewardTier: 0,
 });
-const COMMISSION_IDS = [1, 2, 3, 4];
-const slice: CommissionSlice = {
-  bonuses: [],
-  rewardTiers: [],
-  tasks: COMMISSION_IDS.map((id) => createCommission(id)),
-};
-// The day with its first `finishedCount` commissions finished
-const createDay = (finishedCount: number): CommissionDay => ({
-  claimedCommissionIds: [],
-  dealtAt: Temporal.Instant.fromEpochMilliseconds(0),
-  isBonusClaimed: false,
-  dealtCommissions: COMMISSION_IDS.map((commissionId) => ({
-    commissionId,
-    count: commissionId <= finishedCount ? 1 : 0,
-    dealtRank: 12,
-  })),
-});
 
 describe(computeEncounterPointStorage, () => {
+  const COMMISSION_IDS = [1, 2, 3, 4];
+  const slice: CommissionSlice = {
+    bonuses: [],
+    rewardTiers: [],
+    tasks: COMMISSION_IDS.map((id) => createCommission(id)),
+  };
+  // The day with its first `finishedCount` commissions finished
+  const createDay = (finishedCount: number): CommissionDay => ({
+    claimedCommissionIds: [],
+    dealtAt: Temporal.Instant.fromEpochMilliseconds(0),
+    isBonusClaimed: false,
+    dealtCommissions: COMMISSION_IDS.map((commissionId) => ({
+      commissionId,
+      count: commissionId <= finishedCount ? 1 : 0,
+      dealtRank: 12,
+    })),
+  });
+
   test("the storage shrinks by one Encounter Point for each daily commission finished", () => {
     expect.hasAssertions();
     expect(computeEncounterPointStorage(createDay(0), slice)).toBe(8);

@@ -27,22 +27,12 @@ import { describe, expect, test } from "vitest";
 
 const ALHAITHAM_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ALHAITHAM_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const party = createParty([ALHAITHAM_CHARACTER_ID]);
 
 // The Mirrors a character holds, as the status the kit keeps them in
 const readMirrors = (kitEffectState: KitEffectState): number =>
   kitEffectState.effects.find(
     (effect): effect is KitStatus => effect.kind === "status" && effect.id === "alhaitham-mirrors",
   )?.stacks ?? 0;
-
-// The Mirrors a charged attack's first hit makes, as the striker stands on the body
-const strikeWithChargedAttack = (combatant: Combatant, body: KitBody): number => {
-  const context = createKitTestContext(combatant);
-  const hit = takeOne(ALHAITHAM_KIT.chargedAttack.hits);
-  hit.onStrike?.(context, { body, combatant, hit }, enemy);
-  return readMirrors(context.kitEffectState);
-};
 
 // The first hit of the summon the burst casts, which its strikes are dealt by, as the combatant stands
 const getBurstHit = (combatant: Combatant): KitHit => {
@@ -65,6 +55,17 @@ const tickField = (kitEffectState: KitEffectState, delayFrames: number, combatan
 };
 
 describe(createAlhaithamKitBehaviour, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const party = createParty([ALHAITHAM_CHARACTER_ID]);
+
+  // The Mirrors a charged attack's first hit makes, as the striker stands on the body
+  const strikeWithChargedAttack = (combatant: Combatant, body: KitBody): number => {
+    const context = createKitTestContext(combatant);
+    const hit = takeOne(ALHAITHAM_KIT.chargedAttack.hits);
+    hit.onStrike?.(context, { body, combatant, hit }, enemy);
+    return readMirrors(context.kitEffectState);
+  };
+
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction, combatant = createAlhaithamCombatant()): KitEffectState => {
     const context = createKitTestContext(combatant);

@@ -2,9 +2,9 @@ import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterSta
 import { reviveGcgCharacter } from "#src/services/gcg/effects/reviveGcgCharacter";
 import { describe, expect, test } from "vitest";
 
-const MAX_HP = 10;
-
 describe(reviveGcgCharacter, () => {
+  const MAX_HP = 10;
+
   test("a defeated character comes back with the HP given, up to its maximum, and a standing one is left as it was", () => {
     expect.hasAssertions();
     const lowRevival = createGcgCharacterState({ hp: 0 });

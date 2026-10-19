@@ -17,8 +17,6 @@ import { describe, expect, test } from "vitest";
 
 const EMILIE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, EMILIE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const ATTACK = 2000;
-const KIT_BODY = createKitBody({ x: 0, z: 0 });
 
 // An enemy Burning, as a strike of Emilie's reads it
 const createBurningEnemy = () => {
@@ -27,16 +25,6 @@ const createBurningEnemy = () => {
   return enemy;
 };
 
-// The DMG Bonus a normal attack of hers takes on a Burning enemy at the ascension
-const getBurningStrikeBonus = (ascension: number): number | undefined => {
-  const combatant = createEmilieCombatant(ascension, [{ attribute: Attribute.Attack, value: ATTACK }]);
-  return EMILIE_KIT.getStrikeDamageBonus?.(
-    { body: KIT_BODY, combatant, hit: takeOne(takeOne(EMILIE_KIT.normalAttacks).hits) },
-    createBurningEnemy(),
-    createParty([EMILIE_CHARACTER_ID]),
-    [],
-  );
-};
 // Emilie at the ascension and constellations given, with her total attributes summed from the attribute values given
 const createEmilieCombatant = (
   ascension: number,
@@ -53,6 +41,20 @@ const createEmilieCombatant = (
 });
 
 describe(createEmilieKitBehaviour, () => {
+  const ATTACK = 2000;
+  const KIT_BODY = createKitBody({ x: 0, z: 0 });
+
+  // The DMG Bonus a normal attack of hers takes on a Burning enemy at the ascension
+  const getBurningStrikeBonus = (ascension: number): number | undefined => {
+    const combatant = createEmilieCombatant(ascension, [{ attribute: Attribute.Attack, value: ATTACK }]);
+    return EMILIE_KIT.getStrikeDamageBonus?.(
+      { body: KIT_BODY, combatant, hit: takeOne(takeOne(EMILIE_KIT.normalAttacks).hits) },
+      createBurningEnemy(),
+      createParty([EMILIE_CHARACTER_ID]),
+      [],
+    );
+  };
+
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

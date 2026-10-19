@@ -63,7 +63,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const ABYSS_LECTOR_ID = 2_302;
 
 const createSideState = (characters: GcgCharacterState[], dice: GcgSideState["dice"] = []): GcgSideState => ({
   activeIndex: 0,
@@ -104,15 +103,11 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
   id,
   kind,
 });
-const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
-const ROCK_PAPER_SCISSORS_COMBO = createSkill(24_012, "Char_Skill_24012", GcgSkillKind.ElementalSkill);
-const LIGHTNING_LOCKDOWN = createSkill(24_013, "Char_Skill_24013", GcgSkillKind.ElementalBurst);
-const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
-const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
-const OMINOUS_STAR = createSkill(23_023, "Char_Skill_23023", GcgSkillKind.ElementalBurst);
 
 describe("fiery Rebirth", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+  const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
+
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
     expect.hasAssertions();
 
@@ -181,6 +176,8 @@ describe("electro Crystal Core", () => {
 });
 
 describe("rock-Paper-Scissors Combo", () => {
+  const ROCK_PAPER_SCISSORS_COMBO = createSkill(24_012, "Char_Skill_24012", GcgSkillKind.ElementalSkill);
+
   test("the combo deals 2 Electro and prepares Scissors and Paper, which run at the side's next turn", () => {
     expect.hasAssertions();
 
@@ -248,6 +245,9 @@ describe("rock-Paper-Scissors Combo", () => {
 });
 
 describe("chains of Warding Thunder", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+  const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
+
   test("while it is on the field, the opposing side's first switch of a round spends 1 more die, and a later switch that round does not", () => {
     expect.hasAssertions();
 
@@ -312,6 +312,8 @@ describe("chains of Warding Thunder", () => {
 });
 
 describe("lightning Lockdown", () => {
+  const LIGHTNING_LOCKDOWN = createSkill(24_013, "Char_Skill_24013", GcgSkillKind.ElementalBurst);
+
   test("deals 2 Electro and summons Chains of Warding Thunder for its two usages", () => {
     expect.hasAssertions();
 
@@ -332,6 +334,8 @@ describe("lightning Lockdown", () => {
 });
 
 describe("aegis of Abyssal Flame", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+
   test("the shield takes a hit first, and once its points are depleted, 1 piercing DMG reaches every opposing character", () => {
     expect.hasAssertions();
 
@@ -400,6 +404,7 @@ describe("aegis of Abyssal Flame", () => {
 });
 
 describe("embers Rekindled", () => {
+  const ABYSS_LECTOR_ID = 2_302;
   const EMBERS_TALENT: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -459,6 +464,7 @@ describe("embers Rekindled", () => {
 });
 
 describe("absorbing Prism", () => {
+  const ABYSS_LECTOR_ID = 2_302;
   const ABSORBING_PRISM_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -511,6 +517,8 @@ describe("absorbing Prism", () => {
 });
 
 describe("tengu Stormcall", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+
   test("it deals 1 Electro DMG and summons Tengu Juurai: Ambush for its one use", () => {
     expect.hasAssertions();
 
@@ -574,6 +582,8 @@ describe("tengu Juurai: Stormcluster", () => {
 });
 
 describe("darkfire Furnace", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+
   test("End Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
     expect.hasAssertions();
 
@@ -600,6 +610,9 @@ describe("darkfire Furnace", () => {
 });
 
 describe("ominous Star", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+  const OMINOUS_STAR = createSkill(23_023, "Char_Skill_23023", GcgSkillKind.ElementalBurst);
+
   test("it deals 3 Pyro DMG and summons Darkfire Furnace for its two usages", () => {
     expect.hasAssertions();
 
@@ -620,6 +633,10 @@ describe("ominous Star", () => {
 });
 
 describe("crowfeather Cover", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+  const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+
   test.each([
     ["Elemental Skill", TENGU_STORMCALL, 8],
     ["Elemental Burst", KOUKOU_SENDOU, 7],
@@ -665,6 +682,7 @@ describe("crowfeather Cover", () => {
 });
 
 describe("abyssal Summons", () => {
+  const ABYSS_LECTOR_ID = 2_302;
   const ABYSSAL_SUMMONS_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -700,6 +718,8 @@ describe("abyssal Summons", () => {
 });
 
 describe("hilichurl summons", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+
   test.each([
     ["Cryo Hilichurl Shooter", CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter],
     ["Hilichurl Berserker", HILICHURL_BERSERKER_ID, hilichurlBerserker],
@@ -728,6 +748,8 @@ describe("hilichurl summons", () => {
 });
 
 describe("sin of Pride", () => {
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+  const KOUKOU_SENDOU = createSkill(14_063, "Char_Skill_14063", GcgSkillKind.ElementalBurst);
   const SIN_OF_PRIDE_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -806,6 +828,10 @@ describe("sin of Pride", () => {
 });
 
 describe("shimenawa's Reminiscence", () => {
+  const ABYSS_LECTOR_ID = 2_302;
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
+  const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
+
   test("once per round, a Talent card or Elemental Skill spends one Elemental Die less", () => {
     expect.hasAssertions();
 
@@ -868,6 +894,7 @@ describe("shimenawa's Reminiscence", () => {
 });
 
 describe("chinju Forest", () => {
+  const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
   const createChinjuDuel = (dice: Element[]) => {
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })], dice),
@@ -904,6 +931,7 @@ describe("chinju Forest", () => {
 });
 
 describe("elemental Resonance: High Voltage", () => {
+  const ABYSS_LECTOR_ID = 2_302;
   const HIGH_VOLTAGE_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,

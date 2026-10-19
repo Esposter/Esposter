@@ -10,12 +10,6 @@ import { createElementalState } from "#src/services/combat/aura/createElementalS
 import { stepEnemy } from "#src/services/enemy/stepEnemy";
 import { describe, expect, test } from "vitest";
 
-// Two made-up moves, the boss making the first of them next
-const MOVES: BossMove[] = [
-  { atkPercent: 100, name: "Made-up Sweep", recoverySeconds: 1, windupSeconds: 1 },
-  { atkPercent: 50, name: "Made-up Pulse", recoverySeconds: 2, windupSeconds: 0.5 },
-];
-
 // A boss with every other field made up, in the state the test sets
 const createBoss = (state: EnemyState): Enemy => ({
   attackCooldownSeconds: 3,
@@ -48,6 +42,12 @@ const createBoss = (state: EnemyState): Enemy => ({
 });
 
 describe("startBossMove", () => {
+  // Two made-up moves, the boss making the first of them next
+  const MOVES: BossMove[] = [
+    { atkPercent: 100, name: "Made-up Sweep", recoverySeconds: 1, windupSeconds: 1 },
+    { atkPercent: 50, name: "Made-up Pulse", recoverySeconds: 2, windupSeconds: 0.5 },
+  ];
+
   test("starts the named move as the boss's next, and winds it up on the next step within attack range", () => {
     expect.hasAssertions();
 

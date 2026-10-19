@@ -144,15 +144,15 @@ describe("rainbow Bladework", () => {
   });
 });
 
-const FATAL_RAINSCREEN_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_12022",
-  energyGain: 1,
-  id: 12_022,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
 describe("fatal Rainscreen", () => {
+  const FATAL_RAINSCREEN_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_12022",
+    energyGain: 1,
+    id: 12_022,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("the skill deals 2 Hydro DMG, puts Hydro on its character, and creates a Rain Sword onstage", () => {
     expect.hasAssertions();
     const RAIN_SWORD_ID = 112_021;

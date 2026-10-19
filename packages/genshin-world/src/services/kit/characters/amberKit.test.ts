@@ -36,7 +36,6 @@ const strikeFieryRain = (ascension: number) => {
   return stepKitTestEffects(4, context);
 };
 
-const OTHER_CHARACTER_ID = 10_000_999;
 // One aimed shot of Amber's, its charged attack's hit striking the given number of opponents
 const fireAimedShot = (combatant: Combatant, context: KitContext, opponents: number): void => {
   AMBER_KIT.chargedAttack.onStart?.(context);
@@ -47,6 +46,8 @@ const fireAimedShot = (combatant: Combatant, context: KitContext, opponents: num
 };
 
 describe("amber kit", () => {
+  const OTHER_CHARACTER_ID = 10_000_999;
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

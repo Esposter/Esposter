@@ -51,34 +51,35 @@ const getTickBuffs = (ascension: number): KitEffect[] => {
   return kitEffectState.effects.filter((effect) => effect.kind === "buff");
 };
 
-const IDLE_INPUT: KitInput = {
-  height: 0,
-  isAttackHeld: false,
-  isAttackPressed: false,
-  isBurstPressed: false,
-  isSkillHeld: false,
-  isSkillPressed: false,
-  locomotionState: LocomotionState.Idle,
-};
-
-// Starts a fully charged shot from a held attack whose strike has ended, as the charge holds it, and returns it with its state
-const startChargedShot = (context: KitContext) => {
-  const kitState = createKitState();
-  kitState.attackHeldSeconds = CHARGED_ATTACK_HOLD_SECONDS;
-  const action = startNextKitAction(
-    kitState,
-    GANYU_KIT,
-    IDLE_INPUT,
-    createPartyMember(),
-    createStamina(STAMINA_MAX),
-    true,
-    [],
-    context,
-  );
-  return { action, kitState };
-};
-
 describe(createGanyuKitBehaviour, () => {
+  const IDLE_INPUT: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillHeld: false,
+    isSkillPressed: false,
+    locomotionState: LocomotionState.Idle,
+  };
+
+  // Starts a fully charged shot from a held attack whose strike has ended, as the charge holds it, and returns it
+  // With its state
+  const startChargedShot = (context: KitContext) => {
+    const kitState = createKitState();
+    kitState.attackHeldSeconds = CHARGED_ATTACK_HOLD_SECONDS;
+    const action = startNextKitAction(
+      kitState,
+      GANYU_KIT,
+      IDLE_INPUT,
+      createPartyMember(),
+      createStamina(STAMINA_MAX),
+      true,
+      [],
+      context,
+    );
+    return { action, kitState };
+  };
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

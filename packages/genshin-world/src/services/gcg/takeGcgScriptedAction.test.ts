@@ -19,8 +19,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const EREMITE_ID = 2_303;
-const HYDRO_ID = 2_101;
 
 const createSideState = (characters: GcgCharacterState[], dice: Element[] = []): GcgSideState => ({
   activeIndex: 0,
@@ -56,6 +54,9 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
 });
 
 describe(takeGcgScriptedAction, () => {
+  const EREMITE_ID = 2_303;
+  const HYDRO_ID = 2_101;
+
   test("should use its active character's Technique when no card is in hand and no skill is listed", () => {
     expect.hasAssertions();
 

@@ -8,37 +8,37 @@ import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbo
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { describe, expect, test } from "vitest";
 
-const STRONGBOX_RARITY = 5;
-const PIECE_ITEM_ID = 100_000;
-const PIECE: ReliquaryPieceEntry = {
-  itemId: PIECE_ITEM_ID,
-  nameTextId: "TEST_PIECE",
-  rank: 10,
-  rarity: STRONGBOX_RARITY,
-  setId: 10_030,
-  slot: ArtifactSlot.FlowerOfLife,
-  startingMinorCount: 3,
-};
-const definition = getDroppedItemDefinition(
-  PIECE_ITEM_ID,
-  { TEST_PIECE: "Test Piece" },
-  new Map(),
-  new Map(),
-  new Map([[PIECE_ITEM_ID, PIECE]]),
-);
-const createArtifact = (rarity: number, isLocked: boolean): Artifact => ({
-  experience: 0,
-  isLocked,
-  itemId: PIECE_ITEM_ID,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity,
-  setId: PIECE.setId,
-  slot: ArtifactSlot.FlowerOfLife,
-});
-
 describe(canOfferForStrongbox, () => {
+  const STRONGBOX_RARITY = 5;
+  const PIECE_ITEM_ID = 100_000;
+  const PIECE: ReliquaryPieceEntry = {
+    itemId: PIECE_ITEM_ID,
+    nameTextId: "TEST_PIECE",
+    rank: 10,
+    rarity: STRONGBOX_RARITY,
+    setId: 10_030,
+    slot: ArtifactSlot.FlowerOfLife,
+    startingMinorCount: 3,
+  };
+  const definition = getDroppedItemDefinition(
+    PIECE_ITEM_ID,
+    { TEST_PIECE: "Test Piece" },
+    new Map(),
+    new Map(),
+    new Map([[PIECE_ITEM_ID, PIECE]]),
+  );
+  const createArtifact = (rarity: number, isLocked: boolean): Artifact => ({
+    experience: 0,
+    isLocked,
+    itemId: PIECE_ITEM_ID,
+    level: 0,
+    mainAffix: Attribute.Health,
+    minorAffixes: [],
+    rarity,
+    setId: PIECE.setId,
+    slot: ArtifactSlot.FlowerOfLife,
+  });
+
   test("only an unlocked artifact of the strongbox's star rank can be offered", () => {
     expect.hasAssertions();
 

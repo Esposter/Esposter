@@ -96,48 +96,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
-const KABUKI: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Physic_2",
-  energyGain: 1,
-  id: 11_051,
-  kind: GcgSkillKind.NormalAttack,
-};
-const HYOUKA: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Ice_3",
-  energyGain: 1,
-  id: 11_052,
-  kind: GcgSkillKind.ElementalSkill,
-};
-const SPRING_SPIRIT_SUMMONING: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_11072",
-  energyGain: 1,
-  id: 11_072,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
-const CONQUEROR_OF_EVIL_ID = 215_041;
-const BANE_OF_ALL_EVIL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_15043",
-  energyGain: 2,
-  id: 15_043,
-  kind: GcgSkillKind.ElementalBurst,
-};
-const LEMNISCATIC_WIND_CYCLING: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Wind_3",
-  energyGain: 1,
-  id: 15_042,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
-const PLAIN_SUPPORT_ID = 321_001;
-const LITHIC_SPEAR_ID = 311_402;
-const DRAWN_CARD_ID = 213_011;
-const TALENT_CARD: GcgCard = {
+const createTalentCard = (): GcgCard => ({
   costs: [],
   descriptionTextId: 1,
   effects: [],
@@ -145,11 +104,15 @@ const TALENT_CARD: GcgCard = {
   isLocation: false,
   kind: GcgCardKind.Talent,
   nameTextId: 1,
-};
-const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Event };
+});
 
 // A companion Support Card, with no cost of its own
-const createCompanion = (id: number): GcgCard => ({ ...TALENT_CARD, id, isCompanion: true, kind: GcgCardKind.Support });
+const createCompanion = (id: number): GcgCard => ({
+  ...createTalentCard(),
+  id,
+  isCompanion: true,
+  kind: GcgCardKind.Support,
+});
 
 // A character of the element named
 describe("spring Spirit Summoning", () => {
@@ -180,6 +143,21 @@ describe("spring Spirit Summoning", () => {
 });
 
 describe("icy Quill", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("it deals 1 more Cryo DMG to a Cryo hit, spending a usage", () => {
     expect.hasAssertions();
 
@@ -380,6 +358,14 @@ describe("talisman Spirit", () => {
 });
 
 describe("mystical Abandon", () => {
+  const SPRING_SPIRIT_SUMMONING: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_11072",
+    energyGain: 1,
+    id: 11_072,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("it equips to Shenhe while she is active, and has her use Spring Spirit Summoning at once", () => {
     expect.hasAssertions();
 
@@ -510,6 +496,22 @@ describe("yaksha's Mask's switch clause", () => {
 });
 
 describe("conqueror of Evil: Guardian Yaksha", () => {
+  const CONQUEROR_OF_EVIL_ID = 215_041;
+  const BANE_OF_ALL_EVIL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_15043",
+    energyGain: 2,
+    id: 15_043,
+    kind: GcgSkillKind.ElementalBurst,
+  };
+  const LEMNISCATIC_WIND_CYCLING: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Wind_3",
+    energyGain: 1,
+    id: 15_042,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("it equips to Xiao while she is active, and has her use Bane of All Evil at once", () => {
     expect.hasAssertions();
 
@@ -573,6 +575,8 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
 });
 
 describe("lithic Spear", () => {
+  const LITHIC_SPEAR_ID = 311_402;
+
   test("it deals 1 more DMG to its pole user", () => {
     expect.hasAssertions();
 
@@ -637,6 +641,23 @@ describe("lithic Spear", () => {
 });
 
 describe("vermillion Hereafter", () => {
+  const TALENT_CARD = createTalentCard();
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+  const EVENT_CARD: GcgCard = { ...TALENT_CARD, id: 331_802, kind: GcgCardKind.Event };
+
   test("a Normal Attack spends one die less, once per Round", () => {
     expect.hasAssertions();
 
@@ -697,6 +718,8 @@ describe("vermillion Hereafter", () => {
 });
 
 describe("stone and Contracts", () => {
+  const DRAWN_CARD_ID = 213_011;
+
   test("when the next Action Phase begins, it creates 3 Omni dice and draws a card", () => {
     expect.hasAssertions();
 
@@ -716,6 +739,14 @@ describe("stone and Contracts", () => {
 });
 
 describe("elemental Resonance: Shattering Ice", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+
   test("it can be played only with two Cryo characters on its side", () => {
     expect.hasAssertions();
 
@@ -791,6 +822,9 @@ describe("liu Su", () => {
 });
 
 describe("dunyarzad", () => {
+  const TALENT_CARD = createTalentCard();
+  const PLAIN_SUPPORT_ID = 321_001;
+
   test("a companion played spends one die less, once per Round, and a card that is not a companion spends none less", () => {
     expect.hasAssertions();
 
@@ -873,6 +907,21 @@ describe("dunyarzad", () => {
 });
 
 describe("rana", () => {
+  const KABUKI: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Physic_2",
+    energyGain: 1,
+    id: 11_051,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const HYOUKA: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Ice_3",
+    energyGain: 1,
+    id: 11_052,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("after an Elemental Skill, it creates a die of the next off-field character's element, once per Round", () => {
     expect.hasAssertions();
 

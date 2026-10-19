@@ -2,16 +2,16 @@ import { WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK } from "#src/services/bosses
 import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
 import { describe, expect, test } from "vitest";
 
-// Made-up tiers, each with its own dungeon, in the order a weekly boss's schedule lists them
-const LEVELS = [
-  { dungeonId: 901, recommendedRank: 10 },
-  { dungeonId: 902, recommendedRank: 20 },
-  { dungeonId: 903, recommendedRank: 30 },
-  { dungeonId: 904, recommendedRank: 40 },
-  { dungeonId: 905, recommendedRank: 50 },
-];
-
 describe(computeWeeklyBossQuickChallengeDungeonId, () => {
+  // Made-up tiers, each with its own dungeon, in the order a weekly boss's schedule lists them
+  const LEVELS = [
+    { dungeonId: 901, recommendedRank: 10 },
+    { dungeonId: 902, recommendedRank: 20 },
+    { dungeonId: 903, recommendedRank: 30 },
+    { dungeonId: 904, recommendedRank: 40 },
+    { dungeonId: 905, recommendedRank: 50 },
+  ];
+
   test("a locked weekly boss is challenged from the handbook at Adventure Rank 40", () => {
     expect.hasAssertions();
 
