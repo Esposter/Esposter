@@ -2,6 +2,7 @@ import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/W
 
 import { checkIsWordSubset } from "#src/services/genshinAssets/kits/wiki/checkIsWordSubset";
 import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
+import { readHitNumber } from "#src/services/genshinAssets/kits/wiki/readHitNumber";
 import { toExactTitle } from "#src/services/genshinAssets/kits/wiki/toExactTitle";
 import { toWordSet } from "#src/services/genshinAssets/kits/wiki/toWordSet";
 
@@ -16,6 +17,13 @@ import { toWordSet } from "#src/services/genshinAssets/kits/wiki/toWordSet";
 export const findLabelRows = (label: string, properties: readonly WikiAdvancedProperty[]): WikiAdvancedProperty[] => {
   const exactLabel = toExactTitle(label);
   const labelWords = toWordSet(label);
+  const labelNumber = readHitNumber(label);
+  // The word tiers drop a hit's number to compare its words, so a numbered label keeps only the rows of its own number,
+  // Or of none
+  const numberedRows = properties.filter(({ title }) => {
+    const rowNumber = readHitNumber(title);
+    return labelNumber === undefined || rowNumber === undefined || rowNumber === labelNumber;
+  });
   const checkIsSameWords = (words: ReadonlySet<string>) =>
     words.size === labelWords.size && checkIsWordSubset(words, labelWords);
   const wordTiers: readonly ((title: string) => boolean)[] =
@@ -29,5 +37,5 @@ export const findLabelRows = (label: string, properties: readonly WikiAdvancedPr
             return words.size > 0 && (checkIsWordSubset(words, labelWords) || checkIsWordSubset(labelWords, words));
           },
         ];
-  return findFirstTierRows(properties, [(title) => toExactTitle(title) === exactLabel, ...wordTiers]);
+  return findFirstTierRows(numberedRows, [(title) => toExactTitle(title) === exactLabel, ...wordTiers]);
 };

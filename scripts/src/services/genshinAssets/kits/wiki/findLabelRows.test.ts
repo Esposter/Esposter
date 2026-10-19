@@ -104,4 +104,26 @@ describe(findLabelRows, () => {
 
     expect(findLabelRows("1-Hit DMG", properties)).toStrictEqual([properties[0]]);
   });
+  test("finds only the 2-Hit row for `Lunar Phase Shift 2-Hit DMG`, not the 1-Hit or 4-Hit rows that share its words", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "Lunar Phase Shift 1-Hit" },
+      { row: 2, title: "Lunar Phase Shift 2-Hit" },
+      { row: 3, title: "Lunar Phase Shift 4-Hit" },
+    ];
+
+    expect(findLabelRows("Lunar Phase Shift 2-Hit DMG", properties)).toStrictEqual([properties[1]]);
+  });
+
+  test("finds only its own 1-Hit row for `Spirit Steed's Stride 1-Hit DMG`, not the 2-Hit row that shares its words", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "Spirit Steed's Stride 1-Hit" },
+      { row: 2, title: "Spirit Steed's Stride 2-Hit" },
+    ];
+
+    expect(findLabelRows("Spirit Steed's Stride 1-Hit DMG", properties)).toStrictEqual([properties[0]]);
+  });
 });
