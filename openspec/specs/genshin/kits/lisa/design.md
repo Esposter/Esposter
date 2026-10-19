@@ -1,6 +1,6 @@
 # Lisa
 
-Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on avatar 10000006: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and its hold, released by itself at 4 seconds, and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, and match gcsim's to six decimal places and the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the [shared effects](../README.md).
+Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on avatar 10000006: four strikes, a charged attack, a collision and two plunges, Violet Arc's press and its hold, released by itself at 4 seconds, and Lightning Rose's thirty discharges. Its multipliers are read from proud skill groups 431, 432 and 439, agreeing with gcsim to six decimal places, and with the wiki's Lightning Touch, Violet Arc and Lightning Rose values to two decimal places. Lightning Rose is a summon, built as the [shared effects](../README.md).
 
 ## Decisions
 
@@ -20,7 +20,7 @@ Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on 
 ## Sources
 
 - [Lightning Touch](https://genshin-impact.fandom.com/wiki/Lightning_Touch), [Violet Arc](https://genshin-impact.fandom.com/wiki/Violet_Arc) and [Lightning Rose](https://genshin-impact.fandom.com/wiki/Lightning_Rose), Genshin Impact Wiki: Lisa's strikes', charged attack's and plunges' gauges and poise, Violet Arc's press gauge, poise and cooldown, and Lightning Rose's activation and discharge.
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lisa), MIT: the kit's hitmarks, cancel frames and areas, Lightning Rose's discharges, and the values its talent file gives, which its multipliers match.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lisa), MIT: the kit's hitmarks, cancel frames and areas, Lightning Rose's discharges, and its talent file's values, which its multipliers reproduce.
 - [gcsim v2.47.2 skill file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/skill.go), MIT: the Conductive stack each press applies, up to three.
 - [gcsim v2.47.2 ascension file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/asc.go), MIT: the Conductive stack a charged attack applies from Ascension 1.
 - [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lisa/cons.go), MIT: Constellation 1's Energy and Constellation 6's three Conductive stacks.

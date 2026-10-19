@@ -31,7 +31,7 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 ## Sources
 
 - [Illuga](https://genshin-impact.fandom.com/wiki/Illuga) and [Category:Illuga Talents](https://genshin-impact.fandom.com/wiki/Category:Illuga_Talents), Genshin Impact Wiki: Illuga's multipliers, energy, cooldowns and costs, and the Dawnbearing Songbird text read from the category page.
-- Illuga's clips, `Ani_Avatar_Boy_Pole_Illuga_*`, read with `genshin:assets timings` from the installed game.
+- Illuga's clips, `Ani_Avatar_Boy_Pole_Illuga_*`, read as the [kits README](../README.md#sources) gives.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xiao), MIT at v2.47.2: Xiao's strike hitmarks and areas for Illuga, [Keqing](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/keqing)'s for his Press and [Xiangling](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xiangling)'s for his burst.
 - The built record of Zhongli (10000030), for the Hold's donor above.
 - The installed game's TextMap and avatar talent table, for Illuga's constellations: Elk With Fanged Antlers (talent 1272), Solarhunting Wolf (1274) and Nightmare Orioles (1276), and the Torchforger's Covenant passive (P1272101) it enhances.

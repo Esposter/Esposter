@@ -7,7 +7,7 @@ The [Adventure Rank](../../specs/genshin/adventure-rank/design.md) page holds th
 - **Every source states its own EXP.** Quests, chests, Teleport Waypoints and statues unlocked, Oculi, commissions and the handbook's Experience chapters each give Adventure EXP their own page or table sets, and spending Original Resin gives five for each one spent ([original resin](../../specs/genshin/original-resin/design.md)). Each source's page adds it through `gainAdventureExp`, which takes the completed main quests and returns the Mora a gain past rank 60 pays.
 - **A rank's reward is claimed from Katheryne.** Each rank's reward is its `rewardId` in `PlayerLevelExcelConfigData`, joined to the reward row it names in `RewardExcelConfigData` and published with the level table. Talking to Katheryne at any branch of the Adventurers' Guild gives every reached rank's reward not yet claimed, once, as the game hands it out. Provisional: one talk paying all of them at once is the reading here, since the game's own talk is not read.
 - **What a rank opens is stated by its system.** Each page names the rank its system opens at, from the wiki's table of unlocks, since the game's own open-state table names each system only by a number. The Paimon menu's entry for a system not yet open stays disabled, as it already is for one not built. Of the menu's entries the table names three, Friends at 2, Co-Op Mode at 16 and the Battle Pass at 20 (`ScreenKindOpenRankMap`); the rest are open from the start.
-- **The Change World Level prompt is a plain dialog, its layout provisional.** Its button opens the prompt over the World Level dialog; Confirm makes the change through `toggleWorldLevel` and Cancel returns to the dialog. The prompt's frame and choices are the quit prompt's, measured from its 2026 recording; its levels and tips lines are placed by eye until the user's recording `world-level-dialog-2024.mkv` is measured. Its labels are the game's text ids, read through `GameTextKey`.
+- **The Change World Level prompt is a plain dialog, its layout provisional.** Its button opens the prompt over the World Level dialog; Confirm makes the change through `toggleWorldLevel` and Cancel returns to the dialog. Its layout is as [adventure rank](../../specs/genshin/adventure-rank/design.md) states. Its labels are the game's text ids, read through `GameTextKey`.
 - **A claimed reward is kept with the player's progress.** The ranks' rewards claimed are kept in the save beside the EXP and the quests' progress ([save data](../../specs/genshin/save-data/design.md)), since the world is the person's own.
 - **The claimed ranks are a required save field.** `adventureRankRewardsClaimed` lists the ranks claimed, from rank 2, with no default. A save written before it parses only once the backfill adds it as an empty list, the `backfills` skill's rule.
 - **Bosses and ley line outcrops stand at the World Level.** Their enemies and rewards follow the World Level as the wiki gives them, on the pages that build them.
@@ -39,17 +39,14 @@ Built here: the sources the world reaches (quests, chests, Teleport Waypoints, s
 
 ## Key files
 
-| File                                                                                 | Role after the change                                             |
-| :----------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`                        | Keeps an entry disabled until its system's rank                   |
-| `packages/genshin-world/src/services/handbook/constants.ts`                          | The Experience tab's chapters, once the EXP sources exist         |
-| `packages/genshin-world/src/data/regions/mondstadt.json`                             | Katheryne's place among Mondstadt's residents, for the rewards    |
-| `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`              | Its button opens the Change World Level prompt                    |
-| `packages/genshin-world/src/components/Menu/WorldLevelPrompt/Index.vue`              | The Change World Level prompt, with the labels from `GameTextKey` |
-| `packages/genshin-world/src/services/adventureRank/computeWorldLevelAdjustPrompt.ts` | The levels the prompt shows and whether the change lowers         |
-| `packages/genshin-world/src/services/adventureRank/checkIsSystemOpen.ts`             | Whether a Paimon entry is open at the rank held                   |
-| `packages/genshin-world/src/services/adventureRank/ScreenKindOpenRankMap.ts`         | The rank each Paimon entry the wiki gates opens at                |
-| `packages/genshin-text/src/models/GameTextKey.ts`                                    | The Change World Level prompt's text ids                          |
+| File                                                                    | Role after the change                                             |
+| :---------------------------------------------------------------------- | :---------------------------------------------------------------- |
+| `packages/genshin-world/src/components/Menu/Paimon/Index.vue`           | Keeps an entry disabled until its system's rank                   |
+| `packages/genshin-world/src/services/handbook/constants.ts`             | The Experience tab's chapters, once the EXP sources exist         |
+| `packages/genshin-world/src/data/regions/mondstadt.json`                | Katheryne's place among Mondstadt's residents, for the rewards    |
+| `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue` | Its button opens the Change World Level prompt                    |
+| `packages/genshin-world/src/components/Menu/WorldLevelPrompt/Index.vue` | The Change World Level prompt, with the labels from `GameTextKey` |
+| `packages/genshin-text/src/models/GameTextKey.ts`                       | The Change World Level prompt's text ids                          |
 
 ## Sources
 

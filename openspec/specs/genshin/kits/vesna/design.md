@@ -7,7 +7,7 @@ Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour`, a
 - **Vesna borrows Xingqiu's strikes, Jean's charged attack and skill, and Kazuha's burst, provisional.** Her first four strikes take Xingqiu's first four, her third strike's two hits matching his. Her fifth and sixth take the two hits of his fifth strike, since no sword donor has six strikes. Her charged attack and skill take Jean's, and her burst takes Kazuha's single hit.
 - **Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.** Her plunges' frames are read from her own clips.
 - **Her strikes and charged attack are Physical, and her skill and burst are Anemo.** The Armed for Action form, which makes the strikes Anemo, is not built.
-- **Her frames are her clips' durations at 60 a second.** Her six strikes read `Attack_01` to `Attack_06`, her charged attack ExtraAttack, her skill ElementalArt, her burst `ElementalBurst`, and her plunges FallingAttack_Strike and FallingAttack_Strike_AS.
+- **Her frames are her clips' durations, as the [kits index](../README.md) says.** Her six strikes read `Attack_01` to `Attack_06`, her charged attack ExtraAttack, her skill ElementalArt, her burst `ElementalBurst`, and her plunges FallingAttack_Strike and FallingAttack_Strike_AS.
 
 ## Not built
 

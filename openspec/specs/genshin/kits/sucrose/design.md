@@ -5,7 +5,7 @@ Sucrose's kit is its record and one behaviour module, `createSucroseKitBehaviour
 ## Decisions
 
 - **Sucrose's field runs its absorb check on a schedule of its own, and its tick reads the enemies it is given.** gcsim checks for the absorbed element every 18 frames from 136 until one is taken, while the Anemo tick lands at 137 frames and then every 113. Each is its own field, and the absorb check reads the enemies through the field's tick, which is given them on the world's context (`KitContext.enemyMap`). The absorbed element strikes on each Anemo tick after it is taken, and the aura stays on the enemy, as gcsim leaves it.
-- **Constellation 1's extra charge is a skill charge.** Astable Anemohypostasis Creation's second use before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
+- **Constellation 1's extra charge is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to Astable Anemohypostasis Creation, as the [kits README](../README.md#how-a-kit-is-read) gives.
 - **Constellation 4's count is a status that does not run out.** Alchemania counts each normal or charged attack at the first hit's hitmark, which `NormalAttackLanded` and `ChargedAttackLanded` name, and each seventh cuts Astable's cooldown through `changeKitSkillCooldown` by a random 1 to 7 seconds drawn from the world's seeded source. Two places differ from gcsim: gcsim counts only an attack that strikes an enemy, where the kit counts one whether or not it struck anything, and gcsim draws whole seconds from 1 to 6, where the wiki's range is kept as a fraction of a second.
 
 ## Key files

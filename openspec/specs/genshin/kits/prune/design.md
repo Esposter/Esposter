@@ -14,7 +14,7 @@ gcsim sources: Prune's attack, charge, skill and burst files, with the table dat
 ## Not built
 
 - **The Clang Clang convert waits on the convert hook.** A second press of her skill converts it into Clang Clang! Witch-tribution Comes!, a hit that needs the state the press left behind. The kit holds the press alone.
-- **Her passives wait on their hooks.** Each reads her convert state, her burst's bell or the party's Elemental Resonance, so none is built.
+- **Her passives wait on their hooks.** Each reads her convert state, her burst's bell or the party's Elemental Resonance, and none is built yet.
 
 ## Key files
 

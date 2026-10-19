@@ -56,7 +56,7 @@ A region's data places its enemies in camps, each member with its kind, its leve
 
 The daily reset is the server's 04:00, UTC+8, the one clock every reset of the world is read on, as the [reset clock](../reset-clock/design.md) sets out.
 
-A common or elite member's return is saved in the save as its instant on the server's clock, read through the offset the session holds, so a reload and another device read one moment. A boss camp's return is not saved, since it waits on the claim or the jump, so a reload brings the boss back.
+A common or elite member's return is saved as the [save data](../save-data/design.md) page keeps it, and a boss camp's return is held in memory alone.
 
 The world keeps every spawned enemy in one map by its spawn key, the camp's id and the member's id. A camp's leaving removes its enemies from the map and a spawn's return adds it back, and the character's kit and the enemies' steps read the same map.
 
@@ -106,7 +106,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **The published tables hold a partial dump.** The `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels; `genshin:assets enemies` publishes every kind and curve from the dump when it is run over it.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
 - **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it.
-- **A boss's defeat lasts the page's life.** A boss's return waits on its blossom or the next jump, which the save does not hold, so a reload brings the boss back. Every other defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due.
+- **A boss's defeat lasts the page's life.** A boss's return waits on its blossom or the next jump, as [save data](../save-data/design.md) holds, so a reload brings the boss back. Every other defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due.
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read.
 - **A launch lasts the stagger, and every enemy can be launched.** The game's airtime follows the impulse's vertical force against the enemy's weight, and a hit falls to Heavy when its vertical force is under 5.5 times the enemy's weight, or does nothing for the kinds immune to Air staggers. Neither weight nor that immunity is built, so a launching hit launches every enemy it staggers, for the provisional `ENEMY_STAGGER_SECONDS`, and a hit on an enemy already in the air does not lift it again.
 - **The party's combat leaves after a provisional grace.** The party is in combat while an enemy is in an engaged state on it, and leaves once none has been for `COMBAT_CLEAR_SECONDS`, 5 seconds, provisional until a recording measures it: the wiki gives the clear timers but no figure.

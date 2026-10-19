@@ -23,7 +23,7 @@ Every character on the [character kits](../../specs/genshin/kits/README.md) inde
 3. **Hu Tao's Spirit Soother heal** under half HP, with her Constellations 4 and 6 and Blood Blossom, once a kit's actions can read party HP and an enemy's status at their start.
 4. **The swap watchers onto the kit events.** Klee's Sparks 'n' Splash, Xiao's Bane of All Evil, Ningguang's Star Jades and Razor's Wolf Within each end through a field that ticks on every step to see whether their character still holds the field, built before the [kit events](../../specs/genshin/kits/README.md); each moves onto `CharacterSwapped`. Xingqiu's Raincutter, set going as a normal attack starts, moves onto the same channel once the delay gcsim gives each character's attack before it is read.
 5. **The rolls a hit's strike can now draw.** Klee's Explosive Spark at 50% and her Chained Reactions, and Yelan's Breakthrough Barb at 34% on each Lingering Lifeline hit, each roll from the world's random source as the hit strikes, which `KitContext.random` reaches.
-6. **Nefer's kit and its overlay.** gcsim has no folder for her at v2.47.2, so her record is built from the tables' groups 12231, 12232 and 12239 and the wiki, its frames, hitmarks and areas provisional until a recording measures them.
+6. **Nefer's kit and its overlay.** Nefer has no gcsim folder at v2.47.2, so her record is built from the tables' groups 12231, 12232 and 12239 and the wiki, its frames, hitmarks and areas provisional until a recording measures them.
 
 ## Data and measures
 
