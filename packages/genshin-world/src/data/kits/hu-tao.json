@@ -8,7 +8,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "burstVariant.hits.0.element": { "cause": "Unclassified", "value": "Fire" },
+  "burstVariant.hits.0.element": { "file": "burst.go", "line": 64, "source": "Gcsim", "value": "Fire" },
   "burstVariant.hits.0.hitmarkFrames": { "file": "burst.go", "line": 14, "source": "Gcsim", "value": 66 },
   "burstVariant.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 4639 } },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
@@ -46,8 +46,10 @@
   "stances.paramita.chargedAttack.animationFrames": { "file": "charge.go", "line": 32, "source": "Gcsim", "value": 42 },
   "stances.paramita.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.paramita.chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
+    "file": "charge.go",
+    "line": 99,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 }
   },
   "stances.paramita.chargedAttack.hits.0.hitmarkFrames": {
     "file": "charge.go",
