@@ -21,7 +21,9 @@
   "frames.particularFieldMirrorDelay": { "file": "burst.go", "line": 66, "source": "Gcsim", "value": 184 },
   "hits.projectionAttackOneMirror.length": { "cause": "Unsourced", "value": 1 },
   "hits.projectionAttackOneMirror.0.area": {
-    "cause": "Unsourced",
+    "file": "skill.go",
+    "line": 271,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.6097722286464435 }
   },
   "hits.projectionAttackOneMirror.0.hitmarkFrames": { "file": "skill.go", "line": 29, "source": "Gcsim", "value": 39 },
@@ -245,14 +247,9 @@
   "plunges.low.animationFrames": { "file": "plunge.go", "line": 41, "source": "Gcsim", "value": 70 },
   "plunges.low.hits.0.hitmarkFrames": { "file": "plunge.go", "line": 20, "source": "Gcsim", "value": 46 },
   "skill.hits.length": { "source": "Gcsim" },
-  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 18.25 } },
   "skill.hits.0.element": { "cause": "Unsourced", "value": "Grass" },
   "skill.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7832 } },
-  "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 19.25 }
-  },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 10, "proudSkillGroupId": 7832 } },
   "frames.ascension1IcdDuration": { "file": "asc.go", "line": 28, "source": "Gcsim", "value": 720 },
   "frames.constellation2Duration": { "file": "cons.go", "line": 39, "source": "Gcsim", "value": 480 },
