@@ -7,6 +7,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { getOwnReactionDamageBonus } from "#src/services/artifact/sets/getOwnReactionDamageBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -47,14 +48,14 @@ export const createThunderingFurySetModule = (bonus: ArtifactSetBonus): PassiveM
   const cutCooldownSeconds = takeOne(bonus.params, 1);
   const aggravateDamageBonus = takeOne(bonus.params, 2);
   const lunarChargedDamageBonus = takeOne(bonus.params, 3);
+  const reactionTypeDamageBonusMap = new Map<ReactionType, number>([
+    ...Array.from(TRANSFORMATIVE_REACTION_TYPES, (reactionType) => [reactionType, transformativeDamageBonus] as const),
+    [CatalyzeReactionType.Aggravate, aggravateDamageBonus],
+    [LunarReactionType.LunarCharged, lunarChargedDamageBonus],
+  ]);
   return {
-    getPartyReactionBonus: (member, { combatant, reactionType }) => {
-      if (member.characterId !== combatant.characterId) return {};
-      if (TRANSFORMATIVE_REACTION_TYPES.has(reactionType)) return { damageBonus: transformativeDamageBonus };
-      if (reactionType === CatalyzeReactionType.Aggravate) return { damageBonus: aggravateDamageBonus };
-      if (reactionType === LunarReactionType.LunarCharged) return { damageBonus: lunarChargedDamageBonus };
-      return {};
-    },
+    getPartyReactionBonus: (member, reaction) =>
+      getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap),
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered) return;
       const { characterId } = combatant;

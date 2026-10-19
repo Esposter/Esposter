@@ -2,8 +2,8 @@ import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { getFirstHolderDamageBonus } from "#src/services/artifact/sets/getFirstHolderDamageBonus";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { checkIsStellarGlimmerReaction } from "#src/services/kit/checkIsStellarGlimmerReaction";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -29,7 +29,7 @@ export const createHeartOfTheFurnaceSetModule = (bonus: ArtifactSetBonus): Passi
         ? getFirstHolderDamageBonus(member, HEART_OF_THE_FURNACE_STELLAR_ID, stellarDamageBonus, context)
         : {},
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant)) return;
       if (!event.reactions.some((reaction) => checkIsStellarGlimmerReaction(reaction))) return;
       const { characterId } = combatant;
       buffKitMember(kitEffectState, characterId, {

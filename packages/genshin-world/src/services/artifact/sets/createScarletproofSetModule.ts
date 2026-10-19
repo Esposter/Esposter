@@ -3,7 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -32,7 +32,7 @@ export const createScarletproofSetModule = (bonus: ArtifactSetBonus): PassiveMod
         : {};
     },
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant)) return;
       if (!event.reactions.some(({ reactionType }) => reactionType === StellarReactionType.StellarSwirl)) return;
       const { characterId } = combatant;
       addKitStatus(kitEffectState, characterId, { id: SCARLETPROOF_STELLAR_SWIRL_ID, secondsRemaining: seconds });

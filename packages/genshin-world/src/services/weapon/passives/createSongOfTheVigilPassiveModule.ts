@@ -1,7 +1,7 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { createStellarGlimmerBuffPassiveModule } from "#src/services/weapon/passives/createStellarGlimmerBuffPassiveModule";
@@ -22,7 +22,7 @@ export const createSongOfTheVigilPassiveModule = (params: number[]): PassiveModu
   });
   return {
     onKitEvent: (event, context, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant)) return;
       if (
         startKitCooldown(context.kitEffectState, combatant.characterId, SONG_OF_THE_VIGIL_COOLDOWN_ID, cooldownSeconds)
       )

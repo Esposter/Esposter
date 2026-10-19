@@ -2,7 +2,7 @@ import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { takeOne } from "@esposter/shared";
 
@@ -14,11 +14,7 @@ export const createInstructorSetModule = ({ params }: ArtifactSetBonus): Passive
   const elementalMastery = takeOne(params, 1);
   return {
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
-      if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
-        activeCombatant.characterId !== combatant.characterId
-      )
+      if (!checkIsOwnReactionTriggered(event, combatant) || activeCombatant.characterId !== combatant.characterId)
         return;
       buffKitTeam(kitEffectState, party, {
         amount: elementalMastery,
