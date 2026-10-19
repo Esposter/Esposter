@@ -22,24 +22,29 @@ export const readListHitCalls = (
 ): Map<string, KitCandidate[]> | undefined => {
   const hitmarkCalls = typeof hitmark === "number" ? namedHit.queuedCalls.filter(({ delay }) => delay === hitmark) : [];
   if (hitmarkCalls.length === 1) return hitmarkCalls[0]?.fieldMap;
-  const ownCall = namedHit.queuedCalls[index];
   // The calls land in a known order where each has a delay, ties keeping their source order, or the key makes one call
   const isOrderKnown =
     namedHit.queuedCalls.length === 1 || namedHit.queuedCalls.every(({ delay }) => delay !== undefined);
-  if (namedHit.queuedCalls.length === listLength) {
-    // A call with no delay gives its hit no hitmark, so the hit takes none of its fields unless its hitmark is set
-    if (isOrderKnown && (ownCall?.delay !== undefined || hitmark !== undefined)) return ownCall?.fieldMap;
-    // Where the order is not known, the hit takes the fields every one of the key's calls gives alike
-    const alikeFieldMap = new Map(
-      [...(namedHit.queuedCalls[0]?.fieldMap ?? [])].filter(([field, candidates]) =>
-        namedHit.queuedCalls.every(({ fieldMap }) => {
-          const otherCandidates = fieldMap.get(field);
-          return otherCandidates !== undefined && checkIsKitValueEqual(otherCandidates[0]?.value, candidates[0]?.value);
-        }),
-      ),
-    );
-    if (!isOrderKnown && alikeFieldMap.size > 0) return alikeFieldMap;
-  }
+  if (namedHit.queuedCalls.length === listLength)
+    if (isOrderKnown) {
+      // A call with no delay gives its hit no hitmark, so the hit takes none of its fields unless its hitmark is set
+      const ownCall = namedHit.queuedCalls[index];
+      if (ownCall?.delay !== undefined || hitmark !== undefined) return ownCall?.fieldMap;
+    } else {
+      // Where the order is not known, the hit takes the fields every one of the key's calls gives alike
+      const [firstCall, ...otherCalls] = namedHit.queuedCalls;
+      const alikeFieldMap = new Map(
+        [...(firstCall?.fieldMap ?? [])].filter(([field, candidates]) =>
+          otherCalls.every(({ fieldMap }) => {
+            const otherCandidates = fieldMap.get(field);
+            return (
+              otherCandidates !== undefined && checkIsKitValueEqual(otherCandidates[0]?.value, candidates[0]?.value)
+            );
+          }),
+        ),
+      );
+      if (alikeFieldMap.size > 0) return alikeFieldMap;
+    }
   const takingSites = [...siteCallsMap.values()].filter(
     ({ calls, keys }) => calls.length === listLength && keys.has(key),
   );
