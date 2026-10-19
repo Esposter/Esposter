@@ -8,11 +8,6 @@
   "burst.hits.2.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 20 } },
   "burst.hits.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8739 } },
   "burst.hits.2.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
-  },
-  "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 80 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 10.233 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 8.67 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 13.563 },
