@@ -14,7 +14,7 @@ Not built, and why each is out of reach of the kit now:
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
 - The charged attack's ascension and constellation boxes.
 
-Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas, a radius-23 circle that gcsim's `burst.go` queues as an 8 by 16 box, are each a `DiffersFromSource` entry.
+Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas take gcsim's 8 by 16 box from `burst.go`, priced as a circle to its far corner, a radius of 16.49.
 
 ## Key files
 
