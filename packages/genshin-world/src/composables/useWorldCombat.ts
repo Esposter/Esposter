@@ -28,6 +28,7 @@ import { createCharacter } from "#src/services/character/createCharacter";
 import { getPlayedTalentLevels } from "#src/services/character/getPlayedTalentLevels";
 import { DATA_FETCH_RETRY_MS, WORLD_RANDOM_SEED } from "#src/services/constants";
 import { getEnemyDroppedItems } from "#src/services/enemy/getEnemyDroppedItems";
+import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { computeEnemyStrikeDamage } from "#src/services/kit/computeEnemyStrikeDamage";
 import { createCombatant } from "#src/services/kit/createCombatant";
 import { damageKitTaunt } from "#src/services/kit/effects/damageKitTaunt";
@@ -48,7 +49,7 @@ import { reviveParty } from "#src/services/party/reviveParty";
 import { chargePartyMember } from "#src/services/wildlife/chargePartyMember";
 import { createWildlife } from "#src/services/wildlife/createWildlife";
 import { getCharacterLocomotion } from "#src/services/world/locomotion/getCharacterLocomotion";
-import { getResultAsync, ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { useTimeoutFn } from "@vueuse/core";
 import { createSeededRandom, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { computed, shallowReactive, shallowRef, watch } from "vue";
@@ -255,7 +256,7 @@ export const useWorldCombat = ({
   // The quests in progress count
   const defeatEnemy = (enemy: Enemy, enemyDrops: EnemyDrops) => {
     placeWorldDrops(
-      { id: [enemy.campId, enemy.id].join(ID_SEPARATOR), position: enemy.position },
+      { id: getSpawnKey(enemy.campId, enemy.id), position: enemy.position },
       getEnemyDroppedItems(enemyDrops),
     );
     events.emit("defeatEnemy", enemy);
