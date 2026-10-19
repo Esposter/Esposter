@@ -1,6 +1,5 @@
 {
   "burst.animationFrames": { "cause": "Unsourced", "value": 96 },
-  "burst.hits.length": { "cause": "Unsourced", "value": 4 },
   "burst.hits.0.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000073, "path": "chargedAttack.hits.0.area" }
@@ -88,7 +87,6 @@
     "donor": { "characterId": 10000073, "path": "normalAttacks.3.hits.0.hitmarkFrames" }
   },
   "skill.animationFrames": { "cause": "Unsourced", "value": 36 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 2 },
   "skill.hits.0.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000073, "path": "skill.hits.0.area" }
