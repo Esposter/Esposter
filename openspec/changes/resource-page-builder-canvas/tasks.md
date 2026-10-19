@@ -11,6 +11,7 @@
 ## 3. Pointer
 
 - [ ] 3.1 Drag a palette block into the slot under the pointer, cancelling where none accepts it, and let Escape cancel a drag. Verify: tests named after the scenarios 'Dragging a block into a column inserts it there', 'Dropping a block where no slot accepts it cancels the drop' and 'Escape cancels a drag'.
+- [ ] 3.2 Resolve a drop into a slot holding one child along the slot's own axis, since one child's position cannot show it: a drop right of a lone Column in a row lands after it, not before. Decide in the design whether the axis is declared on the slot's type or read from the slot's laid-out flow, then build it. Verify: a test named 'Dropping right of a lone column in a row lands after it' in apps/web/app/services/pageBuilder/resolveDropTarget.test.ts.
 
 ## 4. Keyboard moves
 
