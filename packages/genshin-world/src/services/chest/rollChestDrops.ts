@@ -11,7 +11,7 @@ import {
   CHEST_LOW_RARITY_ARTIFACT_STARS,
 } from "#src/services/chest/constants";
 import { drawChestCount } from "#src/services/chest/drawChestCount";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 
 // One artifact of the sets a pool names, rolled as the game drops one. Its set is drawn evenly among those the reliquary
 // Tables hold, its slot evenly among the five and its stars evenly among those its set gives, and the artifact is rolled
@@ -22,11 +22,11 @@ const rollArtifactDrop = (
   tables: Pick<ArtifactDropTables, "artifactMainAffixPools" | "artifactRarityDataMap">,
 ): DroppedItem[] => {
   if (artifactSets.length === 0) return [];
-  const set = takeOne(artifactSets, Math.floor(random() * artifactSets.length));
+  const set = takeRandom(artifactSets, random);
   const stars = CHEST_HIGH_RARITY_ARTIFACT_SET_IDS.includes(set.id)
     ? CHEST_HIGH_RARITY_ARTIFACT_STARS
     : CHEST_LOW_RARITY_ARTIFACT_STARS;
-  const rarity = takeOne(stars, Math.floor(random() * stars.length));
+  const rarity = takeRandom(stars, random);
   return [drawSetArtifact(set, rarity, random, tables)];
 };
 
@@ -40,9 +40,7 @@ export const rollChestDrops = (
   const pool = ChestDropPoolMap[kind];
   if (!pool) return [];
   const weapons: DroppedItem[] =
-    pool.weaponItemIds.length === 0
-      ? []
-      : [{ count: 1, itemId: takeOne(pool.weaponItemIds, Math.floor(random() * pool.weaponItemIds.length)) }];
+    pool.weaponItemIds.length === 0 ? [] : [{ count: 1, itemId: takeRandom(pool.weaponItemIds, random) }];
   const artifacts = rollArtifactDrop(
     reliquarySets.filter(({ id }) => pool.artifactSetIds.includes(id)),
     random,

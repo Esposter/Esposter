@@ -4,7 +4,7 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 
 import { ArtifactMinorAffixWeightMap, MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeRandom } from "@esposter/shared";
 
 // The minor affixes after a level an affix is due at: while the artifact holds fewer than four, a new one drawn by the
 // Wiki's weights from those it does not hold yet, valued by one of its tiers; at four, one of them raised by a tier of its
@@ -32,10 +32,7 @@ export const enhanceMinorAffixes = ({
         })),
       random,
     );
-    return [
-      ...minorAffixes,
-      { attribute: group.attribute, value: takeOne(group.values, Math.floor(random() * group.values.length)) },
-    ];
+    return [...minorAffixes, { attribute: group.attribute, value: takeRandom(group.values, random) }];
   }
   const raisedIndex = Math.floor(random() * minorAffixes.length);
   return minorAffixes.map((line, index) => {
@@ -47,6 +44,6 @@ export const enhanceMinorAffixes = ({
         "enhanceMinorAffixes",
         `no tier holds the minor affix ${line.attribute}`,
       );
-    return { ...line, value: line.value + takeOne(group.values, Math.floor(random() * group.values.length)) };
+    return { ...line, value: line.value + takeRandom(group.values, random) };
   });
 };

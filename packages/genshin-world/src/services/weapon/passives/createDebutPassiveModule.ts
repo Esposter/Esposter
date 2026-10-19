@@ -6,7 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 
 const DEBUT_COOLDOWN_ID = "debutCooldown";
 
@@ -32,7 +32,7 @@ export const createDebutPassiveModule = (params: number[]): PassiveModule => {
         !startKitCooldown(context.kitEffectState, combatant.characterId, DEBUT_COOLDOWN_ID, cooldownSeconds)
       )
         return;
-      const theme = themes[Math.floor(context.random() * themes.length)] ?? [];
+      const theme = takeRandom(themes, context.random);
       for (const { amount, attribute } of theme)
         buffKitMember(context.kitEffectState, combatant.characterId, {
           amount,

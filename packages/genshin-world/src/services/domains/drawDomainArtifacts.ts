@@ -5,7 +5,7 @@ import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 
 import { drawSetArtifact } from "#src/services/artifact/drawSetArtifact";
 import { drawChancedCount } from "#src/services/reward/drawChancedCount";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeRandom } from "@esposter/shared";
 
 // The artifacts one claim of a Domain of Blessing's tree draws: each row's count drawn by its guaranteed count and chance,
 // And each artifact of that count rolled as a drop is, from one of the domain's sets drawn evenly, in a slot drawn evenly,
@@ -22,9 +22,8 @@ export const drawDomainArtifacts = (
   if (sets.length === 0 && treeArtifacts.length > 0)
     throw new InvalidOperationError(Operation.Read, drawDomainArtifacts.name, "has no artifact set to draw from");
   return treeArtifacts.flatMap((treeArtifact) =>
-    Array.from({ length: drawChancedCount(treeArtifact, random) }, () => {
-      const set = takeOne(sets, Math.floor(random() * sets.length));
-      return drawSetArtifact(set, treeArtifact.rarity, random, tables);
-    }),
+    Array.from({ length: drawChancedCount(treeArtifact, random) }, () =>
+      drawSetArtifact(takeRandom(sets, random), treeArtifact.rarity, random, tables),
+    ),
   );
 };

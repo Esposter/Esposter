@@ -14,7 +14,7 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 
 // Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/kinich/burst.go
@@ -96,11 +96,7 @@ export const createKinichKitBehaviour = ({
   const createDragonBreathHits = (random: () => number): KitHit[] => {
     let intervalFrames = 0;
     return Array.from({ length: DRAGON_BREATH_COUNT }, (_value, index) => {
-      if (index > 0)
-        intervalFrames += takeOne(
-          dragonBreathIntervalFramesList,
-          Math.floor(random() * dragonBreathIntervalFramesList.length),
-        );
+      if (index > 0) intervalFrames += takeRandom(dragonBreathIntervalFramesList, random);
       const hitmarkSeconds = dragonBreathFields.hitmarkSeconds + toKitSeconds(intervalFrames);
       return { ...dragonBreathFields, hitmarkSeconds };
     });

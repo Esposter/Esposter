@@ -5,7 +5,7 @@ import type { GroundPoint } from "genshin-engine";
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
 import { placeCampRing } from "#src/services/enemy/placeCampRing";
 import { OUTCROP_CAMP_ENEMY_KIND_IDS } from "#src/services/leyLine/constants";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 
 // The camp one wave of a challenge level spawns at its arena: the wave's enemies standing evenly round the centre. Each
 // Enemy is a stand-in kind drawn as an outcrop's camp draws its own, since the wiki's enemy names have no kind in the game
@@ -19,11 +19,7 @@ export const createDomainArenaCamp = (
   random: () => number,
 ): EnemyCamp => {
   const enemyKindIds = wave.flatMap(({ count, enemyKindId }) =>
-    Array.from(
-      { length: count },
-      () =>
-        enemyKindId ?? takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
-    ),
+    Array.from({ length: count }, () => enemyKindId ?? takeRandom(OUTCROP_CAMP_ENEMY_KIND_IDS, random)),
   );
   return {
     areaId,

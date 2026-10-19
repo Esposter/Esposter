@@ -9,7 +9,7 @@ import {
   OUTCROP_CAMP_SIZE,
   OUTCROP_FIGHT_RADIUS,
 } from "#src/services/leyLine/constants";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 
 // The camp a fight spawns at an outcrop's place, provisional: OUTCROP_CAMP_SIZE members, each drawn from the kinds the
 // World places, standing evenly round the place at half its fight radius so each stands within the fight. The camp is
@@ -25,7 +25,7 @@ export const createOutcropCamp = (
     position,
     OUTCROP_FIGHT_RADIUS / 2,
     Array.from({ length: OUTCROP_CAMP_SIZE }, () => ({
-      enemyKindId: takeOne(OUTCROP_CAMP_ENEMY_KIND_IDS, Math.floor(random() * OUTCROP_CAMP_ENEMY_KIND_IDS.length)),
+      enemyKindId: takeRandom(OUTCROP_CAMP_ENEMY_KIND_IDS, random),
       level: OUTCROP_CAMP_LEVEL,
     })),
   ),
