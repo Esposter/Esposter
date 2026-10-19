@@ -66,7 +66,6 @@ const CONSTELLATION_6_COOLDOWN_STATUS_ID = "hu-tao-c6-cooldown";
 const CONSTELLATION_6_SOURCE = "hu-tao-c6";
 
 export const HU_TAO_CHARACTER_ID = 10_000_046;
-
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
 // Seconds, which infuses her attacks with Pyro and adds ATK from her Max HP. The Paramita's charged attack
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
@@ -78,12 +77,10 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
     : [{ amount: SANGUINE_ROUGE_PYRO_DAMAGE_BONUS, attribute: Attribute.PyroDamageBonus }];
-
 // A cast of Spirit Soother starts its count of heals again
 const resetSpiritSootherHeals = ({ activeCombatant, kitEffectState }: KitContext) => {
   spendKitResource(kitEffectState, activeCombatant.characterId, SPIRIT_SOOTHER_HEAL_RESOURCE);
 };
-
 // Constellation 6's CRIT Rate on Hu Tao, for 10 seconds
 const buffConstellation6CriticalRate = (kitEffectState: KitEffectState, characterId: number): void =>
   buffKitMember(kitEffectState, characterId, {
@@ -92,7 +89,6 @@ const buffConstellation6CriticalRate = (kitEffectState: KitEffectState, characte
     secondsRemaining: CONSTELLATION_6_SECONDS,
     source: CONSTELLATION_6_SOURCE,
   });
-
 // Constellation 6's once-a-minute cooldown, which a refused fall and a drain to a quarter of her HP or under both start
 const startConstellation6Cooldown = (kitEffectState: KitEffectState, characterId: number): boolean =>
   startKitCooldown(kitEffectState, characterId, CONSTELLATION_6_COOLDOWN_STATUS_ID, CONSTELLATION_6_COOLDOWN_SECONDS);
