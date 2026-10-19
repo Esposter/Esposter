@@ -9,6 +9,14 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
+const BURST_GROUP_ID = 1;
+const SKILL_GROUP_ID = 2;
+const NORMAL_ATTACK_GROUP_ID = 3;
+const talentGroupIdMap: Record<CombatTalent, number> = {
+  [CombatTalent.ElementalBurst]: BURST_GROUP_ID,
+  [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
+  [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
+};
 const readPage = (title: string, combatTalent: CombatTalent, revisionId: number): WikiTalentPage => ({
   combatTalent,
   properties: parseAdvancedProperties(readFileSync(join(WIKI_FIXTURE_DIRECTORY, `${title}.wikitext`), "utf8")),
@@ -42,8 +50,8 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [varesa],
-      { weaponType: WeaponType.Catalyst },
-      new Map([["skill.hits.0", "Rush DMG"]]),
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      new Map([["skill.hits.0", { label: "Rush DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
     expect(
@@ -67,8 +75,8 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [nahida],
-      { weaponType: WeaponType.Catalyst },
-      new Map([["skillHolds.0.action.hits.0", "Hold DMG"]]),
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      new Map([["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
     expect(
@@ -85,10 +93,10 @@ describe(getWikiKitCandidates, () => {
     const pyronado = readPage("Pyronado", CombatTalent.ElementalBurst, 2066383);
     const candidateMap = getWikiKitCandidates(
       [doughFu, pyronado],
-      { weaponType: WeaponType.Polearm },
+      { talentGroupIdMap, weaponType: WeaponType.Polearm },
       new Map([
-        ["burst.hits.0", "1-Hit Swing DMG"],
-        ["burst.hits.3", "Pyronado DMG"],
+        ["burst.hits.0", { label: "1-Hit Swing DMG", proudSkillGroupId: BURST_GROUP_ID }],
+        ["burst.hits.3", { label: "Pyronado DMG", proudSkillGroupId: BURST_GROUP_ID }],
       ]),
     );
 
@@ -138,8 +146,8 @@ describe(getWikiKitCandidates, () => {
           title: "Vesna",
         },
       ],
-      { weaponType: WeaponType.Claymore },
-      new Map([["skill.hits.0", "Skill DMG"]]),
+      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      new Map([["skill.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
     expect(candidateMap.get("skill.hits.0.internalCooldownTag")?.map(({ value }) => value)).toStrictEqual([
@@ -168,10 +176,13 @@ describe(getWikiKitCandidates, () => {
           title: "Nefer",
         },
       ],
-      { weaponType: WeaponType.Catalyst },
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([
-        ["skillHolds.0.action.hits.0", "Hold DMG"],
-        ["stances.phantasmPerformance.chargedAttack.hits.0", "Phantasm Performance 1-Hit DMG (Nefer)"],
+        ["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        [
+          "stances.phantasmPerformance.chargedAttack.hits.0",
+          { label: "Phantasm Performance 1-Hit DMG (Nefer)", proudSkillGroupId: SKILL_GROUP_ID },
+        ],
       ]),
     );
 
@@ -182,5 +193,32 @@ describe(getWikiKitCandidates, () => {
       candidateMap.get("stances.phantasmPerformance.chargedAttack.hits.0.gauge")?.map(({ value }) => value),
     ).toStrictEqual([1]);
     expect(candidateMap.get("skillHolds.0.action.hits.0.poiseDamage")?.map(({ value }) => value)).toStrictEqual([20]);
+  });
+
+  test("joins a named hit whose multiplier's group is the normal attack's to the normal attack page's row titled as its label", () => {
+    expect.hasAssertions();
+
+    const neuvillette: WikiTalentPage = {
+      combatTalent: CombatTalent.NormalAttack,
+      properties: [{ poise: 25, row: 1, title: "Charged Attack: Equitable Judgment" }],
+      revisionId: 1,
+      title: "Neuvillette",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [neuvillette],
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      new Map([
+        [
+          "hits.judgement.0",
+          { label: "Charged Attack: Equitable Judgment", proudSkillGroupId: NORMAL_ATTACK_GROUP_ID },
+        ],
+      ]),
+    );
+
+    expect(
+      Object.fromEntries(
+        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
+      ),
+    ).toStrictEqual({ "hits.judgement.0.poiseDamage": [25] });
   });
 });

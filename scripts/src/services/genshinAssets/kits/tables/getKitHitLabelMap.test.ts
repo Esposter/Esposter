@@ -67,9 +67,12 @@ describe(getKitHitLabelMap, () => {
 
     expect(hitLabelMap).toStrictEqual(
       new Map([
-        ["skill.hits.0", "Skill DMG"],
-        ["skillHolds.0.action.hits.0", "Hold DMG"],
-        ["stances.lunarPhaseShift.normalAttacks.0.hits.0", "Lunar Phase Shift 1-Hit DMG"],
+        ["skill.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        ["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        [
+          "stances.lunarPhaseShift.normalAttacks.0.hits.0",
+          { label: "Lunar Phase Shift 1-Hit DMG", proudSkillGroupId: SKILL_GROUP_ID },
+        ],
       ]),
     );
   });
@@ -85,7 +88,22 @@ describe(getKitHitLabelMap, () => {
     };
 
     expect(getKitHitLabelMap(new Map(), { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
-      new Map([["skillHolds.0.action.hits.0", "Hold DMG"]]),
+      new Map([["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
+    );
+  });
+
+  test("labels a named hit by the multiplier its overlay gives, where no gcsim candidate gives one", () => {
+    expect.hasAssertions();
+
+    const overlay: KitOverlay = {
+      "hits.judgement.0.multiplier": {
+        source: KitSource.Gcsim,
+        value: { index: 0, proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID },
+      },
+    };
+
+    expect(getKitHitLabelMap(new Map(), { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
+      new Map([["hits.judgement.0", { label: "Press DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
 
@@ -111,7 +129,7 @@ describe(getKitHitLabelMap, () => {
     };
 
     expect(getKitHitLabelMap(candidateMap, { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
-      new Map([["skill.hits.0", "Press DMG"]]),
+      new Map([["skill.hits.0", { label: "Press DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
 });
