@@ -1,9 +1,8 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
-import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { startKitElementalSkillHitCooldown } from "#src/services/kit/effects/startKitElementalSkillHitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -25,10 +24,13 @@ export const createSamuraiConductPassiveModule = (params: number[]): PassiveModu
     getStrikeDamageBonus: (strike) => (strike.attackTag === AttackTag.ElementalSkill ? damageBonus : 0),
     onKitEvent: (event, context, combatant) => {
       if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag !== AttackTag.ElementalSkill ||
-        !startKitCooldown(context.kitEffectState, combatant.characterId, SAMURAI_CONDUCT_COOLDOWN_ID, cooldownSeconds)
+        !startKitElementalSkillHitCooldown(
+          event,
+          context.kitEffectState,
+          combatant,
+          SAMURAI_CONDUCT_COOLDOWN_ID,
+          cooldownSeconds,
+        )
       )
         return;
       const partyMember = getPartyMember(context.party, combatant.characterId);

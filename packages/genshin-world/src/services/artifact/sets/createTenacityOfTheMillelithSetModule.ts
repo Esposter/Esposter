@@ -2,10 +2,8 @@ import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { startKitElementalSkillHitCooldown } from "#src/services/kit/effects/startKitElementalSkillHitCooldown";
 import { takeOne } from "@esposter/shared";
 
 const TENACITY_OF_THE_MILLELITH_COOLDOWN_ID = "tenacityOfTheMillelithCooldown";
@@ -21,12 +19,10 @@ export const createTenacityOfTheMillelithSetModule = (bonus: ArtifactSetBonus): 
   return {
     onKitEvent: (event, context, combatant) => {
       if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        event.attackTag !== AttackTag.ElementalSkill ||
-        !startKitCooldown(
+        !startKitElementalSkillHitCooldown(
+          event,
           context.kitEffectState,
-          combatant.characterId,
+          combatant,
           TENACITY_OF_THE_MILLELITH_COOLDOWN_ID,
           cooldownSeconds,
         )
