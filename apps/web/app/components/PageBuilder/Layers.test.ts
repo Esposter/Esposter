@@ -14,7 +14,7 @@ describe("pageBuilderLayers", () => {
     const resourceId = crypto.randomUUID();
     usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
-    component.get(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
+    component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await expect(press("ArrowDown")).resolves.toBe(TEST_NESTED_TEXT_ID);
     expect(usePageBuilderCanvasStore().getSelectedNodeId(resourceId)).toBe(TEST_NESTED_TEXT_ID);
@@ -28,7 +28,7 @@ describe("pageBuilderLayers", () => {
     const resourceId = crypto.randomUUID();
     usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
-    component.get(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
+    component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await press("t");
 
