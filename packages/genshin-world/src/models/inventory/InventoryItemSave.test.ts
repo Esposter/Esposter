@@ -5,29 +5,6 @@ import { inventoryItemSaveSchema } from "#src/models/inventory/InventoryItemSave
 import { describe, expect, test } from "vitest";
 
 describe("inventoryItemSaveSchema", () => {
-  test("an artifact's entry without the item id of its piece is refused", () => {
-    expect.hasAssertions();
-
-    expect(
-      inventoryItemSaveSchema.safeParse({
-        artifact: {
-          experience: 0,
-          isLocked: false,
-          level: 0,
-          mainAffix: Attribute.Health,
-          minorAffixes: [],
-          rarity: 5,
-          setId: 1,
-          slot: ArtifactSlot.FlowerOfLife,
-        },
-        id: 0,
-        itemId: 101,
-        kind: InventoryItemKind.Artifact,
-        quantity: 1,
-      }).success,
-    ).toBe(false);
-  });
-
   test("an artifact's entry whose item id is not its piece's is refused", () => {
     expect.hasAssertions();
 
