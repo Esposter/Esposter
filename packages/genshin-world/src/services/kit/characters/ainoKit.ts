@@ -70,13 +70,7 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     additiveBaseDamageBonus: (combatant) =>
       combatant.ascension >= ASCENSION_4 ? elementalMasteryMultiplier(combatant, masteryShare) : 0,
   });
-  const waterBallBase: KitHit = {
-    ...waterBallHit,
-    hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds,
-  };
-  // A Water Ball is under the elemental burst's internal cooldown, as gcsim (MIT, main) aino/asc.go gives it
-  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aino/asc.go
-  const waterBall: KitHit = { ...waterBallBase, internalCooldownTag: InternalCooldownTag.ElementalBurst };
+  const waterBall: KitHit = { ...waterBallHit, hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds };
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
   const burstSeconds = readSeconds("burstDuration");
   const burstRadius = readParameter("burstRadius");
@@ -87,14 +81,15 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     hitArea: { ...waterBall.hitArea, radius: burstRadius + ASCENSION_1_WATER_BALL_RADIUS },
     internalCooldownTag: InternalCooldownTag.AinoBurstMoonHit,
   };
+  const { internalCooldownTag: _internalCooldownTag, ...waterBallWithoutCooldown } = waterBall;
   // Constellation 2's ball is the water ball, with the Attack and Elemental Mastery shares of its own in place of the burst's
   // Its ball has no internal cooldown, as gcsim's cons.go gives it
   const constellation2WaterBall: KitHit = {
-    ...waterBallBase,
+    ...waterBallWithoutCooldown,
     additiveBaseDamageBonus: (combatant) =>
-      (waterBallBase.additiveBaseDamageBonus?.(combatant) ?? 0) +
+      (waterBall.additiveBaseDamageBonus?.(combatant) ?? 0) +
       elementalMasteryMultiplier(combatant, CONSTELLATION_2_MASTERY_SHARE),
-    hitArea: { ...waterBallBase.hitArea, radius: CONSTELLATION_2_RADIUS },
+    hitArea: { ...waterBall.hitArea, radius: CONSTELLATION_2_RADIUS },
     talentMultiplier: CONSTELLATION_2_ATTACK_SHARE,
   };
   const skillHits = kit.elementalSkill.hits;
