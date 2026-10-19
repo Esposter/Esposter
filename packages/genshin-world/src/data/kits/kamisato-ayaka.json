@@ -314,9 +314,7 @@
   "hits.smallFrostflake.18.multiplier": { "cause": "Unclassified", "value": 0.22460000000000002 },
   "hits.smallFrostflake.18.poiseDamage": { "cause": "Unsourced", "value": 30 },
   "hits.smallFrostflake.19.area": {
-    "file": "burst.go",
-    "line": 62,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "hits.smallFrostflake.19.element": { "cause": "Unclassified", "value": "Ice" },

@@ -55,21 +55,21 @@
     "file": "attack.go",
     "line": 142,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 }
   },
   "hits.swiftHuntNormalShot.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.swiftHuntNormalShot.1.area": {
     "file": "attack.go",
     "line": 142,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 }
   },
   "hits.swiftHuntNormalShot.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.swiftHuntNormalShot.2.area": {
     "file": "attack.go",
     "line": 142,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.6 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 }
   },
   "hits.swiftHuntNormalShot.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.swiftHuntPiercingShot.length": { "cause": "Unsourced", "value": 3 },

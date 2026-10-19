@@ -1,27 +1,9 @@
 {
   "skill.hits.length": { "cause": "Unsourced", "value": 3 },
-  "skill.hits.0.area": {
-    "file": "skill.go",
-    "line": 74,
-    "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
-  },
   "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 76, "source": "Gcsim", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6232 } },
-  "skill.hits.1.area": {
-    "file": "skill.go",
-    "line": 99,
-    "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
-  },
   "skill.hits.1.hitmarkFrames": { "file": "skill.go", "line": 101, "source": "Gcsim", "value": 31 },
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
-  "skill.hits.2.area": {
-    "file": "skill.go",
-    "line": 99,
-    "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
-  },
   "skill.hits.2.hitmarkFrames": { "file": "skill.go", "line": 101, "source": "Gcsim", "value": 37 },
   "skill.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
   "burst.hits.0.internalCooldownTag": { "source": "Wiki" },
