@@ -247,10 +247,8 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
             class="confirm-button"
             :kind="GameButtonKind.Pill"
             @click="
-              () => {
-                isConfirmingDeleteGift = false;
-                emit('deleteGift', selectedEntry.mail);
-              }
+              isConfirmingDeleteGift = false;
+              emit('deleteGift', selectedEntry.mail);
             "
           >
             {{ gameText[GameTextKey.MailDelete] }}

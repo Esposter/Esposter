@@ -12,7 +12,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const toFrames = (seconds: number) => Math.round(seconds * 60);
 const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
@@ -110,7 +110,9 @@ describe(createSigewinneKitBehaviour, () => {
   test("her burst costs its record's energy on its record's cooldown, and her press cools down on its record's", () => {
     expect.hasAssertions();
 
-    expect(SIGEWINNE_KIT.burstEnergyCost).toBe(toParameter(sigewinneRecord.burstEnergyCost));
+    const { burstEnergyCost } = sigewinneRecord;
+    assert(burstEnergyCost !== undefined);
+    expect(SIGEWINNE_KIT.burstEnergyCost).toBe(toParameter(burstEnergyCost));
     expect(SIGEWINNE_KIT.burstCooldownSeconds).toBe(toParameter(sigewinneRecord.burstCooldownSeconds));
     expect(SIGEWINNE_KIT.skillCooldownSeconds).toBe(toParameter(sigewinneRecord.skillCooldownSeconds));
   });

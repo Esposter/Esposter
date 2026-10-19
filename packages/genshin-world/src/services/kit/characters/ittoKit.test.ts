@@ -230,13 +230,15 @@ describe(createIttoKitBehaviour, () => {
   test("the skill and burst read their cooldowns and the burst its energy cost from the proud skill groups", () => {
     expect.hasAssertions();
 
+    const { burstEnergyCost } = ittoRecord;
+    assert(burstEnergyCost !== undefined);
     expect({
       burstCooldownSeconds: ITTO_KIT.burstCooldownSeconds,
       burstEnergyCost: ITTO_KIT.burstEnergyCost,
       skillCooldownSeconds: ITTO_KIT.skillCooldownSeconds,
     }).toStrictEqual({
       burstCooldownSeconds: toParameter(ittoRecord.burstCooldownSeconds),
-      burstEnergyCost: toParameter(ittoRecord.burstEnergyCost),
+      burstEnergyCost: toParameter(burstEnergyCost),
       skillCooldownSeconds: toParameter(ittoRecord.skillCooldownSeconds),
     });
   });

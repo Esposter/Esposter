@@ -87,7 +87,7 @@ const items: InventoryItem[] = [
 export const props = {
   artifactDropTables,
   gameText: ENGLISH_GAME_TEXT,
-  inventory: { items, nextId: 4 },
+  inventory: { items, nextId: 4, quickSwapItemIds: [] },
   materialDataMap: new Map(),
   names,
   random: createSeededRandom(WORLD_RANDOM_SEED),

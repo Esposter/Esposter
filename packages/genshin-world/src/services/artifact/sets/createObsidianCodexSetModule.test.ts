@@ -105,7 +105,7 @@ describe(createObsidianCodexSetModule, () => {
         wearer,
       );
     const criticalRateBonus = () =>
-      getPassiveBonuses?.(wearer, 1, [{ ...wearer, isOnField: true }], kitEffectState.effects);
+      getPassiveBonuses?.(wearer, 1, [createDeployedCombatant(wearer, { isOnField: true })], kitEffectState.effects);
 
     // The cooldown runs for one second after the first point, so the second, at 0.9 seconds, is refused
     consumeNightsoulPoint();

@@ -15,7 +15,7 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { STAMINA_MAX } from "genshin-engine";
-import { describe, expect, test, vi } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -123,6 +123,7 @@ describe(useWorldCombat, () => {
       wildlifePlaces: [],
     });
     const unbuffedMaxHealth = hudMember.value?.maxHealth;
+    assert(unbuffedMaxHealth !== undefined);
     const BUFF_AMOUNT = 1;
     buffKitMember(kitContext.kitEffectState, TRAVELER_CHARACTER_ID, {
       amount: BUFF_AMOUNT,
