@@ -4,7 +4,7 @@ Wanderer's kit is its record and one behaviour module, `createWandererKitBehavio
 
 ## Decisions
 
-- **Wanderer's high plunge takes Bennett's timing and the wiki's poise.** gcsim gives him a low plunge and its collision but no high plunge, so his high plunge lands at Bennett's 38 frames with his own multiplier and the wiki's 100 poise, as `wandererKit.ts` writes it; his animation showing otherwise would move it.
+- **Wanderer's high plunge takes Bennett's timing and the wiki's poise.** gcsim gives him a low plunge and its collision but no high plunge, so the record lands his high plunge at Bennett's 38 frames, with his own multiplier and the wiki's 100 poise; his animation showing otherwise would move it.
 
 ## Framework pieces built, not yet played
 
