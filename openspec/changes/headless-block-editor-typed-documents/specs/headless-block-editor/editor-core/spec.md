@@ -50,3 +50,27 @@ The editor core SHALL check a document with one schema built from its registry, 
 - **WHEN** an agent reads the JSON Schema of the document
 - **THEN** the recursion is a reference
 - **AND** no part of the schema is marked opaque
+
+### Requirement: Node props are typed from the registry to the renderer
+
+The editor core SHALL type each node type's props as an interface that the type's schema satisfies, and SHALL type a document by its node union, so that a renderer, a props update and a store read a prop with no cast and no re-parse.
+
+#### Scenario: A registry's props satisfy each type's interface
+
+- **GIVEN** a registry whose heading type declares a text prop
+- **WHEN** the registry's schema is built
+- **THEN** the heading type's props satisfy its declared interface
+- **AND** the interface's text prop is typed as a string
+
+#### Scenario: A parsed document carries its node union type
+
+- **GIVEN** a registry whose section type accepts headings in its slot
+- **WHEN** a document holding a section with a heading in that slot is parsed
+- **THEN** the parsed document is typed by the registry's node union
+- **AND** its nodes' props are typed without a loose record
+
+#### Scenario: A renderer reads a typed prop without a cast
+
+- **GIVEN** a document holding a heading with a text prop
+- **WHEN** the heading is rendered
+- **THEN** the text prop is read from the typed node with no cast and no re-parse

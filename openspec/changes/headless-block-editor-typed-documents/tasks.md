@@ -14,3 +14,9 @@
 
 - [x] 3.1 Add the conversion test in headless-block-editor: a slot's JSON Schema lists exactly the types the slot accepts, each type's props appear with their fields, and a recursive slot converts with a `$ref`. Verify: tests named after the scenarios 'An agent reads the types a slot accepts' and 'A recursive slot converts without an opaque part', failing first, then passing.
 - [ ] 3.2 Rewrite the schema sections of `openspec/specs/headless-block-editor/editor-core/design.md` (the "shape first, then the registry" decision, its Key files rows) and `openspec/specs/resource/page-builder/document-model/design.md` (the Schemas section and its Key files rows) as built when this ships. Verify: `pnpm -C scripts exec vitest run src/services/openspec` passes, and `pnpm exec openspec validate headless-block-editor-typed-documents --strict --no-interactive` passes.
+
+## 4. Types run end to end
+
+- [ ] 4.1 Declare each registry type's props as an interface and make its schema satisfy it, through a `satisfies` clause in the type-building helper. Verify: a test named 'A registry's props satisfy each type's interface', failing first, then passing (an `expectTypeOf` check in `createBlockNodeSchema.test.ts`).
+- [ ] 4.2 Make `BlockNode` and `BlockDocument` generic over the registry's node union, so the parsed document is typed by it and the loose `Record<string, unknown>` props retire from the typed path. Verify: a test named 'A parsed document carries its node union type' in `createBlockDocumentSchema.test.ts`, failing first, then passing.
+- [ ] 4.3 Remove the renderer, props-update and store casts and re-parses, reading the typed props instead. Verify: a test named 'A renderer reads a typed prop without a cast' in `renderBlockNodes.test.ts`, failing first, then passing; `pnpm typecheck` and `pnpm lint` in `packages/headless-block-editor`; and a grep for `as ` casts on node props in its `src` finds none outside the untrusted-part reader.
