@@ -36,5 +36,6 @@
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "skill.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.internalCooldownTag": { "file": "skill.go", "line": 32, "source": "Gcsim", "value": "ElementalSkill" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 6632 } }
 }

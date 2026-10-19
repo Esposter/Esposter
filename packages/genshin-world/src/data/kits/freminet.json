@@ -7,5 +7,6 @@
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } },
+  "hits.spiritbreathThorn.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8532 } }
 }

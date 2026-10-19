@@ -3,6 +3,12 @@
   "frames.eyeDelay": { "cause": "Unsourced", "value": 66 },
   "hits.skill.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5232 } },
   "hits.coordinatedAttack.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5232 } },
+  "hits.musouNoHitotachi.internalCooldownTag": {
+    "file": "burst.go",
+    "line": 59,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "hits.musouNoHitotachi.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5239 } },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "parameters.resolveAttackBonus": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5239 } },
@@ -28,7 +34,19 @@
     "source": "Gcsim",
     "value": "ElementalBurst"
   },
+  "stances.musouIsshin.chargedAttack.hits.0.element": {
+    "file": "charge.go",
+    "line": 84,
+    "source": "Gcsim",
+    "value": "Electric"
+  },
   "stances.musouIsshin.chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 24 },
+  "stances.musouIsshin.chargedAttack.hits.0.internalCooldownTag": {
+    "file": "charge.go",
+    "line": 81,
+    "source": "Gcsim",
+    "value": "NormalAttack"
+  },
   "stances.musouIsshin.chargedAttack.hits.0.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 10, "proudSkillGroupId": 5239 }
@@ -37,7 +55,19 @@
     "cause": "BoxAsCircle",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8.744855630597913 }
   },
+  "stances.musouIsshin.chargedAttack.hits.1.element": {
+    "file": "charge.go",
+    "line": 84,
+    "source": "Gcsim",
+    "value": "Electric"
+  },
   "stances.musouIsshin.chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 32 },
+  "stances.musouIsshin.chargedAttack.hits.1.internalCooldownTag": {
+    "file": "charge.go",
+    "line": 81,
+    "source": "Gcsim",
+    "value": "NormalAttack"
+  },
   "stances.musouIsshin.chargedAttack.hits.1.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 11, "proudSkillGroupId": 5239 }

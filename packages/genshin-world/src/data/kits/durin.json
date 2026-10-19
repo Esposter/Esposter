@@ -17,7 +17,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "burstVariant.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
-  "burstVariant.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "burstVariant.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 97 },
   "burstVariant.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12339 } },
   "burstVariant.hits.1.area": {

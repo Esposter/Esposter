@@ -12,7 +12,7 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hitFields.talismanSpiritTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hitFields.talismanSpiritTick.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 6339 } },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "parameters.talismanSpiritSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 6339 } },
   "parameters.talismanSpiritResistanceReduction": {

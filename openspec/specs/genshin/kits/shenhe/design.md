@@ -4,7 +4,7 @@ Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`,
 
 ## Decisions
 
-- **Shenhe's strikes, charged attack and plunges take the wiki's poise, and Spring Spirit Summoning's press and hold deal 0 poise.** The strikes take the wiki's 46.08, 43.44, 56.31, 27.88 and 73.6 per strike, with 27.88 on each of the fourth strike's two hits, and the charged attack the wiki's 120. The plunge collision's 25 is the wiki's too, and the plunges take the wiki's 150 high and 100 low. The zeros are provisional, as gcsim gives none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Shenhe's strikes, charged attack, plunges, skill and DoT ticks take the wiki's poise.** The strikes take the wiki's 46.08, 43.44, 56.31, 27.88 and 73.6 per strike, with 27.88 on each of the fourth strike's two hits, and the charged attack the wiki's 120. The plunge collision's 25 is the wiki's too, and the plunges take the wiki's 150 high and 100 low. Spring Spirit Summoning's press takes the wiki's 100 and its hold 200, and Divine Maiden's Deliverance's DoT ticks 50 each. Her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 - **Spring Spirit Summoning's hold begins at 0.5 seconds.** Provisional: gcsim reads the hold from the input alone, as it does for Eula and Diona.
 - **Divine Maiden's Deliverance's RES Decrease holds between its DoT ticks.** `shenheKit.ts` holds the decrease for one 117-frame tick interval from each tick, where gcsim refreshes it every 18 frames.
 - **Constellation 1's extra use is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to Spring Spirit Summoning, as the [kits README](../README.md#how-a-kit-is-read) gives.
@@ -23,4 +23,5 @@ Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`,
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/shenhe), MIT: the kit's hitmarks, cancel frames and areas, Spring Spirit Summoning's press and hold frames and circles, Divine Maiden's Deliverance's initial hit, its 250 poise, field, DoT ticks and offsets, the Ascension 1 Cryo DMG Bonus and the RES Decrease.
+- [Spring Spirit Summoning](https://genshin-impact.fandom.com/wiki/Spring_Spirit_Summoning) and [Divine Maiden's Deliverance](https://genshin-impact.fandom.com/wiki/Divine_Maiden%27s_Deliverance), Genshin Impact Wiki: the skill's press and hold poise and the DoT ticks' poise, gauge and internal cooldown tag.
 - The Genshin Impact Wiki's Shenhe talents, checked against the dump's proud skill group 6332 for the Icy Quill's ratio (45.7 to 97% of ATK across levels), its 10 and 15 seconds, its 5 and 7 triggers, and the texts of Constellations 4 and 6 from the dump's talent table.

@@ -127,6 +127,12 @@
     "source": "Gcsim",
     "value": "Electric"
   },
+  "stances.pactswornPathclearer.normalAttacks.3.hits.1.gauge": {
+    "file": "attack.go",
+    "line": 141,
+    "source": "Gcsim",
+    "value": 1
+  },
   "stances.pactswornPathclearer.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
   "stances.pactswornPathclearer.normalAttacks.3.hits.1.multiplier": {
     "cause": "Unsourced",
