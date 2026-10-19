@@ -3,17 +3,17 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
+import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
-import { parseJsonPointer } from "@esposter/shared";
+import { getResultAsync, parseJsonPointer } from "@esposter/shared";
 import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 
 // Copy, cut and paste of the selected node in one open resource's webpage. The clipboard carries the node as JSON, and a
@@ -38,28 +38,29 @@ export const usePageBuilderClipboard = (resourceId: MaybeRefOrGetter<string>, an
     return node && { node, title: getNodeTitle(document, parseJsonPointer(nodePointer)) };
   };
   // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that instead
-  const writeToClipboard = async (node: BlockNode) => {
-    try {
-      await window.navigator.clipboard.writeText(
+  const writeToClipboard = (node: BlockNode) =>
+    getResultAsync(() =>
+      window.navigator.clipboard.writeText(
         serializeClipboardNodes({ editor: PageBuilderEditor.Webpage, nodes: [node] }),
-      );
-      return true;
-    } catch (error) {
-      console.error(error);
-      announce("Could not copy block");
-      return false;
-    }
-  };
+      ),
+    ).match(
+      () => true,
+      (error) => {
+        console.error(error);
+        announce("Could not copy block");
+        return false;
+      },
+    );
   // Reads the clipboard text, or none when the clipboard refuses to be read
-  const readFromClipboard = async () => {
-    try {
-      return await window.navigator.clipboard.readText();
-    } catch (error) {
-      console.error(error);
-      announce("Could not paste block");
-      return undefined;
-    }
-  };
+  const readFromClipboard = () =>
+    getResultAsync(() => window.navigator.clipboard.readText()).match(
+      (text) => text,
+      (error) => {
+        console.error(error);
+        announce("Could not paste block");
+        return undefined;
+      },
+    );
   const copySelected = async () => {
     const selection = getSelectedNode();
     if (!selection || !(await writeToClipboard(selection.node))) return;
@@ -88,7 +89,11 @@ export const usePageBuilderClipboard = (resourceId: MaybeRefOrGetter<string>, an
     const document = getDocument(resourceIdValue);
     const [firstNode] = clipboard.nodes;
     const type = Object.values(WebpageNodeType).find((candidate) => candidate === firstNode?.type);
-    if (!document || !type) return;
+    if (!document) return;
+    if (!type) {
+      announce("This block cannot go here");
+      return;
+    }
 
     const nodeId = getSelectedNodeId(resourceIdValue);
     const target = getInsertTarget(document, type, nodeId ? getNodePointer(document, nodeId) : undefined);
