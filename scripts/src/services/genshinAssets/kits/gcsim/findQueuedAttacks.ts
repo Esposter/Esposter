@@ -11,6 +11,7 @@ export const findQueuedAttacks = (attacks: readonly GcsimAttack[], queuedAttack:
   const attack = findQueuedAttack(attacks, queuedAttack);
   if (
     attack?.branch === undefined ||
+    attack.file !== queuedAttack.file ||
     attack.branch.endLine >= queuedAttack.line ||
     queuedAttack.attackLine !== undefined
   )

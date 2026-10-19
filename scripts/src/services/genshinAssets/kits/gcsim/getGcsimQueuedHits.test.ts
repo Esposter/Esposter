@@ -56,4 +56,72 @@ describe(findQueuedAttack, () => {
       "attributes.Anemo",
     ]);
   });
+
+  test("fires no attack from a call of a block's variable bound to a method with no literal, and the outer attack after the block", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package xinyan",
+          "",
+          "func (c *char) burst() {",
+          '\tai := info.AttackInfo{Abil: "Riff Revolution (DoT)", Mult: burstDot[c.TalentLvlBurst()]}',
+          "\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 3), 1, 57)",
+          "\tif c.Base.Cons >= 2 {",
+          "\t\tai := c.getShield()",
+          "\t\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 3), 1, 65)",
+          "\t}",
+          "\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 3), 1, 74)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const constantMap = evaluateGoConstants(sources);
+    const attacks = readGcsimAttacks(sources, constantMap);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+
+    expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.line)).toStrictEqual([
+      4,
+      undefined,
+      4,
+    ]);
+  });
+
+  test("fires the attack a method returns from a call bound to it, in whichever file the method is", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          "package xinyan",
+          "",
+          "func (c *char) burst() {",
+          "\tai := c.getShield()",
+          "\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 3), 1, 65)",
+          "}",
+        ].join("\n"),
+      },
+      {
+        path: "skill.go",
+        source: [
+          "package xinyan",
+          "",
+          "func (c *char) getShield() info.AttackInfo {",
+          '\tai := info.AttackInfo{Abil: "Sweeping Fervor (DoT)", Mult: skillDot[c.TalentLvlSkill()]}',
+          "\treturn ai",
+          "}",
+        ].join("\n"),
+      },
+    ];
+    const constantMap = evaluateGoConstants(sources);
+    const attacks = readGcsimAttacks(sources, constantMap);
+    const queuedAttacks = readGcsimQueuedAttacks(sources, constantMap);
+
+    expect(queuedAttacks.map((queuedAttack) => findQueuedAttack(attacks, queuedAttack)?.talentVariable)).toStrictEqual([
+      "skillDot",
+    ]);
+  });
 });

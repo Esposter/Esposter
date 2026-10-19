@@ -24,6 +24,9 @@ export interface GcsimAttack {
   line: number;
   poiseDamage?: number;
   poiseDamageVariable?: string;
+  // The function the attack is the value of, where its variable is the one the function returns, `return ai`, or the
+  // Literal is returned directly, so a call bound to the function fires it
+  returnedBy?: string;
   // The line of the declaration the attack is made from: its literal's, or a copy's own line, shared by every `Mult` set
   // Under it, so the calls of one declaration can be told from another's
   siteLine: number;
