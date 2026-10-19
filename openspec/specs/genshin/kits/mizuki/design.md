@@ -9,7 +9,7 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 - **Her skill's activation hit is a circle of 5.5 metres round the body at 2 frames, with 30 poise, in an animation of 50 frames.** It is Anemo at one unit of gauge.
 - **Her burst's hit is a circle of 8 metres centred on the primary target at 93 frames, with 100 poise, in an animation of 94 frames.** It is Anemo at two units of gauge, as gcsim's 50 durability gives it.
 - **Her skill's press enters the Dreamdrifter state for five seconds, and a press in it cancels the state.** gcsim gives the state its five-second duration (`skill.go`'s `dreamDrifterBaseDuration`) and cancels it on a second press (`Skill`). The state is the kit's status, so it ends on its timer or the press.
-- **Her plunges are provisional.** Mizuki has no plunge in gcsim, so her collision, low and high plunge are the borrowed ones of the index, except that their poise is the wiki's: 5 for the collision, 100 high and 50 low. The [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks whether a recording of her plunges agrees.
+- **Her plunges are provisional.** Mizuki has no plunge in gcsim, so her collision, low and high plunge take Bennett's timings and reaches, with the wiki's poise: 5 for the collision, 100 high and 50 low. The [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks whether a recording of her plunges agrees.
 
 ## Not built
 

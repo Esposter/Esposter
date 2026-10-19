@@ -8,7 +8,7 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 
 ## Decisions
 
-- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file, so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low, instead of the 150 and 100 Bennett's file gives.
+- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file, so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low.
 - **The burst's hit is priced round the targeting zone.** Her burst is a circle of 6.5 metres on her primary target, which an area holds as the targeting zone's radius plus its own, 21.5 metres, as gcsim's target-centred area.
 - **The skill's hit is a circle of 5 metres round her body**, recorded by hand, as its hitbox has no name in gcsim's press list, so it names no cause for it.
 - **The skill's shield and team buff come on at frame 8, one frame before its hitmark.** gcsim queues both on her task at `skillHitmark-1`, so they land together, and a recast removes the buff it gave at cast, before its own snapshot, as gcsim deletes it there.

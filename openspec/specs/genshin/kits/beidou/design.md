@@ -14,7 +14,7 @@ Beidou's kit is its record and one behaviour module, `createBeidouKitBehaviour`,
 
 ## Provisional constants
 
-- **Beidou's charged attack and plunges are provisional.** gcsim models neither and the wiki gives no frames, so the charged attack's slashes are priced at half a second and a second, and the charge closes at a second and a fifth, draining the table's 40 stamina a second as it plays, and its reaches are gcsim's unimplemented 3.3 and 3.5 metres. Each plunge hits from its action's start to 0.4 seconds later, reaching 1, 3 and 5 metres. Their damage is the table's; the charged attack's poise is 60 and 120, the plunges' is the wiki's 200 and 150, not Bennett's 150 and 100 from gcsim's `bennett/plunge.go`, and the collision's is the wiki's Oceanborne 35.
+- **Beidou's charged attack and plunges are provisional.** gcsim models neither and the wiki gives no frames, so the charged attack's slashes are priced at half a second and a second, and the charge closes at a second and a fifth, draining the table's 40 stamina a second as it plays, and its reaches are gcsim's unimplemented 3.3 and 3.5 metres. Each plunge hits from its action's start to 0.4 seconds later, reaching 1, 3 and 5 metres. Their damage is the table's; the charged attack's poise is 60 and 120, the plunges' is the wiki's 200 and 150, and the collision's is the wiki's Oceanborne 35.
 
 ## Not built
 
