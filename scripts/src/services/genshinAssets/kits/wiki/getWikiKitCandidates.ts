@@ -11,15 +11,12 @@ import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFir
 import { findHitPathRowsMap } from "#src/services/genshinAssets/kits/wiki/findHitPathRowsMap";
 import { findLabelRows } from "#src/services/genshinAssets/kits/wiki/findLabelRows";
 import { getSlotPath } from "#src/services/genshinAssets/kits/wiki/getSlotPath";
-import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
-import { CombatTalent, InternalCooldownTag, WeaponType } from "genshin-world";
-import { z } from "zod";
+import { readWikiRowValue } from "#src/services/genshinAssets/kits/wiki/readWikiRowValue";
+import { CombatTalent, WeaponType } from "genshin-world";
 
 // A slot row's title without its trailing bracketed part, so `Normal Attack 1-Hit (Target Within 2m)` is the first
 // Strike's row
 const TRAILING_BRACKETED_PART_REGEX = /\s*\([^()]*\)$/u;
-const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";
-const internalCooldownTagSchema = z.enum(InternalCooldownTag) satisfies z.ZodType<InternalCooldownTag>;
 
 // Every value the wiki's talent pages give a character's kit, by its path in the record, from each page's Advanced
 // Properties. A slot's row is the one its title matches exactly, and only where the slot has none, a row whose title
@@ -41,7 +38,11 @@ export const getWikiKitCandidates = (
     isElemental: boolean,
   ) => {
     // The first row giving a field, where every row giving it gives the same value
-    const addAgreed = (key: string, givens: readonly { row: WikiAdvancedProperty; value: unknown }[]) => {
+    const addAgreed = (key: string) => {
+      const givens = rows.flatMap((row) => {
+        const given = readWikiRowValue(row, key);
+        return given === undefined ? [] : [{ row, value: given.value }];
+      });
       const [first] = givens;
       if (first === undefined || givens.some(({ value }) => value !== first.value)) return;
       addKitCandidate(candidateMap, `${path}.${key}`, {
@@ -49,25 +50,9 @@ export const getWikiKitCandidates = (
         value: first.value,
       });
     };
-    addAgreed(
-      "poiseDamage",
-      rows.flatMap((row) => (row.poise === undefined ? [] : [{ row, value: row.poise }])),
-    );
-    addAgreed(
-      "internalCooldownTag",
-      rows.flatMap((row): { row: WikiAdvancedProperty; value: unknown }[] => {
-        if (row.internalCooldownTag === undefined) return [];
-        if (row.internalCooldownTag === WIKI_NO_INTERNAL_COOLDOWN_TAG) return [{ row, value: undefined }];
-        const tag = WikiInternalCooldownTagMap[row.internalCooldownTag] ?? row.internalCooldownTag;
-        // A tag the enum does not name is given by no row, as the record would reject it; the row's poise still stands
-        return internalCooldownTagSchema.safeParse(tag).success ? [{ row, value: tag }] : [];
-      }),
-    );
-    if (isElemental)
-      addAgreed(
-        "gauge",
-        rows.flatMap((row) => (row.gauge === undefined ? [] : [{ row, value: row.gauge }])),
-      );
+    addAgreed("poiseDamage");
+    addAgreed("internalCooldownTag");
+    if (isElemental) addAgreed("gauge");
   };
   // The wiki writes a gauge on every row, a physical strike's and collision's as well, so a row's gauge is read only
   // Where the hit is elemental by its slot: a skill's or a burst's, and a catalyst's strikes, plunges and collision

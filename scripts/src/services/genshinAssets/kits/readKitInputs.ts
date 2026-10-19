@@ -23,6 +23,7 @@ import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKi
 import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/getTableKitCandidates";
 import { readKitTablesWithDonors } from "#src/services/genshinAssets/kits/tables/readKitTablesWithDonors";
 import { getWikiKitCandidates } from "#src/services/genshinAssets/kits/wiki/getWikiKitCandidates";
+import { readWikiCitedCandidates } from "#src/services/genshinAssets/kits/wiki/readWikiCitedCandidates";
 import { readWikiTalentPages } from "#src/services/genshinAssets/kits/wiki/readWikiTalentPages";
 import { InvalidOperationError, Operation, toKebabCase } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
@@ -102,7 +103,10 @@ export const readKitInputs = async ({
     const sourceCandidateMap = mergeKitSourceCandidates({
       gcsimCandidateMap,
       tableCandidateMap,
-      wikiCandidateMap: getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
+      wikiCandidateMap: mergeKitCandidates(
+        getWikiKitCandidates(pages, tables, getKitHitLabelMap(gcsimTableCandidateMap, tables, overlay)),
+        readWikiCitedCandidates(overlay, pages),
+      ),
     });
     const stance = gcsimFolder === undefined ? undefined : findGcsimStanceNormalAttack(gcsimFolder);
     if (stance !== undefined) addStanceMultiplierCandidates(sourceCandidateMap, stance);

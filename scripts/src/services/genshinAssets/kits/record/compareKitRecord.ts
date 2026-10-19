@@ -62,10 +62,10 @@ export const compareKitRecord = (
         return;
       }
       const committedEntry: KitOverlayEntry | undefined = committedOverlay[path];
-      // A cited value whose line still gives it keeps its citation as it is
+      // A cited value whose line or wiki row still gives it keeps its citation as it is
       if (
         committedEntry !== undefined &&
-        "file" in committedEntry &&
+        ("file" in committedEntry || "page" in committedEntry) &&
         (candidateMap.get(path) ?? []).some(
           (candidate) =>
             checkIsCitedBy(candidate.provenance, committedEntry) && checkIsKitValueEqual(candidate.value, value),

@@ -9,6 +9,6 @@ export const seedKitOverlay = (committedOverlay: KitOverlay, seededOverlay: KitO
   const coveredPaths = new Set(Object.keys(expandKitOverlay(committedOverlay)));
   const savedOverlay: KitOverlay = { ...committedOverlay };
   for (const [path, entry] of Object.entries(seededOverlay))
-    if (!coveredPaths.has(path)) savedOverlay[path] = { ...entry, index: undefined };
+    if (!coveredPaths.has(path)) savedOverlay[path] = "index" in entry ? { ...entry, index: undefined } : entry;
   return savedOverlay;
 };
