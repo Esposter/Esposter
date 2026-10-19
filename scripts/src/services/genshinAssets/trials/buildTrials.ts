@@ -1,12 +1,4 @@
-import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
-import type { ExcelReliquaryAffixRow } from "#src/models/genshinAssets/stats/ExcelReliquaryAffixRow";
-import type { ExcelReliquaryMainPropRow } from "#src/models/genshinAssets/stats/ExcelReliquaryMainPropRow";
-import type { ExcelTrialAvatarActivityRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarActivityRow";
-import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
-import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarTemplateRow";
-import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
-import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/TrialReliquaryPiece";
-import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
+import type { TrialTables } from "#src/models/genshinAssets/trials/TrialTables";
 
 import { toTrialAvatar } from "#src/services/genshinAssets/trials/toTrialAvatar";
 import { toTrialReliquary } from "#src/services/genshinAssets/trials/toTrialReliquary";
@@ -19,18 +11,6 @@ import { GameDataset } from "genshin-world";
 // Reliquaries by id, the templates by level, the weapon each trial character is fought with by character id, and the items
 // Each stage's first-clear reward pays, keyed by the reward id. A reliquary no set names is left out, since no artifact is
 // Worn from it, and a reliquary the reliquary table lacks is refused
-interface TrialTables {
-  affixRows: ExcelReliquaryAffixRow[];
-  avatarRows: ExcelTrialAvatarRow[];
-  mainPropRows: ExcelReliquaryMainPropRow[];
-  pieceMap: ReadonlyMap<number, TrialReliquaryPiece>;
-  reliquaryRows: ExcelTrialReliquaryRow[];
-  rewardMap: ReadonlyMap<number, ExcelRewardRow>;
-  stageRows: ExcelTrialAvatarActivityRow[];
-  templateRows: ExcelTrialAvatarTemplateRow[];
-  wikiBuilds: readonly WikiTrialBuild[];
-}
-
 export const buildTrials = ({
   affixRows,
   avatarRows,

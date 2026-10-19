@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { AgentEvent } from "agent-console-server/contracts";
+
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { LOCAL_HOST_ADDRESS } from "@/services/agentConsole/constants";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
@@ -333,7 +335,7 @@ describe(useAgentConsoleConnectionStore, () => {
       parentToolUseId: "",
       text: "earlier work",
       type: AgentEventType.UserMessage,
-    };
+    } satisfies AgentEvent;
     const sideAnswer = {
       createdAt: new Date(0),
       id: crypto.randomUUID(),

@@ -1,13 +1,17 @@
 import type { ViewerLink } from "#src/models/ViewerLink";
+import type { Mock } from "vitest";
 
 import { describe, vi } from "vitest";
 
+type FakeViewerLink = { [Method in keyof ViewerLink]: Mock<ViewerLink[Method]> };
+type FakeViewerLinkSink = { drop: () => void; fireTap: () => void; link: FakeViewerLink };
+
 // The viewer's link as a sink drives it: each message recorded by its method, the open state the test sets, and the
 // Taps the test fires at the listeners the sink registered
-export const createFakeViewerLink = (isInitiallyOpen = true) => {
+export const createFakeViewerLink = (isInitiallyOpen = true): FakeViewerLinkSink => {
   const state = { isOpen: isInitiallyOpen };
   const listeners: (() => void)[] = [];
-  const link = {
+  const link: FakeViewerLink = {
     bubble: vi.fn<ViewerLink["bubble"]>(),
     close: vi.fn<ViewerLink["close"]>(() => {
       state.isOpen = false;
@@ -20,12 +24,12 @@ export const createFakeViewerLink = (isInitiallyOpen = true) => {
     }),
     playSound: vi.fn<ViewerLink["playSound"]>(),
     soundStop: vi.fn<ViewerLink["soundStop"]>(),
-  } satisfies Record<keyof ViewerLink, unknown>;
+  };
   return {
-    drop: () => {
+    drop: (): void => {
       state.isOpen = false;
     },
-    fireTap: () => {
+    fireTap: (): void => {
       for (const listener of listeners) listener();
     },
     link,

@@ -150,6 +150,7 @@
     "math-expression-compiler": "workspace:*",
     "minisearch": "catalog:",
     "mjml": "catalog:",
+    "mjml-blocks": "workspace:*",
     "node-html-parser": "catalog:",
     "parse-tmx": "workspace:*",
     "pdfjs-dist": "catalog:",

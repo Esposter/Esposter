@@ -23,24 +23,23 @@ describe("columnTransformationCompileMap", () => {
   test(`${ColumnTransformationType.String} returns null for a null source value`, () => {
     expect.hasAssertions();
     expect(
-      ColumnTransformationCompileMap[ColumnTransformationType.String](
-        {
-          sourceColumnId,
-          stringTransformationType: StringTransformationType.UpperCase,
-          type: ColumnTransformationType.String,
-        },
-        () => createColumn(""),
-      )(createBindContext(null))(createRow({})),
+      ColumnTransformationCompileMap[ColumnTransformationType.String]({
+        sourceColumnId,
+        stringTransformationType: StringTransformationType.UpperCase,
+        type: ColumnTransformationType.String,
+      })(createBindContext(null))(createRow({}), 0),
     ).toBeNull();
   });
 
   test(`${ColumnTransformationType.StringSplit} returns null for a null source value`, () => {
     expect.hasAssertions();
     expect(
-      ColumnTransformationCompileMap[ColumnTransformationType.StringSplit](
-        { delimiter: ",", segmentIndex: 0, sourceColumnId, type: ColumnTransformationType.StringSplit },
-        () => createColumn(""),
-      )(createBindContext(null))(createRow({})),
+      ColumnTransformationCompileMap[ColumnTransformationType.StringSplit]({
+        delimiter: ",",
+        segmentIndex: 0,
+        sourceColumnId,
+        type: ColumnTransformationType.StringSplit,
+      })(createBindContext(null))(createRow({}), 0),
     ).toBeNull();
   });
 

@@ -1237,6 +1237,9 @@ importers:
       mjml:
         specifier: 'catalog:'
         version: 5.4.1(svgo@4.1.0)(terser@5.51.2)
+      mjml-blocks:
+        specifier: workspace:*
+        version: link:../../packages/mjml-blocks
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.4

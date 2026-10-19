@@ -27,7 +27,7 @@ describe("styledDialog", () => {
   const prependConfirm = "<button>a</button>";
   const mountDialog = async (
     props: Partial<InstanceType<typeof StyledDialog>["$props"]>,
-    slots?: Record<string, string>,
+    slots?: Partial<Record<string, string>>,
     modelValue = true,
   ) => {
     const component = mount(StyledDialog, { attachTo: document.body, props: { modelValue, title, ...props }, slots });

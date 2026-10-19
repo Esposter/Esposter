@@ -37,7 +37,7 @@ describe("uiTree", () => {
           "onUpdate:modelValue": (modelValue: string) => component.setProps({ modelValue }),
         },
       });
-      component.get('[data-item-id="a"]').element.focus();
+      component.get<HTMLElement>('[data-item-id="a"]').element.focus();
 
       await expect(press("ArrowDown")).resolves.toBe("b");
       expect(component.props("modelValue")).toBe("b");
@@ -52,7 +52,7 @@ describe("uiTree", () => {
         attachTo: document.body,
         props: { items, label, modelValue: "" },
       });
-      component.get('[data-item-id="a"]').element.focus();
+      component.get<HTMLElement>('[data-item-id="a"]').element.focus();
 
       await expect(press("b")).resolves.toBe("b");
 

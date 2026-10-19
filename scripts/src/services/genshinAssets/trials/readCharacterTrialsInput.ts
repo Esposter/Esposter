@@ -4,7 +4,7 @@ import type { ExcelTrialAvatarActivityRow } from "#src/models/genshinAssets/tria
 import type { ExcelTrialAvatarRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarRow";
 import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/trials/ExcelTrialAvatarTemplateRow";
 import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
-import type { TrialTables } from "#src/services/genshinAssets/trials/buildTrials";
+import type { TrialTables } from "#src/models/genshinAssets/trials/TrialTables";
 
 import {
   RELIQUARY_AFFIX_TABLE_NAME,
