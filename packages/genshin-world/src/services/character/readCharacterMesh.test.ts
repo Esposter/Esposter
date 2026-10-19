@@ -1,9 +1,11 @@
 import type { CharacterPackReader } from "#src/models/character/CharacterPackReader";
 import type { PmxModel } from "genshin-engine";
+import type { BufferGeometry, SkinnedMesh } from "three";
 
 import { CHARACTER_MODEL_PATH, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { getCharacterPmxUnitMetres } from "#src/services/character/getCharacterPmxUnitMetres";
 import { readCharacterMesh } from "#src/services/character/readCharacterMesh";
+import { noop } from "@esposter/shared";
 import {
   createCharacterMaterial,
   createLightUniforms,
@@ -21,8 +23,8 @@ vi.mock(import("genshin-engine"), async (importOriginal) => {
   return {
     ...actual,
     createCharacterMaterial: vi.fn<typeof createCharacterMaterial>(),
-    // oxlint-disable-next-line vitest/require-mock-type-parameters -- a typed mock takes one signature, which the generic export does not accept, so its untyped procedure stands in
-    createPmxMesh: vi.fn(),
+    // A typed mock takes one signature, and the mesh builder is generic over its materials, so the mock's mesh holds none
+    createPmxMesh: vi.fn<(...parameters: Parameters<typeof createPmxMesh>) => SkinnedMesh<BufferGeometry, never[]>>(),
     createPmxTexture: vi.fn<typeof createPmxTexture>(),
     createPmxToonTexture: vi.fn<typeof createPmxToonTexture>(),
     parsePmx: vi.fn<typeof parsePmx>(),
@@ -81,7 +83,9 @@ describe(readCharacterMesh, () => {
     } as PmxModel);
     const result = await readCharacterMesh(characterPackReader, meshOptions);
 
-    expect(result.isOk()).toBe(true);
+    result.match(noop, (error) => {
+      throw error;
+    });
     expect(createPmxMesh).toHaveBeenCalledTimes(1);
     expect(createPmxTexture).toHaveBeenCalledTimes(2);
     expect(createPmxToonTexture).toHaveBeenCalledTimes(1);
