@@ -6,7 +6,7 @@ import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 export interface BlockRegistry<
   TNode extends BlockNode = BlockNode,
   TRootProps extends object = object,
-  TDefinition extends BlockTypeDefinition = BlockTypeDefinition,
+  TDefinition extends BlockTypeDefinition<TNode> = BlockTypeDefinition<TNode>,
 > {
   root: BlockRootDefinition<TRootProps, TNode["type"]>;
   types: TDefinition[];
