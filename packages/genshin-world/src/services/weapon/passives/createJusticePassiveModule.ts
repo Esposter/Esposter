@@ -10,8 +10,8 @@ import { takeOne } from "@esposter/shared";
 const JUSTICE_COOLDOWN_ID = "justiceCooldown";
 
 // Justice at its rank: the normal and charged attacks its wielder deals are raised by the rank's DMG Bonus, and a
-// Critical hit by one of them restores the wielder the rank's share of its ATK as HP, once every cooldown seconds of the
-// Rank. The rank's fourth value is not in the text and is not read
+// Critical hit by one of them restores the wielder the rank's share of its ATK as HP, once every cooldown seconds of
+// The rank. The rank's fourth value is not in the text and is not read
 export const createJusticePassiveModule = (params: number[]): PassiveModule => {
   const damageBonus = takeOne(params, 0);
   const attackShare = takeOne(params, 1);
