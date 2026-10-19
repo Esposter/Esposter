@@ -5,6 +5,7 @@ import type { KitShield } from "#src/models/kit/KitShield";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { absorbKitShield } from "#src/services/kit/effects/absorbKitShield";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
@@ -15,7 +16,6 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 
 describe(absorbKitShield, () => {
   const CHARACTER_ID = TRAVELER_CHARACTER_ID;
-  const OTHER_CHARACTER_ID = 2;
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

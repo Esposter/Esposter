@@ -4,9 +4,9 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { createCharacterSwapped } from "#src/services/kit/createCharacterSwapped.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
-import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";

@@ -11,6 +11,8 @@ import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetB
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { createCharacterSwapped } from "#src/services/kit/createCharacterSwapped.test";
 import {
   createKitTestContext,
   stepKitSeconds,
@@ -20,8 +22,6 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
-import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
