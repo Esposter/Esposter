@@ -1,20 +1,25 @@
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
-
-import { buildBlockNodeSchema } from "#src/services/buildBlockNodeSchema";
 import type { z } from "zod";
 
-// The schema of a node whose type is one of the accepted types, memoized per sorted type list within one build so a recursive slot reuses one schema
+import { buildBlockNodeSchema } from "#src/services/buildBlockNodeSchema";
+
+// A registry is read-only once built, so its schemas are kept per registry across parses, keyed by the sorted accepted types
+const blockNodeSchemaCaches = new WeakMap<object, Map<string, z.ZodType<BlockNode>>>();
+
+// The schema of a node whose type is one of the accepted types, cached per registry and sorted type list so a recursive slot reuses one schema
 export const createBlockNodeSchema = <TNode extends BlockNode, TRootProps extends object>(
   registry: BlockRegistry<TNode, TRootProps>,
   acceptedTypes: string[],
 ): z.ZodType<TNode> => {
-  const schemas = new Map<string, z.ZodType<TNode>>();
+  const schemas = blockNodeSchemaCaches.get(registry) ?? new Map<string, z.ZodType<BlockNode>>();
+  blockNodeSchemaCaches.set(registry, schemas);
   const createNodeSchema = (types: string[]): z.ZodType<TNode> => {
     const sortedTypes = [...new Set(types)].toSorted();
     const key = JSON.stringify(sortedTypes);
     const cachedSchema = schemas.get(key);
-    if (cachedSchema) return cachedSchema;
+    // The cache is keyed by this registry, so its entry is the node schema of this call's own type: the cached union is read back narrowed to TNode
+    if (cachedSchema) return cachedSchema as z.ZodType<TNode>;
 
     const schema = buildBlockNodeSchema(registry, sortedTypes, createNodeSchema);
     schemas.set(key, schema);

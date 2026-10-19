@@ -75,6 +75,15 @@ describe(createBlockNodeSchema, () => {
     expect(schema.safeParse({ props: { id: TEST_LIST_ID, items: [] }, type: "list" }).success).toBe(false);
   });
 
+  test("a later call for the same registry and types reuses the schema", () => {
+    expect.hasAssertions();
+
+    const schema = createBlockNodeSchema(TEST_REGISTRY, ["heading", "list"]);
+
+    expect(createBlockNodeSchema(TEST_REGISTRY, ["heading", "list"])).toBe(schema);
+    expect(createBlockNodeSchema(TEST_REGISTRY, ["list", "heading"])).toBe(schema);
+  });
+
   test("a recursive slot converts without an opaque part", () => {
     expect.hasAssertions();
 
