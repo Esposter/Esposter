@@ -138,7 +138,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [nahida],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map(),
     );
 

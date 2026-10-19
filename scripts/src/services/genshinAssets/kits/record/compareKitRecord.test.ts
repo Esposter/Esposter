@@ -1,45 +1,18 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
-import type { KitActionRecord, KitHitRecord, KitRecord } from "genshin-world";
+import type { KitRecord } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { HIT_RECORD, RECORD, SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
-import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
-import { KitPlunge, KitTargeting } from "genshin-world";
+import { KitPlunge } from "genshin-world";
 import { assert, describe, expect, test } from "vitest";
 
 describe(compareKitRecord, () => {
   const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
-  const HIT_RECORD: KitHitRecord = {
-    area: { angle: 2 * Math.PI, height: 2, radius: 1 },
-    hitmarkFrames: 12,
-    multiplier: { index: 0, proudSkillGroupId: 1 },
-    poiseDamage: 0,
-  };
-  const ACTION_RECORD: KitActionRecord = { animationFrames: 30, hits: [HIT_RECORD], targeting: KitTargeting.Strike };
-  // A record whose every value the build reads back, so the one path it gets wrong is the one mismatch reported
-  const RECORD: KitRecord = {
-    burst: ACTION_RECORD,
-    burstCooldownSeconds: 15,
-    chargedAttack: ACTION_RECORD,
-    chargedAttackStamina: 20,
-    normalAttacks: [ACTION_RECORD],
-    plungeCollision: HIT_RECORD,
-    plunges: { [KitPlunge.High]: ACTION_RECORD, [KitPlunge.Low]: ACTION_RECORD },
-    skill: ACTION_RECORD,
-    skillCooldownSeconds: 6,
-    skillHolds: [],
-  };
   const PLUNGE_HITMARK_PATH = "plunges.low.hits.0.hitmarkFrames";
   const WIKI_HITMARK_FRAMES = 10;
-  // Every value of the record as gcsim gives it, each at a line of its own
-  const SOURCE_CANDIDATE_MAP = new Map(
-    Array.from(flattenKitValues(RECORD), ([path, value], index) => [
-      path,
-      [{ provenance: { file: "kit.go", line: index + 1, source: KitSource.Gcsim } as const, value }],
-    ]),
-  );
 
   test("leaves no entry for a path only the source gives, so the publish adds it rather than removing it", () => {
     expect.hasAssertions();
