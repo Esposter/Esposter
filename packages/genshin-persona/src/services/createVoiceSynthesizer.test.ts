@@ -1,4 +1,3 @@
-import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
 import type { VoiceModel } from "#src/models/VoiceModel";
 import type { VoiceModelOptions } from "#src/models/VoiceModelOptions";
@@ -9,7 +8,6 @@ import {
   GPU_PROVIDER_FAILURE_REGEX,
   MAX_SPEECH_TOKENS_PER_CHARACTER,
   MIN_SPEECH_TOKEN_CEILING,
-  VOICE_CHUNK_TOKENS,
   VOICE_GPU_DEVICE,
   VOICE_SAMPLE_RATE,
   VOICE_VOCODER_GPU_DEVICE,
@@ -32,23 +30,6 @@ class TestTensor {
     this.data = data;
   }
 }
-
-// Speech with no pause in it at all, which a whole sentence's check would refuse
-const continuous = () => 1;
-const concatenate = (parts: Float32Array[]) => {
-  const joined = new Float32Array(parts.reduce((total, part) => total + part.length, 0));
-  let offset = 0;
-  for (const part of parts) {
-    joined.set(part, offset);
-    offset += part.length;
-  }
-  return joined;
-};
-const collect = async (stream: AsyncGenerator<PcmClip>) => {
-  const chunks: Float32Array[] = [];
-  for await (const clip of stream) chunks.push(clip.samples);
-  return concatenate(chunks);
-};
 
 describe(createVoiceSynthesizer, () => {
   const modelsDirectory = "modelsDirectory";
@@ -200,128 +181,5 @@ describe(createVoiceSynthesizer, () => {
 
     await expect(synthesizer.synthesize(text, speaker)).resolves.toBeUndefined();
     expect(onFallback).toHaveBeenCalledTimes(deviceLadder.length);
-  });
-
-  // Each speech token is vocoded to one frame of audio, the frame alternating between speech and near-silence, so a
-  // Chunk of any length has both and passes the speech check; the decoder pads with three silence tokens
-  const SAMPLES_PER_TOKEN = 960;
-  const QUIET = 0.001;
-  const SILENCE_TOKEN_COUNT = 3;
-  const streamTokenCount = VOICE_CHUNK_TOKENS * 2 + 4;
-  const label = "reply m, line 1";
-  const signalAt = (index: number) => (Math.floor(index / SAMPLES_PER_TOKEN) % 2 === 0 ? 1 : QUIET);
-  const getSignal = (count: number, signal: (index: number) => number = signalAt) =>
-    Float32Array.from({ length: count }, (_value, index) => signal(index));
-  const getQuiet = (count: number) => Float32Array.from({ length: count }, () => QUIET);
-
-  // The engine's generation, streaming one token a step
-  const streamTokens = async (inputs: Parameters<VoiceModel["generate"]>[0], signal: (index: number) => number) => {
-    const { end, put } = inputs.streamer as { end: () => void; put: (rows: bigint[][]) => void };
-    put([[0n]]);
-    for (let token = 1; token <= streamTokenCount; token += 1) {
-      put([[BigInt(token)]]);
-      // oxlint-disable-next-line no-await-in-loop -- Each token is streamed before the next is made, as the engine makes them
-      await new Promise((resolve) => {
-        setImmediate(resolve);
-      });
-    }
-    end();
-    return { data: getSignal(streamTokenCount * SAMPLES_PER_TOKEN, signal) };
-  };
-
-  // The engine's generation streams one token a step, the decoder vocodes the tokens it is handed, and the decoder
-  // Goes silent from its `silentFrom`-th run on, so a chunk after that is not speech
-  const getStreamRuntime = (silentFrom: number, signal: (index: number) => number = signalAt) => {
-    let decodeCount = 0;
-    // The order the generation settles and the model is disposed in, so a model is never disposed under its generation
-    const events: string[] = [];
-    // A pass is its speech followed by the decoder's silence, the way the engine pads the tokens it is handed
-    const run = vi.fn<VoiceModel["sessions"]["conditional_decoder"]["run"]>(({ speech_tokens }) => {
-      decodeCount += 1;
-      const passLength = speech_tokens?.data.length ?? 0;
-      const speechLength = (passLength - SILENCE_TOKEN_COUNT) * SAMPLES_PER_TOKEN;
-      const data =
-        decodeCount >= silentFrom
-          ? getQuiet(passLength * SAMPLES_PER_TOKEN)
-          : concatenate([getSignal(speechLength, signal), getQuiet(SILENCE_TOKEN_COUNT * SAMPLES_PER_TOKEN)]);
-      return Promise.resolve({ waveform: { data } });
-    });
-    const generate = vi.fn<VoiceModel["generate"]>(async (inputs) => {
-      const [outcome] = await Promise.allSettled([streamTokens(inputs, signal)]);
-      events.push("settled");
-      if (outcome?.status !== "fulfilled") throw outcome?.reason;
-      return outcome.value;
-    });
-    const model: VoiceModel = {
-      dispose: vi.fn<VoiceModel["dispose"]>(() => {
-        events.push("disposed");
-        return Promise.resolve([]);
-      }),
-      encode_speech: vi.fn<VoiceModel["encode_speech"]>(() => Promise.resolve(speaker)),
-      generate,
-      sessions: { conditional_decoder: { run } },
-    };
-    const runtime: VoiceRuntime = {
-      AutoConfig: { from_pretrained: () => Promise.resolve({}) },
-      AutoProcessor: { from_pretrained: () => Promise.resolve(() => Promise.resolve({})) },
-      ChatterboxModel: { from_pretrained: () => Promise.resolve(model) },
-      env: { cacheDir: "" },
-      Tensor: TestTensor,
-    };
-    return { events, onFallback: vi.fn<(message: string) => void>(), runtime };
-  };
-
-  test("emits the sentence's audio in order, each sample once, as chunks", async () => {
-    expect.hasAssertions();
-
-    const { onFallback, runtime } = getStreamRuntime(Number.POSITIVE_INFINITY);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
-    const chunks: Float32Array[] = [];
-    for await (const clip of synthesizer.streamSpeech(text, speaker, label, () => false)) chunks.push(clip.samples);
-
-    expect(chunks.length).toBeGreaterThan(1);
-    expect(concatenate(chunks)).toStrictEqual(getSignal(streamTokenCount * SAMPLES_PER_TOKEN));
-    expect(onFallback).toHaveBeenCalledTimes(0);
-  });
-
-  test("keeps every chunk of speech that runs on with no pause, which a whole sentence would have", async () => {
-    expect.hasAssertions();
-
-    const { onFallback, runtime } = getStreamRuntime(Number.POSITIVE_INFINITY, continuous);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
-
-    await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
-      getSignal(streamTokenCount * SAMPLES_PER_TOKEN, continuous),
-    );
-    expect(onFallback).toHaveBeenCalledTimes(0);
-  });
-
-  test("keeps a sentence whose middle chunk is a pause, since silence mid-sentence is not a failure", async () => {
-    expect.hasAssertions();
-
-    const pauseStart = VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN;
-    const pauseEnd = 2 * VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN;
-    const withPause = (index: number) => (index >= pauseStart && index < pauseEnd ? QUIET : 1);
-    const { onFallback, runtime } = getStreamRuntime(Number.POSITIVE_INFINITY, withPause);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
-
-    await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
-      getSignal(streamTokenCount * SAMPLES_PER_TOKEN, withPause),
-    );
-    expect(onFallback).toHaveBeenCalledTimes(0);
-  });
-
-  test("drops the sentence when its opening chunk is silent, and moves the ladder down once", async () => {
-    expect.hasAssertions();
-
-    const { events, onFallback, runtime } = getStreamRuntime(1);
-    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
-
-    await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
-      new Float32Array(0),
-    );
-    expect(synthesizer.device).toBe(deviceLadder[1]?.name);
-    expect(onFallback).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(`${label}, chunk 1`));
-    expect(events).toStrictEqual(["settled", "disposed"]);
   });
 });

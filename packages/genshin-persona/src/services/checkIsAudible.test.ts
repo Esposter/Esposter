@@ -18,7 +18,7 @@ describe(checkIsAudible, () => {
       expected: true,
       name: "a burst with a pause after it",
     },
-    // A chunk of speech runs on with no pause deep enough for a sentence's check, and is still audible
+    // Speech that runs on with no pause deep enough for a sentence's check is still audible
     { energiesDb: getEnergiesDb(() => 1), expected: true, name: "a full-scale constant with no pause" },
     { energiesDb: getEnergiesDb(() => 0.001), expected: false, name: "a constant near-silence" },
   ])("$name", ({ energiesDb, expected }) => {
