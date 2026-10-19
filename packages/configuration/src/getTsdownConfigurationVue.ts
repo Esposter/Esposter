@@ -1,7 +1,7 @@
 import type { UserConfig } from "tsdown";
 import type { Options } from "unplugin-vue/api";
 
-import { VUE_AUTO_IMPORTS } from "#src/constants";
+import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/constants";
 import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
 import { readPackageManifest } from "#src/readPackageManifest";
 import { vueStyleSrcPlugin } from "#src/vueStyleSrcPlugin";
@@ -25,6 +25,9 @@ import Vue from "unplugin-vue/rolldown";
 export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig =>
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
     ...(readPackageManifest().private ? {} : { dts: { eager: true, tsconfig: "tsconfig.build.json", vue: true } }),
+    // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
+    // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
+    deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
     plugins: [
       // @TODO: https://github.com/unplugin/unplugin-vue/issues/201
       vueStyleSrcPlugin,
