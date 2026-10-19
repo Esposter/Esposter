@@ -3,22 +3,10 @@ import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
-
-const createArtifact = (rarity: number, level: number, slot: ArtifactSlot): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity,
-  setId: 1,
-  slot,
-});
 
 const createEntry = (id: number, artifact: Artifact): InventoryItem => ({
   artifact,
@@ -33,10 +21,10 @@ describe(getBagArtifactsForSlot, () => {
 
     const inventory: Inventory = {
       items: [
-        createEntry(0, createArtifact(4, 8, ArtifactSlot.FlowerOfLife)),
-        createEntry(1, createArtifact(5, 0, ArtifactSlot.FlowerOfLife)),
-        createEntry(2, createArtifact(4, 12, ArtifactSlot.FlowerOfLife)),
-        createEntry(3, createArtifact(5, 4, ArtifactSlot.PlumeOfDeath)),
+        createEntry(0, createArtifact({ level: 8, rarity: 4, slot: ArtifactSlot.FlowerOfLife })),
+        createEntry(1, createArtifact({ level: 0, rarity: 5, slot: ArtifactSlot.FlowerOfLife })),
+        createEntry(2, createArtifact({ level: 12, rarity: 4, slot: ArtifactSlot.FlowerOfLife })),
+        createEntry(3, createArtifact({ level: 4, rarity: 5, slot: ArtifactSlot.PlumeOfDeath })),
         {
           definition: {
             category: ItemCategory.Material,
@@ -60,7 +48,7 @@ describe(getBagArtifactsForSlot, () => {
     expect.hasAssertions();
 
     const inventory: Inventory = {
-      items: [createEntry(0, createArtifact(5, 0, ArtifactSlot.PlumeOfDeath))],
+      items: [createEntry(0, createArtifact({ level: 0, rarity: 5, slot: ArtifactSlot.PlumeOfDeath }))],
       nextId: 1,
       quickSwapItemIds: [],
     };

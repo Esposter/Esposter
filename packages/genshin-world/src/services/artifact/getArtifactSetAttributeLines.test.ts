@@ -1,21 +1,9 @@
 import type { ArtifactSetData } from "#src/models/artifact/ArtifactSetData";
 
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getArtifactSetAttributeLines } from "#src/services/artifact/getArtifactSetAttributeLines";
 import { describe, expect, test } from "vitest";
-
-const createArtifact = (setId: number) => ({
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level: 0,
-  mainAffix: Attribute.Health,
-  minorAffixes: [],
-  rarity: 5,
-  setId,
-  slot: ArtifactSlot.FlowerOfLife,
-});
 
 describe(getArtifactSetAttributeLines, () => {
   const artifactSetDataMap = new Map<number, ArtifactSetData>([
@@ -60,7 +48,13 @@ describe(getArtifactSetAttributeLines, () => {
 
     expect(
       getArtifactSetAttributeLines(
-        [createArtifact(1), createArtifact(1), createArtifact(1), createArtifact(1), createArtifact(2)],
+        [
+          createArtifact({ setId: 1 }),
+          createArtifact({ setId: 1 }),
+          createArtifact({ setId: 1 }),
+          createArtifact({ setId: 1 }),
+          createArtifact({ setId: 2 }),
+        ],
         artifactSetDataMap,
       ),
     ).toStrictEqual([

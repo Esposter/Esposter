@@ -7,7 +7,6 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -21,6 +20,7 @@ import {
   INSTRUCTOR_ARTIFACT_SET_ID,
   NOBLESSE_OBLIGE_ARTIFACT_SET_ID,
 } from "#src/services/artifact/constants";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getArtifactSetKit } from "#src/services/artifact/getArtifactSetKit";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -67,17 +67,7 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const createSetArtifacts = (setId: number, count: number): Artifact[] =>
-  Array.from({ length: count }, () => ({
-    experience: 0,
-    isLocked: false,
-    itemId: 101,
-    level: 0,
-    mainAffix: Attribute.Health,
-    minorAffixes: [],
-    rarity: 4,
-    setId,
-    slot: ArtifactSlot.FlowerOfLife,
-  }));
+  Array.from({ length: count }, () => createArtifact({ rarity: 4, setId }));
 
 const createSetCombatant = (characterId: number, kit: Kit): Combatant => ({
   ascension: 0,
