@@ -14,7 +14,7 @@ export const createViewerOpener = ({ connect, createPlayer, readConfiguration }:
   let player: ViewerPlayer | undefined;
   let connected: Pick<ViewerConfiguration, "address" | "modelId"> | undefined;
   return {
-    dispose: () => {
+    dispose: (): void => {
       player?.dispose();
       player = undefined;
     },
