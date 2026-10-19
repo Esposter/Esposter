@@ -231,4 +231,69 @@ describe(getWikiKitCandidates, () => {
 
     expect(readCandidateValues(candidateMap)).toStrictEqual({ "skill.hits.0.poiseDamage": [2] });
   });
+
+  test("gives a strike the poise its two bracketed rows agree on", () => {
+    expect.hasAssertions();
+
+    const zhongli: WikiTalentPage = {
+      combatTalent: CombatTalent.NormalAttack,
+      properties: [
+        { poise: 33.76, row: 1, title: "Normal Attack 1-Hit (Target Within 2m)" },
+        { poise: 33.76, row: 2, title: "Normal Attack 1-Hit (Target Not Within 2m)" },
+      ],
+      revisionId: 1,
+      title: "Zhongli",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [zhongli],
+      { talentGroupIdMap, weaponType: WeaponType.Polearm },
+      new Map(),
+    );
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "normalAttacks.0.hits.0.poiseDamage": [33.76] });
+  });
+
+  test("gives a named hit the poise its two found rows agree on, citing the first row", () => {
+    expect.hasAssertions();
+
+    const chongyun: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [
+        { poise: 30, row: 1, title: "Slash DMG (First Hit)" },
+        { poise: 30, row: 2, title: "Slash DMG (Subsequent Hits)" },
+      ],
+      revisionId: 1,
+      title: "Chongyun",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [chongyun],
+      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      new Map([["hits.slash.0", { label: "Slash DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
+    );
+
+    expect(candidateMap.get("hits.slash.0.poiseDamage")).toStrictEqual([
+      { provenance: { page: "Chongyun", revisionId: 1, row: 1, source: KitSource.Wiki }, value: 30 },
+    ]);
+  });
+
+  test("gives a named hit no poise where its two found rows disagree on it", () => {
+    expect.hasAssertions();
+
+    const nahida: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalSkill,
+      properties: [
+        { poise: 20, row: 1, title: "Hold DMG" },
+        { poise: 100, row: 2, title: "Hold DMG" },
+      ],
+      revisionId: 1,
+      title: "Nahida",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [nahida],
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      new Map([["hits.hold.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
+    );
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({});
+  });
 });
