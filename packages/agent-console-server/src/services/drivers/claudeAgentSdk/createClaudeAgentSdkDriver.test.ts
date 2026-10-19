@@ -20,18 +20,19 @@ vi.mock(import("#src/services/drivers/claudeAgentSdk/watchSession"), () => ({
   watchSession: vi.fn<typeof watchSession>(),
 }));
 
+const createDriver = () => {
+  const callbacks: DriverCallbacks = {
+    onEvents: vi.fn<DriverCallbacks["onEvents"]>(),
+    onSessionOpen: vi.fn<DriverCallbacks["onSessionOpen"]>(),
+    onSessionsChange: vi.fn<DriverCallbacks["onSessionsChange"]>(),
+  };
+  return createClaudeAgentSdkDriver(callbacks);
+};
+
 describe(createClaudeAgentSdkDriver, () => {
   const cwd = "/repo";
   const sessionId = crypto.randomUUID();
   const setPermissionMode = vi.fn<Query["setPermissionMode"]>();
-  const createDriver = () => {
-    const callbacks: DriverCallbacks = {
-      onEvents: vi.fn<DriverCallbacks["onEvents"]>(),
-      onSessionOpen: vi.fn<DriverCallbacks["onSessionOpen"]>(),
-      onSessionsChange: vi.fn<DriverCallbacks["onSessionsChange"]>(),
-    };
-    return createClaudeAgentSdkDriver(callbacks);
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();

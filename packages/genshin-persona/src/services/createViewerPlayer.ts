@@ -25,8 +25,8 @@ export interface ViewerPlayer {
 }
 
 export const createViewerPlayer = (link: ViewerLink, modelId: number): ViewerPlayer => {
-  let shown: { caption: ViewerCaption; path?: string } | undefined;
-  let cancelWait = () => {};
+  let shown: undefined | { caption: ViewerCaption; path?: string };
+  let cancelWait: (() => void) | undefined;
   const showCaption = ({ caption, path }: { caption: ViewerCaption; path?: string }) => {
     link.bubble(modelId, caption.text, caption.durationMs + VIEWER_BUBBLE_BEAT_MS, caption.color, VIEWER_TEXT_COLOR);
     if (path) link.playSound(modelId, path);
@@ -51,7 +51,7 @@ export const createViewerPlayer = (link: ViewerLink, modelId: number): ViewerPla
 
   return {
     dispose: () => {
-      cancelWait();
+      cancelWait?.();
       if (shown?.path) rmSync(shown.path, { force: true });
       shown = undefined;
       link.close();
@@ -71,7 +71,7 @@ export const createViewerPlayer = (link: ViewerLink, modelId: number): ViewerPla
       await holdFor(caption.durationMs);
     },
     stop: () => {
-      cancelWait();
+      cancelWait?.();
       link.soundStop(modelId);
       const color = shown?.caption.color ?? VIEWER_DEFAULT_FRAME_COLOR;
       link.bubble(modelId, "", VIEWER_CLEAR_DURATION_MS, color, VIEWER_TEXT_COLOR);

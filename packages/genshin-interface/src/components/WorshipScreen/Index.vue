@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { WorshipLevelState } from "#src/models/WorshipLevelState";
 import { computed } from "vue";
 
 interface Props {
+  // The title of the Statue's Blessing the screen switches to
+  blessingTitle: string;
   // The Oculi the region holds toward its next level, which an offer reaches the levels they complete with
   heldCount: number;
   // The region's levels, each with the Oculi it takes, the rewards it pays and its state on the Worship Statue
@@ -9,10 +12,8 @@ interface Props {
     level: number;
     oculusCount: number;
     rewards: { count: number; name: string }[];
-    state: "claimable" | "claimed" | "locked";
+    state: WorshipLevelState;
   }[];
-  // The title of the Statue's Blessing the screen switches to
-  blessingTitle: string;
   // The title the game shows at the top left
   title: string;
 }
@@ -20,7 +21,7 @@ interface Props {
 const { blessingTitle, heldCount, levels, title } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 // The one level a claim takes is the lowest reached and not yet claimed, since each claim takes the next level in turn
-const nextClaimableLevel = computed(() => levels.find(({ state }) => state === "claimable")?.level);
+const nextClaimableLevel = computed(() => levels.find(({ state }) => state === WorshipLevelState.Claimable)?.level);
 </script>
 
 <template>
@@ -58,4 +59,5 @@ const nextClaimableLevel = computed(() => levels.find(({ state }) => state === "
   opacity: 0.5;
 }
 </style>
+
 <style scoped src="../../styles/blessingWorship.css"></style>

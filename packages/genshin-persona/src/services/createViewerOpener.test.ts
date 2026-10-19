@@ -15,12 +15,12 @@ describe(createViewerOpener, () => {
   test("a machine with no viewer is unchanged", async () => {
     expect.hasAssertions();
 
-    const connect = vi.fn<(address: string) => Promise<ViewerLink | undefined>>();
-    const createPlayer = vi.fn();
+    const connect = vi.fn<(address: string) => Promise<undefined | ViewerLink>>();
+    const createPlayer = vi.fn<(link: ViewerLink, modelId: number) => ViewerPlayer>();
     const opener = createViewerOpener({
       connect,
       createPlayer,
-      readConfiguration: (): ViewerConfiguration | undefined => undefined,
+      readConfiguration: (): undefined | ViewerConfiguration => undefined,
     });
 
     await expect(opener.open()).resolves.toBeUndefined();
@@ -32,7 +32,7 @@ describe(createViewerOpener, () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
-    const connect = vi.fn<(address: string) => Promise<ViewerLink | undefined>>().mockResolvedValue(link);
+    const connect = vi.fn<(address: string) => Promise<undefined | ViewerLink>>().mockResolvedValue(link);
     const createPlayer = vi.fn<(link: ViewerLink, modelId: number) => ViewerPlayer>(createViewerPlayer);
     const configuration: ViewerConfiguration = { address: ADDRESS, modelId: MODEL_ID, motions: {} };
     const opener = createViewerOpener({ connect, createPlayer, readConfiguration: () => configuration });
@@ -49,7 +49,7 @@ describe(createViewerOpener, () => {
     const first = createFakeViewerLink();
     const second = createFakeViewerLink();
     const connect = vi
-      .fn<(address: string) => Promise<ViewerLink | undefined>>()
+      .fn<(address: string) => Promise<undefined | ViewerLink>>()
       .mockResolvedValueOnce(first.link)
       .mockResolvedValueOnce(second.link);
     const createPlayer = vi.fn<(link: ViewerLink, modelId: number) => ViewerPlayer>(createViewerPlayer);

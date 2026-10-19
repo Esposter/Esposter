@@ -4,6 +4,7 @@ import type { Attachment } from "#src/models/command/Attachment";
 import type { Driver } from "#src/models/driver/Driver";
 import type { DriverCallbacks } from "#src/models/driver/DriverCallbacks";
 import type { AgentEvent } from "#src/models/event/AgentEvent";
+import type { Except } from "type-fest";
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SessionState } from "#src/models/session/SessionState";
@@ -48,7 +49,7 @@ export const createClaudeAgentSdkDriver = ({ onEvents, onSessionOpen, onSessions
 
   const openSessionQuery = createSessionOpener({ emit, onSessionOpen, onSessionsChange, openSessionMap, taskRegistry });
   // The terminal's own sessions, as opposed to a side chat's fork
-  const openMainSession = (options: Omit<OpenSessionOptions, "isFork" | "isSideChat">) =>
+  const openMainSession = (options: Except<OpenSessionOptions, "isFork" | "isSideChat">) =>
     openSessionQuery({ ...options, isFork: false, isSideChat: false });
 
   const closeSession = (sessionId: string) => {
