@@ -121,6 +121,15 @@ describe(createDilucKitBehaviour, () => {
       expect(multipliers[index]).toBeCloseTo(expectedMultiplier, 2);
   });
 
+  test("his plunge collision is physical, with no element and no gauge", () => {
+    expect.hasAssertions();
+
+    expect({ element: DILUC_KIT.plungeCollision.element, gauge: DILUC_KIT.plungeCollision.gauge }).toStrictEqual({
+      element: undefined,
+      gauge: undefined,
+    });
+  });
+
   test("the Ascension 4 passive, Blessing of Phoenix, takes effect at its ascension phase", () => {
     expect.hasAssertions();
     const kitEffectState: KitEffectState = { effects: [] };
