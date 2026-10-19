@@ -8,7 +8,7 @@ import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { InvalidOperationError, JsonPatchOperationType, Operation } from "@esposter/shared";
+import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
 import { describe, expect, test, vi } from "vitest";
 
@@ -41,7 +41,9 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
@@ -62,7 +64,9 @@ describe(usePageBuilderHistoryStore, () => {
         updateBlockNodeProps("/content/0", { label: `${step}` }),
         TEST_LABEL_LABEL,
         interactionId,
-      )._unsafeUnwrap();
+      ).match(noop, (error) => {
+        throw error;
+      });
     const undoLabelBeforeUndo = getUndoLabel(resourceId);
     undo(resourceId);
 
@@ -80,8 +84,12 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
-    applyEdit(resourceId, insertAtFirstIndex("d"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
+    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
+      throw error;
+    });
+    applyEdit(resourceId, insertAtFirstIndex("d"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual({
@@ -104,11 +112,21 @@ describe(usePageBuilderHistoryStore, () => {
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
     for (let edit = 0; edit < editCount; edit += 1)
-      applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: `${edit}` }), TEST_LABEL_LABEL)._unsafeUnwrap();
+      applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: `${edit}` }), TEST_LABEL_LABEL).match(
+        noop,
+        (error) => {
+          throw error;
+        },
+      );
     for (let attempt = 0; attempt < editCount; attempt += 1) undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(
-      applyBlockEdit(TEST_DOCUMENT, updateBlockNodeProps("/content/0", { label: "0" }))._unsafeUnwrap().document,
+      applyBlockEdit(TEST_DOCUMENT, updateBlockNodeProps("/content/0", { label: "0" })).match(
+        ({ document }) => document,
+        (error) => {
+          throw error;
+        },
+      ),
     );
     expect(getUndoLabel(resourceId)).toBe("");
   });
@@ -121,7 +139,9 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, redo, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
+      throw error;
+    });
     const movedDocument = getDocument(resourceId);
     undo(resourceId);
     redo(resourceId);
@@ -137,10 +157,14 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, getRedoLabel, redo, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
     const redoLabelAfterUndo = getRedoLabel(resourceId);
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+      throw error;
+    });
     const editedDocument = getDocument(resourceId);
     redo(resourceId);
 
@@ -157,7 +181,9 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, clearHistory, getUndoLabel, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+      throw error;
+    });
     const editedDocument = getDocument(resourceId);
     clearHistory(resourceId);
     undo(resourceId);
@@ -174,8 +200,12 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument, saveDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL)._unsafeUnwrap();
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL)._unsafeUnwrap();
+    applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
+      throw error;
+    });
+    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+      throw error;
+    });
     const editedDocument = getDocument(resourceId);
     const writeDocument = vi.fn<(document: BlockDocument) => Promise<void>>().mockResolvedValue(undefined);
     await saveDocument(resourceId, writeDocument);
@@ -193,7 +223,7 @@ describe(usePageBuilderHistoryStore, () => {
     const { applyEdit, getUndoLabel } = pageBuilderHistoryStore;
     const result = applyEdit(resourceId, updateBlockNodeProps("/content/9", { label: "" }), TEST_LABEL_LABEL);
 
-    expect(result._unsafeUnwrapErr()).toStrictEqual(
+    expect(result.match(noop, (error) => error)).toStrictEqual(
       new InvalidOperationError(Operation.Read, "/content/9/props", "no such member"),
     );
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
@@ -209,19 +239,19 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
-    applyEdit(
-      resourceId,
-      updateBlockNodeProps("/content/0", { label: "" }),
-      TEST_LABEL_LABEL,
-      interactionId,
-    )._unsafeUnwrap();
+    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL, interactionId).match(
+      noop,
+      (error) => {
+        throw error;
+      },
+    );
     const labelEditedDocument = getDocument(resourceId);
-    applyEdit(
-      resourceId,
-      updateBlockNodeProps("/content/0", { href: "" }),
-      "Change link",
-      interactionId,
-    )._unsafeUnwrap();
+    applyEdit(resourceId, updateBlockNodeProps("/content/0", { href: "" }), "Change link", interactionId).match(
+      noop,
+      (error) => {
+        throw error;
+      },
+    );
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(labelEditedDocument);
@@ -236,13 +266,17 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, redo, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId)._unsafeUnwrap();
+    applyEdit(resourceId, insertAtFirstIndex("c"), TEST_MOVE_LABEL, interactionId).match(noop, (error) => {
+      throw error;
+    });
     applyEdit(
       resourceId,
       [{ op: JsonPatchOperationType.Replace, path: "/content/1", value: createButton("d") }],
       TEST_LABEL_LABEL,
       interactionId,
-    )._unsafeUnwrap();
+    ).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual({
@@ -280,7 +314,9 @@ describe(usePageBuilderHistoryStore, () => {
       ],
       TEST_MOVE_LABEL,
       interactionId,
-    )._unsafeUnwrap();
+    ).match(noop, (error) => {
+      throw error;
+    });
     applyEdit(
       resourceId,
       [
@@ -289,7 +325,9 @@ describe(usePageBuilderHistoryStore, () => {
       ],
       TEST_LABEL_LABEL,
       interactionId,
-    )._unsafeUnwrap();
+    ).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("e")], root: TEST_ROOT });
@@ -318,13 +356,17 @@ describe(usePageBuilderHistoryStore, () => {
       [{ op: JsonPatchOperationType.Replace, path: "/root/props/lang", value: TEST_OTHER_LANG }],
       TEST_LABEL_LABEL,
       interactionId,
-    )._unsafeUnwrap();
+    ).match(noop, (error) => {
+      throw error;
+    });
     applyEdit(
       resourceId,
       [{ op: JsonPatchOperationType.Test, path: "/root/props/lang", value: TEST_OTHER_LANG }],
       TEST_LABEL_LABEL,
       interactionId,
-    )._unsafeUnwrap();
+    ).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
     undo(resourceId);
     redo(resourceId);

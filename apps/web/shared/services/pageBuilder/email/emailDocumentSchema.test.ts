@@ -53,7 +53,12 @@ describe("emailDocumentSchema", () => {
       type: EMAIL_SURVEY_INVITE_TYPE,
     };
     const operations = insertBlockNode(document, emailRegistry, columnSlot, 0, surveyInvite);
-    const edited = applyBlockEdit(document, operations)._unsafeUnwrap().document;
+    const edited = applyBlockEdit(document, operations).match(
+      ({ document: editedDocument }) => editedDocument,
+      (error) => {
+        throw error;
+      },
+    );
 
     expect(operations).toStrictEqual([
       { op: JsonPatchOperationType.Add, path: `${columnSlot}/0`, value: surveyInvite },

@@ -75,7 +75,12 @@ describe(compileEmailDocument, () => {
       ],
       root: { props: {} },
     };
-    const html = (await compileEmailDocument(document, TEST_CONTEXT))._unsafeUnwrap();
+    const html = await compileEmailDocument(document, TEST_CONTEXT).match(
+      (compiledHtml) => compiledHtml,
+      (error) => {
+        throw error;
+      },
+    );
 
     expect(html).toMatch(/^<!doctype html>/iu);
   });

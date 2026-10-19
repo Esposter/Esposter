@@ -8,6 +8,7 @@ import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePage
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useCommandStore } from "@/store/ui/command";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { moveBlockNode } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -31,11 +32,12 @@ describe(usePageBuilderHistoryCommands, () => {
     );
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit } = pageBuilderHistoryStore;
-    applyEdit(
-      resourceId,
-      moveBlockNode(document, webpageRegistry, "/content/0", "/content", 1),
-      "Move block",
-    )._unsafeUnwrap();
+    applyEdit(resourceId, moveBlockNode(document, webpageRegistry, "/content/0", "/content", 1), "Move block").match(
+      noop,
+      (error) => {
+        throw error;
+      },
+    );
     const commandStore = useCommandStore();
     const { commands } = storeToRefs(commandStore);
 
