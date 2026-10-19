@@ -11,7 +11,6 @@ import { writeResidents } from "#src/services/genshinAssets/residents/writeResid
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { readTalkConfigs } from "#src/services/genshinText/readTalkConfigs";
-import { takeOne } from "@esposter/shared";
 import { SceneGroupSource } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -96,23 +95,26 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, expect.anything());
-    const [, data] = takeOne(vi.mocked(writeWorldData).mock.calls);
-    expect(data).toStrictEqual({
-      ...region,
-      residents: [
+    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+      [
+        REGION_FILE,
         {
-          areaId: AREA_ID,
-          day: { position: { x: 0, z: 0 }, rotation: 0 },
-          duelGameId: undefined,
-          id: String(BLANCHE_NPC_ID),
-          keepsReputation: undefined,
-          nameTextId: String(BLANCHE_NAME_TEXT_HASH),
-          talkId: String(BLANCHE_TALK_ID),
-          weekGame: undefined,
+          ...region,
+          residents: [
+            {
+              areaId: AREA_ID,
+              day: { position: { x: 0, z: 0 }, rotation: 0 },
+              duelGameId: undefined,
+              id: String(BLANCHE_NPC_ID),
+              keepsReputation: undefined,
+              nameTextId: String(BLANCHE_NAME_TEXT_HASH),
+              talkId: String(BLANCHE_TALK_ID),
+              weekGame: undefined,
+            },
+          ],
         },
       ],
-    });
+    ]);
   });
 
   // A challenger the scene places at a building point, with the talk the dialog names for the NPC
@@ -150,23 +152,26 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, expect.anything());
-    const [, data] = takeOne(vi.mocked(writeWorldData).mock.calls);
-    expect(data).toStrictEqual({
-      ...region,
-      residents: [
+    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+      [
+        REGION_FILE,
         {
-          areaId: AREA_ID,
-          day: { position: { x: 0, z: 0 }, rotation: 0 },
-          duelGameId: ELLIN_DUEL_GAME_ID,
-          id: String(ELLIN_NPC_ID),
-          keepsReputation: undefined,
-          nameTextId: String(ELLIN_NAME_TEXT_HASH),
-          talkId: String(ELLIN_TALK_ID),
-          weekGame: undefined,
+          ...region,
+          residents: [
+            {
+              areaId: AREA_ID,
+              day: { position: { x: 0, z: 0 }, rotation: 0 },
+              duelGameId: ELLIN_DUEL_GAME_ID,
+              id: String(ELLIN_NPC_ID),
+              keepsReputation: undefined,
+              nameTextId: String(ELLIN_NAME_TEXT_HASH),
+              talkId: String(ELLIN_TALK_ID),
+              weekGame: undefined,
+            },
+          ],
         },
       ],
-    });
+    ]);
   });
 
   test("a seated challenger's week game is written with its game, the level it is offered at, and its reward", async () => {
@@ -183,23 +188,26 @@ describe(writeResidents, () => {
 
     await writeResidents({ isDryRun: false });
 
-    expect(writeWorldData).toHaveBeenCalledExactlyOnceWith(REGION_FILE, expect.anything());
-    const [, data] = takeOne(vi.mocked(writeWorldData).mock.calls);
-    expect(data).toStrictEqual({
-      ...region,
-      residents: [
+    expect(vi.mocked(writeWorldData).mock.calls).toStrictEqual([
+      [
+        REGION_FILE,
         {
-          areaId: AREA_ID,
-          day: { position: { x: CRAFTING_KEEPER_BENCH_OFFSET_METRES, z: 0 }, rotation: 0 },
-          duelGameId: KIMIYA_DUEL_GAME_ID,
-          id: String(KIMIYA_NPC_ID),
-          keepsReputation: undefined,
-          nameTextId: String(KIMIYA_NAME_TEXT_HASH),
-          talkId: String(KIMIYA_TALK_ID),
-          weekGame: KIMIYA_WEEK_GAME,
+          ...region,
+          residents: [
+            {
+              areaId: AREA_ID,
+              day: { position: { x: CRAFTING_KEEPER_BENCH_OFFSET_METRES, z: 0 }, rotation: 0 },
+              duelGameId: KIMIYA_DUEL_GAME_ID,
+              id: String(KIMIYA_NPC_ID),
+              keepsReputation: undefined,
+              nameTextId: String(KIMIYA_NAME_TEXT_HASH),
+              talkId: String(KIMIYA_TALK_ID),
+              weekGame: KIMIYA_WEEK_GAME,
+            },
+          ],
         },
       ],
-    });
+    ]);
   });
 
   test("a run writes a region whose residents changed", async () => {
