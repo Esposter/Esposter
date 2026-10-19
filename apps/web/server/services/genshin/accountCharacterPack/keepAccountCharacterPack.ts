@@ -54,7 +54,7 @@ export const keepAccountCharacterPack = async (
   { characterId, files, keepId, modelName, packHash }: KeepCharacterPackInput,
 ): Promise<void> => {
   const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
-  const uniqueFiles = [...new Map(files.map((file) => [file.sha256, file])).values()].map(({ sha256, size }) => ({
+  const uniqueFiles = Array.from(new Map(files.map((file) => [file.sha256, file])).values(), ({ sha256, size }) => ({
     sha256,
     size,
     stagingBlobName: getAccountCharacterPackStagingBlobName(userId, keepId, sha256),

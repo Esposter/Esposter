@@ -7,6 +7,7 @@ import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 // Its worker is the app's own copy from the same install, so the worker and the API cannot drift apart.
 // The viewer's components are a separate load, made by whichever viewer is shown
 export const loadPdfRenderer = async (): Promise<PdfRenderer> => {
+  // eslint-disable-next-line no-restricted-syntax -- pdf.js loads when a viewer first renders, keeping it out of the eager graph and out of a server render
   const api = await import("pdfjs-dist");
 
   return {

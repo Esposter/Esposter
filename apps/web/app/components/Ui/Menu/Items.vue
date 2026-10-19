@@ -4,12 +4,12 @@ import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
+  checkIsTabbable: (value: T) => boolean;
   getItemId: (index: number) => string;
-  isTabbable: (value: T) => boolean;
   items: UiMenuItem<T>[];
 }
 // A menu's items, drawn the one way whether a trigger or a point opened the menu around them
-const { getItemId, isTabbable, items } = defineProps<Props>();
+const { checkIsTabbable, getItemId, items } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
 </script>
 
@@ -29,7 +29,7 @@ const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
         :aria-checked="isSelected"
         :aria-disabled="isDisabled || undefined"
         :role="isSelected === undefined ? 'menuitem' : 'menuitemradio'"
-        :tabindex="isTabbable(value) ? 0 : -1"
+        :tabindex="checkIsTabbable(value) ? 0 : -1"
         type="button"
         ui-item
         @click="emit('select', value, $event)"

@@ -106,10 +106,10 @@ onConsoleFocusRequest(async () => {
         sendCommand({ sessionId: currentSessionId, type: CommandType.BackgroundTasks });
       }
     "
-    @keydown="
+    @keydown.ctrl.exact="
       (event: KeyboardEvent) => {
         // Ctrl+; asks a side question of the open session; with none open there is nothing to ask beside
-        if (!event.ctrlKey || event.key !== ';' || !currentSessionId) return;
+        if (event.key !== ';' || !currentSessionId) return;
         event.preventDefault();
         isSideChatOpen = true;
       }

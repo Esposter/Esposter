@@ -20,7 +20,7 @@ export const renderWebpageDocument = (document: WebpageDocument, context: Render
     presentTypes.has(definition.type),
   );
   const css = definitions.map(({ css: definitionCss }) => definitionCss).join("\n");
-  const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script.toString()})()</script>`] : []));
+  const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${String(script)})()</script>`] : []));
 
   return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${css}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;
 };

@@ -50,6 +50,7 @@ export const useResourceCommands = () => {
     },
   ]);
   useCommandScope({
+    checkIsPending: () => isPending.value,
     commands: () => [
       // oxlint-disable-next-line oxc/no-map-spread -- each command is a new object, never a result mutated in place
       ...items.value.flatMap(({ createTo, group, icon, id, subtitle, title, to }): UiCommand[] => [
@@ -79,7 +80,6 @@ export const useResourceCommands = () => {
           ]
         : []),
     ],
-    isPending: () => isPending.value,
     onSelect: () => {
       addRecentSearch(searchQuery.value);
     },
