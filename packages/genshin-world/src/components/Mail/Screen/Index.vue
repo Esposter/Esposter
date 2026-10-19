@@ -11,10 +11,10 @@ import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameText
 import { getWalletCurrency } from "#src/services/inventory/getWalletCurrency";
 import { toItemDefinition } from "#src/services/inventory/toItemDefinition";
 import { checkIsGiftBoxed } from "#src/services/mail/checkIsGiftBoxed";
+import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { getMailExpiry } from "#src/services/mail/getMailExpiry";
-import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 import { MailExpiryUnitGameTextKeyMap } from "#src/services/mail/MailExpiryUnitGameTextKeyMap";
 import { sortMails } from "#src/services/mail/sortMails";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -67,7 +67,7 @@ const selectedMail = ref<MailSave>();
 // Each delivery of a mail is an entry of its own, so the key takes the delivery as well as the mail's id
 const getEntryKey = ({ mail }: MailEntry): string => [mail.id, mail.deliveredAt].join(ID_SEPARATOR);
 const isSelected = (mail: MailSave): boolean =>
-  selectedMail.value !== undefined && isSameHeldMail(mail, selectedMail.value);
+  selectedMail.value !== undefined && checkIsSameHeldMail(mail, selectedMail.value);
 // Delete Read asks first, and the screen's owner hears of it only once the player confirms
 const isConfirmingDeleteRead = ref(false);
 // Delete on a Gift Mail Box mail asks first, the same way, and closes when the player picks another mail or tab
@@ -148,7 +148,7 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
         <MenuListScreenTab
           v-for="entry of visibleEntries"
           :key="getEntryKey(entry)"
-          :aria-selected="selectedEntry !== undefined && isSameHeldMail(entry.mail, selectedEntry.mail)"
+          :aria-selected="selectedEntry !== undefined && checkIsSameHeldMail(entry.mail, selectedEntry.mail)"
           :data-read="entry.mail.isRead || undefined"
           @click="
             () => {

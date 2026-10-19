@@ -16,10 +16,12 @@ const checkIsGcgElementalHit = (hit: GcgDealtDamage): boolean =>
 
 // Picks count different basic Elemental Dice from the duel's random source, each taken one leaving the choice
 const pickGcgBasicDice = (count: number, random: () => number): Element[] => {
-  const remaining = [...Elements];
+  let remaining = [...Elements];
   const picked: Element[] = [];
   for (let pick = 0; pick < count && remaining.length > 0; pick++) {
-    const [element] = remaining.splice(Math.floor(random() * remaining.length), 1);
+    const index = Math.floor(random() * remaining.length);
+    const element = remaining[index];
+    remaining = remaining.toSpliced(index, 1);
     if (element !== undefined) picked.push(element);
   }
   return picked;

@@ -70,21 +70,21 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
     winnerSideIndex: undefined,
   };
   const context: GcgEffectContext = { duel, sideIndex: 0 };
-  const canPlay = module.canPlay?.(context, undefined) === true;
-  if (canPlay) module.play?.(context, undefined);
-  return { canPlay, dice: takeOne(duel.sides, 0).dice };
+  const isPlayable = module.canPlay?.(context, undefined) === true;
+  if (isPlayable) module.play?.(context, undefined);
+  return { dice: takeOne(duel.sides, 0).dice, isPlayable };
 };
 
 describe("woven Ice", () => {
   test("is refused with one Cryo character, and with two it creates a Cryo die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenIce, [Element.Cryo, Element.Hydro])).toStrictEqual({
-      canPlay: false,
       dice: [],
+      isPlayable: false,
     });
     expect(playResonance(elementalResonanceWovenIce, [Element.Cryo, Element.Hydro, Element.Cryo])).toStrictEqual({
-      canPlay: true,
       dice: [Element.Cryo],
+      isPlayable: true,
     });
   });
 });
@@ -93,12 +93,12 @@ describe("woven Thunder", () => {
   test("is refused with one Electro character, and with two it creates an Electro die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenThunder, [Element.Electro, Element.Hydro])).toStrictEqual({
-      canPlay: false,
       dice: [],
+      isPlayable: false,
     });
     expect(
       playResonance(elementalResonanceWovenThunder, [Element.Electro, Element.Hydro, Element.Electro]),
-    ).toStrictEqual({ canPlay: true, dice: [Element.Electro] });
+    ).toStrictEqual({ dice: [Element.Electro], isPlayable: true });
   });
 });
 
@@ -106,12 +106,12 @@ describe("woven Flames", () => {
   test("is refused with one Pyro character, and with two it creates a Pyro die", () => {
     expect.hasAssertions();
     expect(playResonance(elementalResonanceWovenFlames, [Element.Pyro, Element.Hydro])).toStrictEqual({
-      canPlay: false,
       dice: [],
+      isPlayable: false,
     });
     expect(playResonance(elementalResonanceWovenFlames, [Element.Pyro, Element.Pyro])).toStrictEqual({
-      canPlay: true,
       dice: [Element.Pyro],
+      isPlayable: true,
     });
   });
 });

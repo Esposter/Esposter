@@ -10,4 +10,8 @@ export const getBagArtifactsForSlot = (
 ): Required<Pick<InventoryItem, "artifact" | "definition" | "id">>[] =>
   inventory.items
     .flatMap(({ artifact, definition, id }) => (artifact?.slot === slot ? [{ artifact, definition, id }] : []))
-    .toSorted((a, b) => b.artifact.rarity - a.artifact.rarity || b.artifact.level - a.artifact.level);
+    .toSorted(
+      (firstEntry, secondEntry) =>
+        secondEntry.artifact.rarity - firstEntry.artifact.rarity ||
+        secondEntry.artifact.level - firstEntry.artifact.level,
+    );

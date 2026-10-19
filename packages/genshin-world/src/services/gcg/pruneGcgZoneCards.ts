@@ -17,12 +17,12 @@ export const pruneGcgZoneCards = (duel: GcgDuel, sideIndex: number): void => {
 };
 
 const filterGcgSideCards = (side: GcgSideState, keep: (zoneCard: GcgZoneCard) => boolean): void => {
-  side.supports = side.supports.filter(keep);
-  side.summons = side.summons.filter(keep);
-  side.onstages = side.onstages.filter(keep);
+  side.supports = side.supports.filter((zoneCard) => keep(zoneCard));
+  side.summons = side.summons.filter((zoneCard) => keep(zoneCard));
+  side.onstages = side.onstages.filter((zoneCard) => keep(zoneCard));
   for (const character of side.characters) {
-    character.equipments = character.equipments.filter(keep);
-    character.statuses = character.statuses.filter(keep);
+    character.equipments = character.equipments.filter((zoneCard) => keep(zoneCard));
+    character.statuses = character.statuses.filter((zoneCard) => keep(zoneCard));
   }
 };
 

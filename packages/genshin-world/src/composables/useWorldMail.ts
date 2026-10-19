@@ -8,12 +8,12 @@ import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave
 import type { GameLanguage } from "genshin-text";
 import type { Ref } from "vue";
 
+import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
 import { claimMail } from "#src/services/mail/claimMail";
 import { deleteGiftMail } from "#src/services/mail/deleteGiftMail";
 import { deleteReadMails } from "#src/services/mail/deleteReadMails";
 import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
-import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
 import { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
@@ -92,7 +92,7 @@ export const useWorldMail = ({
       materialDataMap,
     );
     if (!nextState) {
-      isBagFull.value = mails.value.some((mail) => isSameHeldMail(mail, held) && !mail.isClaimed);
+      isBagFull.value = mails.value.some((mail) => checkIsSameHeldMail(mail, held) && !mail.isClaimed);
       return;
     }
     isBagFull.value = false;
@@ -122,12 +122,12 @@ export const useWorldMail = ({
   };
   const markMailRead = (held: MailSave) => {
     mails.value = mails.value.map((mail) =>
-      isSameHeldMail(mail, held) && !mail.isRead ? { ...mail, isRead: true } : mail,
+      checkIsSameHeldMail(mail, held) && !mail.isRead ? { ...mail, isRead: true } : mail,
     );
   };
   const toggleMailPin = (held: MailSave) => {
     mails.value = mails.value.map((mail) =>
-      isSameHeldMail(mail, held) ? { ...mail, isPinned: !mail.isPinned } : mail,
+      checkIsSameHeldMail(mail, held) ? { ...mail, isPinned: !mail.isPinned } : mail,
     );
   };
 

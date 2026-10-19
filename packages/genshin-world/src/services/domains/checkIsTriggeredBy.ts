@@ -7,5 +7,5 @@ export const checkIsTriggeredBy = (
   trigger: DomainDisorderTrigger,
 ): boolean => {
   if (definition.kind === "healthChange") return trigger.kind === "healthChange" && trigger.healthShare !== 0;
-  return trigger.kind === "reaction" && trigger.reactions.some(definition.matches);
+  return trigger.kind === "reaction" && trigger.reactions.some((reaction) => definition.matches(reaction));
 };

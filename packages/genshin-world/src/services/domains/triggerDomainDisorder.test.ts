@@ -81,7 +81,7 @@ describe(triggerDomainDisorder, () => {
   test("a health change disorder stops at its stack limit", () => {
     expect.hasAssertions();
 
-    const stacks = Array.from({ length: 10 }, (_, stack) => ({
+    const stacks = Array.from({ length: 10 }, (_value, stack) => ({
       amount: 0.07,
       attribute: Attribute.CriticalDamage,
       characterId: CHARACTER_ID,

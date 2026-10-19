@@ -10,7 +10,7 @@ export const elementalResonanceHighVoltage: GcgCardModule = {
     const characterCount = side.characters.length;
     const nextIndex = Array.from(
       { length: characterCount - 1 },
-      (_, offset) => (side.activeIndex + offset + 1) % characterCount,
+      (_value, offset) => (side.activeIndex + offset + 1) % characterCount,
     ).find((index) => {
       const character = takeOne(side.characters, index);
       return character.hp > 0 && character.energy < character.character.maxEnergy;

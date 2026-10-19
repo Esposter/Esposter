@@ -9,7 +9,7 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { GameText } from "genshin-text";
 
-import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbox";
+import { checkIsOfferableForStrongbox } from "#src/services/crafting/checkIsOfferableForStrongbox";
 import { computeMysticOfferingText } from "#src/services/crafting/computeMysticOfferingText";
 import { craftStrongbox } from "#src/services/crafting/craftStrongbox";
 import { GameButton, GameButtonKind, GameScreen } from "genshin-interface";
@@ -47,7 +47,7 @@ const candidates = computed(() => {
   const strongbox = pickedStrongbox.value;
   return strongbox === undefined
     ? []
-    : props.inventory.items.filter((item) => canOfferForStrongbox(item, strongbox.rarity));
+    : props.inventory.items.filter((item) => checkIsOfferableForStrongbox(item, strongbox.rarity));
 });
 const isReady = computed(
   () => pickedStrongbox.value !== undefined && pickedIds.value.length === pickedStrongbox.value.needCount,

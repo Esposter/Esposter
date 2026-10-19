@@ -4,11 +4,11 @@ import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEn
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
-import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbox";
+import { checkIsOfferableForStrongbox } from "#src/services/crafting/checkIsOfferableForStrongbox";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { describe, expect, test } from "vitest";
 
-describe(canOfferForStrongbox, () => {
+describe(checkIsOfferableForStrongbox, () => {
   const STRONGBOX_RARITY = 5;
   const PIECE_ITEM_ID = 100_000;
   const PIECE: ReliquaryPieceEntry = {
@@ -50,7 +50,7 @@ describe(canOfferForStrongbox, () => {
       undefined,
     ];
 
-    expect(items.map((item) => canOfferForStrongbox(item, STRONGBOX_RARITY))).toStrictEqual([
+    expect(items.map((item) => checkIsOfferableForStrongbox(item, STRONGBOX_RARITY))).toStrictEqual([
       true,
       false,
       false,

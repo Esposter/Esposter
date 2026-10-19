@@ -33,15 +33,15 @@ describe(readShopGoodMap, () => {
   test("the Realm Depot's goods, split across its tabs' keys, are one list in the tabs' order", async () => {
     expect.hasAssertions();
 
-    const goodsByKey = new Map<GameDataKey, ShopGood[]>(
+    const keyGoodsMap = new Map<GameDataKey, ShopGood[]>(
       REALM_DEPOT_GOODS_KEYS.map((key, index) => [key, [createGood(index + 1)]]),
     );
-    vi.mocked(readGameData).mockImplementation((_, key) => Promise.resolve(goodsByKey.get(key) ?? []));
+    vi.mocked(readGameData).mockImplementation((_gameDataBaseUrl, key) => Promise.resolve(keyGoodsMap.get(key) ?? []));
 
     const goodMap = await readShopGoodMap(GAME_DATA_BASE_URL);
 
     expect(goodMap.get(REALM_DEPOT_SHOP_ID)).toStrictEqual(
-      REALM_DEPOT_GOODS_KEYS.map((_, index) => createGood(index + 1)),
+      REALM_DEPOT_GOODS_KEYS.map((_key, index) => createGood(index + 1)),
     );
   });
 });

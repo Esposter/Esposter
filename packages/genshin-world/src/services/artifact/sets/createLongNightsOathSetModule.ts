@@ -25,7 +25,7 @@ export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveM
   const { params } = bonus;
   if (bonus.pieceCount === 2)
     return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.PlungingAttack });
-  const stacksByAttackTag = new Map<AttackTag, number>([
+  const attackTagStacksMap = new Map<AttackTag, number>([
     [AttackTag.ChargedAttack, takeOne(params, 1)],
     [AttackTag.ElementalSkill, takeOne(params, 2)],
     [AttackTag.PlungingAttack, takeOne(params, 0)],
@@ -43,7 +43,7 @@ export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveM
       if (event.kind !== KitEventKind.DamageTaken || event.striker.characterId !== combatant.characterId) return;
       const { attackTag } = event;
       if (attackTag === undefined) return;
-      const stacks = stacksByAttackTag.get(attackTag);
+      const stacks = attackTagStacksMap.get(attackTag);
       if (stacks === undefined) return;
       const { characterId } = combatant;
       const { kitEffectState, party } = context;
