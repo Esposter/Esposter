@@ -15,8 +15,10 @@ describe(AgentConsolePanelMessageActions, () => {
   test("fork on a side chat's message forks it as a side chat", async () => {
     expect.hasAssertions();
 
-    useAgentConsoleSessionStore().currentSessionId = sessionId;
-    const sendCommand = vi.spyOn(useAgentConsoleConnectionStore(), "sendCommand");
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    agentConsoleSessionStore.currentSessionId = sessionId;
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    const sendCommand = vi.spyOn(agentConsoleConnectionStore, "sendCommand");
     const component = await mountSuspended(AgentConsolePanelMessageActions, {
       props: { isSideChat: true, messageUuid, text: "reply" },
     });
@@ -33,8 +35,10 @@ describe(AgentConsolePanelMessageActions, () => {
   test("fork on a console message forks it as a session of its own", async () => {
     expect.hasAssertions();
 
-    useAgentConsoleSessionStore().currentSessionId = sessionId;
-    const sendCommand = vi.spyOn(useAgentConsoleConnectionStore(), "sendCommand");
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    agentConsoleSessionStore.currentSessionId = sessionId;
+    const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
+    const sendCommand = vi.spyOn(agentConsoleConnectionStore, "sendCommand");
     const component = await mountSuspended(AgentConsolePanelMessageActions, { props: { messageUuid, text: "reply" } });
     component.findComponent(UiMenu).vm.$emit("select", MessageActionType.Fork);
 

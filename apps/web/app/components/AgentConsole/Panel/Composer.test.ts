@@ -8,7 +8,8 @@ describe(AgentConsolePanelComposer, () => {
   test("a side chat's composer offers no mode to change", async () => {
     expect.hasAssertions();
 
-    useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    agentConsoleSessionStore.currentSessionId = crypto.randomUUID();
     const component = await mountSuspended(AgentConsolePanelComposer, { props: { isSideChat: true } });
 
     expect(component.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).toStrictEqual([
@@ -19,7 +20,8 @@ describe(AgentConsolePanelComposer, () => {
   test("the console's composer offers the mode to change", async () => {
     expect.hasAssertions();
 
-    useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    agentConsoleSessionStore.currentSessionId = crypto.randomUUID();
     const component = await mountSuspended(AgentConsolePanelComposer);
 
     expect(component.findAllComponents({ name: "UiSelect" }).map((select) => select.props("label"))).toStrictEqual([

@@ -13,7 +13,8 @@ const { closeSideChat, sendCommand } = agentConsoleConnectionStore;
 const agentConsoleSessionStore = useAgentConsoleSessionStore();
 const { sessions } = storeToRefs(agentConsoleSessionStore);
 const { getDataRef } = agentConsoleSessionStore;
-const { sideChatSessionId } = storeToRefs(useAgentConsoleSideChatStore());
+const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+const { sideChatSessionId } = storeToRefs(agentConsoleSideChatStore);
 // The drawer's own composer draft, which is not the console's and is never kept past the drawer
 const composerText = ref("");
 // Everything under the drawer reads the side chat's session through this scope, and nothing in the console's

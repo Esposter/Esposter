@@ -8,8 +8,10 @@ interface Props {
   resourceId: string;
 }
 const { resourceId } = defineProps<Props>();
-const { getDocument } = usePageBuilderDocumentStore();
-const { getSelectedNodeId, setSelectedNodeId } = usePageBuilderCanvasStore();
+const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
+const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 // Nothing is drawn for a resource whose document is not held, or one the webpage schema refuses
 const layerTreeItems = computed(() => {
   const result = webpageDocumentSchema.safeParse(getDocument(resourceId));
