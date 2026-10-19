@@ -67,6 +67,9 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
+// A random source that throws the Cryo face for every die it rolls
+const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
+
 describe("cuilein-Anbar", () => {
   const FULL_HP = 10;
   const COLLEI_ID = 1701;
@@ -376,9 +379,6 @@ describe("knights of Favonius Library", () => {
 
   const KNIGHTS_OF_FAVONIUS_LIBRARY_ID = 321_002;
 
-  // A random source that throws the Cryo face for every die it rolls
-  const cryoRandom = (): number => (GCG_DIE_FACES.indexOf(Element.Cryo) + 0.5) / GCG_DIE_FACES.length;
-
   test("when played, the chosen dice are rerolled once", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -413,7 +413,8 @@ describe("knights of Favonius Library", () => {
     duel.random = cryoRandom;
     runGcgRollPhase(duel);
     expect(rerollGcgDice(duel, 0, [0])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ dice: [Element.Cryo, Element.Pyro], hasRolled: false });
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Pyro]);
+    expect(takeOne(duel.sides, 0).hasRolled).toBe(false);
     expect(rerollGcgDice(duel, 0, [])).toBe(GcgActionResult.Done);
     expect(takeOne(duel.sides, 0).hasRolled).toBe(true);
     expect(duel.phase).toBe(GcgPhase.Action);

@@ -107,6 +107,15 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
   kind,
 });
 
+const createChinjuDuel = (dice: Element[]) => {
+  const duel = createDuel([
+    createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })], dice),
+    createSideState([createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } })]),
+  ]);
+  takeOne(duel.sides, 0).supports = [createGcgZoneCard(CHINJU_FOREST_ID, chinjuForest)];
+  return duel;
+};
+
 describe("fiery Rebirth", () => {
   const ABYSS_LECTOR_ID = 2302;
   const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
@@ -114,8 +123,11 @@ describe("fiery Rebirth", () => {
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
     expect.hasAssertions();
 
-    const lector = { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), hp: 3 };
-    lector.statuses = [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)];
+    const lector = {
+      ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }),
+      hp: 3,
+      statuses: [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)],
+    };
     const duel = createDuel([
       createSideState([lector]),
       createSideState([
@@ -163,8 +175,8 @@ describe("electro Crystal Core", () => {
     const hypostasis = {
       ...createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
       hp: 2,
+      statuses: [createGcgZoneCard(ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore)],
     };
-    hypostasis.statuses = [createGcgZoneCard(ELECTRO_CRYSTAL_CORE_ID, electroCrystalCore)];
     const duel = createDuel([
       createSideState([hypostasis]),
       createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })]),
@@ -421,9 +433,12 @@ describe("embers Rekindled", () => {
   test("when its character triggers Fiery Rebirth, the card is discarded and the character gains the Aegis of Abyssal Flame", () => {
     expect.hasAssertions();
 
-    const lector = { ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }), hp: 3 };
-    lector.statuses = [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)];
-    lector.equipments = [createGcgZoneCard(EMBERS_REKINDLED_ID, embersRekindled)];
+    const lector = {
+      ...createGcgCharacterState({ character: { id: ABYSS_LECTOR_ID, element: Element.Pyro } }),
+      equipments: [createGcgZoneCard(EMBERS_REKINDLED_ID, embersRekindled)],
+      hp: 3,
+      statuses: [createGcgZoneCard(FIERY_REBIRTH_ID, fieryRebirth)],
+    };
     const duel = createDuel([
       createSideState([lector]),
       createSideState([
@@ -864,8 +879,11 @@ describe("shimenawa's Reminiscence", () => {
   ])("%s deals the damage it would, plus 1 when at 2 Energy", (_name, skill, energy, hp) => {
     expect.hasAssertions();
 
-    const sara = { ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }), energy };
-    sara.equipments = [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)];
+    const sara = {
+      ...createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } }),
+      energy,
+      equipments: [createGcgZoneCard(SHIMENAWAS_REMINISCENCE_ID, shimenawasReminiscence)],
+    };
     const duel = createDuel([
       createSideState([sara]),
       createSideState([
@@ -899,16 +917,6 @@ describe("shimenawa's Reminiscence", () => {
 
 describe("chinju Forest", () => {
   const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
-  const createChinjuDuel = (dice: Element[]) => {
-    const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: KUJOU_SARA_ID, element: Element.Electro } })], dice),
-      createSideState([
-        createGcgCharacterState({ character: { id: ELECTRO_HYPOSTASIS_ID, element: Element.Electro } }),
-      ]),
-    ]);
-    takeOne(duel.sides, 0).supports = [createGcgZoneCard(CHINJU_FOREST_ID, chinjuForest)];
-    return duel;
-  };
   const NORMAL_ATTACK_COSTS: GcgCost[] = [{ count: 2, kind: GcgCostKind.Unaligned }];
 
   test("with an even number of dice, a normal attack costs 1 fewer Unaligned die, and the card spends a usage", () => {

@@ -415,9 +415,10 @@ describe("ushi", () => {
     ]);
     takeOne(duel.sides, 0).summons.push(createGcgZoneCard(USHI_ID, ushi));
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
-    expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses).toStrictEqual([
-      expect.objectContaining({ cardId: SUPERLATIVE_SUPERSTRENGTH_ID, usages: 1 }),
+    expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ cardId }) => cardId)).toStrictEqual([
+      SUPERLATIVE_SUPERSTRENGTH_ID,
     ]);
+    expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([1]);
     takeOne(takeOne(takeOne(duel.sides, 0).characters, 0).statuses, 0).usages = 3;
     applyGcgDamage(duel, 1, { damageType: Element.Hydro, value: 3 }, TEST_RULE);
     expect(takeOne(takeOne(duel.sides, 0).characters, 0).statuses.map(({ usages }) => usages)).toStrictEqual([3]);
@@ -488,10 +489,10 @@ describe("raging Oni King", () => {
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
     runGcgSkillUse({ duel, sideIndex: 0 }, ITTO_NORMAL_ATTACK);
     expect(
-      takeOne(takeOne(duel.sides, 0).characters, 0).statuses.filter(
-        ({ cardId }) => cardId === SUPERLATIVE_SUPERSTRENGTH_ID,
-      ),
-    ).toStrictEqual([expect.objectContaining({ usages: 1 })]);
+      takeOne(takeOne(duel.sides, 0).characters, 0)
+        .statuses.filter(({ cardId }) => cardId === SUPERLATIVE_SUPERSTRENGTH_ID)
+        .map(({ usages }) => usages),
+    ).toStrictEqual([1]);
   });
 });
 

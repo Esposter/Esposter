@@ -34,7 +34,6 @@ import {
   ELLIN_ID,
   GOROU_ID,
 } from "#src/services/gcg/cards/constants";
-import { BURNING_ASSAULT_SKILL } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { elementalResonanceEnduringRock } from "#src/services/gcg/cards/elementalResonanceEnduringRock";
 import { elementalResonanceWovenStone } from "#src/services/gcg/cards/elementalResonanceWovenStone";
 import { ellin } from "#src/services/gcg/cards/ellin";
@@ -42,7 +41,7 @@ import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
 import { generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
 import { grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
 import { kingsSquire, kingsSquireInEffect } from "#src/services/gcg/cards/kingsSquire";
-import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
+import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { rushingHound } from "#src/services/gcg/cards/rushingHound";
 import { sangonomiyaShrine } from "#src/services/gcg/cards/sangonomiyaShrine";
 import { scorpocalypse } from "#src/services/gcg/cards/scorpocalypse";

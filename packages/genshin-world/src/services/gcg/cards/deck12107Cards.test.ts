@@ -16,10 +16,8 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { breastplate } from "#src/services/gcg/cards/breastplate";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
-import { raincutter } from "#src/services/gcg/cards/raincutter";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { stoneForce } from "#src/services/gcg/cards/stoneForce";
 import { stonehide } from "#src/services/gcg/cards/stonehide";
@@ -31,14 +29,6 @@ import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import {
-  FULL_PLATE_ID,
-  RAINBOW_BLADEWORK_ID,
-  RAIN_SWORD_ID,
-  STONEHIDE_ID,
-  STONE_FORCE_ID,
-  SWEEPING_TIME_ID,
-} from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
@@ -76,6 +66,27 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   rule: TEST_RULE,
   sides,
   winnerSideIndex: undefined,
+});
+
+const createShieldedDuel = (shield: number): GcgDuel =>
+  createDuel([
+    createSideState([{ ...createGcgCharacterState({ character: { id: 1602 } }), shield }]),
+    createSideState([]),
+  ]);
+
+const createStonehideDuel = (): GcgDuel =>
+  createDuel([createSideState([createGcgCharacterState({ character: { id: 2601 } })]), createSideState([])]);
+
+const createStoneForceDuel = (statuses: GcgZoneCard[]): GcgDuel =>
+  createDuel([
+    createSideState([{ ...createGcgCharacterState({ character: { id: 2601 } }), statuses }]),
+    createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
+  ]);
+
+const createSweepingTimeContext = (): GcgEffectContext => ({
+  characterIndex: 0,
+  duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1602 } })]), createSideState([])]),
+  sideIndex: 0,
 });
 
 describe("rain Sword", () => {
@@ -217,11 +228,6 @@ describe("raincutter", () => {
 
 describe("full Plate", () => {
   const FULL_PLATE_ID = 116_021;
-  const createShieldedDuel = (shield: number): GcgDuel =>
-    createDuel([
-      createSideState([{ ...createGcgCharacterState({ character: { id: 1602 } }), shield }]),
-      createSideState([]),
-    ]);
 
   test("while its active character holds a shield, the Physical DMG it takes is halved, rounded up", () => {
     expect.hasAssertions();
@@ -276,8 +282,6 @@ describe("breastplate", () => {
 
 describe("stonehide", () => {
   const STONEHIDE_ID = 126_011;
-  const createStonehideDuel = (): GcgDuel =>
-    createDuel([createSideState([createGcgCharacterState({ character: { id: 2601 } })]), createSideState([])]);
 
   test("the character takes one less DMG, for three usages", () => {
     expect.hasAssertions();
@@ -307,11 +311,6 @@ describe("stonehide", () => {
 describe("stone Force", () => {
   const STONE_FORCE_ID = 126_012;
   const STONEHIDE_ID = 126_011;
-  const createStoneForceDuel = (statuses: GcgZoneCard[]): GcgDuel =>
-    createDuel([
-      createSideState([{ ...createGcgCharacterState({ character: { id: 2601 } }), statuses }]),
-      createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
-    ]);
 
   test("the character's Physical DMG is converted to Geo, and its first DMG of the round is one more", () => {
     expect.hasAssertions();
@@ -373,11 +372,6 @@ describe("sweeping Time", () => {
     id: 16_022,
     kind: GcgSkillKind.ElementalSkill,
   };
-  const createSweepingTimeContext = (): GcgEffectContext => ({
-    characterIndex: 0,
-    duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1602 } })]), createSideState([])]),
-    sideIndex: 0,
-  });
 
   test("a Normal Attack deals 2 more DMG, and the character's Physical DMG is converted to Geo", () => {
     expect.hasAssertions();

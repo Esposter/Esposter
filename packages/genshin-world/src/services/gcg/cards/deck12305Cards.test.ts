@@ -114,6 +114,22 @@ const createCompanion = (id: number): GcgCard => ({
   kind: GcgCardKind.Support,
 });
 
+// Xiao is active, with the mask, and three Cryo dice to pay a switch with
+const createSwitchDuel = (): GcgDuel => {
+  const duel = createDuel([
+    createSideState([
+      {
+        ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+        statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+      },
+      createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+    ]),
+    createSideState([createGcgCharacterState({ character: { id: 1107, element: Element.Cryo } })]),
+  ]);
+  takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
+  return duel;
+};
+
 describe("spring Spirit Summoning", () => {
   test("it deals 2 Cryo DMG, then creates an Icy Quill on its side", () => {
     expect.hasAssertions();
@@ -389,7 +405,8 @@ describe("bane of All Evil", () => {
     expect(baneOfAllEvil.getDamage?.(context)).toStrictEqual({ damageType: Element.Anemo, value: 4 });
     baneOfAllEvil.afterDamage?.(context);
     expect(xiao.statuses).toStrictEqual([createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)]);
-    expect(takeOne(xiao.statuses, 0)).toMatchObject({ rounds: 2, usages: 2 });
+    expect(takeOne(xiao.statuses, 0).rounds).toBe(2);
+    expect(takeOne(xiao.statuses, 0).usages).toBe(2);
   });
 
   test("a Yaksha's Mask already on Xiao is refreshed rather than doubled", () => {
@@ -446,29 +463,14 @@ describe("yaksha's Mask", () => {
 });
 
 describe("yaksha's Mask's switch clause", () => {
-  // Xiao is active, with the mask, and three Cryo dice to pay a switch with
-  const createSwitchDuel = (): GcgDuel => {
-    const duel = createDuel([
-      createSideState([
-        {
-          ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
-          statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-        },
-        createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
-      ]),
-      createSideState([createGcgCharacterState({ character: { id: 1107, element: Element.Cryo } })]),
-    ]);
-    takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
-    return duel;
-  };
-
   test("while Xiao is active, a switch away from her spends one die less", () => {
     expect.hasAssertions();
 
     const duel = createSwitchDuel();
 
     expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ activeIndex: 1, dice: [Element.Cryo, Element.Cryo, Element.Cryo] });
+    expect(takeOne(duel.sides, 0).activeIndex).toBe(1);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Cryo, Element.Cryo]);
   });
 
   test("a switch to Xiao while another character is active gets no reduction", () => {
@@ -730,11 +732,9 @@ describe("stone and Contracts", () => {
     stoneAndContracts.play?.({ duel, sideIndex: 0 }, undefined);
     expect(side.onstages).toStrictEqual([createGcgZoneCard(STONE_AND_CONTRACTS_ID, stoneAndContracts)]);
     runGcgActionPhase(duel);
-    expect(side).toMatchObject({
-      dice: [GcgDieFace.Omni, GcgDieFace.Omni, GcgDieFace.Omni],
-      hand: [DRAWN_CARD_ID],
-      onstages: [],
-    });
+    expect(side.dice).toStrictEqual([GcgDieFace.Omni, GcgDieFace.Omni, GcgDieFace.Omni]);
+    expect(side.hand).toStrictEqual([DRAWN_CARD_ID]);
+    expect(side.onstages).toStrictEqual([]);
   });
 });
 

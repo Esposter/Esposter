@@ -99,6 +99,54 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
 // A character of the given id, who wields the weapon kind named
 const createWielder = (id: number, weapon: string): GcgCharacterState =>
   createGcgCharacterState({ character: { element: Element.Cryo, id, weapon } });
+
+// Ayaka holds Senho from the battle's start, so she is the second character of the side
+const createAyakaDuel = (): GcgDuel =>
+  createDuel([
+    createSideState([
+      createGcgCharacterState({ character: { id: 2, element: Element.Cryo } }),
+      {
+        ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
+        statuses: [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)],
+      },
+    ]),
+    createSideState([createGcgCharacterState({ character: { id: 2, element: Element.Cryo } })]),
+  ]);
+
+const createKantened = (statuses: GcgCharacterState["statuses"]): GcgCharacterState => ({
+  ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
+  equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+  statuses,
+});
+
+// Xingqiu is active, and Ayaka, who has Kanten equipped, stands by with three Cryo dice to pay with
+const createSwitchDuel = (): GcgDuel => {
+  const duel = createDuel([
+    createSideState([
+      createGcgCharacterState({ character: { id: 2, element: Element.Cryo } }),
+      {
+        ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
+        equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
+      },
+    ]),
+    createSideState([createGcgCharacterState({ character: { id: 2, element: Element.Cryo } })]),
+  ]);
+  takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
+  return duel;
+};
+
+// A weapon card that costs two Unaligned dice, which its Billets stand in for when they cover it
+const createWeaponCard = (id: number, weapon: string): GcgCard => ({
+  costs: [{ count: 2, kind: GcgCostKind.Unaligned }],
+  descriptionTextId: 1,
+  effects: [],
+  id,
+  isLocation: false,
+  kind: GcgCardKind.Weapon,
+  nameTextId: 1,
+  weapon,
+});
+
 describe("frostflake Seki no To", () => {
   test("it deals 2 Cryo DMG at each End Phase, for two usages", () => {
     expect.hasAssertions();
@@ -187,18 +235,6 @@ describe("kamisato Art: Senho", () => {
     id: SENHO_STATUS_ID,
     kind: GcgSkillKind.Passive,
   };
-  // Ayaka holds Senho from the battle's start, so she is the second character of the side
-  const createAyakaDuel = (): GcgDuel =>
-    createDuel([
-      createSideState([
-        createGcgCharacterState({ character: { id: 2, element: Element.Cryo } }),
-        {
-          ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
-          statuses: [createGcgZoneCard(SENHO_STATUS_ID, kamisatoArtSenho)],
-        },
-      ]),
-      createSideState([createGcgCharacterState({ character: { id: 2, element: Element.Cryo } })]),
-    ]);
 
   test("the passive is held from the battle's start", () => {
     expect.hasAssertions();
@@ -300,7 +336,8 @@ describe("the skills whose damage is parsed from their effect name", () => {
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
-    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: GcgAura.None, hp: STARTING_HP - KABUKI_DAMAGE });
+    expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(GcgAura.None);
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - KABUKI_DAMAGE);
   });
 
   test("kamisato Art: Hyouka deals 3 Cryo DMG, which applies the Cryo aura", () => {
@@ -312,7 +349,8 @@ describe("the skills whose damage is parsed from their effect name", () => {
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
 
-    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({ aura: Element.Cryo, hp: STARTING_HP - HYOUKA_DAMAGE });
+    expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(Element.Cryo);
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - HYOUKA_DAMAGE);
   });
 
   test("firework Flare-Up deals 2 Physical DMG for Yoimiya", () => {
@@ -324,10 +362,8 @@ describe("the skills whose damage is parsed from their effect name", () => {
 
     runGcgSkillUse({ duel, sideIndex: 0 }, FIREWORK_FLARE_UP);
 
-    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({
-      aura: GcgAura.None,
-      hp: STARTING_HP - FLARE_UP_DAMAGE,
-    });
+    expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(GcgAura.None);
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - FLARE_UP_DAMAGE);
   });
 });
 
@@ -575,11 +611,6 @@ describe("kanten Senmyou Blessing", () => {
   };
   const KANTEN_BONUS = 1;
 
-  const createKantened = (statuses: GcgCharacterState["statuses"]): GcgCharacterState => ({
-    ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
-    equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
-    statuses,
-  });
   const INFUSED = [createGcgZoneCard(CRYO_ELEMENTAL_INFUSION_ID, cryoElementalInfusion)];
 
   test("while Ayaka holds Cryo Elemental Infusion, her Physical DMG, dealt as Cryo, is 1 more", () => {
@@ -591,10 +622,8 @@ describe("kanten Senmyou Blessing", () => {
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);
 
-    expect(takeOne(duel.sides, 1).characters[0]).toMatchObject({
-      aura: Element.Cryo,
-      hp: STARTING_HP - KABUKI_DAMAGE - KANTEN_BONUS,
-    });
+    expect(takeOne(duel.sides, 1).characters[0]?.aura).toBe(Element.Cryo);
+    expect(takeOne(duel.sides, 1).characters[0]?.hp).toBe(STARTING_HP - KABUKI_DAMAGE - KANTEN_BONUS);
   });
 
   test("while Ayaka holds Cryo Elemental Infusion, her Cryo DMG is 1 more", () => {
@@ -623,28 +652,13 @@ describe("kanten Senmyou Blessing", () => {
 });
 
 describe("kanten Senmyou Blessing's switch clause", () => {
-  // Xingqiu is active, and Ayaka, who has Kanten equipped, stands by with three Cryo dice to pay with
-  const createSwitchDuel = (): GcgDuel => {
-    const duel = createDuel([
-      createSideState([
-        createGcgCharacterState({ character: { id: 2, element: Element.Cryo } }),
-        {
-          ...createGcgCharacterState({ character: { id: 1, element: Element.Cryo } }),
-          equipments: [createGcgZoneCard(KANTEN_SENMYOU_BLESSING_ID, kantenSenmyouBlessing)],
-        },
-      ]),
-      createSideState([createGcgCharacterState({ character: { id: 2, element: Element.Cryo } })]),
-    ]);
-    takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
-    return duel;
-  };
-
   test("a switch to Ayaka, who has it equipped, spends one die less", () => {
     expect.hasAssertions();
     const duel = createSwitchDuel();
 
     expect(switchGcgCharacter(duel, 0, 1, [])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ activeIndex: 1, dice: [Element.Cryo, Element.Cryo, Element.Cryo] });
+    expect(takeOne(duel.sides, 0).activeIndex).toBe(1);
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([Element.Cryo, Element.Cryo, Element.Cryo]);
   });
 
   test("a switch away from Ayaka gets no reduction", () => {
@@ -691,17 +705,6 @@ describe("wagner", () => {
     kind: GcgCardKind.Event,
     nameTextId: 1,
   };
-  // A weapon card that costs two Unaligned dice, which its Billets stand in for when they cover it
-  const createWeaponCard = (id: number, weapon: string): GcgCard => ({
-    costs: [{ count: 2, kind: GcgCostKind.Unaligned }],
-    descriptionTextId: 1,
-    effects: [],
-    id,
-    isLocation: false,
-    kind: GcgCardKind.Weapon,
-    nameTextId: 1,
-    weapon,
-  });
   const createWagnerDuel = (billets: number, deckWeapons: GcgCard[]): GcgDuel => {
     const duel = createDuel([
       createSideState([createWielder(1, "SWORD"), createWielder(2, "SWORD")]),
@@ -739,7 +742,7 @@ describe("wagner", () => {
     expect(playGcgCard(duel, 0, 0, 0, [])).toBe(GcgActionResult.Done);
     expect(takeOne(duel.sides, 0).supports[0]?.counter).toBe(1);
 
-    takeOne(duel.sides, 0).supports[0]!.counter = 2;
+    takeOne(takeOne(duel.sides, 0).supports, 0).counter = 2;
     duel.actingSideIndex = 0;
     expect(playGcgCard(duel, 0, 0, 1, [])).toBe(GcgActionResult.Unpayable);
   });
@@ -751,7 +754,8 @@ describe("wagner", () => {
     takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo];
 
     expect(playGcgCard(duel, 0, 0, 0, [0, 1])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ dice: [], supports: [expect.objectContaining({ counter: 1 })] });
+    expect(takeOne(duel.sides, 0).dice).toStrictEqual([]);
+    expect(takeOne(duel.sides, 0).supports.map(({ counter }) => counter)).toStrictEqual([1]);
   });
 
   test("with three Weapon kinds in its deck, playing it draws a random Weapon card from the draw pile", () => {
@@ -766,7 +770,8 @@ describe("wagner", () => {
     takeOne(duel.sides, 0).drawPile = [LEAVE_IT_TO_ME_ID, BOW_ID];
 
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ drawPile: [LEAVE_IT_TO_ME_ID], hand: [BOW_ID] });
+    expect(takeOne(duel.sides, 0).drawPile).toStrictEqual([LEAVE_IT_TO_ME_ID]);
+    expect(takeOne(duel.sides, 0).hand).toStrictEqual([BOW_ID]);
   });
 
   test("with two Weapon kinds in its deck, nothing is drawn", () => {
@@ -780,6 +785,7 @@ describe("wagner", () => {
     takeOne(duel.sides, 0).drawPile = [BOW_ID];
 
     expect(playGcgCard(duel, 0, 0, undefined, [])).toBe(GcgActionResult.Done);
-    expect(takeOne(duel.sides, 0)).toMatchObject({ drawPile: [BOW_ID], hand: [] });
+    expect(takeOne(duel.sides, 0).drawPile).toStrictEqual([BOW_ID]);
+    expect(takeOne(duel.sides, 0).hand).toStrictEqual([]);
   });
 });
