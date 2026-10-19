@@ -7,66 +7,66 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, nextTick, shallowRef, Teleport } from "vue";
 
-// A frame in a fixed-size pane, with the page's markup teleported into the frame's body from the default slot
-const CanvasFrameTest = defineComponent({
-  props: {
-    css: { default: "", type: String },
-    fill: { default: false, type: Boolean },
-    paneWidth: { required: true, type: Number },
-    width: { required: true, type: Number },
-  },
-  render() {
-    return h("div", { style: { height: "400px", width: `${this.paneWidth}px` } }, [
-      h("div", { ref: "pane", style: { height: "100%", width: "100%" } }, [
-        h("iframe", {
-          ref: "frame",
-          sandbox: "allow-same-origin",
-          srcdoc: CANVAS_FRAME_SRCDOC,
-          style: [{ border: "0" }, this.frameStyle],
-        }),
-        this.frameBody ? h(Teleport, { to: this.frameBody }, this.$slots.default?.() ?? []) : undefined,
-      ]),
-    ]);
-  },
-  setup(props) {
-    const frame = shallowRef<HTMLIFrameElement>();
-    const pane = shallowRef<HTMLElement>();
-    const { frameBody, frameStyle, loaded } = useCanvasFrame({
-      css: () => props.css,
-      fill: () => props.fill,
-      frame,
-      pane,
-      width: () => props.width,
+describe(useCanvasFrame, () => {
+  // A frame in a fixed-size pane, with the page's markup teleported into the frame's body from the default slot
+  const CanvasFrameTest = defineComponent({
+    props: {
+      css: { default: "", type: String },
+      fill: { default: false, type: Boolean },
+      paneWidth: { required: true, type: Number },
+      width: { required: true, type: Number },
+    },
+    render() {
+      return h("div", { style: { height: "400px", width: `${this.paneWidth}px` } }, [
+        h("div", { ref: "pane", style: { height: "100%", width: "100%" } }, [
+          h("iframe", {
+            ref: "frame",
+            sandbox: "allow-same-origin",
+            srcdoc: CANVAS_FRAME_SRCDOC,
+            style: [{ border: "0" }, this.frameStyle],
+          }),
+          this.frameBody ? h(Teleport, { to: this.frameBody }, this.$slots.default?.() ?? []) : undefined,
+        ]),
+      ]);
+    },
+    setup(props) {
+      const frame = shallowRef<HTMLIFrameElement>();
+      const pane = shallowRef<HTMLElement>();
+      const { frameBody, frameStyle, loaded } = useCanvasFrame({
+        css: () => props.css,
+        fill: () => props.fill,
+        frame,
+        pane,
+        width: () => props.width,
+      });
+      return { frame, frameBody, frameStyle, loaded, pane };
+    },
+  });
+
+  const mountCanvasFrame = (
+    props: { css?: string; fill?: boolean; paneWidth: number; width: number },
+    slotContent?: () => VNodeChild,
+  ): VueWrapper<InstanceType<typeof CanvasFrameTest>> => {
+    const wrapper = mount(CanvasFrameTest, {
+      attachTo: document.body,
+      props,
+      slots: slotContent ? { default: slotContent } : undefined,
     });
-    return { frame, frameBody, frameStyle, loaded, pane };
-  },
-});
+    onTestFinished(() => wrapper.unmount());
+    return wrapper;
+  };
 
-const mountCanvasFrame = (
-  props: { css?: string; fill?: boolean; paneWidth: number; width: number },
-  slotContent?: () => VNodeChild,
-): VueWrapper<InstanceType<typeof CanvasFrameTest>> => {
-  const wrapper = mount(CanvasFrameTest, {
-    attachTo: document.body,
-    props,
-    slots: slotContent ? { default: slotContent } : undefined,
-  });
-  onTestFinished(() => wrapper.unmount());
-  return wrapper;
-};
+  // Waits for the frame's first load, then for the render it causes, then for the next animation frame, the one the
+  // Composable writes the page's css in
+  const settleFrame = async (wrapper: VueWrapper<InstanceType<typeof CanvasFrameTest>>): Promise<HTMLIFrameElement> => {
+    await wrapper.vm.loaded;
+    await nextTick();
+    await new Promise((resolve) => {
+      requestAnimationFrame(resolve);
+    });
+    return wrapper.find("iframe").element;
+  };
 
-// Waits for the frame's first load, then for the render it causes, then for the next animation frame, the one the
-// Composable writes the page's css in
-const settleFrame = async (wrapper: VueWrapper<InstanceType<typeof CanvasFrameTest>>): Promise<HTMLIFrameElement> => {
-  await wrapper.vm.loaded;
-  await nextTick();
-  await new Promise((resolve) => {
-    requestAnimationFrame(resolve);
-  });
-  return wrapper.find("iframe").element;
-};
-
-describe("useCanvasFrame", () => {
   test("a desktop frame is never narrower than its least width", async () => {
     expect.hasAssertions();
     const frame = await settleFrame(mountCanvasFrame({ fill: true, paneWidth: 600, width: 992 }));
