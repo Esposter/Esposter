@@ -5,7 +5,7 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ChestKindRewardMap } from "#src/services/chest/ChestKindRewardMap";
-import { drawChestCount } from "#src/services/chest/drawChestCount";
+import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 import { rollChestDrops } from "#src/services/chest/rollChestDrops";
 
 // Opening a chest once: its Primogems, Mora and Sigils roll within their ranges into the wallet, the Sigils being the
@@ -31,9 +31,9 @@ export const openChest = (
 } => {
   const reward = ChestKindRewardMap[kind];
   if (!reward || openedChestIds.has(id)) return { adventureExp: 0, bagDrops: [], drops: [], openedChestIds, wallet };
-  const moraCount = drawChestCount(reward.mora, random);
-  const primogemCount = drawChestCount(reward.primogem, random);
-  const sigilCount = drawChestCount(reward.sigil, random);
+  const moraCount = drawRangeCount(reward.mora, random);
+  const primogemCount = drawRangeCount(reward.primogem, random);
+  const sigilCount = drawRangeCount(reward.sigil, random);
   const chestDrops = rollChestDrops(kind, random, artifactDropTables);
   return {
     adventureExp: reward.adventureExp,

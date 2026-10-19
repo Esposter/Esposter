@@ -10,7 +10,7 @@ import {
   CHEST_HIGH_RARITY_ARTIFACT_STARS,
   CHEST_LOW_RARITY_ARTIFACT_STARS,
 } from "#src/services/chest/constants";
-import { drawChestCount } from "#src/services/chest/drawChestCount";
+import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 import { takeRandom } from "@esposter/shared";
 
 // One artifact of the sets a pool names, rolled as the game drops one. Its set is drawn evenly among those the reliquary
@@ -47,7 +47,7 @@ export const rollChestDrops = (
     { artifactMainAffixPools, artifactRarityDataMap },
   );
   const materials = pool.materials.flatMap(({ count, itemId }) => {
-    const drawnCount = drawChestCount(count, random);
+    const drawnCount = drawRangeCount(count, random);
     return drawnCount > 0 ? [{ count: drawnCount, itemId }] : [];
   });
   return [...weapons, ...artifacts, ...materials];
