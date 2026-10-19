@@ -31,40 +31,37 @@ const createCombatant = (characterId: number, kit = KIT): Combatant => {
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
 };
 
-describe(createViridescentVenererSetModule, () => {
-  // The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events
-  // The Team sends, and reads the reactions a member makes in the party's hooks
-  const createTeam = (characterIds: number[]) => {
-    const wearer = createCombatant(
-      TRAVELER_CHARACTER_ID,
-      getPassiveKit(KIT, [
-        createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
-      ]),
-    );
-    const other = createCombatant(OTHER_CHARACTER_ID);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty(characterIds);
-    const characterIdCombatantMap = new Map([
-      [TRAVELER_CHARACTER_ID, wearer],
-      [OTHER_CHARACTER_ID, other],
-    ]);
-    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
-    // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
-    const reactionDamageBonus = (
-      combatant: Combatant,
-      reactionType: TransformativeReactionType | StellarReactionType,
-    ) =>
-      wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
-        ?.damageBonus ?? 0;
-    // A hit the striker lands on the enemy, which triggers the given reactions on it
-    const trigger = (
-      striker: Combatant,
-      reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
-    ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
-    return { enemy, other, reactionDamageBonus, trigger, wearer };
-  };
+// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events
+// The Team sends, and reads the reactions a member makes in the party's hooks
+const createTeam = (characterIds: number[]) => {
+  const wearer = createCombatant(
+    TRAVELER_CHARACTER_ID,
+    getPassiveKit(KIT, [
+      createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
+    ]),
+  );
+  const other = createCombatant(OTHER_CHARACTER_ID);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const party = createParty(characterIds);
+  const characterIdCombatantMap = new Map([
+    [TRAVELER_CHARACTER_ID, wearer],
+    [OTHER_CHARACTER_ID, other],
+  ]);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+  // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
+  const reactionDamageBonus = (combatant: Combatant, reactionType: TransformativeReactionType | StellarReactionType) =>
+    wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
+      ?.damageBonus ?? 0;
+  // A hit the striker lands on the enemy, which triggers the given reactions on it
+  const trigger = (
+    striker: Combatant,
+    reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
+  ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
+  return { enemy, other, reactionDamageBonus, trigger, wearer };
+};
 
+describe(createViridescentVenererSetModule, () => {
   test("the wearer's own Swirl reaction DMG is raised by 60%, and another member's Swirl is not", () => {
     expect.hasAssertions();
 
@@ -81,7 +78,9 @@ describe(createViridescentVenererSetModule, () => {
     trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
 
     expect(enemy.statuses).toHaveLength(1);
-    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 });
+    expect(
+      enemy.statuses.map(({ resistanceReduction, secondsRemaining }) => ({ resistanceReduction, secondsRemaining })),
+    ).toStrictEqual([{ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 }]);
   });
 
   test("a second Swirl of the same element refreshes its RES debuff rather than stacking it", () => {
@@ -92,7 +91,9 @@ describe(createViridescentVenererSetModule, () => {
     trigger(wearer, [{ element: Element.Cryo, reactionType: TransformativeReactionType.Swirl }]);
 
     expect(enemy.statuses).toHaveLength(1);
-    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 } });
+    expect(enemy.statuses.map(({ resistanceReduction }) => ({ resistanceReduction }))).toStrictEqual([
+      { resistanceReduction: { [Element.Cryo]: 0.4 } },
+    ]);
   });
 
   test("a Swirl another member triggers, or one the wearer triggers off the field, lowers no RES", () => {
@@ -112,6 +113,8 @@ describe(createViridescentVenererSetModule, () => {
     trigger(wearer, [{ reactionType: StellarReactionType.StellarSwirl }]);
 
     expect(enemy.statuses).toHaveLength(1);
-    expect(enemy.statuses[0]).toMatchObject({ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 });
+    expect(
+      enemy.statuses.map(({ resistanceReduction, secondsRemaining }) => ({ resistanceReduction, secondsRemaining })),
+    ).toStrictEqual([{ resistanceReduction: { [Element.Cryo]: 0.4 }, secondsRemaining: 10 }]);
   });
 });

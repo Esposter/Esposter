@@ -10,6 +10,13 @@ import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
+const createEntry = (artifact: Artifact, id: number): InventoryItem => ({
+  artifact,
+  definition: FLOWER_ITEM_DEFINITION,
+  id,
+  quantity: 1,
+});
+
 describe(equipBagArtifact, () => {
   const options = {
     names: { "101": "Flower Piece" },
@@ -31,12 +38,6 @@ describe(equipBagArtifact, () => {
       },
     ] satisfies ReliquarySetData[],
   };
-  const createEntry = (artifact: Artifact, id: number): InventoryItem => ({
-    artifact,
-    definition: FLOWER_ITEM_DEFINITION,
-    id,
-    quantity: 1,
-  });
 
   test("the chosen piece is worn, and the piece it wore goes back to the bag as an entry of its own", () => {
     expect.hasAssertions();

@@ -1,5 +1,4 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";

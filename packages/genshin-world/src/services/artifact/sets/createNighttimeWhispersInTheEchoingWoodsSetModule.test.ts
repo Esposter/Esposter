@@ -23,6 +23,20 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const useSkill = (context: KitContext) =>
   emitKitEvent({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context);
+// A Crystallize shield the other member's reaction left, picked up by the team, lasting the given seconds
+const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
+  castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });
+const swapToOther = (context: KitContext) => {
+  context.party.activeIndex = 1;
+  emitKitEvent(
+    {
+      characterId: OTHER_CHARACTER_ID,
+      kind: KitEventKind.CharacterSwapped,
+      previousCharacterId: TRAVELER_CHARACTER_ID,
+    },
+    context,
+  );
+};
 
 describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
   const bonus = getArtifactSetBonus(statTables, NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID, 4);
@@ -43,20 +57,6 @@ describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
     (wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [])
       .filter(({ attribute }) => attribute === Attribute.GeoDamageBonus)
       .reduce((sum, { amount }) => sum + amount, 0);
-  // A Crystallize shield the other member's reaction left, picked up by the team, lasting the given seconds
-  const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
-    castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });
-  const swapToOther = (context: KitContext) => {
-    context.party.activeIndex = 1;
-    emitKitEvent(
-      {
-        characterId: OTHER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: TRAVELER_CHARACTER_ID,
-      },
-      context,
-    );
-  };
 
   test("its wearer's skill gives a 20% Geo DMG Bonus for 10 seconds", () => {
     expect.hasAssertions();

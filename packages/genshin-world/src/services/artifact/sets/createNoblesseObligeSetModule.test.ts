@@ -28,6 +28,12 @@ const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_C
 describe(createNoblesseObligeSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wearer = createSetWearer(TRAVELER_KIT);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
 
   test("gives every deployed member 20% more ATK for 12 seconds when its wearer uses its Elemental Burst from four pieces", () => {
     expect.hasAssertions();
@@ -51,12 +57,6 @@ describe(createNoblesseObligeSetModule, () => {
   test("raises the Elemental Burst DMG of each strike its wearer's burst lands by 20% from two pieces, and no other strike", () => {
     expect.hasAssertions();
 
-    const createStrike = (attackTag: AttackTag): KitStrike => ({
-      attackTag,
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant: wearer,
-      hit: TRAVELER_KIT.plungeCollision,
-    });
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const { getStrikeDamageBonus } = createNoblesseObligeSetModule(
       getArtifactSetBonus(statTables, NOBLESSE_OBLIGE_ARTIFACT_SET_ID, 2),

@@ -45,6 +45,12 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   return { defense: sumOf(Attribute.DefensePercent), geo: sumOf(Attribute.GeoDamageBonus) };
 };
 
+const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
+  emitKitEvent(
+    { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
+    context,
+  );
+
 describe(createHuskOfOpulentDreamsSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // A hit the given combatant deals of the given element, as the kit sends it
@@ -58,11 +64,6 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
         kind: KitEventKind.DamageTaken,
         striker,
       },
-      context,
-    );
-  const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
-    emitKitEvent(
-      { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
       context,
     );
 

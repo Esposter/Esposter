@@ -44,8 +44,8 @@ export interface GcgCardModule {
   ) => number;
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
-  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and
-  // UserSideIndex is the side of the character who used the skill
+  // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own.
+  // The `userSideIndex` is the side of the character who used the skill
   onAnySkillUsed?: (
     context: GcgEffectContext & { userSideIndex: number },
     skill: GcgSkill,

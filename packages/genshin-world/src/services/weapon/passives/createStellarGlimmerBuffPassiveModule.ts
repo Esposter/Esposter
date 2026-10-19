@@ -15,6 +15,6 @@ export const createStellarGlimmerBuffPassiveModule = (
   // The buff takes no Ascendant Gleam amount
   createReactionBuffPassiveModule([takeOne(params, 0), takeOne(params, 1), 0], {
     attribute,
-    checkIsTriggering: (reactions) => reactions.some(checkIsStellarGlimmerReaction),
+    checkIsTriggering: (reactions) => reactions.some((reaction) => checkIsStellarGlimmerReaction(reaction)),
     source,
   });

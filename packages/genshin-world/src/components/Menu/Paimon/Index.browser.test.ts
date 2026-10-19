@@ -158,6 +158,7 @@ describe("menuPaimon", () => {
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.BirthdaySet] }).click();
 
     for (let index = 0; index < BIRTHDAY_MONTHS.length + 2; index++) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every Tab moves the focus the next one starts from
       await userEvent.tab();
 
       expect(menu?.contains(document.activeElement)).toBe(false);
@@ -176,6 +177,7 @@ describe("menuPaimon", () => {
     await page.getByRole("button", { exact: true, name: namecard.name }).click();
 
     for (let index = 0; index < namecards.length + 2; index++) {
+      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: every Tab moves the focus the next one starts from
       await userEvent.tab();
 
       expect(menu?.contains(document.activeElement)).toBe(false);
