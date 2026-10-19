@@ -5,12 +5,13 @@ import { TEST_HEADING_ID, TEST_REGISTRY, TEST_SECTION_ID, TEST_SECTION_OTHER_ID 
 import { renderBlockNodes } from "#src/services/renderBlockNodes";
 import { describe, expect, test } from "vitest";
 
+const render = (node: BlockNode, _definition: BlockTypeDefinition, slots: Record<string, unknown[]>) => ({
+  children: Object.values(slots).flat(),
+  id: node.props.id,
+});
+
 describe(renderBlockNodes, () => {
   const TEST_HEADING_OTHER_ID: string = crypto.randomUUID();
-  const render = (node: BlockNode, _definition: BlockTypeDefinition, slots: Record<string, unknown[]>) => ({
-    children: Object.values(slots).flat(),
-    id: node.props.id,
-  });
 
   test("rendering a nested document", () => {
     expect.hasAssertions();

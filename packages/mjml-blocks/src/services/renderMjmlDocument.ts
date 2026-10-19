@@ -5,6 +5,7 @@ import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
 import type { BlockNode } from "headless-block-editor";
 
+import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { escapeAttribute } from "@esposter/shared";
@@ -37,7 +38,7 @@ export const renderMjmlDocument = <TContext>(
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};
   if (rootProps.lang !== undefined) rootAttributes.lang = rootProps.lang;
-  if (rootProps.dir !== undefined) rootAttributes.dir = rootProps.dir;
+  if (rootProps.direction !== undefined) rootAttributes[DIRECTION_ATTRIBUTE_KEY] = rootProps.direction;
 
   return {
     attributes: escapeMjmlAttributes(rootAttributes),

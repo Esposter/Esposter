@@ -35,7 +35,7 @@ export const createMjmlRootPropsSchema = (
         continue;
       }
 
-      const definition = definitions.find((definition) => definition.type === type);
+      const definition = definitions.find((candidate) => candidate.type === type);
       if (definition) checkMjmlAttributeValues(values, definition.allowedAttributes, segments, context);
       else context.addIssue({ code: "custom", message: `"${type}" is not in the registry`, path: segments });
     }

@@ -39,7 +39,7 @@ describe("components", () => {
     (type, specification) => {
       expect.hasAssertions();
 
-      const component = components.find((component) => component.componentName === type);
+      const component = components.find((candidate) => candidate.componentName === type);
       assert.exists(component);
       expect(specification.allowedAttributes).toStrictEqual(
         Object.fromEntries(
@@ -52,7 +52,7 @@ describe("components", () => {
   test.each(SPECIFICATION_ROWS)("%s has the default attributes MJML's component sets", (type, specification) => {
     expect.hasAssertions();
 
-    const component = components.find((component) => component.componentName === type);
+    const component = components.find((candidate) => candidate.componentName === type);
     assert.exists(component);
     expect(specification.defaultAttributes).toStrictEqual(
       Object.fromEntries(Object.entries(component.defaultAttributes).filter(([, value]) => typeof value === "string")),

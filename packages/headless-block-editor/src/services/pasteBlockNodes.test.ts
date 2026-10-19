@@ -10,10 +10,11 @@ import {
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { pasteBlockNodes } from "#src/services/pasteBlockNodes";
 import { applyPatches, JsonPatchOperationType } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(pasteBlockNodes, () => {
   const TEST_IMAGE_ID: string = crypto.randomUUID();
+  const TEST_HEADING_COPY_ID: string = crypto.randomUUID();
 
   test("pasting a node twice", () => {
     expect.hasAssertions();
@@ -50,6 +51,7 @@ describe(pasteBlockNodes, () => {
     expect.hasAssertions();
 
     const copiedHeading: BlockNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
+    vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(TEST_HEADING_COPY_ID);
 
     expect(
       pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [copiedHeading], "/content/0/props/children", 1),
@@ -57,7 +59,7 @@ describe(pasteBlockNodes, () => {
       {
         op: JsonPatchOperationType.Add,
         path: "/content/0/props/children/1",
-        value: { props: { id: expect.any(String), text: "" }, type: "heading" },
+        value: { props: { id: TEST_HEADING_COPY_ID, text: "" }, type: "heading" },
       },
     ]);
   });

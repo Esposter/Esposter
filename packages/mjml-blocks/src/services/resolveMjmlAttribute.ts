@@ -12,7 +12,7 @@ const checkIsApplicableToType = (
   value: string,
 ): boolean => {
   const schema = getMjmlAttributeSchema(definition.allowedAttributes, attributeName);
-  return schema !== undefined && schema.safeParse(value).success;
+  return schema?.safeParse(value).success === true;
 };
 
 // The node's own value, then the root's for its type, then the root's for all, then MJML's default: each undefined where none sets it

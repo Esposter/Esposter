@@ -18,6 +18,8 @@ export const parseMjmlAttributeType = (grammar: string): MjmlAttributeType => {
       return { kind: MjmlAttributeKind.Integer };
     case "string":
       return { kind: MjmlAttributeKind.String };
+    default:
+      break;
   }
 
   const options = ENUM_GRAMMAR_REGEX.exec(grammar)?.groups?.options;

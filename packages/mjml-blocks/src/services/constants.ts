@@ -25,6 +25,8 @@ import { mjWrapper } from "#src/services/components/mjWrapper";
 
 // The key the defaults for every component are held under: mj-all's own tag, as each type's defaults sit under its tag
 export const ALL_ATTRIBUTES_KEY = "mj-all";
+// The attribute the root's direction is written under, HTML's own name for it, held as a string since no identifier of ours takes it
+export const DIRECTION_ATTRIBUTE_KEY = "dir";
 export const ALLOWED_URL_SCHEMES: string[] = ["http", "https", "mailto", "tel"];
 // The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
 export const EXCLUDED_MJML_TAGS: string[] = ["mj-include", "mj-html-attributes", "mj-class"];
@@ -220,7 +222,7 @@ const MJML_COLOR_NAMES: string[] = [
 export const MJML_COLOR_MATCHERS: RegExp[] = [
   /^rgba\(\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?\d(?:\.\d{1,3})?\)$/iu,
   /^rgb\(\d{1,3},\s?\d{1,3},\s?\d{1,3}\)$/iu,
-  /^#([0-9a-f]{3}){1,2}$/iu,
+  /^#(?:[0-9a-f]{3}){1,2}$/iu,
   new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
 ];
 // The tags whose content is read raw: each content kind's type, and the head's title, preview and style
@@ -233,7 +235,7 @@ export const MJML_BLOCK_TEXT_TAGS: string[] = [
   "mj-title",
 ];
 // The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names it
-export const STRAY_TEXT_TYPE: string = "#text";
+export const STRAY_TEXT_TYPE = "#text";
 // The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so the
 // Strict props schema refuses it by this name rather than the import taking it as the node's id
-export const STRAY_ID_ATTRIBUTE_KEY: string = "#id";
+export const STRAY_ID_ATTRIBUTE_KEY = "#id";
