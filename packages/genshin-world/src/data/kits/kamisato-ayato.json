@@ -1,7 +1,7 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
-  "frames.boundlessOriginHitmarks.length": { "cause": "Unclassified", "value": 2 },
+  "frames.boundlessOriginHitmarks.length": { "cause": "Unsourced", "value": 2 },
   "frames.boundlessOriginHitmarks.0": { "cause": "Unsourced", "value": 20 },
   "frames.boundlessOriginHitmarks.1": { "cause": "Unsourced", "value": 22 },
   "frames.bloomwaterBladeFirstTick": { "cause": "Unsourced", "value": 101 },
