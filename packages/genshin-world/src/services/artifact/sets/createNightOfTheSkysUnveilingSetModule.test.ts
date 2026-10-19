@@ -17,7 +17,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { OTHER_CHARACTER_ID, THIRD_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -43,7 +43,6 @@ const createWearer = (characterId = TRAVELER_CHARACTER_ID) =>
     ]),
   );
 describe(createNightOfTheSkysUnveilingSetModule, () => {
-  const THIRD_CHARACTER_ID = 3;
   const FOURTH_CHARACTER_ID = 4;
   // A Moonsign character's kit, which counts toward the team's Moonsign level
   const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };

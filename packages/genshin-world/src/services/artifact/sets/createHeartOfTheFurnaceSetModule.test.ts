@@ -15,7 +15,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { OTHER_CHARACTER_ID, THIRD_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getBuffAmounts } from "#src/services/kit/getBuffAmounts.test";
@@ -29,7 +29,6 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 describe(createHeartOfTheFurnaceSetModule, () => {
-  const THIRD_CHARACTER_ID = 3;
   const WEARER_KIT = getPassiveKit(KIT, [
     createHeartOfTheFurnaceSetModule(getArtifactSetBonus(statTables, HEART_OF_THE_FURNACE_ARTIFACT_SET_ID, 4)),
   ]);

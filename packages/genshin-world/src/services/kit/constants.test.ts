@@ -13,5 +13,7 @@ export const PROOF_PARTY_CHARACTER_IDS = [
 ];
 // The other party member a suite deploys beside its wielder, a character other than the wielder
 export const OTHER_CHARACTER_ID = 1;
+// The third party member a suite deploys beside its wielder and the other member, a character other than both
+export const THIRD_CHARACTER_ID = 3;
 
 describe.todo("constants");
