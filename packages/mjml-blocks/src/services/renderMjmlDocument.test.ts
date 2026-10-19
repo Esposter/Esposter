@@ -21,35 +21,35 @@ import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const EMAIL_DOCUMENT: BlockDocument = {
-  content: [
-    {
-      props: {
-        children: [
-          {
-            props: {
-              children: [
-                { props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" },
-                {
-                  props: { content: "Go", href: 'https://example.com/?a=1&b="2"', id: TEST_BUTTON_ID },
-                  type: "mj-button",
-                },
-                { props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" },
-              ],
-              id: TEST_COLUMN_ID,
-            },
-            type: "mj-column",
-          },
-        ],
-        id: TEST_SECTION_ID,
-      },
-      type: "mj-section",
-    },
-  ],
-  root: { props: {} },
-};
-
 describe(renderMjmlDocument, () => {
+  const EMAIL_DOCUMENT: BlockDocument = {
+    content: [
+      {
+        props: {
+          children: [
+            {
+              props: {
+                children: [
+                  { props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" },
+                  {
+                    props: { content: "Go", href: 'https://example.com/?a=1&b="2"', id: TEST_BUTTON_ID },
+                    type: "mj-button",
+                  },
+                  { props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" },
+                ],
+                id: TEST_COLUMN_ID,
+              },
+              type: "mj-column",
+            },
+          ],
+          id: TEST_SECTION_ID,
+        },
+        type: "mj-section",
+      },
+    ],
+    root: { props: {} },
+  };
+
   // A section of one column holding one text, with the props given set on that text
   const createTextSection = (textProps: Record<string, unknown> = {}): BlockNode => ({
     props: {

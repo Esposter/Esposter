@@ -11,14 +11,6 @@ import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const CSS_CLASS = "css-class";
-const MJ_CLASS = "mj-class";
-// MJML's preset exports its components as classes, whose static fields hold each component's table
-const PRESET_COMPONENT_SCHEMA = z.custom<object>((value) => typeof value === "function");
-const PRESET_SCHEMA = z.object({
-  components: z.array(PRESET_COMPONENT_SCHEMA),
-  dependencies: z.record(z.string(), z.unknown()),
-});
 const readComponent = (component: object) => ({
   allowedAttributes: z.record(z.string(), z.string()).optional().parse(Reflect.get(component, "allowedAttributes")),
   componentName: z.string().parse(Reflect.get(component, "componentName")),
@@ -26,6 +18,15 @@ const readComponent = (component: object) => ({
 });
 
 describe("components", () => {
+  const CSS_CLASS = "css-class";
+  const MJ_CLASS = "mj-class";
+  // MJML's preset exports its components as classes, whose static fields hold each component's table
+  const PRESET_COMPONENT_SCHEMA = z.custom<object>((value) => typeof value === "function");
+  const PRESET_SCHEMA = z.object({
+    components: z.array(PRESET_COMPONENT_SCHEMA),
+    dependencies: z.record(z.string(), z.unknown()),
+  });
+
   const preset = PRESET_SCHEMA.parse(createRequire(import.meta.url)("mjml-preset-core"));
   const components = preset.components.map((component) => readComponent(component));
   const { dependencies } = preset;
