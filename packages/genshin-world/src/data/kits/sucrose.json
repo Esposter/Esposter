@@ -13,7 +13,6 @@
   "hits.burstTick.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 } },
   "hits.burstTick.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.burstTick.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4339 } },
-  "hits.burstTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 5.5 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 7.7 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 8.75 },
