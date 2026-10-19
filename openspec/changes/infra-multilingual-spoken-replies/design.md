@@ -58,7 +58,8 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The output
 
 - **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's synthesis rather than the last sentence's. Each clause is its own synthesis, so no pass re-renders what came before it.
-- **The speech check, the device ladder it moves, the player and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of the synthesis.
+- **A superseded reply stops at a clause boundary.** Today a newer reply that lands during a line's synthesis waits for that line to finish: the supersession check runs after `synthesize` returns, and `synthesize` takes no cancellation signal, so the newer reply's first sound follows the older line's whole synthesis. With clauses, the check runs before each clause's synthesis, which bounds that wait to one clause. Whether a clause's own synthesis can be cancelled mid-generation is the design decision left open here: it needs the generation loop to accept a signal and stop at its next token, as the streaming path did before the whole-line change, and the signal crosses the `VoiceSynthesizer` interface.
+- **The speech check, the device ladder it moves, the player and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds the clause cut in front of the synthesis and the supersession check between clauses.
 
 ### The measurement
 

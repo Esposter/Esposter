@@ -19,3 +19,4 @@
 
 - [ ] 4.1 Cut each sentence at its clause punctuation and start playback at the first clause. Verify: a test named after the scenario 'Playback starts at the first clause of a long sentence' written first and seen failing.
 - [ ] 4.2 Hear one Chinese sentence through the Chinese token before the Chinese path is declared working. Verify: the `voice` verb speaks a Chinese sentence, and the person hears it.
+- [ ] 4.3 Check for supersession before each clause's synthesis, and decide whether a clause can be cancelled mid-generation, taking the signal through `VoiceSynthesizer.synthesize` if so. Verify: a test named after the scenario 'A superseded reply stops before its next clause' written first and seen failing.
