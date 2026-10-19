@@ -4,16 +4,16 @@
   "frames.propArrowPyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 387 },
   "frames.miracleParadePyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 563 },
   "hitFields.pyrotechnicStrike.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "hitFields.pyrotechnicStrike.element": { "cause": "Unclassified", "value": "Fire" },
-  "hitFields.pyrotechnicStrike.gauge": { "cause": "Unclassified", "value": 1 },
+  "hitFields.pyrotechnicStrike.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.pyrotechnicStrike.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 14, "proudSkillGroupId": 8431 }
   },
-  "hitFields.pyrotechnicStrike.poiseDamage": { "cause": "Unclassified", "value": 90 },
+  "hitFields.pyrotechnicStrike.poiseDamage": { "cause": "Unsourced", "value": 90 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
-  "skill.hits.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8432 } }
+  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8432 } }
 }
