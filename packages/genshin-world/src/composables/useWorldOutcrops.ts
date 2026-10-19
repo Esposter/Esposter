@@ -4,7 +4,6 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Outcrop } from "#src/models/leyLine/Outcrop";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
@@ -13,6 +12,7 @@ import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOf
 import type { BlossomClaimPrompt } from "#src/models/originalResin/BlossomClaimPrompt";
 import type { Party } from "#src/models/party/Party";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -69,7 +69,7 @@ export const useWorldOutcrops = ({
   setInventory,
   setWallet,
   wallet,
-}: {
+}: WorldBagDependencies & {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   areaId: Readonly<Ref<string>>;
@@ -81,16 +81,10 @@ export const useWorldOutcrops = ({
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   party: Party;
   placements: Readonly<Ref<OutcropPlacement[]>>;
   rank: Readonly<Ref<number>>;
   regionStatueProgressMap: Readonly<Ref<ReadonlyMap<string, StatueRegionProgressSave>>>;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
   const outcrops = shallowRef<Outcrop[]>([]);
   // The region's kinds, read by the key its publish wrote. A region no publish wrote opens no kind

@@ -9,9 +9,6 @@ import type { DomainLevelRow } from "#src/models/domains/DomainLevelRow";
 import type { DomainSchedule } from "#src/models/domains/DomainSchedule";
 import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { Party } from "#src/models/party/Party";
@@ -21,6 +18,7 @@ import type { RewardItem } from "#src/models/reward/RewardItem";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint } from "genshin-engine";
@@ -123,7 +121,7 @@ export const useWorldDomains = ({
   wallet,
   weaponDataMap,
   worldNow,
-}: {
+}: WorldBagDependencies & {
   adventureExp: Ref<number>;
   adventureRankTables: AdventureRankTables;
   artifactMainAffixPools: ArtifactMainAffixPool[];
@@ -134,20 +132,14 @@ export const useWorldDomains = ({
   events: WorldEvents;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
   jumpTo: (pose: WorldJumpPose) => void;
   kitEffectState: KitEffectState;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   party: Party;
   random: () => number;
   rank: Ref<number>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
-  wallet: Ref<Wallet>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {

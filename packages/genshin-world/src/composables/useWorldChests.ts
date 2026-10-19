@@ -4,12 +4,10 @@ import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
 import type { ChestPlace } from "#src/models/chest/ChestPlace";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref, ShallowRef } from "vue";
@@ -55,7 +53,7 @@ export const useWorldChests = ({
   wallet,
   waterLevel,
   weaponDataMap,
-}: {
+}: WorldBagDependencies & {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   events: WorldEvents;
@@ -63,18 +61,12 @@ export const useWorldChests = ({
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
-  inventory: Ref<Inventory>;
   lockSources: Readonly<Ref<ChestLockSource[]>>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   openedChestIds: ShallowRef<ReadonlySet<string>>;
   placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   puzzleChestPlaces: Readonly<Ref<ChestPlace[]>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
   waterLevel: number;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {

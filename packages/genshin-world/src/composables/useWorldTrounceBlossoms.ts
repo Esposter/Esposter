@@ -3,11 +3,9 @@ import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { Party } from "#src/models/party/Party";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -57,7 +55,7 @@ export const useWorldTrounceBlossoms = ({
   setWallet,
   wallet,
   worldNow,
-}: {
+}: WorldBagDependencies & {
   characters: Ref<Character[]>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
@@ -66,13 +64,7 @@ export const useWorldTrounceBlossoms = ({
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   party: Party;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(new Map());
