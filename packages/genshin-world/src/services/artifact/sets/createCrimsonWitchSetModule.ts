@@ -7,6 +7,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { getOwnReactionDamageBonus } from "#src/services/artifact/sets/getOwnReactionDamageBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -39,14 +40,14 @@ export const createCrimsonWitchSetModule = (bonus: ArtifactSetBonus): PassiveMod
   const pyroDamageBonus = takeOne(bonus.params, 2);
   const stackPyroDamageRatio = takeOne(bonus.params, 3);
   const stackSeconds = takeOne(bonus.params, 4);
+  const reactionTypeDamageBonusMap = new Map<ReactionType, number>([
+    ...Array.from(TRANSFORMATIVE_REACTION_TYPES, (reactionType) => [reactionType, transformativeDamageBonus] as const),
+    [AmplifyingReactionType.Melt, ampedDamageBonus],
+    [AmplifyingReactionType.Vaporize, ampedDamageBonus],
+  ]);
   return {
-    getPartyReactionBonus: (member, { combatant, reactionType }) => {
-      if (member.characterId !== combatant.characterId) return {};
-      if (TRANSFORMATIVE_REACTION_TYPES.has(reactionType)) return { damageBonus: transformativeDamageBonus };
-      if (reactionType === AmplifyingReactionType.Vaporize || reactionType === AmplifyingReactionType.Melt)
-        return { damageBonus: ampedDamageBonus };
-      return {};
-    },
+    getPartyReactionBonus: (member, reaction) =>
+      getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap),
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind !== KitEventKind.SkillUsed) return;
       const { characterId } = combatant;

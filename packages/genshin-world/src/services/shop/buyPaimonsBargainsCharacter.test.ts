@@ -7,7 +7,7 @@ import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { createCharacter } from "#src/services/character/createCharacter";
-import { EMPTY_WALLET } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { buyPaimonsBargainsCharacter } from "#src/services/shop/buyPaimonsBargainsCharacter";
 import { CONSTELLATION_COUNT } from "#src/services/wish/constants";
 import { describe, expect, test } from "vitest";
@@ -28,14 +28,13 @@ const createCharacterData = (id: number): CharacterData => ({
 describe(buyPaimonsBargainsCharacter, () => {
   const CHARACTER_ID = 2;
   const CHARACTER_PRICE = 5;
-  const STARGLITTER_ITEM_ID = 221;
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   // Forty days past the epoch, a morning in February, after the month's refresh on its first
   const NOW = EPOCH.add({ hours: 24 * 40 });
   const characterDataMap = new Map([[CHARACTER_ID, createCharacterData(CHARACTER_ID)]]);
   const good: PaimonsBargainsGood = {
     buyLimit: 1,
-    costs: [{ count: CHARACTER_PRICE, itemId: STARGLITTER_ITEM_ID }],
+    costs: [{ count: CHARACTER_PRICE, itemId: CurrencyItemIdMap[Currency.MasterlessStarglitter] }],
     goodsId: 102_005,
     itemCount: 1,
     itemId: CHARACTER_ID,

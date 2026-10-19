@@ -1,6 +1,6 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
@@ -17,7 +17,7 @@ export const createInfusionScrollPassiveModule = (params: number[]): PassiveModu
   const bonusPerStack = takeOne(params, 0);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant)) return;
       addPassiveStack(kitEffectState, combatant.characterId, {
         id: INFUSION_SCROLL_STATUS_ID,
         maximumStacks: INFUSION_SCROLL_MAXIMUM_STACKS,

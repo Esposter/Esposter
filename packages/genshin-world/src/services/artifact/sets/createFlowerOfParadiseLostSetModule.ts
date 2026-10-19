@@ -4,7 +4,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { takeOne } from "@esposter/shared";
@@ -37,7 +37,7 @@ export const createFlowerOfParadiseLostSetModule = (bonus: ArtifactSetBonus): Pa
       return { damageBonus: baseDamageBonus * (1 + stackDamageRatio * stacks) };
     },
     onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered || event.striker.characterId !== combatant.characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant)) return;
       const { characterId } = combatant;
       const isStackTriggered = event.reactions.some(
         ({ reactionType }) =>

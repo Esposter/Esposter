@@ -11,11 +11,11 @@ import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
 import { describe, expect, test } from "vitest";
 

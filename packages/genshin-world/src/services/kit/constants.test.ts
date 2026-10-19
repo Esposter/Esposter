@@ -11,5 +11,7 @@ export const PROOF_PARTY_CHARACTER_IDS = [
   NOELLE_CHARACTER_ID,
   TRAVELER_CHARACTER_ID,
 ];
+// The other party member a suite deploys beside its wielder, a character other than the wielder
+export const OTHER_CHARACTER_ID = 1;
 
 describe.todo("constants");

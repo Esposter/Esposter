@@ -10,11 +10,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { describe, expect, test } from "vitest";
 

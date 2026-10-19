@@ -5,12 +5,12 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
+import { createCharacterSwapped } from "#src/services/kit/createCharacterSwapped.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
-import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 

@@ -3,7 +3,7 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { takeOne } from "@esposter/shared";
@@ -24,12 +24,7 @@ export const createReactionBuffPassiveModule = (
   const ascendantGleamAmount = takeOne(params, 2);
   return {
     onKitEvent: (event, context, combatant) => {
-      if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsTriggering(event.reactions)
-      )
-        return;
+      if (!checkIsOwnReactionTriggered(event, combatant) || !checkIsTriggering(event.reactions)) return;
       const isAscendantGleam =
         getMoonsignLevel(context.characterIdCombatantMap, context.party) === MoonsignLevel.AscendantGleam;
       buffKitMember(context.kitEffectState, combatant.characterId, {

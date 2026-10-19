@@ -9,9 +9,9 @@ import { createThunderingFurySetModule } from "#src/services/artifact/sets/creat
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);

@@ -1,12 +1,14 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { getOwnReactionDamageBonus } from "#src/services/artifact/sets/getOwnReactionDamageBonus";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
@@ -22,6 +24,10 @@ export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): Pass
   const resistanceReduction = takeOne(bonus.params, 1);
   const resistanceSeconds = takeOne(bonus.params, 2);
   const stellarSwirlDamageBonus = takeOne(bonus.params, 3);
+  const reactionTypeDamageBonusMap = new Map<ReactionType, number>([
+    [StellarReactionType.StellarSwirl, stellarSwirlDamageBonus],
+    [TransformativeReactionType.Swirl, swirlDamageBonus],
+  ]);
   const reduceResistance = (enemy: Enemy, element: Element): void =>
     addEnemyStatus(enemy, {
       damageTakenBonus: 0,
@@ -30,16 +36,11 @@ export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): Pass
       secondsRemaining: resistanceSeconds,
     });
   return {
-    getPartyReactionBonus: (member, { combatant, reactionType }) => {
-      if (member.characterId !== combatant.characterId) return {};
-      if (reactionType === TransformativeReactionType.Swirl) return { damageBonus: swirlDamageBonus };
-      if (reactionType === StellarReactionType.StellarSwirl) return { damageBonus: stellarSwirlDamageBonus };
-      return {};
-    },
+    getPartyReactionBonus: (member, reaction) =>
+      getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap),
     onKitEvent: (event, context, combatant) => {
       if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
+        !checkIsOwnReactionTriggered(event, combatant) ||
         getActiveCharacterId(context.party) !== combatant.characterId
       )
         return;

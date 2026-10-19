@@ -1,26 +1,13 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStellarReactionTypes";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 90,
-});
 
 describe(getPartyStellarReactionTypes, () => {
   const STELLAR_JUBILEE = {
@@ -31,10 +18,10 @@ describe(getPartyStellarReactionTypes, () => {
     expect.hasAssertions();
 
     const characterIdCombatantMap = new Map([
-      [1, createCombatant(1, { ...TRAVELER_KIT, stellarJubilee: STELLAR_JUBILEE })],
+      [1, createKitCombatant(1, { ...TRAVELER_KIT, stellarJubilee: STELLAR_JUBILEE })],
       [
         2,
-        createCombatant(2, {
+        createKitCombatant(2, {
           ...TRAVELER_KIT,
           stellarJubilee: { stellarReactionTypes: [StellarReactionType.StellarConduct] },
         }),
@@ -51,8 +38,8 @@ describe(getPartyStellarReactionTypes, () => {
     expect.hasAssertions();
 
     const characterIdCombatantMap = new Map([
-      [1, createCombatant(1, TRAVELER_KIT)],
-      [2, createCombatant(2, TRAVELER_KIT)],
+      [1, createKitCombatant(1, TRAVELER_KIT)],
+      [2, createKitCombatant(2, TRAVELER_KIT)],
     ]);
 
     expect(getPartyStellarReactionTypes(characterIdCombatantMap, createParty([1, 2]))).toStrictEqual([]);

@@ -11,6 +11,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
@@ -148,8 +149,7 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
         });
       // Flower and a Fighter, from Constellation 4: her own Crystallize or Lunar-Crystallize gives her 20% DEF for 12 seconds
       if (
-        event.kind !== KitEventKind.ReactionTriggered ||
-        event.striker.characterId !== combatant.characterId ||
+        !checkIsOwnReactionTriggered(event, combatant) ||
         combatant.constellationCount < CONSTELLATION_4 ||
         !event.reactions.some(
           ({ reactionType }) =>

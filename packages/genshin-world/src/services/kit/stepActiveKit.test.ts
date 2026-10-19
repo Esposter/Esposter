@@ -18,7 +18,6 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -28,6 +27,7 @@ import { readOreHit } from "#src/services/gathering/readOreHit";
 import { readReactionOreHit } from "#src/services/gathering/readReactionOreHit";
 import { FISCHL_CHARACTER_ID } from "#src/services/kit/characters/fischlKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
@@ -53,16 +53,6 @@ const characterIdKitMap = await readCharacterKits(
   new Map([[TRAVELER_CHARACTER_ID, TALENT_START_LEVELS]]),
 );
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 90,
-});
-
 // The combat state the kit on the field steps in, its party the characters given with the first on the field
 const createContext = (combatants: Combatant[], kitEffectState: KitEffectState = { effects: [] }): KitContext => ({
   ...createKitTestContext(takeOne(combatants), {
@@ -115,7 +105,10 @@ describe(stepActiveKit, () => {
       kitState,
       { ...IDLE_INPUT, isAttackPressed: true },
       0.1,
-      { ...createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]), characterIdCombatantMap: new Map() },
+      {
+        ...createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]),
+        characterIdCombatantMap: new Map(),
+      },
       createControls(),
     );
 
@@ -124,7 +117,7 @@ describe(stepActiveKit, () => {
 
   test("gives the context the stamina pool the character controller holds", () => {
     expect.hasAssertions();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
     const controls = createControls();
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
 
@@ -135,7 +128,7 @@ describe(stepActiveKit, () => {
     expect.hasAssertions();
     const stamina = createStamina(STAMINA_MAX);
     stamina.value = 50;
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
     const controls = createControls(stamina);
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, controls);
     context.stamina.restore(15);
@@ -146,7 +139,7 @@ describe(stepActiveKit, () => {
 
   test("gives the context the locomotion state the input steps in", () => {
     expect.hasAssertions();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
     stepActiveKit(
       createKitState(),
       { ...IDLE_INPUT, locomotionState: LocomotionState.Dash },
@@ -161,9 +154,9 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a swap, an effect that runs out and a normal attack that starts and lands", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const offFieldCombatant = createCombatant(FISCHL_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent });
+    const offFieldCombatant = createKitCombatant(FISCHL_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent });
     const status: KitStatus = { characterId: FISCHL_CHARACTER_ID, id: "", kind: "status", secondsRemaining: 0 };
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT), offFieldCombatant], {
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT), offFieldCombatant], {
       effects: [status],
       fieldCharacterId: FISCHL_CHARACTER_ID,
     });
@@ -187,7 +180,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a swap with no character before it when the battle opens on one", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     stepActiveKit(createKitState(), IDLE_INPUT, 0.1, context, createControls());
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
@@ -198,7 +191,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a burst as it starts, with the member that used it and its energy cost", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = TRAVELER_KIT.burstEnergyCost;
     const controls = createControls();
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context, controls);
@@ -212,7 +205,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a skill as it starts, with the member that used it", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
@@ -229,7 +222,7 @@ describe(stepActiveKit, () => {
       elementalSkill: { ...TRAVELER_KIT.elementalSkill, checkIsStateEndingPress: () => true },
       onKitEvent,
     };
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, kit)]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, kit)]);
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isSkillPressed: true }, 0.1, context, createControls());
 
     expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
@@ -241,7 +234,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a charged attack that lands, with the action it landed", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     const kitState = createKitState();
     const controls = createControls();
     // A single press starts a normal attack, and the attack held past the press starts a charged one as that attack ends
@@ -267,7 +260,7 @@ describe(stepActiveKit, () => {
         },
       },
     };
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, kit)]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, kit)]);
     getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = kit.burstEnergyCost;
     const controls = createControls();
     stepActiveKit(createKitState(), { ...IDLE_INPUT, isBurstPressed: true }, 0.1, context, controls);
@@ -281,7 +274,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits each change to a member's HP since the last step, once", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })]);
     damagePartyMember(context.party, TRAVELER_CHARACTER_ID, 0.25);
     const kitState = createKitState();
     const controls = createControls();
@@ -304,7 +297,7 @@ describe(stepActiveKit, () => {
   test("sends the team's kits a fall a kit refused just after the change that left its member standing", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })], {
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, { ...TRAVELER_KIT, onKitEvent })], {
       effects: [],
       fieldCharacterId: TRAVELER_CHARACTER_ID,
     });
@@ -329,7 +322,7 @@ describe(stepActiveKit, () => {
   test("plays a stance's actions in place of the kit's while the stance holds", () => {
     expect.hasAssertions();
     const stanceAttack: KitAction = { ...takeOne(TRAVELER_KIT.normalAttacks) };
-    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const combatant = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
     const context = createContext([combatant], {
       effects: [
         {
@@ -350,7 +343,7 @@ describe(stepActiveKit, () => {
 
   test("a swap ends each effect of the character leaving the field that ends on one", () => {
     expect.hasAssertions();
-    const offFieldCombatant = createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT);
+    const offFieldCombatant = createKitCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT);
     const keptBuff: KitBuff = {
       amount: 0,
       attribute: Attribute.Attack,
@@ -358,7 +351,7 @@ describe(stepActiveKit, () => {
       kind: "buff",
       secondsRemaining: 1,
     };
-    const context = createContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT), offFieldCombatant], {
+    const context = createContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT), offFieldCombatant], {
       effects: [
         {
           characterId: FISCHL_CHARACTER_ID,
@@ -403,7 +396,7 @@ describe(stepActiveKit, () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const kit: Kit = { ...TRAVELER_KIT, normalAttacks: [lateAttack], onKitEvent };
-    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, kit)], {
+    const context = createStrikeContext([createKitCombatant(TRAVELER_CHARACTER_ID, kit)], {
       effects: [{ characterId: TRAVELER_CHARACTER_ID, element: Element.Cryo, kind: "infusion", secondsRemaining: 1 }],
     });
     // A landing's action or its kind of attack and element, the one its event carries
@@ -435,12 +428,12 @@ describe(stepActiveKit, () => {
   test("a hit whose hitmark falls past its action's end lands after a swap, priced by the character that played it", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
-    const lateCombatant = createCombatant(TRAVELER_CHARACTER_ID, {
+    const lateCombatant = createKitCombatant(TRAVELER_CHARACTER_ID, {
       ...TRAVELER_KIT,
       normalAttacks: [lateAttack],
       onKitEvent,
     });
-    const context = createStrikeContext([lateCombatant, createCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createStrikeContext([lateCombatant, createKitCombatant(FISCHL_CHARACTER_ID, TRAVELER_KIT)]);
     const kitState = createKitState();
     const controls = createControls();
     stepActiveKit(kitState, { ...IDLE_INPUT, isAttackPressed: true }, lateAttack.seconds, context, controls);
@@ -457,7 +450,7 @@ describe(stepActiveKit, () => {
 
   test("strikes the ores an Overloaded's explosion reaches from the enemy it lands on, after the step's own hits", () => {
     expect.hasAssertions();
-    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const combatant = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
     const context = createStrikeContext([combatant]);
     const enemy = takeOne([...context.enemyMap.values()]);
     enemy.elementalState.auras.set(AuraType.Pyro, { decayRate: 0, gauge: 4, isImmutable: true });
@@ -474,7 +467,7 @@ describe(stepActiveKit, () => {
 
   test("strikes the puzzles a landed hit reaches from the body it lands from", () => {
     expect.hasAssertions();
-    const combatant = createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
+    const combatant = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
     const context = createStrikeContext([combatant]);
     const hit = takeOne(TRAVELER_KIT.elementalSkill.hits, 0);
     const strikePuzzle = vi.fn<ActiveKitControls["strikePuzzle"]>();
@@ -485,7 +478,7 @@ describe(stepActiveKit, () => {
 
   test("an action that starts makes the enemy it turns to the primary target, which outlasts the action", () => {
     expect.hasAssertions();
-    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createStrikeContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
     const enemy = takeOne([...context.enemyMap.values()]);
     const kitState = createKitState();
     const controls = createControls();
@@ -501,7 +494,7 @@ describe(stepActiveKit, () => {
     ["leaves the world", (context) => context.enemyMap.clear()],
   ])("a primary target that %s is let go", (_title, leave) => {
     expect.hasAssertions();
-    const context = createStrikeContext([createCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
+    const context = createStrikeContext([createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT)]);
     const enemy = takeOne([...context.enemyMap.values()]);
     context.primaryTarget = enemy;
     leave(context, enemy);

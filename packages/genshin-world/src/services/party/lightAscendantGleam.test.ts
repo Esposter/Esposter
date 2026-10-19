@@ -1,10 +1,9 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { ASCENDANT_GLEAM_SECONDS, ASCENDANT_GLEAM_STATUS_ID } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
@@ -14,16 +13,6 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 90,
-});
-
 describe(lightAscendantGleam, () => {
   const PARTY_CHARACTER_IDS = [1, 2, 3, 4];
   const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
@@ -31,7 +20,7 @@ describe(lightAscendantGleam, () => {
   const characterIdCombatantMap = new Map(
     PARTY_CHARACTER_IDS.map((characterId, index) => [
       characterId,
-      createCombatant(characterId, index < 2 ? MOONSIGN_KIT : TRAVELER_KIT),
+      createKitCombatant(characterId, index < 2 ? MOONSIGN_KIT : TRAVELER_KIT),
     ]),
   );
   const party = createParty(PARTY_CHARACTER_IDS);
