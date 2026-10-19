@@ -27,7 +27,9 @@
   "stances.niwabiFireDance.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 25 },
   "stances.niwabiFireDance.normalAttacks.0.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.0.hits.0.multiplier": { "cause": "Unsourced", "value": 0.49150767599999995 },
@@ -40,7 +42,9 @@
   "stances.niwabiFireDance.normalAttacks.0.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.0.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 34 },
   "stances.niwabiFireDance.normalAttacks.0.hits.1.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.0.hits.1.multiplier": { "cause": "Unsourced", "value": 0.49150767599999995 },
@@ -56,7 +60,9 @@
   "stances.niwabiFireDance.normalAttacks.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 27 },
   "stances.niwabiFireDance.normalAttacks.1.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.1.hits.0.multiplier": { "cause": "Unsourced", "value": 0.9429665784 },
@@ -72,7 +78,9 @@
   "stances.niwabiFireDance.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
   "stances.niwabiFireDance.normalAttacks.2.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.2.hits.0.multiplier": { "cause": "Unsourced", "value": 1.22585655192 },
@@ -88,7 +96,9 @@
   "stances.niwabiFireDance.normalAttacks.3.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.3.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 21 },
   "stances.niwabiFireDance.normalAttacks.3.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.3.hits.0.multiplier": { "cause": "Unsourced", "value": 0.640173578 },
@@ -101,7 +111,9 @@
   "stances.niwabiFireDance.normalAttacks.3.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 36 },
   "stances.niwabiFireDance.normalAttacks.3.hits.1.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.3.hits.1.multiplier": { "cause": "Unsourced", "value": 0.640173578 },
@@ -117,7 +129,9 @@
   "stances.niwabiFireDance.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.niwabiFireDance.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 27 },
   "stances.niwabiFireDance.normalAttacks.4.hits.0.internalCooldownTag": {
-    "cause": "Unclassified",
+    "file": "attack.go",
+    "line": 49,
+    "source": "Gcsim",
     "value": "NormalAttack"
   },
   "stances.niwabiFireDance.normalAttacks.4.hits.0.multiplier": { "cause": "Unsourced", "value": 1.4599598376 },
