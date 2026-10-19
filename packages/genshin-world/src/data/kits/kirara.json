@@ -1,6 +1,5 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
   "frames.cardamomExpiryOffset": { "cause": "Unsourced", "value": 80 },
   "frames.cardamomInterval": { "file": "burst.go", "line": 104, "source": "Gcsim", "value": 18 },
   "hits.detonatedCardamoms.length": { "file": "burst.go", "line": 53, "source": "Gcsim", "value": 2 },
@@ -34,8 +33,7 @@
   "skillHolds.0.action.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 17 },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 6132 } },
   "skillHolds.0.action.hits.1.element": { "cause": "Unsourced", "value": "Grass" },
-  "skillHolds.0.action.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.action.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
+  "skillHolds.0.action.hits.1.hitmarkFrames": { "file": "skill.go", "line": 23, "source": "Gcsim", "value": 48 },
   "skillHolds.0.action.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 6132 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": 8.2 },
   "skillHolds.1.action.hits.length": { "cause": "Unsourced", "value": 3 },
