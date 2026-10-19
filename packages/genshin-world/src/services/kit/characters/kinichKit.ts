@@ -17,7 +17,7 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeRandom } from "@esposter/shared";
 
 // Measured: gcsim (MIT) kinich/burst.go, the Ajaw's Dragon Breath is six lasers
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kinich/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kinich/burst.go
 const DRAGON_BREATH_COUNT = 6;
 
 export const KINICH_CHARACTER_ID = 10_000_101;

@@ -19,7 +19,7 @@ const CONSTELLATION_4_SECONDS = 6;
 const CONSTELLATION_4_STATUS_ID = "lyney-c4-pyro-resistance";
 // Measured: gcsim (MIT, main) lyney/asc.go, Ascension 4's DMG bonus on an enemy affected by Pyro: 60%, and 20% more for each
 // Other Pyro member of the team, up to 100%
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/lyney/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lyney/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_DAMAGE_BONUS = 0.6;
 const ASCENSION_4_DAMAGE_BONUS_PER_OTHER_PYRO = 0.2;

@@ -10,7 +10,7 @@ export const LAN_YAN_CHARACTER_ID = 10_000_108;
 
 // Constellation 4 adds 60 Elemental Mastery to each member of the deployed team for 12 seconds as the burst is cast,
 // As gcsim (MIT) lanyan/cons.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/lanyan/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lanyan/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_4_ELEMENTAL_MASTERY = 60;
@@ -18,7 +18,7 @@ const CONSTELLATION_4_SECONDS = 12;
 const CONSTELLATION_4_SOURCE = "lanyan-c4";
 // Skyfeather Evil-Subduing Charm, Lan Yan's Ascension 4 passive: each hit of Lustrous Moonrise adds 774% of her Elemental
 // Mastery as flat damage, as gcsim v2.47.2 (MIT) lanyan/burst.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/lanyan/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lanyan/burst.go
 const ASCENSION_4 = 4;
 const LUSTROUS_MOONRISE_ELEMENTAL_MASTERY_SHARE = 7.74;
 

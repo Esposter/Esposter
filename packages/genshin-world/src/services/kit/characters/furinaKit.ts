@@ -42,7 +42,7 @@ export const FURINA_CHARACTER_ID = 10_000_089;
 
 // Spiritbreath Thorn in Ousia and Surging Blade in Pneuma: a strike that lands opens the Arkhe's own hit unless its
 // Cooldown runs, as gcsim (MIT) furina/attack.go gives it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const PNEUMA_STATUS_ID = "furina-pneuma";
 const SPIRITBREATH_THORN_COOLDOWN_STATUS_ID = "furina-spiritbreath-thorn-cooldown";
 const SURGING_BLADE_COOLDOWN_STATUS_ID = "furina-surging-blade-cooldown";
@@ -54,12 +54,12 @@ const SALON_ATTACK_SUMMON_ID = "furina-salon-attack";
 const SINGER_FIELD_ID = "furina-singer";
 // As gcsim (MIT) furina/skill.go gives it, as a Salon member attacks it drains every member above half HP by its share of
 // That member's Max HP, each one drained adding a tenth to the attack's damage
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const SALON_DRAINED_HEALTH_SHARE_MIN = 0.5;
 const SALON_DAMAGE_BONUS_PER_DRAINED_MEMBER = 0.1;
 
 // Measured: gcsim (MIT) furina/burst.go, the Fanfare lasting 18.2 seconds, against the table's 18
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const FANFARE_SECONDS = 18.2;
 const FANFARE_STATUS_ID = "furina-fanfare";
 const FANFARE_DEBOUNCE_STATUS_ID = "furina-fanfare-debounce";
@@ -69,7 +69,7 @@ const FANFARE_BUFF_SOURCE = "furina-fanfare";
 // Character on the field, starts a regeneration of 2% of each member's Max HP every two seconds, which runs on while the
 // Last such heal is under four seconds old. Ascension 4 raises the Salon members' DMG by 0.7% for each 1,000 of her Max HP,
 // Up to 28%, and cuts the Singer's interval by 0.4% for each 1,000, up to 16%
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const ASCENSION_1 = 1;
 const ASCENSION_4 = 4;
 const ENDLESS_WALTZ_STATUS_ID = "furina-endless-waltz";
@@ -86,7 +86,7 @@ const ASCENSION_4_INTERVAL_CUT_MAX = 0.16;
 // Measured: gcsim (MIT) furina/cons.go. Constellation 1 starts the Fanfare at 150 and raises its most by 100, Constellation
 // 2 gives 250% more Fanfare from each change, and Constellation 4 gives her 4 energy as a Salon member's hit lands or the
 // Singer heals, once each five seconds
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/furina
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_4 = 4;

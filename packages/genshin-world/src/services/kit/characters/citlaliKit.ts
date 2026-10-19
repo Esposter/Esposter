@@ -40,7 +40,7 @@ const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 // Below 50 points and outlast its points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres,
 // Which the burst's start cannot place since it reads no enemies but its target. Ascension 4's flat damage on the Frostfall
 // Storm from Elemental Mastery is not built either
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/citlali/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/citlali/burst.go
 export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
   const frostfallStormHit = readHit("frostfallStorm");

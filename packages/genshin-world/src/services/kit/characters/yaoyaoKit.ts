@@ -34,20 +34,20 @@ export const YAOYAO_CHARACTER_ID = 10_000_077;
 
 // Measured: gcsim (MIT) yaoyao/yuegui.go, a Yuegui throws at a random enemy within 8 metres of itself while the active
 // Character's HP is above 70% of her Max HP, and at her own position otherwise
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/yuegui.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/yuegui.go
 const YUEGUI_TARGET_RADIUS_METRES = 8;
 const YUEGUI_HEALTH_SHARE_THRESHOLD = 0.7;
 // Measured: gcsim (MIT) yaoyao/skill.go, the Yuegui spawns two metres ahead of her body
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/skill.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/skill.go
 const YUEGUI_SPAWN_METRES = 2;
 // Measured: gcsim (MIT) yaoyao/burst.go, Moonjade Descent's Yuegui spawns behind her, two metres back from her body
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/burst.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/burst.go
 const JUMPING_YUEGUI_METRES = 2;
 const BURST_STATUS_ID = "yaoyao-burst";
 const JUMPING_YUEGUI_ID = "yaoyao-jumping-yuegui";
 // Measured: gcsim (MIT) yaoyao/cons.go, Constellation 1 gives the active character 15% Dendro DMG Bonus for eight seconds
 // After each radish heal, and restores 15 stamina to the party's pool behind a five-second cooldown
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_1 = 1;
 const C1_DENDRO_DMG_BONUS = 0.15;
 const C1_SECONDS = 8;
@@ -56,7 +56,7 @@ const C1_STAMINA_COOLDOWN_SECONDS = 5;
 const C1_STAMINA_COOLDOWN_ID = "yaoyao-c1-stamina-cooldown";
 // Measured: gcsim (MIT) yaoyao/asc.go and radish.go, Ascension 4 heals the active character each second for five seconds
 // After each radish heal, by 0.8% of Yaoyao's Max HP, and a newer radish heal replaces the one running
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/asc.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/asc.go
 const ASCENSION_4 = 4;
 const A4_HEAL_MAX_HEALTH_SHARE = 0.008;
 const A4_INTERVAL_SECONDS = 1;
@@ -64,27 +64,27 @@ const A4_SECONDS = 5;
 const A4_HEAL_ID = "yaoyao-a4-heal";
 // Measured: gcsim (MIT) yaoyao/cons.go, Constellation 2 gives Yaoyao 3 energy when a radish strikes an enemy while her burst
 // Lasts, once each 0.8 seconds
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_2 = 2;
 const C2_ENERGY = 3;
 const C2_INTERVAL_SECONDS = 0.8;
 const C2_ICD_ID = "yaoyao-c2-icd";
 // Measured: gcsim (MIT) yaoyao/cons.go, Constellation 4 gives Yaoyao Elemental Mastery of 0.3% of her Max HP, up to 120,
 // For 8.8 seconds on each skill and burst cast
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_4 = 4;
 const C4_ELEMENTAL_MASTERY_SHARE = 0.003;
 const C4_ELEMENTAL_MASTERY_CAP = 120;
 const C4_SECONDS = 8.8;
 // Measured: gcsim (MIT) yaoyao/cons.go and yuegui.go, Constellation 6 throws a Mega Radish at the target of a skill Yuegui's
 // Third and sixth radishes, healing the active character by 7.5% of Yaoyao's Max HP
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/cons.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/cons.go
 const CONSTELLATION_6 = 6;
 const C6_THROW_INDICES = new Set([2, 5]);
 const C6_HEAL_MAX_HEALTH_SHARE = 0.075;
 // Measured: gcsim (MIT) yaoyao/asc.go, Ascension 1 throws a burst radish every 0.6 seconds of the burst while Yaoyao dashes or
 // Jumps, at a random enemy within the 8 metres round her that a Yuegui targets, and throws none while no enemy stands there
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/yaoyao/asc.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaoyao/asc.go
 const ASCENSION_1 = 1;
 const A1_INTERVAL_SECONDS = 0.6;
 const A1_LOCOMOTION_STATES = new Set<LocomotionState>([LocomotionState.Dash, LocomotionState.Jump]);

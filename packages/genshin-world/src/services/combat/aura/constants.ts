@@ -28,7 +28,7 @@ export const ELECTRO_CHARGED_TICK_GAUGE = 0.4;
 export const ELECTRO_CHARGED_FINAL_TICK_SECONDS = 0.5;
 // A Lunar-Charged hit strikes a target once every 2 seconds at most, taking 0.4 units from its Electro and its Hydro, as
 // Gcsim (MIT) pkg/reactable/lunarcharged.go strikes it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcharged.go
 export const LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS = 2;
 export const LUNAR_CHARGED_HIT_GAUGE = 0.4;
 // Crystallize triggers on a target once a second at most

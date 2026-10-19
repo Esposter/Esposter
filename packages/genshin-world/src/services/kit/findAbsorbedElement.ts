@@ -5,8 +5,8 @@ import { Element } from "#src/models/Element";
 
 // The elements an absorb check takes, in gcsim's AbsorbCheck priority, each with the auras that hold it as gcsim's
 // AuraContains reads them: Pyro in a Pyro or a Burning aura, and Cryo in a Cryo or a Freeze aura
-// https://github.com/genshinsim/gcsim/blob/main/pkg/core/combat/absorb.go
-// https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/reactable.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/combat/absorb.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/reactable.go
 const ABSORBED_ELEMENT_AURA_TYPES: readonly (readonly [Element, readonly AuraType[]])[] = [
   [Element.Pyro, [AuraType.Pyro, AuraType.Burning]],
   [Element.Hydro, [AuraType.Hydro]],

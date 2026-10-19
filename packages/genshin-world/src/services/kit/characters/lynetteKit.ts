@@ -11,11 +11,11 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 
 // The Bogglecat Box stands 1.8 metres ahead of the body, as gcsim (MIT) lynette/burst.go sets it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette
 const BOGGLECAT_BOX_OFFSET_METRES = 1.8;
 // Sophisticated Synergy, Lynette's Ascension 1 passive as gcsim v2.47.2 (MIT) lynette/asc.go gives it: Magic Trick gives the
 // Team 8% ATK for one Elemental Type in the party, 4% more for each further type, for 10 seconds, counted as it is cast
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/lynette
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lynette
 const ASCENSION_1 = 1;
 const SYNERGY_ATTACK_BONUS = 0.08;
 const SYNERGY_ATTACK_BONUS_PER_EXTRA_TYPE = 0.04;

@@ -14,7 +14,7 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
 // Measured: gcsim (MIT, main) faruzan/burst.go, the three gadgets' places, offset from the body at the cast as gcsim's
 // CalcOffsetPoint places them: the top right, the top left, then the bottom middle, cycled through by each Pulse
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/faruzan/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/faruzan/burst.go
 const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] = [
   { forward: 10.5, lateral: 5.19 },
   { forward: 10.5, lateral: -5.19 },

@@ -49,7 +49,7 @@ const COLUMBINA_SKILL_FIELD_ID = "columbina-gravity-interference";
 const ASCENDANT_GLEAM_SKILL_DOT_RADIUS = 6;
 // Measured: gcsim (MIT) columbina/asc.go, Ascension 1's CRIT Rate of 5% for each Lunacy stack, up to three, which each
 // Gravity Interference tick gains (skill.go) and which restarts every stack's 10 seconds
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/asc.go
 const ASCENSION_1 = 1;
 const LUNACY_ID = "columbina-lunacy";
 const LUNACY_CRIT_RATE_PER_STACK = 0.05;
@@ -108,7 +108,7 @@ const BURST_WINDOW_ID = "columbina-burst-window";
 const BURST_WINDOW_SECONDS = 1.2;
 // Measured: gcsim (MIT) columbina/asc.go, Ascension 4's Moonridge Dew: a Lunar-Bloom in her burst's window gives one, at
 // Most three each eighteen seconds from the first, three frames apart (lines 120-145)
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/asc.go
 const ASCENSION_4 = 4;
 const MOONRIDGE_DEW_ICD_ID = "columbina-moonridge-dew-icd";
 const MOONRIDGE_DEW_ICD_SECONDS = toKitSeconds(3);
@@ -307,7 +307,7 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 // That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each Gravity Ripple, not each tick,
 // And its CRIT Rate is the stacks' share.
 // The burst's field is not built yet
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/columbina/skill.go
 // The Gravity Ripple's hit is not built, as the record holds none of its multipliers or hitmarks, so the ripple runs its
 // Lunacy and constellation effects without the hit. Constellation 4 needs the ripple's hits, its energy for each and its flat DMG
 // Constellation 6's CRIT DMG on strikes is built on the burst's window, but its CRIT DMG on the Lunar reaction's own damage

@@ -36,7 +36,7 @@ const CONSTELLATION_2 = 2;
 // Constellation 2, as gcsim (MIT, main) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65). The
 // First enemy her burst hits is marked for a Punishment Edit, a Lunar-Charged hit of 3 times her ATK in a radius of 6
 // Metres, which fires on the marked enemy's next hit or 60 frames on, whichever comes first (lines 97, 107, 111)
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go
 const CONSTELLATION_2_SHIELD_SECONDS = toKitSeconds(37);
 const PUNISHMENT_EDIT_DELAY_SECONDS = toKitSeconds(60);
 const PUNISHMENT_EDIT_MULTIPLIER = 3;
@@ -50,7 +50,7 @@ const CONSTELLATION_4_SECONDS = 4;
 // Birgitta discharges ten times while she stands, with no poise, as gcsim (MIT, main) ineffa/skill.go gives her. Each
 // Discharge that lands gives an Electro particle two times in three, which lands 100 frames later as gcsim's particle
 // Callback gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/skill.go
 const BIRGITTA_DISCHARGE_COUNT = 10;
 const BIRGITTA_ID = "birgitta";
 
@@ -63,14 +63,14 @@ const BIRGITTA_PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 
 // Measured: gcsim (MIT, main) ineffa/asc.go, her Moonsign Benediction turns the party's Electro-Charged into
 // Lunar-Charged and adds 0.7% Base DMG Bonus to its Lunar-Charged for each 100 of her ATK, at most 14%
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa and
 // The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim (MIT, main) ineffa/asc.go gives it.
 // The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/ineffa/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const ASCENSION_4 = 4;
 const PERMUTATION_ELEMENTAL_MASTERY_SHARE = 0.06;
 const PERMUTATION_SECONDS = 20;

@@ -24,7 +24,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) eula/eula.go and skill.go, Grimheart's ICD of 18 frames on the press's strikes, which are the only
 // Strikes that gain a stack
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/eula/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/skill.go
 const GRIMHEART_ICD_SECONDS = 0.3;
 const GRIMHEART_STACK_IDS = ["eula-grimheart-stack-0", "eula-grimheart-stack-1"];
 const GRIMHEART_MAX_STACKS = 2;
@@ -39,7 +39,7 @@ const CONSTELLATION_4_DAMAGE_BONUS = 0.25;
 const CONSTELLATION_4_HEALTH_SHARE = 0.5;
 // Measured: gcsim (MIT) eula/burst.go, the Lightfall Sword gaining a stack from each of Eula's strikes every 0.1 seconds,
 // Up to 30
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/eula/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/eula/burst.go
 const LIGHTFALL_STACK_ICD_SECONDS = 0.1;
 const LIGHTFALL_STACK_ICD_ID = "eula-lightfall-stack-icd";
 const LIGHTFALL_MAX_STACKS = 30;

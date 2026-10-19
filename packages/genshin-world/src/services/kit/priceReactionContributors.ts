@@ -13,7 +13,7 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 // Take the party reaction bonuses read for that contributor's own share of it, with the element its hit is dealt in, so a
 // Kit's bonus reaches whichever contributor it names, and its Elevation multiplies that share last, as gcsim (MIT)
 // Pkg/core/combat/reaction.go prices a contributor
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/core/combat/reaction.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/combat/reaction.go
 export const priceReactionContributors = (
   contributorIds: ReadonlySet<number>,
   context: KitContext,

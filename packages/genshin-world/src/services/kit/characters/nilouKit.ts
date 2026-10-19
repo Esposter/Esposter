@@ -27,7 +27,7 @@ export const NILOU_CHARACTER_ID = 10_000_070;
 
 // Measured: gcsim (MIT) nilou/skill.go, Dance of Haftkarsvar's Pirouette lasts ten seconds from the cast, and Lunar
 // Prayer, which its third sword dance sets off, lasts eight seconds
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const PIROUETTE_SECONDS = 10;
 const LUNAR_PRAYER_SECONDS = 8;
 const PIROUETTE_END_TASK_ID = "nilou-pirouette-end";
@@ -67,7 +67,7 @@ const getConversionBonuses = (combatant: Combatant): { amount: number; attribute
 
 // Measured: gcsim (MIT) nilou/asc.go, Ascension 1 gives each member of a Dendro and Hydro team Golden Chalice's Bounty
 // For 30 seconds, and a Dendro hit on a member under it gives the team 100 Elemental Mastery for 10 seconds
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const ASCENSION_1 = 1;
 const GOLDEN_CHALICE_BOUNTY_SECONDS = 30;
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
@@ -75,7 +75,7 @@ const GOLDEN_CHALICE_ELEMENTAL_MASTERY = 100;
 // Measured: gcsim (MIT) nilou/cons.go, Constellation 2 lowers the Hydro RES of an enemy that a member under Golden Chalice's
 // Bounty hits with Hydro, and the Dendro RES of an enemy that a Bloom or Lunar-Bloom reaction triggers on, by 35% for 10 seconds.
 // In gcsim the Dendro half is also gated on the Bounty, which the talent's text does not do, so the text stands
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_RES_REDUCTION = 0.35;
 const CONSTELLATION_2_SECONDS = 10;
@@ -94,7 +94,7 @@ const GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS = 10;
 
 // Measured: gcsim (MIT) nilou/asc.go, Ascension 4 raises a Bountiful Core's DMG by 9% for each 1,000 Max HP above
 // 30,000, Capped at 400%
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/nilou
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
 const ASCENSION_4 = 4;
 const ASCENSION_4_HEALTH_THRESHOLD = 30_000;
 const ASCENSION_4_DAMAGE_BONUS_PER_MAX_HEALTH = 0.09 / 1000;

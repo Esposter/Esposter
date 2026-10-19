@@ -33,7 +33,7 @@ import { takeOne } from "@esposter/shared";
 // Sacred Rite: Wolf's Swiftness, as gcsim (MIT) cyno/burst.go and cyno/skill.go give it: each Mortuary Rite extends it by
 // The table's seconds, up to two times. From Ascension 4, Pactsworn's normal attacks and the Duststalker Bolts take 150%
 // And 250% of his Elemental Mastery as flat DMG
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/cyno
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/cyno
 const BURST_EXTENSIONS_MAX = 2;
 const BURST_EXTENSIONS_STATUS_ID = "cyno-burst-extensions";
 const BURST_BUFF_SOURCE = "cyno-burst";

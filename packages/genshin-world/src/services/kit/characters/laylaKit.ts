@@ -31,7 +31,7 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
 // The closest enemy in the circle, which the kit cannot pick, so each tick reaches every enemy in its reach, which
 // Overstates a tick against several enemies
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/layla
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/layla
 const STARLIGHT_SLUG_RADIUS = 12;
 
 export const LAYLA_CHARACTER_ID = 10_000_074;

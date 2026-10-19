@@ -17,7 +17,7 @@ export const DURIN_CHARACTER_ID = 10_000_123;
 
 // Measured: gcsim (MIT) durin/skill.go, the recasts' Denial and Confirmation both last 30 seconds, and the black one sets the
 // Burst to As the Stars Smolder until a white recast ends it. A recast also gives the skill's energy, once every six seconds
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/durin
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
 const BLACK_STATUS_SECONDS = 30;
 const BLACK_STATUS_ID = "denial-of-darkness";
 const SKILL_ENERGY_ICD_SECONDS = 6;
@@ -28,7 +28,7 @@ const DRAGON_SUMMON_ID = "durin-dragon";
 // A burst's Dragon, cast on its target, ends the one of the same character, and its DoT ticks on its schedule. The record
 // Holds gcsim's (MIT) durin/burst.go ticks: the white burst's 20 on the primary target and the black's 16, each 1U of Pyro
 // With no poise, each rounded up to a whole frame with its travel after it
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/durin
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/durin
 const createDragonOnStart =
   (hits: KitHit[]): KitAction["onStart"] =>
   ({ activeCombatant: combatant, body, kitEffectState }, target) => {
