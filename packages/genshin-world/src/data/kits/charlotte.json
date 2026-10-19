@@ -17,7 +17,7 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0 }
   },
-  "hits.snappyMark.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
+  "hits.snappyMark.hitmarkFrames": { "file": "skill.go", "line": 220, "source": "Gcsim", "value": 0 },
   "hits.snappyMark.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 8832 } },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 9.346 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 8.133 },
