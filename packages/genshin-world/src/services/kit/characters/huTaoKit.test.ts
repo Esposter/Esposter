@@ -51,6 +51,40 @@ const getCriticalRateBuffs = (kitEffectState: KitEffectState) =>
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate,
   );
 
+// The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of
+// Her Max HP
+const drainHuTao = (constellationCount: number, healthShare: number, drains = 1) => {
+  const combatant = { ...createHuTaoCombatant(), constellationCount };
+  const kitEffectState: KitEffectState = { effects: [] };
+  const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(healthShare) });
+  for (let drain = 0; drain < drains; drain++)
+    HU_TAO_KIT.onKitEvent?.(
+      {
+        bondOfLifeShare: 0,
+        characterId: HU_TAO_CHARACTER_ID,
+        healthShare: -0.1,
+        isFallRefused: false,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+      },
+      context,
+      combatant,
+    );
+  return getCriticalRateBuffs(kitEffectState);
+};
+
+// Hu Tao's share of her Max HP after each of the given lethal hits, from full HP, at the given constellation
+const takeLethalHits = (constellationCount: number, hits: number) => {
+  const combatant = { ...createHuTaoCombatant(), constellationCount };
+  const party = createParty([HU_TAO_CHARACTER_ID]);
+  const kitEffectState: KitEffectState = { effects: [] };
+  const characterIdCombatantMap = new Map([[HU_TAO_CHARACTER_ID, combatant]]);
+  return Array.from({ length: hits }, () => {
+    hitPartyMember(party, combatant, kitEffectState, characterIdCombatantMap, combatant.attributes.maxHealth);
+    return getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare;
+  });
+};
+
 describe(createHuTaoKitBehaviour, () => {
   test("guide to Afterlife holds the Paramita stance, its Pyro infusion and an ATK share of her Max HP", () => {
     expect.hasAssertions();
@@ -323,28 +357,6 @@ describe("constellation 4 and 6", () => {
     return getCriticalRateBuffs(kitEffectState);
   };
 
-  // The CRIT Rate buffs on Hu Tao after she loses HP the given number of times, leaving her at the given share of
-  // Her Max HP
-  const drainHuTao = (constellationCount: number, healthShare: number, drains = 1) => {
-    const combatant = { ...createHuTaoCombatant(), constellationCount };
-    const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitTestContext(combatant, { kitEffectState, party: createHuTaoParty(healthShare) });
-    for (let drain = 0; drain < drains; drain++)
-      HU_TAO_KIT.onKitEvent?.(
-        {
-          bondOfLifeShare: 0,
-          characterId: HU_TAO_CHARACTER_ID,
-          healthShare: -0.1,
-          isFallRefused: false,
-          kind: KitEventKind.HealthChanged,
-          overflowHealthShare: 0,
-        },
-        context,
-        combatant,
-      );
-    return getCriticalRateBuffs(kitEffectState);
-  };
-
   test("at constellation 4, defeating an enemy Blood Blossom marked gives each other member CRIT Rate for 15 seconds", () => {
     expect.hasAssertions();
 
@@ -410,18 +422,6 @@ describe("constellation 4 and 6", () => {
 
     expect(drainHuTao(5, 0.2)).toStrictEqual([]);
   });
-
-  // Hu Tao's share of her Max HP after each of the given lethal hits, from full HP, at the given constellation
-  const takeLethalHits = (constellationCount: number, hits: number) => {
-    const combatant = { ...createHuTaoCombatant(), constellationCount };
-    const party = createParty([HU_TAO_CHARACTER_ID]);
-    const kitEffectState: KitEffectState = { effects: [] };
-    const characterIdCombatantMap = new Map([[HU_TAO_CHARACTER_ID, combatant]]);
-    return Array.from({ length: hits }, () => {
-      hitPartyMember(party, combatant, kitEffectState, characterIdCombatantMap, combatant.attributes.maxHealth);
-      return getPartyMember(party, HU_TAO_CHARACTER_ID).healthShare;
-    });
-  };
 
   test("at constellation 6, a lethal hit leaves Hu Tao at 1 HP, and a second within a minute takes her down", () => {
     expect.hasAssertions();

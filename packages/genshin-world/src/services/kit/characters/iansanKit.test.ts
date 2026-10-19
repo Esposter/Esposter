@@ -5,7 +5,6 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
@@ -37,6 +36,38 @@ const createIansanCombatant = (constellationCount = 0): Combatant => ({
   kit: IANSAN_KIT,
   level: 90,
 });
+
+const countIansanPoints = (context: KitContext) =>
+  countKitResource(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
+
+// Iansan's burst lands on a blessing of the points given, with no drain, so only the burst and her Ascension 1 move it
+const landIansanBurst = (combatant: Combatant, points = 20) => {
+  const context = createKitTestContext(combatant);
+  if (combatant.ascension >= 1)
+    IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
+  enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, { points, secondsRemaining: 16 });
+  IANSAN_KIT.elementalBurst.onStart?.(context);
+  return context;
+};
+
+const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
+
+// Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal shows
+const createWarmingUpIansan = (ascension: number) => {
+  const combatant: Combatant = {
+    ...createIansanCombatant(),
+    ascension,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: 10_000 },
+      { attribute: Attribute.BaseAttack, value: 1000 },
+    ]),
+    regionId: NATLAN_REGION_ID,
+  };
+  const context = landIansanBurst(combatant);
+  triggerKitNightsoulBurst({} as Enemy, combatant, context);
+  getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare = 0.5;
+  return context;
+};
 
 describe(createIansanKitBehaviour, () => {
   test("reads each talent multiplier, cooldown and cost from her proud skill groups, to four decimal places", () => {
@@ -165,17 +196,6 @@ describe(createIansanKitBehaviour, () => {
 
     expect(getPartyMember(context.party, IANSAN_CHARACTER_ID).energy).toBe(0);
   });
-  const countIansanPoints = (context: KitContext) =>
-    countKitResource(context.kitEffectState.effects, IANSAN_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
-  // Iansan's burst lands on a blessing of the points given, with no drain, so only the burst and her Ascension 1 move it
-  const landIansanBurst = (combatant: Combatant, points = 20) => {
-    const context = createKitTestContext(combatant);
-    if (combatant.ascension >= 1)
-      IANSAN_KIT.chargedAttackVariant?.action.hits[0]?.onStrike?.(context, {} as KitStrike, {} as Enemy);
-    enterKitNightsoulBlessing(context.kitEffectState, IANSAN_CHARACTER_ID, { points, secondsRemaining: 16 });
-    IANSAN_KIT.elementalBurst.onStart?.(context);
-    return context;
-  };
 
   test("the burst gains 15 points on a held blessing 0.67 seconds after it lands", () => {
     expect.hasAssertions();
@@ -227,24 +247,6 @@ describe(createIansanKitBehaviour, () => {
     // 35 from the burst, 4 at 1 second, 1 at 1.5, 2 and 3 seconds, then 1 gained at 3.6 seconds and 4 at 4 seconds
     expect(countIansanPoints(context)).toBe(47);
   });
-
-  // Iansan on the field in Natlan with 1000 ATK, her burst landed and a Nightsoul burst set off, her HP at half so a heal shows
-  const createWarmingUpIansan = (ascension: number) => {
-    const combatant: Combatant = {
-      ...createIansanCombatant(),
-      ascension,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.BaseHealth, value: 10_000 },
-        { attribute: Attribute.BaseAttack, value: 1000 },
-      ]),
-      regionId: NATLAN_REGION_ID,
-    };
-    const context = landIansanBurst(combatant);
-    triggerKitNightsoulBurst({} as Enemy, combatant, context);
-    getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare = 0.5;
-    return context;
-  };
-  const healthShareOf = (context: KitContext) => getPartyMember(context.party, IANSAN_CHARACTER_ID).healthShare;
 
   test("a passive takes effect at its ascension phase: a Nightsoul burst gives Iansan Warming Up, and her restore heals the active character for 60% of her ATK", () => {
     expect.hasAssertions();

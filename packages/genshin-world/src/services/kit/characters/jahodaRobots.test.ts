@@ -77,6 +77,8 @@ describe(startJahodaRobots, () => {
   };
 
   test("a robot absorbs the aura its circle holds at its first check, then strikes 41 frames later and every 140 after", () => {
+    expect.hasAssertions();
+
     const context = createRobotContext([createEnemyAt(2, 0, Element.Pyro)]);
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, { ...SETTINGS, robotCount: 1 });
     const strikes = readStrikes(context, 800);
@@ -85,6 +87,8 @@ describe(startJahodaRobots, () => {
   });
 
   test("a robot that finds no aura checks again 46 frames later, and absorbs the aura then", () => {
+    expect.hasAssertions();
+
     const enemy = createEnemyAt(2, 0);
     const context = createRobotContext([enemy]);
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, { ...SETTINGS, robotCount: 1 });
@@ -97,6 +101,8 @@ describe(startJahodaRobots, () => {
   });
 
   test("a strike lands on the three nearest enemies, nearest first", () => {
+    expect.hasAssertions();
+
     const nearest = createEnemyAt(1, 0, Element.Pyro);
     const second = createEnemyAt(2, 0);
     const third = createEnemyAt(3, 0);
@@ -108,6 +114,8 @@ describe(startJahodaRobots, () => {
   });
 
   test("the second robot checks a spacing after the first, and strikes from its own absorb", () => {
+    expect.hasAssertions();
+
     const context = createRobotContext([createEnemyAt(2, 0, Element.Pyro)]);
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, SETTINGS);
     const strikeFrames = readStrikes(context, 800).map(({ frame }) => frame);
@@ -149,6 +157,8 @@ describe("jahoda's robots and Constellation 4", () => {
     createKitTestContext(COMBATANT, { enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])) });
 
   test("an absorb gives her the energy the settings name", () => {
+    expect.hasAssertions();
+
     const context = createRobotContext([createEnemyAt(1, 0, Element.Hydro)]);
     const { characterId } = COMBATANT;
     const before = getPartyMember(context.party, characterId).energy;

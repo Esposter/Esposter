@@ -91,6 +91,36 @@ const defeatEnemy = (combatant: Combatant, context: KitContext) =>
     combatant,
   );
 
+// The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given ascension
+const getEnergyAfterFreezes = (ascension: number, freezes: number, attackTag = AttackTag.ElementalSkill): number => {
+  const combatant: Combatant = {
+    ...createKaeyaCombatant(),
+    ascension,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.BaseHealth, value: 10_000 },
+      { attribute: Attribute.EnergyRecharge, value: 1 },
+    ]),
+    element: Element.Cryo,
+  };
+  const party = createParty([KAEYA_CHARACTER_ID]);
+  const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  KAEYA_KIT.elementalSkill.onStart?.(context);
+  for (let index = 0; index < freezes; index++)
+    KAEYA_KIT.onKitEvent?.(
+      {
+        attackTag,
+        enemy,
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ reactionType: ReactionType.Frozen }],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+  return getPartyMember(party, KAEYA_CHARACTER_ID).energy;
+};
+
 describe("kaeya kit", () => {
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
@@ -289,36 +319,6 @@ describe("kaeya kit", () => {
 });
 
 describe("ascension 4's Glacial Heart particles", () => {
-  // The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given ascension
-  const getEnergyAfterFreezes = (ascension: number, freezes: number, attackTag = AttackTag.ElementalSkill): number => {
-    const combatant: Combatant = {
-      ...createKaeyaCombatant(),
-      ascension,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.BaseHealth, value: 10_000 },
-        { attribute: Attribute.EnergyRecharge, value: 1 },
-      ]),
-      element: Element.Cryo,
-    };
-    const party = createParty([KAEYA_CHARACTER_ID]);
-    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
-    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    KAEYA_KIT.elementalSkill.onStart?.(context);
-    for (let index = 0; index < freezes; index++)
-      KAEYA_KIT.onKitEvent?.(
-        {
-          attackTag,
-          enemy,
-          kind: KitEventKind.ReactionTriggered,
-          reactions: [{ reactionType: ReactionType.Frozen }],
-          striker: combatant,
-        },
-        context,
-        combatant,
-      );
-    return getPartyMember(party, KAEYA_CHARACTER_ID).energy;
-  };
-
   test("a Frostgnaw that freezes an opponent drops a particle at its ascension phase", () => {
     expect.hasAssertions();
 

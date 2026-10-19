@@ -47,19 +47,19 @@ describe(createEquitableJudgementLength, () => {
 
   // The judgement's eight waves, their hitmarks counted from the start of the judgement, as gcsim's ticks land them
   const WAVE_FRAMES = [6, 28, 53, 78, 103, 128, 153, 173];
-  const waves = WAVE_FRAMES.map(createWave);
+  const waves = WAVE_FRAMES.map((hitmarkFrames) => createWave(hitmarkFrames));
+  const lengthAfter = (droplets: number, outside: number) => {
+    const context = createKitTestContext(wielder);
+    for (let index = 0; index < droplets; index++)
+      castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: -1 - index });
+    for (let index = 0; index < outside; index++)
+      castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: 20 });
+    return createEquitableJudgementLength(waves).decide(context) * 60;
+  };
 
   test("lasts the whole judgement with no droplet in its pick-up area, and less as its legal evaluation picks droplets up", () => {
     expect.hasAssertions();
 
-    const lengthAfter = (droplets: number, outside: number) => {
-      const context = createKitTestContext(wielder);
-      for (let index = 0; index < droplets; index++)
-        castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: -1 - index });
-      for (let index = 0; index < outside; index++)
-        castSourcewaterDroplet(context.kitEffectState, NEUVILLETTE_CHARACTER_ID, { x: 0, z: 20 });
-      return createEquitableJudgementLength(waves).decide(context) * 60;
-    };
     expect([lengthAfter(0, 0), lengthAfter(1, 0), lengthAfter(3, 1)]).toStrictEqual([436, 379, 227]);
   });
 

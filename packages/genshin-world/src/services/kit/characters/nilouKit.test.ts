@@ -41,6 +41,24 @@ const findField = (kitEffectState: KitEffectState): KitField | undefined =>
 const findStatuses = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "status");
 const findBuffs = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(({ kind }) => kind === "buff");
 
+// The team Nilou leads on the field, its members in the order given, and the context its effects run in
+const createTeamContext = (combatant: Combatant, members: Combatant[]): KitContext => {
+  const combatants = [combatant, ...members];
+  return createKitTestContext(combatant, {
+    characterIdCombatantMap: new Map(combatants.map((member) => [member.characterId, member])),
+    kitEffectState: { effects: [] },
+    party: createParty(combatants.map(({ characterId }) => characterId)),
+  });
+};
+
+// Pirouette's third step lands: Nilou's cast, the sword dance's third step and the field that follows it ticks
+const landThirdStep = (context: KitContext): void => {
+  NILOU_KIT.elementalSkill.onStart?.(context);
+  const thirdStep = takeOne((findStance(context.kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2));
+  thirdStep.onStart?.(context);
+  findField(context.kitEffectState)?.onTick(context, 0);
+};
+
 describe(createNilouKitBehaviour, () => {
   // The conversion bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
   const getConversionBonusPairs = (constellationCount: number): [Attribute, number][] =>
@@ -73,24 +91,6 @@ describe(createNilouKitBehaviour, () => {
     characterId,
     element,
   });
-
-  // The team Nilou leads on the field, its members in the order given, and the context its effects run in
-  const createTeamContext = (combatant: Combatant, members: Combatant[]): KitContext => {
-    const combatants = [combatant, ...members];
-    return createKitTestContext(combatant, {
-      characterIdCombatantMap: new Map(combatants.map((member) => [member.characterId, member])),
-      kitEffectState: { effects: [] },
-      party: createParty(combatants.map(({ characterId }) => characterId)),
-    });
-  };
-
-  // Pirouette's third step lands: Nilou's cast, the sword dance's third step and the field that follows it ticks
-  const landThirdStep = (context: KitContext): void => {
-    NILOU_KIT.elementalSkill.onStart?.(context);
-    const thirdStep = takeOne((findStance(context.kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2));
-    thirdStep.onStart?.(context);
-    findField(context.kitEffectState)?.onTick(context, 0);
-  };
 
   const MAX_HEALTH = 10_000;
   const kitBody = createKitBody({ x: 0, z: 0 });
@@ -348,24 +348,25 @@ describe(createNilouKitBehaviour, () => {
     expect(findBuffs(context.kitEffectState)).toStrictEqual([]);
   });
 
+  const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
+    const combatant = createNilouCombatant(0, ascension, maxHealth);
+    const bonus =
+      NILOU_KIT.getPartyReactionBonus?.(
+        combatant,
+        {
+          combatant,
+          coreKind,
+          element: Element.Dendro,
+          enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+          reactionType: ReactionType.Bloom,
+        },
+        createTeamContext(combatant, []),
+      )?.damageBonus ?? 0;
+    return Math.round(bonus * 1000) / 1000;
+  };
+
   test("ascension 4 raises a Bountiful Core's DMG by 9% per 1,000 Max HP above 30,000, up to 400%", () => {
     expect.hasAssertions();
-    const getBonus = (ascension: number, maxHealth: number, coreKind: DendroCoreKind): number => {
-      const combatant = createNilouCombatant(0, ascension, maxHealth);
-      const bonus =
-        NILOU_KIT.getPartyReactionBonus?.(
-          combatant,
-          {
-            combatant,
-            coreKind,
-            element: Element.Dendro,
-            enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-            reactionType: ReactionType.Bloom,
-          },
-          createTeamContext(combatant, []),
-        )?.damageBonus ?? 0;
-      return Math.round(bonus * 1000) / 1000;
-    };
 
     expect({
       atAscension3: getBonus(3, 40_000, DendroCoreKind.Bountiful),

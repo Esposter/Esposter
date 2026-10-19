@@ -30,10 +30,49 @@ import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
 const ENEMY_TABLES = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+const createEnemyAt = (x: number, z: number): Enemy => ({
+  ...createEnemy(ENEMY_TABLES, [], ENEMY_CAMP_MEMBER, ""),
+  position: { x, z },
+});
+
+const countNightStars = (kitEffectState: KitEffectState) =>
+  countKitResource(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
+
+const sendSkillUsed = (context: KitContext) =>
+  LAYLA_KIT.onKitEvent?.(
+    { characterId: LAYLA_CHARACTER_ID, kind: KitEventKind.SkillUsed },
+    context,
+    context.activeCombatant,
+  );
+
+// Steps the team's effects frame by frame, recording the frame each Shooting Star is cast on, from `fromFrame` on
+const stepRecordingCasts = (context: KitContext, frames: number, fromFrame = 0) => {
+  const casts: { frame: number; hit: KitHit; summon: KitSummon }[] = [];
+  const seenHits = new WeakSet<KitHit[]>();
+  for (let frame = 1; frame <= frames; frame++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.kitEffectState.effects)
+      if (effect.kind === "summon" && !seenHits.has(effect.hits)) {
+        seenHits.add(effect.hits);
+        casts.push({ frame: fromFrame + frame, hit: takeOne(effect.hits, 0), summon: effect });
+      }
+  }
+  return casts;
+};
+
+// Steps the team's effects as the world does, sending each effect that ran out to the kit as an EffectExpired event
+const stepLaylaSeconds = (context: KitContext, seconds: number) => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects)
+      LAYLA_KIT.onKitEvent?.({ effect, kind: KitEventKind.EffectExpired }, context, context.activeCombatant);
+  }
+};
 
 describe(createLaylaKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
@@ -68,45 +107,6 @@ describe(createLaylaKitBehaviour, () => {
       enemyTables: ENEMY_TABLES,
       kitEffectState,
     });
-
-  const createEnemyAt = (x: number, z: number): Enemy => ({
-    ...createEnemy(ENEMY_TABLES, [], ENEMY_CAMP_MEMBER, ""),
-    position: { x, z },
-  });
-
-  const countNightStars = (kitEffectState: KitEffectState) =>
-    countKitResource(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
-
-  const sendSkillUsed = (context: KitContext) =>
-    LAYLA_KIT.onKitEvent?.(
-      { characterId: LAYLA_CHARACTER_ID, kind: KitEventKind.SkillUsed },
-      context,
-      context.activeCombatant,
-    );
-
-  // Steps the team's effects frame by frame, recording the frame each Shooting Star is cast on, from `fromFrame` on
-  const stepRecordingCasts = (context: KitContext, frames: number, fromFrame = 0) => {
-    const casts: { frame: number; hit: KitHit; summon: KitSummon }[] = [];
-    const seenHits = new WeakSet<KitHit[]>();
-    for (let frame = 1; frame <= frames; frame++) {
-      stepKitEffects(FIXED_STEP_SECONDS, context);
-      for (const effect of context.kitEffectState.effects)
-        if (effect.kind === "summon" && !seenHits.has(effect.hits)) {
-          seenHits.add(effect.hits);
-          casts.push({ frame: fromFrame + frame, hit: takeOne(effect.hits, 0), summon: effect });
-        }
-    }
-    return casts;
-  };
-
-  // Steps the team's effects as the world does, sending each effect that ran out to the kit as an EffectExpired event
-  const stepLaylaSeconds = (context: KitContext, seconds: number) => {
-    for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-      stepKitEffects(FIXED_STEP_SECONDS, context);
-      for (const effect of context.expiredEffects)
-        LAYLA_KIT.onKitEvent?.({ effect, kind: KitEventKind.EffectExpired }, context, context.activeCombatant);
-    }
-  };
 
   // Layla with her shield and two skill uses, so four Night Stars and the Shooting Stars, stepped to the first Shooting
   // Star's cast from the one enemy in reach
@@ -260,12 +260,13 @@ describe(createLaylaKitBehaviour, () => {
     // The tick casts its strike at 36 frames, and the strike lands at 42, which the step does not reach
     stepKitSeconds(context, 0.62);
 
-    const [starlightSlug] = context.kitEffectState.effects.filter(
+    const starlightSlug = context.kitEffectState.effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
-    const [strike] = starlightSlug?.hits ?? [];
+    assert(starlightSlug);
+    const [strike] = starlightSlug.hits;
     const strikeEnemy = () =>
-      strike?.onStrike?.(context, { body: context.body, combatant: starlightSlug!.combatant, hit: strike }, enemy);
+      strike?.onStrike?.(context, { body: context.body, combatant: starlightSlug.combatant, hit: strike }, enemy);
     strikeEnemy();
     strikeEnemy();
     expect(countNightStars(context.kitEffectState)).toBe(1);

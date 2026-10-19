@@ -101,6 +101,43 @@ const strikeInsideField = (context: KitContext, combatant: Combatant): void => {
 const findLastSummon = (effects: KitEffect[]): KitSummon | undefined =>
   effects.findLast((effect): effect is KitSummon => effect.kind === "summon");
 
+// Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced. The
+// Solar Isotoma is cast from the origin and stands from its spawn, 0.42 seconds in, and gcsim checks its field every
+// 0.3 seconds from that hitmark
+// The Albedo who casts the field, and the member on the field, which is that Albedo too unless a teammate is given
+const createConstellation4Fixture = (constellationCount = 4, teammate?: Combatant) => {
+  const combatant = createAlbedoCombatant(0, constellationCount);
+  const activeCombatant = teammate ?? combatant;
+  const kitEffectState: KitEffectState = { effects: [] };
+  const party = createParty(teammate ? [ALBEDO_CHARACTER_ID, teammate.characterId] : [ALBEDO_CHARACTER_ID]);
+  const characterIdCombatantMap = new Map<number, Combatant>([
+    [ALBEDO_CHARACTER_ID, combatant],
+    [activeCombatant.characterId, activeCombatant],
+  ]);
+  // The member stands at the given x, the cast being made from the origin
+  const createContext = (member: Combatant, x: number) =>
+    createKitTestContext(member, { body: createKitBody({ x, z: 0 }), characterIdCombatantMap, kitEffectState, party });
+  const stand = (x: number) => createContext(activeCombatant, x);
+  const cast = () => ALBEDO_KIT.elementalSkill.onStart?.(createContext(combatant, 0));
+  // Steps the seconds with the active member standing at the given x, each step running the effects and the kit's clock
+  const hold = (x: number, seconds: number) => {
+    for (let index = 0; index < Math.round(seconds * 60); index++) {
+      stepKitSeconds(stand(x), 1 / 60);
+      ALBEDO_KIT.onStep?.(stand(x), combatant, 1 / 60);
+    }
+  };
+  const getPlungingBonus = () =>
+    getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes.attributeTotalMap[
+      Attribute.PlungingAttackDamageBonus
+    ];
+  // The characters the plunging attack bonus is a buff on, and the seconds each buff has left
+  const getPlungingBuffs = () =>
+    kitEffectState.effects.flatMap((effect) =>
+      effect.kind === "buff" && effect.attribute === Attribute.PlungingAttackDamageBonus ? [effect] : [],
+    );
+  return { cast, getPlungingBonus, getPlungingBuffs, hold };
+};
+
 describe(createAlbedoKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
@@ -302,47 +339,6 @@ describe(createAlbedoKitBehaviour, () => {
       expect(secondFatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
     });
   });
-
-  // Constellation 4's plunging attack bonus, read off the active member's buffed attributes as its hits are priced. The
-  // Solar Isotoma is cast from the origin and stands from its spawn, 0.42 seconds in, and gcsim checks its field every
-  // 0.3 seconds from that hitmark
-  // The Albedo who casts the field, and the member on the field, which is that Albedo too unless a teammate is given
-  const createConstellation4Fixture = (constellationCount = 4, teammate?: Combatant) => {
-    const combatant = createAlbedoCombatant(0, constellationCount);
-    const activeCombatant = teammate ?? combatant;
-    const kitEffectState: KitEffectState = { effects: [] };
-    const party = createParty(teammate ? [ALBEDO_CHARACTER_ID, teammate.characterId] : [ALBEDO_CHARACTER_ID]);
-    const characterIdCombatantMap = new Map<number, Combatant>([
-      [ALBEDO_CHARACTER_ID, combatant],
-      [activeCombatant.characterId, activeCombatant],
-    ]);
-    // The member stands at the given x, the cast being made from the origin
-    const createContext = (member: Combatant, x: number) =>
-      createKitTestContext(member, {
-        body: createKitBody({ x, z: 0 }),
-        characterIdCombatantMap,
-        kitEffectState,
-        party,
-      });
-    const stand = (x: number) => createContext(activeCombatant, x);
-    const cast = () => ALBEDO_KIT.elementalSkill.onStart?.(createContext(combatant, 0));
-    // Steps the seconds with the active member standing at the given x, each step running the effects and the kit's clock
-    const hold = (x: number, seconds: number) => {
-      for (let index = 0; index < Math.round(seconds * 60); index++) {
-        stepKitSeconds(stand(x), 1 / 60);
-        ALBEDO_KIT.onStep?.(stand(x), combatant, 1 / 60);
-      }
-    };
-    const getPlungingBonus = () =>
-      getBuffedCombatant(combatant, kitEffectState.effects, party, characterIdCombatantMap).attributes
-        .attributeTotalMap[Attribute.PlungingAttackDamageBonus];
-    // The characters the plunging attack bonus is a buff on, and the seconds each buff has left
-    const getPlungingBuffs = () =>
-      kitEffectState.effects.flatMap((effect) =>
-        effect.kind === "buff" && effect.attribute === Attribute.PlungingAttackDamageBonus ? [effect] : [],
-      );
-    return { cast, getPlungingBonus, getPlungingBuffs, hold };
-  };
 
   test("constellation 4 raises the active member's plunging attacks 30% while it stands in the standing Solar Isotoma's field", () => {
     expect.hasAssertions();

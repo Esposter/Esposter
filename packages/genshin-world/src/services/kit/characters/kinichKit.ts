@@ -75,6 +75,10 @@ const castBlindSpot = (context: KitContext, target: Enemy) => {
   );
 };
 
+const gainLoopShotPoints = (context: KitContext) => {
+  generateKitNightsoulPoints(context, LOOP_SHOT_POINTS, NIGHTSOUL_MAXIMUM);
+};
+
 // Kinich's behaviour: the burst calls the Ajaw as it is cast, a summon at the body whose lasers' intervals are drawn from
 // The world's seeded random source then, as gcsim draws each as the laser before it fires. Its schedule is counted in
 // Frames, as gcsim counts it. His skill's press enters the Nightsoul Blessing with no points, which gain two a second up
@@ -100,9 +104,6 @@ export const createKinichKitBehaviour = ({
       const hitmarkSeconds = dragonBreathFields.hitmarkSeconds + toKitSeconds(intervalFrames);
       return { ...dragonBreathFields, hitmarkSeconds };
     });
-  };
-  const gainLoopShotPoints = (context: KitContext) => {
-    generateKitNightsoulPoints(context, LOOP_SHOT_POINTS, NIGHTSOUL_MAXIMUM);
   };
   // The blessing's two Loop Shots, which take the place of his normal attacks while it lasts
   const blessingStance = readStance("blessing", {

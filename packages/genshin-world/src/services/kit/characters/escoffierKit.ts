@@ -108,7 +108,7 @@ export const createEscoffierKitBehaviour = ({
   readParameter,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
-  const skillTickHits = readHits("frostyParfaitTicks").map((hit) => ({ ...hit, enemyStatus: getAscension4Status }));
+  const skillTickHits = readHits("frostyParfaitTicks", { enemyStatus: getAscension4Status });
   const surgingBladeHit = { ...readHit("surgingBlade"), enemyStatus: getAscension4Status };
   const alignedIntervalSeconds = readParameter("alignedIntervalSeconds");
   const burstHealFlat = readParameter("scoringCutsFlatHeal");

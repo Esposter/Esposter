@@ -102,7 +102,12 @@ describe(createVaresaKitBehaviour, () => {
     const events: KitEvent[] = [];
     const combatant: Combatant = {
       ...createVaresaCombatant(),
-      kit: { ...VARESA_KIT, onKitEvent: (event) => void events.push(event) },
+      kit: {
+        ...VARESA_KIT,
+        onKitEvent: (event) => {
+          events.push(event);
+        },
+      },
     };
     const context = createKitTestContext(combatant);
     VARESA_KIT.elementalSkill.onStart?.(context);

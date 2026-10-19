@@ -93,9 +93,9 @@ export const createNeuvilletteKitBehaviour = ({
   burst: {
     onStart: ({ activeCombatant, kitEffectState }) => {
       const { characterId } = activeCombatant;
-      kit.elementalBurst.hits.forEach(({ hitmarkSeconds }, index) => {
+      for (const [index, { hitmarkSeconds }] of kit.elementalBurst.hits.entries()) {
         const droplets = DROPLET_TICKS[index];
-        if (!droplets) return;
+        if (!droplets) continue;
         scheduleKitTask(kitEffectState, characterId, hitmarkSeconds, (tick) => {
           for (const offset of droplets.offsets)
             castSourcewaterDroplet(
@@ -104,7 +104,7 @@ export const createNeuvilletteKitBehaviour = ({
               createDropletPoint(tick.body, offset, droplets.range, tick.random),
             );
         });
-      });
+      }
     },
   },
   chargedAttack: { decideLength: createEquitableJudgementLength(readHits("judgement")) },
