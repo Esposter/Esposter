@@ -1,3 +1,4 @@
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import {
   TEST_CONTEXT,
@@ -24,7 +25,7 @@ describe(renderWebpageDocument, () => {
                 { props: { href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
               ],
               id: TEST_ID,
-              tag: "section",
+              tag: HtmlTag.Section,
             },
             type: WebpageNodeType.Section,
           },

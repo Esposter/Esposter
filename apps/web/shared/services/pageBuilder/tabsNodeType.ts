@@ -2,6 +2,8 @@ import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { z } from "zod";
@@ -11,7 +13,9 @@ const tabLabelsSchema = z.array(z.object({ props: z.object({ id: z.string(), lab
 
 // Every panel but the first starts hidden, as a tab that is not selected does
 const hidePanel = (panel: HtmlNode): HtmlNode =>
-  typeof panel === "object" && "tag" in panel ? { ...panel, attributes: { ...panel.attributes, hidden: "" } } : panel;
+  typeof panel === "object" && "tag" in panel
+    ? { ...panel, attributes: { ...panel.attributes, [HtmlAttributeName.Hidden]: "" } }
+    : panel;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
@@ -62,21 +66,24 @@ export const tabsNodeType = {
     const tabs = tabLabelsSchema.parse(containerPropsSchema.parse(node.props).children).map(({ props }) => props);
     const buttons = tabs.map(({ id, label }, index): HtmlElement => ({
       attributes: {
-        "aria-controls": `${id}-panel`,
-        "aria-selected": String(index === 0),
-        id: `${id}-tab`,
-        role: "tab",
-        tabindex: index === 0 ? "0" : "-1",
-        type: "button",
+        [HtmlAttributeName.AriaControls]: `${id}-panel`,
+        [HtmlAttributeName.AriaSelected]: String(index === 0),
+        [HtmlAttributeName.Id]: `${id}-tab`,
+        [HtmlAttributeName.Role]: "tab",
+        [HtmlAttributeName.Tabindex]: index === 0 ? "0" : "-1",
+        [HtmlAttributeName.Type]: "button",
       },
       children: [label],
-      tag: "button",
+      tag: HtmlTag.Button,
     }));
     const panels = (slots.children ?? []).map((panel, index) => (index === 0 ? panel : hidePanel(panel)));
     return {
-      attributes: { class: "tabs" },
-      children: [{ attributes: { role: "tablist" }, children: buttons, tag: "div" }, ...panels],
-      tag: "div",
+      attributes: { [HtmlAttributeName.Class]: "tabs" },
+      children: [
+        { attributes: { [HtmlAttributeName.Role]: "tablist" }, children: buttons, tag: HtmlTag.Div },
+        ...panels,
+      ],
+      tag: HtmlTag.Div,
     };
   },
   script: tabsScript,

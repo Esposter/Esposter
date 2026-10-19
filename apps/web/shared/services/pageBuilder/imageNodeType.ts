@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
@@ -24,9 +26,16 @@ export const imageNodeType = {
   render: (node) => {
     const { alt, decorative, src } = imagePropsSchema.parse(node.props);
     return {
-      attributes: decorative ? { alt: "", class: "image", role: "presentation", src } : { alt, class: "image", src },
+      attributes: decorative
+        ? {
+            [HtmlAttributeName.Alt]: "",
+            [HtmlAttributeName.Class]: "image",
+            [HtmlAttributeName.Role]: "presentation",
+            [HtmlAttributeName.Src]: src,
+          }
+        : { [HtmlAttributeName.Alt]: alt, [HtmlAttributeName.Class]: "image", [HtmlAttributeName.Src]: src },
       children: [],
-      tag: "img",
+      tag: HtmlTag.Img,
     };
   },
   slots: {},

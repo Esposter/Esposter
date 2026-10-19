@@ -1,3 +1,5 @@
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { describe, expect, test } from "vitest";
 
@@ -11,8 +13,10 @@ describe(serializeHtml, () => {
   test("a void element is written without a closing tag and with its attribute escaped", () => {
     expect.hasAssertions();
 
-    expect(serializeHtml([{ attributes: { alt: "", src: 'a"b' }, children: [], tag: "img" }])).toBe(
-      '<img alt="" src="a&quot;b">',
-    );
+    expect(
+      serializeHtml([
+        { attributes: { [HtmlAttributeName.Alt]: "", [HtmlAttributeName.Src]: 'a"b' }, children: [], tag: HtmlTag.Img },
+      ]),
+    ).toBe('<img alt="" src="a&quot;b">');
   });
 });

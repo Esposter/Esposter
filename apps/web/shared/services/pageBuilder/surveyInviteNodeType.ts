@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
@@ -22,9 +24,12 @@ export const surveyInviteNodeType = {
   render: (node, _slots, context) => {
     const { label, surveyId } = surveyInvitePropsSchema.parse(node.props);
     return {
-      attributes: { class: "survey-invite", href: getSurveyInviteUrl(context.origin, surveyId) },
+      attributes: {
+        [HtmlAttributeName.Class]: "survey-invite",
+        [HtmlAttributeName.Href]: getSurveyInviteUrl(context.origin, surveyId),
+      },
       children: [label],
-      tag: "a",
+      tag: HtmlTag.A,
     };
   },
   slots: {},

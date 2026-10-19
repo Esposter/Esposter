@@ -1,5 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
@@ -14,7 +16,11 @@ export const buttonNodeType = {
   propsSchema: buttonPropsSchema,
   render: (node) => {
     const { href, label } = buttonPropsSchema.parse(node.props);
-    return { attributes: { class: "button", href }, children: [label], tag: "a" };
+    return {
+      attributes: { [HtmlAttributeName.Class]: "button", [HtmlAttributeName.Href]: href },
+      children: [label],
+      tag: HtmlTag.A,
+    };
   },
   slots: {},
   type: WebpageNodeType.Button,

@@ -1,11 +1,15 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
-import { SectionTag } from "#shared/models/pageBuilder/SectionTag";
+import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { z } from "zod";
 
-const sectionFormSchema = z.strictObject({ tag: z.enum(SectionTag) });
+// The semantic tags a section renders under
+const sectionFormSchema = z.strictObject({
+  tag: z.enum([HtmlTag.Div, HtmlTag.Footer, HtmlTag.Header, HtmlTag.Main, HtmlTag.Section]),
+});
 const sectionPropsSchema = z.strictObject({
   ...sectionFormSchema.shape,
   children: z.array(z.unknown()),
@@ -18,7 +22,7 @@ export const sectionNodeType = {
   formSchema: sectionFormSchema,
   propsSchema: sectionPropsSchema,
   render: (node, slots) => ({
-    attributes: { class: "section" },
+    attributes: { [HtmlAttributeName.Class]: "section" },
     children: slots.children ?? [],
     tag: sectionPropsSchema.parse(node.props).tag,
   }),
