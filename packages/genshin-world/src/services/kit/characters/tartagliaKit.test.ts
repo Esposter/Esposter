@@ -233,7 +233,7 @@ describe(createTartagliaKitBehaviour, () => {
     const flash = context.kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
     expect(riptide?.tickIntervalSeconds).toBe(3.9);
-    expect(flash?.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([15, 15, 15]);
+    expect(flash?.hits.map(({ poiseDamage }) => poiseDamage)).toStrictEqual([20, 20, 20]);
     expect(flash?.attackTag).toBe(AttackTag.NormalAttack);
   });
 
