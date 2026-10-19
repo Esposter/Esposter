@@ -7,50 +7,36 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.pressTamotoAttacks.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.pressTamotoAttacks.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.pressTamotoAttacks.0-4.element": { "file": "skill.go", "line": 202, "source": "Gcsim", "value": "Rock" },
   "hits.pressTamotoAttacks.0.hitmarkFrames": { "cause": "Unsourced", "value": 60 },
-  "hits.pressTamotoAttacks.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.pressTamotoAttacks.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.pressTamotoAttacks.0.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.pressTamotoAttacks.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.pressTamotoAttacks.1.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.pressTamotoAttacks.1.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.pressTamotoAttacks.1.hitmarkFrames": { "cause": "Unsourced", "value": 276 },
-  "hits.pressTamotoAttacks.1.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.pressTamotoAttacks.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.pressTamotoAttacks.1.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.pressTamotoAttacks.2.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.pressTamotoAttacks.2.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.pressTamotoAttacks.2.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.pressTamotoAttacks.2.hitmarkFrames": { "cause": "Unsourced", "value": 492 },
-  "hits.pressTamotoAttacks.2.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.pressTamotoAttacks.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.pressTamotoAttacks.2.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.pressTamotoAttacks.3.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.pressTamotoAttacks.3.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.pressTamotoAttacks.3.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.pressTamotoAttacks.3.hitmarkFrames": { "cause": "Unsourced", "value": 708 },
-  "hits.pressTamotoAttacks.3.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.pressTamotoAttacks.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.pressTamotoAttacks.3.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.pressTamotoAttacks.4.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.pressTamotoAttacks.4.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.pressTamotoAttacks.4.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.pressTamotoAttacks.4.hitmarkFrames": { "cause": "Unsourced", "value": 924 },
-  "hits.pressTamotoAttacks.4.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.pressTamotoAttacks.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.pressTamotoAttacks.4.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.holdTamotoAttacks.length": { "cause": "Unsourced", "value": 5 },
@@ -58,50 +44,36 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.holdTamotoAttacks.0.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.holdTamotoAttacks.0.gauge": { "cause": "Unsourced", "value": 1 },
+  "hits.holdTamotoAttacks.0-4.element": { "file": "skill.go", "line": 202, "source": "Gcsim", "value": "Rock" },
   "hits.holdTamotoAttacks.0.hitmarkFrames": { "cause": "Unsourced", "value": 75 },
-  "hits.holdTamotoAttacks.0.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.holdTamotoAttacks.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.holdTamotoAttacks.0.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.holdTamotoAttacks.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.holdTamotoAttacks.1.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.holdTamotoAttacks.1.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.holdTamotoAttacks.1.hitmarkFrames": { "cause": "Unsourced", "value": 291 },
-  "hits.holdTamotoAttacks.1.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.holdTamotoAttacks.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.holdTamotoAttacks.1.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.holdTamotoAttacks.2.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.holdTamotoAttacks.2.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.holdTamotoAttacks.2.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.holdTamotoAttacks.2.hitmarkFrames": { "cause": "Unsourced", "value": 507 },
-  "hits.holdTamotoAttacks.2.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.holdTamotoAttacks.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.holdTamotoAttacks.2.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.holdTamotoAttacks.3.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.holdTamotoAttacks.3.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.holdTamotoAttacks.3.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.holdTamotoAttacks.3.hitmarkFrames": { "cause": "Unsourced", "value": 723 },
-  "hits.holdTamotoAttacks.3.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.holdTamotoAttacks.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.holdTamotoAttacks.3.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "hits.holdTamotoAttacks.4.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.2 }
   },
-  "hits.holdTamotoAttacks.4.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.holdTamotoAttacks.4.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.holdTamotoAttacks.4.hitmarkFrames": { "cause": "Unsourced", "value": 939 },
-  "hits.holdTamotoAttacks.4.internalCooldownTag": { "cause": "DiffersFromSource", "value": "ElementalSkill" },
   "hits.holdTamotoAttacks.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9432 } },
   "hits.holdTamotoAttacks.4.poiseDamage": { "file": "skill.go", "line": 201, "source": "Gcsim", "value": 0 },
   "parameters.tamotoDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 9432 } },
@@ -112,18 +84,10 @@
   "plunges.low.animationFrames": { "cause": "Unsourced", "value": 69 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.internalCooldownTag": { "source": "Wiki" },
-  "skillHolds.length": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.animationFrames": { "cause": "Unsourced", "value": 88 },
   "skillHolds.0.action.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.451123453691213 }
-  },
   "skillHolds.0.action.hits.0.element": { "cause": "Unsourced", "value": "Rock" },
-  "skillHolds.0.action.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 37 },
-  "skillHolds.0.action.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalSkill" },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9432 } },
-  "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9432 } },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9432 } }
 }
