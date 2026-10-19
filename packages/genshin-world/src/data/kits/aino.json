@@ -14,7 +14,5 @@
   "hits.waterBall.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 } },
   "hits.waterBall.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 12139 } },
   "parameters.burstRadius": { "file": "burst.go", "line": 44, "source": "Gcsim", "value": 10 },
-  "parameters.ascension4MasteryShare": { "file": "asc.go", "line": 19, "source": "Gcsim", "value": 0.5 },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 12132 } },
-  "skill.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12132 } }
+  "parameters.ascension4MasteryShare": { "file": "asc.go", "line": 19, "source": "Gcsim", "value": 0.5 }
 }

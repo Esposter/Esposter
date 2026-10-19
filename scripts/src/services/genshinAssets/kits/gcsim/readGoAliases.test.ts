@@ -40,4 +40,20 @@ func (c *char) attack() {
     expect(resolveGoAlias(aliasMap, "attack")).toBe("attack");
     expect(resolveGoAlias(aliasMap, undefined)).toBeUndefined();
   });
+
+  test("resolves a loop's value variable over a bare name to that name, its brace opening the loop's body", () => {
+    expect.hasAssertions();
+
+    const bareSource = `
+func (c *char) burst() {
+	for i, mult := range burstWhiteInitial {
+		ai.Mult = mult[c.TalentLvlBurst()]
+	}
+}
+`;
+    const bareTokens = tokenizeGo(bareSource);
+    const aliasMap = readGoAliases(bareTokens);
+    const multPosition = bareTokens.findIndex(({ text }) => text === "Mult") + 2;
+    expect(resolveGoAlias(aliasMap, "mult", multPosition)).toBe("burstWhiteInitial");
+  });
 });

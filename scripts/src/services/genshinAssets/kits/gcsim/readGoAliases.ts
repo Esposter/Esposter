@@ -13,7 +13,8 @@ export const readGoAliases = (tokens: readonly GoToken[]): Map<string, GoAliasBi
   for (const [position, token] of tokens.entries()) {
     if (!checkIsGoPunctuation(token, ":=")) continue;
     const isRange = tokens[position + 1]?.text === "range";
-    const { expression } = parseGoExpression(tokens, position + (isRange ? 2 : 1));
+    // A range is a control clause, so a bare name before its brace is the slice the loop body follows, not a composite
+    const { expression } = parseGoExpression(tokens, position + (isRange ? 2 : 1), isRange);
     const rootName = getGoRootName(expression);
     const name = tokens[position - 1]?.text;
     if (rootName !== undefined && name !== undefined && tokens[position - 1]?.kind === GoTokenKind.Identifier)

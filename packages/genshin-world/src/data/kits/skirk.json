@@ -37,11 +37,6 @@
   "stances.sevenPhaseFlash.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
   "stances.sevenPhaseFlash.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 54 },
   "stances.sevenPhaseFlash.chargedAttack.hits.length": { "cause": "Unsourced", "value": 3 },
-  "stances.sevenPhaseFlash.chargedAttack.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
-  },
-  "stances.sevenPhaseFlash.chargedAttack.hits.0.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.hitmarkFrames": {
     "file": "charge.go",
     "line": 19,
@@ -49,14 +44,9 @@
     "value": 28
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.0.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
   },
-  "stances.sevenPhaseFlash.chargedAttack.hits.1.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
-  },
-  "stances.sevenPhaseFlash.chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.1.hitmarkFrames": {
     "file": "charge.go",
     "line": 19,
@@ -64,14 +54,9 @@
     "value": 37
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.1.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
   },
-  "stances.sevenPhaseFlash.chargedAttack.hits.2.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
-  },
-  "stances.sevenPhaseFlash.chargedAttack.hits.2.element": { "cause": "Unsourced", "value": "Ice" },
   "stances.sevenPhaseFlash.chargedAttack.hits.2.hitmarkFrames": {
     "file": "charge.go",
     "line": 19,
@@ -79,7 +64,7 @@
     "value": 46
   },
   "stances.sevenPhaseFlash.chargedAttack.hits.2.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
