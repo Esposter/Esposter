@@ -41,7 +41,7 @@ describe(createViewerPlayer, () => {
       COLOR,
       VIEWER_TEXT_COLOR,
     );
-    expect(link.playSound).toHaveBeenCalledExactlyOnceWith(MODEL_ID, getPlayedPaths(link.playSound)[0]);
+    expect(link.playSound.mock.calls.map(([modelId]) => modelId)).toStrictEqual([MODEL_ID]);
     await expect(playing).resolves.toBe("");
   });
 
