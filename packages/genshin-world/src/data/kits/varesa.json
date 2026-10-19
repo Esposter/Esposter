@@ -1,20 +1,12 @@
 {
   "plunges.low.animationFrames": { "cause": "Unsourced", "value": 75 },
   "plunges.low.hits.0.hitmarkFrames": { "file": "plunge.go", "line": 35, "source": "Gcsim", "value": 37 },
-  "plunges.low.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
-  },
   "skill.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 17.000624902374255 }
   },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11132 } },
   "skillCharges": { "cause": "Unsourced", "value": 2 },
-  "burstVariant.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23.5 }
-  },
   "burstVariant.hits.0.poiseDamage": { "file": "burst.go", "line": 70, "source": "Gcsim", "value": 150 },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11139 } }
 }
