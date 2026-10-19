@@ -12,6 +12,7 @@ import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import {
   AFFIX_ID,
   AFFIX_ROW,
+  MAIN_PROP_ID,
   SECOND_AFFIX_ROW,
   SET_ID,
   SET_RELIQUARY_ID,
@@ -29,7 +30,6 @@ describe(buildTrials, () => {
   const TRIAL_AVATAR_ID = 1022;
   const WEAPON_ID = 11_301;
   const NO_SET_RELIQUARY_ID = 20_002;
-  const MAIN_PROP_ID = 15_004;
 
   const avatarRows: ExcelTrialAvatarRow[] = [
     { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },

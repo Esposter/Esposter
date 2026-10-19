@@ -4,6 +4,7 @@ import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/Trial
 import {
   AFFIX_ID,
   AFFIX_ROW,
+  MAIN_PROP_ID,
   SECOND_AFFIX_ID,
   SECOND_AFFIX_ROW,
   SET_ID,
@@ -15,7 +16,6 @@ import { describe, expect, test } from "vitest";
 
 describe(toTrialReliquary, () => {
   const RELIQUARY_ID = 91;
-  const MAIN_PROP_ID = 15_004;
 
   const pieceMap = new Map<number, TrialReliquaryPiece>([
     [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
