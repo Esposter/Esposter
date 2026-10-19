@@ -8,37 +8,32 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.6 }
   },
   "hits.stormclusterTicks.0.hitmarkFrames": { "file": "burst.go", "line": 17, "source": "Gcsim", "value": 100 },
-  "hits.stormclusterTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.0-5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.1.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.95 }
   },
   "hits.stormclusterTicks.1.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 118 },
-  "hits.stormclusterTicks.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.2.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 24.3 }
   },
   "hits.stormclusterTicks.2.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 136 },
-  "hits.stormclusterTicks.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.3.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 25.65 }
   },
   "hits.stormclusterTicks.3.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 154 },
-  "hits.stormclusterTicks.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.4.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 27 }
   },
   "hits.stormclusterTicks.4.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 172 },
-  "hits.stormclusterTicks.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.5.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 28.35 }
   },
   "hits.stormclusterTicks.5.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 190 },
-  "hits.stormclusterTicks.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.ambush.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }
