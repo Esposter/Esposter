@@ -2,10 +2,10 @@ import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
+import { MILLISECONDS_IN_DAY } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
 describe(removeExpiredMails, () => {
-  const DAY_MS = 86_400_000;
   const EXPIRE_DAYS = 365;
   const ROW: Mail = {
     contentTextId: "1",
@@ -25,8 +25,8 @@ describe(removeExpiredMails, () => {
     isPinned: false,
     isRead: false,
   });
-  const PAST_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS + 1));
-  const WITHIN_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (EXPIRE_DAYS - 1));
+  const PAST_EXPIRY = Temporal.Instant.fromEpochMilliseconds(MILLISECONDS_IN_DAY * (EXPIRE_DAYS + 1));
+  const WITHIN_EXPIRY = Temporal.Instant.fromEpochMilliseconds(MILLISECONDS_IN_DAY * (EXPIRE_DAYS - 1));
 
   // A mail held past its expiry is deleted from the mailbox
   test("a mail past its expiry is deleted", () => {
