@@ -14,28 +14,16 @@
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7539 } },
   "chargedAttack.animationFrames": { "file": "charge.go", "line": 23, "source": "Gcsim", "value": 69 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
-  "chargedAttack.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.5 }
-  },
   "chargedAttack.hits.0.hitmarkFrames": { "file": "charge.go", "line": 18, "source": "Gcsim", "value": 34 },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 7531 } },
   "frames.windfavored": { "cause": "Unclassified", "value": 600 },
   "normalAttacks.length": { "file": "attack.go", "line": 24, "source": "Gcsim", "value": 3 },
   "normalAttacks.0.animationFrames": { "file": "attack.go", "line": 29, "source": "Gcsim", "value": 35 },
   "normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },
-  "normalAttacks.0.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
   "normalAttacks.0.hits.0.hitmarkFrames": { "file": "attack.go", "line": 17, "source": "Gcsim", "value": 11 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7531 } },
   "normalAttacks.1.animationFrames": { "file": "attack.go", "line": 36, "source": "Gcsim", "value": 39 },
   "normalAttacks.1.hits.length": { "cause": "Unsourced", "value": 1 },
-  "normalAttacks.1.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
   "normalAttacks.1.hits.0.hitmarkFrames": { "file": "attack.go", "line": 17, "source": "Gcsim", "value": 6 },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 7531 } },
   "normalAttacks.2.animationFrames": { "file": "attack.go", "line": 45, "source": "Gcsim", "value": 76 },
@@ -207,6 +195,5 @@
   "stances.windfavored.normalAttacks.2.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "stances.windfavored.normalAttacks.2.hits.1.multiplier": { "cause": "Unclassified", "value": 0.633581823 },
   "stances.windfavored.normalAttacks.2.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "stances.windfavored.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "stances.windfavored.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" }
 }
