@@ -19,12 +19,12 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `arlecchino`         | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `baizhu`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `barbara`            | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `beidou`             | —                      |                                                                          |
+| `beidou`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `bennett`            | —                      |                                                                          |
 | `candace`            | —                      |                                                                          |
 | `charlotte`          | —                      |                                                                          |
 | `chasca`             | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `chevreuse`          | —                      |                                                                          |
+| `chevreuse`          | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `chiori`             | —                      |                                                                          |
 | `chongyun`           | —                      |                                                                          |
 | `citlali`            | —                      |                                                                          |
@@ -47,7 +47,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `freminet`           | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `furina`             | —                      |                                                                          |
 | `gaming`             | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `ganyu`              | —                      |                                                                          |
+| `ganyu`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `gorou`              | 2026-10-13 · Haiku 5.5 |                                                                          |
 | `hu-tao`             | —                      |                                                                          |
 | `iansan`             | —                      |                                                                          |
@@ -57,21 +57,21 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jean`               | —                      |                                                                          |
 | `kachina`            | —                      |                                                                          |
-| `kaedehara-kazuha`   | —                      | design is `kazuha`                                                       |
+| `kaedehara-kazuha`   | 2026-10-19 · Haiku 5.5 | design is `kazuha`                                                       |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | —                      |                                                                          |
 | `kamisato-ayato`     | —                      |                                                                          |
 | `kaveh`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `keqing`             | —                      |                                                                          |
-| `kinich`             | —                      |                                                                          |
-| `kirara`             | —                      |                                                                          |
+| `kinich`             | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `kirara`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `klee`               | —                      |                                                                          |
 | `kujou-sara`         | —                      |                                                                          |
-| `kuki-shinobu`       | —                      | design is `kuki`                                                         |
+| `kuki-shinobu`       | 2026-10-19 · Haiku 5.5 | design is `kuki`                                                         |
 | `lan-yan`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `lauma`              | —                      |                                                                          |
 | `layla`              | —                      |                                                                          |
-| `linnea`             | —                      |                                                                          |
+| `linnea`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `lisa`               | —                      |                                                                          |
 | `lohen`              | —                      |                                                                          |
 | `lynette`            | 2026-10-14 · Haiku 5.5 |                                                                          |
@@ -108,7 +108,7 @@ grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 | `thoma`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `tighnari`           | —                      |                                                                          |
 | `traveler`           | —                      |                                                                          |
-| `varesa`             | —                      |                                                                          |
+| `varesa`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `varka`              | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `venti`              | —                      |                                                                          |
 | `vesna`              | 2026-10-19 · Haiku 5.5 |                                                                          |
