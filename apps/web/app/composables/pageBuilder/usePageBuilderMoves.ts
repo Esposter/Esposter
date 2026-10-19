@@ -153,19 +153,27 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
   };
-  // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection
+  // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection.
+  // Returns whether the removal landed, so a caller announcing the delete knows a node was actually removed
   const deleteNode = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument(resourceIdValue);
     const nodePointer = document && getNodePointer(document, nodeId);
-    if (!document || nodePointer === undefined) return;
+    if (!document || nodePointer === undefined) return false;
 
     const focusPointer = getFocusAfterRemoval(document, nodePointer);
     const title = getNodeTitle(document, parseJsonPointer(nodePointer));
-    applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(() => {
-      setSelectedNodeId(resourceIdValue, getNodeId(getDocument(resourceIdValue), focusPointer));
-      if (title) announce(`Deleted ${title}`);
-    }, console.error);
+    return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
+      () => {
+        setSelectedNodeId(resourceIdValue, getNodeId(getDocument(resourceIdValue), focusPointer));
+        if (title) announce(`Deleted ${title}`);
+        return true;
+      },
+      (error) => {
+        console.error(error);
+        return false;
+      },
+    );
   };
   const deleteSelected = () => {
     const nodeId = getSelectedNodeId(toValue(resourceId));

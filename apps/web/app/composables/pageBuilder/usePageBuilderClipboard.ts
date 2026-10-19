@@ -21,7 +21,7 @@ import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 export const usePageBuilderClipboard = (
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
-  deleteNode: (nodeId: string) => void,
+  deleteNode: (nodeId: string) => boolean,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
@@ -75,7 +75,7 @@ export const usePageBuilderClipboard = (
     const selection = getSelectedNode();
     if (!selection || !(await writeToClipboard(selection.node))) return;
 
-    deleteNode(selection.nodeId);
+    if (!deleteNode(selection.nodeId)) return;
     if (selection.title) announce(`Cut ${selection.title}`);
   };
   const pasteSelected = async () => {

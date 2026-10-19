@@ -61,14 +61,14 @@ describe(usePageBuilderClipboard, () => {
     await usePageBuilderClipboard(
       sourceId,
       vi.fn<(message: string) => void>(),
-      vi.fn<(nodeId: string) => void>(),
+      vi.fn<(nodeId: string) => boolean>(),
     ).copySelected();
 
     const targetId = await openResource([]);
     await usePageBuilderClipboard(
       targetId,
       vi.fn<(message: string) => void>(),
-      vi.fn<(nodeId: string) => void>(),
+      vi.fn<(nodeId: string) => boolean>(),
     ).pasteSelected();
 
     const pastedNode = pageBuilderDocumentStore.getDocument(targetId)?.content[0];
@@ -90,13 +90,13 @@ describe(usePageBuilderClipboard, () => {
     await usePageBuilderClipboard(
       sourceId,
       vi.fn<(message: string) => void>(),
-      vi.fn<(nodeId: string) => void>(),
+      vi.fn<(nodeId: string) => boolean>(),
     ).copySelected();
 
     const targetId = await openResource([]);
     const announce = vi.fn<(message: string) => void>();
     vi.mocked(refuseClipboardPaste).mockReturnValueOnce(REFUSAL_MESSAGE);
-    await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => void>()).pasteSelected();
+    await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([[REFUSAL_MESSAGE]]);
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
@@ -113,7 +113,7 @@ describe(usePageBuilderClipboard, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const targetId = await openResource([]);
     const announce = vi.fn<(message: string) => void>();
-    await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => void>()).pasteSelected();
+    await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
     expect(announce.mock.calls).toStrictEqual([["This block cannot go here"]]);
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
@@ -138,6 +138,24 @@ describe(usePageBuilderClipboard, () => {
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([createTextNode(otherNodeId)]);
   });
 
+  test("cut announces nothing when the node is deleted while the clipboard write waits", async () => {
+    expect.hasAssertions();
+    setActivePinia(createPinia());
+    const writeGate = Promise.withResolvers<void>();
+    vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const resourceId = await openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const { deleteNode } = usePageBuilderMoves(resourceId, vi.fn<(message: string) => void>());
+    const announce = vi.fn<(message: string) => void>();
+    const cut = usePageBuilderClipboard(resourceId, announce, deleteNode).cutSelected();
+    deleteNode(TEST_ROOT_TEXT_ID);
+    writeGate.resolve();
+    await cut;
+
+    expect(announce.mock.calls).toStrictEqual([]);
+  });
+
   test("copy with a denied clipboard changes nothing", async () => {
     expect.hasAssertions();
     setActivePinia(createPinia());
@@ -147,7 +165,7 @@ describe(usePageBuilderClipboard, () => {
     const resourceId = await openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const announce = vi.fn<(message: string) => void>();
-    await usePageBuilderClipboard(resourceId, announce, vi.fn<(nodeId: string) => void>()).copySelected();
+    await usePageBuilderClipboard(resourceId, announce, vi.fn<(nodeId: string) => boolean>()).copySelected();
 
     expect(announce.mock.calls).toStrictEqual([["Could not copy block"]]);
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual([
