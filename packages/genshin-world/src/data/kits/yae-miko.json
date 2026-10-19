@@ -18,17 +18,15 @@
   "hits.tenkoThunderbolts.length": { "cause": "DiffersFromSource", "value": 3 },
   "hits.tenkoThunderbolts.0.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 154 },
   "hits.tenkoThunderbolts.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5839 } },
-  "hits.tenkoThunderbolts.1.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
+  "hits.tenkoThunderbolts.1-2.area": {
+    "file": "burst.go",
+    "line": 49,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 22 }
   },
   "hits.tenkoThunderbolts.1.hitmarkFrames": { "cause": "Unsourced", "value": 178 },
-  "hits.tenkoThunderbolts.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5839 } },
-  "hits.tenkoThunderbolts.2.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
-  },
   "hits.tenkoThunderbolts.2.hitmarkFrames": { "cause": "Unsourced", "value": 202 },
+  "hits.tenkoThunderbolts.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5839 } },
   "hits.tenkoThunderbolts.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5839 } },
   "parameters.totemStrikeMultipliers.length": { "cause": "Unsourced", "value": 3 },
   "parameters.totemStrikeMultipliers.0": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 5832 } },
