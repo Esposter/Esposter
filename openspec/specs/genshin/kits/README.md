@@ -112,6 +112,7 @@ flowchart TD
   TAUNT --> EMIT
   EXPIRED --> EMIT
   TICK --> EMIT
+  STARTED --> EMIT
   LANDED --> EMIT
   BURST --> EMIT
   REACTION --> EMIT
@@ -119,9 +120,10 @@ flowchart TD
   PARTICLE --> EMIT
   MORA --> EMIT
   HEALTH --> EMIT
+  REFUSED --> EMIT
   SKILL --> EMIT
   CHARGED --> EMIT
-  ELEMENTAL --> EMIT
+  ENEMYHIT --> EMIT
   WEAKPOINT --> EMIT
   DEFEATED --> EMIT
   EMIT --> EFFECTS["the kit's handler: summons, statuses, heals, energy, cooldowns"]
