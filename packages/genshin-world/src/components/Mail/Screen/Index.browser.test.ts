@@ -84,7 +84,7 @@ describe("mailScreen", () => {
     const onDeleteRead = vi.fn<() => void>();
     render(MailScreen, {
       attrs: { onDeleteRead },
-      props: { ...props, birthdayMailIds: new Set(), mails: [{ ...mail(true), isRead: true }] },
+      props: { ...props, birthdayMailIds: new Set<number>(), mails: [{ ...mail(true), isRead: true }] },
     });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
@@ -100,7 +100,7 @@ describe("mailScreen", () => {
     const onDeleteRead = vi.fn<() => void>();
     render(MailScreen, {
       attrs: { onDeleteRead },
-      props: { ...props, birthdayMailIds: new Set(), mails: [{ ...mail(true), isRead: true }] },
+      props: { ...props, birthdayMailIds: new Set<number>(), mails: [{ ...mail(true), isRead: true }] },
     });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
