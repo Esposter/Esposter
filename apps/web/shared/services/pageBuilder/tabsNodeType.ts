@@ -16,7 +16,7 @@ const hidePanel = (panel: HtmlNode): HtmlNode =>
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
 const tabsScript = () => {
-  for (const tablist of document.querySelectorAll<HTMLElement>('.tabs > [role="tablist"]')) {
+  for (const tablist of window.document.querySelectorAll<HTMLElement>('.tabs > [role="tablist"]')) {
     const tabs = [...tablist.querySelectorAll<HTMLElement>('[role="tab"]')];
 
     const selectTab = (selected: HTMLElement) => {
@@ -24,12 +24,12 @@ const tabsScript = () => {
         const isSelected = tab === selected;
         tab.setAttribute("aria-selected", String(isSelected));
         tab.setAttribute("tabindex", isSelected ? "0" : "-1");
-        const panel = document.getElementById(tab.getAttribute("aria-controls") ?? "");
+        const panel = window.document.getElementById(tab.getAttribute("aria-controls") ?? "");
         if (panel) panel.hidden = !isSelected;
       }
     };
 
-    tabs.forEach((tab, index) => {
+    for (const [index, tab] of tabs.entries()) {
       tab.addEventListener("click", () => {
         selectTab(tab);
       });
@@ -47,7 +47,7 @@ const tabsScript = () => {
         selectTab(next);
         next.focus();
       });
-    });
+    }
   }
 };
 

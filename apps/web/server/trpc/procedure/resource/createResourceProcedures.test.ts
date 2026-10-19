@@ -4,6 +4,7 @@ import type { Clause } from "@esposter/azure";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { authMocks } from "#server/auth.test";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
@@ -197,11 +198,11 @@ describe(createResourceProcedures, () => {
       () => dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
     );
 
-    expect(data).toStrictEqual({
-      contentVersion: 1,
-      device: { sessionId: expect.any(String), userId: expect.any(String) },
-      id: newResource.id,
-    });
+    const { device, ...emitted } = data;
+
+    expect(emitted).toStrictEqual({ contentVersion: 1, id: newResource.id });
+    expect(device.sessionId).toBeTypeOf("string");
+    expect(device.userId).toBe(authMocks.user.id);
   });
 
   test("fails save content with old content version", async () => {

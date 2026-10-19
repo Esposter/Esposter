@@ -19,8 +19,8 @@ export const renderWebpageDocument = (document: WebpageDocument, context: Render
   const definitions = Object.values(webpageNodeTypeDefinitionMap).filter((definition) =>
     presentTypes.has(definition.type),
   );
-  const css = definitions.map(({ css }) => css).join("\n");
-  const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script})()</script>`] : []));
+  const css = definitions.map(({ css: definitionCss }) => definitionCss).join("\n");
+  const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script.toString()})()</script>`] : []));
 
   return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${css}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;
 };
