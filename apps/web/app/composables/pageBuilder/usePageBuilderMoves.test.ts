@@ -36,12 +36,12 @@ const createFixtureDocument = (): BlockDocument => ({
   root: TEST_ROOT,
 });
 
-const setup = async (selectedNodeId: string) => {
+const setup = async (selectedNodeId: string, document = createFixtureDocument()) => {
   setActivePinia(createPinia());
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { loadDocument } = pageBuilderDocumentStore;
-  await loadDocument(resourceId, () => Promise.resolve(createFixtureDocument()));
+  await loadDocument(resourceId, () => Promise.resolve(document));
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
@@ -140,7 +140,19 @@ describe(usePageBuilderMoves, () => {
     const { announce, moveDown } = await setup("s1");
     moveDown();
 
-    expect(announce.mock.calls).toStrictEqual([["Moved Section to position 2 of 2 in The page"]]);
+    expect(announce.mock.calls).toStrictEqual([["Moved Section 2 to position 2 of 2 in The page"]]);
+  });
+
+  test("a move announces a sibling of the same type by its ordinal, as the path names it", async () => {
+    expect.hasAssertions();
+
+    const { announce, moveDown } = await setup("k1", {
+      content: [createSection("s1", [createColumns("cs", [createColumn("k1", []), createColumn("k2", [])])])],
+      root: TEST_ROOT,
+    });
+    moveDown();
+
+    expect(announce.mock.calls).toStrictEqual([["Moved Column 2 to position 2 of 2 in Section › Columns"]]);
   });
 
   test("a move to another slot announces the slot it landed in", async () => {
@@ -158,7 +170,7 @@ describe(usePageBuilderMoves, () => {
     const { announce, deleteSelected } = await setup("s1");
     deleteSelected();
 
-    expect(announce.mock.calls).toStrictEqual([["Deleted Section"]]);
+    expect(announce.mock.calls).toStrictEqual([["Deleted Section 1"]]);
   });
 
   test("a refused move announces nothing", async () => {

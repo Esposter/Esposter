@@ -4,10 +4,10 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP, WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -36,12 +36,6 @@ const getNodePointer = (document: BlockDocument, nodeId: string) =>
   getBlockLayerRows(document, webpageRegistry)
     .map(({ nodePointer }) => nodePointer)
     .find((nodePointer) => getNodeId(document, nodePointer) === nodeId);
-
-// The title of the node a pointer names, or none when the pointer names no node of a known type
-const getNodeTitle = (document: BlockDocument, nodePointer: string): string | undefined => {
-  const nodeType = Object.values(WebpageNodeType).find((type) => type === getBlockNode(document, nodePointer)?.type);
-  return nodeType === undefined ? undefined : WEBPAGE_NODE_TYPE_TITLE_MAP[nodeType];
-};
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
@@ -80,18 +74,13 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     return nodePointer === undefined ? undefined : { document, nodeId, nodePointer };
   };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
-  const announceMove = (nodeId: string) => {
-    const resourceIdValue = toValue(resourceId);
-    const document = getDocument(resourceIdValue);
-    const nodePointer = document ? getNodePointer(document, nodeId) : undefined;
-    if (!document || nodePointer === undefined) return;
-
-    const title = getNodeTitle(document, nodePointer);
+  const announceMove = (document: BlockDocument, nodePointer: string) => {
     const segments = parseJsonPointer(nodePointer);
     const slotSegments = segments.slice(0, -1);
     const siblings = readJsonValue(document, slotSegments);
     const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-    if (title === undefined || !Array.isArray(siblings) || index === undefined) return;
+    const title = getNodeTitle(document, segments);
+    if (!title || !Array.isArray(siblings) || index === undefined) return;
 
     const path = getSlotPath(document, toJsonPointer(slotSegments));
     announce(`Moved ${title} to position ${index + 1} of ${siblings.length} in ${path}`);
@@ -109,7 +98,8 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
 
     applyEdit(toValue(resourceId), operations, label).match(() => {
       setSelectedNodeId(toValue(resourceId), selection.nodeId);
-      announceMove(selection.nodeId);
+      const moved = getSelection();
+      if (moved) announceMove(moved.document, moved.nodePointer);
     }, console.error);
   };
   const moveDown = () =>
@@ -156,10 +146,10 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     if (!selection) return;
 
     const focusPointer = getFocusAfterRemoval(selection.document, selection.nodePointer);
-    const title = getNodeTitle(selection.document, selection.nodePointer);
+    const title = getNodeTitle(selection.document, parseJsonPointer(selection.nodePointer));
     applyEdit(toValue(resourceId), removeBlockNode(selection.nodePointer), "Delete block").match(() => {
       setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), focusPointer));
-      if (title !== undefined) announce(`Deleted ${title}`);
+      if (title) announce(`Deleted ${title}`);
     }, console.error);
   };
 
