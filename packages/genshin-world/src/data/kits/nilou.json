@@ -8,7 +8,6 @@
   },
   "actions.swordDance.0.hits.0.attackTag": { "cause": "Unsourced", "value": "ElementalSkill" },
   "actions.swordDance.0.hits.0.element": { "cause": "Unsourced", "value": "Water" },
-  "actions.swordDance.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "actions.swordDance.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
   "actions.swordDance.0.hits.0.multiplier": {
     "cause": "Unsourced",
@@ -24,7 +23,6 @@
   },
   "actions.swordDance.1.hits.0.attackTag": { "cause": "Unsourced", "value": "ElementalSkill" },
   "actions.swordDance.1.hits.0.element": { "cause": "Unsourced", "value": "Water" },
-  "actions.swordDance.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "actions.swordDance.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
   "actions.swordDance.1.hits.0.multiplier": {
     "cause": "Unsourced",
@@ -40,7 +38,6 @@
   },
   "actions.swordDance.2.hits.0.attackTag": { "cause": "Unsourced", "value": "ElementalSkill" },
   "actions.swordDance.2.hits.0.element": { "cause": "Unsourced", "value": "Water" },
-  "actions.swordDance.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "actions.swordDance.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
   "actions.swordDance.2.hits.0.multiplier": {
     "cause": "Unsourced",
@@ -55,7 +52,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "actions.whirlingSteps.hits.0.element": { "cause": "Unsourced", "value": "Water" },
-  "actions.whirlingSteps.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "actions.whirlingSteps.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 21 },
   "actions.whirlingSteps.hits.0.multiplier": {
     "cause": "Unsourced",

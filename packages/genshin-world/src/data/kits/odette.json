@@ -34,11 +34,8 @@
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 15032 }
   },
-  "skillChain.followUps.0.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skillChain.followUps.0.hits.1.hitmarkFrames": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 20 },
-  "skillChain.followUps.0.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skillChain.followUps.0.hits.2.hitmarkFrames": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 28 },
-  "skillChain.followUps.0.hits.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skillChain.followUps.0.hits.3.area": {
     "file": "skill.go",
     "line": 150,
@@ -50,7 +47,6 @@
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 15032 }
   },
-  "skillChain.followUps.0.hits.3.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 4 },
   "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.566666666666666 },

@@ -94,7 +94,6 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 3339 }
   },
-  "stances.meleeStance.burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 250 },
   "stances.meleeStance.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
   "stances.meleeStance.chargedAttack.animationFrames": {
     "file": "charge.go",

@@ -4,7 +4,6 @@
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 11932 }
   },
-  "hitFields.hymnOfEternalRestLunarBloom.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hitFields.hymnOfEternalRestLunarBloom.scalingAttribute": {
     "cause": "Unclassified",
     "value": "FIGHT_PROP_ELEMENT_MASTERY"
