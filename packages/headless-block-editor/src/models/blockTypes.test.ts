@@ -1,8 +1,7 @@
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
-import type { HeadingNode, SectionNode, TestRootProps } from "#src/services/constants.test";
+import type { HeadingNode, SectionNode, TestDocument, TestRootProps } from "#src/services/constants.test";
 
 import { TEST_HEADING_ID, TEST_SECTION_ID } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
@@ -41,7 +40,7 @@ describe("block types", () => {
   test("an interface-typed node passes through the JSON layer", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = { content: [section], root: { props: {} } };
+    const document: TestDocument = { content: [section], root: { props: { title: "" } } };
     const nodes: (HeadingNode | SectionNode)[] = [section];
 
     expect(getBlockNode(document, "/content/0")).toStrictEqual(section);

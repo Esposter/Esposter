@@ -1,7 +1,12 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
+import type { TestDocument } from "#src/services/constants.test";
 
-import { TEST_DOCUMENT, TEST_HEADING_ID, TEST_REGISTRY, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
-import { getBlockPropValue } from "#src/services/getBlockPropValue";
+import {
+  TEST_DOCUMENT,
+  TEST_HEADING_ID,
+  TEST_REGISTRY,
+  TEST_SECTION_ID,
+  TEST_SECTION_OTHER_ID,
+} from "#src/services/constants.test";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -19,8 +24,16 @@ describe(moveBlockNode, () => {
     );
     const { document: movedDocument, inverses } = applyPatches(TEST_DOCUMENT, operations);
 
-    expect(getBlockPropValue(movedDocument.content[1]?.props ?? {}, "children")).toStrictEqual([
-      { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
+    expect(movedDocument.content).toStrictEqual([
+      { props: { children: [], id: TEST_SECTION_ID, title: "" }, type: "section" },
+      {
+        props: {
+          children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
+          id: TEST_SECTION_OTHER_ID,
+          title: "",
+        },
+        type: "section",
+      },
     ]);
     expect(applyPatches(movedDocument, inverses).document).toStrictEqual(TEST_DOCUMENT);
   });
@@ -34,18 +47,22 @@ describe(moveBlockNode, () => {
   test("moving a node into a later sibling", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [
         { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
-        { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },
+        { props: { children: [], id: TEST_SECTION_OTHER_ID, title: "" }, type: "section" },
       ],
-      root: { props: {} },
+      root: { props: { title: "" } },
     };
     const operations = moveBlockNode(document, TEST_REGISTRY, "/content/0", "/content/1/props/children", 0);
 
     expect(applyPatches(document, operations).document.content).toStrictEqual([
       {
-        props: { children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }], id: TEST_SECTION_OTHER_ID },
+        props: {
+          children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
+          id: TEST_SECTION_OTHER_ID,
+          title: "",
+        },
         type: "section",
       },
     ]);

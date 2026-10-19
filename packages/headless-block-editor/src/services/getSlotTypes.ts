@@ -1,9 +1,5 @@
-import { getBlockPropValue } from "#src/services/getBlockPropValue";
-
-// The types a slot accepts, narrowed from the registry's list, or none for a slot the slots record does not declare
-export const getSlotTypes = (slots: object, slot: string): string[] => {
-  const slotTypes = getBlockPropValue(slots, slot);
-  return Array.isArray(slotTypes) && slotTypes.every((type): type is string => typeof type === "string")
-    ? slotTypes
-    : [];
+// The types a slot accepts, read from the definition's slots record, or none for a slot the record does not declare
+export const getSlotTypes = (slots: Record<string, string[]>, slot: string): string[] => {
+  const slotTypes = Object.hasOwn(slots, slot) ? slots[slot] : undefined;
+  return slotTypes ?? [];
 };

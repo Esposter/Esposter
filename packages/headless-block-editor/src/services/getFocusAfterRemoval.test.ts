@@ -1,4 +1,4 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
+import type { TestDocument } from "#src/services/constants.test";
 
 import {
   TEST_DOCUMENT,
@@ -11,21 +11,22 @@ import { getFocusAfterRemoval } from "#src/services/getFocusAfterRemoval";
 import { describe, expect, test } from "vitest";
 
 describe(getFocusAfterRemoval, () => {
-  const threeSiblingsDocument: LooseBlockDocument = {
+  const threeSiblingsDocument: TestDocument = {
     content: [
       {
         props: {
           children: [
             { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
             { props: { id: TEST_LIST_ID, items: [] }, type: "list" },
-            { props: { id: TEST_ITEM_ID, text: "" }, type: "item" },
+            { props: { id: TEST_ITEM_ID, text: "" }, type: "heading" },
           ],
           id: TEST_SECTION_ID,
+          title: "",
         },
         type: "section",
       },
     ],
-    root: { props: {} },
+    root: { props: { title: "" } },
   };
 
   test("removing the last child", () => {

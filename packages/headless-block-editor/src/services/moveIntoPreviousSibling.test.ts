@@ -1,4 +1,4 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
+import type { TestDocument } from "#src/services/constants.test";
 
 import { TEST_HEADING_ID, TEST_LIST_ID, TEST_REGISTRY, TEST_SECTION_ID } from "#src/services/constants.test";
 import { moveIntoPreviousSibling } from "#src/services/moveIntoPreviousSibling";
@@ -6,23 +6,23 @@ import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(moveIntoPreviousSibling, () => {
-  const sectionAndHeadingDocument: LooseBlockDocument = {
+  const sectionAndHeadingDocument: TestDocument = {
     content: [
-      { props: { children: [], id: TEST_SECTION_ID }, type: "section" },
+      { props: { children: [], id: TEST_SECTION_ID, title: "" }, type: "section" },
       { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
     ],
-    root: { props: {} },
+    root: { props: { title: "" } },
   };
 
   test("moving into a sibling that refuses the node", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [
         { props: { id: TEST_LIST_ID, items: [] }, type: "list" },
         { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
       ],
-      root: { props: {} },
+      root: { props: { title: "" } },
     };
 
     expect(moveIntoPreviousSibling(document, TEST_REGISTRY, "/content/1")).toStrictEqual([]);
@@ -35,7 +35,11 @@ describe(moveIntoPreviousSibling, () => {
 
     expect(applyPatches(sectionAndHeadingDocument, operations).document.content).toStrictEqual([
       {
-        props: { children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }], id: TEST_SECTION_ID },
+        props: {
+          children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
+          id: TEST_SECTION_ID,
+          title: "",
+        },
         type: "section",
       },
     ]);

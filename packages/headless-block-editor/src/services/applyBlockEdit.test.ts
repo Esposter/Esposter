@@ -1,3 +1,5 @@
+import type { HeadingNodeProps } from "#src/services/constants.test";
+
 import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import { TEST_DOCUMENT, TEST_DOCUMENT_NODE_COUNT, TEST_ITEM_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
@@ -12,7 +14,7 @@ describe(applyBlockEdit, () => {
   test("an edit that cannot apply", () => {
     expect.hasAssertions();
 
-    const operations = updateBlockNodeProps("/content/5", { text: "" });
+    const operations = updateBlockNodeProps<HeadingNodeProps>("/content/5", { text: "" });
 
     expect(
       applyBlockEdit(schema, TEST_DOCUMENT, operations).match(

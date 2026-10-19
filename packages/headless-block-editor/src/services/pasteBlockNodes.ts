@@ -1,5 +1,5 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
-import type { LooseBlockNode } from "#src/models/LooseBlockNode";
+import type { BlockDocument } from "#src/models/BlockDocument";
+import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
@@ -10,10 +10,10 @@ import { JsonPatchOperationType } from "@esposter/shared";
 
 // Adds copies of the nodes, each with fresh ids, at an index of a slot, or none when the slot or the registry refuses them
 // The copies are checked as the slot's children, not as the root's content; the node limit is the consumer's to check
-export const pasteBlockNodes = (
-  document: LooseBlockDocument,
-  registry: BlockRegistry,
-  nodes: LooseBlockNode[],
+export const pasteBlockNodes = <TNode extends BlockNode>(
+  document: BlockDocument<TNode>,
+  registry: BlockRegistry<TNode>,
+  nodes: TNode[],
   slotPointer: string,
   index: number,
 ): JsonPatchOperation[] => {

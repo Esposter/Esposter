@@ -1,4 +1,4 @@
-import type { LooseBlockNode } from "#src/models/LooseBlockNode";
+import type { HeadingNode, ItemNode, SectionNode } from "#src/services/constants.test";
 
 import {
   TEST_DOCUMENT,
@@ -24,8 +24,12 @@ describe(pasteBlockNodes, () => {
   test("pasting a node twice", () => {
     expect.hasAssertions();
 
-    const copiedNode: LooseBlockNode = {
-      props: { children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }], id: TEST_SECTION_OTHER_ID },
+    const copiedNode: SectionNode = {
+      props: {
+        children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
+        id: TEST_SECTION_OTHER_ID,
+        title: "",
+      },
       type: "section",
     };
     const firstPaste = applyPatches(
@@ -55,7 +59,7 @@ describe(pasteBlockNodes, () => {
   test("a pasted child of a type its slot refuses is refused", () => {
     expect.hasAssertions();
 
-    const copiedItem: LooseBlockNode = { props: { id: TEST_ITEM_ID, text: "" }, type: "item" };
+    const copiedItem: ItemNode = { props: { id: TEST_ITEM_ID, text: "" }, type: "item" };
 
     expect(pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [copiedItem], "/content/0/props/children", 1)).toStrictEqual(
       [],
@@ -65,7 +69,7 @@ describe(pasteBlockNodes, () => {
   test("pasting a child its root does not accept into a slot that does", () => {
     expect.hasAssertions();
 
-    const copiedHeading: LooseBlockNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
+    const copiedHeading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
     vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(TEST_HEADING_COPY_ID);
 
     expect(

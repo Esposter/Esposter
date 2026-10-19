@@ -1,38 +1,35 @@
 import type { BlockCollection } from "#src/models/BlockCollection";
+import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { z } from "zod";
 
-import { blockNodeShapeSchema } from "#src/services/blockNodeShapeSchema";
-import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
+import { getParsedSlotNodes } from "#src/services/getParsedSlotNodes";
 
 // Counts each node of a parsed tree and refuses a node whose id an earlier node holds, in any slot, naming the repeated node's id
-// The refinement runs past issues the schema already raised, so each child is narrowed from unknown rather than trusted as a node
-export const checkBlockNodeIds = (
+// Its callers refine only a parse that raised no issue, so the nodes it is handed are the schema's typed output
+export const checkBlockNodeIds = <TNode extends BlockNode>(
   context: z.RefinementCtx,
-  registry: BlockRegistry,
-  nodes: unknown[],
+  registry: BlockRegistry<TNode>,
+  nodes: TNode[],
   segments: PropertyKey[],
   collection: BlockCollection,
 ): void => {
-  for (const [index, child] of nodes.entries()) {
-    const result = blockNodeShapeSchema.safeParse(child);
-    if (!result.success) continue;
-
-    const node = result.data;
+  for (const [index, node] of nodes.entries()) {
     const nodeSegments = [...segments, index];
     collection.count++;
 
-    const id = getBlockPropValue(node.props, "id");
-    if (typeof id === "string" && collection.ids.has(id))
+    if (collection.ids.has(node.props.id))
       context.addIssue({ code: "custom", message: "repeats an id", path: [...nodeSegments, "props", "id"] });
-    else if (typeof id === "string") collection.ids.add(id);
+    else collection.ids.add(node.props.id);
 
-    const slots = getBlockTypeDefinition(registry, node.type)?.slots ?? {};
-    for (const slot of Object.keys(slots)) {
-      const children = getBlockPropValue(node.props, slot);
-      if (Array.isArray(children))
-        checkBlockNodeIds(context, registry, children, [...nodeSegments, "props", slot], collection);
-    }
+    for (const slot of Object.keys(getBlockTypeDefinition(registry, node.type)?.slots ?? {}))
+      checkBlockNodeIds(
+        context,
+        registry,
+        getParsedSlotNodes(node, slot),
+        [...nodeSegments, "props", slot],
+        collection,
+      );
   }
 };

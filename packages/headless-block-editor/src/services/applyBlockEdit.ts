@@ -1,4 +1,3 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { ApplyPatchesResult, JsonPatchOperation } from "@esposter/shared";
 import type { Result } from "neverthrow";
 import type { z } from "zod";
@@ -10,7 +9,7 @@ import { err, ok } from "neverthrow";
 // The result is the schema's own type, so the patched document is typed by the parse rather than by a cast
 export const applyBlockEdit = <TDocument>(
   schema: z.ZodType<TDocument>,
-  document: LooseBlockDocument,
+  document: TDocument,
   operations: JsonPatchOperation[],
 ): Result<ApplyPatchesResult<TDocument>, Error> =>
   getResult(() => applyPatches(document, operations)).andThen(({ document: patchedDocument, inverses }) => {
