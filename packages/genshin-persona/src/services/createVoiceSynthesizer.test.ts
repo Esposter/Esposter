@@ -6,7 +6,6 @@ import type { VoiceRuntime } from "#src/models/VoiceRuntime";
 import type { VoiceTensor } from "#src/models/VoiceTensor";
 
 import {
-  CHUNK_CROSSFADE_SECONDS,
   GPU_PROVIDER_FAILURE_REGEX,
   MAX_SPEECH_TOKENS_PER_CHARACTER,
   MIN_SPEECH_TOKEN_CEILING,
@@ -210,7 +209,6 @@ describe(createVoiceSynthesizer, () => {
   const SILENCE_TOKEN_COUNT = 3;
   const streamTokenCount = VOICE_CHUNK_TOKENS * 2 + 4;
   const label = "reply m, line 1";
-  const seamSamples = VOICE_SAMPLE_RATE * CHUNK_CROSSFADE_SECONDS;
   const signalAt = (index: number) => (Math.floor(index / SAMPLES_PER_TOKEN) % 2 === 0 ? 1 : QUIET);
   const getSignal = (count: number, signal: (index: number) => number = signalAt) =>
     Float32Array.from({ length: count }, (_value, index) => signal(index));
@@ -298,18 +296,32 @@ describe(createVoiceSynthesizer, () => {
     expect(onFallback).toHaveBeenCalledTimes(0);
   });
 
-  test("drops the rest of the sentence at a chunk that is not speech, and moves the ladder down once", async () => {
+  test("keeps a sentence whose middle chunk is a pause, since silence mid-sentence is not a failure", async () => {
     expect.hasAssertions();
 
-    const { events, onFallback, runtime } = getStreamRuntime(2);
+    const pauseStart = VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN;
+    const pauseEnd = 2 * VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN;
+    const withPause = (index: number) => (index >= pauseStart && index < pauseEnd ? QUIET : 1);
+    const { onFallback, runtime } = getStreamRuntime(Number.POSITIVE_INFINITY, withPause);
     const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
 
-    // The first chunk stops at its seam, which the next chunk would have faded into
     await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
-      getSignal(VOICE_CHUNK_TOKENS * SAMPLES_PER_TOKEN - seamSamples),
+      getSignal(streamTokenCount * SAMPLES_PER_TOKEN, withPause),
+    );
+    expect(onFallback).toHaveBeenCalledTimes(0);
+  });
+
+  test("drops the sentence when its opening chunk is silent, and moves the ladder down once", async () => {
+    expect.hasAssertions();
+
+    const { events, onFallback, runtime } = getStreamRuntime(1);
+    const synthesizer = await createVoiceSynthesizer(runtime, modelsDirectory, { onFallback });
+
+    await expect(collect(synthesizer.streamSpeech(text, speaker, label, () => false))).resolves.toStrictEqual(
+      new Float32Array(0),
     );
     expect(synthesizer.device).toBe(deviceLadder[1]?.name);
-    expect(onFallback).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(`${label}, chunk 2`));
+    expect(onFallback).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(`${label}, chunk 1`));
     expect(events).toStrictEqual(["settled", "disposed"]);
   });
 });

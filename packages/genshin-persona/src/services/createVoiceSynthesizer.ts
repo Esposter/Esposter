@@ -144,6 +144,9 @@ export const createVoiceSynthesizer = async (
     const splice = createChunkSplicer(CHUNK_OVERLAP_SAMPLES);
     let decodedCount = 0;
     let chunkIndex = 0;
+    // Only the sentence's opening chunk is checked for audio: a vocoder run wrong from its start is silent there, while
+    // A pause in the middle of a sentence is silence too, and is not a failure
+    let isOpeningChecked = false;
     // A chunk's audio past the seam, checked for audio on its own samples: a failure moves the ladder down and ends
     // The sentence. A chunk is a stretch of speech with no pause a whole sentence would have, so only its loudness is
     // Checked. A chunk with no samples of its own is only a seam's tail, which is not checked
@@ -158,7 +161,9 @@ export const createVoiceSynthesizer = async (
 
       const clip = { sampleRate: VOICE_SAMPLE_RATE, samples };
       const body = samples.subarray(samples.length - bodyLength);
-      if (bodyLength < MIN_CHECKED_SAMPLES || checkIsAudible({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
+      const isOpening = bodyLength >= MIN_CHECKED_SAMPLES && !isOpeningChecked;
+      if (isOpening) isOpeningChecked = true;
+      if (!isOpening || checkIsAudible({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
         return { clip, isFailed: false };
 
       isDropped = true;
