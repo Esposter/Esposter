@@ -8,10 +8,15 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
   },
-  "burst.hits.0.bubble.explosion.element": { "cause": "Unclassified", "value": "Water" },
+  "burst.hits.0.bubble.explosion.element": { "file": "burst.go", "line": 172, "source": "Gcsim", "value": "Water" },
   "burst.hits.0.bubble.explosion.gauge": { "cause": "Unsourced", "value": 2 },
   "burst.hits.0.bubble.explosion.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
-  "burst.hits.0.bubble.explosion.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "burst.hits.0.bubble.explosion.internalCooldownTag": {
+    "file": "burst.go",
+    "line": 169,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "burst.hits.0.bubble.explosion.multiplier": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 4139 }
@@ -92,7 +97,7 @@
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.sprintPhantom.0.element": { "cause": "Unclassified", "value": "Water" },
+  "hits.sprintPhantom.0.element": { "file": "asc.go", "line": 54, "source": "Gcsim", "value": "Water" },
   "hits.sprintPhantom.0.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.sprintPhantom.0.hitmarkFrames": { "file": "asc.go", "line": 58, "source": "Gcsim", "value": 120 },
   "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
