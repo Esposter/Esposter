@@ -2,11 +2,11 @@ import { getCommentBridgedLines } from "#src/services/sweeps/duplicateCode/getCo
 import { takeOne } from "@esposter/shared";
 
 // A declaration opens on a line starting an interface or a type, or on a component's compiler macro (props, emits,
-// Model or defaults), and closes where its braces balance. A line binding a composable's call with no arguments is
-// Component wiring, read the same way.
+// Model or defaults), and closes where its braces balance. A line binding a composable's call with no arguments, to a
+// Name or to a destructure of bare names and aliases, is component wiring, read the same way.
 const DECLARATION_START_REGEX =
   /^\s*(?:export\s+)?(?:interface|type)\s|\bdefine(?:Props|Emits|Model)<|\bwithDefaults\(/u;
-const COMPOSABLE_CALL_REGEX = /^\s*const \w+ = use\w+\(\);\s*$/u;
+const COMPOSABLE_CALL_REGEX = /^\s*const (?:\w+|\{ \w+(?:: \w+)?(?:, \w+(?:: \w+)?)* \}) = use\w+\(\);\s*$/u;
 
 // A composable's destructured call, or a props destructure of defineProps, opens on `const {` and closes on the
 // `} = useName(...);` or `} = defineProps<...>();` that binds it, and its return opens on `return {`. A block is a

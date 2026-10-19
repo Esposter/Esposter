@@ -20,6 +20,22 @@ describe(getDeclarationLines, () => {
     );
   });
 
+  test("reads a composable's one-line destructured call of bare names and aliases as component wiring", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDeclarationLines("const { count, goodId: id, resetShopPick } = useShopPick();\nconst d = 0;"),
+    ).toStrictEqual(new Set([1]));
+  });
+
+  test("keeps a composable's one-line destructured call with a default or an argument as code", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDeclarationLines("const { count = 1 } = useShopPick();\nconst { a } = useWorldSave(events);"),
+    ).toStrictEqual(new Set());
+  });
+
   test("reads a composable's destructured call of bare names and aliases as component wiring", () => {
     expect.hasAssertions();
 
