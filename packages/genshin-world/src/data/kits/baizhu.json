@@ -4,7 +4,6 @@
   "frames.seamlessShieldRefreshField": { "cause": "Unsourced", "value": 808 },
   "frames.seamlessShieldRefreshInterval": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 146 },
   "frames.firstSeamlessShield": { "cause": "Unsourced", "value": 233 },
-  "hits.spiritvein.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.spiritvein.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 8239 } },
   "hits.spiritvein.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 7.2801 },

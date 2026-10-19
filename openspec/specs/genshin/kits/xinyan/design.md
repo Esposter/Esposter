@@ -4,6 +4,7 @@ Xinyan's kit is its record and one behaviour module, `createXinyanKitBehaviour`,
 
 ## Decisions
 
+- **Riff Revolution's Pyro DoT is seven hits, where gcsim counts nine.** gcsim's nine add the two pulses Constellation 2 gives (`burst.go:14`), which the impromptu list holds with the seven, so the base list `riffDot` keeps the seven.
 - **Ascension 4's Physical DMG Bonus is given to every deployed member, where gcsim raises the character on the field's.** Only the character on the field strikes in the world, so the two differ only for a member's off-field summon.
 - **Sweeping Fervor's shield steps up on a count its hit keeps, and its level lives beside the shield.** The hit counts each enemy it strikes on a status that carries `KitStatus.stacks` for the hit's window, and each count raises the shield to the level it reaches, Lead-In at 2 and Rave at 3, Ascension 1 lowering each by one. The level is a status that lasts as long as the shield, so a shield that breaks takes it with it. Rave's Pyro DoT is a field that strikes every 2 seconds while the shield stands at level 3. The shield is set at the press when none stands. gcsim queues each level 13 frames after the hit, and here the level is decided at the strike.
 
@@ -16,3 +17,4 @@ Xinyan's kit is its record and one behaviour module, `createXinyanKitBehaviour`,
 ## Sources
 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xinyan), MIT: Xinyan's strikes' hitmarks, cancels, reaches and poise, Sweeping Fervor's hit and shield levels, Rave's DoT, Riff Revolution's hit, DoT and Constellation 2's pulses, and her Ascension 1, Ascension 4 and Constellations 2 and 4.
+- [Riff Revolution](https://genshin-impact.fandom.com/wiki/Riff_Revolution), Genshin Impact Wiki: the poise of the Pyro DoT hits.
