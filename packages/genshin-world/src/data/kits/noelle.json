@@ -1,98 +1,112 @@
 {
   "chargedAttack.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.085339643163099 }
   },
   "chargedAttack.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "chargedAttack.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 60 },
+  "chargedAttack.hits.0.poiseDamage": { "file": "charge.go", "line": 19, "source": "Gcsim", "value": 60 },
   "chargedAttack.hits.1.area": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
   },
   "chargedAttack.hits.1.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "chargedAttack.hits.1.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
-  "frames.sweepingTimeStart": { "cause": "Unclassified", "value": 80 },
+  "chargedAttack.hits.1.poiseDamage": { "file": "charge.go", "line": 19, "source": "Gcsim", "value": 120 },
+  "frames.sweepingTimeStart": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 80 },
   "hits.toBeCleaned.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
   },
   "hits.toBeCleaned.element": { "cause": "Unclassified", "value": "Rock" },
-  "hits.toBeCleaned.gauge": { "cause": "Unclassified", "value": 2 },
-  "hits.toBeCleaned.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
+  "hits.toBeCleaned.gauge": { "file": "skill.go", "line": 137, "source": "Gcsim", "value": 2 },
+  "hits.toBeCleaned.hitmarkFrames": { "file": "skill.go", "line": 145, "source": "Gcsim", "value": 0 },
   "hits.toBeCleaned.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalSkill" },
-  "hits.toBeCleaned.multiplier": { "cause": "Unclassified", "value": 4 },
-  "hits.toBeCleaned.poiseDamage": { "cause": "Unclassified", "value": 100 },
-  "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 132.25 },
+  "hits.toBeCleaned.multiplier": { "file": "skill.go", "line": 138, "source": "Gcsim", "value": 4 },
+  "hits.toBeCleaned.poiseDamage": { "file": "skill.go", "line": 135, "source": "Gcsim", "value": 100 },
+  "normalAttacks.0.hits.0.convertedPoiseDamage": {
+    "file": "attack.go",
+    "line": 17,
+    "source": "Gcsim",
+    "value": 132.25
+  },
   "normalAttacks.0.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "normalAttacks.0.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "normalAttacks.1.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 122.82 },
+  "normalAttacks.1.hits.0.convertedPoiseDamage": {
+    "file": "attack.go",
+    "line": 17,
+    "source": "Gcsim",
+    "value": 122.82
+  },
   "normalAttacks.1.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "normalAttacks.1.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "normalAttacks.2.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 143.865 },
+  "normalAttacks.2.hits.0.convertedPoiseDamage": {
+    "file": "attack.go",
+    "line": 17,
+    "source": "Gcsim",
+    "value": 143.865
+  },
   "normalAttacks.2.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "normalAttacks.2.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "normalAttacks.3.hits.0.convertedPoiseDamage": { "cause": "Unclassified", "value": 189.75 },
+  "normalAttacks.3.hits.0.convertedPoiseDamage": {
+    "file": "attack.go",
+    "line": 17,
+    "source": "Gcsim",
+    "value": 189.75
+  },
   "normalAttacks.3.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 3432 }
   },
   "normalAttacks.3.hits.0.healParty.flatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 3432 }
   },
-  "parameters.breastplateHealChance": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3432 } },
-  "parameters.sweepingTimeSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3439 } },
+  "parameters.breastplateHealChance": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 3432 } },
+  "parameters.sweepingTimeSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 3439 } },
   "parameters.sweepingTimeAttackDefenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 3439 }
   },
   "parameters.breastplateShieldFlatHealth": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 6, "proudSkillGroupId": 3432 }
   },
   "parameters.breastplateShieldDefenseShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 3432 }
   },
-  "parameters.breastplateShieldSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 3, "proudSkillGroupId": 3432 }
-  },
-  "skill.hits.0.healParty.defenseShare": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 3432 }
-  },
-  "skill.hits.0.healParty.flatHealth": { "cause": "Unclassified", "value": { "index": 7, "proudSkillGroupId": 3432 } }
+  "parameters.breastplateShieldSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 3432 } },
+  "skill.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3432 } },
+  "skill.hits.0.healParty.flatHealth": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 3432 } }
 }
