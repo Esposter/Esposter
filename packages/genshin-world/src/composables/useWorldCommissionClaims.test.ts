@@ -24,10 +24,10 @@ import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { computed, shallowRef } from "vue";
 import { describe, expect, test, vi } from "vitest";
 
-// No Adventure EXP is routed by these claims, so the rank's tables are left empty rather than read from the game data
-const adventureRankTables: AdventureRankTables = { levels: [], locks: [], worldLevelRows: [] };
-
 describe(useWorldCommissionClaims, () => {
+  // No Adventure EXP is routed by these claims, so the rank's tables are left empty rather than read from the game data
+  const adventureRankTables: AdventureRankTables = { levels: [], locks: [], worldLevelRows: [] };
+
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   // Two days past the epoch, so the latest daily reset falls after the epoch
   const NOW = EPOCH.add({ hours: 48 });

@@ -3,14 +3,14 @@ import type { AdventureRankLevel } from "#src/models/adventureRank/AdventureRank
 import { claimRankRewards } from "#src/services/adventureRank/claimRankRewards";
 import { describe, expect, test } from "vitest";
 
-const MORA_ID = 202;
-const levels: AdventureRankLevel[] = [
-  { exp: 0, level: 1, rewardItems: [] },
-  { exp: 500, level: 2, rewardItems: [{ count: 10_000, itemId: MORA_ID }] },
-  { exp: 1125, level: 3, rewardItems: [{ count: 3, itemId: 104_012 }] },
-];
-
 describe(claimRankRewards, () => {
+  const MORA_ID = 202;
+  const levels: AdventureRankLevel[] = [
+    { exp: 0, level: 1, rewardItems: [] },
+    { exp: 500, level: 2, rewardItems: [{ count: 10_000, itemId: MORA_ID }] },
+    { exp: 1125, level: 3, rewardItems: [{ count: 3, itemId: 104_012 }] },
+  ];
+
   test("katheryne gives a reached rank's reward once", () => {
     expect.hasAssertions();
     const claim = claimRankRewards(levels, 3, []);

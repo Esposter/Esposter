@@ -20,14 +20,15 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createNoblesseObligeSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wearer = createSetWearer(TRAVELER_KIT);
+
   test("gives every deployed member 20% more ATK for 12 seconds when its wearer uses its Elemental Burst from four pieces", () => {
     expect.hasAssertions();
 

@@ -25,13 +25,14 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
 const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
 };
 
 describe(createDisenchantmentInDeepShadowSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+
   test("the wearer's own Superconduct reaction DMG is raised by 80%, and another member's is not", () => {
     expect.hasAssertions();
 

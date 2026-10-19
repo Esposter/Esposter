@@ -24,26 +24,10 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (): Combatant => ({
   ...createSetWearer(KIT),
   kit: getPassiveKit(KIT, [createPaleFlameSetModule(getArtifactSetBonus(statTables, PALE_FLAME_ARTIFACT_SET_ID, 4))]),
 });
-// An enemy the given combatant's attack of the given kind hits, as the kit sends it
-const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
-  emitKitEvent(
-    {
-      attackTag,
-      enemy,
-      hit: KIT.plungeCollision,
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
-    context,
-  );
 // The ATK and Physical DMG shares the wearer's kit adds as it stands
 const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   const bonuses = wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [];
@@ -53,6 +37,23 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
 };
 
 describe(createPaleFlameSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // An enemy the given combatant's attack of the given kind hits, as the kit sends it
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+    emitKitEvent(
+      {
+        attackTag,
+        enemy,
+        hit: KIT.plungeCollision,
+        isCritical: false,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker,
+      },
+      context,
+    );
+
   test("each Elemental Skill hit the wearer lands adds a stack of 9% ATK, two at most, and two stacks add 25% Physical DMG", () => {
     expect.hasAssertions();
 

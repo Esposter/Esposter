@@ -3,9 +3,9 @@ import { STORMTERROR_WIND_CURRENTS } from "#src/services/bosses/stormterror";
 import { DOMAIN_ARENA_SPREAD } from "#src/services/domains/constants";
 import { describe, expect, test } from "vitest";
 
-const CENTER = { x: 10, z: -4 };
-
 describe(computeStormterrorWindCurrentPlaces, () => {
+  const CENTER = { x: 10, z: -4 };
+
   test("each wind current stands beyond the camp's ring, at one distance from the arena's center", () => {
     expect.hasAssertions();
 

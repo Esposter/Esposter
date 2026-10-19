@@ -10,9 +10,6 @@ vi.mock(import("#src/services/chest/readMondstadtChestPlaces"), () => ({
   readMondstadtChestPlaces: () => Promise.resolve([]),
 }));
 
-const SEELIE_ID = "settled";
-const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
-
 const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["puzzleChestPlaces"]) => {
   const openedChestIds = shallowRef<ReadonlySet<string>>(new Set());
   return {
@@ -44,6 +41,9 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
 };
 
 describe("useWorldChests", () => {
+  const SEELIE_ID = "settled";
+  const SEELIE_CHEST_ID = `seelie-chest-${SEELIE_ID}`;
+
   test("a Seelie's chest is offered once it settles", () => {
     expect.hasAssertions();
 

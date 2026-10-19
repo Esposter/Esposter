@@ -7,9 +7,10 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createAttributePassiveSetModule, () => {
+  const wearer = createSetWearer(TRAVELER_KIT);
+
   test("prices its wearer at the amount in each of its attributes, whatever the wearer is doing", () => {
     expect.hasAssertions();
 

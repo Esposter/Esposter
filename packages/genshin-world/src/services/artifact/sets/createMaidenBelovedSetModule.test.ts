@@ -14,12 +14,13 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { assert, describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createMaidenBelovedSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createSetWearer(TRAVELER_KIT);
+
   const bonus = statTables.artifactSetDataMap
     .get(MAIDEN_BELOVED_ARTIFACT_SET_ID)
     ?.bonuses.find((b) => b.pieceCount === 4);

@@ -25,10 +25,6 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const SAME_ELEMENT_CHARACTER_ID = 2;
-const PYRO_CHARACTER_ID = 3;
-const CRYO_CHARACTER_ID = 4;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createCombatant = (characterId: number, element: Element): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -39,22 +35,6 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
   kit: KIT,
   level: 1,
 });
-const wearer: Combatant = {
-  ...createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro),
-  kit: getPassiveKit(KIT, [
-    createGildedDreamsSetModule(getArtifactSetBonus(statTables, GILDED_DREAMS_ARTIFACT_SET_ID, 4)),
-  ]),
-};
-const members = [
-  wearer,
-  createCombatant(SAME_ELEMENT_CHARACTER_ID, Element.Hydro),
-  createCombatant(PYRO_CHARACTER_ID, Element.Pyro),
-  createCombatant(CRYO_CHARACTER_ID, Element.Cryo),
-];
-const characterIdCombatantMap = new Map(members.map((member) => [member.characterId, member]));
-// A reaction a member's strike set off on the enemy, as the team's kits hear it
-const triggerReaction = (striker: Combatant, context: ReturnType<typeof createKitTestContext>) =>
-  emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions: [], striker }, context);
 // The buffs the wearer carries from the set, as the attribute and amount it has
 const getGildedBuffs = (kitEffectState: KitEffectState) =>
   kitEffectState.effects.flatMap((effect) =>
@@ -64,6 +44,27 @@ const getGildedBuffs = (kitEffectState: KitEffectState) =>
   );
 
 describe(createGildedDreamsSetModule, () => {
+  const SAME_ELEMENT_CHARACTER_ID = 2;
+  const PYRO_CHARACTER_ID = 3;
+  const CRYO_CHARACTER_ID = 4;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wearer: Combatant = {
+    ...createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro),
+    kit: getPassiveKit(KIT, [
+      createGildedDreamsSetModule(getArtifactSetBonus(statTables, GILDED_DREAMS_ARTIFACT_SET_ID, 4)),
+    ]),
+  };
+  const members = [
+    wearer,
+    createCombatant(SAME_ELEMENT_CHARACTER_ID, Element.Hydro),
+    createCombatant(PYRO_CHARACTER_ID, Element.Pyro),
+    createCombatant(CRYO_CHARACTER_ID, Element.Cryo),
+  ];
+  const characterIdCombatantMap = new Map(members.map((member) => [member.characterId, member]));
+  // A reaction a member's strike set off on the enemy, as the team's kits hear it
+  const triggerReaction = (striker: Combatant, context: ReturnType<typeof createKitTestContext>) =>
+    emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions: [], striker }, context);
+
   test("a reaction gives the wearer ATK +14% for each other member of its element and Elemental Mastery +50 for each member of another element, for eight seconds, from off the field too", () => {
     expect.hasAssertions();
 

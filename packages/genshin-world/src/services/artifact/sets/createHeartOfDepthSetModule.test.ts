@@ -15,9 +15,10 @@ import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createHeartOfDepthSetModule, () => {
+  const wearer = createSetWearer(TRAVELER_KIT);
+
   test("gives its wearer 30% more Normal and Charged Attack DMG for 15 seconds after its Elemental Skill from four pieces", () => {
     expect.hasAssertions();
 

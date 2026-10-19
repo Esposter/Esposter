@@ -20,11 +20,6 @@ import { assert, describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const bonus = statTables.artifactSetDataMap
-  .get(NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID)
-  ?.bonuses.find(({ pieceCount }) => pieceCount === 4);
-assert.exists(bonus);
 const createCombatant = (characterId: number, kit = KIT): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -34,43 +29,50 @@ const createCombatant = (characterId: number, kit = KIT): Combatant => ({
   kit,
   level: 1,
 });
-const wearer = createCombatant(
-  TRAVELER_CHARACTER_ID,
-  getPassiveKit(KIT, [createNighttimeWhispersInTheEchoingWoodsSetModule(bonus)]),
-);
-const other = createCombatant(OTHER_CHARACTER_ID);
-// The team of the wearer, on the field, and another member
-const createContext = (): KitContext =>
-  createKitTestContext(wearer, {
-    characterIdCombatantMap: new Map([
-      [TRAVELER_CHARACTER_ID, wearer],
-      [OTHER_CHARACTER_ID, other],
-    ]),
-    party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
-  });
-// The Geo DMG Bonus the set gives its wearer as its hits are priced
-const readGeoDamageBonus = ({ kitEffectState }: KitContext): number =>
-  (wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [])
-    .filter(({ attribute }) => attribute === Attribute.GeoDamageBonus)
-    .reduce((sum, { amount }) => sum + amount, 0);
 const useSkill = (context: KitContext) =>
   emitKitEvent({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context);
-// A Crystallize shield the other member's reaction left, picked up by the team, lasting the given seconds
-const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
-  castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });
-const swapToOther = (context: KitContext) => {
-  context.party.activeIndex = 1;
-  emitKitEvent(
-    {
-      characterId: OTHER_CHARACTER_ID,
-      kind: KitEventKind.CharacterSwapped,
-      previousCharacterId: TRAVELER_CHARACTER_ID,
-    },
-    context,
-  );
-};
 
 describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
+  const bonus = statTables.artifactSetDataMap
+    .get(NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID)
+    ?.bonuses.find(({ pieceCount }) => pieceCount === 4);
+  assert.exists(bonus);
+
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createCombatant(
+    TRAVELER_CHARACTER_ID,
+    getPassiveKit(KIT, [createNighttimeWhispersInTheEchoingWoodsSetModule(bonus)]),
+  );
+  const other = createCombatant(OTHER_CHARACTER_ID);
+  // The team of the wearer, on the field, and another member
+  const createContext = (): KitContext =>
+    createKitTestContext(wearer, {
+      characterIdCombatantMap: new Map([
+        [TRAVELER_CHARACTER_ID, wearer],
+        [OTHER_CHARACTER_ID, other],
+      ]),
+      party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
+    });
+  // The Geo DMG Bonus the set gives its wearer as its hits are priced
+  const readGeoDamageBonus = ({ kitEffectState }: KitContext): number =>
+    (wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [])
+      .filter(({ attribute }) => attribute === Attribute.GeoDamageBonus)
+      .reduce((sum, { amount }) => sum + amount, 0);
+  // A Crystallize shield the other member's reaction left, picked up by the team, lasting the given seconds
+  const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
+    castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });
+  const swapToOther = (context: KitContext) => {
+    context.party.activeIndex = 1;
+    emitKitEvent(
+      {
+        characterId: OTHER_CHARACTER_ID,
+        kind: KitEventKind.CharacterSwapped,
+        previousCharacterId: TRAVELER_CHARACTER_ID,
+      },
+      context,
+    );
+  };
+
   test("its wearer's skill gives a 20% Geo DMG Bonus for 10 seconds", () => {
     expect.hasAssertions();
 

@@ -17,15 +17,16 @@ import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
-const BOW_CHARACTER_ID = 2;
-const SWORD_CHARACTER_ID = 3;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer: Combatant = { ...createSetWearer(KIT), weaponType: WeaponType.Catalyst };
-const bowMember: Combatant = { ...wearer, characterId: BOW_CHARACTER_ID, weaponType: WeaponType.Bow };
-const swordMember: Combatant = { ...wearer, characterId: SWORD_CHARACTER_ID, weaponType: WeaponType.Sword };
 
 describe(createScholarSetModule, () => {
+  const BOW_CHARACTER_ID = 2;
+  const SWORD_CHARACTER_ID = 3;
+  const wearer: Combatant = { ...createSetWearer(KIT), weaponType: WeaponType.Catalyst };
+  const bowMember: Combatant = { ...wearer, characterId: BOW_CHARACTER_ID, weaponType: WeaponType.Bow };
+  const swordMember: Combatant = { ...wearer, characterId: SWORD_CHARACTER_ID, weaponType: WeaponType.Sword };
+
   test("gives 3 Energy to each member with a bow or a catalyst when particles are gathered, from four pieces", () => {
     expect.hasAssertions();
 

@@ -25,8 +25,6 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -46,17 +44,20 @@ const createNormalAttackStrike = (combatant: Combatant): KitStrike => ({
 });
 const landNormalAttack = (context: ReturnType<typeof createKitTestContext>) =>
   emitKitEvent({ action: takeOne(KIT.normalAttacks, 0), kind: KitEventKind.NormalAttackLanded }, context);
-// The flat base DMG a Normal Attack of the wearer's adds as it stands, against the enemy
-const getValleyRiteBonus = (wearer: Combatant, kitEffectState: KitEffectState): number =>
-  wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
-    createNormalAttackStrike(wearer),
-    enemy,
-    createParty([TRAVELER_CHARACTER_ID]),
-    kitEffectState.effects,
-    new Map([[TRAVELER_CHARACTER_ID, wearer]]),
-  ) ?? 0;
 
 describe(createEchoesOfAnOfferingSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // The flat base DMG a Normal Attack of the wearer's adds as it stands, against the enemy
+  const getValleyRiteBonus = (wearer: Combatant, kitEffectState: KitEffectState): number =>
+    wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
+      createNormalAttackStrike(wearer),
+      enemy,
+      createParty([TRAVELER_CHARACTER_ID]),
+      kitEffectState.effects,
+      new Map([[TRAVELER_CHARACTER_ID, wearer]]),
+    ) ?? 0;
+
   test("a Normal Attack that lands and passes the 36% roll adds 70% of its wearer's ATK to its DMG, cleared 0.05 seconds on", () => {
     expect.hasAssertions();
 

@@ -24,82 +24,83 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const MAX_HEALTH = 10_000;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  attributes.maxHealth = MAX_HEALTH;
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => ({
   attackTag,
   body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
   combatant,
   hit: KIT.plungeCollision,
 });
-// The team of the wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears
-// Every event the team sends, and the other member's kit is the Traveler's, which carries no set
-const createTeam = (characterIds: number[]) => {
-  const wearer = createCombatant(
-    TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [
-      createSongOfDaysPastSetModule(getArtifactSetBonus(statTables, SONG_OF_DAYS_PAST_ARTIFACT_SET_ID, 4)),
-    ]),
-  );
-  const other = createCombatant(OTHER_CHARACTER_ID);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const party = createParty(characterIds);
-  const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
-    [OTHER_CHARACTER_ID, other],
-  ]);
-  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
-  // A heal of the given share of the wearer's Max HP by the given member, as the party records it
-  const heal = (healthShare: number, sourceCharacterId: number) =>
-    emitKitEvent(
-      {
-        bondOfLifeShare: 0,
-        characterId: TRAVELER_CHARACTER_ID,
-        healthShare,
-        isFallRefused: false,
-        kind: KitEventKind.HealthChanged,
-        overflowHealthShare: 0,
-        sourceCharacterId,
-      },
-      context,
-    );
-  // The step of the team's effects, each expired effect sent as the step ends it
-  const stepSeconds = (seconds: number) => stepKitSecondsSendingExpiries(context, seconds);
-  // The flat base damage a strike by the given member adds as it is priced, read from the hook that prices it: the
-  // Wearer's own hook for its own strike, and the party hook it lends the others
-  const priceStrike = (striker: Combatant, attackTag: AttackTag) => {
-    const strike = createStrike(striker, attackTag);
-    if (striker.characterId === wearer.characterId)
-      return (
-        wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
-          strike,
-          enemy,
-          party,
-          kitEffectState.effects,
-          characterIdCombatantMap,
-        ) ?? 0
-      );
-    return (
-      wearer.kit.getPartyStrikeBonus?.(wearer, strike, enemy, party, kitEffectState.effects, characterIdCombatantMap)
-        ?.additiveBaseDamageBonus ?? 0
-    );
-  };
-  // A hit the striker lands on the enemy, priced first and then sent to the team as it lands
-  const land = (striker: Combatant, attackTag: AttackTag) => {
-    const bonus = priceStrike(striker, attackTag);
-    emitKitEvent({ attackTag, element: undefined, enemy, kind: KitEventKind.EnemyHit, striker }, context);
-    return bonus;
-  };
-  return { heal, land, priceStrike, stepSeconds, wearer, other };
-};
 
 describe(createSongOfDaysPastSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const MAX_HEALTH = 10_000;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const createCombatant = (characterId: number, kit = KIT): Combatant => {
+    const attributes = computeCharacterAttributes([]);
+    attributes.maxHealth = MAX_HEALTH;
+    return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
+  };
+  // The team of the wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears
+  // Every event the team sends, and the other member's kit is the Traveler's, which carries no set
+  const createTeam = (characterIds: number[]) => {
+    const wearer = createCombatant(
+      TRAVELER_CHARACTER_ID,
+      getPassiveKit(KIT, [
+        createSongOfDaysPastSetModule(getArtifactSetBonus(statTables, SONG_OF_DAYS_PAST_ARTIFACT_SET_ID, 4)),
+      ]),
+    );
+    const other = createCombatant(OTHER_CHARACTER_ID);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty(characterIds);
+    const characterIdCombatantMap = new Map([
+      [TRAVELER_CHARACTER_ID, wearer],
+      [OTHER_CHARACTER_ID, other],
+    ]);
+    const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+    // A heal of the given share of the wearer's Max HP by the given member, as the party records it
+    const heal = (healthShare: number, sourceCharacterId: number) =>
+      emitKitEvent(
+        {
+          bondOfLifeShare: 0,
+          characterId: TRAVELER_CHARACTER_ID,
+          healthShare,
+          isFallRefused: false,
+          kind: KitEventKind.HealthChanged,
+          overflowHealthShare: 0,
+          sourceCharacterId,
+        },
+        context,
+      );
+    // The step of the team's effects, each expired effect sent as the step ends it
+    const stepSeconds = (seconds: number) => stepKitSecondsSendingExpiries(context, seconds);
+    // The flat base damage a strike by the given member adds as it is priced, read from the hook that prices it: the
+    // Wearer's own hook for its own strike, and the party hook it lends the others
+    const priceStrike = (striker: Combatant, attackTag: AttackTag) => {
+      const strike = createStrike(striker, attackTag);
+      if (striker.characterId === wearer.characterId)
+        return (
+          wearer.kit.getStrikeAdditiveBaseDamageBonus?.(
+            strike,
+            enemy,
+            party,
+            kitEffectState.effects,
+            characterIdCombatantMap,
+          ) ?? 0
+        );
+      return (
+        wearer.kit.getPartyStrikeBonus?.(wearer, strike, enemy, party, kitEffectState.effects, characterIdCombatantMap)
+          ?.additiveBaseDamageBonus ?? 0
+      );
+    };
+    // A hit the striker lands on the enemy, priced first and then sent to the team as it lands
+    const land = (striker: Combatant, attackTag: AttackTag) => {
+      const bonus = priceStrike(striker, attackTag);
+      emitKitEvent({ attackTag, element: undefined, enemy, kind: KitEventKind.EnemyHit, striker }, context);
+      return bonus;
+    };
+    return { heal, land, priceStrike, stepSeconds, wearer, other };
+  };
+
   test("a heal its wearer gives opens a Yearning that records it, and the Waves stage it leads to adds 8% of the record to the active member's next hits", () => {
     expect.hasAssertions();
 

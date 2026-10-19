@@ -11,9 +11,6 @@ import { ItemCategory } from "genshin-interface";
 import { describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
-const QUEST_ID = "1";
-const ITEM_ID = 101;
-const PROGRESS: QuestProgress = { objectiveCounts: [], stepIndex: 0 };
 const quest = (id: string): Quest => ({
   descriptionTextId: "",
   id,
@@ -26,10 +23,6 @@ const quest = (id: string): Quest => ({
   talks: [],
   titleTextId: "",
 });
-const tip = (
-  id: number,
-  trigger: TipTrigger = { paramList: [QUEST_ID], triggerType: TipTriggerType.FinishQuestOr },
-): Tip => ({ id, subtitleTextId: "", titleTextId: "", trigger });
 const inventoryOf = (itemIds: number[]): Inventory => ({
   items: itemIds.map((itemId, id) => ({
     definition: { category: ItemCategory.Material, id: itemId, name: "", rank: 0, rarity: 0, stackLimit: 99 },
@@ -47,6 +40,14 @@ const createWorldTips = (tips: Tip[], shown: ReadonlySet<number> = new Set(), qu
 };
 
 describe(useWorldTips, () => {
+  const QUEST_ID = "1";
+  const ITEM_ID = 101;
+  const PROGRESS: QuestProgress = { objectiveCounts: [], stepIndex: 0 };
+  const tip = (
+    id: number,
+    trigger: TipTrigger = { paramList: [QUEST_ID], triggerType: TipTriggerType.FinishQuestOr },
+  ): Tip => ({ id, subtitleTextId: "", titleTextId: "", trigger });
+
   test("a triggered tip is shown once when its quest finishes and is kept shown in the save", () => {
     expect.hasAssertions();
     const tipShown = vi.fn<(tip: Tip) => void>();

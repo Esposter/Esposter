@@ -30,16 +30,18 @@ import { ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const SPAWN_KEY = "spawn";
-const UNIQUE_DROP_ID = 9003;
-const UNIQUE_DROP_NAME_TEXT_ID = "9003";
-// The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after that week's reset
-const epoch = Temporal.Instant.fromEpochMilliseconds(0);
-const nextWeek = epoch.add({ hours: 4 * 24 });
 
 describe(useWorldTrounceBlossoms, () => {
-  // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an entry of
-  // The traits map, and its defeat must still reach the listeners after the blossom's
+  const SPAWN_KEY = "spawn";
+  const UNIQUE_DROP_ID = 9003;
+  const UNIQUE_DROP_NAME_TEXT_ID = "9003";
+  // The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after
+  // That week's reset
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const nextWeek = epoch.add({ hours: 4 * 24 });
+
+  // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an
+  // Entry of the traits map, and its defeat must still reach the listeners after the blossom's
   test("a defeat of a kind outside the enum reaches the listeners after the trounce blossom's", () => {
     expect.hasAssertions();
 

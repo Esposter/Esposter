@@ -46,7 +46,6 @@ vi.mock(import("#src/services/spiralAbyss/readAbyssFloorRewards"), () => ({
 }));
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const AREA_ID = "area";
 const CHAMBER_ID = 1;
 const DESCRIBE_ID = 10_101;
 const FLOOR_ID = 1001;
@@ -91,6 +90,8 @@ const reward: AbyssFloorReward = {
 const otherGroupReward: AbyssFloorReward = { ...reward, chamberRewardIds: [OTHER_REWARD_ID], rewardGroup: 1 };
 
 describe(useWorldSpiralAbyss, () => {
+  const AREA_ID = "area";
+
   test("a Moon Spire chamber's clear is recorded in its period's cycle, and its period's group pays", async () => {
     expect.hasAssertions();
     const events = createWorldEvents();

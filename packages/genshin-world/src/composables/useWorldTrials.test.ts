@@ -22,7 +22,6 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { shallowRef } from "vue";
 
 const CHARACTER_ID = 1001;
-const OWNED_CHARACTER_ID = 1002;
 const TRIAL_AVATAR_ID = 1022;
 const STAGE_ID = 51_001;
 const REWARD_ID = 480_001;
@@ -44,14 +43,6 @@ const TABLES: CharacterTrialTables = {
   },
   templates: [{ level: 1, reliquaryIds: [], talentLevel: 1 }],
 };
-const OWNED_KIT = {} as Kit;
-const TRIAL_KIT = {} as Kit;
-const RETURN_POSE: WorldJumpPose = { heightOffset: 0, point: { x: 12, z: -3 }, yaw: 1 };
-const TIMED_OUT_STEP = {
-  deltaMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
-  isPlaying: true,
-  isPartyDown: false,
-};
 
 vi.mock(import("#src/services/trial/readCharacterTrials"), () => ({
   readCharacterTrials: () => Promise.resolve(TABLES),
@@ -60,33 +51,43 @@ vi.mock(import("#src/services/kit/readCharacterKits"), () => ({
   readCharacterKits: vi.fn<() => Promise<Map<number, Kit>>>(),
 }));
 
-// The world's inputs the trials read and write, each a fresh one a test can keep a hold of
-const createDependencies = () => ({
-  artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
-  characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
-  characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
-  characters: shallowRef<Character[]>([]),
-  claimedStageIds: new Set<number>(),
-  gameDataBaseUrl: "https://example.test/game-data/",
-  inventory: shallowRef(EMPTY_INVENTORY),
-  materialDataMap: new Map(),
-  nameText: {},
-  party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
-  setInventory: vi.fn<(inventory: Inventory) => void>(),
-  setWallet: vi.fn<(wallet: Wallet) => void>(),
-  wallet: shallowRef(EMPTY_WALLET),
-  weaponDataMap: new Map([
-    [
-      2001,
-      { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
-    ],
-  ]),
-});
-
-const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) =>
-  useWorldTrials({ ...createDependencies(), ...overrides });
-
 describe(useWorldTrials, () => {
+  const OWNED_CHARACTER_ID = 1002;
+  const OWNED_KIT = {} as Kit;
+  const TRIAL_KIT = {} as Kit;
+  const RETURN_POSE: WorldJumpPose = { heightOffset: 0, point: { x: 12, z: -3 }, yaw: 1 };
+  const TIMED_OUT_STEP = {
+    deltaMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
+    isPlaying: true,
+    isPartyDown: false,
+  };
+
+  // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
+  const createDependencies = () => ({
+    artifactRarityDataMap: new Map<number, ArtifactRarityData>(),
+    characterDataMap: new Map([[CHARACTER_ID, { ascensionPhases: [{ attributeLines: [], maxLevel: 90 }] }]]),
+    characterIdKitMap: shallowRef<ReadonlyMap<number, Kit>>(new Map([[OWNED_CHARACTER_ID, OWNED_KIT]])),
+    characters: shallowRef<Character[]>([]),
+    claimedStageIds: new Set<number>(),
+    gameDataBaseUrl: "https://example.test/game-data/",
+    inventory: shallowRef(EMPTY_INVENTORY),
+    materialDataMap: new Map(),
+    nameText: {},
+    party: createWorldParty(createParty([OWNED_CHARACTER_ID])),
+    setInventory: vi.fn<(inventory: Inventory) => void>(),
+    setWallet: vi.fn<(wallet: Wallet) => void>(),
+    wallet: shallowRef(EMPTY_WALLET),
+    weaponDataMap: new Map([
+      [
+        2001,
+        { ascensionPhases: [{ attributeLines: [], coinCost: 0, costItems: [], maxLevel: 90, requiredPlayerLevel: 0 }] },
+      ],
+    ]),
+  });
+
+  const setUpTrials = (overrides: Partial<ReturnType<typeof createDependencies>> = {}) =>
+    useWorldTrials({ ...createDependencies(), ...overrides });
+
   beforeEach(() => {
     vi.mocked(readCharacterKits).mockResolvedValue(new Map([[CHARACTER_ID, TRIAL_KIT]]));
   });

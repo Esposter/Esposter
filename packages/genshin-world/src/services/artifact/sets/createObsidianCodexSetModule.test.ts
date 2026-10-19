@@ -22,20 +22,21 @@ import { createDeployedCombatant } from "#src/services/party/createDeployedComba
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const strike: KitStrike = {
-  attackTag: AttackTag.NormalAttack,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-};
 
 describe(createObsidianCodexSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createSetWearer(KIT);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const strike: KitStrike = {
+    attackTag: AttackTag.NormalAttack,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  };
+
   test("raises the DMG its wearer deals by 15% in Nightsoul's Blessing while on the field from two pieces", () => {
     expect.hasAssertions();
 

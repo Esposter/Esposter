@@ -39,7 +39,7 @@ vi.mock(import("#src/services/domains/readWeeklyBossDomains"), () => ({
 }));
 
 // A weekly boss's trounce entrance, with the made-up placement a test needs and the production entry id
-const domainEntrance: DomainEntranceLandmark = {
+const createDomainEntrance = (): DomainEntranceLandmark => ({
   areaId: "mondstadt",
   arrival: { heightOffset: 1, position: { x: 600, z: 0 }, rotation: 0 },
   domainKind: DomainKind.Trounce,
@@ -50,26 +50,7 @@ const domainEntrance: DomainEntranceLandmark = {
   position: { x: 600, z: 0 },
   rotation: 0,
   titleTextKey: GameTextKey.DomainEntrance24,
-};
-
-// The challenge levels the tests enter, made up with the one enemy each fight needs: the weekly boss's at rank 40, and
-// the Domain of Forgery's at rank 15 that the day tests open
-const domainChallengeLevels: DomainChallengeLevelMap = {
-  "2": {
-    "15": {
-      defeatTarget: 1,
-      timeLimitSeconds: Number.POSITIVE_INFINITY,
-      waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
-    },
-  },
-  "1006": {
-    "40": {
-      defeatTarget: 1,
-      timeLimitSeconds: Number.POSITIVE_INFINITY,
-      waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
-    },
-  },
-};
+});
 
 // A boss in the arena's camp, staggered by its shield's break, with every other field made up
 const createBrokenBoss = (campId: string): Enemy => ({
@@ -103,6 +84,24 @@ const createBrokenBoss = (campId: string): Enemy => ({
 });
 
 const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMilliseconds(0))) => {
+  // The challenge levels the tests enter, made up with the one enemy each fight needs: the weekly boss's at rank 40,
+  // And the Domain of Forgery's at rank 15 that the day tests open
+  const domainChallengeLevels: DomainChallengeLevelMap = {
+    "2": {
+      "15": {
+        defeatTarget: 1,
+        timeLimitSeconds: Number.POSITIVE_INFINITY,
+        waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+      },
+    },
+    "1006": {
+      "40": {
+        defeatTarget: 1,
+        timeLimitSeconds: Number.POSITIVE_INFINITY,
+        waves: [[{ count: 1, enemyKindId: EnemyKindId.StormterrorDvalin, name: "Stormterror Dvalin" }]],
+      },
+    },
+  };
   const events = createWorldEvents();
   const jumpTo = vi.fn<(pose: WorldJumpPose) => void>();
   const domains = useWorldDomains({
@@ -128,7 +127,7 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     reliquarySets: [],
     setInventory: vi.fn<() => void>(),
     setWallet: vi.fn<() => void>(),
-    unlockedLandmarks: ref<Landmark[]>([domainEntrance]),
+    unlockedLandmarks: ref<Landmark[]>([createDomainEntrance()]),
     wallet: ref<Wallet>(EMPTY_WALLET),
     weaponDataMap: new Map(),
     worldNow: clock.worldNow,
@@ -137,11 +136,14 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
 };
 
 describe("stepDomainChallenge", () => {
+  const domainEntrance = createDomainEntrance();
+
   test("a broken shield moves Stormterror's fight on, and each phase's transition attack is returned as it ends", async () => {
     expect.hasAssertions();
 
     const { domains, events } = createDomains();
-    // The quick challenge reads the weekly schedule, then enters the tier the rank of 40 reaches and starts the fight there
+    // The quick challenge reads the weekly schedule, then enters the tier the rank of 40 reaches and starts
+    // The fight there
     await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
     const campId = domains.domainCamps.value[0]?.id ?? "";
     const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, isPartyDown: false });
@@ -159,6 +161,8 @@ describe("stepDomainChallenge", () => {
 });
 
 describe("entering and leaving a domain", () => {
+  const domainEntrance = createDomainEntrance();
+
   test("entering a domain fades into its scene", async () => {
     expect.hasAssertions();
 
@@ -180,6 +184,7 @@ describe("entering and leaving a domain", () => {
 });
 
 describe("a domain level's day", () => {
+  const domainEntrance = createDomainEntrance();
   // A Domain of Forgery open on Mondays, and on Sundays like every one
   const forgeryEntrance: DomainEntranceLandmark = { ...domainEntrance, domainKind: DomainKind.Forgery, entryId: 2 };
   const forgerySchedule: DomainSchedule = {
