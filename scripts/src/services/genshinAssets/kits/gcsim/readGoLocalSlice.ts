@@ -19,8 +19,13 @@ export const readGoLocalSlice = (
   // The search stops at the named function's body the position is in, so an earlier function's local is not read.
   // A closure runs in its enclosing function, so the search passes over the closure's `func` to the locals above it
   const functionStart = readGoEnclosingBodyStart(namedFunctions, position);
+  // A block that closed before the position ends the scope of its declarations, so the walk back counts braces:
+  // Each `}` passed raises the depth and each `{` lowers it, and only a declaration at depth zero is read
+  let depth = 0;
   for (let declaration = position - 1; declaration > functionStart; declaration--) {
     const token = tokens[declaration];
+    if (checkIsGoPunctuation(token, "}")) depth++;
+    else if (checkIsGoPunctuation(token, "{") && depth > 0) depth--;
     // A plain assignment after the declaration, `ele = ...` in a branch, may leave the declared value unset, so the
     // Local reads as unknown rather than as its declaration
     if (
@@ -31,6 +36,7 @@ export const readGoLocalSlice = (
     )
       return undefined;
     if (
+      depth > 0 ||
       token?.kind !== GoTokenKind.Identifier ||
       token.text !== name ||
       !checkIsGoPunctuation(tokens[declaration + 1], ":=") ||

@@ -46,6 +46,31 @@ describe(readGoLocalSlice, () => {
     });
   });
 
+  test("reads the outer local past a sibling closure's own declaration of the name, which its closed block ends the scope of", () => {
+    expect.hasAssertions();
+
+    const tokens = tokenizeGo(
+      [
+        "func (c *char) burst() {",
+        "\tele := []attributes.Element{attributes.Pyro}",
+        "\tc.Core.Tasks.Add(func() {",
+        "\t\tele := []attributes.Element{attributes.Hydro}",
+        "\t\t_ = ele",
+        "\t}, 1)",
+        "\tc.Core.Tasks.Add(func() {",
+        "\t\tc.Core.QueueAttack(ele[0])",
+        "\t}, 2)",
+        "}",
+      ].join("\n"),
+    );
+    const position = tokens.findLastIndex((token) => token.text === "ele");
+
+    expect(readGoLocalSlice(tokens, readGoNamedFunctions(tokens), "ele", position)).toStrictEqual({
+      elements: [{ kind: GoExpressionKind.Identifier, name: "attributes.Pyro" }],
+      line: 2,
+    });
+  });
+
   test("gives no slice for a local an earlier function declares, as the search stops at the position's own function", () => {
     expect.hasAssertions();
 
