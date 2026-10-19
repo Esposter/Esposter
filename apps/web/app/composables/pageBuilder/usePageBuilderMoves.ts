@@ -2,10 +2,12 @@ import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument } from "headless-block-editor";
+import type { MaybeRefOrGetter } from "vue";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { PAGE_BUILDER_COMMAND_GROUP, WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -35,6 +37,12 @@ const getNodePointer = (document: BlockDocument, nodeId: string) =>
     .map(({ nodePointer }) => nodePointer)
     .find((nodePointer) => getNodeId(document, nodePointer) === nodeId);
 
+// The title of the node a pointer names, or none when the pointer names no node of a known type
+const getNodeTitle = (document: BlockDocument, nodePointer: string): string | undefined => {
+  const nodeType = Object.values(WebpageNodeType).find((type) => type === getBlockNode(document, nodePointer)?.type);
+  return nodeType === undefined ? undefined : WEBPAGE_NODE_TYPE_TITLE_MAP[nodeType];
+};
+
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
   document: BlockDocument,
@@ -52,8 +60,9 @@ const getSiblingMoveOperations = (
 
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
-// It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move
-export const usePageBuilderMoves = (resourceId: string) => {
+// It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
+// Announced once through announce
+export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -62,12 +71,30 @@ export const usePageBuilderMoves = (resourceId: string) => {
   const { applyEdit } = pageBuilderHistoryStore;
   // The document and the node the selection holds, or none when nothing is selected or the node is gone
   const getSelection = () => {
-    const document = getDocument(resourceId);
-    const nodeId = getSelectedNodeId(resourceId);
+    const resourceIdValue = toValue(resourceId);
+    const document = getDocument(resourceIdValue);
+    const nodeId = getSelectedNodeId(resourceIdValue);
     if (!document || !nodeId) return undefined;
 
     const nodePointer = getNodePointer(document, nodeId);
     return nodePointer === undefined ? undefined : { document, nodeId, nodePointer };
+  };
+  // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
+  const announceMove = (nodeId: string) => {
+    const resourceIdValue = toValue(resourceId);
+    const document = getDocument(resourceIdValue);
+    const nodePointer = document ? getNodePointer(document, nodeId) : undefined;
+    if (!document || nodePointer === undefined) return;
+
+    const title = getNodeTitle(document, nodePointer);
+    const segments = parseJsonPointer(nodePointer);
+    const slotSegments = segments.slice(0, -1);
+    const siblings = readJsonValue(document, slotSegments);
+    const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+    if (title === undefined || !Array.isArray(siblings) || index === undefined) return;
+
+    const path = getSlotPath(document, toJsonPointer(slotSegments));
+    announce(`Moved ${title} to position ${index + 1} of ${siblings.length} in ${path}`);
   };
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
   const moveSelected = (
@@ -80,8 +107,9 @@ export const usePageBuilderMoves = (resourceId: string) => {
     const operations = getOperations(selection.document, selection.nodePointer);
     if (operations.length === 0) return;
 
-    applyEdit(resourceId, operations, label).match(() => {
-      setSelectedNodeId(resourceId, selection.nodeId);
+    applyEdit(toValue(resourceId), operations, label).match(() => {
+      setSelectedNodeId(toValue(resourceId), selection.nodeId);
+      announceMove(selection.nodeId);
     }, console.error);
   };
   const moveDown = () =>
@@ -128,8 +156,10 @@ export const usePageBuilderMoves = (resourceId: string) => {
     if (!selection) return;
 
     const focusPointer = getFocusAfterRemoval(selection.document, selection.nodePointer);
-    applyEdit(resourceId, removeBlockNode(selection.nodePointer), "Delete block").match(() => {
-      setSelectedNodeId(resourceId, getNodeId(getDocument(resourceId), focusPointer));
+    const title = getNodeTitle(selection.document, selection.nodePointer);
+    applyEdit(toValue(resourceId), removeBlockNode(selection.nodePointer), "Delete block").match(() => {
+      setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), focusPointer));
+      if (title !== undefined) announce(`Deleted ${title}`);
     }, console.error);
   };
 

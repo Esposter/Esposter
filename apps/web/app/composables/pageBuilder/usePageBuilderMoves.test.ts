@@ -8,7 +8,7 @@ import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMov
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 const createSection = (id: string, children: BlockDocument["content"]) => ({
   props: { children, id, tag: SectionTag.Section },
@@ -44,7 +44,14 @@ const setup = async (selectedNodeId: string) => {
   await loadDocument(resourceId, () => Promise.resolve(createFixtureDocument()));
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
-  return { pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId, ...usePageBuilderMoves(resourceId) };
+  const announce = vi.fn<(message: string) => void>();
+  return {
+    announce,
+    pageBuilderCanvasStore,
+    pageBuilderDocumentStore,
+    resourceId,
+    ...usePageBuilderMoves(resourceId, announce),
+  };
 };
 
 describe(usePageBuilderMoves, () => {
@@ -125,5 +132,43 @@ describe(usePageBuilderMoves, () => {
       root: TEST_ROOT,
     });
     expect(pageBuilderCanvasStore.getSelectedNodeId(resourceId)).toBe("s2");
+  });
+
+  test("a move announces the node's new position among its siblings", async () => {
+    expect.hasAssertions();
+
+    const { announce, moveDown } = await setup("s1");
+    moveDown();
+
+    expect(announce.mock.calls).toStrictEqual([["Moved Section to position 2 of 2 in The page"]]);
+  });
+
+  test("a move to another slot announces the slot it landed in", async () => {
+    expect.hasAssertions();
+
+    const { announce, moveTo } = await setup("i1");
+    moveTo("/content/0/props/children");
+
+    expect(announce.mock.calls).toStrictEqual([["Moved Image to position 2 of 2 in Section 1"]]);
+  });
+
+  test("a delete announces what was deleted", async () => {
+    expect.hasAssertions();
+
+    const { announce, deleteSelected } = await setup("s1");
+    deleteSelected();
+
+    expect(announce.mock.calls).toStrictEqual([["Deleted Section"]]);
+  });
+
+  test("a refused move announces nothing", async () => {
+    expect.hasAssertions();
+
+    const { announce, moveUp, pageBuilderDocumentStore, resourceId } = await setup("s1");
+    const before = pageBuilderDocumentStore.getDocument(resourceId);
+    moveUp();
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBe(before);
+    expect(announce.mock.calls).toStrictEqual([]);
   });
 });

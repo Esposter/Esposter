@@ -31,11 +31,7 @@ describe(usePageBuilderHistoryCommands, () => {
     );
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit } = pageBuilderHistoryStore;
-    applyEdit(
-      resourceId,
-      moveBlockNode(document, webpageRegistry, "/content/0", "/content", 1),
-      "Move block",
-    )._unsafeUnwrap();
+    applyEdit(resourceId, moveBlockNode(document, webpageRegistry, "/content/0", "/content", 1), "Move block");
     const commandStore = useCommandStore();
     const { commands } = storeToRefs(commandStore);
 
