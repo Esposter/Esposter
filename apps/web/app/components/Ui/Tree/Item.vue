@@ -21,16 +21,7 @@ const { item } = defineProps<Props>();
   >
     <UiTreeOpener />
     <Treeview.Activator #default="{ attrs }" renderless>
-      <button
-        :="attrs"
-        ui-item
-        flex
-        flex-1
-        gap-2
-        min-w-0
-        items-center
-        :style="{ paddingInlineStart: `calc(var(--ui-step) * ${depth + 2})` }"
-      >
+      <button :="attrs" ui-item flex-1 min-w-0 :style="{ paddingInlineStart: `calc(var(--ui-step) * ${depth + 2})` }">
         <Treeview.Cue #default="{ attrs: cueAttrs }" renderless>
           <UiDisclosureIcon :="cueAttrs" />
         </Treeview.Cue>
