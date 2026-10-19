@@ -31,7 +31,16 @@ const createBlockNodeBranch = (registry: BlockRegistry, definition: BlockTypeDef
 };
 
 const buildBlockNodeSchema = (registry: BlockRegistry, acceptedTypes: string[]): z.ZodType<BlockNode> => {
-  const definitions = acceptedTypes.flatMap((type) => getBlockTypeDefinition(registry, type) ?? []);
+  const definitions = acceptedTypes.map((type) => {
+    const definition = getBlockTypeDefinition(registry, type);
+    if (!definition)
+      throw new InvalidOperationError(
+        Operation.Create,
+        type,
+        "is accepted by a slot but has no definition in the registry",
+      );
+    return definition;
+  });
   const [firstDefinition, ...restDefinitions] = definitions;
   if (!firstDefinition) return z.never();
 

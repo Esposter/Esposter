@@ -108,7 +108,18 @@ describe(createBlockDocumentSchema, () => {
 
     const otherRegistry: BlockRegistry = {
       ...TEST_REGISTRY,
-      types: TEST_REGISTRY.types.filter((definition) => definition.type !== "list"),
+      types: TEST_REGISTRY.types
+        .filter((definition) => definition.type !== "list")
+        .map((definition) => ({
+          propsSchema: definition.propsSchema,
+          slots: Object.fromEntries(
+            Object.entries(definition.slots).map(([slot, slotTypes]) => [
+              slot,
+              slotTypes.filter((slotType) => slotType !== "list"),
+            ]),
+          ),
+          type: definition.type,
+        })),
     };
     const document: BlockDocument = {
       content: [
