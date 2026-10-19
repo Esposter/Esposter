@@ -21,7 +21,12 @@
   "chargedAttackStamina": { "cause": "Unsourced", "value": 0 },
   "frames.dawnTickInterval": { "file": "burst.go", "line": 99, "source": "Gcsim", "value": 12 },
   "hitFields.dawnPhoenixHit.gauge": { "file": "burst.go", "line": 64, "source": "Gcsim", "value": 2 },
-  "hitFields.dawnPhoenixHit.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
+  "hitFields.dawnPhoenixHit.internalCooldownTag": {
+    "file": "burst.go",
+    "line": 59,
+    "source": "Gcsim",
+    "value": "ElementalBurst"
+  },
   "hitFields.dawnPhoenixHit.poiseDamage": { "file": "burst.go", "line": 62, "source": "Gcsim", "value": 100 },
   "parameters.dawnTickMultiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 1639 } },
   "parameters.dawnExplosionMultiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 1639 } },
@@ -42,7 +47,7 @@
   },
   "skillChain.followUps.1.hits.0.hitmarkFrames": { "file": "skill.go", "line": 18, "source": "Gcsim", "value": 46 },
   "skillChain.followUps.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 1632 } },
-  "skillChain.windowSeconds": { "cause": "Unclassified", "value": 4 },
+  "skillChain.windowSeconds": { "file": "skill.go", "line": 143, "source": "Gcsim", "value": 4 },
   "burst.hits.0.element": { "cause": "Unsourced", "value": "Fire" },
   "burst.hits.0.gauge": { "cause": "Unsourced", "value": 2 },
   "burst.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
