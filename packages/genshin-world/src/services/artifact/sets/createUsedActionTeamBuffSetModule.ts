@@ -1,6 +1,7 @@
 import type { Attribute } from "#src/models/character/Attribute";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
+import { ElementalAction } from "#src/models/artifact/ElementalAction";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 
@@ -13,7 +14,7 @@ export const createUsedActionTeamBuffSetModule = ({
   seconds,
   source,
 }: {
-  actions: ("burst" | "skill")[];
+  actions: ElementalAction[];
   amount: number;
   attribute: Attribute;
   seconds: number;
@@ -22,7 +23,11 @@ export const createUsedActionTeamBuffSetModule = ({
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
     if (!("characterId" in event) || event.characterId !== combatant.characterId) return;
     const action =
-      event.kind === KitEventKind.SkillUsed ? "skill" : event.kind === KitEventKind.BurstUsed ? "burst" : undefined;
+      event.kind === KitEventKind.SkillUsed
+        ? ElementalAction.Skill
+        : event.kind === KitEventKind.BurstUsed
+          ? ElementalAction.Burst
+          : undefined;
     if (action === undefined || !actions.includes(action)) return;
     buffKitTeam(kitEffectState, party, { amount, attribute, secondsRemaining: seconds, source });
   },
