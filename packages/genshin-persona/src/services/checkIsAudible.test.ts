@@ -1,14 +1,16 @@
-import { VOICE_SAMPLE_RATE } from "#src/services/constants";
 import { checkIsAudible } from "#src/services/checkIsAudible";
+import { VOICE_SAMPLE_RATE } from "#src/services/constants";
+import { getFrameEnergiesDb } from "#src/services/getFrameEnergiesDb";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsAudible, () => {
   // A tenth of a second, half of it for the burst
   const length = VOICE_SAMPLE_RATE / 10;
-  const getClip = (getSample: (index: number) => number) => ({
-    sampleRate: VOICE_SAMPLE_RATE,
-    samples: Float32Array.from({ length }, (_value, index) => getSample(index)),
-  });
+  const getClip = (getSample: (index: number) => number) =>
+    getFrameEnergiesDb({
+      sampleRate: VOICE_SAMPLE_RATE,
+      samples: Float32Array.from({ length }, (_value, index) => getSample(index)),
+    });
 
   test.each([
     { clip: getClip((index) => (index < length / 2 ? 1 : 0)), expected: true, name: "a burst with a pause after it" },

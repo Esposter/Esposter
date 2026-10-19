@@ -7,7 +7,7 @@ import { getFrameEnergiesDb } from "#src/services/getFrameEnergiesDb";
 // Whether a synthesis is speech to the ear: loud enough to hear at its loudest, and with a pause somewhere in it.
 // A vocoder run wrong by its provider returns a constant near-silence that fails both, and throws nothing
 export const checkIsSpeech = (clip: PcmClip): boolean => {
-  if (!checkIsAudible(clip)) return false;
   const energiesDb = getFrameEnergiesDb(clip);
+  if (!checkIsAudible(energiesDb)) return false;
   return Math.min(...energiesDb) <= Math.max(...energiesDb) - SPEECH_FLOOR_DB;
 };

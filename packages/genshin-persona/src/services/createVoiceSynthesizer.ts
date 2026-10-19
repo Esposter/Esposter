@@ -25,6 +25,7 @@ import {
 } from "#src/services/constants";
 import { createChunkSplicer } from "#src/services/createChunkSplicer";
 import { deleteSupersededModels } from "#src/services/deleteSupersededModels";
+import { getFrameEnergiesDb } from "#src/services/getFrameEnergiesDb";
 import { getVoiceDeviceLadder } from "#src/services/getVoiceDeviceLadder";
 import { vocodeSpeechTokens } from "#src/services/vocodeSpeechTokens";
 
@@ -163,7 +164,7 @@ export const createVoiceSynthesizer = async (
       const body = samples.subarray(samples.length - bodyLength);
       const isOpening = bodyLength >= MIN_CHECKED_SAMPLES && !isOpeningChecked;
       if (isOpening) isOpeningChecked = true;
-      if (!isOpening || checkIsAudible({ sampleRate: VOICE_SAMPLE_RATE, samples: body }))
+      if (!isOpening || checkIsAudible(getFrameEnergiesDb({ sampleRate: VOICE_SAMPLE_RATE, samples: body })))
         return { clip, isFailed: false };
 
       isDropped = true;
