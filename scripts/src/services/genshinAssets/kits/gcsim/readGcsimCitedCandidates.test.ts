@@ -3,9 +3,11 @@ import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayE
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
+import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { classifyKitValue } from "#src/services/genshinAssets/kits/record/classifyKitValue";
-import { expandKitOverlay } from "genshin-world";
+import { expandKitOverlay, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -22,6 +24,19 @@ describe("readGcsimCitedCandidates", () => {
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const MULTILINE_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
+  const FIELD_CENTRE_GO = "package venti\n\nfunc burst() {\n\tap := combat.NewCircleHitOnTarget(c.qPos, nil, 4)\n}\n";
+  const PLAYER_POSITION_GO =
+    "package citlali\n\nfunc skill() {\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player().Pos(), nil, 6), 0, 0)\n}\n";
+  const COMPUTED_OFFSET_GO =
+    "package rosaria\n\nfunc burst() {\n\tplayerPos := c.Core.Combat.Player()\n\tgadgetOffset := info.Point{Y: 3}\n\tapHit2 := combat.NewCircleHitOnTarget(playerPos, gadgetOffset, 6)\n}\n";
+  const TARGET_GO =
+    "package tartaglia\n\nfunc skill() {\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 3), 0, 0)\n}\n";
+  const BOX_GO =
+    "package diluc\n\nfunc burst() {\n\tc.Core.QueueAttack(ai, combat.NewBoxHitOnTarget(c.Core.Combat.Player(), info.Point{Y: -1}, 16, 6), 0, 0)\n}\n";
+  const KLEE_GO =
+    "package klee\n\nfunc burst() {\n\tc.Core.QueueAttack(ai, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 5), 0, 0)\n}\n";
+  const QIQI_GO =
+    "package qiqi\n\nfunc skill() {\n\tc.Core.QueueAttackWithSnap(ai, snap, combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2.5), 0)\n}\n";
   const createGcsimDirectory = () => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-cited-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
@@ -31,6 +46,13 @@ describe("readGcsimCitedCandidates", () => {
     writeFileSync(join(directory, "internal", "characters", FOLDER, "area.go"), AREA_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "queue.go"), QUEUE_GO);
     writeFileSync(join(directory, "internal", "characters", FOLDER, "multiline.go"), MULTILINE_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "fieldCentre.go"), FIELD_CENTRE_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "playerPosition.go"), PLAYER_POSITION_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "computedOffset.go"), COMPUTED_OFFSET_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "target.go"), TARGET_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "box.go"), BOX_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "klee.go"), KLEE_GO);
+    writeFileSync(join(directory, "internal", "characters", FOLDER, "qiqi.go"), QIQI_GO);
     return directory;
   };
 
@@ -229,5 +251,108 @@ describe("readGcsimCitedCandidates", () => {
     expect(
       readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.blossom.1.poiseDamage")?.[0]?.value,
     ).toBe(15);
+  });
+
+  test("a cited circle centred on a field of its character is priced as a circle round the body", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "hits.stormeyeTicks.0.area": {
+        file: "fieldCentre.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 4 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.stormeyeTicks.0.area")?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 4 });
+  });
+
+  test("a cited circle centred on the player's position through a local adds its forward offset to its radius", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "burst.hits.1.area": {
+        file: "computedOffset.go",
+        line: 6,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 9 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("burst.hits.1.area")?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 9 });
+  });
+
+  test("a cited circle centred on the player's position with its .Pos() gives its own radius", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "hits.frostfallStorm.area": {
+        file: "playerPosition.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 6 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.frostfallStorm.area")?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 6 });
+  });
+
+  test("a cited circle centred on the primary target gives the reach of its action's targeting area, as the mechanical path does", () => {
+    expect.hasAssertions();
+    const skillArea = createTargetedHitArea(SKILL_TARGETING_AREA, 3);
+    const strikeArea = createTargetedHitArea(STRIKE_TARGETING_AREA, 3);
+    const overlay: KitOverlay = {
+      "hits.riptideSlash.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: skillArea },
+      "normalAttacks.0.hits.0.area": { file: "target.go", line: 4, source: KitSource.Gcsim, value: strikeArea },
+    };
+    const candidateMap = readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER);
+    expect(candidateMap.get("hits.riptideSlash.area")?.[0]?.value).toStrictEqual(skillArea);
+    expect(candidateMap.get("normalAttacks.0.hits.0.area")?.[0]?.value).toStrictEqual(strikeArea);
+  });
+
+  test("a cited box centred on the player is priced as the circle to its far corner, as createBoxReach gives", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "burst.hits.0.area": { file: "box.go", line: 4, source: KitSource.Gcsim, value: createBoxReach(-1, 16, 6) },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("burst.hits.0.area")?.[0]?.value,
+    ).toStrictEqual(createBoxReach(-1, 16, 6));
+  });
+
+  test("a cited line of Klee's burst gives the circle of its radius round the player", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "hits.sparklyExplosion.area": {
+        file: "klee.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 5 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.sparklyExplosion.area")?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 5 });
+  });
+
+  test("a cited line of Qiqi's skill gives the circle of its radius round the player", () => {
+    expect.hasAssertions();
+    const angle = 2 * Math.PI;
+    const overlay: KitOverlay = {
+      "hits.herald.0.area": {
+        file: "qiqi.go",
+        line: 4,
+        source: KitSource.Gcsim,
+        value: { angle, height: 2, radius: 2.5 },
+      },
+    };
+    expect(
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), FOLDER).get("hits.herald.0.area")?.[0]?.value,
+    ).toStrictEqual({ angle, height: 2, radius: 2.5 });
   });
 });
