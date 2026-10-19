@@ -69,3 +69,14 @@ The persona voice SHALL choose the reader's dub for whose voice speaks, and SHAL
 - **AND** the reply's spoken line is written in English
 - **WHEN** the line is spoken
 - **THEN** the line is read in English in the ja voice
+
+### Requirement: A superseded reply stops before its next clause
+
+The persona voice SHALL check for a newer reply before synthesizing each clause of a reply, and SHALL stop the superseded reply before the clause that follows.
+
+#### Scenario: A superseded reply stops before its next clause
+
+- **GIVEN** a reply is being spoken clause by clause
+- **WHEN** a newer reply arrives before the next clause's synthesis begins
+- **THEN** the superseded reply's remaining clauses are not synthesized
+- **AND** the newer reply's first clause is spoken as usual
