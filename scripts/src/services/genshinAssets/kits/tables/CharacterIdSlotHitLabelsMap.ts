@@ -120,8 +120,18 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
-  // Jahoda. Her Meowball DMG label gives each Meowball's multiplier, read from the proud skill group its skill's table holds
-  [10_000_124, { values: { "parameters.meowballTalentMultiplier": { combatTalent: SKILL, label: "Meowball DMG" } } }],
+  // Jahoda. Her robot's strike reads its multiplier from her burst's label, which gcsim's join does not reach
+  [
+    10_000_124,
+    {
+      values: {
+        "hitFields.robotStrike.multiplier": {
+          combatTalent: BURST,
+          label: "Purrsonal Coordinated Assistance Robot DMG",
+        },
+      },
+    },
+  ],
   // Zibai. Her fourth strike's second hit is the extra hit Moonsign gates, which the stance's behaviour plays at the
   // Moonsign level it reads, as Columbina's are
   [

@@ -41,7 +41,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
   },
-  "hitFields.robotStrike.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 12439 } },
   "parameters.burstAdditionalAttackHealShare": {
     "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 12439 }
