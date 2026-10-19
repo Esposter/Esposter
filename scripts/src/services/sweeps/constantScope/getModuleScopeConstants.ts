@@ -39,8 +39,8 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
   if (statements.some((statement) => checkIsCallTo(statement, DESCRIBE_TODO_CALLEE))) return [];
 
   const candidates: ModuleScopeConstant[] = [];
-  // What each module-scope name reads, its initializer whether a constant's or a function's, keyed by the name
-  const initializerMap = new Map<string, ts.Expression>();
+  // What each module-scope name reads, its initializer or a function declaration's body, keyed by the name
+  const initializerMap = new Map<string, ts.Node>();
   // The nodes whose identifiers pin what they name at module scope
   const pinningNodes: ts.Node[] = [];
   for (const statement of statements)
@@ -59,6 +59,8 @@ export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => 
         // A destructuring stays at module scope and reads its initializer there, so what it reads stays too
         else if (initializer) pinningNodes.push(initializer);
       }
+    else if (ts.isFunctionDeclaration(statement) && statement.name && statement.body)
+      initializerMap.set(statement.name.text, statement.body);
 
   // A pinned name pins what its initializer or function body reads, so the set is closed to a fixed point
   const pinnedNames = new Set(pinningNodes.flatMap((node) => getIdentifierNames(node)));

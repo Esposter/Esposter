@@ -172,6 +172,23 @@ const check = (token: string) => ${name}.test(token);`),
         `const a = "";\nconst helper = () => a;\nvi.mock("x", () => ({ get db() { return helper(); } }));\n`,
       ),
     ).toStrictEqual([]);
+    expect(
+      getModuleScopeConstants(`const a = "";\nfunction f() { return a; }\nconst fixture = await readFile(f());\n`),
+    ).toStrictEqual([]);
+    expect(
+      getModuleScopeConstants(
+        `const a = "";\nfunction helper() { return a; }\nvi.mock("x", () => ({ get db() { return helper(); } }));\n`,
+      ),
+    ).toStrictEqual([]);
+  });
+
+  // A declaration moves into the describe alongside what it captures, so an unpinned one pins nothing either
+  test("reports a constant only a module-scope function declaration reads", () => {
+    expect.hasAssertions();
+
+    expect(getModuleScopeConstants(`const ${name} = "";\nfunction check() { return ${name}; }`)).toStrictEqual([
+      { line: 1, name },
+    ]);
   });
 
   test("skips a vi.hoisted block, which is lifted above the imports", () => {
