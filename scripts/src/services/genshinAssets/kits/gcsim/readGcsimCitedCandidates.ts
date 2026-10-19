@@ -1,5 +1,6 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { AttackArea } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -12,8 +13,9 @@ import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/read
 import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableCells";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
+import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
-import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "genshin-world";
+import { CombatTalent, kitParameterSchema } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -35,14 +37,54 @@ const readNormalCounter = (path: string): number | undefined => {
   return counter === undefined ? undefined : Number(counter);
 };
 
-// The path segments of the actions a strike's reach is measured from: a normal attack, a charged attack, a plunge and its
-// Collision, as the mechanical reader measures a hit of each
-const STRIKE_PATH_SEGMENTS = new Set(["chargedAttack", "normalAttacks", "plungeCollision", "plunges"]);
+// The path segments that name the normal attack's group: its normal attacks, its charged attacks, its plunges and
+// Their collisions, the actions a strike's reach is measured from as the mechanical reader measures each
+const checkIsNormalAttackPath = (path: string): boolean =>
+  path
+    .split(".")
+    .some(
+      (segment) =>
+        segment === "normalAttacks" ||
+        segment.startsWith("chargedAttack") ||
+        segment === "plungeCollision" ||
+        segment === "plunges",
+    );
 
-// The targeting area a cited area's reach on a target is measured from, the strikes' for a strike's path and the skill's
-// For every other path
-const readCitedTargetingArea = (path: string): AttackArea =>
-  path.split(".").some((segment) => STRIKE_PATH_SEGMENTS.has(segment)) ? STRIKE_TARGETING_AREA : SKILL_TARGETING_AREA;
+// A named hit's path, `hits.<name>` with or without a run index, which names the hit and the run it is
+const HIT_PATH_REGEX = /^hits\.(?<name>[^.]+)(?:\.(?<index>\d+))?\./u;
+
+// The proud skill group an overlay's multiplier names, the one a named hit joins its talent by
+const readMultiplierGroupId = (overlay: KitOverlay, key: string): number | undefined => {
+  const parameter = kitParameterSchema.safeParse(overlay[key]?.value).data;
+  return typeof parameter === "object" ? parameter.proudSkillGroupId : undefined;
+};
+
+// The proud skill group of the hit a `hits.<name>` path names: its run's multiplier's where the path names a run and
+// The overlay gives one, else the name's
+const readHitGroupId = (path: string, overlay: KitOverlay): number | undefined => {
+  const groups = HIT_PATH_REGEX.exec(path)?.groups;
+  if (groups === undefined) return undefined;
+  const { index, name } = groups;
+  if (index === undefined) return readMultiplierGroupId(overlay, `hits.${name}.multiplier`);
+  return (
+    readMultiplierGroupId(overlay, `hits.${name}.${index}.multiplier`) ??
+    readMultiplierGroupId(overlay, `hits.${name}.multiplier`)
+  );
+};
+
+// The targeting area a cited area's reach on a target is measured from, by the group of the action it belongs to: the
+// Normal attack's group for a strike's path, the group of a hit's multiplier for a named hit, the skill's for any other
+const readCitedTargetingArea = (
+  path: string,
+  overlay: KitOverlay,
+  talentGroupIdMap: KitTables["talentGroupIdMap"],
+): AttackArea =>
+  getTalentTargetingArea(
+    checkIsNormalAttackPath(path)
+      ? talentGroupIdMap[CombatTalent.NormalAttack]
+      : (readHitGroupId(path, overlay) ?? talentGroupIdMap[CombatTalent.ElementalSkill]),
+    talentGroupIdMap,
+  );
 
 // A module-scope table's declaration, `name = [][]float64{` or `name = []float64{`
 const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?::=|=)\s*\[\]/u;
@@ -158,6 +200,7 @@ export const readGcsimCitedCandidates = (
   overlay: KitOverlay,
   gcsimDirectory: string,
   folder: string,
+  talentGroupIdMap: KitTables["talentGroupIdMap"],
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   for (const [path, entry] of Object.entries(overlay)) {
@@ -171,7 +214,7 @@ export const readGcsimCitedCandidates = (
         readConstructorIndex(lines, entry.line - 1),
         file,
         readNormalCounter(path),
-        readCitedTargetingArea(path),
+        readCitedTargetingArea(path, overlay, talentGroupIdMap),
       );
       if (cited !== undefined)
         addKitCandidate(candidateMap, path, {

@@ -4,6 +4,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
+import { CombatTalent } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -15,6 +16,13 @@ const overlayFor = (path: string): KitOverlay => ({
 
 describe("readGcsimCitedCandidates local aliases", () => {
   const FOLDER = "aino";
+
+  // The talents' proud skill groups, as the cited reader reads a named hit's targeting area by them
+  const TALENT_GROUP_ID_MAP = {
+    [CombatTalent.ElementalBurst]: 3,
+    [CombatTalent.ElementalSkill]: 2,
+    [CombatTalent.NormalAttack]: 1,
+  };
   const createGcsimDirectory = (source: string) => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-locals-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
@@ -54,8 +62,12 @@ describe("readGcsimCitedCandidates local aliases", () => {
   test("a single-assignment alias reads as its right-hand side, and the constructor's line is cited", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("burst.area"), createGcsimDirectory(SINGLE_GO), FOLDER).get("burst.area") ??
-      [];
+      readGcsimCitedCandidates(
+        overlayFor("burst.area"),
+        createGcsimDirectory(SINGLE_GO),
+        FOLDER,
+        TALENT_GROUP_ID_MAP,
+      ).get("burst.area") ?? [];
     // The constructor's forward offset of 1 is folded into its radius of 4, as a body circle's reach is priced
     expect(candidates).toStrictEqual([
       {
@@ -90,6 +102,7 @@ describe("readGcsimCitedCandidates local aliases", () => {
         },
         createGcsimDirectory(SUM_GO),
         FOLDER,
+        TALENT_GROUP_ID_MAP,
       ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([
       {
@@ -135,9 +148,12 @@ describe("readGcsimCitedCandidates local aliases", () => {
   test("an alias assigned more than once gives no area, so nothing is guessed", () => {
     expect.hasAssertions();
     const candidates =
-      readGcsimCitedCandidates(overlayFor("burst.area"), createGcsimDirectory(REASSIGNED_GO), FOLDER).get(
-        "burst.area",
-      ) ?? [];
+      readGcsimCitedCandidates(
+        overlayFor("burst.area"),
+        createGcsimDirectory(REASSIGNED_GO),
+        FOLDER,
+        TALENT_GROUP_ID_MAP,
+      ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([]);
   });
 });
