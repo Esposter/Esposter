@@ -11,11 +11,9 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
   },
-  "hits.transientBlossom.element": { "cause": "Unsourced", "value": "Rock" },
   "hits.transientBlossom.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
-  "hits.transientBlossom.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3832 } },
+  "hits.transientBlossom.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3832 } },
   "hits.transientBlossom.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
-  "hits.solarIsotoma.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
   "hits.solarIsotoma.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3832 } },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "hits.fatalBlossoms.0-6.hitmarkFrames": {
@@ -26,11 +24,10 @@
   },
   "hits.fatalBlossoms.0-6.poiseDamage": { "file": "burst.go", "line": 69, "source": "Gcsim", "value": 30 },
   "hits.fatalBlossoms.0-6.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
   },
-  "hits.fatalBlossoms.0-6.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
+  "hits.fatalBlossoms.0-6.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3839 } },
   "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
   "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },
   "parameters.solarIsotomaAheadMetres": { "file": "skill.go", "line": 52, "source": "Gcsim", "value": 3 },
