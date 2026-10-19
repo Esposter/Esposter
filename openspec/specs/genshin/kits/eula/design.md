@@ -6,6 +6,7 @@ Eula's kit is its record and one behaviour module, `createEulaKitBehaviour`, ava
 
 - **Eula's charged attack lands its spin at half a second and its final hit at one second, in 1.5 seconds.** Provisional, as gcsim leaves the charged attack unimplemented, so the table's seconds stand until a recording reads others.
 - **Icetide Vortex's hold begins at half a second.** Provisional, as gcsim takes any hold from the input alone.
+- **Icetide Vortex's hold strikes at the skill's Hold DMG, index 1 of its group.** gcsim's `skillHold` array copies the burst's Skill DMG, 245.6% at level 1, and its talent config labels it so, which would deal the hold at the burst's multiplier; the overlay holds the skill's own index as `DiffersFromSource`.
 
 ## Key files
 
