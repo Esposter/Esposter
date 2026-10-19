@@ -26,7 +26,7 @@ const pairConsole = () => {
 const runSession = (sessionId: string) => {
   const agentConsoleSessionStore = useAgentConsoleSessionStore();
   agentConsoleSessionStore.storeEvents(sessionId, [
-    { createdAt: new Date(), id: crypto.randomUUID(), state: SessionState.Running, type: AgentEventType.SessionState },
+    { createdAt: new Date(0), id: crypto.randomUUID(), state: SessionState.Running, type: AgentEventType.SessionState },
   ]);
 };
 
