@@ -31,6 +31,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **The index line names the trigger, not the topic** — _when a test fakes the clock_, never "see X for more detail", which guarantees the page is never opened; a page cited only inside a rule has no index line, which `pnpm ai:sweep:skill-docs` reports (`references/splitting-a-skill.md`).
 - **A rule lives in exactly one skill and one page**; every other mention is a one-line pointer to it, never a paraphrase. `pnpm ai:sweep:duplicate-prose` lists the copies (`references/one-owner-per-topic.md`).
 - **A convention a session discovers or corrects lands in the owning skill in the same session**, never in private memory; a claim the evidence contradicts is verified and fixed, never obeyed (`references/session-learnings.md`).
+- **A rule is added only after a run without it shows the failure it prevents**: the same task with the skill absent, then present. A rule that changes no outcome is not written, which keeps every page lean.
 - **A rule an enforcer checks is owned by the enforcer**: one line with the non-obvious why and the enforcer's name, never the banned forms or the error text (`references/enforced-rules.md`).
 - **A citation is the repo-relative path in backticks**, never a markdown link, and another skill is cited by name plus its page; `scripts/src/workspace/citations.test.ts` resolves every one (`references/citations.md`).
 - **The `description` opens `Apply when …`**, names the domain in a sentence, and never indexes the body (`references/frontmatter.md`).

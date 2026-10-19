@@ -47,6 +47,8 @@ Take the highest rung that fits. Each rung down costs more forever. The decision
 
 **Lint before a test.** A lint rule covers every file in the monorepo in one pass, including files that do not exist yet, and needs nothing when the repo changes; a test covers the paths someone wrote it for and moves with them. A test comes second, for what one file's syntax cannot show. Prose comes last, and every rung above it still keeps its why in prose.
 
+**An enforcer is proven to fail before it is trusted.** Revert the fix it guards, run it, watch it fail for the reason it names, then restore. A guard that has never failed has only shown that it passes.
+
 **By construction** is usually reached by removing the wrong option rather than adding a right one: make the
 dangerous value unobtainable, and every caller has only the safe one left. The idiom that does this most often
 here is **an argument that must be named up front** — a function that hands back the writer for a key, so there
