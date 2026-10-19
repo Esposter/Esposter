@@ -16,6 +16,8 @@ The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hi
 
 Declared in the package's own `tsdown.config.ts`, never in `configuration`. There is one rule and one exception.
 
+**A stylesheet is not a dependency.** `getTsdownConfigurationVue` bundles every `.css` request (`STYLESHEET_REQUEST_REGEX`), a sibling package's one that a style block's `src` names included, since a built script importing a `.css` file is one Node cannot load.
+
 **A self-contained bundle vendors; a library externalizes.** A package whose `dist` is run directly — a CLI installed with one command, a deploy artifact dropped into a host that installs nothing — has no package manager on the other side to resolve an import with, so it bundles what it uses. Derive `alwaysBundle` from the manifest rather than listing names, so a newly added dependency is vendored without anyone remembering to. Three things still stay external:
 
 - **What the host itself provides.** A vendored second copy of the host's own runtime API is not the instance the host hands the handler.

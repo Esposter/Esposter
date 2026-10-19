@@ -3,15 +3,14 @@ import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
 import { readPersonaCard } from "#src/services/readPersonaCard";
 import { readRoster } from "#src/services/readRoster";
 import { readSpinner } from "#src/services/readSpinner";
-import { registerQuietExit } from "#src/services/registerQuietExit";
-import { defineCommand, runMain } from "citty";
+import { runHookCommand } from "#src/services/runHookCommand";
+import { defineCommand } from "citty";
 
 // The session's spinner for the hooks module, as JSON: its verbs and the character's lines under their name. Run off
 // The session start's own path, since the lines cost the data package or the wiki. The character arrives as the
 // English name, which is the identity, and the roster it is looked up in is the interface language's — so the label
 // Is the name that language spells them by
-registerQuietExit();
-await runMain(
+await runHookCommand(
   defineCommand({
     args: {
       name: {
