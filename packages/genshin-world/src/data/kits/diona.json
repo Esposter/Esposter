@@ -91,6 +91,5 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "skillHolds.0.action.hits.4.hitmarkFrames": { "cause": "Unsourced", "value": 38 },
-  "skillHolds.0.action.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3932 } },
-  "chargedAttack.isAimed": { "cause": "DiffersFromSource" }
+  "skillHolds.0.action.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3932 } }
 }
