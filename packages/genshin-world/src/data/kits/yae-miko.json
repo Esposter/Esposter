@@ -9,7 +9,7 @@
   "frames.totemStrikes.3": { "cause": "Unsourced", "value": 648 },
   "frames.totemStrikes.4": { "cause": "Unsourced", "value": 824 },
   "frames.totem": { "file": "kitsune.go", "line": 13, "source": "Gcsim", "value": 900 },
-  "frames.sesshouSakuraSpawn": { "cause": "Unclassified", "value": 34 },
+  "frames.sesshouSakuraSpawn": { "file": "skill.go", "line": 14, "source": "Gcsim", "value": 34 },
   "hitFields.totemStrikes.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
