@@ -22,8 +22,8 @@ describe(readTitleQuestIds, () => {
 
     expect(titleQuestIds).toStrictEqual(
       new Map([
-        ["Made Up Quest", [900]],
         ["Made Up Chapter", [901]],
+        ["Made Up Quest", [900]],
       ]),
     );
   });

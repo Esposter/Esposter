@@ -206,8 +206,8 @@ describe(getTableKitCandidates, () => {
     const candidates = getTableKitCandidates(
       createTables(
         new Map([
-          [LOHEN_SKILL_GROUP_ID, [{ indexes: [17], label: "DMG Increase From Will to Win" }]],
           [LOHEN_BURST_GROUP_ID, [{ indexes: [1], label: "DMG Increase From Will to Win" }]],
+          [LOHEN_SKILL_GROUP_ID, [{ indexes: [17], label: "DMG Increase From Will to Win" }]],
         ]),
         { burstGroupId: LOHEN_BURST_GROUP_ID, skillGroupId: LOHEN_SKILL_GROUP_ID },
       ),
@@ -275,7 +275,7 @@ describe(getTableKitCandidates, () => {
     const candidateValues = readCandidateValues(candidateMap);
     const readValueIndexes = (listName: string) =>
       [0, 1, 2].map(
-        (hit) => (candidateValues[`hits.${listName}.${hit}.multiplier`] as { index: number } | undefined)?.index,
+        (hit) => (candidateValues[`hits.${listName}.${hit}.multiplier`] as undefined | { index: number })?.index,
       );
 
     expect({
@@ -298,13 +298,6 @@ describe(getTableKitCandidates, () => {
       ...createTables(
         new Map([
           [
-            12_239,
-            [
-              { indexes: [0, 1], label: "1-Hit DMG" },
-              { indexes: [2, 3], label: "2-Hit DMG" },
-            ],
-          ],
-          [
             12_232,
             [
               { indexes: [0, 1], label: "Skill DMG" },
@@ -313,6 +306,13 @@ describe(getTableKitCandidates, () => {
               { indexes: [8], label: "Phantasm Performance 1-Hit DMG (Shades)" },
               { indexes: [9], label: "Phantasm Performance 2-Hit DMG (Shades)" },
               { indexes: [10], label: "Phantasm Performance 3-Hit DMG (Shades)" },
+            ],
+          ],
+          [
+            12_239,
+            [
+              { indexes: [0, 1], label: "1-Hit DMG" },
+              { indexes: [2, 3], label: "2-Hit DMG" },
             ],
           ],
         ]),
@@ -369,8 +369,8 @@ describe(getTableKitCandidates, () => {
     const candidates = getTableKitCandidates({
       ...createTables(
         new Map([
-          [14_339, [{ indexes: [0], label: "Spirit Blade DMG" }]],
           [14_332, [{ indexes: [0], label: "Skill DMG" }]],
+          [14_339, [{ indexes: [0], label: "Spirit Blade DMG" }]],
         ]),
         { burstGroupId: 14_339, skillGroupId: 14_332 },
       ),
@@ -389,6 +389,7 @@ describe(getTableKitCandidates, () => {
     const candidates = getTableKitCandidates({
       ...createTables(
         new Map([
+          [12_231, [{ indexes: [10], label: "Shadow Dance Charged Attack Stamina Cost" }]],
           [
             12_232,
             [
@@ -402,7 +403,6 @@ describe(getTableKitCandidates, () => {
               { indexes: [2], label: "Phantasm Performance Charges" },
             ],
           ],
-          [12_231, [{ indexes: [10], label: "Shadow Dance Charged Attack Stamina Cost" }]],
           [
             12_239,
             [

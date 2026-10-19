@@ -1,11 +1,11 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
+import type { Element } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
-import type { Element } from "genshin-world";
 import { KitPlunge, KitTargeting } from "genshin-world";
 
 // Every stance's normal attacks, whichever stance a kit names, by the length its normal attacks carry

@@ -9,9 +9,9 @@ import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/
 // Of its file, as the attack's name
 export interface GcsimAttack {
   abil?: string;
+  attackTag?: string;
   // The if or else the attack's `Mult` set sits in, or the literal's own, which a call after the branches fires per branch
   branch?: GcsimAttackBranch;
-  attackTag?: string;
   durability?: number;
   element?: string;
   fieldLineMap: Partial<Record<string, number>>;

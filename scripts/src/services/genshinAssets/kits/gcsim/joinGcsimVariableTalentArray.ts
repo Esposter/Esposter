@@ -8,7 +8,7 @@ export const joinGcsimVariableTalentArray = (
   talentArrayMap: Map<string, GcsimTalentArray>,
   variable: string,
   { talentGroupIdMap, talentMultiplierMap }: Pick<KitTables, "talentGroupIdMap" | "talentMultiplierMap">,
-): { line: number; multiplier: { index: number; proudSkillGroupId: number } } | undefined => {
+): undefined | { line: number; multiplier: { index: number; proudSkillGroupId: number } } => {
   const talentArray = talentArrayMap.get(variable);
   if (talentArray === undefined) return undefined;
   const multiplier = joinGcsimTalentArray(talentArray, talentMultiplierMap, Object.values(talentGroupIdMap));

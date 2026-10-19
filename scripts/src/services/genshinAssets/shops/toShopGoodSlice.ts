@@ -1,6 +1,6 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
-import type { ShopReputationDiscount } from "#src/models/genshinAssets/shops/ShopReputationDiscount";
 import type { ShopGoodRow } from "#src/models/genshinAssets/shops/ShopGoodRow";
+import type { ShopReputationDiscount } from "#src/models/genshinAssets/shops/ShopReputationDiscount";
 
 import { toShopGoodRow } from "#src/services/genshinAssets/shops/toShopGoodRow";
 

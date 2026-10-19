@@ -1,5 +1,5 @@
-import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { ExcelReputationQuestRow } from "#src/models/genshinAssets/reputation/ExcelReputationQuestRow";
+import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
 import { toReputationQuests } from "#src/services/genshinAssets/reputation/toReputationQuests";
 import { describe, expect, test } from "vitest";

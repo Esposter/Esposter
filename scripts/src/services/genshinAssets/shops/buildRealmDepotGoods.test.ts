@@ -39,12 +39,12 @@ describe(buildRealmDepotGoods, () => {
   const createPublishedGood = (goodsId: number, tabId: number) => ({
     beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
     buyLimit: 0,
+    costs: [{ count: 100, itemId: MORA_ITEM_ID }],
     endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
     goodsId,
     itemCount: 1,
     itemId: 1,
     minPlayerLevel: 1,
-    costs: [{ count: 100, itemId: MORA_ITEM_ID }],
     refresh: ShopRefresh.None,
     tabId,
   });
@@ -63,11 +63,11 @@ describe(buildRealmDepotGoods, () => {
     ]);
 
     expect(buildRealmDepotGoods()).toStrictEqual({
-      [`${GameDataset.Shops}/realmDepotTreasures`]: [createPublishedGood(TREASURE_GOOD_ID, TREASURE_SUB_TAB_ID)],
-      [`${GameDataset.Shops}/realmDepotFurnishings`]: [createPublishedGood(FURNISHING_GOOD_ID, FURNISHING_SUB_TAB_ID)],
       [`${GameDataset.Shops}/realmDepotBlueprints`]: [],
-      [`${GameDataset.Shops}/realmDepotRiches`]: [],
       [`${GameDataset.Shops}/realmDepotCreatures`]: [],
+      [`${GameDataset.Shops}/realmDepotFurnishings`]: [createPublishedGood(FURNISHING_GOOD_ID, FURNISHING_SUB_TAB_ID)],
+      [`${GameDataset.Shops}/realmDepotRiches`]: [],
+      [`${GameDataset.Shops}/realmDepotTreasures`]: [createPublishedGood(TREASURE_GOOD_ID, TREASURE_SUB_TAB_ID)],
       [`${GameDataset.Shops}/realmDepotWood`]: [],
     });
   });

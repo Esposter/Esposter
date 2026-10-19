@@ -2,8 +2,8 @@ import type { ExcelMailRow } from "#src/models/genshinAssets/mail/ExcelMailRow";
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
 import { toMails } from "#src/services/genshinAssets/mail/toMails";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 describe(toMails, () => {
   const REWARD_ID = 240002;

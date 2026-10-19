@@ -1,13 +1,12 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
-
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
 import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
+import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { getGcsimNamedHitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimNamedHitCandidates";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
@@ -53,11 +52,11 @@ describe(getGcsimNamedHitCandidates, () => {
     filePaths: [],
     folder: "amber",
     goSources: [],
+    holdCooldowns: [],
     queuedAttacks: [],
     talentArrayMap: new Map(),
     talentFile: "amber.go",
     talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
-    holdCooldowns: [],
     travelMap: new Map(),
   };
   const tables: KitTables = {

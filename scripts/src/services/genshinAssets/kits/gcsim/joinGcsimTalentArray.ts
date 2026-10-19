@@ -8,7 +8,7 @@ export const joinGcsimTalentArray = (
   { rows }: GcsimTalentArray,
   talentMultiplierMap: TalentMultiplierMap,
   talentGroupIds: readonly number[],
-): { index: number; proudSkillGroupId: number } | undefined => {
+): undefined | { index: number; proudSkillGroupId: number } => {
   const parameters = [...new Set(talentGroupIds)].flatMap((proudSkillGroupId) => {
     const multipliers = talentMultiplierMap[proudSkillGroupId] ?? [];
     const paramCount = Math.max(0, ...multipliers.map(({ paramList }) => paramList.length));

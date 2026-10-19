@@ -28,16 +28,16 @@ describe(readConstantLoops, () => {
     ).toStrictEqual([
       [
         new Map([
-          ["i", 0],
           ["delay", 112],
+          ["i", 0],
         ]),
         new Map([
-          ["i", 1],
           ["delay", 128],
+          ["i", 1],
         ]),
         new Map([
-          ["i", 2],
           ["delay", 140],
+          ["i", 2],
         ]),
       ],
     ]);

@@ -56,9 +56,9 @@ func (c *char) Aimed(p map[string]int) (action.Info, error) {
 
     expect(readGcsimTravels([{ path: "charge.go", source }])).toStrictEqual(
       new Map([
+        ["aimedHitmarks", { file: "charge.go", frames: 10, line: 12 }],
         ["chargeHitmark", { file: "charge.go", frames: 10, line: 6 }],
         ["windup", { file: "charge.go", frames: 10, line: 6 }],
-        ["aimedHitmarks", { file: "charge.go", frames: 10, line: 12 }],
       ]),
     );
   });

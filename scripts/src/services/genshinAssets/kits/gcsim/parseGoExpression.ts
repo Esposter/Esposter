@@ -118,7 +118,7 @@ export const parseGoExpression = (
         position++;
         expression =
           expression.kind === GoExpressionKind.Identifier
-            ? { callee: expression.name, kind: GoExpressionKind.Call, parameterStarts, parameters }
+            ? { callee: expression.name, kind: GoExpressionKind.Call, parameters, parameterStarts }
             : UNKNOWN_EXPRESSION;
       } else if (checkIsPunctuation("[")) {
         const indexStart = position;

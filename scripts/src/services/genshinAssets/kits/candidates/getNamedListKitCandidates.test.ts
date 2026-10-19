@@ -49,8 +49,8 @@ describe(getNamedListKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
-      ["burst.hits.length", 1],
       ["burst.hits.0.multiplier", { index: 3, proudSkillGroupId: 2139 }],
+      ["burst.hits.length", 1],
       ["hits.fieryRainArrows.0.multiplier", { index: 0, proudSkillGroupId: 2139 }],
     ]);
 
@@ -72,8 +72,8 @@ describe(getNamedListKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
-      ["stances.nightVigil.skill.animationFrames", 43],
       ["hits.impaleTheNightLowBondOfLife.0.multiplier", { index: 5, proudSkillGroupId: 2138 }],
+      ["stances.nightVigil.skill.animationFrames", 43],
     ]);
 
     expect(getNamedListKitCandidates(valueMap, talentGroupIdMap)).toStrictEqual(
@@ -88,9 +88,9 @@ describe(getNamedListKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
+      ["hits.swiftHuntNormalShot.0.multiplier", { index: 0, proudSkillGroupId: 2138 }],
       ["stances.nightVigil.normalAttacks.0.animationFrames", 18],
       ["stances.nightVigil.normalAttacks.1.animationFrames", 17],
-      ["hits.swiftHuntNormalShot.0.multiplier", { index: 0, proudSkillGroupId: 2138 }],
     ]);
 
     expect(getNamedListKitCandidates(valueMap, talentGroupIdMap)).toStrictEqual(
@@ -106,9 +106,9 @@ describe(getNamedListKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
+      ["hits.impaleTheNightLowBondOfLife.0.multiplier", { index: 5, proudSkillGroupId: 2138 }],
       ["stances.nightVigil.skill.animationFrames", 43],
       ["stances.nightVigil.skill.hits.0.multiplier", { index: 3, proudSkillGroupId: 2138 }],
-      ["hits.impaleTheNightLowBondOfLife.0.multiplier", { index: 5, proudSkillGroupId: 2138 }],
     ]);
 
     expect(getNamedListKitCandidates(valueMap, talentGroupIdMap)).toStrictEqual(

@@ -1,9 +1,9 @@
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
 import type { GoScope } from "#src/models/genshinAssets/kits/gcsim/GoScope";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
-import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
 
 import { GoAssignmentKind } from "#src/models/genshinAssets/kits/gcsim/GoAssignmentKind";
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
@@ -20,15 +20,15 @@ import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/rea
 // How many calls a value is followed through, so a cycle of calls gives no value
 const MAX_DEPTH = 4;
 
+// Whether a name's latest assignment before a position is one that always runs before it, one a branch may skip, or
+// None at all in the function
+type GoAssignment = { kind: "conditional" } | { kind: "dominating"; valueStart: number } | { kind: "none" };
+
 // The braces a block's assignment dominates a position in: the block it sits in, or the `case` clause of a switch
 interface GoBlock {
   end: number;
   start: number;
 }
-
-// Whether a name's latest assignment before a position is one that always runs before it, one a branch may skip, or
-// None at all in the function
-type GoAssignment = { kind: "conditional" } | { kind: "dominating"; valueStart: number } | { kind: "none" };
 
 const checkIsCaseClause = (token: GoToken | undefined): boolean =>
   token?.kind === GoTokenKind.Identifier && (token.text === "case" || token.text === "default");
@@ -168,7 +168,7 @@ const findAssignment = (
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
   const otherClosures = readOtherClosures(tokens, scope, position);
-  let latest: { isTaken: boolean; kind: GoAssignmentKind; position: number } | undefined;
+  let latest: undefined | { isTaken: boolean; kind: GoAssignmentKind; position: number };
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
     const kind =
       tokens[previous]?.kind === GoTokenKind.Identifier &&
@@ -320,14 +320,14 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
         [new Map()],
       );
     },
-    resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, undefined),
-    resolveConstellationName: (name: string, position: number, constellation: number): GoValue | undefined =>
-      resolveAt(name, position, 0, constellation),
     resolveAssignment: (name: string, position: number): number | undefined => {
       const scope = findScope(position);
       if (scope === undefined || scope.parameters.includes(name)) return undefined;
       const assignment = findAssignment(tokens, scope, name, position, constantMap, undefined);
       return assignment.kind === "dominating" ? assignment.valueStart : undefined;
     },
+    resolveConstellationName: (name: string, position: number, constellation: number): GoValue | undefined =>
+      resolveAt(name, position, 0, constellation),
+    resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, undefined),
   };
 };

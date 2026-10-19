@@ -1,4 +1,5 @@
 import type { Operation } from "@esposter/shared";
+
 import { InvalidOperationError } from "@esposter/shared";
 
 // Throws one error when any failure was collected, its message the given text and then every failure on its own

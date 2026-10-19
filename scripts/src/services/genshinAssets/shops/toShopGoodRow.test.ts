@@ -36,12 +36,12 @@ describe(toShopGoodRow, () => {
     expect(toShopGoodRow(row)).toStrictEqual({
       beginTime: "1970-01-01T00:00:00+08:00",
       buyLimit: BUY_LIMIT,
+      costs: [{ count: PRICE_COUNT, itemId: STARDUST_ITEM_ID }],
       endTime: "1970-01-02T00:00:00+08:00",
       goodsId: GOODS_ID,
       itemCount: 1,
       itemId: FATE_ITEM_ID,
       minPlayerLevel: MIN_PLAYER_LEVEL,
-      costs: [{ count: PRICE_COUNT, itemId: STARDUST_ITEM_ID }],
       refresh: ShopRefresh.Monthly,
     });
   });
@@ -62,12 +62,12 @@ describe(toShopGoodRow, () => {
     ).toStrictEqual({
       beginTime: "1970-01-01T00:00:00+08:00",
       buyLimit: BUY_LIMIT,
+      costs: [{ count: MORA_COST, itemId: MORA_ITEM_ID }],
       endTime: "1970-01-02T00:00:00+08:00",
       goodsId: GOODS_ID,
       itemCount: 1,
       itemId: FATE_ITEM_ID,
       minPlayerLevel: MIN_PLAYER_LEVEL,
-      costs: [{ count: MORA_COST, itemId: MORA_ITEM_ID }],
       refresh: ShopRefresh.Daily,
     });
   });

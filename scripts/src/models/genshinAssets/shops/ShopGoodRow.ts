@@ -13,7 +13,7 @@ export interface ShopGoodRow {
   itemId: number;
   minPlayerLevel: number;
   refresh: ShopRefresh;
+  reputationDiscountLevel?: number;
   // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, each named by the table's sub tab id
   tabId?: number;
-  reputationDiscountLevel?: number;
 }

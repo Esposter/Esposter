@@ -50,11 +50,11 @@ describe(toCraftingStrongboxes, () => {
     createReliquaryRow(OTHER_SET_PIECE_ID, SET_ID + 1),
   ];
   const offerRow: ExcelReliquaryOfferPurchaseRow = {
-    EPLFOBEBPPG: SET_ID,
-    id: 1,
     AAAAAAAAAAA: [FIRST_PIECE_ID + 1, FIRST_PIECE_ID],
     BBBBBBBBBBB: [OTHER_SET_PIECE_ID, OTHER_SET_PIECE_ID],
     CCCCCCCCCCC: [6600, 3400],
+    EPLFOBEBPPG: SET_ID,
+    id: 1,
   };
 
   test("a strongbox takes its set and pieces from its display item and offer row", () => {

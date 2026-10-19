@@ -9,10 +9,10 @@ import { addGcsimNormalAttackCandidates } from "#src/services/genshinAssets/kits
 import { addGcsimPlungeCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimPlungeCandidates";
 import { addGcsimSkillAndBurstCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillAndBurstCandidates";
 import { addGcsimSkillHoldCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimSkillHoldCandidates";
-import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
 import { createGcsimPlungeFallbackWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimPlungeFallbackWriter";
 import { findGcsimStanceNormalAttack } from "#src/services/genshinAssets/kits/gcsim/findGcsimStanceNormalAttack";
+import { GcsimCharacterMappingMap } from "#src/services/genshinAssets/kits/gcsim/GcsimCharacterMappingMap";
 
 // Every value gcsim gives a character's kit at one ref, by its path in the record, read where gcsim's character folders
 // Are regular: the normal attack's `attackHitmarks` and `attackFrames`, the charged attack's, plunges' and skill's and

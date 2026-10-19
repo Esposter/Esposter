@@ -53,8 +53,8 @@ const createCharacterFixture = (
   constantMap: new Map(constants),
   filePaths: [],
   folder,
-  holdCooldowns: [],
   goSources: [],
+  holdCooldowns: [],
   queuedAttacks: [],
   talentArrayMap: new Map(),
   talentFile: `${folder}.go`,
@@ -92,11 +92,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -135,11 +135,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -184,11 +184,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "itto",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "itto.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -233,11 +233,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "jean",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [{ attackName: "ai", delay: 55, delayLine: 7, file: "burst.go", line: 7 }],
       talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -282,11 +282,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "jean",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [{ attackName: "ai", delay: 92, delayLine: 9, file: "burst.go", line: 7 }],
       talentArrayMap: new Map(),
       talentFile: "zz_jean.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -333,6 +333,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "varesa",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [
         {
           attackName: "ai",
@@ -354,7 +355,6 @@ describe(getGcsimKitCandidates, () => {
       talentArrayMap: new Map(),
       talentFile: "zz_varesa.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -398,6 +398,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "varesa",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [
         {
           attackName: "ai",
@@ -435,7 +436,6 @@ describe(getGcsimKitCandidates, () => {
       talentArrayMap: new Map(),
       talentFile: "zz_varesa.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -507,6 +507,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [
         { attackName: "ai", delay: 32, delayLine: 67, file: "burst.go", line: 67 },
         { attackName: "ai", delay: 1, delayLine: 110, file: "burst.go", line: 110 },
@@ -514,7 +515,6 @@ describe(getGcsimKitCandidates, () => {
       talentArrayMap: new Map(),
       talentFile: "zz_razor.go",
       talentParameterMap: new Map([["burst|Burst DMG", { indexes: [3], line: 40 }]]),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -550,11 +550,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "mona",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "mona.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -588,11 +588,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "navia",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "navia.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -624,11 +624,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "barbara",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "barbara.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -720,11 +720,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "aino",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "aino.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -760,11 +760,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "aino",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [],
       talentArrayMap: new Map(),
       talentFile: "aino.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const fallback: GcsimCharacter = {
@@ -822,6 +822,7 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "razor",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [
         { attackLine: undefined, attackName: undefined, delay: 60, delayLine: 4, file: "skill.go", hitbox, line: 4 },
         { attackLine: undefined, attackName: "hit", delay: 60, delayLine: 5, file: "skill.go", hitbox, line: 5 },
@@ -829,7 +830,6 @@ describe(getGcsimKitCandidates, () => {
       talentArrayMap: new Map(),
       talentFile: "razor.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -1217,11 +1217,11 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "zhongli",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [{ attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", line: 5 }],
       talentArrayMap: new Map(),
       talentFile: "zhongli.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -1257,13 +1257,13 @@ describe(getGcsimKitCandidates, () => {
       filePaths: [],
       folder: "zhongli",
       goSources: [],
+      holdCooldowns: [],
       queuedAttacks: [
         { attackLine: 4, attackName: undefined, delay: 48, delayLine: 5, file: "skill.go", holdValue: 1, line: 5 },
       ],
       talentArrayMap: new Map(),
       talentFile: "zhongli.go",
       talentParameterMap: new Map(),
-      holdCooldowns: [],
       travelMap: new Map(),
     };
     const candidateMap = getGcsimKitCandidates(gcsim, KIT_TABLES, gcsim);

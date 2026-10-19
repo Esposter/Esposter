@@ -1,7 +1,7 @@
 import type { RiverCoursePoint } from "genshin-engine";
+import type { Vector3 } from "three";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
-import type { Vector3 } from "three";
 
 // Metres between a course's points along it, each slice of a water surface giving one point on its centreline
 const RIVER_COURSE_SLICE_METRES = 1;

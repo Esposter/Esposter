@@ -3,8 +3,8 @@ import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDun
 
 import { WEEKLY_BOSS_DUNGEON_TYPE, WEEKLY_BOSS_ENTRY_IDS } from "#src/services/genshinAssets/domains/constants";
 import { toWeeklyBossDomains } from "#src/services/genshinAssets/domains/toWeeklyBossDomains";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const toDungeon = (id: number, type: string): ExcelDungeonRow => ({
   id,

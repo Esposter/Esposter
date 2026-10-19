@@ -13,8 +13,8 @@ export const toDomainLevel = (
   treeArtifacts: TreeArtifact[],
   disorder: string,
 ): DomainLevel => ({
-  dungeonId: dungeon.id,
   disorder,
+  dungeonId: dungeon.id,
   enemyLevel: dungeon.levelRevise,
   recommendedRank: dungeon.limitLevel,
   resinCost: dungeon.statueCostCount,

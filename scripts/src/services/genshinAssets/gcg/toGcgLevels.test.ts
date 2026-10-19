@@ -36,14 +36,14 @@ describe(toGcgLevels, () => {
           { gameId: 1022, level: 3 },
         ],
       },
+      playerLevelLocks: [
+        { unlockLevel: 1, unlockMainQuestId: "1" },
+        { unlockLevel: 2, unlockMainQuestId: "2" },
+      ],
       playerLevels: [
         { exp: 0, level: 1 },
         { exp: 300, level: 2 },
         { exp: 1050, level: 3 },
-      ],
-      playerLevelLocks: [
-        { unlockLevel: 1, unlockMainQuestId: "1" },
-        { unlockLevel: 2, unlockMainQuestId: "2" },
       ],
     });
   });

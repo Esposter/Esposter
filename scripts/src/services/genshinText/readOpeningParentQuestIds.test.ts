@@ -4,8 +4,8 @@ import { describe, expect, test } from "vitest";
 describe(readOpeningParentQuestIds, () => {
   // Made-up titles, each the one quest it names; the opening's own world quest is 100
   const titleQuestIds = new Map([
-    ["Made Up Quest", [200]],
     ["Made Up Chapter", [300]],
+    ["Made Up Quest", [200]],
     ["Own Quest", [100]],
     ["Shared Title", [400, 500]],
   ]);

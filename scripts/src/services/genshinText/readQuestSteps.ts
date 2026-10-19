@@ -2,8 +2,8 @@ import type { QuestStep } from "genshin-world";
 
 import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
-import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
+import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { QuestBanTypes, QuestObjectiveKind } from "genshin-world";
 
 // Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do

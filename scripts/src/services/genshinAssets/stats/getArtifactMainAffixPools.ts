@@ -4,7 +4,7 @@ import type { ArtifactMainAffixPool } from "genshin-world";
 import { RELIQUARY_MAIN_PROP_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { ArtifactSlotMainPropDepotMap } from "#src/services/genshinAssets/stats/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { ArtifactMainAffixWeightMap, artifactMainAffixPoolSchema, ArtifactSlot } from "genshin-world";
+import { artifactMainAffixPoolSchema, ArtifactMainAffixWeightMap, ArtifactSlot } from "genshin-world";
 
 // Every slot's main affix pool: the attributes its depot holds that the wiki's distribution weighs for the slot. The depot
 // Also lists flat attributes and resistances the slot never rolls as its main affix, which the distribution leaves out

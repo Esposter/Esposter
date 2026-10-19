@@ -49,12 +49,12 @@ describe(buildGoodHunterGoods, () => {
         {
           beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
           buyLimit: 0,
+          costs: [{ count: 100, itemId: MORA_ITEM_ID }],
           endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
           goodsId: GOOD_ID,
           itemCount: 1,
           itemId: 1,
           minPlayerLevel: 1,
-          costs: [{ count: 100, itemId: MORA_ITEM_ID }],
           refresh: ShopRefresh.None,
           reputationDiscountLevel: DISCOUNT_LEVEL,
         },

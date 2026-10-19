@@ -1,5 +1,5 @@
-import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { RegionDataFile } from "#src/models/genshinAssets/residents/RegionDataFile";
+import type { DumpedNpc } from "#src/models/genshinText/DumpedNpc";
 import type { SceneGroups } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
@@ -76,9 +76,9 @@ describe(writeResidents, () => {
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],
-      transform: IDENTITY_TRANSFORM,
       regionFiles: [{ data: region, file: REGION_FILE, region: REGION }],
       regionMapPoints: [{ position: { x: 0, z: 0 }, region: REGION }],
+      transform: IDENTITY_TRANSFORM,
     });
     vi.mocked(readPublishedGameData).mockResolvedValueOnce({
       buildings: {

@@ -2,7 +2,7 @@
 // Dump renamed at 7.1, and the five-star pieces it lists as per-slot pairs under further obfuscated keys. The pairs are read
 // By their shape and not by their key, so a further rename does not break the read
 export interface ExcelReliquaryOfferPurchaseRow {
+  [key: string]: unknown;
   EPLFOBEBPPG: number;
   id: number;
-  [key: string]: unknown;
 }

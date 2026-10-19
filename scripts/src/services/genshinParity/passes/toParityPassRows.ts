@@ -1,7 +1,7 @@
 import type { ParityPassResult } from "#src/models/genshinParity/passes/ParityPassResult";
 
-import { ROW_PREFIX } from "#src/services/genshinParity/passes/constants";
 import { checkIsReadingHeld } from "#src/services/genshinParity/passes/checkIsReadingHeld";
+import { ROW_PREFIX } from "#src/services/genshinParity/passes/constants";
 import { formatPassValue } from "#src/services/genshinParity/passes/formatPassValue";
 import { formatReadingValue } from "#src/services/genshinParity/passes/formatReadingValue";
 

@@ -3,8 +3,8 @@ import type { ExcelReliquarySetRow } from "#src/models/genshinAssets/archive/Exc
 
 import { BLESSING_ARTIFACT_SET_NAMES } from "#src/services/genshinAssets/domains/constants";
 import { resolveBlessingArtifactSetIds } from "#src/services/genshinAssets/domains/resolveBlessingArtifactSetIds";
-import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 describe(resolveBlessingArtifactSetIds, () => {
   const NAME_HASH_OFFSET = 3000;

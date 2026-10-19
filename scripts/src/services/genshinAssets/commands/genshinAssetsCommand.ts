@@ -1,12 +1,12 @@
 import type { CommandDef } from "citty";
 
 import { achievementsCommand } from "#src/services/genshinAssets/commands/achievementsCommand";
-import { characterTrialsCommand } from "#src/services/genshinAssets/commands/characterTrialsCommand";
 import { archiveCommand } from "#src/services/genshinAssets/commands/archiveCommand";
 import { assetIndexCommand } from "#src/services/genshinAssets/commands/assetIndexCommand";
 import { avatarCommand } from "#src/services/genshinAssets/commands/avatarCommand";
 import { behavioursCommand } from "#src/services/genshinAssets/commands/behavioursCommand";
 import { cameraCommand } from "#src/services/genshinAssets/commands/cameraCommand";
+import { characterTrialsCommand } from "#src/services/genshinAssets/commands/characterTrialsCommand";
 import { chestsCommand } from "#src/services/genshinAssets/commands/chestsCommand";
 import { cityAreasCommand } from "#src/services/genshinAssets/commands/cityAreasCommand";
 import { clearanceCommand } from "#src/services/genshinAssets/commands/clearanceCommand";
@@ -25,7 +25,6 @@ import { fishingCommand } from "#src/services/genshinAssets/commands/fishingComm
 import { fitCommand } from "#src/services/genshinAssets/commands/fitCommand";
 import { forgingCommand } from "#src/services/genshinAssets/commands/forgingCommand";
 import { friendshipCommand } from "#src/services/genshinAssets/commands/friendshipCommand";
-import { mailCommand } from "#src/services/genshinAssets/commands/mailCommand";
 import { gadgetsCommand } from "#src/services/genshinAssets/commands/gadgetsCommand";
 import { gatheringCommand } from "#src/services/genshinAssets/commands/gatheringCommand";
 import { gcgCommand } from "#src/services/genshinAssets/commands/gcgCommand";
@@ -37,6 +36,7 @@ import { itemsCommand } from "#src/services/genshinAssets/commands/itemsCommand"
 import { kitsCommand } from "#src/services/genshinAssets/commands/kitsCommand";
 import { leyLineCommand } from "#src/services/genshinAssets/commands/leyLineCommand";
 import { locomotionCommand } from "#src/services/genshinAssets/commands/locomotionCommand";
+import { mailCommand } from "#src/services/genshinAssets/commands/mailCommand";
 import { mapCommand } from "#src/services/genshinAssets/commands/mapCommand";
 import { materialSourcesCommand } from "#src/services/genshinAssets/commands/materialSourcesCommand";
 import { measureCommand } from "#src/services/genshinAssets/commands/measureCommand";

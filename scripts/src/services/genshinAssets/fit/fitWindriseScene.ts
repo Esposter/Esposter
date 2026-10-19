@@ -5,8 +5,8 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { fitAreaOutlines } from "#src/services/genshinAssets/fit/fitAreaOutlines";
 import { fitGroundLayerColours } from "#src/services/genshinAssets/fit/fitGroundLayerColours";
 import { fitGroundLayerField } from "#src/services/genshinAssets/fit/fitGroundLayerField";
-import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitGroundPieces } from "#src/services/genshinAssets/fit/fitGroundPieces";
+import { fitRegionCapitals } from "#src/services/genshinAssets/fit/fitRegionCapitals";
 import { fitRegionLandmarks } from "#src/services/genshinAssets/fit/fitRegionLandmarks";
 import { fitSurfaceColours } from "#src/services/genshinAssets/fit/fitSurfaceColours";
 import { fitWindriseOak } from "#src/services/genshinAssets/fit/fitWindriseOak";

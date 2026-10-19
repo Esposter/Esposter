@@ -1,6 +1,6 @@
 import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceArea";
-
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+
 import { CATALOGUE_PATH } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFile } from "node:fs/promises";

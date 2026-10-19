@@ -170,8 +170,8 @@ describe(getWikiKitCandidates, () => {
       ],
       { weaponType: WeaponType.Catalyst },
       new Map([
-        ["stances.phantasmPerformance.chargedAttack.hits.0", "Phantasm Performance 1-Hit DMG (Nefer)"],
         ["skillHolds.0.action.hits.0", "Hold DMG"],
+        ["stances.phantasmPerformance.chargedAttack.hits.0", "Phantasm Performance 1-Hit DMG (Nefer)"],
       ]),
     );
 

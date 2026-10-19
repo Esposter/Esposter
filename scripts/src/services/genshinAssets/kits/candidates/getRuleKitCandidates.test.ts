@@ -10,15 +10,14 @@ describe(getRuleKitCandidates, () => {
     expect.hasAssertions();
 
     const valueMap = new Map<string, unknown>([
-      ["stances.chillingPenalty.normalAttacks.length", 1],
-      ["stances.chillingPenalty.normalAttacks.0.hits.length", 2],
       ["stances.chillingPenalty.normalAttacks.0.hits.0.hitmarkFrames", 10],
       ["stances.chillingPenalty.normalAttacks.0.hits.1.hitmarkFrames", 12],
+      ["stances.chillingPenalty.normalAttacks.0.hits.length", 2],
+      ["stances.chillingPenalty.normalAttacks.length", 1],
     ]);
 
     expect(getRuleKitCandidates(valueMap, undefined)).toStrictEqual(
       new Map([
-        ["skillHolds.length", [{ provenance: { rule: KitRule.NoHold, source: KitSource.Rule }, value: 0 }]],
         [
           "plungeCollision.hitmarkFrames",
           [{ provenance: { rule: KitRule.CollisionHitmark, source: KitSource.Rule }, value: 0 }],
@@ -36,10 +35,7 @@ describe(getRuleKitCandidates, () => {
             },
           ],
         ],
-        [
-          "stances.chillingPenalty.normalAttacks.0.targeting",
-          [{ provenance: { rule: KitRule.Targeting, source: KitSource.Rule }, value: KitTargeting.Strike }],
-        ],
+        ["skillHolds.length", [{ provenance: { rule: KitRule.NoHold, source: KitSource.Rule }, value: 0 }]],
         [
           "stances.chillingPenalty.normalAttacks.0.hits.0.poiseDamage",
           [
@@ -66,6 +62,10 @@ describe(getRuleKitCandidates, () => {
             },
           ],
         ],
+        [
+          "stances.chillingPenalty.normalAttacks.0.targeting",
+          [{ provenance: { rule: KitRule.Targeting, source: KitSource.Rule }, value: KitTargeting.Strike }],
+        ],
       ]),
     );
   });
@@ -91,11 +91,11 @@ describe(getRuleKitCandidates, () => {
 
     const candidateMap = getRuleKitCandidates(
       new Map<string, unknown>([
-        ["plungeVariants.length", 2],
-        ["plungeVariants.0.hits.length", 1],
         ["plungeVariants.0.hits.0.hitmarkFrames", 35],
-        ["plungeVariants.1.hits.length", 1],
+        ["plungeVariants.0.hits.length", 1],
         ["plungeVariants.1.hits.0.hitmarkFrames", 40],
+        ["plungeVariants.1.hits.length", 1],
+        ["plungeVariants.length", 2],
       ]),
       undefined,
     );

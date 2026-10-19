@@ -1,5 +1,5 @@
-import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonEntryRow } from "#src/models/genshinAssets/domains/ExcelDungeonEntryRow";
+import type { ExcelDungeonLevelEntityRow } from "#src/models/genshinAssets/domains/ExcelDungeonLevelEntityRow";
 import type { ExcelDungeonRow } from "#src/models/genshinAssets/domains/ExcelDungeonRow";
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
@@ -82,10 +82,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Mastery,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [2, 5],
             treeArtifacts: [],
@@ -109,10 +109,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Mastery,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [1, 4],
             treeArtifacts: [],
@@ -140,10 +140,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Forgery,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 2001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [3, 6],
             treeArtifacts: [],
@@ -197,10 +197,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Blessing,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -227,10 +227,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Blessing,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 40,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -267,10 +267,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Blessing,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [1, 2, 3, 4, 5, 6, 7],
             treeArtifacts: blessingArtifacts,
@@ -310,10 +310,10 @@ describe(toDomainLevels, () => {
         kind: DomainKind.Mastery,
         levels: [
           {
+            disorder: "LevelEntity_ElementAddHurt_Fire",
             dungeonId: 1001,
             enemyLevel: 37,
             recommendedRank: 25,
-            disorder: "LevelEntity_ElementAddHurt_Fire",
             resinCost: 20,
             scheduledDaysOfWeek: [7],
             treeArtifacts: [],

@@ -11,8 +11,8 @@ import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constant
 import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWorldGroundHeight";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { DomainKind, LandmarkKind } from "genshin-world";
 import { GameTextKey } from "genshin-text";
+import { DomainKind, LandmarkKind } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/domains/readCatalogueAreaPlaceMap"));
@@ -35,9 +35,9 @@ describe(writeDomainEntrances, () => {
   const point: DumpedScenePoint = {
     $type: "Point",
     areaId: 5,
+    titleTextID: GameTextKey.DomainTitle,
     tranPos: { x: 1473.9225, y: 243.6, z: -321.23572 },
     tranRot: { y: 270 },
-    titleTextID: GameTextKey.DomainTitle,
   };
   const position = { x: 1473.92, z: 321.24 };
   const entrance: DomainEntranceLandmark = {
@@ -64,9 +64,9 @@ describe(writeDomainEntrances, () => {
     vi.mocked(readFittedRegions).mockResolvedValue({
       origin: [0, 0, 0],
       points: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
       regionFiles: [mondstadtFile, liyueFile],
       regionMapPoints,
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
     });
     vi.mocked(readWorldGroundHeight).mockResolvedValue(() => 0);
     vi.mocked(readDomainEntrancePoints).mockResolvedValue({ "282": point });
@@ -89,9 +89,9 @@ describe(writeDomainEntrances, () => {
     vi.mocked(readFittedRegions).mockResolvedValueOnce({
       origin: [0, 0, 0],
       points: [],
-      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
       regionFiles: [mondstadtFile],
       regionMapPoints,
+      transform: { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 },
     });
 
     const report = await writeDomainEntrances({ isDryRun: false });

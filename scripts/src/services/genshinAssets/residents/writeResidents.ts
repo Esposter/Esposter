@@ -90,8 +90,8 @@ export const writeResidents = async ({ isDryRun }: DryRunOptions): Promise<strin
           (residentJoin.regions.get(region) ?? []).map((resident) =>
             Object.assign(resident, {
               duelGameId: RESIDENT_DUEL_GAME_ID_MAP.get(resident.id),
-              weekGame: RESIDENT_WEEK_GAME_MAP.get(resident.id),
               keepsReputation: reputationKeeperIds.has(resident.id) ? true : undefined,
+              weekGame: RESIDENT_WEEK_GAME_MAP.get(resident.id),
             }),
           ),
         );

@@ -12,6 +12,7 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 export type ParityReference = ParityReferenceBase &
   (
     | { capture: string; crop?: ImageRegion; pending?: never; placement?: never; seconds: number; wikiTitle?: never }
+    | { capture?: never; crop?: never; pending: string; placement?: never; seconds?: never; wikiTitle?: never }
     | {
         capture?: never;
         crop?: never;
@@ -20,7 +21,6 @@ export type ParityReference = ParityReferenceBase &
         seconds?: never;
         wikiTitle: string;
       }
-    | { capture?: never; crop?: never; pending: string; placement?: never; seconds?: never; wikiTitle?: never }
   );
 interface ParityReferenceBase {
   // The measure and bar the screen's image is approved by, where the screen records its own; one that records none is

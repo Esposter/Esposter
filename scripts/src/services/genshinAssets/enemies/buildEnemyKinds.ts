@@ -21,10 +21,10 @@ import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMon
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
+import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readAbyssDescribeIds } from "#src/services/genshinAssets/spiralAbyss/readAbyssDescribeIds";
 import { readAbyssFloors } from "#src/services/genshinAssets/spiralAbyss/readAbyssFloors";
 import { toAbyssEnemyKinds } from "#src/services/genshinAssets/spiralAbyss/toAbyssEnemyKinds";
-import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";

@@ -9,9 +9,9 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPublication";
+import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
-import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { CombatTalent, GameDataset, KitPlunge, KitTargeting, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 

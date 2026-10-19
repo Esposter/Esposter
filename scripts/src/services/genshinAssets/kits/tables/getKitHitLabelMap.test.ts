@@ -47,8 +47,8 @@ describe(getKitHitLabelMap, () => {
     const hitLabelMap = getKitHitLabelMap(
       new Map([
         ["skill.hits.0.multiplier", [createCandidate(0)]],
-        ["stances.lunarPhaseShift.normalAttacks.0.hits.0.multiplier", [createCandidate(5)]],
         ["skillHolds.0.action.hits.0.multiplier", [createCandidate(3)]],
+        ["stances.lunarPhaseShift.normalAttacks.0.hits.0.multiplier", [createCandidate(5)]],
       ]),
       createTables(
         new Map([
@@ -68,8 +68,8 @@ describe(getKitHitLabelMap, () => {
     expect(hitLabelMap).toStrictEqual(
       new Map([
         ["skill.hits.0", "Skill DMG"],
-        ["stances.lunarPhaseShift.normalAttacks.0.hits.0", "Lunar Phase Shift 1-Hit DMG"],
         ["skillHolds.0.action.hits.0", "Hold DMG"],
+        ["stances.lunarPhaseShift.normalAttacks.0.hits.0", "Lunar Phase Shift 1-Hit DMG"],
       ]),
     );
   });

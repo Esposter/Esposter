@@ -10,9 +10,9 @@ describe(toTalentUpgradeMap, () => {
   const ROWS: ExcelProudSkillRow[] = [
     {
       breakLevel: 0,
-      descTextMapHash: 0,
       coinCost: 0,
       costItems: [],
+      descTextMapHash: 0,
       level: 1,
       paramDescList: [],
       paramList: [],
@@ -20,12 +20,12 @@ describe(toTalentUpgradeMap, () => {
     },
     {
       breakLevel: 2,
-      descTextMapHash: 0,
       coinCost: 12_500,
       costItems: [
         { count: 3, id: MATERIAL_ID },
         { count: 0, id: 0 },
       ],
+      descTextMapHash: 0,
       level: 2,
       paramDescList: [],
       paramList: [],
@@ -33,9 +33,9 @@ describe(toTalentUpgradeMap, () => {
     },
     {
       breakLevel: 6,
-      descTextMapHash: 0,
       coinCost: 0,
       costItems: [],
+      descTextMapHash: 0,
       level: 11,
       paramDescList: [],
       paramList: [],
@@ -43,9 +43,9 @@ describe(toTalentUpgradeMap, () => {
     },
     {
       breakLevel: 2,
-      descTextMapHash: 0,
       coinCost: 12_500,
       costItems: [],
+      descTextMapHash: 0,
       level: 2,
       paramDescList: [],
       paramList: [],

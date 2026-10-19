@@ -59,8 +59,8 @@ describe(buildTrials, () => {
     },
   ];
   const pieceMap = new Map<number, TrialReliquaryPiece>([
-    [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
     [NO_SET_RELIQUARY_ID, { rarity: 1, setId: 0, slot: ArtifactSlot.FlowerOfLife }],
+    [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
   ]);
   const mainPropRows: ExcelReliquaryMainPropRow[] = [
     { id: MAIN_PROP_ID, propDepotId: 5000, propType: Attribute.AttackPercent },

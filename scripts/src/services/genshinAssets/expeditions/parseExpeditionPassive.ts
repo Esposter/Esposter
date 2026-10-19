@@ -2,8 +2,8 @@ import type { ExpeditionPassive } from "genshin-world";
 import type { Except } from "type-fest";
 
 import { checkIsExpeditionRegion } from "#src/services/genshinAssets/expeditions/checkIsExpeditionRegion";
-import { ExpeditionPassiveKind } from "genshin-world";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { ExpeditionPassiveKind } from "genshin-world";
 
 // The two sentences the game writes an expedition talent's description in: a time talent names its region, and a reward
 // Talent names its region and the hours its expedition runs for

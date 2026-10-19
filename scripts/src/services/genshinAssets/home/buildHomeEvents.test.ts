@@ -1,8 +1,8 @@
+import { buildHomeEvents } from "#src/services/genshinAssets/home/buildHomeEvents";
 import {
   HOME_AVATAR_REWARD_EVENT_TYPE,
   HOME_AVATAR_SUMMON_EVENT_TYPE,
 } from "#src/services/genshinAssets/home/constants";
-import { buildHomeEvents } from "#src/services/genshinAssets/home/buildHomeEvents";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 import { beforeEach, describe, expect, test, vi } from "vitest";

@@ -4,6 +4,16 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 
+interface GoBranchBody extends GoOpenBody {
+  closePosition: number;
+}
+
+interface GoBranchOpening {
+  branch: GoBranchPlace | undefined;
+  openPosition: number;
+  switchFrame: GoSwitchFrame | undefined;
+}
+
 interface GoBranchPlace {
   chain: number;
   index: number;
@@ -13,21 +23,11 @@ interface GoOpenBody extends GoBranchPlace {
   openPosition: number;
 }
 
-interface GoBranchBody extends GoOpenBody {
-  closePosition: number;
-}
-
 // The clauses a switch has opened so far: its chain, how many clauses have started, and the clause the cursor is in
 interface GoSwitchFrame {
   chain: number;
   clause: GoOpenBody | undefined;
   clauseCount: number;
-}
-
-interface GoBranchOpening {
-  branch: GoBranchPlace | undefined;
-  openPosition: number;
-  switchFrame: GoSwitchFrame | undefined;
 }
 
 // The keyword a brace's statement opens with, such as `if` or `switch`, scanning back over its tokens to the line or block

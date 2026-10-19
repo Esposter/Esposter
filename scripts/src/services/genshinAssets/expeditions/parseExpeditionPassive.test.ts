@@ -1,7 +1,6 @@
+import { parseExpeditionPassive } from "#src/services/genshinAssets/expeditions/parseExpeditionPassive";
 import { ExpeditionPassiveKind, ExpeditionRegion } from "genshin-world";
 import { describe, expect, test } from "vitest";
-
-import { parseExpeditionPassive } from "#src/services/genshinAssets/expeditions/parseExpeditionPassive";
 
 describe(parseExpeditionPassive, () => {
   test("a time talent reads its region and the percent of time it saves from the game's description", () => {

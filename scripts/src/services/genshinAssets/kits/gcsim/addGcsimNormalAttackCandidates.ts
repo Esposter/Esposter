@@ -1,7 +1,7 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
+import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";

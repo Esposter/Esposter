@@ -6,10 +6,10 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimAnimationFrameNames } from "#src/services/genshinAssets/kits/gcsim/readGcsimAnimationFrameNames";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimConfig } from "#src/services/genshinAssets/kits/gcsim/readGcsimConfig";
+import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readGcsimTalentArrays } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentArrays";
 import { readGcsimTalentParameters } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameters";
-import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { readGcsimTravels } from "#src/services/genshinAssets/kits/gcsim/readGcsimTravels";
 import { selectGcsimGenderConstants } from "#src/services/genshinAssets/kits/gcsim/selectGcsimGenderConstants";
 import { posix } from "node:path";

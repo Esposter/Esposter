@@ -39,13 +39,13 @@ export const REPUTATION_KEEPER_NPC_ID_MAP: ReadonlyMap<string, number> = new Map
 // Knights of Favonius headquarters, 54, is Ellin's point, the wiki placing her behind it, which no point gives
 export const BUILDING_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
   ["54", 9704],
+  ["62", 1419],
   ["63", 1423],
   ["64", 1435],
   ["65", 1638],
   ["98", 1512],
   ["391", 1673],
   ["511", 1465],
-  ["62", 1419],
 ]);
 // The scene's crafting benches that an NPC stands beside, each by the bench's building point and the NPC who stands beside
 // It: Sumeru's bench, 526, is Kimiya's, the wiki placing him next to the bench on Treasures Street in Sumeru City
