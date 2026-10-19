@@ -10,6 +10,7 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createNightOfTheSkysUnveilingSetModule } from "#src/services/artifact/sets/createNightOfTheSkysUnveilingSetModule";
+import { createReactionTrigger } from "#src/services/artifact/sets/createReactionTrigger.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -61,17 +62,7 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
   // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
   const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
     getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  // A hit the striker lands on the enemy, which triggers the given reactions on it
-  const trigger = (striker: Combatant, reactionTypes: ReactionType[]) =>
-    emitKitEvent(
-      {
-        enemy,
-        kind: KitEventKind.ReactionTriggered,
-        reactions: reactionTypes.map((reactionType) => ({ reactionType })),
-        striker,
-      },
-      context,
-    );
+  const trigger = createReactionTrigger(enemy, context);
   return { context, enemy, other, teamReactionDamageBonus, trigger, wearer };
 };
 

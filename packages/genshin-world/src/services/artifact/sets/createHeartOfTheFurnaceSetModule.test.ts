@@ -6,9 +6,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { HEART_OF_THE_FURNACE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createHeartOfTheFurnaceSetModule } from "#src/services/artifact/sets/createHeartOfTheFurnaceSetModule";
+import { createReactionTrigger } from "#src/services/artifact/sets/createReactionTrigger.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
@@ -17,7 +17,6 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -52,17 +51,7 @@ const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHAR
     kitEffectState,
     party: createParty(characterIds),
   });
-  // A hit the striker lands on the enemy, which triggers the given reactions on it
-  const trigger = (striker: Combatant, reactionTypes: ReactionType[]) =>
-    emitKitEvent(
-      {
-        enemy,
-        kind: KitEventKind.ReactionTriggered,
-        reactions: reactionTypes.map((reactionType) => ({ reactionType })),
-        striker,
-      },
-      context,
-    );
+  const trigger = createReactionTrigger(enemy, context);
   // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
   const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
     getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
