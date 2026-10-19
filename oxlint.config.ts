@@ -403,8 +403,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     ],
     "no-ternary": "off",
     "no-undefined": "off",
-    // The libraries' own underscored names: Zod's `_def` and neverthrow's unwraps
-    "no-underscore-dangle": ["error", { allow: ["_def", "_unsafeUnwrap", "_unsafeUnwrapErr"] }],
+    "no-underscore-dangle": ["error", { allow: ["_def"] }],
     "no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true }],
     "no-use-before-define": "off",
     "no-useless-return": "off",
