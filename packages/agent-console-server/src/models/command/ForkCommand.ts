@@ -7,10 +7,10 @@ import { sessionIdSchema } from "#src/models/command/SessionId";
 import { z } from "zod";
 
 export interface ForkCommand extends BaseCommand<CommandType.Fork>, SessionId {
-  // The message the fork ends at, empty to fork the whole conversation
-  messageUuid: string;
   // A side chat's fork: opened in plan mode and never saved, so closing it leaves nothing on disk
   isSideChat: boolean;
+  // The message the fork ends at, empty to fork the whole conversation
+  messageUuid: string;
 }
 
 export const forkCommandSchema: z.ZodObject<{
