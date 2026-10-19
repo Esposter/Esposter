@@ -553,17 +553,6 @@ watch(
   height: calc(var(--unit) * 52);
 }
 
-.confirm {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 560);
-  padding: calc(var(--unit) * 32);
-  transform: translate(-50%, -50%);
-  border-radius: calc(var(--unit) * 12);
-  background: #2b2a3d;
-}
-
 .confirm-title,
 .confirm-list-label,
 .confirm-warning {
@@ -685,3 +674,4 @@ watch(
   clip-path: inset(50%);
 }
 </style>
+<style scoped src="../../styles/confirmDialog.css"></style>

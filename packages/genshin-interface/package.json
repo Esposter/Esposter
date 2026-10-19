@@ -44,7 +44,11 @@
       "default": "./dist/save.js"
     },
     "./package.json": "./package.json",
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./styles/*.css": {
+      "source": "./src/styles/*.css",
+      "default": "./dist/styles/*.css"
+    }
   },
   "publishConfig": {
     "exports": {
@@ -52,7 +56,8 @@
       "./constants": "./dist/constants.js",
       "./save": "./dist/save.js",
       "./package.json": "./package.json",
-      "./style.css": "./dist/style.css"
+      "./style.css": "./dist/style.css",
+      "./styles/*.css": "./dist/styles/*.css"
     },
     "access": "public"
   },
