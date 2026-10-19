@@ -7,21 +7,20 @@ import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 import type { CurrencyCount, ShopGoodCell } from "genshin-interface";
 import type { GameText } from "genshin-text";
 
+import { useShopGoodCells } from "#src/composables/useShopGoodCells";
+import { useShopPick } from "#src/composables/useShopPick";
 import { CurrencyGameTextKeyMap } from "#src/services/inventory/CurrencyGameTextKeyMap";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { buyShopGoodCount } from "#src/services/shop/buyShopGoodCount";
 import { checkIsShopGoodOffered } from "#src/services/shop/checkIsShopGoodOffered";
-import { computeNextShopRefreshTime } from "#src/services/shop/computeNextShopRefreshTime";
 import { computeShopGoodLeft } from "#src/services/shop/computeShopGoodLeft";
 import { computeShopTabs } from "#src/services/shop/computeShopTabs";
 import { countShopCost } from "#src/services/shop/countShopCost";
 import { discountShopGood } from "#src/services/shop/discountShopGood";
-import { formatShopRefreshCountdown } from "#src/services/shop/formatShopRefreshCountdown";
 import { ShopItemCurrencyMap } from "#src/services/shop/ShopItemCurrencyMap";
-import { ShopRefreshLimitGameTextKeyMap } from "#src/services/shop/ShopRefreshLimitGameTextKeyMap";
 import { takeOne } from "@esposter/shared";
 import { GameScreen, ShopScreen } from "genshin-interface";
-import { fillGameTextValues, GameTextKey } from "genshin-text";
+import { GameTextKey } from "genshin-text";
 
 interface Props {
   // The Adventure Rank the player has reached, which opens the goods that show from it
@@ -45,12 +44,11 @@ interface Props {
 const { adventureRank, gameText, getWorldNow, goods, materialDataMap, nameText, now, reputationLevel } =
   defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
+const { count, goodId, resetShopPick } = useShopPick();
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 // Every good bought, by its id and the moment it was bought, which each good's limit is counted from
 const purchases = defineModel<ShopPurchase[]>("purchases", { required: true });
-const count = ref(1);
-const goodId = ref(0);
 // The tab the goods are shown on, by its id, where the shop has tabs: the first until the player picks another
 const tabId = ref(0);
 const tabs = computed(() => computeShopTabs(goods, gameText));
@@ -80,27 +78,15 @@ const balances = computed<CurrencyCount[]>(() =>
     quantity: countShopCost(inventory.value, wallet.value, itemId),
   })),
 );
-const goodCells = computed<ShopGoodCell[]>(() =>
-  offeredGoods.value.map((good) => {
-    const left = computeShopGoodLeft(good, purchases.value, now);
-    const limitKey = ShopRefreshLimitGameTextKeyMap[good.refresh];
-    const nextRefreshTime = computeNextShopRefreshTime(good.refresh, now);
-    return {
-      id: good.goodsId,
-      limitLabel:
-        left === undefined || limitKey === undefined ? undefined : fillGameTextValues(gameText[limitKey], left),
-      costs: good.costs.map((cost) => ({ count: cost.count, name: getCostName(cost.itemId) })),
-      name: getItemDefinition(good.itemId, nameText, materialDataMap).name,
-      refreshLabel:
-        nextRefreshTime === undefined
-          ? undefined
-          : fillGameTextValues(
-              gameText[GameTextKey.ShopRefresh],
-              formatShopRefreshCountdown(now.until(nextRefreshTime)),
-            ),
-    };
-  }),
-);
+const goodCells = useShopGoodCells({
+  getCostName,
+  getGameText: () => gameText,
+  getNow: () => now,
+  goods: computed(() =>
+    offeredGoods.value.map((good) => ({ good, name: getItemDefinition(good.itemId, nameText, materialDataMap).name })),
+  ),
+  purchases,
+});
 // The most the picked good can be bought for: its limit left and every cost the player holds counted, the dearest cost
 // Limiting it. A cost of nothing is bought one at a time
 const countMaximum = computed(() => {
@@ -132,8 +118,7 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
   inventory.value = bought.inventory;
   purchases.value = bought.purchases;
   wallet.value = bought.wallet;
-  goodId.value = 0;
-  count.value = 1;
+  resetShopPick();
 };
 </script>
 
