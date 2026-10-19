@@ -1,6 +1,5 @@
 {
   "burst.animationFrames": { "cause": "Unsourced", "value": 94 },
-  "burst.hits.length": { "cause": "Unsourced", "value": 2 },
   "burst.hits.0.area": {
     "cause": "BorrowedFromDonor",
     "donor": { "characterId": 10000042, "path": "burst.hits.0.area" }
