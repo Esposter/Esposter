@@ -4,7 +4,7 @@ Diona's kit is its record and one behaviour module, `createDionaKitBehaviour`, a
 
 ## Decisions
 
-- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target; an area does not hold a target, so the paws reach as the targeting does. The paws' poise is zero until the wiki's advanced properties are measured, and the hold threshold is a provisional half second.
+- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target; an area does not hold a target, so the paws reach as the targeting does. Each paw takes the wiki's 30 poise from its advanced properties, and the hold threshold is a provisional half second.
 
 ## Key files
 

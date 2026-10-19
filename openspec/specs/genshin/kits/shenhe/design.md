@@ -4,7 +4,7 @@ Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`,
 
 ## Decisions
 
-- **Shenhe's strikes, charged attack, plunges and Spring Spirit Summoning's press and hold deal 0 poise.** Provisional, as gcsim gives none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Shenhe's strikes and charged attack take the wiki's poise, and her plunges and Spring Spirit Summoning's press and hold deal 0 poise.** The strikes take the wiki's 46.08, 43.44, 56.31, 27.88 and 73.6 per strike, with 27.88 on each of the fourth strike's two hits, and the charged attack the wiki's 120. The plunge collision's 25 is the wiki's too. The zeros are provisional, as gcsim gives none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 - **Spring Spirit Summoning's hold begins at 0.5 seconds.** Provisional: gcsim reads the hold from the input alone, as it does for Eula and Diona.
 - **Divine Maiden's Deliverance's RES Decrease holds between its DoT ticks.** `shenheKit.ts` holds the decrease for one 117-frame tick interval from each tick, where gcsim refreshes it every 18 frames.
 - **Constellation 1's extra use is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to Spring Spirit Summoning, as the [kits README](../README.md#how-a-kit-is-read) gives.
