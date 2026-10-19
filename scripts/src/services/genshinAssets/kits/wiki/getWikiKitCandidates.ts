@@ -8,6 +8,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { GCSIM_TRAVELER_FORM, TRAVELER_NAME } from "#src/services/genshinAssets/kits/constants";
 import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
+import { findHitPathRowsMap } from "#src/services/genshinAssets/kits/wiki/findHitPathRowsMap";
 import { findLabelRows } from "#src/services/genshinAssets/kits/wiki/findLabelRows";
 import { getSlotPath } from "#src/services/genshinAssets/kits/wiki/getSlotPath";
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
@@ -102,8 +103,13 @@ export const getWikiKitCandidates = (
         .filter(([hitPath]) => !hitPath.startsWith("hits."))
         .flatMap(([, { label }]) => findLabelRows(label, properties)),
     );
-    for (const [hitPath, { label }] of talentHitLabels) {
-      const rows = findLabelRows(label, properties);
+    // The rows each hit takes by its label, where hits sharing one take their numbered rows in path order
+    const hitPathRowsMap = findHitPathRowsMap(
+      talentHitLabels.map(([hitPath, { label }]): [string, string] => [hitPath, label]),
+      properties,
+    );
+    for (const [hitPath] of talentHitLabels) {
+      const rows = hitPathRowsMap.get(hitPath) ?? [];
       addRows(
         hitPath,
         hitPath.startsWith("hits.") ? rows.filter((row) => !slotHitRows.has(row)) : rows,

@@ -348,4 +348,30 @@ describe(getWikiKitCandidates, () => {
 
     expect(readCandidateValues(candidateMap)).toStrictEqual({ "normalAttacks.0.hits.0.poiseDamage": [40.5] });
   });
+  test("gives each of two hits sharing a label the numbered row of its place, where those rows disagree on poise", () => {
+    expect.hasAssertions();
+
+    const rosaria: WikiTalentPage = {
+      combatTalent: CombatTalent.ElementalBurst,
+      properties: [
+        { poise: 50, row: 1, title: "Skill DMG 1-Hit" },
+        { poise: 100, row: 2, title: "Skill DMG 2-Hit" },
+      ],
+      revisionId: 1,
+      title: "Rites of Termination",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [rosaria],
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Sword },
+      new Map([
+        ["burst.hits.0", { label: "Skill DMG", proudSkillGroupId: BURST_GROUP_ID }],
+        ["burst.hits.1", { label: "Skill DMG", proudSkillGroupId: BURST_GROUP_ID }],
+      ]),
+    );
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({
+      "burst.hits.0.poiseDamage": [50],
+      "burst.hits.1.poiseDamage": [100],
+    });
+  });
 });
