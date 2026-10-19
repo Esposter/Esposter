@@ -12,9 +12,9 @@ import { gainKitNightingaleStacks } from "#src/services/kit/effects/gainKitNight
 import { startKitHauntedNight } from "#src/services/kit/effects/startKitHauntedNight";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-
 describe(consumeKitNightingaleStacks, () => {
+  const CHARACTER_ID = 1;
+
   test("consumes one stack per opponent hit, and returns how many it consumed", () => {
     expect.hasAssertions();
 

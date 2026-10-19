@@ -42,7 +42,6 @@ const createLisaCombatant = (): Combatant => ({
   kit: LISA_KIT,
   level: 90,
 });
-const OTHER_CHARACTER_ID = 10_000_999;
 
 const createLisaEnemy = (x: number, z: number): Enemy => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
@@ -79,6 +78,8 @@ const readDischargeEnemyStatuses = (ascension: number) => {
 };
 
 describe("lisa kit", () => {
+  const OTHER_CHARACTER_ID = 10_000_999;
+
   test("reads each talent multiplier from its proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

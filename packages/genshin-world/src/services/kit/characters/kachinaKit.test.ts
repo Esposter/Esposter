@@ -10,22 +10,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KACHINA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KACHINA_CHARACTER_ID);
-const DEFENSE = 1000;
-
-// Turbo Twirly's hits' flat damage from Kachina's DEF, with her at the given ascension
-const readSkillBonuses = (ascension: number): number[] => {
-  const combatant: Combatant = {
-    ascension,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.Defense, value: DEFENSE }]),
-    characterId: KACHINA_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: KACHINA_KIT,
-    level: 90,
-    weaponType: WeaponType.Claymore,
-  };
-  return KACHINA_KIT.elementalSkill.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant) ?? 0);
-};
 
 describe(createKachinaKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
@@ -62,6 +46,23 @@ describe(createKachinaKitBehaviour, () => {
 });
 
 describe("the weight of Stone", () => {
+  const DEFENSE = 1000;
+
+  // Turbo Twirly's hits' flat damage from Kachina's DEF, with her at the given ascension
+  const readSkillBonuses = (ascension: number): number[] => {
+    const combatant: Combatant = {
+      ascension,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.Defense, value: DEFENSE }]),
+      characterId: KACHINA_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: KACHINA_KIT,
+      level: 90,
+      weaponType: WeaponType.Claymore,
+    };
+    return KACHINA_KIT.elementalSkill.hits.map((hit) => hit.additiveBaseDamageBonus?.(combatant) ?? 0);
+  };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 

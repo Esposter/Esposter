@@ -11,25 +11,26 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const COMBATANT: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 90,
-};
-const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
-const createHit = (hitmarkSeconds: number, landsWhen?: KitHit["landsWhen"]): KitHit => ({
-  hitArea: HIT_AREA,
-  hitmarkSeconds,
-  landsWhen,
-  poiseDamage: 0,
-  talentMultiplier: 1,
-});
 
 describe(landKitHits, () => {
+  const COMBATANT: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  };
+  const HIT_AREA = { angle: 2 * Math.PI, height: 2, radius: 2.5 };
+  const createHit = (hitmarkSeconds: number, landsWhen?: KitHit["landsWhen"]): KitHit => ({
+    hitArea: HIT_AREA,
+    hitmarkSeconds,
+    landsWhen,
+    poiseDamage: 0,
+    talentMultiplier: 1,
+  });
+
   test("lands every hit whose hitmark has fallen, in order, and returns the index of the next", () => {
     expect.hasAssertions();
     const hits = [createHit(0.5), createHit(1), createHit(2)];

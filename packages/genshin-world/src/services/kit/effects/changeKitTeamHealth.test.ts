@@ -13,7 +13,6 @@ import { describe, expect, test } from "vitest";
 
 const NOELLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NOELLE_CHARACTER_ID);
 
-const MEMBER_ID = 10_000_032;
 const createCombatant = (characterId: number, maxHealth: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: maxHealth }]),
@@ -25,6 +24,8 @@ const createCombatant = (characterId: number, maxHealth: number): Combatant => (
 });
 
 describe(changeKitTeamHealth, () => {
+  const MEMBER_ID = 10_000_032;
+
   test("heals each member of the deployed team by the amount, each over its own Max HP", () => {
     expect.hasAssertions();
     const source = createCombatant(NOELLE_CHARACTER_ID, 10_000);

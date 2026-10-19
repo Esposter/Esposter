@@ -20,20 +20,20 @@ import { describe, expect, test } from "vitest";
 const NEFER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEFER_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-const MAX_HEALTH = 10_000;
-
-const createNeferCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: NEFER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: NEFER_KIT,
-  level: 90,
-  weaponType: WeaponType.Catalyst,
-});
-
 describe(createNeferKitBehaviour, () => {
+  const MAX_HEALTH = 10_000;
+
+  const createNeferCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: NEFER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: NEFER_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([

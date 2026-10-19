@@ -7,9 +7,9 @@ import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNig
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-
 describe(drainKitNightsoulPoints, () => {
+  const CHARACTER_ID = 1;
+
   test("drains the points asked for, and no more than the character holds", () => {
     expect.hasAssertions();
 

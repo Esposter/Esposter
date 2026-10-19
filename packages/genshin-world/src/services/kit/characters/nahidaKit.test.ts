@@ -31,39 +31,39 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// Named entries the record holds for Tri-Karma Purification, Illusory Heart and the burst's per-count rows, read off the
-// Skill and burst proud skill groups by the builder. The hosted record gains them once its kits are published
-const NAHIDA_RECORD_NAMES: Partial<KitRecord> = {
-  areas: { illusoryHeart: { angle: 2 * Math.PI, height: 2, radius: 20 } },
-  frames: { illusoryHeartFirstTick: 96, illusoryHeartStart: 66, illusoryHeartTickInterval: 30 },
-  hits: {
-    triKarmaPurification: {
-      area: { angle: 2 * Math.PI, height: 2, radius: 4.8 },
-      element: Element.Dendro,
-      gauge: 1,
-      hitmarkFrames: 3,
-      multiplier: { index: 2, proudSkillGroupId: 7332 },
-      poiseDamage: 0,
-    },
-  },
-  parameters: {
-    illusoryHeartHydroExtension: [
-      { index: 4, proudSkillGroupId: 7339 },
-      { index: 5, proudSkillGroupId: 7339 },
-    ],
-    illusoryHeartSeconds: 15,
-    triKarmaElectroIntervalCut: [
-      { index: 2, proudSkillGroupId: 7339 },
-      { index: 3, proudSkillGroupId: 7339 },
-    ],
-    triKarmaElementalMastery: { index: 3, proudSkillGroupId: 7332 },
-    triKarmaPyroDamageBonus: [
-      { index: 0, proudSkillGroupId: 7339 },
-      { index: 1, proudSkillGroupId: 7339 },
-    ],
-  },
-};
 const createNahidaKit = async (): Promise<Kit> => {
+  // Named entries the record holds for Tri-Karma Purification, Illusory Heart and the burst's per-count rows, read off
+  // The Skill and burst proud skill groups by the builder. The hosted record gains them once its kits are published
+  const NAHIDA_RECORD_NAMES: Partial<KitRecord> = {
+    areas: { illusoryHeart: { angle: 2 * Math.PI, height: 2, radius: 20 } },
+    frames: { illusoryHeartFirstTick: 96, illusoryHeartStart: 66, illusoryHeartTickInterval: 30 },
+    hits: {
+      triKarmaPurification: {
+        area: { angle: 2 * Math.PI, height: 2, radius: 4.8 },
+        element: Element.Dendro,
+        gauge: 1,
+        hitmarkFrames: 3,
+        multiplier: { index: 2, proudSkillGroupId: 7332 },
+        poiseDamage: 0,
+      },
+    },
+    parameters: {
+      illusoryHeartHydroExtension: [
+        { index: 4, proudSkillGroupId: 7339 },
+        { index: 5, proudSkillGroupId: 7339 },
+      ],
+      illusoryHeartSeconds: 15,
+      triKarmaElectroIntervalCut: [
+        { index: 2, proudSkillGroupId: 7339 },
+        { index: 3, proudSkillGroupId: 7339 },
+      ],
+      triKarmaElementalMastery: { index: 3, proudSkillGroupId: 7332 },
+      triKarmaPyroDamageBonus: [
+        { index: 0, proudSkillGroupId: 7339 },
+        { index: 1, proudSkillGroupId: 7339 },
+      ],
+    },
+  };
   const [record, talentMultiplierMap, characterTalentKits] = await Promise.all([
     readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, GameDataset.Kits, String(NAHIDA_CHARACTER_ID), kitRecordSchema),
     readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NAHIDA_CHARACTER_ID]),
@@ -79,10 +79,6 @@ const createNahidaKit = async (): Promise<Kit> => {
   return buildKit({ ...record, ...NAHIDA_RECORD_NAMES }, talentMultiplierMap, talentLevelMap, createNahidaKitBehaviour);
 };
 const KIT = await createNahidaKit();
-// The kit the four original tests read, the same kit the new ones build
-const NAHIDA_KIT = KIT;
-// The elemental skill's first hit, the one a press strikes with
-const pressHit = takeOne(KIT.elementalSkill.hits);
 const createCombatant = (characterId: number, element: Element, elementMastery = 0, kit: Kit = KIT): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.ElementalMastery, value: elementMastery }]),
@@ -101,6 +97,9 @@ const getField = (effects: readonly { kind: string }[]) =>
   effects.find((effect): effect is KitField => effect.kind === "field");
 
 describe(createNahidaKitBehaviour, () => {
+  // The kit the four original tests read, the same kit the new ones build
+  const NAHIDA_KIT = KIT;
+
   test("reads the strikes', charged attack's, plunges' and skill's multipliers from her proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -160,6 +159,9 @@ describe(createNahidaKitBehaviour, () => {
 });
 
 describe("seeds of Skandha", () => {
+  // The elemental skill's first hit, the one a press strikes with
+  const pressHit = takeOne(KIT.elementalSkill.hits);
+
   test("a cast's press marks each enemy it strikes", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);
@@ -199,6 +201,9 @@ describe("seeds of Skandha", () => {
 });
 
 describe("tri-Karma Purification", () => {
+  // The elemental skill's first hit, the one a press strikes with
+  const pressHit = takeOne(KIT.elementalSkill.hits);
+
   test("a reaction on a marked enemy strikes every marked enemy, and a reaction on an unmarked one strikes nothing", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);

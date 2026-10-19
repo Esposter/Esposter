@@ -30,7 +30,6 @@ import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 
 const createCombatant = (onKitEvent: Kit["onKitEvent"], attack = 1000): Combatant => ({
   ascension: 0,
@@ -55,7 +54,8 @@ const strikeWithHit = (
   strikeKitEnemies(strikes, context);
 };
 
-// Strikes a hit into the enemies given, and returns the enemies the team's kits saw it damage, in the order it struck them
+// Strikes a hit into the enemies given, and returns the enemies the team's kits saw it damage, in the order
+// It struck them
 const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
   const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
   const combatant = createCombatant(onKitEvent);
@@ -70,36 +70,38 @@ const strikeEnemies = (hit: KitHit, enemies: Enemy[]) => {
     .map(({ enemy }) => enemy);
 };
 
-// A character other than the Traveler, whose kit gives the party strike bonus a test sets
-const OTHER_CHARACTER_ID = 1;
-
-// A combatant of another character, whose kit gives the party strike bonus given
-const createMember = (getPartyStrikeBonus: Kit["getPartyStrikeBonus"]): Combatant => ({
-  ...createCombatant(undefined),
-  characterId: OTHER_CHARACTER_ID,
-  kit: { ...TRAVELER_KIT, getPartyStrikeBonus },
-});
-
-const SURVIVING_HEALTH = 1e9;
-
-// The health the Traveler's first hit takes off an enemy that survives it, struck by the striker with the members given
-// Among the built combatants of the team, the team given as the deployed one, and the roll its critical check takes: 0 lands
-// A critical hit for any Critical Rate above zero, and 1 never does
-const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[], roll = 1): number => {
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  enemy.health = SURVIVING_HEALTH;
-  const context = createKitTestContext(striker, {
-    characterIdCombatantMap: new Map([striker, ...members].map((combatant) => [combatant.characterId, combatant])),
-    enemyMap: new Map([[enemy.id, enemy]]),
-    enemyTables,
-    party: createParty(teamCharacterIds),
-    random: () => roll,
-  });
-  strikeKitEnemies([{ body: context.body, combatant: striker, hit: KIT_HIT, target: enemy }], context);
-  return SURVIVING_HEALTH - enemy.health;
-};
-
 describe(strikeKitEnemies, () => {
+  const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+
+  // A character other than the Traveler, whose kit gives the party strike bonus a test sets
+  const OTHER_CHARACTER_ID = 1;
+
+  // A combatant of another character, whose kit gives the party strike bonus given
+  const createMember = (getPartyStrikeBonus: Kit["getPartyStrikeBonus"]): Combatant => ({
+    ...createCombatant(undefined),
+    characterId: OTHER_CHARACTER_ID,
+    kit: { ...TRAVELER_KIT, getPartyStrikeBonus },
+  });
+
+  const SURVIVING_HEALTH = 1e9;
+
+  // The health the Traveler's first hit takes off an enemy that survives it, struck by the striker with the members
+  // Given among the built combatants of the team, the team given as the deployed one, and the roll its critical check
+  // Takes: 0 lands a critical hit for any Critical Rate above zero, and 1 never does
+  const takeStrikeHealth = (striker: Combatant, members: Combatant[], teamCharacterIds: number[], roll = 1): number => {
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.health = SURVIVING_HEALTH;
+    const context = createKitTestContext(striker, {
+      characterIdCombatantMap: new Map([striker, ...members].map((combatant) => [combatant.characterId, combatant])),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      party: createParty(teamCharacterIds),
+      random: () => roll,
+    });
+    strikeKitEnemies([{ body: context.body, combatant: striker, hit: KIT_HIT, target: enemy }], context);
+    return SURVIVING_HEALTH - enemy.health;
+  };
+
   test("sends the team's kits an enemy hit that carries the element it was dealt as", () => {
     expect.hasAssertions();
     const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();

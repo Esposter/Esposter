@@ -28,47 +28,6 @@ import { describe, expect, test } from "vitest";
 const YAOYAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YAOYAO_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const { readFrame, readFrameList, readHits, readRecordParameter } = await readCharacterKitRecord(YAOYAO_CHARACTER_ID);
-// A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
-const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
-const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
-const MAX_HEALTH = 10_000;
-const BURST_RADISH_HEAL_SHARE = readRecordParameter("burstRadishHealMaxHealthShare");
-const BURST_RADISH_FLAT_HEAL = readRecordParameter("burstRadishFlatHeal");
-const MEMBER_ID = 10_000_032;
-const MEMBER_MAX_HEALTH = 20_000;
-// Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the
-// Throw. Each tick lands on the step its frame names, so a test steps to that frame and one frame short of it
-const YUEGUI_SPAWN_FRAMES = readFrame("skillCooldownStart") + readFrame("yueguiSpawnDelay");
-const YUEGUI_FIRST_THROW_FRAMES = readFrame("yueguiFirstThrow");
-const YUEGUI_THROW_INTERVAL_FRAMES = readFrame("yueguiThrowInterval");
-const RADISH_HITMARK_FRAMES = takeOne(readHits("skillRadish")).hitmarkFrames;
-const MEGA_RADISH_HITMARK_FRAMES = takeOne(readHits("megaRadish")).hitmarkFrames;
-// The frames after the cast at which her burst spawns each Yuegui behind her, and the frames the burst lasts
-const JUMPING_YUEGUI_SPAWN_FRAMES = readFrameList("jumpingYueguiSpawns");
-const BURST_DURATION_FRAMES = readFrame("burstDuration");
-const readJumpingYueguiSpawnFrame = (index: number): number => takeOne(JUMPING_YUEGUI_SPAWN_FRAMES, index);
-
-const createYaoyaoCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: YAOYAO_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: YAOYAO_KIT,
-  level: 90,
-  weaponType: WeaponType.Polearm,
-});
-
-// Yaoyao alone on the field at the given share of her Max HP, standing at the origin facing along the negative z axis
-const createYaoyaoContext = (
-  healthShare: number,
-  context: Partial<KitContext> = {},
-  combatant: Partial<Combatant> = {},
-): KitContext => {
-  const party = createParty([YAOYAO_CHARACTER_ID]);
-  getPartyMember(party, YAOYAO_CHARACTER_ID).healthShare = healthShare;
-  return createKitTestContext({ ...createYaoyaoCombatant(), ...combatant }, { party, ...context });
-};
 
 const createEnemyAt = (x: number, z: number) => ({
   ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
@@ -113,6 +72,48 @@ const findBuffs = (context: KitContext, attribute: Attribute): KitBuff[] =>
   );
 
 describe(createYaoyaoKitBehaviour, () => {
+  // A radish's heal, its share of Yaoyao's Max HP and its flat amount, for the skill's radish and the burst's
+  const SKILL_RADISH_HEAL_SHARE = readRecordParameter("skillRadishHealMaxHealthShare");
+  const SKILL_RADISH_FLAT_HEAL = readRecordParameter("skillRadishFlatHeal");
+  const MAX_HEALTH = 10_000;
+  const BURST_RADISH_HEAL_SHARE = readRecordParameter("burstRadishHealMaxHealthShare");
+  const BURST_RADISH_FLAT_HEAL = readRecordParameter("burstRadishFlatHeal");
+  const MEMBER_ID = 10_000_032;
+  const MEMBER_MAX_HEALTH = 20_000;
+  // Frames from the cast to the Yuegui's spawn, its first throw after the spawn, and the radish's hitmark after the
+  // Throw. Each tick lands on the step its frame names, so a test steps to that frame and one frame short of it
+  const YUEGUI_SPAWN_FRAMES = readFrame("skillCooldownStart") + readFrame("yueguiSpawnDelay");
+  const YUEGUI_FIRST_THROW_FRAMES = readFrame("yueguiFirstThrow");
+  const YUEGUI_THROW_INTERVAL_FRAMES = readFrame("yueguiThrowInterval");
+  const RADISH_HITMARK_FRAMES = takeOne(readHits("skillRadish")).hitmarkFrames;
+  const MEGA_RADISH_HITMARK_FRAMES = takeOne(readHits("megaRadish")).hitmarkFrames;
+  // The frames after the cast at which her burst spawns each Yuegui behind her, and the frames the burst lasts
+  const JUMPING_YUEGUI_SPAWN_FRAMES = readFrameList("jumpingYueguiSpawns");
+  const BURST_DURATION_FRAMES = readFrame("burstDuration");
+  const readJumpingYueguiSpawnFrame = (index: number): number => takeOne(JUMPING_YUEGUI_SPAWN_FRAMES, index);
+
+  const createYaoyaoCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: YAOYAO_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: YAOYAO_KIT,
+    level: 90,
+    weaponType: WeaponType.Polearm,
+  });
+
+  // Yaoyao alone on the field at the given share of her Max HP, standing at the origin facing along the negative z axis
+  const createYaoyaoContext = (
+    healthShare: number,
+    context: Partial<KitContext> = {},
+    combatant: Partial<Combatant> = {},
+  ): KitContext => {
+    const party = createParty([YAOYAO_CHARACTER_ID]);
+    getPartyMember(party, YAOYAO_CHARACTER_ID).healthShare = healthShare;
+    return createKitTestContext({ ...createYaoyaoCombatant(), ...combatant }, { party, ...context });
+  };
+
   test("raphanus sky cluster spawns the Yuegui two metres ahead of her at its spawn frame after the cast", () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(0.5);

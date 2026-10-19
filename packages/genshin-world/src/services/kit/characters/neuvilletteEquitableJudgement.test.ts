@@ -14,18 +14,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const NEUVILLETTE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NEUVILLETTE_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: NEUVILLETTE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: NEUVILLETTE_KIT,
-  level: 90,
-};
 
-// The judgement's eight waves, their hitmarks counted from the start of the judgement, as gcsim's ticks land them
-const WAVE_FRAMES = [6, 28, 53, 78, 103, 128, 153, 173];
 const createWave = (hitmarkFrames: number): KitHit => ({
   element: Element.Hydro,
   gauge: 1,
@@ -34,7 +23,6 @@ const createWave = (hitmarkFrames: number): KitHit => ({
   poiseDamage: 0,
   talentMultiplier: 0.073186,
 });
-const waves = WAVE_FRAMES.map(createWave);
 
 // The frames, counted from the step after the length is decided, on which a strike lands
 const getLandingFrames = (context: KitContext, frames: number): number[] => {
@@ -47,6 +35,20 @@ const getLandingFrames = (context: KitContext, frames: number): number[] => {
 };
 
 describe(createEquitableJudgementLength, () => {
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: NEUVILLETTE_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: NEUVILLETTE_KIT,
+    level: 90,
+  };
+
+  // The judgement's eight waves, their hitmarks counted from the start of the judgement, as gcsim's ticks land them
+  const WAVE_FRAMES = [6, 28, 53, 78, 103, 128, 153, 173];
+  const waves = WAVE_FRAMES.map(createWave);
+
   test("lasts the whole judgement with no droplet in its pick-up area, and less as its legal evaluation picks droplets up", () => {
     expect.hasAssertions();
 

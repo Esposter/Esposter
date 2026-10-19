@@ -7,30 +7,30 @@ import { computeUnlockedJumpLandmarks } from "#src/services/map/computeUnlockedJ
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const ARRIVAL = { heightOffset: 0, position: { x: 1, z: 2 }, rotation: 0 };
-const domainEntrance: Landmark = {
-  areaId: "area-1",
-  arrival: ARRIVAL,
-  domainKind: DomainKind.Blessing,
-  entryId: 1,
-  heightOffset: 0,
-  id: "domain-entrance-1",
-  kind: LandmarkKind.DomainEntrance,
-  position: { x: 1, z: 2 },
-  rotation: 0,
-  titleTextKey: GameTextKey.DomainEntrance24,
-};
-
-// A weekly boss's Trounce Domain entrance, whose entry id names the boss whose introducing quests open it
-const weeklyEntrance: Landmark = {
-  ...domainEntrance,
-  domainKind: DomainKind.Trounce,
-  entryId: 1006,
-  id: "weekly-entrance",
-};
-const noQuests = new Set<string>();
-
 describe(computeUnlockedJumpLandmarks, () => {
+  const ARRIVAL = { heightOffset: 0, position: { x: 1, z: 2 }, rotation: 0 };
+  const domainEntrance: Landmark = {
+    areaId: "area-1",
+    arrival: ARRIVAL,
+    domainKind: DomainKind.Blessing,
+    entryId: 1,
+    heightOffset: 0,
+    id: "domain-entrance-1",
+    kind: LandmarkKind.DomainEntrance,
+    position: { x: 1, z: 2 },
+    rotation: 0,
+    titleTextKey: GameTextKey.DomainEntrance24,
+  };
+
+  // A weekly boss's Trounce Domain entrance, whose entry id names the boss whose introducing quests open it
+  const weeklyEntrance: Landmark = {
+    ...domainEntrance,
+    domainKind: DomainKind.Trounce,
+    entryId: 1006,
+    id: "weekly-entrance",
+  };
+  const noQuests = new Set<string>();
+
   test("an unlocked entrance joins the jumps", () => {
     expect.hasAssertions();
 

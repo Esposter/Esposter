@@ -28,7 +28,6 @@ import { assert, describe, expect, test, vi } from "vitest";
 
 const NICOLE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, NICOLE_CHARACTER_ID);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const TRAVELER_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 const createNicoleCombatant = (attack: number): Combatant => ({
@@ -42,8 +41,8 @@ const createNicoleCombatant = (attack: number): Combatant => ({
   level: 90,
 });
 
-// A team of Nicole and the Traveler on one enemy at the body's origin, with the Traveler's kit hearing what the team's events
-// Report, so each projection's damage shows in its count
+// A team of Nicole and the Traveler on one enemy at the body's origin, with the Traveler's kit hearing what the team's
+// Events report, so each projection's damage shows in its count
 const createProjectionScene = (onKitEvent: Kit["onKitEvent"], nicoleFields: Partial<Combatant> = {}) => {
   const nicole = { ...createNicoleCombatant(1000), ...nicoleFields };
   const traveler: Combatant = {
@@ -98,14 +97,6 @@ const getBuffs = (context: KitContext, characterId: number): KitBuff[] =>
 const emitSwap = (context: KitContext, characterId: number, previousCharacterId: number): void =>
   emitKitEvent({ characterId, kind: KitEventKind.CharacterSwapped, previousCharacterId }, context);
 
-// A strike of the Traveler's normal attack, dealt under the attack tag given, which the Nicole kit's strike hooks read
-const createTravelerStrike = (context: KitContext, traveler: Combatant, attackTag?: AttackTag): KitStrike => ({
-  attackTag,
-  body: context.body,
-  combatant: traveler,
-  hit: TRAVELER_HIT,
-});
-
 // The enemy hits a striker lands on an enemy, one after another, each reported to the team's kits
 const emitEnemyHits = (
   context: KitContext,
@@ -135,6 +126,17 @@ const getPartyStrikeBonus = (
   )?.[field] ?? 0;
 
 describe(createNicoleKitBehaviour, () => {
+  const TRAVELER_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+
+  // A strike of the Traveler's normal attack, dealt under the attack tag given, which the Nicole kit's
+  // Strike hooks read
+  const createTravelerStrike = (context: KitContext, traveler: Combatant, attackTag?: AttackTag): KitStrike => ({
+    attackTag,
+    body: context.body,
+    combatant: traveler,
+    hit: TRAVELER_HIT,
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([

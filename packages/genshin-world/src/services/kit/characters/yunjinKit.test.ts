@@ -53,8 +53,6 @@ const createYunjinCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Polearm,
 });
-// A teammate of Yun Jin's in the element given, with Yun Jin's kit standing in for its own, which none of these tests reads
-const OTHER_CHARACTER_ID = 1;
 const createTeammate = (characterId: number, element?: Element): Combatant => ({
   ...createYunjinCombatant(),
   characterId,
@@ -263,12 +261,16 @@ describe("Ascension 1's counter window", () => {
 });
 
 describe("Cliffbreaker's Banner's DMG Increase", () => {
+  // A teammate of Yun Jin's in the element given, with Yun Jin's kit standing in for its own, which none of
+  // These tests reads
+  const OTHER_CHARACTER_ID = 1;
+
   const BURST_HIT_SECONDS = takeOne(YUNJIN_KIT.elementalBurst.hits).hitmarkSeconds;
   const NORMAL_ATTACK_HIT = takeOne(takeOne(YUNJIN_KIT.normalAttacks).hits);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const party = createParty([YUNJIN_CHARACTER_ID]);
-  // The flat base damage a strike of hers adds as it is priced against the enemy, with the effects on the team given, and
-  // The team's combatants by id, which default to Yun Jin alone
+  // The flat base damage a strike of hers adds as it is priced against the enemy, with the effects on the team given,
+  // And the team's combatants by id, which default to Yun Jin alone
   const getIncrease = (
     strike: KitStrike,
     kitEffectState: KitEffectState,
@@ -283,7 +285,8 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     hit,
   });
   const teamParty = createParty([YUNJIN_CHARACTER_ID, OTHER_CHARACTER_ID]);
-  // The flat base damage a teammate's normal attack adds from the team's party strike hooks, as a strike of the team takes it
+  // The flat base damage a teammate's normal attack adds from the team's party strike hooks, as a strike of the
+  // Team takes it
   const getPartyIncrease = (
     teammate: Combatant,
     characterIdCombatantMap: Map<number, Combatant>,
@@ -433,7 +436,8 @@ describe("Cliffbreaker's Banner's DMG Increase", () => {
     }
   });
 
-  // Yun Jin with the teammates given, each drawn in its element, at the ascension given, with the team's combatants by id
+  // Yun Jin with the teammates given, each drawn in its element, at the ascension given, with the team's
+  // Combatants by id
   const createYunjinTeam = (ascension: number, teammateElements: Element[]) => {
     const combatant: Combatant = { ...createYunjinCombatant(), ascension };
     const teammates = teammateElements.map((element, index) => createTeammate(OTHER_CHARACTER_ID + index, element));

@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
-const STURDY_HEALTH = 1e9;
 
 // A Natlan member alone in the party, whose kit records the Nightsoul bursts the team's kits hear
 const createNatlanTeam = () => {
@@ -47,13 +46,15 @@ const createNatlanTeam = () => {
   return { bursts, context, striker };
 };
 
-const createSturdyEnemy = (): Enemy => ({
-  ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, ""),
-  health: STURDY_HEALTH,
-  maxHealth: STURDY_HEALTH,
-});
-
 describe(dealKitEnemyDamage, () => {
+  const STURDY_HEALTH = 1e9;
+
+  const createSturdyEnemy = (): Enemy => ({
+    ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x: 0, z: 0 } }, ""),
+    health: STURDY_HEALTH,
+    maxHealth: STURDY_HEALTH,
+  });
+
   test("elemental damage a party member deals sets off the team's Nightsoul burst while a Natlan member is in the party, and the kits hear it", () => {
     expect.hasAssertions();
     const { bursts, context, striker } = createNatlanTeam();

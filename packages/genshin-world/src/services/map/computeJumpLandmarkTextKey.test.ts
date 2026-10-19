@@ -8,9 +8,9 @@ import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmar
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-const arrival = { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 };
-
 describe(computeJumpLandmarkTextKey, () => {
+  const arrival = { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 };
+
   test("names a domain entrance by its own title", () => {
     expect.hasAssertions();
 

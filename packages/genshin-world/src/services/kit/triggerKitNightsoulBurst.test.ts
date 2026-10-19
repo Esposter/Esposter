@@ -16,7 +16,6 @@ import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { describe, expect, test } from "vitest";
 
 const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
-const ENEMY = {} as Enemy;
 
 // The given seconds run through the team's effects and its cooldowns, which the world steps together
 const stepTeamSeconds = (context: KitContext, seconds: number) => {
@@ -51,6 +50,8 @@ const createTeam = (size: number, regionId = NATLAN_REGION_ID) => {
 };
 
 describe(triggerKitNightsoulBurst, () => {
+  const ENEMY = {} as Enemy;
+
   test("a party member's damage triggers the team's Nightsoul burst while a Natlan member is in the party, and the kits hear it", () => {
     expect.hasAssertions();
     const { bursts, context, members } = createTeam(1);

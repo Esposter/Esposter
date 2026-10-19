@@ -15,37 +15,38 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const member: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
-const combatantMap = new Map([[TRAVELER_CHARACTER_ID, member]]);
-const healthChanged = {
-  bondOfLifeShare: 0,
-  characterId: TRAVELER_CHARACTER_ID,
-  healthShare: 0,
-  kind: KitEventKind.HealthChanged,
-  isFallRefused: false,
-  overflowHealthShare: 0,
-} as const;
-const party = createParty([TRAVELER_CHARACTER_ID]);
-// A 20% HealthPercent buff, which raises the member's Max HP from 10,000 to 12,000
-const healthBuffs: KitEffect[] = [
-  {
-    amount: 0.2,
-    attribute: Attribute.HealthPercent,
-    characterId: TRAVELER_CHARACTER_ID,
-    kind: "buff",
-    secondsRemaining: 1,
-  },
-];
 
 describe(getKitHealedHp, () => {
+  const member: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: KIT,
+    level: 1,
+  };
+  const combatantMap = new Map([[TRAVELER_CHARACTER_ID, member]]);
+  const healthChanged = {
+    bondOfLifeShare: 0,
+    characterId: TRAVELER_CHARACTER_ID,
+    healthShare: 0,
+    kind: KitEventKind.HealthChanged,
+    isFallRefused: false,
+    overflowHealthShare: 0,
+  } as const;
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+  // A 20% HealthPercent buff, which raises the member's Max HP from 10,000 to 12,000
+  const healthBuffs: KitEffect[] = [
+    {
+      amount: 0.2,
+      attribute: Attribute.HealthPercent,
+      characterId: TRAVELER_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 1,
+    },
+  ];
+
   test("counts the HP a heal restores as its share of the healed member's Max HP", () => {
     expect.hasAssertions();
 

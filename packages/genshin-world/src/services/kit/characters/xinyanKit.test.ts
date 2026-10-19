@@ -34,28 +34,6 @@ const createXinyanCombatant = (ascension = 0): Combatant => ({
   weaponType: WeaponType.Claymore,
 });
 
-// A member beside Xinyan on the team
-const ALLY_CHARACTER_ID = 10_000_050;
-// The Physical DMG Bonus buffs on the team once Xinyan at the ascension sets her shield, as [member, amount], and after
-// The shield breaks when it is told to
-const readPhysicalDamageBuffs = (ascension: number, isShieldBroken = false): [number, number][] => {
-  const combatant = createXinyanCombatant(ascension);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const context = createKitTestContext(combatant, {
-    kitEffectState,
-    party: createParty([XINYAN_CHARACTER_ID, ALLY_CHARACTER_ID]),
-  });
-  XINYAN_KIT.elementalSkill.onStart?.(context);
-  if (isShieldBroken) {
-    const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
-    shield.secondsRemaining = 0;
-    XINYAN_KIT.onKitEvent?.({ effect: shield, kind: KitEventKind.EffectExpired }, context, combatant);
-  }
-  return kitEffectState.effects
-    .filter((effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.PhysicalDamageBonus)
-    .map(({ amount, characterId }) => [characterId, amount]);
-};
-
 describe(createXinyanKitBehaviour, () => {
   const skillHit = takeOne(XINYAN_KIT.elementalSkill.hits);
   // Casts Sweeping Fervor, then strikes the given number of enemies with its hit, as the hit's strikes are read
@@ -117,6 +95,30 @@ describe(createXinyanKitBehaviour, () => {
 });
 
 describe("\"...Now That's Rock 'N' Roll!\"", () => {
+  // A member beside Xinyan on the team
+  const ALLY_CHARACTER_ID = 10_000_050;
+  // The Physical DMG Bonus buffs on the team once Xinyan at the ascension sets her shield, as [member, amount], and
+  // After the shield breaks when it is told to
+  const readPhysicalDamageBuffs = (ascension: number, isShieldBroken = false): [number, number][] => {
+    const combatant = createXinyanCombatant(ascension);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, {
+      kitEffectState,
+      party: createParty([XINYAN_CHARACTER_ID, ALLY_CHARACTER_ID]),
+    });
+    XINYAN_KIT.elementalSkill.onStart?.(context);
+    if (isShieldBroken) {
+      const shield = takeOne(kitEffectState.effects.filter((effect): effect is KitShield => effect.kind === "shield"));
+      shield.secondsRemaining = 0;
+      XINYAN_KIT.onKitEvent?.({ effect: shield, kind: KitEventKind.EffectExpired }, context, combatant);
+    }
+    return kitEffectState.effects
+      .filter(
+        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.PhysicalDamageBonus,
+      )
+      .map(({ amount, characterId }) => [characterId, amount]);
+  };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 

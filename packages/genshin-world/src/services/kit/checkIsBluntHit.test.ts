@@ -12,15 +12,15 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const GOROU_CHARACTER_ID = 10_000_055;
-const KLEE_CHARACTER_ID = 10_000_029;
-const NINGGUANG_CHARACTER_ID = 10_000_027;
-const YUN_JIN_CHARACTER_ID = 10_000_064;
-const ZHONGLI_CHARACTER_ID = 10_000_030;
-
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(checkIsBluntHit, () => {
+  const GOROU_CHARACTER_ID = 10_000_055;
+  const KLEE_CHARACTER_ID = 10_000_029;
+  const NINGGUANG_CHARACTER_ID = 10_000_027;
+  const YUN_JIN_CHARACTER_ID = 10_000_064;
+  const ZHONGLI_CHARACTER_ID = 10_000_030;
+
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

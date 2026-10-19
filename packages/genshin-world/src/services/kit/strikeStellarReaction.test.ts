@@ -25,16 +25,17 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const LEVEL = 90;
-const STURDY_HEALTH = 1e9;
-// Sturdy, so a hit is not clamped to the health the camp member starts with
-const createSturdyEnemy = () => ({
-  ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-  health: STURDY_HEALTH,
-  maxHealth: STURDY_HEALTH,
-});
 
 describe(strikeStellarReaction, () => {
+  const LEVEL = 90;
+  const STURDY_HEALTH = 1e9;
+  // Sturdy, so a hit is not clamped to the health the camp member starts with
+  const createSturdyEnemy = () => ({
+    ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    health: STURDY_HEALTH,
+    maxHealth: STURDY_HEALTH,
+  });
+
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

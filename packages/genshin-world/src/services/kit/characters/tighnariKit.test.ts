@@ -23,7 +23,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TIGHNARI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TIGHNARI_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 10_000_042;
 const createTighnariCombatant = (ascension: number, elementalMastery: number): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([
@@ -38,43 +37,46 @@ const createTighnariCombatant = (ascension: number, elementalMastery: number): C
   weaponType: WeaponType.Bow,
 });
 
-// The buffs the burst gives the party as it starts, with a party of Tighnari and one other member
-const startBurst = (constellationCount: number): KitBuff[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
-  TIGHNARI_KIT.elementalBurst.onStart?.(
-    createKitTestContext(combatant, {
+describe(createTighnariKitBehaviour, () => {
+  const OTHER_CHARACTER_ID = 10_000_042;
+
+  // The buffs the burst gives the party as it starts, with a party of Tighnari and one other member
+  const startBurst = (constellationCount: number): KitBuff[] => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
+    TIGHNARI_KIT.elementalBurst.onStart?.(
+      createKitTestContext(combatant, {
+        kitEffectState,
+        party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
+      }),
+    );
+    return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+  };
+
+  // The buffs the burst gives the party as it starts, then a reaction of the given kind and attack tag lands
+  // On an enemy
+  const triggerReaction = (reactionType: ReactionType, attackTag: AttackTag, constellationCount: number): KitBuff[] => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
+    const context = createKitTestContext(combatant, {
       kitEffectState,
       party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
-    }),
-  );
-  return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
-};
+    });
+    TIGHNARI_KIT.elementalBurst.onStart?.(context);
+    TIGHNARI_KIT.onKitEvent?.(
+      {
+        attackTag,
+        enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+        kind: KitEventKind.ReactionTriggered,
+        reactions: [{ element: Element.Pyro, reactionType }],
+        striker: combatant,
+      },
+      context,
+      combatant,
+    );
+    return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+  };
 
-// The buffs the burst gives the party as it starts, then a reaction of the given kind and attack tag lands on an enemy
-const triggerReaction = (reactionType: ReactionType, attackTag: AttackTag, constellationCount: number): KitBuff[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  const combatant = { ...createTighnariCombatant(0, 0), constellationCount };
-  const context = createKitTestContext(combatant, {
-    kitEffectState,
-    party: createParty([TIGHNARI_CHARACTER_ID, OTHER_CHARACTER_ID]),
-  });
-  TIGHNARI_KIT.elementalBurst.onStart?.(context);
-  TIGHNARI_KIT.onKitEvent?.(
-    {
-      attackTag,
-      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-      kind: KitEventKind.ReactionTriggered,
-      reactions: [{ element: Element.Pyro, reactionType }],
-      striker: combatant,
-    },
-    context,
-    combatant,
-  );
-  return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
-};
-
-describe(createTighnariKitBehaviour, () => {
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [

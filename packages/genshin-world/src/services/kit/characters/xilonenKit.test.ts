@@ -18,7 +18,6 @@ import { describe, expect, test } from "vitest";
 
 const XILONEN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XILONEN_CHARACTER_ID);
 const toFrames = (seconds: number) => Math.round(seconds * 60);
-const JEAN_CHARACTER_ID = 10_000_003;
 
 const createXilonenCombatant = (): Combatant => ({
   ascension: 0,
@@ -31,6 +30,8 @@ const createXilonenCombatant = (): Combatant => ({
 });
 
 describe(createXilonenKitBehaviour, () => {
+  const JEAN_CHARACTER_ID = 10_000_003;
+
   test("reads her strikes and charged attack from her proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [

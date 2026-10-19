@@ -40,10 +40,6 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createEnemyAt = (x: number, z: number): Enemy =>
   createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z } }, "");
 
-// Kinich three metres east of the enemy at the origin, pressing his skill at it, the blind spot's side drawn from the
-// Given random source. The blind spot lies a quarter turn either side of his bearing from that enemy: a draw below one
-// Half puts it at z = 3, one half or above at z = -3
-const OTHER_CHARACTER_ID = 10_000_107;
 const createBlessingContext = (random: () => number) => {
   const target = createEnemyAt(0, 0);
   const context = createKitTestContext(createKinichCombatant(), {
@@ -60,6 +56,11 @@ const countKinichPoints = (context: ReturnType<typeof createBlessingContext>) =>
   countKitResource(context.kitEffectState.effects, KINICH_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
 
 describe(createKinichKitBehaviour, () => {
+  // Kinich three metres east of the enemy at the origin, pressing his skill at it, the blind spot's side drawn from the
+  // Given random source. The blind spot lies a quarter turn either side of his bearing from that enemy: a draw below
+  // One half puts it at z = 3, one half or above at z = -3
+  const OTHER_CHARACTER_ID = 10_000_107;
+
   test("reads each talent multiplier, cooldown and cost from his proud skill groups, to four decimal places", () => {
     expect.hasAssertions();
     const multipliers = [

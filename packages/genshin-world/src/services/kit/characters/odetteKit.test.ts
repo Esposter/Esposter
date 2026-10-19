@@ -35,19 +35,6 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const kit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ODETTE_CHARACTER_ID);
 const { readFrame } = await readCharacterKitRecord(ODETTE_CHARACTER_ID);
-// The frames her record gives: each spawn and first tick of the Dance Double, its status's duration, its attacks'
-// Intervals and the Stellar Vortex's lifetime, all counted from the cast that starts them
-const SKILL_SPAWN_FRAMES = readFrame("danceDoubleSkillSpawn");
-const SKILL_FIRST_TICK_FRAMES = readFrame("danceDoubleFirstTick");
-const BURST_SPAWN_FRAMES = readFrame("danceDoubleBurstSpawn");
-const BURST_FIRST_TICK_FRAMES = readFrame("danceDoubleBurstFirstTick");
-const RECAST_FIRST_TICK_FRAMES = readFrame("danceDoubleRecastFirstTick");
-const DANCE_DOUBLE_DURATION_FRAMES = readFrame("danceDoubleDuration");
-const PLUME_INTERVAL_FRAMES = readFrame("plumeTickInterval");
-const WING_INTERVAL_FRAMES = readFrame("wingTickInterval");
-const STELLAR_VORTEX_FRAMES = readFrame("stellarVortex");
-// The frames stepped before a Coda recast, which the recast's restart and the status it keeps are measured from
-const RECAST_STEP_FRAMES = 200;
 // The vortex's id and its stacks, shaped as the effects read for a test to compare
 const shapeEffects = (context: KitContext) =>
   context.kitEffectState.effects.map((effect) =>
@@ -59,20 +46,36 @@ const checkIsDanceDouble = (effect: KitEffect): effect is KitSummon =>
   effect.kind === "summon" && effect.id === DANCE_DOUBLE_ID;
 const findDanceDoubles = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(checkIsDanceDouble);
 const toHitFrames = ({ hits }: KitSummon) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
-// The frames of a Dance Double's hits from its first, alternating Plume and Wing, each on the interval its attack gives
-const toDanceDoubleFrames = (firstFrame: number, startsWithPlume: boolean, count: number): number[] => {
-  const frames: number[] = [];
-  let frame = firstFrame;
-  let isPlume = startsWithPlume;
-  for (let hit = 0; hit < count; hit++) {
-    frames.push(frame);
-    frame += isPlume ? PLUME_INTERVAL_FRAMES : WING_INTERVAL_FRAMES;
-    isPlume = !isPlume;
-  }
-  return frames;
-};
 
 describe(createOdetteKitBehaviour, () => {
+  // The frames her record gives: each spawn and first tick of the Dance Double, its status's duration, its attacks'
+  // Intervals and the Stellar Vortex's lifetime, all counted from the cast that starts them
+  const SKILL_SPAWN_FRAMES = readFrame("danceDoubleSkillSpawn");
+  const SKILL_FIRST_TICK_FRAMES = readFrame("danceDoubleFirstTick");
+  const BURST_SPAWN_FRAMES = readFrame("danceDoubleBurstSpawn");
+  const BURST_FIRST_TICK_FRAMES = readFrame("danceDoubleBurstFirstTick");
+  const RECAST_FIRST_TICK_FRAMES = readFrame("danceDoubleRecastFirstTick");
+  const DANCE_DOUBLE_DURATION_FRAMES = readFrame("danceDoubleDuration");
+  const PLUME_INTERVAL_FRAMES = readFrame("plumeTickInterval");
+  const WING_INTERVAL_FRAMES = readFrame("wingTickInterval");
+  const STELLAR_VORTEX_FRAMES = readFrame("stellarVortex");
+  // The frames stepped before a Coda recast, which the recast's restart and the status it keeps are measured from
+  const RECAST_STEP_FRAMES = 200;
+
+  // The frames of a Dance Double's hits from its first, alternating Plume and Wing, each on the interval
+  // Its attack gives
+  const toDanceDoubleFrames = (firstFrame: number, startsWithPlume: boolean, count: number): number[] => {
+    const frames: number[] = [];
+    let frame = firstFrame;
+    let isPlume = startsWithPlume;
+    for (let hit = 0; hit < count; hit++) {
+      frames.push(frame);
+      frame += isPlume ? PLUME_INTERVAL_FRAMES : WING_INTERVAL_FRAMES;
+      isPlume = !isPlume;
+    }
+    return frames;
+  };
+
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),

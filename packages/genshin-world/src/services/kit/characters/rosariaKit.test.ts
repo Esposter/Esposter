@@ -19,7 +19,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const ROSARIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ROSARIA_CHARACTER_ID);
-const TEAMMATE_CHARACTER_ID = 90_001;
 const createRosariaCombatant = (constellationCount: number, ascension = 0, criticalRate = 0): Combatant => ({
   ascension,
   attributes: computeCharacterAttributes([
@@ -55,6 +54,8 @@ const strikeFirstSkillHit = (ascension: number) => {
 };
 
 describe(createRosariaKitBehaviour, () => {
+  const TEAMMATE_CHARACTER_ID = 90_001;
+
   test("the field Rites of Termination places lasts four seconds longer from Constellation 2", () => {
     expect.hasAssertions();
     expect(getFieldSeconds(2) - getFieldSeconds(0)).toBe(4);

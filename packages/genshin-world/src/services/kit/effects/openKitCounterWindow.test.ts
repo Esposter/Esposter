@@ -12,17 +12,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const WINDOW_ID = "test-window";
-const WINDOW_SECONDS = 2;
-const combatant: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
 const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealthChangedEvent => ({
   bondOfLifeShare: 0,
   characterId: TRAVELER_CHARACTER_ID,
@@ -34,6 +23,18 @@ const createStrike = (healthShare: number, sourceCharacterId?: number): KitHealt
 });
 
 describe(openKitCounterWindow, () => {
+  const WINDOW_ID = "test-window";
+  const WINDOW_SECONDS = 2;
+  const combatant: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
   // The window the event opens, as the context's effects hold it after the call
   const openWindow = (event: KitEvent, isSkillHeld = true, characterId = TRAVELER_CHARACTER_ID) => {
     const context = createKitTestContext(combatant, { isSkillHeld });
