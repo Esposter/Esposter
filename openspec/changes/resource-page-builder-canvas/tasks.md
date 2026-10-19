@@ -31,4 +31,3 @@
 ## 7. Shell
 
 - [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: tests named after the scenarios 'Editing a button's label in the Content panel shows on the canvas' and 'An empty page offers the palette'.
-- [ ] 7.2 Decide where an empty page's palette sits given the empty state's one-action rule: it renders about twelve buttons in `UiEmptyState`'s slot, which that component documents as holding at most one action. Either the palette is a named exception (its own comment and this design's wording say so) or the empty page gets a surface that holds one action and opens the palette. Verify: the decision is written into this change's design, and a test named after the scenario 'An empty page offers the palette' passes against the chosen surface.
