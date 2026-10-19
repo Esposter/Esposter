@@ -6,10 +6,10 @@ import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { SCHOLAR_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createScholarSetModule } from "#src/services/artifact/sets/createScholarSetModule";
-import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -22,7 +22,7 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createScholarSetModule, () => {
   const BOW_CHARACTER_ID = 2;
   const SWORD_CHARACTER_ID = 3;
-  const wearer: Combatant = { ...createSetWearer(KIT), weaponType: WeaponType.Catalyst };
+  const wearer: Combatant = { ...createKitCombatant(TRAVELER_CHARACTER_ID, KIT), weaponType: WeaponType.Catalyst };
   const bowMember: Combatant = { ...wearer, characterId: BOW_CHARACTER_ID, weaponType: WeaponType.Bow };
   const swordMember: Combatant = { ...wearer, characterId: SWORD_CHARACTER_ID, weaponType: WeaponType.Sword };
 

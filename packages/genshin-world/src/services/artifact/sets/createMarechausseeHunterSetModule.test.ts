@@ -6,13 +6,13 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { MARECHAUSSEE_HUNTER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createMarechausseeHunterSetModule } from "#src/services/artifact/sets/createMarechausseeHunterSetModule";
-import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -35,7 +35,7 @@ const healthChangedOf = (characterId: number) =>
   }) as const;
 
 describe(createMarechausseeHunterSetModule, () => {
-  const wearer = createSetWearer(KIT);
+  const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   test("raises the DMG of its wearer's Normal and Charged Attacks by 15% from two pieces, and of no other strike", () => {

@@ -6,9 +6,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { MAIDEN_BELOVED_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createMaidenBelovedSetModule } from "#src/services/artifact/sets/createMaidenBelovedSetModule";
-import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -19,7 +19,7 @@ const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createMaidenBelovedSetModule, () => {
-  const wearer = createSetWearer(TRAVELER_KIT);
+  const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, TRAVELER_KIT);
 
   const bonus = statTables.artifactSetDataMap
     .get(MAIDEN_BELOVED_ARTIFACT_SET_ID)

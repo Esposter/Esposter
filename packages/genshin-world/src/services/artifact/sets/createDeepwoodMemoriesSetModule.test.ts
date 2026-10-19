@@ -4,13 +4,13 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { DEEPWOOD_MEMORIES_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
-import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -21,7 +21,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createDeepwoodMemoriesSetModule, () => {
-  const wearer = createSetWearer(KIT);
+  const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
   const damageDealtBy = (enemy: ReturnType<typeof createEnemy>, attackTag: AttackTag) =>
     ({
       attackTag,

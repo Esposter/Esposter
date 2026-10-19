@@ -1,5 +1,3 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
@@ -7,11 +5,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
@@ -25,16 +23,6 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 1,
-});
-
 // A Crystallize shield the other member's reaction left, picked up by the team
 const pickUpCrystallizeShield = (context: KitContext) =>
   castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining: 15 });
@@ -45,8 +33,8 @@ describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
   // Many Oaths of Dawn and Dusk at its first rank: a Crystallize shard the party picks up, or a Lunar-Crystallize it
   // Triggers at most once a second, gives a Seal for 15 seconds, up to two, each raising its skill's DMG by 18%
   const passiveModule = createManyOathsOfDawnAndDuskPassiveModule([0.18, 15, 1]);
-  const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
-  const other = createCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);
+  const wielder = createKitCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
+  const other = createKitCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);
   const createContext = (): KitContext =>
     createKitTestContext(wielder, {
       characterIdCombatantMap: new Map([

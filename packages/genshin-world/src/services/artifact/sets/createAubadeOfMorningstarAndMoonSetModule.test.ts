@@ -9,91 +9,85 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createAubadeOfMorningstarAndMoonSetModule } from "#src/services/artifact/sets/createAubadeOfMorningstarAndMoonSetModule";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { assert, describe, expect, test } from "vitest";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const THIRD_CHARACTER_ID = 3;
-const FOURTH_CHARACTER_ID = 4;
-// A Moonsign character's kit, which counts toward the team's Moonsign level
-const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const bonusOf = (pieceCount: number) => {
-  const bonus = statTables.artifactSetDataMap
-    .get(AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID)
-    ?.bonuses.find((b) => b.pieceCount === pieceCount);
-  assert.exists(bonus);
-  return bonus;
-};
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
-// A wearer of four pieces, the three other members, and the party in the order given, with the members in benedictedIds
-// Carrying a Moonsign benediction, which sets the team's Moonsign level
-const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
-  const wearer = createCombatant(
-    TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [createAubadeOfMorningstarAndMoonSetModule(bonusOf(4))]),
-  );
-  const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
-  for (const characterId of [OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
-    characterIdCombatantMap.set(
-      characterId,
-      createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT),
+describe(createAubadeOfMorningstarAndMoonSetModule, () => {
+  const THIRD_CHARACTER_ID = 3;
+  const FOURTH_CHARACTER_ID = 4;
+  // A Moonsign character's kit, which counts toward the team's Moonsign level
+  const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  // A wearer of four pieces, the three other members, and the party in the order given, with the members in benedictedIds
+  // Carrying a Moonsign benediction, which sets the team's Moonsign level
+  const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
+    const wearer = createKitCombatant(
+      TRAVELER_CHARACTER_ID,
+      getPassiveKit(KIT, [
+        createAubadeOfMorningstarAndMoonSetModule(
+          getArtifactSetBonus(statTables, AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID, 4),
+        ),
+      ]),
     );
-  const kitEffectState: KitEffectState = { effects: [] };
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  let context = createKitTestContext(wearer, {
-    characterIdCombatantMap,
-    kitEffectState,
-    party: createParty(characterIds),
-  });
-  // The party after a swap, with the swap's event, which the wearer's kit hears as the battle emits it. A battle's opening has no
-  // Character it came from, so the event carries none
-  const swap = (nextCharacterIds: number[], characterId: number, previousCharacterId?: number) => {
-    context = createKitTestContext(wearer, {
+    const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
+    for (const characterId of [OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
+      characterIdCombatantMap.set(
+        characterId,
+        createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT),
+      );
+    const kitEffectState: KitEffectState = { effects: [] };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    let context = createKitTestContext(wearer, {
       characterIdCombatantMap,
       kitEffectState,
-      party: createParty(nextCharacterIds),
+      party: createParty(characterIds),
     });
-    emitKitEvent(
-      {
-        characterId,
-        kind: KitEventKind.CharacterSwapped,
-        ...(previousCharacterId === undefined ? {} : { previousCharacterId }),
-      },
-      context,
-    );
+    // The party after a swap, with the swap's event, which the wearer's kit hears as the battle emits it. A battle's opening has no
+    // Character it came from, so the event carries none
+    const swap = (nextCharacterIds: number[], characterId: number, previousCharacterId?: number) => {
+      context = createKitTestContext(wearer, {
+        characterIdCombatantMap,
+        kitEffectState,
+        party: createParty(nextCharacterIds),
+      });
+      emitKitEvent(
+        {
+          characterId,
+          kind: KitEventKind.CharacterSwapped,
+          ...(previousCharacterId === undefined ? {} : { previousCharacterId }),
+        },
+        context,
+      );
+    };
+    // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes, in the party as it stands
+    const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
+      getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
+    const step = (seconds: number) => {
+      stepKitSeconds(context, seconds);
+    };
+    return { reactionDamageBonus, step, swap, wearer };
   };
-  // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes, in the party as it stands
-  const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
-    getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  const step = (seconds: number) => {
-    stepKitSeconds(context, seconds);
-  };
-  return { reactionDamageBonus, step, swap, wearer };
-};
 
-describe(createAubadeOfMorningstarAndMoonSetModule, () => {
   test("while its wearer is off the field, a Lunar Reaction the wearer triggers gets 20% DMG, and another member's Lunar Reaction gets none", () => {
     expect.hasAssertions();
 
     const { reactionDamageBonus, wearer } = createTeam([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
-    const other = createCombatant(OTHER_CHARACTER_ID);
+    const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);
 
     expect(reactionDamageBonus(wearer, LunarReactionType.LunarCharged)).toBeCloseTo(0.2);
     expect(reactionDamageBonus(wearer, LunarReactionType.LunarBloom)).toBeCloseTo(0.2);

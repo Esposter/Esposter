@@ -1,14 +1,13 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
@@ -21,23 +20,13 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 1,
-});
-
 describe(createOfferingUntoWindAndSunPassiveModule, () => {
   // Offering Unto Wind and Sun at its first rank: a shield its wielder casts on the field gives Mirror of Night for 15
   // Seconds, the member on the field dealing 28% more DMG, once every 14 seconds
   const passiveModule = createOfferingUntoWindAndSunPassiveModule([0.28, 15, 14]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
-  const other = createCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);
+  const wielder = createKitCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
+  const other = createKitCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);
   const createContext = (): KitContext =>
     createKitTestContext(wielder, {
       characterIdCombatantMap: new Map([
