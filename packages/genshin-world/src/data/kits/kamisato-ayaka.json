@@ -327,6 +327,5 @@
   "normalAttacks.4.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
-  },
-  "plungeCollision.gauge": { "source": "Wiki" }
+  }
 }

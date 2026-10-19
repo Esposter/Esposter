@@ -283,7 +283,5 @@
   "hits.implode.hitmarkFrames": { "cause": "Unclassified", "value": 141 },
   "hits.implode.multiplier": { "file": "cons.go", "line": 57, "source": "Gcsim", "value": 0.75 },
   "hits.implode.poiseDamage": { "cause": "Unsourced", "value": 8.8 },
-  "parameters.pyronadoSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2339 } },
-  "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Fire" },
-  "plungeCollision.gauge": { "source": "Wiki" }
+  "parameters.pyronadoSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2339 } }
 }
