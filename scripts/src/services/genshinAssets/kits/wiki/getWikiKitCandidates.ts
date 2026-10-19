@@ -14,7 +14,7 @@ const CHARGED_ATTACK_TITLE_REGEX =
   /^(?:Charged Attack(?: (?:(?<number>\d+)-Hit|(?<letter>[A-Z])))?|Fully-Charged Aimed Shot)$/u;
 const HIT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";
-const internalCooldownTagSchema = z.enum(InternalCooldownTag);
+const internalCooldownTagSchema = z.enum(InternalCooldownTag) satisfies z.ZodType<InternalCooldownTag>;
 // The plunges' rows by their titles
 const WikiTitlePathMap: Partial<Record<string, string>> = {
   "High Plunge": `plunges.${KitPlunge.High}.hits.0`,

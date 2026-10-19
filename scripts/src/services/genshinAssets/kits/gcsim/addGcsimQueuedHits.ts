@@ -11,14 +11,14 @@ import { readGcsimHoldHitmarks } from "#src/services/genshinAssets/kits/gcsim/re
 
 // The declaration an attack is made from, by its literal's file, variable and line: a `Mult` set's copy shares its
 // Literal's declaration, where a DoT is a literal of its own under the same variable
-const isSameDeclaration = (attack: GcsimAttack, other: GcsimAttack): boolean =>
+const checkIsSameDeclaration = (attack: GcsimAttack, other: GcsimAttack): boolean =>
   attack.file === other.file && attack.siteLine === other.siteLine && attack.variableName === other.variableName;
 
 // A call firing the first hit's attack, or a copy of it where neither call repeats in a loop: a loop's repeated calls
 // Are ticks of their attack, as a DoT's calls are
-const isSameHit = (hit: GcsimQueuedHit, first: GcsimQueuedHit): boolean =>
+const checkIsSameHit = (hit: GcsimQueuedHit, first: GcsimQueuedHit): boolean =>
   hit.attack === first.attack ||
-  (isSameDeclaration(hit.attack, first.attack) && hit.iterations === undefined && first.iterations === undefined);
+  (checkIsSameDeclaration(hit.attack, first.attack) && hit.iterations === undefined && first.iterations === undefined);
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
 // Firing its first declaration, at its damage delay, joined to its multiplier by its place and to its own hitbox,
@@ -53,10 +53,10 @@ export const addGcsimQueuedHits = (
   const heldHitmarks = readGcsimHoldHitmarks(gcsim);
   const fileHits = (file === undefined ? [] : getGcsimQueuedHits(gcsim, attackTags, file))
     .filter(({ delay, file: hitFile }) => !heldHitmarks.some((held) => held.file === hitFile && held.delay === delay))
-    .filter(({ attack }) => !excludedAttacks.some((excluded) => isSameDeclaration(attack, excluded)));
+    .filter(({ attack }) => !excludedAttacks.some((excluded) => checkIsSameDeclaration(attack, excluded)));
   const [firstHit] = fileHits;
   if (firstHit === undefined) return;
-  const queuedHits = fileHits.filter((hit) => isSameHit(hit, firstHit));
+  const queuedHits = fileHits.filter((hit) => checkIsSameHit(hit, firstHit));
   const hitboxes = config.abilityHitboxesMap.get(abilityName) ?? [];
   const isHitboxJoined = hitboxes.length === queuedHits.length;
   add(`${path}.hits.length`, queuedHits.length, toFile(firstHit.file), firstHit.callLine);

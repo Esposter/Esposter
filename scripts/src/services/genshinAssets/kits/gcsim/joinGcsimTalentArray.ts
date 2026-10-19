@@ -12,7 +12,7 @@ export const joinGcsimTalentArray = (
   const parameters = [...new Set(talentGroupIds)].flatMap((proudSkillGroupId) => {
     const multipliers = talentMultiplierMap[proudSkillGroupId] ?? [];
     const paramCount = Math.max(0, ...multipliers.map(({ paramList }) => paramList.length));
-    return Array.from({ length: paramCount }, (_, index) => ({ index, proudSkillGroupId }));
+    return Array.from({ length: paramCount }, (_value, index) => ({ index, proudSkillGroupId }));
   });
   const matches = parameters.filter(({ index, proudSkillGroupId }) =>
     rows.every((row) =>

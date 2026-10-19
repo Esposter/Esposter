@@ -12,11 +12,11 @@ export const readCarriedQuestBinaryPaths = (
   subQuests: readonly Pick<DumpedSubQuest, "mainId" | "subId">[],
 ): string[] => {
   const mainQuestIds = new Set(mainQuests.map(({ id }) => id));
-  const mainIdBySubId = new Map(subQuests.map(({ mainId, subId }) => [subId, mainId] as const));
+  const subIdMainIdMap = new Map(subQuests.map(({ mainId, subId }) => [subId, mainId] as const));
   return [
     ...new Set(
       questIds.flatMap((questId) => {
-        const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, mainIdBySubId);
+        const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, subIdMainIdMap);
         return mainQuestId === undefined ? [] : [`${QUEST_BINARY_DIRECTORY_PATH}/${mainQuestId}.json`];
       }),
     ),

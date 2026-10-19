@@ -228,12 +228,12 @@ const readClampValues = (expression: GoExpression): number[] | undefined => {
 // Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has none,
 // So a local of another function is never read
 export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyMap<string, GoConstant>): GoScope => {
-  const callPositionsByName = new Map<string, number[]>();
+  const nameCallPositionsMap = new Map<string, number[]>();
   for (const [position, token] of tokens.entries())
     if (token.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "(")) {
-      const positions = callPositionsByName.get(token.text) ?? [];
+      const positions = nameCallPositionsMap.get(token.text) ?? [];
       positions.push(position);
-      callPositionsByName.set(token.text, positions);
+      nameCallPositionsMap.set(token.text, positions);
     }
   const namedFunctions = readGoNamedFunctions(tokens);
   const findScope = (position: number): GoNamedFunction | undefined =>
@@ -252,7 +252,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   // Each number a function's parameter takes at its call sites, undefined where a call's argument has none
   const readParameterValues = (scope: GoNamedFunction, index: number, depth: number): number[] | undefined => {
     if (depth > MAX_DEPTH) return undefined;
-    const callPositions = (callPositionsByName.get(scope.name) ?? []).filter(
+    const callPositions = (nameCallPositionsMap.get(scope.name) ?? []).filter(
       (position) => position !== scope.nameIndex,
     );
     if (callPositions.length === 0) return undefined;

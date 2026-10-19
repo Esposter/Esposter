@@ -68,7 +68,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
   const rewardsByQuest = readCarriedQuestRewards(mainQuestMap, subQuestMap);
   const talkTables = await readTalkTables();
   const mainQuestIds = new Set(mainQuestMap.keys());
-  const mainIdBySubId = new Map([...subQuestMap].map(([subId, subQuest]) => [subId, subQuest.mainId] as const));
+  const subIdMainIdMap = new Map(Array.from(subQuestMap, ([subId, subQuest]) => [subId, subQuest.mainId] as const));
   const buildQuest = (questId: QuestId): Quest => {
     const rewards = rewardsByQuest.get(questId) ?? [];
     if (ReputationRequestQuestIds.includes(questId)) {
@@ -90,7 +90,7 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
       return readReputationRequestQuest({ giving, groupItemIds, mainQuest, rewards, subQuest });
     }
     // A city's opening quest is one sub quest of its world quest: titled by that world quest, read from its binary
-    const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, mainIdBySubId);
+    const mainQuestId = readCarriedMainQuestId(Number(questId), mainQuestIds, subIdMainIdMap);
     const mainQuest = mainQuestId === undefined ? undefined : mainQuestMap.get(mainQuestId);
     if (!mainQuest) throw new InvalidOperationError(Operation.Read, MAIN_QUEST_TABLE_NAME, `has no quest ${questId}`);
     const questType = mainQuest.type ?? MAIN_QUEST_DEFAULT_TYPE;
@@ -111,12 +111,13 @@ export const buildQuests = async (): Promise<{ notes: string[]; objects: Record<
     );
     notes.push(...stepNotes);
     const offerTalkIds = questKind === QuestKind.Archon ? [] : readOfferTalkIds;
-    const parentQuestIds = [
-      ...new Set([
+    const parentQuestIds = Array.from(
+      new Set([
         ...readParentQuestIds(questBinary, mainQuest.id, subQuestMap),
         ...readOpeningParentQuestIds(OpeningParentTitleMap[questId]?.titles ?? [], mainQuest.id, titleQuestIds),
       ]),
-    ].map(String);
+      String,
+    );
     const uncarriedParentQuestIds = parentQuestIds.filter((parentQuestId) => !carriedQuestIds.has(parentQuestId));
     if (uncarriedParentQuestIds.length > 0)
       notes.push(

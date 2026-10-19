@@ -20,7 +20,7 @@ export const buildMailPublication = (): { note: string; publication: GameDataPub
     ...new Set(
       mails.flatMap(({ contentTextId, senderTextId, titleTextId }) => [contentTextId, senderTextId, titleTextId]),
     ),
-  ].toSorted((first, second) => first.localeCompare(second));
+  ].toSorted((firstTextId, secondTextId) => firstTextId.localeCompare(secondTextId));
   const { notes, objects } = buildTextChunks(GameDataset.MailText, textIds);
   return {
     note: [

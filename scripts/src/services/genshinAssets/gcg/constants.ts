@@ -20,7 +20,10 @@ export const GCG_DUEL_GAME_IDS: number[] = [
   ...new Set([...RESIDENT_DUEL_GAME_ID_MAP.values(), ...GCG_CHALLENGER_DUEL_GAME_IDS]),
 ];
 // The week games the residents offer in their weekly guest challenge, read from the seats. They publish beside the duels' games
-export const GCG_CHALLENGER_WEEK_GAME_IDS: number[] = [...RESIDENT_WEEK_GAME_MAP.values()].map(({ gameId }) => gameId);
+export const GCG_CHALLENGER_WEEK_GAME_IDS: number[] = Array.from(
+  RESIDENT_WEEK_GAME_MAP.values(),
+  ({ gameId }) => gameId,
+);
 // The deck the player plays when the game names one no slice is published for: deck 3 stands in until the game's own deck is
 // Built, a provisional call recorded on the as-built page
 export const GCG_PLACEHOLDER_PLAYER_DECK_ID = 3;

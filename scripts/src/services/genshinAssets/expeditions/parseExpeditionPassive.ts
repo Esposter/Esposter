@@ -7,9 +7,9 @@ import { ExpeditionPassiveKind } from "genshin-world";
 
 // The two sentences the game writes an expedition talent's description in: a time talent names its region, and a reward
 // Talent names its region and the hours its expedition runs for
-const TIME_TALENT_PATTERN =
+const TIME_TALENT_REGEX =
   /^When dispatched on an expedition in (?<region>[^,]+), time consumed is reduced by (?<percent>\d+)%\.$/u;
-const REWARD_TALENT_PATTERN =
+const REWARD_TALENT_REGEX =
   /^Gains (?<percent>\d+)% more rewards when dispatched on an? (?<region>\S+) Expedition for (?<hours>\d+) hours\.$/u;
 
 // The expedition talent a game description states, without its proud skill group, or undefined where the description names
@@ -17,8 +17,8 @@ const REWARD_TALENT_PATTERN =
 export const parseExpeditionPassive = (
   description: string,
 ): Except<ExpeditionPassive, "proudSkillGroupId"> | undefined => {
-  const timeMatch = TIME_TALENT_PATTERN.exec(description);
-  const rewardMatch = timeMatch ? undefined : REWARD_TALENT_PATTERN.exec(description);
+  const timeMatch = TIME_TALENT_REGEX.exec(description);
+  const rewardMatch = timeMatch ? undefined : REWARD_TALENT_REGEX.exec(description);
   const match = timeMatch ?? rewardMatch;
   if (!match?.groups) return undefined;
   const { hours, percent = "", region = "" } = match.groups;

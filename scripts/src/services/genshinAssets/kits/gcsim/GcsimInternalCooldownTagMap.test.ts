@@ -10,9 +10,10 @@ describe("gcsimInternalCooldownTagMap", () => {
   test.skipIf(!existsSync(ICD_TAGS_FILE))("names every tag gcsim's enum declares, but None, with a map entry", () => {
     expect.hasAssertions();
 
-    const gcsimTags = [...readFileSync(ICD_TAGS_FILE, "utf8").matchAll(/^\s*ICDTag(?<name>[A-Za-z0-9]+)\b/gmu)]
-      .map((match) => match.groups?.name)
-      .filter((name): name is string => name !== undefined && name !== "None");
+    const gcsimTags = Array.from(
+      readFileSync(ICD_TAGS_FILE, "utf8").matchAll(/^\s*ICDTag(?<name>[A-Za-z0-9]+)\b/gmu),
+      (match) => match.groups?.name,
+    ).filter((name): name is string => name !== undefined && name !== "None");
 
     expect(gcsimTags.length).toBeGreaterThan(0);
     const unmappedTags = gcsimTags.filter((name) => !(`attacks.ICDTag${name}` in GcsimInternalCooldownTagMap));

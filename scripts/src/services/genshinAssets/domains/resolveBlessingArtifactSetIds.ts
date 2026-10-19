@@ -14,13 +14,13 @@ export const resolveBlessingArtifactSetIds = (
   const equipAffixNameMap = new Map(
     equipAffixes.map(({ id, nameTextMapHash }) => [id, textMap.get(String(nameTextMapHash))]),
   );
-  const setIdsByName = new Map<string, number[]>();
+  const nameSetIdsMap = new Map<string, number[]>();
   for (const { equipAffixId, setId } of reliquarySets) {
     const name = equipAffixNameMap.get(equipAffixId);
-    if (name !== undefined) setIdsByName.set(name, [...(setIdsByName.get(name) ?? []), setId]);
+    if (name !== undefined) nameSetIdsMap.set(name, [...(nameSetIdsMap.get(name) ?? []), setId]);
   }
   const resolveSetId = (name: string): number => {
-    const setIds = setIdsByName.get(name) ?? [];
+    const setIds = nameSetIdsMap.get(name) ?? [];
     const [setId] = setIds;
     if (setIds.length !== 1 || setId === undefined)
       throw new InvalidOperationError(Operation.Read, "reliquary sets", `names ${setIds.length} sets as ${name}`);

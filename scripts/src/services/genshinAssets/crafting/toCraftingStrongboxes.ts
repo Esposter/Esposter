@@ -4,7 +4,7 @@ import type { CraftingStrongboxData } from "genshin-world";
 import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 
 // A pair of item ids under one of an offer row's keys, which the offer's per-slot lists are, read by shape
-const isItemIdPair = (value: unknown): value is number[] =>
+const checkIsItemIdPair = (value: unknown): value is number[] =>
   Array.isArray(value) && value.length === 2 && value.every((item) => typeof item === "number");
 
 // The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row that
@@ -31,7 +31,7 @@ export const toCraftingStrongboxes = ({
       const offerRow = offerRows.find((row) => row.EPLFOBEBPPG === displayItem.param);
       if (offerRow === undefined) return [];
       const pieceItemIds = Object.values(offerRow)
-        .filter((value) => isItemIdPair(value))
+        .filter((value) => checkIsItemIdPair(value))
         .flat()
         .filter((itemId) => {
           const piece = reliquaryMap.get(itemId);

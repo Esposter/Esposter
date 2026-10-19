@@ -3,9 +3,9 @@
 export const readCarriedMainQuestId = (
   questId: number,
   mainQuestIds: ReadonlySet<number>,
-  mainIdBySubId: ReadonlyMap<number, number>,
+  subIdMainIdMap: ReadonlyMap<number, number>,
 ): number | undefined => {
   if (mainQuestIds.has(questId)) return questId;
-  const mainId = mainIdBySubId.get(questId);
+  const mainId = subIdMainIdMap.get(questId);
   return mainId !== undefined && mainQuestIds.has(mainId) ? mainId : undefined;
 };

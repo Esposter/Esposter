@@ -29,7 +29,8 @@ export const toTipRecords = (
         : [],
     ),
   );
-  return [...toTutorialPushTipMap(pushTipRows).values()].map(
+  return Array.from(
+    toTutorialPushTipMap(pushTipRows).values(),
     ({ pushTipsId, subtitleTextMapHash, titleTextMapHash, watcherId }) => {
       const codexId = codexIdMap.get(pushTipsId);
       const trigger = watcherId === undefined ? undefined : triggerMap.get(watcherId);
