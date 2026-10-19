@@ -4,8 +4,8 @@ import { readFileSync } from "node:fs";
 
 // `unplugin-vue` names a `<style src>` by the stylesheet's own path, and the CSS transform skips a `.css` id that
 // Carries a query, so the build would reject the stylesheet. This names the component's file instead and carries the
-// Stylesheet in `styleSrc`, so the component's descriptor still scopes the rules, and the CSS transform takes them the way
-// It takes an inline block
+// Stylesheet in `styleSrc`, so the component's descriptor still scopes the rules and the CSS transform takes them
+// The way it takes an inline block
 const STYLE_SRC_PARAM = "styleSrc";
 
 export const vueStyleSrcPlugin: Plugin = {
