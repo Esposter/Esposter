@@ -20,6 +20,7 @@ import {
   GCG_SPREAD_DAMAGE,
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
+import { createGcgActiveCharacterSwitch } from "#src/services/gcg/createGcgActiveCharacterSwitch";
 import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { applyGcgNonDamageReactionEffects } from "#src/services/gcg/effects/applyGcgNonDamageReactionEffects";
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
@@ -178,7 +179,14 @@ const applyGcgReactionEffects = (
     for (const zoneCard of listGcgFieldCards(sourceSide, undefined))
       duel.cardModules.get(zoneCard.cardId)?.onSwirl?.({ duel, sideIndex: sourceSideIndex }, zoneCard, aura);
   }
-  applyGcgNonDamageReactionEffects(duel, sourceSideIndex, 1 - sourceSideIndex, hit, reaction);
+  applyGcgNonDamageReactionEffects(
+    duel,
+    sourceSideIndex,
+    1 - sourceSideIndex,
+    hit,
+    reaction,
+    createGcgActiveCharacterSwitch(applyGcgDamage),
+  );
 };
 
 // A Frozen character takes more from a Pyro or Physical hit, which removes its Frozen status. Nothing else breaks it

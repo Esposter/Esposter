@@ -6,6 +6,7 @@ import { GcgAura } from "#src/models/gcg/GcgAura";
 import { GCG_AURA_ELEMENTS } from "#src/services/gcg/constants";
 import { applyGcgNonDamageReactionEffects } from "#src/services/gcg/effects/applyGcgNonDamageReactionEffects";
 import { getGcgReactionKind } from "#src/services/gcg/getGcgReactionKind";
+import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 
 // An element applied to a character with no damage, by a card's effect on the side at sideIndex. A character holding no aura
 // Takes the element as its aura when an aura takes it. One holding an aura reacts with the element when the rule lists the
@@ -25,5 +26,5 @@ export const applyGcgApplication = (
   const reaction = getGcgReactionKind(duel.rule, aura, element);
   if (reaction === undefined) return;
   character.aura = GcgAura.None;
-  applyGcgNonDamageReactionEffects(duel, sideIndex, sideIndex, character, reaction);
+  applyGcgNonDamageReactionEffects(duel, sideIndex, sideIndex, character, reaction, switchGcgActiveCharacter);
 };

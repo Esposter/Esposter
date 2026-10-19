@@ -1,5 +1,6 @@
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
+import type { createGcgActiveCharacterSwitch } from "#src/services/gcg/createGcgActiveCharacterSwitch";
 
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { burningFlame } from "#src/services/gcg/cards/burningFlame";
@@ -14,18 +15,19 @@ import {
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
-import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
 
 // The effects a reaction leaves that deal no DMG: the Frozen status on the character it hits, the Shield its user's active
 // Character gains, the forced switch of an Overloaded active character, and the card a Burning, Bloom or Quicken leaves on
-// Its user's side. The side the reaction is made on is sourceSideIndex, and the one its character is on is targetSideIndex
+// Its user's side. The side the reaction is made on is sourceSideIndex, and the one its character is on is targetSideIndex.
+// The forced switch is switchActiveCharacter, handed in by the caller, since a switch's hooks can deal damage in turn
 export const applyGcgNonDamageReactionEffects = (
   duel: GcgDuel,
   sourceSideIndex: number,
   targetSideIndex: number,
   hit: GcgCharacterState,
   reaction: GcgReactionKind,
+  switchActiveCharacter: ReturnType<typeof createGcgActiveCharacterSwitch>,
 ): void => {
   const sourceSide = takeOne(duel.sides, sourceSideIndex);
   const targetSide = takeOne(duel.sides, targetSideIndex);
@@ -39,7 +41,7 @@ export const applyGcgNonDamageReactionEffects = (
     targetSide.characters.at(targetSide.activeIndex) === hit
   ) {
     const nextIndex = findGcgAdjacentCharacterIndex(targetSide, targetSide.activeIndex, 1);
-    if (nextIndex !== undefined) switchGcgActiveCharacter(duel, targetSideIndex, nextIndex);
+    if (nextIndex !== undefined) switchActiveCharacter(duel, targetSideIndex, nextIndex);
   } else if (reaction === GcgReactionKind.Burning)
     placeGcgZoneCard(sourceSide.summons, GCG_BURNING_FLAME_ID, burningFlame);
   else if (reaction === GcgReactionKind.Bloom) placeGcgZoneCard(sourceSide.onstages, GCG_DENDRO_CORE_ID, dendroCore);
