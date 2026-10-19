@@ -1,0 +1,45 @@
+/* The prompt's scale is the game's own 1080 high unit, since the 2026 recording of the whole prompt fixes its pixels:
+   The dialog is 960 by 606 reference pixels, centred, and each choice sits 70 pixels in from its side of the dialog */
+.exit,
+.world-level-prompt {
+  --reference-pixel: calc(var(--unit) * 1);
+}
+
+/* The World Level dialog's backdrop, the one the game dims a dialog over the world with */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 48%);
+}
+
+.dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--reference-pixel) * 960);
+  height: calc(var(--reference-pixel) * 606);
+  transform: translate(-50%, -50%);
+  /* The panel's median colour in the 2026 frame at 30 seconds (`yt-jHr2bERjkYc`), sampled from a clean band of it */
+  background: #e2dfd8;
+}
+
+/* A choice is a slate pill: the Row kind with its cream pill look replaced, since the 2026 choices are slate */
+.choice {
+  position: absolute;
+  top: calc(var(--reference-pixel) * 498);
+  width: calc(var(--reference-pixel) * 390);
+  height: calc(var(--reference-pixel) * 67);
+  border-radius: calc(infinity * 1px);
+  /* The pills' median colour in the 2026 frame at 30 seconds (`yt-jHr2bERjkYc`), sampled from a clean band of each */
+  background: #404a5e;
+  color: #ffffff;
+  text-align: center;
+}
+
+.cancel {
+  left: calc(var(--reference-pixel) * 70);
+}
+
+.confirm {
+  left: calc(var(--reference-pixel) * 500);
+}
