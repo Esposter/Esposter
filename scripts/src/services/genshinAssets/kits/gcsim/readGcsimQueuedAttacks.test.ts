@@ -4,28 +4,29 @@ import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/eval
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { describe, expect, test } from "vitest";
 
-// The package clause every fixture's Go source opens with, which no reader inspects
-const GO_PACKAGE_CLAUSE = "package character";
-
-// A charge source: its caller's calls of the short charge, and the short charge's body, which fires the attack at its windup
-const createChargeSource = (
-  callerArguments: string[],
-  shortBody = ["\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)"],
-) => [
-  GO_PACKAGE_CLAUSE,
-  "",
-  "const shortChargeHitmark = 27",
-  "",
-  "func (c *char) ChargeAttack(p map[string]int) {",
-  ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
-  "}",
-  "",
-  "func (c *char) chargeAttackShort(windup int) {",
-  ...shortBody,
-  "}",
-];
-
 describe(readGcsimQueuedAttacks, () => {
+  // The package clause every fixture's Go source opens with, which no reader inspects
+  const GO_PACKAGE_CLAUSE = "package character";
+
+  // A charge source: its caller's calls of the short charge, and the short charge's body, which fires the attack
+  // At its windup
+  const createChargeSource = (
+    callerArguments: string[],
+    shortBody = ["\tc.Core.QueueAttack(c.chargeAi, ap, shortChargeHitmark+windup, shortChargeHitmark+windup)"],
+  ) => [
+    GO_PACKAGE_CLAUSE,
+    "",
+    "const shortChargeHitmark = 27",
+    "",
+    "func (c *char) ChargeAttack(p map[string]int) {",
+    ...callerArguments.map((argument) => `\tc.chargeAttackShort(${argument})`),
+    "}",
+    "",
+    "func (c *char) chargeAttackShort(windup int) {",
+    ...shortBody,
+    "}",
+  ];
+
   test("reads a queue call's attack by the name it passes and its delay from the constants, an inline literal's by its line", () => {
     expect.hasAssertions();
 
