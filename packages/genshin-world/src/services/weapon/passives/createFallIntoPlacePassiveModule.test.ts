@@ -5,7 +5,6 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -14,7 +13,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createReaction, createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,18 +27,16 @@ describe(createFallIntoPlacePassiveModule, () => {
   // Master Key with synthetic params: 40 Elemental Mastery for four seconds after a reaction, 30 more under
   // Ascendant Gleam
   const fallIntoPlacePassiveModule = createFallIntoPlacePassiveModule([40, 4, 30, 0]);
-  const createReaction = (striker: Combatant) => ({
-    enemy,
-    kind: KitEventKind.ReactionTriggered as const,
-    reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
-    striker,
-  });
 
   test("a reaction the wielder causes raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    fallIntoPlacePassiveModule.onKitEvent?.(createReaction(wielder), context, wielder);
+    fallIntoPlacePassiveModule.onKitEvent?.(
+      createReaction(wielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      wielder,
+    );
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
@@ -64,7 +61,11 @@ describe(createFallIntoPlacePassiveModule, () => {
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });
-    fallIntoPlacePassiveModule.onKitEvent?.(createReaction(moonsignWielder), context, moonsignWielder);
+    fallIntoPlacePassiveModule.onKitEvent?.(
+      createReaction(moonsignWielder, enemy, ReactionType.Overloaded, Element.Pyro),
+      context,
+      moonsignWielder,
+    );
 
     expect(context.kitEffectState.effects).toStrictEqual([
       {
@@ -83,7 +84,7 @@ describe(createFallIntoPlacePassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     fallIntoPlacePassiveModule.onKitEvent?.(
-      createReaction({ ...wielder, characterId: OTHER_CHARACTER_ID }),
+      createReaction({ ...wielder, characterId: OTHER_CHARACTER_ID }, enemy, ReactionType.Overloaded, Element.Pyro),
       context,
       wielder,
     );
