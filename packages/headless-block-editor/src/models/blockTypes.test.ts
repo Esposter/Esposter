@@ -13,6 +13,12 @@ import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+const renderNode = (
+  node: HeadingNode | SectionNode,
+  _definition: BlockTypeDefinition,
+  slots: Record<string, unknown[]>,
+) => ({ children: Object.values(slots).flat(), id: node.props.id });
+
 describe("block types", () => {
   const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
   const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
@@ -28,6 +34,15 @@ describe("block types", () => {
     ],
   };
   const renderedNodes = [{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }];
+  interface RenderedNode {
+    children: RenderedNode[];
+    id: string;
+  }
+  const renderNode = (
+    node: HeadingNode | SectionNode,
+    _definition: BlockTypeDefinition<HeadingNode> | BlockTypeDefinition<SectionNode>,
+    slots: Record<string, RenderedNode[]>,
+  ): RenderedNode => ({ children: Object.values(slots).flat(), id: node.props.id });
 
   test("an interface-typed node passes through the JSON layer", () => {
     expect.hasAssertions();
@@ -41,12 +56,7 @@ describe("block types", () => {
       `/content/0/props/id`,
       `/content/0/props/title`,
     ]);
-    expect(
-      renderBlockNodes(nodes, registry, (node, _definition, slots) => ({
-        children: Object.values(slots).flat(),
-        id: node.props.id,
-      })),
-    ).toStrictEqual(renderedNodes);
+    expect(renderBlockNodes(nodes, registry, renderNode)).toStrictEqual(renderedNodes);
   });
 
   test("a registry of per-type definitions passes the services with no cast", () => {
@@ -61,11 +71,6 @@ describe("block types", () => {
     expect(
       createBlockDocumentSchema<HeadingNode | SectionNode, TestRootProps>(registry, 2).safeParse(document).success,
     ).toBe(true);
-    expect(
-      renderBlockNodes(document.content, registry, (node, _definition, slots) => ({
-        children: Object.values(slots).flat(),
-        id: node.props.id,
-      })),
-    ).toStrictEqual(renderedNodes);
+    expect(renderBlockNodes(document.content, registry, renderNode)).toStrictEqual(renderedNodes);
   });
 });
