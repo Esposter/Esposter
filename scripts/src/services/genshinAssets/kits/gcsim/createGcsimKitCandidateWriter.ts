@@ -13,16 +13,15 @@ import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_DURABILITY_PER_GAUGE,
   GCSIM_NO_INTERNAL_COOLDOWN_TAG,
-  GCSIM_PHYSICAL_ELEMENT,
 } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap";
-import { GcsimElementMap } from "#src/services/genshinAssets/kits/gcsim/GcsimElementMap";
-import { GcsimInternalCooldownTagMap } from "#src/services/genshinAssets/kits/gcsim/GcsimInternalCooldownTagMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
+import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
+import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
 
 // The first frames of a constant's list, descending through each level's first element
 const readFirstGoFrames = (value: GoValue | undefined): GoValue | undefined =>
@@ -122,14 +121,10 @@ export const createGcsimKitCandidateWriter = (
       const fieldFile = toFile(attack.file);
       const fieldLine = (key: string) => attack.fieldLineMap[key] ?? attack.line;
       if (attack.element !== undefined) {
-        const isPhysical = attack.element === GCSIM_PHYSICAL_ELEMENT;
-        add(
-          `${path}.element`,
-          isPhysical ? undefined : (GcsimElementMap[attack.element] ?? attack.element),
-          fieldFile,
-          fieldLine("Element"),
-        );
-        if (isPhysical) add(`${path}.gauge`, undefined, fieldFile, fieldLine("Element"));
+        const element = toGcsimElement(attack.element);
+        add(`${path}.element`, element, fieldFile, fieldLine("Element"));
+        // A hit of no element applies no gauge
+        if (element === undefined) add(`${path}.gauge`, undefined, fieldFile, fieldLine("Element"));
         else if (attack.durability !== undefined)
           add(`${path}.gauge`, attack.durability / GCSIM_DURABILITY_PER_GAUGE, fieldFile, fieldLine("Durability"));
       }
@@ -141,9 +136,7 @@ export const createGcsimKitCandidateWriter = (
       // A literal with no tag or strike type has gcsim's zero values, no tag and the default strike
       add(
         `${path}.internalCooldownTag`,
-        attack.internalCooldownTag === undefined || attack.internalCooldownTag === GCSIM_NO_INTERNAL_COOLDOWN_TAG
-          ? undefined
-          : (GcsimInternalCooldownTagMap[attack.internalCooldownTag] ?? attack.internalCooldownTag),
+        toGcsimInternalCooldownTag(attack.internalCooldownTag ?? GCSIM_NO_INTERNAL_COOLDOWN_TAG),
         fieldFile,
         fieldLine("ICDTag"),
       );
