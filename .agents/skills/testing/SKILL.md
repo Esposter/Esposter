@@ -98,6 +98,8 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 
 **Every test earns its line or it is deleted** — it earns it only by failing when behaviour a caller or user depends on breaks, and removing a test a change made redundant is part of the change (`references/what-earns-a-test.md`).
 
+- **A regression test is proven to fail before it is kept** — the one end-of-work run (the `running-checks` skill) is made with the fix it guards reverted, the test is watched failing for the reason it names, and the fix is restored only after that run's exit line is in its log, never while it is still in flight, since a test file imported after the restore runs the fixed code; the commit follows the restore. No second run follows the restore. A test that has only passed against fixed code has shown that it passes; the un-awaited form in `references/awaiting-a-double.md` is the same step for an ordering contract.
+
 - **A test that asserts framework or filesystem wiring earns nothing** — a directory exists, a config key holds the value just set; the one pin worth keeping is a literal a tool cannot import and silently drops (`references/what-earns-a-test.md`).
 - **Never add production API for a test's benefit** — a test-only export means the wrong seam, or a drain the repo already owns (`references/what-earns-a-test.md`).
 - The recurring subjects where this has already been decided — a shared primitive versus its wrappers, a composable versus the service under it, Zod constraints, a `declare module` over third-party data, whether a UI change earns a mounted test — are `references/what-earns-a-test.md`.

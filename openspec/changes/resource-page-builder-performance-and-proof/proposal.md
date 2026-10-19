@@ -22,11 +22,11 @@ The editors and their output meet measured targets, and every type's output and 
 
 ## Waiting on
 
-- `openspec/changes/resource-page-builder-canvas/`, whose canvas and browser suite the box and mark tests run in.
+- `openspec/changes/resource-page-builder-canvas/`, whose canvas the box and mark tests run against.
 - `openspec/changes/resource-page-builder-email/`, whose email canvas and compile service the email proof and bench measure.
 
 ## Impact
 
 - The benchmarks for rendering, patching and the server's email compile.
-- The app's browser suite, which the canvas sets up, gaining the box, mark and origin tests.
+- The browser suite of the frame's package, once the frame is extracted, gaining the box, mark and origin tests.
 - The per-type output tests and the sanitiser vector tests.

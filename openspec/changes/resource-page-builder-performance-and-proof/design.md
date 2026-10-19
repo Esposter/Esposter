@@ -50,5 +50,5 @@ New code lands here:
 ```text
 apps/web/shared/services/pageBuilder/    the render and patch benches beside the renderer, and each type's output test
 apps/web/server/services/emailEditor/    the compile bench beside the compile service
-apps/web/app/components/PageBuilder/     the browser tests of the canvas, the email canvas and the editors' requests
+apps/web/app/components/PageBuilder/     the editors' component tests of the canvas and the email canvas; their browser checks wait for the frame's package
 ```

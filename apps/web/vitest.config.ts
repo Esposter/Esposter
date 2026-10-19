@@ -17,8 +17,7 @@ const { test } = getVitestConfiguration(import.meta.dirname, {
   // Would otherwise be a forgeable token in production and nothing at all in a test.
   env: { BETTER_AUTH_SECRET: "mock-auth-secret" },
   environmentOptions: getNuxtEnvironmentOptions(import.meta.dirname),
-  // A `*.browser.test.ts` runs in the browser suite alone (`vitest.browser.config.ts`), where a layout engine draws it
-  exclude: [...configDefaults.exclude, "**/*.browser.test.ts"],
+  exclude: configDefaults.exclude,
   // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
   // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
   hookTimeout: Temporal.Duration.from({ minutes: 5 }).total("milliseconds"),

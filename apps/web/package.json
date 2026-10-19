@@ -59,7 +59,6 @@
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "test": "vitest",
-    "test:browser": "vitest --config vitest.browser.config.ts",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
     "typecheck": "nuxt typecheck",
     "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
@@ -172,6 +171,7 @@
     "trpc-nuxt-module": "workspace:*",
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
+    "vue-canvas-frame-headless": "workspace:*",
     "vue-grid-layout-headless": "workspace:*",
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",

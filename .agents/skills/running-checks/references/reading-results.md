@@ -15,5 +15,5 @@ green light to keep building on the change that broke it, and the next check say
 So open the log. `tail -1` is the appended line; anything else is the command's own output and proves nothing. For the same reason a check is never piped into `tail` and several are never chained with `&&` in one call: a pipeline's status is the last command's, so the appended line describes `tail`, and every later link in the chain runs on top of a failure that was never read.
 
 **A red result is an edit, then a fresh background run** — of that check alone when the fix cannot reach the others,
-of the full pass when it can. Never hand-fix what `lint:fix` fixes, and never chase an error in a file the change
+of the full pass when it can. The exception is the regression proof, run with its fix reverted on purpose: its red is the expected result, and what follows it is the `testing` skill's ("What to Test"). Never hand-fix what `lint:fix` fixes, and never chase an error in a file the change
 never touched before diffing against a clean tree (the `context-efficiency` skill, `references/pre-existing-errors.md`).
