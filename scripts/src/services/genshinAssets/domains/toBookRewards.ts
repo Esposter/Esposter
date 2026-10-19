@@ -1,4 +1,3 @@
-import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { DomainKind, RewardItem } from "genshin-world";
 
 import { DOMAIN_TREE_COUNT_ROWS } from "#src/services/genshinAssets/domains/constants";

@@ -29,6 +29,12 @@ import { regionGroundSchema } from "genshin-world";
 const selectBarSamples = (grid: TerrainResidualGrid): Float64Array =>
   grid.values.filter((sample) => Number.isFinite(sample));
 
+// What a ground misses by at each sample of a grid, the fit's samples or the piece's own ground the bar is read on
+const computeMisses = (
+  grid: TerrainResidualGrid,
+  getGroundHeight: (x: number, z: number) => number,
+): TerrainResidualGrid => mapTerrainResidualGrid(grid, (x, z, height) => height - getGroundHeight(x, z));
+
 // The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre, in
 // Metres
 const GROUND_STEP = 6;
@@ -119,11 +125,6 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
     step: GROUND_STEP,
     widths: GROUND_WIDTHS,
   });
-  // What a ground misses by at each sample of a grid, the fit's samples or the piece's own ground the bar is read on
-  const computeMisses = (
-    grid: TerrainResidualGrid,
-    getGroundHeight: (x: number, z: number) => number,
-  ): TerrainResidualGrid => mapTerrainResidualGrid(grid, (x, z, height) => height - getGroundHeight(x, z));
   const detailSamples = selectBarSamples(computeTerrainDetail(naturalGrid, GROUND_STEP));
   const gate = roundFitted(computeRootMeanSquare(detailSamples));
   const getHillsHeight = createGaussianHillsHeight(hills);
@@ -186,13 +187,13 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
         `${key}: the residual's fade over ${fade.weights.length} cells of ${GROUND_FADE_CELL_SIZE} metres, ${getShareReport((weight) => weight === 0)} at none, ${getShareReport((weight) => weight > 0 && weight < 1)} between and ${getShareReport((weight) => weight === 1)} at one, its mean weight ${getBandsReport(fadeWeights, computeMean, "")}`,
         `${key}: composed ${getBandsReport(groundMisses, computeRootMeanSquare, " metres")}, ${roundFitted(computeRootMeanSquare(groundMisses.values))} over its samples and ${roundFitted(computeRootMeanSquare(unfadedMisses.values))} without its residual`,
         `${key}: places cleared of the residual, ${footprints
-          .map(({ id: placeId, radius, source, x, z }) => {
+          .map(({ id: placeId, radius, source: radiusSource, x, z }) => {
             const tileHeight = getGameHeight(originX + x, originZ - z) - originY;
             // A place on another region's tiles, as Windrise's oak is inside Mondstadt's extent, has no tile here to stand over
             const overTiles = Number.isFinite(tileHeight)
               ? ` and its ground ${roundFitted(getGroundHeight(x, z) - tileHeight)} metres over the tiles'`
               : "";
-            return `${placeId} ${radius} metres from ${source}, its residual ${roundFitted(getGroundHeight(x, z) - getFeaturedHeight(x, z))} metres${overTiles}`;
+            return `${placeId} ${radius} metres from ${radiusSource}, its residual ${roundFitted(getGroundHeight(x, z) - getFeaturedHeight(x, z))} metres${overTiles}`;
           })
           .join(", ")}`,
         `${key}: the residual's power by octave against the faded leftover's, as the change over its scale, ${octaveScales.map((scale) => `${roundFitted(computeLagDifference(drawnResidual, scale))} against ${roundFitted(computeLagDifference(fadedRemainder, scale))} metres at ${scale}`).join(", ")}`,

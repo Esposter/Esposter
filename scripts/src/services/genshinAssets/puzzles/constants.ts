@@ -12,6 +12,7 @@ export const PROVISIONAL_MONUMENT_IS_TIMED = true;
 // Timing, since its one temporary variant is not tied to a place. Every Mondstadt monument is therefore provisional
 export const ELEMENTAL_MONUMENT_WIKI_TIMING: MonumentKindTiming = {};
 // A Shrine of Depths key's English name, the region it names first, as the key's source takes its region
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SHRINE_KEY_NAME_REGEX: RegExp = /^(?<regionName>.+) Shrine of Depths Key$/u;
 // Each region a Shrine of Depths key can name, by the name the key's English name gives it, as the slug the world's
 // Regions take. A key naming a region not here is left out and noted, never guessed at

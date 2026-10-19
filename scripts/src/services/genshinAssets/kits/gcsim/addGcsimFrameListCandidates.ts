@@ -20,7 +20,7 @@ const toCamelCase = (text: string): string =>
 // Origin` and `C6` in `Boundless Origin (C6)`
 const readAbilNames = (abil: string): string[] => {
   const [base = "", parenthesis = ""] = abil.split("(");
-  return [base, parenthesis.replace(")", "")].map(toCamelCase).filter((name) => name !== "");
+  return [base, parenthesis.replace(")", "")].map((text) => toCamelCase(text)).filter((name) => name !== "");
 };
 
 // A frame list the kit holds with no named constant of its name takes the delays of the queue calls whose attack an

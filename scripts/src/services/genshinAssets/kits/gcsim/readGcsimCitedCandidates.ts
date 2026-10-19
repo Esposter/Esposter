@@ -112,12 +112,14 @@ const readCitedValue = (
   const toRecordValue = (value: number) => (field === GAUGE_FIELD ? value / GCSIM_DURABILITY_PER_GAUGE : value + shift);
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
   if (loop === undefined) {
-    const values = readGcsimLineValues(lineText, resolveName).map(toRecordValue);
+    const values = readGcsimLineValues(lineText, resolveName).map((value) => toRecordValue(value));
     return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
   }
   if (loop.count === 0) return undefined;
   const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map(toRecordValue),
+    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map((value) =>
+      toRecordValue(value),
+    ),
   );
   if (hitIndex !== undefined) {
     const hitValues = valuesByIndex[hitIndex] ?? [];

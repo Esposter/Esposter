@@ -42,6 +42,9 @@ const createMaterial = (id: number, rankLevel: number): MaterialRow => ({
   rankLevel,
   stackLimit: 0,
 });
+// Noon of each day in the game's time zone, a moment that falls on that game day
+const atNoon = (day: Temporal.PlainDate) =>
+  day.toZonedDateTime({ plainTime: "12:00", timeZone: GAME_TIME_ZONE }).toInstant();
 
 describe(toDomainLevels, () => {
   const LEVEL_ENTITIES: ExcelDungeonLevelEntityRow[] = [
@@ -165,9 +168,6 @@ describe(toDomainLevels, () => {
     );
     const epochDay = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO("UTC").toPlainDate();
     // The epoch fell on a Thursday, so four days after it is a Monday and five a Tuesday
-    // Noon of each day in the game's time zone, a moment that falls on that game day
-    const atNoon = (day: Temporal.PlainDate) =>
-      day.toZonedDateTime({ plainTime: "12:00", timeZone: GAME_TIME_ZONE }).toInstant();
     const monday = atNoon(epochDay.add({ days: 4 }));
     const tuesday = atNoon(epochDay.add({ days: 5 }));
     for (const { kind, levels } of Object.values(schedules))

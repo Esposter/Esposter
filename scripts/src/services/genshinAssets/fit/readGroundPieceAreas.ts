@@ -7,4 +7,4 @@ import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas
 // A region's areas the catalogue outlines, each one a piece of its ground, in the catalogue's order. An area it gives no
 // Outline is no piece, since no ground is fitted inside an outline that is not there
 export const readGroundPieceAreas = async (region: DerivedAssetComponent): Promise<GroundPieceArea[]> =>
-  (await readRegionAreas(region)).filter(checkHasOutline);
+  (await readRegionAreas(region)).filter((area) => checkHasOutline(area));

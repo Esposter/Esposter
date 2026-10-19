@@ -23,16 +23,21 @@ const readRegionGroundFits = async (
   let fitted: Promise<RegionGroundFit> | undefined;
   const fitRegion = (): Promise<RegionGroundFit> => (fitted ??= fitRegionGroundPieces(region, areas));
   return Object.fromEntries(
-    areas.filter(checkHasOutline).map(({ id }) => [
-      `ground/${id}`,
-      async () => {
-        const fit = await fitRegion();
-        const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };
-        return fit.isQualified
-          ? build
-          : { notes: [...build.notes, `${region}: keeps its plateau and lays no pieces, ${fit.reason}`], objects: {} };
-      },
-    ]),
+    areas
+      .filter((area) => checkHasOutline(area))
+      .map(({ id }) => [
+        `ground/${id}`,
+        async () => {
+          const fit = await fitRegion();
+          const build = fit.pieces.find(({ areaId }) => areaId === id)?.build ?? { notes: [], objects: {} };
+          return fit.isQualified
+            ? build
+            : {
+                notes: [...build.notes, `${region}: keeps its plateau and lays no pieces, ${fit.reason}`],
+                objects: {},
+              };
+        },
+      ]),
   );
 };
 

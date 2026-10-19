@@ -26,14 +26,12 @@ export const findQueuedAttacks = (attacks: readonly GcsimAttack[], queuedAttack:
       latestBranchMap.set(candidate.branch.index, candidate);
   const branchAttacks = [...latestBranchMap.values()];
   if (attack.branch.isExhaustive && latestBranchMap.size === attack.branch.armCount) return branchAttacks;
-  const priorAttack = attacks
-    .filter(
-      (candidate) =>
-        candidate.file === queuedAttack.file &&
-        candidate.variableName === attack.variableName &&
-        candidate.branch === undefined &&
-        candidate.line <= queuedAttack.line,
-    )
-    .at(-1);
+  const priorAttack = attacks.findLast(
+    (candidate) =>
+      candidate.file === queuedAttack.file &&
+      candidate.variableName === attack.variableName &&
+      candidate.branch === undefined &&
+      candidate.line <= queuedAttack.line,
+  );
   return priorAttack === undefined ? branchAttacks : [priorAttack, ...branchAttacks];
 };

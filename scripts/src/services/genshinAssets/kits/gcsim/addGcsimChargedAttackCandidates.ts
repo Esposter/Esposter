@@ -89,7 +89,7 @@ export const addGcsimChargedAttackCandidates = (
     addGcsimQueuedHits(writer, gcsim, {
       abilityName: "charge",
       attackTags: [GCSIM_CHARGED_ATTACK_TAG],
-      excludedAttacks: attacks.filter(checkIsChargedAttackVariantAttack),
+      excludedAttacks: attacks.filter((attack) => checkIsChargedAttackVariantAttack(attack)),
       framesName: "chargeFrames",
       path: "chargedAttack",
       targetingArea: STRIKE_TARGETING_AREA,

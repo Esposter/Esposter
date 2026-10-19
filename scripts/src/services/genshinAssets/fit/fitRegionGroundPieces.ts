@@ -17,7 +17,7 @@ export const fitRegionGroundPieces = async (
 ): Promise<RegionGroundFit> => {
   const source = await readGroundSource(region);
   const pieces: { areaId: string; build: GameDataBuild; isRefused: boolean }[] = [];
-  for (const area of areas.filter(checkHasOutline))
+  for (const area of areas.filter((candidate) => checkHasOutline(candidate)))
     // oxlint-disable-next-line no-await-in-loop -- one piece at a time, as runFits fits one at a time: a piece's compute holds the thread
     pieces.push({ areaId: area.id, ...(await fitGroundPieces(toGroundPiece(region, area), source)) });
   const reasons = [

@@ -5,6 +5,7 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
 
+import { GoAssignmentKind } from "#src/models/genshinAssets/kits/gcsim/GoAssignmentKind";
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
@@ -138,17 +139,17 @@ const findOkDefault = (
 const COMPOUND_OPERATOR_TOKEN_COUNT = 3;
 
 // Whether the name token at a position is set to a value by `:=` or `=`, or updated by `+=`, `<<=`, `++` and the like
-const readAssignmentKind = (tokens: readonly GoToken[], position: number): "update" | "value" | undefined => {
+const readAssignmentKind = (tokens: readonly GoToken[], position: number): GoAssignmentKind | undefined => {
   const next = tokens[position + 1];
-  if (checkIsGoPunctuation(next, ":=") || checkIsGoPunctuation(next, "=")) return "value";
-  if (checkIsGoPunctuation(next, "++") || checkIsGoPunctuation(next, "--")) return "update";
+  if (checkIsGoPunctuation(next, ":=") || checkIsGoPunctuation(next, "=")) return GoAssignmentKind.Value;
+  if (checkIsGoPunctuation(next, "++") || checkIsGoPunctuation(next, "--")) return GoAssignmentKind.Update;
   // The tokens spelled back together, so a split operator reads as the operator it is
   const spelling = tokens
     .slice(position + 1, position + 1 + COMPOUND_OPERATOR_TOKEN_COUNT)
     .map(({ text }) => text)
     .join("");
   return GO_COMPOUND_ASSIGNMENT_OPERATORS.some((operator) => spelling.startsWith(`${operator}=`))
-    ? "update"
+    ? GoAssignmentKind.Update
     : undefined;
 };
 
@@ -167,7 +168,7 @@ const findAssignment = (
   const okDefault = findOkDefault(tokens, scope, name, position, constantMap);
   if (okDefault !== undefined) return { kind: "dominating", valueStart: okDefault };
   const otherClosures = readOtherClosures(tokens, scope, position);
-  let latest: { isTaken: boolean; kind: "update" | "value"; position: number } | undefined;
+  let latest: { isTaken: boolean; kind: GoAssignmentKind; position: number } | undefined;
   for (let previous = scope.bodyStart + 1; previous < position; previous++) {
     const kind =
       tokens[previous]?.kind === GoTokenKind.Identifier &&
@@ -179,14 +180,16 @@ const findAssignment = (
     if (kind === undefined) continue;
     const block = findBlock(tokens, previous);
     const threshold =
-      constellation === undefined || kind !== "value" ? undefined : readConstellationBranch(tokens, block.start);
+      constellation === undefined || kind !== GoAssignmentKind.Value
+        ? undefined
+        : readConstellationBranch(tokens, block.start);
     // A position inside such a branch reads its reassignment, which the constellation does not give
     const isLeftOut = threshold !== undefined && constellation !== undefined && threshold > constellation;
     if (!isLeftOut) latest = { isTaken: threshold !== undefined, kind, position: previous };
     else if (block.start < position && position < block.end) return { kind: "conditional" };
   }
   if (latest === undefined) return { kind: "none" };
-  if (latest.kind === "update") return { kind: "conditional" };
+  if (latest.kind === GoAssignmentKind.Update) return { kind: "conditional" };
   const block = findBlock(tokens, latest.position);
   if (block.start < position && position < block.end) return { kind: "dominating", valueStart: latest.position + 2 };
   // A taken branch's block is one the block around it always runs past, so a position after it in that block is reached
