@@ -1,13 +1,16 @@
+import type { MjmlDocument } from "mjml-blocks";
+
 import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
 import { TEST_CONTEXT, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { noop } from "@esposter/shared";
+import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 describe(compileEmailDocument, () => {
   test("an email document with invalid markup is refused by the compile", async () => {
     expect.hasAssertions();
 
-    const document = {
+    const document: MjmlDocument = {
       content: [
         {
           props: {
@@ -17,17 +20,17 @@ describe(compileEmailDocument, () => {
                   children: [
                     {
                       props: { content: TEST_LABEL, id: crypto.randomUUID(), padding: "1px 2px 3px 4px 5px" },
-                      type: "mj-button",
+                      type: MjmlNodeType.Button,
                     },
                   ],
                   id: crypto.randomUUID(),
                 },
-                type: "mj-column",
+                type: MjmlNodeType.Column,
               },
             ],
             id: crypto.randomUUID(),
           },
-          type: "mj-section",
+          type: MjmlNodeType.Section,
         },
       ],
       root: { props: {} },
@@ -44,7 +47,7 @@ describe(compileEmailDocument, () => {
   test("a valid email document compiles to email HTML", async () => {
     expect.hasAssertions();
 
-    const document = {
+    const document: MjmlDocument = {
       content: [
         {
           props: {
@@ -60,17 +63,17 @@ describe(compileEmailDocument, () => {
                         },
                         id: crypto.randomUUID(),
                       },
-                      type: "mj-text",
+                      type: MjmlNodeType.Text,
                     },
                   ],
                   id: crypto.randomUUID(),
                 },
-                type: "mj-column",
+                type: MjmlNodeType.Column,
               },
             ],
             id: crypto.randomUUID(),
           },
-          type: "mj-section",
+          type: MjmlNodeType.Section,
         },
       ],
       root: { props: {} },
