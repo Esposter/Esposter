@@ -60,7 +60,8 @@ export const GCSIM_SKILL_ATTACK_TAGS: readonly string[] = [
   "attacks.AttackTagElementalArtHold",
 ];
 export const GCSIM_BURST_ATTACK_TAGS: readonly string[] = ["attacks.AttackTagElementalBurst"];
-export const GCSIM_PHYSICAL_ELEMENT = "attributes.Physical";
+// The gcsim elements a hit of no element is named by, which applies no element and no gauge
+export const GCSIM_ELEMENTLESS_ELEMENTS: ReadonlySet<string> = new Set(["attributes.NoElement", "attributes.Physical"]);
 // The gauge a hit applies is its durability over 25, gcsim's units to the game's
 export const GCSIM_DURABILITY_PER_GAUGE = 25;
 // The seconds a hold must be held with no table or wiki figure for it, Bennett's first Charge Level's
