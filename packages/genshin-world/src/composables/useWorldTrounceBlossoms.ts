@@ -1,4 +1,3 @@
-import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
@@ -15,7 +14,6 @@ import type { Ref } from "vue";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { checkIsTrounceBlossomClaimable } from "#src/services/bosses/checkIsTrounceBlossomClaimable";
 import { claimTrounceBlossom } from "#src/services/bosses/claimTrounceBlossom";
-import { claimWeeklyBossTrounceBlossom } from "#src/services/bosses/claimWeeklyBossTrounceBlossom";
 import { computeDefeatTrounceBlossom } from "#src/services/bosses/computeDefeatTrounceBlossom";
 import { computeDefeatWeeklyBossTrounceBlossom } from "#src/services/bosses/computeDefeatWeeklyBossTrounceBlossom";
 import { computeTrounceBlossomInteractables } from "#src/services/bosses/computeTrounceBlossomInteractables";
@@ -26,9 +24,12 @@ import {
   WEEKLY_BOSS_ADVENTURE_EXP,
   WEEKLY_BOSS_COMPANIONSHIP_EXP,
 } from "#src/services/bosses/constants";
+import { drawNormalBossReward } from "#src/services/bosses/drawNormalBossReward";
+import { drawWeeklyBossReward } from "#src/services/bosses/drawWeeklyBossReward";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
+import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
@@ -40,10 +41,7 @@ import { computed, shallowRef } from "vue";
 // And grants its World Level's rewards and its own drop, the claim setting the boss's respawn five seconds on. Choosing
 // A claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
 export const useWorldTrounceBlossoms = ({
-  adventureExp,
-  adventureRankTables,
   characters,
-  completedMainQuestIds,
   enemyKindMap,
   events,
   friendshipLevels,
@@ -60,10 +58,7 @@ export const useWorldTrounceBlossoms = ({
   wallet,
   worldNow,
 }: {
-  adventureExp: Ref<number>;
-  adventureRankTables: AdventureRankTables;
   characters: Ref<Character[]>;
-  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
@@ -147,51 +142,27 @@ export const useWorldTrounceBlossoms = ({
     if (!prompt || !trounceBlossom || !checkIsTrounceBlossomClaimable(trounceBlossom, now) || !friendshipLevels.value)
       return;
     claimPrompt.value = undefined;
-    // A weekly boss's prompt holds its one claim, so its single offer is the one paid
-    const claim =
+    // A weekly boss's prompt holds its one claim, so its single offer is the one paid. The reward is drawn before the resin
+    // Is spent, so the random draws keep their order
+    const { adventureExp, companionshipExp, resin, rewards } =
       trounceBlossom.kind === BlossomKind.WeeklyBoss
-        ? claimWeeklyBossTrounceBlossom(
-            adventureRankTables,
-            wallet.value,
-            inventory.value,
-            takeOne(prompt.offers, 0),
-            worldLevel,
-            adventureExp.value,
-            completedMainQuestIds.value,
-            now,
-            nameText,
-            materialDataMap,
-            random,
-          )
-        : claimTrounceBlossom(
-            adventureRankTables,
-            wallet.value,
-            inventory.value,
-            worldLevel,
-            trounceBlossom.uniqueDropId,
-            adventureExp.value,
-            completedMainQuestIds.value,
-            now,
-            nameText,
-            materialDataMap,
-            random,
-          );
+        ? {
+            adventureExp: WEEKLY_BOSS_ADVENTURE_EXP,
+            companionshipExp: takeOne(WEEKLY_BOSS_COMPANIONSHIP_EXP, computeWeeklyBossRow(worldLevel)),
+            resin: takeOne(prompt.offers, 0).resin,
+            rewards: drawWeeklyBossReward(worldLevel, random),
+          }
+        : {
+            adventureExp: NORMAL_BOSS_ADVENTURE_EXP,
+            companionshipExp: takeOne(NORMAL_BOSS_COMPANIONSHIP_EXP, worldLevel),
+            resin: BlossomClaimResinMap[BlossomKind.NormalBoss],
+            rewards: drawNormalBossReward(worldLevel, trounceBlossom.uniqueDropId, random),
+          };
+    const claim = claimTrounceBlossom(wallet.value, inventory.value, resin, rewards, now, nameText, materialDataMap);
     if (!claim) return;
     setWallet(claim.wallet);
     setInventory(claim.inventory);
-    // A weekly boss's EXP is read by its row, the one its World Level reads for the reward
-    if (trounceBlossom.kind === BlossomKind.WeeklyBoss)
-      grantBossExp(
-        WEEKLY_BOSS_ADVENTURE_EXP,
-        takeOne(WEEKLY_BOSS_COMPANIONSHIP_EXP, computeWeeklyBossRow(worldLevel)),
-        friendshipLevels.value,
-      );
-    else
-      grantBossExp(
-        NORMAL_BOSS_ADVENTURE_EXP,
-        takeOne(NORMAL_BOSS_COMPANIONSHIP_EXP, worldLevel),
-        friendshipLevels.value,
-      );
+    grantBossExp(adventureExp, companionshipExp, friendshipLevels.value);
     writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAts: [...trounceBlossom.claimedAts, now] });
   };
   return {

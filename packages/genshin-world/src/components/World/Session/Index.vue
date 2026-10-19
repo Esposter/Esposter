@@ -1295,10 +1295,7 @@ const {
   trounceBlossomInteractables,
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
-  adventureExp,
-  adventureRankTables,
   characters,
-  completedMainQuestIds,
   enemyKindMap: enemyTables.enemyKindMap,
   events,
   friendshipLevels,

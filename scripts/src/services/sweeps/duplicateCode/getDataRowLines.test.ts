@@ -20,6 +20,22 @@ describe(getDataRowLines, () => {
     );
   });
 
+  test("reads a keyed empty collection and an object of only empty collections as data rows", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines(
+        "  homePlacements: [],\n  companionshipExp: {},\n  cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },",
+      ),
+    ).toStrictEqual(new Set([1, 2, 3]));
+  });
+
+  test("keeps a keyed array holding a value as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  key: [value],")).toStrictEqual(new Set());
+  });
+
   test("reads the header of a record of primitives and the brackets framing a row block as data", () => {
     expect.hasAssertions();
 
@@ -36,5 +52,41 @@ describe(getDataRowLines, () => {
     const line = `{ ${Array.from({ length: FIELD_COUNT }, () => "a: 1").join("  ")}`;
 
     expect(getDataRowLines(line)).toStrictEqual(new Set());
+  });
+
+  test("reads a comment between two data rows as part of their run", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  1: 3,\n  // Energy\n  2: 4,")).toStrictEqual(new Set([1, 2, 3]));
+  });
+
+  test("keeps a comment beside code as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  1: 3,\n  // Energy\n  const a = makeItem();")).toStrictEqual(new Set([1]));
+  });
+
+  test("reads a keyed object's opener and a keyed row of a named or member constant as data rows", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines(
+        "  homeProgress: {\n    realmBounty: MAX_SAVE_NUMBER,\n    trustExp: Number.MAX_SAFE_INTEGER,\n  },",
+      ),
+    ).toStrictEqual(new Set([1, 2, 3, 4]));
+  });
+
+  test("reads a keyed one-line object of numeric or constant fields as a data row", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines("  encounterPoints: { halfPoints: 0, majorVersion: MAX_SAVE_NUMBER },\n  const a = makeItem();"),
+    ).toStrictEqual(new Set([1]));
+  });
+
+  test("keeps a keyed row whose value calls a function, or opens one, as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  realmBounty: makeBounty(),\n  homeProgress: call({")).toStrictEqual(new Set());
   });
 });
