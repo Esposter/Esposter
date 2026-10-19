@@ -65,10 +65,10 @@ export const createTerrainMaterial = (
     ),
     1,
   );
-  if (waterUniforms) {
+  if (waterUniforms)
     terrainMaterial.emissiveNode = createRimNode(lightUniforms)
       .add(createWetSheenNode(lightUniforms))
       .add(createCausticsNode(lightUniforms, waterUniforms));
-  }
+
   return terrainMaterial;
 };

@@ -8,9 +8,9 @@ import { float, hash, smoothstep, step, vec2 } from "three/tsl";
 const MIN_GREENNESS = 0.05;
 
 // A cell of a grass ring: its place in the grid centred on the camera, moving in whole cells so blades stay put in the
-// world, a hash of the cell jittering it, turning it, sizing it and deciding whether the tier grows it. It grows only on
-// green ground above the water, and fades out over its ring's distances. Shared by the blades' draw and the culling pass
-// that picks which of them to draw, so both read one cell the same way
+// World, a hash of the cell jittering it, turning it, sizing it and deciding whether the tier grows it. It grows only on
+// Green ground above the water, and fades out over its ring's distances. Shared by the blades' draw and the culling pass
+// That picks which of them to draw, so both read one cell the same way
 export const createGrassCell = ({
   cameraGround,
   density,

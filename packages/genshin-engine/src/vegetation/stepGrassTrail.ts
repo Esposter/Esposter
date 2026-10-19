@@ -14,8 +14,8 @@ import {
 const encodeBend = (bend: number): number => Math.round((Math.min(Math.max(bend, -1), 1) * 0.5 + 0.5) * 255);
 
 // Advances the trail by a frame: every bend fades, the texels the square has moved off are cleared for the cells it
-// now covers, the character's footing is stamped with its direction of travel when it moves, and the texture takes the
-// result. The square is centred on the character's cell, so the cells that enter it are the ones it has left behind
+// Now covers, the character's footing is stamped with its direction of travel when it moves, and the texture takes the
+// Result. The square is centred on the character's cell, so the cells that enter it are the ones it has left behind
 export const stepGrassTrail = (trail: GrassTrail, position: Vector2, velocity: Vector2, delta: number): void => {
   const { bends, cells, data, texture } = trail;
   const decay = Math.exp(-delta / GRASS_TRAIL_FADE_SECONDS);

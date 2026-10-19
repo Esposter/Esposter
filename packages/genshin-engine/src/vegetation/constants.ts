@@ -22,7 +22,7 @@ export const GRASS_TRAIL_TEXELS = 64;
 // A texel's side, in metres
 export const GRASS_TRAIL_TEXEL_SIZE: number = GRASS_TRAIL_EXTENT / GRASS_TRAIL_TEXELS;
 // The stamp a character leaves in the trail, a disc this many metres across its footing, and the seconds a stamp takes
-// to fade. Both provisional, like the extent
+// To fade. Both provisional, like the extent
 export const GRASS_TRAIL_STAMP_RADIUS = 0.6;
 export const GRASS_TRAIL_FADE_SECONDS = 1.5;
 // How far a blade bends at the top, as a share of its height, under a full stamp of the trail

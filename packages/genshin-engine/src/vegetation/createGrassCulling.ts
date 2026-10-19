@@ -11,9 +11,9 @@ import { createGrassCell } from "#src/vegetation/createGrassCell";
 import { float, max, step, vec2, vec3 } from "three/tsl";
 
 // The cull of one grass ring: each cell is drawn only when it grows a blade within the view. A blade's root, its top as
-// it stands and its tip as the wind and the trail bend it are each tested, since a blade can stand in view by any of them:
-// a tip the bend carries in can be in view while its root and unbent top lie outside it. The survivors feed the ring's
-// material, which draws the same points
+// It stands and its tip as the wind and the trail bend it are each tested, since a blade can stand in view by any of them:
+// A tip the bend carries in can be in view while its root and unbent top lie outside it. The survivors feed the ring's
+// Material, which draws the same points
 export const createGrassCulling = ({
   bladeHeight,
   cameraGround,

@@ -23,8 +23,8 @@ interface GrassBladePointOptions {
 }
 
 // A point on a blade, bent by the wind and the grass trail by the square of its height, so the root stays planted and the
-// top travels and dips as it bends. The blade's draw places its vertices with it and the culling pass tests the same
-// points, so a tip the bend carries into view is the one drawn
+// Top travels and dips as it bends. The blade's draw places its vertices with it and the culling pass tests the same
+// Points, so a tip the bend carries into view is the one drawn
 export const createGrassBladePoint = ({
   bladeHeight,
   captured,

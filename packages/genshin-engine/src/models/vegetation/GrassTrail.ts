@@ -2,8 +2,8 @@ import type { DataTexture, Vector2 } from "three";
 import type { UniformNode } from "three/webgpu";
 
 // The grass trail, the bend each texel of a square round the character records as it is passed through. The square is
-// toroidal: a texel holds the one world cell its index names, so the square moves with the character by reusing the
-// texels it leaves behind. The bends are in ground coordinates, and the texture carries them encoded in two bytes
+// Toroidal: a texel holds the one world cell its index names, so the square moves with the character by reusing the
+// Texels it leaves behind. The bends are in ground coordinates, and the texture carries them encoded in two bytes
 export interface GrassTrail {
   // The square's centre in world coordinates, which the grass fades the trail out past
   center: UniformNode<"vec2", Vector2>;

@@ -10,10 +10,10 @@ import { DoubleSide } from "three";
 import { cameraViewMatrix, cos, mix, positionGeometry, sin, varying, vec2, vec3, vec4 } from "three/tsl";
 
 // A grass ring's blades, generated in the vertex stage so no blade is stored. A blade's cell is its instance's cell as
-// the culling pass kept it, and the cell itself gives the blade its place, jitter, turn, size and whether it grows at all
+// The culling pass kept it, and the cell itself gives the blade its place, jitter, turn, size and whether it grows at all
 // (`createGrassCell`). The wind and the grass trail bend its points (`createGrassBladePoint`). It takes the ground's
-// upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root. A wet meadow
-// darkens and takes the sun's glint as the ground does, and no rim
+// Upward normal, so a meadow toon-shades as one surface with light rolling across it, darker at the root. A wet meadow
+// Darkens and takes the sun's glint as the ground does, and no rim
 export const createGrassMaterial = ({
   bladeHeight,
   bladeWidth,

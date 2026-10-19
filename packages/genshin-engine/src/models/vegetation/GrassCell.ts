@@ -8,6 +8,6 @@ export interface GrassCell {
   // The cell's ground point, in world coordinates
   ground: Node<"vec2">;
   // The blade's size, zero where the cell grows none: outside the ring's fade, off green ground, under water or not
-  // grown by the density
+  // Grown by the density
   size: Node<"float">;
 }
