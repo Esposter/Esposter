@@ -37,11 +37,9 @@ interface WeaponInventoryItemSave {
 
 const inventoryItemSaveBaseSchema = z.object({ id: z.int().nonnegative(), itemId: z.int().positive() });
 export const inventoryItemSaveSchema = z.discriminatedUnion("kind", [
-  inventoryItemSaveBaseSchema.extend({
-    artifact: artifactSchema,
-    kind: z.literal(InventoryItemKind.Artifact),
-    quantity: z.literal(1),
-  }),
+  inventoryItemSaveBaseSchema
+    .extend({ artifact: artifactSchema, kind: z.literal(InventoryItemKind.Artifact), quantity: z.literal(1) })
+    .refine((entry) => entry.itemId === entry.artifact.itemId, { error: "The item id must be the artifact's own" }),
   inventoryItemSaveBaseSchema.extend({
     kind: z.literal(InventoryItemKind.Stack),
     quantity: z.int().positive().max(MAX_ITEM_QUANTITY),
