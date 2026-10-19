@@ -142,13 +142,13 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     if (!selection) return;
 
     const operations = duplicateBlockNode(selection.document, webpageRegistry, selection.nodePointer);
-    if (operations.length === 0) return;
-
     const segments = parseJsonPointer(selection.nodePointer);
     const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+    if (operations.length === 0 || index === undefined) return;
+
     const title = getNodeTitle(selection.document, segments);
     applyEdit(toValue(resourceId), operations, "Duplicate block").match(() => {
-      const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${(index ?? 0) + 1}`;
+      const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${index + 1}`;
       setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), copyPointer));
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
