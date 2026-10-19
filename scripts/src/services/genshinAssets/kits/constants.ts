@@ -76,10 +76,10 @@ export const GCSIM_SKILL_PRESS_HITBOX_NAMES: readonly string[] = ["E-Tap", "E-Pr
 // The file a gcsim character's own plunges are in
 export const GCSIM_PLUNGE_FILE = "plunge.go";
 // The two landings: each one's plunge, its frames and hitmark named by its prefix, and its area's hitbox by name
-export const GCSIM_PLUNGE_LANDINGS = [
+export const GCSIM_PLUNGE_LANDINGS: readonly (readonly [KitPlunge, string, string])[] = [
   [KitPlunge.Low, "low", "Low_Plunge"],
   [KitPlunge.High, "high", "High_Plunge"],
-] as const;
+];
 export const GCSIM_PLUNGE_COLLISION_HITBOX_NAME = "Plunge";
 // A claymore's charged attack gcsim has no file for lands its spin and its final blow at these frames and ends at the
 // Next, as the kits without one share Diluc's

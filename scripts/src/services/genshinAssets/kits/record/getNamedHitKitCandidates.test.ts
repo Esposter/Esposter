@@ -186,7 +186,9 @@ describe(getNamedHitKitCandidates, () => {
           fieldMap: new Map(),
           queuedCalls: [
             {
-              fieldMap: new Map([["poiseDamage", [{ provenance: { source: KitSource.Gcsim }, value: 10 }]]]),
+              fieldMap: new Map([
+                ["poiseDamage", [{ provenance: { file: "burst.go", line: 5, source: KitSource.Gcsim }, value: 10 }]],
+              ]),
               file: "burst.go",
               line: 5,
               site: "burst.go:4",
@@ -210,7 +212,9 @@ describe(getNamedHitKitCandidates, () => {
           fieldMap: new Map(),
           queuedCalls: [
             {
-              fieldMap: new Map([["poiseDamage", [{ provenance: { source: KitSource.Gcsim }, value: 10 }]]]),
+              fieldMap: new Map([
+                ["poiseDamage", [{ provenance: { file: "burst.go", line: 5, source: KitSource.Gcsim }, value: 10 }]],
+              ]),
               file: "burst.go",
               line: 5,
               site: "burst.go:4",

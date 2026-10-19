@@ -70,7 +70,7 @@ export const TABLE_HEADER: readonly string[] = [
   "| :--- | :------ | ----: | ---: | :--- | :--- |",
 ];
 // The heading, the blank line under it and the table's header come before the rows
-export const ROWS_START = 2 + TABLE_HEADER.length;
+export const ROWS_START: number = 2 + TABLE_HEADER.length;
 // The text each row of the report opens with, before the pass its first cell names
 export const ROW_PREFIX = "| ";
 // The directory each component's committed report of its last run of its passes is written to, a file per component
