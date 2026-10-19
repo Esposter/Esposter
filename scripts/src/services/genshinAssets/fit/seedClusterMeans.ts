@@ -1,13 +1,14 @@
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeSquaredDistance } from "#src/services/genshinAssets/fit/computeSquaredDistance";
+import { ORIGIN } from "#src/services/genshinAssets/fit/constants";
+import { takeRandom } from "@esposter/shared";
 
-const ORIGIN: Vector = [0, 0, 0];
 // The means k-means starts from: the first a random point, then each next one drawn with a chance in proportion to its
 // Squared distance from the means already drawn (k-means++), so the means start spread across the points rather than
 // Bunched in one of them
 export const seedClusterMeans = (points: readonly Vector[], count: number, random: () => number): Vector[] => {
-  const firstMean = points[Math.floor(random() * points.length)] ?? ORIGIN;
+  const firstMean = takeRandom(points, random) ?? ORIGIN;
   const means: Vector[] = [firstMean];
   const distances = points.map((point) => computeSquaredDistance(point, firstMean));
   while (means.length < count) {

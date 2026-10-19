@@ -7,7 +7,7 @@ import { ELECTRO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants"
 import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
 import { HILICHURL_BERSERKER_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 
 const ABYSSAL_SUMMON_POOL: [number, GcgCardModule][] = [
   [CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter],
@@ -19,7 +19,7 @@ const ABYSSAL_SUMMON_POOL: [number, GcgCardModule][] = [
 // Abyssal Summons)
 export const abyssalSummons: GcgCardModule = {
   play: ({ duel, sideIndex }) => {
-    const [cardId, module] = takeOne(ABYSSAL_SUMMON_POOL, Math.floor(duel.random() * ABYSSAL_SUMMON_POOL.length));
+    const [cardId, module] = takeRandom(ABYSSAL_SUMMON_POOL, duel.random);
     placeGcgZoneCard(takeOne(duel.sides, sideIndex).summons, cardId, module);
   },
 };

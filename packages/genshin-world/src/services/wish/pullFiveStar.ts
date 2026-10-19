@@ -6,7 +6,7 @@ import type { WishPull } from "#src/models/wish/WishPull";
 import { BannerKindWishRatesMap } from "#src/services/wish/BannerKindWishRatesMap";
 import { CAPTURING_RADIANCE_LOSS_LIMIT, CAPTURING_RADIANCE_RATE, FATE_POINT_LIMIT } from "#src/services/wish/constants";
 import { pickWishItem } from "#src/services/wish/pickWishItem";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 import { BannerKind } from "genshin-interface";
 
 // Which five-star a wish draws, by its banner's kind. On the character event wish a guarantee draws the promotional
@@ -37,7 +37,7 @@ export const pullFiveStar = (banner: Banner, pity: WishPity, random: () => numbe
     let item: WishItem;
     if (chartedWeapon && pity.fatePoints >= FATE_POINT_LIMIT) item = chartedWeapon;
     else if (pity.isFiveStarGuaranteed || random() < featuredFiveStarShare)
-      item = takeOne(banner.featuredFiveStars, Math.floor(random() * banner.featuredFiveStars.length));
+      item = takeRandom(banner.featuredFiveStars, random);
     else item = pickWishItem(banner.fiveStars, random);
     return {
       pity: {

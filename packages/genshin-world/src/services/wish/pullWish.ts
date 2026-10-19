@@ -7,7 +7,7 @@ import { BannerKindWishRatesMap } from "#src/services/wish/BannerKindWishRatesMa
 import { BEGINNERS_GUARANTEED_WISH } from "#src/services/wish/constants";
 import { pickWishItem } from "#src/services/wish/pickWishItem";
 import { pullFiveStar } from "#src/services/wish/pullFiveStar";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 import { BannerKind } from "genshin-interface";
 
 // A rarity's rate on the given wish since the last of it: its base until soft pity, a step higher each wish from there,
@@ -37,9 +37,7 @@ export const pullWish = (banner: Banner, pity: WishPity, random: () => number): 
   if (roll < fiveStarRate) return pullFiveStar(banner, { ...pity, fiveStarCount: 0, fourStarCount, wishCount }, random);
   else if (roll < fiveStarRate + fourStarRate) {
     const isFeatured = pity.isFourStarGuaranteed || random() < featuredFourStarShare;
-    const item = isFeatured
-      ? takeOne(banner.featuredFourStars, Math.floor(random() * banner.featuredFourStars.length))
-      : pickWishItem(banner.fourStars, random);
+    const item = isFeatured ? takeRandom(banner.featuredFourStars, random) : pickWishItem(banner.fourStars, random);
     return {
       pity: {
         ...pity,

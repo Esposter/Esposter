@@ -5,7 +5,7 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 
 import { ArtifactMainAffixWeightMap, ArtifactMinorAffixWeightMap } from "#src/services/artifact/constants";
 import { drawWeightedValue } from "#src/services/shared/drawWeightedValue";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 
 // A new artifact at level 0 as a drop gives one: its main affix drawn from its slot's pool by the wiki's weights, then
 // Its minor affixes drawn one at a time from the rarity's pool, with the main affix's attribute and each one drawn left
@@ -41,10 +41,7 @@ export const rollArtifact = ({
       random,
     );
     minorAffixGroups = minorAffixGroups.filter((minorAffixGroup) => minorAffixGroup !== group);
-    minorAffixes.push({
-      attribute: group.attribute,
-      value: takeOne(group.values, Math.floor(random() * group.values.length)),
-    });
+    minorAffixes.push({ attribute: group.attribute, value: takeRandom(group.values, random) });
   }
   return {
     experience: 0,

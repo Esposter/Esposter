@@ -11,7 +11,7 @@ import { claimWeeklyReputationBounty } from "#src/services/reputation/claimWeekl
 import { createReputationBountyCamp } from "#src/services/reputation/createReputationBountyCamp";
 import { defeatReputationBountyTarget } from "#src/services/reputation/defeatReputationBountyTarget";
 import { takeReputationBounty } from "#src/services/reputation/takeReputationBounty";
-import { takeOne } from "@esposter/shared";
+import { takeRandom } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
 interface Props {
@@ -59,7 +59,7 @@ export const useWorldReputationBounty = ({
   const takeBounty = () => {
     const city = reputationCity.value;
     if (!city || bountyHunt.value || city.bounties.length === 0) return;
-    const bounty = takeOne(city.bounties, Math.floor(random() * city.bounties.length));
+    const bounty = takeRandom(city.bounties, random);
     const hunt = takeReputationBounty(city, reputation.value.level, bounty.id, random());
     if (!hunt) return;
     bountyHunt.value = hunt;
