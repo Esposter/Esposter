@@ -2,10 +2,10 @@ import { computeSurfaceOctaves } from "#src/nodes/computeSurfaceOctaves";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "#src/nodes/constants";
 import { describe, expect, test } from "vitest";
 
-// A base map's texel spans 2 metres where the ground draws it, 512 texels over a 1,024-metre tile
-const BASE_MAP_METRES_PER_TEXEL = 2;
-
 describe(computeSurfaceOctaves, () => {
+  // A base map's texel spans 2 metres where the ground draws it, 512 texels over a 1,024-metre tile
+  const BASE_MAP_METRES_PER_TEXEL = 2;
+
   test("gives a flat surface no detail", () => {
     expect.hasAssertions();
 
