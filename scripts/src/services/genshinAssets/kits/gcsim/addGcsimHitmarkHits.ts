@@ -2,6 +2,7 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { AttackArea } from "genshin-world";
+import type { Except } from "type-fest";
 
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 
@@ -26,7 +27,7 @@ export const addGcsimHitmarkHits = (
       values: readonly (number | undefined)[];
     };
     path: string;
-    readHit: (hitIndex: number, hitmark: number) => Omit<GcsimHitSource, "hitmark">;
+    readHit: (hitIndex: number, hitmark: number) => Except<GcsimHitSource, "hitmark">;
     targetingArea: AttackArea;
   },
 ): void => {

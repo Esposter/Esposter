@@ -19,7 +19,7 @@ export const addGcsimChargedAttackVariantCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
   { attacks, config, queuedAttacks }: GcsimCharacter,
 ): void => {
-  const swift = attacks.find(checkIsChargedAttackVariantAttack);
+  const swift = attacks.find((attack) => checkIsChargedAttackVariantAttack(attack));
   if (swift === undefined) return;
   const swiftCall = queuedAttacks.find(
     (queuedAttack) => queuedAttack.delay !== undefined && findQueuedAttack(attacks, queuedAttack) === swift,

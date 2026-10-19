@@ -94,6 +94,8 @@ describe(addGcsimChargedAttackCandidates, () => {
   };
 
   test("joins a charged attack variant's hit to the queue call that fires its attack, as a burst variant's kick joins", () => {
+    expect.hasAssertions();
+
     const candidateMap = new Map<string, KitCandidate[]>();
 
     addGcsimChargedAttackCandidates(

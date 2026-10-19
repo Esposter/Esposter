@@ -155,12 +155,17 @@ describe(buildKitPublication, () => {
     expect.hasAssertions();
 
     // Gcsim's multiplier for the first strike names the constellation its talent variable reads at
-    const sourceCandidateMap = new Map(SOURCE_CANDIDATE_MAP);
-    sourceCandidateMap.set("normalAttacks.0.hits.0.multiplier", [
-      {
-        provenance: { file: "kit.go", line: 1, source: KitSource.Gcsim },
-        value: { constellation: 4, index: 0, proudSkillGroupId: 1 },
-      },
+    const sourceCandidateMap = new Map<string, KitCandidate[]>([
+      ...SOURCE_CANDIDATE_MAP,
+      [
+        "normalAttacks.0.hits.0.multiplier",
+        [
+          {
+            provenance: { file: "kit.go", line: 1, source: KitSource.Gcsim },
+            value: { constellation: 4, index: 0, proudSkillGroupId: 1 },
+          },
+        ],
+      ],
     ]);
 
     const { indexes } = buildKitPublication([createInput(1, false, {}, sourceCandidateMap)], [1]);

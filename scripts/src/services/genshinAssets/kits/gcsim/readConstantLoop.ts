@@ -55,13 +55,12 @@ export const readConstantLoop = (
     return undefined;
   const isRunning = (value: number): boolean => (isBoundInclusive ? value <= boundValue : value < boundValue);
   const values: number[] = [];
-  if (stepValue === undefined) {
-    if (isRunning(startValue)) values.push(startValue);
-  } else
+  if (stepValue !== undefined)
     for (let value = startValue; isRunning(value); value += stepValue) {
       if (values.length === GO_MAX_LOOP_ITERATIONS) return undefined;
       values.push(value);
     }
+  else if (isRunning(startValue)) values.push(startValue);
 
   const bodyEnd = findClosing(tokens, stepEnd, "{", "}");
   return bodyEnd === undefined

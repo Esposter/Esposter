@@ -32,6 +32,8 @@ describe(resolveKitValues, () => {
   ]);
 
   test("names an overlay value no gcsim folder gives as the unit gcsim does not model", () => {
+    expect.hasAssertions();
+
     const { provenanceMap } = resolveKitValues(new Map(), OVERLAY, new Map(), new Map(), TABLES, false);
     expect(provenanceMap.get("burst.hits.0.element")).toStrictEqual({
       cause: KitProvisionalCause.NoGcsimUnit,
@@ -40,10 +42,18 @@ describe(resolveKitValues, () => {
   });
 
   test("refuses that cause for a character gcsim has a folder for, which can read the value", () => {
-    expect(() => resolveKitValues(new Map(), OVERLAY, new Map(), new Map(), TABLES, true)).toThrow();
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(new Map(), OVERLAY, new Map(), new Map(), TABLES, true),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: burst.hits.0.element, names NoGcsimUnit, but gcsim has a folder for the character]`,
+    );
   });
 
   test("gives a burst's first hit the character's element where no source gives one, as a rule", () => {
+    expect.hasAssertions();
+
     const { provenanceMap, valueMap } = resolveKitValues(
       new Map(),
       { "burst.hits.length": { cause: KitProvisionalCause.NoGcsimUnit, value: 1 } },

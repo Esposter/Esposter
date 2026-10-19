@@ -41,6 +41,7 @@ export const WEEKLY_BOSS_ENTRY_IDS: number[] = [1006];
 // The type a weekly boss's level is named by in the dungeon table
 export const WEEKLY_BOSS_DUNGEON_TYPE = "DUNGEON_BOSS";
 // The record the weekly bosses' trounce domains publish under, in the domains dataset
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const WEEKLY_BOSS_DOMAINS_KEY: string = `${GameDataset.Domains}/weeklyBosses`;
 // The days of the week, Monday as 1, each of a Domain of Forgery's or Mastery's day pairs is set for, in the order its
 // Entry's day lists give them: Monday and Thursday, Tuesday and Friday, Wednesday and Saturday

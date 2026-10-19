@@ -7,7 +7,7 @@ import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumbe
 
 // Every number a value holds, a list of levels' hitmarks flattened into one list
 const readGoNumbers = (value: GoValue): number[] => {
-  if (Array.isArray(value)) return value.flatMap(readGoNumbers);
+  if (Array.isArray(value)) return value.flatMap((element) => readGoNumbers(element));
   const number = readGoNumber(value);
   return number === undefined ? [] : [number];
 };
