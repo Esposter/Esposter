@@ -1,3 +1,4 @@
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTalentPage";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -37,6 +38,9 @@ const createUntaggedEntries = (path: string, poise: number, gauge?: number): [st
   [`${path}.internalCooldownTag`, undefined],
   ...(gauge === undefined ? [] : [[`${path}.gauge`, gauge] satisfies [string, unknown]]),
 ];
+// Each path's candidate values, in the order the reader gives them
+const readCandidateValues = (candidateMap: ReadonlyMap<string, KitCandidate[]>) =>
+  Object.fromEntries(Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]));
 
 describe(getWikiKitCandidates, () => {
   test("keeps a row's poise where its internal cooldown tag is one the enum does not name, and writes no tag", () => {
@@ -54,11 +58,7 @@ describe(getWikiKitCandidates, () => {
       new Map([["skill.hits.0", { label: "Rush DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
-    expect(
-      Object.fromEntries(
-        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
-      ),
-    ).toStrictEqual({ "skill.hits.0.poiseDamage": [50] });
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "skill.hits.0.poiseDamage": [50] });
   });
 
   test("joins a skill hold's hit to its row by the label its multiplier gives, as the skill's hits are", () => {
@@ -79,11 +79,7 @@ describe(getWikiKitCandidates, () => {
       new Map([["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
-    expect(
-      Object.fromEntries(
-        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
-      ),
-    ).toStrictEqual({ "skillHolds.0.action.hits.0.poiseDamage": [100] });
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "skillHolds.0.action.hits.0.poiseDamage": [100] });
   });
 
   test("joins Xiangling's rows by their titles, the skill's and burst's by the words their table labels share", () => {
@@ -100,11 +96,7 @@ describe(getWikiKitCandidates, () => {
       ]),
     );
 
-    expect(
-      Object.fromEntries(
-        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
-      ),
-    ).toStrictEqual(
+    expect(readCandidateValues(candidateMap)).toStrictEqual(
       Object.fromEntries(
         [
           ...createStrikeEntries("normalAttacks.0.hits.0", 16),
@@ -215,11 +207,7 @@ describe(getWikiKitCandidates, () => {
       ]),
     );
 
-    expect(
-      Object.fromEntries(
-        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
-      ),
-    ).toStrictEqual({ "hits.judgement.0.poiseDamage": [25] });
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "hits.judgement.0.poiseDamage": [25] });
   });
 
   test("gives a named hit no row a slot hit on its page takes, where the named hit reuses that slot hit's label", () => {
@@ -240,10 +228,6 @@ describe(getWikiKitCandidates, () => {
       ]),
     );
 
-    expect(
-      Object.fromEntries(
-        Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]),
-      ),
-    ).toStrictEqual({ "skill.hits.0.poiseDamage": [2] });
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "skill.hits.0.poiseDamage": [2] });
   });
 });
