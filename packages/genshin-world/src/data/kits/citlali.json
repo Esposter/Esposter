@@ -10,7 +10,6 @@
   "hits.frostfallStorm.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.frostfallStorm.internalCooldownTag": { "cause": "Unclassified", "value": "CitlaliFrostfallStorm" },
   "hits.frostfallStorm.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 10732 } },
-  "hits.frostfallStorm.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

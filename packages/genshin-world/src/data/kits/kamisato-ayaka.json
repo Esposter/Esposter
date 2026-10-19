@@ -7,200 +7,141 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.0.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.0.hitmarkFrames": { "cause": "Unclassified", "value": 104 },
-  "hits.frostflake.0.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.0.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.0.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.1.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.1.hitmarkFrames": { "cause": "Unclassified", "value": 119 },
-  "hits.frostflake.1.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.1.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.1.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.2.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.2.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.2.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.2.hitmarkFrames": { "cause": "Unclassified", "value": 134 },
-  "hits.frostflake.2.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.2.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.2.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.3.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.3.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.3.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.3.hitmarkFrames": { "cause": "Unclassified", "value": 149 },
-  "hits.frostflake.3.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.3.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.3.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.4.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.4.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.4.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.4.hitmarkFrames": { "cause": "Unclassified", "value": 164 },
-  "hits.frostflake.4.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.4.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.4.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.5.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.5.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.5.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.5.hitmarkFrames": { "cause": "Unclassified", "value": 179 },
-  "hits.frostflake.5.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.5.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.5.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.6.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.6.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.6.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.6.hitmarkFrames": { "cause": "Unclassified", "value": 194 },
-  "hits.frostflake.6.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.6.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.6.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.7.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.7.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.7.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.7.hitmarkFrames": { "cause": "Unclassified", "value": 209 },
-  "hits.frostflake.7.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.7.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.7.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.8.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.8.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.8.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.8.hitmarkFrames": { "cause": "Unclassified", "value": 224 },
-  "hits.frostflake.8.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.8.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.8.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.9.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.9.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.9.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.9.hitmarkFrames": { "cause": "Unclassified", "value": 239 },
-  "hits.frostflake.9.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.9.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.9.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.10.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.10.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.10.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.10.hitmarkFrames": { "cause": "Unclassified", "value": 254 },
-  "hits.frostflake.10.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.10.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.10.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.11.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.11.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.11.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.11.hitmarkFrames": { "cause": "Unclassified", "value": 269 },
-  "hits.frostflake.11.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.11.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.11.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.12.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.12.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.12.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.12.hitmarkFrames": { "cause": "Unclassified", "value": 284 },
-  "hits.frostflake.12.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.12.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.12.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.13.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.13.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.13.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.13.hitmarkFrames": { "cause": "Unclassified", "value": 299 },
-  "hits.frostflake.13.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.13.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.13.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.14.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.14.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.14.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.14.hitmarkFrames": { "cause": "Unclassified", "value": 314 },
-  "hits.frostflake.14.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.14.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.14.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.15.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.15.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.15.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.15.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
-  "hits.frostflake.15.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.15.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.15.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.16.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.16.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.16.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.16.hitmarkFrames": { "cause": "Unclassified", "value": 344 },
-  "hits.frostflake.16.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.16.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.16.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.17.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.17.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.17.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.17.hitmarkFrames": { "cause": "Unclassified", "value": 359 },
-  "hits.frostflake.17.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.17.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.17.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.18.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
   "hits.frostflake.18.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.18.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.18.hitmarkFrames": { "cause": "Unclassified", "value": 374 },
-  "hits.frostflake.18.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "hits.frostflake.18.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 239 } },
-  "hits.frostflake.18.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.frostflake.19.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.frostflake.19.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.frostflake.19.gauge": { "cause": "Unclassified", "value": 1 },
   "hits.frostflake.19.hitmarkFrames": { "cause": "Unclassified", "value": 404 },
   "hits.frostflake.19.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 239 } },
-  "hits.frostflake.19.poiseDamage": { "cause": "Unclassified", "value": 30 },
   "hits.smallFrostflake.length": { "cause": "Unclassified", "value": 20 },
   "hits.smallFrostflake.0.area": {
     "cause": "Unclassified",

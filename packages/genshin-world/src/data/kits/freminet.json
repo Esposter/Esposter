@@ -16,6 +16,5 @@
   },
   "hits.spiritbreathThorn.element": { "cause": "Unsourced", "value": "Ice" },
   "hits.spiritbreathThorn.hitmarkFrames": { "cause": "Unsourced", "value": 62 },
-  "hits.spiritbreathThorn.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8532 } },
-  "hits.spiritbreathThorn.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
+  "hits.spiritbreathThorn.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8532 } }
 }

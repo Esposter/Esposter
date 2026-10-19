@@ -7,7 +7,6 @@
   },
   "hits.ritesTick.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
   "hits.ritesTick.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4539 } },
-  "hits.ritesTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "parameters.ritesOfTerminationSeconds": {
     "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 4539 }

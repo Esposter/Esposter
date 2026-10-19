@@ -143,14 +143,12 @@
   },
   "hits.jumpyDumpty.3.hitmarkFrames": { "cause": "Unclassified", "value": 240 },
   "hits.jumpyDumpty.3.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2932 } },
-  "hits.jumpyDumpty.3.poiseDamage": { "cause": "Unclassified", "value": 40 },
   "hits.jumpyDumpty.4.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
   "hits.jumpyDumpty.4.hitmarkFrames": { "cause": "Unclassified", "value": 240 },
   "hits.jumpyDumpty.4.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 2932 } },
-  "hits.jumpyDumpty.4.poiseDamage": { "cause": "Unclassified", "value": 40 },
   "hits.sparklyExplosion.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
