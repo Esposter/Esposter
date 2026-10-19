@@ -7,8 +7,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.0.hitmarkFrames": { "cause": "Unclassified", "value": 178 },
   "hits.signatureMixTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.1.area": {
     "file": "burst.go",
@@ -16,8 +14,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.1.hitmarkFrames": { "cause": "Unclassified", "value": 298 },
   "hits.signatureMixTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.2.area": {
     "file": "burst.go",
@@ -25,8 +21,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.2.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.2.hitmarkFrames": { "cause": "Unclassified", "value": 418 },
   "hits.signatureMixTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.3.area": {
     "file": "burst.go",
@@ -34,8 +28,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.3.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.3.hitmarkFrames": { "cause": "Unclassified", "value": 538 },
   "hits.signatureMixTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.4.area": {
     "file": "burst.go",
@@ -43,8 +35,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.4.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.4.hitmarkFrames": { "cause": "Unclassified", "value": 658 },
   "hits.signatureMixTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.5.area": {
     "file": "burst.go",
@@ -52,8 +42,6 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.5.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.signatureMixTicks.5.hitmarkFrames": { "cause": "Unclassified", "value": 778 },
   "hits.signatureMixTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3931 } },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3931 } },
