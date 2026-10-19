@@ -32,6 +32,11 @@ describe(createHeartOfTheFurnaceSetModule, () => {
   const WEARER_KIT = getPassiveKit(KIT, [
     createHeartOfTheFurnaceSetModule(getArtifactSetBonus(statTables, HEART_OF_THE_FURNACE_ARTIFACT_SET_ID, 4)),
   ]);
+  // The two Stellar reactions the set's effects are tested on, each one a case of the same test
+  const STELLAR_REACTION_CASES = [
+    { reactionType: StellarReactionType.StellarSwirl },
+    { reactionType: StellarReactionType.StellarConduct },
+  ];
   // The traveller and two other members, the given ones wearing four pieces, with the party in the order given
   const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHARACTER_ID]) => {
     const createMember = (characterId: number) =>
@@ -58,76 +63,47 @@ describe(createHeartOfTheFurnaceSetModule, () => {
     return { context, other, reactionDamageBonus, secondWearer, trigger, wearer };
   };
 
-  test("a Stellar Swirl the wearer triggers gives it 12% ATK for twelve seconds", () => {
-    expect.hasAssertions();
+  test.each(STELLAR_REACTION_CASES)(
+    "a $reactionType the wearer triggers gives it 12% ATK for twelve seconds",
+    ({ reactionType }) => {
+      expect.hasAssertions();
 
-    const { context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+      const { context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
-    trigger(wearer, [StellarReactionType.StellarSwirl]);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
+      trigger(wearer, [reactionType]);
+      expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
 
-    stepKitSeconds(context, 11);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
+      stepKitSeconds(context, 11);
+      expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
 
-    stepKitSeconds(context, 1);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
-  });
+      stepKitSeconds(context, 1);
+      expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
+    },
+  );
 
-  test("while it lasts, every party member's Stellar Swirl DMG is raised by 50%, and its other reactions are not", () => {
-    expect.hasAssertions();
+  test.each(STELLAR_REACTION_CASES)(
+    "while it lasts, every party member's $reactionType DMG is raised by 50%, and its other reactions are not",
+    ({ reactionType }) => {
+      expect.hasAssertions();
 
-    const { context, other, reactionDamageBonus, trigger, wearer } = createTeam([
-      TRAVELER_CHARACTER_ID,
-      OTHER_CHARACTER_ID,
-    ]);
+      const { context, other, reactionDamageBonus, trigger, wearer } = createTeam([
+        TRAVELER_CHARACTER_ID,
+        OTHER_CHARACTER_ID,
+      ]);
 
-    trigger(wearer, [StellarReactionType.StellarSwirl]);
+      trigger(wearer, [reactionType]);
 
-    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
-    expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
-    expect(reactionDamageBonus(other, TransformativeReactionType.Overloaded)).toBe(0);
+      expect(reactionDamageBonus(other, reactionType)).toBeCloseTo(0.5);
+      expect(reactionDamageBonus(wearer, reactionType)).toBeCloseTo(0.5);
+      expect(reactionDamageBonus(other, TransformativeReactionType.Overloaded)).toBe(0);
 
-    stepKitSeconds(context, 11);
-    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
+      stepKitSeconds(context, 11);
+      expect(reactionDamageBonus(other, reactionType)).toBeCloseTo(0.5);
 
-    stepKitSeconds(context, 1);
-    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBe(0);
-  });
-
-  test("a Stellar-Conduct the wearer triggers gives it 12% ATK for twelve seconds", () => {
-    expect.hasAssertions();
-
-    const { context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
-
-    trigger(wearer, [StellarReactionType.StellarConduct]);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
-
-    stepKitSeconds(context, 11);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
-
-    stepKitSeconds(context, 1);
-    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
-  });
-
-  test("every party member's Stellar-Conduct DMG is raised by 50% while it holds", () => {
-    expect.hasAssertions();
-
-    const { context, other, reactionDamageBonus, trigger, wearer } = createTeam([
-      TRAVELER_CHARACTER_ID,
-      OTHER_CHARACTER_ID,
-    ]);
-
-    trigger(wearer, [StellarReactionType.StellarConduct]);
-
-    expect(reactionDamageBonus(other, StellarReactionType.StellarConduct)).toBeCloseTo(0.5);
-    expect(reactionDamageBonus(wearer, StellarReactionType.StellarConduct)).toBeCloseTo(0.5);
-
-    stepKitSeconds(context, 11);
-    expect(reactionDamageBonus(other, StellarReactionType.StellarConduct)).toBeCloseTo(0.5);
-
-    stepKitSeconds(context, 1);
-    expect(reactionDamageBonus(other, StellarReactionType.StellarConduct)).toBe(0);
-  });
+      stepKitSeconds(context, 1);
+      expect(reactionDamageBonus(other, reactionType)).toBe(0);
+    },
+  );
 
   test("a Stellar Swirl another member triggers gives the wearer nothing", () => {
     expect.hasAssertions();
