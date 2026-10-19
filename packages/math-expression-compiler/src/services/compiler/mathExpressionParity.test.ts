@@ -55,8 +55,8 @@ describe(compileMathExpression, () => {
   };
 
   // The entries whose answer our evaluation does not give, where a fix row's recorded answer is the one we give
-  const getMismatches = (entries: SnapshotEntry[]): Mismatch[] =>
-    entries.flatMap((entry): Mismatch[] => {
+  const getMismatches = (checkedEntries: SnapshotEntry[]): Mismatch[] =>
+    checkedEntries.flatMap((entry): Mismatch[] => {
       const recorded = entry.fix === undefined ? entry.value : entry.fix.value;
       const expected = decodeValue(recorded);
       const actual = evaluateFormula(entry.formula, entry.scope);
