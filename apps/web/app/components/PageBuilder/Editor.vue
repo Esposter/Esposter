@@ -38,8 +38,11 @@ const announce = (message: string) => {
     announcement.value = message;
   });
 };
-const { deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(() => resourceId, announce);
-const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(() => resourceId, announce);
+const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(
+  () => resourceId,
+  announce,
+);
+const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(() => resourceId, announce, deleteNode);
 usePageBuilderHistoryCommands(() => resourceId);
 const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
 const canvas = useTemplateRef("canvas");

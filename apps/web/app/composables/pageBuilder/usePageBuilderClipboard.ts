@@ -3,7 +3,6 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
@@ -18,15 +17,18 @@ import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 
 // Copy, cut and paste of the selected node in one open resource's webpage. The clipboard carries the node as JSON, and a
 // Paste lands where an insert would, as a copy with fresh ids. Each landed edit is announced once through announce
-export const usePageBuilderClipboard = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
+export const usePageBuilderClipboard = (
+  resourceId: MaybeRefOrGetter<string>,
+  announce: (message: string) => void,
+  deleteNode: (nodeId: string) => void,
+) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  const { deleteSelected } = usePageBuilderMoves(resourceId, announce);
-  // The selected node with its title, or none when nothing is selected or the node is gone
+  // The selected node with its id and title, or none when nothing is selected or the node is gone
   const getSelectedNode = () => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument(resourceIdValue);
@@ -35,7 +37,7 @@ export const usePageBuilderClipboard = (resourceId: MaybeRefOrGetter<string>, an
     if (!document || nodePointer === undefined) return undefined;
 
     const node = getBlockNode(document, nodePointer);
-    return node && { node, title: getNodeTitle(document, parseJsonPointer(nodePointer)) };
+    return node && { node, nodeId, title: getNodeTitle(document, parseJsonPointer(nodePointer)) };
   };
   // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that instead
   const writeToClipboard = (node: BlockNode) =>
@@ -66,12 +68,13 @@ export const usePageBuilderClipboard = (resourceId: MaybeRefOrGetter<string>, an
     if (!selection || !(await writeToClipboard(selection.node))) return;
     if (selection.title) announce(`Copied ${selection.title}`);
   };
-  // A cut is a copy that lands on the clipboard before the node is deleted, so a refused clipboard deletes nothing
+  // A cut is a copy that lands on the clipboard before the node is deleted, so a refused clipboard deletes nothing. The
+  // Deletion names the copied node by id, since the selection may move while the clipboard write waits
   const cutSelected = async () => {
     const selection = getSelectedNode();
     if (!selection || !(await writeToClipboard(selection.node))) return;
 
-    deleteSelected();
+    deleteNode(selection.nodeId);
     if (selection.title) announce(`Cut ${selection.title}`);
   };
   const pasteSelected = async () => {

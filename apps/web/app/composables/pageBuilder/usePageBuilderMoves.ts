@@ -154,17 +154,23 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     }, console.error);
   };
   // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection
-  const deleteSelected = () => {
-    const selection = getSelection();
-    if (!selection) return;
+  const deleteNode = (nodeId: string) => {
+    const resourceIdValue = toValue(resourceId);
+    const document = getDocument(resourceIdValue);
+    const nodePointer = document && getNodePointer(document, nodeId);
+    if (!document || nodePointer === undefined) return;
 
-    const focusPointer = getFocusAfterRemoval(selection.document, selection.nodePointer);
-    const title = getNodeTitle(selection.document, parseJsonPointer(selection.nodePointer));
-    applyEdit(toValue(resourceId), removeBlockNode(selection.nodePointer), "Delete block").match(() => {
-      setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), focusPointer));
+    const focusPointer = getFocusAfterRemoval(document, nodePointer);
+    const title = getNodeTitle(document, parseJsonPointer(nodePointer));
+    applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(() => {
+      setSelectedNodeId(resourceIdValue, getNodeId(getDocument(resourceIdValue), focusPointer));
       if (title) announce(`Deleted ${title}`);
     }, console.error);
   };
+  const deleteSelected = () => {
+    const nodeId = getSelectedNodeId(toValue(resourceId));
+    if (nodeId) deleteNode(nodeId);
+  };
 
-  return { deleteSelected, duplicateSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
+  return { deleteNode, deleteSelected, duplicateSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
 };
