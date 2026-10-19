@@ -10,49 +10,42 @@
   },
   "hits.bakeKurageRipples.0.hitmarkFrames": { "cause": "Unsourced", "value": 24 },
   "hits.bakeKurageRipples.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.1.hitmarkFrames": { "cause": "Unsourced", "value": 150 },
   "hits.bakeKurageRipples.1.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.2.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.2.hitmarkFrames": { "cause": "Unsourced", "value": 270 },
   "hits.bakeKurageRipples.2.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.3.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.3.hitmarkFrames": { "cause": "Unsourced", "value": 390 },
   "hits.bakeKurageRipples.3.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.3.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.4.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.4.hitmarkFrames": { "cause": "Unsourced", "value": 510 },
   "hits.bakeKurageRipples.4.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.5.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.5.hitmarkFrames": { "cause": "Unsourced", "value": 630 },
   "hits.bakeKurageRipples.5.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.5.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bakeKurageRipples.6.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
   },
   "hits.bakeKurageRipples.6.hitmarkFrames": { "cause": "Unsourced", "value": 750 },
   "hits.bakeKurageRipples.6.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 5432 } },
-  "hits.bakeKurageRipples.6.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "parameters.bakeKurageHealMaxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 5432 }
@@ -87,7 +80,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 5431 }
   },
-  "stances.ceremonialGarment.chargedAttack.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.ceremonialGarment.normalAttacks.length": { "cause": "Unsourced", "value": 3 },
   "stances.ceremonialGarment.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 30 },
