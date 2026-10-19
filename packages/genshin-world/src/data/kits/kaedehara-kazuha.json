@@ -1,65 +1,27 @@
 {
-  "areas.absorbCheck": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
+  "areas.absorbCheck": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 }
+  },
   "burst.hits.length": { "source": "Gcsim" },
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 } },
   "frames.absorbCheckFirst": { "cause": "Unsourced", "value": 81 },
   "frames.absorbCheckLast": { "cause": "Unsourced", "value": 369 },
   "frames.absorbCheckInterval": { "file": "burst.go", "line": 132, "source": "Gcsim", "value": 18 },
-  "hits.autumnWhirlwindTicks.length": { "cause": "Unsourced", "value": 5 },
-  "hits.autumnWhirlwindTicks.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
-  },
-  "hits.autumnWhirlwindTicks.0.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.0.hitmarkFrames": { "cause": "Unsourced", "value": 140 },
-  "hits.autumnWhirlwindTicks.0.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 4739 }
-  },
-  "hits.autumnWhirlwindTicks.1.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
-  },
-  "hits.autumnWhirlwindTicks.1.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.1.hitmarkFrames": { "cause": "Unsourced", "value": 257 },
-  "hits.autumnWhirlwindTicks.1.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 4739 }
-  },
-  "hits.autumnWhirlwindTicks.2.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
-  },
-  "hits.autumnWhirlwindTicks.2.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.2.hitmarkFrames": { "cause": "Unsourced", "value": 374 },
-  "hits.autumnWhirlwindTicks.2.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 4739 }
-  },
-  "hits.autumnWhirlwindTicks.3.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
-  },
-  "hits.autumnWhirlwindTicks.3.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.3.hitmarkFrames": { "cause": "Unsourced", "value": 491 },
-  "hits.autumnWhirlwindTicks.3.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 4739 }
-  },
-  "hits.autumnWhirlwindTicks.4.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
-  },
-  "hits.autumnWhirlwindTicks.4.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.4.hitmarkFrames": { "cause": "Unsourced", "value": 608 },
-  "hits.autumnWhirlwindTicks.4.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 4739 }
-  },
+  "hits.autumnWhirlwindTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4739 } },
+  "hits.autumnWhirlwindTicks.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4739 } },
+  "hits.autumnWhirlwindTicks.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4739 } },
+  "hits.autumnWhirlwindTicks.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4739 } },
+  "hits.autumnWhirlwindTicks.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4739 } },
   "parameters.autumnWhirlwindAbsorptionMultiplier": {
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 4739 }
   },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4732 } },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "hits.autumnWhirlwindTicks.0.element": { "cause": "Unsourced", "value": "Wind" },
+  "hits.autumnWhirlwindTicks.1.element": { "cause": "Unsourced", "value": "Wind" },
+  "hits.autumnWhirlwindTicks.2.element": { "cause": "Unsourced", "value": "Wind" },
+  "hits.autumnWhirlwindTicks.3.element": { "cause": "Unsourced", "value": "Wind" },
+  "hits.autumnWhirlwindTicks.4.element": { "cause": "Unsourced", "value": "Wind" }
 }
