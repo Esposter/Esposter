@@ -4,7 +4,7 @@ Mika's kit is its record and one behaviour module, `createMikaKitBehaviour`, on 
 
 Not built yet: Rimestar Shard, which strikes three random enemies within 10 metres of the body after the flare, as it needs a strike on three chosen enemies rather than all in reach; Eagleplume, the party's heal on each member's normal attack, which waits on a reaction to another member's attacks; the ATK SPD bonus Starfrost Swirl gives the team, as the attributes do not yet hold attack speed; and his Ascension and Constellation passives.
 
-Gcsim gives Mika's plunges no file, so they take the timings and poise of Bennett's plunge file, with the reaches as the fallback's areas. The flare's hold threshold is the half second gcsim does not give, and the poise of his strikes and charged attack is 0, as gcsim gives none. Each is provisional until a recording settles it.
+Gcsim gives Mika's plunges no file, so they take the timings and poise of Bennett's plunge file, with the reaches as the fallback's areas. The flare's hold threshold is the half second gcsim does not give, and his strikes and charged attack take the wiki's rows: 40.245, 38.606 and 50.701 for the first three strikes, 25.68 for each hit of the fourth, 65.93 for the fifth and 120 for the charged attack. Each is provisional until a recording settles it.
 
 ## Key files
 

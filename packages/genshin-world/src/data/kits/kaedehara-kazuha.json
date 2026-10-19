@@ -2,7 +2,6 @@
   "areas.absorbCheck": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 9 } },
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 } },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.absorbCheckFirst": { "cause": "Unsourced", "value": 81 },
   "frames.absorbCheckLast": { "cause": "Unsourced", "value": 369 },
   "frames.absorbCheckInterval": { "file": "burst.go", "line": 132, "source": "Gcsim", "value": 18 },
@@ -61,7 +60,6 @@
     "cause": "Unsourced",
     "value": { "index": 2, "proudSkillGroupId": 4739 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4732 } },
   "plungeCollision.gauge": { "cause": "DiffersFromSource" }
 }

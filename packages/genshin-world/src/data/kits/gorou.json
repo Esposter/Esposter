@@ -15,7 +15,5 @@
   },
   "parameters.crunchGeoDamageBonus": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5532 } },
   "parameters.bannerSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 5532 } },
-  "parameters.juugaSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5539 } },
-  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 }
+  "parameters.juugaSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5539 } }
 }

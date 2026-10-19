@@ -42,12 +42,6 @@
   "burst.hits.11.hitmarkFrames": { "cause": "Unclassified", "value": 175 },
   "burst.hits.11.internalCooldownTag": { "cause": "Unclassified", "value": "ElementalBurst" },
   "burst.hits.11.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeCollision.poiseDamage": { "cause": "Unsourced", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6932 } }
 }

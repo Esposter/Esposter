@@ -14,9 +14,5 @@
   "hitFields.dragonBreath.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 10139 } },
   "hitFields.dragonBreath.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
-  "stances.blessing.normalAttacks.0.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "stances.blessing.normalAttacks.0.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "stances.blessing.normalAttacks.1.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "stances.blessing.normalAttacks.1.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }

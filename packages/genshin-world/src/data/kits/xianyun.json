@@ -1,15 +1,7 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9339 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.high.animationFrames": { "file": "plunge.go", "line": 68, "source": "Gcsim", "value": 68 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plunges.low.animationFrames": { "file": "plunge.go", "line": 78, "source": "Gcsim", "value": 65 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeVariants.0.animationFrames": { "file": "plunge.go", "line": 40, "source": "Gcsim", "value": 65 },
   "plungeVariants.0.hits.0.area": {
     "cause": "Unsourced",
@@ -44,7 +36,6 @@
   "plungeVariants.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "plungeVariants.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "plungeVariants.length": { "cause": "Unsourced", "value": 3 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.gauge": { "cause": "DiffersFromSource" },
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 243 },
   "skillChain.followUps.0.hits.0.area": {

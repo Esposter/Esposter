@@ -263,8 +263,5 @@
     "value": { "index": 3, "proudSkillGroupId": 6532 }
   },
   "parameters.grassRingFlatHealing": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6532 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 50 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6532 } }
 }
