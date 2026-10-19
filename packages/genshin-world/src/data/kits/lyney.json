@@ -7,7 +7,7 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hitFields.pyrotechnicStrike.element": { "cause": "Unclassified", "value": "Fire" },
+  "hitFields.pyrotechnicStrike.element": { "file": "grinmalkinhat.go", "line": 42, "source": "Gcsim", "value": "Fire" },
   "hitFields.pyrotechnicStrike.gauge": { "cause": "Unsourced", "value": 1 },
   "hitFields.pyrotechnicStrike.multiplier": {
     "cause": "Unsourced",
