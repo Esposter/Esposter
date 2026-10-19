@@ -33,9 +33,9 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 // A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party in the
 // Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's Moonsign level
-const createWearer = () =>
+const createWearer = (characterId = TRAVELER_CHARACTER_ID) =>
   createKitCombatant(
-    TRAVELER_CHARACTER_ID,
+    characterId,
     getPassiveKit(KIT, [
       createNightOfTheSkysUnveilingSetModule(
         getArtifactSetBonus(statTables, NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID, 4),
@@ -136,14 +136,7 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const firstWearer = createWearer();
-    const secondWearer = createKitCombatant(
-      THIRD_CHARACTER_ID,
-      getPassiveKit(KIT, [
-        createNightOfTheSkysUnveilingSetModule(
-          getArtifactSetBonus(statTables, NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID, 4),
-        ),
-      ]),
-    );
+    const secondWearer = createWearer(THIRD_CHARACTER_ID);
     const characterIdCombatantMap = new Map<number, Combatant>([
       [THIRD_CHARACTER_ID, secondWearer],
       [TRAVELER_CHARACTER_ID, firstWearer],

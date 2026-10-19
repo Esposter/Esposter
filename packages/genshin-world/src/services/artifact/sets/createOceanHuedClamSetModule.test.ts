@@ -36,11 +36,10 @@ const createSturdyEnemy = (id = "enemy", position = { x: 0, z: 0 }) => ({
   position,
 });
 const createWearer = (maxHealth = 10_000, characterId = TRAVELER_CHARACTER_ID): Combatant => {
-  const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
+  const wearer = createKitCombatant(characterId, KIT);
   wearer.attributes.maxHealth = maxHealth;
   return {
     ...wearer,
-    characterId,
     kit: getPassiveKit(KIT, [
       createOceanHuedClamSetModule(getArtifactSetBonus(statTables, OCEAN_HUED_CLAM_ARTIFACT_SET_ID, 4)),
     ]),
