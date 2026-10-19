@@ -34,9 +34,7 @@ const { GATED_EFFECTS } = vi.hoisted(() => ({
 // Adds a passive whose strike damage bonus is gated on the team's effects being the list the test passes, keeping the
 // Real passives as they are
 vi.mock(import("#src/services/weapon/WeaponPassiveNameTextIdCreateModuleMap"), async (importOriginal) => {
-  const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal<{
-    WeaponPassiveNameTextIdCreateModuleMap: Record<string, unknown>;
-  }>();
+  const { WeaponPassiveNameTextIdCreateModuleMap } = await importOriginal();
   return {
     WeaponPassiveNameTextIdCreateModuleMap: {
       ...WeaponPassiveNameTextIdCreateModuleMap,

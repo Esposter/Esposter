@@ -41,9 +41,8 @@ const { receivedKinds } = vi.hoisted(() => ({ receivedKinds: [] as string[] }));
 
 // Instructor's module, wrapped to record each event it is sent before the module answers it
 vi.mock(import("#src/services/artifact/ArtifactSetIdCreateModuleMap"), async (importOriginal) => {
-  const { ArtifactSetIdCreateModuleMap } =
-    await importOriginal<typeof import("#src/services/artifact/ArtifactSetIdCreateModuleMap")>();
-  const { INSTRUCTOR_ARTIFACT_SET_ID } = await importOriginal<typeof import("#src/services/artifact/constants")>();
+  const { ArtifactSetIdCreateModuleMap } = await importOriginal();
+  const { INSTRUCTOR_ARTIFACT_SET_ID } = await import("#src/services/artifact/constants");
   const createInstructorModule = ArtifactSetIdCreateModuleMap[INSTRUCTOR_ARTIFACT_SET_ID];
   return {
     ArtifactSetIdCreateModuleMap: {
