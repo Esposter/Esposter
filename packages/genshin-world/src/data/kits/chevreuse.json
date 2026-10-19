@@ -32,8 +32,6 @@
   "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 30.189 },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 71.871 },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9032 } },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9032 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": 15 },

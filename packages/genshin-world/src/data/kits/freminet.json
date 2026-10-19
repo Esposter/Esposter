@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 86 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -7,7 +6,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.4 }
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } },
   "hits.spiritbreathThorn.area": {

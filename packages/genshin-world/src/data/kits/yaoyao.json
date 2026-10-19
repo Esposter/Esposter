@@ -1,7 +1,5 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 7739 } },
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.burstDuration": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 360 },
   "frames.jumpingYueguiSpawns.0": { "file": "burst.go", "line": 51, "source": "Gcsim", "value": 104 },
   "frames.jumpingYueguiSpawns.1": { "file": "burst.go", "line": 52, "source": "Gcsim", "value": 162 },
@@ -31,11 +29,6 @@
   "hits.skillRadish.0.hitmarkFrames": { "file": "yuegui.go", "line": 15, "source": "Gcsim", "value": 13 },
   "hits.skillRadish.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7732 } },
   "hits.skillRadish.length": { "cause": "Unsourced", "value": 1 },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.burstRadishFlatHeal": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 7739 } },
   "parameters.burstRadishHealMaxHealthShare": {
     "cause": "Unsourced",
@@ -46,8 +39,5 @@
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 7732 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
