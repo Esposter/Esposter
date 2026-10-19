@@ -25,11 +25,22 @@ export const toTrialReliquary = (
     id: Id,
     level: Level - 1,
     mainAffix: z.enum(Attribute).parse(mainPropType),
-    minorAffixes: AppendPropList.map((affixId) => {
-      const affix = affixMap.get(affixId);
-      if (!affix) throw new InvalidOperationError(Operation.Read, String(Id), `names no affix ${affixId}`);
-      return attributeLineSchema.parse({ attribute: affix.propType, value: affix.propValue });
-    }),
+    // The table lists every roll the piece took, so a sub-stat rolled more than once is one line at its rolls' sum
+    minorAffixes: Array.from(
+      Map.groupBy(
+        AppendPropList.map((affixId) => {
+          const affix = affixMap.get(affixId);
+          if (!affix) throw new InvalidOperationError(Operation.Read, String(Id), `names no affix ${affixId}`);
+          return affix;
+        }),
+        ({ propType }) => propType,
+      ),
+      ([propType, rolls]) =>
+        attributeLineSchema.parse({
+          attribute: propType,
+          value: rolls.reduce((sum, { propValue }) => sum + propValue, 0),
+        }),
+    ),
     rarity: piece.rarity,
     setId: piece.setId,
     slot: piece.slot,

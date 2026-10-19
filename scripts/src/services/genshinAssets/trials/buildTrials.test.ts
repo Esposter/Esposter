@@ -26,6 +26,7 @@ describe(buildTrials, () => {
   const SET_ID = 15_021;
   const MAIN_PROP_ID = 15_004;
   const AFFIX_ID = 201_053;
+  const SECOND_AFFIX_ID = 201_054;
 
   const avatarRows: ExcelTrialAvatarRow[] = [
     { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },
@@ -67,6 +68,7 @@ describe(buildTrials, () => {
   ];
   const affixRows: ExcelReliquaryAffixRow[] = [
     { depotId: 201, groupId: 5, id: AFFIX_ID, propType: Attribute.Attack, propValue: 4.67 },
+    { depotId: 201, groupId: 5, id: SECOND_AFFIX_ID, propType: Attribute.Attack, propValue: 5.25 },
   ];
   const wikiBuilds: WikiTrialBuild[] = [
     {
@@ -126,6 +128,20 @@ describe(buildTrials, () => {
       },
       "characterTrials/templates": [{ level: 85, reliquaryIds: RELIQUARY_IDS, talentLevel: 8 }],
     });
+  });
+
+  test("a sub-stat a trial reliquary rolled more than once is one line at its rolls' sum", () => {
+    expect.hasAssertions();
+
+    const reliquaries = buildTrials({
+      ...trialTables,
+      reliquaryRows: [{ ...takeOne(reliquaryRows), AppendPropList: [AFFIX_ID, SECOND_AFFIX_ID, AFFIX_ID] }],
+    })["characterTrials/reliquaries"];
+
+    expect(reliquaries).toHaveProperty(
+      [String(takeOne(RELIQUARY_IDS)), "minorAffixes"],
+      [{ attribute: Attribute.Attack, value: 4.67 + 5.25 + 4.67 }],
+    );
   });
 
   test("a trial reliquary whose piece the reliquary table lacks is refused rather than left out", () => {
