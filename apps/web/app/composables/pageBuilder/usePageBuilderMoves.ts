@@ -37,6 +37,9 @@ const getNodePointer = (document: BlockDocument, nodeId: string) =>
     .map(({ nodePointer }) => nodePointer)
     .find((nodePointer) => getNodeId(document, nodePointer) === nodeId);
 
+// The pointer of the slot a node sits in, which is the node's own pointer without its last index
+const getNodeSlotPointer = (nodePointer: string) => toJsonPointer(parseJsonPointer(nodePointer).slice(0, -1));
+
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
   document: BlockDocument,
@@ -44,7 +47,7 @@ const getSiblingMoveOperations = (
   offset: number,
 ): JsonPatchOperation[] => {
   const segments = parseJsonPointer(nodePointer);
-  const slotPointer = toJsonPointer(segments.slice(0, -1));
+  const slotPointer = getNodeSlotPointer(nodePointer);
   const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
   if (index === undefined || index + offset < 0 || !getBlockNode(document, `${slotPointer}/${index + offset}`))
     return [];
@@ -115,7 +118,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   const moveTo = (slotPointer: string) =>
     moveSelected("Move to", (document, nodePointer) => {
       const children = readJsonValue(document, parseJsonPointer(slotPointer));
-      const nodeSlotPointer = toJsonPointer(parseJsonPointer(nodePointer).slice(0, -1));
+      const nodeSlotPointer = getNodeSlotPointer(nodePointer);
       // A node taken out of its own slot leaves that slot one shorter, so the end of it is one index less
       const childCount = Array.isArray(children) ? children.length - (slotPointer === nodeSlotPointer ? 1 : 0) : 0;
       return moveBlockNode(document, webpageRegistry, nodePointer, slotPointer, childCount);
