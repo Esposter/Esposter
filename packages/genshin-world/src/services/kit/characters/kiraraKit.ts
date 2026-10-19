@@ -8,11 +8,9 @@ import type { Party } from "#src/models/party/Party";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { castKitShieldInfusion } from "#src/services/kit/effects/castKitShieldInfusion";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
-import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT, main) kirara/skill.go, Tail-Flicking Flying Kick's shield lasting 12 seconds
@@ -89,21 +87,16 @@ export const createKiraraKitBehaviour = ({
   // The shield is a share of her Max HP and a flat amount, capped at its maximum's share and flat amount, as gcsim caps it
   const skillStart: KitActionBehaviour = {
     onStart: (context) => {
-      const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
-      const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-      castKitShield(context, combatant.characterId, {
+      const { activeCombatant: combatant, kitEffectState, party } = context;
+      castKitShieldInfusion(context, combatant, {
         element: Element.Dendro,
-        health: Math.min(
-          shieldMaxHealthShare * maxHealth + shieldFlatHealth,
-          shieldMaximumMaxHealthShare * maxHealth + shieldMaximumFlatHealth,
-        ),
-        secondsRemaining: SHIELD_SECONDS,
-      });
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
-        element: Element.Dendro,
-        kind: "infusion",
-        secondsRemaining: SELF_INFUSION_SECONDS,
+        getShieldHealth: (maxHealth) =>
+          Math.min(
+            shieldMaxHealthShare * maxHealth + shieldFlatHealth,
+            shieldMaximumMaxHealthShare * maxHealth + shieldMaximumFlatHealth,
+          ),
+        infusionSeconds: SELF_INFUSION_SECONDS,
+        shieldSeconds: SHIELD_SECONDS,
       });
       buffTeamElementalDamage(kitEffectState, party, combatant);
     },

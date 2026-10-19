@@ -10,9 +10,9 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
+import { castKitShieldInfusion } from "#src/services/kit/effects/castKitShieldInfusion";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -157,18 +157,13 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {
       onStart: (context) => {
-        const { activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party } = context;
-        const maxHealth = getKitMaxHealth(combatant, kitEffectState.effects, party, characterIdCombatantMap);
-        castKitShield(context, combatant.characterId, {
+        const { activeCombatant: combatant, kitEffectState } = context;
+        castKitShieldInfusion(context, combatant, {
           element: Element.Pyro,
-          health: blazingBlessingShieldMaxHealthShare * maxHealth + blazingBlessingShieldFlatHealth,
-          secondsRemaining: blazingBlessingShieldSeconds,
-        });
-        addKitEffect(kitEffectState, {
-          characterId: combatant.characterId,
-          element: Element.Pyro,
-          kind: "infusion",
-          secondsRemaining: blazingBlessingInfusionSeconds,
+          getShieldHealth: (maxHealth) =>
+            blazingBlessingShieldMaxHealthShare * maxHealth + blazingBlessingShieldFlatHealth,
+          infusionSeconds: blazingBlessingInfusionSeconds,
+          shieldSeconds: blazingBlessingShieldSeconds,
         });
         // Each shield set restarts Constellation 6's status, as the game restarts the Blazing Barrier's
         if (combatant.constellationCount >= CONSTELLATION_6)
