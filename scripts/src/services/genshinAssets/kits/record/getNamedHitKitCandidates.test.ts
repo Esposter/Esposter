@@ -1,3 +1,4 @@
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 
@@ -233,5 +234,104 @@ describe(getNamedHitKitCandidates, () => {
     const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
 
     expect(hitmarks(candidateMap, "hits.waterBall.poiseDamage")).toStrictEqual([10]);
+  });
+
+  test("takes no call by its place where one of its key's calls has no delay", () => {
+    expect.hasAssertions();
+    // Jean's burst makes two calls of one key: its entering damage in a loop over a parameter with no delay, and its
+    // Exit at 640
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "1|1",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [
+            call("burst.go:62", 640, 62),
+            { fieldMap: new Map(), file: "burst.go", line: 58, site: "burst.go:58" },
+          ],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([
+      ["hits.fieldDamage.0.multiplier", { index: 1, proudSkillGroupId: 1 }],
+      ["hits.fieldDamage.1.multiplier", { index: 1, proudSkillGroupId: 1 }],
+    ]);
+
+    const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+
+    expect(hitmarks(candidateMap, "hits.fieldDamage.0.hitmarkFrames")).toBeUndefined();
+    expect(hitmarks(candidateMap, "hits.fieldDamage.1.hitmarkFrames")).toBeUndefined();
+  });
+
+  test("takes the call landing at its hitmark where one of its key's calls has no delay", () => {
+    expect.hasAssertions();
+    // The same two calls, with hit 1's hitmark at the exit's 640, so that hit takes the call landing there and
+    // Hit 0 none
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "1|1",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [
+            call("burst.go:62", 640, 62),
+            { fieldMap: new Map(), file: "burst.go", line: 58, site: "burst.go:58" },
+          ],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([
+      ["hits.fieldDamage.0.multiplier", { index: 1, proudSkillGroupId: 1 }],
+      ["hits.fieldDamage.1.hitmarkFrames", 640],
+      ["hits.fieldDamage.1.multiplier", { index: 1, proudSkillGroupId: 1 }],
+    ]);
+
+    const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+
+    expect(hitmarks(candidateMap, "hits.fieldDamage.0.hitmarkFrames")).toBeUndefined();
+    expect(hitmarks(candidateMap, "hits.fieldDamage.1.hitmarkFrames")).toStrictEqual([640]);
+  });
+
+  test("gives each hit the fields every one of its key's calls gives alike, where their order is not known", () => {
+    expect.hasAssertions();
+
+    // The exit's call at 640 and the entering damage's call in a loop with no delay give both hits one area, and only
+    // The exit's call gives a hitmark, which neither hit takes
+    const area: KitCandidate = {
+      provenance: { file: "burst.go", line: 40, source: KitSource.Gcsim },
+      value: { radius: 6 },
+    };
+    const hitmark: KitCandidate = { provenance: { file: "burst.go", line: 62, source: KitSource.Gcsim }, value: 640 };
+    const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+      [
+        "1|1",
+        {
+          fieldMap: new Map(),
+          queuedCalls: [
+            {
+              delay: 640,
+              fieldMap: new Map([
+                ["area", [area]],
+                ["hitmarkFrames", [hitmark]],
+              ]),
+              file: "burst.go",
+              line: 62,
+              site: "burst.go:62",
+            },
+            { fieldMap: new Map([["area", [area]]]), file: "burst.go", line: 58, site: "burst.go:58" },
+          ],
+        },
+      ],
+    ]);
+    const valueMap = new Map<string, unknown>([
+      ["hits.fieldDamage.0.multiplier", { index: 1, proudSkillGroupId: 1 }],
+      ["hits.fieldDamage.1.multiplier", { index: 1, proudSkillGroupId: 1 }],
+    ]);
+
+    const candidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+
+    expect(candidateMap.get("hits.fieldDamage.0.area")).toStrictEqual([area]);
+    expect(candidateMap.get("hits.fieldDamage.1.area")).toStrictEqual([area]);
+    expect(hitmarks(candidateMap, "hits.fieldDamage.0.hitmarkFrames")).toBeUndefined();
+    expect(hitmarks(candidateMap, "hits.fieldDamage.1.hitmarkFrames")).toBeUndefined();
   });
 });
