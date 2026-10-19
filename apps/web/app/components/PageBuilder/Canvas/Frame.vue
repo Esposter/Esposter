@@ -2,6 +2,9 @@
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 
+// Only a window with its own CSSStyleSheet constructor can build the sheet its document adopts
+const checkIsStyleSheetWindow = (window: Window): window is Window & typeof globalThis => "CSSStyleSheet" in window;
+
 interface Props {
   css: string;
   device: PageBuilderDevice;
@@ -50,7 +53,7 @@ onUnmounted(() => cancelAnimationFrame(styleFrame));
         () => {
           const contentWindow = frame?.contentWindow;
           const contentDocument = frame?.contentDocument;
-          if (!contentWindow || !contentDocument) return;
+          if (!contentWindow || !contentDocument || !checkIsStyleSheetWindow(contentWindow)) return;
 
           // A sheet adopted into a document must be constructed in that document's realm
           const styleSheet = new contentWindow.CSSStyleSheet();
