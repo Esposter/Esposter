@@ -10,7 +10,7 @@
   },
   "hitFields.rainSwordsTick.element": { "file": "orbital.go", "line": 63, "source": "Gcsim", "value": "Water" },
   "hitFields.rainSwordsTick.gauge": { "file": "orbital.go", "line": 64, "source": "Gcsim", "value": 1 },
-  "hitFields.rainSwordsTick.multiplier": { "cause": "Unsourced", "value": 0 },
+  "hitFields.rainSwordsTick.multiplier": { "cause": "NoDamageHit", "value": 0 },
   "hitFields.rainSwordsTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.evilsootherRainscreen.length": { "cause": "Unsourced", "value": 2 },
   "hits.evilsootherRainscreen.0.area": {
