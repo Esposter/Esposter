@@ -3,6 +3,7 @@ import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitb
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
 import type { GoScope } from "#src/models/genshinAssets/kits/gcsim/GoScope";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
@@ -19,6 +20,7 @@ import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/
 import { readGoHitbox, SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
 import { readGoMethodCallSites } from "#src/services/genshinAssets/kits/gcsim/readGoMethodCallSites";
 import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
+import { readVisibleBindingValue } from "#src/services/genshinAssets/kits/gcsim/readVisibleBindingValue";
 import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOptionalDelays";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -73,6 +75,26 @@ const getPassedName = (expression: GoExpression): string | undefined => {
   if (expression.kind === GoExpressionKind.Identifier) return expression.name.split(".").at(-1);
   else if (expression.kind === GoExpressionKind.Call) return expression.callee.split(".").at(-1);
   else return undefined;
+};
+
+// The name a call's first argument passes its attack by. A local is read as the value its binding in scope gives it: a
+// Call's callee, which the method or function returns, a field's name, else its own name, as a literal or a copy is
+// Named. A value that is none of these passes no name, so the call fires no known attack
+const readPassedName = (
+  tokens: readonly GoToken[],
+  namedFunctions: readonly GoNamedFunction[],
+  start: number,
+  position: number,
+): string | undefined => {
+  const expression = parseGoExpression(tokens, start).expression;
+  if (expression.kind !== GoExpressionKind.Identifier || expression.name.includes("."))
+    return getPassedName(expression);
+  const valueStart = readVisibleBindingValue(tokens, namedFunctions, expression.name, position);
+  if (valueStart === undefined || findInlineAttackPosition(tokens, valueStart) !== undefined) return expression.name;
+  const value = parseGoExpression(tokens, valueStart).expression;
+  if (value.kind === GoExpressionKind.Identifier)
+    return value.name.includes(".") ? getPassedName(value) : expression.name;
+  return value.kind === GoExpressionKind.Call ? getPassedName(value) : undefined;
 };
 
 // A `Tasks.Add`, `QueueCharTask` or `QueueEnemyTask` closure's body and the delay written after its closing brace. The
@@ -350,9 +372,7 @@ export const readGcsimQueuedAttacks = (
       )?.hitbox;
       const attackLine = inlineAttackPosition === undefined ? undefined : tokens[inlineAttackPosition]?.line;
       const attackName =
-        inlineAttackPosition === undefined
-          ? getPassedName(parseGoExpression(tokens, attackStart).expression)
-          : undefined;
+        inlineAttackPosition === undefined ? readPassedName(tokens, namedFunctions, attackStart, position) : undefined;
       const enclosingTasks = taskClosures.filter(
         ({ bodyEnd, bodyStart }) => bodyStart < position && position < bodyEnd,
       );

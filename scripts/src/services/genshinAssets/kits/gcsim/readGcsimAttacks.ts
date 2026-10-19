@@ -19,6 +19,7 @@ import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGo
 import { readGoLocalSlice } from "#src/services/genshinAssets/kits/gcsim/readGoLocalSlice";
 import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
+import { readReturnedFunction } from "#src/services/genshinAssets/kits/gcsim/readReturnedFunction";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -230,6 +231,11 @@ export const readGcsimAttacks = (
         const poiseDamage = evaluateNumber("PoiseDMG");
         const poiseField = fieldMap.get("PoiseDMG");
         const abilExpression = fieldMap.get("Abil")?.expression;
+        const variableName = readVariableName(tokens, position);
+        const returnedBy =
+          tokens[typeStart - 1]?.text === "return"
+            ? variableName
+            : readReturnedFunction(tokens, namedFunctions, position, variableName);
         const base: GcsimAttack = {
           abil:
             abilExpression?.kind === GoExpressionKind.String
@@ -247,12 +253,13 @@ export const readGcsimAttacks = (
           poiseDamage,
           poiseDamageVariable:
             poiseDamage === undefined && poiseField !== undefined ? getGoRootName(poiseField.expression) : undefined,
+          ...(returnedBy !== undefined && { returnedBy }),
           siteLine: token.line,
           talentVariable:
             multiplierField === undefined
               ? undefined
               : resolveGoAlias(aliasMap, getGoRootName(multiplierField.expression), position),
-          variableName: readVariableName(tokens, position),
+          variableName,
         };
         const indexedElements = readIndexedElements(position, fieldMap.get("Element")?.expression);
         if (indexedElements === undefined) attacks.push(withBranch(base, position));
@@ -312,10 +319,18 @@ export const readGcsimAttacks = (
       } else {
         const copySource = readCopySource(tokens, position);
         const sourceAttacks = copySource === undefined ? [] : readVariableAttacks(copySource, token.line);
-        for (const sourceAttack of sourceAttacks)
-          attacks.push(
-            withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
-          );
+        for (const sourceAttack of sourceAttacks) {
+          // The copy is returned only where its own name is, not where its source's is
+          const copy: GcsimAttack = {
+            ...sourceAttack,
+            line: token.line,
+            siteLine: token.line,
+            variableName: token.text,
+          };
+          delete copy.returnedBy;
+          const returnedBy = readReturnedFunction(tokens, namedFunctions, position, token.text);
+          attacks.push(withBranch(returnedBy === undefined ? copy : { ...copy, returnedBy }, position));
+        }
       }
 
     return attacks;
