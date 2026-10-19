@@ -24,14 +24,14 @@ export const createMjmlRootPropsSchema = (
     for (const [type, values] of Object.entries(props.attributes ?? {})) {
       const segments = ["attributes", type];
       if (type === ALL_ATTRIBUTES_KEY) {
-        for (const name of Object.keys(values)) {
+        for (const name of Object.keys(values))
           if (!definitions.some((definition) => Object.hasOwn(definition.allowedAttributes, name)))
             context.addIssue({
               code: "custom",
               message: `"${name}" is not an attribute any type takes`,
               path: [...segments, name],
             });
-        }
+
         continue;
       }
 

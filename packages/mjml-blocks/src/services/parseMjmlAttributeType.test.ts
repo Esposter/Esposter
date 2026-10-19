@@ -26,6 +26,7 @@ describe(parseMjmlAttributeType, () => {
 
     expect(parseMjmlAttributeType(grammar)).toStrictEqual(type);
   });
+
   test("a grammar it does not know is refused", () => {
     expect.hasAssertions();
 

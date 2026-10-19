@@ -54,7 +54,7 @@ const readMjmlRoot = <TContent>(
 };
 
 // The top level beside the one mjml, refused by name: text outside it by the stray text type, a tag before it under its own name,
-// and a second element by #document. A source of one mjml and nothing else reads no refusal here
+// And a second element by #document. A source of one mjml and nothing else reads no refusal here
 const readMjmlTopLevel = (root: HTMLElement): Record<string, unknown> => {
   const [mjml, ...others] = root.children;
   const props: Record<string, unknown> = readMjmlStrayText(root);

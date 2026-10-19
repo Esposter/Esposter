@@ -9,7 +9,7 @@ import { getBlockTypeDefinition } from "headless-block-editor";
 import { HTMLElement, TextNode } from "node-html-parser";
 
 // A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its children
-// are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
+// Are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
 const readMjmlNode = <TContent>(
   element: HTMLElement,
   registry: BlockRegistry,

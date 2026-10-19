@@ -17,6 +17,7 @@ describe(serializeMjml, () => {
     };
     expect(serializeMjml(column)).toBe('<mj-column><mj-image src="a"></mj-image><mj-text>Hi</mj-text></mj-column>');
   });
+
   test("#285 the source is the mjml element alone, with no body tag around it", () => {
     expect.hasAssertions();
 
@@ -27,6 +28,7 @@ describe(serializeMjml, () => {
     };
     expect(serializeMjml(json)).toBe("<mjml><mj-body></mj-body></mjml>");
   });
+
   test("a boolean attribute is written as its string", () => {
     expect.hasAssertions();
 

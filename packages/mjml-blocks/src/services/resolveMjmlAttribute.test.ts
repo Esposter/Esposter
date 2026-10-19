@@ -19,6 +19,7 @@ describe(resolveMjmlAttribute, () => {
         ),
     ).toBe("Georgia");
   });
+
   test("a set attribute wins over the cascade", () => {
     expect.hasAssertions();
 

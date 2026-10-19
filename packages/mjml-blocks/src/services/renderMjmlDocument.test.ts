@@ -100,6 +100,7 @@ describe(renderMjmlDocument, () => {
       tagName: "mjml",
     });
   });
+
   test("an attribute holding a quote is escaped once", async () => {
     expect.hasAssertions();
 
@@ -109,6 +110,7 @@ describe(renderMjmlDocument, () => {
     });
     await expect(html).toMatchFileSnapshot("escapedQuote.snapshot.html");
   });
+
   test("a valid email compiles under strict validation", async () => {
     expect.hasAssertions();
 
@@ -118,6 +120,7 @@ describe(renderMjmlDocument, () => {
     });
     expect(errors).toStrictEqual([]);
   });
+
   test("stamping writes an id that holds a quote as an escaped css class", () => {
     expect.hasAssertions();
 
@@ -138,6 +141,7 @@ describe(renderMjmlDocument, () => {
       tagName: "mjml",
     });
   });
+
   test("#56 #268 #304 #307 a section and a wrapper take full-width and compile", async () => {
     expect.hasAssertions();
 
@@ -204,6 +208,7 @@ describe(renderMjmlDocument, () => {
     const { errors } = await mjml2html(json, { validationLevel: "strict" });
     expect(errors).toStrictEqual([]);
   });
+
   test("#184 #150 #185 a section in a wrapper compiles with no body of its own", async () => {
     expect.hasAssertions();
 
@@ -249,6 +254,7 @@ describe(renderMjmlDocument, () => {
     expect(errors).toStrictEqual([]);
     await expect(html).toMatchFileSnapshot("sectionInWrapper.snapshot.html");
   });
+
   test("#35 #4 #118 #124 #207 #208 #248 #249 #284 #351 #370 #371 a head's font, preview and style reach the compiled email", async () => {
     expect.hasAssertions();
 
@@ -272,6 +278,7 @@ describe(renderMjmlDocument, () => {
     });
     await expect(html).toMatchFileSnapshot("headEmail.snapshot.html");
   });
+
   test("#388 #269 #358 #367 #368 mj-attributes applies, and MJML's defaults fill what a node sets none", async () => {
     expect.hasAssertions();
 
@@ -284,6 +291,7 @@ describe(renderMjmlDocument, () => {
     });
     await expect(html).toMatchFileSnapshot("attributesCascade.snapshot.html");
   });
+
   test("#202 a body width caps the email at the width it sets", async () => {
     expect.hasAssertions();
 
@@ -296,6 +304,7 @@ describe(renderMjmlDocument, () => {
     });
     await expect(html).toMatchFileSnapshot("bodyWidth.snapshot.html");
   });
+
   test("a consumer's leaf type renders with the context the render is given", () => {
     expect.hasAssertions();
 

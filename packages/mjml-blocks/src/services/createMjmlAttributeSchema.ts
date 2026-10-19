@@ -10,7 +10,7 @@ import { z } from "zod";
 
 // MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them
 const createUnitPattern = (units: string[], isNegativeAllowed: boolean, minCount: number, maxCount: number): RegExp => {
-  const numeric = isNegativeAllowed ? "-|\\d|,|\\." : "\\d|,|\\.";
+  const numeric = isNegativeAllowed ? String.raw`-|\d|,|\.` : String.raw`\d|,|\.`;
   const filteredUnits = units
     .filter((unit) => unit !== "auto")
     .map((unit) => RegExp.escape(unit))

@@ -15,6 +15,7 @@ describe("renderMjmlNode", () => {
       ),
     ).toStrictEqual({ attributes: { alt: "", src: "https://example.com/a.png" }, tagName: "mj-image" });
   });
+
   test("#179 #196 a node's id and an unset attribute are never written", () => {
     expect.hasAssertions();
 
@@ -36,6 +37,7 @@ describe("renderMjmlNode", () => {
       ),
     ).toStrictEqual({ attributes: {}, content: "Share", tagName: "mj-social-element" });
   });
+
   test("#257 a column's width is written as its own attribute, which MJML lays out", () => {
     expect.hasAssertions();
 
@@ -48,6 +50,7 @@ describe("renderMjmlNode", () => {
       ),
     ).toStrictEqual({ attributes: { width: "50%" }, children: [], tagName: "mj-column" });
   });
+
   test("#391 an attribute holding markup is written escaped once", () => {
     expect.hasAssertions();
 

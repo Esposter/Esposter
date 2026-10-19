@@ -111,6 +111,7 @@ describe(parseMjmlDocument, () => {
     assert.exists(result.data);
     expect(renderMjmlDocument(result.data, TEST_REGISTRY, TEST_RENDER_OPTIONS)).toStrictEqual(json);
   });
+
   test("an import holding a tag the package leaves out is refused", () => {
     expect.hasAssertions();
 
@@ -123,6 +124,7 @@ describe(parseMjmlDocument, () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-include>"']);
   });
+
   test("raw html is cleaned before it is stored", () => {
     expect.hasAssertions();
 
@@ -135,6 +137,7 @@ describe(parseMjmlDocument, () => {
     expect(result.error?.issues.map((issue) => issue.message) ?? []).toStrictEqual([]);
     expect(result.data?.content.map((node) => node.props.content)).toStrictEqual(["<p>kept</p>"]);
   });
+
   test("a label holding an element is refused at its content", () => {
     expect.hasAssertions();
 
@@ -148,6 +151,7 @@ describe(parseMjmlDocument, () => {
       ["content", 0, "props", "children", 0, "props", "children", 0, "props", "content"],
     ]);
   });
+
   test("#41 #149 a self-closing image beside a text reads back as two nodes", () => {
     expect.hasAssertions();
 
@@ -181,6 +185,7 @@ describe(parseMjmlDocument, () => {
       root: { props: { body: {} } },
     });
   });
+
   test("stray text is refused by name, not dropped", () => {
     expect.hasAssertions();
 
@@ -200,6 +205,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(inHead.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "#text"']);
   });
+
   test("a second document or text outside the mjml is refused, not dropped", () => {
     expect.hasAssertions();
 
@@ -239,6 +245,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(head.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-head>"']);
   });
+
   test("a tag named like a read prop is refused, not read into it", () => {
     expect.hasAssertions();
 
@@ -258,6 +265,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(bodyWithSection.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<body>"']);
   });
+
   test("an attribute the mjml element does not take is refused by name", () => {
     expect.hasAssertions();
 
@@ -269,6 +277,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mjml>"']);
   });
+
   test("a second title is refused by name, not kept over the first", () => {
     expect.hasAssertions();
 
@@ -280,6 +289,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-title>"']);
   });
+
   test("a second default for one tag is refused by name, not kept over the first", () => {
     expect.hasAssertions();
 
@@ -291,6 +301,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-text>"']);
   });
+
   test("a tag named all among the defaults is refused, not read as every component's", () => {
     expect.hasAssertions();
 
@@ -302,6 +313,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['"all" is not in the registry']);
   });
+
   test("an attribute on the title is refused by name", () => {
     expect.hasAssertions();
 
@@ -313,6 +325,7 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-title>"']);
   });
+
   test("#179 an id attribute is refused at its node, not taken as the node's id", () => {
     expect.hasAssertions();
 

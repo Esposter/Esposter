@@ -42,6 +42,7 @@ describe(createMjmlAttributeSchema, () => {
       !(await checkIsRefusedByMjml(sample.tag, sample.attribute, sample.value)),
     );
   });
+
   test.each([
     { attribute: "href", value: "javascript:alert(1)" },
     { attribute: "background-url", value: "data:text/html,x" },

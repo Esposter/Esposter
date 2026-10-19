@@ -1,4 +1,4 @@
-import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
+import type { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 
 export type MjmlAttributeType =
   | { isNegativeAllowed: boolean; kind: MjmlAttributeKind.Unit; maxCount: number; minCount: number; units: string[] }

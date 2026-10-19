@@ -48,6 +48,7 @@ describe("components", () => {
       );
     },
   );
+
   test.each(SPECIFICATION_ROWS)("%s has the default attributes MJML's component sets", (type, specification) => {
     expect.hasAssertions();
 
@@ -57,6 +58,7 @@ describe("components", () => {
       Object.fromEntries(Object.entries(component.defaultAttributes).filter(([, value]) => typeof value === "string")),
     );
   });
+
   test.each(SPECIFICATION_ROWS)("%s has the children MJML's preset allows it", (type, specification) => {
     expect.hasAssertions();
 
@@ -66,6 +68,7 @@ describe("components", () => {
       ),
     );
   });
+
   test("the root's content is the children MJML's preset allows mj-body", () => {
     expect.hasAssertions();
 
@@ -79,6 +82,7 @@ describe("components", () => {
       MJML_BODY_CHILDREN,
     );
   });
+
   test("the root's body and breakpoint take MJML's attributes", () => {
     expect.hasAssertions();
 

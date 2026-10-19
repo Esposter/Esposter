@@ -40,6 +40,7 @@ describe(createMjmlRegistry, () => {
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0]]);
   });
+
   test("a text at the root is refused", () => {
     expect.hasAssertions();
 
@@ -47,6 +48,7 @@ describe(createMjmlRegistry, () => {
       getIssuePaths({ content: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], root: { props: {} } }),
     ).toStrictEqual([["content", 0]]);
   });
+
   test("an attribute value MJML's type refuses", () => {
     expect.hasAssertions();
 
@@ -75,6 +77,7 @@ describe(createMjmlRegistry, () => {
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "props", "children", 0, "props", "padding"]]);
   });
+
   test("an image without alternative text is refused", () => {
     expect.hasAssertions();
 
@@ -101,6 +104,7 @@ describe(createMjmlRegistry, () => {
       }),
     ).toStrictEqual([["content", 0, "props", "children", 0, "props", "children", 0, "props", "alt"]]);
   });
+
   test("#330 #339 #344 #262 #96 an image's width takes pixels only, and auto is refused", () => {
     expect.hasAssertions();
 
@@ -139,6 +143,7 @@ describe(createMjmlRegistry, () => {
       ["content", 0, "props", "children", 0, "props", "children", 1, "props", "width"],
     ]);
   });
+
   test("#142 #150 #184 #185 #361 a wrapper and a hero are body content, and a group holds columns", () => {
     expect.hasAssertions();
 
@@ -188,6 +193,7 @@ describe(createMjmlRegistry, () => {
       }),
     ).toStrictEqual([]);
   });
+
   test.each([
     { html: "<p>Hi</p>", isAccepted: true },
     { html: "<p>Hi</p><script>alert(1)</script>", isAccepted: false },
