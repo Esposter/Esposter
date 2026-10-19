@@ -65,8 +65,8 @@ const setup = (document: BlockDocument) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(RESOURCE_ID, document);
   const announce = vi.fn<(message: string) => void>();
-  const { startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
-  return { announce, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
+  const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
+  return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
 };
 
 const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
@@ -121,6 +121,19 @@ describe("usePageBuilderDrag", () => {
 
     expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
     expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("the drag flag is held from the threshold until the release", () => {
+    expect.hasAssertions();
+    const { isDragging, startPaletteDrag } = setup(ROOT_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 1, 1));
+    expect(isDragging.value).toBe(false);
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    expect(isDragging.value).toBe(true);
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+    expect(isDragging.value).toBe(false);
   });
 
   test("a click without movement does not start an insert", () => {

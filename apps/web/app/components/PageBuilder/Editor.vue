@@ -39,7 +39,7 @@ const announce = (message: string) => {
 };
 const { deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(() => resourceId, announce);
 usePageBuilderHistoryCommands(() => resourceId);
-const { dropTarget, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
+const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
@@ -106,7 +106,16 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div v-if="pageDocument" ref="shell" flex gap-2 h-full min-h-0 @keydown="handleEditorKeydown">
+  <div
+    v-if="pageDocument"
+    ref="shell"
+    :class="{ 'pointer-events-none': isDragging }"
+    flex
+    gap-2
+    h-full
+    min-h-0
+    @keydown="handleEditorKeydown"
+  >
     <div :style="{ width: `${leftWidth}px` }" relative flex flex-col gap-4 shrink-0 min-h-0>
       <div flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto>
         <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />

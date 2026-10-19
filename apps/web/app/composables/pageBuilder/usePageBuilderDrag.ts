@@ -46,6 +46,8 @@ export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announc
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
   const dropTarget = shallowRef<DropTarget>();
+  // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
+  const isDragging = ref(false);
 
   const startPaletteDrag = (
     type: WebpageNodeType,
@@ -54,22 +56,23 @@ export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announc
   ) => {
     const abortController = new AbortController();
     const { clientX: startX, clientY: startY } = event;
-    let isDragging = false;
     const endDrag = () => {
       abortController.abort();
       dropTarget.value = undefined;
+      isDragging.value = false;
     };
     const onPointerMove = (moveEvent: PointerEvent) => {
       const point = { x: moveEvent.clientX, y: moveEvent.clientY };
-      if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_THRESHOLD) isDragging = true;
-      if (!isDragging) return;
+      if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_THRESHOLD) isDragging.value = true;
+      if (!isDragging.value) return;
 
       dropTarget.value = getDropTargetAt(getDocument(toValue(resourceId)), type, point, getFrameGeometry());
     };
     const onPointerUp = () => {
+      const wasDragging = isDragging.value;
       const landing = dropTarget.value;
       endDrag();
-      if (!isDragging || landing === undefined) return;
+      if (!wasDragging || landing === undefined) return;
 
       if (insertAt(toValue(resourceId), landing.slotPointer, landing.index, type))
         announce(`Inserted ${WEBPAGE_NODE_TYPE_TITLE_MAP[type]}`);
@@ -84,5 +87,5 @@ export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announc
     window.addEventListener("keydown", onKeydown, { signal });
   };
 
-  return { dropTarget, startPaletteDrag };
+  return { dropTarget, isDragging, startPaletteDrag };
 };
