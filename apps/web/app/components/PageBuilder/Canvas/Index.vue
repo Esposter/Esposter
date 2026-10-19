@@ -33,8 +33,8 @@ const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
 const selectedNodeId = computed(() => pageBuilderCanvasStore.getSelectedNodeId(resourceId));
 const editingNodeId = computed(() => pageBuilderCanvasStore.getEditingNodeId(resourceId));
-// The document the frame draws. While a text node is edited it stays as it was when the edit began, since each change would
-// Otherwise reset the node's rendered html, which the editor is mounted inside
+// The document the frame draws. While a text node is edited it stays as it was when the edit began
+// Otherwise each change would reset the node's rendered html, which the editor is mounted inside
 const drawnDocument = shallowRef<WebpageDocument>();
 watch(
   [pageDocument, editingNodeId],
@@ -78,8 +78,8 @@ const toolbarPosition = computed(() => {
     top: frameRect.top + selectionBox.value.top * scale,
   };
 });
-// What a palette drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame, the
-// Same space the pointer is mapped into, so the drop logic is not offset by the frame's own scroll
+// What a palette drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame.
+// That is the same space the pointer is mapped into, so the drop logic is not offset by the frame's own scroll
 const getFrameGeometry = (): FrameGeometry | undefined => {
   const frameElement = getFrameElement();
   if (!frameElement) return undefined;
