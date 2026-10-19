@@ -34,6 +34,7 @@ describe("readGcsimCitedCandidates", () => {
     "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, ap, 0, skillDelay)\n\t}, 20)\n}\n";
   const NAMED_GO =
     "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, ap, 0, 2)\n\t}, 113)\n}\n";
+  const STATUS_GO = "package aino\n\nfunc burst() {\n\tc.Core.Status.Add(stilettoKey, 5*60+20)\n}\n";
   const GO_FILES = new Map([
     ["area.go", AREA_GO],
     ["asc.go", ASC_GO],
@@ -47,6 +48,7 @@ describe("readGcsimCitedCandidates", () => {
     ["queue.go", QUEUE_GO],
     ["queued.go", QUEUED_GO],
     ["run.go", RUN_GO],
+    ["status.go", STATUS_GO],
   ]);
   const gcsim = readGcsimCharacter(FOLDER, new Map([...GO_FILES, [GCSIM_CONFIG_FILE, "name: aino\n"]]));
   const createGcsimDirectory = () => {
@@ -320,5 +322,21 @@ describe("readGcsimCitedCandidates", () => {
       "skill.hits.0.hitmarkFrames",
     )?.[0];
     expect(candidate?.value).toBe(115);
+  });
+
+  test("a cited seconds field gives its frames over the frame rate, its frames also offered as a candidate", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "skillChain.windowSeconds": { file: "status.go", line: 4, source: KitSource.Gcsim, value: 320 / 60 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get(
+      "skillChain.windowSeconds",
+    )?.[0];
+    expect(candidate?.value).toBe(320 / 60);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/status.go",
+      line: 4,
+      source: KitSource.Gcsim,
+    });
   });
 });

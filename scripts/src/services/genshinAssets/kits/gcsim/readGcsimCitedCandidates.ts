@@ -22,6 +22,7 @@ import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/r
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { toKitSeconds } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -103,6 +104,9 @@ const readCitedArea = (
 const ACTION_FRAME_NAME = "c.Core.F";
 const ACTION_FRAME_VALUE = 0;
 
+// The suffix of a field that counts seconds, which a count of frames over the frame rate gives
+const SECONDS_FIELD_SUFFIX = "Seconds";
+
 // The path of an action's hit, `burst.hits.0.hitmarkFrames` and the like, as opposed to a named hit's, `hits.<name>`
 const ACTION_HIT_PATH_REGEX =
   /^(?:normalAttacks|chargedAttack|plunges|plungeCollision|skill\.hits|skillHolds|burst\.hits)\./u;
@@ -136,7 +140,8 @@ const readQueuedHitmarks = (
   );
 
 // The value a cited line gives, in the record's units: its one value equal to the cited value, or its first where none
-// Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. An action's hit on a queue
+// Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. A seconds field gives its
+// Frames over the frame rate, with those converted values first and its frames after them. An action's hit on a queue
 // Call's line is the hitmark readGcsimQueuedAttacks reads for that call. Otherwise a line gives its literal numbers,
 // And the value of each expression that starts on it, with its locals, constants and loop index resolved. In a `for`
 // Loop, an array of that line's value at each index of the loop, taken at the one expression position whose values
@@ -158,6 +163,7 @@ const readCitedValue = (
   const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
   if (delay === undefined) return undefined;
   const shift = field === HITMARK_FIELD && isActionHit ? delay : 0;
+  const isSeconds = field.endsWith(SECONDS_FIELD_SUFFIX);
   const toRecordValue = (value: number) => (field === GAUGE_FIELD ? value / GCSIM_DURABILITY_PER_GAUGE : value + shift);
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
   // An action's hit takes its queue call's hitmark; a named hit is spawned at its own time, so its line gives it
@@ -181,11 +187,13 @@ const readCitedValue = (
       );
       return value === undefined ? [] : [value];
     });
-  const readRecordValues = (overrides: (name: string) => GoValue | undefined): number[] =>
-    [
+  const readRecordValues = (overrides: (name: string) => GoValue | undefined): number[] => {
+    const values = [
       ...readGcsimLineValues(lineText, (name) => overrides(name) ?? resolveName(name)),
       ...readExpressionValues(overrides),
     ].map((value) => toRecordValue(value));
+    return isSeconds ? [...values.map((value) => toKitSeconds(value)), ...values] : values;
+  };
   if (loop === undefined) {
     const values = readRecordValues(() => undefined);
     return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
