@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import AgentConsoleMarkdown from "@/components/AgentConsole/Markdown.vue";
-import { AGENT_CONSOLE_SESSION_KEY } from "@/services/agentConsole/constants";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleFileStore } from "@/store/agentConsole/file";
 import { useAgentConsolePaneStore } from "@/store/agentConsole/pane";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { CommandType } from "agent-console-server/contracts";
 import { describe, expect, test, vi } from "vitest";
@@ -73,12 +73,11 @@ describe(AgentConsoleMarkdown, () => {
     const agentConsoleSessionStore = useAgentConsoleSessionStore();
     agentConsoleSessionStore.currentSessionId = crypto.randomUUID();
     const sideChatSessionId = crypto.randomUUID();
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    agentConsoleSideChatStore.sideChatSessionId = sideChatSessionId;
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
     const sendCommand = vi.spyOn(agentConsoleConnectionStore, "sendCommand");
-    const component = await mountSuspended(AgentConsoleMarkdown, {
-      global: { provide: { [AGENT_CONSOLE_SESSION_KEY]: { sessionId: ref(sideChatSessionId) } } },
-      props: { source: path },
-    });
+    const component = await mountSuspended(AgentConsoleMarkdown, { props: { isSideChat: true, source: path } });
     await component.get('a[href="#agent-console-file"]').trigger("click");
 
     expect(sendCommand).toHaveBeenCalledExactlyOnceWith({

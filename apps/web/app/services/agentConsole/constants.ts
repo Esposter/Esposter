@@ -1,6 +1,3 @@
-import type { AgentConsoleSession } from "@/models/agentConsole/AgentConsoleSession";
-import type { InjectionKey } from "vue";
-
 import { RoutePath } from "@esposter/shared";
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from "agent-console-server/contracts";
 
@@ -24,7 +21,7 @@ export const GENSHIN_FOUR_STAR_COLOR = "#c1a1ff";
 export const GENSHIN_FIVE_STAR_COLOR = "#ffc85c";
 // How long the star takes to fall from above the world into the nameplate, and the heights it starts and lands at in
 // The view, which runs from 1 at its top edge to -1 at its bottom
-export const FALLING_STAR_DURATION_SECONDS = Temporal.Duration.from({ seconds: 2 }).total("seconds");
+export const FALLING_STAR_DURATION_SECONDS = 2;
 export const FALLING_STAR_START_Y = 1.2;
 export const FALLING_STAR_LAND_Y = -0.55;
 // The camera's field of view, and the distance at which the view is two units high at the star's depth, so those
@@ -64,5 +61,3 @@ export const PAIRING_CODE_BYTE_LENGTH = 32;
 // The side pane's width until the reader drags its edge, and the range that drag is held to
 export const AGENT_CONSOLE_PANE_DEFAULT_WIDTH = 420;
 export const AGENT_CONSOLE_PANE_MIN_WIDTH = 240;
-// The session a part of the console reads and writes, which the side chat's drawer provides in place of the console's
-export const AGENT_CONSOLE_SESSION_KEY: InjectionKey<AgentConsoleSession> = Symbol("agentConsoleSession");

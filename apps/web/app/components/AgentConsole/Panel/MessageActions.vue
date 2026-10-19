@@ -18,7 +18,7 @@ interface Props {
 const { isPrompt, isSideChat, messageUuid, text } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
-const { sessionId } = useAgentConsoleSession();
+const { sessionId } = useAgentConsoleSession(isSideChat);
 const { copied, copy } = useClipboard({ legacy: true });
 // One quiet mark over the message's corner rather than a row of buttons under it, so it takes no room of its own;
 // What it can do opens from it

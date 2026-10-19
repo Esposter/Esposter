@@ -7,13 +7,15 @@ import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection"
 import { CommandType, PermissionBehavior } from "agent-console-server/contracts";
 
 interface Props {
+  // The side chat's permission requests are answered in the side chat's own session
+  isSideChat?: true;
   permissionRequest: PermissionRequestEvent;
 }
 
-const { permissionRequest } = defineProps<Props>();
+const { isSideChat, permissionRequest } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
-const { sessionId } = useAgentConsoleSession();
+const { sessionId } = useAgentConsoleSession(isSideChat);
 // What a denial tells Claude to do instead, the terminal's "No, and tell Claude what to do differently"
 const denyMessage = ref("");
 // A change to a file is shown as the diff it would make; every other input is shown whole

@@ -19,7 +19,7 @@ const { isSideChat } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { askSideChat, sendCommand } = agentConsoleConnectionStore;
 const { capabilities, composerText, currentSession, isTurnRunning, sessionId, sessionSettings } =
-  useAgentConsoleSession();
+  useAgentConsoleSession(isSideChat);
 const prompt = useTemplateRef("prompt");
 const attachments = ref<Attachment[]>([]);
 // The palette lists the session's own commands — the person's skills and plugins included — while the input is a
