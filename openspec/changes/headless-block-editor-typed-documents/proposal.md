@@ -14,6 +14,7 @@ The fix is for the schema to be the validator. Each node's type is a branch of a
 - A paste's copies are checked by the same typed schema as the destination slot's children.
 - Refusals name the node's `type` field at the position the schema reached, and the message lists the types that slot accepts.
 - The Webpage and Email registries declare every prop their stored nodes hold, so the typed schema accepts what the editors already store.
+- Types run end to end: each node type's props are an interface its schema satisfies, the document is typed by its node union, and the renderers, the props updates and the stores read typed props with no cast and no re-parse.
 
 Nothing an editor sees changes. The agent content tools, the resource list and the cutover's ResourceDefinitionMap entries are not touched here; the cutover records the Webpage and Email's opaque paths once they are registered.
 
