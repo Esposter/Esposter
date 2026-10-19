@@ -70,7 +70,11 @@ export const getDuplicateCodeFindings = (
       fragments.every(({ endLine, sourceId, startLine }) => checkIsRangeFree(startLine, endLine, readLines(sourceId)));
     // Two files sharing an import block run from it into their bodies, so a clone reaching a leading import line is a
     // Shared block rather than a copied body, and no clone can include an import line.
-    if (!checkIsEveryRangeFree(readLeadingImportLines) || readCodeLinesReaders.some(checkIsEveryRangeFree)) continue;
+    if (
+      !checkIsEveryRangeFree(readLeadingImportLines) ||
+      readCodeLinesReaders.some((readLines) => checkIsEveryRangeFree(readLines))
+    )
+      continue;
 
     const [fragmentA, fragmentB] = fragments;
     findings.push({

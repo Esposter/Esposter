@@ -22,7 +22,7 @@ vi.mock(import("#src/services/genshinText/readTalkTables"));
 vi.mock(import("#src/services/genshinText/readTextMap"));
 vi.mock(import("node:fs"), async (importOriginal) => ({
   ...(await importOriginal()),
-  readFileSync: vi.fn(() => "{}") as unknown as typeof readFileSync,
+  readFileSync: vi.fn<() => string>(() => "{}") as unknown as typeof readFileSync,
 }));
 
 describe(buildQuests, () => {

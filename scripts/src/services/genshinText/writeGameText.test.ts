@@ -1,3 +1,5 @@
+import type { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
+
 import { GENSHIN_TEXT_GENERATED_DIRECTORY } from "#src/services/genshinText/constants";
 import { readManualTextMap } from "#src/services/genshinText/readManualTextMap";
 import { readSdkText } from "#src/services/genshinText/readSdkText";
@@ -9,7 +11,6 @@ import { GameLanguage, GameLanguages, GameTextKeys } from "genshin-text";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import type { readGenshinDb } from "genshin-persona/src/services/readGenshinDb.ts";
 
 vi.mock(import("#src/services/genshinText/getGameTextHash"), () => ({ getGameTextHash: () => "1" }));
 vi.mock(import("#src/services/genshinText/readManualTextMap"));
@@ -22,9 +23,9 @@ vi.mock(import("genshin-persona/src/services/readGenshinDb.ts"), () => ({
 }));
 vi.mock(import("node:fs"), async (importOriginal) => ({
   ...(await importOriginal()),
-  mkdirSync: vi.fn(),
-  rmSync: vi.fn(),
-  writeFileSync: vi.fn(),
+  mkdirSync: vi.fn<typeof mkdirSync>(),
+  rmSync: vi.fn<typeof rmSync>(),
+  writeFileSync: vi.fn<typeof writeFileSync>(),
 }));
 
 describe(writeGameText, () => {

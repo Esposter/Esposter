@@ -22,8 +22,8 @@ vi.mock(import("#src/services/shared/fetchOk"));
 vi.mock(import("#src/services/shared/publishFile"));
 vi.mock(import("node:fs"), async (importOriginal) => ({
   ...(await importOriginal()),
-  existsSync: vi.fn(() => true),
-  readdirSync: vi.fn(() => [
+  existsSync: vi.fn<() => boolean>(() => true),
+  readdirSync: vi.fn<() => Dirent[]>(() => [
     {
       isBlockDevice: () => false,
       isCharacterDevice: () => false,
@@ -36,7 +36,7 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
       parentPath: join(GAME_TEXT_DIRECTORY, BIN_OUTPUT_DIRECTORY, "Quest"),
     } satisfies Dirent,
   ]) as unknown as typeof readdirSync,
-  statSync: vi.fn(() => ({ size: 100 })) as unknown as typeof statSync,
+  statSync: vi.fn<() => { size: number }>(() => ({ size: 100 })) as unknown as typeof statSync,
 }));
 
 describe(fetchDump, () => {
@@ -46,10 +46,12 @@ describe(fetchDump, () => {
     vi.mocked(readExcelTable).mockImplementation((tableName) =>
       tableName === MAIN_QUEST_TABLE_NAME ? [{ id: 352 }] : [],
     );
-    vi.mocked(fetchJson).mockImplementation(async (url) => ({
-      tree: url.endsWith(`:${QUEST_BINARY_DIRECTORY_PATH}`) ? [{ path: "352.json", size: 100, type: "blob" }] : [],
-      truncated: false,
-    }));
+    vi.mocked(fetchJson).mockImplementation((url) =>
+      Promise.resolve({
+        tree: url.endsWith(`:${QUEST_BINARY_DIRECTORY_PATH}`) ? [{ path: "352.json", size: 100, type: "blob" }] : [],
+        truncated: false,
+      }),
+    );
 
     await expect(fetchDump()).resolves.toStrictEqual(["0 dump files fetched, 1 already held"]);
   });
