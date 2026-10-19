@@ -11,13 +11,15 @@ export interface KitDonor {
 
 // One value of a kit's overlay: a value no source holds with its cause, a value removed with its cause where a source
 // Holds one the kit does not, or the source chosen where the sources disagree. A source chosen by a join, a named hit's
-// Multiplier joined to its talent row, carries the value it joined by, as the join needs it to find the row
-// A value gcsim writes inline is cited by the file of its character's folder and the line it is on, which evaluates
-// To it. A cited entry a range key expands to carries its hit's place in the run as `index`, which the cited line's
-// List is read at, and which no overlay file holds.
+// Multiplier joined to its talent row, carries the value it joined by, as the join needs it to find the row. A value
+// Gcsim writes inline is cited by the file of its character's folder and the line it is on, which evaluates to it. A
+// Wiki value is cited by its talent page's title and the row of its Advanced Properties, which gives its field. A cited
+// Entry a range key expands to carries its hit's place in the run as `index`, which the cited line's list is read at,
+// And which no overlay file holds.
 export type KitOverlayEntry =
   | { cause: KitProvisionalCause; donor?: KitDonor; value?: unknown }
   | { file: string; index?: number; line: number; source: KitSource.Gcsim; value?: unknown }
+  | { page: string; row: number; source: KitSource.Wiki; value?: unknown }
   | { source: KitSource.Gcsim | KitSource.Tables | KitSource.Wiki; value?: unknown };
 
 export const kitDonorSchema: z.ZodType<KitDonor> = z.strictObject({
@@ -43,6 +45,12 @@ export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([
     file: z.string().min(1),
     line: z.int().positive(),
     source: z.literal(KitSource.Gcsim),
+    value: z.unknown().optional(),
+  }),
+  z.strictObject({
+    page: z.string().min(1),
+    row: z.int().positive(),
+    source: z.literal(KitSource.Wiki),
     value: z.unknown().optional(),
   }),
   z.strictObject({
