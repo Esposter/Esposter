@@ -1,30 +1,9 @@
 {
-  "burst.hits.0.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
-  "burst.hits.1.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
   "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
-  "burst.hits.2.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
   "burst.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
-  "burst.hits.3.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
   "burst.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
-  "burst.hits.4.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 23 }
-  },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
-  "skill.hits.length": { "cause": "Unclassified", "value": 0 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
