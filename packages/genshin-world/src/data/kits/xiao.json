@@ -21,23 +21,21 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.dash.1.damageBonus": { "file": "asc.go", "line": 46, "source": "Gcsim", "value": 0.15 },
-  "hits.dash.1.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
+  "hits.dash.1-3.hitmarkFrames": { "file": "skill.go", "line": 59, "source": "Gcsim", "value": 4 },
   "hits.dash.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2632 } },
   "hits.dash.1.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "hits.dash.2.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.dash.2.damageBonus": { "cause": "Unclassified", "value": 0.3 },
-  "hits.dash.2.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
+  "hits.dash.2.damageBonus": { "cause": "DiffersFromSource", "value": 0.3 },
   "hits.dash.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2632 } },
   "hits.dash.2.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "hits.dash.3.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.dash.3.damageBonus": { "cause": "Unclassified", "value": 0.44999999999999996 },
-  "hits.dash.3.hitmarkFrames": { "cause": "Unclassified", "value": 4 },
+  "hits.dash.3.damageBonus": { "cause": "DiffersFromSource", "value": 0.44999999999999996 },
   "hits.dash.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2632 } },
   "hits.dash.3.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "normalAttacks.0.hits.0.convertedArea": {
@@ -46,7 +44,7 @@
   },
   "normalAttacks.0.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.62 },
   "normalAttacks.0.hits.1.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.1048349392520045 }
   },
   "normalAttacks.0.hits.1.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.62 },
@@ -73,7 +71,7 @@
   "normalAttacks.3.hits.1.convertedPoiseDamage": { "cause": "Unsourced", "value": 51.42 },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
   "normalAttacks.4.hits.0.convertedArea": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.310966626228661 }
   },
   "normalAttacks.4.hits.0.convertedPoiseDamage": { "cause": "Unsourced", "value": 97.56 },
@@ -88,7 +86,7 @@
   },
   "parameters.drainShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 2639 } },
   "plungeCollision.convertedPoiseDamage": { "cause": "Unsourced", "value": 37.5 },
-  "plungeCollision.element": { "cause": "Unclassified", "value": "Wind" },
+  "plungeCollision.element": { "file": "xiao.go", "line": 83, "source": "Gcsim", "value": "Wind" },
   "plunges.high.animationFrames": { "file": "plunge.go", "line": 56, "source": "Gcsim", "value": 66 },
   "plunges.high.hits.0.convertedArea": {
     "cause": "Unclassified",
