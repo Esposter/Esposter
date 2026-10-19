@@ -11,10 +11,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
   },
-  "chargedAttack.hits.1.element": { "cause": "Unsourced", "value": "Ice" },
-  "chargedAttack.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 131 },
-  "chargedAttack.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 9, "proudSkillGroupId": 3731 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 3731 } },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unsourced", "value": 20 },
   "frames.celestialShowerStart": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 122 },
   "frames.celestialShowerTickInterval": { "file": "burst.go", "line": 51, "source": "Gcsim", "value": 18 },
@@ -24,7 +22,6 @@
   },
   "hits.celestialShower.hitmarkFrames": { "cause": "Unsourced", "value": 8 },
   "hits.celestialShower.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3739 } },
-  "hits.celestialShower.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.iceLotusExplosion.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
