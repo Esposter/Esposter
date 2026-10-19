@@ -17,7 +17,7 @@ const config = readGcsimConfig(
 );
 
 describe(readSliceRangeLoop, () => {
-  test("binds the index alone where a range over rows names a value variable, as a row is no number", () => {
+  test("runs a range over a talent table once per row, binding its index alone, as a row is no number", () => {
     expect.hasAssertions();
 
     const tokens = tokenizeGo(
@@ -27,31 +27,6 @@ describe(readSliceRangeLoop, () => {
         "func (c *char) burst() {",
         "\tfor i, mult := range burstWhiteInitial {",
         "\t\tc.Core.QueueAttack(ai, ap, 0, i)",
-        "\t}",
-        "}",
-      ].join("\n"),
-    );
-
-    expect(
-      readSliceRangeLoop(
-        tokens,
-        tokens.findIndex(({ text }) => text === "for"),
-        () => undefined,
-        config,
-      )?.iterations,
-    ).toStrictEqual([new Map([["i", 0]]), new Map([["i", 1]]), new Map([["i", 2]])]);
-  });
-
-  test("runs a range over a talent table once per row", () => {
-    expect.hasAssertions();
-
-    const tokens = tokenizeGo(
-      [
-        "package durin",
-        "",
-        "func (c *char) burst() {",
-        "\tfor i, mult := range burstWhiteInitial {",
-        "\t\tc.Core.QueueAttack(ai, ap, burstInitHitmark[i], burstInitHitmark[i])",
         "\t}",
         "}",
       ].join("\n"),
