@@ -68,6 +68,13 @@ describe(readCharacterMesh, () => {
           textureIndex: 1,
           toonIndex: 0,
         },
+        {
+          isToonShared: false,
+          sphereMode: PmxSphereMode.Disabled,
+          sphereTextureIndex: -1,
+          textureIndex: 0,
+          toonIndex: 0,
+        },
       ],
       textures: ["ramp.bmp", "body.png"],
     } as PmxModel);
@@ -75,9 +82,13 @@ describe(readCharacterMesh, () => {
 
     expect(result.isOk()).toBe(true);
     expect(createPmxMesh).toHaveBeenCalledTimes(1);
+    expect(createPmxTexture).toHaveBeenCalledTimes(2);
+    expect(createPmxToonTexture).toHaveBeenCalledTimes(1);
     const materialOptions = vi.mocked(createCharacterMaterial).mock.calls.map(([options]) => options);
     expect(materialOptions[0]?.texture).toBe(colourTexture);
     expect(materialOptions[1]?.toonTexture).toBe(toonTexture);
+    expect(materialOptions[2]?.texture).toBe(colourTexture);
+    expect(materialOptions[2]?.toonTexture).toBe(toonTexture);
     expect(materialOptions[1]?.toonTexture).not.toBe(materialOptions[0]?.texture);
   });
 
