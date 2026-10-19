@@ -1,228 +1,268 @@
 {
-  "frames.ringNextTick": { "cause": "Unclassified", "value": 113 },
-  "frames.ringStart": { "cause": "Unclassified", "value": 23 },
-  "frames.ringTickInterval": { "cause": "Unclassified", "value": 90 },
+  "frames.ringNextTick": { "cause": "Unsourced", "value": 113 },
+  "frames.ringStart": { "file": "skill.go", "line": 78, "source": "Gcsim", "value": 23 },
+  "frames.ringTickInterval": { "file": "skill.go", "line": 138, "source": "Gcsim", "value": 90 },
   "hits.gyoeiNarukamiKariyamaRite.length": { "cause": "DiffersFromSource", "value": 7 },
   "hits.gyoeiNarukamiKariyamaRite.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.0.hitmarkFrames": { "cause": "Unclassified", "value": 50 },
+  "hits.gyoeiNarukamiKariyamaRite.0.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.0.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.0.hitmarkFrames": { "file": "burst.go", "line": 14, "source": "Gcsim", "value": 50 },
   "hits.gyoeiNarukamiKariyamaRite.0.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.0.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.1.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.1.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.1.hitmarkFrames": { "cause": "Unclassified", "value": 67 },
+  "hits.gyoeiNarukamiKariyamaRite.1.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.1.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.1.hitmarkFrames": { "cause": "Unsourced", "value": 67 },
   "hits.gyoeiNarukamiKariyamaRite.1.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.1.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.1.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.2.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.2.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.2.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.2.hitmarkFrames": { "cause": "Unclassified", "value": 84 },
+  "hits.gyoeiNarukamiKariyamaRite.2.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.2.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.2.hitmarkFrames": { "cause": "Unsourced", "value": 84 },
   "hits.gyoeiNarukamiKariyamaRite.2.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.2.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.2.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.3.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.3.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.3.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.3.hitmarkFrames": { "cause": "Unclassified", "value": 101 },
+  "hits.gyoeiNarukamiKariyamaRite.3.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.3.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.3.hitmarkFrames": { "cause": "Unsourced", "value": 101 },
   "hits.gyoeiNarukamiKariyamaRite.3.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.3.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.3.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.3.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.4.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.4.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.4.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.4.hitmarkFrames": { "cause": "Unclassified", "value": 118 },
+  "hits.gyoeiNarukamiKariyamaRite.4.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.4.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.4.hitmarkFrames": { "cause": "Unsourced", "value": 118 },
   "hits.gyoeiNarukamiKariyamaRite.4.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.4.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.4.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.5.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.5.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.5.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.5.hitmarkFrames": { "cause": "Unclassified", "value": 135 },
+  "hits.gyoeiNarukamiKariyamaRite.5.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.5.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.5.hitmarkFrames": { "cause": "Unsourced", "value": 135 },
   "hits.gyoeiNarukamiKariyamaRite.5.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.5.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.5.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.5.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.gyoeiNarukamiKariyamaRite.6.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.6.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.gyoeiNarukamiKariyamaRite.6.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.gyoeiNarukamiKariyamaRite.6.hitmarkFrames": { "cause": "Unclassified", "value": 152 },
+  "hits.gyoeiNarukamiKariyamaRite.6.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.gyoeiNarukamiKariyamaRite.6.gauge": { "file": "burst.go", "line": 32, "source": "Gcsim", "value": 1 },
+  "hits.gyoeiNarukamiKariyamaRite.6.hitmarkFrames": { "cause": "Unsourced", "value": 152 },
   "hits.gyoeiNarukamiKariyamaRite.6.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.gyoeiNarukamiKariyamaRite.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
-  "hits.gyoeiNarukamiKariyamaRite.6.scalingAttribute": { "cause": "Unclassified", "value": "FIGHT_PROP_HP" },
+  "hits.gyoeiNarukamiKariyamaRite.6.poiseDamage": { "cause": "Unsourced", "value": 0 },
+  "hits.gyoeiNarukamiKariyamaRite.6.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.length": { "cause": "DiffersFromSource", "value": 7 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.hitmarkFrames": { "cause": "Unclassified", "value": 50 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.hitmarkFrames": {
+    "file": "burst.go",
+    "line": 14,
+    "source": "Gcsim",
+    "value": 50
+  },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.0.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.hitmarkFrames": { "cause": "Unclassified", "value": 67 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.hitmarkFrames": { "cause": "Unsourced", "value": 67 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.1.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.hitmarkFrames": { "cause": "Unclassified", "value": 84 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.hitmarkFrames": { "cause": "Unsourced", "value": 84 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.2.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.hitmarkFrames": { "cause": "Unclassified", "value": 101 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.hitmarkFrames": { "cause": "Unsourced", "value": 101 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.3.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.hitmarkFrames": { "cause": "Unclassified", "value": 118 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.hitmarkFrames": { "cause": "Unsourced", "value": 118 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.4.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.hitmarkFrames": { "cause": "Unclassified", "value": 135 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.hitmarkFrames": { "cause": "Unsourced", "value": 135 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.5.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.hitmarkFrames": { "cause": "Unclassified", "value": 152 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.gauge": {
+    "file": "burst.go",
+    "line": 32,
+    "source": "Gcsim",
+    "value": 1
+  },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.hitmarkFrames": { "cause": "Unsourced", "value": 152 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.multiplier": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 0, "proudSkillGroupId": 6539 }
   },
-  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.toCloisterCompassionGyoeiNarukamiKariyamaRite.6.scalingAttribute": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": "FIGHT_PROP_HP"
   },
-  "hits.ringTick.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
-  "hits.ringTick.element": { "cause": "Unclassified", "value": "Electric" },
-  "hits.ringTick.gauge": { "cause": "Unclassified", "value": 1 },
-  "hits.ringTick.hitmarkFrames": { "cause": "Unclassified", "value": 2 },
-  "hits.ringTick.multiplier": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 6532 } },
-  "hits.ringTick.poiseDamage": { "cause": "Unclassified", "value": 0 },
+  "hits.ringTick.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 } },
+  "hits.ringTick.element": { "cause": "Unsourced", "value": "Electric" },
+  "hits.ringTick.gauge": { "file": "skill.go", "line": 118, "source": "Gcsim", "value": 1 },
+  "hits.ringTick.hitmarkFrames": { "file": "skill.go", "line": 124, "source": "Gcsim", "value": 2 },
+  "hits.ringTick.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 6532 } },
+  "hits.ringTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6531 } },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6531 } },
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 6531 } },
   "normalAttacks.3.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 6531 } },
-  "parameters.ringSeconds": { "cause": "Unclassified", "value": { "index": 5, "proudSkillGroupId": 6532 } },
+  "parameters.ringSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 6532 } },
   "parameters.grassRingMaxHealthHealingShare": {
-    "cause": "Unclassified",
+    "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 6532 }
   },
-  "parameters.grassRingFlatHealing": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 6532 } },
+  "parameters.grassRingFlatHealing": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 6532 } },
   "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 10 },
   "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 100 },
   "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 50 },
