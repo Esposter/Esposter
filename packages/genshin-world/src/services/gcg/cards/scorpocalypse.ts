@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { addScorpionBlessingStack } from "#src/services/gcg/cards/addScorpionBlessingStack";
 import { BLAZING_STRIKE_SKILL_ID, EREMITE_SCORCHING_LOREMASTER_ID } from "#src/services/gcg/cards/constants";
-import { addScorpionBlessingStack } from "#src/services/gcg/cards/scorpionBlessing";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
 
