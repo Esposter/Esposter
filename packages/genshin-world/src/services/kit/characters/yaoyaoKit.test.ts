@@ -20,6 +20,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 import { LocomotionState } from "genshin-engine";
 import { describe, expect, test } from "vitest";
@@ -378,7 +379,7 @@ describe(createYaoyaoKitBehaviour, () => {
 
     // The first spawn's radish is thrown at its first throw and strikes at its hitmark after the throw
     const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
-    stepKitSecondsStriking(context, (firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
+    stepKitSecondsStriking(context, toKitSeconds(firstStrikeFrames - 1));
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
     stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
@@ -403,7 +404,7 @@ describe(createYaoyaoKitBehaviour, () => {
     // Ended
     stepKitSecondsStriking(
       context,
-      (YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES) * FIXED_STEP_SECONDS,
+      toKitSeconds(YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES),
     );
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
   });
@@ -427,11 +428,11 @@ describe(createYaoyaoKitBehaviour, () => {
     // Past the cooldown
     const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
     const secondStrikeFrames = readJumpingYueguiSpawnFrame(1) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
-    stepKitSecondsStriking(context, (firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
+    stepKitSecondsStriking(context, toKitSeconds(firstStrikeFrames - 1));
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
     stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
-    stepKitSecondsStriking(context, (secondStrikeFrames - firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
+    stepKitSecondsStriking(context, toKitSeconds(secondStrikeFrames - firstStrikeFrames - 1));
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
     stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(6);

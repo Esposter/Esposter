@@ -23,7 +23,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { noop, takeOne } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -199,16 +199,21 @@ describe(burstKitDendroCores, () => {
 
       burstKitDendroCores([{ ...createCore(TransformativeReactionType.Bloom), coreKind }], context);
 
-      const [member, reaction] = takeOne(getPartyReactionBonus.mock.calls);
-      expect({
-        characterId: member.characterId,
-        coreKind: reaction.coreKind,
-        reactionType: reaction.reactionType,
-      }).toStrictEqual({
-        characterId: TRAVELER_CHARACTER_ID,
-        coreKind,
-        reactionType: TransformativeReactionType.Bloom,
-      });
+      expect(
+        getPartyReactionBonus.mock.calls.map(([member, reaction, readContext]) => ({
+          characterId: member.characterId,
+          coreKind: reaction.coreKind,
+          isBurstContext: readContext === context,
+          reactionType: reaction.reactionType,
+        })),
+      ).toStrictEqual([
+        {
+          characterId: TRAVELER_CHARACTER_ID,
+          coreKind,
+          isBurstContext: true,
+          reactionType: TransformativeReactionType.Bloom,
+        },
+      ]);
     },
   );
 });

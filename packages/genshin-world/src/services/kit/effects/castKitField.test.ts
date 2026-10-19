@@ -7,6 +7,9 @@ import { describe, expect, test, vi } from "vitest";
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
 const readField = ({ centre, id, secondsRemaining }: KitField) => ({ centre, id, secondsRemaining });
+// The fields a kit effect state holds, each read as its centre, id and seconds remaining
+const readFields = (kitEffectState: KitEffectState) =>
+  kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field));
 
 // A field the character casts at the point on the x axis under the name given, for the seconds left of it
 const castNamedField = (
@@ -30,9 +33,7 @@ describe(castKitField, () => {
     castNamedField(kitEffectState, 1, 0, "field", 5);
     castNamedField(kitEffectState, 1, 3, "field", 9);
 
-    expect(
-      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
-    ).toStrictEqual([{ centre: { x: 3, z: 0 }, id: "field", secondsRemaining: 9 }]);
+    expect(readFields(kitEffectState)).toStrictEqual([{ centre: { x: 3, z: 0 }, id: "field", secondsRemaining: 9 }]);
   });
 
   test("a field under another name, or cast by another character, stands beside the one already standing", () => {
@@ -42,9 +43,7 @@ describe(castKitField, () => {
     castNamedField(kitEffectState, 1, 3, "other", 5);
     castNamedField(kitEffectState, 2, 6, "field", 5);
 
-    expect(
-      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
-    ).toStrictEqual([
+    expect(readFields(kitEffectState)).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: "field", secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: "other", secondsRemaining: 5 },
       { centre: { x: 6, z: 0 }, id: "field", secondsRemaining: 5 },
@@ -64,9 +63,7 @@ describe(castKitField, () => {
     unnamed(0);
     unnamed(3);
 
-    expect(
-      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
-    ).toStrictEqual([
+    expect(readFields(kitEffectState)).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: undefined, secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: undefined, secondsRemaining: 5 },
     ]);
@@ -90,9 +87,7 @@ describe(castKitField, () => {
         },
       );
 
-    expect(
-      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
-    ).toStrictEqual([
+    expect(readFields(kitEffectState)).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: "droplet", secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: "droplet", secondsRemaining: 5 },
     ]);
