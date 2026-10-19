@@ -1,6 +1,6 @@
 {
   "burstEnergyCost": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 4839 } },
-  "chargedAttack.hits.length": { "cause": "Unclassified", "value": 0 },
+  "chargedAttack.hits.length": { "cause": "NamedHitList", "value": 0 },
   "hits.scarletSealChargedAttacks.length": { "cause": "Unsourced", "value": 5 },
   "hits.scarletSealChargedAttacks.0.area": {
     "cause": "TargetCentred",
