@@ -26,8 +26,14 @@ export const createBlockNodeBranch = (
       z.array(z.lazy(() => createNodeSchema(registry, slotTypes))),
     ]),
   );
-  return z.object({
-    props: z.strictObject({ ...definition.propsSchema.shape, id: z.string(), ...slotShapes }),
-    type: z.literal(definition.type),
-  });
+  // The type's own refinements run once the shape passes, over the keys it declares, so an issue is reported once and at its own path
+  const declaredKeys = Object.keys(definition.propsSchema.shape);
+  const props = z
+    .strictObject({ ...definition.propsSchema.shape, id: z.string(), ...slotShapes })
+    .superRefine((value: Record<string, unknown>, context) => {
+      const declaredProps = Object.fromEntries(declaredKeys.map((key) => [key, value[key]]));
+      for (const { message, path } of definition.propsSchema.safeParse(declaredProps).error?.issues ?? [])
+        context.addIssue({ code: "custom", message, path });
+    });
+  return z.object({ props, type: z.literal(definition.type) });
 };

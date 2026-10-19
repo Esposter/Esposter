@@ -38,6 +38,33 @@ describe(createBlockNodeSchema, () => {
     ]);
   });
 
+  test("a refinement on a type's props is enforced", () => {
+    expect.hasAssertions();
+
+    const refinedRegistry: BlockRegistry = {
+      root: { content: ["heading"], propsSchema: z.object({}) },
+      types: [
+        {
+          propsSchema: z.object({ text: z.string() }).superRefine((props, context) => {
+            if (props.text === "") context.addIssue({ code: "custom", message: "needs text", path: ["text"] });
+          }),
+          slots: {},
+          type: "heading",
+        },
+      ],
+    };
+    const schema = createBlockNodeSchema(refinedRegistry, ["heading"]);
+    const empty = schema.safeParse({ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" });
+    const wrongType = schema.safeParse({ props: { id: TEST_HEADING_ID, text: 1 }, type: "heading" });
+
+    expect(empty.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: "needs text", path: ["props", "text"] },
+    ]);
+    expect(wrongType.error?.issues.map(({ code, path }) => ({ code, path }))).toStrictEqual([
+      { code: "invalid_type", path: ["props", "text"] },
+    ]);
+  });
+
   test("an empty accepted set refuses every child", () => {
     expect.hasAssertions();
 
