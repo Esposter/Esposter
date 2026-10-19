@@ -59,8 +59,8 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation 2 queues a water ball on each
 // Enemy her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball
 // Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Not built yet:
-// The internal cooldown gcsim gives those Moonsign hits, which the kit has no tag for, and Constellation 6's Lunar DMG bonus,
-// Which waits on the Lunar hook. Musecatcher's hold is not built, as gcsim does not implement it either
+// Constellation 6's Lunar DMG bonus, which waits on the Lunar hook. Musecatcher's hold is not built, as gcsim does not
+// Implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const burstFirstTickSeconds = readSeconds("burstStart");
