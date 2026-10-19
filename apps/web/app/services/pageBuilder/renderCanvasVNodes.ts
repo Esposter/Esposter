@@ -8,7 +8,7 @@ import type { VNode } from "vue";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { renderBlockNodes } from "headless-block-editor";
-import { createStaticVNode, h } from "vue";
+import { createStaticVNode, createTextVNode, h } from "vue";
 import { z } from "zod";
 
 const nodeIdPropsSchema = z.object({ id: z.string() });
@@ -27,8 +27,8 @@ export const renderCanvasVNodes = (document: WebpageDocument, context: RenderCon
     return rendered;
   });
 
-  const toVNode = (node: HtmlNode): string | VNode => {
-    if (typeof node === "string") return node;
+  const toVNode = (node: HtmlNode): VNode => {
+    if (typeof node === "string") return createTextVNode(node);
     if (checkIsRawNode(node)) return createStaticVNode(node.html, 1);
 
     const nodeId = nodeIds.get(node);
