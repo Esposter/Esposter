@@ -1,5 +1,5 @@
 import type { Character } from "#src/models/character/Character";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 
@@ -9,7 +9,7 @@ export const gainCompanionshipExp = (
   characters: readonly Character[],
   characterIds: readonly number[],
   exp: number,
-  friendshipLevels: readonly FriendshipLevel[],
+  friendshipLevels: FriendshipLevels,
 ): Character[] => {
   const maxExp = Math.max(...friendshipLevels.map(({ exp: levelExp }) => levelExp));
   return characters.map((character) =>

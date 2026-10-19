@@ -1,4 +1,5 @@
 import type { Character } from "#src/models/character/Character";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
 
 import { CombatTalent } from "#src/models/character/CombatTalent";
@@ -15,6 +16,10 @@ describe(claimHomeBounty, () => {
   const LIMIT = 10;
   const COMFORT = 0;
   const TOP_EXP = 30;
+  const FRIENDSHIP_LEVELS: FriendshipLevels = [
+    { exp: 0, level: 1 },
+    { exp: TOP_EXP, level: 2 },
+  ];
   const character: Character = {
     artifacts: [],
     ascension: 0,
@@ -45,10 +50,7 @@ describe(claimHomeBounty, () => {
   const options = {
     comfort: COMFORT,
     comfortLevels: [{ bountyRate: RATE, coinRate: 0, comfort: COMFORT, level: 1 }],
-    friendshipLevels: [
-      { exp: 0, level: 1 },
-      { exp: TOP_EXP, level: 2 },
-    ],
+    friendshipLevels: FRIENDSHIP_LEVELS,
     trustLevels: [{ bountyStoreLimit: LIMIT, coinStoreLimit: 0, exp: 0, level: 1, npcCount: 2 }],
   };
 

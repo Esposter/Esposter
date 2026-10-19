@@ -1,5 +1,5 @@
 import type { Character } from "#src/models/character/Character";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { HomeProgress } from "#src/models/home/HomeProgress";
 import type { HomeStoreLevels } from "#src/models/home/HomeStoreLevels";
 
@@ -14,7 +14,7 @@ export const claimHomeBounty = (
   characters: Character[],
   progress: HomeProgress,
   now: Temporal.Instant,
-  { comfort, comfortLevels, friendshipLevels, trustLevels }: HomeStoreLevels & { friendshipLevels: FriendshipLevel[] },
+  { comfort, comfortLevels, friendshipLevels, trustLevels }: HomeStoreLevels & { friendshipLevels: FriendshipLevels },
 ): { characters: Character[]; progress: HomeProgress } => {
   const settled = settleHomeStores(progress, now, { comfort, comfortLevels, trustLevels });
   return {

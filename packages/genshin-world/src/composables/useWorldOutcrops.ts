@@ -2,7 +2,7 @@ import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRan
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -77,7 +77,7 @@ export const useWorldOutcrops = ({
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyMap: ReadonlyMap<string, Enemy>;
   events: WorldEvents;
-  friendshipLevels: Readonly<Ref<FriendshipLevel[]>>;
+  friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   gameDataBaseUrl: string;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
@@ -200,7 +200,7 @@ export const useWorldOutcrops = ({
     const prompt = claimPrompt.value;
     const outcrop = prompt && findClearedOutcrop(prompt.placeId);
     const kindRule = kindRules.value.find(({ kind }) => kind === outcrop?.kind);
-    if (!prompt || !kindRule || friendshipLevels.value.length === 0) return;
+    if (!prompt || !kindRule || !friendshipLevels.value) return;
     claimPrompt.value = undefined;
     const rewards = Array.from({ length: offer.claimCount }, () =>
       drawRewardItems(computeOutcropClaimRewards(kindRule, worldLevel), random),

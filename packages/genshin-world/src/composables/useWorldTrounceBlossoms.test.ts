@@ -1,7 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -52,7 +52,7 @@ describe(useWorldTrounceBlossoms, () => {
       completedMainQuestIds: shallowRef(new Set<string>()),
       enemyKindMap: enemyTables.enemyKindMap,
       events,
-      friendshipLevels: shallowRef<FriendshipLevel[]>([]),
+      friendshipLevels: shallowRef<FriendshipLevels>(),
       gainWorldAdventureExp: () => {},
       gameText: {},
       getGroundHeight: () => 0,
@@ -89,7 +89,7 @@ describe(useWorldTrounceBlossoms, () => {
       completedMainQuestIds: shallowRef(new Set<string>()),
       enemyKindMap: new Map(),
       events: createWorldEvents(),
-      friendshipLevels: ref<FriendshipLevel[]>([]),
+      friendshipLevels: ref<FriendshipLevels>(),
       gainWorldAdventureExp: vi.fn(),
       gameText: {},
       getGroundHeight: () => 0,
@@ -125,7 +125,7 @@ describe(useWorldTrounceBlossoms, () => {
       completedMainQuestIds: shallowRef(new Set<string>()),
       enemyKindMap: new Map(),
       events: createWorldEvents(),
-      friendshipLevels: ref<FriendshipLevel[]>([{ exp: 0, level: 1 }]),
+      friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
         adventureExp.value += amount;
       },

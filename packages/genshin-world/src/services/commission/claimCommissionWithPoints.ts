@@ -4,7 +4,7 @@ import type { CommissionClaimOutcome } from "#src/models/commission/CommissionCl
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -43,7 +43,7 @@ export const claimCommissionWithPoints = ({
   commissionId: number;
   completedMainQuestIds: ReadonlySet<string>;
   encounterPoints: EncounterPoints;
-  friendshipLevels: readonly FriendshipLevel[];
+  friendshipLevels: FriendshipLevels;
   inventory: Inventory;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   names: Readonly<Record<string, string>>;

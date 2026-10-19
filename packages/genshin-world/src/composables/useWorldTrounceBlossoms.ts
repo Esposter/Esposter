@@ -3,7 +3,7 @@ import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -66,7 +66,7 @@ export const useWorldTrounceBlossoms = ({
   completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
-  friendshipLevels: Readonly<Ref<FriendshipLevel[]>>;
+  friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
   gainWorldAdventureExp: (amount: number) => void;
   gameText: Readonly<Record<string, string>>;
   getGroundHeight: (x: number, z: number) => number;
@@ -132,24 +132,19 @@ export const useWorldTrounceBlossoms = ({
     claimPrompt.value = undefined;
   };
   // A boss's claim pays its Adventure EXP through the rank and its Companionship EXP to the deployed team, as the game does
-  const grantBossExp = (adventureAmount: number, companionshipAmount: number) => {
+  const grantBossExp = (adventureAmount: number, companionshipAmount: number, levels: FriendshipLevels) => {
     gainWorldAdventureExp(adventureAmount);
     characters.value = gainCompanionshipExp(
       characters.value,
       getDeployedCharacterIds(party),
       companionshipAmount,
-      friendshipLevels.value,
+      levels,
     );
   };
   const chooseTrounceBlossomClaim = (now: Temporal.Instant, worldLevel: number, random: () => number) => {
     const prompt = claimPrompt.value;
     const trounceBlossom = prompt && trounceBlossoms.value.get(prompt.spawnKey);
-    if (
-      !prompt ||
-      !trounceBlossom ||
-      !checkIsTrounceBlossomClaimable(trounceBlossom, now) ||
-      friendshipLevels.value.length === 0
-    )
+    if (!prompt || !trounceBlossom || !checkIsTrounceBlossomClaimable(trounceBlossom, now) || !friendshipLevels.value)
       return;
     claimPrompt.value = undefined;
     // A weekly boss's prompt holds its one claim, so its single offer is the one paid
@@ -186,8 +181,17 @@ export const useWorldTrounceBlossoms = ({
     setInventory(claim.inventory);
     // A weekly boss's EXP is read by its row, the one its World Level reads for the reward
     if (trounceBlossom.kind === BlossomKind.WeeklyBoss)
-      grantBossExp(WEEKLY_BOSS_ADVENTURE_EXP, takeOne(WEEKLY_BOSS_COMPANIONSHIP_EXP, computeWeeklyBossRow(worldLevel)));
-    else grantBossExp(NORMAL_BOSS_ADVENTURE_EXP, takeOne(NORMAL_BOSS_COMPANIONSHIP_EXP, worldLevel));
+      grantBossExp(
+        WEEKLY_BOSS_ADVENTURE_EXP,
+        takeOne(WEEKLY_BOSS_COMPANIONSHIP_EXP, computeWeeklyBossRow(worldLevel)),
+        friendshipLevels.value,
+      );
+    else
+      grantBossExp(
+        NORMAL_BOSS_ADVENTURE_EXP,
+        takeOne(NORMAL_BOSS_COMPANIONSHIP_EXP, worldLevel),
+        friendshipLevels.value,
+      );
     writeTrounceBlossom(prompt.spawnKey, { ...trounceBlossom, claimedAts: [...trounceBlossom.claimedAts, now] });
   };
   return {

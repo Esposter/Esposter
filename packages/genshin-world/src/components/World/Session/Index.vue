@@ -870,7 +870,7 @@ const profileNamecards = computed(() =>
     achievements: achievementData.value?.achievements ?? [],
     categories: achievementData.value?.categories ?? [],
     characters: characters.value,
-    friendshipLevels: friendshipLevels.value,
+    friendshipLevels: friendshipLevels.value ?? [],
     friendshipNamecards: friendshipNamecards.value,
     progressMap: achievementProgressMap.value,
   })

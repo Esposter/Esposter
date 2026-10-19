@@ -5,7 +5,7 @@ import type { CommissionRouting } from "#src/models/commission/CommissionRouting
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -52,7 +52,7 @@ export const useWorldCommissionClaims = ({
   commissionSlice: ComputedRef<CommissionSlice | undefined>;
   completedMainQuestIds: ComputedRef<ReadonlySet<string>>;
   encounterPoints: Ref<EncounterPoints>;
-  friendshipLevels: Ref<FriendshipLevel[]>;
+  friendshipLevels: Ref<FriendshipLevels | undefined>;
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   longTermEncounterPoints: Ref<LongTermEncounterPoints>;
@@ -76,7 +76,7 @@ export const useWorldCommissionClaims = ({
   // A dealt commission claimed: nothing changes where the claim is refused, and the rewards are routed where they are kept
   const claimCommission = (commissionId: number) => {
     const slice = commissionSlice.value;
-    if (!slice) return;
+    if (!slice || !friendshipLevels.value) return;
     const outcome = claimCommissionWithPoints({
       adventureExp: adventureExp.value,
       adventureRankTables,
@@ -104,7 +104,7 @@ export const useWorldCommissionClaims = ({
   // Records it, so a second talk gives nothing
   const claimKatheryneBonus = () => {
     const slice = commissionSlice.value;
-    if (!slice) return;
+    if (!slice || !friendshipLevels.value) return;
     const bonusClaim = takeKatheryneBonus(commissionDay.value, slice, rank.value, Math.random);
     if (!bonusClaim) return;
     const routing = routeCommissionClaim(
