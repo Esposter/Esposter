@@ -53,35 +53,35 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Key files
 
-| File                                                                                | Role                                                                                                                               |
-| :---------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/crafting/buildCraftingRecipes.ts`               | The recipe record built from the combine table, for publishing                                                                     |
-| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`                   | One row as a recipe, refusing a tier that is not three of one material or a conversion that is not one material and its catalyst   |
-| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`                   | Each recipe's instruction items, read off the material table                                                                       |
-| `packages/genshin-world/src/services/crafting/CharacterIdCraftingTalentMap.ts`      | The thirteen characters' crafting talents, by avatar id                                                                            |
-| `packages/genshin-world/src/services/crafting/CombineTypeGameTextKeyMap.ts`         | Each combine type's tab name, by the game's own text key                                                                           |
-| `packages/genshin-world/src/services/crafting/TalentBookIdOtherSeriesIdsMap.ts`     | Each talent book craft's regional extra: the same tier of the region's other two series                                            |
-| `packages/genshin-world/src/services/crafting/rollCraftingTalent.ts`                | The extra results, refunds and regional materials a character's talent adds to a batch                                             |
-| `packages/genshin-world/src/services/crafting/craftRecipe.ts`                       | A batch crafted whole, or refused with nothing spent                                                                               |
-| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts`             | How many of a recipe the bag, wallet and regenerated resin pay for                                                                 |
-| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`                 | Whether a recipe is open at a rank, and learned where an instruction opens it                                                      |
-| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`               | A recipe learned from an instruction in the bag                                                                                    |
-| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`               | The recipes, fetched by their key from the hosted game data and checked against their shape                                        |
-| `packages/genshin-world/src/models/crafting/CraftingSave.ts`                        | The save's crafting slice: the learned recipes and each recipe's crafted count                                                     |
-| `packages/genshin-world/src/components/Crafting/Screen/Index.vue`                   | The bench's screen: the open recipes, the crafter, the count and the craft, and the Mystic Offering's panel once its tab is picked |
-| `packages/genshin-interface/src/components/CraftingScreen/Index.vue`                | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft                                        |
-| `scripts/src/services/genshinAssets/items/buildItems.ts`                            | The item table's rows, now with every crafting recipe's materials and result                                                       |
-| `scripts/src/services/genshinAssets/crafting/buildCraftingBenchPlaces.ts`           | The bench's place in its region's axes, published as `craftingBenchPlaces/mondstadt`                                               |
-| `scripts/src/services/genshinAssets/crafting/toCraftingKeeperPlace.ts`              | The keeper's place beside the bench, moved along x by the reckoned offset                                                          |
-| `scripts/src/services/genshinAssets/crafting/findCraftingBenchMember.ts`            | The bench's NPC member of its scene group record, found by its group and NPC ids                                                   |
-| `packages/genshin-world/src/models/crafting/CraftingBenchPlace.ts`                  | The bench's ground point and turn in its region                                                                                    |
-| `packages/genshin-world/src/services/crafting/readMondstadtCraftingBenchPlace.ts`   | Mondstadt's bench place, fetched by its key from the hosted game data                                                              |
-| `packages/genshin-world/src/services/crafting/computeCraftingBenchInteractables.ts` | The bench as a Use prompt beneath its place, named by the crafting title                                                           |
-| `packages/genshin-world/src/services/crafting/computeCraftingCrafters.ts`           | The party's characters who can craft, the character on the field picked as crafter                                                 |
-| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`           | The bench's tab list: the recipe tabs, then the Mystic Offering from its Adventure Rank                                            |
-| `packages/genshin-world/src/services/crafting/computeLearnedRecipeCells.ts`         | The learned recipes of one bench tab, in the game's order, with their crafted counts                                               |
-| `packages/genshin-world/src/services/crafting/getCraftingTabId.ts`                  | The bench tab a recipe is listed under: its combine type's, or a conversion's apart from the crafts                                |
-| `packages/genshin-world/src/components/World/Session/Index.vue`                     | Offers the bench's prompt and opens the crafting screen from it                                                                    |
+| File                                                                              | Role                                                                                                                               |
+| :-------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/crafting/buildCraftingRecipes.ts`             | The recipe record built from the combine table, for publishing                                                                     |
+| `scripts/src/services/genshinAssets/crafting/toCraftingRecipe.ts`                 | One row as a recipe, refusing a tier that is not three of one material or a conversion that is not one material and its catalyst   |
+| `scripts/src/services/genshinAssets/items/readUnlockItemIdMap.ts`                 | Each recipe's instruction items, read off the material table                                                                       |
+| `packages/genshin-world/src/services/crafting/CharacterIdCraftingTalentMap.ts`    | The thirteen characters' crafting talents, by avatar id                                                                            |
+| `packages/genshin-world/src/services/crafting/CombineTypeGameTextKeyMap.ts`       | Each combine type's tab name, by the game's own text key                                                                           |
+| `packages/genshin-world/src/services/crafting/TalentBookIdOtherSeriesIdsMap.ts`   | Each talent book craft's regional extra: the same tier of the region's other two series                                            |
+| `packages/genshin-world/src/services/crafting/rollCraftingTalent.ts`              | The extra results, refunds and regional materials a character's talent adds to a batch                                             |
+| `packages/genshin-world/src/services/crafting/craftRecipe.ts`                     | A batch crafted whole, or refused with nothing spent                                                                               |
+| `packages/genshin-world/src/services/crafting/computeCraftableCount.ts`           | How many of a recipe the bag, wallet and regenerated resin pay for                                                                 |
+| `packages/genshin-world/src/services/crafting/checkIsRecipeOpen.ts`               | Whether a recipe is open at a rank, and learned where an instruction opens it                                                      |
+| `packages/genshin-world/src/services/crafting/learnCraftingRecipe.ts`             | A recipe learned from an instruction in the bag                                                                                    |
+| `packages/genshin-world/src/services/crafting/readCraftingRecipes.ts`             | The recipes, fetched by their key from the hosted game data and checked against their shape                                        |
+| `packages/genshin-world/src/models/crafting/CraftingSave.ts`                      | The save's crafting slice: the learned recipes and each recipe's crafted count                                                     |
+| `packages/genshin-world/src/components/Crafting/Screen/Index.vue`                 | The bench's screen: the open recipes, the crafter, the count and the craft, and the Mystic Offering's panel once its tab is picked |
+| `packages/genshin-interface/src/components/CraftingScreen/Index.vue`              | The bench's 2D screen over the recipe tabs, the recipe list, the crafter pick and the craft                                        |
+| `scripts/src/services/genshinAssets/items/buildItems.ts`                          | The item table's rows, now with every crafting recipe's materials and result                                                       |
+| `scripts/src/services/genshinAssets/crafting/buildCraftingBenchPlaces.ts`         | The bench's place in its region's axes, published as `craftingBenchPlaces/mondstadt`                                               |
+| `scripts/src/services/genshinAssets/crafting/toCraftingKeeperPlace.ts`            | The keeper's place beside the bench, moved along x by the reckoned offset                                                          |
+| `scripts/src/services/genshinAssets/crafting/findCraftingBenchMember.ts`          | The bench's NPC member of its scene group record, found by its group and NPC ids                                                   |
+| `packages/genshin-world/src/models/crafting/CraftingBenchPlace.ts`                | The bench's ground point and turn in its region                                                                                    |
+| `packages/genshin-world/src/services/crafting/readMondstadtCraftingBenchPlace.ts` | Mondstadt's bench place, fetched by its key from the hosted game data                                                              |
+| `packages/genshin-world/src/services/interaction/computePlaceInteractables.ts`    | The bench as a Use prompt beneath its place, named by the crafting title                                                           |
+| `packages/genshin-world/src/services/crafting/computeCraftingCrafters.ts`         | The party's characters who can craft, the character on the field picked as crafter                                                 |
+| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`         | The bench's tab list: the recipe tabs, then the Mystic Offering from its Adventure Rank                                            |
+| `packages/genshin-world/src/services/crafting/computeLearnedRecipeCells.ts`       | The learned recipes of one bench tab, in the game's order, with their crafted counts                                               |
+| `packages/genshin-world/src/services/crafting/getCraftingTabId.ts`                | The bench tab a recipe is listed under: its combine type's, or a conversion's apart from the crafts                                |
+| `packages/genshin-world/src/components/World/Session/Index.vue`                   | Offers the bench's prompt and opens the crafting screen from it                                                                    |
 
 ## Notes
 
