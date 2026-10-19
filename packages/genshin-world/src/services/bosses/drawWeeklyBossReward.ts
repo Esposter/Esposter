@@ -12,9 +12,8 @@ import {
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
 import { computeWeeklyBossRow } from "#src/services/bosses/computeWeeklyBossRow";
-import { pickItemId } from "#src/services/bosses/pickItemId";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 
 // What a weekly boss's claim pays at a World Level: its Mora, a talent count of one of Dvalin's Plume, Claw and Sigh, one
 // Northlander billet and one Dream Solvent where `random` falls under their chances, and each star tier's Ascension Gem at the
@@ -24,13 +23,13 @@ export const drawWeeklyBossReward = (worldLevel: number, random: () => number): 
   const { chance, count } = takeOne(WEEKLY_BOSS_TALENT_DROPS, row);
   const talentCount = count + (random() < chance ? 1 : 0);
   const rewards: ItemCount[] = [{ count: takeOne(WEEKLY_BOSS_MORA, row), id: MORA_ITEM_ID }];
-  if (talentCount > 0) rewards.push({ count: talentCount, id: pickItemId(WEEKLY_BOSS_TALENT_ITEM_IDS, random) });
+  if (talentCount > 0) rewards.push({ count: talentCount, id: takeRandom(WEEKLY_BOSS_TALENT_ITEM_IDS, random) });
   if (random() < WEEKLY_BOSS_BILLET_CHANCE)
-    rewards.push({ count: 1, id: pickItemId(WEEKLY_BOSS_BILLET_ITEM_IDS, random) });
+    rewards.push({ count: 1, id: takeRandom(WEEKLY_BOSS_BILLET_ITEM_IDS, random) });
   for (const [tier, average] of takeOne(WEEKLY_BOSS_GEM_AVERAGES, row).entries()) {
     const gemCount = Math.floor(average + random());
     if (gemCount > 0)
-      rewards.push({ count: gemCount, id: pickItemId(takeOne(WEEKLY_BOSS_GEM_ITEM_IDS, tier), random) });
+      rewards.push({ count: gemCount, id: takeRandom(takeOne(WEEKLY_BOSS_GEM_ITEM_IDS, tier), random) });
   }
   if (random() < WEEKLY_BOSS_DREAM_SOLVENT_CHANCE) rewards.push({ count: 1, id: WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID });
   return rewards;

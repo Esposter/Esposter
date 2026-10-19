@@ -4,14 +4,16 @@ import { deliverBirthdayMail } from "#src/services/mail/deliverBirthdayMail";
 import { GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
+const getBirthdayNoon = (year: number): Temporal.Instant =>
+  Temporal.PlainDate.from({ day: 1, month: 1, year }).toZonedDateTime(GAME_TIME_ZONE).add({ hours: 12 }).toInstant();
+
 describe(deliverBirthdayMail, () => {
   const BIRTHDAY = { day: 1, month: 1 };
-  const getBirthdayNoon = (year: number): Temporal.Instant =>
-    Temporal.PlainDate.from({ day: 1, month: 1, year }).toZonedDateTime(GAME_TIME_ZONE).add({ hours: 12 }).toInstant();
   const BIRTHDAY_NOON = getBirthdayNoon(1971);
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO(GAME_TIME_ZONE).toPlainDateTime();
   const BIRTHDAY_ROWS = [
-    { effectiveDate: Temporal.PlainDateTime.from("1970-01-01T08:00:00"), mailId: 9 },
-    { effectiveDate: Temporal.PlainDateTime.from("1970-04-11T08:00:00"), mailId: 35 },
+    { effectiveDate: epoch, mailId: 9 },
+    { effectiveDate: epoch.add({ days: 100 }), mailId: 35 },
   ];
 
   // The birthday mail in force on the birthday is delivered on it, the latest row taking effect by then

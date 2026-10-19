@@ -20,16 +20,16 @@ vi.mock(import("genshin-engine"), async (importOriginal) => {
   const actual = await importOriginal<typeof import("genshin-engine")>();
   return {
     ...actual,
-    createCharacterMaterial: vi.fn(),
-    createPmxMesh: vi.fn(),
-    createPmxTexture: vi.fn(),
-    createPmxToonTexture: vi.fn(),
-    parsePmx: vi.fn(),
+    createCharacterMaterial: vi.fn<typeof createCharacterMaterial>(),
+    createPmxMesh: vi.fn<typeof createPmxMesh>(),
+    createPmxTexture: vi.fn<typeof createPmxTexture>(),
+    createPmxToonTexture: vi.fn<typeof createPmxToonTexture>(),
+    parsePmx: vi.fn<typeof parsePmx>(),
   };
 });
 
 describe(readCharacterMesh, () => {
-  const readFile = vi.fn((path: string) => Promise.resolve(new Blob([path])));
+  const readFile = vi.fn<(path: string) => Promise<Blob>>((path) => Promise.resolve(new Blob([path])));
   const characterPackReader: CharacterPackReader = { key: "", readFile };
   const meshOptions = {
     characterId: TRAVELER_CHARACTER_ID,

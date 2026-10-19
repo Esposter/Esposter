@@ -7,14 +7,14 @@ import { regionDataSchema } from "#src/models/world/RegionData";
 import { gameDataLock } from "#src/services/data/gameDataLock";
 import { MONDSTADT_TIMBER_COLOR } from "#src/services/mondstadt/constants";
 import { readRegionPalettes } from "#src/services/world/readRegionPalettes";
-import { takeOne } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // A palette's hex colour as the number a material is coloured with
 const parseHexColour = (hex: string): number => Number.parseInt(hex.slice(1), 16);
 // The Mondstadt palette the mirror holds, as the publish wrote it
 const readMondstadtPalette = async (): Promise<{ stone: { hex: string }; timber: { hex: string } }> =>
-  JSON.parse(await readMirroredGameDataObject(takeOne(gameDataLock.objects, "regions/mondstadt/palette")));
+  jsonDateParse(await readMirroredGameDataObject(takeOne(gameDataLock.objects, "regions/mondstadt/palette")));
 
 describe(readRegionPalettes, () => {
   afterEach(() => {

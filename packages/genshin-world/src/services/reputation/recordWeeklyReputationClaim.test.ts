@@ -3,10 +3,10 @@ import { now, weeklyReset } from "#src/services/reputation/constants.test";
 import { recordWeeklyReputationClaim } from "#src/services/reputation/recordWeeklyReputationClaim";
 import { describe, expect, test } from "vitest";
 
-describe(recordWeeklyReputationClaim, () => {
-  const toEpochs = (claimedAts: readonly Temporal.Instant[]) =>
-    claimedAts.map(({ epochMilliseconds }) => epochMilliseconds);
+const toEpochs = (claimedAts: readonly Temporal.Instant[]) =>
+  claimedAts.map(({ epochMilliseconds }) => epochMilliseconds);
 
+describe(recordWeeklyReputationClaim, () => {
   test("a claim past the limit is still recorded, and the list keeps the newest claims of the week", () => {
     expect.hasAssertions();
     const claimedAts = Array.from({ length: REPUTATION_WEEKLY_CLAIM_LIMIT }, (_value, index) =>

@@ -26,7 +26,7 @@ export const damagePartyMember = (
   if (partyMember.healthShare === 0 || lostHealthShare <= 0) return;
   const previousHealthShare = partyMember.healthShare;
   const remainingHealthShare = previousHealthShare - lostHealthShare;
-  const isFallRefused = remainingHealthShare <= 0 && fallRefusal !== undefined && fallRefusal.refuses();
+  const isFallRefused = remainingHealthShare <= 0 && fallRefusal?.refuses() === true;
   partyMember.healthShare = isFallRefused ? fallRefusal.healthShare : Math.max(0, remainingHealthShare);
   party.healthChanges.push({
     bondOfLifeShare: 0,

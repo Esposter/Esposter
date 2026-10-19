@@ -18,15 +18,16 @@ const getAttackBuffs = (kitEffectState: KitEffectState): KitBuff[] =>
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
   );
 
+const createCharacterSwapped = () => ({
+  characterId: OTHER_CHARACTER_ID,
+  kind: KitEventKind.CharacterSwapped as const,
+  previousCharacterId: TRAVELER_CHARACTER_ID,
+});
+
 describe(createHeritagePassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // Heritage with synthetic params: the ATK percentage, its seconds and the cooldown on its wielder
   const heritagePassiveModule = createHeritagePassiveModule([0.2, 8, 15]);
-  const createCharacterSwapped = () => ({
-    characterId: OTHER_CHARACTER_ID,
-    kind: KitEventKind.CharacterSwapped as const,
-    previousCharacterId: TRAVELER_CHARACTER_ID,
-  });
 
   test("a character swapped onto the field gains the rank's ATK percentage for its seconds", () => {
     expect.hasAssertions();

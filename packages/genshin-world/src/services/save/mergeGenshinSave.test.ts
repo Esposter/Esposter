@@ -10,7 +10,6 @@ import { BannerKind } from "genshin-interface/save";
 import { describe, expect, test } from "vitest";
 
 describe(mergeGenshinSave, () => {
-  const WISH_ITEM_ID = 1;
   const COOKING_DISH_ID = 1;
   const OTHER_COOKING_DISH_ID = 2;
   const PROCESSING_ID = 3;

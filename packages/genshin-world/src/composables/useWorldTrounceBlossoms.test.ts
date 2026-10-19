@@ -1,5 +1,6 @@
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -97,7 +98,7 @@ describe(useWorldTrounceBlossoms, () => {
       wallet: shallowRef(EMPTY_WALLET),
       worldNow: shallowRef(epoch),
     });
-    const defeatListener = vi.fn();
+    const defeatListener = vi.fn<(enemy: Enemy) => void>();
     events.on("defeatEnemy", defeatListener);
     const enemy = createEnemy(
       enemyTables,
@@ -118,7 +119,7 @@ describe(useWorldTrounceBlossoms, () => {
       enemyKindMap: new Map(),
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>(),
-      gainWorldAdventureExp: vi.fn(),
+      gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
       gameText: {},
       getGroundHeight: () => 0,
       getWorldNow: clock.getWorldNow,
@@ -126,8 +127,8 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: new Map(),
       nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
-      setInventory: vi.fn(),
-      setWallet: vi.fn(),
+      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
+      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref(EMPTY_WALLET),
       worldNow: clock.worldNow,
     });
@@ -161,8 +162,8 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
-      setInventory: vi.fn(),
-      setWallet: vi.fn(),
+      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
+      setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] }),
       worldNow: ref(epoch),
     });
@@ -214,7 +215,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
-      setInventory: vi.fn(),
+      setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: (nextWallet) => {
         wallet.value = nextWallet;
       },

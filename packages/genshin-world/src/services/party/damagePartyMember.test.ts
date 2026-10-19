@@ -65,7 +65,7 @@ describe(damagePartyMember, () => {
     expect.hasAssertions();
 
     const party = createParty([1]);
-    const refuses = vi.fn(() => true);
+    const refuses = vi.fn<() => boolean>(() => true);
     damagePartyMember(party, 1, 0.25, { fallRefusal: { healthShare: 0.1, refuses } });
 
     expect(refuses).not.toHaveBeenCalled();

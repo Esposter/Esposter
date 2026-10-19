@@ -18,6 +18,12 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
+const createContext = (wielder: Combatant) => {
+  const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) });
+  getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = 0;
+  return context;
+};
+
 describe(createPrimordialJadeRegaliaPassiveModule, () => {
   // Primordial Jade Regalia at its first rank: for 3 seconds after its wielder's burst or a shield it casts, 0.3% of
   // Its element's DMG Bonus for each 1,000 Max HP, up to 12%, and 4.5 energy restored
@@ -32,11 +38,6 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
     kit: getPassiveKit(TRAVELER_KIT, [passiveModule]),
     level: 1,
   });
-  const createContext = (wielder: Combatant) => {
-    const context = createKitTestContext(wielder, { party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]) });
-    getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy = 0;
-    return context;
-  };
 
   test.each([
     ["the wielder casts gives it its Elemental DMG Bonus", TRAVELER_CHARACTER_ID, 0.06],

@@ -18,6 +18,15 @@ const getNoItemDefinition = (itemId: number): ItemDefinition => {
   throw new Error(`no definition asked for item ${itemId}`);
 };
 
+const getFishDefinition = (itemId: number): ItemDefinition => ({
+  category: ItemCategory.Material,
+  id: itemId,
+  name: "Fish",
+  rank: 1,
+  rarity: 1,
+  stackLimit: 99,
+});
+
 describe(buyShopGood, () => {
   const ADVENTURE_RANK = 4;
   const STARGLITTER_PRICE = 5;
@@ -264,14 +273,6 @@ describe(buyShopGood, () => {
     ).toBeUndefined();
   });
   const FISH_ITEM_ID = 9001;
-  const getFishDefinition = (itemId: number): ItemDefinition => ({
-    category: ItemCategory.Material,
-    id: itemId,
-    name: "Fish",
-    rank: 1,
-    rarity: 1,
-    stackLimit: 99,
-  });
   // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
   const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, costs: [{ count: 2, itemId: FISH_ITEM_ID }] };
 

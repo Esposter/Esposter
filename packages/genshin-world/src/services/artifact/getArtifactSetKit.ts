@@ -7,7 +7,6 @@ import { ArtifactSetIdCreateModuleMap } from "#src/services/artifact/ArtifactSet
 import { WILDLIFE_ANSWERING_ARTIFACT_SET_IDS } from "#src/services/artifact/constants";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A character's kit with the sets its artifacts make pricing and answering the events of combat after it: each bonus its
 // Worn pieces reach that the set table gives numbers to, built as its set's module where the set has one. A character

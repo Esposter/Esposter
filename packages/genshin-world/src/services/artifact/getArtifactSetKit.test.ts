@@ -42,12 +42,12 @@ const { receivedKinds } = vi.hoisted(() => ({ receivedKinds: [] as string[] }));
 // Instructor's module, wrapped to record each event it is sent before the module answers it
 vi.mock(import("#src/services/artifact/ArtifactSetIdCreateModuleMap"), async (importOriginal) => {
   const { ArtifactSetIdCreateModuleMap } = await importOriginal();
-  const { INSTRUCTOR_ARTIFACT_SET_ID } = await import("#src/services/artifact/constants");
-  const createInstructorModule = ArtifactSetIdCreateModuleMap[INSTRUCTOR_ARTIFACT_SET_ID];
+  const { INSTRUCTOR_ARTIFACT_SET_ID: instructorArtifactSetId } = await import("#src/services/artifact/constants");
+  const createInstructorModule = ArtifactSetIdCreateModuleMap[instructorArtifactSetId];
   return {
     ArtifactSetIdCreateModuleMap: {
       ...ArtifactSetIdCreateModuleMap,
-      [INSTRUCTOR_ARTIFACT_SET_ID]: (bonus: Parameters<NonNullable<typeof createInstructorModule>>[0]) => {
+      [instructorArtifactSetId]: (bonus: Parameters<NonNullable<typeof createInstructorModule>>[0]) => {
         const setModule = createInstructorModule?.(bonus);
         return {
           ...setModule,
@@ -251,7 +251,7 @@ describe(getArtifactSetKit, () => {
     expect.hasAssertions();
     receivedKinds.length = 0;
     // The weapon's passives ride on the kit the sets are added to, so they hear the hit through it
-    const weaponPassive = vi.fn();
+    const weaponPassive = vi.fn<NonNullable<Kit["onKitEvent"]>>();
     const kit = getArtifactSetKit(
       { ...TRAVELER_KIT, onKitEvent: weaponPassive },
       createSetArtifacts(INSTRUCTOR_ARTIFACT_SET_ID, 4),

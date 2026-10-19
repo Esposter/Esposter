@@ -12,16 +12,17 @@ import {
 } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
+const createTakeField = () => ({
+  characterId: TRAVELER_CHARACTER_ID,
+  kind: KitEventKind.CharacterSwapped as const,
+  previousCharacterId: OTHER_CHARACTER_ID,
+});
+
 describe(createDebutPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // The Widsith's Debut with synthetic params: the Recitative's ATK, the Aria's Elemental DMG and the Interlude's
   // Elemental Mastery, a theme for three seconds, and a cooldown of four
   const debutPassiveModule = createDebutPassiveModule([0.2, 0.15, 60, 3, 4]);
-  const createTakeField = () => ({
-    characterId: TRAVELER_CHARACTER_ID,
-    kind: KitEventKind.CharacterSwapped as const,
-    previousCharacterId: OTHER_CHARACTER_ID,
-  });
 
   test("taking the field with a roll on the first theme gains its ATK for its three seconds", () => {
     expect.hasAssertions();

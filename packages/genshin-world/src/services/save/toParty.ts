@@ -9,7 +9,10 @@ import { createPartyMember } from "#src/services/party/createPartyMember";
 export const toParty = ({ activeIndex, deployedTeamIndex, downCharacterIds, teams }: PartySave): Party => {
   const party = createParty(teams[deployedTeamIndex]?.characterIds ?? []);
   const downCharacterIdSet = new Set(downCharacterIds);
-  const characterIds = new Set([...teams.flatMap(({ characterIds }) => characterIds), ...downCharacterIds]);
+  const characterIds = new Set([
+    ...teams.flatMap(({ characterIds: teamCharacterIds }) => teamCharacterIds),
+    ...downCharacterIds,
+  ]);
   party.activeIndex = activeIndex;
   party.characterIdMemberMap = new Map(
     Array.from(characterIds, (characterId) => [
@@ -18,6 +21,9 @@ export const toParty = ({ activeIndex, deployedTeamIndex, downCharacterIds, team
     ]),
   );
   party.deployedTeamIndex = deployedTeamIndex;
-  party.teams = teams.map(({ characterIds, name }) => ({ characterIds: [...characterIds], name }));
+  party.teams = teams.map(({ characterIds: teamCharacterIds, name }) => ({
+    characterIds: [...teamCharacterIds],
+    name,
+  }));
   return party;
 };

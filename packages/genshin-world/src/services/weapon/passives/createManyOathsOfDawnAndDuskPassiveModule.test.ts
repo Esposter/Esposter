@@ -35,12 +35,12 @@ const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   level: 1,
 });
 
+// A Crystallize shield the other member's reaction left, picked up by the team
+const pickUpCrystallizeShield = (context: KitContext) =>
+  castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining: 15 });
+
 describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-
-  // A Crystallize shield the other member's reaction left, picked up by the team
-  const pickUpCrystallizeShield = (context: KitContext) =>
-    castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining: 15 });
 
   // Many Oaths of Dawn and Dusk at its first rank: a Crystallize shard the party picks up, or a Lunar-Crystallize it
   // Triggers at most once a second, gives a Seal for 15 seconds, up to two, each raising its skill's DMG by 18%
