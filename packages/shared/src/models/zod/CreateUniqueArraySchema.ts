@@ -7,7 +7,7 @@ import type { z } from "zod";
 // List of keys whose parts are primitives, as the identifiers joined by the one separator are
 export type CreateUniqueArraySchema = (<TOutput extends object, TInput, TSchema extends z.ZodType<TOutput, TInput>>(
   schema: TSchema,
-  key: UniqueArraySchemaKey<TSchema> | readonly UniqueArraySchemaKey<TSchema>[],
+  key: readonly UniqueArraySchemaKey<TSchema>[] | UniqueArraySchemaKey<TSchema>,
 ) => z.ZodArray<TSchema>) &
   (<TOutput extends Primitive, TInput, TSchema extends z.ZodType<TOutput, TInput>>(
     schema: TSchema,
