@@ -1,6 +1,7 @@
 import type { ExcelReliquaryLevelRow } from "#src/models/genshinAssets/stats/ExcelReliquaryLevelRow";
 import type { ArtifactMainAffixCurve } from "genshin-world";
 
+import { RELIQUARY_LEVEL_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { toAttributeLines } from "#src/services/genshinAssets/stats/toAttributeLines";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
@@ -8,7 +9,7 @@ import { artifactMainAffixCurveSchema } from "genshin-world";
 
 // What every main affix gives at each rarity, by enhancement level from +0, as the game's level table holds it
 export const getArtifactMainAffixCurves = (notes: string[]): ArtifactMainAffixCurve[] => {
-  const rows = readExcelTable<ExcelReliquaryLevelRow>("ReliquaryLevelExcelConfigData")
+  const rows = readExcelTable<ExcelReliquaryLevelRow>(RELIQUARY_LEVEL_TABLE_NAME)
     .filter(({ rank }) => rank > 0)
     .toSorted((firstRow, secondRow) => firstRow.level - secondRow.level);
   const curveMap = new Map<string, ArtifactMainAffixCurve>();
