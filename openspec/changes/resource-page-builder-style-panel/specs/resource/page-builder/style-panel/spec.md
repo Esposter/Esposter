@@ -49,7 +49,7 @@ A colour picked from the theme SHALL be stored as a reference to the theme colou
 
 ### Requirement: A style value the browser does not support is not saved
 
-A style value that the browser does not support, or that holds braces or angle brackets or is over the length limit, SHALL NOT be saved.
+A style value that the browser does not support, or that holds braces, angle brackets or a comment delimiter or is over the length limit, SHALL NOT be saved.
 
 #### Scenario: An unsupported style value stays in its field unsaved
 

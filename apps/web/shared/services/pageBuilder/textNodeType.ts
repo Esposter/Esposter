@@ -2,18 +2,20 @@ import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefi
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { z } from "zod";
 
 const textFormSchema = z.strictObject({ content: noteDocumentSchema });
-const textPropsSchema = z.strictObject({ ...textFormSchema.shape, id: z.string() });
+const textPropsSchema = z.object({ ...textFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Rich text written in the Note's own writing kit, so a text node holds what a note holds
 export const textNodeType = {
   css: "",
   formSchema: textFormSchema,
+  isFocusable: false,
   propsSchema: textPropsSchema,
   render: (node) => {
     const { content } = textPropsSchema.parse(node.props);

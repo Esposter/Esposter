@@ -1,28 +1,21 @@
-import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { getResult } from "@esposter/shared";
+import { checkIsRealEndsAt } from "#shared/services/pageBuilder/checkIsRealEndsAt";
+import { createCountdownUnit } from "#shared/services/pageBuilder/createCountdownUnit";
 import { z } from "zod";
 
 // A date, or a date and a time, in the form the editor's inputs write
 const ENDS_AT_REGEX = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:T(?<hour>\d{2}):(?<minute>\d{2}))?$/u;
 
-// Whether the value names a real calendar date and time: Temporal refuses an impossible one, where Date rolls it over
-// Into a later one, and a date-only value is midnight
-const checkIsRealEndsAt = (endsAt: string): boolean =>
-  getResult(() => Temporal.PlainDateTime.from(endsAt)).match(
-    () => true,
-    () => false,
-  );
-
 const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
   endText: z.string(),
 });
-const countdownPropsSchema = z.strictObject({ ...countdownFormSchema.shape, id: z.string() });
+const countdownPropsSchema = z.object({ ...countdownFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
 // Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space form
@@ -87,21 +80,13 @@ const countdownScript = () => {
   for (const element of window.document.querySelectorAll<HTMLElement>(".countdown")) startCountdown(element);
 };
 
-const createCountdownUnit = (name: string): HtmlElement => ({
-  attributes: { [HtmlAttributeName.Class]: "countdown-unit", [HtmlAttributeName.DataUnit]: name },
-  children: [
-    { attributes: { [HtmlAttributeName.Class]: "countdown-value" }, children: [], tag: HtmlTag.Span },
-    ` ${name}s`,
-  ],
-  tag: HtmlTag.Span,
-});
-
 export const countdownNodeType = {
   css: `.countdown { display: flex; justify-content: center; gap: 1rem; text-align: center; }
 .countdown-unit { display: inline-flex; flex-direction: column; }
 .countdown-value { font-size: 2rem; font-variant-numeric: tabular-nums; }
 .countdown-end { font-size: 2rem; }`,
   formSchema: countdownFormSchema,
+  isFocusable: false,
   propsSchema: countdownPropsSchema,
   // The timer's live region stays off, so a screen reader is not told each tick; the script fills in the values
   render: (node) => {

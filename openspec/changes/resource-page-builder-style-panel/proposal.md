@@ -12,7 +12,7 @@ Each node carries its own styles, edited in a panel of library controls, with th
 - There are three breakpoints: base for desktop, tablet at 991 pixels and below, and mobile at 478 pixels and below. Editing at tablet writes the tablet override.
 - The two states are default and hover, and a hover style also applies when a reader focuses the element with the keyboard.
 - A colour can be picked as a theme token, edited in the Theme panel, so editing the token recolours every node that uses it.
-- A value the browser does not support, or one holding braces, angle brackets or exceeding the length limit, is kept in its field with an error and is not saved.
+- A value the browser does not support, or one holding braces, angle brackets, a comment delimiter or exceeding the length limit, is kept in its field with an error and is not saved.
 - Each field shows the value in effect at the active breakpoint and state, and names where an inherited value comes from. Reset removes an override.
 - Copy style and Paste style carry a node's styles to another node.
 - A slider previews live and records one undoable change when it settles.

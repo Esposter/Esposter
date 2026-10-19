@@ -1,0 +1,149 @@
+// @vitest-environment nuxt
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { BlockDocument } from "headless-block-editor";
+
+import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
+import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createPinia, setActivePinia } from "pinia";
+import { describe, expect, test, vi } from "vitest";
+
+const TEXT_ONE = "text-one";
+const TEXT_TWO = "text-two";
+const COLUMN_SLOT = "/content/0/props/children/0/props/children";
+const COLUMN_DOCUMENT: BlockDocument = {
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [
+                { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
+                { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
+              ],
+              id: "column",
+            },
+            type: WebpageNodeType.Column,
+          },
+        ],
+        id: "columns",
+      },
+      type: WebpageNodeType.Columns,
+    },
+  ],
+  root: TEST_ROOT,
+};
+const ROOT_DOCUMENT: BlockDocument = {
+  content: [
+    { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
+    { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
+  ],
+  root: TEST_ROOT,
+};
+const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
+  [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
+  [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
+};
+const RESOURCE_ID = "resource";
+const TEXT_TITLE = WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text];
+
+const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
+  frameRect: { height: 500, left: 0, top: 0, width: 500 },
+  getChildRect: (nodeId) => RECTS[nodeId],
+  hoveredNodeId,
+  scale: 1,
+});
+
+const setup = (document: BlockDocument) => {
+  setActivePinia(createPinia());
+  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  pageBuilderDocumentStore.setDocument(RESOURCE_ID, document);
+  const announce = vi.fn<(message: string) => void>();
+  const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
+  return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
+};
+
+const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
+
+describe("usePageBuilderDrag", () => {
+  test("escape cancels a drag", () => {
+    expect.hasAssertions();
+    const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(COLUMN_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(COLUMN_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("a drag dropped into a column inserts the block there", () => {
+    expect.hasAssertions();
+    const { announce, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag } = setup(COLUMN_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
+    const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
+    expect(document && getSlotChildIds(document, COLUMN_SLOT)).toStrictEqual([TEXT_ONE, insertedId, TEXT_TWO]);
+    expect(announce.mock.calls).toStrictEqual([[`Inserted ${TEXT_TITLE}`]]);
+  });
+
+  test("a drag dropped where no slot accepts it cancels the drop", () => {
+    expect.hasAssertions();
+    const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(ROOT_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Column, pointerAt("pointerdown", 0, 0), () => createGeometry(TEXT_ONE));
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("a drag released outside the frame cancels the drop", () => {
+    expect.hasAssertions();
+    const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(ROOT_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 600, 30));
+    window.dispatchEvent(pointerAt("pointerup", 600, 30));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+
+  test("the drag flag is held from the threshold until the release", () => {
+    expect.hasAssertions();
+    const { isDragging, startPaletteDrag } = setup(ROOT_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 1, 1));
+    expect(isDragging.value).toBe(false);
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    expect(isDragging.value).toBe(true);
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+    expect(isDragging.value).toBe(false);
+  });
+
+  test("a click without movement does not start an insert", () => {
+    expect.hasAssertions();
+    const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(ROOT_DOCUMENT);
+
+    startPaletteDrag(WebpageNodeType.Text, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointerup", 0, 0));
+
+    expect(pageBuilderDocumentStore.getDocument(RESOURCE_ID)).toStrictEqual(ROOT_DOCUMENT);
+    expect(announce).not.toHaveBeenCalled();
+  });
+});

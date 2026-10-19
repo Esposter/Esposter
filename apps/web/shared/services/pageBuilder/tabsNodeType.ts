@@ -1,21 +1,15 @@
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
-import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
+import { hidePanel } from "#shared/services/pageBuilder/hidePanel";
 import { z } from "zod";
 
 // Each child is a Tab node, of which the tab button needs only its id and its label
 const tabLabelsSchema = z.array(z.object({ props: z.object({ id: z.string(), label: z.string() }) }));
-
-// Every panel but the first starts hidden, as a tab that is not selected does
-const hidePanel = (panel: HtmlNode): HtmlNode =>
-  typeof panel === "object" && "tag" in panel
-    ? { ...panel, attributes: { ...panel.attributes, [HtmlAttributeName.Hidden]: "" } }
-    : panel;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
@@ -61,9 +55,10 @@ export const tabsNodeType = {
 .tabs [role="tab"] { padding: 0.5rem 1rem; border: 0; background: none; cursor: pointer; }
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
   formSchema: z.strictObject({}),
+  isFocusable: true,
   propsSchema: containerPropsSchema,
   render: (node, slots) => {
-    const tabs = tabLabelsSchema.parse(containerPropsSchema.parse(node.props).children).map(({ props }) => props);
+    const tabs = tabLabelsSchema.parse(node.props.children).map(({ props }) => props);
     const buttons = tabs.map(({ id, label }, index): HtmlElement => ({
       attributes: {
         [HtmlAttributeName.AriaControls]: `${id}-panel`,

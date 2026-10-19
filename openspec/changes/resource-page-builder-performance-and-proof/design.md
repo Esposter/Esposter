@@ -23,7 +23,7 @@ There is nothing saved to hold the new editors to, so parity is proved against t
 - **Every patch round-trips:** applying an edit and then its inverse returns a document equal to the original, for every command over a fixture document.
 - **The canvas is the page.** A browser test renders the starter webpage in the canvas and in the published view's frame at each device width — the published copy rendered for the test with each node's id stamped on its element — and holds every node's box within one pixel across the two. The same test checks that the published page's own scripts run under the policy its frame inherits from the app.
 - **The email canvas is close to the email.** The same test for the starter email, compiled with a class per node that MJML's `css-class` carries onto the output, holds each section, column and leaf box within a few pixels at desktop and mobile width.
-- **Editor interactions** have component tests (the tree, the panels, the commands and the patches each issues, under happy-dom like the library's) and browser tests: a drag from the palette across the frame boundary, Alt-arrow moves with their announcement, Move to…, and focus into a text node and back out. The browser tests run in the app's browser suite, which the canvas sets up.
+- **Editor interactions** have component tests (the tree, the panels, the commands and the patches each issues, under happy-dom like the library's) and browser tests: a drag from the palette across the frame boundary, Alt-arrow moves with their announcement, Move to…, and focus into a text node and back out. The browser tests run in the frame package's browser suite, `packages/vue-canvas-frame-headless`, which the canvas sets up.
 
 ```mermaid
 flowchart TD

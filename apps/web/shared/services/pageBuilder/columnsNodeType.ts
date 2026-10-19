@@ -10,6 +10,7 @@ import { z } from "zod";
 export const columnsNodeType = {
   css: ".columns { display: flex; flex-wrap: wrap; gap: 1rem; }",
   formSchema: z.strictObject({}),
+  isFocusable: false,
   propsSchema: containerPropsSchema,
   render: (_node, slots) => ({
     attributes: { [HtmlAttributeName.Class]: "columns" },

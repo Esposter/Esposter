@@ -56,8 +56,8 @@ describe(useCanvasFrame, () => {
     return wrapper;
   };
 
-  // Waits for the frame's first load, then for the render it causes, then for the next animation frame, the one the
-  // Composable writes the page's css in
+  // Waits for the frame's first load, then for the render it causes, then for the next animation frame.
+  // That frame is the one the composable writes the page's css in
   const settleFrame = async (wrapper: VueWrapper<InstanceType<typeof CanvasFrameTest>>): Promise<HTMLIFrameElement> => {
     await wrapper.vm.loaded;
     await nextTick();

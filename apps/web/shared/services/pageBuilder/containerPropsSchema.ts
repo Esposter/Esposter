@@ -1,4 +1,5 @@
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { z } from "zod";
 
-// The props of a node that holds its children in slots, each slot's own node type checking what it holds
-export const containerPropsSchema = z.strictObject({ children: z.array(z.unknown()), id: z.string() });
+// The props a node holding its children in slots declares: its style, the children being the core's slot
+export const containerPropsSchema = z.object({ style: nodeStyleSchema.optional() });

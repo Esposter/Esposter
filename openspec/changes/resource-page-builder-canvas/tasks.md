@@ -1,7 +1,7 @@
 ## 1. Frame
 
 - [x] 1.1 Give the frame's browser checks a package of their own, on the shared browser configuration with no Nuxt, apart from the package's default run, in packages/vue-canvas-frame-headless. Verify: the package's test:browser script runs its browser tests, and its unit tests start no browser.
-- [x] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: the frame package's tests 'a tablet frame draws at its fixed width' (useCanvasFrame.browser.test.ts) and 'a narrow pane scales the frame down' (getFrameScale.test.ts).
+- [x] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: the tests 'a tablet frame draws at its fixed width', 'a desktop frame is never narrower than its least width' and 'a narrow pane scales the frame down', in packages/vue-canvas-frame-headless.
 - [ ] 1.3 Keep the page's styles out of the editor and the editor's styles out of the page, and stop custom HTML scripts from running in the canvas, in the frame's browser checks once it is extracted. Verify: browser tests named after the scenarios 'A page's body style does not restyle the editor' and 'A script inside a custom HTML block does not run in the canvas'.
 
 ## 2. Selection and overlays
@@ -11,6 +11,7 @@
 ## 3. Pointer
 
 - [ ] 3.1 Drag a palette block into the slot under the pointer, cancelling where none accepts it, and let Escape cancel a drag. Verify: tests named after the scenarios 'Dragging a block into a column inserts it there', 'Dropping a block where no slot accepts it cancels the drop' and 'Escape cancels a drag'.
+- [ ] 3.2 Resolve a drop into a slot holding one child along the slot's own axis, since one child's position cannot show it: a drop right of a lone Column in a row lands after it, not before. Decide in the design whether the axis is declared on the slot's type or read from the slot's laid-out flow, then build it. Verify: a test named 'Dropping right of a lone column in a row lands after it' in apps/web/app/services/pageBuilder/resolveDropTarget.test.ts.
 
 ## 4. Keyboard moves
 
@@ -26,8 +27,9 @@
 
 ## 6. Clipboard
 
-- [ ] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
+- [ ] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. The refusal is open: the clipboard composable pastes only into a webpage, so no path reaches it until the email editor pastes through the same clipboard. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
 
 ## 7. Shell
 
-- [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: tests named after the scenarios 'Editing a button's label in the Content panel shows on the canvas' and 'An empty page offers the palette'.
+- [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: a test named after the scenario 'Editing a button's label in the Content panel shows on the canvas'.
+- [ ] 7.2 Draw an empty page's one action as the design records: an Insert a block button in `UiEmptyState` that opens the palette's blocks as a `UiCommandScope`, in place of the palette in the slot. Verify: a test named after the scenario 'An empty page offers the palette' passes against that surface.

@@ -11,6 +11,7 @@ import { z } from "zod";
 export const columnNodeType = {
   css: ".column { flex: 1 1 0; min-width: 0; }",
   formSchema: z.strictObject({}),
+  isFocusable: false,
   propsSchema: containerPropsSchema,
   render: (node, slots) => ({
     attributes: { [HtmlAttributeName.Class]: "column" },

@@ -38,7 +38,7 @@ describe(createBlockDocumentSchema, () => {
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([
-      ["content", 0, "props", "children", 0, "props", "items", 0],
+      ["content", 0, "props", "children", 0, "props", "items", 0, "type"],
     ]);
   });
 
@@ -52,7 +52,7 @@ describe(createBlockDocumentSchema, () => {
     const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
-    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0]]);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0, "type"]]);
   });
 
   test("root props its schema refuses", () => {
@@ -108,7 +108,18 @@ describe(createBlockDocumentSchema, () => {
 
     const otherRegistry: BlockRegistry = {
       ...TEST_REGISTRY,
-      types: TEST_REGISTRY.types.filter((definition) => definition.type !== "list"),
+      types: TEST_REGISTRY.types
+        .filter((definition) => definition.type !== "list")
+        .map((definition) => ({
+          propsSchema: definition.propsSchema,
+          slots: Object.fromEntries(
+            Object.entries(definition.slots).map(([slot, slotTypes]) => [
+              slot,
+              slotTypes.filter((slotType) => slotType !== "list"),
+            ]),
+          ),
+          type: definition.type,
+        })),
     };
     const document: BlockDocument = {
       content: [
@@ -135,6 +146,23 @@ describe(createBlockDocumentSchema, () => {
     expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(TEST_DOCUMENT).success).toBe(
       true,
     );
+  });
+
+  test("a repeated id is refused across slots", () => {
+    expect.hasAssertions();
+
+    const document: BlockDocument = {
+      content: [...TEST_DOCUMENT.content, { props: { children: [], id: TEST_HEADING_ID }, type: "section" }],
+      root: TEST_DOCUMENT.root,
+    };
+    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 1).safeParse(
+      document,
+    );
+
+    expect(success).toBe(false);
+    expect(error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
+      { message: "repeats an id", path: ["content", 2, "props", "id"] },
+    ]);
   });
 
   test("a document with a repeated id", () => {

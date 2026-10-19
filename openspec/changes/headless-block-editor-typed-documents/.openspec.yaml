@@ -1,0 +1,10 @@
+schema: spec-driven
+created: 2026-10-19
+affected_areas: [headless-block-editor, resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "packages/headless-block-editor/src/services/**",
+    "apps/web/shared/services/pageBuilder/**",
+    "packages/mjml-blocks/src/services/**",
+  ]

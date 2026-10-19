@@ -2,12 +2,13 @@ import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefi
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 const typedTextFormSchema = z.strictObject({ texts: z.array(z.string().min(1)).min(1) });
-const typedTextPropsSchema = z.strictObject({ ...typedTextFormSchema.shape, id: z.string() });
+const typedTextPropsSchema = z.object({ ...typedTextFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. The texts are typed out and
 // Deleted in turn, unless the reader prefers reduced motion, when the whole text stands still
@@ -52,6 +53,7 @@ const typedTextScript = () => {
 export const typedTextNodeType = {
   css: "",
   formSchema: typedTextFormSchema,
+  isFocusable: false,
   propsSchema: typedTextPropsSchema,
   render: (node) => {
     const { texts } = typedTextPropsSchema.parse(node.props);

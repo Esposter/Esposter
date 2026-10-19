@@ -19,7 +19,6 @@ export const useCanvasFrame = ({
 }): {
   frameBody: ComputedRef<HTMLElement | undefined>;
   frameStyle: ComputedRef<Record<string, string>>;
-  frameWidth: ComputedRef<number>;
   loaded: Promise<void>;
 } => {
   const { promise: loaded, resolve: resolveLoaded } = Promise.withResolvers<void>();
@@ -83,5 +82,5 @@ export const useCanvasFrame = ({
   });
   onScopeDispose(() => cancelAnimationFrame(styleFrame));
 
-  return { frameBody, frameStyle, frameWidth, loaded };
+  return { frameBody, frameStyle, loaded };
 };

@@ -2,10 +2,12 @@
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument } from "headless-block-editor";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
+import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
@@ -23,6 +25,7 @@ describe(usePageBuilderHistoryStore, () => {
   };
   const TEST_MOVE_LABEL = "Move block";
   const TEST_LABEL_LABEL = "Change label";
+  const TEST_TEXT_LABEL = "Edit text";
   const TEST_OTHER_LANG = "fr";
   const setupDocument = async () => {
     const resourceId = crypto.randomUUID();
@@ -73,6 +76,36 @@ describe(usePageBuilderHistoryStore, () => {
     expect(undoLabelBeforeUndo).toBe(TEST_LABEL_LABEL);
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
     expect(getUndoLabel(resourceId)).toBe("");
+  });
+
+  test("a text session is one undoable change", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const textDocument: BlockDocument = {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    };
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, loadDocument } = pageBuilderDocumentStore;
+    await loadDocument(resourceId, () => Promise.resolve(textDocument));
+    const interactionId = crypto.randomUUID();
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, undo } = pageBuilderHistoryStore;
+    for (const text of ["a", "ab"])
+      applyEdit(
+        resourceId,
+        updateBlockNodeProps("/content/0", {
+          content: { content: [{ content: [{ text, type: "text" }], type: "paragraph" }], type: "doc" },
+        }),
+        TEST_TEXT_LABEL,
+        interactionId,
+      ).match(noop, console.error);
+    const pastLength = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length;
+    undo(resourceId);
+
+    expect(pastLength).toBe(1);
+    expect(getDocument(resourceId)).toStrictEqual(textDocument);
   });
 
   test("two inserts at one index in one interaction are two undo entries", async () => {
