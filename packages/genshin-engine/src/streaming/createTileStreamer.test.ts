@@ -136,12 +136,12 @@ describe(createTileStreamer, () => {
     wanted.keys.set([fineKey]);
     wanted.count = 1;
     tileStreamer.update(wanted, emptySelection, emptySelection);
-    const whileRefreshing = { isSettled: tileStreamer.isSettled(fineKey), tile: tileStreamer.get(fineKey) };
+    const whileRefreshing = { isSettled: tileStreamer.checkIsSettled(fineKey), tile: tileStreamer.get(fineKey) };
     tileStreamer.receive(fineKey, 1);
 
     expect({
       disposed: disposeTile.mock.calls,
-      isSettled: tileStreamer.isSettled(fineKey),
+      isSettled: tileStreamer.checkIsSettled(fineKey),
       requested: requestTile.mock.calls,
       tile: tileStreamer.get(fineKey),
       whileRefreshing,
@@ -172,7 +172,7 @@ describe(createTileStreamer, () => {
     tileStreamer.receive(fineKey, 0);
     tileStreamer.update(wanted, emptySelection, emptySelection);
 
-    expect({ isSettled: tileStreamer.isSettled(fineKey), requested: requestTile.mock.calls }).toStrictEqual({
+    expect({ isSettled: tileStreamer.checkIsSettled(fineKey), requested: requestTile.mock.calls }).toStrictEqual({
       isSettled: false,
       requested: [[fineKey], [fineKey]],
     });
@@ -198,7 +198,7 @@ describe(createTileStreamer, () => {
     tileStreamer.receive(coarseKey, 2);
     tileStreamer.update(wanted, emptySelection, emptySelection);
 
-    expect({ isSettled: tileStreamer.isSettled(otherFineKey), requested: requestTile.mock.calls }).toStrictEqual({
+    expect({ isSettled: tileStreamer.checkIsSettled(otherFineKey), requested: requestTile.mock.calls }).toStrictEqual({
       isSettled: true,
       requested: [[coarseKey], [fineKey], [otherFineKey], [coarseKey], [fineKey]],
     });
@@ -245,7 +245,7 @@ describe(createTileStreamer, () => {
 
     expect({
       givenUp,
-      isSettled: tileStreamer.isSettled(fineKey),
+      isSettled: tileStreamer.checkIsSettled(fineKey),
       requestCount: requestTile.mock.calls.length,
     }).toStrictEqual({ givenUp: [false, false, true], isSettled: true, requestCount: MAX_TILE_ATTEMPTS });
   });

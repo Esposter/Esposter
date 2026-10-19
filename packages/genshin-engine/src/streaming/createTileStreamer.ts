@@ -57,6 +57,7 @@ export const createTileStreamer = <TTile>({
   };
 
   return {
+    checkIsSettled,
     dispose: () => {
       isDisposed = true;
       for (const { tile } of cachedTileMap.values()) disposeTile(tile);
@@ -77,7 +78,6 @@ export const createTileStreamer = <TTile>({
     },
     get: (key) => cachedTileMap.get(key)?.tile,
     has: (key) => cachedTileMap.has(key),
-    isSettled: checkIsSettled,
     receive: (key, tile) => {
       const lastWantedFrame = pendingWantedFrameMap.get(key) ?? frame;
       pendingWantedFrameMap.delete(key);

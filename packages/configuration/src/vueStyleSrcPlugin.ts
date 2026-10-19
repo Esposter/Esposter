@@ -32,8 +32,9 @@ export const vueStyleSrcPlugin: Plugin = {
     const resolved = await this.resolve(id.slice(0, queryStart), importer, { skipSelf: true });
     if (!resolved) return null;
 
-    const rest = params.filter((param) => !param.startsWith("src="));
-    rest.splice(1, 0, `${STYLE_SRC_PARAM}=${encodeURIComponent(resolved.id)}`);
+    const rest = params
+      .filter((param) => !param.startsWith("src="))
+      .toSpliced(1, 0, `${STYLE_SRC_PARAM}=${encodeURIComponent(resolved.id)}`);
     return `${importer}?${rest.join("&")}`;
   },
 };

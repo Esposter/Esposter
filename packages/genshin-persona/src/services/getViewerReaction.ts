@@ -5,7 +5,7 @@ import { ViewerMoment as Moment } from "#src/models/ViewerMoment";
 
 export interface ViewerReaction {
   isExpressionCleared: boolean;
-  motion: string | undefined;
+  motion?: string;
 }
 
 // What the viewer does at a moment: the motion the reader mapped to it, if any, and the expression cleared when a

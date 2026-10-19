@@ -16,8 +16,8 @@ import { join } from "node:path";
 // Held until this one's length has passed. The last clip stays on disk for a tap to play again, and is the only one
 // Kept, since the stock player deletes its clips once answered and a viewer answers the message, not the sound
 export interface ViewerPlayer {
+  checkIsOpen: () => boolean;
   dispose: () => void;
-  isOpen: () => boolean;
   play: (audio: Uint8Array, caption: ViewerCaption) => Promise<string>;
   // A bubble alone, for a clip whose sound another player plays
   show: (caption: ViewerCaption) => Promise<void>;
@@ -50,15 +50,15 @@ export const createViewerPlayer = (link: ViewerLink, modelId: number): ViewerPla
   });
 
   return {
+    checkIsOpen: () => link.checkIsOpen(),
     dispose: () => {
       cancelWait?.();
       if (shown?.path) rmSync(shown.path, { force: true });
       shown = undefined;
       link.close();
     },
-    isOpen: () => link.isOpen(),
     play: async (audio, caption) => {
-      if (!link.isOpen()) return "the viewer is not open";
+      if (!link.checkIsOpen()) return "the viewer is not open";
 
       const path = join(tmpdir(), `${PLAYER_FILE_PREFIX}${crypto.randomUUID()}.wav`);
       writeFileSync(path, audio);

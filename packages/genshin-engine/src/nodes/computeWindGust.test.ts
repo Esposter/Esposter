@@ -8,7 +8,7 @@ describe(computeWindGust, () => {
     // Made-up gust: a band 4 long that travels at 1 and swells to 2
     const wind = { gustSpeed: 1, gustStrength: 2, gustWidth: 4 };
     const period = wind.gustWidth / wind.gustSpeed;
-    const samples = Array.from({ length: 20 }, (_, index) => (index * period) / 20);
+    const samples = Array.from({ length: 20 }, (_value, index) => (index * period) / 20);
     const gusts = samples.map((seconds) => computeWindGust(0, seconds, wind));
     const halfWidthGusts = samples.map((seconds) => computeWindGust(wind.gustWidth / 2, seconds, wind));
 

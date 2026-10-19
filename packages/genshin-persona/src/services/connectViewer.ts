@@ -44,7 +44,7 @@ export const connectViewer = async (
     if (!frame) return;
 
     const { data, msg, msgId } = frame;
-    if (msg === ViewerMessage.ModelEvent && isTap(data)) for (const listener of tapListeners) listener();
+    if (msg === ViewerMessage.ModelEvent && checkIsTap(data)) for (const listener of tapListeners) listener();
     if (typeof msgId !== "number") return;
 
     pendingReplies.get(msgId)?.();
@@ -70,13 +70,13 @@ export const connectViewer = async (
         textFrameColor: frameColor,
       });
     },
+    checkIsOpen: () => socket.readyState === VIEWER_OPEN_READY_STATE,
     close: () => {
       socket.close();
     },
     expressionClear: (modelId) => {
       send(ViewerMessage.ExpressionClear, modelId);
     },
-    isOpen: () => socket.readyState === VIEWER_OPEN_READY_STATE,
     motion: (modelId, motion) => {
       send(ViewerMessage.Motion, { id: modelId, mtn: motion, type: 0 });
     },
@@ -116,7 +116,7 @@ const readViewerFrame = (text: string): Record<string, unknown> | undefined => {
   }
 };
 
-const isTap = (data: unknown): boolean =>
+const checkIsTap = (data: unknown): boolean =>
   typeof data === "object" && data !== null && "type" in data && data.type === ViewerEvent.Tap;
 
 const waitForOpen = (socket: ViewerSocket): Promise<boolean> =>
