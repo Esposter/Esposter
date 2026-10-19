@@ -15,6 +15,8 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { getResultAsync, parseJsonPointer } from "@esposter/shared";
 import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 
+const CANNOT_GO_HERE_MESSAGE = "This block cannot go here";
+
 // Copy, cut and paste of the selected node in one open resource's webpage. The clipboard carries the node as JSON, and a
 // Paste lands where an insert would, as a copy with fresh ids. Each landed edit is announced once through announce
 export const usePageBuilderClipboard = (
@@ -94,7 +96,7 @@ export const usePageBuilderClipboard = (
     const type = Object.values(WebpageNodeType).find((candidate) => candidate === firstNode?.type);
     if (!document) return;
     if (!type) {
-      announce("This block cannot go here");
+      announce(CANNOT_GO_HERE_MESSAGE);
       return;
     }
 
@@ -104,7 +106,7 @@ export const usePageBuilderClipboard = (
 
     const operations = pasteBlockNodes(document, webpageRegistry, clipboard.nodes, target.slotPointer, target.index);
     if (operations.length === 0) {
-      announce("This block cannot go here");
+      announce(CANNOT_GO_HERE_MESSAGE);
       return;
     }
 
