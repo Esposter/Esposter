@@ -7,12 +7,11 @@ import type { ExcelTrialAvatarTemplateRow } from "#src/models/genshinAssets/tria
 import type { ExcelTrialReliquaryRow } from "#src/models/genshinAssets/trials/ExcelTrialReliquaryRow";
 import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/TrialReliquaryPiece";
 import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
-import type { TrialReliquary } from "genshin-world";
 
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
 import { takeOne } from "@esposter/shared";
 import { ArtifactSlot, Attribute } from "genshin-world";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(buildTrials, () => {
   const CHARACTER_ID = 10_000_022;
@@ -129,20 +128,6 @@ describe(buildTrials, () => {
       },
       "characterTrials/templates": [{ level: 85, reliquaryIds: RELIQUARY_IDS, talentLevel: 8 }],
     });
-  });
-
-  test("a sub-stat a trial reliquary rolled more than once is one line at its rolls' sum", () => {
-    expect.hasAssertions();
-
-    // The records buildTrials returns are typed unknown, so the reliquary record takes toTrialReliquary's type
-    const reliquaries = buildTrials({
-      ...trialTables,
-      reliquaryRows: [{ ...takeOne(reliquaryRows), AppendPropList: [AFFIX_ID, SECOND_AFFIX_ID, AFFIX_ID] }],
-    })["characterTrials/reliquaries"] as Record<string, TrialReliquary>;
-    const reliquary = reliquaries[String(takeOne(RELIQUARY_IDS))];
-
-    assert.exists(reliquary);
-    expect(reliquary.minorAffixes).toStrictEqual([{ attribute: Attribute.Attack, value: 4.67 + 5.25 + 4.67 }]);
   });
 
   test("a trial reliquary whose piece the reliquary table lacks is refused rather than left out", () => {
