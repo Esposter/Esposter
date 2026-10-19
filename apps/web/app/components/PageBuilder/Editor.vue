@@ -84,7 +84,7 @@ const onKeydown = (event: KeyboardEvent) => {
     <div flex flex-col gap-2 flex-1 min-w-0 min-h-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" :announce :resource-id />
-      <PageBuilderCanvas v-else :resource-id />
+      <PageBuilderCanvas v-else :announce :resource-id />
     </div>
     <div :style="{ width: `${rightWidth}px` }" relative shrink-0 min-h-0>
       <UiResizeHandle

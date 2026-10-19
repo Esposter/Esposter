@@ -183,4 +183,23 @@ describe(usePageBuilderMoves, () => {
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toBe(before);
     expect(announce.mock.calls).toStrictEqual([]);
   });
+
+  test("duplicating a node places its copy after it", async () => {
+    expect.hasAssertions();
+
+    const { announce, duplicateSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } =
+      await setup("i1");
+    duplicateSelected();
+    const copyId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+
+    expect(copyId).not.toBe("i1");
+    expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
+      content: [
+        createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
+        createSection("s2", [createImage("i1"), createImage(copyId)]),
+      ],
+      root: TEST_ROOT,
+    });
+    expect(announce.mock.calls).toStrictEqual([["Duplicated Image"]]);
+  });
 });

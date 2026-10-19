@@ -16,6 +16,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
 import {
+  duplicateBlockNode,
   getAcceptingSlotPointers,
   getBlockNode,
   getFocusAfterRemoval,
@@ -135,6 +136,23 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     query: ref(""),
     title: "Move to",
   };
+  // The copy is the node placed straight after the selected one in its slot, so it is selected and announced once it lands
+  const duplicateSelected = () => {
+    const selection = getSelection();
+    if (!selection) return;
+
+    const operations = duplicateBlockNode(selection.document, webpageRegistry, selection.nodePointer);
+    if (operations.length === 0) return;
+
+    const segments = parseJsonPointer(selection.nodePointer);
+    const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+    const title = getNodeTitle(selection.document, segments);
+    applyEdit(toValue(resourceId), operations, "Duplicate block").match(() => {
+      const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${(index ?? 0) + 1}`;
+      setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), copyPointer));
+      if (title) announce(`Duplicated ${title}`);
+    }, console.error);
+  };
   // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection
   const deleteSelected = () => {
     const selection = getSelection();
@@ -148,5 +166,5 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     }, console.error);
   };
 
-  return { deleteSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
+  return { deleteSelected, duplicateSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
 };
