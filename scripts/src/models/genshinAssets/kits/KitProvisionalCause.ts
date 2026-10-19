@@ -13,6 +13,9 @@ export enum KitProvisionalCause {
   // A talent whose hits its module spawns as a named list keeps its own hits list empty, unless one of its own hits joins
   // The group at an index no named list's hit does. A stance's actions keep theirs the same way in the skill's group
   NamedHitList = "NamedHitList",
+  // A hit the module casts to carry an effect, an enemy status or a pulse, which the game deals no damage with, so its
+  // Multiplier is 0. The builder refuses it where a source gives the hit a multiplier
+  NoDamageHit = "NoDamageHit",
   // A plunge gcsim has no file for borrows Bennett's plunge frames, hits and areas, and a claymore's charged
   // Attack it has no file for the frames the kits share
   NoActionFile = "NoActionFile",
