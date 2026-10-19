@@ -17,6 +17,7 @@ Where a finding's home looked missing, it is settled:
 - **Across Claude plugins:** a clone whose two sides sit in two different plugins (a package with a `.claude-plugin` folder) is not a finding, since each plugin installs standalone with no build and cannot share a file.
 - **Engine-bound register code:** a clone of two `register*.ts` files under a plugin's `src/services` is not a finding, since the engine keeps each `$` call and atom in its own register file. A pure helper in any other file stays a finding.
 - **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, bare composable bindings, a composable's destructured call (`const { … } = useName(…);`) of bare names or `name: alias` entries, or a `return { … }` of bare names is each file's own list of what it holds, not logic. The finder skips it.
+- **A clone's edges:** a clone runs from token to token, so the finder reads it as the lines it covers whole. A statement it touches only at its first or last token, and a comment left at either edge, are not part of it.
 - **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
 
 | Unit                                                 | Swept                  | Notes                              |

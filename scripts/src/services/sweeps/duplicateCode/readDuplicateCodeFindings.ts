@@ -24,9 +24,9 @@ interface JscpdReport {
 }
 
 interface JscpdReportFragment {
-  end: number;
+  endLoc: DuplicateCodeFragment["end"];
   name: string;
-  start: number;
+  startLoc: DuplicateCodeFragment["start"];
 }
 
 // The `jscpd` package is the Rust engine's launcher, with no JavaScript API, so the scan runs as its command line and
@@ -42,9 +42,9 @@ const getSourceId = ({ name }: JscpdReportFragment) =>
   name.replace(WINDOWS_VERBATIM_PREFIX_REGEX, "").replace(FORMAT_SUFFIX_REGEX, "");
 
 const toDuplicateCodeFragment = (fragment: JscpdReportFragment): DuplicateCodeFragment => ({
-  end: { line: fragment.end },
+  end: fragment.endLoc,
   sourceId: getSourceId(fragment),
-  start: { line: fragment.start },
+  start: fragment.startLoc,
 });
 
 // The JSON report goes into a temporary directory that is removed once it is read, so the scan leaves nothing behind.
