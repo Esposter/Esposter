@@ -65,7 +65,7 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
     const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
       getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
     const trigger = createReactionTrigger(enemy, context);
-    return { context, enemy, other, teamReactionDamageBonus, trigger, wearer };
+    return { context, other, teamReactionDamageBonus, trigger, wearer };
   };
 
   test("a Lunar Reaction the team triggers while the wearer is on the field gives it 15% CRIT Rate for four seconds at Nascent Gleam", () => {
