@@ -7,7 +7,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { getGleamingMoonLunarBonus } from "#src/services/artifact/sets/getGleamingMoonLunarBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
-import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
+import { getMoonsignLevelAmount } from "#src/services/party/getMoonsignLevelAmount";
 import { takeOne } from "@esposter/shared";
 
 const GLEAMING_MOON_DEVOTION_ID = "gleamingMoonDevotion";
@@ -22,6 +22,10 @@ export const createSilkenMoonsSerenadeSetModule = (bonus: ArtifactSetBonus): Pas
   const nascentElementalMasteryBonus = takeOne(bonus.params, 1);
   const ascendantElementalMasteryBonus = takeOne(bonus.params, 2);
   const lunarDamageBonus = takeOne(bonus.params, 3);
+  const moonsignLevelElementalMasteryBonusMap: Record<MoonsignLevel, number> = {
+    [MoonsignLevel.AscendantGleam]: ascendantElementalMasteryBonus,
+    [MoonsignLevel.NascentGleam]: nascentElementalMasteryBonus,
+  };
   return {
     getPartyReactionBonus: (member, reaction, context) =>
       getGleamingMoonLunarBonus(member, reaction, GLEAMING_MOON_DEVOTION_ID, lunarDamageBonus, context),
@@ -29,13 +33,7 @@ export const createSilkenMoonsSerenadeSetModule = (bonus: ArtifactSetBonus): Pas
       if (event.kind !== KitEventKind.EnemyHit) return;
       if (event.striker.characterId !== combatant.characterId || event.element === undefined) return;
       addKitStatus(kitEffectState, combatant.characterId, { id: GLEAMING_MOON_DEVOTION_ID, secondsRemaining: seconds });
-      const moonsignLevel = getMoonsignLevel(characterIdCombatantMap, party);
-      const amount =
-        moonsignLevel === MoonsignLevel.AscendantGleam
-          ? ascendantElementalMasteryBonus
-          : moonsignLevel === MoonsignLevel.NascentGleam
-            ? nascentElementalMasteryBonus
-            : 0;
+      const amount = getMoonsignLevelAmount(characterIdCombatantMap, party, moonsignLevelElementalMasteryBonusMap);
       if (amount === 0) return;
       buffKitTeam(kitEffectState, party, {
         amount,

@@ -2,10 +2,10 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
 const AEON_WAVE_ID = "aeonWave";

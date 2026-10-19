@@ -3,7 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
 // Unreturning at its rank: a charged attack hit on a weak point raises its wielder's Movement SPD and ATK for the seconds

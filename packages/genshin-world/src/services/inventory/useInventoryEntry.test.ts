@@ -11,7 +11,7 @@ import { DishTarget } from "#src/models/cooking/DishTarget";
 import { Currency } from "#src/models/inventory/Currency";
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
-import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
 import { FRAGILE_RESIN_ITEM_ID, FRAGILE_RESIN_RESTORE } from "#src/services/originalResin/constants";
@@ -122,7 +122,6 @@ describe(useInventoryEntry, () => {
   });
 
   // The instruction's materials row as the dump gives it: a Consume material of stack limit 2000, read by its name's text id
-  const STARGLITTER_ITEM_ID = 221;
   const INSTRUCTION_NAME_TEXT_ID = "3664176372";
   const instructionMaterial: MaterialData = {
     id: INSTRUCTION_ITEM_ID,
@@ -142,7 +141,7 @@ describe(useInventoryEntry, () => {
     const good: ShopGood = {
       beginTime: NOW.subtract({ hours: 1 }).toString(),
       buyLimit: 0,
-      costs: [{ count: 5, itemId: STARGLITTER_ITEM_ID }],
+      costs: [{ count: 5, itemId: CurrencyItemIdMap[Currency.MasterlessStarglitter] }],
       endTime: NOW.add({ hours: 24 * 365 }).toString(),
       goodsId: 3001,
       itemCount: 1,

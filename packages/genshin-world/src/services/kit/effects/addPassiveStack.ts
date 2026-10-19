@@ -3,8 +3,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
-import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 export interface PassiveStack {
   // The seconds a passive waits after it adds a stack before it adds another, if it waits at all
@@ -13,7 +13,8 @@ export interface PassiveStack {
   // The bonuses a passive adds on its wielder while it holds its maximum stacks, each at its full amount, if it adds any
   maximumBonuses?: { amount: number; attribute: Attribute }[];
   maximumStacks: number;
-  perStackBonuses: { amount: number; attribute: Attribute }[];
+  // The bonuses each stack adds on its wielder, if it adds any
+  perStackBonuses?: { amount: number; attribute: Attribute }[];
   seconds: number;
 }
 
@@ -25,11 +26,10 @@ export const addPassiveStack = (
   characterId: number,
   passive: PassiveStack,
 ): boolean => {
-  const { cooldownSeconds, id, maximumBonuses = [], maximumStacks, perStackBonuses, seconds } = passive;
+  const { cooldownSeconds, id, maximumBonuses = [], maximumStacks, perStackBonuses = [], seconds } = passive;
   const cooldownId = `${id}Cooldown`;
-  if (checkIsKitStatusActive(kitEffectState.effects, characterId, cooldownId)) return false;
-  if (cooldownSeconds !== undefined)
-    addKitStatus(kitEffectState, characterId, { id: cooldownId, secondsRemaining: cooldownSeconds });
+  if (cooldownSeconds !== undefined && !startKitCooldown(kitEffectState, characterId, cooldownId, cooldownSeconds))
+    return false;
   const stacks = Math.min((findKitStatus(kitEffectState.effects, characterId, id)?.stacks ?? 0) + 1, maximumStacks);
   addKitStatus(kitEffectState, characterId, { id, secondsRemaining: seconds, stacks });
   for (const { amount, attribute } of perStackBonuses)

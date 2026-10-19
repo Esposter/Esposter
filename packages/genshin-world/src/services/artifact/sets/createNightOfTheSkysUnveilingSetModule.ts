@@ -9,7 +9,7 @@ import { checkIsLunarReactionType } from "#src/services/combat/checkIsLunarReact
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
-import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
+import { getMoonsignLevelAmount } from "#src/services/party/getMoonsignLevelAmount";
 import { takeOne } from "@esposter/shared";
 
 const GLEAMING_MOON_INTENT_ID = "gleamingMoonIntent";
@@ -24,6 +24,10 @@ export const createNightOfTheSkysUnveilingSetModule = (bonus: ArtifactSetBonus):
   const nascentCriticalRateBonus = takeOne(bonus.params, 1);
   const ascendantCriticalRateBonus = takeOne(bonus.params, 2);
   const lunarDamageBonus = takeOne(bonus.params, 3);
+  const moonsignLevelCriticalRateBonusMap: Record<MoonsignLevel, number> = {
+    [MoonsignLevel.AscendantGleam]: ascendantCriticalRateBonus,
+    [MoonsignLevel.NascentGleam]: nascentCriticalRateBonus,
+  };
   return {
     getPartyReactionBonus: (member, reaction, context) =>
       getGleamingMoonLunarBonus(member, reaction, GLEAMING_MOON_INTENT_ID, lunarDamageBonus, context),
@@ -32,13 +36,11 @@ export const createNightOfTheSkysUnveilingSetModule = (bonus: ArtifactSetBonus):
       if (!event.reactions.some(({ reactionType }) => checkIsLunarReactionType(reactionType))) return;
       const { characterId } = combatant;
       if (getActiveCharacterId(party) !== characterId) return;
-      const moonsignLevel = getMoonsignLevel(characterIdCombatantMap, party);
-      const criticalRateBonus =
-        moonsignLevel === MoonsignLevel.AscendantGleam
-          ? ascendantCriticalRateBonus
-          : moonsignLevel === MoonsignLevel.NascentGleam
-            ? nascentCriticalRateBonus
-            : 0;
+      const criticalRateBonus = getMoonsignLevelAmount(
+        characterIdCombatantMap,
+        party,
+        moonsignLevelCriticalRateBonusMap,
+      );
       addKitStatus(kitEffectState, characterId, { id: GLEAMING_MOON_INTENT_ID, secondsRemaining: seconds });
       buffKitMember(kitEffectState, characterId, {
         amount: criticalRateBonus,
