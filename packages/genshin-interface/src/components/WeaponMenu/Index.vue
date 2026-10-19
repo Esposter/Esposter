@@ -129,8 +129,6 @@ const emit = defineEmits<{ action: []; close: [] }>();
 .star {
   width: calc(var(--unit) * 22);
   height: calc(var(--unit) * 22);
-  background: #f5c542;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%, 50% 0%);
 }
 
 /* The refinement rank sits at the panel's right, as a gold figure in its own pill */
@@ -168,17 +166,6 @@ const emit = defineEmits<{ action: []; close: [] }>();
 .sparks {
   display: flex;
   gap: calc(var(--unit) * 6);
-}
-
-.spark {
-  width: calc(var(--unit) * 14);
-  height: calc(var(--unit) * 14);
-  background: rgb(255 255 255 / 0.3);
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%, 50% 0%);
-}
-
-.spark.lit {
-  background: #fff;
 }
 
 .experience-text {
@@ -256,3 +243,4 @@ const emit = defineEmits<{ action: []; close: [] }>();
   line-height: 1;
 }
 </style>
+<style scoped src="../../styles/weaponStars.css"></style>

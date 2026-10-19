@@ -55,16 +55,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 }
 
 .option {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
   padding: calc(var(--unit) * 12) calc(var(--unit) * 16);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.1);
-  color: inherit;
-  font: inherit;
-  text-align: left;
 }
 
 .option:hover,
@@ -76,3 +67,4 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
   align-self: flex-end;
 }
 </style>
+<style scoped src="../../styles/artifactPicker.css"></style>

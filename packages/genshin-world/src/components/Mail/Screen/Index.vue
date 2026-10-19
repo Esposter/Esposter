@@ -260,17 +260,6 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
 </template>
 
 <style scoped>
-.confirm {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--unit) * 560);
-  padding: calc(var(--unit) * 32);
-  transform: translate(-50%, -50%);
-  border-radius: calc(var(--unit) * 12);
-  background: #2b2a3d;
-}
-
 .confirm-text {
   margin: 0 0 calc(var(--unit) * 12);
   font-size: calc(var(--unit) * 24);
@@ -324,3 +313,4 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
   margin-top: calc(var(--unit) * 20);
 }
 </style>
+<style scoped src="genshin-interface/styles/confirmDialog.css"></style>

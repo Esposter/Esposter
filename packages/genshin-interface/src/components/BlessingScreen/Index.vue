@@ -33,53 +33,6 @@ const emit = defineEmits<{ close: []; heal: [characterId: number]; worship: [] }
 </template>
 
 <style scoped>
-/* The screen's colours and placement are provisional until the recording shows them */
-.blessing-screen {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: rgb(20 18 16 / 55%);
-  color: rgb(245 240 230);
-}
-
-.title {
-  position: absolute;
-  top: 6%;
-  left: 6%;
-  font-size: 2rem;
-}
-
-.close {
-  position: absolute;
-  top: 6%;
-  right: 6%;
-  font-size: 2rem;
-}
-
-.worship {
-  position: absolute;
-  top: 6%;
-  right: 16%;
-  font-size: 1.25rem;
-}
-
-.pool {
-  position: absolute;
-  top: 16%;
-  left: 6%;
-  font-size: 1.25rem;
-}
-
-.members {
-  position: absolute;
-  top: 26%;
-  left: 6%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 .members button {
   display: flex;
   justify-content: space-between;
@@ -89,3 +42,4 @@ const emit = defineEmits<{ close: []; heal: [characterId: number]; worship: [] }
   background: rgb(255 255 255 / 8%);
 }
 </style>
+<style scoped src="../../styles/blessingWorship.css"></style>

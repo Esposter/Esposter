@@ -69,30 +69,6 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
   font-weight: 600;
 }
 
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: calc(var(--unit) * 20) calc(var(--unit) * 40);
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 24);
-}
-
-.back,
-.step {
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border: none;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.15);
-  color: #ece5d8;
-  font: inherit;
-  font-size: calc(var(--unit) * 28);
-}
-
 .team {
   display: flex;
   flex: 1;
@@ -193,3 +169,4 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
   font-size: calc(var(--unit) * 22);
 }
 </style>
+<style scoped src="../../styles/partyReputation.css"></style>

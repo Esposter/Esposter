@@ -324,26 +324,14 @@ const buy = () => {
   top: calc(var(--unit) * 380);
   left: calc(var(--unit) * 183);
   width: calc(var(--unit) * 540);
-  height: calc(var(--unit) * 14);
-  margin: 0;
-  appearance: none;
-  background: transparent;
-  cursor: inherit;
 }
 
 .amount::-webkit-slider-runnable-track {
-  height: calc(var(--unit) * 4);
   background: #9aa3b8;
 }
 
 .amount::-webkit-slider-thumb {
-  width: calc(var(--unit) * 14);
-  height: calc(var(--unit) * 14);
-  margin-top: calc(var(--unit) * -5);
-  border-radius: calc(var(--unit) * 2);
   background: #2b2a26;
-  transform: rotate(45deg);
-  appearance: none;
 }
 
 .amount-value {
@@ -385,3 +373,4 @@ const buy = () => {
   opacity: 0.4;
 }
 </style>
+<style scoped src="../../styles/craftingShop.css"></style>

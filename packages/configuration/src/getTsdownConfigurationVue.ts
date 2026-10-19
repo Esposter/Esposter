@@ -4,6 +4,7 @@ import type { Options } from "unplugin-vue/api";
 import { VUE_AUTO_IMPORTS } from "#src/constants";
 import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
 import { readPackageManifest } from "#src/readPackageManifest";
+import { vueStyleSrcPlugin } from "#src/vueStyleSrcPlugin";
 import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";
@@ -24,5 +25,9 @@ import Vue from "unplugin-vue/rolldown";
 export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig =>
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
     ...(readPackageManifest().private ? {} : { dts: { eager: true, tsconfig: "tsconfig.build.json", vue: true } }),
-    plugins: [AutoImport({ imports: [...VUE_AUTO_IMPORTS] }), Vue({ ...vueOptions, isProduction: true })],
+    plugins: [
+      vueStyleSrcPlugin,
+      AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
+      Vue({ ...vueOptions, isProduction: true }),
+    ],
   });

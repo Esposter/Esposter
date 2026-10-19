@@ -317,26 +317,14 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   top: calc(var(--unit) * 666);
   left: calc(var(--unit) * 1120);
   width: calc(var(--unit) * 365);
-  height: calc(var(--unit) * 14);
-  margin: 0;
-  appearance: none;
-  background: transparent;
-  cursor: inherit;
 }
 
 .amount::-webkit-slider-runnable-track {
-  height: calc(var(--unit) * 4);
   background: #2d4159;
 }
 
 .amount::-webkit-slider-thumb {
-  width: calc(var(--unit) * 14);
-  height: calc(var(--unit) * 14);
-  margin-top: calc(var(--unit) * -5);
-  border-radius: calc(var(--unit) * 2);
   background: #fff7ea;
-  transform: rotate(45deg);
-  appearance: none;
 }
 
 .crafted,
@@ -416,3 +404,4 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   clip-path: inset(50%);
 }
 </style>
+<style scoped src="../../styles/craftingShop.css"></style>

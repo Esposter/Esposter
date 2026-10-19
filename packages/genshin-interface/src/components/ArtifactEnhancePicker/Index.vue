@@ -135,16 +135,7 @@ const emit = defineEmits<{
 }
 
 .option {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
   padding: calc(var(--unit) * 10) calc(var(--unit) * 14);
-  border: none;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(255 255 255 / 0.1);
-  color: inherit;
-  font: inherit;
-  text-align: left;
 }
 
 .option[aria-pressed="true"] {
@@ -167,3 +158,4 @@ const emit = defineEmits<{
   gap: calc(var(--unit) * 8);
 }
 </style>
+<style scoped src="../../styles/artifactPicker.css"></style>

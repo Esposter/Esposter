@@ -73,24 +73,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.world-level-prompt {
-  --reference-pixel: calc(var(--unit) * 1);
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgb(0 0 0 / 48%);
-}
-
 .dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(var(--reference-pixel) * 960);
-  height: calc(var(--reference-pixel) * 606);
-  transform: translate(-50%, -50%);
-  background: #e2dfd8;
   color: #3a434b;
 }
 
@@ -144,28 +127,10 @@ onMounted(() => {
   line-height: calc(var(--reference-pixel) * 36);
 }
 
-.choice {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 498);
-  width: calc(var(--reference-pixel) * 390);
-  height: calc(var(--reference-pixel) * 67);
-  border-radius: calc(infinity * 1px);
-  background: #404a5e;
-  color: #ffffff;
-  text-align: center;
-}
-
-.cancel {
-  left: calc(var(--reference-pixel) * 70);
-}
-
-.confirm {
-  left: calc(var(--reference-pixel) * 500);
-}
-
 .label-text {
   font-size: calc(var(--reference-pixel) * 36);
   font-weight: 600;
   line-height: calc(var(--reference-pixel) * 67);
 }
 </style>
+<style scoped src="../../../styles/menuDialog.css"></style>
