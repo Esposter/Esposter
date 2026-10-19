@@ -8,7 +8,7 @@ import { Element } from "#src/models/Element";
 
 // Measured: gcsim (MIT) emilie/cons.go, Constellation 2's Dendro RES cut of 30% for 10 seconds on each enemy the skill's
 // Hits strike, whose damage is not zero
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/emilie/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/emilie/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_STATUS: EnemyStatus = {
   damageTakenBonus: 0,
@@ -18,7 +18,7 @@ const CONSTELLATION_2_STATUS: EnemyStatus = {
 };
 // Measured: gcsim (MIT) emilie/asc.go, Ascension 4's DMG Bonus of 0.15 per 1000 total ATK, capped at 36%, on each attack
 // That strikes a Burning enemy
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/emilie/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/emilie/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_ATTACK_SHARE = 0.15;
 const ASCENSION_4_DAMAGE_BONUS_CAP = 0.36;

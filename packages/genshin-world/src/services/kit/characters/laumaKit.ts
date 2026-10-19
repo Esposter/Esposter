@@ -28,7 +28,7 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Measured: gcsim (MIT) lauma/skill.go, the Frostgrove Sanctuary standing 15 seconds, and each of its ticks shedding the
 // RES below for 10 seconds
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const SANCTUARY_SECONDS = 15;
 const SHRED_SECONDS = 10;
 const SHRED_STATUS_ID = "lauma-skill-shred";
@@ -36,12 +36,12 @@ const SHRED_STATUS_ID = "lauma-skill-shred";
 // Measured: gcsim (MIT) lauma/skill.go, Hymn of Eternal Rest's hold spends up to three Verdant Dew. The hold spends
 // Dew, Verdant first and then Moonridge, through spendDew. The Dew is spent as the hold starts, where gcsim spends it
 // At 29 frames, since the hit's multiplier is set on the cast. A hold with no Dew plays the press, as gcsim refuses it
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const SKILL_HOLD_MAXIMUM_DEW_COUNT = 3;
 
 // Measured: gcsim (MIT) lauma/asc.go, her Moonsign Benediction turns the party's Bloom into Lunar-Bloom and adds 0.0175%
 // Base DMG Bonus to its Lunar-Bloom for each point of her Elemental Mastery, at most 14%
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.000175;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 // Cleansing for the Spring, Lauma's Ascension 4 passive as its text gives it: her Elemental Skill's DMG rises by 0.04% for
@@ -52,14 +52,14 @@ const CLEANSING_MAXIMUM_DAMAGE_BONUS = 0.32;
 
 // Measured: gcsim (MIT) lauma/burst.go, her burst gives the party 18 Pale Hymn 96 frames after it starts, and the burst and
 // Each Pale Hymn last 15 seconds. Each Bloom or Lunar-Bloom reaction then spends one, Moon Song's before the burst's
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const BURST_SECONDS = 15;
 const PALE_HYMN_SECONDS = 15;
 const PALE_HYMN_BURST_STACKS = 18;
 const PALE_HYMN_GAIN_FRAMES = 96;
 // Measured: gcsim (MIT) lauma/skill.go, each Dew Hymn of Eternal Rest spends during her burst gives the Moon Song six Pale
 // Hymn, once in each burst. A Dew spent outside it waits for the burst's gain, for 15 seconds
-// Https://github.com/genshinsim/gcsim/tree/main/internal/characters/lauma
+// Https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lauma
 const MOON_SONG_PALE_HYMN_PER_DEW = 6;
 
 export const LAUMA_CHARACTER_ID = 10_000_119;

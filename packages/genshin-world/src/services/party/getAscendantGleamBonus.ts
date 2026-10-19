@@ -9,7 +9,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 // Buffs, by its element: 0.9% for every 100 ATK of an Electro, Pyro or Cryo character, 0.6% for every 1,000 Max HP of
 // A Hydro one, 2.25% for every 100 Elemental Mastery of a Dendro or Anemo one and 1% for every 100 DEF of a Geo one, at
 // Most 36%, as gcsim (MIT) pkg/simulation/setup.go gives it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/simulation/setup.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/simulation/setup.go
 export const getAscendantGleamBonus = ({ attributes, element }: Combatant): number => {
   if (element === undefined) return 0;
   const { attack, attributeTotalMap, defense, maxHealth } = attributes;

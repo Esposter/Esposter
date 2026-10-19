@@ -22,7 +22,7 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
 // Of radius 6 whose centre lies 3 metres ahead, every tick, for 12.5 seconds
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/skill.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/skill.go
 const SKILL_DURATION_SECONDS = 12.5;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
@@ -36,11 +36,11 @@ const CONSTELLATION_4_ENERGY = 0.8;
 const CONSTELLATION_4_ENERGY_SECONDS = 0.2;
 const CONSTELLATION_4_ENERGY_STATUS_ID = "kokomi-c4-energy";
 // Measured: gcsim (MIT) kokomi/burst.go, Ceremonial Garment lasts ten seconds
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/burst.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/burst.go
 const GARMENT_SECONDS = 10;
 // Measured: gcsim (MIT) kokomi/asc.go, Song of Pearls adds 15% of her Healing Bonus, of her Max HP, to each garment
 // Normal and Charged Attack, from Ascension 4
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kokomi/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/asc.go
 const ASCENSION_4 = 4;
 const SONG_OF_PEARLS_HEALING_BONUS_SHARE = 0.15;
 // Flawless Strategy, Kokomi's passive she holds from the start, as its text gives it: 25% Healing Bonus, and a CRIT Rate

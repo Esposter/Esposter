@@ -18,7 +18,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 // Measured: gcsim (MIT) sayu/burst.go, Muji-Muji Daruma a field of radius 10 a metre and a half ahead, each of its ticks a
 // Strike on the nearest enemy in it and a heal of the active character at 70% HP or under. The Daruma's strike is a
 // Summon here, its every tick striking whatever is in reach, as gcsim strikes one enemy
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/sayu/burst.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/burst.go
 const BURST_FIELD_CENTRE_METRES = 1.5;
 const BURST_FIELD_RADIUS = 10;
 const BURST_HEAL_HP_SHARE = 0.7;

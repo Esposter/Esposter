@@ -17,7 +17,7 @@ import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) kuki/skill.go, Grass Ring of Sanctification lasts 3 seconds more from Constellation 2
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/kuki
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/kuki
 const RING_CONSTELLATION = 2;
 const RING_CONSTELLATION_SECONDS = 3;
 // The ring's field id: a second cast restarts the ring it finds, as gcsim keeps one Grass Ring status for her skill

@@ -28,19 +28,19 @@ const ASCENSION_4_BONUS_PER_MEMBER = 0.05;
 const FONTAINE_REGION_ID = "fontaine";
 
 // Spiritbreath Thorn's cooldown starts when it strikes, as gcsim (MIT) charlotte/charge.go gives it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/charlotte
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
 const THORN_COOLDOWN_STATUS_ID = "charlotte-thorn-cooldown";
 
 // Framing's press marks each enemy it strikes with Snappy Silhouette, ticking every 1.5 seconds from the mark, and no more
 // Than five enemies a cast, as gcsim (MIT) charlotte/skill.go gives it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/charlotte
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
 const SNAPPY_MARK_STATUS_ID = "charlotte-snappy-silhouette";
 const SNAPPY_MARK_INTERVAL_SECONDS = 1.5;
 const SNAPPY_MARK_CAP = 5;
 
 // Each Kamera tick heals the character on the field while it stands within a circle of radius 7 round the point Still
 // Photo was cast at, 4.5 metres ahead of the body, as gcsim (MIT) charlotte/burst.go gives it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/charlotte
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/charlotte
 const BURST_OFFSET_METRES = 4.5;
 const BURST_HEAL_RADIUS = 7;
 

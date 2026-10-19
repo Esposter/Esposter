@@ -4,130 +4,50 @@
   "frames.rehabDietFirstTick": { "file": "asc.go", "line": 14, "source": "Gcsim", "value": 157 },
   "frames.rehabDietInterval": { "file": "asc.go", "line": 15, "source": "Gcsim", "value": 58.5 },
   "hits.frostyParfaitTicks.length": { "file": "skill.go", "line": 19, "source": "Gcsim", "value": 21 },
-  "hits.frostyParfaitTicks.0.area": {
-    "cause": "DiffersFromSource",
+  "hits.frostyParfaitTicks.0-20.area": {
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
   },
   "hits.frostyParfaitTicks.0.hitmarkFrames": { "cause": "Unsourced", "value": 153 },
   "hits.frostyParfaitTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.1.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.1.hitmarkFrames": { "cause": "Unsourced", "value": 212 },
   "hits.frostyParfaitTicks.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.2.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.2.hitmarkFrames": { "cause": "Unsourced", "value": 270 },
   "hits.frostyParfaitTicks.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.3.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.3.hitmarkFrames": { "cause": "Unsourced", "value": 329 },
   "hits.frostyParfaitTicks.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.4.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.4.hitmarkFrames": { "cause": "Unsourced", "value": 387 },
   "hits.frostyParfaitTicks.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.5.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.5.hitmarkFrames": { "cause": "Unsourced", "value": 446 },
   "hits.frostyParfaitTicks.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.6.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.6.hitmarkFrames": { "cause": "Unsourced", "value": 504 },
   "hits.frostyParfaitTicks.6.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.7.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.7.hitmarkFrames": { "cause": "Unsourced", "value": 563 },
   "hits.frostyParfaitTicks.7.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.8.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.8.hitmarkFrames": { "cause": "Unsourced", "value": 621 },
   "hits.frostyParfaitTicks.8.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.9.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.9.hitmarkFrames": { "cause": "Unsourced", "value": 680 },
   "hits.frostyParfaitTicks.9.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.10.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.10.hitmarkFrames": { "cause": "Unsourced", "value": 738 },
   "hits.frostyParfaitTicks.10.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.11.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.11.hitmarkFrames": { "cause": "Unsourced", "value": 797 },
   "hits.frostyParfaitTicks.11.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.12.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.12.hitmarkFrames": { "cause": "Unsourced", "value": 855 },
   "hits.frostyParfaitTicks.12.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.13.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.13.hitmarkFrames": { "cause": "Unsourced", "value": 914 },
   "hits.frostyParfaitTicks.13.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.14.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.14.hitmarkFrames": { "cause": "Unsourced", "value": 972 },
   "hits.frostyParfaitTicks.14.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.15.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.15.hitmarkFrames": { "cause": "Unsourced", "value": 1031 },
   "hits.frostyParfaitTicks.15.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.16.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.16.hitmarkFrames": { "cause": "Unsourced", "value": 1089 },
   "hits.frostyParfaitTicks.16.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.17.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.17.hitmarkFrames": { "cause": "Unsourced", "value": 1148 },
   "hits.frostyParfaitTicks.17.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.18.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.18.hitmarkFrames": { "cause": "Unsourced", "value": 1206 },
   "hits.frostyParfaitTicks.18.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.19.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.19.hitmarkFrames": { "cause": "Unsourced", "value": 1265 },
   "hits.frostyParfaitTicks.19.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
-  "hits.frostyParfaitTicks.20.area": {
-    "cause": "DiffersFromSource",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 16.5 }
-  },
   "hits.frostyParfaitTicks.20.hitmarkFrames": { "cause": "Unsourced", "value": 1323 },
   "hits.frostyParfaitTicks.20.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11232 } },
   "hits.surgingBlade.area": {

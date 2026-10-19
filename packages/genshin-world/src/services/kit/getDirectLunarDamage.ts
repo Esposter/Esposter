@@ -13,7 +13,7 @@ import { getDirectReactionDamage } from "#src/services/kit/getDirectReactionDama
 // And the hit's own CRIT DMG bonus, as Gcsim (MIT) pkg/enemy/damage.go prices a direct reaction hit. The party reaction
 // Bonuses its Lunar reaction takes reach it too: the DMG Bonus into the reaction bonus, the CRIT DMG onto a CRIT hit,
 // And the Elevation over the whole last
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/enemy/damage.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/enemy/damage.go
 export const getDirectLunarDamage = (
   { additiveBaseDamageBonus, criticalDamageBonus = 0 }: KitHit,
   { getScalingStat, lunarReactionType }: KitLunarHit,

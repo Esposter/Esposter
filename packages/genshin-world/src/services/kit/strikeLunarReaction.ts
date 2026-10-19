@@ -17,7 +17,7 @@ import { takeOne } from "@esposter/shared";
 // And the deployed team's Moonsign raises it, with its own CRIT. The hit deals their weighted sum against the enemy's
 // RES to the reaction's element, its energy dropping to the team as the element of the member who owns it. With no
 // Contributor it strikes nothing, as gcsim (MIT) pkg/reactable deals its Lunar reactions
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcharged.go
 export const strikeLunarReaction = (
   enemy: Enemy,
   lunarReactionType: LunarReactionType,

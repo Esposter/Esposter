@@ -25,7 +25,7 @@ const ABSORB_FIELD_LINGER_SECONDS = 0.1;
 
 // Measured: gcsim (MIT) kazuha/cons.go, Chihayaburu's and Kazuha Slash's cooldowns each drop by a tenth from Constellation 1,
 // Which the table's 360 and 540 frames become 324 and 486 with
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kazuha/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go
 const PRESS_AND_HOLD_CONSTELLATION = 1;
 const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 // Measured: gcsim (MIT) kazuha/cons.go, from Constellation 6 each Chihayaburu or Kazuha Slash gives Kazuha an Anemo infusion for

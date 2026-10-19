@@ -11,7 +11,7 @@ import { strikeLunarReaction } from "#src/services/kit/strikeLunarReaction";
 // A Lunar-Charged hit on an enemy, written into it in place: the members whose Electro or Hydro still stands in its
 // Auras contribute to it, owned by the member whose Electro or Hydro last charged it, and a hit that strikes takes 0.4U
 // From its Electro and its Hydro, as gcsim (MIT) pkg/reactable/lunarcharged.go deals it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcharged.go
 export const strikeLunarCharged = (enemy: Enemy, context: KitContext): void => {
   const { elementalState } = enemy;
   const contributorIds = new Set([

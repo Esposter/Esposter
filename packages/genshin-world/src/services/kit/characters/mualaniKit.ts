@@ -14,7 +14,7 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 10;
 // Cooldown, which runs from the press where gcsim runs it from the blessing's end, and the cooldown her leaving sets, which
 // The kit does not hold. Her strikes, charged attack and plunges are her record's alone, and she has no plunge in gcsim, so
 // Each plunge hits as its action starts
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/mualani
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mualani
 // Constellation 1 needs the first Surfing Bite of the Nightsoul's Blessing, which the kit does not build
 // Constellation 2 needs the Wave Momentum stacks and Puffers, which the kit does not build
 // Constellation 4 needs Puffers and the Energy they restore, which the kit does not build

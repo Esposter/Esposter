@@ -1,5 +1,7 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { NamedHitCall } from "#src/models/genshinAssets/kits/NamedHitCall";
+import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
@@ -8,6 +10,17 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolveKitValues";
 import { CombatTalent, Element } from "genshin-world";
 import { describe, expect, test } from "vitest";
+
+// A call the fiery rain arrows' talent variable makes, landing at the delay and giving it as its hitmark
+const call = (delay: number): NamedHitCall => ({
+  delay,
+  fieldMap: new Map([
+    ["hitmarkFrames", [{ provenance: { file: "burst.go", line: delay, source: KitSource.Gcsim }, value: delay }]],
+  ]),
+  file: "burst.go",
+  line: 5,
+  site: "burst.go:4",
+});
 
 describe(resolveKitValues, () => {
   const TABLES = { element: Element.Geo, talentGroupIdMap: {} } as unknown as KitTables;
@@ -29,6 +42,10 @@ describe(resolveKitValues, () => {
         },
       ],
     ],
+  ]);
+
+  const namedHitCandidateMap: NamedHitCandidateMap = new Map([
+    ["2139|0", { fieldMap: new Map(), queuedCalls: [call(10), call(30)] }],
   ]);
 
   test("names an overlay value no gcsim folder gives as the unit gcsim does not model", () => {
@@ -66,6 +83,47 @@ describe(resolveKitValues, () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: burst.hits.length, names Unsourced, but Gcsim gives 3]`,
     );
+  });
+
+  test("refuses a DiffersFromSource value a gcsim candidate gives at its path, which a choice of gcsim names", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(
+        sourceCandidateMap,
+        { "burst.hits.length": { cause: KitProvisionalCause.DiffersFromSource, value: 3 } },
+        new Map(),
+        new Map(),
+        TABLES,
+        false,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: burst.hits.length, names DiffersFromSource, but Gcsim gives 3]`,
+    );
+  });
+
+  test("keeps a DiffersFromSource reference that reads the same numbers as a source's reference to another group", () => {
+    expect.hasAssertions();
+
+    const sameRowTables = {
+      ...tables,
+      talentMultiplierMap: { "2138": [{ level: 1, paramList: [2.456] }], "2139": [{ level: 1, paramList: [2.456] }] },
+    } as unknown as KitTables;
+    const { valueMap } = resolveKitValues(
+      sourceCandidateMap,
+      {
+        "hits.fieryRainArrows.0.multiplier": {
+          cause: KitProvisionalCause.DiffersFromSource,
+          value: { index: 0, proudSkillGroupId: 2138 },
+        },
+      },
+      new Map(),
+      new Map(),
+      sameRowTables,
+      false,
+    );
+
+    expect(valueMap.get("hits.fieryRainArrows.0.multiplier")).toStrictEqual({ index: 0, proudSkillGroupId: 2138 });
   });
 
   test("refuses a NoPoiseSource value the wiki gives at its path, naming the wiki", () => {
@@ -152,6 +210,43 @@ describe(resolveKitValues, () => {
       rule: KitRule.NamedHitList,
       source: KitSource.Rule,
     });
+  });
+
+  test("takes a chosen gcsim hitmark from the call of the hit's attack that lands at it", () => {
+    expect.hasAssertions();
+
+    const { provenanceMap, valueMap } = resolveKitValues(
+      sourceCandidateMap,
+      { "hits.fieryRainArrows.0.hitmarkFrames": { source: KitSource.Gcsim, value: 30 } },
+      new Map(),
+      namedHitCandidateMap,
+      tables,
+      false,
+    );
+
+    expect(valueMap.get("hits.fieryRainArrows.0.hitmarkFrames")).toBe(30);
+    expect(provenanceMap.get("hits.fieryRainArrows.0.hitmarkFrames")).toStrictEqual({
+      file: "burst.go",
+      line: 30,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("refuses a chosen gcsim hitmark no call of the hit's attack lands at", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(
+        sourceCandidateMap,
+        { "hits.fieryRainArrows.0.hitmarkFrames": { source: KitSource.Gcsim, value: 20 } },
+        new Map(),
+        namedHitCandidateMap,
+        tables,
+        false,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: hits.fieryRainArrows.0.hitmarkFrames, has no Gcsim value for the overlay to choose]`,
+    );
   });
 
   test("keeps the overlay's own length over the named list's", () => {

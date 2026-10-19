@@ -22,11 +22,11 @@ import { takeOne } from "@esposter/shared";
 // Escoffier/skill.go gates it, its cooldown starting 22 frames after the press there, which the framework does not hold.
 // Arkhe's application is a TODO in gcsim, so it is not applied here, and the interval is checked on the cast, not at the
 // Blade's hitmark as gcsim queues it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/skill.go
 const ALIGNED_INTERVAL_STATUS_ID = "escoffier-aligned-icd";
 // Scoring Cuts' heal lands on the active character as a single tick of a field the burst sets going, as gcsim (MIT, main)
 // Escoffier/burst.go heals
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/burst.go
 const BURST_HEAL_FIELD_ID = "escoffier-scoring-cuts-heal";
 // Measured: gcsim (MIT, main) escoffier/asc.go, Rehab Diet heals the active character nine times for 1.3824 of her ATK
 // Each tick, and the burst starts it on Ascension 1 or above
@@ -35,7 +35,7 @@ const REHAB_DIET_FIELD_ID = "escoffier-rehab-diet";
 const REHAB_DIET_ASCENSION = 1;
 // Measured: gcsim (MIT, main) escoffier/asc.go, Ascension 4's Hydro and Cryo RES shred by how many Hydro or Cryo members the
 // Team holds, 0 to 55%, for 12 seconds, on each enemy her skill and burst hit
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_RES_SHREDS = [0, 0.05, 0.1, 0.15, 0.55];
 const ASCENSION_4_SECONDS = 12;
@@ -54,7 +54,7 @@ const checkIsCryoHydroTeam = (deployedElements: readonly (Element | undefined)[]
 
 // Constellation 1's window, which her skill and burst open for 15 seconds on an Ascension 4 Escoffier and a team of Cryo and
 // Hydro members, as gcsim (MIT, main) escoffier/cons.go's c1 does at the end of each, and the wiki states the same window
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/escoffier/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/cons.go
 const startConstellation1 = (combatant: Combatant, kitEffectState: KitEffectState): void => {
   if (
     combatant.constellationCount < CONSTELLATION_1 ||

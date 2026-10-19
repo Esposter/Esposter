@@ -9,7 +9,7 @@ import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants
 // The Base DMG Bonus the deployed team's Stellar Jubilees add to its Stellar damage, each from its holder's stats as the
 // Team's buffs leave them, two adding up, as each Jubilee adds its own in gcsim (MIT) odette/stellar.go and
 // Traveler/common/cryo/stellar.go
-// Https://github.com/genshinsim/gcsim/blob/main/internal/characters/odette/stellar.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/odette/stellar.go
 export const getPartyStellarBaseDamageBonus = (
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,
   effects: readonly KitEffect[],

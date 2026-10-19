@@ -59,7 +59,7 @@ const CONSTELLATION_4_SOURCE = "baizhu-ancient-art-of-perception";
 // Heals and its removal's heal; Ascension 1's Healing Bonus, which no heal of his reads yet, and which a passive bonus
 // Cannot price from the Field's HP, since a passive is given only its wearer's HP share; and Ascension 4, which rides
 // The Seamless Shield's heals
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/baizhu
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu
 // The Splice is queued at the enemy it strikes, so it lands in the step it is raised: gcsim gives it the skill's first
 // Hitmark as a placeholder, a TODO in its source, which a passive's hit does not price
 const gossamerSpliceHit: KitHit = {

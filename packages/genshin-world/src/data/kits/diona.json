@@ -1,5 +1,4 @@
 {
-  "burst.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "hits.signatureMixTicks.length": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 6 },
   "hits.signatureMixTicks.0.area": {
     "cause": "DiffersFromSource",

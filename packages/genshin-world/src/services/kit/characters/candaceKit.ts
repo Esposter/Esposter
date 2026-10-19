@@ -32,7 +32,7 @@ const WAVES_STATUS_ID = "candace-waves";
 // Measured: gcsim (MIT) candace/cons.go, Constellation 1 lengthens the Prayer to 12 seconds, three past the table's nine, and
 // Constellation 6 sets a wave off on each elemental normal attack a party member lands, once every 2.3 seconds. The table
 // Gives both, and the 2.3 seconds read the same from its constellation row
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/candace
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_PRAYER_EXTRA_SECONDS = 3;
 const CONSTELLATION_6 = 6;

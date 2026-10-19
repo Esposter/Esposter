@@ -77,14 +77,14 @@ export const DROWN_HEALTH_SHARE_LOSS = 0.1;
 export const ASCENDANT_GLEAM_MOONSIGN_COUNT = 2;
 // Ascendant Gleam, lit by a skill or burst of a character outside the Moonsign, gives every party member a reaction
 // Bonus to its Lunar damage for 20 seconds, at most 36%, as gcsim (MIT) pkg/simulation/setup.go gives it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/simulation/setup.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/simulation/setup.go
 export const ASCENDANT_GLEAM_SECONDS = 20;
 export const ASCENDANT_GLEAM_MAXIMUM_REACTION_BONUS = 0.36;
 // The id of the status Ascendant Gleam stands as on the character that lit it, which the next one to light it replaces
 export const ASCENDANT_GLEAM_STATUS_ID = "ascendantGleam";
 // The Verdant Dew a party holds at most. A Lunar-Bloom lets Dew gather for 149 frames after it, and one Dew gathers in
 // 146 frames of that, as gcsim (MIT) pkg/core/player/verdantdew.go counts them
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/core/player/verdantdew.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/core/player/verdantdew.go
 export const VERDANT_DEW_MAXIMUM_COUNT = 3;
 // The Moonridge Dew a party holds at most. The wiki's Law of the New Moon page gives it a cap of its own, calculated
 // Separately from Verdant Dew's, so it keeps its own constant though both are 3. gcsim's AddMoonridgeDew caps it at
@@ -96,7 +96,7 @@ export const VERDANT_DEW_GATHER_SECONDS = 146 / 60;
 // A Lunar-Charged forms the party's cloud for 5.5 seconds, or keeps the one standing for 5.5 seconds again. A new cloud
 // First ticks 9 frames on and every 6 frames after, each tick striking every Lunar-Charged enemy within 8 metres of the
 // Character on the field, as gcsim (MIT) pkg/reactable/lunarcharged.go ticks it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcharged.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcharged.go
 export const LUNAR_CHARGED_CLOUD_SECONDS = 5.5;
 export const LUNAR_CHARGED_CLOUD_FIRST_TICK_SECONDS = 9 / 60;
 export const LUNAR_CHARGED_CLOUD_TICK_SECONDS = 6 / 60;
@@ -106,7 +106,7 @@ export const LUNAR_CHARGED_CLOUD_RADIUS = 8;
 // Metre out, lasting 9 seconds. With 3 standing and 3 counted, it spends the 3 to resonate a Harmony, at most once in
 // 37 frames, firing a hit at the enemy 13, 25 and 37 frames on, each flying 10 frames more, and keeping the Moondrifts
 // Standing for 9 seconds again, as gcsim (MIT) pkg/reactable/lunarcrystallize.go has it
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcrystallize.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcrystallize.go
 export const LUNAR_CRYSTALLIZE_MAXIMUM_COUNT = 6;
 export const MOONDRIFT_NEARBY_RADIUS = 20;
 export const MOONDRIFT_SECONDS = 9;
@@ -115,7 +115,7 @@ export const MOONDRIFT_HARMONY_COOLDOWN_SECONDS = 37 / 60;
 export const MOONDRIFT_HARMONY_HIT_SECONDS = [13, 25, 37].map((hitmarkFrames) => (hitmarkFrames + 10) / 60);
 // Provisional: gcsim leaves its Moondrifts a metre out from the enemy at three even bearings, marking their place a
 // Guess, until a recording of a Lunar-Crystallize shows where they stand
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/lunarcrystallize.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/lunarcrystallize.go
 export const MOONDRIFT_OFFSETS = [
   { x: 0, z: 1 },
   { x: Math.sqrt(3) / 2, z: -0.5 },

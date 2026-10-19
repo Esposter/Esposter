@@ -9,7 +9,7 @@
   "hits.droplet.length": { "cause": "Unsourced", "value": 2 },
   "hits.droplet.0.hitmarkFrames": { "file": "skill.go", "line": 22, "source": "Gcsim", "value": 42 },
   "hits.droplet.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 1432 } },
-  "hits.droplet.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 78 },
+  "hits.droplet.1.hitmarkFrames": { "source": "Gcsim", "value": 78 },
   "hits.droplet.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 1432 } },
   "normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.healParty.flatHealth": {

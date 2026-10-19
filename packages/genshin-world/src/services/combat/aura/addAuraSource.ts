@@ -5,7 +5,7 @@ import type { ElementalState } from "#src/models/combat/ElementalState";
 // Before starts its sources afresh. The gauge the aura rose by is no other source's, so each other source stands that much
 // Further below it, and the applying source's share becomes the larger of what it held and what it applied, as gcsim
 // (MIT) pkg/reactable/reactable.go's attachOverlap adds to one source's durability
-// Https://github.com/genshinsim/gcsim/blob/main/pkg/reactable/reactable.go
+// Https://github.com/genshinsim/gcsim/blob/v2.47.2/pkg/reactable/reactable.go
 export const addAuraSource = (
   state: ElementalState,
   auraType: AuraType,

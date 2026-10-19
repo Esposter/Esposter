@@ -27,7 +27,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 
 // Measured: gcsim (MIT) raiden/skill.go, the Eye reaching the deployed team from a task after the cast, and a member
 // Holding it who deals damage setting off its coordinated attack once every 0.9 seconds across the team
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/skill.go
 const EYE_STATUS_ID = "raiden-eye";
 const EYE_PENDING_TASK_ID = "raiden-eye-pending";
 const COORDINATED_ATTACK_ICD_SECONDS = 0.9;
@@ -35,7 +35,7 @@ const COORDINATED_ATTACK_ICD_ID = "raiden-eye-icd";
 
 // Measured: gcsim (MIT) raiden/burst.go, the Resolve stacks the burst spends, and Musou Isshin's strikes restoring the
 // Team's energy once a second, five times a cast
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/burst.go
 const RESOLVE_RESOURCE_ID = "raiden-resolve";
 // Measured: gcsim (MIT) raiden/burst.go, Constellation 1 raising the Resolve another member's burst gives her by 80% for
 // An Electro member's burst and 20% for any other's, and Resolve's cap of 60 stacks
@@ -56,7 +56,7 @@ const ASCENSION_1_ICD_SECONDS = 3;
 const ASCENSION_1_ICD_ID = "raiden-a1-icd";
 // Measured: gcsim (MIT) raiden/asc.go, Ascension 4's 0.6% more energy restored by Musou Isshin for each whole 1% of Energy
 // Recharge past 100%, and its 0.4% Electro DMG Bonus for each 1% of it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/asc.go
 const ASCENSION_4 = 4;
 const ASCENSION_4_RESTORE_BONUS_PER_PERCENT = 0.006;
 const ASCENSION_4_ELECTRO_BONUS_PER_SHARE = 0.4;
@@ -66,7 +66,7 @@ const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_DEFENCE_IGNORED = 0.6;
 // Measured: gcsim (MIT) raiden/cons.go, Constellation 4's 30% ATK for 10 seconds to the team but Raiden as Musou Isshin
 // Ends, and Constellation 6's second off the other members' burst cooldowns on the strikes that restore energy
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/raiden/cons.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ATTACK_SHARE = 0.3;
 const CONSTELLATION_4_SECONDS = 10;

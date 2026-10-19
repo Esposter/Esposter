@@ -22,7 +22,7 @@ import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 // Measured: gcsim (MIT) aino/burst.go, Cool Your Jets Ducky's Water Balls fall for 14.2 seconds from the first, each on a
 // Random enemy within 10 metres of the body. Ascension 1's faster and wider balls at Ascendant Gleam are read as the burst
 // Is cast
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/aino
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aino
 const ASCENSION_4 = 4;
 // Ascension 1 at Ascendant Gleam, as gcsim's aino/asc.go gives the balls: one every 0.7 seconds, each landing with a radius
 // Of 4 metres where the base ball's is 1
@@ -75,7 +75,7 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
     hitmarkSeconds: waterBallHit.hitmarkSeconds - burstFirstTickSeconds,
   };
   // A Water Ball is under the elemental burst's internal cooldown, as gcsim (MIT, main) aino/asc.go gives it
-  // https://github.com/genshinsim/gcsim/blob/main/internal/characters/aino/asc.go
+  // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/aino/asc.go
   const waterBall: KitHit = { ...waterBallBase, internalCooldownTag: InternalCooldownTag.ElementalBurst };
   const burstTickIntervalSeconds = readSeconds("waterBallInterval");
   const burstSeconds = readSeconds("burstDuration");

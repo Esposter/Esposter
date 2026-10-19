@@ -14,18 +14,18 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim (MIT, main) kirara/skill.go, Tail-Flicking Flying Kick's shield lasting 12 seconds
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/skill.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kirara/skill.go
 const SHIELD_SECONDS = 12;
 const SELF_INFUSION_SECONDS = 0.1;
 
 // Measured: gcsim (MIT, main) kirara/burst.go, Secret Art: Surprise Dispatch's six Cat Grass Cardamoms, the ones not
 // Detonated exploding one after another from their expiry
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/burst.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kirara/burst.go
 const CARDAMOM_COUNT = 6;
 
 // Pupillary Variance, Kirara's Ascension 4 passive: every 1,000 of her Max HP adds 0.4% DMG to her skill's hits and 0.3%
 // To her burst's, as gcsim (MIT, main) kirara/asc.go gives it
-// https://github.com/genshinsim/gcsim/blob/main/internal/characters/kirara/asc.go
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kirara/asc.go
 const ASCENSION_4 = 4;
 const PUPILLARY_VARIANCE_SKILL_DAMAGE_BONUS = 0.004;
 const PUPILLARY_VARIANCE_BURST_DAMAGE_BONUS = 0.003;

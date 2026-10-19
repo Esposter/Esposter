@@ -19,7 +19,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 
 // Soukai Kanka lasts six seconds from the cast, and a second cast restarts it, as gcsim (MIT) ayato/skill.go gives it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/ayato
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato
 const SOUKAI_KANKA_SECONDS = 6;
 // Constellation 6's two extra Shunsuiken strikes each deal 450% of his ATK, as gcsim (MIT) ayato/cons.go gives them
 const CONSTELLATION_6_HIT_MULTIPLIER = 4.5;

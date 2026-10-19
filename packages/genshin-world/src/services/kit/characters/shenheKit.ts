@@ -28,7 +28,7 @@ import { takeOne } from "@esposter/shared";
 // Measured: gcsim (MIT) shenhe/burst.go, Divine Maiden's Deliverance's field centred 2 metres ahead of the body, its DoT
 // Ticking two hits each tick, the second its tick's offset on from the first, and the field's Ascension 1 Cryo DMG Bonus
 // Of 15% for an active character inside it
-// https://github.com/genshinsim/gcsim/tree/main/internal/characters/shenhe
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/shenhe
 const BURST_OFFSET_METRES = 2;
 const BURST_ASCENSION = 1;
 const BURST_CRYO_DAMAGE_BONUS = 0.15;
