@@ -6,6 +6,7 @@ import type { ViewerCaption } from "#src/models/ViewerCaption";
 
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
+import { connectViewer } from "#src/services/connectViewer";
 import {
   MAX_VOLUME,
   MESSAGE_DISPLAY_HOOK_TIMEOUT_MS,
@@ -15,7 +16,6 @@ import {
   VOICE_IDLE_TIMEOUT_MS,
   VOICE_STATUS_SEPARATOR,
 } from "#src/services/constants";
-import { connectViewer } from "#src/services/connectViewer";
 import { createAudioPlayer } from "#src/services/createAudioPlayer";
 import { createClipDecoder } from "#src/services/createClipDecoder";
 import { createReadingPlayer } from "#src/services/createReadingPlayer";

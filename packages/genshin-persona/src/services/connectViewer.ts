@@ -24,7 +24,7 @@ const createViewerSocket: ViewerSocketFactory = (address) => new WebSocket(addre
 export const connectViewer = async (
   address: string,
   createSocket: ViewerSocketFactory = createViewerSocket,
-): Promise<ViewerLink | undefined> => {
+): Promise<undefined | ViewerLink> => {
   const socket = createSocket(address);
   const isOpened = await waitForOpen(socket);
   if (!isOpened) {

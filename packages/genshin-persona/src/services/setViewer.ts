@@ -4,9 +4,9 @@ import type { ViewerLink } from "#src/models/ViewerLink";
 import { VIEWER_DEFAULT_FRAME_COLOR, VIEWER_PROOF_DURATION_MS, VIEWER_TEXT_COLOR } from "#src/services/constants";
 
 export interface SetViewerDependencies {
-  connect: (address: string) => Promise<ViewerLink | undefined>;
+  connect: (address: string) => Promise<undefined | ViewerLink>;
   proofText: string;
-  readConfiguration: () => ViewerConfiguration | undefined;
+  readConfiguration: () => undefined | ViewerConfiguration;
   writeConfiguration: (configuration: ViewerConfiguration) => void;
 }
 

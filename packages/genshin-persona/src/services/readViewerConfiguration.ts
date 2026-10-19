@@ -10,7 +10,7 @@ import { readStateFile } from "#src/services/readStateFile";
 // The viewer the file names, or nothing when there is none: the gate every reading and every reaction passes, so a
 // Machine with no viewer runs the stock path unchanged. A field the file holds wrongly is no viewer rather than a
 // Guess at one
-export const readViewerConfiguration = (): ViewerConfiguration | undefined => {
+export const readViewerConfiguration = (): undefined | ViewerConfiguration => {
   const content = readStateFile(VIEWER_PATH);
   if (!content) return undefined;
 

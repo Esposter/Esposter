@@ -1,5 +1,5 @@
-import { HEX_RADIX, VIEWER_DEFAULT_FRAME_COLOR } from "#src/services/constants";
 import { CharacterColorMap } from "#src/services/CharacterColorMap";
+import { HEX_RADIX, VIEWER_DEFAULT_FRAME_COLOR } from "#src/services/constants";
 
 // The frame of a character's bubble: the character's own colour from the nameplate palette, else white
 export const getViewerFrameColor = (name: string): number => {

@@ -1,8 +1,8 @@
 import { deliverWarmRequest } from "#src/services/deliverWarmRequest";
 import { formatLoreChart } from "#src/services/formatLoreChart";
-import { getLoreRates } from "#src/services/getLoreRates";
 import { formatUpcomingBirthdays } from "#src/services/formatUpcomingBirthdays";
 import { getCard } from "#src/services/getCard";
+import { getLoreRates } from "#src/services/getLoreRates";
 import { getSessionStartOutput } from "#src/services/getSessionStartOutput";
 import { readInterfaceLanguage } from "#src/services/readInterfaceLanguage";
 import { readLocalization } from "#src/services/readLocalization";
