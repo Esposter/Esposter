@@ -7,6 +7,8 @@ import type { MaybeRefOrGetter } from "vue";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -15,7 +17,6 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
 import {
   getAcceptingSlotPointers,
-  getBlockLayerRows,
   getBlockNode,
   getFocusAfterRemoval,
   moveBlockNode,
@@ -30,15 +31,6 @@ const getNodeId = (document: BlockDocument | undefined, nodePointer: string | un
   const id = getBlockNode(document, nodePointer)?.props.id;
   return typeof id === "string" ? id : "";
 };
-
-// The pointer of the node a selection holds. A selection holds an id, since a move changes a node's pointer but not its id
-const getNodePointer = (document: BlockDocument, nodeId: string) =>
-  getBlockLayerRows(document, webpageRegistry)
-    .map(({ nodePointer }) => nodePointer)
-    .find((nodePointer) => getNodeId(document, nodePointer) === nodeId);
-
-// The pointer of the slot a node sits in, which is the node's own pointer without its last index
-const getNodeSlotPointer = (nodePointer: string) => toJsonPointer(parseJsonPointer(nodePointer).slice(0, -1));
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
