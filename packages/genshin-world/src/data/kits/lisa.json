@@ -1,6 +1,7 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
+  "burst.hits.0.poiseDamage": { "page": "Lightning Rose", "row": 1, "source": "Wiki" },
   "frames.lightningRose": { "file": "burst.go", "line": 192, "source": "Gcsim", "value": 1019 },
   "hits.discharges.length": { "cause": "Unsourced", "value": 30 },
   "hits.discharges.0.area": {
