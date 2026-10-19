@@ -25,8 +25,6 @@
   "hitFields.dawnPhoenixHit.poiseDamage": { "file": "burst.go", "line": 62, "source": "Gcsim", "value": 100 },
   "parameters.dawnTickMultiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 1639 } },
   "parameters.dawnExplosionMultiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 1639 } },
-  "plungeCollision.element": { "cause": "Unsourced", "value": "Fire" },
-  "plungeCollision.gauge": { "source": "Wiki" },
   "skillChain.followUps.length": { "cause": "Unsourced", "value": 2 },
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 38, "source": "Gcsim", "value": 38 },
   "skillChain.followUps.0.hits.length": { "cause": "Unsourced", "value": 1 },

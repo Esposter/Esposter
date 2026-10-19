@@ -110,7 +110,7 @@ describe(getWikiKitCandidates, () => {
           ...createStrikeEntries("normalAttacks.3.hits.3", 12.8),
           ...createStrikeEntries("normalAttacks.4.hits.0", 71.2),
           ...createStrikeEntries("chargedAttack.hits.0", 120, InternalCooldownTag.ChargedAttack),
-          ...createUntaggedEntries("plungeCollision", 25, 0),
+          ...createUntaggedEntries("plungeCollision", 25),
           ...createUntaggedEntries(`plunges.${KitPlunge.Low}.hits.0`, 100),
           ...createUntaggedEntries(`plunges.${KitPlunge.High}.hits.0`, 150),
           ...createStrikeEntries("burst.hits.0", 30, InternalCooldownTag.ElementalBurst),
@@ -124,6 +124,28 @@ describe(getWikiKitCandidates, () => {
       revisionId: 2066383,
       row: 2,
       source: KitSource.Wiki,
+    });
+  });
+
+  test("reads a catalyst's collision gauge, as the collision is elemental by its slot", () => {
+    expect.hasAssertions();
+
+    const nahida: WikiTalentPage = {
+      combatTalent: CombatTalent.NormalAttack,
+      properties: [{ gauge: 1, internalCooldownTag: "none", poise: 25, row: 1, title: "Plunging Attack Collision" }],
+      revisionId: 1,
+      title: "Nahida",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [nahida],
+      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      new Map(),
+    );
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({
+      "plungeCollision.gauge": [1],
+      "plungeCollision.internalCooldownTag": [undefined],
+      "plungeCollision.poiseDamage": [25],
     });
   });
 

@@ -65,8 +65,8 @@ export const getWikiKitCandidates = (
     }
     if (isElemental && gauge !== undefined) add("gauge", gauge);
   };
-  // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the
-  // Hit is elemental by its slot: a skill's or a burst's, a catalyst's strikes and the plunge's collision
+  // The wiki writes a gauge on every row, a physical strike's and collision's as well, so a row's gauge is read only
+  // Where the hit is elemental by its slot: a skill's or a burst's, and a catalyst's strikes, plunges and collision
   const isCatalyst = weaponType === WeaponType.Catalyst;
   for (const page of pages) {
     if (page.combatTalent === CombatTalent.NormalAttack)
@@ -85,8 +85,7 @@ export const getWikiKitCandidates = (
                 : HIT_LETTERS.indexOf(chargedGroups.letter)
               : Number(chargedGroups.number) - 1;
           addRow(`chargedAttack.hits.${hitIndex}`, property, page, isCatalyst);
-        } else if (plungePath !== undefined)
-          addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
+        } else if (plungePath !== undefined) addRow(plungePath, property, page, isCatalyst);
       }
     const talentHitLabels = [...hitLabelMap].filter(
       ([, { proudSkillGroupId }]) => proudSkillGroupId === talentGroupIdMap[page.combatTalent],
