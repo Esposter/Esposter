@@ -16,18 +16,14 @@
   },
   "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 9131 } },
-  "hits.surgingBlades.length": { "cause": "Unsourced", "value": 2 },
-  "hits.surgingBlades.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
-  },
-  "hits.surgingBlades.0.hitmarkFrames": { "cause": "Unsourced", "value": 75 },
+  "hits.surgingBlades.length": { "cause": "DiffersFromSource", "value": 2 },
+  "hits.surgingBlades.0.hitmarkFrames": { "cause": "DiffersFromSource", "value": 75 },
   "hits.surgingBlades.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9132 } },
   "hits.surgingBlades.1.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "hits.surgingBlades.1.hitmarkFrames": { "cause": "Unsourced", "value": 104 },
+  "hits.surgingBlades.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 104 },
   "hits.surgingBlades.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 9132 } },
   "hits.cannonFireSupportShots.length": { "cause": "Unsourced", "value": 17 },
   "hits.cannonFireSupportShots.0.area": {
@@ -35,7 +31,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
   },
   "hits.cannonFireSupportShots.0.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.cannonFireSupportShots.0.hitmarkFrames": { "cause": "Unsourced", "value": 163 },
+  "hits.cannonFireSupportShots.0.hitmarkFrames": { "cause": "Unclassified", "value": 163 },
   "hits.cannonFireSupportShots.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9139 } },
   "hits.cannonFireSupportShots.1.area": {
     "cause": "Unsourced",
@@ -197,11 +193,6 @@
   },
   "parameters.crystalShrapnelSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 9132 } },
   "skill.hits.length": { "source": "Gcsim" },
-  "skill.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.681081512988468 }
-  },
-  "skill.hits.0.multiplier": { "cause": "Unsourced", "value": 4.7376 },
   "skillCharges": { "cause": "Unsourced", "value": 2 },
   "skillHolds.length": { "cause": "Unsourced", "value": 1 },
   "skillHolds.0.action.animationFrames": { "cause": "Unsourced", "value": 72 },
