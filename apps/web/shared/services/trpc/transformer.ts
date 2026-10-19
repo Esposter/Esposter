@@ -6,6 +6,7 @@ for (const [name, entityClass] of Object.entries(JSONClassMap))
   SuperJSON.registerCustom(
     {
       deserialize: (data) => new entityClass(jsonDateParse(data as string)),
+      // eslint-disable-next-line no-restricted-syntax -- SuperJSON's custom transformer names this key
       isApplicable: (value): value is InstanceType<typeof entityClass> => value instanceof entityClass,
       serialize: (value) => JSON.stringify(value),
     },

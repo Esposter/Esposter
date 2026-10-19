@@ -135,6 +135,7 @@ declare namespace Desmos {
     /**
      * Whether or not the current viewport projection is uniform with respect to both axes (i.e., the mathematical aspect ratio is square).
      */
+    // eslint-disable-next-line no-restricted-syntax -- Desmos names this member
     isProjectionUniform(): boolean;
     /**
      * Convert math coordinates to pixel coordinates.
