@@ -22,7 +22,7 @@ export const createReadingPlayer = (
       await stock?.close();
     },
     play: async (audio, caption) => {
-      if (!caption || !viewer.isOpen()) return playOnStock(audio);
+      if (!caption || !viewer.checkIsOpen()) return playOnStock(audio);
       if (soundForm === ViewerSoundForm.WavPath) return viewer.play(audio, caption);
 
       const [, failure] = await Promise.all([viewer.show(caption), playOnStock(audio)]);

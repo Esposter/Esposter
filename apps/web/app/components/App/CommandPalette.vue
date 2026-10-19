@@ -137,12 +137,12 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
       >
         <template v-if="isScoped && scope" #prepend>
           <UiChip shrink-0>{{ scope.title }}</UiChip>
-          <UiSpinner v-if="scope.isPending?.()" />
+          <UiSpinner v-if="scope.checkIsPending?.()" />
         </template>
         <template #append>
           <!-- A scope's first read draws its rows' shape rather than saying it found nothing while the read is out -->
           <template v-if="foundCommands.length === 0">
-            <div v-if="isScoped && scope?.isPending?.()" aria-hidden="true" px-2 flex flex-col gap-1>
+            <div v-if="isScoped && scope?.checkIsPending?.()" aria-hidden="true" px-2 flex flex-col gap-1>
               <UiSkeleton v-for="index of 3" :key="index" h-8 />
             </div>
             <UiEmptyState
@@ -153,7 +153,7 @@ watch(isCommandPaletteOpen, (newIsCommandPaletteOpen) => {
           </template>
           <StyledWaypoint
             v-if="isScoped && scope?.readMore"
-            :is-active="scope.hasMore?.() ?? false"
+            :is-active="scope.checkHasMore?.() ?? false"
             @change="(onComplete: () => void) => scope?.readMore?.(onComplete)"
           >
             <UiSpinner px-3 />

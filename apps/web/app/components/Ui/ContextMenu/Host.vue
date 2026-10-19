@@ -72,6 +72,6 @@ watch(isOpen, (newIsOpen) => {
     ui-popover
     @keydown="(event) => onMenuKeydown(event)"
   >
-    <UiMenuItems :get-item-id :is-tabbable :items @select="(value, event) => choose(value, event)" />
+    <UiMenuItems :get-item-id :check-is-tabbable="isTabbable" :items @select="(value, event) => choose(value, event)" />
   </div>
 </template>

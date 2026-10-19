@@ -17,11 +17,11 @@ export const createFakeViewerLink = (isInitiallyOpen = true): FakeViewerLinkSink
   const listeners: (() => void)[] = [];
   const link: FakeViewerLink = {
     bubble: vi.fn<ViewerLink["bubble"]>(),
+    checkIsOpen: vi.fn<ViewerLink["checkIsOpen"]>(() => state.isOpen),
     close: vi.fn<ViewerLink["close"]>(() => {
       state.isOpen = false;
     }),
     expressionClear: vi.fn<ViewerLink["expressionClear"]>(),
-    isOpen: vi.fn<ViewerLink["isOpen"]>(() => state.isOpen),
     motion: vi.fn<ViewerLink["motion"]>(),
     onTap: vi.fn<ViewerLink["onTap"]>((listener) => {
       listeners.push(listener);

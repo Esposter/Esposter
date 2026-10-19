@@ -10,7 +10,7 @@ import { OperatorNode, TextureNode } from "three/webgpu";
 import { describe, expect, test } from "vitest";
 
 // Whether a node is the texture's sample, the texture read or one channel of it
-const isSample = (node: Node, texture: Texture): boolean =>
+const checkIsSample = (node: Node, texture: Texture): boolean =>
   (node instanceof TextureNode && node.value === texture) ||
   [...node.getChildren()].some((child) => child instanceof TextureNode && child.value === texture);
 
@@ -21,7 +21,7 @@ const getSampleOperators = (root: Node | null, texture: Texture): string[] => {
   const visit = (node: Node): void => {
     if (visited.has(node)) return;
     visited.add(node);
-    if (node instanceof OperatorNode && [node.aNode, node.bNode].some((operand) => isSample(operand, texture)))
+    if (node instanceof OperatorNode && [node.aNode, node.bNode].some((operand) => checkIsSample(operand, texture)))
       operators.add(node.op);
     for (const child of node.getChildren()) visit(child);
   };

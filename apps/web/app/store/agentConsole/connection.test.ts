@@ -84,6 +84,24 @@ const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAUL
 describe(useAgentConsoleConnectionStore, () => {
   const credential = crypto.randomUUID();
   const deviceId = crypto.randomUUID();
+  const sideChatSessionId = crypto.randomUUID();
+  const mainMessage = {
+    attachmentCount: 0,
+    createdAt: new Date(0),
+    id: crypto.randomUUID(),
+    messageUuid: crypto.randomUUID(),
+    parentToolUseId: "",
+    text: "earlier work",
+    type: AgentEventType.UserMessage,
+  } satisfies AgentEvent;
+  const sideAnswer = {
+    createdAt: new Date(0),
+    id: crypto.randomUUID(),
+    messageUuid: crypto.randomUUID(),
+    parentToolUseId: "",
+    text: "it renders the list",
+    type: AgentEventType.AssistantMessage,
+  };
 
   beforeEach(() => {
     FakeWebSocket.sockets = [];
@@ -107,6 +125,38 @@ describe(useAgentConsoleConnectionStore, () => {
     const socket = takeOne(FakeWebSocket.sockets);
     socket.dispatchEvent(new Event("open"));
     return { agentConsoleConnectionStore, connectionId, socket };
+  };
+
+  // One paired host with one session open in the console, which the side chat forks from
+  const openConsole = async () => {
+    const { privateKey, publicKey } = await createHostKeyPair();
+    const { agentConsoleConnectionStore, connectionId, socket } = connectPaired(publicKey);
+    await admit(socket, privateKey);
+    const agentConsoleSessionStore = useAgentConsoleSessionStore();
+    const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
+    const sessionId = crypto.randomUUID();
+    sessions.value = [
+      { connectionId, cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" },
+    ];
+    currentSessionId.value = sessionId;
+    agentConsoleSessionStore.storeEvents(sessionId, [mainMessage]);
+    return { agentConsoleConnectionStore, agentConsoleSessionStore, sessionId, socket };
+  };
+
+  // Opens the side chat with one question, which the host's fork answers, with one session open in the console
+  const askSideChat = async () => {
+    const { agentConsoleConnectionStore, agentConsoleSessionStore, sessionId, socket } = await openConsole();
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    agentConsoleSideChatStore.isSideChatOpen = true;
+    agentConsoleConnectionStore.askSideChat("what does this render?", []);
+    const forkCommand = readLastCommand(socket);
+    dispatchMessage(socket, {
+      commandId: forkCommand.id,
+      sessionId: sideChatSessionId,
+      type: ServerMessageType.SessionOpened,
+    });
+    dispatchMessage(socket, { events: [sideAnswer], sessionId: sideChatSessionId, type: ServerMessageType.Events });
+    return { agentConsoleConnectionStore, agentConsoleSessionStore, forkCommand, sessionId, socket };
   };
 
   test("refuses a linked address that is not a WebSocket URL instead of retrying it forever", () => {
@@ -330,132 +380,69 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(FakeWebSocket.sockets).toHaveLength(2);
   });
 
-  describe("the side chat", () => {
-    const sideChatSessionId = crypto.randomUUID();
-    const mainMessage = {
-      attachmentCount: 0,
-      createdAt: new Date(0),
-      id: crypto.randomUUID(),
-      messageUuid: crypto.randomUUID(),
-      parentToolUseId: "",
-      text: "earlier work",
-      type: AgentEventType.UserMessage,
-    } satisfies AgentEvent;
-    const sideAnswer = {
-      createdAt: new Date(0),
-      id: crypto.randomUUID(),
-      messageUuid: crypto.randomUUID(),
-      parentToolUseId: "",
-      text: "it renders the list",
-      type: AgentEventType.AssistantMessage,
-    };
+  test("the side chat leaves the main conversation unchanged by a question", async () => {
+    expect.hasAssertions();
 
-    // One paired host with one session open in the console, which the side chat forks from
-    const openConsole = async () => {
-      const { privateKey, publicKey } = await createHostKeyPair();
-      const { agentConsoleConnectionStore, connectionId, socket } = connectPaired(publicKey);
-      await admit(socket, privateKey);
-      const agentConsoleSessionStore = useAgentConsoleSessionStore();
-      const { currentSessionId, sessions } = storeToRefs(agentConsoleSessionStore);
-      const sessionId = crypto.randomUUID();
-      sessions.value = [
-        { connectionId, cwd: "", id: sessionId, lastActivityAt: new Date(0), state: SessionState.Idle, title: "" },
-      ];
-      currentSessionId.value = sessionId;
-      agentConsoleSessionStore.storeEvents(sessionId, [mainMessage]);
-      return { agentConsoleConnectionStore, agentConsoleSessionStore, sessionId, socket };
-    };
+    const { agentConsoleSessionStore, forkCommand, sessionId, socket } = await askSideChat();
+    const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
 
-    // Opens the side chat with one question, which the host's fork answers, with one session open in the console
-    const askSideChat = async () => {
-      const { agentConsoleConnectionStore, agentConsoleSessionStore, sessionId, socket } = await openConsole();
-      const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
-      agentConsoleSideChatStore.isSideChatOpen = true;
-      agentConsoleConnectionStore.askSideChat("what does this render?", []);
-      const forkCommand = readLastCommand(socket);
-      dispatchMessage(socket, {
-        commandId: forkCommand.id,
-        sessionId: sideChatSessionId,
-        type: ServerMessageType.SessionOpened,
-      });
-      dispatchMessage(socket, { events: [sideAnswer], sessionId: sideChatSessionId, type: ServerMessageType.Events });
-      return { agentConsoleConnectionStore, agentConsoleSessionStore, forkCommand, sessionId, socket };
-    };
+    const { id: forkCommandId, ...forkCommandRest } = forkCommand;
+    const { id: promptCommandId, ...promptCommand } = readLastCommand(socket);
 
-    test("a side chat question leaves the main conversation unchanged", async () => {
-      expect.hasAssertions();
-
-      const { agentConsoleSessionStore, forkCommand, sessionId, socket } = await askSideChat();
-      const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
-
-      const { id: forkCommandId, ...forkCommandRest } = forkCommand;
-      const { id: promptCommandId, ...promptCommand } = readLastCommand(socket);
-
-      expect(forkCommandRest).toStrictEqual({ isSideChat: true, messageUuid: "", sessionId, type: CommandType.Fork });
-      expect(forkCommandId).toBeTypeOf("string");
-      expect(promptCommand).toStrictEqual({
-        attachments: [],
-        sessionId: sideChatSessionId,
-        text: "what does this render?",
-        type: CommandType.Prompt,
-      });
-      expect(promptCommandId).toBeTypeOf("string");
-      expect(conversationEvents.value).toStrictEqual([mainMessage]);
-      expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([
-        sideAnswer,
-      ]);
+    expect(forkCommandRest).toStrictEqual({ isSideChat: true, messageUuid: "", sessionId, type: CommandType.Fork });
+    expect(forkCommandId).toBeTypeOf("string");
+    expect(promptCommand).toStrictEqual({
+      attachments: [],
+      sessionId: sideChatSessionId,
+      text: "what does this render?",
+      type: CommandType.Prompt,
     });
+    expect(promptCommandId).toBeTypeOf("string");
+    expect(conversationEvents.value).toStrictEqual([mainMessage]);
+    expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([sideAnswer]);
+  });
 
-    test("closing the drawer discards its answers", async () => {
-      expect.hasAssertions();
+  test("the side chat discards its answers when the drawer closes", async () => {
+    expect.hasAssertions();
 
-      const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await askSideChat();
-      const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
-      const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
-      agentConsoleConnectionStore.closeSideChat();
+    const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await askSideChat();
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
+    agentConsoleConnectionStore.closeSideChat();
 
-      const { id: closeCommandId, ...closeCommand } = readLastCommand(socket);
+    const { id: closeCommandId, ...closeCommand } = readLastCommand(socket);
 
-      expect(closeCommand).toStrictEqual({ sessionId: sideChatSessionId, type: CommandType.CloseSession });
-      expect(closeCommandId).toBeTypeOf("string");
-      expect(agentConsoleSideChatStore.isSideChatOpen).toBe(false);
-      expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([]);
-      expect(conversationEvents.value).toStrictEqual([mainMessage]);
+    expect(closeCommand).toStrictEqual({ sessionId: sideChatSessionId, type: CommandType.CloseSession });
+    expect(closeCommandId).toBeTypeOf("string");
+    expect(agentConsoleSideChatStore.isSideChatOpen).toBe(false);
+    expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([]);
+    expect(conversationEvents.value).toStrictEqual([mainMessage]);
+  });
+
+  test("the side chat keeps a newer question when an earlier fork fails after it was held", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, socket } = await openConsole();
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    agentConsoleSideChatStore.isSideChatOpen = true;
+    agentConsoleConnectionStore.askSideChat("first question", []);
+    const staleFork = readLastCommand(socket);
+    agentConsoleConnectionStore.closeSideChat();
+    agentConsoleSideChatStore.isSideChatOpen = true;
+    agentConsoleConnectionStore.askSideChat("second question", []);
+    const newFork = readLastCommand(socket);
+    dispatchMessage(socket, { commandId: staleFork.id, message: "fork failed", type: ServerMessageType.CommandError });
+
+    expect(agentConsoleSideChatStore.pendingQuestion).toStrictEqual({ attachments: [], text: "second question" });
+    const newSessionId = crypto.randomUUID();
+    dispatchMessage(socket, { commandId: newFork.id, sessionId: newSessionId, type: ServerMessageType.SessionOpened });
+    const { id, ...prompt } = readLastCommand(socket);
+    expect(prompt).toStrictEqual({
+      attachments: [],
+      sessionId: newSessionId,
+      text: "second question",
+      type: CommandType.Prompt,
     });
-
-    test("a fork that fails after a newer question was held keeps that question", async () => {
-      expect.hasAssertions();
-
-      const { agentConsoleConnectionStore, socket } = await openConsole();
-      const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
-      agentConsoleSideChatStore.isSideChatOpen = true;
-      agentConsoleConnectionStore.askSideChat("first question", []);
-      const staleFork = readLastCommand(socket);
-      agentConsoleConnectionStore.closeSideChat();
-      agentConsoleSideChatStore.isSideChatOpen = true;
-      agentConsoleConnectionStore.askSideChat("second question", []);
-      const newFork = readLastCommand(socket);
-      dispatchMessage(socket, {
-        commandId: staleFork.id,
-        message: "fork failed",
-        type: ServerMessageType.CommandError,
-      });
-
-      expect(agentConsoleSideChatStore.pendingQuestion).toStrictEqual({ attachments: [], text: "second question" });
-      const newSessionId = crypto.randomUUID();
-      dispatchMessage(socket, {
-        commandId: newFork.id,
-        sessionId: newSessionId,
-        type: ServerMessageType.SessionOpened,
-      });
-      const { id, ...prompt } = readLastCommand(socket);
-      expect(prompt).toStrictEqual({
-        attachments: [],
-        sessionId: newSessionId,
-        text: "second question",
-        type: CommandType.Prompt,
-      });
-      expect(id).toBeTypeOf("string");
-    });
+    expect(id).toBeTypeOf("string");
   });
 });

@@ -24,7 +24,7 @@ export const createViewerOpener = ({ connect, createPlayer, readConfiguration }:
 
       const isConnectedToConfiguration =
         connected?.address === configuration.address && connected.modelId === configuration.modelId;
-      if (player?.isOpen() && isConnectedToConfiguration) return player;
+      if (player?.checkIsOpen() && isConnectedToConfiguration) return player;
 
       player?.dispose();
       player = undefined;

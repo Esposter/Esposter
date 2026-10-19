@@ -255,14 +255,14 @@ for (const [workerIndex, worker] of workers.entries()) {
 }
 // Built once, since the draws are resolved every frame
 const checkTileLoaded = (key: number): boolean => tileStreamer.has(key);
-const checkIsTileSettled = (key: number): boolean => tileStreamer.isSettled(key);
+const checkIsTileSettled = (key: number): boolean => tileStreamer.checkIsSettled(key);
 const checkIsSelectionSettled = (
   { count, keys }: TerrainSelection,
   checkIsSettled: (key: number) => boolean,
 ): boolean => keys.subarray(0, count).every((key) => checkIsSettled(key));
 // The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
 const checkIsFirstFrameSettled = (key: number): boolean =>
-  getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.isSettled(key);
+  getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.checkIsSettled(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);

@@ -7,6 +7,7 @@ const { hasMore, items, searchQuery } = storeToRefs(roomSearchStore);
 const { readMoreSearchedItems } = roomSearchStore;
 
 useCommandScope({
+  checkHasMore: () => hasMore.value,
   commands: () =>
     items.value.map(({ displayName, id, image }) => ({
       group: "Rooms",
@@ -15,7 +16,6 @@ useCommandScope({
       title: displayName,
       to: RoutePath.Messages(id),
     })),
-  hasMore: () => hasMore.value,
   placeholder: "Where would you like to go?",
   query: searchQuery,
   readMore: readMoreSearchedItems,
