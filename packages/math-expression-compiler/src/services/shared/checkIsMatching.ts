@@ -1,6 +1,6 @@
+import type { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 import type { MathExpressionSignature } from "#src/models/function/MathExpressionSignature";
 
-import type { MathExpressionParameterType } from "#src/models/function/MathExpressionParameterType";
 import { checkIsMatchingKind } from "#src/services/shared/checkIsMatchingKind";
 import { getParameterType } from "#src/services/shared/getParameterType";
 

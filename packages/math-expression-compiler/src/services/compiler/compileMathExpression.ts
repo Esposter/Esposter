@@ -1,6 +1,6 @@
 import type { MathExpressionCompileContext } from "#src/models/compiler/MathExpressionCompileContext";
-import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionOuterBinding } from "#src/models/compiler/MathExpressionOuterBinding";
+import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { collectMathExpressionAssignedNames } from "#src/services/compiler/collectMathExpressionAssignedNames";
 import { compileMathExpressionNode } from "#src/services/compiler/compileMathExpressionNode";

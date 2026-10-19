@@ -1,8 +1,8 @@
 import type { MathExpressionCompileContext } from "#src/models/compiler/MathExpressionCompileContext";
 import type { MathExpressionCompiled } from "#src/models/compiler/MathExpressionCompiled";
+import type { MathExpressionValue } from "#src/models/function/MathExpressionValue";
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
-import type { MathExpressionValue } from "#src/models/function/MathExpressionValue";
 
 import { compileArgument } from "#src/services/compiler/compileArgument";
 import { getMathExpressionParameterType } from "#src/services/shared/getMathExpressionParameterType";

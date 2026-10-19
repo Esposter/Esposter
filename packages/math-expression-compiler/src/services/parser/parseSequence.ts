@@ -1,8 +1,8 @@
-import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
+import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
-import { failMathExpression } from "#src/services/parser/failMathExpression";
 import { checkIsToken } from "#src/services/parser/checkIsToken";
+import { failMathExpression } from "#src/services/parser/failMathExpression";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 
 // Parses the comma-separated items up to the closing bracket, which the caller then takes

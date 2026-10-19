@@ -1,5 +1,5 @@
-import type { MathExpressionError } from "#src/models/shared/MathExpressionError";
 import type { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
+import type { MathExpressionError } from "#src/models/shared/MathExpressionError";
 
 // The tokenizer's and parser's cursor over a formula. The first error met is kept in `error`, and every reader stops
 // At it, so a parse returns the error rather than throwing one

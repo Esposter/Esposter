@@ -1,6 +1,6 @@
+import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 import type { MathExpressionError } from "#src/models/shared/MathExpressionError";
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
-import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 import type { Result } from "neverthrow";
 
 import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGrammarRule";
