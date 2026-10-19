@@ -9,6 +9,7 @@ import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { applyElement } from "#src/services/combat/aura/applyElement";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -18,11 +19,10 @@ import {
   JAHODA_CHARACTER_ID,
   PURSUIT_FIELD_ID,
 } from "#src/services/kit/characters/jahodaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsStriking } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -332,10 +332,7 @@ describe(createJahodaKitBehaviour, () => {
     // The enemy outlasts the Meowballs, so each one that falls reaches it
     for (const enemy of context.enemyMap.values()) enemy.health = 1_000_000_000;
     const energyBefore = getPartyMember(context.party, JAHODA_CHARACTER_ID).energy;
-    for (let frame = 0; frame < 1300; frame++) {
-      stepKitEffects(1 / 60, context);
-      if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
-    }
+    stepKitSecondsStriking(context, 1300 * FIXED_STEP_SECONDS);
     // Five Meowballs fall 3.5 seconds or more after the last that gave energy: those on the 129th, 361st, 593rd, 825th
     // And 1057th frames
     expect(getPartyMember(context.party, JAHODA_CHARACTER_ID).energy - energyBefore).toBe(10);

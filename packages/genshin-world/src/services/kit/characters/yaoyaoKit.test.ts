@@ -14,11 +14,10 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsStriking } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
-import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -37,14 +36,6 @@ const createEnemyAt = (x: number, z: number) => ({
 // The team stepped the given frames, one fixed step each, as the world's step runs
 const stepFrames = (context: KitContext, frames: number): void => {
   for (let frame = 0; frame < frames; frame++) stepKitEffects(FIXED_STEP_SECONDS, context);
-};
-
-// The team stepped the given frames, each hit that lands struck as the world's step strikes it
-const stepFramesStriking = (context: KitContext, frames: number): void => {
-  for (let frame = 0; frame < frames; frame++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
-  }
 };
 
 // The Yuegui her skill spawns: the field whose throws repeat on an interval
@@ -387,9 +378,9 @@ describe(createYaoyaoKitBehaviour, () => {
 
     // The first spawn's radish is thrown at its first throw and strikes at its hitmark after the throw
     const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
-    stepFramesStriking(context, firstStrikeFrames - 1);
+    stepKitSecondsStriking(context, (firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
-    stepFramesStriking(context, 1);
+    stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
   });
 
@@ -410,7 +401,10 @@ describe(createYaoyaoKitBehaviour, () => {
 
     // The skill's first radish strikes at its spawn, its first throw and its hitmark after the cast, the burst already
     // Ended
-    stepFramesStriking(context, YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES);
+    stepKitSecondsStriking(
+      context,
+      (YUEGUI_SPAWN_FRAMES + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES) * FIXED_STEP_SECONDS,
+    );
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
   });
 
@@ -433,13 +427,13 @@ describe(createYaoyaoKitBehaviour, () => {
     // Past the cooldown
     const firstStrikeFrames = readJumpingYueguiSpawnFrame(0) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
     const secondStrikeFrames = readJumpingYueguiSpawnFrame(1) + YUEGUI_FIRST_THROW_FRAMES + RADISH_HITMARK_FRAMES;
-    stepFramesStriking(context, firstStrikeFrames - 1);
+    stepKitSecondsStriking(context, (firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(0);
-    stepFramesStriking(context, 1);
+    stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
-    stepFramesStriking(context, secondStrikeFrames - firstStrikeFrames - 1);
+    stepKitSecondsStriking(context, (secondStrikeFrames - firstStrikeFrames - 1) * FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(3);
-    stepFramesStriking(context, 1);
+    stepKitSecondsStriking(context, FIXED_STEP_SECONDS);
     expect(getPartyMember(context.party, YAOYAO_CHARACTER_ID).energy).toBe(6);
   });
 

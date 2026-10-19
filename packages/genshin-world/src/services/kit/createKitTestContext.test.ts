@@ -11,6 +11,7 @@ import { createKitBody } from "#src/services/kit/createKitBody";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { stepKit } from "#src/services/kit/stepKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
@@ -86,6 +87,15 @@ export const stepKitSecondsSendingExpiries = (context: KitContext, seconds: numb
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
     stepKitEffects(FIXED_STEP_SECONDS, context);
     for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+  }
+};
+
+// The given seconds stepped in stepActiveKit's order: each step's effects, then its expired effects, then its strikes
+export const stepKitSecondsStriking = (context: KitContext, seconds: number) => {
+  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
+    stepKitEffects(FIXED_STEP_SECONDS, context);
+    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
   }
 };
 

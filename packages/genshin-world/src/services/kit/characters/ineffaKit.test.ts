@@ -18,15 +18,19 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createIneffaKitBehaviour, INEFFA_CHARACTER_ID } from "#src/services/kit/characters/ineffaKit";
-import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import {
+  castKitAction,
+  createKitTestContext,
+  stepKitSecondsStriking,
+} from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -123,11 +127,7 @@ const readEnergyAfterSkill = (random: () => number, frames: number): number => {
     party,
     random,
   });
-  for (let frame = 0; frame < frames; frame++) {
-    stepKitEffects(1 / 60, context);
-    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
-    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-  }
+  stepKitSecondsStriking(context, frames * FIXED_STEP_SECONDS);
   return party.characterIdMemberMap.get(INEFFA_CHARACTER_ID)?.energy ?? 0;
 };
 
