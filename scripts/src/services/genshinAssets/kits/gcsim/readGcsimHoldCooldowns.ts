@@ -11,6 +11,8 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
+import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
@@ -42,12 +44,13 @@ const readSwitchCooldowns = (
   name: string,
   file: string,
   resolveName: (name: string) => GoValue | undefined,
+  functionStart: number,
 ): GcsimHoldCooldown[] => {
-  // The search stops at the call's own function, so a switch in an earlier function gives none
+  // The search stops at the call's own function's body, so a switch in an earlier function gives none. A closure runs
+  // In its enclosing function, so the search passes over the closure's `func` to the switch that sets the local
   let switchIndex = callIndex;
-  while (switchIndex >= 0 && tokens[switchIndex]?.text !== "switch" && tokens[switchIndex]?.text !== "func")
-    switchIndex--;
-  if (switchIndex < 0 || tokens[switchIndex]?.text === "func") return [];
+  while (switchIndex > functionStart && tokens[switchIndex]?.text !== "switch") switchIndex--;
+  if (switchIndex <= functionStart) return [];
   const openIndex = tokens.findIndex((token, index) => index > switchIndex && checkIsGoPunctuation(token, "{"));
   const closeIndex = findClosing(tokens, openIndex, "{", "}") ?? tokens.length;
   const caseIndices = tokens.flatMap((token, index) =>
@@ -84,12 +87,14 @@ export const readGcsimHoldCooldowns = (
   const resolveName = (name: string) => constantMap.get(name)?.value;
   for (const { path: file, source } of sources) {
     const tokens = tokenizeGo(source);
+    const namedFunctions = readGoNamedFunctions(tokens);
     for (const [index, token] of tokens.entries()) {
       if (!COOLDOWN_CALL_NAMES.has(token.text) || !checkIsGoPunctuation(tokens[index + 1], "(")) continue;
       const call = parseGoExpression(tokens, index).expression;
       const cooldownExpression = call.kind === GoExpressionKind.Call ? call.parameters[1] : undefined;
+      const functionStart = readGoEnclosingFunction(namedFunctions, index)?.bodyStart ?? -1;
       for (const name of cooldownExpression === undefined ? [] : readGoNames(cooldownExpression)) {
-        const cooldowns = readSwitchCooldowns(tokens, index, name, file, resolveName);
+        const cooldowns = readSwitchCooldowns(tokens, index, name, file, resolveName, functionStart);
         if (cooldowns.length > 0) return cooldowns;
       }
     }

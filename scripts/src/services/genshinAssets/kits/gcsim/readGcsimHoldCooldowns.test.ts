@@ -74,4 +74,19 @@ describe(readGcsimHoldCooldowns, () => {
 
     expect(readGcsimHoldCooldowns([{ path: "skill.go", source }], constantMap)).toStrictEqual([]);
   });
+
+  test("reads the cooldown a closure's cooldown call passes from the switch in the function the closure is in", () => {
+    expect.hasAssertions();
+
+    const constantMap = new Map<string, GoConstant>();
+    const closureSource = SKILL_SOURCE.replace(
+      "c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
+      "c.Core.Tasks.Add(func() {\n\t\tc.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)\n\t}, 1)",
+    );
+
+    expect(readGcsimHoldCooldowns([{ path: "skill.go", source: closureSource }], constantMap)).toStrictEqual([
+      { file: "skill.go", frames: 450, line: 8 },
+      { file: "skill.go", frames: 600, line: 12 },
+    ]);
+  });
 });
