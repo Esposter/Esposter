@@ -1,7 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -16,10 +15,11 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -29,12 +29,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createVourukashasGlowSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wearer = createSetWearer(KIT);
-  const createStrike = (attackTag: AttackTag, combatant: Combatant = wearer): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant,
-    hit: KIT.plungeCollision,
-  });
   // The wearer's share of DMG a strike of the given kind gets, as its kit's module and the effects stand
   const getDamageBonus = (
     module: ReturnType<typeof createVourukashasGlowSetModule>,
@@ -43,7 +37,7 @@ describe(createVourukashasGlowSetModule, () => {
     combatant: Combatant = wearer,
   ) =>
     module.getStrikeDamageBonus?.(
-      createStrike(attackTag, combatant),
+      createKitStrike(combatant, attackTag),
       enemy,
       createParty([TRAVELER_CHARACTER_ID]),
       kitEffectState.effects,

@@ -17,7 +17,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { createParty } from "#src/services/party/createParty";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

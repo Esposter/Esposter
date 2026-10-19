@@ -8,11 +8,12 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createDaylightsAuguryPassiveModule } from "#src/services/weapon/passives/createDaylightsAuguryPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -34,12 +35,6 @@ describe(createDaylightsAuguryPassiveModule, () => {
     kind: KitEventKind.DamageTaken as const,
     striker: wielder,
   });
-  const createStrike = (attackTag: AttackTag) => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("an Elemental Skill and an Elemental Burst the wielder deals are raised by the rank's percentage, and a normal attack is not", () => {
     expect.hasAssertions();
@@ -47,13 +42,28 @@ describe(createDaylightsAuguryPassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
 
     expect(
-      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
+      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ElementalSkill),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0.15);
     expect(
-      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, []),
+      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ElementalBurst),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0.15);
     expect(
-      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      daylightsAuguryPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.NormalAttack),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0);
   });
 

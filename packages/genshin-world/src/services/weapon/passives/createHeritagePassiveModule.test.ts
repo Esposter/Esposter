@@ -3,26 +3,18 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const getAttackBuffs = (kitEffectState: KitEffectState): KitBuff[] =>
   kitEffectState.effects.filter(
     (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent,
   );
-
-const createCharacterSwapped = () => ({
-  characterId: OTHER_CHARACTER_ID,
-  kind: KitEventKind.CharacterSwapped as const,
-  previousCharacterId: TRAVELER_CHARACTER_ID,
-});
 
 describe(createHeritagePassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
@@ -34,7 +26,11 @@ describe(createHeritagePassiveModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wielder, { kitEffectState });
-    heritagePassiveModule.onKitEvent?.(createCharacterSwapped(), context, wielder);
+    heritagePassiveModule.onKitEvent?.(
+      createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID),
+      context,
+      wielder,
+    );
 
     expect(
       getAttackBuffs(kitEffectState).map(({ amount, characterId, secondsRemaining }) => ({
@@ -50,8 +46,16 @@ describe(createHeritagePassiveModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wielder, { kitEffectState });
-    heritagePassiveModule.onKitEvent?.(createCharacterSwapped(), context, wielder);
-    heritagePassiveModule.onKitEvent?.(createCharacterSwapped(), context, wielder);
+    heritagePassiveModule.onKitEvent?.(
+      createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID),
+      context,
+      wielder,
+    );
+    heritagePassiveModule.onKitEvent?.(
+      createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID),
+      context,
+      wielder,
+    );
 
     expect(getAttackBuffs(kitEffectState)).toHaveLength(1);
   });

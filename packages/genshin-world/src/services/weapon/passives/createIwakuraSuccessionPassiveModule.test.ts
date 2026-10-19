@@ -7,7 +7,7 @@ import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createIwakuraSuccessionPassiveModule } from "#src/services/weapon/passives/createIwakuraSuccessionPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createIwakuraSuccessionPassiveModule, () => {

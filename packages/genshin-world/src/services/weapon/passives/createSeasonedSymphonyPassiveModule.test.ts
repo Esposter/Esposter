@@ -8,8 +8,8 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const readAttackPercent = (context: KitContext, combatant: Combatant): number =>

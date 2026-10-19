@@ -1,5 +1,4 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -13,6 +12,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -26,12 +26,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createShimenawasReminiscenceSetModule, () => {
   const wearer = createSetWearer(KIT);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  });
 
   test("spends 15 Energy on casting an Elemental Skill and raises the DMG of its wearer's Normal, Charged and Plunging Attacks by 50% for 10 seconds", () => {
     expect.hasAssertions();
@@ -48,18 +42,18 @@ describe(createShimenawasReminiscenceSetModule, () => {
     onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wearer);
 
     expect(partyMember.energy).toBe(0);
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, kitEffectState.effects)).toBe(
-      0.5,
-    );
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects)).toBe(
-      0.5,
-    );
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.PlungingAttack), enemy, party, kitEffectState.effects)).toBe(
-      0.5,
-    );
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, kitEffectState.effects)).toBe(
-      0,
-    );
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.NormalAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0.5);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ChargedAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0.5);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.PlungingAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0.5);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ElementalSkill), enemy, party, kitEffectState.effects),
+    ).toBe(0);
   });
 
   test("starts nothing and spends nothing on a skill cast with less than 15 Energy", () => {
@@ -77,7 +71,9 @@ describe(createShimenawasReminiscenceSetModule, () => {
     onKitEvent?.({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed }, context, wearer);
 
     expect(partyMember.energy).toBe(14);
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, kitEffectState.effects)).toBe(0);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.NormalAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0);
   });
 
   test("does not trigger again while its 10 seconds run", () => {

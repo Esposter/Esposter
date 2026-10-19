@@ -10,6 +10,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
@@ -51,12 +52,6 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     level: 1,
   };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const createStrike = (attackTag: AttackTag) => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a Charged Attack the wielder deals is raised by the rank's percentage and a normal attack is not", () => {
     expect.hasAssertions();
@@ -64,10 +59,20 @@ describe(createTheFirstGreatMagicPassiveModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID]);
 
     expect(
-      theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
+      theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ChargedAttack),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0.5);
     expect(
-      theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      theFirstGreatMagicPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.NormalAttack),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0);
   });
 

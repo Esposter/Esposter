@@ -1,8 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createProtectorsVirtuePassiveModule } from "#src/services/weapon/passives/createProtectorsVirtuePassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createProtectorsVirtuePassiveModule, () => {

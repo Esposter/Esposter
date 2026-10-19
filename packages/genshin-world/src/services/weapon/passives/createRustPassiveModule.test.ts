@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -7,36 +6,29 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createParty } from "#src/services/party/createParty";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createRustPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   // Synthetic params, not the weapon's row: half more normal attack DMG and a fifth less charged attack DMG
   const rustPassiveModule = createRustPassiveModule([0.5, 0.2]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a normal attack is raised by the rank's percentage and a charged attack is lowered by the second", () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
-      rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      rustPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
     ).toBeCloseTo(0.5);
     expect(
-      rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
+      rustPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ChargedAttack), enemy, party, []),
     ).toBeCloseTo(-0.2);
   });
 
@@ -44,6 +36,8 @@ describe(createRustPassiveModule, () => {
     expect.hasAssertions();
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
-    expect(rustPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
+    expect(
+      rustPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ElementalSkill), enemy, party, []),
+    ).toBe(0);
   });
 });

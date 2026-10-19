@@ -1,7 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -11,11 +10,12 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -34,12 +34,6 @@ describe(createDiffusingBoundaryPassiveModule, () => {
   };
   const deployed = (isOnField: boolean): DeployedCombatant[] => [createDeployedCombatant(wielder, { isOnField })];
   const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   // Diffusing Boundary at its first rank: while the wielder is protected by a shield, its Normal and Charged Attacks
   // Deal 20% more DMG and take 8% more CRIT Rate
@@ -70,9 +64,9 @@ describe(createDiffusingBoundaryPassiveModule, () => {
       const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
       party.activeIndex = activeIndex;
 
-      expect(passiveModule.getStrikeCriticalRateBonus?.(createStrike(attackTag), enemy, party, effects)).toBe(
-        criticalRateBonus,
-      );
+      expect(
+        passiveModule.getStrikeCriticalRateBonus?.(createKitStrike(wielder, attackTag), enemy, party, effects),
+      ).toBe(criticalRateBonus);
     },
   );
 });

@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,11 +7,12 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createHamayumiPassiveModule } from "#src/services/weapon/passives/createHamayumiPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,12 +28,6 @@ describe(createHamayumiPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // Hamayumi with synthetic params: its normal and charged attack DMG bonuses, and the full Energy increase of each
   const hamayumiPassiveModule = createHamayumiPassiveModule([0.1, 0.2, 0.5]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a normal and a charged attack each raise the bonus of their own kind by the rank's amount", () => {
     expect.hasAssertions();
@@ -49,9 +43,9 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
-      0.05,
-    );
+    expect(
+      hamayumiPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
+    ).toBe(0.05);
   });
 
   test("a charged attack's hit gains half the charged attack bonus again at full Energy", () => {
@@ -59,9 +53,9 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, [])).toBe(
-      0.1,
-    );
+    expect(
+      hamayumiPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ChargedAttack), enemy, party, []),
+    ).toBe(0.1);
   });
 
   test("a hit short of full Energy gains nothing", () => {
@@ -69,9 +63,9 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost - 1);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(
-      0,
-    );
+    expect(
+      hamayumiPassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
+    ).toBe(0);
   });
 
   test("an elemental skill's hit gains nothing even at full Energy", () => {
@@ -79,8 +73,13 @@ describe(createHamayumiPassiveModule, () => {
 
     const party = createPartyWithEnergy(TRAVELER_KIT.burstEnergyCost);
 
-    expect(hamayumiPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(
-      0,
-    );
+    expect(
+      hamayumiPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ElementalSkill),
+        enemy,
+        party,
+        [],
+      ),
+    ).toBe(0);
   });
 });
