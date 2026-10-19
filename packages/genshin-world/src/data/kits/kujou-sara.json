@@ -1,6 +1,5 @@
 {
   "burst.hits.length": { "source": "Gcsim" },
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
   "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 20 },
   "hits.stormclusterTicks.length": { "file": "burst.go", "line": 86, "source": "Gcsim", "value": 6 },
@@ -8,51 +7,44 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.6 }
   },
-  "hits.stormclusterTicks.0.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.0.hitmarkFrames": { "file": "burst.go", "line": 17, "source": "Gcsim", "value": 100 },
-  "hits.stormclusterTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.1.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.95 }
   },
-  "hits.stormclusterTicks.1.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.1.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 118 },
-  "hits.stormclusterTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.2.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 24.3 }
   },
-  "hits.stormclusterTicks.2.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.2.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 136 },
-  "hits.stormclusterTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.3.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 25.65 }
   },
-  "hits.stormclusterTicks.3.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.3.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 154 },
-  "hits.stormclusterTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.4.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 27 }
   },
-  "hits.stormclusterTicks.4.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.4.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 172 },
-  "hits.stormclusterTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.5.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 28.35 }
   },
-  "hits.stormclusterTicks.5.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.stormclusterTicks.5.hitmarkFrames": { "file": "burst.go", "line": 91, "source": "Gcsim", "value": 190 },
-  "hits.stormclusterTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5639 } },
+  "hits.stormclusterTicks.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.ambush.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }
   },
   "hits.ambush.hitmarkFrames": { "file": "aimed.go", "line": 138, "source": "Gcsim", "value": 150 },
   "hits.ambush.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5632 } },
-  "hits.ambush.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.darkWingsAmbush.area": {
     "file": "skill.go",
     "line": 54,
@@ -73,6 +65,5 @@
   "parameters.atkBonusSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5632 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 10 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "hits.ambush.element": { "cause": "Unsourced", "value": "Electric" },
-  "hits.ambush.gauge": { "cause": "Unsourced", "value": 1 }
+  "hits.ambush.element": { "cause": "Unsourced", "value": "Electric" }
 }
