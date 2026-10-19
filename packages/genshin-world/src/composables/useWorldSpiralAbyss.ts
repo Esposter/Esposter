@@ -25,6 +25,7 @@ import {
   ABYSS_ENTRANCE_POSITION,
 } from "#src/services/spiralAbyss/constants";
 import { createAbyssArena } from "#src/services/spiralAbyss/createAbyssArena";
+import { createInitialAbyssBlessingState } from "#src/services/spiralAbyss/createInitialAbyssBlessingState";
 import { defeatAbyssArenaEnemy } from "#src/services/spiralAbyss/defeatAbyssArenaEnemy";
 import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
 import { getAbyssBenedictionAttributeLines } from "#src/services/spiralAbyss/getAbyssBenedictionAttributeLines";
@@ -48,9 +49,6 @@ interface AbyssPendingChoice {
   choices: AbyssBenedictionChoice[];
   floor: AbyssFloor;
 }
-
-// The blessing state a chamber starts with, before any reaction in it has been answered
-const INITIAL_ABYSS_BLESSING_STATE: AbyssBlessingState = { blessingReadySecondsMap: new Map(), shockwavePositions: [] };
 
 // Reads one piece of the Spiral Abyss's game data once, and names a failed read in the console
 const readAbyssData = <T>(read: () => Promise<T>, onRead: (value: T) => void) => {
@@ -106,7 +104,7 @@ export const useWorldSpiralAbyss = ({
   const abyssProgressMap = shallowRef<ReadonlyMap<string, AbyssProgress>>(new Map(savedProgressMap));
   // The Moon Spire period the running chamber is fought in, none for a Corridor chamber, and what the blessing has done in its arena
   const abyssChamberPeriod = shallowRef<AbyssPeriod>();
-  const abyssBlessingState = shallowRef<AbyssBlessingState>(INITIAL_ABYSS_BLESSING_STATE);
+  const abyssBlessingState = shallowRef<AbyssBlessingState>(createInitialAbyssBlessingState());
   // The health and energy the last clear leaves the party with, which the next chamber starts from
   const abyssCarry = shallowRef<AbyssCarryMember[]>([]);
 
@@ -171,7 +169,7 @@ export const useWorldSpiralAbyss = ({
     if (arena === undefined) return;
     abyssArena.value = arena;
     abyssChamberPeriod.value = floor.index > ABYSS_CORRIDOR_LAST_FLOOR_INDEX ? abyssEntrancePeriod.value : undefined;
-    abyssBlessingState.value = INITIAL_ABYSS_BLESSING_STATE;
+    abyssBlessingState.value = createInitialAbyssBlessingState();
     const carried = abyssCarry.value.filter(({ characterId }) => party.characterIdMemberMap.has(characterId));
     if (carried.length > 0) party.characterIdMemberMap = applyAbyssCarry(party.characterIdMemberMap, carried);
     abyssCarry.value = [];

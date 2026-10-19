@@ -2,5 +2,5 @@
 // Against the daily reset. No key until the day's first investigation
 export interface InvestigationDay {
   count: number;
-  dayKey: Temporal.Instant | undefined;
+  dayKey?: Temporal.Instant;
 }

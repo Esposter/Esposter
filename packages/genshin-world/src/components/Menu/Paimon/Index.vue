@@ -256,7 +256,7 @@ onBeforeUnmount(() => {
       v-if="isBirthdayDialogOpen"
       :game-text
       @close="isBirthdayDialogOpen = false"
-      @confirm="setBirthday"
+      @confirm="(birthday) => setBirthday(birthday)"
     />
     <MenuNamecardDialog
       v-if="isNamecardDialogOpen"
@@ -264,7 +264,7 @@ onBeforeUnmount(() => {
       :namecard-item-id
       :namecards
       @close="isNamecardDialogOpen = false"
-      @pick="pickNamecard"
+      @pick="(itemId) => pickNamecard(itemId)"
     />
     <MenuWorldLevelDialog
       v-if="isWorldLevelDialogOpen"

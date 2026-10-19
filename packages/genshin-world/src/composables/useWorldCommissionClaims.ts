@@ -135,7 +135,7 @@ export const useWorldCommissionClaims = ({
       wallet: wallet.value,
     });
   // Offered by the world's clock, so a resin that regenerates or a reset that passes with no write is seen
-  const canConvertLongTermPoint = computed(() => computeConversion(worldNow.value) !== undefined);
+  const isLongTermPointConvertible = computed(() => computeConversion(worldNow.value) !== undefined);
   const convertLongTermPoint = () => {
     const conversion = computeConversion(getWorldNow());
     if (!conversion) return;
@@ -143,5 +143,5 @@ export const useWorldCommissionClaims = ({
     longTermEncounterPoints.value = conversion.longTermEncounterPoints;
     setWallet(conversion.wallet);
   };
-  return { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLongTermPoint };
+  return { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible };
 };

@@ -12,7 +12,7 @@ export interface KitReaction {
   combatant: Combatant;
   // The kind of Dendro Core the reaction bursts from, if it is a core's burst
   coreKind?: DendroCoreKind;
-  element: Element | undefined;
+  element?: Element;
   enemy: Enemy;
   reactionType: ReactionType;
 }

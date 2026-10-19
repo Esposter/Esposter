@@ -90,7 +90,7 @@ describe(useWorldAdventureRank, () => {
     const finalWorldLevel = adventureRank.worldLevel.value;
     expect(finalWorldLevel).toBeGreaterThan(startingWorldLevel);
     expect(worldLevelUps.mock.calls).toStrictEqual(
-      Array.from({ length: finalWorldLevel - startingWorldLevel }, (_, index) => [startingWorldLevel + index + 1]),
+      Array.from({ length: finalWorldLevel - startingWorldLevel }, (_value, index) => [startingWorldLevel + index + 1]),
     );
   });
 });

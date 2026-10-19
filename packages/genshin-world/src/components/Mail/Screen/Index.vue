@@ -66,7 +66,7 @@ const sortedEntries = computed<MailEntry[]>(() =>
 const selectedMail = ref<MailSave>();
 // Each delivery of a mail is an entry of its own, so the key takes the delivery as well as the mail's id
 const getEntryKey = ({ mail }: MailEntry): string => [mail.id, mail.deliveredAt].join(ID_SEPARATOR);
-const isSelected = (mail: MailSave): boolean =>
+const checkIsSelected = (mail: MailSave): boolean =>
   selectedMail.value !== undefined && checkIsSameHeldMail(mail, selectedMail.value);
 // Delete Read asks first, and the screen's owner hears of it only once the player confirms
 const isConfirmingDeleteRead = ref(false);
@@ -78,7 +78,7 @@ const visibleEntries = computed(() =>
   sortedEntries.value.filter(({ mail, row }) => checkIsGiftBoxed(mail, row, birthdayMailIds) === isGiftBoxTab.value),
 );
 const selectedEntry = computed(
-  () => visibleEntries.value.find(({ mail }) => isSelected(mail)) ?? visibleEntries.value[0],
+  () => visibleEntries.value.find(({ mail }) => checkIsSelected(mail)) ?? visibleEntries.value[0],
 );
 const hasClaimable = computed(() =>
   mails.some(({ id, isClaimed }) => !isClaimed && (mailRows.get(id)?.items.length ?? 0) > 0),

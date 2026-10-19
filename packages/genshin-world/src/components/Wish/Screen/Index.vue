@@ -293,7 +293,7 @@ const wish = (count: number) => {
       @buy="buyFate()"
       @close="emit('close')"
       @dismiss="results = []"
-      @trial="openTrial"
+      @trial="openTrial()"
       @wish="(count) => wish(count)"
     />
   </GameScreen>

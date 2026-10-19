@@ -6,7 +6,7 @@ import type { ItemCategory } from "genshin-interface";
 // The place the game gives it in its tab's own order. A weapon or an artifact also carries the game's destroy rule and
 // What a destroy returns; an entry without a rule is never destroyed
 export interface ItemDefinition {
-  category: ItemCategory | undefined;
+  category?: ItemCategory;
   destroyReturnMaterial?: number;
   destroyReturnMaterialCount?: number;
   destroyRule?: DestroyRule;

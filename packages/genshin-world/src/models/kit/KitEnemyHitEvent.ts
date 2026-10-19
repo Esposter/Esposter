@@ -8,7 +8,7 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // And the combatant that dealt it
 export interface KitEnemyHitEvent {
   attackTag?: AttackTag;
-  element: Element | undefined;
+  element?: Element;
   enemy: Enemy;
   kind: KitEventKind.EnemyHit;
   striker: Combatant;
