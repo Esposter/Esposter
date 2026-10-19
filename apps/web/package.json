@@ -170,6 +170,7 @@
     "trpc-nuxt-module": "workspace:*",
     "unicode-emoji-json": "catalog:",
     "vue": "catalog:",
+    "vue-canvas-frame-headless": "workspace:*",
     "vue-grid-layout-headless": "workspace:*",
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",

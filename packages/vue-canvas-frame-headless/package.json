@@ -1,0 +1,67 @@
+{
+  "name": "vue-canvas-frame-headless",
+  "version": "4.2.0",
+  "description": "A headless canvas frame: an isolated document at a width, scaled down to fit a narrower pane, with its styles adopted into it, and no styling of its own.",
+  "keywords": [
+    "headless",
+    "iframe",
+    "typescript",
+    "vue"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-canvas-frame-headless#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "test:browser": "vitest --config vitest.browser.config.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:"
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  }
+}

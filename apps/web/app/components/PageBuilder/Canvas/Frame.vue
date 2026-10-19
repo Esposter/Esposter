@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { DESKTOP_MIN_WIDTH, DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
+import { CANVAS_FRAME_SRCDOC, useCanvasFrame } from "vue-canvas-frame-headless";
 
 interface Props {
   css: string;
@@ -13,53 +14,19 @@ const { css, device, title } = defineProps<Props>();
 
 const frame = useTemplateRef("frame");
 const pane = useTemplateRef("pane");
-const { height: paneHeight, width: paneWidth } = useElementSize(pane);
-const frameDocument = shallowRef<Document>();
-const frameStyleSheet = shallowRef<CSSStyleSheet>();
-const frameBody = computed(() => frameDocument.value?.body);
-const frameWidth = computed(() =>
-  device === PageBuilderDevice.Desktop ? Math.max(paneWidth.value, DESKTOP_MIN_WIDTH) : DEVICE_WIDTH_MAP[device],
-);
-const frameScale = computed(() => (paneWidth.value > 0 ? Math.min(1, paneWidth.value / frameWidth.value) : 1));
-
-// The page's css is replaced at most once per animation frame, so a burst of style patches writes the sheet once
-let styleFrame = 0;
-watch([frameStyleSheet, () => css], ([styleSheet, cssText]) => {
-  cancelAnimationFrame(styleFrame);
-  styleFrame = requestAnimationFrame(() => styleSheet?.replaceSync(cssText));
+const { frameBody, frameStyle } = useCanvasFrame({
+  css: () => css,
+  fill: () => device === PageBuilderDevice.Desktop,
+  frame,
+  pane,
+  width: () => (device === PageBuilderDevice.Desktop ? DESKTOP_MIN_WIDTH : DEVICE_WIDTH_MAP[device]),
 });
-onUnmounted(() => cancelAnimationFrame(styleFrame));
 </script>
 
 <!-- The page draws in its own document at its device's width, scaled down to fit a narrower pane rather than reflowed -->
 <template>
   <div ref="pane" h-full w-full of-hidden>
-    <iframe
-      ref="frame"
-      srcdoc="<!doctype html><html><head></head><body></body></html>"
-      sandbox="allow-same-origin"
-      :title
-      :style="{
-        border: 0,
-        height: `${paneHeight / frameScale}px`,
-        transform: `scale(${frameScale})`,
-        transformOrigin: '0 0',
-        width: `${frameWidth}px`,
-      }"
-      @load="
-        () => {
-          const contentWindow = frame?.contentWindow;
-          const contentDocument = frame?.contentDocument;
-          if (!contentWindow || !contentDocument) return;
-
-          // A sheet adopted into a document must be constructed in that document's realm
-          const styleSheet = new contentWindow.CSSStyleSheet();
-          contentDocument.adoptedStyleSheets = [styleSheet];
-          frameStyleSheet = styleSheet;
-          frameDocument = contentDocument;
-        }
-      "
-    />
+    <iframe ref="frame" :srcdoc="CANVAS_FRAME_SRCDOC" sandbox="allow-same-origin" border-0 :title :style="frameStyle" />
     <Teleport v-if="frameBody" :to="frameBody">
       <slot />
     </Teleport>
