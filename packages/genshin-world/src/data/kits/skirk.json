@@ -90,8 +90,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.78013840664737 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.0.hits.0.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.0.hits.0.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -110,8 +110,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.675467891024383 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.1.hits.0.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.1.hits.0.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -130,8 +130,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.313930922024598 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.0.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.0.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -147,8 +147,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.459820624195552 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.2.hits.1.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.2.hits.1.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -167,8 +167,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.0.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.0.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -184,8 +184,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.041522986797285 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.3.hits.1.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.3.hits.1.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
@@ -204,8 +204,8 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.849203781276161 }
   },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "cause": "DiffersFromSource", "value": "Ice" },
-  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "cause": "DiffersFromSource", "value": 1 },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.element": { "source": "Gcsim", "value": "Ice" },
+  "stances.sevenPhaseFlash.normalAttacks.4.hits.0.gauge": { "source": "Gcsim", "value": 1 },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.hitmarkFrames": {
     "file": "attack.go",
     "line": 27,
