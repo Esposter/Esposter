@@ -123,9 +123,5 @@
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 9, "proudSkillGroupId": 11932 } },
   "skillHolds.0.variant.animationFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 64 },
   "skillHolds.0.variant.hits.length": { "cause": "Unsourced", "value": 1 },
-  "skillHolds.0.variant.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
   "skillHolds.0.variant.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 11932 } }
 }
