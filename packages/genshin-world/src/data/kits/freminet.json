@@ -3,7 +3,7 @@
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
     "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.4 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.9 }
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },

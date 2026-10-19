@@ -8,7 +8,7 @@ Not built: Pressurized Floe's Pers Time stance, which holds the frost of each st
 
 ## Decisions
 
-- **Freminet's charged attack is provisional at 42 frames, in a circle of radius 2.4 round the target, for 40 stamina.** gcsim gives him none ("action charge not implemented"), so the record takes the fourth strike's hitmark, animation and reach, the table's attack multiplier at index 4 and its stamina at index 6; a recording of the attack showing another timing, reach or stamina would replace them.
+- **Freminet's charged attack is provisional at 42 frames, in the fourth strike's circle of radius 2.4 half a metre ahead of him, for 40 stamina.** gcsim gives him none ("action charge not implemented"), so the record takes the fourth strike's hitmark, animation and reach, the table's attack multiplier at index 4 and its stamina at index 6; a recording of the attack showing another timing, reach or stamina would replace them.
 
 ## Key files
 
