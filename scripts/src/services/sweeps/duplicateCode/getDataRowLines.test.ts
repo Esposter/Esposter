@@ -65,4 +65,28 @@ describe(getDataRowLines, () => {
 
     expect(getDataRowLines("  1: 3,\n  // Energy\n  const a = makeItem();")).toStrictEqual(new Set([1]));
   });
+
+  test("reads a keyed object's opener and a keyed row of a named or member constant as data rows", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines(
+        "  homeProgress: {\n    realmBounty: MAX_SAVE_NUMBER,\n    trustExp: Number.MAX_SAFE_INTEGER,\n  },",
+      ),
+    ).toStrictEqual(new Set([1, 2, 3, 4]));
+  });
+
+  test("reads a keyed one-line object of numeric or constant fields as a data row", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines("  encounterPoints: { halfPoints: 0, majorVersion: MAX_SAVE_NUMBER },\n  const a = makeItem();"),
+    ).toStrictEqual(new Set([1]));
+  });
+
+  test("keeps a keyed row whose value calls a function, or opens one, as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  realmBounty: makeBounty(),\n  homeProgress: call({")).toStrictEqual(new Set());
+  });
 });
