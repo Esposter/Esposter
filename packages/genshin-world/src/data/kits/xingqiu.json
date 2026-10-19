@@ -2,8 +2,8 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "frames.rainSwordsTickInterval": { "file": "orbital.go", "line": 77, "source": "Gcsim", "value": 135 },
   "frames.raincutterExtra": { "file": "burst.go", "line": 54, "source": "Gcsim", "value": 33 },
-  "frames.rainSwordsBurstFirstTick": { "cause": "DiffersFromSource", "value": 19 },
-  "frames.rainSwordsSkillFirstTick": { "cause": "DiffersFromSource", "value": 44 },
+  "frames.rainSwordsBurstFirstTick": { "file": "burst.go", "line": 17, "source": "Gcsim", "value": 18 },
+  "frames.rainSwordsSkillFirstTick": { "file": "skill.go", "line": 78, "source": "Gcsim", "value": 43 },
   "hitFields.rainSwordsTick.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
