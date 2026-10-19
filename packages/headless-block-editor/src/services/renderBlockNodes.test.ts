@@ -27,7 +27,7 @@ const TEST_RENDER_REGISTRY: BlockRegistry<TestNode> = {
   ],
 };
 
-const render = (node: TestNode, _definition: BlockTypeDefinition<TestNode>, slots: Record<string, unknown[]>) => ({
+const render = (node: TestNode, _definition: BlockTypeDefinition, slots: Record<string, unknown[]>) => ({
   children: Object.values(slots).flat(),
   id: node.props.id,
 });

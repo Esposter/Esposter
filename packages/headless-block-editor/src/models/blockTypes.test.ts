@@ -1,4 +1,5 @@
 import type { BlockNode } from "#src/models/BlockNode";
+import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
@@ -7,7 +8,9 @@ import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";
 
 import { TEST_HEADING_ID, TEST_SECTION_ID } from "#src/services/constants.test";
+import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { getBlockNode } from "#src/services/getBlockNode";
+import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { renderBlockNodes } from "#src/services/renderBlockNodes";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { describe, expect, expectTypeOf, test } from "vitest";
@@ -22,6 +25,9 @@ interface SectionNodeProps extends BlockNodeProps {
   title: string;
 }
 type SectionNode = BlockNode<"section", SectionNodeProps>;
+interface TestRootProps {
+  title: string;
+}
 
 describe("block types", () => {
   test("a node's props default to the id alone", () => {
@@ -98,6 +104,39 @@ describe("block types", () => {
     ]);
     expect(
       renderBlockNodes(nodes, registry, (node, _definition, slots) => ({
+        children: Object.values(slots).flat(),
+        id: node.props.id,
+      })),
+    ).toStrictEqual([{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }]);
+  });
+
+  test("a registry of per-type definitions passes the services with no cast", () => {
+    expect.hasAssertions();
+
+    const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
+    const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
+    const document: BlockDocument<SectionNode | HeadingNode, TestRootProps> = {
+      content: [section],
+      root: { props: { title: "" } },
+    };
+    const registry: BlockRegistry<
+      SectionNode | HeadingNode,
+      TestRootProps,
+      BlockTypeDefinition<SectionNode> | BlockTypeDefinition<HeadingNode>
+    > = {
+      root: { content: ["section"], propsSchema: z.object({ title: z.string() }) },
+      types: [
+        { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
+        { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
+      ],
+    };
+
+    expect(getBlockTypeDefinition(registry, "heading")?.type).toBe("heading");
+    expect(
+      createBlockDocumentSchema<SectionNode | HeadingNode, TestRootProps>(registry, 2).safeParse(document).success,
+    ).toBe(true);
+    expect(
+      renderBlockNodes(document.content, registry, (node, _definition, slots) => ({
         children: Object.values(slots).flat(),
         id: node.props.id,
       })),
