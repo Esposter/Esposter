@@ -55,7 +55,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [varesa],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([["skill.hits.0", { label: "Rush DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
@@ -76,7 +76,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [nahida],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
@@ -90,7 +90,7 @@ describe(getWikiKitCandidates, () => {
     const pyronado = readPage("Pyronado", CombatTalent.ElementalBurst, 2066383);
     const candidateMap = getWikiKitCandidates(
       [doughFu, pyronado],
-      { talentGroupIdMap, weaponType: WeaponType.Polearm },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Polearm },
       new Map([
         ["burst.hits.0", { label: "1-Hit Swing DMG", proudSkillGroupId: BURST_GROUP_ID }],
         ["burst.hits.3", { label: "Pyronado DMG", proudSkillGroupId: BURST_GROUP_ID }],
@@ -139,7 +139,7 @@ describe(getWikiKitCandidates, () => {
           title: "Vesna",
         },
       ],
-      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Claymore },
       new Map([["skill.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
@@ -169,7 +169,7 @@ describe(getWikiKitCandidates, () => {
           title: "Nefer",
         },
       ],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([
         ["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }],
         [
@@ -199,7 +199,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [neuvillette],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([
         [
           "hits.judgement.0",
@@ -222,7 +222,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [chongyun],
-      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Claymore },
       new Map([
         ["hits.rimechaserBlade.0", { label: "Blade DMG", proudSkillGroupId: SKILL_GROUP_ID }],
         ["skill.hits.0", { label: "Blade DMG", proudSkillGroupId: SKILL_GROUP_ID }],
@@ -246,7 +246,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [zhongli],
-      { talentGroupIdMap, weaponType: WeaponType.Polearm },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Polearm },
       new Map(),
     );
 
@@ -265,7 +265,11 @@ describe(getWikiKitCandidates, () => {
       revisionId: 1,
       title: "Tengu Bowmanship",
     };
-    const candidateMap = getWikiKitCandidates([tengu], { talentGroupIdMap, weaponType: WeaponType.Bow }, new Map());
+    const candidateMap = getWikiKitCandidates(
+      [tengu],
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Bow },
+      new Map(),
+    );
 
     expect(readCandidateValues(candidateMap)).toStrictEqual({ "chargedAttack.hits.0.poiseDamage": [20] });
   });
@@ -284,7 +288,7 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [chongyun],
-      { talentGroupIdMap, weaponType: WeaponType.Claymore },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Claymore },
       new Map([["hits.slash.0", { label: "Slash DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
@@ -307,10 +311,41 @@ describe(getWikiKitCandidates, () => {
     };
     const candidateMap = getWikiKitCandidates(
       [nahida],
-      { talentGroupIdMap, weaponType: WeaponType.Catalyst },
+      { name: "Test", talentGroupIdMap, weaponType: WeaponType.Catalyst },
       new Map([["hits.hold.0", { label: "Hold DMG", proudSkillGroupId: SKILL_GROUP_ID }]]),
     );
 
     expect(readCandidateValues(candidateMap)).toStrictEqual({});
+  });
+
+  test("gives a traveler only its own form's block's poise, where the other form's block disagrees", () => {
+    expect.hasAssertions();
+
+    const traveler: WikiTalentPage = {
+      combatTalent: CombatTalent.NormalAttack,
+      properties: parseAdvancedProperties(
+        [
+          ";Aether",
+          "{{Advanced Properties",
+          "|title   = Normal Attack 1-Hit",
+          "|poise   = 41.4",
+          "}}",
+          ";Lumine",
+          "{{Advanced Properties",
+          "|title   = Normal Attack 1-Hit",
+          "|poise   = 40.5",
+          "}}",
+        ].join("\n"),
+      ),
+      revisionId: 1,
+      title: "Foreign Ironwind",
+    };
+    const candidateMap = getWikiKitCandidates(
+      [traveler],
+      { name: "Traveler", talentGroupIdMap, weaponType: WeaponType.Sword },
+      new Map(),
+    );
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "normalAttacks.0.hits.0.poiseDamage": [40.5] });
   });
 });

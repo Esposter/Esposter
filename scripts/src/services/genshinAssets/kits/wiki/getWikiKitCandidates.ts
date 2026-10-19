@@ -6,6 +6,7 @@ import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTal
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { GCSIM_TRAVELER_FORM, TRAVELER_NAME } from "#src/services/genshinAssets/kits/constants";
 import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
 import { findLabelRows } from "#src/services/genshinAssets/kits/wiki/findLabelRows";
 import { getSlotPath } from "#src/services/genshinAssets/kits/wiki/getSlotPath";
@@ -28,7 +29,7 @@ const internalCooldownTagSchema = z.enum(InternalCooldownTag) satisfies z.ZodTyp
 // From the first row giving it: the poise, the ICD tag and, where the hit is elemental, the gauge
 export const getWikiKitCandidates = (
   pages: readonly WikiTalentPage[],
-  { talentGroupIdMap, weaponType }: Pick<KitTables, "talentGroupIdMap" | "weaponType">,
+  { name, talentGroupIdMap, weaponType }: Pick<KitTables, "name" | "talentGroupIdMap" | "weaponType">,
   hitLabelMap: ReadonlyMap<string, KitHitLabel>,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
@@ -70,17 +71,22 @@ export const getWikiKitCandidates = (
   // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the
   // Hit is elemental by its slot: a skill's or a burst's, a catalyst's strikes and the plunge's collision
   const isCatalyst = weaponType === WeaponType.Catalyst;
+  // A traveler's talent page holds a block under each of its two forms, so the kit reads its own form's block and any
+  // Block with no heading, the form gcsim reads the traveler as. Every other character's rows are all read
+  const checkIsReadRow = ({ heading }: WikiAdvancedProperty) =>
+    name !== TRAVELER_NAME || heading === undefined || heading === GCSIM_TRAVELER_FORM;
   for (const page of pages) {
+    const properties = page.properties.filter((property) => checkIsReadRow(property));
     if (page.combatTalent === CombatTalent.NormalAttack) {
       const slotPaths = new Set(
-        page.properties.flatMap(({ title }) => [
+        properties.flatMap(({ title }) => [
           getSlotPath(title),
           getSlotPath(title.replace(TRAILING_BRACKETED_PART_REGEX, "")),
         ]),
       );
       for (const path of slotPaths) {
         if (path === undefined) continue;
-        const rows = findFirstTierRows(page.properties, [
+        const rows = findFirstTierRows(properties, [
           (title) => getSlotPath(title) === path,
           (title) => getSlotPath(title.replace(TRAILING_BRACKETED_PART_REGEX, "")) === path,
         ]);
@@ -94,10 +100,10 @@ export const getWikiKitCandidates = (
     const slotHitRows = new Set(
       talentHitLabels
         .filter(([hitPath]) => !hitPath.startsWith("hits."))
-        .flatMap(([, { label }]) => findLabelRows(label, page.properties)),
+        .flatMap(([, { label }]) => findLabelRows(label, properties)),
     );
     for (const [hitPath, { label }] of talentHitLabels) {
-      const rows = findLabelRows(label, page.properties);
+      const rows = findLabelRows(label, properties);
       addRows(
         hitPath,
         hitPath.startsWith("hits.") ? rows.filter((row) => !slotHitRows.has(row)) : rows,
