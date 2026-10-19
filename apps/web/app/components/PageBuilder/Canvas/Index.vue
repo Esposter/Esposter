@@ -33,7 +33,7 @@ const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
 const selectedNodeId = computed(() => pageBuilderCanvasStore.getSelectedNodeId(resourceId));
 const editingNodeId = computed(() => pageBuilderCanvasStore.getEditingNodeId(resourceId));
-// The document the frame draws. While a text node is edited it stays as it was when the edit began
+// The document the frame draws. While a text node is edited it stays as it was when the edit began.
 // Otherwise each change would reset the node's rendered html, which the editor is mounted inside
 const drawnDocument = shallowRef<WebpageDocument>();
 watch(
