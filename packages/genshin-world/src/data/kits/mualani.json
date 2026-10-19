@@ -2,8 +2,6 @@
   "burst.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 178 },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 10239 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 113 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
