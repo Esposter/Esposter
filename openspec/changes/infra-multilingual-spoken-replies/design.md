@@ -58,7 +58,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 ### The output
 
 - **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md) page's streaming cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because each clause is its own synthesis where a token chunk is one more vocoder pass over everything before it — a price that pays only while the engine outruns real time, which the larger checkpoint will not.
-- **The per-chunk audibility check, the device ladder it moves, the player that takes a stream and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of them.
+- **The opening-chunk audibility check, the device ladder it moves, the player that takes a stream and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of them.
 
 ### The measurement
 
