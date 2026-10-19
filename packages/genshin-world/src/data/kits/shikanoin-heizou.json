@@ -1,10 +1,14 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 2 },
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": 0 },
-  "burst.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 } },
-  "burst.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 34 },
+  "burst.hits.1.area": {
+    "file": "burst.go",
+    "line": 75,
+    "source": "Gcsim",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 21 }
+  },
+  "burst.hits.1.hitmarkFrames": { "file": "burst.go", "line": 76, "source": "Gcsim", "value": 34 },
+  "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5939 } },
-  "hits.iris.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
   "hits.iris.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5939 } },
   "skill.hits.0.area": {
     "cause": "Unsourced",
@@ -25,6 +29,5 @@
   "skillHolds.0.action.hits.0.multiplier": { "cause": "Unsourced", "value": 5.688 },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 5932 } },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unsourced", "value": 3 },
-  "hits.iris.element": { "cause": "DiffersFromSource" },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "hits.iris.element": { "cause": "DiffersFromSource" }
 }

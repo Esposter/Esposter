@@ -3,10 +3,6 @@
   "parameters.initialHealFlatHealth": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8039 } },
   "parameters.initialHealMaxHealthShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8039 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8032 } },
-  "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15 }
-  },
   "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8032 } },
   "skillHolds.0.cooldownSeconds": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 8032 } }
 }
