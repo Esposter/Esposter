@@ -29,7 +29,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackOneMirror.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.projectionAttackTwoMirrors.length": { "cause": "Unsourced", "value": 2 },
   "hits.projectionAttackTwoMirrors.0.area": {
     "file": "skill.go",
@@ -42,7 +41,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackTwoMirrors.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.projectionAttackTwoMirrors.1.area": {
     "file": "skill.go",
     "line": 265,
@@ -54,7 +52,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackTwoMirrors.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.projectionAttackThreeMirrors.length": { "cause": "Unsourced", "value": 3 },
   "hits.projectionAttackThreeMirrors.0.area": {
     "file": "skill.go",
@@ -72,7 +69,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackThreeMirrors.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.projectionAttackThreeMirrors.1.area": {
     "file": "skill.go",
     "line": 262,
@@ -89,7 +85,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackThreeMirrors.1.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.projectionAttackThreeMirrors.2.area": {
     "file": "skill.go",
     "line": 262,
@@ -106,7 +101,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 7832 }
   },
-  "hits.projectionAttackThreeMirrors.2.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.particularFieldHits.length": { "cause": "Unsourced", "value": 10 },
   "hits.particularFieldHits.0.area": {
     "file": "burst.go",

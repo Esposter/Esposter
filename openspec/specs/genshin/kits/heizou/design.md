@@ -6,7 +6,7 @@ The burst lands an aura check just before its hit, with no damage, element or po
 
 ## Decisions
 
-- **Heizou's hold is gcsim's full charge.** gcsim's Heartstopper hold charges its four Declension stacks over 180 frames, so the kit's hold is one level at three seconds, and a shorter hold reads as the press. His strikes, charged attack, plunges, skill and burst give no poise, as gcsim gives none.
+- **Heizou's hold is gcsim's full charge.** gcsim's Heartstopper hold charges its four Declension stacks over 180 frames, so the kit's hold is one level at three seconds, and a shorter hold reads as the press. His strikes, charged attack, plunges, skill and burst give no poise, as neither gcsim nor the wiki gives one, except his Windmuster Iris, which takes the wiki's 25.
 - **Windmuster Iris reads the aura from a hit of its own, ahead of the burst's Anemo.** gcsim queues a no-damage aura check on the burst's frame ahead of its Anemo hit, so the Swirl the hit triggers does not take the aura first. The kit's burst holds the same check as its first hit, and the kit reads the aura of each enemy it strikes as the damage it took reaches it. The Iris is a summon on the enemy as the check found it, where gcsim's circle follows the enemy over the 40 frames.
 
 ## Key files

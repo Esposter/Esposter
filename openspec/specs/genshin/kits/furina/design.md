@@ -20,7 +20,7 @@ Not built yet:
 - **The schedule's jitter.** Gcsim gives each Salon member a random spread round its mean interval; the kit takes the mean.
 - **Pneuma's skill animation** is gcsim's Ousia one, 54 frames, though gcsim gives Pneuma's 57 and a 10-frame delay to its cooldown; the charged attack after a strike is not 11 frames shorter as gcsim has it.
 
-Gcsim gives her strikes, charged attack and the Salon's hits no poise, so each deals none. A Salon member with no enemy within the skill's reach neither drains nor strikes, a provisional reading of gcsim's targeting. Each is provisional until a recording settles it.
+Gcsim gives her strikes, charged attack and the Salon's hits no poise, so each deals none, except the Ousia Bubble, which takes the wiki's 20. A Salon member with no enemy within the skill's reach neither drains nor strikes, a provisional reading of gcsim's targeting. Each is provisional until a recording settles it.
 
 ## Key files
 
