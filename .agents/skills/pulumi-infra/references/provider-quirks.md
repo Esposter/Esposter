@@ -34,6 +34,6 @@ A field the provider _does_ carry can still be refused: enabling a GitHub Secret
 
 The rule — `import * as azure_native from "@pulumi/azure-native"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".
 
-- Provider packages are CommonJS and lazy-load every resource submodule through `utilities.lazyLoad`, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`.
+- Provider packages are CommonJS and lazy-load every resource submodule through utilities.lazyLoad, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`.
 - `apps/infra` is `"type": "module"`, so named ESM imports from those CJS modules force Node's interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable.
 - Pulumi's own codegen always emits `import * as`. Match it; do not "fix" provider imports for lint/style consistency.

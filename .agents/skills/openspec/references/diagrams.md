@@ -9,7 +9,7 @@ wrong.
 
 Any page describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage,
 background workers) must carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for
-lifecycles, `sequenceDiagram` for request/event ordering. Prose says _why_; the diagram is the alignment artifact
+lifecycles, sequenceDiagram for request/event ordering. Prose says _why_; the diagram is the alignment artifact
 for _what talks to what_. Label edges with the procedure or event that drives them.
 
 Exemptions: a `README.md` index, a `spec.md`, deferred and rejected ideas, roadmaps, and static inventories (key-file

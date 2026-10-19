@@ -7,7 +7,7 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 - **Alyosha borrows Candace's strikes, charged attack and skill, provisional.** Candace's four strikes have the shape of Alyosha's, one, one, two and one hits, so her strikes take them whole. Her charged attack and Thunderbolt Strike's tap take Candace's single hits.
 - **Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.** Her plunges' frames are read from her own clips.
 - **Her burst has no hit yet, as `NamedHitList`.** Hunter's Advance's field and Tugarin hits are spawned by her module by name, and that module is not built, so the burst's hits list is empty until it is.
-- **Her frames are her clips' durations at 60 a second.** Her strikes read `Attack_01` to `Attack_04`, her charged attack `ExtraAttack`, her tap `ElementalArt_NoCharge_Attack`, her burst `ElementalBurst`, and her plunges `FallingAttack_Strike` and `FallingAttack_Strike_AS`.
+- **Her frames are her clips' durations at 60 a second.** Her strikes read `Attack_01` to `Attack_04`, her charged attack ExtraAttack, her tap ElementalArt_NoCharge_Attack, her burst `ElementalBurst`, and her plunges FallingAttack_Strike and FallingAttack_Strike_AS.
 - **Her strikes and charged attack are Physical, and her tap is Electro.**
 
 ## Not built
