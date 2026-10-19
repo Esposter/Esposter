@@ -1,8 +1,23 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
+import type { BlockNode } from "#src/models/BlockNode";
+import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import { describe } from "vitest";
 import { z } from "zod";
+
+export type HeadingNode = BlockNode<"heading", HeadingNodeProps>;
+export interface HeadingNodeProps extends BlockNodeProps {
+  text: string;
+}
+export type SectionNode = BlockNode<"section", SectionNodeProps>;
+export interface SectionNodeProps extends BlockNodeProps {
+  children: HeadingNode[];
+  title: string;
+}
+export interface TestRootProps {
+  title: string;
+}
 
 export const TEST_SECTION_ID: string = crypto.randomUUID();
 export const TEST_SECTION_OTHER_ID: string = crypto.randomUUID();
