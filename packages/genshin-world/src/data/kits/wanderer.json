@@ -49,31 +49,26 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 7539 }
   },
-  "stances.windfavored.burst.hits.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.burst.hits.1.hitmarkFrames": { "file": "burst.go", "line": 98, "source": "Gcsim", "value": 98 },
   "stances.windfavored.burst.hits.1.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 7539 }
   },
-  "stances.windfavored.burst.hits.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.burst.hits.2.hitmarkFrames": { "file": "burst.go", "line": 98, "source": "Gcsim", "value": 104 },
   "stances.windfavored.burst.hits.2.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 7539 }
   },
-  "stances.windfavored.burst.hits.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.burst.hits.3.hitmarkFrames": { "file": "burst.go", "line": 98, "source": "Gcsim", "value": 110 },
   "stances.windfavored.burst.hits.3.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 7539 }
   },
-  "stances.windfavored.burst.hits.3.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.burst.hits.4.hitmarkFrames": { "file": "burst.go", "line": 98, "source": "Gcsim", "value": 116 },
   "stances.windfavored.burst.hits.4.multiplier": {
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 7539 }
   },
-  "stances.windfavored.burst.hits.4.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "stances.windfavored.burst.targeting": { "cause": "Unsourced", "value": "Skill" },
   "stances.windfavored.chargedAttack.animationFrames": {
     "file": "charge.go",
