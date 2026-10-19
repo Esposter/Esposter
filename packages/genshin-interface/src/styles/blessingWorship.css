@@ -1,0 +1,50 @@
+/* The screen's colours and placement are provisional until the recording shows them */
+.blessing-screen,
+.worship-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: rgb(20 18 16 / 55%);
+  color: rgb(245 240 230);
+}
+
+.title {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  font-size: 2rem;
+}
+
+.close {
+  position: absolute;
+  top: 6%;
+  right: 6%;
+  font-size: 2rem;
+}
+
+.blessing,
+.worship {
+  position: absolute;
+  top: 6%;
+  right: 16%;
+  font-size: 1.25rem;
+}
+
+.held,
+.pool {
+  position: absolute;
+  top: 16%;
+  left: 6%;
+  font-size: 1.25rem;
+}
+
+.levels,
+.members {
+  position: absolute;
+  top: 26%;
+  left: 6%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
