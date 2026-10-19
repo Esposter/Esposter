@@ -1,6 +1,7 @@
 import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/WikiAdvancedProperty";
 
 import { checkIsWordSubset } from "#src/services/genshinAssets/kits/wiki/checkIsWordSubset";
+import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
 import { toWordSet } from "#src/services/genshinAssets/kits/wiki/toWordSet";
 
 // The rows a hit's table label finds on its talent's page, from the first of three tiers that finds any. The first
@@ -13,16 +14,12 @@ export const findLabelRows = (label: string, properties: readonly WikiAdvancedPr
   if (labelWords.size === 0) return [];
   const checkIsSameWords = (words: ReadonlySet<string>) =>
     words.size === labelWords.size && checkIsWordSubset(words, labelWords);
-  const tierMatchers = [
-    (title: string) => checkIsSameWords(toWordSet(title)),
-    (title: string) => checkIsSameWords(toWordSet(title.replaceAll(/\([^()]*\)/gu, ""))),
-    (title: string) => {
+  return findFirstTierRows(properties, [
+    (title) => checkIsSameWords(toWordSet(title)),
+    (title) => checkIsSameWords(toWordSet(title.replaceAll(/\([^()]*\)/gu, ""))),
+    (title) => {
       const words = toWordSet(title);
       return words.size > 0 && (checkIsWordSubset(words, labelWords) || checkIsWordSubset(labelWords, words));
     },
-  ];
-  return (
-    tierMatchers.map((isMatch) => properties.filter(({ title }) => isMatch(title))).find((rows) => rows.length > 0) ??
-    []
-  );
+  ]);
 };

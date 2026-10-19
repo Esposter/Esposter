@@ -253,6 +253,23 @@ describe(getWikiKitCandidates, () => {
     expect(readCandidateValues(candidateMap)).toStrictEqual({ "normalAttacks.0.hits.0.poiseDamage": [33.76] });
   });
 
+  test("a slot takes its exact row over a bracketed variant", () => {
+    expect.hasAssertions();
+
+    const tengu: WikiTalentPage = {
+      combatTalent: CombatTalent.NormalAttack,
+      properties: [
+        { poise: 20, row: 8, title: "Fully-Charged Aimed Shot" },
+        { poise: 60, row: 9, title: "Fully-Charged Aimed Shot (Hit Weak Spot)" },
+      ],
+      revisionId: 1,
+      title: "Tengu Bowmanship",
+    };
+    const candidateMap = getWikiKitCandidates([tengu], { talentGroupIdMap, weaponType: WeaponType.Bow }, new Map());
+
+    expect(readCandidateValues(candidateMap)).toStrictEqual({ "chargedAttack.hits.0.poiseDamage": [20] });
+  });
+
   test("gives a named hit the poise its two found rows agree on, citing the first row", () => {
     expect.hasAssertions();
 
