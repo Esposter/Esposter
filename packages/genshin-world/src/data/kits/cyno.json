@@ -3,7 +3,7 @@
   "frames.endseer": { "cause": "Unsourced", "value": 84 },
   "frames.burstDurationCast": { "cause": "Unsourced", "value": 112 },
   "frames.judicationInterval": { "cause": "Unsourced", "value": 234 },
-  "hits.mortuaryRiteDuststalkerBolts.length": { "cause": "Unclassified", "value": 3 },
+  "hits.mortuaryRiteDuststalkerBolts.length": { "file": "skill.go", "line": 127, "source": "Gcsim", "value": 3 },
   "hits.mortuaryRiteDuststalkerBolts.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.3 }
@@ -71,7 +71,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.0.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
   "stances.pactswornPathclearer.normalAttacks.0.hits.0.multiplier": {
@@ -86,7 +85,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.1.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
   "stances.pactswornPathclearer.normalAttacks.1.hits.0.multiplier": {
@@ -101,7 +99,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.933169473392783 }
   },
-  "stances.pactswornPathclearer.normalAttacks.2.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 18 },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.multiplier": {
@@ -143,7 +140,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "stances.pactswornPathclearer.normalAttacks.4.hits.0.element": { "cause": "Unclassified", "value": "Electric" },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.multiplier": {

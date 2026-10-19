@@ -4,6 +4,7 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
+import { CombatTalent } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -15,6 +16,13 @@ const overlayFor = (path: string): KitOverlay => ({
 
 describe("readGcsimCitedCandidates table cells", () => {
   const FOLDER = "aino";
+
+  // The talents' proud skill groups, as the cited reader reads a named hit's targeting area by them
+  const TALENT_GROUP_ID_MAP = {
+    [CombatTalent.ElementalBurst]: 3,
+    [CombatTalent.ElementalSkill]: 2,
+    [CombatTalent.NormalAttack]: 1,
+  };
   // Row 0 is on line 4 and row 1 on line 5; the constructor's own line is 9
   const TABLE_GO = [
     "package aino",
@@ -57,6 +65,7 @@ describe("readGcsimCitedCandidates table cells", () => {
         overlayFor("normalAttacks.1.hits.0.area"),
         createGcsimDirectory(TABLE_GO),
         createCharacter(TABLE_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([
       {
@@ -73,6 +82,7 @@ describe("readGcsimCitedCandidates table cells", () => {
         overlayFor("normalAttacks.0.hits.0.area"),
         createGcsimDirectory(TABLE_GO),
         createCharacter(TABLE_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.0.hits.0.area") ?? [];
     expect(candidates[0]).toStrictEqual({
       provenance: { file: "internal/characters/aino/attack.go", line: 4, source: KitSource.Gcsim },
@@ -87,6 +97,7 @@ describe("readGcsimCitedCandidates table cells", () => {
         overlayFor("normalAttacks.1.hits.0.area"),
         createGcsimDirectory(UNEVALUABLE_GO),
         createCharacter(UNEVALUABLE_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([]);
   });

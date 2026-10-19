@@ -51,6 +51,8 @@ export interface KitHit {
   healParty?: KitPartyHeal;
   hitArea: AttackArea;
   hitmarkSeconds: number;
+  // The gauge the hit deals while an infusion takes it, if not the infused element's 1U: a plunge's collision's 0U
+  infusedGauge?: number;
   internalCooldownTag?: InternalCooldownTag;
   // Whether the hit always lands as a critical hit, which its strike rolls no CRIT Rate for
   isForcedCritical?: true;

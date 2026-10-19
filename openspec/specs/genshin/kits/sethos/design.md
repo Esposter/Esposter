@@ -6,7 +6,7 @@ Sethos's kit is built from its record alone, on avatar 10000097, and `createSeth
 
 - **The fully-charged Aimed Shot is the charged attack.** Sethos has one aimed shot in the kit's slot, so the fully-charged shot takes it, as Ganyu's does, and it is marked aimed so the body turns to the camera's aim while it is held.
 - **Hitmarks and animations are gcsim's.** His strikes' frames are 19, 35 and 69, with the second strike's two hits at 12 and 15 frames, as gcsim's attack file gives them, and their poise is the wiki's 18.879 for the first, 8.791 for each hit of the second and 25.809 for the third, as gcsim gives none.
-- **His plunges are provisional.** Sethos has no gcsim plunge file; like Chevreuse's, his plunges use the shared reach and land as their action starts, with the wiki's poise, 100 high and 50 low, and the Manual verification list on the roadmap asks about them.
+- **His plunges are provisional.** Sethos has no gcsim plunge file; his plunges use the shared reach and land as their action starts, with the wiki's poise, 100 high and 50 low, and the Manual verification list on the roadmap asks about them.
 
 ## Not built
 

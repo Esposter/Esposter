@@ -1,15 +1,17 @@
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { TabsNode } from "#shared/models/pageBuilder/TabsNode";
+import type { TabsNodeProps } from "#shared/models/pageBuilder/TabsNodeProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { hidePanel } from "#shared/services/pageBuilder/hidePanel";
 import { z } from "zod";
 
-// Each child is a Tab node, of which the tab button needs only its id and its label
-const tabLabelsSchema = z.array(z.object({ props: z.object({ id: z.string(), label: z.string() }) }));
+const tabsPropsSchema = z.object({ style: nodeStyleSchema.optional() }) satisfies z.ZodType<OwnProps<TabsNodeProps>>;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
@@ -56,10 +58,9 @@ export const tabsNodeType = {
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
   formSchema: z.strictObject({}),
   isFocusable: true,
-  propsSchema: containerPropsSchema,
+  propsSchema: tabsPropsSchema,
   render: (node, slots) => {
-    const tabs = tabLabelsSchema.parse(node.props.children).map(({ props }) => props);
-    const buttons = tabs.map(({ id, label }, index): HtmlElement => ({
+    const buttons = node.props.children.map(({ props: { id, label } }, index): HtmlElement => ({
       attributes: {
         [HtmlAttributeName.AriaControls]: `${id}-panel`,
         [HtmlAttributeName.AriaSelected]: String(index === 0),
@@ -71,7 +72,7 @@ export const tabsNodeType = {
       children: [label],
       tag: HtmlTag.Button,
     }));
-    const panels = (slots.children ?? []).map((panel, index) => (index === 0 ? panel : hidePanel(panel)));
+    const panels = slots.children.map((panel, index) => (index === 0 ? panel : hidePanel(panel)));
     return {
       attributes: { [HtmlAttributeName.Class]: "tabs" },
       children: [
@@ -84,4 +85,4 @@ export const tabsNodeType = {
   script: tabsScript,
   slots: { children: [WebpageNodeType.Tab] },
   type: WebpageNodeType.Tabs,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<TabsNode>;

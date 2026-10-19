@@ -16,7 +16,8 @@ import { posix } from "node:path";
 
 // The plunges: each landing's hitmark and frames from `lowPlungeHitmark` and `lowPlungeFrames` and their high twins,
 // Its area from the `Low_Plunge` or `High_Plunge` hitbox, and the collision's from `Plunge`. With no plunge file, the
-// Fallback character's, Bennett's, stand in as NoActionFile, only where the kit's own wiki row gives nothing
+// Fallback character's, Bennett's, stand in as NoActionFile, which mergeKitSourceCandidates orders after the kit's
+// Own wiki row
 export const addGcsimPlungeCandidates = (
   { add, addFrames, addHit, toFile }: GcsimKitCandidateWriter,
   gcsim: GcsimCharacter,

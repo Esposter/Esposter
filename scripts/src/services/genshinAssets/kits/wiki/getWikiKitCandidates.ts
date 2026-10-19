@@ -6,101 +6,116 @@ import type { WikiTalentPage } from "#src/models/genshinAssets/kits/wiki/WikiTal
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { GCSIM_TRAVELER_FORM, TRAVELER_NAME } from "#src/services/genshinAssets/kits/constants";
+import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
+import { findHitPathRowsMap } from "#src/services/genshinAssets/kits/wiki/findHitPathRowsMap";
+import { findLabelRows } from "#src/services/genshinAssets/kits/wiki/findLabelRows";
+import { getSlotPath } from "#src/services/genshinAssets/kits/wiki/getSlotPath";
 import { WikiInternalCooldownTagMap } from "#src/services/genshinAssets/kits/wiki/WikiInternalCooldownTagMap";
-import { CombatTalent, InternalCooldownTag, KitPlunge, WeaponType } from "genshin-world";
+import { CombatTalent, InternalCooldownTag, WeaponType } from "genshin-world";
 import { z } from "zod";
 
-const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
-const CHARGED_ATTACK_TITLE_REGEX =
-  /^(?:Charged Attack(?: (?:(?<number>\d+)-Hit|(?<letter>[A-Z])))?|Fully-Charged Aimed Shot)$/u;
-const HIT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+// A slot row's title without its trailing bracketed part, so `Normal Attack 1-Hit (Target Within 2m)` is the first
+// Strike's row
+const TRAILING_BRACKETED_PART_REGEX = /\s*\([^()]*\)$/u;
 const WIKI_NO_INTERNAL_COOLDOWN_TAG = "none";
 const internalCooldownTagSchema = z.enum(InternalCooldownTag) satisfies z.ZodType<InternalCooldownTag>;
-// The plunges' rows by their titles
-const WikiTitlePathMap: Partial<Record<string, string>> = {
-  "High Plunge": `plunges.${KitPlunge.High}.hits.0`,
-  "Low Plunge": `plunges.${KitPlunge.Low}.hits.0`,
-  "Plunging Attack Collision": "plungeCollision",
-};
-
-// A row title or a table label as the words they share, `1-Hit Swing DMG` and `Swing DMG` both `swing`
-const toTitleWords = (title: string): string =>
-  title
-    .toLowerCase()
-    .replaceAll(/\b\d+-hit\b|\bdmg\b/gu, "")
-    .replaceAll(/[^a-z]+/gu, " ")
-    .trim();
 
 // Every value the wiki's talent pages give a character's kit, by its path in the record, from each page's Advanced
-// Properties: a normal attack's rows by their titles, `Normal Attack 3-Hit B` the third strike's second hit, the
-// Charged attack's and the plunges' by theirs, and each hit by the row titled as its multiplier's table label on the page
-// Of the talent that label's proud skill group belongs to, `Swing DMG` for `1-Hit Swing DMG`. A named hit takes no row a
-// Slot hit on the same page takes, as a row describes one attack. Each row gives its hit's poise, its ICD tag and, where
-// The hit is elemental, its gauge
+// Properties. A slot's row is the one its title matches exactly, and only where the slot has none, a row whose title
+// Matches once its trailing bracketed part is removed, so `Fully-Charged Aimed Shot` gives the charged shot before its
+// `(Hit Weak Spot)` variant. Each hit takes the rows its table label finds (`findLabelRows`) on the page of the talent
+// Whose proud skill group that label belongs to, `Swing DMG` for `1-Hit Swing DMG`, and a named hit takes no row a slot
+// Hit on the same page takes, as a row describes one attack. Each path takes a field the rows matched to it give alike,
+// From the first row giving it: the poise, the ICD tag and, where the hit is elemental, the gauge
 export const getWikiKitCandidates = (
   pages: readonly WikiTalentPage[],
-  { talentGroupIdMap, weaponType }: Pick<KitTables, "talentGroupIdMap" | "weaponType">,
+  { name, talentGroupIdMap, weaponType }: Pick<KitTables, "name" | "talentGroupIdMap" | "weaponType">,
   hitLabelMap: ReadonlyMap<string, KitHitLabel>,
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
-  const addRow = (
+  const addRows = (
     path: string,
-    { gauge, internalCooldownTag, poise, row }: WikiAdvancedProperty,
+    rows: readonly WikiAdvancedProperty[],
     { revisionId, title }: WikiTalentPage,
     isElemental: boolean,
   ) => {
-    const add = (key: string, value: unknown) =>
+    // The first row giving a field, where every row giving it gives the same value
+    const addAgreed = (key: string, givens: readonly { row: WikiAdvancedProperty; value: unknown }[]) => {
+      const [first] = givens;
+      if (first === undefined || givens.some(({ value }) => value !== first.value)) return;
       addKitCandidate(candidateMap, `${path}.${key}`, {
-        provenance: { page: title, revisionId, row, source: KitSource.Wiki },
-        value,
+        provenance: { page: title, revisionId, row: first.row.row, source: KitSource.Wiki },
+        value: first.value,
       });
-    if (poise !== undefined) add("poiseDamage", poise);
-    if (internalCooldownTag !== undefined) {
-      const tag =
-        internalCooldownTag === WIKI_NO_INTERNAL_COOLDOWN_TAG
-          ? undefined
-          : (WikiInternalCooldownTagMap[internalCooldownTag] ?? internalCooldownTag);
-      // A tag the enum does not name is not written, as the record would reject it; the row's poise still stands
-      if (tag === undefined || internalCooldownTagSchema.safeParse(tag).success) add("internalCooldownTag", tag);
-    }
-    if (isElemental && gauge !== undefined) add("gauge", gauge);
+    };
+    addAgreed(
+      "poiseDamage",
+      rows.flatMap((row) => (row.poise === undefined ? [] : [{ row, value: row.poise }])),
+    );
+    addAgreed(
+      "internalCooldownTag",
+      rows.flatMap((row): { row: WikiAdvancedProperty; value: unknown }[] => {
+        if (row.internalCooldownTag === undefined) return [];
+        if (row.internalCooldownTag === WIKI_NO_INTERNAL_COOLDOWN_TAG) return [{ row, value: undefined }];
+        const tag = WikiInternalCooldownTagMap[row.internalCooldownTag] ?? row.internalCooldownTag;
+        // A tag the enum does not name is given by no row, as the record would reject it; the row's poise still stands
+        return internalCooldownTagSchema.safeParse(tag).success ? [{ row, value: tag }] : [];
+      }),
+    );
+    if (isElemental)
+      addAgreed(
+        "gauge",
+        rows.flatMap((row) => (row.gauge === undefined ? [] : [{ row, value: row.gauge }])),
+      );
   };
-  // The wiki writes a hit's gauge on every row, a physical strike's as well, so a row's gauge is read only where the
-  // Hit is elemental by its slot: a skill's or a burst's, a catalyst's strikes and the plunge's collision
+  // The wiki writes a gauge on every row, a physical strike's and collision's as well, so a row's gauge is read only
+  // Where the hit is elemental by its slot: a skill's or a burst's, and a catalyst's strikes, plunges and collision
   const isCatalyst = weaponType === WeaponType.Catalyst;
+  // A traveler's talent page holds a block under each of its two forms, so the kit reads its own form's block and any
+  // Block with no heading, the form gcsim reads the traveler as. Every other character's rows are all read
+  const checkIsReadRow = ({ heading }: WikiAdvancedProperty) =>
+    name !== TRAVELER_NAME || heading === undefined || heading === GCSIM_TRAVELER_FORM;
   for (const page of pages) {
-    if (page.combatTalent === CombatTalent.NormalAttack)
-      for (const property of page.properties) {
-        const normalGroups = NORMAL_ATTACK_TITLE_REGEX.exec(property.title)?.groups;
-        const chargedGroups = CHARGED_ATTACK_TITLE_REGEX.exec(property.title)?.groups;
-        const plungePath = WikiTitlePathMap[property.title];
-        if (normalGroups?.strike !== undefined) {
-          const hitIndex = normalGroups.hit === undefined ? 0 : HIT_LETTERS.indexOf(normalGroups.hit);
-          addRow(`normalAttacks.${Number(normalGroups.strike) - 1}.hits.${hitIndex}`, property, page, isCatalyst);
-        } else if (chargedGroups !== undefined) {
-          const hitIndex =
-            chargedGroups.number === undefined
-              ? chargedGroups.letter === undefined
-                ? 0
-                : HIT_LETTERS.indexOf(chargedGroups.letter)
-              : Number(chargedGroups.number) - 1;
-          addRow(`chargedAttack.hits.${hitIndex}`, property, page, isCatalyst);
-        } else if (plungePath !== undefined)
-          addRow(plungePath, property, page, isCatalyst || plungePath === "plungeCollision");
+    const properties = page.properties.filter((property) => checkIsReadRow(property));
+    if (page.combatTalent === CombatTalent.NormalAttack) {
+      const slotPaths = new Set(
+        properties.flatMap(({ title }) => [
+          getSlotPath(title),
+          getSlotPath(title.replace(TRAILING_BRACKETED_PART_REGEX, "")),
+        ]),
+      );
+      for (const path of slotPaths) {
+        if (path === undefined) continue;
+        const rows = findFirstTierRows(properties, [
+          (title) => getSlotPath(title) === path,
+          (title) => getSlotPath(title.replace(TRAILING_BRACKETED_PART_REGEX, "")) === path,
+        ]);
+        addRows(path, rows, page, isCatalyst);
       }
+    }
     const talentHitLabels = [...hitLabelMap].filter(
       ([, { proudSkillGroupId }]) => proudSkillGroupId === talentGroupIdMap[page.combatTalent],
     );
-    const findLabelRow = ({ label }: KitHitLabel) =>
-      page.properties.find(({ title }) => toTitleWords(title) === toTitleWords(label));
     // The rows a slot hit on this page joins, which a named hit reusing one of their labels does not take
     const slotHitRows = new Set(
-      talentHitLabels.filter(([hitPath]) => !hitPath.startsWith("hits.")).map(([, hitLabel]) => findLabelRow(hitLabel)),
+      talentHitLabels
+        .filter(([hitPath]) => !hitPath.startsWith("hits."))
+        .flatMap(([, { label }]) => findLabelRows(label, properties)),
     );
-    for (const [hitPath, hitLabel] of talentHitLabels) {
-      const property = findLabelRow(hitLabel);
-      if (property !== undefined && !(hitPath.startsWith("hits.") && slotHitRows.has(property)))
-        addRow(hitPath, property, page, page.combatTalent !== CombatTalent.NormalAttack || isCatalyst);
+    // The rows each hit takes by its label, where hits sharing one take their numbered rows in path order
+    const hitPathRowsMap = findHitPathRowsMap(
+      talentHitLabels.map(([hitPath, { label }]): [string, string] => [hitPath, label]),
+      properties,
+    );
+    for (const [hitPath] of talentHitLabels) {
+      const rows = hitPathRowsMap.get(hitPath) ?? [];
+      addRows(
+        hitPath,
+        hitPath.startsWith("hits.") ? rows.filter((row) => !slotHitRows.has(row)) : rows,
+        page,
+        page.combatTalent !== CombatTalent.NormalAttack || isCatalyst,
+      );
     }
   }
   return candidateMap;

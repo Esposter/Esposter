@@ -4,7 +4,7 @@ Mika's kit is its record and one behaviour module, `createMikaKitBehaviour`, on 
 
 Not built yet: Rimestar Shard, which strikes three random enemies within 10 metres of the body after the flare, as it needs a strike on three chosen enemies rather than all in reach; Eagleplume, the party's heal on each member's normal attack, which waits on a reaction to another member's attacks; the ATK SPD bonus Starfrost Swirl gives the team, as the attributes do not yet hold attack speed; and his Ascension and Constellation passives.
 
-Gcsim gives Mika's plunges no file, so they take the timings and poise of Bennett's plunge file, with the reaches as the fallback's areas. The flare's hold threshold is the half second gcsim does not give, and his strikes and charged attack take the wiki's rows: 40.245, 38.606 and 50.701 for the first three strikes, 25.68 for each hit of the fourth, 65.93 for the fifth and 120 for the charged attack. Each is provisional until a recording settles it.
+Gcsim gives Mika's plunges no file, so the record takes Bennett's timings and reaches, and the wiki's poise: 25 for the collision, and 100 and 150 for the low and high plunges. The flare's hold threshold is the half second gcsim does not give, and his strikes and charged attack take the wiki's rows: 40.245, 38.606 and 50.701 for the first three strikes, 25.68 for each hit of the fourth, 65.93 for the fifth and 120 for the charged attack. Each is provisional until a recording settles it.
 
 ## Key files
 
@@ -15,4 +15,5 @@ Gcsim gives Mika's plunges no file, so they take the timings and poise of Bennet
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mika), MIT: Mika's strikes' hitmarks, cancel frames and reaches, the charged attack, Starfrost Swirl's press and held Rimestar Flare, and Skyfeather Song's animation and initial heal.
-- [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed as Mika's own folder has no plunge file.
+- [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings, borrowed as Mika's own folder has no plunge file.
+- [Spear of Favonius - Arrow's Passage](https://genshin-impact.fandom.com/wiki/Spear_of_Favonius_-_Arrow%27s_Passage), Genshin Impact Wiki: the plunges' poise.

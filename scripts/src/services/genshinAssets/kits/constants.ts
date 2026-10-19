@@ -14,6 +14,11 @@ export const GCSIM_RAW_URL = "https://raw.githubusercontent.com/genshinsim/gcsim
 export const GCSIM_CHARACTERS_PATH = "internal/characters";
 // A character folder's config, which a folder holding only other folders, the Traveler's, does not have
 export const GCSIM_CONFIG_FILE = "config.yml";
+// The Traveler's English name, which is the kit's and the wiki's talent category's, `Category:Traveler_Talents`
+export const TRAVELER_NAME = "Traveler";
+// The Traveler's form gcsim reads the kit as, Lumine's Anemo one: its folder under the Traveler's and the heading its
+// Block carries on the wiki, whose gender gcsim's `NewTraveler` gives its constants at
+export const GCSIM_TRAVELER_FORM = "Lumine";
 // The frame helpers gcsim's action files build an action's cancel frames with
 export const GCSIM_NORMAL_FRAMES_CALLEE = "frames.InitNormalCancelSlice";
 // The frames a second of game time is, the unit a gcsim cooldown is written in and the table gives it in seconds
@@ -60,7 +65,8 @@ export const GCSIM_SKILL_ATTACK_TAGS: readonly string[] = [
   "attacks.AttackTagElementalArtHold",
 ];
 export const GCSIM_BURST_ATTACK_TAGS: readonly string[] = ["attacks.AttackTagElementalBurst"];
-export const GCSIM_PHYSICAL_ELEMENT = "attributes.Physical";
+// The gcsim elements a hit of no element is named by, which applies no element and no gauge
+export const GCSIM_ELEMENTLESS_ELEMENTS: ReadonlySet<string> = new Set(["attributes.NoElement", "attributes.Physical"]);
 // The gauge a hit applies is its durability over 25, gcsim's units to the game's
 export const GCSIM_DURABILITY_PER_GAUGE = 25;
 // The seconds a hold must be held with no table or wiki figure for it, Bennett's first Charge Level's

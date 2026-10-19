@@ -1,4 +1,7 @@
+import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
+import type { ImageNodeProps } from "#shared/models/pageBuilder/ImageNodeProps";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -20,7 +23,7 @@ const imageShape = { alt: z.string(), decorative: z.boolean(), src: webpageUrlSc
 const imageFormSchema = z.strictObject(imageShape).superRefine(refineImageAlternative);
 const imagePropsSchema = z
   .object({ ...imageShape, style: nodeStyleSchema.optional() })
-  .superRefine(refineImageAlternative);
+  .superRefine(refineImageAlternative) satisfies z.ZodType<OwnProps<ImageNodeProps>>;
 
 export const imageNodeType = {
   css: ".image { max-width: 100%; height: auto; }",
@@ -28,7 +31,7 @@ export const imageNodeType = {
   isFocusable: false,
   propsSchema: imagePropsSchema,
   render: (node) => {
-    const { alt, decorative, src } = imagePropsSchema.parse(node.props);
+    const { alt, decorative, src } = node.props;
     return {
       attributes: decorative
         ? {
@@ -44,4 +47,4 @@ export const imageNodeType = {
   },
   slots: {},
   type: WebpageNodeType.Image,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<ImageNode>;

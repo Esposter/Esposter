@@ -5,6 +5,7 @@ import { GCSIM_CONFIG_FILE, GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/servic
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
+import { CombatTalent } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -16,6 +17,13 @@ const overlayFor = (path: string): KitOverlay => ({
 
 describe("readGcsimCitedCandidates local aliases", () => {
   const FOLDER = "aino";
+
+  // The talents' proud skill groups, as the cited reader reads a named hit's targeting area by them
+  const TALENT_GROUP_ID_MAP = {
+    [CombatTalent.ElementalBurst]: 3,
+    [CombatTalent.ElementalSkill]: 2,
+    [CombatTalent.NormalAttack]: 1,
+  };
   const createGcsimDirectory = (source: string) => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-locals-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });
@@ -68,11 +76,13 @@ describe("readGcsimCitedCandidates local aliases", () => {
         overlayFor("burst.area"),
         createGcsimDirectory(SINGLE_GO),
         createCharacter(SINGLE_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("burst.area") ?? [];
+    // The constructor's forward offset of 1 is folded into its radius of 4, as a body circle's reach is priced
     expect(candidates).toStrictEqual([
       {
         provenance: { file: "internal/characters/aino/burst.go", line: 5, source: KitSource.Gcsim },
-        value: { angle: 2 * Math.PI, height: 2, radius: 4 },
+        value: { angle: 2 * Math.PI, height: 2, radius: 5 },
       },
     ]);
   });
@@ -102,6 +112,7 @@ describe("readGcsimCitedCandidates local aliases", () => {
         },
         createGcsimDirectory(SUM_GO),
         createCharacter(SUM_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([
       {
@@ -151,6 +162,7 @@ describe("readGcsimCitedCandidates local aliases", () => {
         overlayFor("burst.area"),
         createGcsimDirectory(REASSIGNED_GO),
         createCharacter(REASSIGNED_GO),
+        TALENT_GROUP_ID_MAP,
       ).get("burst.area") ?? [];
     expect(candidates).toStrictEqual([]);
   });

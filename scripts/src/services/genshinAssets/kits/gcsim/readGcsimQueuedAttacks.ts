@@ -301,7 +301,13 @@ const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: s
         hitbox:
           areaValueStart === undefined
             ? undefined
-            : readGoHitbox(tokens, areaValueStart, (name) => scope.resolveName(name, queryStart), file),
+            : readGoHitbox(
+                tokens,
+                areaValueStart,
+                (name) => scope.resolveName(name, queryStart),
+                file,
+                (name) => scope.resolveAssignment(name, queryStart),
+              ),
       },
     ];
   });
@@ -375,7 +381,11 @@ export const readGcsimQueuedAttacks = (
           const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
           // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
           const ownHitbox =
-            hitboxValueStart === undefined ? undefined : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file);
+            hitboxValueStart === undefined
+              ? undefined
+              : readGoHitbox(tokens, hitboxValueStart, resolveIteration, file, (name) =>
+                  scope.resolveAssignment(name, position),
+                );
           const hitbox =
             ownHitbox?.name === SINGLE_TARGET_HIT_CONSTRUCTOR && queryHitbox !== undefined ? queryHitbox : ownHitbox;
           const delay = sumOptionalDelays(

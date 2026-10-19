@@ -1,4 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { TooltipNode } from "#shared/models/pageBuilder/TooltipNode";
+import type { TooltipNodeProps } from "#shared/models/pageBuilder/TooltipNodeProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -7,7 +10,10 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { z } from "zod";
 
 const tooltipFormSchema = z.strictObject({ label: z.string().min(1), text: z.string().min(1) });
-const tooltipPropsSchema = z.object({ ...tooltipFormSchema.shape, style: nodeStyleSchema.optional() });
+const tooltipPropsSchema = z.object({
+  ...tooltipFormSchema.shape,
+  style: nodeStyleSchema.optional(),
+}) satisfies z.ZodType<OwnProps<TooltipNodeProps>>;
 
 // A button whose text shows on hover and on keyboard focus, described by that text for a reader who cannot see it
 export const tooltipNodeType = {
@@ -17,26 +23,22 @@ export const tooltipNodeType = {
   formSchema: tooltipFormSchema,
   isFocusable: false,
   propsSchema: tooltipPropsSchema,
-  render: (node) => {
-    const id = z.string().parse(node.props.id);
-    const { label, text } = tooltipPropsSchema.parse(node.props);
-    return {
-      attributes: { [HtmlAttributeName.Class]: "tooltip" },
-      children: [
-        {
-          attributes: { [HtmlAttributeName.AriaDescribedBy]: `${id}-tip`, [HtmlAttributeName.Type]: "button" },
-          children: [label],
-          tag: HtmlTag.Button,
-        },
-        {
-          attributes: { [HtmlAttributeName.Id]: `${id}-tip`, [HtmlAttributeName.Role]: "tooltip" },
-          children: [text],
-          tag: HtmlTag.Span,
-        },
-      ],
-      tag: HtmlTag.Span,
-    };
-  },
+  render: (node) => ({
+    attributes: { [HtmlAttributeName.Class]: "tooltip" },
+    children: [
+      {
+        attributes: { [HtmlAttributeName.AriaDescribedBy]: `${node.props.id}-tip`, [HtmlAttributeName.Type]: "button" },
+        children: [node.props.label],
+        tag: HtmlTag.Button,
+      },
+      {
+        attributes: { [HtmlAttributeName.Id]: `${node.props.id}-tip`, [HtmlAttributeName.Role]: "tooltip" },
+        children: [node.props.text],
+        tag: HtmlTag.Span,
+      },
+    ],
+    tag: HtmlTag.Span,
+  }),
   slots: {},
   type: WebpageNodeType.Tooltip,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<TooltipNode>;

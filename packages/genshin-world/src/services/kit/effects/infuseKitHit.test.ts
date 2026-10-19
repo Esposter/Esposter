@@ -33,6 +33,20 @@ describe(infuseKitHit, () => {
     ]);
   });
 
+  test("infuses a collision with no gauge of its own at 0U", () => {
+    expect.hasAssertions();
+    const collisionHit = { ...DILUC_KIT.plungeCollision, gauge: undefined, infusedGauge: 0 };
+
+    expect(
+      infuseKitHit(collisionHit, {
+        characterId: DILUC_CHARACTER_ID,
+        element: Element.Pyro,
+        kind: "infusion",
+        secondsRemaining: 1,
+      }),
+    ).toStrictEqual({ ...collisionHit, element: Element.Pyro, gauge: 0 });
+  });
+
   test("an infusion that converts its attacks gives a normal attack its converted poise", () => {
     expect.hasAssertions();
     const normalHit = takeOne(takeOne(NOELLE_KIT.normalAttacks).hits);

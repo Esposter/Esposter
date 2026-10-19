@@ -32,4 +32,4 @@ Flins's kit is its record and one behaviour module, `createFlinsKitBehaviour`, o
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/flins), MIT: each strike's hitmark, animation and reach, the charged attack's box, hitmark and animation, Manifest Flame's press and stance, and Cometh the Night's hitmarks, animation and circle, read from gcsim's `attack.go`, `charge.go`, `skill.go` and `burst.go`; `cons.go` and `asc.go` hold the mechanics still waiting on hooks.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group.
-- [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings and poise, borrowed since Flins has no plunge file of his own; the collision's poise is the wiki's.
+- [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: Bennett's plunge timings and poise, which Flins takes for want of a plunge file of his own; the wiki gives the collision's poise.

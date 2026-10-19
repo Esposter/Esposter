@@ -1,4 +1,4 @@
-import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { WebpageNodeDefinitionMap } from "#shared/models/pageBuilder/WebpageNodeDefinitionMap";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { buttonNodeType } from "#shared/services/pageBuilder/buttonNodeType";
@@ -17,7 +17,7 @@ import { typedTextNodeType } from "#shared/services/pageBuilder/typedTextNodeTyp
 import { videoNodeType } from "#shared/services/pageBuilder/videoNodeType";
 
 // Every webpage type's shared half, keyed by its type, so a type missing from either half fails the typecheck
-export const webpageNodeTypeDefinitionMap: Record<WebpageNodeType, NodeTypeDefinition> = {
+export const webpageNodeTypeDefinitionMap = {
   [WebpageNodeType.Button]: buttonNodeType,
   [WebpageNodeType.Column]: columnNodeType,
   [WebpageNodeType.Columns]: columnsNodeType,
@@ -32,4 +32,4 @@ export const webpageNodeTypeDefinitionMap: Record<WebpageNodeType, NodeTypeDefin
   [WebpageNodeType.Tooltip]: tooltipNodeType,
   [WebpageNodeType.TypedText]: typedTextNodeType,
   [WebpageNodeType.Video]: videoNodeType,
-};
+} satisfies WebpageNodeDefinitionMap;

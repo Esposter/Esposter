@@ -4,6 +4,7 @@ const TEMPLATE_START = "{{Advanced Properties";
 const PARAMETER_REGEX = /^(?<field>[a-z]+?)(?<row>\d*)$/u;
 const GAUGE_REGEX = /^(?<units>\d+(?:\.\d+)?)U$/u;
 const NUMBER_REGEX = /^\d+(?:\.\d+)?$/u;
+const HEADING_REGEX = /^;\s*(?<name>\S.*?)\s*$/u;
 
 // The template's text from its opening braces to its closing ones, nested templates and all
 const readTemplateBody = (wikitext: string, start: number): string => {
@@ -23,7 +24,8 @@ const readTemplateBody = (wikitext: string, start: number): string => {
 };
 
 // The rows of every `{{Advanced Properties}}` template on a wiki talent page, numbered on from one template to the
-// Next: each row's `titleN`, `guN`, `icdtagN` and `poiseN`, the first row's written with no number
+// Next: each row's `titleN`, `guN`, `icdtagN` and `poiseN`, the first row's written with no number. A template under a
+// `;name` line carries that name as its rows' heading
 export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[] => {
   const properties: WikiAdvancedProperty[] = [];
   let rowOffset = 0;
@@ -32,6 +34,8 @@ export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[
     start !== -1;
     start = wikitext.indexOf(TEMPLATE_START, start + 1)
   ) {
+    // The line directly above the template, where a `;name` line heads it
+    const heading = HEADING_REGEX.exec(wikitext.slice(0, start).split("\n").at(-2) ?? "")?.groups?.name;
     const fieldMaps = new Map<number, Map<string, string>>();
     for (const parameter of readTemplateBody(wikitext, start).split("\n|").slice(1)) {
       const separator = parameter.indexOf("=");
@@ -51,6 +55,7 @@ export const parseAdvancedProperties = (wikitext: string): WikiAdvancedProperty[
       const internalCooldownTag = fieldMap.get("icdtag");
       properties.push({
         ...(gauge !== undefined && { gauge: Number(gauge) }),
+        ...(heading !== undefined && { heading }),
         ...(internalCooldownTag !== undefined && internalCooldownTag !== "" && { internalCooldownTag }),
         ...(NUMBER_REGEX.test(poise) && { poise: Number(poise) }),
         row: rowOffset + row,

@@ -12,8 +12,6 @@
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 8131 } },
   "frames.paintedDome": { "cause": "Unsourced", "value": 720 },
-  "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Grass" },
-  "plungeCollision.gauge": { "source": "Wiki" },
   "stances.paintedDome.normalAttacks.length": { "cause": "Unsourced", "value": 4 },
   "stances.paintedDome.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 44 },
   "stances.paintedDome.normalAttacks.0.hits.length": { "cause": "Unsourced", "value": 1 },

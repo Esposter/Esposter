@@ -1,4 +1,5 @@
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
+import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 // The most nodes a webpage may hold, counted across every slot, so a document cannot grow past what a render walks
@@ -8,9 +9,20 @@ export const MAX_WEBPAGE_NODES = 2000;
 export const SURVEY_INVITE_BUTTON_COLOR = "#F63A4D";
 
 // Every type a webpage slot may hold but a Column, which only Columns holds, and a Tab, which only Tabs holds
-export const WEBPAGE_PLACEABLE_NODE_TYPES: WebpageNodeType[] = Object.values(WebpageNodeType).filter(
-  (type) => type !== WebpageNodeType.Column && type !== WebpageNodeType.Tab,
-);
+export const WEBPAGE_PLACEABLE_NODE_TYPES = [
+  WebpageNodeType.Button,
+  WebpageNodeType.Columns,
+  WebpageNodeType.Countdown,
+  WebpageNodeType.CustomHtml,
+  WebpageNodeType.Image,
+  WebpageNodeType.Section,
+  WebpageNodeType.SurveyInvite,
+  WebpageNodeType.Tabs,
+  WebpageNodeType.Text,
+  WebpageNodeType.Tooltip,
+  WebpageNodeType.TypedText,
+  WebpageNodeType.Video,
+] satisfies WebpagePlaceableNode["type"][];
 
 // The most characters a style value may hold, so one value cannot grow a rule past what a render writes
 export const MAX_STYLE_VALUE_LENGTH = 200;

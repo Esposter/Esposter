@@ -5,7 +5,7 @@ Ayato's kit is its record and one behaviour module, `createAyatoKitBehaviour`, o
 ## Decisions
 
 - **Ayato's Namisen stacks are a status that each Shunsuiken strike reads through the team's effects as it prices.** A hit's `additiveBaseDamageBonus` receives the striker alone, so the stance's strikes close over the owner of the team's effects that Kyouka's cast writes into, and read the stacks there. Each enemy a strike hits adds a stack through `onStrike`, and the status has no end, which a swap ends, as gcsim clears the stacks when he leaves the field; the stance ends on the same swap. Soukai Kanka replaces his normal attacks only, as a stance's charged attack and plunges are the kit's own: gcsim refuses both in the skill state, which a stance cannot express.
-- **Kamisato Art: Kyouka's water illusion explodes 35 frames after the cast.** gcsim takes the illusion's least delay, which a player's parameter may only raise, so `ayatoKit.ts` takes 35 frames, about 0.58 seconds.
+- **Kamisato Art: Kyouka's water illusion explodes 35 frames after the cast.** gcsim takes the illusion's least delay, which a player's parameter may only raise, so the record takes 35 frames, about 0.58 seconds.
 
 ## Key files
 
@@ -15,4 +15,4 @@ Ayato's kit is its record and one behaviour module, `createAyatoKitBehaviour`, o
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slash, the collision and the low and high plunges' frames, reaches and poise, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato), MIT: the kit's hitmarks, cancel frames and areas, reaches, the charged attack's slash, every plunge's frames, reach and poise with the collision's, Kamisato Art: Kyouka's animation, illusion and Soukai Kanka's Shunsuiken strikes, the Namisen stacks, Kamisato Art: Suiyuu's frames, field and ticks, and Ascension 1 and Constellations 1, 2 and 6.

@@ -6,8 +6,8 @@ import { CatalyzeReactionType } from "#src/models/combat/CatalyzeReactionType";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { getOwnReactionDamageBonus } from "#src/services/artifact/sets/getOwnReactionDamageBonus";
+import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
@@ -57,9 +57,8 @@ export const createThunderingFurySetModule = (bonus: ArtifactSetBonus): PassiveM
     getPartyReactionBonus: (member, reaction) =>
       getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap),
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
-      if (event.kind !== KitEventKind.ReactionTriggered) return;
       const { characterId } = combatant;
-      if (event.striker.characterId !== characterId || getActiveCharacterId(party) !== characterId) return;
+      if (!checkIsOwnReactionTriggered(event, combatant) || getActiveCharacterId(party) !== characterId) return;
       if (!event.reactions.some((reaction) => checkIsCutReaction(reaction, event.isGadget))) return;
       if (checkIsKitStatusActive(kitEffectState.effects, characterId, THUNDERING_FURY_COOLDOWN_ID)) return;
       addKitStatus(kitEffectState, characterId, {

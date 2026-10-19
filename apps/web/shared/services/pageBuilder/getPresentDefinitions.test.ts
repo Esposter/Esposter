@@ -1,3 +1,4 @@
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { buttonNodeType } from "#shared/services/pageBuilder/buttonNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
@@ -18,7 +19,7 @@ describe(getPresentDefinitions, () => {
               { props: { href: TEST_URL, id: TEST_OTHER_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
             ],
             id: TEST_ID,
-            tag: "section",
+            tag: HtmlTag.Section,
           },
           type: WebpageNodeType.Section,
         },

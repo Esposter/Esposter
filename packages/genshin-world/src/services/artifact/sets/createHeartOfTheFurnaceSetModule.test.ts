@@ -10,6 +10,7 @@ import { HEART_OF_THE_FURNACE_ARTIFACT_SET_ID } from "#src/services/artifact/con
 import { createHeartOfTheFurnaceSetModule } from "#src/services/artifact/sets/createHeartOfTheFurnaceSetModule";
 import { createReactionTrigger } from "#src/services/artifact/sets/createReactionTrigger.test";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
+import { getBuffAmounts } from "#src/services/artifact/sets/getBuffAmounts.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -18,7 +19,6 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { OTHER_CHARACTER_ID, THIRD_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { getBuffAmounts } from "#src/services/kit/getBuffAmounts.test";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";

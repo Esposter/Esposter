@@ -15,8 +15,6 @@
     "cause": "Unclassified",
     "value": { "index": 4, "proudSkillGroupId": 3239 }
   },
-  "plungeCollision.element": { "cause": "Unsourced", "value": "Fire" },
-  "plungeCollision.gauge": { "source": "Wiki" },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 37, "source": "Gcsim", "value": 98 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",

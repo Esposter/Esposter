@@ -97,8 +97,6 @@
   "parameters.sigilEnergy": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 2032 } },
   "parameters.electroResistanceBonus": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 2039 } },
   "parameters.wolfWithinSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2039 } },
-  "plungeCollision.element": { "cause": "DiffersFromSource", "value": "Electric" },
-  "plungeCollision.gauge": { "source": "Wiki" },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2032 } },
   "skill.hits.0.poiseDamage": { "cause": "Unsourced", "value": 140 },

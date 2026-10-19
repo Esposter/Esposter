@@ -18,12 +18,6 @@ const CRIMSON_WITCH_SOURCE = "Crimson Witch";
 const CRIMSON_WITCH_STACKS_ID = "crimsonWitchStacks";
 // The most stacks the four-piece gives, as its text says
 const MAXIMUM_STACKS = 3;
-// The transformative reactions the first param raises the wearer's own DMG of
-const TRANSFORMATIVE_REACTION_TYPES = new Set<ReactionType>([
-  TransformativeReactionType.Burgeon,
-  TransformativeReactionType.Burning,
-  TransformativeReactionType.Overloaded,
-]);
 
 // The stacks the wearer holds. The status they run on is dropped when it runs out, so a lapsed count reads as none, as gcsim's
 // Cw4pc status does
@@ -41,9 +35,11 @@ export const createCrimsonWitchSetModule = (bonus: ArtifactSetBonus): PassiveMod
   const stackPyroDamageRatio = takeOne(bonus.params, 3);
   const stackSeconds = takeOne(bonus.params, 4);
   const reactionTypeDamageBonusMap = new Map<ReactionType, number>([
-    ...Array.from(TRANSFORMATIVE_REACTION_TYPES, (reactionType) => [reactionType, transformativeDamageBonus] as const),
     [AmplifyingReactionType.Melt, ampedDamageBonus],
     [AmplifyingReactionType.Vaporize, ampedDamageBonus],
+    [TransformativeReactionType.Burgeon, transformativeDamageBonus],
+    [TransformativeReactionType.Burning, transformativeDamageBonus],
+    [TransformativeReactionType.Overloaded, transformativeDamageBonus],
   ]);
   return {
     getPartyReactionBonus: (member, reaction) =>

@@ -4,11 +4,15 @@ import type { KitRecord } from "genshin-world";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { HIT_RECORD, RECORD, SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
-import { describe, expect, test } from "vitest";
+import { KitPlunge } from "genshin-world";
+import { assert, describe, expect, test } from "vitest";
 
 describe(compareKitRecord, () => {
   const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
+  const PLUNGE_HITMARK_PATH = "plunges.low.hits.0.hitmarkFrames";
+  const WIKI_HITMARK_FRAMES = 10;
 
   test("leaves no entry for a path only the source gives, so the publish adds it rather than removing it", () => {
     expect.hasAssertions();
@@ -77,5 +81,40 @@ describe(compareKitRecord, () => {
         tables,
       ),
     ).toStrictEqual({ failures: [expect.stringContaining("which character 1 lacks")], overlay: {} });
+  });
+
+  test("leaves no entry for a plunge path its donor stands in at, so the wiki value the build reads is reported", () => {
+    expect.hasAssertions();
+
+    const sourceCandidateMap = new Map<string, KitCandidate[]>([
+      ...SOURCE_CANDIDATE_MAP,
+      [
+        PLUNGE_HITMARK_PATH,
+        [
+          { provenance: { page: "Kit", revisionId: 1, row: 1, source: KitSource.Wiki }, value: WIKI_HITMARK_FRAMES },
+          {
+            provenance: { cause: KitProvisionalCause.NoActionFile, file: "kit.go", line: 1, source: KitSource.Gcsim },
+            value: HIT_RECORD.hitmarkFrames,
+          },
+        ],
+      ],
+    ]);
+
+    const { built, ...comparison } = compareKitRecord(
+      RECORD,
+      sourceCandidateMap,
+      new Map(),
+      false,
+      {},
+      new Map(),
+      new Map(),
+      tables,
+    );
+
+    expect(comparison).toStrictEqual({ failures: [PLUNGE_HITMARK_PATH], overlay: {} });
+    assert.exists(built);
+    expect(built.record.plunges[KitPlunge.Low].hits).toStrictEqual([
+      { ...HIT_RECORD, hitmarkFrames: WIKI_HITMARK_FRAMES },
+    ]);
   });
 });

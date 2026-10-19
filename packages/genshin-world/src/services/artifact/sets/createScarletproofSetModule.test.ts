@@ -6,11 +6,11 @@ import { SCARLETPROOF_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createReactionSetTeam } from "#src/services/artifact/sets/createReactionSetTeam.test";
 import { createScarletproofSetModule } from "#src/services/artifact/sets/createScarletproofSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
+import { getBuffAmounts } from "#src/services/artifact/sets/getBuffAmounts.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { OTHER_CHARACTER_ID } from "#src/services/kit/constants.test";
 import { stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { getBuffAmounts } from "#src/services/kit/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);

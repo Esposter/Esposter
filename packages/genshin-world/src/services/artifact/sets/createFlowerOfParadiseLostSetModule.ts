@@ -4,6 +4,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { getOwnReactionDamageBonus } from "#src/services/artifact/sets/getOwnReactionDamageBonus";
 import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
@@ -28,13 +29,13 @@ export const createFlowerOfParadiseLostSetModule = (bonus: ArtifactSetBonus): Pa
   const stackDamageRatio = takeOne(bonus.params, 5);
   const cooldownSeconds = takeOne(bonus.params, 6);
   return {
-    getPartyReactionBonus: (member, { combatant, reactionType }, context) => {
-      const baseDamageBonus = reactionTypeDamageBonusMap.get(reactionType);
-      if (member.characterId !== combatant.characterId || baseDamageBonus === undefined) return {};
+    getPartyReactionBonus: (member, reaction, context) => {
+      const { damageBonus } = getOwnReactionDamageBonus(member, reaction, reactionTypeDamageBonusMap);
+      if (damageBonus === undefined) return {};
       const stacks =
-        findKitStatus(context.kitEffectState.effects, combatant.characterId, FLOWER_OF_PARADISE_LOST_STACKS_ID)
-          ?.stacks ?? 0;
-      return { damageBonus: baseDamageBonus * (1 + stackDamageRatio * stacks) };
+        findKitStatus(context.kitEffectState.effects, member.characterId, FLOWER_OF_PARADISE_LOST_STACKS_ID)?.stacks ??
+        0;
+      return { damageBonus: damageBonus * (1 + stackDamageRatio * stacks) };
     },
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (!checkIsOwnReactionTriggered(event, combatant)) return;
