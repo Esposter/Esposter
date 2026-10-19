@@ -10,14 +10,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const BURST_GROUP_ID = 1;
-const SKILL_GROUP_ID = 2;
-const NORMAL_ATTACK_GROUP_ID = 3;
-const talentGroupIdMap: Record<CombatTalent, number> = {
-  [CombatTalent.ElementalBurst]: BURST_GROUP_ID,
-  [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
-  [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
-};
 const readPage = (title: string, combatTalent: CombatTalent, revisionId: number): WikiTalentPage => ({
   combatTalent,
   properties: parseAdvancedProperties(readFileSync(join(WIKI_FIXTURE_DIRECTORY, `${title}.wikitext`), "utf8")),
@@ -43,6 +35,15 @@ const readCandidateValues = (candidateMap: ReadonlyMap<string, KitCandidate[]>) 
   Object.fromEntries(Array.from(candidateMap, ([path, candidates]) => [path, candidates.map(({ value }) => value)]));
 
 describe(getWikiKitCandidates, () => {
+  const BURST_GROUP_ID = 1;
+  const SKILL_GROUP_ID = 2;
+  const NORMAL_ATTACK_GROUP_ID = 3;
+  const talentGroupIdMap: Record<CombatTalent, number> = {
+    [CombatTalent.ElementalBurst]: BURST_GROUP_ID,
+    [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
+    [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
+  };
+
   test("keeps a row's poise where its internal cooldown tag is one the enum does not name, and writes no tag", () => {
     expect.hasAssertions();
 
