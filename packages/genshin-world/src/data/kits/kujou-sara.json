@@ -50,7 +50,7 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11 }
   },
-  "hits.ambush.hitmarkFrames": { "cause": "Unclassified", "value": 150 },
+  "hits.ambush.hitmarkFrames": { "file": "aimed.go", "line": 138, "source": "Gcsim", "value": 150 },
   "hits.ambush.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5632 } },
   "hits.ambush.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.darkWingsAmbush.area": {
@@ -69,8 +69,8 @@
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 16.92 },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 17.58 },
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 20.25 },
-  "parameters.atkBonusRatio": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 5632 } },
-  "parameters.atkBonusSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 5632 } },
+  "parameters.atkBonusRatio": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5632 } },
+  "parameters.atkBonusSeconds": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5632 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 10 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "hits.ambush.element": { "cause": "Unsourced", "value": "Electric" },
