@@ -50,15 +50,41 @@ const getInsertTarget = (document: BlockDocument, type: WebpageNodeType, nodePoi
   return { index: index + 1, slotPointer: getNodeSlotPointer(nodePointer) };
 };
 
+// Inserts a new block of a type at an index of a slot in one open resource's webpage, selects it, and reports whether the
+// Edit applied. A slot that refuses the type, or a resource with no document held, applies nothing
+export const insertAt = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType): boolean => {
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const document = pageBuilderDocumentStore.getDocument(resourceId);
+  if (!document) return false;
+
+  const insertedId = crypto.randomUUID();
+  const operations = insertBlockNode(document, webpageRegistry, slotPointer, index, {
+    props: createWebpageNodeProps(type, insertedId),
+    type,
+  });
+  if (operations.length === 0) return false;
+
+  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+  return pageBuilderHistoryStore.applyEdit(resourceId, operations, "Insert block").match(
+    () => {
+      pageBuilderCanvasStore.setSelectedNodeId(resourceId, insertedId);
+      return true;
+    },
+    (error) => {
+      console.error(error);
+      return false;
+    },
+  );
+};
+
 // Inserts a new block of a type into one open resource's webpage, at the selection's place. An edit the slot refuses
 // Does nothing and announces nothing. A landed insert is one history entry, selects the new node and is announced once
 export const usePageBuilderInsert = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
-  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-  const { applyEdit } = pageBuilderHistoryStore;
+  const { getSelectedNodeId } = pageBuilderCanvasStore;
   const insert = (type: WebpageNodeType) => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument(resourceIdValue);
@@ -66,19 +92,8 @@ export const usePageBuilderInsert = (resourceId: MaybeRefOrGetter<string>, annou
 
     const nodeId = getSelectedNodeId(resourceIdValue);
     const target = getInsertTarget(document, type, nodeId ? getNodePointer(document, nodeId) : undefined);
-    if (!target) return;
-
-    const insertedId = crypto.randomUUID();
-    const operations = insertBlockNode(document, webpageRegistry, target.slotPointer, target.index, {
-      props: createWebpageNodeProps(type, insertedId),
-      type,
-    });
-    if (operations.length === 0) return;
-
-    applyEdit(resourceIdValue, operations, "Insert block").match(() => {
-      setSelectedNodeId(resourceIdValue, insertedId);
+    if (target && insertAt(resourceIdValue, target.slotPointer, target.index, type))
       announce(`Inserted ${WEBPAGE_NODE_TYPE_TITLE_MAP[type]}`);
-    }, console.error);
   };
 
   return { insert };

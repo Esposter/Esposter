@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { OverlayBox } from "@/services/pageBuilder/getOverlayBox";
+import type { DropTarget } from "@/services/pageBuilder/resolveDropTarget";
 
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
@@ -12,10 +14,11 @@ import { getFrameScale } from "vue-canvas-frame-headless";
 
 interface Props {
   announce: (message: string) => void;
+  dropTarget?: DropTarget;
   resourceId: string;
 }
 
-const { announce, resourceId } = defineProps<Props>();
+const { announce, dropTarget, resourceId } = defineProps<Props>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -27,19 +30,41 @@ const hoveredNodeId = ref<string>();
 const selectionBox = ref<OverlayBox>();
 const getElement = (nodeId: string) =>
   contentRoot.value?.ownerDocument.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`) ?? null;
+const getFrameElement = () => {
+  const frameElement = contentRoot.value?.ownerDocument.defaultView?.frameElement;
+  return frameElement instanceof HTMLIFrameElement ? frameElement : undefined;
+};
+// The frame is scaled to fit its pane, so the scale maps the frame's own pixels to the app's viewport
+const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
+  getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
 // The toolbar sits in the app's document, so the selection box is mapped into the app's viewport through the frame's element
 // The frame is scaled to fit its pane while the box is in the frame's own unscaled pixels, so the scale applies to the box
 const toolbarPosition = computed(() => {
-  const frameElement = contentRoot.value?.ownerDocument.defaultView?.frameElement;
-  if (!(frameElement instanceof HTMLIFrameElement) || !selectionBox.value) return undefined;
+  const frameElement = getFrameElement();
+  if (!frameElement || !selectionBox.value) return undefined;
 
-  const scale = getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
+  const scale = getFrameScaleOf(frameElement);
   const frameRect = frameElement.getBoundingClientRect();
   return {
     left: frameRect.left + selectionBox.value.left * scale,
     top: frameRect.top + selectionBox.value.top * scale,
   };
 });
+// What a palette drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame, the
+// Same space the pointer is mapped into, so the drop logic is not offset by the frame's own scroll
+const getFrameGeometry = (): FrameGeometry | undefined => {
+  const frameElement = getFrameElement();
+  if (!frameElement) return undefined;
+
+  const frameRect = frameElement.getBoundingClientRect();
+  return {
+    frameRect: { height: frameRect.height, left: frameRect.left, top: frameRect.top, width: frameRect.width },
+    getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
+    hoveredNodeId: hoveredNodeId.value,
+    scale: getFrameScaleOf(frameElement),
+  };
+};
+defineExpose({ getFrameGeometry });
 const css = computed(() =>
   pageDocument.value ? getWebpageCss(pageDocument.value, getPresentDefinitions(pageDocument.value)) : "",
 );
@@ -67,6 +92,7 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
         :get-element
+        :drop-target="dropTarget"
         :hovered-node-id
         :resource-id
         :selected-node-id

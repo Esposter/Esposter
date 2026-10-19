@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
+import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -32,6 +33,10 @@ const announce = (message: string) => {
 };
 const { deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(() => resourceId, announce);
 usePageBuilderHistoryCommands(() => resourceId);
+const { dropTarget, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
+const canvas = useTemplateRef("canvas");
+// The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
+const getFrameGeometry = () => canvas.value?.getFrameGeometry();
 
 // The move an Alt chord makes with an arrow key, or none for any other key
 const getAltMove = (key: string) => {
@@ -71,7 +76,7 @@ const onKeydown = (event: KeyboardEvent) => {
   <div v-if="pageDocument" flex gap-2 h-full min-h-0 @keydown="onKeydown">
     <div :style="{ width: `${leftWidth}px` }" relative flex flex-col gap-4 shrink-0 min-h-0>
       <div flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto>
-        <PageBuilderPalette :announce :resource-id />
+        <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />
         <PageBuilderLayers :resource-id />
       </div>
       <UiResizeHandle
@@ -84,7 +89,7 @@ const onKeydown = (event: KeyboardEvent) => {
     <div flex flex-col gap-2 flex-1 min-w-0 min-h-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" :announce :resource-id />
-      <PageBuilderCanvas v-else :announce :resource-id />
+      <PageBuilderCanvas v-else ref="canvas" :announce :drop-target="dropTarget" :resource-id />
     </div>
     <div :style="{ width: `${rightWidth}px` }" relative shrink-0 min-h-0>
       <UiResizeHandle
