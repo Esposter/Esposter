@@ -175,6 +175,28 @@ describe("pageBuilderEditor", () => {
     expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
   });
 
+  test("enter on a button in the canvas frame activates it rather than editing the selected text", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    // An element of the frame's document comes from another realm, so it fails instanceof Element against this window's
+    const frameButton: { closest: () => unknown; tagName: string } = { closest: () => frameButton, tagName: "BUTTON" };
+    const event = new KeyboardEvent("keydown", { key: "Enter" });
+    Object.defineProperty(event, "target", { value: frameButton });
+
+    component.findComponent(PageBuilderCanvas).vm.$emit("canvasKeydown", event);
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+  });
+
   test("leaving a text edit focuses the node's row in the layers tree", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();

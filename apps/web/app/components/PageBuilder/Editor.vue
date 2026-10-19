@@ -94,8 +94,9 @@ watch(
   },
 );
 // A focused button or link takes Enter as its own activation, so the key starts no edit from there
+// Duck-typed rather than instanceof Element, since a key pressed in the canvas frame comes from the frame's own realm
 const checkIsControlTarget = (target: EventTarget | null) =>
-  target instanceof Element && target.closest("button, a[href]") !== null;
+  target !== null && "tagName" in target && (target as Element).closest("button, a[href]") !== null;
 // Keys are not taken while the user types in a field, so Delete and the arrows keep their own meaning there
 // The canvas forwards the keys its frame takes no command for, so the frame's keys reach the same handler as the shell's own
 const handleEditorKeydown = (event: KeyboardEvent) => {
