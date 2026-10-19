@@ -77,7 +77,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `lynette`            | 2026-10-19 · Haiku 5.5 |                    |
 | `lyney`              | 2026-10-19 · Haiku 5.5 |                    |
 | `mavuika`            | 2026-10-19 · Haiku 5.5 |                    |
-| `mika`               | —                      |                    |
+| `mika`               | 2026-10-19 · Opus 5.5  |                    |
 | `mona`               | 2026-10-19 · Haiku 5.5 |                    |
 | `mualani`            | 2026-10-19 · Haiku 5.5 |                    |
 | `nahida`             | 2026-10-19 · Haiku 5.5 |                    |
@@ -124,7 +124,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `yae-miko`           | 2026-10-19 · Haiku 5.5 |                    |
 | `yanfei`             | 2026-10-19 · Haiku 5.5 |                    |
 | `yaoyao`             | —                      |                    |
-| `yelan`              | —                      |                    |
+| `yelan`              | 2026-10-19 · Opus 5.5  |                    |
 | `yoimiya`            | —                      |                    |
 | `yumemizuki-mizuki`  | 2026-10-19 · Haiku 5.5 | design is `mizuki` |
 | `yun-jin`            | 2026-10-19 · Haiku 5.5 |                    |

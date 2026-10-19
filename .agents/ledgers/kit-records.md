@@ -42,7 +42,7 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `eula`               | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `faruzan`            | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `fischl`             | —                      |                                                                          |
-| `flins`              | —                      |                                                                          |
+| `flins`              | 2026-10-19 · Opus 5.5  |                                                                          |
 | `freminet`           | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `furina`             | —                      |                                                                          |
 | `gaming`             | 2026-10-19 · Haiku 5.5 |                                                                          |
@@ -55,7 +55,7 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `ineffa`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jean`               | —                      |                                                                          |
-| `kachina`            | 2026-10-19 · Haiku 5.5 |                                                                          |
+| `kachina`            | 2026-10-19 · Opus 5.5  |                                                                          |
 | `kaedehara-kazuha`   | 2026-10-19 · Haiku 5.5 | design is `kazuha`                                                       |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | 2026-10-19 · Haiku 5.5 |                                                                          |
