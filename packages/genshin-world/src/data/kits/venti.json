@@ -107,8 +107,5 @@
   },
   "skillHolds.0.action.hits.0.element": { "file": "skill.go", "line": 40, "source": "Gcsim", "value": "Wind" },
   "skillHolds.0.action.hits.0.hitmarkFrames": { "file": "skill.go", "line": 62, "source": "Gcsim", "value": 74 },
-  "skillHolds.0.action.hits.0.multiplier": {
-    "cause": "Unclassified",
-    "value": { "index": 2, "proudSkillGroupId": 2232 }
-  }
+  "skillHolds.0.action.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 2232 } }
 }
