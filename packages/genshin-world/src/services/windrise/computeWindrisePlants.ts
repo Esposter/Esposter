@@ -11,6 +11,7 @@ import {
   UP,
 } from "#src/services/windrise/constants";
 import { getSlope } from "#src/services/windrise/getSlope";
+import { takeRandom } from "@esposter/shared";
 import {
   computeScatterPoints,
   createSeededRandom,
@@ -61,7 +62,7 @@ export const computeWindrisePlants = (
     rotation.setFromAxisAngle(UP, random() * Math.PI * 2);
     scale.setScalar(MathUtils.lerp(FLOWER_MIN_SIZE, FLOWER_MAX_SIZE, random()));
     matrix.compose(translation, rotation, scale).toArray(plantMatrices, plantIndex * 16);
-    flowerColors[Math.floor(random() * flowerColors.length)]?.toArray(plantColors, plantIndex * 3);
+    takeRandom(flowerColors, random).toArray(plantColors, plantIndex * 3);
   }
   return { plantColors, plantMatrices };
 };

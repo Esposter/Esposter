@@ -34,9 +34,9 @@ export const enhanceMinorAffixes = ({
     );
     return [...minorAffixes, { attribute: group.attribute, value: takeRandom(group.values, random) }];
   }
-  const raisedIndex = Math.floor(random() * minorAffixes.length);
-  return minorAffixes.map((line, index) => {
-    if (index !== raisedIndex) return line;
+  const raisedLine = takeRandom(minorAffixes, random);
+  return minorAffixes.map((line) => {
+    if (line !== raisedLine) return line;
     const group = minorAffixGroups.find(({ attribute }) => attribute === line.attribute);
     if (!group)
       throw new InvalidOperationError(
