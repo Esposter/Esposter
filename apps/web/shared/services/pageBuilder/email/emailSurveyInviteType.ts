@@ -1,8 +1,9 @@
+import type { EmailSurveyInviteNode } from "#shared/models/pageBuilder/EmailSurveyInviteNode";
 import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { MjmlBlockTypeDefinition } from "mjml-blocks";
 
+import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { SURVEY_INVITE_BUTTON_COLOR } from "#shared/services/pageBuilder/constants";
-import { EMAIL_SURVEY_INVITE_TYPE } from "#shared/services/pageBuilder/email/constants";
 import { getSurveyInviteUrl } from "#shared/services/pageBuilder/getSurveyInviteUrl";
 import { surveyInviteNodeType } from "#shared/services/pageBuilder/surveyInviteNodeType";
 import { escapeAttribute, escapeText } from "@esposter/shared";
@@ -11,6 +12,7 @@ import { escapeAttribute, escapeText } from "@esposter/shared";
 export const emailSurveyInviteType = {
   allowedAttributes: {},
   defaultAttributes: {},
+  hasAlternativeText: false,
   propsSchema: surveyInviteNodeType.propsSchema,
   render: (node, _slots, context) => {
     const { label, surveyId } = surveyInviteNodeType.propsSchema.parse(node.props);
@@ -24,5 +26,5 @@ export const emailSurveyInviteType = {
     };
   },
   slots: {},
-  type: EMAIL_SURVEY_INVITE_TYPE,
-} satisfies MjmlBlockTypeDefinition<RenderContext>;
+  type: EmailNodeType.SurveyInvite,
+} satisfies MjmlBlockTypeDefinition<EmailSurveyInviteNode, RenderContext>;
