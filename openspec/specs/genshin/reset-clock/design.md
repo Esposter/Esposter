@@ -46,7 +46,7 @@ flowchart TD
 | `packages/genshin-world/src/services/shop/getPaimonsBargainsOffer.ts`                   | The bargains' month, the game day's month                                                                  |
 | `packages/genshin-world/src/services/originalResin/refillOriginalResinWithPrimogems.ts` | The Primogem refill's game day                                                                             |
 | `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`            | The forge cap, counted over the game day                                                                   |
-| `packages/genshin-world/src/services/investigation/countInvestigationsToday.ts`         | The investigations made since the last daily reset                                                         |
+| `packages/genshin-world/src/services/investigation/computeInvestigationDay.ts`          | The investigations made since the last daily reset                                                         |
 | `packages/genshin-world/src/services/commission/computeCommissionDay.ts`                | The day's four, dealt again when the kept day is no longer current                                         |
 | `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`           | A mined outcrop stands until the next 04:00 reset after its mining                                         |
 | `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`                  | An elite camp's member returns at the next daily reset                                                     |
