@@ -59,7 +59,7 @@ describe("mailScreen", () => {
     const onClaim = vi.fn<(held: MailSave) => void>();
     render(MailScreen, { attrs: { onClaim }, props: { ...props, mails: [mail(false)] } });
 
-    await page.getByRole("tab", { name: "Best Wishes on Your Birthday" }).click();
+    await page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Expires in 364 day(s)" }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailClaim] }).click();
 
     expect(onClaim).toHaveBeenCalledWith(mail(false));
@@ -76,12 +76,16 @@ describe("mailScreen", () => {
       .toBeDisabled();
   });
 
-  // Delete Read asks first, and says so to the screen's owner only once the player confirms it
+  // Delete Read asks first, and says so to the screen's owner only once the player confirms it. The read mail is an
+  // Ordinary letter here, since a claimed birthday mail sits in the Gift Mail Box, which Delete Read keeps
   test("should delete read mail once delete read is confirmed", async () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
-    render(MailScreen, { attrs: { onDeleteRead }, props: { ...props, mails: [{ ...mail(true), isRead: true }] } });
+    render(MailScreen, {
+      attrs: { onDeleteRead },
+      props: { ...props, birthdayMailIds: new Set<number>(), mails: [{ ...mail(true), isRead: true }] },
+    });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Confirm] }).click();
@@ -94,7 +98,10 @@ describe("mailScreen", () => {
     expect.hasAssertions();
 
     const onDeleteRead = vi.fn<() => void>();
-    render(MailScreen, { attrs: { onDeleteRead }, props: { ...props, mails: [{ ...mail(true), isRead: true }] } });
+    render(MailScreen, {
+      attrs: { onDeleteRead },
+      props: { ...props, birthdayMailIds: new Set<number>(), mails: [{ ...mail(true), isRead: true }] },
+    });
 
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailDeleteRead] }).click();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Cancel] }).click();
@@ -119,10 +126,14 @@ describe("mailScreen", () => {
 
     render(MailScreen, { props: { ...props, mails: [mail(true)] } });
 
-    await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).not.toBeInTheDocument();
+    await expect
+      .element(page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Gift Mail Box" }))
+      .not.toBeInTheDocument();
     await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MailGiftBox] }).click();
 
-    await expect.element(page.getByRole("tab", { name: "Best Wishes on Your Birthday" })).toBeVisible();
+    await expect
+      .element(page.getByRole("tab", { name: "Best Wishes on Your Birthday Mailing System Gift Mail Box" }))
+      .toBeVisible();
   });
 
   // The date line gives the date the mail was received, which NuxtTime formats in the reader's locale
