@@ -11,7 +11,7 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
+import { readGoEnclosingBodyStart } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingBodyStart";
 import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -78,8 +78,8 @@ const readSwitchCooldowns = (
   return cooldowns;
 };
 
-// The cooldown each case of a skill hold's switch gives the skill: the local the `SetCD` or `SetCDWithDelay` call passes
-// Is a switch's local, set in each of its cases. A call passing a literal, or none a switch sets, gives none
+// The cooldown each case of a skill hold's switch gives the skill: the local the `SetCD` or `SetCDWithDelay` call
+// Passes is a switch's local, set in each of its cases. A call passing a literal, or none a switch sets, gives none
 export const readGcsimHoldCooldowns = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,
@@ -92,7 +92,7 @@ export const readGcsimHoldCooldowns = (
       if (!COOLDOWN_CALL_NAMES.has(token.text) || !checkIsGoPunctuation(tokens[index + 1], "(")) continue;
       const call = parseGoExpression(tokens, index).expression;
       const cooldownExpression = call.kind === GoExpressionKind.Call ? call.parameters[1] : undefined;
-      const functionStart = readGoEnclosingFunction(namedFunctions, index)?.bodyStart ?? -1;
+      const functionStart = readGoEnclosingBodyStart(namedFunctions, index);
       for (const name of cooldownExpression === undefined ? [] : readGoNames(cooldownExpression)) {
         const cooldowns = readSwitchCooldowns(tokens, index, name, file, resolveName, functionStart);
         if (cooldowns.length > 0) return cooldowns;
