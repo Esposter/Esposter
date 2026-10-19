@@ -4,17 +4,15 @@ import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Interactable } from "#src/models/interaction/Interactable";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
+import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { GameText } from "genshin-text";
-import type { Ref, ShallowRef } from "vue";
+import type { ShallowRef } from "vue";
 
 import { useGatheringPoints } from "#src/composables/useGatheringPoints";
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
@@ -59,21 +57,15 @@ export const useWorldPickups = ({
   setWallet,
   wallet,
   weaponDataMap,
-}: {
+}: WorldBagDependencies & {
   archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
   events: WorldEvents;
   gameDataBaseUrl: string;
   gameText: GameText;
   getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   serverClockOffsetMs: number;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
   weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
