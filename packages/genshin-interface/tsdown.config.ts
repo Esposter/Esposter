@@ -16,7 +16,8 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(),
       ...exports,
       "./styles/*.css": isPublish
         ? "./dist/styles/*.css"
-        : { default: "./dist/styles/*.css", source: "./src/styles/*.css" },
+        : // eslint-disable-next-line perfectionist/sort-objects -- a condition map resolves in its key order, so the source arm comes first, as devExports writes it
+          { source: "./src/styles/*.css", default: "./dist/styles/*.css" },
     }),
   },
 });
