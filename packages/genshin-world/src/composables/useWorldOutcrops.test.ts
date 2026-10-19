@@ -1,6 +1,6 @@
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { OutcropKindRule } from "#src/models/leyLine/OutcropKindRule";
@@ -28,7 +28,7 @@ import { ref } from "vue";
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const CHARACTER_ID = 1;
 const BENCHED_CHARACTER_ID = 2;
-const FRIENDSHIP_LEVELS: FriendshipLevel[] = [
+const FRIENDSHIP_LEVELS: FriendshipLevels = [
   { exp: 0, level: 1 },
   { exp: 1000, level: 2 },
 ];
@@ -61,7 +61,7 @@ const epoch = Temporal.Instant.fromEpochMilliseconds(0);
 const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
   const events = createWorldEvents();
   const adventureExp = ref(0);
-  const friendshipLevels = ref(FRIENDSHIP_LEVELS);
+  const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
   const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
   const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
   const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
@@ -150,7 +150,7 @@ describe("useWorldOutcrops", () => {
     expect.hasAssertions();
 
     const { characters, friendshipLevels, outcrops, wallet } = createOutcrops();
-    friendshipLevels.value = [];
+    friendshipLevels.value = undefined;
     outcrops.openOutcropClaim(1, epoch);
     outcrops.chooseOutcropClaim(takeOne(outcrops.claimPrompt.value?.offers ?? [], 0), epoch, 0, () => 0);
 

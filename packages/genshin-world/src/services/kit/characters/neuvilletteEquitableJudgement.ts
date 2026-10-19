@@ -3,13 +3,13 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { checkIsInSourcewaterPickupArea } from "#src/services/kit/checkIsInSourcewaterPickupArea";
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { absorbSourcewaterDroplets } from "#src/services/kit/effects/absorbSourcewaterDroplets";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { KIT_FRAMES_PER_SECOND } from "#src/services/shared/constants";
 import { takeOne } from "@esposter/shared";
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/charge.go, ChargeAttack and chargeJudgementTick. The charge's legal evaluation

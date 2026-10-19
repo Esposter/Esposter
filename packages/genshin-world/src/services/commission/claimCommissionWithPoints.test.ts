@@ -2,7 +2,7 @@ import type { Character } from "#src/models/character/Character";
 import type { Commission } from "#src/models/commission/Commission";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { RewardItem } from "#src/models/reward/RewardItem";
@@ -44,7 +44,7 @@ describe(claimCommissionWithPoints, () => {
       { id: ITEM_ID, materialType: MaterialType.Exchange, nameTextId: NAME_TEXT_ID, rank: 1, rarity: 1, stackLimit: 5 },
     ],
   ]);
-  const FRIENDSHIP_LEVELS: FriendshipLevel[] = [
+  const FRIENDSHIP_LEVELS: FriendshipLevels = [
     { exp: 0, level: 1 },
     { exp: 100, level: 2 },
   ];

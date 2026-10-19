@@ -5,6 +5,7 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
@@ -115,6 +116,10 @@ describe(useWorldCommissionClaims, () => {
     });
     const adventureExp = shallowRef(0);
     const characters = shallowRef<Character[]>([{ ...CHARACTER, id: TRAVELER_CHARACTER_ID }, CHARACTER]);
+    const friendshipLevels = shallowRef<FriendshipLevels | undefined>([
+      { exp: 0, level: 1 },
+      { exp: 100, level: 2 },
+    ]);
     const inventory = shallowRef(EMPTY_INVENTORY);
     const setCharacters = vi.fn<(nextCharacters: Character[]) => void>();
     const setInventory = vi.fn<(nextInventory: Inventory) => void>();
@@ -129,10 +134,7 @@ describe(useWorldCommissionClaims, () => {
       commissionSlice: computed(() => slice),
       completedMainQuestIds: computed(() => new Set<string>()),
       encounterPoints,
-      friendshipLevels: shallowRef([
-        { exp: 0, level: 1 },
-        { exp: 100, level: 2 },
-      ]),
+      friendshipLevels,
       getWorldNow: clock.getWorldNow,
       inventory,
       longTermEncounterPoints,
@@ -146,7 +148,7 @@ describe(useWorldCommissionClaims, () => {
       wallet,
       worldNow: clock.worldNow,
     });
-    return { claims, commissionDay, encounterPoints, longTermEncounterPoints, wallet };
+    return { claims, commissionDay, encounterPoints, friendshipLevels, longTermEncounterPoints, setCharacters, wallet };
   };
 
   test("should claim a finished commission free, routing its Mora into the wallet and recording the claim", () => {
@@ -173,6 +175,24 @@ describe(useWorldCommissionClaims, () => {
     claims.claimCommission(commission.id);
 
     expect(commissionDay.value).toBe(day);
+    expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
+  });
+
+  test("should refuse a claim while the friendship levels are unread, leaving the day and the wallet as they were", () => {
+    expect.hasAssertions();
+    const day = dayWith(FINISH_PROGRESS);
+    const { claims, commissionDay, friendshipLevels, setCharacters, wallet } = createClaims({
+      day,
+      halfPoints: 0,
+      longTermHalfPoints: 0,
+      resin: 0,
+    });
+    friendshipLevels.value = undefined;
+
+    claims.claimCommission(commission.id);
+
+    expect(commissionDay.value).toBe(day);
+    expect(setCharacters).not.toHaveBeenCalled();
     expect(wallet.value[Currency.Mora]).toBe(STARTING_MORA);
   });
 

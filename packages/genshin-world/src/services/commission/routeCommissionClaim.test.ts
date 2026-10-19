@@ -1,5 +1,5 @@
 import type { Character } from "#src/models/character/Character";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 
@@ -44,7 +44,7 @@ describe(routeCommissionClaim, () => {
     rarity: 1,
     stackLimit: 5,
   };
-  const FRIENDSHIP_LEVELS: FriendshipLevel[] = [
+  const FRIENDSHIP_LEVELS: FriendshipLevels = [
     { exp: 0, level: 1 },
     { exp: 100, level: 2 },
   ];
@@ -130,32 +130,6 @@ describe(routeCommissionClaim, () => {
         noQuest,
         FRIENDSHIP_LEVELS,
         fullInventory,
-        materialDataMap,
-        names,
-        party,
-        wallet,
-      ),
-    ).toBeUndefined();
-  });
-
-  test("a claim made before the Friendship levels load is refused whole, and routes none of its Mora or EXP", () => {
-    expect.hasAssertions();
-
-    const party = createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]);
-    const items = [
-      { count: MORA_COUNT, id: MORA_ITEM_ID },
-      { count: COMPANIONSHIP_EXP, id: COMPANIONSHIP_EXP_ITEM_ID },
-    ];
-
-    expect(
-      routeCommissionClaim(
-        adventureRankTables,
-        0,
-        [CHARACTER],
-        items,
-        noQuest,
-        [],
-        EMPTY_INVENTORY,
         materialDataMap,
         names,
         party,

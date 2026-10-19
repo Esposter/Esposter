@@ -1,5 +1,5 @@
 import type { Character } from "#src/models/character/Character";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
@@ -12,7 +12,7 @@ describe(gainCompanionshipExp, () => {
   const BENCHED_CHARACTER_ID = 3;
   const GAIN_EXP = 5;
   const TOP_EXP = 30;
-  const FRIENDSHIP_LEVELS: FriendshipLevel[] = [
+  const FRIENDSHIP_LEVELS: FriendshipLevels = [
     { exp: 0, level: 1 },
     { exp: 10, level: 2 },
     { exp: TOP_EXP, level: 3 },

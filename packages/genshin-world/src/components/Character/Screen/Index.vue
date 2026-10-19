@@ -567,7 +567,7 @@ const isActivateDisabled = computed(
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
         :="talentPanel"
         :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-        @upgrade="(index) => upgradeTalentAt(index)"
+        @upgrade="upgradeTalentAt"
       />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"

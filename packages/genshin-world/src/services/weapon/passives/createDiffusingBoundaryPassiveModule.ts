@@ -3,6 +3,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { Attribute } from "#src/models/character/Attribute";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { checkIsKitShielded } from "#src/services/kit/effects/checkIsKitShielded";
+import { checkIsCharacterOnField } from "#src/services/party/checkIsCharacterOnField";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
@@ -14,7 +15,7 @@ export const createDiffusingBoundaryPassiveModule = (params: number[]): PassiveM
   const criticalRateBonus = takeOne(params, 1);
   return {
     getPassiveBonuses: ({ characterId }, _healthShare, deployedCombatants, effects) =>
-      checkIsKitShielded(effects, characterId, deployedCombatants.find(({ isOnField }) => isOnField)?.characterId)
+      checkIsKitShielded(effects, checkIsCharacterOnField(deployedCombatants, characterId))
         ? [
             { amount: damageBonus, attribute: Attribute.NormalAttackDamageBonus },
             { amount: damageBonus, attribute: Attribute.ChargedAttackDamageBonus },
@@ -22,7 +23,7 @@ export const createDiffusingBoundaryPassiveModule = (params: number[]): PassiveM
         : [],
     getStrikeCriticalRateBonus: ({ attackTag, combatant }, _enemy, party, effects) =>
       checkIsNormalOrChargedAttack(attackTag) &&
-      checkIsKitShielded(effects, combatant.characterId, getActiveCharacterId(party))
+      checkIsKitShielded(effects, combatant.characterId === getActiveCharacterId(party))
         ? criticalRateBonus
         : 0,
   };

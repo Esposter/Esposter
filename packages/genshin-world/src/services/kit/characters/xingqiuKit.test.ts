@@ -11,7 +11,6 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createXingqiuKitBehaviour, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -19,6 +18,7 @@ import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { KIT_FRAMES_PER_SECOND } from "#src/services/shared/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

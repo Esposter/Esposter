@@ -1,7 +1,7 @@
 import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionRouting } from "#src/models/commission/CommissionRouting";
-import type { FriendshipLevel } from "#src/models/friendship/FriendshipLevel";
+import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
@@ -20,23 +20,21 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 
 // The state after a commission claim's items are routed as a blossom's claim routes its draws: the Mora and the Mora
 // Its Adventure EXP pays past rank 60 into the wallet, the Adventure EXP into the rank, the Companionship EXP into the
-// Deployed team's friendship, and every other item into the bag. Undefined where the bag cannot take an item whole, or
-// The Friendship levels are not loaded yet, which refuses the claim, so nothing is routed or recorded
+// Deployed team's friendship, and every other item into the bag. Undefined where the bag cannot take an item whole, so
+// Nothing is routed or recorded
 export const routeCommissionClaim = (
   adventureRankTables: AdventureRankTables,
   adventureExp: number,
   characters: readonly Character[],
   items: readonly ItemCount[],
   completedMainQuestIds: ReadonlySet<string>,
-  friendshipLevels: readonly FriendshipLevel[],
+  friendshipLevels: FriendshipLevels,
   inventory: Inventory,
   materialDataMap: ReadonlyMap<number, MaterialData>,
   names: Readonly<Record<string, string>>,
   party: Party,
   wallet: Wallet,
 ): CommissionRouting | undefined => {
-  // The Companionship EXP has no top to stop at until the levels load, so the claim waits for them
-  if (friendshipLevels.length === 0) return undefined;
   let claimedInventory = inventory;
   let moraCount = 0;
   let adventureExpCount = 0;
