@@ -1,21 +1,13 @@
-import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { getResult } from "@esposter/shared";
+import { checkIsRealEndsAt } from "#shared/services/pageBuilder/checkIsRealEndsAt";
+import { createCountdownUnit } from "#shared/services/pageBuilder/createCountdownUnit";
 import { z } from "zod";
 
 // A date, or a date and a time, in the form the editor's inputs write
 const ENDS_AT_REGEX = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:T(?<hour>\d{2}):(?<minute>\d{2}))?$/u;
-
-// Whether the value names a real calendar date and time: Temporal refuses an impossible one, where Date rolls it over
-// Into a later one, and a date-only value is midnight
-const checkIsRealEndsAt = (endsAt: string): boolean =>
-  getResult(() => Temporal.PlainDateTime.from(endsAt)).match(
-    () => true,
-    () => false,
-  );
 
 const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
@@ -89,12 +81,6 @@ const countdownScript = () => {
 
   for (const element of document.querySelectorAll<HTMLElement>(".countdown")) startCountdown(element);
 };
-
-const createCountdownUnit = (name: string): HtmlElement => ({
-  attributes: { class: "countdown-unit", "data-unit": name },
-  children: [{ attributes: { class: "countdown-value" }, children: [], tag: "span" }, ` ${name}s`],
-  tag: "span",
-});
 
 export const countdownNodeType = {
   css: `.countdown { display: flex; justify-content: center; gap: 1rem; text-align: center; }
