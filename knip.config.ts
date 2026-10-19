@@ -25,6 +25,9 @@ const knipConfiguration: KnipConfig = {
       ignoreDependencies: [
         "@iconify-json/.+",
         "@takumi-rs/core",
+        // `tresjs-nuxt` registers the components of every `@tresjs` package the app declares, so the templates name
+        // Cientos's components and nothing imports the package
+        "@tresjs/cientos",
         "@vueuse/router",
         // @TODO: no upstream issue — unstorage 2's fs driver loads `chokidar` without declaring it, so the app declares
         // It for Nitro 3's server bundle and nothing in the app imports it (nitrojs/nitro)
@@ -71,6 +74,9 @@ const knipConfiguration: KnipConfig = {
       entry: ["parity/*.visual.ts", "src/index.ts", "src/**/*.reference.ts", "src/workers/*.ts"],
       ignore: ["**/auto-imports.d.ts"],
     },
+    // The components suite loads MJML's preset through createRequire, since the preset ships no types, and knip cannot
+    // Follow it
+    "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
     "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is

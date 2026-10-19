@@ -1,5 +1,3 @@
-import type { Nuxt } from "nuxt/schema";
-
 import { join } from "node:path";
 import { addServerHandler } from "nuxt/kit";
 import { describe, expect, test, vi } from "vitest";
@@ -16,7 +14,8 @@ vi.mock(import("nuxt/kit"), async (importOriginal) => ({
 }));
 
 // The module reads nothing of Nuxt but whether it runs under `nuxt dev` and where the server's directory is
-const createNuxt = (isDevelopment: boolean) => ({ options: { dev: isDevelopment, serverDir: "" } }) as unknown as Nuxt;
+const createNuxt = (isDevelopment: boolean) =>
+  ({ options: { dev: isDevelopment, serverDir: "" } }) as unknown as Parameters<typeof serveGenshinExtractions>[1];
 
 describe("serveGenshinExtractions", () => {
   test("a visitor cannot retrieve a game asset from the app", async () => {
