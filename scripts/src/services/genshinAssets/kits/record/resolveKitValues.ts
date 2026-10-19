@@ -15,6 +15,12 @@ import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/r
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
+// The causes saying no source gives a value: none, and no poise
+const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([
+  KitProvisionalCause.NoPoiseSource,
+  KitProvisionalCause.Unsourced,
+]);
+
 // A kit's values from its sources' candidates and its overlay: each path takes its first source's value, the overlay
 // Then sets its own values, removes others and picks another source where it names one. A talent whose hits a named list
 // Spawns keeps its own list empty, the named lists' hits join to their multipliers' talent variables, and the rules fill
@@ -86,7 +92,7 @@ export const resolveKitValues = (
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   // A cause saying no source gives the value is refused where one does
   for (const [path, entry] of Object.entries(overlay))
-    if ("cause" in entry && entry.cause === KitProvisionalCause.Unsourced) {
+    if ("cause" in entry && NO_SOURCE_CAUSES.has(entry.cause)) {
       const candidate = [...(sourceCandidateMap.get(path) ?? []), ...(namedHitKitCandidateMap.get(path) ?? [])].find(
         ({ provenance }) => provenance.source !== KitSource.Rule,
       );
@@ -94,7 +100,7 @@ export const resolveKitValues = (
         throw new InvalidOperationError(
           Operation.Read,
           path,
-          `names Unsourced, but ${candidate.provenance.source} gives ${JSON.stringify(candidate.value)}`,
+          `names ${entry.cause}, but ${candidate.provenance.source} gives ${JSON.stringify(candidate.value)}`,
         );
     }
   chooseDefaults(namedHitKitCandidateMap);

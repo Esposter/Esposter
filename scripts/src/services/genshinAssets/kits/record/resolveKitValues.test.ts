@@ -68,6 +68,28 @@ describe(resolveKitValues, () => {
     );
   });
 
+  test("refuses a NoPoiseSource value the wiki gives at its path, naming the wiki", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(
+        new Map([
+          [
+            "burst.hits.0.poiseDamage",
+            [{ provenance: { page: "Dough-Fu", revisionId: 1, row: 1, source: KitSource.Wiki }, value: 50 }],
+          ],
+        ]),
+        { "burst.hits.0.poiseDamage": { cause: KitProvisionalCause.NoPoiseSource, value: 0 } },
+        new Map(),
+        new Map(),
+        TABLES,
+        false,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: burst.hits.0.poiseDamage, names NoPoiseSource, but Wiki gives 50]`,
+    );
+  });
+
   test("keeps an Unsourced value over a rule's candidate, which is not a source at its path", () => {
     expect.hasAssertions();
 
