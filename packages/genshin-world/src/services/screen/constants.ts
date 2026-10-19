@@ -21,6 +21,15 @@ export const NPC_SCREEN_KINDS = [
   ScreenKind.Forge,
   ScreenKind.GcgDuel,
 ] as const;
+// The screens with no title of their own in the Paimon menu: the world, the Paimon menu, a talk, the game over and the
+// Screens an NPC or a world object opens
+export const UNTITLED_SCREEN_KINDS = [
+  ScreenKind.Dialogue,
+  ScreenKind.GameOver,
+  ScreenKind.PaimonMenu,
+  ScreenKind.World,
+  ...NPC_SCREEN_KINDS,
+] as const;
 // What closes any screen to the world, beside its own shortcut: Escape and a pad's Start, which open the Paimon menu
 // From the world, and a pad's cancel
 export const CLOSING_INPUT_ACTIONS: readonly InputAction[] = [InputAction.Cancel, InputAction.OpenPaimonMenu];
