@@ -17,6 +17,7 @@ import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/
 import { readGoBranchAt } from "#src/services/genshinAssets/kits/gcsim/readGoBranchAt";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { readGoLocalSlice } from "#src/services/genshinAssets/kits/gcsim/readGoLocalSlice";
+import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
@@ -148,6 +149,7 @@ export const readGcsimAttacks = (
   const resolveName = (name: string) => constantMap.get(name)?.value;
   return sources.flatMap(({ path: file, source }) => {
     const tokens = tokenizeGo(source);
+    const namedFunctions = readGoNamedFunctions(tokens);
     const aliasMap = readGoAliases(tokens);
     const stringMap = readGoStringConstants(tokens);
     const readBranchAt = readGoBranchAt(tokens);
@@ -166,7 +168,7 @@ export const readGcsimAttacks = (
         ({ bodyEnd, bodyStart, iterations }) =>
           bodyStart < position && position < bodyEnd && iterations[0]?.has(variable),
       );
-      const slice = readGoLocalSlice(tokens, expression.target.name, position);
+      const slice = readGoLocalSlice(tokens, namedFunctions, expression.target.name, position);
       if (loop === undefined || slice === undefined) return undefined;
       return {
         values: loop.iterations.flatMap((iteration) => {
