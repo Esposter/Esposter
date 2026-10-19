@@ -6,6 +6,13 @@ export const ABYSS_SHORT_CLOCK_SECONDS = 300;
 export const ABYSS_LONG_CLOCK_SECONDS = 600;
 // The last floor of the Abyss Corridor, the eighth. Every floor above it is the Abyssal Moon Spire's, whose period gives its blessing
 export const ABYSS_CORRIDOR_LAST_FLOOR_INDEX = 8;
+// A floor's chambers, each paying its first clear's reward, and its star milestones at 3, 6 and 9 stars
+export const ABYSS_FLOOR_CHAMBER_COUNT = 3;
+export const ABYSS_STAR_MILESTONE_COUNT = 3;
+// The rewards one cycle can claim: each floor's chambers and milestones over the Corridor's eight floors, the most any
+// Cycle holds, as a Moon Spire period holds four
+export const MAX_ABYSS_CYCLE_REWARD_CLAIM_COUNT =
+  ABYSS_CORRIDOR_LAST_FLOOR_INDEX * (ABYSS_FLOOR_CHAMBER_COUNT + ABYSS_STAR_MILESTONE_COUNT);
 
 // The key the Corridor's progress is saved under, the one cycle that never resets; a Moon Spire period is saved under its id
 export const ABYSS_CORRIDOR_CYCLE_KEY = "corridor";

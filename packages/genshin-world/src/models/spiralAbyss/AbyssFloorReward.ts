@@ -1,3 +1,4 @@
+import { ABYSS_FLOOR_CHAMBER_COUNT } from "#src/services/spiralAbyss/constants";
 import { z } from "zod";
 
 // The rewards a floor gives in one reward group of the game's tower table: the first clear of each of its chambers, in
@@ -12,7 +13,7 @@ export interface AbyssFloorReward {
 }
 
 export const abyssFloorRewardSchema = z.object({
-  chamberRewardIds: z.array(z.int().positive()).length(3),
+  chamberRewardIds: z.array(z.int().positive()).length(ABYSS_FLOOR_CHAMBER_COUNT),
   floorIndex: z.int().positive(),
   nineStarRewardId: z.int().positive(),
   rewardGroup: z.int().positive(),
