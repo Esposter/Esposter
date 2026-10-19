@@ -3,6 +3,7 @@ import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData
 
 import { EXPERIENCE_BONUS_WEIGHTS } from "#src/services/artifact/constants";
 import { enhanceMinorAffixes } from "#src/services/artifact/enhanceMinorAffixes";
+import { getArtifactExperienceToLevel } from "#src/services/artifact/getArtifactExperienceToLevel";
 import { getArtifactMaxExperience } from "#src/services/artifact/getArtifactMaxExperience";
 import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { getFodderEnhancement } from "#src/services/artifact/getFodderEnhancement";
@@ -34,7 +35,7 @@ export const enhanceArtifact = ({
   const totalExperience = getArtifactMaxExperience(rarityData);
   const experience = Math.min(artifact.experience + fedExperience * experienceBonus, totalExperience);
   let level = artifact.level;
-  let levelExperience = rarityData.levelExperiences.slice(0, level).reduce((total, cost) => total + cost, 0);
+  let levelExperience = getArtifactExperienceToLevel(rarityData, level);
   let minorAffixes = artifact.minorAffixes;
   while (level < rarityData.maxLevel) {
     const nextLevelExperience = levelExperience + takeOne(rarityData.levelExperiences, level);
