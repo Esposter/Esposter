@@ -1,5 +1,6 @@
 import type { GcgCharacter } from "#src/models/gcg/GcgCharacter";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
+import type { Except } from "type-fest";
 
 import { Element } from "#src/models/Element";
 import { GcgAura } from "#src/models/gcg/GcgAura";
@@ -9,7 +10,7 @@ import { describe } from "vitest";
 // Statuses, shield, energy or Frozen status. The overrides replace those values, and a character's own fields are given
 // Inside the character they name
 export const createGcgCharacterState = (
-  overrides: Partial<Omit<GcgCharacterState, "character">> & { character?: Partial<GcgCharacter> } = {},
+  overrides: Partial<Except<GcgCharacterState, "character">> & { character?: Partial<GcgCharacter> } = {},
 ): GcgCharacterState => {
   const { character, ...state } = overrides;
   return {

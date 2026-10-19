@@ -163,6 +163,11 @@ describe("a skill's any-side hooks", () => {
 });
 
 const PLUNGE_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
+const createMaskedXiao = () =>
+  createGcgCharacterState({ character: { id: XIAO_ID }, statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)] });
+
+// Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
+const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
 
 describe("a Plunging Attack", () => {
   const CHONGYUN_ID = 1104;
@@ -180,14 +185,6 @@ describe("a Plunging Attack", () => {
     id: 11_052,
     kind: GcgSkillKind.ElementalSkill,
   };
-  const createMaskedXiao = () =>
-    createGcgCharacterState({
-      character: { id: XIAO_ID },
-      statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-    });
-
-  // Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
-  const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
 
   test("a Normal Attack by a character switched in this Round is a Plunging Attack, which the mask adds 2 DMG to", () => {
     expect.hasAssertions();

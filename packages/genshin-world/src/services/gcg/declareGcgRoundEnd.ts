@@ -3,6 +3,7 @@ import type { GcgRule } from "#src/models/gcg/GcgRule";
 
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgSideDamageHook } from "#src/models/gcg/GcgSideDamageHook";
 import { checkGcgActingSide } from "#src/services/gcg/checkGcgActingSide";
 import { endGcgRound } from "#src/services/gcg/endGcgRound";
 import { runGcgSideDamageHook } from "#src/services/gcg/runGcgSideDamageHook";
@@ -14,7 +15,7 @@ import { takeOne } from "@esposter/shared";
 export const declareGcgRoundEnd = (duel: GcgDuel, sideIndex: number, rule: GcgRule): GcgActionResult => {
   const refusal = checkGcgActingSide(duel, sideIndex);
   if (refusal !== undefined) return refusal;
-  runGcgSideDamageHook(duel, sideIndex, "onRoundEndDeclared");
+  runGcgSideDamageHook(duel, sideIndex, GcgSideDamageHook.OnRoundEndDeclared);
   if (duel.phase === GcgPhase.Ended) return GcgActionResult.Done;
   const otherSideIndex = 1 - sideIndex;
   takeOne(duel.sides, sideIndex).hasDeclaredEnd = true;
@@ -22,7 +23,7 @@ export const declareGcgRoundEnd = (duel: GcgDuel, sideIndex: number, rule: GcgRu
   if (takeOne(duel.sides, otherSideIndex).hasDeclaredEnd) endGcgRound(duel, rule);
   else {
     duel.actingSideIndex = otherSideIndex;
-    runGcgSideDamageHook(duel, otherSideIndex, "onBeforeAction");
+    runGcgSideDamageHook(duel, otherSideIndex, GcgSideDamageHook.OnBeforeAction);
   }
   return GcgActionResult.Done;
 };

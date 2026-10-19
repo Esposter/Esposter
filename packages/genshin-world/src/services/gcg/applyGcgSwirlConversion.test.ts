@@ -18,7 +18,6 @@ import { LARGE_WIND_SPIRIT_ID } from "#src/services/gcg/cards/constants";
 describe("the Large Wind Spirit's Swirl conversion", () => {
   const SEED = 6;
   const TUTORIAL_DECK_ID = 1;
-  const LARGE_WIND_SPIRIT_ID = 115_011;
 
   const openDuel = async (): Promise<GcgDuel> => {
     const random = createSeededRandom(SEED);
