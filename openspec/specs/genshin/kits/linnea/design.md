@@ -24,6 +24,6 @@ Linnea's kit is its record and one behaviour module, `createLinneaKitBehaviour`,
 ## Sources
 
 - [Linnea](https://genshin-impact.fandom.com/wiki/Linnea) and [Category:Linnea Talents](https://genshin-impact.fandom.com/wiki/Category:Linnea_Talents), Genshin Impact Wiki: Linnea's multipliers, energy, cooldowns and costs.
-- Linnea's clips, `Ani_Avatar_Girl_Bow_Linnea_*`, read with `genshin:assets timings` from the installed game.
+- Linnea's clips, `Ani_Avatar_Girl_Bow_Linnea_*`, read as the [kits README](../README.md#sources) gives.
 - The game's `ProudSkillExcelConfigData` rows for Linnea's skill and burst groups (13032, 13039): her multipliers, durations, healing, cooldowns and costs, which the record reads by default.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/tighnari), MIT at v2.47.2: Tighnari's hitmarks and areas and his charged shot's frames, which Linnea's strikes, charged shot and skill take.

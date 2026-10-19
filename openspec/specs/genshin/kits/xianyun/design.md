@@ -4,7 +4,7 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 
 ## Decisions
 
-- **Constellation 1's extra charge is a skill charge.** White Clouds at Dawn's second charge before its cooldown is a charge count, so Constellation 1 adds one through `getSkillChargeBonus`, as Ganyu's Constellation 2 does.
+- **Constellation 1's extra charge is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to White Clouds at Dawn, as the [kits README](../README.md#how-a-kit-is-read) gives.
 
 ## Skyladder's presses
 

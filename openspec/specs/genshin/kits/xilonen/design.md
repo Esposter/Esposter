@@ -13,7 +13,7 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 
 ## Not built
 
-- **The Blessing's exit strike is not built.** gcsim's press in the Blessing leaves it with no strike, and the kit plays one action per press, so Yohual's Scratch still strikes on that press, which Chasca's kit avoids through the skill's state-ending check.
+- **The Blessing's exit strike is not built.** gcsim gives the press that leaves the Blessing no strike, and the kit plays one action per press, so Yohual's Scratch still strikes on that press, which Chasca's kit avoids through the skill's state-ending check.
 - **The Blade Roller's four strikes are not built.** They stand in for her strikes while the Blessing lasts, which needs a normal attack variant the kit does not have.
 - **The Samplers and their Sampler RES shred are not built.** A Blessing's Samplers shred an enemy's RES to the elements the party's other members carry, by the table's 0.09 each, with Geo standing in for any element outside Pyro, Hydro, Cryo and Electro. The Samplers wait on the Blessing, and their count on a kit step that reads the deployed team's elements, which the step context does not yet carry.
 - **Ocelotlicue Point's heal is not built.** With two or more Samplers in the party, the burst heals the active member on a schedule, through eight ticks at each 1.5 seconds, instead of its damage. The heal waits on the kit step reading the team's elements, and on a timed heal to the active member.
@@ -28,6 +28,6 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xilonen), MIT: the kit's hitmarks, animations, reach, the charged attack's box and the plunges' radii and poise, and the proud group indices behind each multiplier.
-- [gcsim skill.go and dash.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xilonen), MIT: the Blessing's 45 points, its five-a-second drain, its nine-second length and its sprint drain.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xilonen), MIT: the kit's hitmarks, animations, reach, the charged attack's box and the plunges' radii and poise, and the indices of the proud groups for each multiplier.
+- [gcsim's skill and dash files](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xilonen), MIT: the Blessing's 45 points, its five-a-second drain, its nine-second length and its sprint drain.
 - [Hosted game data](../../hosted-game-data/design.md): the avatar's talent groups 10331, 10332 and 10339 and her skill depot, from the talent and skill kit tables.

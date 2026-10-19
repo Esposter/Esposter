@@ -14,7 +14,7 @@ Kinich's kit is its record and one behaviour module, `createKinichKitBehaviour`,
 
 ## Not built
 
-- **The press inside the blessing waits on the hook.** The press enters the blessing with no points, which gain two a second to 20 for ten and a sixth seconds, as gcsim (MIT) kinich/skill.go and kinich.go set them, and his Loop Shots replace his normal attacks in it. A press in the blessing is the Scalespiker Cannon, which waits on the hook, so it does nothing.
+- **The press inside the blessing waits on the hook.** The press starts the blessing with no points, which gain two a second to 20 for ten and a sixth seconds, as gcsim (MIT) kinich/skill.go and kinich.go set them, and his Loop Shots replace his normal attacks in it. A press in the blessing is the Scalespiker Cannon, which waits on the hook, so it does nothing.
 - **The Scalespiker Cannon's spending waits on the Nightsoul hook.** The Cannon spends all of the points, and the cooldown bypass and points gate it needs wait on the hook, along with the points his Ascension 1 and 4 read.
 - **Kinich's Ascension 1 (Desolation's points), Ascension 4 (Hunter's Experience) and Constellations 2 and 4 wait on the Nightsoul hook.** Each of them reads the Nightsoul Blessing, its points or the Desolation status a Scalespiker Cannon leaves on an enemy. Constellation 1 instead needs a movement speed attribute, which no attribute carries, and Cannon CRIT DMG, which the kit does not build. Constellation 6 needs its bounce hit, which the kit does not build.
 

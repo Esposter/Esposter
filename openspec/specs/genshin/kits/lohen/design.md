@@ -26,6 +26,6 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 ## Sources
 
 - [Lohen](https://genshin-impact.fandom.com/wiki/Lohen) and [Category:Lohen Talents](https://genshin-impact.fandom.com/wiki/Category:Lohen_Talents), Genshin Impact Wiki: Lohen's multipliers, energy, cooldowns and costs.
-- Lohen's clips, `Ani_Avatar_Boy_Pole_Lohen_*`, read with `genshin:assets timings` from the installed game.
+- Lohen's clips, `Ani_Avatar_Boy_Pole_Lohen_*`, read per the [kits README](../README.md#sources).
 - The game's `ProudSkillExcelConfigData` rows for Lohen's skill and burst groups (12932, 12939): his multipliers, durations, cooldowns, costs and Will to Win values.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xiangling), MIT at v2.47.2: Xiangling's hitmarks and areas, which Lohen's strikes, charged attack and burst take.
