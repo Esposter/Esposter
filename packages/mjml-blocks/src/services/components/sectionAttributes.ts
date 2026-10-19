@@ -1,7 +1,7 @@
-import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+import type { MjmlAttributeTable } from "#src/models/MjmlAttributeTable";
 
 // The attributes and defaults a section-shaped container shares, held once so mj-section and mj-wrapper cannot drift apart
-export const sectionAttributes: Pick<MjmlComponentSpecification, "allowedAttributes" | "defaultAttributes"> = {
+export const sectionAttributes: MjmlAttributeTable = {
   allowedAttributes: {
     "background-color": "color",
     "background-position": "string",

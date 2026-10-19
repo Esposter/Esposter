@@ -3,9 +3,8 @@ import {
   MJML_BODY_ATTRIBUTES,
   MJML_BODY_CHILDREN,
   MJML_BREAKPOINT_ATTRIBUTES,
-  MJML_COMPONENT_SPECIFICATIONS,
 } from "#src/services/constants";
-import { TEST_RICH_TEXT } from "#src/services/constants.test";
+import { TEST_REGISTRY, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
@@ -30,18 +29,16 @@ describe("components", () => {
   const preset = PRESET_SCHEMA.parse(createRequire(import.meta.url)("mjml-preset-core"));
   const components = preset.components.map((component) => readComponent(component));
   const { dependencies } = preset;
-  const SPECIFICATION_ROWS = MJML_COMPONENT_SPECIFICATIONS.map(
-    (specification) => [specification.type, specification] as const,
-  );
+  const DEFINITION_ROWS = TEST_REGISTRY.types.map((definition) => [definition.type, definition] as const);
 
-  test.each(SPECIFICATION_ROWS)(
+  test.each(DEFINITION_ROWS)(
     "%s takes the attributes MJML's component allows, less css-class and mj-class",
-    (type, specification) => {
+    (type, definition) => {
       expect.hasAssertions();
 
       const component = components.find((candidate) => candidate.componentName === type);
       assert.exists(component);
-      expect(specification.allowedAttributes).toStrictEqual(
+      expect(definition.allowedAttributes).toStrictEqual(
         Object.fromEntries(
           Object.entries(component.allowedAttributes ?? {}).filter(([name]) => name !== CSS_CLASS && name !== MJ_CLASS),
         ),
@@ -49,24 +46,23 @@ describe("components", () => {
     },
   );
 
-  test.each(SPECIFICATION_ROWS)("%s has the default attributes MJML's component sets", (type, specification) => {
+  test.each(DEFINITION_ROWS)("%s has the default attributes MJML's component sets", (type, definition) => {
     expect.hasAssertions();
 
     const component = components.find((candidate) => candidate.componentName === type);
     assert.exists(component);
-    expect(specification.defaultAttributes).toStrictEqual(
+    expect(definition.defaultAttributes).toStrictEqual(
       Object.fromEntries(Object.entries(component.defaultAttributes).filter(([, value]) => typeof value === "string")),
     );
   });
 
-  test.each(SPECIFICATION_ROWS)("%s has the children MJML's preset allows it", (type, specification) => {
+  test.each(DEFINITION_ROWS)("%s has the children MJML's preset allows it", (type, definition) => {
     expect.hasAssertions();
 
-    expect(specification.children).toStrictEqual(
-      (z.array(z.string()).optional().parse(dependencies[type]) ?? []).filter(
-        (tag) => !EXCLUDED_MJML_TAGS.includes(tag),
-      ),
+    const children = (z.array(z.string()).optional().parse(dependencies[type]) ?? []).filter(
+      (tag) => !EXCLUDED_MJML_TAGS.includes(tag),
     );
+    expect(definition.slots).toStrictEqual(children.length > 0 ? { children } : {});
   });
 
   test("the root's content is the children MJML's preset allows mj-body", () => {

@@ -1,7 +1,9 @@
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlDocument } from "#src/models/MjmlDocument";
-import type { BlockDocument, BlockNode } from "headless-block-editor";
+import type { MjmlTextProps } from "#src/models/MjmlTextProps";
+import type { BlockNode } from "headless-block-editor";
 
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
   TEST_BUTTON_ID,
   TEST_COLUMN_ID,
@@ -21,25 +23,33 @@ import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+// A leaf a consumer declares beside MJML's own, which a column takes as a child
+type TestLeafNode = BlockNode<"test-leaf">;
+declare module "#src/models/MjmlLeafNodes" {
+  interface MjmlLeafNodes {
+    "test-leaf": TestLeafNode;
+  }
+}
+
 // A section of one column holding one text, with the props given set on that text
-const createTextSection = (textProps: Record<string, unknown> = {}): BlockNode => ({
+const createTextSection = (textProps: Partial<MjmlTextProps> = {}) => ({
   props: {
     children: [
       {
         props: {
-          children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: "mj-text" }],
+          children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: MjmlNodeType.Text }],
           id: TEST_COLUMN_ID,
         },
-        type: "mj-column",
+        type: MjmlNodeType.Column,
       },
     ],
     id: TEST_SECTION_ID,
   },
-  type: "mj-section",
+  type: MjmlNodeType.Section,
 });
 
 describe(renderMjmlDocument, () => {
-  const EMAIL_DOCUMENT: BlockDocument = {
+  const EMAIL_DOCUMENT: MjmlDocument = {
     content: [
       {
         props: {
@@ -47,21 +57,24 @@ describe(renderMjmlDocument, () => {
             {
               props: {
                 children: [
-                  { props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" },
+                  { props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text },
                   {
                     props: { content: "Go", href: 'https://example.com/?a=1&b="2"', id: TEST_BUTTON_ID },
-                    type: "mj-button",
+                    type: MjmlNodeType.Button,
                   },
-                  { props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" },
+                  {
+                    props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" },
+                    type: MjmlNodeType.Image,
+                  },
                 ],
                 id: TEST_COLUMN_ID,
               },
-              type: "mj-column",
+              type: MjmlNodeType.Column,
             },
           ],
           id: TEST_SECTION_ID,
         },
-        type: "mj-section",
+        type: MjmlNodeType.Section,
       },
     ],
     root: { props: {} },
@@ -126,7 +139,7 @@ describe(renderMjmlDocument, () => {
 
     const id = 'id"1';
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
-      content: [{ props: { children: [], id }, type: "mj-section" }],
+      content: [{ props: { children: [], id }, type: MjmlNodeType.Section }],
       root: { props: {} },
     });
     expect(renderMjmlDocument(document, TEST_REGISTRY, { context: undefined, isStampingIds: true })).toStrictEqual({
@@ -155,22 +168,22 @@ describe(renderMjmlDocument, () => {
                   children: [
                     {
                       props: {
-                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
                         id: TEST_COLUMN_ID,
                       },
-                      type: "mj-column",
+                      type: MjmlNodeType.Column,
                     },
                   ],
                   "full-width": "full-width",
                   id: TEST_SECTION_ID,
                 },
-                type: "mj-section",
+                type: MjmlNodeType.Section,
               },
             ],
             "full-width": "full-width",
             id: TEST_WRAPPER_ID,
           },
-          type: "mj-wrapper",
+          type: MjmlNodeType.Wrapper,
         },
       ],
       root: { props: {} },
@@ -225,25 +238,25 @@ describe(renderMjmlDocument, () => {
                         children: [
                           {
                             props: {
-                              children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: "mj-text" }],
+                              children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
                               id: TEST_COLUMN_ID,
                             },
-                            type: "mj-column",
+                            type: MjmlNodeType.Column,
                           },
                         ],
                         id: crypto.randomUUID(),
                       },
-                      type: "mj-group",
+                      type: MjmlNodeType.Group,
                     },
                   ],
                   id: TEST_SECTION_ID,
                 },
-                type: "mj-section",
+                type: MjmlNodeType.Section,
               },
             ],
             id: TEST_WRAPPER_ID,
           },
-          type: "mj-wrapper",
+          type: MjmlNodeType.Wrapper,
         },
       ],
       root: { props: {} },
@@ -262,7 +275,7 @@ describe(renderMjmlDocument, () => {
       content: [
         {
           props: { children: [createTextSection({ "font-family": "Test" })], id: TEST_WRAPPER_ID },
-          type: "mj-wrapper",
+          type: MjmlNodeType.Wrapper,
         },
       ],
       root: {
@@ -283,7 +296,7 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
-      content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: "mj-wrapper" }],
+      content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: MjmlNodeType.Wrapper }],
       root: { props: { attributes: { "mj-all": { "font-family": "Arial" } } } },
     });
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
@@ -309,14 +322,15 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const origin = "https://example.com";
-    const inviteType: MjmlBlockTypeDefinition<string> = {
+    const inviteType = {
       allowedAttributes: {},
       defaultAttributes: {},
+      hasAlternativeText: false,
       propsSchema: z.strictObject({}),
       render: (_node, _slots, context) => ({ attributes: { href: context }, content: "", tagName: "mj-button" }),
       slots: {},
-      type: "survey-invite",
-    };
+      type: "test-leaf",
+    } satisfies MjmlBlockTypeDefinition<TestLeafNode, string>;
     const registry = createMjmlRegistry({ leafTypes: [inviteType], richText: TEST_RICH_TEXT });
     const document: MjmlDocument = {
       content: [
@@ -325,12 +339,12 @@ describe(renderMjmlDocument, () => {
             children: [
               {
                 props: { children: [{ props: { id: TEST_TEXT_ID }, type: inviteType.type }], id: TEST_COLUMN_ID },
-                type: "mj-column",
+                type: MjmlNodeType.Column,
               },
             ],
             id: TEST_SECTION_ID,
           },
-          type: "mj-section",
+          type: MjmlNodeType.Section,
         },
       ],
       root: { props: {} },

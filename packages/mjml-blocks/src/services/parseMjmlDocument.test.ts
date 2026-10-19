@@ -1,10 +1,11 @@
 import type { BlockDocument, BlockNode } from "headless-block-editor";
 
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { TEST_MAX_NODES, TEST_REGISTRY, TEST_RENDER_OPTIONS, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { parseMjmlDocument } from "#src/services/parseMjmlDocument";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { serializeMjml } from "#src/services/serializeMjml";
-import { createBlockDocumentSchema } from "headless-block-editor";
+import { createBlockDocumentSchema, getBlockPropValue } from "headless-block-editor";
 import { assert, describe, expect, test } from "vitest";
 
 const createNode = (type: string, props: Record<string, unknown> = {}): BlockNode => ({
@@ -143,7 +144,7 @@ describe(parseMjmlDocument, () => {
       TEST_MAX_NODES,
     );
     expect(result.error?.issues.map((issue) => issue.message) ?? []).toStrictEqual([]);
-    expect(result.data?.content.map((node) => node.props.content)).toStrictEqual(["<p>kept</p>"]);
+    expect(result.data?.content.map((node) => getBlockPropValue(node.props, "content"))).toStrictEqual(["<p>kept</p>"]);
   });
 
   test("a label holding an element is refused at its content", () => {
@@ -177,17 +178,17 @@ describe(parseMjmlDocument, () => {
               {
                 props: {
                   children: [
-                    { props: { alt: "A", id: "<id>", src: "https://example.com/a.png" }, type: "mj-image" },
-                    { props: { content: "After", id: "<id>" }, type: "mj-text" },
+                    { props: { alt: "A", id: "<id>", src: "https://example.com/a.png" }, type: MjmlNodeType.Image },
+                    { props: { content: "After", id: "<id>" }, type: MjmlNodeType.Text },
                   ],
                   id: "<id>",
                 },
-                type: "mj-column",
+                type: MjmlNodeType.Column,
               },
             ],
             id: "<id>",
           },
-          type: "mj-section",
+          type: MjmlNodeType.Section,
         },
       ],
       root: { props: { body: {} } },
@@ -203,7 +204,9 @@ describe(parseMjmlDocument, () => {
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
-    expect(inContainer.error?.issues.map((issue) => issue.message)).toStrictEqual(['"#text" is not in the registry']);
+    expect(inContainer.error?.issues.map((issue) => issue.message)).toStrictEqual([
+      "type must be one of mj-column, mj-group, mj-raw",
+    ]);
 
     const inHead = parseMjmlDocument(
       "<mjml><mj-head>Hi</mj-head><mj-body></mj-body></mjml>",

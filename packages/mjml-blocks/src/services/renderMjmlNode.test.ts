@@ -1,3 +1,8 @@
+import type { MjmlColumnNode } from "#src/models/MjmlColumnNode";
+import type { MjmlImageNode } from "#src/models/MjmlImageNode";
+import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
+
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { TEST_COLUMN_ID, TEST_IMAGE_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -6,57 +11,65 @@ describe("renderMjmlNode", () => {
   test("a decorative image renders an empty alternative text", () => {
     expect.hasAssertions();
 
-    const definition = getBlockTypeDefinition(TEST_REGISTRY, "mj-image");
-    expect(
-      definition?.render(
-        { props: { decorative: true, id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" },
-        {},
-        undefined,
-      ),
-    ).toStrictEqual({ attributes: { alt: "", src: "https://example.com/a.png" }, tagName: "mj-image" });
+    const definition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Image);
+    const image: MjmlImageNode = {
+      props: { decorative: true, id: TEST_IMAGE_ID, src: "https://example.com/a.png" },
+      type: MjmlNodeType.Image,
+    };
+    expect(definition?.render(image, {}, undefined)).toStrictEqual({
+      attributes: { alt: "", src: "https://example.com/a.png" },
+      tagName: "mj-image",
+    });
   });
 
   test("#179 #196 a node's id and an unset attribute are never written", () => {
     expect.hasAssertions();
 
-    const image = getBlockTypeDefinition(TEST_REGISTRY, "mj-image");
-    expect(
-      image?.render(
-        { props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" }, type: "mj-image" },
-        {},
-        undefined,
-      ),
-    ).toStrictEqual({ attributes: { alt: "A cat", src: "https://example.com/a.png" }, tagName: "mj-image" });
+    const imageDefinition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Image);
+    const image: MjmlImageNode = {
+      props: { alt: "A cat", id: TEST_IMAGE_ID, src: "https://example.com/a.png" },
+      type: MjmlNodeType.Image,
+    };
+    expect(imageDefinition?.render(image, {}, undefined)).toStrictEqual({
+      attributes: { alt: "A cat", src: "https://example.com/a.png" },
+      tagName: "mj-image",
+    });
 
-    const socialElement = getBlockTypeDefinition(TEST_REGISTRY, "mj-social-element");
-    expect(
-      socialElement?.render(
-        { props: { content: "Share", id: TEST_IMAGE_ID }, type: "mj-social-element" },
-        {},
-        undefined,
-      ),
-    ).toStrictEqual({ attributes: {}, content: "Share", tagName: "mj-social-element" });
+    const socialElementDefinition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.SocialElement);
+    const socialElement: MjmlSocialElementNode = {
+      props: { content: "Share", id: TEST_IMAGE_ID },
+      type: MjmlNodeType.SocialElement,
+    };
+    expect(socialElementDefinition?.render(socialElement, {}, undefined)).toStrictEqual({
+      attributes: {},
+      content: "Share",
+      tagName: "mj-social-element",
+    });
   });
 
   test("#257 a column's width is written as its own attribute, which MJML lays out", () => {
     expect.hasAssertions();
 
-    const column = getBlockTypeDefinition(TEST_REGISTRY, "mj-column");
-    expect(
-      column?.render(
-        { props: { children: [], id: TEST_COLUMN_ID, width: "50%" }, type: "mj-column" },
-        { children: [] },
-        undefined,
-      ),
-    ).toStrictEqual({ attributes: { width: "50%" }, children: [], tagName: "mj-column" });
+    const definition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Column);
+    const column: MjmlColumnNode = {
+      props: { children: [], id: TEST_COLUMN_ID, width: "50%" },
+      type: MjmlNodeType.Column,
+    };
+    expect(definition?.render(column, { children: [] }, undefined)).toStrictEqual({
+      attributes: { width: "50%" },
+      children: [],
+      tagName: "mj-column",
+    });
   });
 
   test("#391 an attribute holding markup is written escaped once", () => {
     expect.hasAssertions();
 
-    const image = getBlockTypeDefinition(TEST_REGISTRY, "mj-image");
-    expect(
-      image?.render({ props: { alt: "A", id: TEST_IMAGE_ID, title: '<b>&"' }, type: "mj-image" }, {}, undefined),
-    ).toStrictEqual({ attributes: { alt: "A", title: "&lt;b&gt;&amp;&quot;" }, tagName: "mj-image" });
+    const definition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Image);
+    const image: MjmlImageNode = { props: { alt: "A", id: TEST_IMAGE_ID, title: '<b>&"' }, type: MjmlNodeType.Image };
+    expect(definition?.render(image, {}, undefined)).toStrictEqual({
+      attributes: { alt: "A", title: "&lt;b&gt;&amp;&quot;" },
+      tagName: "mj-image",
+    });
   });
 });

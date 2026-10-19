@@ -1,5 +1,4 @@
-import type { BlockDocument } from "headless-block-editor";
-
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
   TEST_BUTTON_ID,
   TEST_COLUMN_ID,
@@ -16,7 +15,8 @@ import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createBlockDocumentSchema, getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
-const getIssuePaths = (document: BlockDocument): PropertyKey[][] =>
+// A document as it arrives from its JSON, which the document schema narrows, so its issues name what the schema refused
+const getIssuePaths = (document: unknown): PropertyKey[][] =>
   createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES)
     .safeParse(document)
     .error?.issues.map((issue) => issue.path) ?? [];
@@ -32,8 +32,11 @@ describe(createMjmlRegistry, () => {
       getIssuePaths({
         content: [
           {
-            props: { children: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], id: TEST_SECTION_ID },
-            type: "mj-section",
+            props: {
+              children: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+              id: TEST_SECTION_ID,
+            },
+            type: MjmlNodeType.Section,
           },
         ],
         root: { props: {} },
@@ -45,7 +48,10 @@ describe(createMjmlRegistry, () => {
     expect.hasAssertions();
 
     expect(
-      getIssuePaths({ content: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], root: { props: {} } }),
+      getIssuePaths({
+        content: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+        root: { props: {} },
+      }),
     ).toStrictEqual([["content", 0, "type"]]);
   });
 
@@ -61,16 +67,19 @@ describe(createMjmlRegistry, () => {
                 {
                   props: {
                     children: [
-                      { props: { content: "", id: TEST_BUTTON_ID, padding: "1px 2px 3px 4px 5px" }, type: "mj-button" },
+                      {
+                        props: { content: "", id: TEST_BUTTON_ID, padding: "1px 2px 3px 4px 5px" },
+                        type: MjmlNodeType.Button,
+                      },
                     ],
                     id: TEST_COLUMN_ID,
                   },
-                  type: "mj-column",
+                  type: MjmlNodeType.Column,
                 },
               ],
               id: TEST_SECTION_ID,
             },
-            type: "mj-section",
+            type: MjmlNodeType.Section,
           },
         ],
         root: { props: {} },
@@ -89,15 +98,15 @@ describe(createMjmlRegistry, () => {
               children: [
                 {
                   props: {
-                    children: [{ props: { id: TEST_IMAGE_ID, src: TEST_IMAGE_SOURCE }, type: "mj-image" }],
+                    children: [{ props: { id: TEST_IMAGE_ID, src: TEST_IMAGE_SOURCE }, type: MjmlNodeType.Image }],
                     id: TEST_COLUMN_ID,
                   },
-                  type: "mj-column",
+                  type: MjmlNodeType.Column,
                 },
               ],
               id: TEST_SECTION_ID,
             },
-            type: "mj-section",
+            type: MjmlNodeType.Section,
           },
         ],
         root: { props: {} },
@@ -119,21 +128,21 @@ describe(createMjmlRegistry, () => {
                     children: [
                       {
                         props: { alt: TEST_ALT_TEXT, id: TEST_IMAGE_ID, src: TEST_IMAGE_SOURCE, width: "50%" },
-                        type: "mj-image",
+                        type: MjmlNodeType.Image,
                       },
                       {
                         props: { alt: TEST_ALT_TEXT, id: TEST_BUTTON_ID, src: TEST_IMAGE_SOURCE, width: "auto" },
-                        type: "mj-image",
+                        type: MjmlNodeType.Image,
                       },
                     ],
                     id: TEST_COLUMN_ID,
                   },
-                  type: "mj-column",
+                  type: MjmlNodeType.Column,
                 },
               ],
               id: TEST_SECTION_ID,
             },
-            type: "mj-section",
+            type: MjmlNodeType.Section,
           },
         ],
         root: { props: {} },
@@ -161,32 +170,32 @@ describe(createMjmlRegistry, () => {
                           children: [
                             {
                               props: {
-                                children: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }],
+                                children: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
                                 id: TEST_COLUMN_ID,
                               },
-                              type: "mj-column",
+                              type: MjmlNodeType.Column,
                             },
                           ],
                           id: TEST_GROUP_ID,
                         },
-                        type: "mj-group",
+                        type: MjmlNodeType.Group,
                       },
                     ],
                     id: TEST_SECTION_ID,
                   },
-                  type: "mj-section",
+                  type: MjmlNodeType.Section,
                 },
               ],
               id: TEST_WRAPPER_ID,
             },
-            type: "mj-wrapper",
+            type: MjmlNodeType.Wrapper,
           },
           {
             props: {
-              children: [{ props: { content: "", id: crypto.randomUUID() }, type: "mj-text" }],
+              children: [{ props: { content: "", id: crypto.randomUUID() }, type: MjmlNodeType.Text }],
               id: TEST_HERO_ID,
             },
-            type: "mj-hero",
+            type: MjmlNodeType.Hero,
           },
         ],
         root: { props: {} },
@@ -200,7 +209,7 @@ describe(createMjmlRegistry, () => {
   ])("a raw block accepts $html only when sanitising leaves it unchanged", ({ html, isAccepted }) => {
     expect.hasAssertions();
 
-    const definition = getBlockTypeDefinition(TEST_REGISTRY, "mj-raw");
+    const definition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Raw);
     expect(definition?.propsSchema.safeParse({ content: html }).success).toBe(isAccepted);
   });
 });

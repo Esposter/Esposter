@@ -1,27 +1,4 @@
-import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
-
-import { mjAccordion } from "#src/services/components/mjAccordion";
-import { mjAccordionElement } from "#src/services/components/mjAccordionElement";
-import { mjAccordionText } from "#src/services/components/mjAccordionText";
-import { mjAccordionTitle } from "#src/services/components/mjAccordionTitle";
-import { mjButton } from "#src/services/components/mjButton";
-import { mjCarousel } from "#src/services/components/mjCarousel";
-import { mjCarouselImage } from "#src/services/components/mjCarouselImage";
-import { mjColumn } from "#src/services/components/mjColumn";
-import { mjDivider } from "#src/services/components/mjDivider";
-import { mjGroup } from "#src/services/components/mjGroup";
-import { mjHero } from "#src/services/components/mjHero";
-import { mjImage } from "#src/services/components/mjImage";
-import { mjNavbar } from "#src/services/components/mjNavbar";
-import { mjNavbarLink } from "#src/services/components/mjNavbarLink";
-import { mjRaw } from "#src/services/components/mjRaw";
-import { mjSection } from "#src/services/components/mjSection";
-import { mjSocial } from "#src/services/components/mjSocial";
-import { mjSocialElement } from "#src/services/components/mjSocialElement";
-import { mjSpacer } from "#src/services/components/mjSpacer";
-import { mjTable } from "#src/services/components/mjTable";
-import { mjText } from "#src/services/components/mjText";
-import { mjWrapper } from "#src/services/components/mjWrapper";
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
 
 // The key the defaults for every component are held under: mj-all's own tag, as each type's defaults sit under its tag
 export const ALL_ATTRIBUTES_KEY = "mj-all";
@@ -36,36 +13,15 @@ export const MJML_BODY_ATTRIBUTES: Record<string, string> = {
   id: "string",
   width: "unit(px)",
 };
-export const MJML_BODY_CHILDREN: string[] = ["mj-raw", "mj-section", "mj-wrapper", "mj-hero"];
+export const MJML_BODY_CHILDREN: MjmlNodeType[] = [
+  MjmlNodeType.Raw,
+  MjmlNodeType.Section,
+  MjmlNodeType.Wrapper,
+  MjmlNodeType.Hero,
+];
 export const MJML_BREAKPOINT_ATTRIBUTES: Record<string, string> = { width: "unit(px)" };
 // The head tags read once: a second of one is refused under its name rather than kept over the first
 export const MJML_HEAD_SINGLE_TAGS: string[] = ["mj-breakpoint", "mj-preview", "mj-title"];
-// The containers that take a consumer's leaf type in their children, beside the MJML tags their preset lists
-export const MJML_LEAF_HOST_TYPES: string[] = ["mj-column", "mj-hero"];
-export const MJML_COMPONENT_SPECIFICATIONS: MjmlComponentSpecification[] = [
-  mjWrapper,
-  mjSection,
-  mjGroup,
-  mjColumn,
-  mjHero,
-  mjText,
-  mjButton,
-  mjImage,
-  mjDivider,
-  mjSpacer,
-  mjTable,
-  mjRaw,
-  mjSocial,
-  mjSocialElement,
-  mjNavbar,
-  mjNavbarLink,
-  mjCarousel,
-  mjCarouselImage,
-  mjAccordion,
-  mjAccordionElement,
-  mjAccordionTitle,
-  mjAccordionText,
-];
 // The colour names MJML's validator accepts, as its own list has them
 const MJML_COLOR_NAMES: string[] = [
   "aliceblue",
@@ -227,9 +183,14 @@ export const MJML_COLOR_MATCHERS: RegExp[] = [
 ];
 // The tags whose content is read raw: each content kind's type, and the head's title, preview and style
 export const MJML_BLOCK_TEXT_TAGS: string[] = [
-  ...MJML_COMPONENT_SPECIFICATIONS.filter((specification) => specification.contentKind !== undefined).map(
-    (specification) => specification.type,
-  ),
+  MjmlNodeType.AccordionText,
+  MjmlNodeType.AccordionTitle,
+  MjmlNodeType.Button,
+  MjmlNodeType.NavbarLink,
+  MjmlNodeType.Raw,
+  MjmlNodeType.SocialElement,
+  MjmlNodeType.Table,
+  MjmlNodeType.Text,
   "mj-preview",
   "mj-style",
   "mj-title",

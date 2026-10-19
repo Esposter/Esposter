@@ -1,4 +1,3 @@
-import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlJson } from "#src/models/MjmlJson";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
@@ -27,14 +26,10 @@ export const renderMjmlDocument = <TContext>(
   options: RenderMjmlDocumentOptions<TContext>,
 ): MjmlJson => {
   const rootProps = document.root.props;
-  const content = renderBlockNodes<MjmlBlockTypeDefinition<TContext>, MjmlJson>(
-    document.content,
-    registry,
-    (node, definition, slots) => {
-      const output = definition.render(node, slots, options.context);
-      return stampNode(output, node, options.isStampingIds);
-    },
-  );
+  const content: MjmlJson[] = renderBlockNodes(document.content, registry, (node, definition, slots) => {
+    const output = definition.render(node, slots, options.context);
+    return stampNode(output, node, options.isStampingIds);
+  });
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};
   if (rootProps.lang !== undefined) rootAttributes.lang = rootProps.lang;

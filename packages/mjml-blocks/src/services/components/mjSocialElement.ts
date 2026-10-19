@@ -1,42 +1,52 @@
-import type { MjmlComponentSpecification } from "#src/models/MjmlComponentSpecification";
+import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
+import type { MjmlSocialElementProps } from "#src/models/MjmlSocialElementProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
+import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { renderMjmlNode } from "#src/services/renderMjmlNode";
+import { z } from "zod";
 
-export const mjSocialElement: MjmlComponentSpecification = {
-  allowedAttributes: {
-    align: "enum(left,center,right)",
-    alt: "string",
-    "background-color": "color",
-    border: "string",
-    "border-radius": "string",
-    color: "color",
-    "font-family": "string",
-    "font-size": "unit(px)",
-    "font-style": "string",
-    "font-weight": "string",
-    href: "string",
-    "icon-height": "unit(px,%)",
-    "icon-padding": "unit(px,%){1,4}",
-    "icon-position": "enum(left,right)",
-    "icon-size": "unit(px,%)",
-    "line-height": "unit(px,%,)",
-    name: "string",
-    padding: "unit(px,%){1,4}",
-    "padding-bottom": "unit(px,%)",
-    "padding-left": "unit(px,%)",
-    "padding-right": "unit(px,%)",
-    "padding-top": "unit(px,%)",
-    rel: "string",
-    sizes: "string",
-    src: "string",
-    srcset: "string",
-    target: "string",
-    "text-decoration": "string",
-    "text-padding": "unit(px,%){1,4}",
-    title: "string",
-    "vertical-align": "enum(top,middle,bottom)",
-  },
-  children: [],
+// The attributes MJML takes on the social element component, each in MJML's grammar
+const socialElementAttributes = {
+  align: "enum(left,center,right)",
+  alt: "string",
+  "background-color": "color",
+  border: "string",
+  "border-radius": "string",
+  color: "color",
+  "font-family": "string",
+  "font-size": "unit(px)",
+  "font-style": "string",
+  "font-weight": "string",
+  href: "string",
+  "icon-height": "unit(px,%)",
+  "icon-padding": "unit(px,%){1,4}",
+  "icon-position": "enum(left,right)",
+  "icon-size": "unit(px,%)",
+  "line-height": "unit(px,%,)",
+  name: "string",
+  padding: "unit(px,%){1,4}",
+  "padding-bottom": "unit(px,%)",
+  "padding-left": "unit(px,%)",
+  "padding-right": "unit(px,%)",
+  "padding-top": "unit(px,%)",
+  rel: "string",
+  sizes: "string",
+  src: "string",
+  srcset: "string",
+  target: "string",
+  "text-decoration": "string",
+  "text-padding": "unit(px,%){1,4}",
+  title: "string",
+  "vertical-align": "enum(top,middle,bottom)",
+};
+
+// The social element component: the attributes it takes, the props its schema reads and what it renders
+export const mjmlSocialElementType: MjmlBlockTypeDefinition<MjmlSocialElementNode> = {
+  allowedAttributes: socialElementAttributes,
   contentKind: MjmlContentKind.Label,
   defaultAttributes: {
     align: "left",
@@ -55,5 +65,17 @@ export const mjSocialElement: MjmlComponentSpecification = {
     "vertical-align": "middle",
   },
   hasAlternativeText: false,
-  type: "mj-social-element",
+  propsSchema: z.strictObject({
+    ...createMjmlAttributeShape(socialElementAttributes),
+    content: z.string(),
+  }) satisfies z.ZodType<OwnProps<MjmlSocialElementProps>>,
+  render: renderMjmlNode({
+    allowedAttributes: socialElementAttributes,
+    contentKind: MjmlContentKind.Label,
+    hasAlternativeText: false,
+    hasChildren: false,
+    tagName: MjmlNodeType.SocialElement,
+  }),
+  slots: {},
+  type: MjmlNodeType.SocialElement,
 };
