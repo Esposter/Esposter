@@ -28,13 +28,15 @@ flowchart TD
     Reply[A spoken line] --> Sentence[Its sentences<br/>terminators of every script]
     Sentence --> Script{Script of the sentence}
     Script -- Latin anywhere --> En["[en] token"]
-    Script -- else kana, else Han --> Ja["[ja] or [zh] token"]
+    Script -- else kana --> Ja["[ja] token"]
     Script -- else Hangul --> Ko["[ko] token"]
+    Script -- else Han --> Zh["[zh] token"]
     Script -- none the model reads --> Drop[Not spoken, logged]
     Dub[Dub file] --> Clip[Reference clip<br/>whose voice]
     En --> Engine[Multilingual engine]
     Ja --> Engine
     Ko --> Engine
+    Zh --> Engine
     Clip --> Engine
     Engine --> Clauses[Clause by clause<br/>synthesize, vocode, check]
     Clauses --> Player[Player fed as clauses arrive]
@@ -51,7 +53,7 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The input
 
-- **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Han → `zh`; else Hangul → `ko`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`. Han ranks below kana for the same reason, so a Japanese sentence of kanji alone, with no kana, is read as `[zh]`, a cost this order accepts unheard. A rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
+- **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Hangul → `ko`; else Han → `zh`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`. Han ranks last, below kana and Hangul, for the same reason: a Japanese sentence of kanji alone, with no kana, is read as `[zh]`, a cost this order accepts unheard, and a Korean sentence with a Hanja in it is read as `[ko]`. A rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
 - **Sentence terminators.** A spoken line is a sentence or two, and the clause cut below starts from its sentences: `.`, `!` and `?` followed by white space, joined by the fullwidth `。`, `！` and `？` with no white-space requirement, because those scripts put none after a sentence. Without this a Japanese line is one chunk, and the streaming that makes a longer line bearable does nothing for it.
 - **The interim gate already in place** — `checkIsReadable` drops a line with no Latin letter, or with a letter of another script in it, so the engine never sees text it cannot read and the ladder never moves for it. The script detection above replaces that gate rather than sitting beside it.
 
