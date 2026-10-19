@@ -18,7 +18,6 @@
   },
   "hits.bloodBlossom.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.bloodBlossom.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4632 } },
-  "hits.bloodBlossom.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 35.76 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 36.88 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 46.64 },

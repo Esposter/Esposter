@@ -18,21 +18,18 @@
   },
   "hits.hydrospoutFlash.0.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.hydrospoutFlash.0.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.hydrospoutFlash.0.poiseDamage": { "cause": "Unclassified", "value": 15 },
   "hits.hydrospoutFlash.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "hits.hydrospoutFlash.1.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.hydrospoutFlash.1.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.hydrospoutFlash.1.poiseDamage": { "cause": "Unclassified", "value": 15 },
   "hits.hydrospoutFlash.2.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "hits.hydrospoutFlash.2.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.hydrospoutFlash.2.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.hydrospoutFlash.2.poiseDamage": { "cause": "Unclassified", "value": 15 },
   "hits.riptideFlash.length": { "cause": "Unclassified", "value": 3 },
   "hits.riptideFlash.0.area": {
     "cause": "Unclassified",
@@ -40,28 +37,24 @@
   },
   "hits.riptideFlash.0.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.riptideFlash.0.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.riptideFlash.0.poiseDamage": { "cause": "Unclassified", "value": 20 },
   "hits.riptideFlash.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "hits.riptideFlash.1.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.riptideFlash.1.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.riptideFlash.1.poiseDamage": { "cause": "Unclassified", "value": 20 },
   "hits.riptideFlash.2.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "hits.riptideFlash.2.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.riptideFlash.2.multiplier": { "source": "Gcsim", "value": { "index": 8, "proudSkillGroupId": 3331 } },
-  "hits.riptideFlash.2.poiseDamage": { "cause": "Unclassified", "value": 20 },
   "hits.flashOfHavoc.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "hits.flashOfHavoc.hitmarkFrames": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 70 },
   "hits.flashOfHavoc.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 3339 } },
-  "hits.flashOfHavoc.poiseDamage": { "cause": "Unclassified", "value": 200 },
   "hits.riptideSlash.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
@@ -70,20 +63,17 @@
   "hits.riptideSlash.gauge": { "file": "riptide.go", "line": 177, "source": "Gcsim", "value": 1 },
   "hits.riptideSlash.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
   "hits.riptideSlash.multiplier": { "cause": "Unclassified", "value": { "index": 10, "proudSkillGroupId": 3332 } },
-  "hits.riptideSlash.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "hits.riptideBlast.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.riptideBlast.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
   "hits.riptideBlast.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3339 } },
-  "hits.riptideBlast.poiseDamage": { "cause": "Unclassified", "value": 100 },
   "hits.riptideBurst.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.riptideBurst.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 3331 } },
-  "hits.riptideBurst.poiseDamage": { "cause": "Unclassified", "value": 60 },
   "normalAttacks.0.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 27 },
   "normalAttacks.1.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 18 },
   "normalAttacks.2.hits.0.hitmarkFrames": { "source": "Gcsim", "value": 25 },

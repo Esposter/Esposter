@@ -10,6 +10,5 @@
   "hits.witchlureBell.element": { "cause": "Unsourced", "value": "Wind" },
   "hits.witchlureBell.hitmarkFrames": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 137 },
   "hits.witchlureBell.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 13239 } },
-  "hits.witchlureBell.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "skill.hits.0.poiseDamage": { "source": "Wiki", "value": 50 }
 }

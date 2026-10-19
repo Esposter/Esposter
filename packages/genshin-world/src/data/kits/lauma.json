@@ -19,7 +19,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.0.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -29,7 +28,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.1.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.2.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -39,7 +37,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.2.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.3.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -49,7 +46,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.3.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.4.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -59,7 +55,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.4.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.5.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -69,7 +64,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.5.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.6.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -79,7 +73,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.6.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.frostgroveSanctuaryTicks.7.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
@@ -89,7 +82,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 11932 }
   },
-  "hits.frostgroveSanctuaryTicks.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unclassified", "value": 1 },
   "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unclassified", "value": "LunarBloom" },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },

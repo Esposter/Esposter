@@ -128,7 +128,6 @@
     "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 4432 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.7.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.impromptuOpeningRiffRevolutionDots.8.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 18 }
@@ -138,7 +137,6 @@
     "source": "Gcsim",
     "value": { "index": 7, "proudSkillGroupId": 4432 }
   },
-  "hits.impromptuOpeningRiffRevolutionDots.8.poiseDamage": { "cause": "Unclassified", "value": 0 },
   "hits.riffDot.length": { "cause": "Unclassified", "value": 7 },
   "hits.riffDot.0.area": {
     "cause": "Unclassified",

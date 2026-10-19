@@ -9,7 +9,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
   },
   "hits.crystalCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5539 } },
-  "hits.crystalCollapse.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "parameters.generalsWarBannerDefenseBonus": {
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 5532 }

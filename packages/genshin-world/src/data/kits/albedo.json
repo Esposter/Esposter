@@ -12,10 +12,8 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.4 }
   },
   "hits.transientBlossom.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.transientBlossom.gauge": { "cause": "Unsourced", "value": 1 },
   "hits.transientBlossom.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.transientBlossom.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3832 } },
-  "hits.transientBlossom.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.transientBlossom.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_DEFENSE" },
   "hits.solarIsotoma.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
   "hits.solarIsotoma.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3832 } },
@@ -32,8 +30,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13 }
   },
   "hits.fatalBlossoms.0-6.element": { "cause": "Unsourced", "value": "Rock" },
-  "hits.fatalBlossoms.0-6.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.fatalBlossoms.0-6.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "hits.fatalBlossoms.0-6.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3839 } },
   "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
   "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },

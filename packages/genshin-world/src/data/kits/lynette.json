@@ -12,7 +12,6 @@
   },
   "hits.bogglecatTick.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.bogglecatTick.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8339 } },
-  "hits.bogglecatTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 46.0575 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 40.2102 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 27 },
