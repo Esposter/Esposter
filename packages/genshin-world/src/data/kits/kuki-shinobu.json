@@ -252,7 +252,6 @@
   "hits.ringTick.gauge": { "file": "skill.go", "line": 118, "source": "Gcsim", "value": 1 },
   "hits.ringTick.hitmarkFrames": { "file": "skill.go", "line": 124, "source": "Gcsim", "value": 2 },
   "hits.ringTick.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 6532 } },
-  "hits.ringTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6531 } },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6531 } },
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 6531 } },
