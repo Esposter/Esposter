@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
 import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
 import {
   TEST_ROOT_TEXT_ID,
@@ -171,6 +172,51 @@ describe("pageBuilderEditor", () => {
 
     expect(document.activeElement).toBe(component.get(`[data-item-id="${TEST_ROOT_TEXT_ID}"]`).element);
     component.unmount();
+  });
+
+  test("a keydown forwarded from the canvas deletes the selected node", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [
+        { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
+        { props: { content: TEST_TEXT_CONTENT, id: TEST_OTHER_ID }, type: WebpageNodeType.Text },
+      ],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+
+    component
+      .findComponent(PageBuilderCanvas)
+      .vm.$emit("canvasKeydown", new KeyboardEvent("keydown", { key: "Delete" }));
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content.map(({ props }) => props.id)).toStrictEqual([
+      TEST_OTHER_ID,
+    ]);
+  });
+
+  test("a keydown forwarded from the canvas starts a text edit on enter", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+
+    component
+      .findComponent(PageBuilderCanvas)
+      .vm.$emit("canvasKeydown", new KeyboardEvent("keydown", { key: "Enter" }));
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
   });
 
   test("an empty page shows the palette instead of the canvas", async () => {

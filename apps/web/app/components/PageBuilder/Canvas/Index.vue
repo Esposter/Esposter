@@ -4,12 +4,19 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { OverlayBox } from "@/services/pageBuilder/getOverlayBox";
 import type { DropTarget } from "@/services/pageBuilder/resolveDropTarget";
 
+import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
+import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { getAdjacentBlockNodePointer, getBlockLayerRows, getBlockNode } from "headless-block-editor";
 import { getFrameScale } from "vue-canvas-frame-headless";
 
 interface Props {
@@ -19,6 +26,7 @@ interface Props {
 }
 
 const { announce, dropTarget, resourceId } = defineProps<Props>();
+const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -84,6 +92,50 @@ const getFrameGeometry = (): FrameGeometry | undefined => {
     scale: getFrameScaleOf(frameElement),
   };
 };
+// Up and Down select the adjacent node in document order, starting from the first node when none is selected, and stay put past either end
+const selectAdjacentNode = (offset: number) => {
+  const document = pageDocument.value;
+  if (!document) return;
+
+  const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const nodePointer = nodeId ? getNodePointer(document, nodeId) : undefined;
+  const adjacentPointer =
+    nodePointer === undefined
+      ? getBlockLayerRows(document, webpageRegistry)[0]?.nodePointer
+      : getAdjacentBlockNodePointer(document, webpageRegistry, nodePointer, offset);
+  const adjacentId = adjacentPointer === undefined ? undefined : getBlockNode(document, adjacentPointer)?.props.id;
+  if (typeof adjacentId === "string") pageBuilderCanvasStore.setSelectedNodeId(resourceId, adjacentId);
+};
+const selectParent = () => {
+  const document = pageDocument.value;
+  if (!document) return;
+
+  const parentId = getParentNodeId(document, pageBuilderCanvasStore.getSelectedNodeId(resourceId));
+  pageBuilderCanvasStore.setSelectedNodeId(resourceId, parentId ?? "");
+};
+// The canvas takes its own keys, and forwards every other key to the editor
+// A text edit's own keys stay with it, and a modified key keeps the meaning the editor gives it, so an Alt chord still moves the node
+const onFrameKeydown = (event: KeyboardEvent) => {
+  if (checkIsEditableTarget(event.target)) return;
+
+  const action = event.altKey || event.ctrlKey || event.metaKey ? undefined : getCanvasKeyAction(event.key);
+  if (!action) {
+    emit("canvasKeydown", event);
+    return;
+  }
+
+  event.preventDefault();
+  if (action === CanvasKeyAction.Parent) selectParent();
+  else selectAdjacentNode(action === CanvasKeyAction.Next ? 1 : -1);
+};
+// The frame's document is the one the keys are pressed in, so its listener is attached once the page is drawn in it and removed with it
+watch(contentRoot, (element, _previousElement, onCleanup) => {
+  const frameDocument = element?.ownerDocument;
+  if (!frameDocument) return;
+
+  frameDocument.addEventListener("keydown", onFrameKeydown);
+  onCleanup(() => frameDocument.removeEventListener("keydown", onFrameKeydown));
+});
 defineExpose({ getFrameGeometry });
 // While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
 const css = computed(() => {
@@ -102,7 +154,7 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
 </script>
 
 <template>
-  <PageBuilderCanvasFrame v-if="pageDocument" :css :device title="Page">
+  <PageBuilderCanvasFrame v-if="pageDocument" :css :device tabindex="0" aria-label="Canvas of the page" title="Page">
     <div
       ref="contentRoot"
       relative

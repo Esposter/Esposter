@@ -79,7 +79,8 @@ watch(
   },
 );
 // Keys are not taken while the user types in a field, so Delete and the arrows keep their own meaning there
-const onKeydown = (event: KeyboardEvent) => {
+// The canvas forwards the keys its frame takes no command for, so the frame's keys reach the same handler as the shell's own
+const handleEditorKeydown = (event: KeyboardEvent) => {
   if (checkIsEditableTarget(event.target)) return;
 
   if (event.key === "Enter") {
@@ -102,7 +103,7 @@ const onKeydown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div v-if="pageDocument" ref="shell" flex gap-2 h-full min-h-0 @keydown="onKeydown">
+  <div v-if="pageDocument" ref="shell" flex gap-2 h-full min-h-0 @keydown="handleEditorKeydown">
     <div :style="{ width: `${leftWidth}px` }" relative flex flex-col gap-4 shrink-0 min-h-0>
       <div flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto>
         <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />
@@ -118,7 +119,14 @@ const onKeydown = (event: KeyboardEvent) => {
     <div flex flex-col gap-2 flex-1 min-w-0 min-h-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" :announce :resource-id />
-      <PageBuilderCanvas v-else ref="canvas" :announce :drop-target="dropTarget" :resource-id />
+      <PageBuilderCanvas
+        v-else
+        ref="canvas"
+        :announce
+        :drop-target="dropTarget"
+        :resource-id
+        @canvas-keydown="handleEditorKeydown"
+      />
     </div>
     <div :style="{ width: `${rightWidth}px` }" relative shrink-0 min-h-0>
       <UiResizeHandle
