@@ -1,12 +1,9 @@
-import type { DroppedItem } from "#src/models/enemy/DroppedItem";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
 import type { StatueRegionProgressSave } from "#src/models/statue/StatueProgressSave";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { Ref, ShallowRef } from "vue";
+import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
+import type { ShallowRef } from "vue";
 
 import { checkIsGameDataKey } from "#src/services/data/checkIsGameDataKey";
 import { payOfferingLevels } from "#src/services/offering/payOfferingLevels";
@@ -37,19 +34,10 @@ export const useWorldStatues = ({
   setInventory,
   setWallet,
   wallet,
-}: {
+}: WorldOfferingDependencies & {
   events: WorldEvents;
   foundOculusIds: ShallowRef<ReadonlySet<string>>;
-  gainWorldAdventureExp: (amount: number) => void;
-  gameDataBaseUrl: string;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
-  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
   regionStatueProgressMap: ShallowRef<ReadonlyMap<string, StatueRegionProgressSave>>;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
 }) => {
   // The region's progress is kept as the save holds it, its levels left to the table. A level the region rises to is an
   // Achievement event for its city, read against the level the region held before it

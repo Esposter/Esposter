@@ -1,12 +1,8 @@
-import type { DroppedItem } from "#src/models/enemy/DroppedItem";
-import type { Inventory } from "#src/models/inventory/Inventory";
-import type { MaterialData } from "#src/models/inventory/MaterialData";
-import type { Wallet } from "#src/models/inventory/Wallet";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { OfferingProgressSave } from "#src/models/offering/OfferingProgressSave";
-import type { WorldDrop } from "#src/models/world/WorldDrop";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
-import type { Ref, ShallowRef } from "vue";
+import type { WorldOfferingDependencies } from "#src/models/world/WorldOfferingDependencies";
+import type { ShallowRef } from "vue";
 
 import { AchievementEventKind } from "#src/models/achievement/AchievementEventKind";
 import { FROSTBEARING_TREE_OFFERING_ID } from "#src/services/offering/constants";
@@ -32,19 +28,7 @@ export const useWorldOfferings = ({
   setInventory,
   setWallet,
   wallet,
-}: {
-  events: WorldEvents;
-  frostbearingTreeProgress: ShallowRef<OfferingProgressSave>;
-  gainWorldAdventureExp: (amount: number) => void;
-  gameDataBaseUrl: string;
-  inventory: Ref<Inventory>;
-  materialDataMap: ReadonlyMap<number, MaterialData>;
-  nameText: Readonly<Record<string, string>>;
-  placeWorldDrops: (source: Pick<WorldDrop, "id" | "position">, droppedItems: DroppedItem[]) => void;
-  setInventory: (nextInventory: Inventory) => void;
-  setWallet: (nextWallet: Wallet) => void;
-  wallet: Ref<Wallet>;
-}) => {
+}: WorldOfferingDependencies & { events: WorldEvents; frostbearingTreeProgress: ShallowRef<OfferingProgressSave> }) => {
   // Levels that fail to arrive are logged and the bag is left as it was
   const offerFrostbearingTree = (frostbearingTreePlace: FrostbearingTreePlace) =>
     getResultAsync(() => readFrostbearingTreeLevels(gameDataBaseUrl)).match(
