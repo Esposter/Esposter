@@ -12,6 +12,5 @@
   },
   "chargedAttack.hits.1.hitmarkFrames": { "cause": "DiffersFromSource", "value": 300 },
   "chargedAttack.staminaPerSecond": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 7931 } },
-  "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.8 } },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7932 } }
 }
