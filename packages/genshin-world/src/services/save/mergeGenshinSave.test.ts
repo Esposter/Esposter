@@ -83,7 +83,7 @@ describe(mergeGenshinSave, () => {
   const GUEST_TRAVELER_NAME = "b";
   const EARLIER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }).toString();
   const LATER_DEALT_AT = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 2 }).toString();
-  // Two keys in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the day after it
+  // One key in the game day that starts at the 04:00 reset (UTC+8), which the epoch falls in, and one in the next day
   const EARLIER_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).toString();
   const NEXT_GAME_DAY_KEY = Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 21 }).toString();
   // A character as a save holds it, the fields a test reads set by its own overrides
