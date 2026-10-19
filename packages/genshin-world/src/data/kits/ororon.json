@@ -20,6 +20,5 @@
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.6 } },
   "normalAttacks.0.hits.0.internalCooldownTag": { "source": "Wiki" },
   "normalAttacks.1.hits.0.internalCooldownTag": { "source": "Wiki" },
-  "normalAttacks.2.hits.0.internalCooldownTag": { "source": "Wiki" },
-  "hits.soundwave.internalCooldownTag": { "cause": "DiffersFromSource" }
+  "normalAttacks.2.hits.0.internalCooldownTag": { "source": "Wiki" }
 }

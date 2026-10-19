@@ -1,6 +1,6 @@
 # Jahoda
 
-Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`, avatar 10000124: three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit. Her multipliers are read from proud skill groups 12431, 12432 and 12439; the flask's fill, the skill's cooldown, the burst's cooldown and its energy cost are read from the same groups.
+Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`, avatar 10000124: three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit. Her multipliers are read from proud skill groups 12431, 12432 and 12439; the skill's cooldown, the burst's cooldown and its energy cost are read from the same groups, and the flask's fill is 20 at every level, gcsim's `flaskFillValue` at skill.go line 24.
 
 ## Decisions
 

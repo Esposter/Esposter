@@ -50,7 +50,6 @@
     "cause": "Unsourced",
     "value": { "index": 1, "proudSkillGroupId": 12432 }
   },
-  "parameters.flaskFillValue": { "cause": "DiffersFromSource", "value": { "index": 3, "proudSkillGroupId": 12432 } },
   "parameters.burstAdditionalAttackHealShare": {
     "cause": "Unsourced",
     "value": { "index": 5, "proudSkillGroupId": 12439 }
