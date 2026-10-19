@@ -16,7 +16,7 @@ A combatant holds the deployed team's elements, which a status and a hit read as
 ## Decisions
 
 - **The plunges are the airborne ones.** gcsim plays her plunges as airborne moves, so the kit takes their frames: the low plunge at 41 frames of a 76-frame animation, the high at 43 of 77, and the collision at 35.
-- **Strikes and the charged attack give no poise, and the collision none.** gcsim gives none to a normal attack, the charged attack or the collision, so each reads 0 as the framework's rule for a poise gcsim does not give.
+- **Strikes and the charged attack take the wiki's poise, and the collision 25.** gcsim gives none to a normal attack, the charged attack or the collision, so each takes its wiki row: 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision.
 - **The Surging Blade's interval is checked on the cast.** gcsim queues the blade at 83 frames only if the 10-second interval is not running at that frame. The kit checks at the press and starts the interval there, which differs only when the interval ends between the press and its 83rd frame. The roadmap's manual verification has the question.
 - **Scoring Cuts' heal is one tick of a field.** gcsim heals at frame 97 with no hit, which the framework does not place, so the burst sets a field whose one tick heals the active character, as Diona's Signature Mix heals, and a second tick is kept past its end.
 - **Rehab Diet is a field from the burst.** gcsim starts it from the burst on Ascension 1 or above, nine ticks from 157 frames every 58.5 frames, each healing the active character for 1.3824 of her ATK, so the kit starts the same field from the burst's start.

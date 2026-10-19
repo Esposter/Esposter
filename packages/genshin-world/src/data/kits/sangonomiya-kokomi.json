@@ -67,8 +67,6 @@
     "value": { "index": 3, "proudSkillGroupId": 5439 }
   },
   "parameters.garmentSkillMaxHealthBonus": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 5439 } },
-  "plunges.high.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "NoActionFile", "value": 0 },
   "stances.ceremonialGarment.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 76 },
   "stances.ceremonialGarment.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.ceremonialGarment.chargedAttack.hits.0.area": {

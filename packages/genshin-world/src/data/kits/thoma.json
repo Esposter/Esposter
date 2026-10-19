@@ -1,13 +1,7 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5039 } },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "frames.blazingBlessingInfusion": { "cause": "Unsourced", "value": 30 },
   "hits.fieryCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5039 } },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.blazingBlessingMaxShieldMaxHealthShare": {
     "cause": "Unsourced",
     "value": { "index": 4, "proudSkillGroupId": 5032 }
@@ -41,9 +35,5 @@
   "parameters.blazingBlessingShieldSeconds": {
     "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 5032 }
-  },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "skill.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 }
+  }
 }

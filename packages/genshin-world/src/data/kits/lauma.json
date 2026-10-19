@@ -100,9 +100,6 @@
   },
   "moonsignBenediction.lunarReactionTypes.length": { "cause": "Unclassified", "value": 1 },
   "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unclassified", "value": "LunarBloom" },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.frostgroveSanctuaryResistanceDecrease": {
     "cause": "Unsourced",
     "value": { "index": 7, "proudSkillGroupId": 11932 }
@@ -119,7 +116,6 @@
     "cause": "Unsourced",
     "value": { "index": 3, "proudSkillGroupId": 11939 }
   },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "source": "Gcsim" },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 11932 } },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 35, "source": "Gcsim", "value": 42 },

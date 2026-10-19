@@ -1,6 +1,5 @@
 {
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 2 },
   "skill.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 7.1 } },
   "skill.hits.1.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 22.1 } },

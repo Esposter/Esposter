@@ -4,7 +4,7 @@ Kirara's kit is its record and one behaviour module, `createKiraraKitBehaviour`,
 
 ## Decisions
 
-- **Kirara's strikes, charged attack and burst are priced at 0 poise, except the two Cat Grass Cardamoms that detonate at 180 frames, which take the wiki's 25 each, and her skill, which takes the wiki's 100 on its press and 25 and 200 on its short hold.** Provisional: `kiraraKit.ts` sets each of the rest at 0, gcsim giving none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Kirara's strikes take the wiki's 33.25 to 76.72, her charged attack 40 a hit, her burst 200, and her high and low plunges the wiki's 150 and 100; the two Cat Grass Cardamoms that detonate at 180 frames take the wiki's 25 each, and her skill the wiki's 100 on its press and 25 and 200 on its short hold.** Provisional: gcsim gives none for the strikes, charged attack, burst and plunges, so each takes its wiki row; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 - **Kirara's Constellation 6 buffs the whole deployed party, since the kit has no nearby check.** The constellation says nearby members, but the kit has no distance to read, so `buffKitTeam` gives every deployed member the buff, as the team buffs of the other kits do.
 
 ## Key files
