@@ -3,11 +3,10 @@ import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/W
 import { checkIsWordSubset } from "#src/services/genshinAssets/kits/wiki/checkIsWordSubset";
 import { findFirstTierRows } from "#src/services/genshinAssets/kits/wiki/findFirstTierRows";
 import { readHitNumber } from "#src/services/genshinAssets/kits/wiki/readHitNumber";
+import { readHitPlace } from "#src/services/genshinAssets/kits/wiki/readHitPlace";
 import { toExactTitle } from "#src/services/genshinAssets/kits/wiki/toExactTitle";
 import { toWordSet } from "#src/services/genshinAssets/kits/wiki/toWordSet";
 
-// A place after a label in a row's title, one whole number or one letter, as in `4-Hit DMG 1` or `4-Hit DMG B`
-const PLACE_TOKEN_REGEX = /^(?:\d+|[a-z])$/u;
 // The rows a hit's table label finds on its talent's page, from the first of four tiers that finds any. The first tier
 // Is the rows whose title equals the label exactly, case and whitespace runs aside, or equals it followed by a place,
 // Like `4-Hit DMG 1` for `4-Hit DMG`, since the wiki's title often shares the label's words, its hit numbers included,
@@ -43,7 +42,7 @@ export const findLabelRows = (label: string, properties: readonly WikiAdvancedPr
     const exactTitle = toExactTitle(title);
     return (
       exactTitle === exactLabel ||
-      (exactTitle.startsWith(`${exactLabel} `) && PLACE_TOKEN_REGEX.test(exactTitle.slice(exactLabel.length + 1)))
+      (readHitPlace(exactTitle) !== undefined && exactTitle.slice(0, exactTitle.lastIndexOf(" ")) === exactLabel)
     );
   };
   return findFirstTierRows(numberedRows, [checkIsExactLabel, ...wordTiers]);
