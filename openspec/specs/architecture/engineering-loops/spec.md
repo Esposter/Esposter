@@ -74,11 +74,11 @@ A loop's output SHALL be handed to the loop that consumes it, never kept in a si
 - **WHEN** the fix is recorded
 - **THEN** it becomes a proposal and leaves the sweep
 
-#### Scenario: A finding a change does not fix
+#### Scenario: A finding a change surfaces
 
-- **GIVEN** a change has surfaced a finding it does not fix
+- **GIVEN** a change's review has confirmed a finding
 - **WHEN** the change is finished
-- **THEN** the finding becomes a proposal
+- **THEN** the finding is fixed in that change, and none is left open or deferred to a proposal
 
 ### Requirement: Every change passes the finishing audit
 

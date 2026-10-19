@@ -39,7 +39,6 @@ flowchart TD
   BUILD --> FINISH
   LEDGER --> FINISH
   LEDGER -->|"a fix that changes behaviour"| PROPOSAL
-  FINISH -->|"an unfixed finding"| PROPOSAL
   FINISH -->|"a lesson"| SKILLS["skills — the knowledge loop"]
   REVIEW -->|"a lesson"| SKILLS
   LEDGER -->|"a rule gap"| SKILLS
@@ -75,7 +74,7 @@ Every loop has a stop rule that its owner states. Together, they are what makes 
 
 - **Product review** stops for an area once a full pass finds nothing new and changes no decision. It starts again only when something moves under that area: a ship, a changed reference product, a deferred page's trigger firing, or a reported gap.
 - **A build** stops when the proposal has shipped. The build loop as a whole is empty when `pnpm ai:proposals:report` lists no open proposal.
-- **A code review** stops at a round whose confirmed findings are all minor.
+- **A code review** stops at a round whose confirmed findings are all minor, once that round has fixed them: no confirmed finding is left open.
 - **A sweep** stops when a resume reports nothing, and an enforcer can take it over entirely.
 - **The skill sweep** stops when a full pass over the tree finds nothing.
 

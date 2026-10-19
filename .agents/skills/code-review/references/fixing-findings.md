@@ -6,7 +6,7 @@ report shape are `SKILL.md`'s; this page is everything after the table.
 
 ## The stop rule
 
-**A round whose confirmed findings are all `minor` is converged.** Fix them if cheap, then stop — minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
+**A round whose confirmed findings are all `minor` is converged.** Fix every one of them, then stop: the rule ends the reviewing, never the fixing. Minor supply is effectively unbounded on any mature file, so "the round reported something" is a loop with no exit.
 
 Another round is justified by a confirmed `critical`/`major`, or by a fix round that touched lines an earlier fix wrote. Re-reading the same window at the same depth to resample the same ranking is not: go one hop further out instead, or narrow the window so the reading is deeper per file.
 
@@ -15,7 +15,7 @@ Another round is justified by a confirmed `critical`/`major`, or by a fix round 
 1. Verify each finding against current HEAD before fixing — post-merge findings can be stale — and check it against the written record (`SKILL.md`, "The written record wins").
 2. Fix confirmed findings, per "Order of work" on this page.
 3. Run this page's regression checklist over your own fixes **before** verifying.
-4. Give every confirmed finding the round does not fix a home, and name it in its Disposition — "noted" is not one, since a finding that lives only in a report is re-found by the next round. A fix that changes behaviour, or is larger than the round, becomes a proposal (an `openspec/changes/<area>-<slug>/` change, or `refactors-<slug>` for a repo-wide one) that the `building-proposals` skill takes up; a finding the code shares across a tree becomes a ledger row or an enforcer (the `sweeps` skill); one declined on purpose is written where the next review greps (`references/written-record.md`).
+4. **No confirmed finding stays open.** Each is fixed in the round that confirmed it, with the best architectural fix rather than a local patch: the primitive both twins call, the signature change a hook needs, the dead path deleted, however much it touches. A finding the code shares across a tree is fixed across the tree, with an enforcer where one can hold it (the `sweeps` skill). A finding that turns out to argue with a settled choice is refuted, not deferred (`references/written-record.md`). "Noted", "left for later" and a proposal for the fix are not dispositions, because a finding that lives only in a report is re-found by the next round (the owner, 2026-10-19: "no findings should be open ever"). A delegated fixer that reports a ruling it could not carry out hands it back, and the main session rules it the same turn and sends it down again.
 5. Verify with the tests over the paths touched, backgrounded per the `running-checks` skill — typecheck and lint are CI's on the push — then commit per the `git` skill and push `ai/queue` (`review-queue` skill).
 
 ## Why the checklist exists
