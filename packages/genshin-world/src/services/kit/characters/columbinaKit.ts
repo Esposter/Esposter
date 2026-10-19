@@ -16,6 +16,7 @@ import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsLunarReactionType } from "#src/services/combat/checkIsLunarReactionType";
 import { getBenedictionBaseDamageBonus } from "#src/services/kit/characters/columbinaBenediction";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitHold } from "#src/services/kit/effects/addKitHold";
@@ -90,7 +91,6 @@ const CONSTELLATION_2_TEAM_BUFFS: Record<
   },
 };
 const CONSTELLATION_2_TEAM_SOURCES = new Set(Object.values(CONSTELLATION_2_TEAM_BUFFS).map(({ source }) => source));
-const LUNAR_REACTION_TYPES = new Set<ReactionType>(Object.values(LunarReactionType));
 // The Lunar reactions in the order gcsim reads them, which breaks a tie in gravity toward the first
 const GRAVITY_REACTION_TYPES = [
   LunarReactionType.LunarCharged,
@@ -194,9 +194,6 @@ const createGravity = (): Gravity => ({
   },
   windowSeconds: 0,
 });
-
-const checkIsLunarReactionType = (reactionType: ReactionType): reactionType is LunarReactionType =>
-  LUNAR_REACTION_TYPES.has(reactionType);
 
 const getGravityRate = (combatant: Combatant): number =>
   combatant.constellationCount >= CONSTELLATION_2 ? CONSTELLATION_2_GRAVITY_RATE : 0;
