@@ -70,7 +70,7 @@ describe(mergeParityScores, () => {
     expect.hasAssertions();
 
     const report = mergeParityScores(["| `a` | `S` | 1.00% | 0.000 | 0.00% | 0.0000 |"], {}, ["a"], {
-      a: { reason: "no recording yet", screen: "S" },
+      a: { pending: "no recording yet", screen: "S" },
     });
 
     expect(report).toContain("| `a` | `S` | pending: no recording yet | | | |");
