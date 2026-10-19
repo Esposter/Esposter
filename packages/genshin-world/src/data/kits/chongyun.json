@@ -1,53 +1,62 @@
 {
-  "burst.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "burst.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3639 } },
-  "burst.hits.1.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "burst.hits.1.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
   "burst.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3639 } },
-  "burst.hits.2.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 } },
+  "burst.hits.2.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
+  },
   "burst.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3639 } },
   "chargedAttack.hits.0.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
-  "chargedAttack.hits.0.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "Unclassified", "value": 60 },
+  "chargedAttack.hits.0.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
+  "chargedAttack.hits.0.poiseDamage": { "cause": "Unsourced", "value": 60 },
   "chargedAttack.hits.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
-  "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unclassified", "value": "NormalAttack" },
-  "chargedAttack.hits.1.poiseDamage": { "cause": "Unclassified", "value": 120 },
+  "chargedAttack.hits.1.internalCooldownTag": { "cause": "Unsourced", "value": "NormalAttack" },
+  "chargedAttack.hits.1.poiseDamage": { "cause": "Unsourced", "value": 120 },
   "chargedAttack.staminaPerSecond": { "cause": "Unclassified", "value": { "index": 6, "proudSkillGroupId": 3631 } },
-  "hits.iceUnleashed.length": { "cause": "Unclassified", "value": 3 },
+  "hits.iceUnleashed.length": { "file": "attack.go", "line": 81, "source": "Gcsim", "value": 3 },
   "hits.iceUnleashed.0.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.6925824035672523 }
   },
   "hits.iceUnleashed.0.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.iceUnleashed.0.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.iceUnleashed.0.gauge": { "file": "attack.go", "line": 77, "source": "Gcsim", "value": 1 },
   "hits.iceUnleashed.0.hitmarkFrames": { "cause": "Unclassified", "value": 1 },
-  "hits.iceUnleashed.0.multiplier": { "cause": "Unclassified", "value": 0.5 },
-  "hits.iceUnleashed.0.poiseDamage": { "cause": "Unclassified", "value": 36 },
+  "hits.iceUnleashed.0.multiplier": { "file": "attack.go", "line": 78, "source": "Gcsim", "value": 0.5 },
+  "hits.iceUnleashed.0.poiseDamage": { "cause": "Unsourced", "value": 36 },
   "hits.iceUnleashed.1.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.6925824035672523 }
   },
   "hits.iceUnleashed.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.iceUnleashed.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.iceUnleashed.1.gauge": { "file": "attack.go", "line": 77, "source": "Gcsim", "value": 1 },
   "hits.iceUnleashed.1.hitmarkFrames": { "cause": "Unclassified", "value": 6 },
-  "hits.iceUnleashed.1.multiplier": { "cause": "Unclassified", "value": 0.5 },
-  "hits.iceUnleashed.1.poiseDamage": { "cause": "Unclassified", "value": 36 },
+  "hits.iceUnleashed.1.multiplier": { "file": "attack.go", "line": 78, "source": "Gcsim", "value": 0.5 },
+  "hits.iceUnleashed.1.poiseDamage": { "cause": "Unsourced", "value": 36 },
   "hits.iceUnleashed.2.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.6925824035672523 }
   },
   "hits.iceUnleashed.2.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.iceUnleashed.2.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.iceUnleashed.2.gauge": { "file": "attack.go", "line": 77, "source": "Gcsim", "value": 1 },
   "hits.iceUnleashed.2.hitmarkFrames": { "cause": "Unclassified", "value": 11 },
-  "hits.iceUnleashed.2.multiplier": { "cause": "Unclassified", "value": 0.5 },
-  "hits.iceUnleashed.2.poiseDamage": { "cause": "Unclassified", "value": 36 },
+  "hits.iceUnleashed.2.multiplier": { "file": "attack.go", "line": 78, "source": "Gcsim", "value": 0.5 },
+  "hits.iceUnleashed.2.poiseDamage": { "cause": "Unsourced", "value": 36 },
   "hits.rallyOfFourBlades.area": {
-    "cause": "Unclassified",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.rallyOfFourBlades.hitmarkFrames": { "cause": "Unclassified", "value": 77 },
@@ -57,10 +66,10 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
   },
   "hits.rimechaserBlade.element": { "cause": "Unclassified", "value": "Ice" },
-  "hits.rimechaserBlade.gauge": { "cause": "Unclassified", "value": 1 },
+  "hits.rimechaserBlade.gauge": { "file": "asc.go", "line": 27, "source": "Gcsim", "value": 1 },
   "hits.rimechaserBlade.hitmarkFrames": { "cause": "Unclassified", "value": 13.000000000000007 },
   "hits.rimechaserBlade.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3632 } },
-  "hits.rimechaserBlade.poiseDamage": { "cause": "Unclassified", "value": 100 },
+  "hits.rimechaserBlade.poiseDamage": { "file": "asc.go", "line": 25, "source": "Gcsim", "value": 100 },
   "parameters.infusionSeconds": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 3632 } },
   "parameters.frostFieldSeconds": { "cause": "Unclassified", "value": { "index": 3, "proudSkillGroupId": 3632 } },
   "skill.hits.0.gauge": { "source": "Wiki" },
