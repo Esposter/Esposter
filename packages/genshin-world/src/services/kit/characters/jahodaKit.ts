@@ -106,18 +106,19 @@ const findLowestHealthCharacterId = (party: Party): number | undefined => {
   return lowest?.characterId;
 };
 
-// Jahoda's behaviour: Savvy Strategy's press starts the pursuit, which follows the body and on each tick fills the flask
+// Jahoda's behaviour: Savvy
+// Strategy's press starts the pursuit, which follows the body and on each tick fills the flask
 // From the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and its
 // Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
 // Burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above 70%
 // Health the member with the lowest share of health is healed as well. Her burst's two robots are built at Ascendant
 // Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, under the
 // Internal cooldown gcsim gives their strikes. Ascension 1 and Constellation 2 adjust them and her heals, and Ascension
-// 4 gives her Elemental Mastery on each heal above 70% Health, from jahodaAscension. Her Meowball is built, its Values
-// Read from the hit fields, frames and areas the next publish adds, and Constellation 1 is not built yet. Her Moonsign
-// Benediction, Rooftop Dash (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its
-// Record carries no lunar Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each
-// Moonsign member
+// 4 gives her Elemental Mastery on each heal above 70% Health, from jahodaAscension. Her
+// Meowball is built from her hit fields, frames and areas, and Constellation 1 is not built yet. Her Moonsign
+// Benediction, Rooftop Dash (TextMap 801500603), raises the party's
+// Moonsign a level and names no lunar reaction, so its Record carries no lunar Reaction types. Constellation
+// 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
   readArea,
   readHitFields,
