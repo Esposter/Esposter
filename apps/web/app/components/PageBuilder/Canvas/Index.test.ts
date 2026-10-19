@@ -32,7 +32,7 @@ describe("pageBuilderCanvas", () => {
       props: { announce: vi.fn<(message: string) => void>(), resourceId: TEST_ID },
     });
 
-    expect((component.get("iframe").element as HTMLIFrameElement).style.width).toBe("768px");
+    expect(component.get<HTMLIFrameElement>("iframe").element.style.width).toBe("768px");
   });
 
   test("a page with no document draws nothing", async () => {

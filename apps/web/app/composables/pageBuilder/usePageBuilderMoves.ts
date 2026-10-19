@@ -9,6 +9,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -29,7 +30,7 @@ import {
 // The id a node carries, or the empty id when the pointer names no node
 const getNodeId = (document: WebpageDocument | undefined, nodePointer: string | undefined): string => {
   if (!document || !nodePointer) return "";
-  return getBlockNode(document, nodePointer)?.props.id ?? "";
+  return getNodeIdAt(document, nodePointer);
 };
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index

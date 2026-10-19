@@ -91,7 +91,11 @@ export const usePageBuilderClipboard = (
 
     const document = getDocument(resourceIdValue);
     const [firstNode] = clipboard.nodes;
-    if (!document || !firstNode) return;
+    if (!document) return;
+    if (!firstNode) {
+      announce(CANNOT_GO_HERE_MESSAGE);
+      return;
+    }
 
     const nodeId = getSelectedNodeId(resourceIdValue);
     const target = getInsertTarget(document, firstNode.type, nodeId ? getNodePointer(document, nodeId) : undefined);

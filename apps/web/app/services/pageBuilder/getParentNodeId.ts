@@ -1,8 +1,8 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
-import { getBlockNode } from "headless-block-editor";
 import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
 // The id of the node whose slot holds the node, or the empty id for a node in the page's own content, or none when the
@@ -14,5 +14,5 @@ export const getParentNodeId = (document: WebpageDocument, nodeId: string): stri
   const slotSegments = parseJsonPointer(getNodeSlotPointer(nodePointer));
   if (slotSegments.length <= 1) return "";
 
-  return getBlockNode(document, toJsonPointer(slotSegments.slice(0, -2)))?.props.id ?? "";
+  return getNodeIdAt(document, toJsonPointer(slotSegments.slice(0, -2)));
 };

@@ -1,11 +1,10 @@
-import type { VNode } from "vue";
-
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_CONTEXT, TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
+import { isVNode } from "vue";
 
 describe(renderCanvasVNodes, () => {
   test("a section holding a text node stamps each node's id on its own root element", () => {
@@ -31,7 +30,9 @@ describe(renderCanvasVNodes, () => {
       ),
       0,
     );
-    const text = takeOne(section.children as VNode[], 0);
+    assert(Array.isArray(section.children));
+    const text = takeOne(section.children, 0);
+    assert(isVNode(text));
 
     expect(section.props).toStrictEqual({ class: "section", "data-node-id": TEST_ID });
     expect(text.props).toStrictEqual({ class: "text", "data-node-id": TEST_OTHER_ID, innerHTML: "<p>a</p>" });
