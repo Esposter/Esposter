@@ -4,9 +4,9 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { getNodeStyleClass } from "#shared/services/pageBuilder/getNodeStyleClass";
 import { getNodeStyleCss } from "#shared/services/pageBuilder/getNodeStyleCss";
+import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
-import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpageNodeTypeDefinitionMap";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { escapeAttribute } from "@esposter/shared";
 import { renderBlockNodes } from "headless-block-editor";
@@ -14,9 +14,7 @@ import { renderBlockNodes } from "headless-block-editor";
 // A pure render: one HTML document, with each type the page holds contributing its CSS once and its script once, so the
 // Output runs the same in the browser that exports it and on the server that publishes it
 export const renderWebpageDocument = (document: WebpageDocument, context: RenderContext): string => {
-  const presentTypes = new Set<string>();
   const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, definition, slots) => {
-    presentTypes.add(definition.type);
     const rendered = definition.render(node, slots, context);
     if (getNodeStyleCss(node, definition) === "" || typeof rendered === "string" || !("tag" in rendered))
       return rendered;
@@ -29,9 +27,7 @@ export const renderWebpageDocument = (document: WebpageDocument, context: Render
       },
     };
   });
-  const definitions = Object.values(webpageNodeTypeDefinitionMap).filter((definition) =>
-    presentTypes.has(definition.type),
-  );
+  const definitions = getPresentDefinitions(document);
   const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script})()</script>`] : []));
 
   return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${getWebpageCss(document, definitions)}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;
