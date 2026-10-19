@@ -63,7 +63,6 @@
   "hits.ousiaBubble.element": { "cause": "Unclassified", "value": "Water" },
   "hits.ousiaBubble.hitmarkFrames": { "file": "skill.go", "line": 26, "source": "Gcsim", "value": 18 },
   "hits.ousiaBubble.multiplier": { "cause": "Unclassified", "value": { "index": 0, "proudSkillGroupId": 8932 } },
-  "hits.ousiaBubble.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.ousiaBubble.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 50.5548 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 48.4344 },

@@ -47,7 +47,6 @@
   },
   "hits.snappyMark.hitmarkFrames": { "cause": "Unsourced", "value": 1 },
   "hits.snappyMark.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 8832 } },
-  "hits.snappyMark.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 9.346 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 8.133 },
   "normalAttacks.2.hits.0.poiseDamage": { "source": "Wiki", "value": 12.113 },

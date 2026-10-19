@@ -16,7 +16,7 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 - **Constellation 2's stacks are one buff refreshed by each hit.** Its 8% starts with the burst and gains 8% for each enemy the ritual or a soundwave strikes, to 32%, and keeps the burst's nine seconds rather than restarting them on each hit.
 - **Ascension 4 counts its three triggers on the Spirit Orb's status.** The status starts at the orb's hit and runs 15 seconds, and each trigger gives 3 energy to the active character and to Ororon, then a second's cooldown before the next, as gcsim's internal cooldown gives it.
 - **The plunges are the table's standard ones.** gcsim has no plunge file for him, so the collision, low and high plunge read the proud group's 5, 6 and 7 and land the moment their action starts, with a zero animation, which is what the framework gives a plunge with no source timing. A recording of his plunges landing together would settle the shared reach; a later landing would need frames.
-- **Poise is zero where gcsim gives none.** gcsim gives Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges no poise, so `ororonKit.ts` stands every hit at 0, until a recording of the game's poise on them says otherwise.
+- **Poise is zero where neither source gives one.** gcsim gives Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges no poise, so `ororonKit.ts` stands every hit at 0, except the soundwave's hit, which takes the wiki's 10, until a recording of the game's poise on them says otherwise.
 
 ## Key files
 

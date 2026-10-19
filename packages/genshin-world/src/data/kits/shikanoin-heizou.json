@@ -7,7 +7,6 @@
   "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.iris.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 } },
   "hits.iris.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5939 } },
-  "hits.iris.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
