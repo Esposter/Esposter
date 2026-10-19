@@ -1,5 +1,5 @@
 {
-  "burst.hits.length": { "cause": "Unclassified", "value": 0 },
+  "burst.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.shootingStarTravels.length": { "cause": "Unsourced", "value": 4 },
@@ -9,7 +9,7 @@
   "frames.shootingStarTravels.3": { "file": "shield.go", "line": 20, "source": "Gcsim", "value": 28 },
   "frames.starlightSlugStart": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 36 },
   "frames.starlightSlugDuration": { "cause": "Unsourced", "value": 755 },
-  "frames.starlightSlugTickInterval": { "cause": "Unclassified", "value": 90 },
+  "frames.starlightSlugTickInterval": { "file": "burst.go", "line": 53, "source": "Gcsim", "value": 90 },
   "hits.shootingStarStrike.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.8 }
@@ -20,9 +20,9 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 13.5 }
   },
-  "hits.starlightSlugStrike.element": { "cause": "Unclassified", "value": "Ice" },
+  "hits.starlightSlugStrike.element": { "file": "burst.go", "line": 44, "source": "Gcsim", "value": "Ice" },
   "hits.starlightSlugStrike.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.starlightSlugStrike.hitmarkFrames": { "cause": "Unclassified", "value": 42 },
+  "hits.starlightSlugStrike.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "hits.starlightSlugStrike.multiplier": { "cause": "Unsourced", "value": 0 },
   "hits.starlightSlugStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7431 } },
