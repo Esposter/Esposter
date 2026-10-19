@@ -39,7 +39,7 @@ describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [createNighttimeWhispersInTheEchoingWoodsSetModule(bonus)]),
   );
-  const other = { ...createKitCombatant(TRAVELER_CHARACTER_ID, KIT), characterId: OTHER_CHARACTER_ID };
+  const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);
   // The team of the wearer, on the field, and another member
   const createContext = (): KitContext =>
     createKitTestContext(wearer, {

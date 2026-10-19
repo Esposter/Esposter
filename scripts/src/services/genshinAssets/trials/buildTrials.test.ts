@@ -9,6 +9,14 @@ import type { TrialReliquaryPiece } from "#src/models/genshinAssets/trials/Trial
 import type { WikiTrialBuild } from "#src/models/genshinAssets/trials/WikiTrialBuild";
 
 import { buildTrials } from "#src/services/genshinAssets/trials/buildTrials";
+import {
+  AFFIX_ID,
+  AFFIX_ROW,
+  MAIN_PROP_ID,
+  SECOND_AFFIX_ROW,
+  SET_ID,
+  SET_RELIQUARY_ID,
+} from "#src/services/genshinAssets/trials/constants.test";
 import { takeOne } from "@esposter/shared";
 import { ArtifactSlot, Attribute } from "genshin-world";
 import { describe, expect, test } from "vitest";
@@ -21,12 +29,7 @@ describe(buildTrials, () => {
   const STAGE_ID = 51_001;
   const TRIAL_AVATAR_ID = 1022;
   const WEAPON_ID = 11_301;
-  const SET_RELIQUARY_ID = 60_211;
   const NO_SET_RELIQUARY_ID = 20_002;
-  const SET_ID = 15_021;
-  const MAIN_PROP_ID = 15_004;
-  const AFFIX_ID = 201_053;
-  const SECOND_AFFIX_ID = 201_054;
 
   const avatarRows: ExcelTrialAvatarRow[] = [
     { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },
@@ -66,10 +69,7 @@ describe(buildTrials, () => {
   const mainPropRows: ExcelReliquaryMainPropRow[] = [
     { id: MAIN_PROP_ID, propDepotId: 5000, propType: Attribute.AttackPercent },
   ];
-  const affixRows: ExcelReliquaryAffixRow[] = [
-    { depotId: 201, groupId: 5, id: AFFIX_ID, propType: Attribute.Attack, propValue: 4.67 },
-    { depotId: 201, groupId: 5, id: SECOND_AFFIX_ID, propType: Attribute.Attack, propValue: 5.25 },
-  ];
+  const affixRows: ExcelReliquaryAffixRow[] = [AFFIX_ROW, SECOND_AFFIX_ROW];
   const wikiBuilds: WikiTrialBuild[] = [
     {
       characterId: CHARACTER_ID,
