@@ -84,6 +84,19 @@ export const resolveKitValues = (
   const namedListKitCandidateMap = getNamedListKitCandidates(valueMap, tables.talentGroupIdMap);
   chooseDefaults(namedListKitCandidateMap, (path) => Object.hasOwn(overlay, path));
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
+  // A cause saying no source gives the value is refused where one does
+  for (const [path, entry] of Object.entries(overlay))
+    if ("cause" in entry && entry.cause === KitProvisionalCause.Unsourced) {
+      const candidate = [...(sourceCandidateMap.get(path) ?? []), ...(namedHitKitCandidateMap.get(path) ?? [])].find(
+        ({ provenance }) => provenance.source !== KitSource.Rule,
+      );
+      if (candidate !== undefined)
+        throw new InvalidOperationError(
+          Operation.Read,
+          path,
+          `names Unsourced, but ${candidate.provenance.source} gives ${JSON.stringify(candidate.value)}`,
+        );
+    }
   chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
   chooseDefaults(ruleCandidateMap);

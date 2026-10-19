@@ -51,6 +51,56 @@ describe(resolveKitValues, () => {
     );
   });
 
+  test("refuses an Unsourced value a gcsim candidate gives at its path, naming gcsim", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(
+        sourceCandidateMap,
+        { "burst.hits.length": { cause: KitProvisionalCause.Unsourced, value: 2 } },
+        new Map(),
+        new Map(),
+        TABLES,
+        false,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: burst.hits.length, names Unsourced, but Gcsim gives 3]`,
+    );
+  });
+
+  test("keeps an Unsourced value over a rule's candidate, which is not a source at its path", () => {
+    expect.hasAssertions();
+
+    const { provenanceMap, valueMap } = resolveKitValues(
+      new Map([
+        [
+          "burst.hits.0.poiseDamage",
+          [
+            {
+              provenance: {
+                cause: KitProvisionalCause.NoPoiseSource,
+                rule: KitRule.NoPoiseSource,
+                source: KitSource.Rule,
+              },
+              value: 0,
+            },
+          ],
+        ],
+      ]),
+      { "burst.hits.0.poiseDamage": { cause: KitProvisionalCause.Unsourced, value: 2 } },
+      new Map(),
+      new Map(),
+      TABLES,
+      false,
+    );
+
+    expect(valueMap.get("burst.hits.0.poiseDamage")).toBe(2);
+    expect(provenanceMap.get("burst.hits.0.poiseDamage")).toStrictEqual({
+      cause: KitProvisionalCause.Unsourced,
+      source: KitSource.Overlay,
+    });
+  });
+
   test("gives a burst's first hit the character's element where no source gives one, as a rule", () => {
     expect.hasAssertions();
 
