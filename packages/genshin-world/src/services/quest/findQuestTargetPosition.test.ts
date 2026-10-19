@@ -7,32 +7,32 @@ import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosi
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { describe, expect, test } from "vitest";
 
-const quest: Quest = {
-  descriptionTextId: "descriptionTextId",
-  id: "0",
-  kind: QuestKind.Archon,
-  mainId: "0",
-  offerTalkIds: [],
-  parentQuestIds: [],
-  rewards: [],
-  steps: [
-    { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["place"] }], textId: "textId" },
-  ],
-  talks: [],
-  titleTextId: "titleTextId",
-};
-const regionData: RegionData = {
-  enemyCamps: [],
-  goToPlaces: [{ id: "place", position: { x: 30, z: 40 }, radius: 10 }],
-  id: "region",
-  landmarks: [],
-  outcropPlaces: [],
-  residents: [],
-  rivers: [],
-  waterfalls: [],
-};
-
 describe(findQuestTargetPosition, () => {
+  const quest: Quest = {
+    descriptionTextId: "descriptionTextId",
+    id: "0",
+    kind: QuestKind.Archon,
+    mainId: "0",
+    offerTalkIds: [],
+    parentQuestIds: [],
+    rewards: [],
+    steps: [
+      { id: "0", objectives: [{ count: 1, kind: QuestObjectiveKind.GoTo, targetIds: ["place"] }], textId: "textId" },
+    ],
+    talks: [],
+    titleTextId: "titleTextId",
+  };
+  const regionData: RegionData = {
+    enemyCamps: [],
+    goToPlaces: [{ id: "place", position: { x: 30, z: 40 }, radius: 10 }],
+    id: "region",
+    landmarks: [],
+    outcropPlaces: [],
+    residents: [],
+    rivers: [],
+    waterfalls: [],
+  };
+
   test("tracking a go-to step points the beam at its place", () => {
     expect.hasAssertions();
 

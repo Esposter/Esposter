@@ -59,31 +59,32 @@ const readWeaponData = (id: number): WeaponData => {
 // One value of a weapon's passive at a refinement rank, as its record in the stats table gives it
 const readPassiveParam = (weaponData: WeaponData, refinement: number, index: number): number =>
   takeOne(takeOne(weaponData.passiveRankParams, refinement - 1), index);
-// Full HP Critic Up's weapon, as its record in the stats table gives it
-const WEAPON_DATA = readWeaponData(11302);
-
-// The CRIT Rate a wielder of the weapon at a refinement rank is priced with at full HP
-const getCriticalRateLines = (refinement: number, kit: Kit = KIT) => {
-  const weaponKit = getWeaponPassiveKit(
-    kit,
-    { ascension: 0, experience: 0, id: 11302, level: 1, refinement },
-    WEAPON_DATA,
-  );
-  const combatant: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: weaponKit,
-    level: 90,
-  };
-  return (weaponKit.getPassiveBonuses?.(combatant, 1, [], []) ?? []).filter(
-    ({ attribute }) => attribute === Attribute.CriticalRate,
-  );
-};
 
 describe(getWeaponPassiveKit, () => {
+  // Full HP Critic Up's weapon, as its record in the stats table gives it
+  const WEAPON_DATA = readWeaponData(11302);
+
+  // The CRIT Rate a wielder of the weapon at a refinement rank is priced with at full HP
+  const getCriticalRateLines = (refinement: number, kit: Kit = KIT) => {
+    const weaponKit = getWeaponPassiveKit(
+      kit,
+      { ascension: 0, experience: 0, id: 11302, level: 1, refinement },
+      WEAPON_DATA,
+    );
+    const combatant: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: TRAVELER_CHARACTER_ID,
+      constellationCount: 0,
+      elementalResonances: [],
+      kit: weaponKit,
+      level: 90,
+    };
+    return (weaponKit.getPassiveBonuses?.(combatant, 1, [], []) ?? []).filter(
+      ({ attribute }) => attribute === Attribute.CriticalRate,
+    );
+  };
+
   test("a weapon at refinement rank one reads its first passive row", () => {
     expect.hasAssertions();
 

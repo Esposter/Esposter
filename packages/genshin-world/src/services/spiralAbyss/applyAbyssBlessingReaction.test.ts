@@ -9,17 +9,17 @@ import {
 } from "#src/services/spiralAbyss/blessings/stardreadBlessing";
 import { describe, expect, test } from "vitest";
 
-const POSITION = { x: 1, z: 2 };
-const SUPERCONDUCT = [{ reactionType: ReactionType.Superconduct }];
-const STARDREAD_BLESSING: AbyssPeriodBlessing = {
-  descriptionTextHash: 0,
-  icon: "UI_TowerBlessing_107",
-  nameTextHash: STARDREAD_NAME_TEXT_HASH,
-};
-const OTHER_BLESSING: AbyssPeriodBlessing = { ...STARDREAD_BLESSING, nameTextHash: 0 };
-const INITIAL_STATE: AbyssBlessingState = { blessingReadySecondsMap: new Map(), shockwavePositions: [] };
-
 describe(applyAbyssBlessingReaction, () => {
+  const POSITION = { x: 1, z: 2 };
+  const SUPERCONDUCT = [{ reactionType: ReactionType.Superconduct }];
+  const STARDREAD_BLESSING: AbyssPeriodBlessing = {
+    descriptionTextHash: 0,
+    icon: "UI_TowerBlessing_107",
+    nameTextHash: STARDREAD_NAME_TEXT_HASH,
+  };
+  const OTHER_BLESSING: AbyssPeriodBlessing = { ...STARDREAD_BLESSING, nameTextHash: 0 };
+  const INITIAL_STATE: AbyssBlessingState = { blessingReadySecondsMap: new Map(), shockwavePositions: [] };
+
   test("a Stardread Moon chamber's reaction fires a shockwave at the enemy's position", () => {
     expect.hasAssertions();
 

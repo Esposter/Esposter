@@ -13,11 +13,12 @@ import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/c
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Guerilla Tactics with synthetic params: its percentage and its seconds
-const guerillaTacticsPassiveModule = createGuerillaTacticsPassiveModule([0.1, 12]);
 describe(createGuerillaTacticsPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Guerilla Tactics with synthetic params: its percentage and its seconds
+  const guerillaTacticsPassiveModule = createGuerillaTacticsPassiveModule([0.1, 12]);
+
   test("defeating an opponent raises the wielder's ATK and Movement SPD by the rank's percentage for its seconds", () => {
     expect.hasAssertions();
 

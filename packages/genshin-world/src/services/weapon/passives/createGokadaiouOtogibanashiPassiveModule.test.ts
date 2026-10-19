@@ -17,10 +17,11 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createGokadaiouOtogibanashiPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Redhorn Stonethresher with synthetic params: its first, a DEF line the module does not read, is passed as 0, and
   // Normal and Charged Attack hits deal 30% of DEF more as base damage
   const gokadaiouOtogibanashiPassiveModule = createGokadaiouOtogibanashiPassiveModule([0, 0.3]);

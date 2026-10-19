@@ -16,20 +16,21 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Echo of a Vow with synthetic params: 50 Elemental Mastery for three seconds after a reaction, and 10% Stellar Glimmer
-// Reaction DMG for two seconds after a Stellar Glimmer reaction
-const echoOfAVowPassiveModule = createEchoOfAVowPassiveModule([50, 0.1, 3, 2]);
-const createReaction = (reactionType: ReactionType, element: Element) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element, reactionType }],
-  striker: wielder,
-});
 const getBuffs = (effects: readonly KitEffect[]) => effects.filter(({ kind }) => kind === "buff");
 
 describe(createEchoOfAVowPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Echo of a Vow with synthetic params: 50 Elemental Mastery for three seconds after a reaction, and 10% Stellar
+  // Glimmer reaction DMG for two seconds after a Stellar Glimmer reaction
+  const echoOfAVowPassiveModule = createEchoOfAVowPassiveModule([50, 0.1, 3, 2]);
+  const createReaction = (reactionType: ReactionType, element: Element) => ({
+    enemy,
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions: [{ element, reactionType }],
+    striker: wielder,
+  });
+
   test("an Elemental Reaction the wielder causes raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 

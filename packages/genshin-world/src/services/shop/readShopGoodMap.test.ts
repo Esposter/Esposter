@@ -9,23 +9,23 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/data/readGameData"));
 
-const GAME_DATA_BASE_URL = "https://example.test/game-data";
-// A table date computed from the epoch, as the shops dataset writes its game-time moments
-const EPOCH_TIME = Temporal.Instant.fromEpochMilliseconds(0).toString();
-// A made-up good, its id the one the test reads back in the depot's order
-const createGood = (goodsId: number): ShopGood => ({
-  beginTime: EPOCH_TIME,
-  buyLimit: 0,
-  endTime: EPOCH_TIME,
-  goodsId,
-  itemCount: 1,
-  itemId: 1,
-  minPlayerLevel: 1,
-  costs: [{ count: 1, itemId: 1 }],
-  refresh: ShopRefresh.None,
-});
-
 describe(readShopGoodMap, () => {
+  const GAME_DATA_BASE_URL = "https://example.test/game-data";
+  // A table date computed from the epoch, as the shops dataset writes its game-time moments
+  const EPOCH_TIME = Temporal.Instant.fromEpochMilliseconds(0).toString();
+  // A made-up good, its id the one the test reads back in the depot's order
+  const createGood = (goodsId: number): ShopGood => ({
+    beginTime: EPOCH_TIME,
+    buyLimit: 0,
+    endTime: EPOCH_TIME,
+    goodsId,
+    itemCount: 1,
+    itemId: 1,
+    minPlayerLevel: 1,
+    costs: [{ count: 1, itemId: 1 }],
+    refresh: ShopRefresh.None,
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

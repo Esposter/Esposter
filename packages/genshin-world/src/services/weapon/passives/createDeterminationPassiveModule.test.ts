@@ -9,11 +9,12 @@ import { createDeterminationPassiveModule } from "#src/services/weapon/passives/
 import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 10_000_066;
-const wielder: Combatant = createWielderCombatant();
-// Determination with synthetic params: its percentage and its seconds
-const determinationPassiveModule = createDeterminationPassiveModule([0.2, 3]);
 describe(createDeterminationPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 10_000_066;
+  const wielder: Combatant = createWielderCombatant();
+  // Determination with synthetic params: its percentage and its seconds
+  const determinationPassiveModule = createDeterminationPassiveModule([0.2, 3]);
+
   test("a burst the wielder uses raises its ATK and Movement SPD by the rank's percentage for its seconds", () => {
     expect.hasAssertions();
 

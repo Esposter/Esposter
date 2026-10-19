@@ -5,25 +5,6 @@ import { getAbyssChamberBlessing } from "#src/services/spiralAbyss/getAbyssChamb
 import { GAME_TIME_ZONE, MILLISECONDS_IN_DAY } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
-const CORRIDOR_FLOOR_ID = 1;
-const MOON_SPIRE_FLOOR_ID = 9;
-const BLESSING = { descriptionTextHash: 1, icon: "UI_TowerBlessing_107", nameTextHash: 2 };
-const LISTS = [
-  [{ descriptionTextHash: 1, towerBuffId: 1, weight: 100 }],
-  [{ descriptionTextHash: 2, towerBuffId: 2, weight: 100 }],
-  [{ descriptionTextHash: 3, towerBuffId: 3, weight: 100 }],
-];
-// The epoch's game time, a period of thirty days from it, and the second game day as the moment both are read at
-const GAME_EPOCH = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO(GAME_TIME_ZONE).toPlainDateTime();
-const PERIOD: AbyssPeriod = {
-  blessing: BLESSING,
-  closesAt: GAME_EPOCH.add({ days: 30 }).toString(),
-  floorIds: [9, 10, 11, 12],
-  id: 1,
-  rewardGroup: 1,
-  startsAt: GAME_EPOCH.toString(),
-};
-const NOW = Temporal.Instant.fromEpochMilliseconds(MILLISECONDS_IN_DAY);
 const createFloor = (id: number, index: number): AbyssFloor => ({
   chambers: [],
   id,
@@ -33,6 +14,26 @@ const createFloor = (id: number, index: number): AbyssFloor => ({
 });
 
 describe(getAbyssChamberBlessing, () => {
+  const CORRIDOR_FLOOR_ID = 1;
+  const MOON_SPIRE_FLOOR_ID = 9;
+  const BLESSING = { descriptionTextHash: 1, icon: "UI_TowerBlessing_107", nameTextHash: 2 };
+  const LISTS = [
+    [{ descriptionTextHash: 1, towerBuffId: 1, weight: 100 }],
+    [{ descriptionTextHash: 2, towerBuffId: 2, weight: 100 }],
+    [{ descriptionTextHash: 3, towerBuffId: 3, weight: 100 }],
+  ];
+  // The epoch's game time, a period of thirty days from it, and the second game day as the moment both are read at
+  const GAME_EPOCH = Temporal.Instant.fromEpochMilliseconds(0).toZonedDateTimeISO(GAME_TIME_ZONE).toPlainDateTime();
+  const PERIOD: AbyssPeriod = {
+    blessing: BLESSING,
+    closesAt: GAME_EPOCH.add({ days: 30 }).toString(),
+    floorIds: [9, 10, 11, 12],
+    id: 1,
+    rewardGroup: 1,
+    startsAt: GAME_EPOCH.toString(),
+  };
+  const NOW = Temporal.Instant.fromEpochMilliseconds(MILLISECONDS_IN_DAY);
+
   test("should show the period's blessing in a Moon Spire chamber", () => {
     expect.hasAssertions();
 

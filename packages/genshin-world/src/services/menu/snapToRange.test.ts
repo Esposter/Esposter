@@ -1,10 +1,10 @@
 import { snapToRange } from "#src/services/menu/snapToRange";
 import { describe, expect, test } from "vitest";
 
-const distanceRange = { max: 6, min: 4.5, step: 0.1 };
-const sensitivityRange = { max: 5, min: 1, step: 1 };
-
 describe(snapToRange, () => {
+  const distanceRange = { max: 6, min: 4.5, step: 0.1 };
+  const sensitivityRange = { max: 5, min: 1, step: 1 };
+
   test("a value between steps lands on the nearest step", () => {
     expect.hasAssertions();
 

@@ -17,12 +17,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = createWielderCombatant();
-const strike: KitStrike = {
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: takeOne(takeOne(KIT.normalAttacks).hits),
-};
 
 // An enemy under the aura given, or under none
 const createEnemyUnder = (auraType?: AuraType) => {
@@ -32,6 +26,13 @@ const createEnemyUnder = (auraType?: AuraType) => {
 };
 
 describe(createBaneOfElementsPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  const strike: KitStrike = {
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: takeOne(takeOne(KIT.normalAttacks).hits),
+  };
+
   const party = createParty([TRAVELER_CHARACTER_ID]);
 
   test("a bane passive raises a strike on an enemy under either of its elements", () => {

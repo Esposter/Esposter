@@ -15,12 +15,13 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
-// Cull the Weak with synthetic params: 20% of Max HP for each defeat
-const cullTheWeakPassiveModule = createCullTheWeakPassiveModule([0.2]);
 
 describe(createCullTheWeakPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
+  // Cull the Weak with synthetic params: 20% of Max HP for each defeat
+  const cullTheWeakPassiveModule = createCullTheWeakPassiveModule([0.2]);
+
   test("defeating an opponent restores the wielder its share of Max HP", () => {
     expect.hasAssertions();
 

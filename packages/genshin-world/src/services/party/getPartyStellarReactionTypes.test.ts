@@ -11,9 +11,6 @@ import { getPartyStellarReactionTypes } from "#src/services/party/getPartyStella
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const STELLAR_JUBILEE = {
-  stellarReactionTypes: [StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl],
-};
 
 const createCombatant = (characterId: number, kit: Kit): Combatant => ({
   ascension: 0,
@@ -26,6 +23,10 @@ const createCombatant = (characterId: number, kit: Kit): Combatant => ({
 });
 
 describe(getPartyStellarReactionTypes, () => {
+  const STELLAR_JUBILEE = {
+    stellarReactionTypes: [StellarReactionType.StellarConduct, StellarReactionType.StellarSwirl],
+  };
+
   test("enables each Stellar reaction once however many passives enable it", () => {
     expect.hasAssertions();
 

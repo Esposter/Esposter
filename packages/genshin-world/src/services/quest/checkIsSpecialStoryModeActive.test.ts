@@ -5,10 +5,10 @@ import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
 import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecialStoryModeActive";
 import { describe, expect, test } from "vitest";
 
-const QUEST_ID = "1";
-const OBJECTIVE = { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["1"] };
-
 describe(checkIsSpecialStoryModeActive, () => {
+  const QUEST_ID = "1";
+  const OBJECTIVE = { count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["1"] };
+
   test("a quest on a restricted step is restricted", () => {
     expect.hasAssertions();
 

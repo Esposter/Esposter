@@ -16,21 +16,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Composed with synthetic params: a 50% chance, and its cooldown in seconds
-const composedPassiveModule = createComposedPassiveModule([0.5, 10]);
-const createDamageTaken = (attackTag: AttackTag) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createComposedPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Composed with synthetic params: a 50% chance, and its cooldown in seconds
+  const composedPassiveModule = createComposedPassiveModule([0.5, 10]);
+  const createDamageTaken = (attackTag: AttackTag) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("an elemental skill's damage within the rank's chance ends the skill's cooldown", () => {
     expect.hasAssertions();
 

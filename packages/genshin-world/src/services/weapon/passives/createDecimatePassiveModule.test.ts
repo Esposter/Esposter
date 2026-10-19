@@ -16,18 +16,19 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Decimate with a synthetic percentage, which is its only param
-const decimatePassiveModule = createDecimatePassiveModule([0.2]);
-const strike: KitStrike = {
-  attackTag: AttackTag.NormalAttack,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-};
 
 describe(createDecimatePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Decimate with a synthetic percentage, which is its only param
+  const decimatePassiveModule = createDecimatePassiveModule([0.2]);
+  const strike: KitStrike = {
+    attackTag: AttackTag.NormalAttack,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  };
+
   test("a strike on an automaton is raised by the rank's percentage", () => {
     expect.hasAssertions();
 

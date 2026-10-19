@@ -15,35 +15,35 @@ import {
 import { stepSheerCold } from "#src/services/sheerCold/stepSheerCold";
 import { describe, expect, test } from "vitest";
 
-const maxHealth = 1000;
-const inCold: SheerColdStep = {
-  antiColdRatio: 0,
-  isHeated: false,
-  isInCold: true,
-  isSnowstorm: false,
-  isSwimming: false,
-  maxHealth,
-};
-const outOfCold: SheerColdStep = {
-  antiColdRatio: 0,
-  isHeated: false,
-  isInCold: false,
-  isSnowstorm: false,
-  isSwimming: false,
-  maxHealth,
-};
-const heated: SheerColdStep = {
-  antiColdRatio: 0,
-  isHeated: true,
-  isInCold: true,
-  isSnowstorm: false,
-  isSwimming: false,
-  maxHealth,
-};
-// The damage one interval costs a character with the test's max HP
-const intervalDamage = SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT;
-
 describe(stepSheerCold, () => {
+  const maxHealth = 1000;
+  const inCold: SheerColdStep = {
+    antiColdRatio: 0,
+    isHeated: false,
+    isInCold: true,
+    isSnowstorm: false,
+    isSwimming: false,
+    maxHealth,
+  };
+  const outOfCold: SheerColdStep = {
+    antiColdRatio: 0,
+    isHeated: false,
+    isInCold: false,
+    isSnowstorm: false,
+    isSwimming: false,
+    maxHealth,
+  };
+  const heated: SheerColdStep = {
+    antiColdRatio: 0,
+    isHeated: true,
+    isInCold: true,
+    isSnowstorm: false,
+    isSwimming: false,
+    maxHealth,
+  };
+  // The damage one interval costs a character with the test's max HP
+  const intervalDamage = SHEER_COLD_DAMAGE_SHARE * maxHealth + SHEER_COLD_DAMAGE_FLAT;
+
   test("should fill the gauge in the subzero climate", () => {
     expect.hasAssertions();
 

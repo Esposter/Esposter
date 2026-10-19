@@ -10,15 +10,6 @@ import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passive
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const ATTACK_BUFF = 0.25;
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant([
-  { attribute: Attribute.BaseAttack, value: 1250 },
-  { attribute: Attribute.BaseHealth, value: 10_000 },
-]);
-// Falcon's Defiance with synthetic params: the first, a static ATK line the module does not read, is passed as 0.
-// Then a heal of 50% of ATK, a hit of 150% of ATK and a cooldown of three seconds
-const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0, 0.5, 1.5, 3]);
 const createEnemyStrikeLoss = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: -0.1,
@@ -29,6 +20,16 @@ const createEnemyStrikeLoss = () => ({
 });
 
 describe(createFalconsDefiancePassiveModule, () => {
+  const ATTACK_BUFF = 0.25;
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant([
+    { attribute: Attribute.BaseAttack, value: 1250 },
+    { attribute: Attribute.BaseHealth, value: 10_000 },
+  ]);
+  // Falcon's Defiance with synthetic params: the first, a static ATK line the module does not read, is passed as 0.
+  // Then a heal of 50% of ATK, a hit of 150% of ATK and a cooldown of three seconds
+  const aquilaFavoniaPassiveModule = createFalconsDefiancePassiveModule([0, 0.5, 1.5, 3]);
+
   test("taking DMG heals the wielder by the rank's share of ATK and queues its hit on the surrounding opponents", () => {
     expect.hasAssertions();
 

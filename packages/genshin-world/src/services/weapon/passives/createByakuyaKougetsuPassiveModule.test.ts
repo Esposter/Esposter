@@ -20,10 +20,11 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createByakuyaKougetsuPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Byakuya Kougetsu with synthetic params: its Healing Bonus is the table's, so its first param is not read here.
   // Normal Attack DMG rises by 5% of the wielder's Max HP as base damage, and for 3 seconds after an Elemental Burst,
   // Each Normal Attack that hits restores 0.5 Energy, once every 0.5 seconds

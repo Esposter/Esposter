@@ -8,10 +8,11 @@ import { describe, expect, test } from "vitest";
 
 const floors = await readAbyssFloors(GAME_DATA_LOCAL_BASE_URL);
 const periods = await readAbyssPeriods(GAME_DATA_LOCAL_BASE_URL);
-// The latest period the record holds, whose floors the Moon Spire offers now
-const period = takeOne(periods, periods.length - 1);
 
 describe(getAbyssFloorsOffered, () => {
+  // The latest period the record holds, whose floors the Moon Spire offers now
+  const period = takeOne(periods, periods.length - 1);
+
   test("a period offers its own floors", () => {
     expect.hasAssertions();
 

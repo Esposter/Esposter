@@ -9,9 +9,6 @@ import { stepTimeTrialChallenge } from "#src/services/puzzle/stepTimeTrialChalle
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { describe, expect, test } from "vitest";
 
-const MARKER_ID = "marker";
-const MARKER_POSITION = { x: 3, z: -4 };
-
 describe(startTimeTrialChallenge, () => {
   const LIMIT_SECONDS = 10;
   const TARGET_COUNT = 2;
@@ -40,6 +37,8 @@ describe(startTimeTrialChallenge, () => {
 describe(strikeTimeTrialTarget, () => {
   const LIMIT_SECONDS = 10;
   const TARGET_COUNT = 2;
+  const MARKER_ID = "marker";
+  const MARKER_POSITION = { x: 3, z: -4 };
 
   const createChallenge = (): TimeTrialChallenge => ({
     limitSeconds: LIMIT_SECONDS,
@@ -68,6 +67,8 @@ describe(strikeTimeTrialTarget, () => {
 describe(stepTimeTrialChallenge, () => {
   const LIMIT_SECONDS = 10;
   const TARGET_COUNT = 2;
+  const MARKER_ID = "marker";
+  const MARKER_POSITION = { x: 3, z: -4 };
 
   const createChallenge = (): TimeTrialChallenge => ({
     limitSeconds: LIMIT_SECONDS,

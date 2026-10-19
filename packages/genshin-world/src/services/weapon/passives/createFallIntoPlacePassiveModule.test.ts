@@ -17,23 +17,24 @@ import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Master Key with synthetic params: 40 Elemental Mastery for four seconds after a reaction, 30 more under
-// Ascendant Gleam
-const fallIntoPlacePassiveModule = createFallIntoPlacePassiveModule([40, 4, 30, 0]);
-const createReaction = (striker: Combatant) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
-  striker,
-});
 
 describe(createFallIntoPlacePassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const MOONSIGN_KIT: Kit = { ...TRAVELER_KIT, moonsignBenediction: { lunarReactionTypes: [] } };
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Master Key with synthetic params: 40 Elemental Mastery for four seconds after a reaction, 30 more under
+  // Ascendant Gleam
+  const fallIntoPlacePassiveModule = createFallIntoPlacePassiveModule([40, 4, 30, 0]);
+  const createReaction = (striker: Combatant) => ({
+    enemy,
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
+    striker,
+  });
+
   test("a reaction the wielder causes raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 

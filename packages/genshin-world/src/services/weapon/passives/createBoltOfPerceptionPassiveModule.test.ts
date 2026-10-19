@@ -15,21 +15,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Echo with synthetic params: a 50% chance, the bounce count (not modelled here), its multiplier and its cooldown
-const boltOfPerceptionPassiveModule = createBoltOfPerceptionPassiveModule([0.5, 2, 1.5, 3]);
-const createNormalAttackHit = () => ({
-  attackTag: AttackTag.NormalAttack,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createBoltOfPerceptionPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Echo with synthetic params: a 50% chance, the bounce count (not modelled here), its multiplier and its cooldown
+  const boltOfPerceptionPassiveModule = createBoltOfPerceptionPassiveModule([0.5, 2, 1.5, 3]);
+  const createNormalAttackHit = () => ({
+    attackTag: AttackTag.NormalAttack,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a normal attack the wielder lands queues one bolt on the enemy it struck at the rank's multiplier", () => {
     expect.hasAssertions();
 

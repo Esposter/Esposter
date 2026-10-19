@@ -16,22 +16,24 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Archer's Message with synthetic params: an extra forced critical hit at the multiplier given, once every ten seconds
-const archersMessagePassiveModule = createArchersMessagePassiveModule([2]);
-const weakPointHit: KitHit = { ...TRAVELER_KIT.plungeCollision, weakPoint: true };
-const createDamageTaken = (attackTag: AttackTag, hit: KitHit) => ({
-  attackTag,
-  enemy,
-  hit,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createArchersMessagePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Archer's Message with synthetic params: an extra forced critical hit at the multiplier given, once
+  // Every ten seconds
+  const archersMessagePassiveModule = createArchersMessagePassiveModule([2]);
+  const weakPointHit: KitHit = { ...TRAVELER_KIT.plungeCollision, weakPoint: true };
+  const createDamageTaken = (attackTag: AttackTag, hit: KitHit) => ({
+    attackTag,
+    enemy,
+    hit,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a charged attack's hit on a weak point queues one forced critical hit at the rank's multiplier on the enemy it struck", () => {
     expect.hasAssertions();
 

@@ -15,21 +15,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Gash with synthetic params: a 40% chance, a 200% multiplier and a ten-second cooldown
-const gashPassiveModule = createGashPassiveModule([0.4, 2, 10]);
-const createDamageTaken = (attackTag?: AttackTag) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createGashPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Gash with synthetic params: a 40% chance, a 200% multiplier and a ten-second cooldown
+  const gashPassiveModule = createGashPassiveModule([0.4, 2, 10]);
+  const createDamageTaken = (attackTag?: AttackTag) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a hit the wielder deals queues one extra hit on the enemy it struck at the rank's multiplier", () => {
     expect.hasAssertions();
 

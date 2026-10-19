@@ -24,9 +24,10 @@ const createCombatant = (characterId: number, element: Element): Combatant => ({
   kit: TRAVELER_KIT,
   level: 1,
 });
-const wielder = createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro);
 
 describe(createFangsFlyingToAndFroPassiveModule, () => {
+  const wielder = createCombatant(TRAVELER_CHARACTER_ID, Element.Hydro);
+
   // Fangs Flying To and Fro at its first rank: 20% Max HP for ten seconds after an Elemental Skill, once every fifteen,
   // And another 12% for each Hydro member of the party, 24% at most
   const passiveModule = createFangsFlyingToAndFroPassiveModule([0.15, 0.2, 10, 15, 0.12, 2]);
