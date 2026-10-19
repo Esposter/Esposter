@@ -5,7 +5,7 @@ Yae Miko's kit is its record and one behaviour module, `createYaeMikoKitBehaviou
 ## Decisions
 
 - **Constellation 6's DEF ignored is 60%, the value gcsim's `c6DefIgnore` returns, not the 45% its kitsune.go comment gives.** The code is what the kit reads, and the comment is stale.
-- **A totem's strikes are fixed as it is cast.** gcsim reads the totems standing at each strike, but a kit's hits are fixed when their action starts, so a totem's strikes take the level its cast gives, and a later cast does not raise them. Each strike lands on the enemies within its circle round the totem; gcsim picks one enemy within a detection radius that its file leaves to a constant not given, so that radius is not built.
+- **A totem's strikes are fixed as it is cast.** gcsim reads the totems standing at each strike, but a kit's hits are fixed when their action starts, so a totem's strikes take the level its cast gives, and a later cast does not raise them. Each strike lands on the enemies within its circle round the totem; gcsim picks one enemy within a detection radius that its file leaves to a constant not given, so that radius is not built. The burst's thunderbolts take the same cap of three, where gcsim's burst reads one hit.
 - **A totem lasts gcsim's 900 frames, not the table's 14 at index 4.** The two differ, and the table's value is not read until one is checked.
 
 ## Key files

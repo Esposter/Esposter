@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 2.0943951023931953, "height": 2, "radius": 10 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6339 } },
   "frames.talismanSpiritTickSecondHitOffsets.length": { "cause": "Unsourced", "value": 3 },
   "frames.talismanSpiritTickSecondHitOffsets.0": { "cause": "Unsourced", "value": 0 },
@@ -12,12 +11,6 @@
   "hitFields.talismanSpiritTick.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
-  },
-  "hitFields.talismanSpiritTick.element": { "cause": "Unsourced", "value": "Ice" },
-  "hitFields.talismanSpiritTick.gauge": { "cause": "Unsourced", "value": 1 },
-  "hitFields.talismanSpiritTick.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 2, "proudSkillGroupId": 6339 }
   },
   "hitFields.talismanSpiritTick.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },

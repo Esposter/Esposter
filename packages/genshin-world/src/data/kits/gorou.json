@@ -4,10 +4,6 @@
   "frames.bannerTick": { "file": "skill.go", "line": 127, "source": "Gcsim", "value": 18 },
   "frames.generalsGloryFirstTick": { "cause": "Unsourced", "value": 48 },
   "frames.crystalCollapseInterval": { "file": "burst.go", "line": 64, "source": "Gcsim", "value": 90 },
-  "hits.crystalCollapse.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 11.5 }
-  },
   "hits.crystalCollapse.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5539 } },
   "parameters.generalsWarBannerDefenseBonus": {
     "cause": "Unsourced",
