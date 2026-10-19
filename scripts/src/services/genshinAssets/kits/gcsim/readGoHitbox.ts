@@ -31,11 +31,17 @@ const HITBOX_CONSTRUCTORS = new Map<string, HitboxConstructor>([
   ["NewCircleHitOnTargetFanAngle", { fanAngle: true, onTarget: true, shape: GcsimHitboxShape.Circle }],
 ]);
 
-// The centre a source or target argument names, the player or the primary target by its getter, else none
+// The centre a source or target argument names by its getter: the player or the primary target, read through its
+// `.Pos()` as well
 const CENTER_GETTERS: [string, GcsimHitboxCenter][] = [
   ["Combat.Player()", GcsimHitboxCenter.Player],
+  ["Combat.Player().Pos()", GcsimHitboxCenter.Player],
   ["Combat.PrimaryTarget()", GcsimHitboxCenter.PrimaryTarget],
+  ["Combat.PrimaryTarget().Pos()", GcsimHitboxCenter.PrimaryTarget],
 ];
+
+// A bare name or a field of one, `stelePos` or `c.qPos`, which a constructor may name a place by
+const PLACE_REGEX = /^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*$/u;
 
 const readArgumentText = (tokens: readonly GoToken[], start: number): string => {
   const end = parseGoExpression(tokens, start).end;
@@ -46,18 +52,36 @@ const readArgumentText = (tokens: readonly GoToken[], start: number): string => 
     .join("");
 };
 
-const readCenter = (text: string): GcsimHitboxCenter | undefined =>
+const readGetterCenter = (text: string): GcsimHitboxCenter | undefined =>
   CENTER_GETTERS.find(([getter]) => text.endsWith(getter))?.[1];
 
-// The offset a `info.Point{X: x, Y: y}` literal gives, forward as its Y, or none for a nil argument. Undefined where the
-// Argument is any other form
+// The centre a source or target argument names: its getter, else for a place its name is bound to by a getter, else
+// The place itself, the code computes it somewhere a getter does not give. Any other call names none
+const readCenter = (
+  tokens: readonly GoToken[],
+  start: number,
+  resolveAssignment: (name: string) => number | undefined,
+): GcsimHitboxCenter | undefined => {
+  const text = readArgumentText(tokens, start);
+  if (!PLACE_REGEX.test(text)) return readGetterCenter(text);
+  const valueStart = resolveAssignment(text);
+  const boundCenter = valueStart === undefined ? undefined : readGetterCenter(readArgumentText(tokens, valueStart));
+  return boundCenter ?? GcsimHitboxCenter.Position;
+};
+
+// The offset a `info.Point{X: x, Y: y}` literal gives, forward as its Y, or none for a nil argument. A bare name is read
+// At the literal its dominating assignment gives. Undefined where the argument is any other form
 const readOffset = (
   tokens: readonly GoToken[],
   start: number,
   resolveName: (name: string) => GoValue | undefined,
+  resolveAssignment: (name: string) => number | undefined,
 ): [number, number] | null | undefined => {
-  if (readArgumentText(tokens, start) === "nil") return null;
-  let position = start;
+  const text = readArgumentText(tokens, start);
+  if (text === "nil") return null;
+  const valueStart = PLACE_REGEX.test(text) ? resolveAssignment(text) : start;
+  if (valueStart === undefined) return undefined;
+  let position = valueStart;
   while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
     position += 2;
   if (tokens[position]?.text !== "Point" || !checkIsGoPunctuation(tokens[position + 1], "{")) return undefined;
@@ -82,14 +106,15 @@ const readNumber = (
 ): number | undefined => evaluateGoNumber(parseGoExpression(tokens, start).expression, resolveName);
 
 // The hitbox a queue call's attack pattern is written as, `combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 2)`
-// And its kin, in gcsim's shape and centre terms: a circle or box on the player, or on the primary target, with its
-// Offset, radius or size and fan angle. A constructor centred on any other target, or with a size or offset the
-// Constants do not give a number, has no hitbox. The line is the constructor's
+// And its kin, in gcsim's shape and centre terms: a circle or box on the player, on the primary target or on a place
+// The code computes, with its offset, radius or size and fan angle. A constructor with a size or offset the constants
+// Do not give a number, or centred on a call that is no getter, has no hitbox. The line is the constructor's
 export const readGoHitbox = (
   tokens: readonly GoToken[],
   start: number,
   resolveName: (name: string) => GoValue | undefined,
   file: string,
+  resolveAssignment: (name: string) => number | undefined,
 ): GcsimHitbox | undefined => {
   let position = start;
   while (tokens[position]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "."))
@@ -119,12 +144,15 @@ export const readGoHitbox = (
   if (argumentStarts.length !== fanIndex + (hasFanAngle ? 1 : 0)) return undefined;
   const [sourceStart, centerStart] = argumentStarts;
   if (sourceStart === undefined) return undefined;
-  const sourceCenter = readCenter(readArgumentText(tokens, sourceStart));
+  const sourceCenter = readCenter(tokens, sourceStart, resolveAssignment);
   // A source-centred constructor is centred on its source, unless its centre argument names a centre of its own
-  const centerText = onTarget || centerStart === undefined ? "nil" : readArgumentText(tokens, centerStart);
-  const center = centerText === "nil" ? sourceCenter : readCenter(centerText);
+  const center =
+    centerStart === undefined || onTarget || readArgumentText(tokens, centerStart) === "nil"
+      ? sourceCenter
+      : readCenter(tokens, centerStart, resolveAssignment);
   const offsetStart = argumentStarts[offsetIndex];
-  const offset = offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName);
+  const offset =
+    offsetStart === undefined ? undefined : readOffset(tokens, offsetStart, resolveName, resolveAssignment);
   if (center === undefined || offset === undefined) return undefined;
   // A circle on the player or the target takes its offset, which moves its centre as a body circle's does; a box on the
   // Target keeps none

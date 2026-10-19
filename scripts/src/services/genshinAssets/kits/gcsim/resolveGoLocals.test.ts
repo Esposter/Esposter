@@ -56,10 +56,11 @@ describe("readGcsimCitedCandidates local aliases", () => {
     const candidates =
       readGcsimCitedCandidates(overlayFor("burst.area"), createGcsimDirectory(SINGLE_GO), FOLDER).get("burst.area") ??
       [];
+    // The constructor's forward offset of 1 is folded into its radius of 4, as a body circle's reach is priced
     expect(candidates).toStrictEqual([
       {
         provenance: { file: "internal/characters/aino/burst.go", line: 5, source: KitSource.Gcsim },
-        value: { angle: 2 * Math.PI, height: 2, radius: 4 },
+        value: { angle: 2 * Math.PI, height: 2, radius: 5 },
       },
     ]);
   });

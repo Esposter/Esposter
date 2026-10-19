@@ -13,6 +13,7 @@ import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/read
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableCells";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
+import { SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -33,6 +34,15 @@ const readNormalCounter = (path: string): number | undefined => {
   const counter = NORMAL_ATTACK_PATH_REGEX.exec(path)?.groups?.counter;
   return counter === undefined ? undefined : Number(counter);
 };
+
+// The path segments of the actions a strike's reach is measured from: a normal attack, a charged attack, a plunge and its
+// Collision, as the mechanical reader measures a hit of each
+const STRIKE_PATH_SEGMENTS = new Set(["chargedAttack", "normalAttacks", "plungeCollision", "plunges"]);
+
+// The targeting area a cited area's reach on a target is measured from, the strikes' for a strike's path and the skill's
+// For every other path
+const readCitedTargetingArea = (path: string): AttackArea =>
+  path.split(".").some((segment) => STRIKE_PATH_SEGMENTS.has(segment)) ? STRIKE_TARGETING_AREA : SKILL_TARGETING_AREA;
 
 // A module-scope table's declaration, `name = [][]float64{` or `name = []float64{`
 const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?::=|=)\s*\[\]/u;
@@ -75,6 +85,7 @@ const readCitedArea = (
   lineIndex: number,
   file: string,
   counter: number | undefined,
+  targetingArea: AttackArea,
 ): undefined | { area: AttackArea; line: number } => {
   const constructorText = readConstructorText(lines, lineIndex);
   // The arguments are read with the locals they name resolved, the constructor's own name and its left side left as they are
@@ -84,7 +95,7 @@ const readCitedArea = (
   if (argumentText === undefined) return undefined;
   const table = substituteGoTableCells(`${constructorText.slice(0, open + 1)}${argumentText}`, lines, counter);
   if (table === undefined) return undefined;
-  const area = readGcsimCitedArea(table.text, file);
+  const area = readGcsimCitedArea(table.text, file, targetingArea);
   if (area === undefined) return undefined;
   const cite = table.cites.find(({ value }) => value === area.radius) ?? table.cites[0];
   return { area, line: cite?.line ?? lineIndex + 1 };
@@ -155,7 +166,13 @@ export const readGcsimCitedCandidates = (
     const lines = readFileSync(join(gcsimDirectory, file), "utf8").split("\n");
     // An area is cited by the constructor on its line, whole, with the table cells it reads cited by their rows
     if (typeof entry.value === "object" && entry.value !== null && !Array.isArray(entry.value)) {
-      const cited = readCitedArea(lines, readConstructorIndex(lines, entry.line - 1), file, readNormalCounter(path));
+      const cited = readCitedArea(
+        lines,
+        readConstructorIndex(lines, entry.line - 1),
+        file,
+        readNormalCounter(path),
+        readCitedTargetingArea(path),
+      );
       if (cited !== undefined)
         addKitCandidate(candidateMap, path, {
           provenance: { file, line: cited.line, source: KitSource.Gcsim },
