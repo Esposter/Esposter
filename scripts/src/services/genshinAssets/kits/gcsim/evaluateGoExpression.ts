@@ -32,8 +32,8 @@ const applyOperator = (operator: string, left: GoOperand, right: GoOperand): GoV
 };
 
 // A Go expression's value as gcsim's action files compute their hitmarks and frames: numbers and their sums, slices,
-// Indexes into them, the frame helpers and the numeric conversions, each name read through the package's constants.
-// Anything else, a call into the simulation or a name the package does not define, has no value
+// Indexes into them, the frame helpers, the numeric conversions and the ceiling, each name read through the package's
+// Constants. Anything else, a call into the simulation or a name the package does not define, has no value
 export const evaluateGoExpression = (
   expression: GoExpression,
   resolveName: (name: string) => GoValue | undefined,
@@ -64,6 +64,8 @@ export const evaluateGoExpression = (
             ? toGoNumberValue(firstNumber, true)
             : firstNumber;
       else if (expression.callee === "make") return [];
+      // The `ceil` helper each character defines, which gives the whole number at or above its argument
+      else if (expression.callee === "ceil") return firstNumber === undefined ? undefined : Math.ceil(firstNumber);
       else return undefined;
     }
     case GoExpressionKind.Composite: {
