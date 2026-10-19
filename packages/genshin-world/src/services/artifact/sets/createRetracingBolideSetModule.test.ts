@@ -9,13 +9,14 @@ import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.tes
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { assert, describe, expect, test } from "vitest";
 
 const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const wearer = createSetWearer(TRAVELER_KIT);
-const deployed = (isOnField: boolean): DeployedCombatant[] => [{ ...wearer, isOnField }];
+const deployed = (isOnField: boolean): DeployedCombatant[] => [createDeployedCombatant(wearer, { isOnField })];
 const liveShield: KitEffect = { characterId: OTHER_CHARACTER_ID, health: 100, kind: "shield", secondsRemaining: 5 };
 const shieldedBonuses = [
   { amount: 0.4, attribute: Attribute.NormalAttackDamageBonus },
