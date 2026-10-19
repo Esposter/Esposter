@@ -32,8 +32,7 @@ export const startQuests = (
     quests.some(({ id }) => id === acceptedQuestId)
   )
     nextProgressMap.set(acceptedQuestId, { objectiveCounts: [], stepIndex: 0 });
-  // A quest whose parent quests are all finished starts, at load and on any event, since a step's quest event can
-  // Finish one. A Parent the world does not carry never finishes, so its child stays unstarted
+  // A parent quest the world does not carry never finishes, so its child stays unstarted
   const checkIsParentQuestFinished = (parentQuestId: string) => {
     const parentQuest = quests.find(({ id }) => id === parentQuestId);
     return parentQuest !== undefined && checkIsQuestFinished(parentQuest, progressMap.get(parentQuestId));
