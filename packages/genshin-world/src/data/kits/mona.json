@@ -1,5 +1,5 @@
 {
-  "burst.hits.0.multiplier": { "cause": "Unsourced", "value": 0 },
+  "burst.hits.0.multiplier": { "file": "burst.go", "line": 45, "source": "Gcsim", "value": 0 },
   "burst.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10 }
@@ -43,7 +43,6 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
-  "hits.mirrorReflectionPhantom.0.poiseDamage": { "cause": "Unsourced", "value": 40 },
   "hits.mirrorReflectionPhantom.1.area": {
     "file": "skill.go",
     "line": 58,
@@ -55,7 +54,6 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
-  "hits.mirrorReflectionPhantom.1.poiseDamage": { "cause": "Unsourced", "value": 40 },
   "hits.mirrorReflectionPhantom.2.area": {
     "file": "skill.go",
     "line": 58,
@@ -67,7 +65,6 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
-  "hits.mirrorReflectionPhantom.2.poiseDamage": { "cause": "Unsourced", "value": 40 },
   "hits.mirrorReflectionPhantom.3.area": {
     "file": "skill.go",
     "line": 58,
@@ -79,7 +76,6 @@
     "source": "Gcsim",
     "value": { "index": 0, "proudSkillGroupId": 4132 }
   },
-  "hits.mirrorReflectionPhantom.3.poiseDamage": { "cause": "Unsourced", "value": 40 },
   "hits.mirrorReflectionPhantom.4.area": {
     "file": "skill.go",
     "line": 58,
@@ -91,7 +87,6 @@
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 4132 }
   },
-  "hits.mirrorReflectionPhantom.4.poiseDamage": { "cause": "Unsourced", "value": 150 },
   "hits.sprintPhantom.length": { "cause": "Unsourced", "value": 1 },
   "hits.sprintPhantom.0.area": {
     "cause": "Unclassified",
@@ -102,6 +97,5 @@
   "hits.sprintPhantom.0.hitmarkFrames": { "file": "asc.go", "line": 58, "source": "Gcsim", "value": 120 },
   "hits.sprintPhantom.0.multiplier": { "cause": "Unclassified", "value": 0.664 },
   "hits.sprintPhantom.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
-  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" },
-  "hits.mirrorReflectionPhantom.4.gauge": { "cause": "Unsourced", "value": 1 }
+  "hits.mirrorReflectionPhantom.4.element": { "cause": "Unsourced", "value": "Water" }
 }
