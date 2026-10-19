@@ -5,6 +5,5 @@
   "burst.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8639 } },
   "normalAttacks.3.hits.1.multiplier": { "source": "Tables" },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
-  "plungeCollision.gauge": { "cause": "DiffersFromSource" }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
