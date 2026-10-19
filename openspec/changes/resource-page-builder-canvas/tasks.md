@@ -27,7 +27,7 @@
 
 ## 6. Clipboard
 
-- [ ] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
+- [x] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
 
 ## 7. Shell
 

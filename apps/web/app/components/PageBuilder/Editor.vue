@@ -2,6 +2,7 @@
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilderClipboard";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
@@ -38,6 +39,7 @@ const announce = (message: string) => {
   });
 };
 const { deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(() => resourceId, announce);
+const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(() => resourceId, announce);
 usePageBuilderHistoryCommands(() => resourceId);
 const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
 const canvas = useTemplateRef("canvas");
@@ -55,6 +57,19 @@ const getAltMove = (key: string) => {
       return moveRight;
     case "ArrowUp":
       return moveUp;
+    default:
+      return undefined;
+  }
+};
+// The clipboard command a Ctrl or Cmd chord makes with C, X or V, or none for any other key
+const getClipboardCommand = (key: string) => {
+  switch (key.toLowerCase()) {
+    case "c":
+      return copySelected;
+    case "v":
+      return pasteSelected;
+    case "x":
+      return cutSelected;
     default:
       return undefined;
   }
@@ -86,6 +101,12 @@ const checkIsControlTarget = (target: EventTarget | null) =>
 const handleEditorKeydown = (event: KeyboardEvent) => {
   if (checkIsEditableTarget(event.target)) return;
 
+  const clipboardCommand = event.ctrlKey || event.metaKey ? getClipboardCommand(event.key) : undefined;
+  if (clipboardCommand) {
+    event.preventDefault();
+    clipboardCommand();
+    return;
+  }
   if (event.key === "Enter") {
     if (!checkIsControlTarget(event.target)) startTextEdit();
     return;

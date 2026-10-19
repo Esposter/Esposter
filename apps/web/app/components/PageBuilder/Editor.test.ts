@@ -8,15 +8,20 @@ import {
   TEST_SECTION_ID,
 } from "@/services/pageBuilder/constants.test";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORY_MAP } from "@/services/pageBuilder/constants";
+import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { nextTick } from "vue";
 
 describe("pageBuilderEditor", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   test("the editor draws the palette, the canvas and the content panel", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -235,6 +240,28 @@ describe("pageBuilderEditor", () => {
       .vm.$emit("canvasKeydown", new KeyboardEvent("keydown", { key: "Enter" }));
 
     expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+  });
+
+  test("ctrl C copies the selected node to the clipboard", async () => {
+    expect.hasAssertions();
+    const writeText = vi.fn<(text: string) => Promise<void>>(() => Promise.resolve());
+    vi.stubGlobal("navigator", { clipboard: { writeText } });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+
+    await component.trigger("keydown", { ctrlKey: true, key: "c" });
+
+    expect(
+      writeText.mock.calls.map(([text]) => parseClipboardNodes(text)?.nodes.map(({ props }) => props.id)),
+    ).toStrictEqual([[TEST_ROOT_TEXT_ID]]);
   });
 
   test("an empty page shows the palette instead of the canvas", async () => {
