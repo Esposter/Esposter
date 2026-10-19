@@ -55,6 +55,7 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.25,
+          isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
         },
@@ -74,6 +75,7 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0,
+          isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0.1,
         },
@@ -93,6 +95,7 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0.25,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.125,
+          isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
         },
@@ -112,6 +115,7 @@ describe(getKitHealedHp, () => {
           bondOfLifeShare: 0,
           characterId: TRAVELER_CHARACTER_ID,
           healthShare: 0.1,
+          isFallRefused: false,
           kind: KitEventKind.HealthChanged,
           overflowHealthShare: 0,
         },
@@ -135,11 +139,20 @@ describe(getKitHealedHp, () => {
       TRAVELER_CHARACTER_ID,
       1200,
     );
-    const { characterId, healthShare, bondOfLifeShare, overflowHealthShare } = takeOne(healedParty.healthChanges);
+    const { bondOfLifeShare, characterId, healthShare, isFallRefused, overflowHealthShare } = takeOne(
+      healedParty.healthChanges,
+    );
 
     expect(
       getKitHealedHp(
-        { bondOfLifeShare, characterId, healthShare, kind: KitEventKind.HealthChanged, overflowHealthShare },
+        {
+          bondOfLifeShare,
+          characterId,
+          healthShare,
+          isFallRefused,
+          kind: KitEventKind.HealthChanged,
+          overflowHealthShare,
+        },
         healthBuffs,
         healedParty,
         combatantMap,
