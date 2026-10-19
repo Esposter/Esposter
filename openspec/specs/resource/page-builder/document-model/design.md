@@ -30,7 +30,7 @@ The two editors' documents are these, each with its root's props typed by its re
 
 ## Schemas
 
-Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry. The node's shape and the root's props, parsed by the root's own schema, come first. Then a refinement walks the tree and checks each node's type against the registry and its slot, its props against its type's schema, that ids are unique within the document, and that the node count stays within a named limit the editor passes in: `MAX_WEBPAGE_NODES` (2000) for the webpage and `MAX_EMAIL_NODES` (1000) for the email. A refusal names the slot or the field that refused.
+Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry. The node's shape and the root's props, parsed by the root's own schema, come first. Then a refinement walks the tree and checks each node's type against the registry and its slot, its props against its type's schema, that ids are unique within the document, and that the node count stays within a named limit the editor passes in: `MAX_WEBPAGE_NODES` for the webpage and `MAX_EMAIL_NODES` for the email. A refusal names the slot or the field that refused.
 
 An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS. The text inside a text node is the ProseMirror JSON the Note stores, validated by the Note's own document schema, which the webpage's text node and the email's rich text both read. Portable Text was weighed for the text node and lost: it would need an editor of its own, since Portable Text's is React, or a converter each way, against a format the app already stores, edits and renders on the server.
 
