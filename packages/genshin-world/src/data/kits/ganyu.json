@@ -17,7 +17,7 @@
   "chargedAttack.hits.1.multiplier": { "cause": "Unsourced", "value": { "index": 9, "proudSkillGroupId": 3731 } },
   "chargedAttack.hits.1.poiseDamage": { "cause": "Unsourced", "value": 20 },
   "frames.celestialShowerStart": { "file": "burst.go", "line": 18, "source": "Gcsim", "value": 122 },
-  "frames.celestialShowerTickInterval": { "cause": "Unclassified", "value": 18 },
+  "frames.celestialShowerTickInterval": { "file": "burst.go", "line": 51, "source": "Gcsim", "value": 18 },
   "hits.celestialShower.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 12.5 }
