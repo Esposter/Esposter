@@ -10,9 +10,13 @@ import {
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { pasteBlockNodes } from "#src/services/pasteBlockNodes";
 import { applyPatches, JsonPatchOperationType } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(pasteBlockNodes, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const TEST_IMAGE_ID: string = crypto.randomUUID();
   const TEST_HEADING_COPY_ID = crypto.randomUUID();
 

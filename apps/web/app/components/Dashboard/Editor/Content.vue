@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { GridItem } from "vue-grid-layout-headless";
-
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { DASHBOARD_EDITOR_ROW_HEIGHT, DASHBOARD_NO_COLUMNS } from "@/services/dashboard/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
@@ -8,9 +6,6 @@ import { useVisualStore } from "@/store/dashboard/visual";
 const visualStore = useVisualStore();
 const { visuals } = storeToRefs(visualStore);
 const { updateVisual } = visualStore;
-const updateVisuals = (changes: GridItem[]) => {
-  for (const change of changes) updateVisual(change);
-};
 </script>
 
 <template>
@@ -27,7 +22,11 @@ const updateVisuals = (changes: GridItem[]) => {
       :column-number="DASHBOARD_NO_COLUMNS"
       :row-height="DASHBOARD_EDITOR_ROW_HEIGHT"
       is-editable
-      @commit="(changes) => updateVisuals(changes)"
+      @commit="
+        (changes) => {
+          for (const change of changes) updateVisual(change);
+        }
+      "
     >
       <template #default="{ visual }">
         <DashboardVisualPreviewContainer

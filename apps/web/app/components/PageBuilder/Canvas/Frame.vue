@@ -26,7 +26,7 @@ const { frameBody, frameStyle } = useCanvasFrame({
 <!-- The page draws in its own document at its device's width, scaled down to fit a narrower pane rather than reflowed -->
 <template>
   <div ref="pane" h-full w-full of-hidden>
-    <iframe ref="frame" :srcdoc="CANVAS_FRAME_SRCDOC" sandbox="allow-same-origin" b-0 :title :style="frameStyle" />
+    <iframe ref="frame" b-0 sandbox="allow-same-origin" :srcdoc="CANVAS_FRAME_SRCDOC" :style="frameStyle" :title />
     <Teleport v-if="frameBody" :to="frameBody">
       <slot />
     </Teleport>

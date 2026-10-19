@@ -29,7 +29,7 @@ const content = useTemplateRef("content");
 const triggerElement = computed(() => trigger.value?.element);
 const popover = usePopover({ isOpen: isOpenModel, positionArea, positionTry: POPOVER_POSITION_TRY });
 const { anchorStyles, attach, attachAnchor, contentAttrs, contentStyles, id, isOpen, open } = popover;
-const { choose, getItemId, isTabbable, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
+const { checkIsTabbable, choose, getItemId, onMenuKeydown, openAtEnd } = useMenu(() => items, popover, {
   onSelect: (value, event) => {
     emit("select", value, event);
   },
@@ -68,6 +68,6 @@ attach(content);
     ui-popover
     @keydown="(event) => onMenuKeydown(event)"
   >
-    <UiMenuItems :get-item-id :check-is-tabbable="isTabbable" :items @select="(value, event) => choose(value, event)" />
+    <UiMenuItems :check-is-tabbable :get-item-id :items @select="(value, event) => choose(value, event)" />
   </div>
 </template>

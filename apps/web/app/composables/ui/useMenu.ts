@@ -20,7 +20,14 @@ export const useMenu = <T extends string>(
   { onSelect, returnFocusTo }: UseMenuOptions<T>,
 ) => {
   const getItemId = (index: number) => `${id}-item-${index}`;
-  const { first, focus, focusedId, isTabbable, last, onKeydown } = useRovingFocus(
+  const {
+    first,
+    focus,
+    focusedId,
+    isTabbable: checkIsTabbable,
+    last,
+    onKeydown,
+  } = useRovingFocus(
     () =>
       toValue(items).map(({ value }, index) => ({
         el: () => window.document.getElementById(getItemId(index)),
@@ -74,5 +81,5 @@ export const useMenu = <T extends string>(
     else first();
   });
 
-  return { choose, first, getItemId, isTabbable, onMenuKeydown, openAtEnd };
+  return { checkIsTabbable, choose, first, getItemId, onMenuKeydown, openAtEnd };
 };

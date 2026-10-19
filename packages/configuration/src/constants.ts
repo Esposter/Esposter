@@ -55,6 +55,9 @@ export const NON_SOURCE_SUFFIXES = [
   ".typebench.program.ts",
   ".typebench.ts",
 ] as const;
+// A browser test runs in its package's browser suite alone (`vitest.browser.config.ts`), so the default run
+// Starts no browser.
+export const BROWSER_TEST_GLOB = "**/*.browser.test.ts";
 // `pnpm`'s workspace manifest, at the repository root — the one list of members every tool that runs across the
 // Workspace derives its own from, since a copy is a member the tool silently stops covering the day one is added.
 // `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict
