@@ -46,17 +46,4 @@ export const TEST_DOCUMENT: LooseBlockDocument = {
   root: { props: { title: "" } },
 };
 
-export type TestHeadingNode = BlockNode<"heading", TestHeadingNodeProps>;
-export interface TestHeadingNodeProps extends BlockNodeProps {
-  text: string;
-}
-export interface TestRootProps {
-  title: string;
-}
-export type TestSectionNode = BlockNode<"section", TestSectionNodeProps>;
-export interface TestSectionNodeProps extends BlockNodeProps {
-  children: TestHeadingNode[];
-  title: string;
-}
-
 describe.todo("constants");
