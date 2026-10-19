@@ -115,6 +115,7 @@ describe(triggerDomainDisorder, () => {
       0,
       0,
     );
+    for (const effect of kitEffectState.effects) effect.secondsRemaining = 1;
     triggerDomainDisorder(
       kitEffectState,
       party,
