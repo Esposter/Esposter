@@ -67,7 +67,7 @@ const createGcsim = (withMoondewCleanse: boolean): GcsimCharacter => ({
   queuedAttacks: [],
   talentArrayMap: new Map(),
   talentFile: "columbina.go",
-  talentParameterMap: new Map([["attack|Moondew Cleanse DMG", { indexes: [3], line: 4 }]]),
+  talentParameterMap: new Map([["attack|Moondew Cleanse DMG", [{ index: 3, line: 4 }]]]),
   travelMap: new Map(),
 });
 

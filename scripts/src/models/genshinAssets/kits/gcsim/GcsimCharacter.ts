@@ -27,6 +27,6 @@ export interface GcsimCharacter {
   queuedAttacks: GcsimQueuedAttack[];
   talentArrayMap: Map<string, GcsimTalentArray>;
   talentFile: string;
-  talentParameterMap: Map<string, GcsimTalentParameter>;
+  talentParameterMap: Map<string, GcsimTalentParameter[]>;
   travelMap: Map<string, GcsimTravel>;
 }
