@@ -36,7 +36,7 @@ describe(createSessionOpener, () => {
     vi.mocked(watchSession).mockResolvedValue(undefined);
   });
 
-  test("A closed side chat leaves no saved session", async () => {
+  test("a closed side chat leaves no saved session", async () => {
     expect.hasAssertions();
 
     await openSideChat(true);
@@ -44,7 +44,7 @@ describe(createSessionOpener, () => {
     expect(readQueryOptions()?.persistSession).toBe(false);
   });
 
-  test("The first question is answered with the conversation as context", async () => {
+  test("the first question is answered with the conversation as context", async () => {
     expect.hasAssertions();
 
     await openSideChat(true);
@@ -54,7 +54,7 @@ describe(createSessionOpener, () => {
     expect(readQueryOptions()?.resumeSessionAt).toBeUndefined();
   });
 
-  test("A side chat question cannot become edits", async () => {
+  test("a side chat question cannot become edits", async () => {
     expect.hasAssertions();
 
     await openSideChat(true);

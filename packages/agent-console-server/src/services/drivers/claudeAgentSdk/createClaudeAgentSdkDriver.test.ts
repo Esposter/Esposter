@@ -41,7 +41,7 @@ describe(createClaudeAgentSdkDriver, () => {
     vi.mocked(watchSession).mockResolvedValue(undefined);
   });
 
-  test("A side chat never leaves plan mode", async () => {
+  test("a side chat never leaves plan mode", async () => {
     expect.hasAssertions();
 
     const driver = createDriver();
@@ -55,7 +55,7 @@ describe(createClaudeAgentSdkDriver, () => {
     expect(setPermissionMode).not.toHaveBeenCalled();
   });
 
-  test("A main session's permission mode changes as asked", async () => {
+  test("a main session's permission mode changes as asked", async () => {
     expect.hasAssertions();
 
     const driver = createDriver();

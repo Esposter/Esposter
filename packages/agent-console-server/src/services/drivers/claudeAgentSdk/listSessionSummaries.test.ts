@@ -9,7 +9,7 @@ describe(listSessionSummaries, () => {
   const cwd = "/repo";
   const lastActivityAt = new Date(0);
 
-  test("An open side chat is hidden from the sessions list", async () => {
+  test("an open side chat is hidden from the sessions list", async () => {
     expect.hasAssertions();
 
     vi.mocked(listSessions).mockResolvedValue([]);
