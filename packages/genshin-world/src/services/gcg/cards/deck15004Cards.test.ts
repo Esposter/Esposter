@@ -569,7 +569,7 @@ describe("king's Squire", () => {
         0,
         { card: undefined, skill: PYRO_SKILL },
         PYRO_SKILL.costs,
-        dice.map((_, index) => index),
+        dice.map((_element, index) => index),
       );
     };
 
@@ -743,7 +743,7 @@ describe("sumeru City", () => {
         0,
         { card: undefined, skill: PYRO_SKILL },
         PYRO_SKILL.costs,
-        dice.map((_, index) => index),
+        dice.map((_element, index) => index),
       );
     };
 
@@ -811,10 +811,10 @@ describe("elemental Resonance: Woven Stone", () => {
       createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
-    const canPlay = elementalResonanceWovenStone.canPlay?.({ duel, sideIndex: 0 }, undefined);
+    const isPlayable = elementalResonanceWovenStone.canPlay?.({ duel, sideIndex: 0 }, undefined);
     elementalResonanceWovenStone.play?.({ duel, sideIndex: 0 }, undefined);
 
-    expect({ canPlay, dice: attacker.dice }).toStrictEqual({ canPlay: true, dice: [Element.Geo] });
+    expect({ dice: attacker.dice, isPlayable }).toStrictEqual({ dice: [Element.Geo], isPlayable: true });
   });
 
   test("should not be playable with one Geo character", () => {

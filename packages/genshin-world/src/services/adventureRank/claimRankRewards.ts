@@ -9,7 +9,7 @@ export const claimRankRewards = (
   rank: number,
   claimedRanks: readonly number[],
 ): { claimedRanks: number[]; rewards: QuestRewardItem[] } => {
-  const reachedRanks = Array.from({ length: rank - 1 }, (_, index) => index + 2);
+  const reachedRanks = Array.from({ length: rank - 1 }, (_value, index) => index + 2);
   const rewards = reachedRanks
     .filter((reachedRank) => !claimedRanks.includes(reachedRank))
     .flatMap((unclaimedRank) => levels.find(({ level }) => level === unclaimedRank)?.rewardItems ?? []);

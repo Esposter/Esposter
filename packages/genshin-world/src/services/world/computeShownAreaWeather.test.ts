@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 describe(computeShownAreaWeather, () => {
   const AREA_WEATHERS = [WeatherKind.Clear, WeatherKind.Cloudy, WeatherKind.Rain, WeatherKind.Thunderstorm];
   // Every draw of the chain from clear, a thousandth apart, so each weather it can turn to is reached
-  const TURNS = Array.from({ length: 1000 }, (_, index) =>
+  const TURNS = Array.from({ length: 1000 }, (_value, index) =>
     getNextAreaWeather(WeatherKind.Clear, AREA_WEATHERS, () => index / 1000),
   );
 

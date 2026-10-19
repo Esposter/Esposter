@@ -14,7 +14,7 @@ export const kidKujirai: GcgCardModule = {
     const opposingSide = takeOne(duel.sides, 1 - sideIndex);
     createGcgDice(side, GcgDieFace.Omni, 1);
     if (opposingSide.supports.length >= GCG_SUPPORT_LIMIT) return;
-    side.supports.splice(side.supports.indexOf(zoneCard), 1);
+    side.supports = side.supports.toSpliced(side.supports.indexOf(zoneCard), 1);
     opposingSide.supports.push(zoneCard);
   },
 };

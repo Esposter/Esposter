@@ -4,7 +4,7 @@ import { computeDailyMiningOutcrops } from "#src/services/gathering/computeDaily
 import { describe, expect, test } from "vitest";
 
 describe(computeDailyMiningOutcrops, () => {
-  const places: GatheringPlace[] = Array.from({ length: 10 }, (_, index) => ({
+  const places: GatheringPlace[] = Array.from({ length: 10 }, (_value, index) => ({
     id: `place-${index}`,
     kind: 101_004,
     position: { x: index, z: index },

@@ -26,7 +26,10 @@ export const getAutoAddFodders = ({
     .flatMap(({ artifact: fodder, id }) =>
       fodder && !fodder.isLocked && fodder.rarity <= maxRarity ? [{ fodder, id }] : [],
     )
-    .toSorted((a, b) => a.fodder.rarity - b.fodder.rarity || a.fodder.level - b.fodder.level);
+    .toSorted(
+      (firstEntry, secondEntry) =>
+        firstEntry.fodder.rarity - secondEntry.fodder.rarity || firstEntry.fodder.level - secondEntry.fodder.level,
+    );
   let remainingExperience = totalExperience - artifact.experience;
   const ids: number[] = [];
   for (const { fodder, id } of fodders) {

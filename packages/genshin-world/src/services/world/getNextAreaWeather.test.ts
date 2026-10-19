@@ -15,7 +15,7 @@ describe(getNextAreaWeather, () => {
   test("rain always turns to clear or cloudy at the next change", () => {
     expect.hasAssertions();
 
-    const rainTurns = Array.from({ length: 1000 }, (_, index) =>
+    const rainTurns = Array.from({ length: 1000 }, (_value, index) =>
       getNextAreaWeather(WeatherKind.Rain, AREA_WEATHERS, () => index / 1000),
     );
 

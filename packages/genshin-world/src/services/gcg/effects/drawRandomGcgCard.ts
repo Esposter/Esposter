@@ -20,6 +20,6 @@ export const drawRandomGcgCard = (
   });
   if (candidates.length === 0) return;
   const cardId = takeRandom(candidates, random);
-  side.drawPile.splice(side.drawPile.indexOf(cardId), 1);
+  side.drawPile = side.drawPile.toSpliced(side.drawPile.indexOf(cardId), 1);
   if (side.hand.length < handCardLimit) side.hand.push(cardId);
 };

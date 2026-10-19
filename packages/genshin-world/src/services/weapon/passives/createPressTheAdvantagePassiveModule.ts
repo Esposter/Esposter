@@ -29,7 +29,7 @@ export const createPressTheAdvantagePassiveModule = (params: number[]): PassiveM
       );
       const source = Array.from(
         { length: PRESS_THE_ADVANTAGE_MAXIMUM_STACKS },
-        (_, index) => `${PRESS_THE_ADVANTAGE_SOURCE}${index}`,
+        (_value, index) => `${PRESS_THE_ADVANTAGE_SOURCE}${index}`,
       ).find((stackSource) => !liveSources.has(stackSource));
       if (source === undefined) return;
       buffKitMember(context.kitEffectState, characterId, {

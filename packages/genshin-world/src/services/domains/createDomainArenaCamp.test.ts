@@ -15,7 +15,7 @@ describe(createDomainArenaCamp, () => {
     expect(
       camp.members.map(({ enemyKindId, id, level: memberLevel }) => ({ enemyKindId, id, level: memberLevel })),
     ).toStrictEqual(
-      Array.from({ length: 3 }, (_, index) => ({
+      Array.from({ length: 3 }, (_value, index) => ({
         enemyKindId: OUTCROP_CAMP_ENEMY_KIND_IDS[0],
         id: String(index),
         level: 60,

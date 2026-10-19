@@ -6,7 +6,7 @@ import type { StatueLevel } from "#src/models/statue/StatueLevel";
 export const claimStatueLevel = (
   progress: OfferingProgress<StatueLevel>,
   claimedLevel: number,
-): { claimed: StatueLevel | undefined; claimedLevel: number } => {
+): { claimed?: StatueLevel; claimedLevel: number } => {
   const nextLevel = progress.levels.find(({ level }) => level === claimedLevel + 1);
   if (!nextLevel || nextLevel.level > progress.level) return { claimed: undefined, claimedLevel };
   return { claimed: nextLevel, claimedLevel: nextLevel.level };

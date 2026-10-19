@@ -26,7 +26,9 @@ export const deliverBirthdayMail = (
   const birthdayStart = birthdayDate.toZonedDateTime(GAME_TIME_ZONE).toInstant();
   const inForce = birthdayMailRows
     .filter((row) => Temporal.Instant.compare(getEffectiveAt(row), birthdayStart) <= 0)
-    .toSorted((a, b) => Temporal.Instant.compare(getEffectiveAt(b), getEffectiveAt(a)))[0];
+    .toSorted((firstRow, secondRow) =>
+      Temporal.Instant.compare(getEffectiveAt(secondRow), getEffectiveAt(firstRow)),
+    )[0];
   if (inForce === undefined) return [...mails];
   const isDelivered = mails.some(
     ({ deliveredAt, id }) =>

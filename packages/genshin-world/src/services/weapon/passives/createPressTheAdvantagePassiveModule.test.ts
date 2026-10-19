@@ -17,7 +17,7 @@ const getStackSeconds = (context: KitContext) =>
   context.kitEffectState.effects
     .filter((effect) => effect.kind === "buff" && effect.source?.startsWith("pressTheAdvantage"))
     .map(({ secondsRemaining }) => Math.round(secondsRemaining))
-    .toSorted((a, b) => a - b);
+    .toSorted((firstSeconds, secondSeconds) => firstSeconds - secondSeconds);
 
 describe(createPressTheAdvantagePassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
