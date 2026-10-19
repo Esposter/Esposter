@@ -18,11 +18,11 @@ gcsim sources: Prune's attack, charge, skill and burst files, with the table dat
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                                     |
-| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which casts the Witchlure Bell's DoT on the shared nearest-enemy selector                                                                                     |
-| `packages/genshin-world/src/services/kit/selectNearestEnemy.ts`  | `selectNearestEnemy`, the standing enemy nearest a point within a radius, which the Witchlure Bell and Hyperbloom's homing both read                                                                     |
-| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits (Wiki), the Witchlure Bell's hit, duration, first tick and interval, cited to `burst.go`; her other hits and areas come from the record |
+| File                                                             | Role                                                                                                                                                                                                                                                                |
+| :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-world/src/services/kit/characters/pruneKit.ts` | `createPruneKitBehaviour`, Prune's module, which casts the Witchlure Bell's DoT on the shared nearest-enemy selector                                                                                                                                                |
+| `packages/genshin-world/src/services/kit/selectNearestEnemy.ts`  | `selectNearestEnemy`, the standing enemy nearest a point within a radius, which the Witchlure Bell and Hyperbloom's homing both read                                                                                                                                |
+| `packages/genshin-world/src/data/kits/prune.json`                | Prune's overlay: the poise of her skill's and burst's first hits (Wiki), the Witchlure Bell's hit, duration, first tick and interval, cited to `burst.go`, with its area, element and multiplier as gcsim gives them; her other hits and areas come from the record |
 
 ## Sources
 
