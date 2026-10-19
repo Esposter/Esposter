@@ -26,29 +26,20 @@
   "frames.filledPressHit": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 2 },
   "frames.firstMeowballFirstHitmark": { "source": "Gcsim" },
   "frames.meowballHitmarkInterval": { "source": "Gcsim" },
-  "hitFields.flaskDrain.area": {
+  "hitFields.flaskDrainFilled.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
   },
-  "hitFields.flaskDrain.element": { "cause": "Unsourced", "value": "Wind" },
-  "hitFields.flaskDrain.gauge": { "cause": "Unsourced", "value": 1 },
-  "hitFields.flaskDrain.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "hitFields.meowball.gauge": { "cause": "Unsourced", "value": 1 },
-  "hitFields.meowball.poiseDamage": { "cause": "Unsourced", "value": 35 },
+  "hitFields.flaskDrainFilled.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 12432 } },
+  "hitFields.flaskDrainUnfilled.area": {
+    "cause": "Unsourced",
+    "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 }
+  },
+  "hitFields.flaskDrainUnfilled.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 12432 } },
+  "hitFields.meowball.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 12432 } },
   "hitFields.robotStrike.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1.2 }
-  },
-  "hitFields.robotStrike.gauge": { "cause": "Unsourced", "value": 1 },
-  "hitFields.robotStrike.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "parameters.flaskDrainTalentMultipliers.length": { "cause": "Unsourced", "value": 2 },
-  "parameters.flaskDrainTalentMultipliers.0": {
-    "cause": "Unsourced",
-    "value": { "index": 2, "proudSkillGroupId": 12432 }
-  },
-  "parameters.flaskDrainTalentMultipliers.1": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 12432 }
   },
   "parameters.burstAdditionalAttackHealShare": {
     "cause": "Unsourced",
@@ -57,10 +48,6 @@
   "parameters.burstAdditionalFlatHeal": { "cause": "Unsourced", "value": { "index": 6, "proudSkillGroupId": 12439 } },
   "parameters.burstAttackHealShare": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 12439 } },
   "parameters.burstFlatHeal": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12439 } },
-  "parameters.robotStrikeTalentMultiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 1, "proudSkillGroupId": 12439 }
-  },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 49, "source": "Gcsim", "value": 48 },

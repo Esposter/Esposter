@@ -41,7 +41,6 @@ import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { takeOne } from "@esposter/shared";
 
 // Savvy Strategy's flask fills to 100 over the pursuit, as gcsim (MIT, v2.47.2) jahoda/skill.go gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/jahoda/skill.go
@@ -107,28 +106,26 @@ const findLowestHealthCharacterId = (party: Party): number | undefined => {
   return lowest?.characterId;
 };
 
-// Jahoda's behaviour: Savvy Strategy's press starts the pursuit, which follows the body and on each tick fills the flask
-// From the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and its
-// Second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains. Her
-// Burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above 70%
-// Health the member with the lowest share of health is healed as well. Her burst's two robots are built at Ascendant
-// Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, under the
-// Internal cooldown gcsim gives their strikes. Ascension 1 and Constellation 2 adjust them and her heals, and Ascension
-// 4 gives her Elemental Mastery on each heal above 70% Health, from jahodaAscension. Her Meowball is built, its Values
-// Read from the parameters, frames and areas the next publish adds, and Constellation 1 is not built yet. Her Moonsign
-// Benediction, Rooftop Dash (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its
-// Record carries no lunar Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each
-// Moonsign member
+// Jahoda's behaviour: Savvy Strategy's press starts the pursuit, which follows the body and on each tick fills the
+// Flask from the enemies its circle holds an aura of, draining it once the gauge is full or the pursuit runs out, and
+// Its second press drains it at once. Each drain lands the flask's filled or unfilled hit as a summon where it drains.
+// Her burst's heals are built: every 87 frames from its 12th, the active character is healed, and while she is above
+// 70% health the member with the lowest share of health is healed as well. Her burst's two robots are built at
+// Ascendant Gleam: each absorbs the aura its circle holds first, then strikes the three nearest enemies with it, under
+// The internal cooldown gcsim gives their strikes. Ascension 1 and Constellation 2 adjust them and her heals, and
+// Ascension 4 gives her Elemental Mastery on each heal above 70% health, from jahodaAscension. Her Meowball is built
+// From her hit fields, frames and areas, and Constellation 1 is not built yet. Her Moonsign Benediction, Rooftop Dash
+// (TextMap 801500603), raises the party's Moonsign a level and names no lunar reaction, so its record carries no lunar
+// Reaction types. Constellation 6 is built: a full flask's drain at Ascendant Gleam buffs each Moonsign member
 export const createJahodaKitBehaviour = ({
   readArea,
   readHitFields,
   readParameter,
-  readParameters,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
   const circle = readArea("pursuitCircle");
-  const drainHitFields = readHitFields("flaskDrain", ["hitmarkSeconds", "talentMultiplier"]);
-  const drainTalentMultipliers = readParameters("flaskDrainTalentMultipliers");
+  const filledDrainHitFields = readHitFields("flaskDrainFilled", ["hitmarkSeconds"]);
+  const unfilledDrainHitFields = readHitFields("flaskDrainUnfilled", ["hitmarkSeconds"]);
   const flaskFillValue = readParameter("flaskFillValue");
   // A flask that has absorbed an element fills by its full value from that element and by half from another
   const flaskWeakFillValue = flaskFillValue / 2;
@@ -148,14 +145,12 @@ export const createJahodaKitBehaviour = ({
   const robotAbsorbIntervalSeconds = readSeconds("robotAbsorbInterval");
   const robotFirstStrikeSeconds = readSeconds("robotFirstStrike");
   const robotStrikeIntervalSeconds = readSeconds("robotStrikeInterval");
-  const robotStrikeMultiplier = readParameter("robotStrikeTalentMultiplier");
-  const robotStrikeHitFields = readHitFields("robotStrike", ["hitmarkSeconds", "talentMultiplier"]);
+  const robotStrikeHitFields = readHitFields("robotStrike", ["hitmarkSeconds"]);
   const meowballArea = readArea("meowballCircle");
   // Named as gcsim names its constants, so the builder reads each from its declaration in skill.go
   const meowballFirstSeconds = readSeconds("firstMeowballFirstHitmark");
   const meowballIntervalSeconds = readSeconds("meowballHitmarkInterval");
-  const meowballTalentMultiplier = readParameter("meowballTalentMultiplier");
-  const meowballHitFields = readHitFields("meowball", ["hitArea", "hitmarkSeconds", "talentMultiplier"]);
+  const meowballHitFields = readHitFields("meowball", ["hitArea", "hitmarkSeconds"]);
   // Each Meowball reaches the enemies within its circle about the enemy it strikes, as gcsim's circle on the primary target does
   const meowballHitbox: KitHitbox = { offset: { x: 0, z: 0 }, shape: { kind: "circle", radius: meowballArea.radius } };
   // A Meowball's hit gives her energy on each enemy it strikes, at most once per 3.5 seconds, as gcsim's energy callback does
@@ -175,25 +170,12 @@ export const createJahodaKitBehaviour = ({
       )
         gainPartyMemberEnergy(party, combatant, MEOWBALL_ENERGY);
     },
-    talentMultiplier: meowballTalentMultiplier,
   };
   // The filled flask's hit lands sooner from a press, or the pursuit running out, than from the fill that fills it, and the
   // Unfilled flask's hit the same from each
-  const filledDrainHit: KitHit = {
-    ...drainHitFields,
-    hitmarkSeconds: readSeconds("filledDrainHit"),
-    talentMultiplier: takeOne(drainTalentMultipliers),
-  };
-  const filledPressHit: KitHit = {
-    ...drainHitFields,
-    hitmarkSeconds: readSeconds("filledPressHit"),
-    talentMultiplier: takeOne(drainTalentMultipliers),
-  };
-  const unfilledHit: KitHit = {
-    ...drainHitFields,
-    hitmarkSeconds: readSeconds("unfilledHit"),
-    talentMultiplier: takeOne(drainTalentMultipliers, 1),
-  };
+  const filledDrainHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledDrainHit") };
+  const filledPressHit: KitHit = { ...filledDrainHitFields, hitmarkSeconds: readSeconds("filledPressHit") };
+  const unfilledHit: KitHit = { ...unfilledDrainHitFields, hitmarkSeconds: readSeconds("unfilledHit") };
 
   // Each Meowball strikes the living enemy nearest her body, which the kit takes as the primary target, since it reads no
   // Default target as gcsim does
@@ -375,7 +357,7 @@ export const createJahodaKitBehaviour = ({
               ...robotStrikeHitFields,
               hitmarkSeconds: 0,
               internalCooldownTag: InternalCooldownTag.JahodaRobotStrike,
-              talentMultiplier: robotStrikeMultiplier * elementEffects.damageMultiplier,
+              talentMultiplier: robotStrikeHitFields.talentMultiplier * elementEffects.damageMultiplier,
             },
             strikeIntervalSeconds: robotStrikeIntervalSeconds * elementEffects.intervalMultiplier,
             strikeTargetCount: ROBOT_STRIKE_TARGET_COUNT,
