@@ -30,7 +30,7 @@ None.
 ## Impact
 
 - The webpage editor's shell, its canvas, its overlays, its node toolbar and its context menu.
-- The app's first browser suite, kept apart from its default run, for what only a layout engine can show.
+- A browser suite for what only a layout engine can show, held by the frame's package once the frame is extracted, with no Nuxt.
 - The layers tree, a new component in the shared UI library.
 - The command registry, which lists every pointer and keyboard action in the shortcuts dialog.
 - Text editing inside a node, which moves to the rich text editor mounted inside the frame.
