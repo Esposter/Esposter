@@ -13,11 +13,7 @@ const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
   endText: z.string(),
 });
-const countdownPropsSchema = z.strictObject({
-  ...countdownFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const countdownPropsSchema = z.object({ ...countdownFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
 // Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space form

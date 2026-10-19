@@ -6,11 +6,7 @@ import { sanitizeHtml } from "@esposter/shared";
 import { z } from "zod";
 
 const customHtmlFormSchema = z.strictObject({ html: z.string() });
-const customHtmlPropsSchema = z.strictObject({
-  ...customHtmlFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const customHtmlPropsSchema = z.object({ ...customHtmlFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Raw HTML a page author writes, cleaned again at publish whatever was stored
 export const customHtmlNodeType = {

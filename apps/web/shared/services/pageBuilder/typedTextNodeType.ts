@@ -6,11 +6,7 @@ import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 const typedTextFormSchema = z.strictObject({ texts: z.array(z.string().min(1)).min(1) });
-const typedTextPropsSchema = z.strictObject({
-  ...typedTextFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const typedTextPropsSchema = z.object({ ...typedTextFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. The texts are typed out and
 // Deleted in turn, unless the reader prefers reduced motion, when the whole text stands still

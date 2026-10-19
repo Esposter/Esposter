@@ -7,7 +7,7 @@
 
 ## 2. Consumers declare what they store
 
-- [ ] 2.1 Declare in each Webpage type's props every key its stored node holds, the style included wherever the style panel stores it, so no existing webpage document is refused. Verify: the webpage document schema tests pass, and a test named after the scenario 'a stored webpage parses under the typed schema' over a fixture holding every type.
+- [x] 2.1 Declare in each Webpage type's props every key its stored node holds, the style included wherever the style panel stores it, so no existing webpage document is refused. Verify: the webpage document schema tests pass, and a test named after the scenario 'a stored webpage parses under the typed schema' over a fixture holding every type.
 - [ ] 2.2 Declare the same in each Email type's props, and merge fields as string props on the node that holds them. Verify: `parseMjmlDocument.test.ts` and `createMjmlRegistry.test.ts` pass, and a test named after the scenario 'a stored email parses under the typed schema'.
 
 ## 3. The agent reads the same schema

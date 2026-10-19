@@ -7,7 +7,7 @@ import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { z } from "zod";
 
 const textFormSchema = z.strictObject({ content: noteDocumentSchema });
-const textPropsSchema = z.strictObject({ ...textFormSchema.shape, id: z.string(), style: nodeStyleSchema.optional() });
+const textPropsSchema = z.object({ ...textFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // Rich text written in the Note's own writing kit, so a text node holds what a note holds
 export const textNodeType = {

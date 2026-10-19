@@ -56,7 +56,7 @@ export const tabsNodeType = {
   isFocusable: true,
   propsSchema: containerPropsSchema,
   render: (node, slots) => {
-    const tabs = tabLabelsSchema.parse(containerPropsSchema.parse(node.props).children).map(({ props }) => props);
+    const tabs = tabLabelsSchema.parse(node.props.children).map(({ props }) => props);
     const buttons = tabs.map(({ id, label }, index): HtmlElement => ({
       attributes: {
         "aria-controls": `${id}-panel`,

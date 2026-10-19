@@ -5,11 +5,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { z } from "zod";
 
 const tooltipFormSchema = z.strictObject({ label: z.string().min(1), text: z.string().min(1) });
-const tooltipPropsSchema = z.strictObject({
-  ...tooltipFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const tooltipPropsSchema = z.object({ ...tooltipFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // A button whose text shows on hover and on keyboard focus, described by that text for a reader who cannot see it
 export const tooltipNodeType = {
@@ -20,7 +16,8 @@ export const tooltipNodeType = {
   isFocusable: false,
   propsSchema: tooltipPropsSchema,
   render: (node) => {
-    const { id, label, text } = tooltipPropsSchema.parse(node.props);
+    const id = z.string().parse(node.props.id);
+    const { label, text } = tooltipPropsSchema.parse(node.props);
     return {
       attributes: { class: "tooltip" },
       children: [

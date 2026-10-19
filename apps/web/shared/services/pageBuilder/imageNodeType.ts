@@ -17,7 +17,7 @@ const refineImageAlternative = (
 const imageShape = { alt: z.string(), decorative: z.boolean(), src: webpageUrlSchema };
 const imageFormSchema = z.strictObject(imageShape).superRefine(refineImageAlternative);
 const imagePropsSchema = z
-  .strictObject({ ...imageShape, id: z.string(), style: nodeStyleSchema.optional() })
+  .object({ ...imageShape, style: nodeStyleSchema.optional() })
   .superRefine(refineImageAlternative);
 
 export const imageNodeType = {

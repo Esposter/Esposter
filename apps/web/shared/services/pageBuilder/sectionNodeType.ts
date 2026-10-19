@@ -7,12 +7,7 @@ import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/const
 import { z } from "zod";
 
 const sectionFormSchema = z.strictObject({ tag: z.enum(SectionTag) });
-const sectionPropsSchema = z.strictObject({
-  ...sectionFormSchema.shape,
-  children: z.array(z.unknown()),
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const sectionPropsSchema = z.object({ ...sectionFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // A block of the page under a semantic tag, holding any placeable content
 export const sectionNodeType = {

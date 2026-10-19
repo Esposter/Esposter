@@ -6,11 +6,7 @@ import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema"
 import { z } from "zod";
 
 const buttonFormSchema = z.strictObject({ href: webpageUrlSchema, label: z.string().min(1) });
-const buttonPropsSchema = z.strictObject({
-  ...buttonFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const buttonPropsSchema = z.object({ ...buttonFormSchema.shape, style: nodeStyleSchema.optional() });
 
 // A link drawn as a button, so the published control is a real link a reader can follow and focus
 export const buttonNodeType = {

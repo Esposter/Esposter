@@ -13,11 +13,7 @@ const surveyInviteFormSchema = z.strictObject({
   label: z.string().min(1),
   surveyId: createResourceLinkSchema(ResourceLinkType.Survey),
 });
-const surveyInvitePropsSchema = z.strictObject({
-  ...surveyInviteFormSchema.shape,
-  id: z.string(),
-  style: nodeStyleSchema.optional(),
-});
+const surveyInvitePropsSchema = z.object({ ...surveyInviteFormSchema.shape, style: nodeStyleSchema.optional() });
 
 export const surveyInviteNodeType = {
   css: `.survey-invite { display: inline-block; padding: 0.5rem 1rem; border-radius: 0.25rem; background-color: ${SURVEY_INVITE_BUTTON_COLOR}; color: #fff; text-decoration: none; }`,
