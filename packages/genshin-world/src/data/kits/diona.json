@@ -2,44 +2,32 @@
   "burst.hits.length": { "cause": "DiffersFromSource", "value": 1 },
   "hits.signatureMixTicks.length": { "file": "burst.go", "line": 56, "source": "Gcsim", "value": 6 },
   "hits.signatureMixTicks.0.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.1.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.2.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.3.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.4.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.5.area": {
-    "file": "burst.go",
-    "line": 41,
-    "source": "Gcsim",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
   "hits.signatureMixTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },

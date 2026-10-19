@@ -3,7 +3,7 @@
     "file": "skill.go",
     "line": 335,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 4 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 19 }
   },
   "areas.pursuitCircle": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 5, "radius": 5 } },
   "areas.robotAbsorbCircle": {
