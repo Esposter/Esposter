@@ -17,13 +17,13 @@ describe(getAdjacentBlockNodePointer, () => {
   test("previous and next at both ends", () => {
     expect.hasAssertions();
 
-    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/0", -1)).toStrictEqual(undefined);
-    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/1", 1)).toStrictEqual(undefined);
+    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/0", -1)).toBeUndefined();
+    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/1", 1)).toBeUndefined();
   });
 
   test("a pointer naming no node", () => {
     expect.hasAssertions();
 
-    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/5", 1)).toStrictEqual(undefined);
+    expect(getAdjacentBlockNodePointer(TEST_DOCUMENT, TEST_REGISTRY, "/content/5", 1)).toBeUndefined();
   });
 });
