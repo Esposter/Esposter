@@ -4,8 +4,11 @@ import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";
 import type { HeadingNodeProps, SectionNode, SectionNodeProps } from "#src/services/constants.test";
+import type { z } from "zod";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
+
+declare const ownPropsSchema: z.ZodType<OwnProps<SectionNodeProps>>;
 
 describe("blockTypes type", () => {
   test("a node's props default to the id alone", () => {
@@ -33,5 +36,29 @@ describe("blockTypes type", () => {
     expect.hasAssertions();
 
     expectTypeOf<BlockTypeDefinition<SectionNode>["slots"]>().toEqualTypeOf<{ children: "heading"[] }>();
+  });
+
+  test("a definition missing a slot its props hold is refused", () => {
+    expect.hasAssertions();
+
+    const definition: BlockTypeDefinition<SectionNode> = {
+      propsSchema: ownPropsSchema,
+      // @ts-expect-error: TS2741 - the children slot the props hold is missing from the slots
+      slots: {},
+      type: "section",
+    };
+    expectTypeOf(definition).toEqualTypeOf<BlockTypeDefinition<SectionNode>>();
+  });
+
+  test("a definition listing a node type its slot does not hold is refused", () => {
+    expect.hasAssertions();
+
+    const definition: BlockTypeDefinition<SectionNode> = {
+      propsSchema: ownPropsSchema,
+      // @ts-expect-error: TS2322 - image is not a node type the children slot holds
+      slots: { children: ["image"] },
+      type: "section",
+    };
+    expectTypeOf(definition).toEqualTypeOf<BlockTypeDefinition<SectionNode>>();
   });
 });

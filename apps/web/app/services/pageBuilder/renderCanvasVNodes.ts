@@ -5,13 +5,11 @@ import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { VNode } from "vue";
 
+import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { renderBlockNodes } from "headless-block-editor";
 import { createStaticVNode, createTextVNode, h } from "vue";
-import { z } from "zod";
-
-const nodeIdPropsSchema = z.object({ id: z.string() });
 
 const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;
 const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsElement(node);
@@ -21,9 +19,9 @@ const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== 
 // Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML
 export const renderCanvasVNodes = (document: WebpageDocument, context: RenderContext): VNode[] => {
   const nodeIds = new WeakMap<HtmlElement, string>();
-  const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, definition, slots) => {
-    const rendered = definition.render(node, slots, context);
-    if (checkIsElement(rendered)) nodeIds.set(rendered, nodeIdPropsSchema.parse(node.props).id);
+  const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, _definition, slots) => {
+    const rendered = renderWebpageNode(node, slots, context);
+    if (checkIsElement(rendered)) nodeIds.set(rendered, node.props.id);
     return rendered;
   });
 

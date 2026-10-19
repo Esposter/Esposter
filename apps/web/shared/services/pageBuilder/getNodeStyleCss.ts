@@ -1,7 +1,6 @@
-import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
-import type { BlockNode } from "headless-block-editor";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
 
-import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import {
@@ -20,8 +19,8 @@ const BREAKPOINT_MEDIA_QUERIES = [
 
 // The rules of one node's style, a rule per breakpoint and state that sets any property. On a focusable node the hover
 // Rule also matches keyboard focus, so the hover style is not mouse-only
-export const getNodeStyleCss = (node: BlockNode, definition: NodeTypeDefinition): string => {
-  const style = nodeStyleSchema.optional().parse(node.props.style);
+export const getNodeStyleCss = (node: WebpageNode, definition: WebpageNodeDefinition): string => {
+  const { style } = node.props;
   if (!style) return "";
 
   const selector = `.${getNodeStyleClass(node)}`;

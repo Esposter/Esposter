@@ -1,4 +1,6 @@
 // @vitest-environment happy-dom
+import type { CountdownNode } from "#shared/models/pageBuilder/CountdownNode";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { countdownNodeType } from "#shared/services/pageBuilder/countdownNodeType";
@@ -23,7 +25,7 @@ const endsAtOf = (year: number, month: number, day: number) => {
   return date.toISOString().slice(0, 10);
 };
 
-const createCountdown = (endsAt: string, endText = TEST_LABEL) => ({
+const createCountdown = (endsAt: string, endText = TEST_LABEL): CountdownNode => ({
   props: { endsAt, endText, id: TEST_ID },
   type: WebpageNodeType.Countdown,
 });

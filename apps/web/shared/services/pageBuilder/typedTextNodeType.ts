@@ -1,4 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { TypedTextNode } from "#shared/models/pageBuilder/TypedTextNode";
+import type { TypedTextNodeProps } from "#shared/models/pageBuilder/TypedTextNodeProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -8,7 +11,10 @@ import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 const typedTextFormSchema = z.strictObject({ texts: z.array(z.string().min(1)).min(1) });
-const typedTextPropsSchema = z.object({ ...typedTextFormSchema.shape, style: nodeStyleSchema.optional() });
+const typedTextPropsSchema = z.object({
+  ...typedTextFormSchema.shape,
+  style: nodeStyleSchema.optional(),
+}) satisfies z.ZodType<OwnProps<TypedTextNodeProps>>;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. The texts are typed out and
 // Deleted in turn, unless the reader prefers reduced motion, when the whole text stands still
@@ -55,21 +61,21 @@ export const typedTextNodeType = {
   formSchema: typedTextFormSchema,
   isFocusable: false,
   propsSchema: typedTextPropsSchema,
-  render: (node) => {
-    const { texts } = typedTextPropsSchema.parse(node.props);
-    return {
-      attributes: { [HtmlAttributeName.AriaLabel]: texts.join(", "), [HtmlAttributeName.Class]: "typed-text" },
-      children: [
-        {
-          attributes: { [HtmlAttributeName.AriaHidden]: "true", [HtmlAttributeName.DataTexts]: JSON.stringify(texts) },
-          children: [takeOne(texts, 0)],
-          tag: HtmlTag.Span,
+  render: (node) => ({
+    attributes: { [HtmlAttributeName.AriaLabel]: node.props.texts.join(", "), [HtmlAttributeName.Class]: "typed-text" },
+    children: [
+      {
+        attributes: {
+          [HtmlAttributeName.AriaHidden]: "true",
+          [HtmlAttributeName.DataTexts]: JSON.stringify(node.props.texts),
         },
-      ],
-      tag: HtmlTag.Span,
-    };
-  },
+        children: [takeOne(node.props.texts, 0)],
+        tag: HtmlTag.Span,
+      },
+    ],
+    tag: HtmlTag.Span,
+  }),
   script: typedTextScript,
   slots: {},
   type: WebpageNodeType.TypedText,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<TypedTextNode>;

@@ -1,4 +1,6 @@
 // @vitest-environment happy-dom
+import type { TabNode } from "#shared/models/pageBuilder/TabNode";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID } from "#shared/services/pageBuilder/constants.test";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
@@ -6,7 +8,10 @@ import { tabNodeType } from "#shared/services/pageBuilder/tabNodeType";
 import { tabsNodeType } from "#shared/services/pageBuilder/tabsNodeType";
 import { afterEach, describe, expect, test } from "vitest";
 
-const createTab = (id: string) => ({ props: { children: [], id, label: TEST_LABEL }, type: WebpageNodeType.Tab });
+const createTab = (id: string): TabNode => ({
+  props: { children: [], id, label: TEST_LABEL },
+  type: WebpageNodeType.Tab,
+});
 
 describe("tabsNodeType", () => {
   afterEach(() => {

@@ -13,12 +13,6 @@ import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const renderNode = (
-  node: HeadingNode | SectionNode,
-  _definition: BlockTypeDefinition,
-  slots: Record<string, unknown[]>,
-) => ({ children: Object.values(slots).flat(), id: node.props.id });
-
 describe("block types", () => {
   const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
   const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };

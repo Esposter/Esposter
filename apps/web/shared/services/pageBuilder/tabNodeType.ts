@@ -1,4 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { TabNode } from "#shared/models/pageBuilder/TabNode";
+import type { TabNodeProps } from "#shared/models/pageBuilder/TabNodeProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -8,7 +11,9 @@ import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/const
 import { z } from "zod";
 
 const tabFormSchema = z.strictObject({ label: z.string().min(1) });
-const tabPropsSchema = z.object({ ...tabFormSchema.shape, style: nodeStyleSchema.optional() });
+const tabPropsSchema = z.object({ ...tabFormSchema.shape, style: nodeStyleSchema.optional() }) satisfies z.ZodType<
+  OwnProps<TabNodeProps>
+>;
 
 // The panel of one tab. Its tab button and whether it is hidden are the Tabs node's, which holds the tabs in order
 export const tabNodeType = {
@@ -16,18 +21,15 @@ export const tabNodeType = {
   formSchema: tabFormSchema,
   isFocusable: false,
   propsSchema: tabPropsSchema,
-  render: (node, slots) => {
-    const id = z.string().parse(node.props.id);
-    return {
-      attributes: {
-        [HtmlAttributeName.AriaLabelledBy]: `${id}-tab`,
-        [HtmlAttributeName.Id]: `${id}-panel`,
-        [HtmlAttributeName.Role]: "tabpanel",
-      },
-      children: slots.children ?? [],
-      tag: HtmlTag.Div,
-    };
-  },
+  render: (node, slots) => ({
+    attributes: {
+      [HtmlAttributeName.AriaLabelledBy]: `${node.props.id}-tab`,
+      [HtmlAttributeName.Id]: `${node.props.id}-panel`,
+      [HtmlAttributeName.Role]: "tabpanel",
+    },
+    children: slots.children,
+    tag: HtmlTag.Div,
+  }),
   slots: { children: WEBPAGE_PLACEABLE_NODE_TYPES },
   type: WebpageNodeType.Tab,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<TabNode>;
