@@ -4,6 +4,7 @@ import {
   TEST_DOCUMENT,
   TEST_DOCUMENT_NODE_COUNT,
   TEST_HEADING_ID,
+  TEST_ITEM_ID,
   TEST_REGISTRY,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
@@ -44,6 +45,16 @@ describe(pasteBlockNodes, () => {
     expect(
       pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [{ props: { id: TEST_IMAGE_ID }, type: "image" }], "/content", 2),
     ).toStrictEqual([]);
+  });
+
+  test("a pasted child of a type its slot refuses is refused", () => {
+    expect.hasAssertions();
+
+    const copiedItem: BlockNode = { props: { id: TEST_ITEM_ID, text: "" }, type: "item" };
+
+    expect(pasteBlockNodes(TEST_DOCUMENT, TEST_REGISTRY, [copiedItem], "/content/0/props/children", 1)).toStrictEqual(
+      [],
+    );
   });
 
   test("pasting a child its root does not accept into a slot that does", () => {
