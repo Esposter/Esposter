@@ -1,31 +1,38 @@
-import type { BlockDocument } from "headless-block-editor";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
+import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootProps";
 import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
 import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { checkIsDeepEqual, noop } from "@esposter/shared";
-import { getBlockNode, getBlockTypeDefinition, updateBlockNodeProps } from "headless-block-editor";
+import { checkIsDeepEqual, JsonPatchOperationType, noop } from "@esposter/shared";
+import { getBlockNode, getBlockTypeDefinition } from "headless-block-editor";
 
 // The pointer and history interaction of the root, whose props are edited when no node is selected
 const ROOT_POINTER = "/root";
 const ROOT_INTERACTION_ID = "content:root";
 
+// The props a form edits: the root's, or a node's own props as its type's props schema parses them
+type ContentValue = WebpageRootProps | z.output<WebpageNodeDefinition["propsSchema"]>;
+
 interface ContentTarget {
   formSchema: z.ZodType;
   interactionId: string;
   pointer: string;
-  props: Record<string, unknown>;
+  // The props the target holds in full, which an edit writes back whole so the slots and the id it keeps are untouched
+  props: WebpageNode["props"] | WebpageRootProps;
+  propsSchema: z.ZodType<ContentValue>;
 }
 
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
-const getContentTarget = (document: BlockDocument, nodeId: string): ContentTarget | undefined => {
+const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTarget | undefined => {
   const nodePointer = getNodePointer(document, nodeId);
   if (nodePointer === undefined)
     return {
@@ -33,6 +40,7 @@ const getContentTarget = (document: BlockDocument, nodeId: string): ContentTarge
       interactionId: ROOT_INTERACTION_ID,
       pointer: ROOT_POINTER,
       props: document.root.props,
+      propsSchema: webpageRootPropsSchema,
     };
 
   const node = getBlockNode(document, nodePointer);
@@ -44,13 +52,8 @@ const getContentTarget = (document: BlockDocument, nodeId: string): ContentTarge
     interactionId: `content:${nodeId}`,
     pointer: nodePointer,
     props: node.props,
+    propsSchema: definition.propsSchema,
   };
-};
-
-// The props a form edits: those of the form's schema, so the id and the style are never shown or changed by the form
-const getFormValue = (props: Record<string, unknown>, formSchema: z.ZodType) => {
-  const formKeys = Object.keys(zodToJsonSchema(formSchema).properties ?? {});
-  return Object.fromEntries(formKeys.filter((key) => key in props).map((key) => [key, props[key]]));
 };
 
 // The form of the selected node's content, edited through the page builder's history: a value that is not valid is
@@ -68,27 +71,33 @@ export const usePageBuilderContent = (resourceId: MaybeRefOrGetter<string>) => {
     return document && getContentTarget(document, getSelectedNodeId(resourceIdValue));
   });
   // The form's value as the document holds it, which the form's draft follows whenever the document changes
-  const savedValue = computed(() => target.value && getFormValue(target.value.props, target.value.formSchema));
+  const savedValue = computed(() => {
+    const currentTarget = target.value;
+    if (!currentTarget) return undefined;
+
+    const result = currentTarget.propsSchema.safeParse(currentTarget.props);
+    return result.success ? result.data : undefined;
+  });
   // The value the form shows, which keeps an invalid value the user typed until the document changes
   const draftValue = ref(savedValue.value);
   watch(savedValue, (value) => {
     draftValue.value = value;
   });
-  const setFormValue = (value: Record<string, unknown>) => {
+  const setFormValue = (value: ContentValue) => {
     draftValue.value = value;
     const currentTarget = target.value;
-    if (!currentTarget) return;
-
-    const current = getFormValue(currentTarget.props, currentTarget.formSchema);
-    const changedProps = Object.fromEntries(
-      Object.entries(value).filter(([key, propValue]) => !checkIsDeepEqual(propValue, current[key])),
-    );
-    if (Object.keys(changedProps).length === 0) return;
-    if (!currentTarget.formSchema.safeParse(value).success) return;
+    if (!currentTarget || checkIsDeepEqual(value, savedValue.value)) return;
+    if (!currentTarget.propsSchema.safeParse(value).success) return;
 
     applyEdit(
       toValue(resourceId),
-      updateBlockNodeProps(currentTarget.pointer, changedProps),
+      [
+        {
+          op: JsonPatchOperationType.Replace,
+          path: `${currentTarget.pointer}/props`,
+          value: { ...currentTarget.props, ...value },
+        },
+      ],
       "Edit block",
       currentTarget.interactionId,
     ).match(noop, console.error);
@@ -100,6 +109,6 @@ export const usePageBuilderContent = (resourceId: MaybeRefOrGetter<string>) => {
     formValue: draftValue,
     pointer: computed(() => target.value?.pointer),
     setFormValue,
-    validationSchema: formSchema,
+    validationSchema: computed(() => target.value?.propsSchema),
   };
 };

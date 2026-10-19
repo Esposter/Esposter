@@ -2,7 +2,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpageNodeTypeDefinitionMap";
-import { createWebpageNodeProps } from "@/services/pageBuilder/webpageNodeDefaults";
+import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { describe, expect, test } from "vitest";
 
 describe("webpageNodeDefaults", () => {
@@ -12,7 +12,7 @@ describe("webpageNodeDefaults", () => {
     for (const type of [...WEBPAGE_PLACEABLE_NODE_TYPES, WebpageNodeType.Column, WebpageNodeType.Tab]) {
       const { propsSchema } = webpageNodeTypeDefinitionMap[type];
 
-      expect(propsSchema.safeParse(createWebpageNodeProps(type, TEST_ID)).success).toBe(true);
+      expect(propsSchema.safeParse(createWebpageNode(type, TEST_ID).props).success).toBe(true);
     }
   });
 });

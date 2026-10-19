@@ -1,10 +1,13 @@
 // @vitest-environment nuxt
+import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps";
+import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { BlockDocument } from "headless-block-editor";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
+import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
@@ -19,7 +22,7 @@ const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
 ];
 
 describe(usePageBuilderHistoryStore, () => {
-  const TEST_DOCUMENT: BlockDocument = {
+  const TEST_DOCUMENT: WebpageDocument = {
     content: [createButton(TEST_ID), createButton(TEST_OTHER_ID)],
     root: TEST_ROOT,
   };
@@ -27,6 +30,9 @@ describe(usePageBuilderHistoryStore, () => {
   const TEST_LABEL_LABEL = "Change label";
   const TEST_TEXT_LABEL = "Edit text";
   const TEST_OTHER_LANG = "fr";
+  // Values an edit writes over a button's label and link, each different from the one the fixture holds
+  const TEST_EDITED_LABEL = "Edited";
+  const TEST_EDITED_URL = "https://example.com/edited";
   const setupDocument = async () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -64,7 +70,7 @@ describe(usePageBuilderHistoryStore, () => {
     for (let step = 0; step < 10; step += 1)
       applyEdit(
         resourceId,
-        updateBlockNodeProps("/content/0", { label: `${step}` }),
+        updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: `${step}` }),
         TEST_LABEL_LABEL,
         interactionId,
       ).match(noop, (error) => {
@@ -82,7 +88,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const textDocument: BlockDocument = {
+    const textDocument: WebpageDocument = {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     };
@@ -95,7 +101,7 @@ describe(usePageBuilderHistoryStore, () => {
     for (const text of ["a", "ab"])
       applyEdit(
         resourceId,
-        updateBlockNodeProps("/content/0", {
+        updateBlockNodeProps<TextNodeProps>("/content/0", {
           content: { content: [{ content: [{ text, type: "text" }], type: "paragraph" }], type: "doc" },
         }),
         TEST_TEXT_LABEL,
@@ -145,16 +151,21 @@ describe(usePageBuilderHistoryStore, () => {
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
     for (let edit = 0; edit < editCount; edit += 1)
-      applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: `${edit}` }), TEST_LABEL_LABEL).match(
-        noop,
-        (error) => {
-          throw error;
-        },
-      );
+      applyEdit(
+        resourceId,
+        updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: `${edit}` }),
+        TEST_LABEL_LABEL,
+      ).match(noop, (error) => {
+        throw error;
+      });
     for (let attempt = 0; attempt < editCount; attempt += 1) undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(
-      applyBlockEdit(TEST_DOCUMENT, updateBlockNodeProps("/content/0", { label: "0" })).match(
+      applyBlockEdit(
+        webpageDocumentSchema,
+        TEST_DOCUMENT,
+        updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: "0" }),
+      ).match(
         ({ document }) => document,
         (error) => {
           throw error;
@@ -195,7 +206,11 @@ describe(usePageBuilderHistoryStore, () => {
     });
     undo(resourceId);
     const redoLabelAfterUndo = getRedoLabel(resourceId);
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
+      TEST_LABEL_LABEL,
+    ).match(noop, (error) => {
       throw error;
     });
     const editedDocument = getDocument(resourceId);
@@ -214,7 +229,11 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, clearHistory, getUndoLabel, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
+      TEST_LABEL_LABEL,
+    ).match(noop, (error) => {
       throw error;
     });
     const editedDocument = getDocument(resourceId);
@@ -236,11 +255,15 @@ describe(usePageBuilderHistoryStore, () => {
     applyEdit(resourceId, moveFirstToEnd(), TEST_MOVE_LABEL).match(noop, (error) => {
       throw error;
     });
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL).match(noop, (error) => {
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
+      TEST_LABEL_LABEL,
+    ).match(noop, (error) => {
       throw error;
     });
     const editedDocument = getDocument(resourceId);
-    const writeDocument = vi.fn<(document: BlockDocument) => Promise<void>>().mockResolvedValue(undefined);
+    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     await saveDocument(resourceId, writeDocument);
 
     expect(writeDocument).toHaveBeenCalledExactlyOnceWith(editedDocument);
@@ -254,7 +277,11 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, getUndoLabel } = pageBuilderHistoryStore;
-    const result = applyEdit(resourceId, updateBlockNodeProps("/content/9", { label: "" }), TEST_LABEL_LABEL);
+    const result = applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/9", { label: "" }),
+      TEST_LABEL_LABEL,
+    );
 
     expect(result.match(noop, (error) => error)).toStrictEqual(
       new InvalidOperationError(Operation.Read, "/content/9/props", "no such member"),
@@ -272,19 +299,23 @@ describe(usePageBuilderHistoryStore, () => {
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { label: "" }), TEST_LABEL_LABEL, interactionId).match(
-      noop,
-      (error) => {
-        throw error;
-      },
-    );
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/0", { label: TEST_EDITED_LABEL }),
+      TEST_LABEL_LABEL,
+      interactionId,
+    ).match(noop, (error) => {
+      throw error;
+    });
     const labelEditedDocument = getDocument(resourceId);
-    applyEdit(resourceId, updateBlockNodeProps("/content/0", { href: "" }), "Change link", interactionId).match(
-      noop,
-      (error) => {
-        throw error;
-      },
-    );
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<ButtonNodeProps>("/content/0", { href: TEST_EDITED_URL }),
+      "Change link",
+      interactionId,
+    ).match(noop, (error) => {
+      throw error;
+    });
     undo(resourceId);
 
     expect(getDocument(resourceId)).toStrictEqual(labelEditedDocument);

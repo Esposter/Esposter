@@ -158,14 +158,9 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
     <div
       ref="contentRoot"
       relative
-      @click="
-        pageBuilderCanvasStore.setSelectedNodeId(
-          resourceId,
-          getNodeIdFromElement($event.target as Element | null) ?? '',
-        )
-      "
+      @click="pageBuilderCanvasStore.setSelectedNodeId(resourceId, getNodeIdFromElement($event.target) ?? '')"
       @pointerleave="hoveredNodeId = undefined"
-      @pointerover="hoveredNodeId = getNodeIdFromElement($event.target as Element | null)"
+      @pointerover="hoveredNodeId = getNodeIdFromElement($event.target)"
     >
       <CanvasNodes v-if="drawnDocument" :document="drawnDocument" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">

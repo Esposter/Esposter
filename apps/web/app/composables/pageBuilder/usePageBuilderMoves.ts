@@ -1,7 +1,7 @@
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
-import type { BlockDocument } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
@@ -27,15 +27,14 @@ import {
 } from "headless-block-editor";
 
 // The id a node carries, or the empty id when the pointer names no node
-const getNodeId = (document: BlockDocument | undefined, nodePointer: string | undefined): string => {
+const getNodeId = (document: WebpageDocument | undefined, nodePointer: string | undefined): string => {
   if (!document || !nodePointer) return "";
-  const id = getBlockNode(document, nodePointer)?.props.id;
-  return typeof id === "string" ? id : "";
+  return getBlockNode(document, nodePointer)?.props.id ?? "";
 };
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
-  document: BlockDocument,
+  document: WebpageDocument,
   nodePointer: string,
   offset: number,
 ): JsonPatchOperation[] => {
@@ -70,7 +69,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     return nodePointer === undefined ? undefined : { document, nodeId, nodePointer };
   };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
-  const announceMove = (document: BlockDocument, nodePointer: string) => {
+  const announceMove = (document: WebpageDocument, nodePointer: string) => {
     const segments = parseJsonPointer(nodePointer);
     const slotSegments = segments.slice(0, -1);
     const siblings = readJsonValue(document, slotSegments);
@@ -84,7 +83,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
   const moveSelected = (
     label: string,
-    getOperations: (document: BlockDocument, nodePointer: string) => JsonPatchOperation[],
+    getOperations: (document: WebpageDocument, nodePointer: string) => JsonPatchOperation[],
   ) => {
     const selection = getSelection();
     if (!selection) return;

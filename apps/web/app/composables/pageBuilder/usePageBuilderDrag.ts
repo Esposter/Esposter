@@ -1,9 +1,8 @@
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { BlockDocument } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
-
-import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
@@ -23,7 +22,7 @@ const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeo
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type
 const getDropTargetAt = (
-  document: BlockDocument | undefined,
+  document: WebpageDocument | undefined,
   type: WebpageNodeType,
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,

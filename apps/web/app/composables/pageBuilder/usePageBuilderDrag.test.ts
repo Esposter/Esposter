@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { BlockDocument } from "headless-block-editor";
+import type { TextNode } from "#shared/models/pageBuilder/TextNode";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -15,19 +17,17 @@ import { describe, expect, test, vi } from "vitest";
 const TEXT_ONE = "text-one";
 const TEXT_TWO = "text-two";
 const COLUMN_SLOT = "/content/0/props/children/0/props/children";
-const COLUMN_DOCUMENT: BlockDocument = {
+const createText = (id: string): TextNode => ({
+  props: { content: TEST_TEXT_CONTENT, id },
+  type: WebpageNodeType.Text,
+});
+const COLUMN_DOCUMENT: WebpageDocument = {
   content: [
     {
       props: {
         children: [
           {
-            props: {
-              children: [
-                { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
-                { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
-              ],
-              id: "column",
-            },
+            props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
             type: WebpageNodeType.Column,
           },
         ],
@@ -38,13 +38,7 @@ const COLUMN_DOCUMENT: BlockDocument = {
   ],
   root: TEST_ROOT,
 };
-const ROOT_DOCUMENT: BlockDocument = {
-  content: [
-    { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
-    { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
-  ],
-  root: TEST_ROOT,
-};
+const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
 const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
   [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
   [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
@@ -59,7 +53,7 @@ const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
   scale: 1,
 });
 
-const setup = (document: BlockDocument) => {
+const setup = (document: WebpageDocument) => {
   setActivePinia(createPinia());
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();

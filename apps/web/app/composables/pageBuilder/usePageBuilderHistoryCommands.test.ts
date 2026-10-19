@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { BlockDocument } from "headless-block-editor";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
@@ -18,7 +18,10 @@ describe(usePageBuilderHistoryCommands, () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const document: BlockDocument = { content: [createButton(TEST_ID), createButton(TEST_OTHER_ID)], root: TEST_ROOT };
+    const document: WebpageDocument = {
+      content: [createButton(TEST_ID), createButton(TEST_OTHER_ID)],
+      root: TEST_ROOT,
+    };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument } = pageBuilderDocumentStore;
     await loadDocument(resourceId, () => Promise.resolve(document));

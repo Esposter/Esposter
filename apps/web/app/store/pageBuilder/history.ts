@@ -1,7 +1,8 @@
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { History, JsonPatchOperation } from "@esposter/shared";
-import type { BlockDocument } from "headless-block-editor";
 
+import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -35,9 +36,9 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
       const document = getDocument(resourceId);
       if (!document) throw new InvalidOperationError(Operation.Update, resourceId, "has no document held");
       return document;
-    }).andThen((document) => applyBlockEdit(document, operations));
+    }).andThen((document) => applyBlockEdit(webpageDocumentSchema, document, operations));
   // The document and the history an edit leaves land together, so neither is ever ahead of the other
-  const commitEdit = (resourceId: string, document: BlockDocument, history: History<PageBuilderHistoryEntry>) => {
+  const commitEdit = (resourceId: string, document: WebpageDocument, history: History<PageBuilderHistoryEntry>) => {
     setDocument(resourceId, document);
     setHistory(resourceId, history);
   };

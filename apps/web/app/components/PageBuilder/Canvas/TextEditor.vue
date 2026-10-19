@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Editor } from "@tiptap/vue-3";
+import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
 
-import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -27,23 +27,27 @@ const getNodeContent = () => {
   const document = getDocument(resourceId);
   const nodePointer = document && getNodePointer(document, nodeId);
   const node = document && nodePointer !== undefined ? getBlockNode(document, nodePointer) : undefined;
-  return node && textNodeType.propsSchema.parse(node.props).content;
+  return node?.type === WebpageNodeType.Text ? node.props.content : undefined;
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one
 const interactionId = crypto.randomUUID();
-const onUpdate = ({ editor }: { editor: Editor }) => {
-  const document = getDocument(resourceId);
-  const nodePointer = document && getNodePointer(document, nodeId);
-  if (nodePointer === undefined) return;
+const editor = useEditor({
+  autofocus: "end",
+  content: getNodeContent(),
+  extensions: getNoteExtensions(),
+  onUpdate: ({ editor: currentEditor }) => {
+    const document = getDocument(resourceId);
+    const nodePointer = document && getNodePointer(document, nodeId);
+    if (nodePointer === undefined) return;
 
-  applyEdit(
-    resourceId,
-    updateBlockNodeProps(nodePointer, { content: editor.getJSON() }),
-    "Edit text",
-    interactionId,
-  ).match(noop, console.error);
-};
-const editor = useEditor({ autofocus: "end", content: getNodeContent(), extensions: getNoteExtensions(), onUpdate });
+    applyEdit(
+      resourceId,
+      updateBlockNodeProps<TextNodeProps>(nodePointer, { content: currentEditor.getJSON() }),
+      "Edit text",
+      interactionId,
+    ).match(noop, console.error);
+  },
+});
 // Escape ends the edit; the stop keeps the shell from acting on the same key
 const onKeydown = (event: KeyboardEvent) => {
   if (event.key !== "Escape") return;

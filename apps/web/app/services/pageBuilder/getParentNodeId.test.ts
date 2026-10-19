@@ -1,4 +1,4 @@
-import type { BlockDocument } from "headless-block-editor";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -10,7 +10,7 @@ const TEST_CONTAINER_ID = "cs";
 const TEST_NODE_ID = "k1";
 const TEST_SECTION_ID = "s1";
 
-const createDocument = (): BlockDocument => ({
+const createDocument = (): WebpageDocument => ({
   content: [
     {
       props: {

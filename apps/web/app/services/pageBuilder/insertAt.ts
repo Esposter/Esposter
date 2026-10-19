@@ -1,7 +1,7 @@
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
-import { createWebpageNodeProps } from "@/services/pageBuilder/webpageNodeDefaults";
+import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
@@ -15,10 +15,13 @@ export const insertAt = (resourceId: string, slotPointer: string, index: number,
   if (!document) return false;
 
   const insertedId = crypto.randomUUID();
-  const operations = insertBlockNode(document, webpageRegistry, slotPointer, index, {
-    props: createWebpageNodeProps(type, insertedId),
-    type,
-  });
+  const operations = insertBlockNode(
+    document,
+    webpageRegistry,
+    slotPointer,
+    index,
+    createWebpageNode(type, insertedId),
+  );
   if (operations.length === 0) return false;
 
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();

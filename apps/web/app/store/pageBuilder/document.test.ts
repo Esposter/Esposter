@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { BlockDocument } from "headless-block-editor";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -11,9 +11,9 @@ describe(usePageBuilderDocumentStore, () => {
 
     const firstResourceId = crypto.randomUUID();
     const secondResourceId = crypto.randomUUID();
-    const firstDocument: BlockDocument = { content: [], root: { props: { lang: "" } } };
-    const secondDocument: BlockDocument = { content: [], root: { props: { lang: " " } } };
-    const changedDocument: BlockDocument = { content: [], root: { props: { lang: TEST_LANG } } };
+    const firstDocument: WebpageDocument = { content: [], root: { props: { lang: "" } } };
+    const secondDocument: WebpageDocument = { content: [], root: { props: { lang: " " } } };
+    const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument, setDocument } = pageBuilderDocumentStore;
     await loadDocument(firstResourceId, () => Promise.resolve(firstDocument));
@@ -28,8 +28,8 @@ describe(usePageBuilderDocumentStore, () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const document: BlockDocument = { content: [], root: { props: { lang: "" } } };
-    const writeDocument = vi.fn<(document: BlockDocument) => Promise<void>>().mockResolvedValue(undefined);
+    const document: WebpageDocument = { content: [], root: { props: { lang: "" } } };
+    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument, saveDocument } = pageBuilderDocumentStore;
     await loadDocument(resourceId, () => Promise.resolve(document));
@@ -41,7 +41,7 @@ describe(usePageBuilderDocumentStore, () => {
   test("a save writes nothing for a resource whose document is not held", async () => {
     expect.hasAssertions();
 
-    const writeDocument = vi.fn<(document: BlockDocument) => Promise<void>>().mockResolvedValue(undefined);
+    const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { saveDocument } = pageBuilderDocumentStore;
     await saveDocument(crypto.randomUUID(), writeDocument);

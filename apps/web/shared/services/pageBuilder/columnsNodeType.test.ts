@@ -1,3 +1,5 @@
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
@@ -8,7 +10,7 @@ describe("columnsNodeType", () => {
   test("a columns node holds only columns", () => {
     expect.hasAssertions();
 
-    const document = {
+    const document: WebpageDocument = {
       content: [
         {
           props: {

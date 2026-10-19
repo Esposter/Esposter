@@ -6,7 +6,7 @@ import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice"
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderCanvas", () => {
   test("switching to tablet draws the page at tablet width", async () => {
@@ -28,7 +28,9 @@ describe("pageBuilderCanvas", () => {
     });
     pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
-    const component = await mountSuspended(PageBuilderCanvas, { props: { resourceId: TEST_ID } });
+    const component = await mountSuspended(PageBuilderCanvas, {
+      props: { announce: vi.fn<(message: string) => void>(), resourceId: TEST_ID },
+    });
 
     expect((component.get("iframe").element as HTMLIFrameElement).style.width).toBe("768px");
   });
@@ -36,7 +38,9 @@ describe("pageBuilderCanvas", () => {
   test("a page with no document draws nothing", async () => {
     expect.hasAssertions();
 
-    const component = await mountSuspended(PageBuilderCanvas, { props: { resourceId: TEST_ID } });
+    const component = await mountSuspended(PageBuilderCanvas, {
+      props: { announce: vi.fn<(message: string) => void>(), resourceId: TEST_ID },
+    });
 
     expect(component.find("iframe").exists()).toBe(false);
   });

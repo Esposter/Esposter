@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import type { BlockDocument } from "headless-block-editor";
+import type { TextNode } from "#shared/models/pageBuilder/TextNode";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
@@ -20,8 +21,13 @@ vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOrig
 });
 
 const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
+// A type name no webpage node holds, written over a copied text node's tag in the clipboard text
+const UNKNOWN_NODE_TYPE = "UnknownNodeType";
 
-const createTextNode = (id: string) => ({ props: { content: TEST_TEXT_CONTENT, id }, type: WebpageNodeType.Text });
+const createTextNode = (id: string): TextNode => ({
+  props: { content: TEST_TEXT_CONTENT, id },
+  type: WebpageNodeType.Text,
+});
 
 // A clipboard held in memory, so the text a copy writes is what the next paste reads
 const stubClipboard = () => {
@@ -38,7 +44,7 @@ const stubClipboard = () => {
   return clipboard;
 };
 
-const openResource = async (content: BlockDocument["content"]) => {
+const openResource = async (content: WebpageDocument["content"]) => {
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   await pageBuilderDocumentStore.loadDocument(resourceId, () => Promise.resolve({ content, root: TEST_ROOT }));
@@ -102,20 +108,20 @@ describe(usePageBuilderClipboard, () => {
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
   });
 
-  test("a clipboard node of a type the webpage lacks is announced as refused", async () => {
+  test("a clipboard node of a type no webpage holds is ignored on paste", async () => {
     expect.hasAssertions();
     setActivePinia(createPinia());
     const clipboard = stubClipboard();
     clipboard.text = serializeClipboardNodes({
       editor: PageBuilderEditor.Webpage,
-      nodes: [{ props: { id: "unknown-node-id" }, type: "UnknownNodeType" }],
-    });
+      nodes: [createTextNode(TEST_ROOT_TEXT_ID)],
+    }).replace(`"type":"${WebpageNodeType.Text}"`, `"type":"${UNKNOWN_NODE_TYPE}"`);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const targetId = await openResource([]);
     const announce = vi.fn<(message: string) => void>();
     await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
-    expect(announce.mock.calls).toStrictEqual([["This block cannot go here"]]);
+    expect(announce.mock.calls).toStrictEqual([]);
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
   });
 

@@ -1,7 +1,6 @@
-import type { BlockNode } from "headless-block-editor";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { MaybeRefOrGetter } from "vue";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
@@ -41,7 +40,7 @@ export const usePageBuilderClipboard = (
     return node && { node, nodeId, title: getNodeTitle(document, parseJsonPointer(nodePointer)) };
   };
   // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that instead
-  const writeToClipboard = (node: BlockNode) =>
+  const writeToClipboard = (node: WebpageNode) =>
     getResultAsync(() =>
       window.navigator.clipboard.writeText(
         serializeClipboardNodes({ editor: PageBuilderEditor.Webpage, nodes: [node] }),
@@ -92,15 +91,10 @@ export const usePageBuilderClipboard = (
 
     const document = getDocument(resourceIdValue);
     const [firstNode] = clipboard.nodes;
-    const type = Object.values(WebpageNodeType).find((candidate) => candidate === firstNode?.type);
-    if (!document) return;
-    if (!type) {
-      announce(CANNOT_GO_HERE_MESSAGE);
-      return;
-    }
+    if (!document || !firstNode) return;
 
     const nodeId = getSelectedNodeId(resourceIdValue);
-    const target = getInsertTarget(document, type, nodeId ? getNodePointer(document, nodeId) : undefined);
+    const target = getInsertTarget(document, firstNode.type, nodeId ? getNodePointer(document, nodeId) : undefined);
     if (!target) return;
 
     const operations = pasteBlockNodes(document, webpageRegistry, clipboard.nodes, target.slotPointer, target.index);
@@ -113,7 +107,7 @@ export const usePageBuilderClipboard = (
     applyEdit(resourceIdValue, operations, "Paste block").match(() => {
       const pastedDocument = getDocument(resourceIdValue);
       const pastedId = pastedDocument && getBlockNode(pastedDocument, pastedPointer)?.props.id;
-      if (typeof pastedId === "string") setSelectedNodeId(resourceIdValue, pastedId);
+      if (pastedId !== undefined) setSelectedNodeId(resourceIdValue, pastedId);
       const title = pastedDocument ? getNodeTitle(pastedDocument, parseJsonPointer(pastedPointer)) : "";
       if (title) announce(`Pasted ${title}`);
     }, console.error);

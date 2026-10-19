@@ -1,25 +1,26 @@
-import type { BlockDocument } from "headless-block-editor";
+import type { TextNode } from "#shared/models/pageBuilder/TextNode";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { describe, expect, test } from "vitest";
 
 const TEXT_ONE = "text-one";
 const TEXT_TWO = "text-two";
 const COLUMN_SLOT = "/content/0/props/children/0/props/children";
-const COLUMN_DOCUMENT: BlockDocument = {
+const createText = (id: string): TextNode => ({
+  props: { content: TEST_TEXT_CONTENT, id },
+  type: WebpageNodeType.Text,
+});
+const COLUMN_DOCUMENT: WebpageDocument = {
   content: [
     {
       props: {
         children: [
           {
-            props: {
-              children: [
-                { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
-                { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
-              ],
-              id: "column",
-            },
+            props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
             type: WebpageNodeType.Column,
           },
         ],
@@ -28,15 +29,9 @@ const COLUMN_DOCUMENT: BlockDocument = {
       type: WebpageNodeType.Columns,
     },
   ],
-  root: { props: {} },
+  root: TEST_ROOT,
 };
-const ROOT_DOCUMENT: BlockDocument = {
-  content: [
-    { props: { id: TEXT_ONE }, type: WebpageNodeType.Text },
-    { props: { id: TEXT_TWO }, type: WebpageNodeType.Text },
-  ],
-  root: { props: {} },
-};
+const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
 const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
   [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
   [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },

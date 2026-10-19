@@ -11,6 +11,7 @@ import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORY_MAP } from "@/ser
 import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -33,7 +34,7 @@ describe("pageBuilderEditor", () => {
           props: {
             children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_NESTED_TEXT_ID }, type: WebpageNodeType.Text }],
             id: TEST_SECTION_ID,
-            tag: "section",
+            tag: HtmlTag.Section,
           },
           type: WebpageNodeType.Section,
         },

@@ -1,8 +1,10 @@
-import type { BlockNode } from "headless-block-editor";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { SITE_NAME } from "@esposter/shared";
-import { blockNodeShapeSchema } from "headless-block-editor";
+import { createBlockNodesSchema } from "headless-block-editor";
 import { z } from "zod";
 
 // Tags the clipboard text as page builder nodes, so text copied from anywhere else is ignored on paste
@@ -10,10 +12,10 @@ const CLIPBOARD_MARKER = `${SITE_NAME.toLowerCase()}-page-builder`;
 const clipboardNodesSchema = z.object({
   editor: z.enum(PageBuilderEditor),
   marker: z.literal(CLIPBOARD_MARKER),
-  nodes: z.array(blockNodeShapeSchema),
+  nodes: createBlockNodesSchema<WebpageNode>(webpageRegistry, Object.values(WebpageNodeType)),
 });
 
-export const serializeClipboardNodes = ({ editor, nodes }: { editor: PageBuilderEditor; nodes: BlockNode[] }) =>
+export const serializeClipboardNodes = ({ editor, nodes }: { editor: PageBuilderEditor; nodes: WebpageNode[] }) =>
   JSON.stringify({ editor, marker: CLIPBOARD_MARKER, nodes });
 
 // The editor and nodes clipboard text was copied as, or none when the text is not page builder nodes or is malformed

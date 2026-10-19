@@ -1,6 +1,4 @@
 // @vitest-environment nuxt
-import type { Editor } from "@tiptap/vue-3";
-
 import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -50,7 +48,8 @@ describe("pageBuilderCanvasTextEditor", () => {
       props: { nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
-    const editor: Editor = component.getComponent(EditorContent).props("editor");
+    const editor = component.getComponent(EditorContent).props("editor");
+    assert.exists(editor);
 
     // Two updates in one session are one history entry
     editor.commands.insertContent("a");

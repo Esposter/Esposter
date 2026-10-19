@@ -1,5 +1,10 @@
 // @vitest-environment nuxt
-import type { BlockDocument } from "headless-block-editor";
+import type { ColumnNode } from "#shared/models/pageBuilder/ColumnNode";
+import type { ColumnsNode } from "#shared/models/pageBuilder/ColumnsNode";
+import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
+import type { SectionNode } from "#shared/models/pageBuilder/SectionNode";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -10,25 +15,25 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 
-const createSection = (id: string, children: BlockDocument["content"]) => ({
+const createSection = (id: string, children: WebpagePlaceableNode[]): SectionNode => ({
   props: { children, id, tag: HtmlTag.Section },
   type: WebpageNodeType.Section,
 });
-const createColumns = (id: string, children: BlockDocument["content"]) => ({
+const createColumns = (id: string, children: ColumnNode[]): ColumnsNode => ({
   props: { children, id },
   type: WebpageNodeType.Columns,
 });
-const createColumn = (id: string, children: BlockDocument["content"]) => ({
+const createColumn = (id: string, children: WebpagePlaceableNode[]): ColumnNode => ({
   props: { children, id },
   type: WebpageNodeType.Column,
 });
-const createImage = (id: string) => ({
+const createImage = (id: string): ImageNode => ({
   props: { alt: "", decorative: true, id, src: "https://example.com/a.png" },
   type: WebpageNodeType.Image,
 });
 
 // Section 1 holds Columns with one Column; Section 2 holds an image; the image sits in Section 2
-const createFixtureDocument = (): BlockDocument => ({
+const createFixtureDocument = (): WebpageDocument => ({
   content: [
     createSection("s1", [createColumns("cs", [createColumn("k1", [])])]),
     createSection("s2", [createImage("i1")]),

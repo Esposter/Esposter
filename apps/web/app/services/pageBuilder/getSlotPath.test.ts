@@ -1,4 +1,4 @@
-import type { BlockDocument } from "headless-block-editor";
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -7,7 +7,7 @@ import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { describe, expect, test } from "vitest";
 
 describe(getSlotPath, () => {
-  const TEST_DOCUMENT: BlockDocument = {
+  const TEST_DOCUMENT: WebpageDocument = {
     content: [
       {
         props: {
