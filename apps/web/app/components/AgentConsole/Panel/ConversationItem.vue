@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { event, isSideChat } = defineProps<Props>();
-const { toolCallMap } = useAgentConsoleSession();
+const { toolCallMap } = useAgentConsoleSession(isSideChat);
 </script>
 
 <template>
@@ -20,22 +20,18 @@ const { toolCallMap } = useAgentConsoleSession();
   <div v-if="event.type === AgentEventType.UserMessage" class="group" ws-pre-wrap relative>
     <span text-accent>›</span> {{ event.text }}
     <span v-if="event.attachmentCount > 0" text-muted>[{{ event.attachmentCount }} attached]</span>
-    <AgentConsolePanelMessageActions
-      is-prompt
-      :is-side-chat="isSideChat"
-      :message-uuid="event.messageUuid"
-      :text="event.text"
-    />
+    <AgentConsolePanelMessageActions is-prompt :is-side-chat :message-uuid="event.messageUuid" :text="event.text" />
   </div>
   <div v-else-if="event.type === AgentEventType.AssistantMessage" class="group" relative>
-    <AgentConsoleMarkdown :source="event.text" />
-    <AgentConsolePanelMessageActions :is-side-chat="isSideChat" :message-uuid="event.messageUuid" :text="event.text" />
+    <AgentConsoleMarkdown :source="event.text" :is-side-chat />
+    <AgentConsolePanelMessageActions :is-side-chat :message-uuid="event.messageUuid" :text="event.text" />
   </div>
   <AgentConsolePanelThinking v-else-if="event.type === AgentEventType.Thinking" :text="event.thinking" />
   <!-- The fold records the call as it folds its use, so the call as first made is only ever the type's fallback -->
   <AgentConsolePanelToolCall
     v-else-if="event.type === AgentEventType.ToolUse"
     :tool-call="toolCallMap.get(event.toolUseId) ?? { elapsedSeconds: 0, toolUse: event }"
+    :is-side-chat
   />
   <details v-else-if="event.type === AgentEventType.Hook">
     <summary text-muted cursor-pointer>Hook · {{ event.hookEvent }} · {{ event.phase }}</summary>

@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { isSideChat } = defineProps<Props>();
-const { conversationEvents, sessionState, streamDraft } = useAgentConsoleSession();
+const { conversationEvents, sessionState, streamDraft } = useAgentConsoleSession(isSideChat);
 const searchQuery = ref("");
 const displayEvents = computed(() => {
   const normalizedSearchQuery = searchQuery.value.toLowerCase();
@@ -33,15 +33,11 @@ watch([() => displayEvents.value.length, () => streamDraft.value?.text.length], 
   <UiFrame>
     <UiTextField v-model="searchQuery" label="Search this session" :type="UiTextFieldType.Search" />
     <div ref="scrollContainer" flex flex-1 flex-col gap-3 min-h-0 of-y-auto>
-      <AgentConsolePanelConversationItem
-        v-for="event of displayEvents"
-        :key="event.id"
-        :event
-        :is-side-chat="isSideChat"
-      />
-      <AgentConsolePanelStreamDraft v-if="streamDraft && !searchQuery" :stream-draft />
+      <AgentConsolePanelConversationItem v-for="event of displayEvents" :key="event.id" :event :is-side-chat />
+      <AgentConsolePanelStreamDraft v-if="streamDraft && !searchQuery" :stream-draft :is-side-chat />
       <AgentConsolePanelWorking
         v-if="sessionState && [SessionState.Compacting, SessionState.Running].includes(sessionState)"
+        :is-side-chat
       />
     </div>
   </UiFrame>

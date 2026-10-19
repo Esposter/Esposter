@@ -494,6 +494,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     agentConsoleSideChatStore.isSideChatOpen = false;
     agentConsoleSideChatStore.sideChatSessionId = "";
     agentConsoleSideChatStore.sideChatConnectionId = "";
+    agentConsoleSideChatStore.sideChatComposerText = "";
     agentConsoleSideChatStore.pendingQuestion = undefined;
   };
 

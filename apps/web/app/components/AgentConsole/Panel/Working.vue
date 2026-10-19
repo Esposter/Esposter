@@ -4,7 +4,13 @@ import { WorkingVerbs } from "@/services/agentConsole/WorkingVerbs";
 import { takeOne } from "@esposter/shared";
 import { AgentEventType, SessionState, TodoStatus } from "agent-console-server/contracts";
 
-const { conversationEvents, sessionState, todoUpdate, turnUsage } = useAgentConsoleSession();
+interface Props {
+  // The side chat's working line follows the side chat's session, not the console's
+  isSideChat?: true;
+}
+
+const { isSideChat } = defineProps<Props>();
+const { conversationEvents, sessionState, todoUpdate, turnUsage } = useAgentConsoleSession(isSideChat);
 // Mounted once per turn, so the verb holds for the turn and changes with the next
 const verb = takeOne(WorkingVerbs, Math.floor(Math.random() * WorkingVerbs.length));
 // The terminal's line names the task in progress while there is one, and the turn's verb otherwise

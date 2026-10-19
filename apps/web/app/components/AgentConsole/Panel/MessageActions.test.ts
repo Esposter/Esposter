@@ -4,6 +4,7 @@ import UiMenu from "@/components/Ui/Menu/Index.vue";
 import { MessageActionType } from "@/models/agentConsole/MessageActionType";
 import { useAgentConsoleConnectionStore } from "@/store/agentConsole/connection";
 import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
+import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { CommandType } from "agent-console-server/contracts";
 import { describe, expect, test, vi } from "vitest";
@@ -15,8 +16,8 @@ describe(AgentConsolePanelMessageActions, () => {
   test("fork on a side chat's message forks it as a side chat", async () => {
     expect.hasAssertions();
 
-    const agentConsoleSessionStore = useAgentConsoleSessionStore();
-    agentConsoleSessionStore.currentSessionId = sessionId;
+    const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+    agentConsoleSideChatStore.sideChatSessionId = sessionId;
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
     const sendCommand = vi.spyOn(agentConsoleConnectionStore, "sendCommand");
     const component = await mountSuspended(AgentConsolePanelMessageActions, {

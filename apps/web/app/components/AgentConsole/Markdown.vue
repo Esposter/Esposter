@@ -10,10 +10,12 @@ import { CommandType } from "agent-console-server/contracts";
 import { marked } from "marked";
 
 interface Props {
+  // A message in the side chat reads and opens files through the side chat's session, not the console's
+  isSideChat?: true;
   source: string;
 }
 
-const { source } = defineProps<Props>();
+const { isSideChat, source } = defineProps<Props>();
 const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
 const { sendCommand } = agentConsoleConnectionStore;
 const agentConsoleFileStore = useAgentConsoleFileStore();
@@ -22,7 +24,7 @@ const repositoryPathLinkifier = computed(() => createRepositoryPathLinkifier(fil
 const agentConsolePaneStore = useAgentConsolePaneStore();
 const { openPage } = agentConsolePaneStore;
 // The session the message is shown in, so a file opened from the side chat reads through the side chat's session
-const { sessionId } = useAgentConsoleSession();
+const { sessionId } = useAgentConsoleSession(isSideChat);
 const openRepositoryFile = (path: string) =>
   sendCommand({ path, sessionId: sessionId.value, type: CommandType.ReadFile });
 // A link to a page of this app opens in the side pane, unless a modifier asks for a tab of its own or it only moves to

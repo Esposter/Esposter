@@ -7,10 +7,11 @@ import { getDurationSeconds } from "@/services/agentConsole/getDurationSeconds";
 import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {
+  isSideChat?: true;
   toolCall: ToolCall;
 }
 
-const { toolCall } = defineProps<Props>();
+const { isSideChat, toolCall } = defineProps<Props>();
 // A call's duration is the time between the call and its result; one still running shows how long it has been going
 const duration = computed(() =>
   toolCall.result
@@ -49,7 +50,7 @@ const resultPreview = computed(() => {
         <span text-muted flex-1 min-w-0 truncate>{{ summary }}</span>
         <span text-muted>{{ duration }}</span>
       </summary>
-      <AgentConsoleMarkdown :source="toolInputMarkdown" />
+      <AgentConsoleMarkdown :source="toolInputMarkdown" :is-side-chat />
       <pre
         v-if="toolCall.result"
         b-border
