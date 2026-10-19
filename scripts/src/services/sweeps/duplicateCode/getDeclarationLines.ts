@@ -5,7 +5,34 @@ import { takeOne } from "@esposter/shared";
 const DECLARATION_START_REGEX = /^\s*(?:export\s+)?(?:interface|type)\s|\bdefine(?:Props|Emits|Model)</u;
 const COMPOSABLE_CALL_REGEX = /^\s*const \w+ = use\w+\(\);\s*$/u;
 
+// A composable's destructured call opens on `const {` and closes on the `} = useName(...);` that binds it, and its return
+// Opens on `return {`. A block is a declaration only while every line in it is an entry: a bare name or `name: alias,` in
+// A call, and a bare name in a return. A block with a computed value stays code.
+interface WiringBlock {
+  end: RegExp;
+  entry: RegExp;
+  start: RegExp;
+}
+
+const WIRING_BLOCKS: WiringBlock[] = [
+  { end: /^\s*\} = use\w+\(.*\);\s*$/u, entry: /^\s*\w+(?:: \w+)?,\s*$/u, start: /^\s*const \{\s*$/u },
+  { end: /^\s*\};?\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*return \{\s*$/u },
+];
+
 const getBraceBalance = (line: string) => line.split("{").length - line.split("}").length;
+
+// The index of the line closing the wiring block opened at `index`, or -1 when no block opens there or a line inside it
+// Is not one of its entries
+const getWiringBlockEnd = (lines: string[], index: number): number => {
+  const block = WIRING_BLOCKS.find(({ start }) => start.test(takeOne(lines, index)));
+  if (!block) return -1;
+  for (let end = index + 1; end < lines.length; end++) {
+    const line = takeOne(lines, end);
+    if (block.end.test(line)) return end;
+    if (!block.entry.test(line)) return -1;
+  }
+  return -1;
+};
 
 // The 1-based lines of a file that belong to a declaration or to component wiring, so a copy of only those is a
 // Component's preamble rather than logic.
@@ -14,6 +41,11 @@ export const getDeclarationLines = (text: string): Set<number> => {
   const declarationLines = new Set<number>();
   let index = 0;
   while (index < lines.length) {
+    const wiringBlockEnd = getWiringBlockEnd(lines, index);
+    if (wiringBlockEnd !== -1) {
+      for (; index <= wiringBlockEnd; index++) declarationLines.add(index + 1);
+      continue;
+    }
     const line = takeOne(lines, index);
     if (!DECLARATION_START_REGEX.test(line) && !COMPOSABLE_CALL_REGEX.test(line)) {
       index++;

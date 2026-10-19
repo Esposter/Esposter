@@ -20,6 +20,22 @@ describe(getDataRowLines, () => {
     );
   });
 
+  test("reads a keyed empty collection and an object of only empty collections as data rows", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDataRowLines(
+        "  homePlacements: [],\n  companionshipExp: {},\n  cooking: { learnedRecipeIds: [], processingJobs: {}, proficiencies: {} },",
+      ),
+    ).toStrictEqual(new Set([1, 2, 3]));
+  });
+
+  test("keeps a keyed array holding a value as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  key: [value],")).toStrictEqual(new Set());
+  });
+
   test("reads the header of a record of primitives and the brackets framing a row block as data", () => {
     expect.hasAssertions();
 
