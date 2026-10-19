@@ -1,7 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffect } from "#src/models/kit/KitEffect";
-import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -9,18 +8,12 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
-const swapOnto = (characterId: number, previousCharacterId: number): KitEvent => ({
-  characterId,
-  kind: KitEventKind.CharacterSwapped,
-  previousCharacterId,
-});
 const getStacks = (effects: readonly KitEffect[]) =>
   findKitStatus(effects, TRAVELER_CHARACTER_ID, BOUNDLESS_BLESSING_ID)?.stacks;
 
@@ -41,7 +34,11 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 4.5);
 
     expect(getStacks(context.kitEffectState.effects)).toBe(1);
@@ -56,7 +53,11 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 21);
 
     expect(getStacks(context.kitEffectState.effects)).toBe(4);
@@ -66,11 +67,19 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 8.5);
     expect(getStacks(context.kitEffectState.effects)).toBe(2);
 
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 8);
 
     expect(getStacks(context.kitEffectState.effects)).toBeUndefined();
@@ -81,7 +90,11 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 4.5);
     boundlessBlessingPassiveModule.onKitEvent?.(
       {
@@ -103,7 +116,11 @@ describe(createBoundlessBlessingPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    boundlessBlessingPassiveModule.onKitEvent?.(swapOnto(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID), context, wielder);
+    boundlessBlessingPassiveModule.onKitEvent?.(
+      createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID),
+      context,
+      wielder,
+    );
     stepKitSeconds(context, 8.5);
 
     expect(getStacks(context.kitEffectState.effects)).toBeUndefined();

@@ -1,5 +1,3 @@
-import type { KitStrike } from "#src/models/kit/KitStrike";
-
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -11,6 +9,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -21,12 +20,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 
 describe(createResolutionOfSojournerSetModule, () => {
   const wearer = createSetWearer(KIT);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  });
   const party = createParty([TRAVELER_CHARACTER_ID]);
 
   test("raises the CRIT Rate of a charged attack by 30% from four pieces, and of no other strike", () => {
@@ -37,7 +30,9 @@ describe(createResolutionOfSojournerSetModule, () => {
       getArtifactSetBonus(statTables, RESOLUTION_OF_SOJOURNER_ARTIFACT_SET_ID, 4),
     );
 
-    expect(getStrikeCriticalRateBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, [])).toBeCloseTo(0.3);
-    expect(getStrikeCriticalRateBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(0);
+    expect(
+      getStrikeCriticalRateBonus?.(createKitStrike(wearer, AttackTag.ChargedAttack), enemy, party, []),
+    ).toBeCloseTo(0.3);
+    expect(getStrikeCriticalRateBonus?.(createKitStrike(wearer, AttackTag.NormalAttack), enemy, party, [])).toBe(0);
   });
 });

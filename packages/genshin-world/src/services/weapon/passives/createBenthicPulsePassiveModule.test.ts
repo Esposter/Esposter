@@ -6,7 +6,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createBenthicPulsePassiveModule } from "#src/services/weapon/passives/createBenthicPulsePassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createBenthicPulsePassiveModule, () => {

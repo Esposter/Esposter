@@ -4,7 +4,6 @@ import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -28,6 +27,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
@@ -173,17 +173,13 @@ describe(getArtifactSetKit, () => {
       statTables.artifactSetDataMap,
     );
     const combatant = createSetCombatant(TRAVELER_CHARACTER_ID, kit);
-    const createStrike = (attackTag: AttackTag): KitStrike => ({
-      attackTag,
-      body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-      combatant,
-      hit: TRAVELER_KIT.plungeCollision,
-    });
     const party = createParty([TRAVELER_CHARACTER_ID]);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
-    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(0.2);
-    expect(kit.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
+    expect(
+      kit.getStrikeDamageBonus?.(createKitStrike(combatant, AttackTag.ElementalBurst), enemy, party, []),
+    ).toBeCloseTo(0.2);
+    expect(kit.getStrikeDamageBonus?.(createKitStrike(combatant, AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
   });
 
   test("a wearer of fewer than four pieces is not restored", () => {

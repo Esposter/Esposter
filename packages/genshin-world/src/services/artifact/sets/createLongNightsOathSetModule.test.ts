@@ -1,6 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -14,12 +13,13 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -35,12 +35,6 @@ const createWearer = (): Combatant => ({
     createLongNightsOathSetModule(getArtifactSetBonus(statTables, LONG_NIGHTS_OATH_ARTIFACT_SET_ID, 4)),
   ]),
   level: 1,
-});
-const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant,
-  hit: KIT.plungeCollision,
 });
 
 describe(createLongNightsOathSetModule, () => {
@@ -61,7 +55,7 @@ describe(createLongNightsOathSetModule, () => {
   // The DMG Bonus a Plunging Attack of the wearer's adds as it stands, against the enemy
   const getPlungeBonus = (wearer: Combatant, kitEffectState: KitEffectState) =>
     wearer.kit.getStrikeDamageBonus?.(
-      createStrike(wearer, AttackTag.PlungingAttack),
+      createKitStrike(wearer, AttackTag.PlungingAttack),
       enemy,
       createParty([TRAVELER_CHARACTER_ID]),
       kitEffectState.effects,
@@ -81,7 +75,7 @@ describe(createLongNightsOathSetModule, () => {
     expect(getPlungeBonus(wearer, kitEffectState)).toBeCloseTo(0.25);
     expect(
       wearer.kit.getStrikeDamageBonus?.(
-        createStrike(wearer, AttackTag.ChargedAttack),
+        createKitStrike(wearer, AttackTag.ChargedAttack),
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
         kitEffectState.effects,

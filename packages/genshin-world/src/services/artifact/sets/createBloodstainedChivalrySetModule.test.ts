@@ -1,6 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -14,10 +13,12 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -27,12 +28,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createBloodstainedChivalrySetModule, () => {
   const wearer = createSetWearer(KIT);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  });
 
   test("raises the DMG of its wearer's Charged Attacks by 50% once it defeats an opponent, and of no other strike", () => {
     expect.hasAssertions();
@@ -44,12 +39,16 @@ describe(createBloodstainedChivalrySetModule, () => {
       getArtifactSetBonus(statTables, BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID, 4),
     );
 
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects)).toBe(0);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ChargedAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0);
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, kitEffectState.effects)).toBe(
-      0.5,
-    );
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, kitEffectState.effects)).toBe(0);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ChargedAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0.5);
+    expect(
+      getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.NormalAttack), enemy, party, kitEffectState.effects),
+    ).toBe(0);
   });
 
   test("costs its wearer's Charged Attacks no stamina while the bonus stands, and keeps the cost otherwise", () => {
@@ -99,27 +98,24 @@ describe(createBloodstainedChivalrySetModule, () => {
 
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, benchContext, wearer);
     expect(
-      getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, benchParty, benchKitEffectState.effects),
+      getStrikeDamageBonus?.(
+        createKitStrike(wearer, AttackTag.ChargedAttack),
+        enemy,
+        benchParty,
+        benchKitEffectState.effects,
+      ),
     ).toBe(0);
 
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, { kitEffectState, party });
-    const charged = createStrike(AttackTag.ChargedAttack);
+    const charged = createKitStrike(wearer, AttackTag.ChargedAttack);
 
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: undefined }, context, wearer);
     expect(getStrikeDamageBonus?.(charged, enemy, party, kitEffectState.effects)).toBe(0);
     onKitEvent?.({ enemy, kind: KitEventKind.EnemyDefeated, striker: wearer }, context, wearer);
     expect(getStrikeDamageBonus?.(charged, enemy, party, kitEffectState.effects)).toBe(0.5);
-    onKitEvent?.(
-      {
-        characterId: OTHER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: TRAVELER_CHARACTER_ID,
-      },
-      context,
-      wearer,
-    );
+    onKitEvent?.(createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID), context, wearer);
     expect(getStrikeDamageBonus?.(charged, enemy, party, kitEffectState.effects)).toBe(0.5);
   });
 });

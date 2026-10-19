@@ -15,8 +15,8 @@ import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/servic
 import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);

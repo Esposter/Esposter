@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -13,6 +12,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
@@ -36,12 +36,6 @@ const createWearer = (energyRecharge: number): Combatant => {
     level: 1,
   };
 };
-const createStrike = (attackTag: AttackTag, combatant: Combatant): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant,
-  hit: KIT.plungeCollision,
-});
 
 describe(createEmblemOfSeveredFateSetModule, () => {
   test("raises the Elemental Burst DMG by 25% of the wearer's Energy Recharge from four pieces", () => {
@@ -54,8 +48,10 @@ describe(createEmblemOfSeveredFateSetModule, () => {
     );
     const wearer = createWearer(1.5);
 
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst, wearer), enemy, party, [])).toBeCloseTo(0.375);
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill, wearer), enemy, party, [])).toBe(0);
+    expect(getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(
+      0.375,
+    );
+    expect(getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ElementalSkill), enemy, party, [])).toBe(0);
   });
 
   test("caps the Elemental Burst DMG it raises at 75%", () => {
@@ -68,6 +64,8 @@ describe(createEmblemOfSeveredFateSetModule, () => {
     );
     const wearer = createWearer(4);
 
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalBurst, wearer), enemy, party, [])).toBeCloseTo(0.75);
+    expect(getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ElementalBurst), enemy, party, [])).toBeCloseTo(
+      0.75,
+    );
   });
 });

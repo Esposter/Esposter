@@ -1,22 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 
 import { Attribute } from "#src/models/character/Attribute";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
-
-const createTakeField = () => ({
-  characterId: TRAVELER_CHARACTER_ID,
-  kind: KitEventKind.CharacterSwapped as const,
-  previousCharacterId: OTHER_CHARACTER_ID,
-});
 
 describe(createDebutPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
@@ -28,7 +20,11 @@ describe(createDebutPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    debutPassiveModule.onKitEvent?.(createTakeField(), context, wielder);
+    debutPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
 
     expect(
       context.kitEffectState.effects
@@ -41,7 +37,11 @@ describe(createDebutPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder, { random: () => 0.5 });
-    debutPassiveModule.onKitEvent?.(createTakeField(), context, wielder);
+    debutPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
 
     expect(
       context.kitEffectState.effects
@@ -54,8 +54,16 @@ describe(createDebutPassiveModule, () => {
     expect.hasAssertions();
 
     const context = createKitTestContext(wielder);
-    debutPassiveModule.onKitEvent?.(createTakeField(), context, wielder);
-    debutPassiveModule.onKitEvent?.(createTakeField(), context, wielder);
+    debutPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
+    debutPassiveModule.onKitEvent?.(
+      createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID),
+      context,
+      wielder,
+    );
 
     expect(
       context.kitEffectState.effects.filter((effect) => effect.kind === "buff").map(({ attribute }) => attribute),

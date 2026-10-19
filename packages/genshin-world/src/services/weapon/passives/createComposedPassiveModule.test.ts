@@ -11,7 +11,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createComposedPassiveModule } from "#src/services/weapon/passives/createComposedPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

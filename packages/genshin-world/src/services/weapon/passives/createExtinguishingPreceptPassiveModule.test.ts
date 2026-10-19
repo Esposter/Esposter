@@ -8,7 +8,7 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createExtinguishingPreceptPassiveModule, () => {

@@ -12,7 +12,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { CHORD_HARMONIC_ID } from "#src/services/weapon/passives/constants";
 import { createChordPassiveModule } from "#src/services/weapon/passives/createChordPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

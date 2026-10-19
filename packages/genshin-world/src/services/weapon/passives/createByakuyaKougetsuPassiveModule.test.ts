@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -10,13 +9,14 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createByakuyaKougetsuPassiveModule } from "#src/services/weapon/passives/createByakuyaKougetsuPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -40,12 +40,6 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     kind: KitEventKind.DamageTaken as const,
     striker: wielder,
   };
-  const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a Normal Attack gains 5% of the wielder's Max HP as base damage, and a Charged Attack gains none", () => {
     expect.hasAssertions();
@@ -58,7 +52,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
         byakuyaKougetsuPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-          createStrike(attackTag, combatant),
+          createKitStrike(combatant, attackTag),
           enemy,
           context.party,
           context.kitEffectState.effects,
@@ -90,7 +84,7 @@ describe(createByakuyaKougetsuPassiveModule, () => {
 
     expect(
       byakuyaKougetsuPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack, buffedCombatant),
+        createKitStrike(buffedCombatant, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,

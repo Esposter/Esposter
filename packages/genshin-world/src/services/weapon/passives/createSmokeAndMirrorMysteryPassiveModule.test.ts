@@ -4,11 +4,9 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createSmokeAndMirrorMysteryPassiveModule, () => {

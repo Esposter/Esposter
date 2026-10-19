@@ -13,11 +13,9 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
 import { createParty } from "#src/services/party/createParty";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createSunsetReignitesTheDawnPassiveModule } from "#src/services/weapon/passives/createSunsetReignitesTheDawnPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

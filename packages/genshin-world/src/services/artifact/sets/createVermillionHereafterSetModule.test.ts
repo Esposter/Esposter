@@ -20,7 +20,8 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -126,14 +127,7 @@ describe(createVermillionHereafterSetModule, () => {
     emitKitEvent(createHpDecrease(), context);
     expect(getAttackBonus(wearer, kitEffectState)).toBeCloseTo(0.18);
 
-    emitKitEvent(
-      {
-        characterId: OTHER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: TRAVELER_CHARACTER_ID,
-      },
-      context,
-    );
+    emitKitEvent(createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID), context);
     expect(getAttackBonus(wearer, kitEffectState)).toBe(0);
   });
 });

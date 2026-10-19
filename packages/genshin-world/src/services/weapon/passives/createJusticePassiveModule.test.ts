@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,13 +8,14 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createJusticePassiveModule } from "#src/services/weapon/passives/createJusticePassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -31,12 +31,6 @@ describe(createJusticePassiveModule, () => {
   // Justice with synthetic params: 15% DMG for normal and charged attacks, 50% of ATK as HP on a critical hit, and a
   // Cooldown of four seconds
   const justicePassiveModule = createJusticePassiveModule([0.15, 0.5, 4]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
   const createDamageTaken = (attackTag: AttackTag, isCritical: boolean) => ({
     attackTag,
     enemy,
@@ -53,14 +47,14 @@ describe(createJusticePassiveModule, () => {
     const { party } = createKitTestContext(wielder);
 
     expect(
-      justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.NormalAttack), enemy, party, []),
     ).toBeCloseTo(0.15);
     expect(
-      justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ChargedAttack), enemy, party, []),
+      justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ChargedAttack), enemy, party, []),
     ).toBeCloseTo(0.15);
-    expect(justicePassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBe(
-      0,
-    );
+    expect(
+      justicePassiveModule.getStrikeDamageBonus?.(createKitStrike(wielder, AttackTag.ElementalSkill), enemy, party, []),
+    ).toBe(0);
   });
 
   test("a critical normal attack restores the wielder the rank's share of its ATK as HP", () => {

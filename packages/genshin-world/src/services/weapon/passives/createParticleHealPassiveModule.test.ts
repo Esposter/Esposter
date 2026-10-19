@@ -7,11 +7,9 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
-import {
-  createWielderCombatant,
-  OTHER_CHARACTER_ID,
-} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const createParticleCollected = (characterId: number) => ({

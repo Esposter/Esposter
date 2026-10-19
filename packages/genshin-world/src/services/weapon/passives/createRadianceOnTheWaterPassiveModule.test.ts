@@ -4,8 +4,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createRadianceOnTheWaterPassiveModule } from "#src/services/weapon/passives/createRadianceOnTheWaterPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 describe(createRadianceOnTheWaterPassiveModule, () => {

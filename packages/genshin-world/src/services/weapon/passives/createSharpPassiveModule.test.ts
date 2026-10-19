@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -7,33 +6,26 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createParty } from "#src/services/party/createParty";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createSharpPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
   // A synthetic DMG percentage of half, not the weapon's row
   const sharpPassiveModule = createSharpPassiveModule([0.5]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a normal attack its wielder deals is raised by the rank's percentage", () => {
     expect.hasAssertions();
 
     expect(
       sharpPassiveModule.getStrikeDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        createKitStrike(wielder, AttackTag.NormalAttack),
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
         [],
@@ -46,7 +38,7 @@ describe(createSharpPassiveModule, () => {
 
     expect(
       sharpPassiveModule.getStrikeDamageBonus?.(
-        createStrike(AttackTag.ChargedAttack),
+        createKitStrike(wielder, AttackTag.ChargedAttack),
         enemy,
         createParty([TRAVELER_CHARACTER_ID]),
         [],

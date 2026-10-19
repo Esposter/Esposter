@@ -9,7 +9,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const getBuffs = (effects: readonly KitEffect[], source: string) =>

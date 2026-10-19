@@ -16,7 +16,8 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { MOONDRIFT_SECONDS } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -28,14 +29,7 @@ const pickUpCrystallizeShield = (context: KitContext, secondsRemaining = 15) =>
   castKitShield(context, OTHER_CHARACTER_ID, { health: 1, isCrystallize: true, secondsRemaining });
 const swapToOther = (context: KitContext) => {
   context.party.activeIndex = 1;
-  emitKitEvent(
-    {
-      characterId: OTHER_CHARACTER_ID,
-      kind: KitEventKind.CharacterSwapped,
-      previousCharacterId: TRAVELER_CHARACTER_ID,
-    },
-    context,
-  );
+  emitKitEvent(createCharacterSwapped(OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID), context);
 };
 
 describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {

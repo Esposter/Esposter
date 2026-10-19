@@ -8,10 +8,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createTurquoiseHuntPassiveModule } from "#src/services/weapon/passives/createTurquoiseHuntPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -39,12 +40,6 @@ describe(createTurquoiseHuntPassiveModule, () => {
     reactions: [{ reactionType }],
     striker,
   });
-  const createStrike = (attackTag: AttackTag) => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("an Elemental Skill hit gains a stack that raises Elemental Skill and Burst DMG, and a normal attack is not raised", () => {
     expect.hasAssertions();
@@ -53,7 +48,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
     turquoiseHuntPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
     const getBonus = (attackTag: AttackTag) =>
       turquoiseHuntPassiveModule.getStrikeDamageBonus?.(
-        createStrike(attackTag),
+        createKitStrike(wielder, attackTag),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -72,7 +67,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
     turquoiseHuntPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
     const getSkillBonus = () =>
       turquoiseHuntPassiveModule.getStrikeDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -97,7 +92,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
 
     expect(
       turquoiseHuntPassiveModule.getStrikeDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -113,7 +108,7 @@ describe(createTurquoiseHuntPassiveModule, () => {
 
     expect(
       turquoiseHuntPassiveModule.getStrikeDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,

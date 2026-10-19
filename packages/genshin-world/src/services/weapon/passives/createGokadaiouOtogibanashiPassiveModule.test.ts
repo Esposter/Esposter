@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -8,16 +7,15 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createGokadaiouOtogibanashiPassiveModule } from "#src/services/weapon/passives/createGokadaiouOtogibanashiPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createGokadaiouOtogibanashiPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -26,12 +24,6 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
   // Normal and Charged Attack hits deal 30% of DEF more as base damage
   const gokadaiouOtogibanashiPassiveModule = createGokadaiouOtogibanashiPassiveModule([0, 0.3]);
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseDefense, value: 1000 }]);
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a normal or charged attack gains the rank's share of DEF as base damage", () => {
     expect.hasAssertions();
@@ -40,7 +32,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
         gokadaiouOtogibanashiPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-          createStrike(attackTag),
+          createKitStrike(wielder, attackTag),
           enemy,
           context.party,
           context.kitEffectState.effects,
@@ -74,7 +66,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
     );
     expect(
       gokadaiouOtogibanashiPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        { ...createStrike(AttackTag.NormalAttack), combatant: pricedWielder },
+        { ...createKitStrike(wielder, AttackTag.NormalAttack), combatant: pricedWielder },
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -89,7 +81,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
     const context = createKitTestContext(wielder);
     expect(
       gokadaiouOtogibanashiPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,

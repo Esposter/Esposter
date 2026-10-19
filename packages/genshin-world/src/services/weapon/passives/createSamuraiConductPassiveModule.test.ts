@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -8,12 +7,13 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -25,12 +25,6 @@ describe(createSamuraiConductPassiveModule, () => {
   const samuraiConductPassiveModule = createSamuraiConductPassiveModule([0.5, 2, 3, 4, 5]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder: Combatant = createWielderCombatant();
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
   const createDamageTaken = (attackTag: AttackTag) => ({
     attackTag,
     enemy,
@@ -46,10 +40,20 @@ describe(createSamuraiConductPassiveModule, () => {
 
     const party = createParty([TRAVELER_CHARACTER_ID]);
     expect(
-      samuraiConductPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, []),
+      samuraiConductPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.ElementalSkill),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0.5);
     expect(
-      samuraiConductPassiveModule.getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, []),
+      samuraiConductPassiveModule.getStrikeDamageBonus?.(
+        createKitStrike(wielder, AttackTag.NormalAttack),
+        enemy,
+        party,
+        [],
+      ),
     ).toBe(0);
   });
 

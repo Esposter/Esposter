@@ -20,7 +20,8 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
-import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/constants.test";
+import { createCharacterSwapped } from "#src/services/weapon/passives/createCharacterSwapped.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -46,10 +47,7 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
 };
 
 const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
-  emitKitEvent(
-    { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
-    context,
-  );
+  emitKitEvent(createCharacterSwapped(to, wearer.characterId), context);
 
 describe(createHuskOfOpulentDreamsSetModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -199,14 +197,7 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
 
     swapOff(wearer, awayContext);
     stepKitSecondsSendingExpiries(awayContext, 1);
-    emitKitEvent(
-      {
-        characterId: TRAVELER_CHARACTER_ID,
-        kind: KitEventKind.CharacterSwapped,
-        previousCharacterId: OTHER_CHARACTER_ID,
-      },
-      backContext,
-    );
+    emitKitEvent(createCharacterSwapped(TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID), backContext);
     stepKitSecondsSendingExpiries(backContext, 3.1);
     expect(getBonuses(wearer, kitEffectState).defense).toBe(0);
   });

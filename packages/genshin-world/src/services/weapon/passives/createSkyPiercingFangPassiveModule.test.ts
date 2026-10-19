@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,16 +8,15 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSkyPiercingFangPassiveModule } from "#src/services/weapon/passives/createSkyPiercingFangPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createSkyPiercingFangPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -27,12 +25,6 @@ describe(createSkyPiercingFangPassiveModule, () => {
   // Tenths, and Normal and Charged hits deal half of ATK more as base damage, for four seconds
   const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.1, 0.2, 0.3, 0.5, 4]);
   const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
-  const createStrike = (attackTag: AttackTag, combatant: Combatant = wielder): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a burst raises the wielder's Movement SPD and Normal Attack SPD for four seconds", () => {
     expect.hasAssertions();
@@ -59,7 +51,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack].map((attackTag) =>
         skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-          createStrike(attackTag),
+          createKitStrike(wielder, attackTag),
           enemy,
           context.party,
           context.kitEffectState.effects,
@@ -94,7 +86,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
 
     expect(
       skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack, pricedWielder),
+        createKitStrike(pricedWielder, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -109,7 +101,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
     const context = createKitTestContext(wielder);
     expect(
       skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        createKitStrike(wielder, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -120,7 +112,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
 
     expect(
       skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -138,7 +130,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
 
     expect(
       skyPiercingFangPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        createKitStrike(wielder, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,

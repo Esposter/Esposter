@@ -1,5 +1,4 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -13,6 +12,7 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -26,12 +26,6 @@ const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_
 describe(createGamblerSetModule, () => {
   const wearer = createSetWearer(KIT);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wearer,
-    hit: KIT.plungeCollision,
-  });
 
   test("raises the DMG of its wearer's Elemental Skills by 20% from two pieces, and of no other strike", () => {
     expect.hasAssertions();
@@ -41,8 +35,10 @@ describe(createGamblerSetModule, () => {
       getArtifactSetBonus(statTables, GAMBLER_ARTIFACT_SET_ID, 2),
     );
 
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.ElementalSkill), enemy, party, [])).toBeCloseTo(0.2);
-    expect(getStrikeDamageBonus?.(createStrike(AttackTag.NormalAttack), enemy, party, [])).toBe(0);
+    expect(getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.ElementalSkill), enemy, party, [])).toBeCloseTo(
+      0.2,
+    );
+    expect(getStrikeDamageBonus?.(createKitStrike(wearer, AttackTag.NormalAttack), enemy, party, [])).toBe(0);
   });
 
   test("ends its wearer's skill cooldown when it defeats an opponent from four pieces, once every 15 seconds", () => {

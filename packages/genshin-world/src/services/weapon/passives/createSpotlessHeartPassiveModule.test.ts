@@ -1,5 +1,4 @@
 import type { Combatant } from "#src/models/kit/Combatant";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -9,10 +8,11 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSpotlessHeartPassiveModule } from "#src/services/weapon/passives/createSpotlessHeartPassiveModule";
+import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -37,12 +37,6 @@ describe(createSpotlessHeartPassiveModule, () => {
     kind: KitEventKind.DamageTaken as const,
     striker: wielder,
   });
-  const createStrike = (attackTag: AttackTag): KitStrike => ({
-    attackTag,
-    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-    combatant: wielder,
-    hit: TRAVELER_KIT.plungeCollision,
-  });
 
   test("a skill's strike gains the rank's share of DEF as base damage once the skill is used, and a normal attack gains none", () => {
     expect.hasAssertions();
@@ -52,7 +46,7 @@ describe(createSpotlessHeartPassiveModule, () => {
 
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -61,7 +55,7 @@ describe(createSpotlessHeartPassiveModule, () => {
     ).toBe(0.5 * wielder.attributes.defense);
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.NormalAttack),
+        createKitStrike(wielder, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -80,7 +74,7 @@ describe(createSpotlessHeartPassiveModule, () => {
 
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -92,7 +86,7 @@ describe(createSpotlessHeartPassiveModule, () => {
 
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -112,7 +106,7 @@ describe(createSpotlessHeartPassiveModule, () => {
 
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
@@ -125,7 +119,7 @@ describe(createSpotlessHeartPassiveModule, () => {
 
     expect(
       spotlessHeartPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        createStrike(AttackTag.ElementalSkill),
+        createKitStrike(wielder, AttackTag.ElementalSkill),
         enemy,
         context.party,
         context.kitEffectState.effects,
