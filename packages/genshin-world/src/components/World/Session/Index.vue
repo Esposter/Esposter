@@ -693,7 +693,7 @@ const offerWorship = () => {
 // A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
 // Has no room for them
 const claimWorship = () => {
-  if (worshipRegionId.value === undefined || !worshipLandmarkId.value) return;
+  if (worshipRegionId.value === undefined) return;
   claimLevel(worshipRegionId.value, worshipLevels.value, {
     id: worshipLandmarkId.value,
     position: characterBody.position,
