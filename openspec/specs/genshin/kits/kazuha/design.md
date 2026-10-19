@@ -12,7 +12,7 @@ flowchart TD
 
 ## Decisions
 
-- **Chihayaburu's hold is reached at half a second, and its skill and collision deal 0 poise, as does the burst's first hit, while its five ticks take the wiki's 75 each.** The table and the wiki give no seconds for a press's hold, so Venti's half second stands, as the other holds do; gcsim gives the skill, the collision and the burst's first hit no poise, so each reads 0, and gcsim gives the ticks none either, so each takes the wiki's 75.
+- **Chihayaburu's hold is reached at half a second, and its skill deals 0 poise, while its collision takes the wiki's 25, the burst's first hit the wiki's 250 and its five ticks the wiki's 75 each.** The table and the wiki give no seconds for a press's hold, so Venti's half second stands, as the other holds do; gcsim gives the skill no poise, so it reads 0, and gcsim gives the collision, the burst's first hit and the ticks none either, so each takes its wiki row.
 - **The Autumn Whirlwind's absorb check is a field beside the summon, as Sucrose's is.** The field runs gcsim's checks on its own schedule and takes an element once; the summon then holds the elemental tick ahead of each Anemo tick still to come, so the element lands first and the Anemo tick Swirls it, in gcsim's order.
 
 ## Key files

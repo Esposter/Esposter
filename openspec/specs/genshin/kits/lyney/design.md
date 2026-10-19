@@ -4,7 +4,7 @@ Lyney's kit is its record and one behaviour module, `createLyneyKitBehaviour`, o
 
 Not built yet: the tap-released Physical Aimed Shot and the Pyro shot at a partial hold, which a kit's single charged attack cannot hold beside the Prop Arrow, so the hold for each waits on a kit with several charged attacks; the Prop Surplus that the Prop Arrow adds, its bonus per stack and its heal on Bewildering Lights, and the HP drain the Prop Arrow takes from him, which read his own HP; the hats' kill and skill explosions, which need a hit when a hat is removed early; the hat limit that kills the oldest hat for a newer one; the burst's ticks, which strike each enemy within four metres once while the burst's mark is not on it; the skill-aligned Spiritbreath Thorn, which needs a cooldown a hit cannot read; his Ascension 1 passive and Constellations 1 and 6.
 
-Provisional: his plunges. gcsim's folder has no plunge file, so the collision, low and high plunge take Bennett's shared timings and poise, with his table's entries 5, 6 and 7 as their multipliers, as `lyneyKit.ts` writes them. The roadmap asks whether they match the game.
+Provisional: his plunges. gcsim's folder has no plunge file, so the collision, low and high plunge take Bennett's shared timings, with his table's entries 5, 6 and 7 as their multipliers, as `lyneyKit.ts` writes them; the collision takes its wiki row's poise, and the low and high plunge the wiki's 50 and 100 in place of Bennett's 100 and 150. The roadmap asks whether they match the game.
 
 ## Decisions
 

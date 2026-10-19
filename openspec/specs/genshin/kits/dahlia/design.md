@@ -16,7 +16,7 @@ The framework has no attack-speed buff for the party, so what depends on it wait
 - **The shield is a task's.** gcsim places Radiant Psalter's shield 31 frames in, so the burst sets a task that runs then; the shield reads her Max HP as it runs, as the table's share of Max HP plus a flat HP. It lasts the 12 seconds Favonian Favor holds, from its placement.
 - **The hold's threshold is provisional.** gcsim takes Immersive Ordinance's hold as its own variant but gives no threshold for it, so the kit uses the 0.5 seconds the other holds use. The roadmap's manual verification has the question.
 - **The plunges are borrowed.** Dahlia has no gcsim plunge file, so her three plunges are priced like the ones in [how a kit is read](../README.md#how-a-kit-is-read), with the 150, 100 and 25 poise Mizuki's plunges are given. The roadmap's manual verification has the question.
-- **Normal attacks and the charged attack have no poise.** gcsim gives her normal attacks and charged attack none, so the kit stands both at 0.
+- **Normal attacks and the charged attack take the wiki's poise.** gcsim gives her normal attacks and charged attack none, so the kit takes the wiki's rows: 45.6 for the first strike, 42 for the second, 27.6 for each hit of the third and 68.7 for the fourth, and 60 for each of the charged attack's two hits.
 
 ## Key files
 

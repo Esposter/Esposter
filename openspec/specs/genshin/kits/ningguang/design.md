@@ -13,7 +13,7 @@ Ningguang's kit is its record and one behaviour module, `createNingguangKitBehav
 
 ## Provisional constants
 
-- **Ningguang's plunges are provisional.** Her plunges take the index's no-file rule. The plunges' gauges are the wiki's Sparkling Scatter's, Geo at 1U, and their poise is Bennett's 150 and 100, as the no-file rule borrows; the collision is Geo at 0U with 5.
+- **Ningguang's plunges are provisional.** Her plunges take the index's no-file rule. The plunges' gauges are the wiki's Sparkling Scatter's, Geo at 1U, and their poise is the wiki's 100 high and 50 low, in place of the 150 and 100 the no-file rule borrows from Bennett's; the collision is Geo at 0U with 5.
 
 ## Not built
 

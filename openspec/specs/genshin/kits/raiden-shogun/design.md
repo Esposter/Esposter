@@ -5,7 +5,7 @@ Raiden Shogun's kit is its record and one behaviour module, `createRaidenKitBeha
 ## Decisions
 
 - **Constellation 2's DEF ignored is read off her Musou Isshin stance.** gcsim gives it while her burst's status stands or the burst's animation plays. The kit has no such status, so the hook reads the stance the burst takes at its cast, and prices only the strikes her own kit deals while it stands.
-- **The Raiden Shogun's strikes, charged attacks, skill, coordinated attack, burst and collision deal 0 poise.** Provisional, as gcsim gives none, so the kit sets each at 0.
+- **The Raiden Shogun's Musou Isshin strikes, skill, coordinated attack and burst deal 0 poise, while her polearm strikes take the wiki's 36.88, 36.96, 46.4, 26.96 (both hits of the fourth) and 60.88, her charged attack the wiki's 120 and her collision the wiki's 25.** Provisional, as gcsim gives none for the skill, the coordinated attack and the Musou Isshin strikes, so the kit sets each at 0; gcsim gives none for the polearm strikes, the charged attack or the collision either, so each takes its wiki row.
 
 ## Key files
 
@@ -15,4 +15,4 @@ Raiden Shogun's kit is its record and one behaviour module, `createRaidenKitBeha
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/raiden), MIT: the Raiden Shogun's polearm and Musou Isshin strikes' hitmarks, animations and hitboxes, both charged attacks' frames and hits, the plunges' and collision's frames, circles and poise, Eye of Stormy Judgment's frames, hit, Eye delay and coordinated attack with its ICD, Musou Shinsetsu's frames and hitbox, Musou Isshin's energy with its interval and count, Resolve's gain from another member's burst and its cap, the proud skill groups' indices ([zz_raidenshogun.dm.go](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/zz_raidenshogun.dm.go)), Ascensions 1 and 4, and Constellations 1, 4 and 6.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/raiden), MIT: the Raiden Shogun's polearm and Musou Isshin strikes' hitmarks, animations and hitboxes, both charged attacks' frames and hits, the plunges' frames, circles and poise, the collision's frames and circles, Eye of Stormy Judgment's frames, hit, Eye delay and coordinated attack with its ICD, Musou Shinsetsu's frames and hitbox, Musou Isshin's energy with its interval and count, Resolve's gain from another member's burst and its cap, the proud skill groups' indices ([zz_raidenshogun.dm.go](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/raiden/zz_raidenshogun.dm.go)), Ascensions 1 and 4, and Constellations 1, 4 and 6.

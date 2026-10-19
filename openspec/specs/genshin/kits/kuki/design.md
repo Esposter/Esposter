@@ -5,7 +5,7 @@ Kuki's kit is its record and one behaviour module, `createKukiKitBehaviour`, on 
 ## Decisions
 
 - **Kuki's HP-based damage and drain are read from her Max HP and the party's health share.** A kit has no current HP for her, so each burst hit is her Max HP's share as flat damage on the caster's Max HP, and the cast's drain is a one-tick field that lowers the health share by 30%, floored at 20%, as Xiao's drain is a field. gcsim casts seven hits at full HP and twelve at half or less, every 17 frames from 50, which the kit cannot tell, so seven stand until the Mac measures it.
-- **Kuki's plunges reach 1, 3 and 5 metres with poise 10, 50 and 100.** gcsim gives Kuki no plunge file, so the kit takes the generic plunges' reaches and poise.
+- **Kuki's plunges reach 1, 3 and 5 metres with the wiki's poise, 25, 100 and 150.** gcsim gives Kuki no plunge file, so the kit takes the generic plunges' reaches, and each plunge takes its wiki row's poise.
 
 ## Key files
 

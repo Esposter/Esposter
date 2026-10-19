@@ -1,7 +1,5 @@
 {
-  "burst.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttackVariant.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "chargedAttackVariant.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttackVariant.hits.1.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
@@ -17,13 +15,7 @@
   "moonsignBenediction.lunarReactionTypes.0": { "cause": "Unsourced", "value": "LunarCharged" },
   "moonsignBenediction.lunarReactionTypes.1": { "cause": "Unsourced", "value": "LunarBloom" },
   "moonsignBenediction.lunarReactionTypes.2": { "cause": "Unsourced", "value": "LunarCrystallize" },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "parameters.skillDurationSeconds": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 12532 } },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 12532 } },
   "skill.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" }
 }
