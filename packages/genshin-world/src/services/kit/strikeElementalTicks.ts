@@ -8,12 +8,13 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import { Attribute } from "#src/models/character/Attribute";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { EnemyState } from "#src/models/enemy/EnemyState";
-import { getTransformativeDamage } from "#src/services/combat/damage/getTransformativeDamage";
 import { applyReactionInternalCooldown } from "#src/services/combat/internalCooldown/applyReactionInternalCooldown";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
+import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
+import { getPartyTransformativeDamage } from "#src/services/kit/getPartyTransformativeDamage";
 import { landKitReactionReaches } from "#src/services/kit/landKitReactionReaches";
 import { priceEnemyReactions } from "#src/services/kit/priceEnemyReactions";
 import { getReactionParticleDrops } from "#src/services/party/getReactionParticleDrops";
@@ -44,6 +45,8 @@ const strikeOwnedTicks = (
   let burningDamage = 0;
   for (const { element, reactionType, spreadGauge } of reactions) {
     if (reactionType !== TransformativeReactionType.Burning) continue;
+    const resistance = getEnemyResistance(kind, enemy, element);
+    const partyBonus = getDeployedReactionBonuses({ combatant, element, enemy, reactionType }, context);
     burningDamage +=
       applyReactionInternalCooldown(
         enemy.internalCooldownMap,
@@ -51,7 +54,15 @@ const strikeOwnedTicks = (
         reactionType,
         element,
         enemy.elementalState.seconds,
-      ) * getTransformativeDamage(reactionType, level, elementalMastery, getEnemyResistance(kind, enemy, element));
+      ) *
+      getPartyTransformativeDamage(
+        reactionType,
+        level,
+        elementalMastery,
+        resistance,
+        partyBonus.damageBonus,
+        partyBonus.additiveBaseDamageBonus,
+      );
     reachingReactions.push({ element, reactionType, spreadGauge });
   }
   collectKitEnergyDrops(

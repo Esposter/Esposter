@@ -139,6 +139,30 @@ describe(strikeElementalTicks, () => {
     });
   });
 
+  test("a Burning tick takes its creator's party reaction DMG Bonus in its multiplier", () => {
+    expect.hasAssertions();
+
+    const creator: Combatant = {
+      ...combatant,
+      kit: { ...TRAVELER_KIT, getPartyReactionBonus: () => ({ damageBonus: 0.4 }) },
+    };
+    const burning = createSturdyEnemy(0);
+    burning.burningCombatant = creator;
+    burning.elementalReactions.push(BURNING_TICK);
+
+    strikeElementalTicks(
+      createKitTestContext(creator, {
+        characterIdCombatantMap: new Map([[creator.characterId, creator]]),
+        enemyMap: new Map([["", burning]]),
+        enemyTables,
+      }),
+    );
+
+    expect(burning.maxHealth - burning.health).toBeCloseTo(
+      getTransformativeDamage(TransformativeReactionType.Burning, LEVEL, 0, kind.elementResistances[Element.Pyro], 0.4),
+    );
+  });
+
   test.each<[string, Reaction]>([
     ["an Electro-Charged tick", ELECTRO_CHARGED_TICK],
     ["a Burning tick", BURNING_TICK],

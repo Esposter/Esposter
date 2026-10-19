@@ -19,4 +19,6 @@ export interface KitStrike {
   isAimed?: true;
   // The one enemy the hit lands on, instead of each enemy its area reaches, if it lands on one
   target?: Enemy;
+  // Whether the hit is a summon's, a gadget in gcsim's terms, which a reaction it triggers carries as a gadget's
+  isGadget?: true;
 }
