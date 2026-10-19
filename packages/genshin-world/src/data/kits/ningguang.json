@@ -33,7 +33,7 @@
   },
   "hits.strikeGem.1.hitmarkFrames": { "cause": "Unsourced", "value": 37 },
   "hits.strikeGem.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2731 } },
-  "hits.starshatterGem.length": { "cause": "Unclassified", "value": 6 },
+  "hits.starshatterGem.length": { "file": "burst.go", "line": 51, "source": "Gcsim", "value": 6 },
   "hits.starshatterGem.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
@@ -70,7 +70,7 @@
   },
   "hits.starshatterGem.5.hitmarkFrames": { "file": "burst.go", "line": 15, "source": "Gcsim", "value": 124 },
   "hits.starshatterGem.5.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2739 } },
-  "hits.jadeScreenGem.length": { "cause": "Unclassified", "value": 6 },
+  "hits.jadeScreenGem.length": { "file": "burst.go", "line": 60, "source": "Gcsim", "value": 6 },
   "hits.jadeScreenGem.0.area": {
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
@@ -117,7 +117,7 @@
     "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.5 }
   },
-  "hits.starJadeShot.hitmarkFrames": { "cause": "Unclassified", "value": 40 },
+  "hits.starJadeShot.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
   "hits.starJadeShot.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 2731 } },
   "hits.chargedAttackGem.hitmarkFrames": { "cause": "Unsourced", "value": 30 },
   "hits.chargedAttackGem.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 2731 } },
