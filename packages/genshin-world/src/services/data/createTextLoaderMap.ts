@@ -1,3 +1,4 @@
+import type { GameDataset } from "#src/models/data/GameDataset";
 import type { TextChunk } from "#src/models/data/TextChunk";
 
 import { textChunkSchema } from "#src/models/data/TextChunk";
@@ -6,13 +7,13 @@ import { GameLanguage } from "genshin-text";
 
 // The text datasets a loader map reads, each a prefix of its languages' keys in the game data lock
 type TextPrefix =
-  | "achievementText"
-  | "archiveText"
-  | "gcgText"
-  | "nameText"
-  | "questText"
-  | "standingTalkText"
-  | "tipText";
+  | GameDataset.AchievementText
+  | GameDataset.ArchiveText
+  | GameDataset.GcgText
+  | GameDataset.NameText
+  | GameDataset.QuestText
+  | GameDataset.StandingTalkText
+  | GameDataset.TipText;
 
 // A text map by language, each language's chunk fetched by its own key under the prefix, so a page downloads only the
 // Language it shows

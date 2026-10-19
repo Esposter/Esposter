@@ -28,6 +28,53 @@ describe("inventoryItemSaveSchema", () => {
     ).toBe(false);
   });
 
+  test("an artifact's entry whose item id is not its piece's is refused", () => {
+    expect.hasAssertions();
+
+    expect(
+      inventoryItemSaveSchema.safeParse({
+        artifact: {
+          experience: 0,
+          isLocked: false,
+          itemId: 102,
+          level: 0,
+          mainAffix: Attribute.Health,
+          minorAffixes: [],
+          rarity: 5,
+          setId: 1,
+          slot: ArtifactSlot.FlowerOfLife,
+        },
+        id: 0,
+        itemId: 101,
+        kind: InventoryItemKind.Artifact,
+        quantity: 1,
+      }).success,
+    ).toBe(false);
+  });
+
+  test("an artifact's entry holds the item id of its piece", () => {
+    expect.hasAssertions();
+
+    const entry = {
+      artifact: {
+        experience: 0,
+        isLocked: false,
+        itemId: 101,
+        level: 0,
+        mainAffix: Attribute.Health,
+        minorAffixes: [],
+        rarity: 5,
+        setId: 1,
+        slot: ArtifactSlot.FlowerOfLife,
+      },
+      id: 0,
+      itemId: 101,
+      kind: InventoryItemKind.Artifact,
+      quantity: 1,
+    };
+    expect(inventoryItemSaveSchema.parse(entry)).toStrictEqual(entry);
+  });
+
   test("a weapon's entry holds its level, EXP, ascension and refinement", () => {
     expect.hasAssertions();
 

@@ -71,7 +71,7 @@ describe(toInventorySave, () => {
     const artifact: Artifact = {
       experience: 0,
       isLocked: false,
-      itemId: 101,
+      itemId: artifactDefinition.id,
       level: 0,
       mainAffix: Attribute.Health,
       minorAffixes: [{ attribute: Attribute.Attack, value: 10 }],

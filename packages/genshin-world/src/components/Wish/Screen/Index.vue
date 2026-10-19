@@ -85,7 +85,7 @@ const historyCells = computed(() =>
       splitGameTextColors(gameText[BannerKindGameTextKeyMap[bannerKind]])
         .map(({ text }) => text)
         .join(""),
-    Intl.DateTimeFormat().resolvedOptions().timeZone,
+    Temporal.Now.timeZoneId(),
   ),
 );
 // The banners the world offers now, their pools read from the stat tables and named in the reader's language: the

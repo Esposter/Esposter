@@ -8,7 +8,7 @@ A system the world holds is saved only when its slice is in the save's schema (`
 
 - the wallet: the currencies, the instant Original Resin last changed, and the Primogem refill count and day;
 - the Frostbearing Tree's offering: the items held toward its next level and the level it has reached ([offering systems](../offering-systems/design.md));
-- the bag: each entry by its item id, with its bag id, its count and a weapon's or an artifact's level, and the id the next entry takes;
+- the bag: each entry by its item id, with its bag id, its count, a weapon's level or an artifact as rolled (whose item id must be the entry's own, so a save that splits them is refused), and the id the next entry takes;
 - the characters the player holds, each by its id with its level, ascension, constellations, stella fortuna count, talent levels, weapon, artifacts and copy count ([character attributes](../character-attributes/design.md));
 - the carried quests' progress, by quest id, and the unlocked landmarks, by id;
 - the chests opened, by chest id ([chests](../chests/design.md));

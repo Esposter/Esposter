@@ -27,7 +27,6 @@ import {
   WEEKLY_BOSS_COMPANIONSHIP_EXP,
 } from "#src/services/bosses/constants";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
-import { getEnemyKindTraits } from "#src/services/enemy/getEnemyKindTraits";
 import { getSpawnKey } from "#src/services/enemy/getSpawnKey";
 import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionshipExp";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
@@ -96,11 +95,7 @@ export const useWorldTrounceBlossoms = ({
     // A weekly boss's blossom is read first, since a weekly boss is no normal boss whatever its traits say of a drop
     const trounceBlossom =
       computeDefeatWeeklyBossTrounceBlossom(enemy.enemyKindId, enemy.position) ??
-      computeDefeatTrounceBlossom(
-        enemyType,
-        enemy.position,
-        getEnemyKindTraits(enemyKindMap, enemy.enemyKindId).uniqueDropId,
-      );
+      computeDefeatTrounceBlossom(enemyType, enemy.position, enemy.traits.uniqueDropId);
     if (trounceBlossom) writeTrounceBlossom(getSpawnKey(enemy.campId, enemy.id), trounceBlossom);
   });
   events.on("teleport", () => {
