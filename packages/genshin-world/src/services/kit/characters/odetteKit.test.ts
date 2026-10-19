@@ -44,7 +44,8 @@ const shapeEffects = (context: KitContext) =>
 // The Dance Double a summon leaves on the effects, and the frames each of its hits falls at from its summon
 const checkIsDanceDouble = (effect: KitEffect): effect is KitSummon =>
   effect.kind === "summon" && effect.id === DANCE_DOUBLE_ID;
-const findDanceDoubles = (kitEffectState: KitEffectState) => kitEffectState.effects.filter(checkIsDanceDouble);
+const findDanceDoubles = (kitEffectState: KitEffectState) =>
+  kitEffectState.effects.filter((effect) => checkIsDanceDouble(effect));
 const toHitFrames = ({ hits }: KitSummon) => hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60));
 
 describe(createOdetteKitBehaviour, () => {

@@ -58,72 +58,70 @@ describe("stepKitEffects", () => {
     },
   );
 
-  describe("a status's five seconds", () => {
-    const STATUS_ID = "five-second-status";
-    // The status a combatant carries for five seconds, stepped the way the world steps it, at the fixed step
-    const createStatusContext = () => {
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context = createKitTestContext(COMBATANT, { kitEffectState });
-      addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 5 });
-      return { context, kitEffectState };
-    };
+  const STATUS_ID = "five-second-status";
+  // The status a combatant carries for five seconds, stepped the way the world steps it, at the fixed step
+  const createStatusContext = () => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(COMBATANT, { kitEffectState });
+    addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 5 });
+    return { context, kitEffectState };
+  };
 
-    test("reads active at four seconds of steps", () => {
-      expect.hasAssertions();
-      const { context, kitEffectState } = createStatusContext();
-      stepKitSeconds(context, 4);
+  test("a status's five seconds reads active at four seconds of steps", () => {
+    expect.hasAssertions();
+    const { context, kitEffectState } = createStatusContext();
+    stepKitSeconds(context, 4);
 
-      expect(checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID)).toBe(true);
+    expect(checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID)).toBe(true);
+  });
+
+  test("a status's five seconds reads inactive and is dropped at exactly five seconds of steps", () => {
+    expect.hasAssertions();
+    const { context, kitEffectState } = createStatusContext();
+    stepKitSeconds(context, 5);
+
+    expect([
+      checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
+      kitEffectState.effects,
+    ]).toStrictEqual([false, []]);
+  });
+
+  test("a status's five seconds reads a field a tick adds with the status's seconds gone with it at 360 frames", () => {
+    expect.hasAssertions();
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(COMBATANT, { kitEffectState });
+    addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 6 });
+    scheduleKitTask(kitEffectState, TRAVELER_CHARACTER_ID, 221 / 60, (tick) => {
+      const status = findKitStatus(tick.kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID);
+      castKitField(
+        tick.kitEffectState,
+        TRAVELER_CHARACTER_ID,
+        { x: 0, z: 0 },
+        {
+          id: "copy",
+          nextTickSeconds: Number.POSITIVE_INFINITY,
+          onTick: () => {},
+          secondsRemaining: status?.secondsRemaining ?? 0,
+          tickIntervalSeconds: Number.POSITIVE_INFINITY,
+        },
+      );
     });
+    const checkIsCopyPresent = () =>
+      kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === "copy");
 
-    test("reads inactive and is dropped at exactly five seconds of steps", () => {
-      expect.hasAssertions();
-      const { context, kitEffectState } = createStatusContext();
-      stepKitSeconds(context, 5);
+    stepKitSeconds(context, 359 / 60);
+    const presentAt359 = [
+      checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
+      checkIsCopyPresent(),
+    ];
+    stepKitSeconds(context, 1 / 60);
 
-      expect([
-        checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
-        kitEffectState.effects,
-      ]).toStrictEqual([false, []]);
-    });
-
-    test("reads a field a tick adds with the status's seconds gone with it at 360 frames", () => {
-      expect.hasAssertions();
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context = createKitTestContext(COMBATANT, { kitEffectState });
-      addKitStatus(kitEffectState, TRAVELER_CHARACTER_ID, { id: STATUS_ID, secondsRemaining: 6 });
-      scheduleKitTask(kitEffectState, TRAVELER_CHARACTER_ID, 221 / 60, (tick) => {
-        const status = findKitStatus(tick.kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID);
-        castKitField(
-          tick.kitEffectState,
-          TRAVELER_CHARACTER_ID,
-          { x: 0, z: 0 },
-          {
-            id: "copy",
-            nextTickSeconds: Number.POSITIVE_INFINITY,
-            onTick: () => {},
-            secondsRemaining: status?.secondsRemaining ?? 0,
-            tickIntervalSeconds: Number.POSITIVE_INFINITY,
-          },
-        );
-      });
-      const checkIsCopyPresent = () =>
-        kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === "copy");
-
-      stepKitSeconds(context, 359 / 60);
-      const presentAt359 = [
-        checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID),
-        checkIsCopyPresent(),
-      ];
-      stepKitSeconds(context, 1 / 60);
-
-      expect([
-        presentAt359,
-        [checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID), checkIsCopyPresent()],
-      ]).toStrictEqual([
-        [true, true],
-        [false, false],
-      ]);
-    });
+    expect([
+      presentAt359,
+      [checkIsKitStatusActive(kitEffectState.effects, TRAVELER_CHARACTER_ID, STATUS_ID), checkIsCopyPresent()],
+    ]).toStrictEqual([
+      [true, true],
+      [false, false],
+    ]);
   });
 });

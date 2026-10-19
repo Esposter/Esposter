@@ -268,193 +268,189 @@ describe(createColumbinaKitBehaviour, () => {
     );
   });
 
-  describe("ascension 1's Lunacy", () => {
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("ascension 1's Lunacy a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getCriticalRateBonus(1, 1)).toBeCloseTo(0.05);
-    });
-
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
-
-      expect(getCriticalRateBonus(0, 3)).toBe(0);
-    });
-
-    test("each Gravity Ripple stacks Lunacy up to three", () => {
-      expect.hasAssertions();
-
-      expect(getCriticalRateBonus(1, 2)).toBeCloseTo(0.1);
-      expect(getCriticalRateBonus(1, 5)).toBeCloseTo(0.15);
-    });
-
-    test("a DoT tick stacks no Lunacy, as gcsim gives it on the Gravity Ripple alone", () => {
-      expect.hasAssertions();
-
-      const ascendedCombatant: Combatant = { ...combatant, ascension: 1 };
-      const kitEffectState: KitEffectState = { effects: [] };
-      const context = createKitTestContext(ascendedCombatant, { kitEffectState });
-      COLUMBINA_KIT.elementalSkill.onStart?.(context);
-      const [field] = kitEffectState.effects as KitField[];
-      for (let tick = 0; tick < 3; tick++) field?.onTick(context, 0);
-
-      expect(readLunacyCriticalRate(ascendedCombatant, kitEffectState.effects)).toBe(0);
-    });
+    expect(getCriticalRateBonus(1, 1)).toBeCloseTo(0.05);
   });
 
-  describe("gravity interference", () => {
-    test("a Lunar reaction builds ten gravity a second for the two seconds after it, so six seconds of it fire a Gravity Ripple", () => {
-      expect.hasAssertions();
+  test("ascension 1's Lunacy a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-      expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
+    expect(getCriticalRateBonus(0, 3)).toBe(0);
+  });
 
+  test("ascension 1's Lunacy each Gravity Ripple stacks Lunacy up to three", () => {
+    expect.hasAssertions();
+
+    expect(getCriticalRateBonus(1, 2)).toBeCloseTo(0.1);
+    expect(getCriticalRateBonus(1, 5)).toBeCloseTo(0.15);
+  });
+
+  test("ascension 1's Lunacy a DoT tick stacks no Lunacy, as gcsim gives it on the Gravity Ripple alone", () => {
+    expect.hasAssertions();
+
+    const ascendedCombatant: Combatant = { ...combatant, ascension: 1 };
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(ascendedCombatant, { kitEffectState });
+    COLUMBINA_KIT.elementalSkill.onStart?.(context);
+    const [field] = kitEffectState.effects as KitField[];
+    for (let tick = 0; tick < 3; tick++) field?.onTick(context, 0);
+
+    expect(readLunacyCriticalRate(ascendedCombatant, kitEffectState.effects)).toBe(0);
+  });
+
+  test("gravity interference a Lunar reaction builds ten gravity a second for the two seconds after it, so six seconds of it fire a Gravity Ripple", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-      expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBeCloseTo(0.05);
-    });
+    expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
 
-    test("gravity builds only in the two seconds after a Lunar reaction, so a second with none adds nothing", () => {
-      expect.hasAssertions();
+    feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
+    expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBeCloseTo(0.05);
+  });
 
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
+  test("gravity interference gravity builds only in the two seconds after a Lunar reaction, so a second with none adds nothing", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
+    feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
+    for (let second = 0; second < 6; second++) stepGravitySecond(field, context);
+    expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
+
+    for (let second = 0; second < 3; second++)
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-      for (let second = 0; second < 6; second++) stepGravitySecond(field, context);
-      expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
+    expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
 
-      for (let second = 0; second < 3; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-      expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBe(0);
+    feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
+    expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBeCloseTo(0.05);
+  });
 
+  test("gravity interference a press while the skill stands keeps the gravity built, as gcsim clears it only when no skill stands", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const first = pressSkill(kitEffectState, 0, 1);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
+      feedGravitySecond(first.field, first.context, first.pressed, LunarReactionType.LunarCharged);
+    const second = pressSkill(kitEffectState, 0, 1);
+    feedGravitySecond(second.field, second.context, second.pressed, LunarReactionType.LunarCharged);
+
+    expect(readLunacyCriticalRate(second.pressed, kitEffectState.effects)).toBeCloseTo(0.05);
+  });
+
+  test("gravity interference a press with no skill standing starts from no gravity", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const first = pressSkill(kitEffectState, 0, 1);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
+      feedGravitySecond(first.field, first.context, first.pressed, LunarReactionType.LunarCharged);
+    kitEffectState.effects = [];
+    const second = pressSkill(kitEffectState, 0, 1);
+    feedGravitySecond(second.field, second.context, second.pressed, LunarReactionType.LunarCharged);
+
+    expect(readLunacyCriticalRate(second.pressed, kitEffectState.effects)).toBe(0);
+  });
+
+  test("gravity interference constellation 1's press fires a Gravity Ripple at once, giving the active member six energy for Lunar-Charged, then waits fifteen seconds", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context } = pressSkill(kitEffectState, 1);
+    expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(6);
+
+    COLUMBINA_KIT.elementalSkill.onStart?.(context);
+    expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(6);
+
+    stepKitTestEffects(15, context);
+    COLUMBINA_KIT.elementalSkill.onStart?.(context);
+    expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(12);
+  });
+
+  test("gravity interference constellation 1's Lunar-Crystallize ripple shields her for 12% of her max HP for eight seconds", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context, field, pressed } = pressSkill(kitEffectState, 1);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+      feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
+
+    const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+    expect(shield?.characterId).toBe(COLUMBINA_CHARACTER_ID);
+    expect(shield?.element).toBe(Element.Hydro);
+    expect(shield?.secondsRemaining).toBe(8);
+    expect(shield?.health).toBeCloseTo(0.12 * pressed.attributes.maxHealth);
+  });
+
+  test("gravity interference constellation 1's Lunar-Crystallize shield is 12% of her max HP as her constellation 2 buff raises it", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context, field, pressed } = pressSkill(kitEffectState, 2);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+      feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
+
+    const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
+    expect(shield?.health).toBeCloseTo(0.12 * 1.4 * pressed.attributes.maxHealth);
+  });
+
+  test("gravity interference constellation 2 gives her 40% max HP for eight seconds with each Gravity Ripple", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    pressSkill(kitEffectState, 2);
+    const healthBuff = kitEffectState.effects.find(
+      (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.HealthPercent,
+    );
+
+    expect(healthBuff?.amount).toBe(0.4);
+    expect(healthBuff?.characterId).toBe(COLUMBINA_CHARACTER_ID);
+    expect(healthBuff?.secondsRemaining).toBe(8);
+  });
+
+  test("gravity interference constellation 2's Lunar-Charged ripple gives the active member 1% of her max HP in ATK, and a Lunar-Crystallize one moves it to DEF", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const pressed: Combatant = { ...combatant, constellationCount: 2 };
+    const characterIdCombatantMap = new Map<number, Combatant>([
+      [COLUMBINA_CHARACTER_ID, pressed],
+      ...MOONSIGN_CHARACTER_IDS.map((characterId): [number, Combatant] => [
+        characterId,
+        { ...combatant, characterId, kit: MOONSIGN_KIT },
+      ]),
+    ]);
+    const context = createKitTestContext(pressed, {
+      characterIdCombatantMap,
+      kitEffectState,
+      party: createParty([COLUMBINA_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS]),
+    });
+    COLUMBINA_KIT.elementalSkill.onStart?.(context);
+    const [field] = kitEffectState.effects as KitField[];
+    const [attack] = readTeamBuffs(kitEffectState);
+    expect(attack?.attribute).toBe(Attribute.Attack);
+    expect(attack?.characterId).toBe(COLUMBINA_CHARACTER_ID);
+    expect(attack?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
+
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+      feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
+    expect(readTeamBuffs(kitEffectState).map(({ attribute }) => attribute)).toStrictEqual([Attribute.Defense]);
+  });
+
+  test("gravity interference constellation 2's team buffs need the Moonsign to reach Ascendant Gleam, so a team without it gives none", () => {
+    expect.hasAssertions();
+
+    const kitEffectState: KitEffectState = { effects: [] };
+    const { context, field, pressed } = pressSkill(kitEffectState, 2);
+    for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
       feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-      expect(readLunacyCriticalRate(pressed, kitEffectState.effects)).toBeCloseTo(0.05);
-    });
 
-    test("a press while the skill stands keeps the gravity built, as gcsim clears it only when no skill stands", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const first = pressSkill(kitEffectState, 0, 1);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
-        feedGravitySecond(first.field, first.context, first.pressed, LunarReactionType.LunarCharged);
-      const second = pressSkill(kitEffectState, 0, 1);
-      feedGravitySecond(second.field, second.context, second.pressed, LunarReactionType.LunarCharged);
-
-      expect(readLunacyCriticalRate(second.pressed, kitEffectState.effects)).toBeCloseTo(0.05);
-    });
-
-    test("a press with no skill standing starts from no gravity", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const first = pressSkill(kitEffectState, 0, 1);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE - 1; second++)
-        feedGravitySecond(first.field, first.context, first.pressed, LunarReactionType.LunarCharged);
-      kitEffectState.effects = [];
-      const second = pressSkill(kitEffectState, 0, 1);
-      feedGravitySecond(second.field, second.context, second.pressed, LunarReactionType.LunarCharged);
-
-      expect(readLunacyCriticalRate(second.pressed, kitEffectState.effects)).toBe(0);
-    });
-
-    test("constellation 1's press fires a Gravity Ripple at once, giving the active member six energy for Lunar-Charged, then waits fifteen seconds", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context } = pressSkill(kitEffectState, 1);
-      expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(6);
-
-      COLUMBINA_KIT.elementalSkill.onStart?.(context);
-      expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(6);
-
-      stepKitTestEffects(15, context);
-      COLUMBINA_KIT.elementalSkill.onStart?.(context);
-      expect(getPartyMember(context.party, COLUMBINA_CHARACTER_ID).energy).toBe(12);
-    });
-
-    test("constellation 1's Lunar-Crystallize ripple shields her for 12% of her max HP for eight seconds", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context, field, pressed } = pressSkill(kitEffectState, 1);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
-
-      const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
-      expect(shield?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-      expect(shield?.element).toBe(Element.Hydro);
-      expect(shield?.secondsRemaining).toBe(8);
-      expect(shield?.health).toBeCloseTo(0.12 * pressed.attributes.maxHealth);
-    });
-
-    test("constellation 1's Lunar-Crystallize shield is 12% of her max HP as her constellation 2 buff raises it", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context, field, pressed } = pressSkill(kitEffectState, 2);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
-
-      const shield = kitEffectState.effects.find((effect): effect is KitShield => effect.kind === "shield");
-      expect(shield?.health).toBeCloseTo(0.12 * 1.4 * pressed.attributes.maxHealth);
-    });
-
-    test("constellation 2 gives her 40% max HP for eight seconds with each Gravity Ripple", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      pressSkill(kitEffectState, 2);
-      const healthBuff = kitEffectState.effects.find(
-        (effect): effect is KitBuff => effect.kind === "buff" && effect.attribute === Attribute.HealthPercent,
-      );
-
-      expect(healthBuff?.amount).toBe(0.4);
-      expect(healthBuff?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-      expect(healthBuff?.secondsRemaining).toBe(8);
-    });
-
-    test("constellation 2's Lunar-Charged ripple gives the active member 1% of her max HP in ATK, and a Lunar-Crystallize one moves it to DEF", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const pressed: Combatant = { ...combatant, constellationCount: 2 };
-      const characterIdCombatantMap = new Map<number, Combatant>([
-        [COLUMBINA_CHARACTER_ID, pressed],
-        ...MOONSIGN_CHARACTER_IDS.map((characterId): [number, Combatant] => [
-          characterId,
-          { ...combatant, characterId, kit: MOONSIGN_KIT },
-        ]),
-      ]);
-      const context = createKitTestContext(pressed, {
-        characterIdCombatantMap,
-        kitEffectState,
-        party: createParty([COLUMBINA_CHARACTER_ID, ...MOONSIGN_CHARACTER_IDS]),
-      });
-      COLUMBINA_KIT.elementalSkill.onStart?.(context);
-      const [field] = kitEffectState.effects as KitField[];
-      const [attack] = readTeamBuffs(kitEffectState);
-      expect(attack?.attribute).toBe(Attribute.Attack);
-      expect(attack?.characterId).toBe(COLUMBINA_CHARACTER_ID);
-      expect(attack?.amount).toBeCloseTo(0.01 * 1.4 * pressed.attributes.maxHealth);
-
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCrystallize);
-      expect(readTeamBuffs(kitEffectState).map(({ attribute }) => attribute)).toStrictEqual([Attribute.Defense]);
-    });
-
-    test("constellation 2's team buffs need the Moonsign to reach Ascendant Gleam, so a team without it gives none", () => {
-      expect.hasAssertions();
-
-      const kitEffectState: KitEffectState = { effects: [] };
-      const { context, field, pressed } = pressSkill(kitEffectState, 2);
-      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
-        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
-
-      expect(readTeamBuffs(kitEffectState)).toStrictEqual([]);
-    });
+    expect(readTeamBuffs(kitEffectState)).toStrictEqual([]);
   });
 
   test("constellation 6 gives each party member's Electro and Hydro strikes 80% CRIT DMG for eight seconds after a Lunar-Charged reaction in the burst's 1.2 seconds", () => {
@@ -512,130 +508,120 @@ describe(createColumbinaKitBehaviour, () => {
     expect(readOwnCriticalDamage(context, columbina, Element.Electro)).toBe(0.8);
   });
 
-  describe("ascension 4's Moonridge Dew", () => {
-    test("a Lunar-Bloom in the burst's window gives the party a Moonridge Dew at Ascension 4", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
+  test("ascension 4's Moonridge Dew a Lunar-Bloom in the burst's window gives the party a Moonridge Dew at Ascension 4", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
 
-      expect(context.party.moonridgeDew).toBe(1);
-    });
-
-    test("below Ascension 4, a Lunar-Bloom gives no Moonridge Dew", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      triggerLunarReaction(context, { ...columbina, ascension: 3 }, other, LunarReactionType.LunarBloom);
-
-      expect(context.party.moonridgeDew).toBe(0);
-    });
-
-    test("a Lunar-Charged reaction gives no Moonridge Dew, only a Lunar-Bloom does", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarCharged);
-
-      expect(context.party.moonridgeDew).toBe(0);
-    });
-
-    test("a Lunar-Bloom after the burst's window gives none", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      stepKitTestEffects(2, context);
-      triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
-
-      expect(context.party.moonridgeDew).toBe(0);
-    });
-
-    test("two Lunar-Blooms at the same instant gain one Moonridge Dew, as gcsim's three-frame cooldown gives", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      const ascended = { ...columbina, ascension: 4 };
-      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
-      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
-
-      expect(context.party.moonridgeDew).toBe(1);
-    });
-
-    test("three gains is the most in an eighteen-second window, and a burst after the window runs out gains again", () => {
-      expect.hasAssertions();
-      const { columbina, context, other } = createBurstContext(0);
-      const ascended = { ...columbina, ascension: 4 };
-      for (let index = 0; index < 4; index++) {
-        triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
-        stepKitTestEffects(0.1, context);
-      }
-      // The three gains fill the party's Moonridge Dew, and the fourth gives none within the window
-      expect(context.party.moonridgeDew).toBe(3);
-
-      context.party.moonridgeDew = 0;
-      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
-      expect(context.party.moonridgeDew).toBe(0);
-
-      stepKitTestEffects(19, context);
-      COLUMBINA_KIT.elementalBurst?.onStart?.(context);
-      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
-      expect(context.party.moonridgeDew).toBe(1);
-    });
+    expect(context.party.moonridgeDew).toBe(1);
   });
 
-  describe("charged attack variant, Moondew Cleanse", () => {
-    test("a charged attack with Dew to spend stands as Moondew Cleanse, and one without Dew is her normal charged attack", () => {
-      expect.hasAssertions();
+  test("ascension 4's Moonridge Dew below Ascension 4, a Lunar-Bloom gives no Moonridge Dew", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    triggerLunarReaction(context, { ...columbina, ascension: 3 }, other, LunarReactionType.LunarBloom);
 
-      const context = createKitTestContext(createColumbinaCombatant(), {
-        party: createParty([COLUMBINA_CHARACTER_ID]),
-      });
-      expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+    expect(context.party.moonridgeDew).toBe(0);
+  });
 
-      context.party.moonridgeDew = 1;
-      expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
-    });
+  test("ascension 4's Moonridge Dew a Lunar-Charged reaction gives no Moonridge Dew, only a Lunar-Bloom does", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarCharged);
 
-    test("a Moondew Cleanse spends no stamina, and her normal charged attack spends the table's", () => {
-      expect.hasAssertions();
+    expect(context.party.moonridgeDew).toBe(0);
+  });
 
-      const context = createKitTestContext(createColumbinaCombatant(), {
-        party: createParty([COLUMBINA_CHARACTER_ID]),
-      });
-      const readSpentStamina = (): number =>
-        COLUMBINA_KIT.chargedAttackStamina * (COLUMBINA_KIT.getChargedAttackStaminaMultiplier?.(context) ?? 1);
-      expect(readSpentStamina()).toStrictEqual(COLUMBINA_KIT.chargedAttackStamina);
+  test("ascension 4's Moonridge Dew a Lunar-Bloom after the burst's window gives none", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    stepKitTestEffects(2, context);
+    triggerLunarReaction(context, { ...columbina, ascension: 4 }, other, LunarReactionType.LunarBloom);
 
-      context.party.moonridgeDew = 1;
-      expect(readSpentStamina()).toBe(0);
-    });
+    expect(context.party.moonridgeDew).toBe(0);
+  });
 
-    test("a Moondew Cleanse spends one Dew, from the verdant first", () => {
-      expect.hasAssertions();
+  test("ascension 4's Moonridge Dew two Lunar-Blooms at the same instant gain one Moonridge Dew, as gcsim's three-frame cooldown gives", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    const ascended = { ...columbina, ascension: 4 };
+    triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+    triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
 
-      const context = createKitTestContext(createColumbinaCombatant(), {
-        party: createParty([COLUMBINA_CHARACTER_ID]),
-      });
-      context.party.verdantDew.count = 1;
-      context.party.moonridgeDew = 2;
-      COLUMBINA_KIT.chargedAttackVariant?.action.onStart?.(context);
+    expect(context.party.moonridgeDew).toBe(1);
+  });
 
-      expect(context.party.verdantDew.count).toBe(0);
-      expect(context.party.moonridgeDew).toBe(2);
-    });
+  test("ascension 4's Moonridge Dew three gains is the most in an eighteen-second window, and a burst after the window runs out gains again", () => {
+    expect.hasAssertions();
+    const { columbina, context, other } = createBurstContext(0);
+    const ascended = { ...columbina, ascension: 4 };
+    for (let index = 0; index < 4; index++) {
+      triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+      stepKitTestEffects(0.1, context);
+    }
+    // The three gains fill the party's Moonridge Dew, and the fourth gives none within the window
+    expect(context.party.moonridgeDew).toBe(3);
 
-    test("each of Moondew Cleanse's Lunar-Bloom hits ignores all of the enemy's DEF, and her normal charged attack ignores none", () => {
-      expect.hasAssertions();
+    context.party.moonridgeDew = 0;
+    triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+    expect(context.party.moonridgeDew).toBe(0);
 
-      const columbina = createColumbinaCombatant();
-      const context = createKitTestContext(columbina, { party: createParty([COLUMBINA_CHARACTER_ID]) });
-      const readDefenceIgnored = (hit: KitHit) =>
-        COLUMBINA_KIT.getStrikeDefenceIgnored?.(
-          { attackTag: AttackTag.ChargedAttack, body: kitBody, combatant: columbina, hit },
-          c6Enemy,
-          context.party,
-          context.kitEffectState.effects,
-        ) ?? 0;
-      const variantHits = COLUMBINA_KIT.chargedAttackVariant?.action.hits ?? [];
+    stepKitTestEffects(19, context);
+    COLUMBINA_KIT.elementalBurst?.onStart?.(context);
+    triggerLunarReaction(context, ascended, other, LunarReactionType.LunarBloom);
+    expect(context.party.moonridgeDew).toBe(1);
+  });
 
-      expect(variantHits).toHaveLength(3);
-      for (const hit of variantHits) expect(readDefenceIgnored(hit)).toBe(1);
-      expect(readDefenceIgnored(takeOne(COLUMBINA_KIT.chargedAttack.hits))).toBe(0);
-    });
+  test("charged attack variant, Moondew Cleanse a charged attack with Dew to spend stands as Moondew Cleanse, and one without Dew is her normal charged attack", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(createColumbinaCombatant(), { party: createParty([COLUMBINA_CHARACTER_ID]) });
+    expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(false);
+
+    context.party.moonridgeDew = 1;
+    expect(COLUMBINA_KIT.chargedAttackVariant?.checkIsActive(context)).toBe(true);
+  });
+
+  test("charged attack variant, Moondew Cleanse a Moondew Cleanse spends no stamina, and her normal charged attack spends the table's", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(createColumbinaCombatant(), { party: createParty([COLUMBINA_CHARACTER_ID]) });
+    const readSpentStamina = (): number =>
+      COLUMBINA_KIT.chargedAttackStamina * (COLUMBINA_KIT.getChargedAttackStaminaMultiplier?.(context) ?? 1);
+    expect(readSpentStamina()).toStrictEqual(COLUMBINA_KIT.chargedAttackStamina);
+
+    context.party.moonridgeDew = 1;
+    expect(readSpentStamina()).toBe(0);
+  });
+
+  test("charged attack variant, Moondew Cleanse a Moondew Cleanse spends one Dew, from the verdant first", () => {
+    expect.hasAssertions();
+
+    const context = createKitTestContext(createColumbinaCombatant(), { party: createParty([COLUMBINA_CHARACTER_ID]) });
+    context.party.verdantDew.count = 1;
+    context.party.moonridgeDew = 2;
+    COLUMBINA_KIT.chargedAttackVariant?.action.onStart?.(context);
+
+    expect(context.party.verdantDew.count).toBe(0);
+    expect(context.party.moonridgeDew).toBe(2);
+  });
+
+  test("charged attack variant, Moondew Cleanse each of Moondew Cleanse's Lunar-Bloom hits ignores all of the enemy's DEF, and her normal charged attack ignores none", () => {
+    expect.hasAssertions();
+
+    const columbina = createColumbinaCombatant();
+    const context = createKitTestContext(columbina, { party: createParty([COLUMBINA_CHARACTER_ID]) });
+    const readDefenceIgnored = (hit: KitHit) =>
+      COLUMBINA_KIT.getStrikeDefenceIgnored?.(
+        { attackTag: AttackTag.ChargedAttack, body: kitBody, combatant: columbina, hit },
+        c6Enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ) ?? 0;
+    const variantHits = COLUMBINA_KIT.chargedAttackVariant?.action.hits ?? [];
+
+    expect(variantHits).toHaveLength(3);
+    for (const hit of variantHits) expect(readDefenceIgnored(hit)).toBe(1);
+    expect(readDefenceIgnored(takeOne(COLUMBINA_KIT.chargedAttack.hits))).toBe(0);
   });
 });

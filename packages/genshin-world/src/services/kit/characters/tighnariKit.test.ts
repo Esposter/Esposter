@@ -77,6 +77,21 @@ describe(createTighnariKitBehaviour, () => {
     return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
   };
 
+  const strikeBody = createKitBody({ x: 0, z: 0 });
+  const strikeEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
+    TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
+      {
+        attackTag,
+        body: strikeBody,
+        combatant: { ...createTighnariCombatant(0, 0), constellationCount },
+        hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
+      },
+      strikeEnemy,
+      createParty([TIGHNARI_CHARACTER_ID]),
+      [],
+    ) ?? 0;
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -159,99 +174,81 @@ describe(createTighnariKitBehaviour, () => {
 
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
-  describe("constellation 1's CRIT Rate", () => {
-    const strikeBody = createKitBody({ x: 0, z: 0 });
-    const strikeEnemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const getCriticalRateBonus = (constellationCount: number, attackTag: AttackTag): number =>
-      TIGHNARI_KIT.getStrikeCriticalRateBonus?.(
-        {
-          attackTag,
-          body: strikeBody,
-          combatant: { ...createTighnariCombatant(0, 0), constellationCount },
-          hit: takeOne(TIGHNARI_KIT.chargedAttack.hits),
-        },
-        strikeEnemy,
-        createParty([TIGHNARI_CHARACTER_ID]),
-        [],
-      ) ?? 0;
 
-    test("a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
-      expect.hasAssertions();
+  test("constellation 1's CRIT Rate a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
+    expect.hasAssertions();
 
-      expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
-    });
-
-    test("a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
-      expect.hasAssertions();
-
-      expect([
-        getCriticalRateBonus(0, AttackTag.ChargedAttack),
-        getCriticalRateBonus(1, AttackTag.NormalAttack),
-      ]).toStrictEqual([0, 0]);
-    });
+    expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
   });
-  describe("constellation 4's team Elemental Mastery", () => {
-    test("a Constellation 4 switch gives every member 60 Elemental Mastery for 8 seconds as the burst starts", () => {
-      expect.hasAssertions();
 
-      expect(
-        startBurst(4).map(({ amount, attribute, characterId, secondsRemaining }) => ({
+  test("constellation 1's CRIT Rate a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
+    expect.hasAssertions();
+
+    expect([
+      getCriticalRateBonus(0, AttackTag.ChargedAttack),
+      getCriticalRateBonus(1, AttackTag.NormalAttack),
+    ]).toStrictEqual([0, 0]);
+  });
+
+  test("constellation 4's team Elemental Mastery a Constellation 4 switch gives every member 60 Elemental Mastery for 8 seconds as the burst starts", () => {
+    expect.hasAssertions();
+
+    expect(
+      startBurst(4).map(({ amount, attribute, characterId, secondsRemaining }) => ({
+        amount,
+        attribute,
+        characterId,
+        secondsRemaining,
+      })),
+    ).toStrictEqual([
+      { amount: 60, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
+      { amount: 60, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
+    ]);
+  });
+
+  test("constellation 4's team Elemental Mastery a Constellation 3 switch gives no Elemental Mastery as the burst starts", () => {
+    expect.hasAssertions();
+
+    expect(startBurst(3)).toStrictEqual([]);
+  });
+
+  test("constellation 4's reaction raise a Constellation 4 burst reaction of Burning raises every member's Elemental Mastery to 120 for 8 seconds", () => {
+    expect.hasAssertions();
+
+    expect(
+      triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 4).map(
+        ({ amount, attribute, characterId, secondsRemaining }) => ({
           amount,
           attribute,
           characterId,
           secondsRemaining,
-        })),
-      ).toStrictEqual([
-        { amount: 60, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
-        { amount: 60, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
-      ]);
-    });
-
-    test("a Constellation 3 switch gives no Elemental Mastery as the burst starts", () => {
-      expect.hasAssertions();
-
-      expect(startBurst(3)).toStrictEqual([]);
-    });
+        }),
+      ),
+    ).toStrictEqual([
+      { amount: 120, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
+      { amount: 120, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
+    ]);
   });
-  describe("constellation 4's reaction raise", () => {
-    test("a Constellation 4 burst reaction of Burning raises every member's Elemental Mastery to 120 for 8 seconds", () => {
-      expect.hasAssertions();
 
-      expect(
-        triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 4).map(
-          ({ amount, attribute, characterId, secondsRemaining }) => ({
-            amount,
-            attribute,
-            characterId,
-            secondsRemaining,
-          }),
-        ),
-      ).toStrictEqual([
-        { amount: 120, attribute: Attribute.ElementalMastery, characterId: TIGHNARI_CHARACTER_ID, secondsRemaining: 8 },
-        { amount: 120, attribute: Attribute.ElementalMastery, characterId: OTHER_CHARACTER_ID, secondsRemaining: 8 },
-      ]);
-    });
+  test("constellation 4's reaction raise a Constellation 4 burst reaction that is not raised leaves the 60 as it is", () => {
+    expect.hasAssertions();
 
-    test("a Constellation 4 burst reaction that is not raised leaves the 60 as it is", () => {
-      expect.hasAssertions();
+    expect(
+      triggerReaction(ReactionType.ElectroCharged, AttackTag.ElementalBurst, 4).map(({ amount }) => amount),
+    ).toStrictEqual([60, 60]);
+  });
 
-      expect(
-        triggerReaction(ReactionType.ElectroCharged, AttackTag.ElementalBurst, 4).map(({ amount }) => amount),
-      ).toStrictEqual([60, 60]);
-    });
+  test("constellation 4's reaction raise a Constellation 4 normal attack's reaction raises nothing", () => {
+    expect.hasAssertions();
 
-    test("a Constellation 4 normal attack's reaction raises nothing", () => {
-      expect.hasAssertions();
+    expect(triggerReaction(ReactionType.Burning, AttackTag.NormalAttack, 4).map(({ amount }) => amount)).toStrictEqual([
+      60, 60,
+    ]);
+  });
 
-      expect(
-        triggerReaction(ReactionType.Burning, AttackTag.NormalAttack, 4).map(({ amount }) => amount),
-      ).toStrictEqual([60, 60]);
-    });
+  test("constellation 4's reaction raise a Constellation 3 burst reaction raises nothing", () => {
+    expect.hasAssertions();
 
-    test("a Constellation 3 burst reaction raises nothing", () => {
-      expect.hasAssertions();
-
-      expect(triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 3)).toStrictEqual([]);
-    });
+    expect(triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 3)).toStrictEqual([]);
   });
 });

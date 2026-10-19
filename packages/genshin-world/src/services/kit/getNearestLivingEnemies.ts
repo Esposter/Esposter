@@ -8,5 +8,8 @@ const squaredDistance = (point: GroundPoint, other: GroundPoint): number =>
 export const getNearestLivingEnemies = (enemies: Iterable<Enemy>, point: GroundPoint, count: number): Enemy[] =>
   [...enemies]
     .filter(({ health }) => health > 0)
-    .toSorted((a, b) => squaredDistance(a.position, point) - squaredDistance(b.position, point))
+    .toSorted(
+      (firstEnemy, secondEnemy) =>
+        squaredDistance(firstEnemy.position, point) - squaredDistance(secondEnemy.position, point),
+    )
     .slice(0, count);

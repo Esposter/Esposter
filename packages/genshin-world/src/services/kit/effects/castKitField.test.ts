@@ -30,9 +30,9 @@ describe(castKitField, () => {
     castNamedField(kitEffectState, 1, 0, "field", 5);
     castNamedField(kitEffectState, 1, 3, "field", 9);
 
-    expect(kitEffectState.effects.filter(checkIsField).map((field) => readField(field))).toStrictEqual([
-      { centre: { x: 3, z: 0 }, id: "field", secondsRemaining: 9 },
-    ]);
+    expect(
+      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
+    ).toStrictEqual([{ centre: { x: 3, z: 0 }, id: "field", secondsRemaining: 9 }]);
   });
 
   test("a field under another name, or cast by another character, stands beside the one already standing", () => {
@@ -42,7 +42,9 @@ describe(castKitField, () => {
     castNamedField(kitEffectState, 1, 3, "other", 5);
     castNamedField(kitEffectState, 2, 6, "field", 5);
 
-    expect(kitEffectState.effects.filter(checkIsField).map((field) => readField(field))).toStrictEqual([
+    expect(
+      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
+    ).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: "field", secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: "other", secondsRemaining: 5 },
       { centre: { x: 6, z: 0 }, id: "field", secondsRemaining: 5 },
@@ -62,7 +64,9 @@ describe(castKitField, () => {
     unnamed(0);
     unnamed(3);
 
-    expect(kitEffectState.effects.filter(checkIsField).map((field) => readField(field))).toStrictEqual([
+    expect(
+      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
+    ).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: undefined, secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: undefined, secondsRemaining: 5 },
     ]);
@@ -86,7 +90,9 @@ describe(castKitField, () => {
         },
       );
 
-    expect(kitEffectState.effects.filter(checkIsField).map((field) => readField(field))).toStrictEqual([
+    expect(
+      kitEffectState.effects.filter((effect) => checkIsField(effect)).map((field) => readField(field)),
+    ).toStrictEqual([
       { centre: { x: 0, z: 0 }, id: "droplet", secondsRemaining: 5 },
       { centre: { x: 3, z: 0 }, id: "droplet", secondsRemaining: 5 },
     ]);

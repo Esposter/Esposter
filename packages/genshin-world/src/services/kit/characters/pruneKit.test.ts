@@ -49,7 +49,7 @@ describe(createPruneKitBehaviour, () => {
       kitEffectState,
     });
     stepKitSeconds(context, seconds);
-    return kitEffectState.effects.filter(checkIsSummon);
+    return kitEffectState.effects.filter((effect) => checkIsSummon(effect));
   };
 
   test("the bell's first tick lands its DoT on the enemy nearest Prune within 10 metres", () => {

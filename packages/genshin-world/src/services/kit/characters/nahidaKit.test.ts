@@ -147,7 +147,7 @@ describe("seeds of Skandha", () => {
     expect.hasAssertions();
     const combatant = createCombatant(NAHIDA_CHARACTER_ID, Element.Dendro);
     const context = createKitTestContext(combatant);
-    const enemies = Array.from({ length: 9 }, (_, index) => createEnemyAt(`enemy-${index}`));
+    const enemies = Array.from({ length: 9 }, (_value, index) => createEnemyAt(`enemy-${index}`));
     const strikeEach = (struck: readonly ReturnType<typeof createEnemyAt>[]) => {
       for (const enemy of struck) {
         const strike: KitStrike = { body: context.body, combatant, hit: pressHit };

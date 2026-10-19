@@ -25,13 +25,13 @@ export const addKitHold = (
     if (!replacesOldest) return;
     const holds = effects.filter((effect): effect is KitStatus => checkIsKitHold(effect, characterId, id));
     const oldest = takeOne(
-      holds.toSorted((first, second) => first.secondsRemaining - second.secondsRemaining),
+      holds.toSorted((firstHold, secondHold) => firstHold.secondsRemaining - secondHold.secondsRemaining),
       0,
     );
     addKitStatus(kitEffectState, characterId, { id: oldest.id, secondsRemaining: seconds });
     return;
   }
-  const place = Array.from({ length: maximum }, (_, index) => `${id}${ID_SEPARATOR}${index}`).find(
+  const place = Array.from({ length: maximum }, (_value, index) => `${id}${ID_SEPARATOR}${index}`).find(
     (holdId) => !effects.some((effect) => checkIsKitHold(effect, characterId, id) && effect.id === holdId),
   );
   if (place === undefined) return;
