@@ -7,7 +7,7 @@ import { glacialWaltz } from "#src/services/gcg/cards/glacialWaltz";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { describe, expect, test } from "vitest";
 
-describe(glacialWaltz, () => {
+describe("glacialWaltz", () => {
   test("its damage again refreshes the Icicle on the field to its usages, and adds no second copy", () => {
     expect.hasAssertions();
 

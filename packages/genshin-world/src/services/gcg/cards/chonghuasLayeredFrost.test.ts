@@ -5,7 +5,7 @@ import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 import { chonghuasLayeredFrost } from "#src/services/gcg/cards/chonghuasLayeredFrost";
 import { describe, expect, test } from "vitest";
 
-describe(chonghuasLayeredFrost, () => {
+describe("chonghuasLayeredFrost", () => {
   test("its damage refreshes the Chonghua Frost Field already on the field, and adds no second copy", () => {
     expect.hasAssertions();
 

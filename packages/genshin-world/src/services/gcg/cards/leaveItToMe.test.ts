@@ -6,7 +6,7 @@ import { LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
 import { describe, expect, test } from "vitest";
 
-describe(leaveItToMe, () => {
+describe("leaveItToMe", () => {
   test("playing it again refreshes the one on the field to its usage, and adds no second copy", () => {
     expect.hasAssertions();
 

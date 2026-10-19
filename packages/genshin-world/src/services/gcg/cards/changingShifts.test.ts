@@ -6,7 +6,7 @@ import { CHANGING_SHIFTS_ID } from "#src/services/gcg/cards/constants";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
 import { describe, expect, test } from "vitest";
 
-describe(changingShifts, () => {
+describe("changingShifts", () => {
   test("playing it again refreshes the one on the field to its usage, and adds no second copy", () => {
     expect.hasAssertions();
 
