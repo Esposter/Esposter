@@ -133,6 +133,8 @@ Jahoda's collision and two plunges SHALL land at once with the shared reach, and
 
 ### Requirement: Constellation 6 buffs the Moonsign team when a full flask drains at Ascendant Gleam
 
+At Constellation 6, when Savvy Strategy's flask drains full with the deployed team at Ascendant Gleam, each deployed member with a Moonsign Benediction SHALL gain 5% Crit Rate and 40% Crit DMG for 20 seconds.
+
 #### Scenario: A full flask drains at Ascendant Gleam and buffs each Moonsign member
 
 - **GIVEN** Jahoda has Constellation 6 and the deployed team is at Ascendant Gleam

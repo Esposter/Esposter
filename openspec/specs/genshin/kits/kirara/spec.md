@@ -67,7 +67,7 @@ Kirara's strikes, charged attack, skill and burst SHALL deal no poise damage, pr
 
 ### Requirement: Constellation 6's team elemental damage bonus
 
-At Constellation 6, Kirara's skill or burst gives each deployed party member a 12% buff to every elemental DMG Bonus for 15 seconds, across the whole deployed party because the kit has no nearby check.
+At Constellation 6, Kirara's skill or burst SHALL give each deployed party member a 12% buff to every elemental DMG Bonus for 15 seconds, across the whole deployed party because the kit has no nearby check.
 
 #### Scenario: Burst gives the team the bonus at Constellation 6
 

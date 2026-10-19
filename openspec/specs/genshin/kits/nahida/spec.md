@@ -130,7 +130,7 @@ Nahida's burst SHALL cast a field of radius 20 metres, centred one metre ahead o
 
 #### Scenario: A tick inside the field opens the window
 
-- **GIVEN** Nahida stands inside the field when it ticks
+- **WHEN** the field ticks while Nahida stands inside it
 - **THEN** Tri-Karma Purification's Pyro bonus and Electro cut apply for one second
 
 ### Requirement: Unbuilt Nahida effects

@@ -210,6 +210,20 @@ A click on a party member's portrait in the Statue's Blessing SHALL heal a stand
 
 With auto-recover on and a threshold set, standing by a statue for two seconds SHALL revive the deployed team's fallen members at thirty-five percent of their HP at no cost to the pool, and then SHALL heal every member under the threshold up to that threshold from the pool, slot by slot.
 
+#### Scenario: Fallen member revived for free
+
+- **GIVEN** a deployed team member has fallen
+- **WHEN** auto-recover runs
+- **THEN** the member is revived at thirty-five percent of their HP
+- **AND** the pool is unchanged by the revival
+
+#### Scenario: Pool runs out part way
+
+- **GIVEN** several members are under the threshold and the pool holds less than the heal they need
+- **WHEN** auto-recover runs
+- **THEN** the earlier slots are healed up to the threshold
+- **AND** the later slots stay where they stand
+
 #### Scenario: Standing by a statue for two seconds revives the fallen
 
 - **GIVEN** a fallen party member and auto-recover on near a statue

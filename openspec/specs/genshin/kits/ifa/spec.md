@@ -81,7 +81,7 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed and SHALL deal no h
 
 ### Requirement: Second constellation counts the party's points above 60 three times over
 
-From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it. Below her second constellation the points count once and the cap is 150.
+From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it.
 
 #### Scenario: Constellation 2 counts 80 party points as 140
 
@@ -94,6 +94,10 @@ From her second constellation, with her first ascension, the party's Nightsoul p
 - **GIVEN** Ifa is at her second constellation and her first ascension, and her party holds 200 Nightsoul points
 - **WHEN** a Swirl the party makes is priced
 - **THEN** it takes a DMG Bonus of 3.0, which is 1.5% of 200 points
+
+### Requirement: Below her second constellation the party's points count once
+
+Below her second constellation the party's points above 60 SHALL count once, and the cap SHALL stay at 150.
 
 #### Scenario: Below her second constellation the points above 60 count once
 

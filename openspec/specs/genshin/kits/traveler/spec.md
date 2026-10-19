@@ -59,7 +59,7 @@ While the Traveler's statue is Anemo, Constellation 2 SHALL raise her Energy Rec
 
 #### Scenario: Constellation 2 raises Energy Recharge
 
-- **GIVEN** the Traveler has Constellation 2 with an Anemo statue
+- **WHEN** the Traveler has Constellation 2 with an Anemo statue
 - **THEN** her Energy Recharge is raised by 16%
 
 #### Scenario: Constellation 6 lowers Anemo RES on the burst's enemies
@@ -70,7 +70,7 @@ While the Traveler's statue is Anemo, Constellation 2 SHALL raise her Energy Rec
 
 #### Scenario: Another element, another character or a lower constellation changes nothing
 
-- **GIVEN** the statue is not Anemo, or the character is not the Traveler, or she has fewer constellations than the one named
+- **WHEN** the statue is not Anemo, or the character is not the Traveler, or she has fewer constellations than the one named
 - **THEN** no Anemo constellation effect applies
 
 ### Requirement: Unbuilt Traveler effects

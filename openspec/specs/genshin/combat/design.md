@@ -150,7 +150,7 @@ flowchart TD
   CORE -->|"its seconds run out: burstKitDendroCores"| REACH
   STRIKE -->|"particles"| ENERGY["gainPartyEnergy: each standing member, up to its burst's cost"]
   STRIKE -->|"a normal or charged attack's that struck"| ATTACK_ENERGY["gainKitAttackEnergy: its weapon's chance of 1 energy"]
-  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: getDamage against the member as its buffs leave it, its DMG Reduction among them, then the team's shields, then over its Max HP"]
+  ENEMY["An enemy's strike reaches the body"] --> HURT["strikePartyMember: getDamage, then the shields, then Max HP"]
   HURT -->|"the team all down"| RESPAWN["reviveParty at 35%, jumped to the nearest statue"]
 ```
 

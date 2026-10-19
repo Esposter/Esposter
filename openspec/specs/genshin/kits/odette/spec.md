@@ -36,9 +36,9 @@ Odette's elemental burst SHALL deal its four hits on the enemies within reach.
 - **WHEN** the player casts Odette's elemental burst
 - **THEN** four hits land on the enemies within reach, the last one as Ice
 
-### Requirement: A Polestar Field on a Stellar-Conduct
+### Requirement: A Stellar-Conduct leaves a Polestar Field
 
-A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field the body is inside SHALL be refreshed rather than doubled, while one triggered with the body inside none SHALL leave a new field beside it. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it. While it stands, an enemy inside it has its Physical RES lowered by 40%. A Cryo or Electro applied to an enemy inside it is a recorded hit, and each 4 seconds the body standing inside has its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds. While the body stands inside it, every deployed member SHALL be in Radiance: Stellar-Conduct, carrying the field's count of the last 4 seconds, and SHALL stay in it for 4 seconds after the body leaves.
+A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of radius 15 at the body, for 7 seconds, and a standing field the body is inside SHALL be refreshed rather than doubled, while one triggered with the body inside none SHALL leave a new field beside it. The reaction path places it for any enabler's Stellar-Conduct, so no kit carries a copy of it.
 
 #### Scenario: Stellar-Conduct places a Polestar Field
 
@@ -50,10 +50,18 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 - **WHEN** a Stellar-Conduct is triggered with the body inside a standing Polestar Field
 - **THEN** the field's time is set back to 7 seconds, and no second field stands
 
+### Requirement: A Polestar Field lowers the Physical RES of enemies inside it
+
+While it stands, an enemy inside it SHALL have its Physical RES lowered by 40%.
+
 #### Scenario: an enemy inside a standing field loses 40% Physical RES
 
 - **WHEN** a Polestar Field stands and an enemy is inside it
 - **THEN** the enemy's Physical RES is 40% lower, and an enemy outside the field is unchanged
+
+### Requirement: The body's DMG Bonus follows the recorded hits in a Polestar Field
+
+A Cryo or Electro applied to an enemy inside it SHALL be a recorded hit, and each 4 seconds the body standing inside SHALL have its Cryo and Electro DMG Bonus set to 20%, or to 28% and 1% for each recorded hit (up to 12) of the last 4 seconds.
 
 #### Scenario: a recorded hit raises the next 4 seconds' DMG Bonus
 
@@ -65,14 +73,18 @@ A Stellar-Conduct triggered by any party member SHALL leave a Polestar Field of 
 - **WHEN** a Cryo is applied to an enemy outside the field, or a Pyro is applied to an enemy inside it, and a tick passes with the body inside
 - **THEN** the body's Cryo and Electro DMG Bonus stays at 20% for the 4 seconds that follow
 
+### Requirement: The body inside a Polestar Field puts the team in Radiance
+
+While the body stands inside it, every deployed member SHALL be in Radiance: Stellar-Conduct, carrying the field's count of the last 4 seconds, and SHALL stay in it for 4 seconds after the body leaves.
+
 #### Scenario: the body inside the field puts every deployed member in Radiance: Stellar-Conduct
 
 - **WHEN** a Polestar Field stands and the body stands inside it
 - **THEN** every deployed member is in Radiance: Stellar-Conduct, and a member is in it only while the body stands inside or for 4 seconds after
 
-### Requirement: A Stellar Vortex on a Stellar Swirl
+### Requirement: A Stellar Swirl leaves one Stellar Vortex and deals its Anemo instance
 
-While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled. A further Stellar Swirl while it stands SHALL add a stack without renewing its 181 frames, and the sixth stack SHALL explode it at once. A Stellar Swirl also SHALL deal its Anemo instance at a coefficient of 0.75 to its target. A vortex that runs out SHALL explode for Cryo damage to each enemy within its radius, which is 6, or 8 from its third stack, at a coefficient of 2 for its first two stacks and 3 from the third.
+While Odette is deployed, a Stellar Swirl triggered by any party member SHALL leave one Stellar Vortex, for 181 frames, and a standing vortex SHALL NOT be doubled. A Stellar Swirl also SHALL deal its Anemo instance at a coefficient of 0.75 to its target.
 
 #### Scenario: Stellar Swirl places a Stellar Vortex
 
@@ -84,6 +96,10 @@ While Odette is deployed, a Stellar Swirl triggered by any party member SHALL le
 - **WHEN** a Melt, or a Swirl of another element, is triggered while Odette is deployed
 - **THEN** no Polestar Field and no Stellar Vortex is placed
 
+### Requirement: A further Stellar Swirl adds a stack to the vortex
+
+A further Stellar Swirl while it stands SHALL add a stack without renewing its 181 frames, and the sixth stack SHALL explode it at once.
+
 #### Scenario: the third Stellar Swirl levels a vortex up
 
 - **WHEN** a Stellar Swirl is triggered on a standing vortex with two stacks
@@ -93,6 +109,10 @@ While Odette is deployed, a Stellar Swirl triggered by any party member SHALL le
 
 - **WHEN** three Stellar Swirls are triggered after the vortex has three stacks
 - **THEN** the vortex explodes at once, and no vortex stands
+
+### Requirement: A vortex that runs out explodes
+
+A vortex that runs out SHALL explode for Cryo damage to each enemy within its radius, which is 6, or 8 from its third stack, at a coefficient of 2 for its first two stacks and 3 from the third.
 
 #### Scenario: a vortex that runs out explodes
 

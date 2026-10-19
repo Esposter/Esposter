@@ -90,7 +90,7 @@ A passive or a constellation that answers something happening in combat is a kit
 flowchart TD
   STEP["stepActiveKit, at the fixed step"] -->|"another character on the field than the last step's"| SWAP["CharacterSwapped"]
   STEP -->|"the outbox: an enemy's strike a taunt took since the last step"| TAUNT["TauntDamaged"]
-  STEP -->|"stepKitEffects drops an effect that ran out, or stepKitNightsoul exits a blessing its points ran out of"| EXPIRED["EffectExpired"]
+  STEP -->|"stepKitEffects or stepKitNightsoul: an effect or blessing that ran out"| EXPIRED["EffectExpired"]
   STEP -->|"the outbox: tickEnemyStatuses puts on it a status's tick that falls due"| TICK["StatusTicked"]
   STEP -->|"a normal attack starts, as its action does"| STARTED["NormalAttackStarted"]
   STEP -->|"a normal attack's first hitmark falls"| LANDED["NormalAttackLanded"]
@@ -276,7 +276,7 @@ flowchart TD
   BUILD["buildKit, once as a member joins: each hit's kinds of attack"]
   SWAP["a swap: the effects that end on it end, CharacterSwapped sent"] --> OUT["the outbox sent in order to every deployed kit"]
   OUT --> EFFECTS["stepKitEffects: three walks in place, the strikes and expired effects kept on the context"]
-  EFFECTS --> PARTY["EffectExpired sent; Verdant Dew, Moondrifts and Crystallize shards step, each shard picked up onto the outbox, then the kits' pick-ups"]
+  EFFECTS --> PARTY["EffectExpired sent, then the Verdant Dew, Moondrifts and shard steps"]
   PARTY --> ENEMIES["enemy statuses tick onto the outbox, sent again"]
   ENEMIES --> REACT["elemental ticks, Lunar-Charged and Moondrift Harmony strike, Dendro Cores burst"]
   REACT --> STEP["stepKit on the stance's combatant: the cursor lands hits, or presses start one"]
