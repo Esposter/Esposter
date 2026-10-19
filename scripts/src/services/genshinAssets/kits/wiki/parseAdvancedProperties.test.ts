@@ -60,4 +60,31 @@ describe(parseAdvancedProperties, () => {
       { row: 4, title: "Plunge DMG" },
     ]);
   });
+
+  test("keeps each template's `;name` heading on its rows, undefined where the template has none", () => {
+    expect.hasAssertions();
+
+    const wikitext = [
+      ";Aether",
+      "{{Advanced Properties",
+      "|title   = Normal Attack 1-Hit",
+      "|poise   = 41.4",
+      "}}",
+      ";Lumine",
+      "{{Advanced Properties",
+      "|title   = Normal Attack 1-Hit",
+      "|poise   = 40.5",
+      "}}",
+      "{{Advanced Properties",
+      "|title   = High Plunge",
+      "|poise   = 150",
+      "}}",
+    ].join("\n");
+
+    expect(parseAdvancedProperties(wikitext)).toStrictEqual([
+      { heading: "Aether", poise: 41.4, row: 1, title: "Normal Attack 1-Hit" },
+      { heading: "Lumine", poise: 40.5, row: 2, title: "Normal Attack 1-Hit" },
+      { poise: 150, row: 3, title: "High Plunge" },
+    ]);
+  });
 });
