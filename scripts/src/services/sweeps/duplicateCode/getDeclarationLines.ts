@@ -1,3 +1,4 @@
+import { getCommentBridgedLines } from "#src/services/sweeps/duplicateCode/getCommentBridgedLines";
 import { takeOne } from "@esposter/shared";
 
 // A declaration opens on a line starting an interface or a type, or on a component's props, emits or model, and closes where
@@ -58,5 +59,5 @@ export const getDeclarationLines = (text: string): Set<number> => {
       index++;
     } while (depth > 0 && index < lines.length);
   }
-  return declarationLines;
+  return getCommentBridgedLines(text, declarationLines);
 };

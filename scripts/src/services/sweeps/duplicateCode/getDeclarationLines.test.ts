@@ -45,4 +45,20 @@ describe(getDeclarationLines, () => {
 
     expect(getDeclarationLines("return {\n  name: value + 1,\n};")).toStrictEqual(new Set());
   });
+
+  test("reads a comment between two composable calls, a JSDoc included, as part of their run", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDeclarationLines("const a = useA();\n// The second call\n/**\n * Its JSDoc\n */\nconst b = useB();"),
+    ).toStrictEqual(new Set([1, 2, 3, 4, 5, 6]));
+  });
+
+  test("keeps a comment beside code as code", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("const a = useA();\n// The second call\nconst b = compute(1);")).toStrictEqual(
+      new Set([1]),
+    );
+  });
 });

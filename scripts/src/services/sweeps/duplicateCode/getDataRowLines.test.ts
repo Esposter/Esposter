@@ -53,4 +53,16 @@ describe(getDataRowLines, () => {
 
     expect(getDataRowLines(line)).toStrictEqual(new Set());
   });
+
+  test("reads a comment between two data rows as part of their run", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  1: 3,\n  // Energy\n  2: 4,")).toStrictEqual(new Set([1, 2, 3]));
+  });
+
+  test("keeps a comment beside code as code", () => {
+    expect.hasAssertions();
+
+    expect(getDataRowLines("  1: 3,\n  // Energy\n  const a = makeItem();")).toStrictEqual(new Set([1]));
+  });
 });

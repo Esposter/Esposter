@@ -1,3 +1,5 @@
+import { getCommentBridgedLines } from "#src/services/sweeps/duplicateCode/getCommentBridgedLines";
+
 // The unsigned body of a decimal literal, so each pattern places its own sign
 const DECIMAL_LITERAL_SOURCE = String.raw`\d[\d_]*(?:\.\d+)?(?:e[+-]?\d+)?`;
 // A row holds one literal: a number, a hex number or a `"#rrggbb"` colour, optionally keyed, with its separator. A line
@@ -39,5 +41,5 @@ export const getDataRowLines = (text: string): Set<number> => {
       EMPTY_COLLECTION_OBJECT_ROW_REGEX.test(line)
     )
       dataRowLines.add(index + 1);
-  return dataRowLines;
+  return getCommentBridgedLines(text, dataRowLines);
 };
