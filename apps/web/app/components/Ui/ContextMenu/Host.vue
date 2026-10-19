@@ -15,7 +15,7 @@ const items = computed(() => getUiMenuItems(contextMenu.value?.items ?? []));
 // Read when the menu is chosen from rather than when it closes: closing clears what is open
 let openItems = contextMenu.value?.items ?? [];
 let opener: HTMLElement | undefined;
-const { choose, first, getItemId, isTabbable, onMenuKeydown } = useMenu(items, popover, {
+const { checkIsTabbable, choose, first, getItemId, onMenuKeydown } = useMenu(items, popover, {
   onSelect: async (title, event) => {
     await openItems.find((item) => item.title === title)?.onClick?.(event);
   },
@@ -72,6 +72,6 @@ watch(isOpen, (newIsOpen) => {
     ui-popover
     @keydown="(event) => onMenuKeydown(event)"
   >
-    <UiMenuItems :get-item-id :check-is-tabbable="isTabbable" :items @select="(value, event) => choose(value, event)" />
+    <UiMenuItems :check-is-tabbable :get-item-id :items @select="(value, event) => choose(value, event)" />
   </div>
 </template>
