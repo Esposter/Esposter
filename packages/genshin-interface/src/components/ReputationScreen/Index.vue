@@ -101,27 +101,7 @@ const emit = defineEmits<{ accept: []; close: [] }>();
 }
 
 .head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: calc(var(--unit) * 20) calc(var(--unit) * 40);
   color: #ece5d8;
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 24);
-}
-
-.back {
-  width: calc(var(--unit) * 56);
-  height: calc(var(--unit) * 56);
-  border: none;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.15);
-  color: #ece5d8;
-  font: inherit;
-  font-size: calc(var(--unit) * 28);
 }
 
 .detail {
@@ -331,3 +311,4 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 31);
 }
 </style>
+<style scoped src="../../styles/partyReputation.css"></style>
