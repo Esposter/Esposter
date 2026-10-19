@@ -188,9 +188,9 @@ interface CitedFile {
   tokens: readonly GoToken[];
 }
 
-// The hitmarks readGcsimQueuedAttacks reads for a file's queue calls on a line, each the delay its call is queued at
-// With the tasks around it, as the mechanical path writes it. Where the cited hit has a loop index, only the call of
-// The iteration that index names is one of them
+// The hitmarks readGcsimQueuedAttacks reads for a file's queue calls with the cited line among their lines, each the
+// Delay its call is queued at with the tasks around it, as the mechanical path writes it. Where the cited hit has a loop
+// Index, only the call of the iteration that index names is one of them
 const readQueuedHitmarks = (
   queuedAttacks: readonly GcsimQueuedAttack[],
   fileName: string,
@@ -198,9 +198,10 @@ const readQueuedHitmarks = (
   hitIndex: number | undefined,
   loopIndex: string | undefined,
 ): number[] =>
-  queuedAttacks.flatMap(({ delay, file, iterations, line: queuedLine }) =>
+  queuedAttacks.flatMap(({ delay, file, iterations, lastLine, line: firstLine }) =>
     file === fileName &&
-    queuedLine === line &&
+    firstLine <= line &&
+    line <= lastLine &&
     delay !== undefined &&
     (hitIndex === undefined || loopIndex === undefined || iterations?.[loopIndex] === hitIndex)
       ? [delay]

@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe(findQueuedAttacks, () => {
   const attackCommon = { fieldLineMap: {}, file: "burst.go", siteLine: 1, variableName: "ai" };
-  const queuedAttack: GcsimQueuedAttack = { attackName: "ai", delayLine: 9, file: "burst.go", line: 9 };
+  const queuedAttack: GcsimQueuedAttack = { attackName: "ai", delayLine: 9, file: "burst.go", lastLine: 9, line: 9 };
 
   test("keeps the declared attack when the one branch that sets its multiplier may not run", () => {
     expect.hasAssertions();

@@ -35,6 +35,8 @@ describe("readGcsimCitedCandidates", () => {
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const MULTILINE_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
+  const QUEUE_ATTACK_MULTILINE_GO =
+    "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttackWithSnap(\n\t\t\tai, snap, ap,\n\t\t\t2,\n\t\t)\n\t}, 113)\n}\n";
   const FIELDS_GO =
     "package aino\n\nfunc burst() {\n\tai := info.AttackInfo{\n\t\tElement: attributes.Cryo,\n\t\tUseDef: true,\n\t\tAttackTag: attacks.AttackTagElementalBurst,\n\t}\n\tai.ICDTag = attacks.ICDTagNormalAttack\n\tai.Element = attributes.NoElement\n}\n";
   const FIELD_CENTRE_GO = "package venti\n\nfunc burst() {\n\tap := combat.NewCircleHitOnTarget(c.qPos, nil, 4)\n}\n";
@@ -86,6 +88,7 @@ describe("readGcsimCitedCandidates", () => {
     ["progress.go", PROGRESS_GO],
     ["qiqi.go", QIQI_GO],
     ["queue.go", QUEUE_GO],
+    ["queueAttackMultiline.go", QUEUE_ATTACK_MULTILINE_GO],
     ["queued.go", QUEUED_GO],
     ["run.go", RUN_GO],
     ["status.go", STATUS_GO],
@@ -587,6 +590,17 @@ describe("readGcsimCitedCandidates", () => {
       "hits.x.hitmarkFrames",
     )?.[0];
     expect(candidate?.value).toBe(2);
+  });
+
+  test("a cited hitmark on a line of a multi-line queue call gives the queued hitmark of that call", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.x.hitmarkFrames": { file: "queueAttackMultiline.go", line: 7, source: KitSource.Gcsim, value: 115 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim, TALENT_GROUP_ID_MAP).get(
+      "hits.x.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(115);
   });
 
   test("a cited hitmark on a named hit's queue call that is the queued hitmark gives that hitmark", () => {

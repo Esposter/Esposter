@@ -334,7 +334,7 @@ export const readGcsimQueuedAttacks = (
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
-      const call = parseGoExpression(tokens, position).expression;
+      const { end: callEnd, expression: call } = parseGoExpression(tokens, position);
       if (call.kind !== GoExpressionKind.Call) continue;
       const argumentStarts = call.parameterStarts;
       const [attackStart, delayStart] = [argumentStarts[0], argumentStarts[DELAY_ARGUMENT_INDEX]];
@@ -402,6 +402,7 @@ export const readGcsimQueuedAttacks = (
             file,
             hitbox,
             ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
+            lastLine: tokens[callEnd - 1]?.line ?? token.line,
             line: token.line,
             ...(holdValue !== undefined && { holdValue }),
           });
