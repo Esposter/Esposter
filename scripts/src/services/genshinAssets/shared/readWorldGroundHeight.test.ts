@@ -19,11 +19,6 @@ vi.mock(import("#src/services/gameData/readPublishedGameData"), () => ({
   },
 }));
 
-const WINDRISE_BASE = 10;
-const LIYUE_HEIGHT = 5;
-const MONDSTADT_HEIGHT = 40;
-const LIYUE_PLACE = { x: 100, z: 0 };
-const MONDSTADT_PLACE = { x: -100, z: 0 };
 const plateau = ({ x, z }: { x: number; z: number }, height: number) => ({
   falloff: 6,
   height,
@@ -34,6 +29,12 @@ const plateau = ({ x, z }: { x: number; z: number }, height: number) => ({
 });
 
 describe(readWorldGroundHeight, () => {
+  const WINDRISE_BASE = 10;
+  const LIYUE_HEIGHT = 5;
+  const MONDSTADT_HEIGHT = 40;
+  const LIYUE_PLACE = { x: 100, z: 0 };
+  const MONDSTADT_PLACE = { x: -100, z: 0 };
+
   test("reads Windrise's base and the laid regions' grounds, leaving Mondstadt's plateau unlaid", async () => {
     expect.hasAssertions();
 

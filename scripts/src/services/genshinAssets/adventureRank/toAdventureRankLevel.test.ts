@@ -3,23 +3,23 @@ import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewa
 import { toAdventureRankLevel } from "#src/services/genshinAssets/adventureRank/toAdventureRankLevel";
 import { describe, expect, test } from "vitest";
 
-const REWARD_ID = 200_002;
-const MORA_ID = 202;
-const rewardMap = new Map<number, ExcelRewardRow>([
-  [
-    REWARD_ID,
-    {
-      rewardId: REWARD_ID,
-      rewardItemList: [
-        { itemCount: 10_000, itemId: MORA_ID },
-        { itemCount: 0, itemId: 0 },
-        { itemCount: 3, itemId: 104_012 },
-      ],
-    },
-  ],
-]);
-
 describe(toAdventureRankLevel, () => {
+  const REWARD_ID = 200_002;
+  const MORA_ID = 202;
+  const rewardMap = new Map<number, ExcelRewardRow>([
+    [
+      REWARD_ID,
+      {
+        rewardId: REWARD_ID,
+        rewardItemList: [
+          { itemCount: 10_000, itemId: MORA_ID },
+          { itemCount: 0, itemId: 0 },
+          { itemCount: 3, itemId: 104_012 },
+        ],
+      },
+    ],
+  ]);
+
   test("a rank's reward is its reward row's items with the empty slots dropped", () => {
     expect.hasAssertions();
     expect(

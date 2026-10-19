@@ -9,28 +9,28 @@ import { resolveKitValues } from "#src/services/genshinAssets/kits/record/resolv
 import { CombatTalent, Element } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const TABLES = { element: Element.Geo, talentGroupIdMap: {} } as unknown as KitTables;
-const OVERLAY: KitOverlay = { "burst.hits.0.element": { cause: KitProvisionalCause.NoGcsimUnit, value: "Rock" } };
-
-const tables = {
-  talentGroupIdMap: { [CombatTalent.ElementalBurst]: 2139, [CombatTalent.ElementalSkill]: 2138 },
-  talentMultiplierMap: {},
-} as unknown as KitTables;
-
-const sourceCandidateMap = new Map<string, KitCandidate[]>([
-  ["burst.hits.length", [{ provenance: { file: "burst.go", line: 60, source: KitSource.Gcsim }, value: 3 }]],
-  [
-    "hits.fieryRainArrows.0.multiplier",
-    [
-      {
-        provenance: { index: 0, label: " ", proudSkillGroupId: 2139, source: KitSource.Tables },
-        value: { index: 0, proudSkillGroupId: 2139 },
-      },
-    ],
-  ],
-]);
-
 describe(resolveKitValues, () => {
+  const TABLES = { element: Element.Geo, talentGroupIdMap: {} } as unknown as KitTables;
+  const OVERLAY: KitOverlay = { "burst.hits.0.element": { cause: KitProvisionalCause.NoGcsimUnit, value: "Rock" } };
+
+  const tables = {
+    talentGroupIdMap: { [CombatTalent.ElementalBurst]: 2139, [CombatTalent.ElementalSkill]: 2138 },
+    talentMultiplierMap: {},
+  } as unknown as KitTables;
+
+  const sourceCandidateMap = new Map<string, KitCandidate[]>([
+    ["burst.hits.length", [{ provenance: { file: "burst.go", line: 60, source: KitSource.Gcsim }, value: 3 }]],
+    [
+      "hits.fieryRainArrows.0.multiplier",
+      [
+        {
+          provenance: { index: 0, label: " ", proudSkillGroupId: 2139, source: KitSource.Tables },
+          value: { index: 0, proudSkillGroupId: 2139 },
+        },
+      ],
+    ],
+  ]);
+
   test("names an overlay value no gcsim folder gives as the unit gcsim does not model", () => {
     const { provenanceMap } = resolveKitValues(new Map(), OVERLAY, new Map(), new Map(), TABLES, false);
     expect(provenanceMap.get("burst.hits.0.element")).toStrictEqual({

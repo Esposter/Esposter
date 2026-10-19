@@ -5,15 +5,6 @@ import { toCatalogueAreaPlaceMap } from "#src/services/genshinAssets/domains/toC
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { describe, expect, test } from "vitest";
 
-const regions = [
-  { areas: [{ id: "starfell-valley", name: "Starfell Valley" }], id: "mondstadt" },
-  { areas: [{ id: "bishui-plain", name: "Bishui Plain" }], id: "liyue" },
-];
-const textMap = new Map([
-  ["1", "Starfell Valley"],
-  ["2", "Bishui Plain"],
-  ["3", "Unlisted"],
-]);
 const createArea = (
   overrides: Partial<Pick<WorldArea, "areaID1" | "areaNameTextMapHash" | "areaType" | "sceneID">>,
 ): Pick<WorldArea, "areaID1" | "areaNameTextMapHash" | "areaType" | "sceneID"> => ({
@@ -25,6 +16,16 @@ const createArea = (
 });
 
 describe(toCatalogueAreaPlaceMap, () => {
+  const regions = [
+    { areas: [{ id: "starfell-valley", name: "Starfell Valley" }], id: "mondstadt" },
+    { areas: [{ id: "bishui-plain", name: "Bishui Plain" }], id: "liyue" },
+  ];
+  const textMap = new Map([
+    ["1", "Starfell Valley"],
+    ["2", "Bishui Plain"],
+    ["3", "Unlisted"],
+  ]);
+
   test("a level-one area is mapped to the catalogue area of its English name and the region holding it", () => {
     expect.hasAssertions();
 

@@ -4,20 +4,20 @@ import type { KitRecord } from "genshin-world";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { describe, expect, test } from "vitest";
 
-const TALENT_MULTIPLIER_MAP: KitTables["talentMultiplierMap"] = {
-  // Its parameters zero and one read 10 at every level alike, so a reference to either is the same value
-  "1": [
-    { level: 1, paramList: [10, 10] },
-    { level: 2, paramList: [10, 10] },
-  ],
-  // Its parameter zero reads 1 at level one and 2 at level two, and its parameter one 3 at both
-  "2": [
-    { level: 1, paramList: [1, 3] },
-    { level: 2, paramList: [2, 3] },
-  ],
-};
-
 describe(getMismatchedKitPaths, () => {
+  const TALENT_MULTIPLIER_MAP: KitTables["talentMultiplierMap"] = {
+    // Its parameters zero and one read 10 at every level alike, so a reference to either is the same value
+    "1": [
+      { level: 1, paramList: [10, 10] },
+      { level: 2, paramList: [10, 10] },
+    ],
+    // Its parameter zero reads 1 at level one and 2 at level two, and its parameter one 3 at both
+    "2": [
+      { level: 1, paramList: [1, 3] },
+      { level: 2, paramList: [2, 3] },
+    ],
+  };
+
   test("gives no path where a reference and its built value read the same at every level", () => {
     expect.hasAssertions();
 

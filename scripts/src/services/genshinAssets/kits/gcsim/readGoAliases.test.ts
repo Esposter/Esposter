@@ -2,8 +2,9 @@ import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 
-// A made-up file binding `mult` twice, over `attack` and then over `skillAttack`, and a local that aliases `mult`
-const source = `
+describe(readGoAliases, () => {
+  // A made-up file binding `mult` twice, over `attack` and then over `skillAttack`, and a local that aliases `mult`
+  const source = `
 func (c *char) attack() {
 	for i, mult := range attack[c.NormalCounter] {
 		use(mult[0])
@@ -15,14 +16,13 @@ func (c *char) attack() {
 }
 `;
 
-const tokens = tokenizeGo(source);
-const usePosition = (occurrence: number) =>
-  tokens.reduce(
-    (found, token, position) => (token.text === "mult" && found.length < occurrence ? [...found, position] : found),
-    [] as number[],
-  )[occurrence - 1];
+  const tokens = tokenizeGo(source);
+  const usePosition = (occurrence: number) =>
+    tokens.reduce(
+      (found, token, position) => (token.text === "mult" && found.length < occurrence ? [...found, position] : found),
+      [] as number[],
+    )[occurrence - 1];
 
-describe(readGoAliases, () => {
   test("resolves a name bound twice to the binding nearest before each use", () => {
     expect.hasAssertions();
 

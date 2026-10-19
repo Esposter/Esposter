@@ -11,29 +11,29 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("#src/services/genshinAssets/shops/readCityDiscountLevel"));
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
-// A table date in the table's own shape, computed from the epoch
-const EPOCH_TIME = new Date(0).toISOString().slice(0, 19).replace("T", " ");
-// A made-up discount level and good id, which the test reads back rather than any game value
-const DISCOUNT_LEVEL = 4;
-const GOOD_ID = 1;
-const goodRow: ExcelShopGoodsRow = {
-  beginTime: EPOCH_TIME,
-  buyLimit: 0,
-  costHcoin: 0,
-  costItems: [],
-  costMcoin: 0,
-  costScoin: 100,
-  endTime: EPOCH_TIME,
-  goodsId: GOOD_ID,
-  itemCount: 1,
-  itemId: 1,
-  minPlayerLevel: 1,
-  rotateId: 0,
-  shopType: GOOD_HUNTER_SHOP_TYPE,
-  subTabId: 0,
-};
-
 describe(buildGoodHunterGoods, () => {
+  // A table date in the table's own shape, computed from the epoch
+  const EPOCH_TIME = new Date(0).toISOString().slice(0, 19).replace("T", " ");
+  // A made-up discount level and good id, which the test reads back rather than any game value
+  const DISCOUNT_LEVEL = 4;
+  const GOOD_ID = 1;
+  const goodRow: ExcelShopGoodsRow = {
+    beginTime: EPOCH_TIME,
+    buyLimit: 0,
+    costHcoin: 0,
+    costItems: [],
+    costMcoin: 0,
+    costScoin: 100,
+    endTime: EPOCH_TIME,
+    goodsId: GOOD_ID,
+    itemCount: 1,
+    itemId: 1,
+    minPlayerLevel: 1,
+    rotateId: 0,
+    shopType: GOOD_HUNTER_SHOP_TYPE,
+    subTabId: 0,
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

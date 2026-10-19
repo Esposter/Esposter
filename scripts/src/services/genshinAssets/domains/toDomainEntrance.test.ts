@@ -6,7 +6,6 @@ import { GameTextKey } from "genshin-text";
 import { DomainKind, LandmarkKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const ORIGIN = [100, 20, 200] as const;
 const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntryRow => ({
   cooldownTipsDungeonId: [],
   descriptionCycleRewardList: [],
@@ -18,6 +17,8 @@ const createEntry = (overrides: Partial<ExcelDungeonEntryRow>): ExcelDungeonEntr
 });
 
 describe(toDomainEntrance, () => {
+  const ORIGIN = [100, 20, 200] as const;
+
   test("a domain entrance takes its kind from its entry type, its place from its transport point carried round the origin, and its game area from its point", () => {
     expect.hasAssertions();
 

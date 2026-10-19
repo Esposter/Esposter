@@ -9,38 +9,38 @@ import { getKitHitLabelMap } from "#src/services/genshinAssets/kits/tables/getKi
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const SKILL_GROUP_ID = 12_632;
-const PRESS_AND_HOLD_GROUP_ID = 7332;
-
-const createCandidate = (index: number): KitCandidate => ({
-  provenance: { index, label: "", proudSkillGroupId: SKILL_GROUP_ID, source: KitSource.Tables },
-  value: { index, proudSkillGroupId: SKILL_GROUP_ID },
-});
-
-const createTables = (labelMap: Map<number, KitTableLabel[]>): KitTables => ({
-  characterId: 10_000_126,
-  labelMap,
-  name: "Test",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 0,
-    [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
-    [CombatTalent.NormalAttack]: 0,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Catalyst,
-});
-
-const pressAndHoldLabelMap: Pick<KitTables, "labelMap">["labelMap"] = new Map([
-  [
-    PRESS_AND_HOLD_GROUP_ID,
-    [
-      { indexes: [0], label: "Press DMG" },
-      { indexes: [1], label: "Hold DMG" },
-    ],
-  ],
-]);
-
 describe(getKitHitLabelMap, () => {
+  const SKILL_GROUP_ID = 12_632;
+  const PRESS_AND_HOLD_GROUP_ID = 7332;
+
+  const createCandidate = (index: number): KitCandidate => ({
+    provenance: { index, label: "", proudSkillGroupId: SKILL_GROUP_ID, source: KitSource.Tables },
+    value: { index, proudSkillGroupId: SKILL_GROUP_ID },
+  });
+
+  const createTables = (labelMap: Map<number, KitTableLabel[]>): KitTables => ({
+    characterId: 10_000_126,
+    labelMap,
+    name: "Test",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 0,
+      [CombatTalent.ElementalSkill]: SKILL_GROUP_ID,
+      [CombatTalent.NormalAttack]: 0,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Catalyst,
+  });
+
+  const pressAndHoldLabelMap: Pick<KitTables, "labelMap">["labelMap"] = new Map([
+    [
+      PRESS_AND_HOLD_GROUP_ID,
+      [
+        { indexes: [0], label: "Press DMG" },
+        { indexes: [1], label: "Hold DMG" },
+      ],
+    ],
+  ]);
+
   test("maps a stance's hit and a hold's hit to the table labels their multipliers name, as a skill's hit is mapped", () => {
     expect.hasAssertions();
 

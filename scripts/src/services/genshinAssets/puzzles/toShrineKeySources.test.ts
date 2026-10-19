@@ -3,30 +3,6 @@ import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import { toShrineKeySources } from "#src/services/genshinAssets/puzzles/toShrineKeySources";
 import { describe, expect, test } from "vitest";
 
-const englishTextMap = new Map([
-  ["9001", "Mondstadt Shrine of Depths Key"],
-  ["9002", "Ore Chunk"],
-  ["9003", "Testland Shrine of Depths Key"],
-]);
-const materials = [
-  { id: 9001, nameTextMapHash: 9001 },
-  { id: 9002, nameTextMapHash: 9002 },
-  { id: 9003, nameTextMapHash: 9003 },
-];
-const rewards = new Map([
-  [
-    9101,
-    {
-      rewardId: 9101,
-      rewardItemList: [
-        { itemCount: 1, itemId: 9001 },
-        { itemCount: 500, itemId: 9002 },
-      ],
-    },
-  ],
-  [9102, { rewardId: 9102, rewardItemList: [{ itemCount: 1, itemId: 9003 }] }],
-  [9103, { rewardId: 9103, rewardItemList: [{ itemCount: 500, itemId: 9002 }] }],
-]);
 const createQuest = (id: number, rewardIdList?: number[]): DumpedMainQuest => ({
   chapterId: 0,
   descTextMapHash: 0,
@@ -36,6 +12,31 @@ const createQuest = (id: number, rewardIdList?: number[]): DumpedMainQuest => ({
 });
 
 describe(toShrineKeySources, () => {
+  const englishTextMap = new Map([
+    ["9001", "Mondstadt Shrine of Depths Key"],
+    ["9002", "Ore Chunk"],
+    ["9003", "Testland Shrine of Depths Key"],
+  ]);
+  const materials = [
+    { id: 9001, nameTextMapHash: 9001 },
+    { id: 9002, nameTextMapHash: 9002 },
+    { id: 9003, nameTextMapHash: 9003 },
+  ];
+  const rewards = new Map([
+    [
+      9101,
+      {
+        rewardId: 9101,
+        rewardItemList: [
+          { itemCount: 1, itemId: 9001 },
+          { itemCount: 500, itemId: 9002 },
+        ],
+      },
+    ],
+    [9102, { rewardId: 9102, rewardItemList: [{ itemCount: 1, itemId: 9003 }] }],
+    [9103, { rewardId: 9103, rewardItemList: [{ itemCount: 500, itemId: 9002 }] }],
+  ]);
+
   test("a quest reward naming a shrine key gives its source, filed under the key's region", () => {
     expect.hasAssertions();
 

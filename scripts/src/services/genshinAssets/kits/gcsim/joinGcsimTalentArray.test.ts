@@ -3,18 +3,18 @@ import type { TalentMultiplierMap } from "genshin-world";
 import { joinGcsimTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimTalentArray";
 import { describe, expect, test } from "vitest";
 
-const talentMultiplierMap: TalentMultiplierMap = {
-  10: [
-    { level: 1, paramList: [0.5, 2] },
-    { level: 2, paramList: [0.6, 2] },
-  ],
-  20: [
-    { level: 1, paramList: [0.5, 0.25] },
-    { level: 2, paramList: [0.6, 0.5] },
-  ],
-};
-
 describe(joinGcsimTalentArray, () => {
+  const talentMultiplierMap: TalentMultiplierMap = {
+    10: [
+      { level: 1, paramList: [0.5, 2] },
+      { level: 2, paramList: [0.6, 2] },
+    ],
+    20: [
+      { level: 1, paramList: [0.5, 0.25] },
+      { level: 2, paramList: [0.6, 0.5] },
+    ],
+  };
+
   test("joins a row to the one parameter whose multiplier at every level is the row's value", () => {
     expect.hasAssertions();
 

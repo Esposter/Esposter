@@ -7,9 +7,9 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { describe, expect, test } from "vitest";
 
-const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
-
 describe(compareKitRecord, () => {
+  const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
+
   test("leaves no entry for a path only the source gives, so the publish adds it rather than removing it", () => {
     expect.hasAssertions();
 

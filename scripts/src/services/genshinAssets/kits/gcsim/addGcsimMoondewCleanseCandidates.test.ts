@@ -70,20 +70,20 @@ const createGcsim = (withMoondewCleanse: boolean): GcsimCharacter => ({
   travelMap: new Map(),
 });
 
-const tables: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Columbina",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 0,
-    [CombatTalent.ElementalSkill]: 0,
-    [CombatTalent.NormalAttack]: 11031,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Catalyst,
-};
-
 describe(addGcsimMoondewCleanseCandidates, () => {
+  const tables: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Columbina",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 0,
+      [CombatTalent.ElementalSkill]: 0,
+      [CombatTalent.NormalAttack]: 11031,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Catalyst,
+  };
+
   test("gives the Moondew Cleanse's three Lunar-Bloom hits their hitmarks, frames, element, multiplier and primary target's circle", () => {
     expect.hasAssertions();
 

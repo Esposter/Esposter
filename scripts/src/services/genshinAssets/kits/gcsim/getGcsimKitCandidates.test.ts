@@ -31,18 +31,6 @@ const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", li
 const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });
 const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
 
-const KIT_TABLES: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Test",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 1,
-    [CombatTalent.ElementalSkill]: 2,
-    [CombatTalent.NormalAttack]: 3,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Sword,
-};
 const attackConstant = (value: GoValue, line: number, file = "attack.go") => ({ elementLines: {}, file, line, value });
 const toConstantAt = (file: string, line: number, value: GoValue) => ({ elementLines: {}, file, line, value });
 const createCharacterFixture = (
@@ -75,6 +63,19 @@ const createCharacterFixture = (
 });
 
 describe(getGcsimKitCandidates, () => {
+  const KIT_TABLES: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Test",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 1,
+      [CombatTalent.ElementalSkill]: 2,
+      [CombatTalent.NormalAttack]: 3,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Sword,
+  };
+
   test("reads a press's and a hold's hitmarks listed one for each burst state as no hits, the hold still read", () => {
     expect.hasAssertions();
 

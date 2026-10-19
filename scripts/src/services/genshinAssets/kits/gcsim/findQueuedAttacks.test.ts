@@ -4,10 +4,10 @@ import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/Gcs
 import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
 import { describe, expect, test } from "vitest";
 
-const attackCommon = { fieldLineMap: {}, file: "burst.go", siteLine: 1, variableName: "ai" };
-const queuedAttack: GcsimQueuedAttack = { attackName: "ai", delayLine: 9, file: "burst.go", line: 9 };
-
 describe(findQueuedAttacks, () => {
+  const attackCommon = { fieldLineMap: {}, file: "burst.go", siteLine: 1, variableName: "ai" };
+  const queuedAttack: GcsimQueuedAttack = { attackName: "ai", delayLine: 9, file: "burst.go", line: 9 };
+
   test("keeps the declared attack when the one branch that sets its multiplier may not run", () => {
     expect.hasAssertions();
 

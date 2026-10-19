@@ -6,12 +6,12 @@ import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { getDonorKitCandidates } from "#src/services/genshinAssets/kits/record/getDonorKitCandidates";
 import { describe, expect, test } from "vitest";
 
-// Xingqiu's character id, declared here because the kit modules that export it are the world's, not the builder's
-const XINGQIU_CHARACTER_ID = 10_000_025;
-
 const strike = (hitmarkFrames: number) => ({ hits: [{ hitmarkFrames }] });
 
 describe(getDonorKitCandidates, () => {
+  // Xingqiu's character id, declared here because the kit modules that export it are the world's, not the builder's
+  const XINGQIU_CHARACTER_ID = 10_000_025;
+
   test("gives Vesna's sixth strike the second hit of Xingqiu's fifth strike, the sixth strike remapped to the donor's fifth", () => {
     expect.hasAssertions();
 

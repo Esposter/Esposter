@@ -9,20 +9,20 @@ vi.mock(import("#src/services/genshinParity/shared/openParityPage"), () => ({
   openParityPage: vi.fn<typeof openParityPage>(),
 }));
 
-const BENCH = {
-  gameDataBytes: 1,
-  gameDataRequests: 2,
-  geometries: 3,
-  kindCounts: {},
-  longFrameMs: 0,
-  measures: [],
-  programs: 4,
-  requests: 5,
-  textures: 6,
-  totalBytes: 7,
-} satisfies LoadBench;
-
 describe(loadScreen, () => {
+  const BENCH = {
+    gameDataBytes: 1,
+    gameDataRequests: 2,
+    geometries: 3,
+    kindCounts: {},
+    longFrameMs: 0,
+    measures: [],
+    programs: 4,
+    requests: 5,
+    textures: 6,
+    totalBytes: 7,
+  } satisfies LoadBench;
+
   test("opens the page at its load event and reads ready and the bench together at the ready signal", async () => {
     expect.hasAssertions();
 
