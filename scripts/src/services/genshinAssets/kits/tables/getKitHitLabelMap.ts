@@ -5,16 +5,13 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 
 import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
+import { checkIsTitleSlotPath } from "#src/services/genshinAssets/kits/wiki/checkIsTitleSlotPath";
 import { kitParameterSchema } from "genshin-world";
-
-// A slot hit is the skill's or burst's, a stance's, a hold's, or a named hit's, whose multiplier names its table label
-const SLOT_HIT_PATH_REGEX =
-  /^(?:(?:skill|burst)\.|stances\.[A-Za-z]+\.(?:chargedAttack|skill|normalAttacks\.\d+)\.|skillHolds\.\d+\.(?:action|variant)\.)?hits\.(?:\d+|[A-Za-z]+(?:\.\d+)?)$/u;
 
 // A hit's path split into its list and its index, `burst.hits` and `5` for `burst.hits.5`
 const HIT_LIST_INDEX_REGEX = /^(?<list>.+)\.(?<index>\d+)$/u;
 
-// The table label each slot hit deals its multiplier under, by the hit's path, with the proud skill group that label
+// The table label each hit deals its multiplier under, by the hit's path, with the proud skill group that label
 // Belongs to. A hit takes the label of the multiplier the record publishes at its path, the overlay's where it sets a
 // Value and else its first candidate's. A hit at or past its list's length takes none: the overlay's length, else the
 // Named list rule's empty list, which the resolver gives the slot a named list joins to
@@ -31,7 +28,9 @@ export const getKitHitLabelMap = (
   const hitLabelMap = new Map<string, KitHitLabel>();
   for (const [path, value] of multiplierMap) {
     const hitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
-    if (hitPath === undefined || !SLOT_HIT_PATH_REGEX.test(hitPath)) continue;
+    // Every hit takes its label but the normal attack page's strikes, charged attack, plunges and collision, which take
+    // Their rows by their titles
+    if (hitPath === undefined || checkIsTitleSlotPath(hitPath)) continue;
     const listIndex = HIT_LIST_INDEX_REGEX.exec(hitPath)?.groups;
     if (listIndex !== undefined) {
       const lengthPath = `${listIndex.list}.length`;

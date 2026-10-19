@@ -196,4 +196,51 @@ describe(getKitHitLabelMap, () => {
       ),
     ).toStrictEqual(new Map([["hits.dragonTicks.0", { label: "Dragon DMG", proudSkillGroupId: SKILL_GROUP_ID }]]));
   });
+
+  test("labels a follow-up's, a plunge variant's, an action's and a hit field's hits by the multipliers they name", () => {
+    expect.hasAssertions();
+
+    const candidate = createCandidate(0);
+    const candidateMap = new Map<string, KitCandidate[]>([
+      ["actions.kesagiris.0.hits.0.multiplier", [candidate]],
+      ["hitFields.lightningDischarge.multiplier", [candidate]],
+      ["plungeVariants.0.hits.0.multiplier", [candidate]],
+      ["skillChain.followUps.0.hits.0.multiplier", [candidate]],
+    ]);
+
+    expect(
+      getKitHitLabelMap(
+        candidateMap,
+        createTables(new Map([[SKILL_GROUP_ID, [{ indexes: [0], label: "Skill DMG" }]]])),
+        {},
+      ),
+    ).toStrictEqual(
+      new Map([
+        ["actions.kesagiris.0.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        ["hitFields.lightningDischarge", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        ["plungeVariants.0.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+        ["skillChain.followUps.0.hits.0", { label: "Skill DMG", proudSkillGroupId: SKILL_GROUP_ID }],
+      ]),
+    );
+  });
+
+  test("takes no label for a normal attack page's strike, charged attack, plunge or collision, which take their rows by title", () => {
+    expect.hasAssertions();
+
+    const candidate = createCandidate(0);
+    const candidateMap = new Map<string, KitCandidate[]>([
+      ["chargedAttack.hits.0.multiplier", [candidate]],
+      ["normalAttacks.0.hits.0.multiplier", [candidate]],
+      ["plungeCollision.multiplier", [candidate]],
+      ["plunges.high.hits.0.multiplier", [candidate]],
+    ]);
+
+    expect(
+      getKitHitLabelMap(
+        candidateMap,
+        createTables(new Map([[SKILL_GROUP_ID, [{ indexes: [0], label: "Skill DMG" }]]])),
+        {},
+      ),
+    ).toStrictEqual(new Map());
+  });
 });
