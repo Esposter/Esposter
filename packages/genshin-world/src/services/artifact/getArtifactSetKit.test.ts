@@ -40,7 +40,7 @@ import { describe, expect, test, vi } from "vitest";
 const { receivedKinds } = vi.hoisted(() => ({ receivedKinds: [] as string[] }));
 
 // Instructor's module, wrapped to record each event it is sent before the module answers it
-vi.mock("#src/services/artifact/ArtifactSetIdCreateModuleMap", async (importOriginal) => {
+vi.mock(import("#src/services/artifact/ArtifactSetIdCreateModuleMap"), async (importOriginal) => {
   const { ArtifactSetIdCreateModuleMap } =
     await importOriginal<typeof import("#src/services/artifact/ArtifactSetIdCreateModuleMap")>();
   const { INSTRUCTOR_ARTIFACT_SET_ID } = await importOriginal<typeof import("#src/services/artifact/constants")>();
@@ -230,7 +230,8 @@ describe(getArtifactSetKit, () => {
     expect(getPartyMember(party, wearer.characterId).healthShare).toBeCloseTo(0.8);
     expect(getPartyMember(party, ally.characterId).healthShare).toBe(0.5);
   });
-  test("A hit on wildlife reaches Bloodstained Chivalry's set module, the one set that answers wildlife", () => {
+
+  test("a hit on wildlife reaches Bloodstained Chivalry's set module, the one set that answers wildlife", () => {
     expect.hasAssertions();
 
     const kit = getArtifactSetKit(
@@ -247,7 +248,7 @@ describe(getArtifactSetKit, () => {
     expect(kit.getChargedAttackStaminaMultiplier?.(context)).toBe(0);
   });
 
-  test("A weapon passive triggers on wildlife, an artifact set does not", () => {
+  test("a weapon passive triggers on wildlife, an artifact set does not", () => {
     expect.hasAssertions();
     receivedKinds.length = 0;
     // The weapon's passives ride on the kit the sets are added to, so they hear the hit through it
@@ -265,7 +266,7 @@ describe(getArtifactSetKit, () => {
       combatant,
     );
 
-    expect(weaponPassive).toHaveBeenCalledOnce();
+    expect(weaponPassive).toHaveBeenCalledTimes(1);
     expect(receivedKinds).toStrictEqual([]);
   });
 });

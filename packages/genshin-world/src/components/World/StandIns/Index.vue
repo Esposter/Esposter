@@ -25,8 +25,8 @@ interface Props {
 const { color, getGroundHeight, lightUniforms, places, radius, rampTexture, shape } = defineProps<Props>();
 
 // Every stand-in is one shape of one instanced draw sharing one material. The stand-ins are placed anywhere in the world,
-// so the mesh's bounds, measured from its geometry alone, would cull them. An instanced mesh's count is fixed at setup, so
-// the parent mounts this keyed by the number of places, and a change in that number mounts it again
+// So the mesh's bounds, measured from its geometry alone, would cull them. An instanced mesh's count is fixed at setup, so
+// The parent mounts this keyed by the number of places, and a change in that number mounts it again
 const standInMesh = createInstancedMesh(
   shape === StandInShape.Rock ? new DodecahedronGeometry(radius) : new SphereGeometry(radius),
   createToonMaterial({ color, lightUniforms, rampTexture }),

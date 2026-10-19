@@ -9,7 +9,7 @@ import { takeOne } from "@esposter/shared";
 const SPRING_SPIRIT_SUMMONING_DAMAGE = 2;
 
 // Spring Spirit Summoning, Shenhe's skill: 2 Cryo DMG, and an Icy Quill is created on her side once the damage is dealt (the
-// wiki's Spring Spirit Summoning (Character Card Skill))
+// Wiki's Spring Spirit Summoning (Character Card Skill))
 export const springSpiritSummoning: GcgSkillModule = {
   afterDamage: ({ duel, sideIndex }) => {
     placeGcgZoneCard(takeOne(duel.sides, sideIndex).onstages, ICY_QUILL_ID, icyQuill);

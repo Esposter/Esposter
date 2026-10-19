@@ -14,7 +14,7 @@ describe(computeBountyTrailEnds, () => {
     targetEnemyKindId: EnemyKindId.HilichurlFighter,
   };
 
-  test("A bounty with no placed target draws no trail", () => {
+  test("a bounty with no placed target draws no trail", () => {
     expect.hasAssertions();
 
     expect(computeBountyTrailEnds([{ areaId: "", id: "", members: [] }])).toStrictEqual([]);

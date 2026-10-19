@@ -33,6 +33,6 @@ describe("expeditionLoader", () => {
       },
     });
 
-    expect(await logged).toBeInstanceOf(Error);
+    await expect(logged).resolves.toBeInstanceOf(Error);
   });
 });

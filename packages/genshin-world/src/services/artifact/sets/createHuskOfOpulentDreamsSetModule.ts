@@ -90,9 +90,8 @@ export const createHuskOfOpulentDreamsSetModule = (bonus: ArtifactSetBonus): Pas
         isOnField &&
         getKitHitElement(event.hit, event.striker) === Element.Geo &&
         startKitCooldown(kitEffectState, characterId, HUSK_STACK_GAIN_COOLDOWN_ID, cooldownSeconds)
-      ) {
+      )
         gainStack(kitEffectState, characterId);
-      }
     },
   };
 };

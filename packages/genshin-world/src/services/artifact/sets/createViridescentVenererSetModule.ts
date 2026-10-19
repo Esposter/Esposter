@@ -40,11 +40,10 @@ export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): Pass
         getActiveCharacterId(context.party) !== combatant.characterId
       )
         return;
-      for (const { element, reactionType } of event.reactions) {
+      for (const { element, reactionType } of event.reactions)
         if (reactionType === TransformativeReactionType.Swirl && element !== undefined)
           reduceResistance(event.enemy, element);
         else if (reactionType === StellarReactionType.StellarSwirl) reduceResistance(event.enemy, Element.Cryo);
-      }
     },
   };
 };

@@ -17,7 +17,7 @@ import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 export interface GcgCardModule {
   canPlay?: (context: GcgEffectContext, targetIndex: number | undefined) => boolean;
   // Whether a card on a side's field is spent by what the side holds now, for a card that lasts while another card or a shield
-  // does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
+  // Does, rather than while a usage or round lasts. The side is read after its cards are pruned by usages and rounds
   checkIsSpent?: (side: GcgSideState, zoneCard: GcgZoneCard) => boolean;
   checkIsSwitchFast?: (context: GcgEffectContext) => boolean;
   // The Piercing DMG a card deals to each opposing character on standby at the end phase, before its onEndPhase damage
@@ -45,7 +45,7 @@ export interface GcgCardModule {
   multiplyDamageDealt?: (context: GcgEffectContext, damage: GcgDamage, zoneCard: GcgZoneCard) => GcgDamage;
   onActionPhase?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => void;
   // The hits a skill of either side landed, for a card on either side's field: the context's side is the card's own, and
-  // userSideIndex is the side of the character who used the skill
+  // UserSideIndex is the side of the character who used the skill
   onAnySkillUsed?: (
     context: GcgEffectContext & { userSideIndex: number },
     skill: GcgSkill,
@@ -55,7 +55,7 @@ export interface GcgCardModule {
   // A side is handed the choice of its action, for a card on its field, before it chooses: the damage the card deals, if any
   onBeforeAction?: (context: GcgEffectContext, zoneCard: GcgZoneCard) => GcgDamage | void;
   // A card is played by this card's side, for a card on that side's field: the played card is on the field and its own play has
-  // resolved, so a card that draws on the play reads the field as it now stands
+  // Resolved, so a card that draws on the play reads the field as it now stands
   onCardPlayed?: (context: GcgEffectContext, playedCard: GcgCard, zoneCard: GcgZoneCard) => void;
   onCostPaid?: (context: GcgEffectContext, subject: GcgCostSubject, zoneCard: GcgZoneCard) => void;
   // A character's own cards hear it take DMG and survive it, once the damage has landed: its equipments, then its statuses

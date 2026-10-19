@@ -71,7 +71,7 @@ describe(useWorldCombat, () => {
     expect(kitContext.outbox).toStrictEqual([{ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.ChestOpened }]);
   });
 
-  test("Impetuous Winds cuts each spend from the stamina the party shares", () => {
+  test("impetuous Winds cuts each spend from the stamina the party shares", () => {
     expect.hasAssertions();
     const characterIds = [
       TRAVELER_CHARACTER_ID,

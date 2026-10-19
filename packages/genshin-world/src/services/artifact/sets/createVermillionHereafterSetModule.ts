@@ -80,13 +80,12 @@ export const createVermillionHereafterSetModule = (bonus: ArtifactSetBonus): Pas
         event.healthShare < 0 &&
         checkIsKitStatusActive(kitEffectState.effects, characterId, VERMILLION_HEREAFTER_NASCENT_LIGHT_ID) &&
         startKitCooldown(kitEffectState, characterId, VERMILLION_HEREAFTER_COOLDOWN_ID, cooldownSeconds)
-      ) {
+      )
         addKitHold(kitEffectState, characterId, {
           id: VERMILLION_HEREAFTER_INCREASE_ID,
           maximum: maximumIncreases,
           seconds: Number.POSITIVE_INFINITY,
         });
-      }
     },
   };
 };

@@ -6,10 +6,10 @@ import { takeOne } from "@esposter/shared";
 import { DUNYARZAD_ID } from "#src/services/gcg/cards/constants";
 
 // Dunyarzad, a companion: a companion costs one die less to play, once per Round, and after a companion is played, a random
-// companion is drawn from the pile, once per match (the wiki's Dunyarzad (Support Card)). The draw is kept in the card's
-// counter, not its usages, so Dunyarzad stays on the field once it is spent; the use is spent even when the pile holds no
-// companion. The draw is the side's, not each copy's: once any copy has spent it, a second copy does not draw again. That
-// is provisional, as the wiki gives the draw once per match and not for a second copy
+// Companion is drawn from the pile, once per match (the wiki's Dunyarzad (Support Card)). The draw is kept in the card's
+// Counter, not its usages, so Dunyarzad stays on the field once it is spent; the use is spent even when the pile holds no
+// Companion. The draw is the side's, not each copy's: once any copy has spent it, a second copy does not draw again. That
+// Is provisional, as the wiki gives the draw once per match and not for a second copy
 export const dunyarzad: GcgCardModule = {
   initialCounter: 1,
   onCardPlayed: ({ duel, sideIndex }, playedCard, zoneCard) => {

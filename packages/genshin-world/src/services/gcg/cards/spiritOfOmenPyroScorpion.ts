@@ -7,14 +7,13 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { SCORPOCALYPSE_ID } from "#src/services/gcg/cards/constants";
+import { SCORPOCALYPSE_ID, BURNING_ASSAULT_ID, PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
 import {
   addScorpionBlessingStack,
   readScorpionBlessingStacks,
   spendScorpionBlessingStacks,
 } from "#src/services/gcg/cards/scorpionBlessing";
 import { takeOne } from "@esposter/shared";
-import { BURNING_ASSAULT_ID, PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
 
 const BURNING_ASSAULT_DAMAGE = 2;
 const PYRO_SCORPION_NEGATED_DAMAGE = 1;

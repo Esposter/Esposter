@@ -1,9 +1,9 @@
 import type { GroundPoint } from "genshin-engine";
-import type { BufferGeometry, Material } from "three";
+import type { BufferGeometry, Material, InstancedMesh } from "three";
 
 import { watchImmediate } from "@vueuse/core";
 import { onUnmounted } from "vue";
-import { InstancedMesh, Matrix4, Quaternion, Vector3 } from "three";
+import { Matrix4, Quaternion, Vector3 } from "three";
 
 // Writes one instance of a stand-in mesh at each of its places, each stood on the ground beneath it and lifted by the given
 // Height, and disposes the mesh with the component that draws it

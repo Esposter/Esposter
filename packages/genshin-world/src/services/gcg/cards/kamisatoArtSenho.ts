@@ -2,18 +2,17 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
-import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
+import { CRYO_ELEMENTAL_INFUSION_ID, SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
 
 // The id Kamisato Art: Senho's status is held under: the passive's own skill id, since the dump names no card for it
 const SENHO_TRIGGERS_PER_ROUND = 2;
 const SENHO_BONUS = 1;
 
 // Kamisato Art: Senho, Ayaka's passive: when she is switched to be the active character, she gains Cryo Elemental Infusion,
-// and her next Normal Attack this Round deals 1 more DMG. It triggers twice per Round (the wiki's Kamisato Art: Senho)
+// And her next Normal Attack this Round deals 1 more DMG. It triggers twice per Round (the wiki's Kamisato Art: Senho)
 export const kamisatoArtSenho: GcgCardModule = {
   modifyDamageDealt: (context, damage, zoneCard) => {
     if (zoneCard.usages <= 0 || context.skill?.kind !== GcgSkillKind.NormalAttack) return damage;

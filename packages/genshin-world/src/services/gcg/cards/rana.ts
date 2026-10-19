@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 import { RANA_ID } from "#src/services/gcg/cards/constants";
 
 // Rana, a companion: after her side's character uses an Elemental Skill, a die of the element of the next off-field character
-// is created, once per Round (the wiki's Rana (Support Card)). The skill counts only when her side is the acting side
+// Is created, once per Round (the wiki's Rana (Support Card)). The skill counts only when her side is the acting side
 export const rana: GcgCardModule = {
   onAnySkillUsed: ({ duel, sideIndex }, skill) => {
     if (duel.actingSideIndex !== sideIndex || skill.kind !== GcgSkillKind.ElementalSkill) return;

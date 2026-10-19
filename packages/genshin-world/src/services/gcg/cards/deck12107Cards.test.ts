@@ -173,7 +173,7 @@ describe("fatal Rainscreen", () => {
     [Element.Hydro, Element.Hydro, false],
     [Element.Pyro, GcgAura.None, false],
   ])(
-    "Hydro Application on its character holding %s leaves the aura %s and Frozen %s, and deals no reaction DMG",
+    "hydro Application on its character holding %s leaves the aura %s and Frozen %s, and deals no reaction DMG",
     (aura, expectedAura, isFrozen) => {
       expect.hasAssertions();
       const duel = createDuel([

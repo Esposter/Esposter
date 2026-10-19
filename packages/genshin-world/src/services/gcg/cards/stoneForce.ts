@@ -2,9 +2,8 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
-import { STONEHIDE_ID } from "#src/services/gcg/cards/constants";
+import { STONEHIDE_ID, STONE_FORCE_ID } from "#src/services/gcg/cards/constants";
 import { takeOne } from "@esposter/shared";
-import { STONE_FORCE_ID } from "#src/services/gcg/cards/constants";
 
 const STONE_FORCE_BONUS = 1;
 

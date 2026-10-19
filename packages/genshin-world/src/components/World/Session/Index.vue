@@ -671,7 +671,7 @@ const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLeve
   wallet,
 });
 // The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which its
-// offer and claim act on
+// Offer and claim act on
 const worshipLandmarkId = ref<string>();
 const worshipLevels = shallowRef<StatueLevel[]>([]);
 const worshipRegionId = computed(() =>
@@ -691,7 +691,7 @@ const offerWorship = () => {
   if (worshipRegionId.value !== undefined) offerOculi(worshipRegionId.value, worshipLevels.value);
 };
 // A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
-// has no room for them
+// Has no room for them
 const claimWorship = () => {
   if (worshipRegionId.value === undefined || worshipLandmarkId.value === undefined) return;
   claimLevel(worshipRegionId.value, worshipLevels.value, {
@@ -945,7 +945,7 @@ const {
 // The residents of the regions in reach, which the talks and a keeper's screen are read from
 const getResidents = () => [...(windrise.value?.regionDataMap.values() ?? [])].flatMap(({ residents }) => residents);
 // A won week game pays its reward once, its Player EXP into the card game's EXP and its Lucky Coins into the bag and wallet,
-// the way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
+// The way a Mail claim pays into them. A duel that is not a week game, or was lost, pays nothing
 const payCardGameReward = (gameId: number | undefined, won: boolean) => {
   const weekGame = getResidents().find((resident) => resident.weekGame?.gameId === gameId)?.weekGame;
   if (!won || !weekGame) return;

@@ -13,12 +13,7 @@ describe("changingShifts", () => {
     const side: { onstages: GcgZoneCard[] } = {
       onstages: [{ cardId: CHANGING_SHIFTS_ID, counter: 0, rounds: 0, usages: 0 }],
     };
-    changingShifts.play?.(
-      { duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 } as Parameters<
-        NonNullable<GcgCardModule["play"]>
-      >[0],
-      undefined,
-    );
+    changingShifts.play?.({ duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 }, undefined);
 
     expect(side.onstages).toStrictEqual([{ cardId: CHANGING_SHIFTS_ID, counter: 0, rounds: 0, usages: 1 }]);
   });

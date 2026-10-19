@@ -8,7 +8,7 @@ const LIYUE = "LIYUE";
 const LITHIC_SPEAR_MAX_SHIELD_POINTS = 3;
 
 // Lithic Spear, a pole: the character deals 1 more DMG, and when it is played, she gains a Shield point for each party member
-// from Liyue, up to 3 points (the wiki's Lithic Spear (Equipment Card)), held within the shield limit
+// From Liyue, up to 3 points (the wiki's Lithic Spear (Equipment Card)), held within the shield limit
 export const lithicSpear: GcgCardModule = {
   ...createGcgWeaponCard("POLE"),
   play: ({ duel, sideIndex }, targetIndex) => {

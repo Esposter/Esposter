@@ -18,8 +18,8 @@ import { toStatueRegionProgress, toStatueRegionProgressSave } from "#src/service
 import { getResultAsync } from "@esposter/shared";
 
 // The statues' state the world holds: each region's level, the level its rewards are claimed through and the Oculi held,
-// and the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
-// and the Worship Statue offers the Oculi held and pays each level's rewards as that level is claimed, one level an action.
+// And the Oculi found. A touch collects an Oculus and holds it in its region, a resonance starts its region at level one,
+// And the Worship Statue offers the Oculi held and pays each level's rewards as that level is claimed, one level an action.
 // What the bag has no room for drops where the claim was made
 export const useWorldStatues = ({
   events,
@@ -62,7 +62,7 @@ export const useWorldStatues = ({
     return checkIsGameDataKey(key) ? readStatueLevels(gameDataBaseUrl, key) : Promise.resolve([]);
   };
   // The levels a region's statues take, handed to the caller once they have arrived, so the Worship Statue opens with its
-  // screen showing each level and its rewards, and a resonance reads them before it acts
+  // Screen showing each level and its rewards, and a resonance reads them before it acts
   const readRegionLevels = (regionId: string, onRead: (levels: StatueLevel[]) => void) =>
     getResultAsync(() => readRegionStatueLevels(regionId)).match(onRead, (error) => {
       console.error(error);
@@ -101,14 +101,14 @@ export const useWorldStatues = ({
     });
   };
   // The Worship Statue offers the Oculi a started region holds, reaching each level they complete and leaving its rewards
-  // to be claimed
+  // To be claimed
   const offerOculi = (regionId: string, levels: StatueLevel[]) => {
     const progress = getRegionProgress(regionId);
     const offered = offerStatueOculi(toStatueRegionProgress(progress, levels));
     setRegionProgress(regionId, toStatueRegionProgressSave(offered, progress.claimedLevel));
   };
   // A claim takes the next level the region has reached, paying its rewards once; a region with none left to claim is left
-  // as it is
+  // As it is
   const claimLevel = (regionId: string, levels: StatueLevel[], source: Pick<WorldDrop, "id" | "position">) => {
     const progress = getRegionProgress(regionId);
     const offeringProgress = toStatueRegionProgress(progress, levels);

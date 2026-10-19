@@ -26,7 +26,7 @@ describe("transcendentAutomaton", () => {
     kind: GcgSkillKind.ElementalSkill,
   };
 
-  test("Blustering Blade's switch lands Vermillion Hereafter's status on the character switched in", () => {
+  test("blustering Blade's switch lands Vermillion Hereafter's status on the character switched in", () => {
     expect.hasAssertions();
 
     const zoneCard = createGcgZoneCard(TRANSCENDENT_AUTOMATON_ID, transcendentAutomaton);

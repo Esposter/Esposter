@@ -2,10 +2,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
-import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
+import { CRYO_ELEMENTAL_INFUSION_ID, KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
-import { KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/constants";
 
 const KANTEN_SENMYOU_BLESSING_DAMAGE_BONUS = 1;
 

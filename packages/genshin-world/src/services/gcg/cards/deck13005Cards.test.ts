@@ -17,23 +17,25 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { GcgEffectDamageNameMap } from "#src/services/gcg/constants";
 import { adventurersBandana } from "#src/services/gcg/cards/adventurersBandana";
-import { ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/constants";
+import {
+  ADVENTURERS_BANDANA_ID,
+  AQUILA_FAVONIA_ID,
+  CRYO_ELEMENTAL_INFUSION_ID,
+  KANTEN_SENMYOU_BLESSING_ID,
+  WAGNER_ID,
+  PARAMETRIC_TRANSFORMER_ID,
+  FROSTFLAKE_SEKI_NO_TO_ID,
+  SENHO_STATUS_ID,
+  LEAVE_IT_TO_ME_ID,
+  YOIMIYA_ID,
+} from "#src/services/gcg/cards/constants";
 import { aquilaFavonia } from "#src/services/gcg/cards/aquilaFavonia";
-import { AQUILA_FAVONIA_ID } from "#src/services/gcg/cards/constants";
 import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
-import { CRYO_ELEMENTAL_INFUSION_ID } from "#src/services/gcg/cards/constants";
 import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
-import { KANTEN_SENMYOU_BLESSING_ID } from "#src/services/gcg/cards/constants";
 import { wagner } from "#src/services/gcg/cards/wagner";
-import { WAGNER_ID } from "#src/services/gcg/cards/constants";
 import { parametricTransformer } from "#src/services/gcg/cards/parametricTransformer";
-import { PARAMETRIC_TRANSFORMER_ID } from "#src/services/gcg/cards/constants";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
-import { FROSTFLAKE_SEKI_NO_TO_ID } from "#src/services/gcg/cards/constants";
 import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
-import { SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
-import { LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
-import { YOIMIYA_ID } from "#src/services/gcg/cards/constants";
 import { kamisatoArtSenhoSkill } from "#src/services/gcg/cards/kamisatoArtSenhoSkill";
 import { kamisatoArtSoumetsu } from "#src/services/gcg/cards/kamisatoArtSoumetsu";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
@@ -288,6 +290,7 @@ describe("the skills whose damage is parsed from their effect name", () => {
     id: 3,
     kind: GcgSkillKind.NormalAttack,
   };
+
   test("kamisato Art: Kabuki deals 2 Physical DMG, with no aura", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -519,6 +522,7 @@ describe("parametric Transformer", () => {
     id: 3,
     kind: GcgSkillKind.NormalAttack,
   };
+
   test("it gains 1 Qualitative Progress when either side's Skill deals Elemental DMG, and not for Physical DMG", () => {
     expect.hasAssertions();
     const duel = createDuel([

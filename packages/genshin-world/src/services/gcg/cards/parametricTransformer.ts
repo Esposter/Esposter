@@ -1,7 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 
-import { Element, Elements } from "#src/models/Element";
+import type { Element } from "#src/models/Element";
+import { Elements } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";

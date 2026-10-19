@@ -18,7 +18,7 @@ export const emblemOfSeveredFate: GcgCardModule = {
       return;
     const side = takeOne(duel.sides, sideIndex);
     const userIndex = side.characters.findIndex(({ character }) => character.skills.some(({ id }) => id === skill.id));
-    if (userIndex < 0 || userIndex === characterIndex) return;
+    if (userIndex === -1 || userIndex === characterIndex) return;
     const owner = takeOne(side.characters, characterIndex);
     owner.energy = Math.min(owner.energy + 1, owner.character.maxEnergy);
   },

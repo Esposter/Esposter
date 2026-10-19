@@ -1,11 +1,13 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
-import { CRYO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
+import {
+  CRYO_HILICHURL_SHOOTER_ID,
+  ELECTRO_HILICHURL_SHOOTER_ID,
+  HILICHURL_BERSERKER_ID,
+} from "#src/services/gcg/cards/constants";
 import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
-import { ELECTRO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
 import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
-import { HILICHURL_BERSERKER_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne, takeRandom } from "@esposter/shared";
 

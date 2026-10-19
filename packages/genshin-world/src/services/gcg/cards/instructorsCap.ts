@@ -7,7 +7,7 @@ import { INSTRUCTORS_CAP_ID } from "#src/services/gcg/cards/constants";
 const INSTRUCTORS_CAP_LIMIT = 3;
 
 // Instructor's Cap, an artifact on a character: after the character's skill triggers an Elemental Reaction, an Elemental Die
-// of the character's element is created, up to three times a round
+// Of the character's element is created, up to three times a round
 export const instructorsCap: GcgCardModule = {
   onSkillUsed: ({ characterIndex, duel, sideIndex }, _skill, _zoneCard, dealt) => {
     const side = takeOne(duel.sides, sideIndex);

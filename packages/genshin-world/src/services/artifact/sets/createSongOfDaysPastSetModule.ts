@@ -17,16 +17,16 @@ const YEARNING_ID = `songOfDaysPast${ID_SEPARATOR}yearning`;
 const WAVES_ID = `songOfDaysPast${ID_SEPARATOR}waves`;
 const SNAPSHOT_ID = `songOfDaysPast${ID_SEPARATOR}snapshot`;
 // The attack tags a Waves stage's hits are counted from: a Normal, Charged or Plunging attack, or an elemental skill or burst
-const WAVES_ATTACK_TAGS: readonly AttackTag[] = [
+const WAVES_ATTACK_TAGS: readonly AttackTag[] = new Set([
   AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
   AttackTag.PlungingAttack,
   AttackTag.ElementalSkill,
   AttackTag.ElementalBurst,
-];
+]);
 
 const checkIsWavesAttackTag = (attackTag: AttackTag | undefined): boolean =>
-  attackTag !== undefined && WAVES_ATTACK_TAGS.includes(attackTag);
+  attackTag !== undefined && WAVES_ATTACK_TAGS.has(attackTag);
 
 // The Yearning is the team's one, opened by whichever wearer's heal came first, so it is found among the team's effects
 const findYearning = (effects: readonly KitEffect[]): KitStatus | undefined =>

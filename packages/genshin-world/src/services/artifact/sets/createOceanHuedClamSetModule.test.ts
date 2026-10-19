@@ -202,6 +202,7 @@ describe(createOceanHuedClamSetModule, () => {
     stepKitSeconds(context, 3);
     expect(1e9 - enemy.health).toBeCloseTo(0.9 * 0.2 * wearer.attributes.maxHealth * physicalMultiplier);
   });
+
   test("a foam bursts about the active character where it pops, not where the foam was cast, as gcsim draws the burst about the player", () => {
     expect.hasAssertions();
 

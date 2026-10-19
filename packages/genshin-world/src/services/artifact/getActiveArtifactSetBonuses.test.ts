@@ -30,6 +30,7 @@ describe(getActiveArtifactSetBonuses, () => {
       },
     ],
   ]);
+
   test("a set's two-piece bonus is active from two pieces", () => {
     expect.hasAssertions();
 

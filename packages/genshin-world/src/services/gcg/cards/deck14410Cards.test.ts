@@ -15,38 +15,42 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
-import { ABSORBING_PRISM_ID } from "#src/services/gcg/cards/constants";
-import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/constants";
+import {
+  ABSORBING_PRISM_ID,
+  AEGIS_OF_ABYSSAL_FLAME_ID,
+  CHAINS_OF_WARDING_THUNDER_ID,
+  CHINJU_FOREST_ID,
+  ABYSSAL_SUMMONS_ID,
+  CROWFEATHER_COVER_ID,
+  CRYO_HILICHURL_SHOOTER_ID,
+  DARKFIRE_FURNACE_ID,
+  ELECTRO_CRYSTAL_CORE_ID,
+  ELECTRO_HILICHURL_SHOOTER_ID,
+  ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID,
+  EMBERS_REKINDLED_ID,
+  FIERY_REBIRTH_ID,
+  HILICHURL_BERSERKER_ID,
+  SIN_OF_PRIDE_ID,
+  SHIMENAWAS_REMINISCENCE_ID,
+  TENGU_JUURAI_AMBUSH_ID,
+  TENGU_JUURAI_STORMCLUSTER_ID,
+  ELECTRO_HYPOSTASIS_ID,
+  KUJOU_SARA_ID,
+} from "#src/services/gcg/cards/constants";
 import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
-import { CHAINS_OF_WARDING_THUNDER_ID } from "#src/services/gcg/cards/constants";
 import { chinjuForest } from "#src/services/gcg/cards/chinjuForest";
-import { CHINJU_FOREST_ID } from "#src/services/gcg/cards/constants";
-import { ABYSSAL_SUMMONS_ID } from "#src/services/gcg/cards/constants";
 import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
-import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
 import { cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
-import { CRYO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
 import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
-import { DARKFIRE_FURNACE_ID } from "#src/services/gcg/cards/constants";
 import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
-import { ELECTRO_CRYSTAL_CORE_ID } from "#src/services/gcg/cards/constants";
 import { electroHilichurlShooter } from "#src/services/gcg/cards/electroHilichurlShooter";
-import { ELECTRO_HILICHURL_SHOOTER_ID } from "#src/services/gcg/cards/constants";
-import { ELEMENTAL_RESONANCE_HIGH_VOLTAGE_ID } from "#src/services/gcg/cards/constants";
 import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
-import { EMBERS_REKINDLED_ID } from "#src/services/gcg/cards/constants";
 import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
-import { FIERY_REBIRTH_ID } from "#src/services/gcg/cards/constants";
 import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
-import { HILICHURL_BERSERKER_ID } from "#src/services/gcg/cards/constants";
 import { sinOfPride } from "#src/services/gcg/cards/sinOfPride";
-import { SIN_OF_PRIDE_ID } from "#src/services/gcg/cards/constants";
 import { shimenawasReminiscence } from "#src/services/gcg/cards/shimenawasReminiscence";
-import { SHIMENAWAS_REMINISCENCE_ID } from "#src/services/gcg/cards/constants";
 import { tenguJuuraiAmbush } from "#src/services/gcg/cards/tenguJuuraiAmbush";
-import { TENGU_JUURAI_AMBUSH_ID } from "#src/services/gcg/cards/constants";
 import { tenguJuuraiStormcluster } from "#src/services/gcg/cards/tenguJuuraiStormcluster";
-import { TENGU_JUURAI_STORMCLUSTER_ID } from "#src/services/gcg/cards/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { passGcgTurn } from "#src/services/gcg/passGcgTurn";
@@ -58,7 +62,6 @@ import { runGcgPreparedSkills } from "#src/services/gcg/runGcgPreparedSkills";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ELECTRO_HYPOSTASIS_ID, KUJOU_SARA_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
@@ -105,7 +108,7 @@ const createSkill = (id: number, effect: string, kind: GcgSkillKind): GcgSkill =
 });
 
 describe("fiery Rebirth", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
 
   test("a lethal hit restores the character to 4 HP, and a second lethal hit defeats it", () => {
@@ -245,7 +248,7 @@ describe("rock-Paper-Scissors Combo", () => {
 });
 
 describe("chains of Warding Thunder", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const ELEMENTAL_SKILL = createSkill(23_022, "Effect_Damage_Fire_3", GcgSkillKind.ElementalSkill);
 
   test("while it is on the field, the opposing side's first switch of a round spends 1 more die, and a later switch that round does not", () => {
@@ -334,7 +337,7 @@ describe("lightning Lockdown", () => {
 });
 
 describe("aegis of Abyssal Flame", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
 
   test("the shield takes a hit first, and once its points are depleted, 1 piercing DMG reaches every opposing character", () => {
     expect.hasAssertions();
@@ -404,7 +407,7 @@ describe("aegis of Abyssal Flame", () => {
 });
 
 describe("embers Rekindled", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const EMBERS_TALENT: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -464,7 +467,7 @@ describe("embers Rekindled", () => {
 });
 
 describe("absorbing Prism", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const ABSORBING_PRISM_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -539,7 +542,7 @@ describe("tengu Stormcall", () => {
 });
 
 describe("tengu Juurai: Ambush", () => {
-  test("End Phase deals 1 Electro DMG, applies Crowfeather Cover to the active character, and is spent after its one use", () => {
+  test("end Phase deals 1 Electro DMG, applies Crowfeather Cover to the active character, and is spent after its one use", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
@@ -561,7 +564,7 @@ describe("tengu Juurai: Ambush", () => {
 });
 
 describe("tengu Juurai: Stormcluster", () => {
-  test("End Phase deals 2 Electro DMG and stays for a second End Phase", () => {
+  test("end Phase deals 2 Electro DMG and stays for a second End Phase", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
@@ -582,9 +585,9 @@ describe("tengu Juurai: Stormcluster", () => {
 });
 
 describe("darkfire Furnace", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
 
-  test("End Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
+  test("end Phase deals 1 Pyro DMG to the active character and 1 piercing DMG to each character on standby", () => {
     expect.hasAssertions();
 
     const standby = {
@@ -610,7 +613,7 @@ describe("darkfire Furnace", () => {
 });
 
 describe("ominous Star", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const OMINOUS_STAR = createSkill(23_023, "Char_Skill_23023", GcgSkillKind.ElementalBurst);
 
   test("it deals 3 Pyro DMG and summons Darkfire Furnace for its two usages", () => {
@@ -682,7 +685,7 @@ describe("crowfeather Cover", () => {
 });
 
 describe("abyssal Summons", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const ABYSSAL_SUMMONS_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,
@@ -718,7 +721,7 @@ describe("abyssal Summons", () => {
 });
 
 describe("hilichurl summons", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
 
   test.each([
     ["Cryo Hilichurl Shooter", CRYO_HILICHURL_SHOOTER_ID, cryoHilichurlShooter],
@@ -759,6 +762,7 @@ describe("sin of Pride", () => {
     kind: GcgCardKind.Talent,
     nameTextId: 1,
   };
+
   test("it is equipped to Kujou Sara when she is active, and her Tengu Stormcall is used once at once", () => {
     expect.hasAssertions();
 
@@ -828,7 +832,7 @@ describe("sin of Pride", () => {
 });
 
 describe("shimenawa's Reminiscence", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const SARA_NORMAL_ATTACK = createSkill(14_061, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
   const TENGU_STORMCALL = createSkill(14_062, "Char_Skill_14062", GcgSkillKind.ElementalSkill);
 
@@ -931,7 +935,7 @@ describe("chinju Forest", () => {
 });
 
 describe("elemental Resonance: High Voltage", () => {
-  const ABYSS_LECTOR_ID = 2_302;
+  const ABYSS_LECTOR_ID = 2302;
   const HIGH_VOLTAGE_CARD: GcgCard = {
     costs: [],
     descriptionTextId: 1,

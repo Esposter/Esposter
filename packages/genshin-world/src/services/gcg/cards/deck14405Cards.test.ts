@@ -19,29 +19,35 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { bakeKurage } from "#src/services/gcg/cards/bakeKurage";
-import { BAKE_KURAGE_ID } from "#src/services/gcg/cards/constants";
+import {
+  BAKE_KURAGE_ID,
+  CAPRICIOUS_VISAGE_ID,
+  CEREMONIAL_GARMENT_ID,
+  EMBLEM_OF_SEVERED_FATE_ID,
+  HANACHIRUSATO_ID,
+  KID_KUJIRAI_ID,
+  RAGING_ONI_KING_ID,
+  SESSHOU_SAKURA_ID,
+  SUPERLATIVE_SUPERSTRENGTH_ID,
+  TENKO_THUNDERBOLTS_ID,
+  USHI_ID,
+  TENKO_KENSHIN_ID,
+  XIAO_ID,
+  YAE_MIKO_ID,
+  YAKAN_EVOCATION_ID,
+} from "#src/services/gcg/cards/constants";
 import { capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
-import { CAPRICIOUS_VISAGE_ID } from "#src/services/gcg/cards/constants";
 import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
-import { CEREMONIAL_GARMENT_ID } from "#src/services/gcg/cards/constants";
 import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
-import { EMBLEM_OF_SEVERED_FATE_ID } from "#src/services/gcg/cards/constants";
 import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
-import { HANACHIRUSATO_ID } from "#src/services/gcg/cards/constants";
 import { kidKujirai } from "#src/services/gcg/cards/kidKujirai";
-import { KID_KUJIRAI_ID } from "#src/services/gcg/cards/constants";
 import { ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
-import { RAGING_ONI_KING_ID } from "#src/services/gcg/cards/constants";
 import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
-import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
 import { superlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
-import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
-import { TENKO_THUNDERBOLTS_ID } from "#src/services/gcg/cards/constants";
 import { theShrinesSacredShade } from "#src/services/gcg/cards/theShrinesSacredShade";
 import { thunderAndEternity } from "#src/services/gcg/cards/thunderAndEternity";
 import { ushi } from "#src/services/gcg/cards/ushi";
-import { USHI_ID } from "#src/services/gcg/cards/constants";
 import { GCG_SUPPORT_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -54,7 +60,6 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { TENKO_KENSHIN_ID, XIAO_ID, YAE_MIKO_ID, YAKAN_EVOCATION_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
@@ -179,7 +184,7 @@ describe("capricious Visage", () => {
 });
 
 describe("thunder and Eternity", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
 
   const INAZUMA = "INAZUMA";
   const LIYUE = "LIYUE";
@@ -217,7 +222,7 @@ describe("thunder and Eternity", () => {
 });
 
 describe("bake-Kurage", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
   const KURAGE_OATH_ID = 12_052;
   const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
 
@@ -234,7 +239,7 @@ describe("bake-Kurage", () => {
     expect(takeOne(duel.sides, 0).summons.map(({ usages }) => usages)).toStrictEqual([1]);
   });
 
-  test("Kurage's Oath stacks a second Bake-Kurage's usages, up to four", () => {
+  test("kurage's Oath stacks a second Bake-Kurage's usages, up to four", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: KOKOMI_ID, element: Element.Hydro } })]),
@@ -250,7 +255,7 @@ describe("bake-Kurage", () => {
 });
 
 describe("ceremonial Garment", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
   const KOKOMI_NORMAL_ATTACK = createSkill(12_051, "Effect_Damage_Water_1", GcgSkillKind.NormalAttack);
 
   test("its character's Normal Attacks deal 1 more DMG, and heal every character 1 HP after the attack", () => {
@@ -385,7 +390,7 @@ describe("tenko Thunderbolts", () => {
 });
 
 describe("ushi", () => {
-  const ITTO_ID = 1_605;
+  const ITTO_ID = 1605;
   const MASATSU_ZETSUGI_ID = 16_052;
   const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
 
@@ -451,7 +456,7 @@ describe("ushi", () => {
 });
 
 describe("raging Oni King", () => {
-  const ITTO_ID = 1_605;
+  const ITTO_ID = 1605;
   const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
 
   test("its character's Normal Attacks deal 1 more DMG, and its Physical DMG becomes Geo DMG", () => {
@@ -491,7 +496,7 @@ describe("raging Oni King", () => {
 });
 
 describe("superlative Superstrength", () => {
-  const ITTO_ID = 1_605;
+  const ITTO_ID = 1605;
   const ITTO_NORMAL_ATTACK = createSkill(16_051, "Effect_Damage_Physic_2", GcgSkillKind.NormalAttack);
 
   test("a Charged Attack deals 1 more DMG and spends a usage", () => {
@@ -571,8 +576,8 @@ describe("superlative Superstrength", () => {
 });
 
 describe("emblem of Severed Fate", () => {
-  const KOKOMI_ID = 1_205;
-  const ITTO_ID = 1_605;
+  const KOKOMI_ID = 1205;
+  const ITTO_ID = 1605;
   const TENKO = createSkill(TENKO_KENSHIN_ID, "Char_Skill_14083", GcgSkillKind.ElementalBurst);
   const NEREID_ASCENSION_ID = 12_053;
   const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
@@ -651,7 +656,7 @@ describe("emblem of Severed Fate", () => {
 });
 
 describe("hanachirusato", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
   const ELECTRO_DIE: GcgCost = { count: 2, element: Element.Electro, kind: GcgCostKind.Dice };
   const TALENT_CARD = createTalentCard();
   const WEAPON_CARD: GcgCard = { ...TALENT_CARD, id: 311_401, kind: GcgCardKind.Weapon };
@@ -713,7 +718,7 @@ describe("hanachirusato", () => {
 });
 
 describe("kid Kujirai", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
 
   test("at the Action Phase it creates an Omni die and moves to the opposing Support Zone when it has room", () => {
     expect.hasAssertions();
@@ -793,7 +798,7 @@ describe("the Shrine's Sacred Shade", () => {
 });
 
 describe("masatsu Zetsugi: Akaushi Burst!", () => {
-  const ITTO_ID = 1_605;
+  const ITTO_ID = 1605;
   const MASATSU_ZETSUGI_ID = 16_052;
   const MASATSU = createSkill(MASATSU_ZETSUGI_ID, "Char_Skill_16052", GcgSkillKind.ElementalSkill);
 
@@ -813,7 +818,7 @@ describe("masatsu Zetsugi: Akaushi Burst!", () => {
 });
 
 describe("royal Descent: Behold, Itto the Evil!", () => {
-  const ITTO_ID = 1_605;
+  const ITTO_ID = 1605;
   const ROYAL_DESCENT_ID = 16_053;
   const ROYAL = createSkill(ROYAL_DESCENT_ID, "Char_Skill_16053", GcgSkillKind.ElementalBurst);
 
@@ -832,7 +837,7 @@ describe("royal Descent: Behold, Itto the Evil!", () => {
 });
 
 describe("nereid's Ascension", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
   const NEREID_ASCENSION_ID = 12_053;
   const NEREID = createSkill(NEREID_ASCENSION_ID, "Char_Skill_12053", GcgSkillKind.ElementalBurst);
 
@@ -855,7 +860,7 @@ describe("nereid's Ascension", () => {
 });
 
 describe("kurage's Oath", () => {
-  const KOKOMI_ID = 1_205;
+  const KOKOMI_ID = 1205;
   const KURAGE_OATH_ID = 12_052;
   const KURAGE = createSkill(KURAGE_OATH_ID, "Char_Skill_12052", GcgSkillKind.ElementalSkill);
 

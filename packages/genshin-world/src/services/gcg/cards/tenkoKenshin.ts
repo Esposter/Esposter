@@ -1,10 +1,12 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
+import {
+  SESSHOU_SAKURA_ID,
+  TENKO_THUNDERBOLTS_ID,
+  THE_SHRINES_SACRED_SHADE_ID,
+} from "#src/services/gcg/cards/constants";
 import { tenkoThunderbolts } from "#src/services/gcg/cards/tenkoThunderbolts";
-import { TENKO_THUNDERBOLTS_ID } from "#src/services/gcg/cards/constants";
-import { THE_SHRINES_SACRED_SHADE_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 

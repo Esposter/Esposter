@@ -10,9 +10,7 @@ describe("chonghuasLayeredFrost", () => {
     expect.hasAssertions();
 
     const side = { onstages: [{ cardId: CHONGHUA_FROST_FIELD_ID, counter: 0, rounds: 1, usages: 0 }] };
-    chonghuasLayeredFrost.afterDamage?.({ duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 } as Parameters<
-      NonNullable<GcgSkillModule["afterDamage"]>
-    >[0]);
+    chonghuasLayeredFrost.afterDamage?.({ duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 });
 
     expect(side.onstages).toStrictEqual([{ cardId: CHONGHUA_FROST_FIELD_ID, counter: 0, rounds: 2, usages: 0 }]);
   });

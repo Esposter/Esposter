@@ -1,10 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
+import { CROWFEATHER_COVER_ID, KUJOU_SARA_ID, TENGU_STORMCALL_SKILL_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgElementalUse } from "#src/services/gcg/effects/checkIsGcgElementalUse";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
-import { KUJOU_SARA_ID, TENGU_STORMCALL_SKILL_ID } from "#src/services/gcg/cards/constants";
 
 const SIN_OF_PRIDE_DAMAGE_BONUS = 1;
 

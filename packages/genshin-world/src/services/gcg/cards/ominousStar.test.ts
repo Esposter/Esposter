@@ -9,9 +9,7 @@ describe("ominousStar", () => {
     expect.hasAssertions();
 
     const side = { summons: [] };
-    ominousStar.afterDamage?.({ duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 } as Parameters<
-      NonNullable<GcgSkillModule["afterDamage"]>
-    >[0]);
+    ominousStar.afterDamage?.({ duel: { sides: [side] } as unknown as GcgDuel, sideIndex: 0 });
 
     expect(side.summons).toStrictEqual([expect.objectContaining({ cardId: 123_021 })]);
   });

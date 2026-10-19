@@ -9,7 +9,7 @@ import { SHATTERING_ICE_ID } from "#src/services/gcg/cards/constants";
 const SHATTERING_ICE_BONUS = 2;
 
 // Elemental Resonance: Shattering Ice, a Cryo Elemental Resonance event: the active character deals 2 more DMG on her next
-// instance this Round. It is held as a status on her until that instance, or until the Round ends (the wiki's Elemental
+// Instance this Round. It is held as a status on her until that instance, or until the Round ends (the wiki's Elemental
 // Resonance: Shattering Ice). It is played with two Cryo characters on its side, as the Elemental Resonance group is
 export const shatteringIce: GcgCardModule = {
   canPlay: ({ duel, sideIndex }) => checkCanPlayGcgElementalResonance(takeOne(duel.sides, sideIndex), Element.Cryo),
