@@ -21,6 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -59,7 +60,6 @@ const countFoams = (kitEffectState: KitEffectState) =>
   kitEffectState.effects.filter((effect) => effect.kind === "field" && effect.id === OCEAN_HUED_CLAM_FOAM_ID).length;
 
 describe(createOceanHuedClamSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
   const kind = getEnemyKind(enemyTables.enemyKindMap, ENEMY_CAMP_MEMBER.enemyKindId);
 
   test("a heal its wearer gives builds a foam that, three seconds on, deals 90% of the HP healed to each standing enemy as Physical DMG", () => {

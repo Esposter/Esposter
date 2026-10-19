@@ -16,6 +16,7 @@ import { endKitSwapEffects } from "#src/services/kit/effects/endKitSwapEffects";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createLabyrinthLordsInstructionPassiveModule } from "#src/services/weapon/passives/createLabyrinthLordsInstructionPassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -26,8 +27,6 @@ const createEnemyAt = (id: string, x: number): Enemy => ({
 });
 
 describe(createLabyrinthLordsInstructionPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
-
   // Labyrinth Lord's Instruction at its first rank: an Elemental Skill or Burst gives Teachings of the Forest, 60
   // Elemental Mastery for twelve seconds, once every twenty, and its end deals 100% ATK
   const passiveModule = createLabyrinthLordsInstructionPassiveModule([60, 12, 1, 20]);

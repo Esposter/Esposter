@@ -1,23 +1,10 @@
-import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactMainAffixCurve } from "#src/models/artifact/ArtifactMainAffixCurve";
 
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
-
-const createArtifact = (mainAffix: Attribute, minorAffixes: Artifact["minorAffixes"]): Artifact => ({
-  experience: 0,
-  isLocked: false,
-  itemId: 101,
-  level: 0,
-  mainAffix,
-  minorAffixes,
-  rarity: 5,
-  setId: 1,
-  slot: ArtifactSlot.FlowerOfLife,
-});
 
 describe(getArtifactDetailStats, () => {
   // The five-star curves a level from +0: a flat main affix and a percentage one
@@ -30,11 +17,7 @@ describe(getArtifactDetailStats, () => {
     expect.hasAssertions();
 
     expect(
-      getArtifactDetailStats(
-        { ...createArtifact(Attribute.Health, []), isLocked: true },
-        ENGLISH_GAME_TEXT,
-        artifactMainAffixCurves,
-      ).isLocked,
+      getArtifactDetailStats(createArtifact({ isLocked: true }), ENGLISH_GAME_TEXT, artifactMainAffixCurves).isLocked,
     ).toBe(true);
   });
 
@@ -42,7 +25,11 @@ describe(getArtifactDetailStats, () => {
     expect.hasAssertions();
 
     expect(
-      getArtifactDetailStats(createArtifact(Attribute.Health, []), ENGLISH_GAME_TEXT, artifactMainAffixCurves),
+      getArtifactDetailStats(
+        createArtifact({ mainAffix: Attribute.Health }),
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ),
     ).toStrictEqual({
       mainStat: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeMaxHealth], value: "+717" },
       isLocked: false,
@@ -54,8 +41,11 @@ describe(getArtifactDetailStats, () => {
     expect.hasAssertions();
 
     expect(
-      getArtifactDetailStats(createArtifact(Attribute.HealthPercent, []), ENGLISH_GAME_TEXT, artifactMainAffixCurves)
-        .mainStat.value,
+      getArtifactDetailStats(
+        createArtifact({ mainAffix: Attribute.HealthPercent }),
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ).mainStat.value,
     ).toBe("+4.7%");
   });
 
@@ -67,8 +57,11 @@ describe(getArtifactDetailStats, () => {
       { attribute: Attribute.CriticalRate, value: 0.031 },
     ];
     expect(
-      getArtifactDetailStats(createArtifact(Attribute.Health, minorAffixes), ENGLISH_GAME_TEXT, artifactMainAffixCurves)
-        .subStats,
+      getArtifactDetailStats(
+        createArtifact({ mainAffix: Attribute.Health, minorAffixes }),
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ).subStats,
     ).toStrictEqual([
       { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeAttack], value: "+19" },
       { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeCriticalRate], value: "+3.1%" },
@@ -79,7 +72,11 @@ describe(getArtifactDetailStats, () => {
     expect.hasAssertions();
 
     expect(() =>
-      getArtifactDetailStats(createArtifact(Attribute.BaseHealth, []), ENGLISH_GAME_TEXT, artifactMainAffixCurves),
+      getArtifactDetailStats(
+        createArtifact({ mainAffix: Attribute.BaseHealth }),
+        ENGLISH_GAME_TEXT,
+        artifactMainAffixCurves,
+      ),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: getAffixLabel, FIGHT_PROP_BASE_HP]`,
     );

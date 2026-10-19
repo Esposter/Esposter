@@ -8,7 +8,10 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { damagePartyMember } from "#src/services/party/damagePartyMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const createParticleCollected = (characterId: number) => ({
@@ -19,7 +22,6 @@ const createParticleCollected = (characterId: number) => ({
 });
 
 describe(createParticleHealPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 10_000_066;
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
   // A synthetic tenth of Max HP for each particle or orb, not the weapon's row
   const particleHealPassiveModule = createParticleHealPassiveModule([0.1]);

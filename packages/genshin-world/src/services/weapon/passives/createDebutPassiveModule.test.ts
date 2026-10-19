@@ -6,11 +6,13 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 describe(createDebutPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant();
   // The Widsith's Debut with synthetic params: the Recitative's ATK, the Aria's Elemental DMG and the Interlude's
   // Elemental Mastery, a theme for three seconds, and a cooldown of four

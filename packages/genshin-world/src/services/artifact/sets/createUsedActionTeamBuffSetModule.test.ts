@@ -11,6 +11,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -25,8 +26,6 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(createUsedActionTeamBuffSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
-
   const wearer = createCombatant(TRAVELER_CHARACTER_ID);
   const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
   const module = createUsedActionTeamBuffSetModule({

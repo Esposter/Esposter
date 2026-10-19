@@ -5,7 +5,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createItinerantHeroPassiveModule } from "#src/services/weapon/passives/createItinerantHeroPassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const createEnemyStrikeLoss = () => ({
@@ -18,7 +21,6 @@ const createEnemyStrikeLoss = () => ({
 });
 
 describe(createItinerantHeroPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant();
   // Itinerant Hero with synthetic params: 15% DMG, disabled for five seconds by taking DMG
   const itinerantHeroPassiveModule = createItinerantHeroPassiveModule([0.15]);

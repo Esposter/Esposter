@@ -1,28 +1,16 @@
-import type { Combatant } from "#src/models/kit/Combatant";
-
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSkillBuffPassiveModule } from "#src/services/weapon/passives/createSkillBuffPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
 describe(createSkillBuffPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
-  const wielder: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: TRAVELER_CHARACTER_ID,
-    constellationCount: 0,
-    elementalResonances: [],
-    kit: TRAVELER_KIT,
-    level: 1,
-  };
+  const wielder = createWielderCombatant();
 
   // Busybody's Running Light at its first rank: 20% ATK and 10% Movement SPD for ten seconds after an Elemental Skill
   const passiveModule = createSkillBuffPassiveModule([0.2, 0.1, 10], {

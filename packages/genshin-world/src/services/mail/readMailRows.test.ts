@@ -3,13 +3,13 @@ import type { MailSave } from "#src/models/mail/MailSave";
 
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
+import { MILLISECONDS_IN_DAY } from "#src/services/time/constants";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(readMailRows, () => {
   const ROW_HASH = "2".repeat(64);
 
   const gameDataBaseUrl = "mail-rows";
-  const DAY_MS = 86_400_000;
   const ROW: Mail = {
     contentTextId: "1",
     expireDays: 1,
@@ -39,7 +39,7 @@ describe(readMailRows, () => {
       { deliveredAt: new Date(0).toISOString(), id: GONE_ID, isClaimed: false, isPinned: false, isRead: false },
     ];
     const rows = await readMailRows(gameDataBaseUrl, [ROW.id, GONE_ID]);
-    const PAST_ROW_EXPIRY = Temporal.Instant.fromEpochMilliseconds(DAY_MS * (ROW.expireDays + 1));
+    const PAST_ROW_EXPIRY = Temporal.Instant.fromEpochMilliseconds(MILLISECONDS_IN_DAY * (ROW.expireDays + 1));
 
     expect(rows).toStrictEqual(new Map([[ROW.id, ROW]]));
     expect(removeExpiredMails(held, rows, new Set(), PAST_ROW_EXPIRY)).toStrictEqual([held[1]]);

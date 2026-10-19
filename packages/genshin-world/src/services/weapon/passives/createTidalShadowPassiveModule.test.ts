@@ -5,7 +5,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -19,7 +22,6 @@ const createHealthChanged = (characterId: number, healthShare: number): KitEvent
 });
 
 describe(createTidalShadowPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant();
   // Synthetic params, not the weapon's row: a quarter ATK for three seconds after the wielder is healed
   const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.25, 3, 0, 0]);

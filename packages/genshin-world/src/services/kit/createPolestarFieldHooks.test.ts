@@ -87,7 +87,7 @@ describe("createPolestarFieldHooks", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(3);
     const context = createKitTestContext(combatant, {
-      body: { facing: 0, height: 0, position: ORIGIN },
+      body: createKitBody(ORIGIN),
       enemyMap: new Map([[enemy.id, enemy]]),
     });
     addPolestarField(context.kitEffectState, TRAVELER_CHARACTER_ID, [STELLAR_CONDUCT], ORIGIN);

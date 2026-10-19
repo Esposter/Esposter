@@ -12,7 +12,6 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
@@ -23,10 +22,9 @@ import {
   LAUMA_PALE_HYMN_MOON_SONG_ID,
 } from "#src/services/kit/characters/laumaKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -206,14 +204,6 @@ describe("cleansing for the Spring", () => {
   });
 });
 
-// The kit seconds stepped through the team's effects, each one that runs out emitted to the kits as it is in play
-const stepLaumaSeconds = (context: KitContext, seconds: number): void => {
-  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
-  }
-};
-
 const countPaleHymn = (context: KitContext, id: string): number =>
   countKitResource(context.kitEffectState.effects, LAUMA_CHARACTER_ID, id);
 
@@ -241,13 +231,13 @@ describe("pale hymn", () => {
     const context = createKitTestContext(createCombatant(0));
     LAUMA_KIT.elementalBurst.onStart?.(context);
 
-    stepLaumaSeconds(context, toKitSeconds(95));
+    stepKitSecondsSendingExpiries(context, toKitSeconds(95));
     const beforeGain = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
-    stepLaumaSeconds(context, toKitSeconds(1));
+    stepKitSecondsSendingExpiries(context, toKitSeconds(1));
     const atGain = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
-    stepLaumaSeconds(context, 14);
+    stepKitSecondsSendingExpiries(context, 14);
     const during = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
-    stepLaumaSeconds(context, 2);
+    stepKitSecondsSendingExpiries(context, 2);
     const after = countPaleHymn(context, LAUMA_PALE_HYMN_BURST_ID);
 
     expect({ after, atGain, beforeGain, during }).toStrictEqual({ after: 0, atGain: 18, beforeGain: 0, during: 18 });
@@ -257,7 +247,7 @@ describe("pale hymn", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createCombatant(0));
     LAUMA_KIT.elementalBurst.onStart?.(context);
-    stepLaumaSeconds(context, toKitSeconds(96));
+    stepKitSecondsSendingExpiries(context, toKitSeconds(96));
 
     context.party.verdantDew.count = 2;
     castEternalRest(context);
@@ -279,7 +269,7 @@ describe("pale hymn", () => {
     const beforeBurst = countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID);
 
     LAUMA_KIT.elementalBurst.onStart?.(context);
-    stepLaumaSeconds(context, toKitSeconds(96));
+    stepKitSecondsSendingExpiries(context, toKitSeconds(96));
 
     expect({ beforeBurst, moonSong: countPaleHymn(context, LAUMA_PALE_HYMN_MOON_SONG_ID) }).toStrictEqual({
       beforeBurst: 0,
@@ -291,7 +281,7 @@ describe("pale hymn", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createCombatant(0));
     LAUMA_KIT.elementalBurst.onStart?.(context);
-    stepLaumaSeconds(context, toKitSeconds(96));
+    stepKitSecondsSendingExpiries(context, toKitSeconds(96));
     context.party.verdantDew.count = 1;
     castEternalRest(context);
     const snapshot = () => ({

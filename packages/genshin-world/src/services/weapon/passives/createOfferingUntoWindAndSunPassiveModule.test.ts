@@ -15,6 +15,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -34,7 +35,6 @@ describe(createOfferingUntoWindAndSunPassiveModule, () => {
   // Offering Unto Wind and Sun at its first rank: a shield its wielder casts on the field gives Mirror of Night for 15
   // Seconds, the member on the field dealing 28% more DMG, once every 14 seconds
   const passiveModule = createOfferingUntoWindAndSunPassiveModule([0.28, 15, 14]);
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
   const other = createCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);

@@ -14,6 +14,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passives/createLegacyOfLangGanPassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -30,7 +31,6 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(createLegacyOfLangGanPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   // Legacy of Lang-Gan at its first rank: the Lunar-Crystallize DMG its wielder deals rises by 64% for five seconds

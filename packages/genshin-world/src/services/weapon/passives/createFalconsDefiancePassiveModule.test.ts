@@ -7,7 +7,10 @@ import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKi
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const createEnemyStrikeLoss = () => ({
@@ -21,7 +24,6 @@ const createEnemyStrikeLoss = () => ({
 
 describe(createFalconsDefiancePassiveModule, () => {
   const ATTACK_BUFF = 0.25;
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant([
     { attribute: Attribute.BaseAttack, value: 1250 },
     { attribute: Attribute.BaseHealth, value: 10_000 },

@@ -19,6 +19,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -35,7 +36,6 @@ const createCombatant = (characterId: number, kit: Kit): Combatant => ({
 });
 
 describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   // A Crystallize shield the other member's reaction left, picked up by the team

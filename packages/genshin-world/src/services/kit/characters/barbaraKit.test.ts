@@ -16,7 +16,7 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { BARBARA_CHARACTER_ID, createBarbaraKitBehaviour } from "#src/services/kit/characters/barbaraKit";
 import { JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
@@ -81,8 +81,7 @@ const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitE
 // Kit steps on the step
 const stepBarbaraSeconds = (context: KitContext, seconds: number): void => {
   for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    for (const effect of context.expiredEffects) emitKitEvent({ effect, kind: KitEventKind.EffectExpired }, context);
+    stepKitSecondsSendingExpiries(context, FIXED_STEP_SECONDS);
     stepDeployedKits(context, FIXED_STEP_SECONDS);
   }
 };

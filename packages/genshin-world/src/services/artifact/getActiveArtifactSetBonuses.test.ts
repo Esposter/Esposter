@@ -1,8 +1,8 @@
-import type { Artifact } from "#src/models/artifact/Artifact";
 import type { ArtifactSetData } from "#src/models/artifact/ArtifactSetData";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { describe, expect, test } from "vitest";
 
@@ -30,22 +30,13 @@ describe(getActiveArtifactSetBonuses, () => {
       },
     ],
   ]);
-  const createArtifact = (slot: ArtifactSlot, setId = SET_ID): Artifact => ({
-    experience: 0,
-    isLocked: false,
-    itemId: 101,
-    level: 0,
-    mainAffix: Attribute.Health,
-    minorAffixes: [],
-    rarity: 5,
-    setId,
-    slot,
-  });
-
   test("a set's two-piece bonus is active from two pieces", () => {
     expect.hasAssertions();
 
-    const twoPieces = [createArtifact(ArtifactSlot.CircletOfLogos), createArtifact(ArtifactSlot.FlowerOfLife)];
+    const twoPieces = [
+      createArtifact({ slot: ArtifactSlot.CircletOfLogos }),
+      createArtifact({ slot: ArtifactSlot.FlowerOfLife }),
+    ];
     expect(getActiveArtifactSetBonuses(twoPieces, artifactSetDataMap)).toStrictEqual([
       {
         attributeLines: [{ attribute: Attribute.Health, value: 10 }],
@@ -60,11 +51,14 @@ describe(getActiveArtifactSetBonuses, () => {
   test("a set's four-piece bonus is active from four pieces", () => {
     expect.hasAssertions();
 
-    const twoPieces = [createArtifact(ArtifactSlot.CircletOfLogos), createArtifact(ArtifactSlot.FlowerOfLife)];
+    const twoPieces = [
+      createArtifact({ slot: ArtifactSlot.CircletOfLogos }),
+      createArtifact({ slot: ArtifactSlot.FlowerOfLife }),
+    ];
     const fourPieces = [
       ...twoPieces,
-      createArtifact(ArtifactSlot.GobletOfEonothem),
-      createArtifact(ArtifactSlot.PlumeOfDeath),
+      createArtifact({ slot: ArtifactSlot.GobletOfEonothem }),
+      createArtifact({ slot: ArtifactSlot.PlumeOfDeath }),
     ];
     expect(getActiveArtifactSetBonuses(fourPieces, artifactSetDataMap)).toStrictEqual([
       {
@@ -88,7 +82,7 @@ describe(getActiveArtifactSetBonuses, () => {
     expect.hasAssertions();
 
     expect(
-      getActiveArtifactSetBonuses([createArtifact(ArtifactSlot.CircletOfLogos)], artifactSetDataMap),
+      getActiveArtifactSetBonuses([createArtifact({ slot: ArtifactSlot.CircletOfLogos })], artifactSetDataMap),
     ).toStrictEqual([]);
   });
 
@@ -97,7 +91,10 @@ describe(getActiveArtifactSetBonuses, () => {
 
     expect(() =>
       getActiveArtifactSetBonuses(
-        [createArtifact(ArtifactSlot.CircletOfLogos, 999), createArtifact(ArtifactSlot.FlowerOfLife, 999)],
+        [
+          createArtifact({ setId: 999, slot: ArtifactSlot.CircletOfLogos }),
+          createArtifact({ setId: 999, slot: ArtifactSlot.FlowerOfLife }),
+        ],
         artifactSetDataMap,
       ),
     ).toThrowErrorMatchingInlineSnapshot(

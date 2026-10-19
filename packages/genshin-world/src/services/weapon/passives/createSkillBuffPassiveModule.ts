@@ -12,14 +12,13 @@ export const createSkillBuffPassiveModule = (
   params: number[],
   { attributes, source }: { attributes: Attribute[]; source: string },
 ): PassiveModule => {
-  const amounts = attributes.map((_attribute, index) => takeOne(params, index));
   const seconds = takeOne(params, attributes.length);
   return {
     onKitEvent: (event, { kitEffectState }, combatant) => {
       if (event.kind !== KitEventKind.SkillUsed || event.characterId !== combatant.characterId) return;
       for (const [index, attribute] of attributes.entries())
         buffKitMember(kitEffectState, combatant.characterId, {
-          amount: takeOne(amounts, index),
+          amount: takeOne(params, index),
           attribute,
           secondsRemaining: seconds,
           source,

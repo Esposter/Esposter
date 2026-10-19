@@ -4,12 +4,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { describe, expect, test } from "vitest";
 
 describe(createRebelliousGuardianPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
   // Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a
   // Fifth DMG Bonus

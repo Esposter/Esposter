@@ -3,7 +3,12 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import {
+  NIGHTSOUL_BLESSING_STATUS_ID,
+  NIGHTSOUL_POINTS_ID,
+  RESCUE_ESSENTIALS_CAP,
+  RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS,
+} from "#src/services/kit/constants";
 import { createNightsoulBlessingStart } from "#src/services/kit/createNightsoulBlessingStart";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
@@ -17,13 +22,8 @@ const CONSTELLATION_4_ELEMENTAL_MASTERY = 100;
 const CONSTELLATION_4_SECONDS = 15;
 // Her Nightsoul points are set to 80 as her blessing is entered, as gcsim (MIT) ifa/skill.go enterNightsoul sets them
 const NIGHTSOUL_POINTS = 80;
-// Her Rescue Essentials, her A1, are the Nightsoul points of her whole party, up to 150, held while her blessing lasts, as
-// The wiki's passive text and gcsim's team sum give them. Each one adds to the party's Swirl and Electro-Charged DMG 1.5%,
-// And to its Lunar-Charged DMG 0.2%, as the proud skill 1132101's record gives the first two and the description (TextMap
-// 2399084529) the last. At Constellation 2 the points above 60 count three times over, and the cap is 50 higher
-const RESCUE_ESSENTIALS_CAP = 150;
+// Each Rescue Essential adds 1.5% to the party's Swirl and Electro-Charged DMG, per the proud skill 1132101's record
 const RESCUE_ESSENTIALS_SWIRL_ELECTRO_CHARGED_DAMAGE_BONUS = 0.015;
-const RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS = 0.002;
 const RESCUE_ESSENTIALS_CONSTELLATION_2_THRESHOLD = 60;
 const RESCUE_ESSENTIALS_CONSTELLATION_2_MULTIPLIER = 3;
 const RESCUE_ESSENTIALS_CONSTELLATION_2_CAP_INCREASE = 50;

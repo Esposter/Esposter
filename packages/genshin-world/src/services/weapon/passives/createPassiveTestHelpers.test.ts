@@ -16,6 +16,9 @@ import { describe } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
+// The other party member a suite deploys beside its wielder, a character other than the wielder
+export const OTHER_CHARACTER_ID = 1;
+
 // The Traveler a weapon passive's suite wields at level one with her kit, the attribute lines given and no resonances
 export const createWielderCombatant = (attributeLines: readonly AttributeLine[] = []): Combatant => ({
   ascension: 0,

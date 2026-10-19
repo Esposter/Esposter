@@ -3,23 +3,10 @@ import type { ArtifactRarityData } from "#src/models/artifact/ArtifactRarityData
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
-import { Attribute } from "#src/models/character/Attribute";
+import { createArtifact } from "#src/services/artifact/createArtifact.test";
 import { getAutoAddFodders } from "#src/services/artifact/getAutoAddFodders";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
-
-const createArtifact = (rarity: number, level: number, experience = 0, isLocked = false): Artifact => ({
-  experience,
-  isLocked,
-  itemId: 101,
-  level,
-  mainAffix: Attribute.Attack,
-  minorAffixes: [],
-  rarity,
-  setId: 1,
-  slot: ArtifactSlot.PlumeOfDeath,
-});
 
 const createEntry = (id: number, artifact: Artifact): InventoryItem => ({
   artifact,
@@ -57,11 +44,11 @@ describe(getAutoAddFodders, () => {
   ]);
   const inventory: Inventory = {
     items: [
-      createEntry(0, createArtifact(5, 0)),
-      createEntry(1, createArtifact(4, 0, 0, true)),
-      createEntry(2, createArtifact(4, 0)),
-      createEntry(3, createArtifact(2, 0)),
-      createEntry(4, createArtifact(3, 0)),
+      createEntry(0, createArtifact({ level: 0, rarity: 5 })),
+      createEntry(1, createArtifact({ isLocked: true, level: 0, rarity: 4 })),
+      createEntry(2, createArtifact({ level: 0, rarity: 4 })),
+      createEntry(3, createArtifact({ level: 0, rarity: 2 })),
+      createEntry(4, createArtifact({ level: 0, rarity: 3 })),
     ],
     nextId: 5,
     quickSwapItemIds: [],
@@ -71,7 +58,12 @@ describe(getAutoAddFodders, () => {
     expect.hasAssertions();
 
     expect(
-      getAutoAddFodders({ artifact: createArtifact(5, 0), artifactRarityDataMap, inventory, maxRarity: 4 }),
+      getAutoAddFodders({
+        artifact: createArtifact({ level: 0, rarity: 5 }),
+        artifactRarityDataMap,
+        inventory,
+        maxRarity: 4,
+      }),
     ).toStrictEqual([3, 4, 2]);
   });
 
@@ -79,7 +71,12 @@ describe(getAutoAddFodders, () => {
     expect.hasAssertions();
 
     expect(
-      getAutoAddFodders({ artifact: createArtifact(5, 1, 200), artifactRarityDataMap, inventory, maxRarity: 4 }),
+      getAutoAddFodders({
+        artifact: createArtifact({ experience: 200, level: 1, rarity: 5 }),
+        artifactRarityDataMap,
+        inventory,
+        maxRarity: 4,
+      }),
     ).toStrictEqual([3, 4]);
   });
 });
