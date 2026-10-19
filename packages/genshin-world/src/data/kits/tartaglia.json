@@ -59,7 +59,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "hits.riptideBlast.hitmarkFrames": { "cause": "Unsourced", "value": 48 },
+  "hits.riptideBlast.hitmarkFrames": { "cause": "DiffersFromSource", "value": 48 },
   "hits.riptideBlast.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3339 } },
   "hits.riptideBurst.area": {
     "cause": "Unclassified",
@@ -165,7 +165,6 @@
     "source": "Gcsim",
     "value": { "index": 1, "proudSkillGroupId": 3332 }
   },
-  "stances.meleeStance.normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 40.68 },
   "stances.meleeStance.normalAttacks.0.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.meleeStance.normalAttacks.1.animationFrames": {
     "file": "attack.go",
@@ -188,7 +187,6 @@
     "source": "Gcsim",
     "value": { "index": 2, "proudSkillGroupId": 3332 }
   },
-  "stances.meleeStance.normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 43.56 },
   "stances.meleeStance.normalAttacks.1.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.meleeStance.normalAttacks.2.animationFrames": {
     "file": "attack.go",
@@ -211,7 +209,6 @@
     "source": "Gcsim",
     "value": { "index": 3, "proudSkillGroupId": 3332 }
   },
-  "stances.meleeStance.normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 58.95 },
   "stances.meleeStance.normalAttacks.2.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.meleeStance.normalAttacks.3.animationFrames": {
     "file": "attack.go",
@@ -234,7 +231,6 @@
     "source": "Gcsim",
     "value": { "index": 4, "proudSkillGroupId": 3332 }
   },
-  "stances.meleeStance.normalAttacks.3.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 62.73 },
   "stances.meleeStance.normalAttacks.3.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.meleeStance.normalAttacks.4.animationFrames": {
     "file": "attack.go",
@@ -257,7 +253,6 @@
     "source": "Gcsim",
     "value": { "index": 5, "proudSkillGroupId": 3332 }
   },
-  "stances.meleeStance.normalAttacks.4.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 57.87 },
   "stances.meleeStance.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.meleeStance.normalAttacks.5.animationFrames": {
     "file": "attack.go",
