@@ -1,0 +1,12 @@
+/* The option row the artifact pickers share, each picker sets its own padding */
+.option {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  border-radius: calc(var(--unit) * 8);
+  background: rgb(255 255 255 / 0.1);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
