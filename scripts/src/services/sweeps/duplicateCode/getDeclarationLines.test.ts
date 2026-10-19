@@ -61,4 +61,26 @@ describe(getDeclarationLines, () => {
       new Set([1]),
     );
   });
+
+  test("reads a props destructure of a defineProps call as declaration, through its closing line", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("const {\n  a,\n  b: c,\n} = defineProps<Props>();\nconst d = 0;")).toStrictEqual(
+      new Set([1, 2, 3, 4]),
+    );
+  });
+
+  test("reads a withDefaults call as declaration, through its closing brace", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("const props = withDefaults(propsSource, {\n  a: 1,\n});\nconst b = 0;")).toStrictEqual(
+      new Set([1, 2, 3]),
+    );
+  });
+
+  test("keeps a destructure's computed default as code, its closing macro line still preamble", () => {
+    expect.hasAssertions();
+
+    expect(getDeclarationLines("const {\n  a = makeA(),\n} = defineProps<Props>();")).toStrictEqual(new Set([3]));
+  });
 });

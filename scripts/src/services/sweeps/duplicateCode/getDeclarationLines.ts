@@ -1,14 +1,17 @@
 import { getCommentBridgedLines } from "#src/services/sweeps/duplicateCode/getCommentBridgedLines";
 import { takeOne } from "@esposter/shared";
 
-// A declaration opens on a line starting an interface or a type, or on a component's props, emits or model, and closes where
-// Its braces balance. A line binding a composable's call with no arguments is component wiring, read the same way.
-const DECLARATION_START_REGEX = /^\s*(?:export\s+)?(?:interface|type)\s|\bdefine(?:Props|Emits|Model)</u;
+// A declaration opens on a line starting an interface or a type, or on a component's compiler macro (props, emits,
+// Model or defaults), and closes where its braces balance. A line binding a composable's call with no arguments is
+// Component wiring, read the same way.
+const DECLARATION_START_REGEX =
+  /^\s*(?:export\s+)?(?:interface|type)\s|\bdefine(?:Props|Emits|Model)<|\bwithDefaults\(/u;
 const COMPOSABLE_CALL_REGEX = /^\s*const \w+ = use\w+\(\);\s*$/u;
 
-// A composable's destructured call opens on `const {` and closes on the `} = useName(...);` that binds it, and its return
-// Opens on `return {`. A block is a declaration only while every line in it is an entry: a bare name or `name: alias,` in
-// A call, and a bare name in a return. A block with a computed value stays code.
+// A composable's destructured call, or a props destructure of defineProps, opens on `const {` and closes on the
+// `} = useName(...);` or `} = defineProps<...>();` that binds it, and its return opens on `return {`. A block is a
+// Declaration only while every line in it is an entry: a bare name or `name: alias,` in a call, and a bare name in a
+// Return. A block with a computed value stays code.
 interface WiringBlock {
   end: RegExp;
   entry: RegExp;
@@ -16,7 +19,11 @@ interface WiringBlock {
 }
 
 const WIRING_BLOCKS: WiringBlock[] = [
-  { end: /^\s*\} = use\w+\(.*\);\s*$/u, entry: /^\s*\w+(?:: \w+)?,\s*$/u, start: /^\s*const \{\s*$/u },
+  {
+    end: /^\s*\} = (?:use\w+|defineProps<.*>)\(.*\);\s*$/u,
+    entry: /^\s*\w+(?:: \w+)?,\s*$/u,
+    start: /^\s*const \{\s*$/u,
+  },
   { end: /^\s*\};?\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*return \{\s*$/u },
 ];
 
