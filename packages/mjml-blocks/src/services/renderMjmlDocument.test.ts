@@ -312,7 +312,7 @@ describe(renderMjmlDocument, () => {
     const inviteType: MjmlBlockTypeDefinition<string> = {
       allowedAttributes: {},
       defaultAttributes: {},
-      propsSchema: z.strictObject({ id: z.string() }),
+      propsSchema: z.strictObject({}),
       render: (_node, _slots, context) => ({ attributes: { href: context }, content: "", tagName: "mj-button" }),
       slots: {},
       type: "survey-invite",
