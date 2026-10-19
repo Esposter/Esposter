@@ -6,12 +6,7 @@
   "burst.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6939 } },
   "burst.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6939 } },
   "burst.hits.5.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6939 } },
-  "burst.hits.6.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "burst.hits.7.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "burst.hits.8.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "burst.hits.9.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "burst.hits.10.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
-  "burst.hits.11.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
+  "burst.hits.6-11.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6939 } },
   "plungeCollision.poiseDamage": { "cause": "Unsourced", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6932 } }
 }
