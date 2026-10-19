@@ -4,6 +4,7 @@ import type { MailboxState } from "#src/models/mail/MailboxState";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { claimAllMails } from "#src/services/mail/claimAllMails";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(claimAllMails, () => {
@@ -50,7 +51,7 @@ describe(claimAllMails, () => {
 
     const later = { deliveredAt: new Date(1).toISOString(), id: 1, isClaimed: false, isPinned: false, isRead: false };
 
-    expect(claimAllMails({ ...STATE, mails: [STATE.mails[0], later] }, mailRows, {}, new Map())).toStrictEqual({
+    expect(claimAllMails({ ...STATE, mails: [takeOne(STATE.mails), later] }, mailRows, {}, new Map())).toStrictEqual({
       inventory: EMPTY_INVENTORY,
       mails: [
         { deliveredAt, id: 1, isClaimed: true, isPinned: false, isRead: true },
