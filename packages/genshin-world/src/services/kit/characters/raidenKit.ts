@@ -21,7 +21,6 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -278,10 +277,9 @@ export const createRaidenKitBehaviour = ({
             (ascension >= ASCENSION_4
               ? Math.floor(excessEnergyRecharge * 100) * ASCENSION_4_RESTORE_BONUS_PER_PERCENT
               : 0));
-        // A fallen member gains none, as it has lost its energy
         for (const memberId of memberIds) {
           const member = characterIdCombatantMap.get(memberId);
-          if (member && !checkIsCharacterDown(party, memberId)) gainPartyMemberEnergy(party, member, energy);
+          if (member) gainPartyMemberEnergy(party, member, energy);
         }
         if (constellationCount >= CONSTELLATION_6)
           for (const memberId of otherMemberIds) {

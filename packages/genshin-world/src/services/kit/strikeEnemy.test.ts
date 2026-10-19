@@ -831,6 +831,33 @@ describe(strikeEnemy, () => {
     );
   });
 
+  test("a direct Stellar hit takes its own CRIT DMG bonus on a critical hit, as a direct Lunar hit does", () => {
+    expect.hasAssertions();
+
+    const HIT_CRITICAL_DAMAGE_BONUS = 0.2;
+    const enemy = createSturdyEnemy();
+    const combatant: Combatant = createCombatant();
+    const hit: KitHit = {
+      criticalDamageBonus: HIT_CRITICAL_DAMAGE_BONUS,
+      element: Element.Electro,
+      hitArea: TRAVELER_KIT.plungeCollision.hitArea,
+      hitmarkSeconds: 0,
+      isForcedCritical: true,
+      poiseDamage: 0,
+      stellarReactionType: StellarReactionType.StellarConduct,
+      talentMultiplier: 2,
+    };
+    const damage =
+      getLunarReactionDamage(1, 2 * ATTACK, 0, 0, 0) *
+      getResistanceMultiplier(getEnemyResistance(kind, enemy, Element.Electro)) *
+      (1 + combatant.attributes.attributeTotalMap[Attribute.CriticalDamage] + HIT_CRITICAL_DAMAGE_BONUS);
+    const context = createKitTestContext(combatant, { enemyTables, random: () => 0.5 });
+
+    strikeEnemy(enemy, hit, combatant, context);
+
+    expect(enemy.health).toBeCloseTo(enemy.maxHealth - damage);
+  });
+
   test("takes an enemy's statuses' Physical RES reduction off the RES a physical hit reads", () => {
     expect.hasAssertions();
 

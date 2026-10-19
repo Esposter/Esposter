@@ -137,4 +137,30 @@ describe(routeCommissionClaim, () => {
       ),
     ).toBeUndefined();
   });
+
+  test("a claim made before the Friendship levels load is refused whole, and routes none of its Mora or EXP", () => {
+    expect.hasAssertions();
+
+    const party = createParty([TRAVELER_CHARACTER_ID, FIRST_CHARACTER_ID]);
+    const items = [
+      { count: MORA_COUNT, id: MORA_ITEM_ID },
+      { count: COMPANIONSHIP_EXP, id: COMPANIONSHIP_EXP_ITEM_ID },
+    ];
+
+    expect(
+      routeCommissionClaim(
+        adventureRankTables,
+        0,
+        [CHARACTER],
+        items,
+        noQuest,
+        [],
+        EMPTY_INVENTORY,
+        materialDataMap,
+        names,
+        party,
+        wallet,
+      ),
+    ).toBeUndefined();
+  });
 });

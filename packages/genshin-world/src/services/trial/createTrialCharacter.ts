@@ -8,6 +8,7 @@ import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 
 import { CombatTalent } from "#src/models/character/CombatTalent";
+import { getArtifactExperienceToLevel } from "#src/services/artifact/getArtifactExperienceToLevel";
 import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { TALENT_START_LEVEL } from "#src/services/character/constants";
 import { findTrialTemplate } from "#src/services/trial/findTrialTemplate";
@@ -81,9 +82,9 @@ const toTrialArtifact = (
   reliquary: TrialReliquary,
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>,
 ): Artifact => {
-  const { levelExperiences } = getArtifactRarityData(artifactRarityDataMap, reliquary.rarity);
+  const rarityData = getArtifactRarityData(artifactRarityDataMap, reliquary.rarity);
   return {
-    experience: levelExperiences.slice(0, reliquary.level).reduce((total, cost) => total + cost, 0),
+    experience: getArtifactExperienceToLevel(rarityData, reliquary.level),
     isLocked: false,
     itemId: reliquary.id,
     level: reliquary.level,
