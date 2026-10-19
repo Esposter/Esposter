@@ -1,6 +1,5 @@
 {
   "burst.hits.0.area": { "cause": "TargetCentred", "value": { "angle": 6.283185307179586, "height": 7, "radius": 3 } },
-  "burst.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "burst.hits.0.multiplier": { "cause": "DiffersFromSource", "value": { "index": 0, "proudSkillGroupId": 739 } },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 732 } },
   "skillCooldownSeconds": { "file": "common/anemo/skill.go", "line": 79, "source": "Gcsim", "value": 5 }
