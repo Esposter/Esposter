@@ -3,11 +3,12 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitHitLabel } from "#src/models/genshinAssets/kits/tables/KitHitLabel";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { kitParameterSchema } from "genshin-world";
 
 // A slot hit is the skill's or burst's, a stance's, a hold's, or a named hit's, whose multiplier names its table label
-const SLOT_HIT_MULTIPLIER_PATH_REGEX =
-  /^(?<hitPath>(?:skill|burst)\.hits\.\d+|stances\.[A-Za-z]+\.(?:chargedAttack|skill|normalAttacks\.\d+)\.hits\.\d+|skillHolds\.\d+\.(?:action|variant)\.hits\.\d+|hits\.[A-Za-z]+(?:\.\d+)?)\.multiplier$/u;
+const SLOT_HIT_PATH_REGEX =
+  /^(?:(?:skill|burst)\.|stances\.[A-Za-z]+\.(?:chargedAttack|skill|normalAttacks\.\d+)\.|skillHolds\.\d+\.(?:action|variant)\.)?hits\.(?:\d+|[A-Za-z]+(?:\.\d+)?)$/u;
 
 // The table label each slot hit deals its multiplier under, by the hit's path, with the proud skill group that label belongs
 // To. A hit takes the label its first candidate's parameter names: the burst's first hit `1-Hit Swing DMG` where it reads that
@@ -21,7 +22,9 @@ export const getKitHitLabelMap = (
   const hitLabelMap = new Map<string, KitHitLabel>();
   const multiplierPaths = new Set([...candidateMap.keys(), ...Object.keys(overlay)]);
   for (const path of multiplierPaths) {
-    const hitPath = SLOT_HIT_MULTIPLIER_PATH_REGEX.exec(path)?.groups?.hitPath;
+    const multiplierHitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
+    const hitPath =
+      multiplierHitPath !== undefined && SLOT_HIT_PATH_REGEX.test(multiplierHitPath) ? multiplierHitPath : undefined;
     // A skill's or burst's hit keeps its gcsim candidate's label alone; a hold or a named hit takes its overlay's multiplier
     // Where no candidate gives one
     const isOverlayLabelled = hitPath?.startsWith("skillHolds.") || hitPath?.startsWith("hits.");
