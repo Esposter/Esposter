@@ -1,9 +1,6 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 
-import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
-import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
-import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
+import { createNightsoulBlessingStart } from "#src/services/kit/createNightsoulBlessingStart";
 
 export const MUALANI_CHARACTER_ID = 10_000_102;
 
@@ -23,17 +20,5 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 10;
 // Constellation 4 needs Puffers and the Energy they restore, which the kit does not build
 // Constellation 6 needs Constellation 1's increase, which the kit does not build
 export const createMualaniKitBehaviour = (): KitBehaviour => ({
-  skill: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
-      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
-        exitKitNightsoulBlessing(kitEffectState, characterId);
-      else
-        enterKitNightsoulBlessing(kitEffectState, characterId, {
-          nightsoulRate: { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
-          points: NIGHTSOUL_POINTS,
-          secondsRemaining: Number.POSITIVE_INFINITY,
-        });
-    },
-  },
+  skill: { onStart: createNightsoulBlessingStart(NIGHTSOUL_POINTS, NIGHTSOUL_DRAIN_PER_SECOND) },
 });
