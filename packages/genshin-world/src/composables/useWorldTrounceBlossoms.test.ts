@@ -46,32 +46,34 @@ import { computed, ref, shallowRef } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const SPAWN_KEY = "spawn";
-const UNIQUE_DROP_ID = 9003;
-const UNIQUE_DROP_NAME_TEXT_ID = "9003";
-// The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after that week's reset
-const epoch = Temporal.Instant.fromEpochMilliseconds(0);
-const nextWeek = epoch.add({ hours: 4 * 24 });
-const materialDataMap = new Map<number, MaterialData>([
-  [
-    UNIQUE_DROP_ID,
-    {
-      id: UNIQUE_DROP_ID,
-      materialType: MaterialType.Exchange,
-      nameTextId: UNIQUE_DROP_NAME_TEXT_ID,
-      rank: 0,
-      rarity: 0,
-      stackLimit: 99,
-    },
-  ],
-]);
-const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
-const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
-const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
 
 describe(useWorldTrounceBlossoms, () => {
-  // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an entry of
-  // The traits map, and its defeat must still reach the listeners after the blossom's
+  const SPAWN_KEY = "spawn";
+  const UNIQUE_DROP_ID = 9003;
+  const UNIQUE_DROP_NAME_TEXT_ID = "9003";
+  // The epoch is a Thursday on the server's clock, so four days on at eight in the morning is the Monday after
+  // That week's reset
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const nextWeek = epoch.add({ hours: 4 * 24 });
+  const materialDataMap = new Map<number, MaterialData>([
+    [
+      UNIQUE_DROP_ID,
+      {
+        id: UNIQUE_DROP_ID,
+        materialType: MaterialType.Exchange,
+        nameTextId: UNIQUE_DROP_NAME_TEXT_ID,
+        rank: 0,
+        rarity: 0,
+        stackLimit: 99,
+      },
+    ],
+  ]);
+  const savedState = readGenshinSave(EMPTY_GENSHIN_SAVE, {}, new Map(), new Map(), new Map());
+  const maxAdventureExp = computeAdventureExpAtRank(adventureRankTables.levels, MAX_ADVENTURE_RANK);
+  const ascensionQuestIds = new Set([25_001, 25_005, 25_009, 25_011]);
+
+  // A kind only a Spiral Abyss chamber fights is outside the enum, so its traits are its family's defaults, not an
+  // Entry of the traits map, and its defeat must still reach the listeners after the blossom's
   test("a defeat of a kind outside the enum reaches the listeners after the trounce blossom's", () => {
     expect.hasAssertions();
 
@@ -236,7 +238,8 @@ describe(useWorldTrounceBlossoms, () => {
   test("a weekly boss's claim spends its offer's resin and pays its talent materials and Mora", () => {
     expect.hasAssertions();
 
-    // The row a World Level reads, Domain Level VI, is the one of the constants that pays both a talent count and a chance
+    // The row a World Level reads, Domain Level VI, is the one of the constants that pays both a talent count and a
+    // Chance
     const WORLD_LEVEL = 6;
     const ROW = 5;
     // Every item a draw can pay, since a zero draw hits each chance, so each one needs its material row to be granted

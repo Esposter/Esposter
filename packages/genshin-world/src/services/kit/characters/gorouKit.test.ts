@@ -29,7 +29,6 @@ import { describe, expect, test } from "vitest";
 
 const GOROU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, GOROU_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -43,9 +42,6 @@ const createGorouCombatant = (characterId = GOROU_CHARACTER_ID): Combatant => ({
 });
 
 const checkIsField = (effect: KitEffect): effect is KitField => effect.kind === "field";
-
-const OTHER_CHARACTER_ID = 10_000_052;
-const THIRD_CHARACTER_ID = 10_000_029;
 
 // Gorou at the constellation, with the given combatants beside him on the team, the Geo ones counted for Crunch and Constellation 6
 const createTeam = (constellationCount: number, others: Combatant[], gorou = createGorouCombatant()) => {
@@ -65,28 +61,9 @@ const createTeam = (constellationCount: number, others: Combatant[], gorou = cre
   };
 };
 
-// A Geo hit from the striker on an enemy standing at the point
-const createHit = (striker: Combatant, point: GroundPoint, element = Element.Geo): KitEvent => ({
-  element,
-  enemy: { ...enemy, position: point },
-  kind: KitEventKind.EnemyHit,
-  striker,
-});
-
 // The centre of the team's one field, the General's War Banner or Juuga's field
 const readFieldCentre = (kitEffectState: KitEffectState): GroundPoint =>
   takeOne(kitEffectState.effects.filter(checkIsField)).centre;
-
-// The skill cooldown Gorou has left after the hit the other member lands, with the banner standing
-const readCooldownAfterHit = (constellationCount: number, hit: (centre: GroundPoint) => KitEvent): number => {
-  const { combatant, context, kitEffectState, party } = createTeam(constellationCount, [
-    createGorouCombatant(OTHER_CHARACTER_ID),
-  ]);
-  GOROU_KIT.elementalSkill.onStart?.(context);
-  getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds = 10;
-  GOROU_KIT.onKitEvent?.(hit(readFieldCentre(kitEffectState)), context, combatant);
-  return getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds;
-};
 
 // The team DEF buffs Juuga's cast gives as Gorou stands at the ascension
 const getA1Buffs = (ascension: number): KitEffect[] =>
@@ -107,6 +84,30 @@ const createGorouWithDefense = (ascension: number): Combatant => ({
 // The burst's hit, from which Constellation 4's heal chain starts its first 1.5 seconds
 const readBurstHitmarkSeconds = (): number => takeOne(GOROU_KIT.elementalBurst.hits).hitmarkSeconds;
 describe(createGorouKitBehaviour, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  const OTHER_CHARACTER_ID = 10_000_052;
+  const THIRD_CHARACTER_ID = 10_000_029;
+
+  // A Geo hit from the striker on an enemy standing at the point
+  const createHit = (striker: Combatant, point: GroundPoint, element = Element.Geo): KitEvent => ({
+    element,
+    enemy: { ...enemy, position: point },
+    kind: KitEventKind.EnemyHit,
+    striker,
+  });
+
+  // The skill cooldown Gorou has left after the hit the other member lands, with the banner standing
+  const readCooldownAfterHit = (constellationCount: number, hit: (centre: GroundPoint) => KitEvent): number => {
+    const { combatant, context, kitEffectState, party } = createTeam(constellationCount, [
+      createGorouCombatant(OTHER_CHARACTER_ID),
+    ]);
+    GOROU_KIT.elementalSkill.onStart?.(context);
+    getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds = 10;
+    GOROU_KIT.onKitEvent?.(hit(readFieldCentre(kitEffectState)), context, combatant);
+    return getPartyMember(party, GOROU_CHARACTER_ID).skillCooldownSeconds;
+  };
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const crystalCollapse = castKitAction(GOROU_KIT.elementalBurst, createGorouCombatant()).effects.find(

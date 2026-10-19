@@ -4,16 +4,16 @@ import { TipTriggerType } from "#src/models/tip/TipTriggerType";
 import { getTipsTriggered } from "#src/services/tip/getTipsTriggered";
 import { describe, expect, test } from "vitest";
 
-const PARAM = "7001";
-const TIP: Tip = {
-  id: 1,
-  subtitleTextId: "",
-  titleTextId: "",
-  trigger: { paramList: [PARAM], triggerType: TipTriggerType.FinishQuestOr },
-};
-const matchesParam = (paramList: string[]) => paramList.includes(PARAM);
-
 describe(getTipsTriggered, () => {
+  const PARAM = "7001";
+  const TIP: Tip = {
+    id: 1,
+    subtitleTextId: "",
+    titleTextId: "",
+    trigger: { paramList: [PARAM], triggerType: TipTriggerType.FinishQuestOr },
+  };
+  const matchesParam = (paramList: string[]) => paramList.includes(PARAM);
+
   test("a tip of the kind fires when its parameters match", () => {
     expect.hasAssertions();
     expect(getTipsTriggered([TIP], new Set(), TipTriggerType.FinishQuestOr, matchesParam)).toStrictEqual([TIP]);

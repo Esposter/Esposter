@@ -17,20 +17,21 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Elemental Mastery with synthetic params: the elemental DMG percentage per stack and its seconds
-const elementalMasteryPassiveModule = createElementalMasteryPassiveModule([0.05, 3]);
-const createNormalAttackHit = () => ({
-  attackTag: AttackTag.NormalAttack,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 describe(createElementalMasteryPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Elemental Mastery with synthetic params: the elemental DMG percentage per stack and its seconds
+  const elementalMasteryPassiveModule = createElementalMasteryPassiveModule([0.05, 3]);
+  const createNormalAttackHit = () => ({
+    attackTag: AttackTag.NormalAttack,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a normal attack hit raises every elemental DMG bonus by the rank's percentage at one stack", () => {
     expect.hasAssertions();
 

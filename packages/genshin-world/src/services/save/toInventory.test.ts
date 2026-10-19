@@ -11,25 +11,25 @@ import { toInventory } from "#src/services/save/toInventory";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { describe, expect, test } from "vitest";
 
-// Made-up pieces and names, so the test reads no game data
-const PIECE_ID = 90_101;
-const names = { TEST_PIECE: "Test Piece" };
-const reliquaryPieceEntryMap = new Map([
-  [
-    PIECE_ID,
-    {
-      itemId: PIECE_ID,
-      nameTextId: "TEST_PIECE",
-      rank: 1,
-      rarity: 1,
-      setId: 90_001,
-      slot: ArtifactSlot.FlowerOfLife,
-      startingMinorCount: 0,
-    },
-  ],
-]);
-
 describe(toInventory, () => {
+  // Made-up pieces and names, so the test reads no game data
+  const PIECE_ID = 90_101;
+  const names = { TEST_PIECE: "Test Piece" };
+  const reliquaryPieceEntryMap = new Map([
+    [
+      PIECE_ID,
+      {
+        itemId: PIECE_ID,
+        nameTextId: "TEST_PIECE",
+        rank: 1,
+        rarity: 1,
+        setId: 90_001,
+        slot: ArtifactSlot.FlowerOfLife,
+        startingMinorCount: 0,
+      },
+    ],
+  ]);
+
   test("reads an artifact back as the artifact it was saved as", () => {
     expect.hasAssertions();
 

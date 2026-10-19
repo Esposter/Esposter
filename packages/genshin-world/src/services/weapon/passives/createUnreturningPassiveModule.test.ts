@@ -17,20 +17,21 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: its Movement SPD, ATK and seconds, read from the params' three numbers
-const unreturningPassiveModule = createUnreturningPassiveModule([0.2, 0.3, 3]);
-const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
-  attackTag,
-  enemy,
-  hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 describe(createUnreturningPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: its Movement SPD, ATK and seconds, read from the params' three numbers
+  const unreturningPassiveModule = createUnreturningPassiveModule([0.2, 0.3, 3]);
+  const createDamageTaken = (attackTag: AttackTag, weakPoint: boolean) => ({
+    attackTag,
+    enemy,
+    hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a charged attack hit on a weak point raises movement speed and ATK for three seconds", () => {
     expect.hasAssertions();
 

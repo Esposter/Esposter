@@ -9,18 +9,6 @@ import { getAutoAddFodders } from "#src/services/artifact/getAutoAddFodders";
 import { ItemCategory } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
-const LEVEL_EXPERIENCE = 100;
-const MAX_LEVEL = 3;
-
-const createRarityData = (rarity: number, baseExperience: number): ArtifactRarityData => ({
-  affixLevels: [],
-  baseExperience,
-  levelExperiences: Array.from({ length: MAX_LEVEL }, () => LEVEL_EXPERIENCE),
-  maxLevel: MAX_LEVEL,
-  minorAffixGroups: [],
-  rarity,
-});
-
 const createArtifact = (rarity: number, level: number, experience = 0, isLocked = false): Artifact => ({
   experience,
   isLocked,
@@ -48,6 +36,18 @@ const createEntry = (id: number, artifact: Artifact): InventoryItem => ({
 });
 
 describe(getAutoAddFodders, () => {
+  const LEVEL_EXPERIENCE = 100;
+  const MAX_LEVEL = 3;
+
+  const createRarityData = (rarity: number, baseExperience: number): ArtifactRarityData => ({
+    affixLevels: [],
+    baseExperience,
+    levelExperiences: Array.from({ length: MAX_LEVEL }, () => LEVEL_EXPERIENCE),
+    maxLevel: MAX_LEVEL,
+    minorAffixGroups: [],
+    rarity,
+  });
+
   // Base EXP per star, so a fodder's EXP is its star's base alone while it is unenhanced
   const artifactRarityDataMap = new Map([
     [2, createRarityData(2, 40)],

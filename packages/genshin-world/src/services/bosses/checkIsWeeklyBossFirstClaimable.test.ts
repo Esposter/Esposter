@@ -3,9 +3,9 @@ import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossF
 import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
 import { describe, expect, test } from "vitest";
 
-const ENTRY_ID = 42;
-
 describe(checkIsWeeklyBossFirstClaimable, () => {
+  const ENTRY_ID = 42;
+
   test("a weekly boss's first clear is claimable once its highest difficulty has been cleared", () => {
     expect.hasAssertions();
 

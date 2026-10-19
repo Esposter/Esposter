@@ -11,14 +11,6 @@ import {
 import { JUMP_LANDMARK_KINDS, LandmarkKind } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const ORIGIN = [100, 20, 200] as const;
-const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
-const AREA_OUTLINE: GroundPoint[] = [
-  { x: -100, z: -300 },
-  { x: 200, z: -300 },
-  { x: 200, z: 100 },
-  { x: -100, z: 100 },
-];
 const createMapPoint = (overrides: Partial<InteractiveMapPoint>): InteractiveMapPoint => ({
   area_id: 1,
   id: 11,
@@ -28,19 +20,28 @@ const createMapPoint = (overrides: Partial<InteractiveMapPoint>): InteractiveMap
   z_level: GROUND_LAYER,
   ...overrides,
 });
-const TRANSPORT_POINT: SceneTransportPoint = { height: 30, id: "7", position: { x: 150, z: 300 }, turnDegrees: 90 };
-const landmarksAt = (mapPoints: InteractiveMapPoint[]) =>
-  toWaypointLandmarks({
-    areas: [],
-    getWorldHeight: () => 5,
-    mapPoints,
-    origin: ORIGIN,
-    region: "mondstadt",
-    transform: IDENTITY_TRANSFORM,
-    transportPoints: [TRANSPORT_POINT],
-  });
 
 describe(toWaypointLandmarks, () => {
+  const ORIGIN = [100, 20, 200] as const;
+  const IDENTITY_TRANSFORM = { mirrored: false, offset: { x: 0, z: 0 }, scale: 1, turn: 0 };
+  const AREA_OUTLINE: GroundPoint[] = [
+    { x: -100, z: -300 },
+    { x: 200, z: -300 },
+    { x: 200, z: 100 },
+    { x: -100, z: 100 },
+  ];
+  const TRANSPORT_POINT: SceneTransportPoint = { height: 30, id: "7", position: { x: 150, z: 300 }, turnDegrees: 90 };
+  const landmarksAt = (mapPoints: InteractiveMapPoint[]) =>
+    toWaypointLandmarks({
+      areas: [],
+      getWorldHeight: () => 5,
+      mapPoints,
+      origin: ORIGIN,
+      region: "mondstadt",
+      transform: IDENTITY_TRANSFORM,
+      transportPoints: [TRANSPORT_POINT],
+    });
+
   test("a waypoint is listed as a jump target", () => {
     expect.hasAssertions();
 

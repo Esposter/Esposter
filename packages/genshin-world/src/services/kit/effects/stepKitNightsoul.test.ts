@@ -8,9 +8,9 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { stepKitNightsoul } from "#src/services/kit/effects/stepKitNightsoul";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-
 describe(stepKitNightsoul, () => {
+  const CHARACTER_ID = 1;
+
   test("drains a blessing's points by its rate, and ends the blessing when they run out", () => {
     expect.hasAssertions();
 

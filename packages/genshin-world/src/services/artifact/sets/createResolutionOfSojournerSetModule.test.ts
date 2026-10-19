@@ -18,16 +18,17 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-});
-const party = createParty([TRAVELER_CHARACTER_ID]);
 
 describe(createResolutionOfSojournerSetModule, () => {
+  const wearer = createSetWearer(KIT);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  });
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+
   test("raises the CRIT Rate of a charged attack by 30% from four pieces, and of no other strike", () => {
     expect.hasAssertions();
 

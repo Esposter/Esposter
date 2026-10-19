@@ -11,47 +11,48 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const FRAME_SECONDS = 1 / 60;
-
-const COMBATANT: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 90,
-};
-
-// The frames, counted from the cast, on which the task ticks, with the body set where a test puts it
-const runTickFrames = (
-  {
-    firstSeconds,
-    intervalSeconds,
-    untilSeconds,
-  }: { firstSeconds: number; intervalSeconds: number; untilSeconds: number },
-  framesToRun: number,
-  bodyX = 0,
-): number[] => {
-  const context = createKitTestContext(COMBATANT, { body: createKitBody({ x: bodyX, z: 0 }) });
-  const tickFrames: number[] = [];
-  let frame = 0;
-  schedulePeriodicKitTask(
-    context.kitEffectState,
-    COMBATANT.characterId,
-    { firstSeconds, intervalSeconds, untilSeconds },
-    () => {
-      tickFrames.push(frame);
-    },
-  );
-  for (let stepIndex = 0; stepIndex < framesToRun; stepIndex++) {
-    frame++;
-    stepKitEffects(FRAME_SECONDS, context);
-  }
-  return tickFrames;
-};
 
 describe(schedulePeriodicKitTask, () => {
+  const FRAME_SECONDS = 1 / 60;
+
+  const COMBATANT: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  };
+
+  // The frames, counted from the cast, on which the task ticks, with the body set where a test puts it
+  const runTickFrames = (
+    {
+      firstSeconds,
+      intervalSeconds,
+      untilSeconds,
+    }: { firstSeconds: number; intervalSeconds: number; untilSeconds: number },
+    framesToRun: number,
+    bodyX = 0,
+  ): number[] => {
+    const context = createKitTestContext(COMBATANT, { body: createKitBody({ x: bodyX, z: 0 }) });
+    const tickFrames: number[] = [];
+    let frame = 0;
+    schedulePeriodicKitTask(
+      context.kitEffectState,
+      COMBATANT.characterId,
+      { firstSeconds, intervalSeconds, untilSeconds },
+      () => {
+        tickFrames.push(frame);
+      },
+    );
+    for (let stepIndex = 0; stepIndex < framesToRun; stepIndex++) {
+      frame++;
+      stepKitEffects(FRAME_SECONDS, context);
+    }
+    return tickFrames;
+  };
+
   test("ticks on its first frame and every interval after, the last before its end, as Jahoda's heals fall", () => {
     // Jahoda's heals: the first 12 frames in, then every 87, through her burst's 790
     expect(

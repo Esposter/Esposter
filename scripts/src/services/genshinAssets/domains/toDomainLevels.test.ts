@@ -29,7 +29,6 @@ const createDungeon = (overrides: Partial<ExcelDungeonRow>): ExcelDungeonRow => 
   type: "DUNGEON_DAILY_FIGHT",
   ...overrides,
 });
-const LEVEL_ENTITIES: ExcelDungeonLevelEntityRow[] = [{ id: 1995, levelConfigName: "LevelEntity_ElementAddHurt_Fire" }];
 const createPreview = (id: number, itemIds: number[]): ExcelRewardPreviewRow => ({
   id,
   previewItems: itemIds.map((itemId) => ({ id: itemId })),
@@ -44,27 +43,31 @@ const createMaterial = (id: number, rankLevel: number): MaterialRow => ({
   stackLimit: 0,
 });
 
-// Three day lists of a talent domain, in the order Monday and Thursday, Tuesday and Friday, Wednesday and Saturday, and
-// Sunday's union of all three
-const talentEntry = createEntry({ descriptionCycleRewardList: [[101], [102], [103], [101, 102, 103]] });
-const blessingEntry = createEntry({ dungeonEntryId: 48, id: 1, type: "DUNGEN_ENTRY_TYPE_RELIQUARY" });
-const blessingPoint: DumpedScenePoint = { $type: "NKJPPNFAEEF", dungeonIds: [1001] };
-// The materials of the day lists above, a book's rarity being its place in its list
-const materials = [
-  createMaterial(101, 2),
-  createMaterial(102, 3),
-  createMaterial(103, 4),
-  createMaterial(201, 2),
-  createMaterial(202, 3),
-  createMaterial(203, 4),
-];
-// A Domain of Blessing's artifacts at Adventure Rank 25, the row a level of rank 25 reads
-const blessingArtifacts = [
-  { chance: 0.414, guaranteedCount: 2, rarity: 2 },
-  { chance: 0.686, guaranteedCount: 4, rarity: 3 },
-];
-
 describe(toDomainLevels, () => {
+  const LEVEL_ENTITIES: ExcelDungeonLevelEntityRow[] = [
+    { id: 1995, levelConfigName: "LevelEntity_ElementAddHurt_Fire" },
+  ];
+
+  // Three day lists of a talent domain, in the order Monday and Thursday, Tuesday and Friday, Wednesday and Saturday,
+  // And Sunday's union of all three
+  const talentEntry = createEntry({ descriptionCycleRewardList: [[101], [102], [103], [101, 102, 103]] });
+  const blessingEntry = createEntry({ dungeonEntryId: 48, id: 1, type: "DUNGEN_ENTRY_TYPE_RELIQUARY" });
+  const blessingPoint: DumpedScenePoint = { $type: "NKJPPNFAEEF", dungeonIds: [1001] };
+  // The materials of the day lists above, a book's rarity being its place in its list
+  const materials = [
+    createMaterial(101, 2),
+    createMaterial(102, 3),
+    createMaterial(103, 4),
+    createMaterial(201, 2),
+    createMaterial(202, 3),
+    createMaterial(203, 4),
+  ];
+  // A Domain of Blessing's artifacts at Adventure Rank 25, the row a level of rank 25 reads
+  const blessingArtifacts = [
+    { chance: 0.414, guaranteedCount: 2, rarity: 2 },
+    { chance: 0.686, guaranteedCount: 4, rarity: 3 },
+  ];
+
   test("a talent domain's level takes the days of the pair its book is set for", () => {
     expect.hasAssertions();
 
@@ -93,8 +96,8 @@ describe(toDomainLevels, () => {
   test("a talent domain's level pays its pair's book at the count its rarity has in its Adventure Rank's row", () => {
     expect.hasAssertions();
 
-    // A level of rank 25 reads the Mastery row at 27, which counts only two-star books, so the three- and four-star books
-    // Of the pair are not paid
+    // A level of rank 25 reads the Mastery row at 27, which counts only two-star books, so the three- and four-star
+    // Books of the pair are not paid
     expect(
       toDomainLevels([talentEntry], [createDungeon({})], [createPreview(20, [101])], {}, materials, LEVEL_ENTITIES, {}),
     ).toStrictEqual({

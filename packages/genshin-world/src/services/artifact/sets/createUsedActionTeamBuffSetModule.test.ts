@@ -14,7 +14,6 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
 const createCombatant = (characterId: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -26,6 +25,8 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(createUsedActionTeamBuffSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+
   const wearer = createCombatant(TRAVELER_CHARACTER_ID);
   const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
   const module = createUsedActionTeamBuffSetModule({

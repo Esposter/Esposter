@@ -8,33 +8,33 @@ import { stepAbyssArena } from "#src/services/spiralAbyss/stepAbyssArena";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const AREA_ID = "area";
-const CENTER = { x: 0, z: 0 };
-const DESCRIBE_ID = 10101;
-const ENEMY_KIND_IDS = { [DESCRIBE_ID]: EnemyKindId.HilichurlFighter };
-const MONSTER_LEVEL = 24;
-const STARTED_AT = 0;
-const STEP_SECONDS = 10;
-const chamber: AbyssChamber = {
-  conditions: [],
-  halfMonsterDescribeIds: [[DESCRIBE_ID], [DESCRIBE_ID]],
-  id: 1,
-  index: 1,
-  monsterLevel: MONSTER_LEVEL,
-};
-const floor: AbyssFloor = { chambers: [chamber], id: 1001, index: 1, teamCount: 2, unlockStarCount: 0 };
-const teams = [
-  { characterIds: [1], name: "a" },
-  { characterIds: [2], name: "b" },
-];
-
-const enterChamber = (): AbyssArena => {
-  const arena = createAbyssArena(floor, chamber, teams, ENEMY_KIND_IDS, AREA_ID, CENTER, STARTED_AT);
-  if (!arena) throw new InvalidOperationError(Operation.Read, enterChamber.name, `chamber ${chamber.id}`);
-  return arena;
-};
-
 describe(stepAbyssArena, () => {
+  const AREA_ID = "area";
+  const CENTER = { x: 0, z: 0 };
+  const DESCRIBE_ID = 10101;
+  const ENEMY_KIND_IDS = { [DESCRIBE_ID]: EnemyKindId.HilichurlFighter };
+  const MONSTER_LEVEL = 24;
+  const STARTED_AT = 0;
+  const STEP_SECONDS = 10;
+  const chamber: AbyssChamber = {
+    conditions: [],
+    halfMonsterDescribeIds: [[DESCRIBE_ID], [DESCRIBE_ID]],
+    id: 1,
+    index: 1,
+    monsterLevel: MONSTER_LEVEL,
+  };
+  const floor: AbyssFloor = { chambers: [chamber], id: 1001, index: 1, teamCount: 2, unlockStarCount: 0 };
+  const teams = [
+    { characterIds: [1], name: "a" },
+    { characterIds: [2], name: "b" },
+  ];
+
+  const enterChamber = (): AbyssArena => {
+    const arena = createAbyssArena(floor, chamber, teams, ENEMY_KIND_IDS, AREA_ID, CENTER, STARTED_AT);
+    if (!arena) throw new InvalidOperationError(Operation.Read, enterChamber.name, `chamber ${chamber.id}`);
+    return arena;
+  };
+
   test("the clock runs down while the chamber is fought", () => {
     expect.hasAssertions();
     const arena = enterChamber();

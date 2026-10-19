@@ -2,10 +2,10 @@ import { computeImpostorFade } from "#src/vegetation/computeImpostorFade";
 import { IMPOSTOR_SWITCH_HEIGHTS } from "#src/vegetation/constants";
 import { describe, expect, test } from "vitest";
 
-const IMPOSTOR_HEIGHT = 2;
-const SWITCH_DISTANCE = IMPOSTOR_HEIGHT * IMPOSTOR_SWITCH_HEIGHTS;
-
 describe(computeImpostorFade, () => {
+  const IMPOSTOR_HEIGHT = 2;
+  const SWITCH_DISTANCE = IMPOSTOR_HEIGHT * IMPOSTOR_SWITCH_HEIGHTS;
+
   test("a far tree shows its impostor", () => {
     expect.hasAssertions();
 

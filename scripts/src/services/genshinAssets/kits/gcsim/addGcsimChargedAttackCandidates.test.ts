@@ -9,90 +9,90 @@ import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-// Iansan's charge.go: a charge hitmark constant, the charged attack, and the Stormflight `swift` attack fired by a queue
-// Call in the same file
-const gcsim: GcsimCharacter = {
-  animationFrameNameMap: new Map(),
-  attacks: [
-    {
-      abil: "Charged Attack",
-      attackTag: "attacks.AttackTagExtra",
-      durability: 25,
-      element: "attributes.Physical",
-      fieldLineMap: { Durability: 53, Element: 52 },
-      file: "charge.go",
-      internalCooldownTag: "attacks.ICDTagExtraAttack",
-      line: 45,
-      siteLine: 45,
-      talentVariable: "charge",
-      variableName: "ai",
-    },
-    {
-      abil: "Swift Stormflight",
-      attackTag: "attacks.AttackTagExtra",
-      durability: 25,
-      element: "attributes.Electro",
-      fieldLineMap: { Durability: 92, Element: 91, PoiseDMG: 85 },
-      file: "charge.go",
-      internalCooldownTag: "attacks.ICDTagNone",
-      line: 81,
-      poiseDamage: 120,
-      siteLine: 81,
-      talentVariable: "swift",
-      variableName: "ai",
-    },
-  ],
-  config: {
-    abilityHitboxesMap: new Map(),
-    names: [],
-    talentVariables: [
+describe(addGcsimChargedAttackCandidates, () => {
+  // Iansan's charge.go: a charge hitmark constant, the charged attack, and the Stormflight `swift` attack fired by a
+  // Queue call in the same file
+  const gcsim: GcsimCharacter = {
+    animationFrameNameMap: new Map(),
+    attacks: [
       {
-        leaves: [{ path: [], reference: { label: "Charged Attack DMG", selector: 0, type: GcsimTalentType.Attack } }],
-        line: 1,
-        name: "charge",
+        abil: "Charged Attack",
+        attackTag: "attacks.AttackTagExtra",
+        durability: 25,
+        element: "attributes.Physical",
+        fieldLineMap: { Durability: 53, Element: 52 },
+        file: "charge.go",
+        internalCooldownTag: "attacks.ICDTagExtraAttack",
+        line: 45,
+        siteLine: 45,
+        talentVariable: "charge",
+        variableName: "ai",
       },
       {
-        leaves: [
-          { path: [], reference: { label: "Swift Stormflight DMG", selector: 0, type: GcsimTalentType.Attack } },
-        ],
-        line: 2,
-        name: "swift",
+        abil: "Swift Stormflight",
+        attackTag: "attacks.AttackTagExtra",
+        durability: 25,
+        element: "attributes.Electro",
+        fieldLineMap: { Durability: 92, Element: 91, PoiseDMG: 85 },
+        file: "charge.go",
+        internalCooldownTag: "attacks.ICDTagNone",
+        line: 81,
+        poiseDamage: 120,
+        siteLine: 81,
+        talentVariable: "swift",
+        variableName: "ai",
       },
     ],
-  },
-  configFile: "config.yml",
-  constantMap: new Map([
-    ["chargeHitmarks", { elementLines: {}, file: "charge.go", line: 19, value: [21] }],
-    ["swiftFrames", { elementLines: {}, file: "charge.go", line: 31, value: { animationFrames: 33 } }],
-  ]),
-  filePaths: [],
-  folder: "iansan",
-  holdCooldowns: [],
-  goSources: [],
-  queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
-  talentArrayMap: new Map(),
-  talentFile: "iansan.go",
-  talentParameterMap: new Map([
-    ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
-    ["attack|Swift Stormflight DMG", { indexes: [4], line: 5 }],
-  ]),
-  travelMap: new Map(),
-};
+    config: {
+      abilityHitboxesMap: new Map(),
+      names: [],
+      talentVariables: [
+        {
+          leaves: [{ path: [], reference: { label: "Charged Attack DMG", selector: 0, type: GcsimTalentType.Attack } }],
+          line: 1,
+          name: "charge",
+        },
+        {
+          leaves: [
+            { path: [], reference: { label: "Swift Stormflight DMG", selector: 0, type: GcsimTalentType.Attack } },
+          ],
+          line: 2,
+          name: "swift",
+        },
+      ],
+    },
+    configFile: "config.yml",
+    constantMap: new Map([
+      ["chargeHitmarks", { elementLines: {}, file: "charge.go", line: 19, value: [21] }],
+      ["swiftFrames", { elementLines: {}, file: "charge.go", line: 31, value: { animationFrames: 33 } }],
+    ]),
+    filePaths: [],
+    folder: "iansan",
+    holdCooldowns: [],
+    goSources: [],
+    queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+    talentArrayMap: new Map(),
+    talentFile: "iansan.go",
+    talentParameterMap: new Map([
+      ["attack|Charged Attack DMG", { indexes: [3], line: 4 }],
+      ["attack|Swift Stormflight DMG", { indexes: [4], line: 5 }],
+    ]),
+    travelMap: new Map(),
+  };
 
-const tables: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Iansan",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 0,
-    [CombatTalent.ElementalSkill]: 0,
-    [CombatTalent.NormalAttack]: 11031,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Catalyst,
-};
+  const tables: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Iansan",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 0,
+      [CombatTalent.ElementalSkill]: 0,
+      [CombatTalent.NormalAttack]: 11031,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Catalyst,
+  };
 
-describe(addGcsimChargedAttackCandidates, () => {
   test("joins a charged attack variant's hit to the queue call that fires its attack, as a burst variant's kick joins", () => {
     const candidateMap = new Map<string, KitCandidate[]>();
 

@@ -21,53 +21,54 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wearer = createSetWearer(KIT);
-const createStrike = (attackTag: AttackTag, combatant: Combatant = wearer): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant,
-  hit: KIT.plungeCollision,
-});
-// The wearer's share of DMG a strike of the given kind gets, as its kit's module and the effects stand
-const getDamageBonus = (
-  module: ReturnType<typeof createVourukashasGlowSetModule>,
-  attackTag: AttackTag,
-  kitEffectState: KitEffectState,
-  combatant: Combatant = wearer,
-) =>
-  module.getStrikeDamageBonus?.(
-    createStrike(attackTag, combatant),
-    enemy,
-    createParty([TRAVELER_CHARACTER_ID]),
-    kitEffectState.effects,
-  ) ?? 0;
-// The wearer's HP lost to an enemy's strike of the given share, as the party records it, its fields set by overrides
-const takeEnemyHit = (
-  module: ReturnType<typeof createVourukashasGlowSetModule>,
-  context: KitContext,
-  healthShare = -0.1,
-  overrides: Partial<PartyHealthChange> = {},
-) =>
-  module.onKitEvent?.(
-    {
-      bondOfLifeShare: 0,
-      characterId: TRAVELER_CHARACTER_ID,
-      healthShare,
-      isFallRefused: false,
-      kind: KitEventKind.HealthChanged,
-      overflowHealthShare: 0,
-      ...overrides,
-    },
-    context,
-    wearer,
-  );
 
 describe(createVourukashasGlowSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wearer = createSetWearer(KIT);
+  const createStrike = (attackTag: AttackTag, combatant: Combatant = wearer): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant,
+    hit: KIT.plungeCollision,
+  });
+  // The wearer's share of DMG a strike of the given kind gets, as its kit's module and the effects stand
+  const getDamageBonus = (
+    module: ReturnType<typeof createVourukashasGlowSetModule>,
+    attackTag: AttackTag,
+    kitEffectState: KitEffectState,
+    combatant: Combatant = wearer,
+  ) =>
+    module.getStrikeDamageBonus?.(
+      createStrike(attackTag, combatant),
+      enemy,
+      createParty([TRAVELER_CHARACTER_ID]),
+      kitEffectState.effects,
+    ) ?? 0;
+  // The wearer's HP lost to an enemy's strike of the given share, as the party records it, its fields set by overrides
+  const takeEnemyHit = (
+    module: ReturnType<typeof createVourukashasGlowSetModule>,
+    context: KitContext,
+    healthShare = -0.1,
+    overrides: Partial<PartyHealthChange> = {},
+  ) =>
+    module.onKitEvent?.(
+      {
+        bondOfLifeShare: 0,
+        characterId: TRAVELER_CHARACTER_ID,
+        healthShare,
+        isFallRefused: false,
+        kind: KitEventKind.HealthChanged,
+        overflowHealthShare: 0,
+        ...overrides,
+      },
+      context,
+      wearer,
+    );
+
   test("the wearer's Elemental Skill and Elemental Burst hits gain 10% DMG, and no other hit does", () => {
     expect.hasAssertions();
 

@@ -125,38 +125,39 @@ describe(createKujouSaraKitBehaviour, () => {
   });
 });
 
-const OTHER_CHARACTER_ID = 10_000_001;
-
-// The Energy each party member holds once the Ambush a fully charged shot under the Cover summons has struck, with Sara at
-// The given ascension and Energy Recharge
-const readEnergies = (ascension: number, energyRecharge: number): number[] => {
-  const combatant = {
-    ...createSaraCombatant(ascension),
-    attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: energyRecharge }]),
-  };
-  const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };
-  const party = createParty([KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID]);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const context = createKitTestContext(combatant, {
-    characterIdCombatantMap: new Map([
-      [KUJOU_SARA_CHARACTER_ID, combatant],
-      [OTHER_CHARACTER_ID, other],
-    ]),
-    kitEffectState,
-    party,
-  });
-  SARA_KIT.elementalSkill.onStart?.(context);
-  SARA_KIT.chargedAttack.onStart?.(context);
-  const hit = takeOne(takeOne(kitEffectState.effects.filter((effect) => checkIsSummon(effect))).hits);
-  hit.onStrike?.(
-    context,
-    { body: createKitBody({ x: 0, z: 0 }), combatant, hit },
-    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-  );
-  return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map((characterId) => getPartyMember(party, characterId).energy);
-};
-
 describe("decorum", () => {
+  const OTHER_CHARACTER_ID = 10_000_001;
+  // The Energy each party member holds once the Ambush a fully charged shot under the Cover summons has struck, with
+  // Sara at the given ascension and Energy Recharge
+  const readEnergies = (ascension: number, energyRecharge: number): number[] => {
+    const combatant = {
+      ...createSaraCombatant(ascension),
+      attributes: computeCharacterAttributes([{ attribute: Attribute.EnergyRecharge, value: energyRecharge }]),
+    };
+    const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };
+    const party = createParty([KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [KUJOU_SARA_CHARACTER_ID, combatant],
+        [OTHER_CHARACTER_ID, other],
+      ]),
+      kitEffectState,
+      party,
+    });
+    SARA_KIT.elementalSkill.onStart?.(context);
+    SARA_KIT.chargedAttack.onStart?.(context);
+    const hit = takeOne(takeOne(kitEffectState.effects.filter((effect) => checkIsSummon(effect))).hits);
+    hit.onStrike?.(
+      context,
+      { body: createKitBody({ x: 0, z: 0 }), combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+    );
+    return [KUJOU_SARA_CHARACTER_ID, OTHER_CHARACTER_ID].map(
+      (characterId) => getPartyMember(party, characterId).energy,
+    );
+  };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
@@ -187,6 +188,7 @@ const readMarkSeconds = (constellationCount: number): number | undefined => {
 };
 
 describe("constellation 6", () => {
+  const OTHER_CHARACTER_ID = 10_000_001;
   const kitBody = createKitBody({ x: 0, z: 0 });
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const other = { ...createSaraCombatant(), characterId: OTHER_CHARACTER_ID };

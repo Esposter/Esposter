@@ -30,7 +30,6 @@ const createBeidouCombatant = (constellationCount: number): Combatant => ({
   level: 90,
 });
 
-const OTHER_CHARACTER_ID = 10_000_049;
 // Beidou losing a tenth of her Max HP to an enemy's strike, which names no source
 const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => ({
   characterId,
@@ -49,6 +48,8 @@ const getStunningRevengeHit = (combatant: Combatant, activeCombatant: Combatant,
   );
 
 describe(createBeidouKitBehaviour, () => {
+  const OTHER_CHARACTER_ID = 10_000_049;
+
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createBeidouCombatant(0));

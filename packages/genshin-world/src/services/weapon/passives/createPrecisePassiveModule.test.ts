@@ -15,18 +15,19 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// A synthetic DMG percentage of a fifth, not the weapon's row
-const precisePassiveModule = createPrecisePassiveModule([0.2]);
-const createStrike = (weakPoint: boolean): KitStrike => ({
-  attackTag: AttackTag.ChargedAttack,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
-});
 
 describe(createPrecisePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // A synthetic DMG percentage of a fifth, not the weapon's row
+  const precisePassiveModule = createPrecisePassiveModule([0.2]);
+  const createStrike = (weakPoint: boolean): KitStrike => ({
+    attackTag: AttackTag.ChargedAttack,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
+  });
+
   test("a strike on a weak point is raised by the rank's percentage", () => {
     expect.hasAssertions();
 

@@ -21,7 +21,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KEQING_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KEQING_CHARACTER_ID);
-const KEQING_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createKeqingCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -36,16 +35,6 @@ const createKeqingCombatant = (): Combatant => ({
 // The buffs a reaction event gives the kit's owner, the striker being whichever character dealt the hit
 // The fields of a buff a test names, so the others it holds are not compared
 const pickBuffTerms = ({ amount, attribute, secondsRemaining }: KitBuff) => ({ amount, attribute, secondsRemaining });
-
-const getReactionBuffs = (combatant: Combatant, striker: Combatant, reactions: Reaction[]): KitBuff[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  KEQING_KIT.onKitEvent?.(
-    { enemy: KEQING_ENEMY, kind: KitEventKind.ReactionTriggered, reactions, striker },
-    createKitTestContext(combatant, { kitEffectState }),
-    combatant,
-  );
-  return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
-};
 
 const castStarwardSword = (ascension: number): KitBuff[] => {
   const kitEffectState: KitEffectState = { effects: [] };
@@ -64,6 +53,18 @@ const castRecast = (ascension: number): KitEffectState["effects"] => {
 };
 
 describe(createKeqingKitBehaviour, () => {
+  const KEQING_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  const getReactionBuffs = (combatant: Combatant, striker: Combatant, reactions: Reaction[]): KitBuff[] => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    KEQING_KIT.onKitEvent?.(
+      { enemy: KEQING_ENEMY, kind: KitEventKind.ReactionTriggered, reactions, striker },
+      createKitTestContext(combatant, { kitEffectState }),
+      combatant,
+    );
+    return kitEffectState.effects.filter((effect): effect is KitBuff => effect.kind === "buff");
+  };
+
   // Ascension 4's Starward Sword buffs
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();

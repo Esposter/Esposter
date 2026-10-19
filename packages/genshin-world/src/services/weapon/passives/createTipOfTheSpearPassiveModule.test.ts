@@ -9,19 +9,19 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { createTipOfTheSpearPassiveModule } from "#src/services/weapon/passives/createTipOfTheSpearPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: three Energy for a heal of the wielder, once every two seconds
-const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([3, 2, 0, 0]);
-const healthGained: KitEvent = {
-  characterId: TRAVELER_CHARACTER_ID,
-  healthShare: 0.5,
-  bondOfLifeShare: 0,
-  isFallRefused: false,
-  kind: KitEventKind.HealthChanged,
-  overflowHealthShare: 0,
-};
-
 describe(createTipOfTheSpearPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: three Energy for a heal of the wielder, once every two seconds
+  const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([3, 2, 0, 0]);
+  const healthGained: KitEvent = {
+    characterId: TRAVELER_CHARACTER_ID,
+    healthShare: 0.5,
+    bondOfLifeShare: 0,
+    isFallRefused: false,
+    kind: KitEventKind.HealthChanged,
+    overflowHealthShare: 0,
+  };
+
   test("a heal of the wielder restores the rank's Energy to it, even off the field", () => {
     expect.hasAssertions();
 

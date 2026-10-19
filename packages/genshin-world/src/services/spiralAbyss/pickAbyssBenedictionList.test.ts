@@ -4,15 +4,16 @@ import { pickAbyssBenedictionList } from "#src/services/spiralAbyss/pickAbyssBen
 import { MILLISECONDS_IN_DAY } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
-const LISTS: AbyssBenedictionChoice[][] = [
-  [{ descriptionTextHash: 1, towerBuffId: 1, weight: 100 }],
-  [{ descriptionTextHash: 2, towerBuffId: 2, weight: 100 }],
-  [{ descriptionTextHash: 3, towerBuffId: 3, weight: 100 }],
-];
 // The instant at the start of a game day counted from the epoch, which the game's daily hour falls inside
 const atGameDay = (gameDay: number) => Temporal.Instant.fromEpochMilliseconds(gameDay * MILLISECONDS_IN_DAY);
 
 describe(pickAbyssBenedictionList, () => {
+  const LISTS: AbyssBenedictionChoice[][] = [
+    [{ descriptionTextHash: 1, towerBuffId: 1, weight: 100 }],
+    [{ descriptionTextHash: 2, towerBuffId: 2, weight: 100 }],
+    [{ descriptionTextHash: 3, towerBuffId: 3, weight: 100 }],
+  ];
+
   test("should offer the list its game day picks, one list after another as the days pass", () => {
     expect.hasAssertions();
 

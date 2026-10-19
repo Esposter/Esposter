@@ -39,29 +39,9 @@ const createCitlaliCombatant = (): Combatant => ({
 
 const CITLALI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CITLALI_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const ENEMY_HEALTH = 1e9;
-// A frame of the world's seconds, the step the team's effects run on at sixty frames a second
-const FRAME_SECONDS = toKitSeconds(1);
-
-// Steps the team the given frames, applying the strikes each frame's step raises, as the world does
-const stepFrames = (context: KitContext, frames: number) => {
-  for (let frame = 0; frame < frames; frame++) {
-    stepKitEffects(FRAME_SECONDS, context);
-    // The world advances each enemy's elemental clock with the frames, which an internal cooldown reads for its reset
-    for (const enemy of context.enemyMap.values()) enemy.elementalState.seconds += FRAME_SECONDS;
-    if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
-  }
-};
 
 const countPoints = (context: KitContext) =>
   countKitResource(context.kitEffectState.effects, CITLALI_CHARACTER_ID, NIGHTSOUL_POINTS_ID);
-
-// An enemy standing the given metres along the x axis from the body's origin, too sturdy to die over a test
-const createSturdyEnemy = (x: number): Enemy => ({
-  ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, ""),
-  health: ENEMY_HEALTH,
-  maxHealth: ENEMY_HEALTH,
-});
 
 // A team whose skill's press and two bursts put Citlali's points at 72 in the Blessing, which starts the Opal Fire at once
 const createOpalFireContext = (enemies: Enemy[]) => {
@@ -76,6 +56,27 @@ const createOpalFireContext = (enemies: Enemy[]) => {
 };
 
 describe(createCitlaliKitBehaviour, () => {
+  const ENEMY_HEALTH = 1e9;
+  // A frame of the world's seconds, the step the team's effects run on at sixty frames a second
+  const FRAME_SECONDS = toKitSeconds(1);
+
+  // Steps the team the given frames, applying the strikes each frame's step raises, as the world does
+  const stepFrames = (context: KitContext, frames: number) => {
+    for (let frame = 0; frame < frames; frame++) {
+      stepKitEffects(FRAME_SECONDS, context);
+      // The world advances each enemy's elemental clock with the frames, which an internal cooldown reads for its reset
+      for (const enemy of context.enemyMap.values()) enemy.elementalState.seconds += FRAME_SECONDS;
+      if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
+    }
+  };
+
+  // An enemy standing the given metres along the x axis from the body's origin, too sturdy to die over a test
+  const createSturdyEnemy = (x: number): Enemy => ({
+    ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, ""),
+    health: ENEMY_HEALTH,
+    maxHealth: ENEMY_HEALTH,
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([

@@ -12,12 +12,6 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
-// Finale of the Deep with synthetic params: 10% ATK for twelve seconds after an Elemental Skill, and a Bond of Life
-// Worth a fifth of Max HP once every six seconds, and 3% of the HP a Bond of Life cleared as flat ATK, at most 90,
-// For eight seconds after it is cleared
-const finaleOfTheDeepPassiveModule = createFinaleOfTheDeepPassiveModule([0.1, 12, 0.2, 0.03, 90, 8, 6]);
-const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const getBuffs = (effects: readonly KitEffect[], source: string) =>
   effects.filter((effect): effect is KitBuff => effect.kind === "buff" && effect.source === source);
 const clearHealth = (bondOfLifeShare: number) => ({
@@ -30,6 +24,13 @@ const clearHealth = (bondOfLifeShare: number) => ({
 });
 
 describe(createFinaleOfTheDeepPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
+  // Finale of the Deep with synthetic params: 10% ATK for twelve seconds after an Elemental Skill, and a Bond of Life
+  // Worth a fifth of Max HP once every six seconds, and 3% of the HP a Bond of Life cleared as flat ATK, at most 90,
+  // For eight seconds after it is cleared
+  const finaleOfTheDeepPassiveModule = createFinaleOfTheDeepPassiveModule([0.1, 12, 0.2, 0.03, 90, 8, 6]);
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+
   test("an Elemental Skill raises the wielder's ATK by the rank's percentage for the rank's seconds, and grants a Bond of Life worth the rank's share of its Max HP", () => {
     expect.hasAssertions();
 

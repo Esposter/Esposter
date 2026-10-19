@@ -5,9 +5,9 @@ import { stepGrassTrail } from "#src/vegetation/stepGrassTrail";
 import { Vector2 } from "three";
 import { describe, expect, test } from "vitest";
 
-const FRAME_SECONDS = 0.1;
-
 describe(stepGrassTrail, () => {
+  const FRAME_SECONDS = 0.1;
+
   test("A stamp bends the footing the character walks through", () => {
     expect.hasAssertions();
 

@@ -22,17 +22,18 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-});
 
 describe(createBloodstainedChivalrySetModule, () => {
+  const wearer = createSetWearer(KIT);
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  });
+
   test("raises the DMG of its wearer's Charged Attacks by 50% once it defeats an opponent, and of no other strike", () => {
     expect.hasAssertions();
 

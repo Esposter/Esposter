@@ -11,10 +11,6 @@ import { createParticleHealPassiveModule } from "#src/services/weapon/passives/c
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 10_000_066;
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
-// A synthetic tenth of Max HP for each particle or orb, not the weapon's row
-const particleHealPassiveModule = createParticleHealPassiveModule([0.1]);
 const createParticleCollected = (characterId: number) => ({
   characterId,
   count: 2,
@@ -23,6 +19,11 @@ const createParticleCollected = (characterId: number) => ({
 });
 
 describe(createParticleHealPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 10_000_066;
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.Health, value: 1000 }]);
+  // A synthetic tenth of Max HP for each particle or orb, not the weapon's row
+  const particleHealPassiveModule = createParticleHealPassiveModule([0.1]);
+
   test("a particle the wielder collects restores its share of Max HP for each one collected", () => {
     expect.hasAssertions();
 

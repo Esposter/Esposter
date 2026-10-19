@@ -11,7 +11,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
 
 const createCombatant = (): Combatant => ({
   ascension: 0,
@@ -25,6 +24,8 @@ const createCombatant = (): Combatant => ({
 });
 
 describe(queueKitPassiveHit, () => {
+  const KIT_HIT = takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits);
+
   test("queues a passive's extra hit to strike from the striker's body, with no attack tag", () => {
     expect.hasAssertions();
     const combatant = createCombatant();

@@ -22,20 +22,21 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Focus with synthetic params: 10% CRIT Rate a stack
-const focusPassiveModule = createFocusPassiveModule([0.1]);
-const createDamageTaken = (isCritical: boolean) => ({
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createFocusPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Focus with synthetic params: 10% CRIT Rate a stack
+  const focusPassiveModule = createFocusPassiveModule([0.1]);
+  const createDamageTaken = (isCritical: boolean) => ({
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   const LEVEL = 90;
   const STURDY_HEALTH = 1e9;
 

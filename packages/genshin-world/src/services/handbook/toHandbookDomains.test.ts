@@ -10,9 +10,6 @@ import { takeOne } from "@esposter/shared";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-// A weekly boss's entrance, whose entry id is the one the weekly boss's domain is read by
-const WEEKLY_ENTRY_ID = 1006;
-
 const entrance = (overrides: Partial<DomainEntranceLandmark>): DomainEntranceLandmark => ({
   arrival: { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 },
   areaId: "fixture-area",
@@ -26,9 +23,6 @@ const entrance = (overrides: Partial<DomainEntranceLandmark>): DomainEntranceLan
   titleTextKey: GameTextKey.DomainEntrance24,
   ...overrides,
 });
-const weeklyEntrance = entrance({ domainKind: DomainKind.Trounce, entryId: WEEKLY_ENTRY_ID, id: "fixture-weekly" });
-const introDone = new Set(STORMTERROR_INTRO_QUEST_IDS.map(String));
-const none = new Set<string>();
 const flags = ({ isFirstClearClaimable, isLocked, isQuickChallengeable }: HandbookDomain) => ({
   isFirstClearClaimable,
   isLocked,
@@ -36,6 +30,13 @@ const flags = ({ isFirstClearClaimable, isLocked, isQuickChallengeable }: Handbo
 });
 
 describe(toHandbookDomains, () => {
+  // A weekly boss's entrance, whose entry id is the one the weekly boss's domain is read by
+  const WEEKLY_ENTRY_ID = 1006;
+
+  const weeklyEntrance = entrance({ domainKind: DomainKind.Trounce, entryId: WEEKLY_ENTRY_ID, id: "fixture-weekly" });
+  const introDone = new Set(STORMTERROR_INTRO_QUEST_IDS.map(String));
+  const none = new Set<string>();
+
   test("a locked weekly boss is quick challenged from Adventure Rank 40", () => {
     expect.hasAssertions();
 

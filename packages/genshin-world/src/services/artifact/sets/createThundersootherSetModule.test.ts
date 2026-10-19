@@ -19,14 +19,6 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const strike: KitStrike = {
-  attackTag: AttackTag.ElementalSkill,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-};
-const party = createParty([TRAVELER_CHARACTER_ID]);
 // An enemy under the aura given, or under none
 const createEnemyUnder = (auraType?: AuraType) => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -35,6 +27,15 @@ const createEnemyUnder = (auraType?: AuraType) => {
 };
 
 describe(createThundersootherSetModule, () => {
+  const wearer = createSetWearer(KIT);
+  const strike: KitStrike = {
+    attackTag: AttackTag.ElementalSkill,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  };
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+
   test("raises the DMG of a strike on an enemy under Electro by 35% from four pieces", () => {
     expect.hasAssertions();
 

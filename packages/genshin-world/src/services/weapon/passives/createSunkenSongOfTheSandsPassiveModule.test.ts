@@ -19,7 +19,6 @@ import { createSunkenSongOfTheSandsPassiveModule } from "#src/services/weapon/pa
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const readMemberBuffs = (effects: readonly KitEffect[], characterId: number) =>
   effects.flatMap((effect) =>
@@ -29,6 +28,8 @@ const readMemberBuffs = (effects: readonly KitEffect[], characterId: number) =>
   );
 
 describe(createSunkenSongOfTheSandsPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Synthetic params, not the weapon's row, and a first param the module does not read: each Elemental Skill hit
   // Adds a stack of 1% of the wielder's Max HP as Elemental Mastery, up to three, once every 0.4 seconds, and
   // The third stack gives each other deployed member 2% of it for two seconds, restarted by a trigger at three stacks

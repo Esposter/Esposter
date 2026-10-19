@@ -3,26 +3,26 @@ import type { RewardItem } from "#src/models/reward/RewardItem";
 import { drawRewardItems } from "#src/services/reward/drawRewardItems";
 import { describe, expect, test } from "vitest";
 
-const GOLDEN_STEP = (Math.sqrt(5) - 1) / 2;
-
-// A roll sequence spread evenly over the unit interval, so the mean over many draws is the chance's own mean and not one
-// Lucky run of rolls
-const createRolls = (): (() => number) => {
-  let step = 0;
-  return () => {
-    step += 1;
-    return (step * GOLDEN_STEP) % 1;
-  };
-};
-
-const getMeanCount = (item: RewardItem, draws: number): number => {
-  const random = createRolls();
-  let total = 0;
-  for (let draw = 0; draw < draws; draw += 1) total += drawRewardItems([item], random)[0]?.count ?? 0;
-  return total / draws;
-};
-
 describe(drawRewardItems, () => {
+  const GOLDEN_STEP = (Math.sqrt(5) - 1) / 2;
+
+  // A roll sequence spread evenly over the unit interval, so the mean over many draws is the chance's own mean and not
+  // One lucky run of rolls
+  const createRolls = (): (() => number) => {
+    let step = 0;
+    return () => {
+      step += 1;
+      return (step * GOLDEN_STEP) % 1;
+    };
+  };
+
+  const getMeanCount = (item: RewardItem, draws: number): number => {
+    const random = createRolls();
+    let total = 0;
+    for (let draw = 0; draw < draws; draw += 1) total += drawRewardItems([item], random)[0]?.count ?? 0;
+    return total / draws;
+  };
+
   test("an item without an average draws its count uniformly between its least and most", () => {
     expect.hasAssertions();
 

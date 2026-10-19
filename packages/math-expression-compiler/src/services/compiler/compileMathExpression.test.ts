@@ -3,12 +3,12 @@ import { parseNode } from "#src/services/compiler/parseNode.fixture";
 import { getMathExpressionNames } from "#src/services/names/getMathExpressionNames";
 import { describe, expect, test } from "vitest";
 
-const SCOPE = { col0: 3, col1: -2.5 };
-
 const evaluateFormula = (formula: string, scope: Record<string, number> = {}): number =>
   compileMathExpression(parseNode(formula), Object.keys(scope))(Object.values(scope));
 
 describe(compileMathExpression, () => {
+  const SCOPE = { col0: 3, col1: -2.5 };
+
   test.each([
     ["Power binds tighter than a sign", "-2 ^ 2", {}, -4],
     ["Modulo takes the sign of the divisor", "-7 % 3", {}, 2],

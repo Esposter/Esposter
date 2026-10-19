@@ -17,21 +17,22 @@ import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: five Elemental Mastery for two seconds on an Elemental Reaction, and a fifth
-// ATK for three seconds on a Stellar Glimmer reaction
-const repentanceAndRedemptionPassiveModule = createRepentanceAndRedemptionPassiveModule([5, 2, 0.2, 3]);
-const createReaction = (reactionType: ReactionType, element: Element) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element, reactionType }],
-  striker: wielder,
-});
 const getBuffs = (effects: readonly KitEffect[]) =>
   effects.filter((effect): effect is KitBuff => effect.kind === "buff");
 
 describe(createRepentanceAndRedemptionPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: five Elemental Mastery for two seconds on an Elemental Reaction, and a
+  // Fifth ATK for three seconds on a Stellar Glimmer reaction
+  const repentanceAndRedemptionPassiveModule = createRepentanceAndRedemptionPassiveModule([5, 2, 0.2, 3]);
+  const createReaction = (reactionType: ReactionType, element: Element) => ({
+    enemy,
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions: [{ element, reactionType }],
+    striker: wielder,
+  });
+
   test("an Elemental Reaction the wielder triggers raises its Elemental Mastery by the rank's amount for the rank's seconds", () => {
     expect.hasAssertions();
 

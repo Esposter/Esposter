@@ -25,42 +25,46 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
 const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
 };
-// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events the
-// Team sends, and reads the reactions a member makes in the party's hooks
-const createTeam = (characterIds: number[]) => {
-  const wearer = createCombatant(
-    TRAVELER_CHARACTER_ID,
-    getPassiveKit(KIT, [
-      createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
-    ]),
-  );
-  const other = createCombatant(OTHER_CHARACTER_ID);
-  const kitEffectState: KitEffectState = { effects: [] };
-  const party = createParty(characterIds);
-  const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
-    [OTHER_CHARACTER_ID, other],
-  ]);
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
-  // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
-  const reactionDamageBonus = (combatant: Combatant, reactionType: TransformativeReactionType | StellarReactionType) =>
-    wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
-      ?.damageBonus ?? 0;
-  // A hit the striker lands on the enemy, which triggers the given reactions on it
-  const trigger = (
-    striker: Combatant,
-    reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
-  ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
-  return { enemy, other, reactionDamageBonus, trigger, wearer };
-};
 
 describe(createViridescentVenererSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  // The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events
+  // The Team sends, and reads the reactions a member makes in the party's hooks
+  const createTeam = (characterIds: number[]) => {
+    const wearer = createCombatant(
+      TRAVELER_CHARACTER_ID,
+      getPassiveKit(KIT, [
+        createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
+      ]),
+    );
+    const other = createCombatant(OTHER_CHARACTER_ID);
+    const kitEffectState: KitEffectState = { effects: [] };
+    const party = createParty(characterIds);
+    const characterIdCombatantMap = new Map([
+      [TRAVELER_CHARACTER_ID, wearer],
+      [OTHER_CHARACTER_ID, other],
+    ]);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
+    // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
+    const reactionDamageBonus = (
+      combatant: Combatant,
+      reactionType: TransformativeReactionType | StellarReactionType,
+    ) =>
+      wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
+        ?.damageBonus ?? 0;
+    // A hit the striker lands on the enemy, which triggers the given reactions on it
+    const trigger = (
+      striker: Combatant,
+      reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
+    ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
+    return { enemy, other, reactionDamageBonus, trigger, wearer };
+  };
+
   test("the wearer's own Swirl reaction DMG is raised by 60%, and another member's Swirl is not", () => {
     expect.hasAssertions();
 

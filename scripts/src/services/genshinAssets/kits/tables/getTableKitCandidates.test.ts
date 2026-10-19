@@ -7,40 +7,6 @@ import { getTableKitCandidates } from "#src/services/genshinAssets/kits/tables/g
 import { CombatTalent, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const LINNEA_BURST_GROUP_ID = 13_039;
-const LINNEA_SKILL_GROUP_ID = 13_032;
-const LOHEN_BURST_GROUP_ID = 12_939;
-const LOHEN_SKILL_GROUP_ID = 12_932;
-const COLUMBINA_BURST_GROUP_ID = 12_539;
-const COLUMBINA_SKILL_GROUP_ID = 12_532;
-
-const CLORINDE_NAME = "Clorinde";
-const CLORINDE_CHARACTER_ID = 10_000_098;
-const NORMAL_ATTACK_GROUP_ID = 9831;
-const ELEMENTAL_SKILL_GROUP_ID = 9832;
-const ELEMENTAL_BURST_GROUP_ID = 9839;
-
-// Clorinde's elemental skill rows as her table gives them, with the parameter indexes each reads
-const CLORINDE_SKILL_LABELS = [
-  { indexes: [2], label: "Swift Hunt Bond of Life Gain" },
-  { indexes: [5, 7], label: "Impale the Night Healing" },
-  { indexes: [8], label: "Bond of Life Conversion" },
-  { indexes: [11], label: "Night Vigil Duration" },
-];
-
-const createCharacterTables = (name: string, characterId: number): KitTables => ({
-  characterId,
-  labelMap: new Map([[ELEMENTAL_SKILL_GROUP_ID, CLORINDE_SKILL_LABELS]]),
-  name,
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: ELEMENTAL_BURST_GROUP_ID,
-    [CombatTalent.ElementalSkill]: ELEMENTAL_SKILL_GROUP_ID,
-    [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Sword,
-});
-
 const createTables = (
   labelMap: Map<number, KitTableLabel[]>,
   { burstGroupId, skillGroupId }: { burstGroupId: number; skillGroupId: number },
@@ -62,6 +28,40 @@ const readCandidateValues = (candidates: Map<string, KitCandidate[]>) =>
   Object.fromEntries([...candidates].map(([path, [candidate]]) => [path, candidate?.value]));
 
 describe(getTableKitCandidates, () => {
+  const LINNEA_BURST_GROUP_ID = 13_039;
+  const LINNEA_SKILL_GROUP_ID = 13_032;
+  const LOHEN_BURST_GROUP_ID = 12_939;
+  const LOHEN_SKILL_GROUP_ID = 12_932;
+  const COLUMBINA_BURST_GROUP_ID = 12_539;
+  const COLUMBINA_SKILL_GROUP_ID = 12_532;
+
+  const CLORINDE_NAME = "Clorinde";
+  const CLORINDE_CHARACTER_ID = 10_000_098;
+  const NORMAL_ATTACK_GROUP_ID = 9831;
+  const ELEMENTAL_SKILL_GROUP_ID = 9832;
+  const ELEMENTAL_BURST_GROUP_ID = 9839;
+
+  // Clorinde's elemental skill rows as her table gives them, with the parameter indexes each reads
+  const CLORINDE_SKILL_LABELS = [
+    { indexes: [2], label: "Swift Hunt Bond of Life Gain" },
+    { indexes: [5, 7], label: "Impale the Night Healing" },
+    { indexes: [8], label: "Bond of Life Conversion" },
+    { indexes: [11], label: "Night Vigil Duration" },
+  ];
+
+  const createCharacterTables = (name: string, characterId: number): KitTables => ({
+    characterId,
+    labelMap: new Map([[ELEMENTAL_SKILL_GROUP_ID, CLORINDE_SKILL_LABELS]]),
+    name,
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: ELEMENTAL_BURST_GROUP_ID,
+      [CombatTalent.ElementalSkill]: ELEMENTAL_SKILL_GROUP_ID,
+      [CombatTalent.NormalAttack]: NORMAL_ATTACK_GROUP_ID,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Sword,
+  });
+
   test("reads the skill's Lumi Duration as the lumi duration parameter, at its index in the skill group", () => {
     expect.hasAssertions();
     const candidates = getTableKitCandidates(

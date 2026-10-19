@@ -5,9 +5,9 @@ import { readMailRows } from "#src/services/mail/readMailRows";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const ROW_HASH = "2".repeat(64);
-
 describe(readMailRows, () => {
+  const ROW_HASH = "2".repeat(64);
+
   const gameDataBaseUrl = "mail-rows";
   const DAY_MS = 86_400_000;
   const ROW: Mail = {

@@ -14,10 +14,11 @@ const createEnemyAt = (x: number, state = EnemyState.Idle): Enemy => ({
   ...createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, ""),
   state,
 });
-const ORIGIN = { x: 0, z: 0 };
-const RADIUS = 10;
 
 describe(selectNearestEnemy, () => {
+  const ORIGIN = { x: 0, z: 0 };
+  const RADIUS = 10;
+
   test("takes the standing enemy nearest the point within the radius", () => {
     expect.hasAssertions();
     const nearest = createEnemyAt(1.5);

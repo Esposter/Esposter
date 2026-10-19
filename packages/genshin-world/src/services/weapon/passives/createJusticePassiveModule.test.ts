@@ -20,32 +20,33 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const ATTACK_BUFF = 0.25;
-const wielder: Combatant = createWielderCombatant([
-  { attribute: Attribute.BaseAttack, value: 250 },
-  { attribute: Attribute.Health, value: 1000 },
-]);
-// Justice with synthetic params: 15% DMG for normal and charged attacks, 50% of ATK as HP on a critical hit, and a
-// Cooldown of four seconds
-const justicePassiveModule = createJusticePassiveModule([0.15, 0.5, 4]);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
-const createDamageTaken = (attackTag: AttackTag, isCritical: boolean) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createJusticePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const ATTACK_BUFF = 0.25;
+  const wielder: Combatant = createWielderCombatant([
+    { attribute: Attribute.BaseAttack, value: 250 },
+    { attribute: Attribute.Health, value: 1000 },
+  ]);
+  // Justice with synthetic params: 15% DMG for normal and charged attacks, 50% of ATK as HP on a critical hit, and a
+  // Cooldown of four seconds
+  const justicePassiveModule = createJusticePassiveModule([0.15, 0.5, 4]);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+  const createDamageTaken = (attackTag: AttackTag, isCritical: boolean) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("normal and charged attacks deal the rank's DMG bonus and no other attack does", () => {
     expect.hasAssertions();
 

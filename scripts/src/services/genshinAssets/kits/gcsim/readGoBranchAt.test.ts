@@ -2,26 +2,26 @@ import { readGoBranchAt } from "#src/services/genshinAssets/kits/gcsim/readGoBra
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 
-// A switch like Columbina's gravity tick: each case sets the same local, and a nested if sits inside one case
-const SWITCH_SOURCE = [
-  "func (c *char) gravityTick(maxReaction info.ReactionType) {",
-  "    var mult float64",
-  "    switch maxReaction {",
-  "    case LunarCharge:",
-  "        mult = skillLC[c.TalentLvlSkill()]",
-  "    case LunarBloom:",
-  "        mult = skillLB[c.TalentLvlSkill()]",
-  "        if c.Base.Cons >= 4 {",
-  "            mult *= 2",
-  "        }",
-  "    default:",
-  "        mult = skillLCr[c.TalentLvlSkill()]",
-  "    }",
-  "    ai := info.AttackInfo{Mult: mult}",
-  "}",
-].join("\n");
-
 describe(readGoBranchAt, () => {
+  // A switch like Columbina's gravity tick: each case sets the same local, and a nested if sits inside one case
+  const SWITCH_SOURCE = [
+    "func (c *char) gravityTick(maxReaction info.ReactionType) {",
+    "    var mult float64",
+    "    switch maxReaction {",
+    "    case LunarCharge:",
+    "        mult = skillLC[c.TalentLvlSkill()]",
+    "    case LunarBloom:",
+    "        mult = skillLB[c.TalentLvlSkill()]",
+    "        if c.Base.Cons >= 4 {",
+    "            mult *= 2",
+    "        }",
+    "    default:",
+    "        mult = skillLCr[c.TalentLvlSkill()]",
+    "    }",
+    "    ai := info.AttackInfo{Mult: mult}",
+    "}",
+  ].join("\n");
+
   test("reads each case clause of a switch as a branch numbered from zero in the order the clauses are written", () => {
     expect.hasAssertions();
 

@@ -6,11 +6,11 @@ import { getDomainDisorderSource } from "#src/services/domains/getDomainDisorder
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const SECONDS = 300;
-const FIRE = "LevelEntity_ElementAddHurt_Fire";
-
 describe(applyDomainDisorder, () => {
+  const CHARACTER_ID = 1;
+  const SECONDS = 300;
+  const FIRE = "LevelEntity_ElementAddHurt_Fire";
+
   test("a ley line disorder changes the fight", () => {
     expect.hasAssertions();
 

@@ -18,8 +18,6 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 1;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 const createCombatant = (characterId: number): Combatant => ({
   ascension: 0,
@@ -32,6 +30,9 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(createLegacyOfLangGanPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Legacy of Lang-Gan at its first rank: the Lunar-Crystallize DMG its wielder deals rises by 64% for five seconds
   // After its Elemental Skill
   const passiveModule = createLegacyOfLangGanPassiveModule([0.64, 5]);

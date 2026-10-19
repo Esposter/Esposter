@@ -13,17 +13,18 @@ import { createWhitehillsBestowalPassiveModule } from "#src/services/weapon/pass
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
 
 describe(createWhitehillsBestowalPassiveModule, () => {
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
   // Whitehill's Bestowal at its first rank: 24% ATK for twelve seconds after an Elemental Skill, and while the wielder
   // Holds no Energy, another 24% ATK and 40% CRIT DMG
   const passiveModule = createWhitehillsBestowalPassiveModule([0.24, 12, 0.24, 0.4]);

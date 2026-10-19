@@ -22,19 +22,20 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const damageDealtBy = (enemy: ReturnType<typeof createEnemy>, attackTag: AttackTag) =>
-  ({
-    attackTag,
-    enemy,
-    hit: KIT.plungeCollision,
-    isCritical: false,
-    isDefeated: false,
-    kind: KitEventKind.DamageTaken,
-    striker: wearer,
-  }) as const;
 
 describe(createDeepwoodMemoriesSetModule, () => {
+  const wearer = createSetWearer(KIT);
+  const damageDealtBy = (enemy: ReturnType<typeof createEnemy>, attackTag: AttackTag) =>
+    ({
+      attackTag,
+      enemy,
+      hit: KIT.plungeCollision,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: wearer,
+    }) as const;
+
   test("lowers the Dendro RES of an enemy its wearer's Elemental Skill or Burst hits by 30% for 8 seconds, from four pieces", () => {
     expect.hasAssertions();
 

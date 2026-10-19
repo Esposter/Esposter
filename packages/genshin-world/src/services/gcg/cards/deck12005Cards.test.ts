@@ -30,19 +30,7 @@ import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/serv
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const FULL_HP = 10;
-const OTHER_CHARACTER_ID = 1401;
-const OPPOSING_CHARACTER_ID = 1203;
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-const TALENT_SKILL: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_14032_Ex_1",
-  energyGain: 1,
-  id: 14_032,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
-const NORMAL_SKILL: GcgSkill = { ...TALENT_SKILL, effect: "Char_Skill_14032" };
 
 const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
@@ -79,6 +67,10 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
 });
 
 describe("sacred Cryo Pearl", () => {
+  const FULL_HP = 10;
+  const OTHER_CHARACTER_ID = 1401;
+  const OPPOSING_CHARACTER_ID = 1203;
+
   test("the end phase deals its piercing and Cryo, and spends a usage", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(111_011, sacredCryoPearl);
@@ -136,6 +128,19 @@ describe("jade Screen", () => {
 });
 
 describe("stellar Restoration", () => {
+  const FULL_HP = 10;
+  const OTHER_CHARACTER_ID = 1401;
+  const OPPOSING_CHARACTER_ID = 1203;
+  const TALENT_SKILL: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_14032_Ex_1",
+    energyGain: 1,
+    id: 14_032,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
+  const NORMAL_SKILL: GcgSkill = { ...TALENT_SKILL, effect: "Char_Skill_14032" };
+
   test("the skill deals 3 Electro and creates a Lightning Stiletto in hand", () => {
     expect.hasAssertions();
     const duel = createDuel([
@@ -203,6 +208,9 @@ describe("stellar Restoration", () => {
 });
 
 describe("lightning Stiletto", () => {
+  const OTHER_CHARACTER_ID = 1401;
+  const OPPOSING_CHARACTER_ID = 1203;
+
   test("a played card switches Keqing in for free, so the field's switch hook fires, and her skill grants Electro Infusion", () => {
     expect.hasAssertions();
     const duel = createDuel([

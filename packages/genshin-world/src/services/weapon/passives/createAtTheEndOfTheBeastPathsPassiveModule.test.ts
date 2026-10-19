@@ -18,10 +18,11 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createAtTheEndOfTheBeastPathsPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // At the End of the Beast-Paths with synthetic params: its All Elemental DMG Bonus is a passive bonus. A Charged
   // Attack obtains Tireless Hunt, adding 50% of Elemental Mastery to the Charged Attack DMG it is obtained with, ending
   // After 3 Charged Attacks or 2 seconds, and it is obtained once every 4 seconds

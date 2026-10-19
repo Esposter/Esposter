@@ -3,9 +3,9 @@ import type { GroundPieceArea } from "#src/models/genshinAssets/fit/GroundPieceA
 import { getTerrainTileNames } from "#src/services/genshinAssets/world/getTerrainTileNames";
 import { describe, expect, test } from "vitest";
 
-const origin: [number, number, number] = [0, 0, 0];
-
 describe(getTerrainTileNames, () => {
+  const origin: [number, number, number] = [0, 0, 0];
+
   test("names the capital's tile and its east, north and north-east neighbours, as Windrise's ground is", () => {
     expect.hasAssertions();
 

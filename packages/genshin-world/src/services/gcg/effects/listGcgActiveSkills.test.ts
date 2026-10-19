@@ -9,22 +9,22 @@ import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
 import { describe, expect, test } from "vitest";
 
-const NORMAL_ATTACK: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Fire_3",
-  energyGain: 0,
-  id: 12_002,
-  kind: GcgSkillKind.NormalAttack,
-};
-const PASSIVE: GcgSkill = {
-  costs: [],
-  effect: "Char_Skill_23034",
-  energyGain: 0,
-  id: 23_034,
-  kind: GcgSkillKind.Passive,
-};
-
 describe(listGcgActiveSkills, () => {
+  const NORMAL_ATTACK: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Fire_3",
+    energyGain: 0,
+    id: 12_002,
+    kind: GcgSkillKind.NormalAttack,
+  };
+  const PASSIVE: GcgSkill = {
+    costs: [],
+    effect: "Char_Skill_23034",
+    energyGain: 0,
+    id: 23_034,
+    kind: GcgSkillKind.Passive,
+  };
+
   test("should list the character's skills without its Passive ones, then the Technique its equipment gives it", () => {
     expect.hasAssertions();
 

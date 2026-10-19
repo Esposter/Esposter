@@ -14,11 +14,6 @@ import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { reactive, ref } from "vue";
 
-// Made-up keys, since no record is copied into a test: one of the shrine's region and one of another region
-const KEY_ITEM_ID = 900_001;
-const OTHER_KEY_ITEM_ID = 900_002;
-const OTHER_REGION = "made-up-region";
-const NAMES: Readonly<Record<string, string>> = { "1": "Made-up Key" };
 const createMaterialData = (id: number): MaterialData => ({
   id,
   materialType: MaterialType.Consume,
@@ -27,53 +22,61 @@ const createMaterialData = (id: number): MaterialData => ({
   rarity: 1,
   stackLimit: 99,
 });
-const MATERIAL_DATA_MAP = new Map([KEY_ITEM_ID, OTHER_KEY_ITEM_ID].map((id) => [id, createMaterialData(id)] as const));
-const KEY_SOURCE: ShrineKeySource = {
-  id: "key",
-  keyItemId: KEY_ITEM_ID,
-  keyRegion: SHRINE_REGION_ID,
-  questId: 1,
-  rewardId: 1,
-};
-const OTHER_KEY_SOURCE: ShrineKeySource = {
-  id: "other-key",
-  keyItemId: OTHER_KEY_ITEM_ID,
-  keyRegion: OTHER_REGION,
-  questId: 2,
-  rewardId: 2,
-};
-const GAME_TEXT: Readonly<Record<string, string>> = { [GameTextKey.ShrineOfDepths]: "Made-up Shrine" };
-const GROUND_HEIGHT = 3;
-const SHRINE_ID = "shrine";
-const SHRINE_POSITION = { x: 1, z: 2 };
-
-const createBag = (...keys: [itemId: number, quantity: number][]): Inventory =>
-  keys.reduce<Inventory>(
-    (inventory, [itemId, quantity]) =>
-      addInventoryItem(inventory, getItemDefinition(itemId, NAMES, MATERIAL_DATA_MAP), quantity).inventory,
-    { ...EMPTY_INVENTORY },
-  );
-
-const setup = (bag: Inventory, keySources: ShrineKeySource[]) => {
-  const inventory = ref<Inventory>(bag);
-  const setInventory = vi.fn<(nextInventory: Inventory) => void>((nextInventory) => {
-    inventory.value = nextInventory;
-  });
-  const shrineMarkers = reactive<ShrineMarker[]>([
-    { id: SHRINE_ID, position: SHRINE_POSITION, shrine: { isOpen: false, region: SHRINE_REGION_ID } },
-  ]);
-  const { openShrineById, shrineInteractables } = useWorldShrines({
-    gameText: GAME_TEXT,
-    getGroundHeight: () => GROUND_HEIGHT,
-    inventory,
-    setInventory,
-    shrineKeySources: keySources,
-    shrineMarkers,
-  });
-  return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
-};
 
 describe(useWorldShrines, () => {
+  // Made-up keys, since no record is copied into a test: one of the shrine's region and one of another region
+  const KEY_ITEM_ID = 900_001;
+  const OTHER_KEY_ITEM_ID = 900_002;
+  const OTHER_REGION = "made-up-region";
+  const NAMES: Readonly<Record<string, string>> = { "1": "Made-up Key" };
+  const MATERIAL_DATA_MAP = new Map(
+    [KEY_ITEM_ID, OTHER_KEY_ITEM_ID].map((id) => [id, createMaterialData(id)] as const),
+  );
+  const KEY_SOURCE: ShrineKeySource = {
+    id: "key",
+    keyItemId: KEY_ITEM_ID,
+    keyRegion: SHRINE_REGION_ID,
+    questId: 1,
+    rewardId: 1,
+  };
+  const OTHER_KEY_SOURCE: ShrineKeySource = {
+    id: "other-key",
+    keyItemId: OTHER_KEY_ITEM_ID,
+    keyRegion: OTHER_REGION,
+    questId: 2,
+    rewardId: 2,
+  };
+  const GAME_TEXT: Readonly<Record<string, string>> = { [GameTextKey.ShrineOfDepths]: "Made-up Shrine" };
+  const GROUND_HEIGHT = 3;
+  const SHRINE_ID = "shrine";
+  const SHRINE_POSITION = { x: 1, z: 2 };
+
+  const createBag = (...keys: [itemId: number, quantity: number][]): Inventory =>
+    keys.reduce<Inventory>(
+      (inventory, [itemId, quantity]) =>
+        addInventoryItem(inventory, getItemDefinition(itemId, NAMES, MATERIAL_DATA_MAP), quantity).inventory,
+      { ...EMPTY_INVENTORY },
+    );
+
+  const setup = (bag: Inventory, keySources: ShrineKeySource[]) => {
+    const inventory = ref<Inventory>(bag);
+    const setInventory = vi.fn<(nextInventory: Inventory) => void>((nextInventory) => {
+      inventory.value = nextInventory;
+    });
+    const shrineMarkers = reactive<ShrineMarker[]>([
+      { id: SHRINE_ID, position: SHRINE_POSITION, shrine: { isOpen: false, region: SHRINE_REGION_ID } },
+    ]);
+    const { openShrineById, shrineInteractables } = useWorldShrines({
+      gameText: GAME_TEXT,
+      getGroundHeight: () => GROUND_HEIGHT,
+      inventory,
+      setInventory,
+      shrineKeySources: keySources,
+      shrineMarkers,
+    });
+    return { inventory, openShrineById, setInventory, shrineInteractables, shrineMarkers };
+  };
+
   test("a shut shrine is offered while its region's key is held", () => {
     expect.hasAssertions();
 

@@ -7,10 +7,10 @@ import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNight
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const OTHER_CHARACTER_ID = 2;
-
 describe(enterKitNightsoulBlessing, () => {
+  const CHARACTER_ID = 1;
+  const OTHER_CHARACTER_ID = 2;
+
   test("enters the blessing with the points it starts with, in place of the points it held", () => {
     expect.hasAssertions();
 

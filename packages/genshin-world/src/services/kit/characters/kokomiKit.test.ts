@@ -18,11 +18,9 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KOKOMI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KOKOMI_CHARACTER_ID);
 
-const MAX_HEALTH = 10_000;
-
-const createKokomiCombatant = (): Combatant => ({
+const createKokomiCombatant = (maxHealth = 10_000): Combatant => ({
   ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: maxHealth }]),
   characterId: KOKOMI_CHARACTER_ID,
   constellationCount: 0,
   elementalResonances: [],
@@ -41,24 +39,6 @@ const readBakeKurageSeconds = (ascension: number): number | undefined => {
   if (field) field.secondsRemaining = 1;
   KOKOMI_KIT.elementalBurst.onStart?.(context);
   return findField()?.secondsRemaining;
-};
-
-// The bonus the garment's first normal attack adds to its damage, as Kokomi holds the given Healing Bonus
-const readGarmentBonus = (ascension: number): number => {
-  const combatant = {
-    ...createKokomiCombatant(),
-    ascension,
-    attributes: computeCharacterAttributes([
-      { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
-      { attribute: Attribute.HealingBonus, value: 0.8 },
-    ]),
-  };
-  const context = createKitTestContext(combatant);
-  KOKOMI_KIT.elementalBurst.onStart?.(context);
-  const garment = context.kitEffectState.effects.find((effect) => effect.kind === "stance");
-  if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
-  const [firstNormalAttack] = garment.combatant.kit.normalAttacks;
-  return firstNormalAttack?.hits[0]?.additiveBaseDamageBonus?.(combatant) ?? 0;
 };
 
 // The energy Kokomi holds after her garment's normal attack strikes at each of the given seconds, one strike per time
@@ -80,6 +60,8 @@ const readGarmentEnergy = (constellationCount: number, strikeSeconds: number[]):
 };
 
 describe(createKokomiKitBehaviour, () => {
+  const MAX_HEALTH = 10_000;
+
   test("nereid's ascension's garment gives Kokomi's normal attacks a share of her Max HP to their damage, for ten seconds", () => {
     expect.hasAssertions();
     const combatant = createKokomiCombatant();
@@ -141,6 +123,25 @@ describe("tamakushi Casket", () => {
 });
 
 describe("song of Pearls", () => {
+  const MAX_HEALTH = 10_000;
+  // The bonus the garment's first normal attack adds to its damage, as Kokomi holds the given Healing Bonus
+  const readGarmentBonus = (ascension: number): number => {
+    const combatant = {
+      ...createKokomiCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([
+        { attribute: Attribute.BaseHealth, value: MAX_HEALTH },
+        { attribute: Attribute.HealingBonus, value: 0.8 },
+      ]),
+    };
+    const context = createKitTestContext(combatant);
+    KOKOMI_KIT.elementalBurst.onStart?.(context);
+    const garment = context.kitEffectState.effects.find((effect) => effect.kind === "stance");
+    if (garment?.kind !== "stance") throw new Error("Nereid's Ascension starts no garment");
+    const [firstNormalAttack] = garment.combatant.kit.normalAttacks;
+    return firstNormalAttack?.hits[0]?.additiveBaseDamageBonus?.(combatant) ?? 0;
+  };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 

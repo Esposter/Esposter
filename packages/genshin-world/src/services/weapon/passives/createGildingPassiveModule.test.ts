@@ -13,9 +13,6 @@ import { createGildingPassiveModule } from "#src/services/weapon/passives/create
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-// Gilding with synthetic params: eight seconds, a tick every two seconds, and on each tick three energy and 5%
-// Of Max HP, given to the deployed team
-const gildingPassiveModule = createGildingPassiveModule([8, 2, 3, 0.05]);
 const createBurstUsed = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   energyCost: 0,
@@ -32,6 +29,10 @@ const createWielder = (health: number): Combatant => ({
 });
 
 describe(createGildingPassiveModule, () => {
+  // Gilding with synthetic params: eight seconds, a tick every two seconds, and on each tick three energy and 5%
+  // Of Max HP, given to the deployed team
+  const gildingPassiveModule = createGildingPassiveModule([8, 2, 3, 0.05]);
+
   test("a burst regenerates the wielder's energy every two seconds for eight seconds", () => {
     expect.hasAssertions();
 

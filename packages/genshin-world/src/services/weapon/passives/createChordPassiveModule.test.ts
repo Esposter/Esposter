@@ -17,21 +17,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// The Flute's Chord with synthetic params: a 200% ATK burst, from one harmonic a hit
-const chordPassiveModule = createChordPassiveModule([0, 2]);
-const createDamageTaken = (attackTag: AttackTag) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createChordPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // The Flute's Chord with synthetic params: a 200% ATK burst, from one harmonic a hit
+  const chordPassiveModule = createChordPassiveModule([0, 2]);
+  const createDamageTaken = (attackTag: AttackTag) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("the fifth harmonic queues the burst at the rank's multiplier and clears the count", () => {
     expect.hasAssertions();
 

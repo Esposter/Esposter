@@ -14,8 +14,6 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const POINTS = 10;
-const SPRINT_DRAIN = 3;
 
 const createTravelerCombatant = (): Combatant => ({
   ascension: 0,
@@ -28,6 +26,9 @@ const createTravelerCombatant = (): Combatant => ({
 });
 
 describe(drainKitSprintNightsoulPoints, () => {
+  const POINTS = 10;
+  const SPRINT_DRAIN = 3;
+
   test("drains its amount on the step a sprint starts, and nothing on the steps after it", () => {
     expect.hasAssertions();
     const context = createKitTestContext(createTravelerCombatant());

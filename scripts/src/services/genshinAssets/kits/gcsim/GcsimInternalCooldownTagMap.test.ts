@@ -4,9 +4,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const ICD_TAGS_FILE = join(GCSIM_CACHE_DIRECTORY, "pkg/core/attacks/icd_tags.dm.go");
-
 describe("GcsimInternalCooldownTagMap", () => {
+  const ICD_TAGS_FILE = join(GCSIM_CACHE_DIRECTORY, "pkg/core/attacks/icd_tags.dm.go");
+
   test.skipIf(!existsSync(ICD_TAGS_FILE))("names every tag gcsim's enum declares, but None, with a map entry", () => {
     expect.hasAssertions();
 

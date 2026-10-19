@@ -37,19 +37,6 @@ const ILLUGA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ILLUGA_CHARA
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
-const MAX_HEALTH = 10_000;
-
-const createIllugaCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: ILLUGA_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: ILLUGA_KIT,
-  level: 90,
-  weaponType: WeaponType.Polearm,
-});
-
 // A team of Illuga and the Traveler, with the burst's and skill's effects on the state, and the Traveler on the field
 const createTeamContext = (illuga: Combatant) => {
   const traveler: Combatant = { ...illuga, characterId: TRAVELER_CHARACTER_ID, kit: TRAVELER_KIT };
@@ -94,6 +81,19 @@ const priceStrike = (context: KitContext, illuga: Combatant, striker: Combatant,
   );
 
 describe(createIllugaKitBehaviour, () => {
+  const MAX_HEALTH = 10_000;
+
+  const createIllugaCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: ILLUGA_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: ILLUGA_KIT,
+    level: 90,
+    weaponType: WeaponType.Polearm,
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([

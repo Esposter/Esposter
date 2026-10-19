@@ -16,10 +16,11 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(createOathOfQhapaqNanPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Synthetic params, not the weapon's row: a Pyro-related reaction from a party member raises the wielder's Elemental
   // Skill DMG by half for two seconds
   const oathOfQhapaqNanPassiveModule = createOathOfQhapaqNanPassiveModule([0.5, 2]);

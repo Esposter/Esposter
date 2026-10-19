@@ -17,19 +17,6 @@ import { describe, expect, test } from "vitest";
 const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });
 const frames = (animationFrames: number) => ({ animationFrames, hitmarkFrames: 0 });
 
-const tables: KitTables = {
-  characterId: 0,
-  labelMap: new Map(),
-  name: "Nefer",
-  talentGroupIdMap: {
-    [CombatTalent.ElementalBurst]: 0,
-    [CombatTalent.ElementalSkill]: 0,
-    [CombatTalent.NormalAttack]: 0,
-  },
-  talentMultiplierMap: {},
-  weaponType: WeaponType.Catalyst,
-};
-
 const createBennett = (abilityHitboxesMap: GcsimConfig["abilityHitboxesMap"] = new Map()): GcsimCharacter => ({
   animationFrameNameMap: new Map(),
   attacks: [],
@@ -52,6 +39,19 @@ const createBennett = (abilityHitboxesMap: GcsimConfig["abilityHitboxesMap"] = n
 });
 
 describe(getFallbackPlungeKitCandidates, () => {
+  const tables: KitTables = {
+    characterId: 0,
+    labelMap: new Map(),
+    name: "Nefer",
+    talentGroupIdMap: {
+      [CombatTalent.ElementalBurst]: 0,
+      [CombatTalent.ElementalSkill]: 0,
+      [CombatTalent.NormalAttack]: 0,
+    },
+    talentMultiplierMap: {},
+    weaponType: WeaponType.Catalyst,
+  };
+
   test("gives a character with no gcsim folder the fallback's plunge and collision as NoActionFile, each cited at its file", () => {
     expect.hasAssertions();
 

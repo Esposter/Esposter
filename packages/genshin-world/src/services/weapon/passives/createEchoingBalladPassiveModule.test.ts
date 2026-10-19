@@ -17,21 +17,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Skyward Harp with synthetic params: 10% CRIT DMG, a 50% chance, 150% ATK, and a three-second cooldown
-const echoingBalladPassiveModule = createEchoingBalladPassiveModule([0.1, 0.5, 1.5, 3]);
-const createDamageTaken = (attackTag?: AttackTag): KitEvent => ({
-  ...(attackTag === undefined ? {} : { attackTag }),
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker: wielder,
-});
 
 describe(createEchoingBalladPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Skyward Harp with synthetic params: 10% CRIT DMG, a 50% chance, 150% ATK, and a three-second cooldown
+  const echoingBalladPassiveModule = createEchoingBalladPassiveModule([0.1, 0.5, 1.5, 3]);
+  const createDamageTaken = (attackTag?: AttackTag): KitEvent => ({
+    ...(attackTag === undefined ? {} : { attackTag }),
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker: wielder,
+  });
+
   test("the rank's CRIT DMG is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 

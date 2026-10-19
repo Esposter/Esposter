@@ -11,10 +11,11 @@ import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test, vi } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OFF_FIELD_CHARACTER_ID = 0;
-const OUTSIDE_CHARACTER_ID = 10_000_999;
 
 describe(stepDeployedKits, () => {
+  const OFF_FIELD_CHARACTER_ID = 0;
+  const OUTSIDE_CHARACTER_ID = 10_000_999;
+
   test("steps the kit of each deployed member with the step's seconds, on the field or off it, and none outside the team", () => {
     expect.hasAssertions();
     const onStep = vi.fn<NonNullable<Kit["onStep"]>>();

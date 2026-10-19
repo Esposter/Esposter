@@ -15,21 +15,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Blunt Conclusion with synthetic params: the multiplier, the seconds it lasts after a skill and its cooldown
-const bluntConclusionPassiveModule = createBluntConclusionPassiveModule([0.5, 2, 3]);
-const createNormalAttackHit = () => ({
-  attackTag: AttackTag.NormalAttack,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 
 describe(createBluntConclusionPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Blunt Conclusion with synthetic params: the multiplier, the seconds it lasts after a skill and its cooldown
+  const bluntConclusionPassiveModule = createBluntConclusionPassiveModule([0.5, 2, 3]);
+  const createNormalAttackHit = () => ({
+    attackTag: AttackTag.NormalAttack,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a normal attack after the wielder's skill queues one extra hit at the rank's multiplier", () => {
     expect.hasAssertions();
 

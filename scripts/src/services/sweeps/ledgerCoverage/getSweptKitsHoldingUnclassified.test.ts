@@ -6,18 +6,19 @@ import { OPEN_CELL } from "#src/services/sweeps/ledgerCoverage/constants";
 import { getSweptKitsHoldingUnclassified } from "#src/services/sweeps/ledgerCoverage/getSweptKitsHoldingUnclassified";
 import { describe, expect, test } from "vitest";
 
-const header = `| Unit  | Swept      | Notes |
-| ----- | ---------- | ----- |
-`;
-const date = new Date(0).toISOString().slice(0, 10);
 const getRow = (unit: string, swept: string) => `| \`${unit}\` | ${swept} | |\n`;
-const unclassifiedOverlay: KitOverlay = { "a.b": { cause: KitProvisionalCause.Unclassified, value: 0 } };
-const classifiedOverlay: KitOverlay = {
-  "a.b": { cause: KitProvisionalCause.Unsourced, value: 0 },
-  "a.c": { source: KitSource.Gcsim, value: 1 },
-};
 
 describe(getSweptKitsHoldingUnclassified, () => {
+  const header = `| Unit  | Swept      | Notes |
+| ----- | ---------- | ----- |
+`;
+  const date = new Date(0).toISOString().slice(0, 10);
+  const unclassifiedOverlay: KitOverlay = { "a.b": { cause: KitProvisionalCause.Unclassified, value: 0 } };
+  const classifiedOverlay: KitOverlay = {
+    "a.b": { cause: KitProvisionalCause.Unsourced, value: 0 },
+    "a.c": { source: KitSource.Gcsim, value: 1 },
+  };
+
   test("names a dated row whose overlay still holds an Unclassified entry", () => {
     expect.hasAssertions();
 

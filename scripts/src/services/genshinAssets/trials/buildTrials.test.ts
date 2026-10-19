@@ -13,87 +13,87 @@ import { takeOne } from "@esposter/shared";
 import { ArtifactSlot, Attribute } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 10_000_022;
-const DUNGEON_ID = 6131;
-const RELIQUARY_IDS = [91, 92, 93, 94, 95];
-const REWARD_ID = 480_001;
-const STAGE_ID = 51_001;
-const TRIAL_AVATAR_ID = 1022;
-const WEAPON_ID = 11_301;
-const SET_RELIQUARY_ID = 60_211;
-const NO_SET_RELIQUARY_ID = 20_002;
-const SET_ID = 15_021;
-const MAIN_PROP_ID = 15_004;
-const AFFIX_ID = 201_053;
-
-const avatarRows: ExcelTrialAvatarRow[] = [
-  { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },
-];
-const stageRows: ExcelTrialAvatarActivityRow[] = [
-  {
-    dungeonId: DUNGEON_ID,
-    firstPassReward: REWARD_ID,
-    id: STAGE_ID,
-    trialAvatarId: TRIAL_AVATAR_ID,
-    trialAvatarIndexId: 1,
-  },
-];
-const templateRows: ExcelTrialAvatarTemplateRow[] = [
-  { TrialAvatarLevel: 85, TrialAvatarSkillLevel: 8, TrialReliquaryList: RELIQUARY_IDS },
-];
-const reliquaryRows: ExcelTrialReliquaryRow[] = [
-  {
-    AppendPropList: [AFFIX_ID],
-    Id: takeOne(RELIQUARY_IDS),
-    Level: 5,
-    MainPropId: MAIN_PROP_ID,
-    ReliquaryId: SET_RELIQUARY_ID,
-  },
-  {
-    AppendPropList: [],
-    Id: takeOne(RELIQUARY_IDS, 1),
-    Level: 1,
-    MainPropId: MAIN_PROP_ID,
-    ReliquaryId: NO_SET_RELIQUARY_ID,
-  },
-];
-const pieceMap = new Map<number, TrialReliquaryPiece>([
-  [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
-  [NO_SET_RELIQUARY_ID, { rarity: 1, setId: 0, slot: ArtifactSlot.FlowerOfLife }],
-]);
-const mainPropRows: ExcelReliquaryMainPropRow[] = [
-  { id: MAIN_PROP_ID, propDepotId: 5000, propType: Attribute.AttackPercent },
-];
-const affixRows: ExcelReliquaryAffixRow[] = [
-  { depotId: 201, groupId: 5, id: AFFIX_ID, propType: Attribute.Attack, propValue: 4.67 },
-];
-const wikiBuilds: WikiTrialBuild[] = [
-  {
-    characterId: CHARACTER_ID,
-    characterName: "characterName",
-    constellation: 0,
-    page: "page",
-    refinement: 1,
-    weaponId: WEAPON_ID,
-    weaponName: "weaponName",
-  },
-];
-const rewardMap = new Map<number, ExcelRewardRow>([
-  [REWARD_ID, { rewardId: REWARD_ID, rewardItemList: [{ itemCount: 5, itemId: 201 }] }],
-]);
-const trialTables = {
-  affixRows,
-  avatarRows,
-  mainPropRows,
-  pieceMap,
-  reliquaryRows,
-  rewardMap,
-  stageRows,
-  templateRows,
-  wikiBuilds,
-};
-
 describe(buildTrials, () => {
+  const CHARACTER_ID = 10_000_022;
+  const DUNGEON_ID = 6131;
+  const RELIQUARY_IDS = [91, 92, 93, 94, 95];
+  const REWARD_ID = 480_001;
+  const STAGE_ID = 51_001;
+  const TRIAL_AVATAR_ID = 1022;
+  const WEAPON_ID = 11_301;
+  const SET_RELIQUARY_ID = 60_211;
+  const NO_SET_RELIQUARY_ID = 20_002;
+  const SET_ID = 15_021;
+  const MAIN_PROP_ID = 15_004;
+  const AFFIX_ID = 201_053;
+
+  const avatarRows: ExcelTrialAvatarRow[] = [
+    { trialAvatarId: TRIAL_AVATAR_ID, trialAvatarParamList: [CHARACTER_ID, 90] },
+  ];
+  const stageRows: ExcelTrialAvatarActivityRow[] = [
+    {
+      dungeonId: DUNGEON_ID,
+      firstPassReward: REWARD_ID,
+      id: STAGE_ID,
+      trialAvatarId: TRIAL_AVATAR_ID,
+      trialAvatarIndexId: 1,
+    },
+  ];
+  const templateRows: ExcelTrialAvatarTemplateRow[] = [
+    { TrialAvatarLevel: 85, TrialAvatarSkillLevel: 8, TrialReliquaryList: RELIQUARY_IDS },
+  ];
+  const reliquaryRows: ExcelTrialReliquaryRow[] = [
+    {
+      AppendPropList: [AFFIX_ID],
+      Id: takeOne(RELIQUARY_IDS),
+      Level: 5,
+      MainPropId: MAIN_PROP_ID,
+      ReliquaryId: SET_RELIQUARY_ID,
+    },
+    {
+      AppendPropList: [],
+      Id: takeOne(RELIQUARY_IDS, 1),
+      Level: 1,
+      MainPropId: MAIN_PROP_ID,
+      ReliquaryId: NO_SET_RELIQUARY_ID,
+    },
+  ];
+  const pieceMap = new Map<number, TrialReliquaryPiece>([
+    [SET_RELIQUARY_ID, { rarity: 5, setId: SET_ID, slot: ArtifactSlot.FlowerOfLife }],
+    [NO_SET_RELIQUARY_ID, { rarity: 1, setId: 0, slot: ArtifactSlot.FlowerOfLife }],
+  ]);
+  const mainPropRows: ExcelReliquaryMainPropRow[] = [
+    { id: MAIN_PROP_ID, propDepotId: 5000, propType: Attribute.AttackPercent },
+  ];
+  const affixRows: ExcelReliquaryAffixRow[] = [
+    { depotId: 201, groupId: 5, id: AFFIX_ID, propType: Attribute.Attack, propValue: 4.67 },
+  ];
+  const wikiBuilds: WikiTrialBuild[] = [
+    {
+      characterId: CHARACTER_ID,
+      characterName: "characterName",
+      constellation: 0,
+      page: "page",
+      refinement: 1,
+      weaponId: WEAPON_ID,
+      weaponName: "weaponName",
+    },
+  ];
+  const rewardMap = new Map<number, ExcelRewardRow>([
+    [REWARD_ID, { rewardId: REWARD_ID, rewardItemList: [{ itemCount: 5, itemId: 201 }] }],
+  ]);
+  const trialTables = {
+    affixRows,
+    avatarRows,
+    mainPropRows,
+    pieceMap,
+    reliquaryRows,
+    rewardMap,
+    stageRows,
+    templateRows,
+    wikiBuilds,
+  };
+
   test("a trial stage pays its first-clear reward, and its character is kept at its level", () => {
     expect.hasAssertions();
     expect(buildTrials(trialTables)).toStrictEqual({

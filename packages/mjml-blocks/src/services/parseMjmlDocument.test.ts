@@ -12,95 +12,96 @@ const createNode = (type: string, props: Record<string, unknown> = {}): BlockNod
   type,
 });
 
-// Every built-in block type, each with an attribute set, every content kind and a decorative image, with the head's every prop
-const EVERY_TYPE_CONTENT: BlockDocument = {
-  content: [
-    createNode("mj-raw", { content: "<p>kept</p>", position: "file-start" }),
-    createNode("mj-hero", {
-      "background-color": "#ffffff",
-      children: [createNode("mj-text", { color: "#000000", content: "Hero" })],
-    }),
-    createNode("mj-wrapper", {
-      "background-url": "https://example.com/bg.png",
-      children: [
-        createNode("mj-section", {
-          "background-color": "#ffffff",
-          children: [
-            createNode("mj-column", {
-              "background-color": "#ffffff",
-              children: [
-                createNode("mj-text", {
-                  align: "left",
-                  content: 'Hi <a href="https://example.com" style="color:red">link</a>',
-                }),
-                createNode("mj-button", { content: "Go & stop", href: 'https://example.com/?a="1"&b=2' }),
-                createNode("mj-image", { alt: "A cat", src: "https://example.com/a.png", width: "300px" }),
-                createNode("mj-image", { decorative: true, src: "https://example.com/b.png" }),
-                createNode("mj-divider", { align: "center" }),
-                createNode("mj-spacer", { height: "10px" }),
-                createNode("mj-table", { content: "Cell", width: "100%" }),
-                createNode("mj-raw", { content: "<p>kept</p>" }),
-                createNode("mj-social", {
-                  children: [createNode("mj-social-element", { content: "Share", name: "facebook" })],
-                  "icon-size": "20px",
-                  mode: "horizontal",
-                }),
-                createNode("mj-navbar", {
-                  children: [createNode("mj-navbar-link", { content: "Home", href: "https://example.com" })],
-                }),
-                createNode("mj-carousel", {
-                  children: [createNode("mj-carousel-image", { alt: "One", src: "https://example.com/c.png" })],
-                }),
-                createNode("mj-accordion", {
-                  children: [
-                    createNode("mj-accordion-element", {
-                      children: [
-                        createNode("mj-accordion-title", { content: "Title" }),
-                        createNode("mj-accordion-text", { content: "<p>Text</p>" }),
-                      ],
-                    }),
-                  ],
-                }),
-              ],
-              "inner-background-color": "#eeeeee",
-              padding: "5px 10px",
-              "vertical-align": "middle",
-            }),
-          ],
-        }),
-        createNode("mj-section", {
-          children: [
-            createNode("mj-group", {
-              children: [createNode("mj-column", { children: [createNode("mj-text", { content: "Grouped" })] })],
-              direction: "ltr",
-            }),
-          ],
-          "full-width": "full-width",
-        }),
-      ],
-      "full-width": "full-width",
-    }),
-  ],
-  root: {
-    props: {
-      attributes: { "mj-all": { "font-family": "Arial" }, "mj-text": { color: "#000000" } },
-      body: { "background-color": "#ffffff", width: "600px" },
-      breakpoint: { width: "480px" },
-      dir: "ltr",
-      fonts: [{ href: "https://fonts.example.com/a.css", name: "Test" }],
-      lang: "en",
-      preview: "Preview",
-      styles: [
-        { css: ".a{color:red}", inline: false },
-        { css: "p{margin:0}", inline: true },
-      ],
-      title: "Hi & bye",
-    },
-  },
-};
-const EVERY_TYPE_DOCUMENT = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EVERY_TYPE_CONTENT);
-
 describe(parseMjmlDocument, () => {
+  // Every built-in block type, each with an attribute set, every content kind and a decorative image, with
+  // The head's every prop
+  const EVERY_TYPE_CONTENT: BlockDocument = {
+    content: [
+      createNode("mj-raw", { content: "<p>kept</p>", position: "file-start" }),
+      createNode("mj-hero", {
+        "background-color": "#ffffff",
+        children: [createNode("mj-text", { color: "#000000", content: "Hero" })],
+      }),
+      createNode("mj-wrapper", {
+        "background-url": "https://example.com/bg.png",
+        children: [
+          createNode("mj-section", {
+            "background-color": "#ffffff",
+            children: [
+              createNode("mj-column", {
+                "background-color": "#ffffff",
+                children: [
+                  createNode("mj-text", {
+                    align: "left",
+                    content: 'Hi <a href="https://example.com" style="color:red">link</a>',
+                  }),
+                  createNode("mj-button", { content: "Go & stop", href: 'https://example.com/?a="1"&b=2' }),
+                  createNode("mj-image", { alt: "A cat", src: "https://example.com/a.png", width: "300px" }),
+                  createNode("mj-image", { decorative: true, src: "https://example.com/b.png" }),
+                  createNode("mj-divider", { align: "center" }),
+                  createNode("mj-spacer", { height: "10px" }),
+                  createNode("mj-table", { content: "Cell", width: "100%" }),
+                  createNode("mj-raw", { content: "<p>kept</p>" }),
+                  createNode("mj-social", {
+                    children: [createNode("mj-social-element", { content: "Share", name: "facebook" })],
+                    "icon-size": "20px",
+                    mode: "horizontal",
+                  }),
+                  createNode("mj-navbar", {
+                    children: [createNode("mj-navbar-link", { content: "Home", href: "https://example.com" })],
+                  }),
+                  createNode("mj-carousel", {
+                    children: [createNode("mj-carousel-image", { alt: "One", src: "https://example.com/c.png" })],
+                  }),
+                  createNode("mj-accordion", {
+                    children: [
+                      createNode("mj-accordion-element", {
+                        children: [
+                          createNode("mj-accordion-title", { content: "Title" }),
+                          createNode("mj-accordion-text", { content: "<p>Text</p>" }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+                "inner-background-color": "#eeeeee",
+                padding: "5px 10px",
+                "vertical-align": "middle",
+              }),
+            ],
+          }),
+          createNode("mj-section", {
+            children: [
+              createNode("mj-group", {
+                children: [createNode("mj-column", { children: [createNode("mj-text", { content: "Grouped" })] })],
+                direction: "ltr",
+              }),
+            ],
+            "full-width": "full-width",
+          }),
+        ],
+        "full-width": "full-width",
+      }),
+    ],
+    root: {
+      props: {
+        attributes: { "mj-all": { "font-family": "Arial" }, "mj-text": { color: "#000000" } },
+        body: { "background-color": "#ffffff", width: "600px" },
+        breakpoint: { width: "480px" },
+        dir: "ltr",
+        fonts: [{ href: "https://fonts.example.com/a.css", name: "Test" }],
+        lang: "en",
+        preview: "Preview",
+        styles: [
+          { css: ".a{color:red}", inline: false },
+          { css: "p{margin:0}", inline: true },
+        ],
+        title: "Hi & bye",
+      },
+    },
+  };
+  const EVERY_TYPE_DOCUMENT = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EVERY_TYPE_CONTENT);
+
   test("rendering a parsed email returns its source", () => {
     expect.hasAssertions();
 

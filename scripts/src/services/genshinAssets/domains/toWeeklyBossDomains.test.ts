@@ -6,19 +6,6 @@ import { toWeeklyBossDomains } from "#src/services/genshinAssets/domains/toWeekl
 import { describe, expect, test } from "vitest";
 import { takeOne } from "@esposter/shared";
 
-const ENTRY_ID = takeOne(WEEKLY_BOSS_ENTRY_IDS);
-const FIRST_DUNGEON_ID = 91001;
-const SECOND_DUNGEON_ID = 91002;
-
-const toEntry = (cooldownTipsDungeonId: number[]): ExcelDungeonEntryRow => ({
-  cooldownTipsDungeonId,
-  descriptionCycleRewardList: [],
-  dungeonEntryId: 1,
-  id: ENTRY_ID,
-  sceneId: 1,
-  type: "DUNGEON_ENTRY_TYPE_TRIAL",
-});
-
 const toDungeon = (id: number, type: string): ExcelDungeonRow => ({
   id,
   levelRevise: 40,
@@ -29,6 +16,19 @@ const toDungeon = (id: number, type: string): ExcelDungeonRow => ({
 });
 
 describe(toWeeklyBossDomains, () => {
+  const ENTRY_ID = takeOne(WEEKLY_BOSS_ENTRY_IDS);
+  const FIRST_DUNGEON_ID = 91001;
+  const SECOND_DUNGEON_ID = 91002;
+
+  const toEntry = (cooldownTipsDungeonId: number[]): ExcelDungeonEntryRow => ({
+    cooldownTipsDungeonId,
+    descriptionCycleRewardList: [],
+    dungeonEntryId: 1,
+    id: ENTRY_ID,
+    sceneId: 1,
+    type: "DUNGEON_ENTRY_TYPE_TRIAL",
+  });
+
   test("a weekly boss's domain lists its boss dungeons as its levels, lowest dungeon first", () => {
     expect.hasAssertions();
 

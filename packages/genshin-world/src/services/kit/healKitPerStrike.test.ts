@@ -15,21 +15,22 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const RESOURCE_ID = "test-heals";
-const MAXIMUM_HEALS = 5;
-const HEAL_HEALTH_SHARE = 0.05;
-const MAX_HEALTH = 16_000;
-const createCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 90,
-});
 
 describe(healKitPerStrike, () => {
+  const RESOURCE_ID = "test-heals";
+  const MAXIMUM_HEALS = 5;
+  const HEAL_HEALTH_SHARE = 0.05;
+  const MAX_HEALTH = 16_000;
+  const createCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 90,
+  });
+
   test("heals the striker on each strike, until the cast's maximum heals are given", () => {
     expect.hasAssertions();
     const combatant = createCombatant();

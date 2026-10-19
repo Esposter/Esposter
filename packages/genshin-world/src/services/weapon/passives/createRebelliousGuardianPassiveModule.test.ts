@@ -8,13 +8,13 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { createRebelliousGuardianPassiveModule } from "#src/services/weapon/passives/createRebelliousGuardianPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
-// Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a
-// Fifth DMG Bonus
-const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.3, 3, 0.2]);
-
 describe(createRebelliousGuardianPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10_000 }]);
+  // Synthetic params, not the weapon's row: a shield of three tenths of Max HP, a cooldown of three seconds and a
+  // Fifth DMG Bonus
+  const rebelliousGuardianPassiveModule = createRebelliousGuardianPassiveModule([0.3, 3, 0.2]);
+
   test("an enemy's strike that takes the wielder's HP generates its shield and the DMG Bonus while it lasts", () => {
     expect.hasAssertions();
 

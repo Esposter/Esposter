@@ -24,8 +24,6 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -43,29 +41,32 @@ const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => 
   combatant,
   hit: KIT.plungeCollision,
 });
-const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
-  emitKitEvent(
-    {
-      attackTag,
-      enemy,
-      hit: KIT.plungeCollision,
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
-    context,
-  );
-// The DMG Bonus a Plunging Attack of the wearer's adds as it stands, against the enemy
-const getPlungeBonus = (wearer: Combatant, kitEffectState: KitEffectState) =>
-  wearer.kit.getStrikeDamageBonus?.(
-    createStrike(wearer, AttackTag.PlungingAttack),
-    enemy,
-    createParty([TRAVELER_CHARACTER_ID]),
-    kitEffectState.effects,
-  ) ?? 0;
 
 describe(createLongNightsOathSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+    emitKitEvent(
+      {
+        attackTag,
+        enemy,
+        hit: KIT.plungeCollision,
+        isCritical: false,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker,
+      },
+      context,
+    );
+  // The DMG Bonus a Plunging Attack of the wearer's adds as it stands, against the enemy
+  const getPlungeBonus = (wearer: Combatant, kitEffectState: KitEffectState) =>
+    wearer.kit.getStrikeDamageBonus?.(
+      createStrike(wearer, AttackTag.PlungingAttack),
+      enemy,
+      createParty([TRAVELER_CHARACTER_ID]),
+      kitEffectState.effects,
+    ) ?? 0;
+
   test("the two-piece bonus raises Plunging Attack DMG by 25%, and no other attack's", () => {
     expect.hasAssertions();
 

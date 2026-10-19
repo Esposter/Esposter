@@ -9,46 +9,46 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
-// A table date in the table's own shape, computed from the epoch
-const EPOCH_TIME = new Date(0).toISOString().slice(0, 19).replace("T", " ");
-// Made-up good ids, and a sub tab of the depot each good is filed under, which the test reads back
-const TREASURE_GOOD_ID = 1;
-const FURNISHING_GOOD_ID = 2;
-const OTHER_SHOP_GOOD_ID = 3;
-const TREASURE_SUB_TAB_ID = 1;
-const FURNISHING_SUB_TAB_ID = 2;
-const OTHER_SHOP_TYPE = 1001;
-const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
-  beginTime: EPOCH_TIME,
-  buyLimit: 0,
-  costHcoin: 0,
-  costItems: [],
-  costMcoin: 0,
-  costScoin: 100,
-  endTime: EPOCH_TIME,
-  goodsId,
-  itemCount: 1,
-  itemId: 1,
-  minPlayerLevel: 1,
-  rotateId: 0,
-  shopType,
-  subTabId,
-});
-// The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
-const createPublishedGood = (goodsId: number, tabId: number) => ({
-  beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
-  buyLimit: 0,
-  endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
-  goodsId,
-  itemCount: 1,
-  itemId: 1,
-  minPlayerLevel: 1,
-  costs: [{ count: 100, itemId: MORA_ITEM_ID }],
-  refresh: ShopRefresh.None,
-  tabId,
-});
-
 describe(buildRealmDepotGoods, () => {
+  // A table date in the table's own shape, computed from the epoch
+  const EPOCH_TIME = new Date(0).toISOString().slice(0, 19).replace("T", " ");
+  // Made-up good ids, and a sub tab of the depot each good is filed under, which the test reads back
+  const TREASURE_GOOD_ID = 1;
+  const FURNISHING_GOOD_ID = 2;
+  const OTHER_SHOP_GOOD_ID = 3;
+  const TREASURE_SUB_TAB_ID = 1;
+  const FURNISHING_SUB_TAB_ID = 2;
+  const OTHER_SHOP_TYPE = 1001;
+  const createGoodRow = (goodsId: number, shopType: number, subTabId: number): ExcelShopGoodsRow => ({
+    beginTime: EPOCH_TIME,
+    buyLimit: 0,
+    costHcoin: 0,
+    costItems: [],
+    costMcoin: 0,
+    costScoin: 100,
+    endTime: EPOCH_TIME,
+    goodsId,
+    itemCount: 1,
+    itemId: 1,
+    minPlayerLevel: 1,
+    rotateId: 0,
+    shopType,
+    subTabId,
+  });
+  // The good as the shops dataset holds it, its dates with the game's offset and the sub tab it is shown on
+  const createPublishedGood = (goodsId: number, tabId: number) => ({
+    beginTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
+    buyLimit: 0,
+    endTime: `${EPOCH_TIME.replace(" ", "T")}${GAME_TIME_OFFSET}`,
+    goodsId,
+    itemCount: 1,
+    itemId: 1,
+    minPlayerLevel: 1,
+    costs: [{ count: 100, itemId: MORA_ITEM_ID }],
+    refresh: ShopRefresh.None,
+    tabId,
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

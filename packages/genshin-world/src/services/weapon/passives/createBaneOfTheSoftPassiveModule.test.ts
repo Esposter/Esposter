@@ -16,17 +16,18 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = createWielderCombatant();
-const strike: KitStrike = {
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits),
-};
-const party = createParty([TRAVELER_CHARACTER_ID]);
-// Bane of the Soft with a synthetic percentage, which is its only param
-const baneOfTheSoftPassiveModule = createBaneOfTheSoftPassiveModule([0.2]);
 
 describe(createBaneOfTheSoftPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  const strike: KitStrike = {
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: takeOne(takeOne(TRAVELER_KIT.normalAttacks).hits),
+  };
+  const party = createParty([TRAVELER_CHARACTER_ID]);
+  // Bane of the Soft with a synthetic percentage, which is its only param
+  const baneOfTheSoftPassiveModule = createBaneOfTheSoftPassiveModule([0.2]);
+
   test("a strike on a slime is raised by the rank's percentage", () => {
     expect.hasAssertions();
 

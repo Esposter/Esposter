@@ -16,32 +16,34 @@ import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/pas
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Primordial Jade Winged-Spear with synthetic params: 5% ATK a stack, and 15% DMG dealt at the maximum of seven stacks
-const eagleSpearOfJusticePassiveModule = createEagleSpearOfJusticePassiveModule([0.05, 0.15]);
-const EAGLE_SPEAR_ID = "eagleSpear";
-const createHit = (striker: Combatant): KitEvent => ({
-  attackTag: AttackTag.NormalAttack,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker,
-});
-const getStacks = (effects: Parameters<typeof findKitStatus>[0]) =>
-  findKitStatus(effects, TRAVELER_CHARACTER_ID, EAGLE_SPEAR_ID)?.stacks;
-const getMaximumBuffs = (effects: Parameters<typeof findKitStatus>[0]) =>
-  effects.filter(
-    (effect) =>
-      effect.kind === "buff" && effect.source === EAGLE_SPEAR_ID && effect.attribute === Attribute.AllDamageBonus,
-  );
 
 describe(createEagleSpearOfJusticePassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Primordial Jade Winged-Spear with synthetic params: 5% ATK a stack, and 15% DMG dealt at the maximum
+  // Of seven stacks
+  const eagleSpearOfJusticePassiveModule = createEagleSpearOfJusticePassiveModule([0.05, 0.15]);
+  const EAGLE_SPEAR_ID = "eagleSpear";
+  const createHit = (striker: Combatant): KitEvent => ({
+    attackTag: AttackTag.NormalAttack,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker,
+  });
+  const getStacks = (effects: Parameters<typeof findKitStatus>[0]) =>
+    findKitStatus(effects, TRAVELER_CHARACTER_ID, EAGLE_SPEAR_ID)?.stacks;
+  const getMaximumBuffs = (effects: Parameters<typeof findKitStatus>[0]) =>
+    effects.filter(
+      (effect) =>
+        effect.kind === "buff" && effect.source === EAGLE_SPEAR_ID && effect.attribute === Attribute.AllDamageBonus,
+    );
+
   test("a hit adds a stack, and each stack raises the wielder's ATK by the rank's percentage", () => {
     expect.hasAssertions();
 

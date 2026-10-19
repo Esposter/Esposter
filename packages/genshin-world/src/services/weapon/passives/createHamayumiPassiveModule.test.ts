@@ -17,16 +17,6 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Hamayumi with synthetic params: its normal and charged attack DMG bonuses, and the full Energy increase of each
-const hamayumiPassiveModule = createHamayumiPassiveModule([0.1, 0.2, 0.5]);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 const createPartyWithEnergy = (energy: number) => {
   const party = createParty([TRAVELER_CHARACTER_ID]);
   getPartyMember(party, TRAVELER_CHARACTER_ID).energy = energy;
@@ -34,6 +24,17 @@ const createPartyWithEnergy = (energy: number) => {
 };
 
 describe(createHamayumiPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Hamayumi with synthetic params: its normal and charged attack DMG bonuses, and the full Energy increase of each
+  const hamayumiPassiveModule = createHamayumiPassiveModule([0.1, 0.2, 0.5]);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   test("a normal and a charged attack each raise the bonus of their own kind by the rank's amount", () => {
     expect.hasAssertions();
 

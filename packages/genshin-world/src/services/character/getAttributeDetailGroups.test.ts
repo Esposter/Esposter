@@ -5,11 +5,11 @@ import { getAttributeDetailGroups } from "#src/services/character/getAttributeDe
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
-// Every label is its own text id, so a row or a title shows which game text it was given
-const gameText = Object.fromEntries(Object.values(GameTextKey).map((key) => [key, key])) as GameText;
-const attributeTotalMap = Object.fromEntries(Attributes.map((attribute) => [attribute, 0]));
-
 describe("getAttributeDetailGroups", () => {
+  // Every label is its own text id, so a row or a title shows which game text it was given
+  const gameText = Object.fromEntries(Object.values(GameTextKey).map((key) => [key, key])) as GameText;
+  const attributeTotalMap = Object.fromEntries(Attributes.map((attribute) => [attribute, 0]));
+
   // Details opened: the base, advanced and elemental groups in the game's order, each attribute under its own title
   test("details lists the advanced and elemental attributes beyond the summary", () => {
     expect.hasAssertions();

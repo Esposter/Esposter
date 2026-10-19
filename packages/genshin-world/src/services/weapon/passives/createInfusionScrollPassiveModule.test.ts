@@ -15,19 +15,21 @@ import { createWielderCombatant, getBuff } from "#src/services/weapon/passives/c
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 10_000_066;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Infusion Scroll with synthetic params, which reads its per-stack bonus from the first number
-const infusionScrollPassiveModule = createInfusionScrollPassiveModule([0.1]);
 
-const createReaction = (striker: Combatant) => ({
-  enemy,
-  kind: KitEventKind.ReactionTriggered as const,
-  reactions: [{ element: Element.Pyro, reactionType: ReactionType.Melt }],
-  striker,
-});
 describe(createInfusionScrollPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 10_000_066;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Infusion Scroll with synthetic params, which reads its per-stack bonus from the first number
+  const infusionScrollPassiveModule = createInfusionScrollPassiveModule([0.1]);
+
+  const createReaction = (striker: Combatant) => ({
+    enemy,
+    kind: KitEventKind.ReactionTriggered as const,
+    reactions: [{ element: Element.Pyro, reactionType: ReactionType.Melt }],
+    striker,
+  });
+
   test("a reaction the wielder triggers gives every element its bonus at one stack", () => {
     expect.hasAssertions();
 

@@ -21,9 +21,10 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 describe(createDolorousStrokePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Dolorous Stroke at its first rank: an Elemental Skill gives Path of Conflict for 17 seconds, and Unforgivable and
   // Irreparable for three, once every 18; each raises its own attacks' DMG by 40%, and a hit of the other kind extends it
   // By a second while the Path holds, by 75% more in Hexerei: Secret Rite

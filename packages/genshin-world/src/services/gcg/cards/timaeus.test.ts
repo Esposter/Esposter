@@ -16,67 +16,67 @@ import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
-const ARTIFACT_IDS = [401, 402, 403, 404, 405, 406];
-const ACTION_ID = 501;
-const HAND_CARD_LIMIT = 10;
-const ARTIFACT_COST = 2;
-
-const createCard = (id: number, kind: GcgCardKind): GcgCard => ({
-  costs: kind === GcgCardKind.Artifact ? [{ count: ARTIFACT_COST, kind: GcgCostKind.Unaligned }] : [],
-  descriptionTextId: 2,
-  effects: [],
-  id,
-  isLocation: false,
-  kind,
-  nameTextId: 1,
-});
-
-const cards = [
-  ...ARTIFACT_IDS.map((id) => createCard(id, GcgCardKind.Artifact)),
-  createCard(ACTION_ID, GcgCardKind.Event),
-];
-
-const createSide = (deckCardIds: number[], drawPile: number[], hand: number[] = []): GcgSideState => ({
-  activeIndex: 0,
-  cards,
-  characters: [],
-  deckCardIds,
-  dice: [],
-  drawPile,
-  hand,
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random,
-  round: 1,
-  rule: { drawCount: 2, handCardLimit: HAND_CARD_LIMIT, reactions: [] },
-  sides: [side, createSide([], [])],
-  winnerSideIndex: undefined,
-});
-
-const createArtifactSubject = (): GcgCostSubject => ({
-  card: createCard(takeOne(ARTIFACT_IDS, 0), GcgCardKind.Artifact),
-  costs: [{ count: ARTIFACT_COST, kind: GcgCostKind.Unaligned }],
-  element: Element.Hydro,
-});
-
 describe("timaeus", () => {
+  const ARTIFACT_IDS = [401, 402, 403, 404, 405, 406];
+  const ACTION_ID = 501;
+  const HAND_CARD_LIMIT = 10;
+  const ARTIFACT_COST = 2;
+
+  const createCard = (id: number, kind: GcgCardKind): GcgCard => ({
+    costs: kind === GcgCardKind.Artifact ? [{ count: ARTIFACT_COST, kind: GcgCostKind.Unaligned }] : [],
+    descriptionTextId: 2,
+    effects: [],
+    id,
+    isLocation: false,
+    kind,
+    nameTextId: 1,
+  });
+
+  const cards = [
+    ...ARTIFACT_IDS.map((id) => createCard(id, GcgCardKind.Artifact)),
+    createCard(ACTION_ID, GcgCardKind.Event),
+  ];
+
+  const createSide = (deckCardIds: number[], drawPile: number[], hand: number[] = []): GcgSideState => ({
+    activeIndex: 0,
+    cards,
+    characters: [],
+    deckCardIds,
+    dice: [],
+    drawPile,
+    hand,
+    hasDeclaredEnd: false,
+    hasPrepared: true,
+    hasRolled: true,
+    isReplacementPending: false,
+    onstages: [],
+    summons: [],
+    supports: [],
+    usedCardIds: [],
+    usedSkillIds: [],
+  });
+
+  const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
+    actingSideIndex: 0,
+    firstSideIndex: 0,
+    nextFirstSideIndex: 0,
+    outcome: undefined,
+    phase: GcgPhase.Action,
+    random,
+    round: 1,
+    rule: { drawCount: 2, handCardLimit: HAND_CARD_LIMIT, reactions: [] },
+    sides: [side, createSide([], [])],
+    winnerSideIndex: undefined,
+  });
+
+  const createArtifactSubject = (): GcgCostSubject => ({
+    card: createCard(takeOne(ARTIFACT_IDS, 0), GcgCardKind.Artifact),
+    costs: [{ count: ARTIFACT_COST, kind: GcgCostKind.Unaligned }],
+    element: Element.Hydro,
+  });
+
   test("should come with two materials", () => {
     expect.hasAssertions();
     expect(createGcgZoneCard(TIMAEUS_ID, timaeus)).toStrictEqual({

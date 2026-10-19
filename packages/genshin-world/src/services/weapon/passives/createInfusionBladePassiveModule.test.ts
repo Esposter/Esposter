@@ -17,20 +17,21 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Infusion Blade with synthetic params, which reads its per-stack percentage from the first number
-const infusionBladePassiveModule = createInfusionBladePassiveModule([0.05]);
-const createDamageTaken = (attackTag: AttackTag) => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
 describe(createInfusionBladePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Infusion Blade with synthetic params, which reads its per-stack percentage from the first number
+  const infusionBladePassiveModule = createInfusionBladePassiveModule([0.05]);
+  const createDamageTaken = (attackTag: AttackTag) => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+
   test("a normal attack hit raises ATK and DEF by the rank's percentage at one stack", () => {
     expect.hasAssertions();
 

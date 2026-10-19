@@ -13,15 +13,6 @@ import { createPressTheAdvantagePassiveModule } from "#src/services/weapon/passi
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// A synthetic fifth ATK for four seconds a stack, not the weapon's row
-const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.2, 4]);
-const createDefeat = (striker: Combatant | undefined) => ({
-  enemy,
-  kind: KitEventKind.EnemyDefeated as const,
-  striker,
-});
 const getStackSeconds = (context: KitContext) =>
   context.kitEffectState.effects
     .filter((effect) => effect.kind === "buff" && effect.source?.startsWith("pressTheAdvantage"))
@@ -29,6 +20,16 @@ const getStackSeconds = (context: KitContext) =>
     .toSorted((a, b) => a - b);
 
 describe(createPressTheAdvantagePassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // A synthetic fifth ATK for four seconds a stack, not the weapon's row
+  const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.2, 4]);
+  const createDefeat = (striker: Combatant | undefined) => ({
+    enemy,
+    kind: KitEventKind.EnemyDefeated as const,
+    striker,
+  });
+
   test("a defeat by the wielder adds a stack of the rank's ATK bonus for its seconds", () => {
     expect.hasAssertions();
 

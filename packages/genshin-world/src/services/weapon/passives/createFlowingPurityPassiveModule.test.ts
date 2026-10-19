@@ -12,12 +12,6 @@ import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
-// Flowing Purity with synthetic params: 10% All Elemental DMG Bonus for twelve seconds after an Elemental Skill, and a
-// Bond of Life worth a fifth of Max HP once every six seconds, and 3% All Elemental DMG Bonus for every 1,000 HP
-// The bond cleared, at most 9%, for eight seconds
-const flowingPurityPassiveModule = createFlowingPurityPassiveModule([0.1, 12, 0.2, 0.03, 0.09, 8, 6]);
-const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
 const getBuffs = (effects: readonly KitEffect[], source: string) =>
   effects.filter((effect): effect is KitBuff => effect.kind === "buff" && effect.source === source);
 const clearHealth = (bondOfLifeShare: number) => ({
@@ -30,6 +24,13 @@ const clearHealth = (bondOfLifeShare: number) => ({
 });
 
 describe(createFlowingPurityPassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant([{ attribute: Attribute.BaseHealth, value: 10000 }]);
+  // Flowing Purity with synthetic params: 10% All Elemental DMG Bonus for twelve seconds after an Elemental Skill, and
+  // A bond of Life worth a fifth of Max HP once every six seconds, and 3% All Elemental DMG Bonus for every 1,000 HP
+  // The bond cleared, at most 9%, for eight seconds
+  const flowingPurityPassiveModule = createFlowingPurityPassiveModule([0.1, 12, 0.2, 0.03, 0.09, 8, 6]);
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+
   test("an Elemental Skill raises every element's DMG Bonus by the rank's percentage for the rank's seconds, and grants a Bond of Life worth the rank's share of Max HP", () => {
     expect.hasAssertions();
 

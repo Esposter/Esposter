@@ -6,10 +6,10 @@ import { gainKitNightingaleStacks } from "#src/services/kit/effects/gainKitNight
 import { startKitHauntedNight } from "#src/services/kit/effects/startKitHauntedNight";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const OPTIONS = { maximumExtraStacks: 15, stacksPerConstruct: 5 };
-
 describe(gainKitNightingaleStacks, () => {
+  const CHARACTER_ID = 1;
+  const OPTIONS = { maximumExtraStacks: 15, stacksPerConstruct: 5 };
+
   test("gains its stacks for each Geo Construct on the battlefield while the state holds", () => {
     expect.hasAssertions();
 

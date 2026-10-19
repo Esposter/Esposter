@@ -9,17 +9,6 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
-// Made-up companion, suite, reward and talk ids
-const FIRST_COMPANION_ID = 1;
-const SECOND_COMPANION_ID = 2;
-const FIRST_SUITE_ID = 10;
-const SECOND_SUITE_ID = 20;
-const FIRST_REWARD_ID = 100;
-const SECOND_REWARD_ID = 200;
-const FIRST_TALK_ID = 1000;
-const SECOND_TALK_ID = 2000;
-// The talk a reward row holds where the dump leaves its talk out, which the dump's defaults write back as zero
-const NO_TALK_ID = 0;
 const rewardRow = (avatarID: number, furnitureSuitID: number, rewardID: number, talkID: number) => ({
   avatarID,
   eventType: HOME_AVATAR_REWARD_EVENT_TYPE,
@@ -37,6 +26,18 @@ const summonRow = (avatarID: number, furnitureSuitID: number, talkID: number) =>
 });
 
 describe(buildHomeEvents, () => {
+  // Made-up companion, suite, reward and talk ids
+  const FIRST_COMPANION_ID = 1;
+  const SECOND_COMPANION_ID = 2;
+  const FIRST_SUITE_ID = 10;
+  const SECOND_SUITE_ID = 20;
+  const FIRST_REWARD_ID = 100;
+  const SECOND_REWARD_ID = 200;
+  const FIRST_TALK_ID = 1000;
+  const SECOND_TALK_ID = 2000;
+  // The talk a reward row holds where the dump leaves its talk out, which the dump's defaults write back as zero
+  const NO_TALK_ID = 0;
+
   beforeEach(() => {
     vi.clearAllMocks();
   });

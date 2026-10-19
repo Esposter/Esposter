@@ -52,14 +52,10 @@ const createMonaCombatant = (): Combatant => ({
   level: 90,
 });
 
-const OTHER_CHARACTER_ID = 10_000_052;
-const HEXEREI_CHARACTER_ID = 10_000_029;
-const kitBody = createKitBody({ x: 0, z: 0 });
 const createOmenedEnemy = (): Enemy => ({
   ...createSturdyEnemy(),
   statuses: [{ damageTakenBonus: 0, id: "mona-omen", secondsRemaining: 10 }],
 });
-const createOther = (characterId = OTHER_CHARACTER_ID): Combatant => ({ ...createMonaCombatant(), characterId });
 
 // Constellation 6's stacks are read at the Charged Attack's damage hook, as her sprint and her attack play out, one step at a time
 const createConstellation6Fixture = (constellationCount = 6) => {
@@ -102,6 +98,11 @@ const createConstellation6Fixture = (constellationCount = 6) => {
 };
 
 describe("mona kit", () => {
+  const OTHER_CHARACTER_ID = 10_000_052;
+  const HEXEREI_CHARACTER_ID = 10_000_029;
+  const kitBody = createKitBody({ x: 0, z: 0 });
+  const createOther = (characterId = OTHER_CHARACTER_ID): Combatant => ({ ...createMonaCombatant(), characterId });
+
   test("constellation 2 follows a normal attack's last hit with its Charged Attack's hit at the attack's hitmark, at a 20% chance", () => {
     expect.hasAssertions();
     const combatant = { ...createMonaCombatant(), constellationCount: 2 };

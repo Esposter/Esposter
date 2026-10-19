@@ -19,38 +19,39 @@ import { describe, expect, test } from "vitest";
 
 const PRUNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, PRUNE_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const combatant: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
-  characterId: PRUNE_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: PRUNE_KIT,
-  level: 90,
-  weaponType: WeaponType.Catalyst,
-};
-// The Witchlure Bell's first tick, 137 frames after the cast (burst.go:56), stepped past at the world's fixed step
-const AFTER_FIRST_TICK_SECONDS = 140 / 60;
-const BEFORE_FIRST_TICK_SECONDS = 130 / 60;
 
 const createEnemyAt = (x: number): Enemy =>
   createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, "");
 
 const checkIsSummon = (effect: KitEffect): effect is KitSummon => effect.kind === "summon";
 
-// The summons the bell's ticks have cast, each landing its DoT on the one enemy it was cast on
-const castBellTicks = (enemies: Enemy[], seconds: number): KitSummon[] => {
-  const kitEffectState: KitEffectState = { effects: [] };
-  castKitAction(PRUNE_KIT.elementalBurst, combatant, kitEffectState);
-  const context = createKitTestContext(combatant, {
-    enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])),
-    kitEffectState,
-  });
-  stepKitSeconds(context, seconds);
-  return kitEffectState.effects.filter(checkIsSummon);
-};
-
 describe(createPruneKitBehaviour, () => {
+  const combatant: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
+    characterId: PRUNE_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: PRUNE_KIT,
+    level: 90,
+    weaponType: WeaponType.Catalyst,
+  };
+  // The Witchlure Bell's first tick, 137 frames after the cast (burst.go:56), stepped past at the world's fixed step
+  const AFTER_FIRST_TICK_SECONDS = 140 / 60;
+  const BEFORE_FIRST_TICK_SECONDS = 130 / 60;
+
+  // The summons the bell's ticks have cast, each landing its DoT on the one enemy it was cast on
+  const castBellTicks = (enemies: Enemy[], seconds: number): KitSummon[] => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    castKitAction(PRUNE_KIT.elementalBurst, combatant, kitEffectState);
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map(enemies.map((enemy) => [enemy.id, enemy])),
+      kitEffectState,
+    });
+    stepKitSeconds(context, seconds);
+    return kitEffectState.effects.filter(checkIsSummon);
+  };
+
   test("the bell's first tick lands its DoT on the enemy nearest Prune within 10 metres", () => {
     expect.hasAssertions();
     const nearest = createEnemyAt(3);

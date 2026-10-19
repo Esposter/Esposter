@@ -13,10 +13,6 @@ import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/s
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant();
-// Lost Prayer to the Sacred Winds with synthetic params: 20% Movement SPD and 5% Elemental DMG Bonus a stack
-const boundlessBlessingPassiveModule = createBoundlessBlessingPassiveModule([0.2, 0.05]);
 const swapOnto = (characterId: number, previousCharacterId: number): KitEvent => ({
   characterId,
   kind: KitEventKind.CharacterSwapped,
@@ -26,6 +22,11 @@ const getStacks = (effects: readonly KitEffect[]) =>
   findKitStatus(effects, TRAVELER_CHARACTER_ID, BOUNDLESS_BLESSING_ID)?.stacks;
 
 describe(createBoundlessBlessingPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant();
+  // Lost Prayer to the Sacred Winds with synthetic params: 20% Movement SPD and 5% Elemental DMG Bonus a stack
+  const boundlessBlessingPassiveModule = createBoundlessBlessingPassiveModule([0.2, 0.05]);
+
   test("the rank's Movement SPD is a passive bonus on the wielder", () => {
     expect.hasAssertions();
 

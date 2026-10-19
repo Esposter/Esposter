@@ -25,26 +25,27 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-});
-const damageDealtBy = (attackTag: AttackTag) =>
-  ({
-    attackTag,
-    enemy,
-    hit: KIT.plungeCollision,
-    isCritical: false,
-    isDefeated: false,
-    kind: KitEventKind.DamageTaken,
-    striker: wearer,
-  }) as const;
 
 describe(createFinaleOfTheDeepGalleriesSetModule, () => {
+  const wearer = createSetWearer(KIT);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  });
+  const damageDealtBy = (attackTag: AttackTag) =>
+    ({
+      attackTag,
+      enemy,
+      hit: KIT.plungeCollision,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: wearer,
+    }) as const;
+
   test("raises Normal Attack and Elemental Burst DMG by 60% each while its wearer has no Elemental Energy, from four pieces", () => {
     expect.hasAssertions();
 

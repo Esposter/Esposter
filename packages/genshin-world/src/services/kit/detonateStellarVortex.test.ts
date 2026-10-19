@@ -22,11 +22,12 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const LEVEL = 90;
-const BODY = createKitBody({ x: 0, z: 0 });
-const STURDY_HEALTH = 1e9;
 
 describe(detonateStellarVortex, () => {
+  const LEVEL = 90;
+  const BODY = createKitBody({ x: 0, z: 0 });
+  const STURDY_HEALTH = 1e9;
+
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

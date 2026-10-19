@@ -10,18 +10,19 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const combatant: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: KIT,
-  level: 1,
-};
-const context = createKitTestContext(combatant);
 
 describe(getPassiveKit, () => {
+  const combatant: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: KIT,
+    level: 1,
+  };
+  const context = createKitTestContext(combatant);
+
   test("multiplies the charged attack stamina factor of the kit by each module's, and leaves it at one with none", () => {
     expect.hasAssertions();
 

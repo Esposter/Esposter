@@ -16,9 +16,10 @@ import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(TRAVELER_KIT);
 
 describe(createMartialArtistSetModule, () => {
+  const wearer = createSetWearer(TRAVELER_KIT);
+
   test("prices its wearer at 15% more Normal and Charged Attack DMG from two pieces", () => {
     expect.hasAssertions();
 

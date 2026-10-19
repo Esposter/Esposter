@@ -17,21 +17,22 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant();
-// Skyward Spine with synthetic params: 20% CRIT Rate, 30% Normal Attack SPD, a quarter chance, 60% ATK
-const blackWingPassiveModule = createBlackWingPassiveModule([0.2, 0.3, 0.25, 0.6]);
-const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
-  attackTag,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken,
-  striker: wielder,
-});
 
 describe(createBlackWingPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant();
+  // Skyward Spine with synthetic params: 20% CRIT Rate, 30% Normal Attack SPD, a quarter chance, 60% ATK
+  const blackWingPassiveModule = createBlackWingPassiveModule([0.2, 0.3, 0.25, 0.6]);
+  const createDamageTaken = (attackTag: AttackTag): KitEvent => ({
+    attackTag,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken,
+    striker: wielder,
+  });
+
   test("the rank's CRIT Rate and Normal Attack SPD are passive bonuses on the wielder", () => {
     expect.hasAssertions();
 

@@ -17,32 +17,33 @@ import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = createWielderCombatant([
-  { attribute: Attribute.BaseDefense, value: 800 },
-  { attribute: Attribute.Defense, value: 100 },
-]);
-// Synthetic params, not the weapon's row: half of the wielder's DEF, an unread second value, a one-second cooldown and
-// A clear of two tenths of a second
-const spotlessHeartPassiveModule = createSpotlessHeartPassiveModule([0.5, 1, 1, 0.2]);
-const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
-const createSkillDamageTaken = () => ({
-  attackTag: AttackTag.ElementalSkill,
-  enemy,
-  hit: TRAVELER_KIT.plungeCollision,
-  isCritical: false,
-  isDefeated: false,
-  kind: KitEventKind.DamageTaken as const,
-  striker: wielder,
-});
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wielder,
-  hit: TRAVELER_KIT.plungeCollision,
-});
 
 describe(createSpotlessHeartPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = createWielderCombatant([
+    { attribute: Attribute.BaseDefense, value: 800 },
+    { attribute: Attribute.Defense, value: 100 },
+  ]);
+  // Synthetic params, not the weapon's row: half of the wielder's DEF, an unread second value, a one-second cooldown
+  // And a clear of two tenths of a second
+  const spotlessHeartPassiveModule = createSpotlessHeartPassiveModule([0.5, 1, 1, 0.2]);
+  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const createSkillDamageTaken = () => ({
+    attackTag: AttackTag.ElementalSkill,
+    enemy,
+    hit: TRAVELER_KIT.plungeCollision,
+    isCritical: false,
+    isDefeated: false,
+    kind: KitEventKind.DamageTaken as const,
+    striker: wielder,
+  });
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wielder,
+    hit: TRAVELER_KIT.plungeCollision,
+  });
+
   test("a skill's strike gains the rank's share of DEF as base damage once the skill is used, and a normal attack gains none", () => {
     expect.hasAssertions();
 

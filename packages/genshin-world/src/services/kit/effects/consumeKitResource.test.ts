@@ -5,10 +5,10 @@ import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const RESOURCE_ID = "resource";
-
 describe(consumeKitResource, () => {
+  const CHARACTER_ID = 1;
+  const RESOURCE_ID = "resource";
+
   test("spends the amount a character holds of a resource and keeps the rest", () => {
     expect.hasAssertions();
 

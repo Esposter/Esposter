@@ -18,11 +18,12 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const DAMAGE = 100;
-// A roll between the base CRIT Rate and the raised one, so only a raised rate crits
-const ROLL = 0.5;
 
 describe(priceReactionContributors, () => {
+  const DAMAGE = 100;
+  // A roll between the base CRIT Rate and the raised one, so only a raised rate crits
+  const ROLL = 0.5;
+
   const createContributor = (kit = TRAVELER_KIT): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([]),

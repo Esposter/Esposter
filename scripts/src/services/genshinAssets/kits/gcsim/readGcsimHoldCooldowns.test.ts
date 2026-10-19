@@ -3,28 +3,28 @@ import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant
 import { readGcsimHoldCooldowns } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldCooldowns";
 import { describe, expect, test } from "vitest";
 
-const SKILL_SOURCE = [
-  "package bennett",
-  "",
-  "func (c *char) skill(level int) {",
-  "	var idx, cd, cdDelay int",
-  "	switch level {",
-  "	case 1:",
-  "		idx = 1",
-  "		cd = 7.5 * 60",
-  "		cdDelay = 43",
-  "	case 2:",
-  "		idx = 3",
-  "		cd = 10 * 60",
-  "		cdDelay = 110",
-  "	default:",
-  '		panic("level")',
-  "	}",
-  "	c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
-  "}",
-].join("\n");
-
 describe(readGcsimHoldCooldowns, () => {
+  const SKILL_SOURCE = [
+    "package bennett",
+    "",
+    "func (c *char) skill(level int) {",
+    "	var idx, cd, cdDelay int",
+    "	switch level {",
+    "	case 1:",
+    "		idx = 1",
+    "		cd = 7.5 * 60",
+    "		cdDelay = 43",
+    "	case 2:",
+    "		idx = 3",
+    "		cd = 10 * 60",
+    "		cdDelay = 110",
+    "	default:",
+    '		panic("level")',
+    "	}",
+    "	c.SetCDWithDelay(action.ActionSkill, c.a4CD(c.a1(cd)), cdDelay)",
+    "}",
+  ].join("\n");
+
   test("reads the cooldown each case of the switch sets the local the cooldown call passes, in frames", () => {
     expect.hasAssertions();
 

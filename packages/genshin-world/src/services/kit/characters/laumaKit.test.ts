@@ -162,8 +162,8 @@ describe(createLaumaKitBehaviour, () => {
   });
 });
 
-// The Elemental Skill DMG Bonus Cleansing for the Spring gives a hit of hers, with her at the given ascension and Elemental
-// Mastery
+// The Elemental Skill DMG Bonus Cleansing for the Spring gives a hit of hers, with her at the given ascension
+// And Elemental mastery
 const readSkillDamageBonus = (ascension: number, elementalMastery: number): number => {
   const combatant = { ...createCombatant(elementalMastery), ascension };
   return (
@@ -318,14 +318,6 @@ describe("pale hymn", () => {
   });
 });
 
-// Lauma's Pale Hymn Bloom and Lunar-Bloom increases of her Elemental Mastery at her burst's talent level 1, from gcsim
-// (MIT) lauma/burst.go and the burst's proud skill group
-const BLOOM_INCREASE = 2.7776;
-const LUNAR_BLOOM_INCREASE = 2.2224;
-// Constellation 2's extra Elemental Mastery ratio for each Bloom and each Lunar-Bloom, as gcsim v2.47.2 (MIT) lauma/cons.go gives them
-const C2_BLOOM_INCREASE = 5;
-const C2_LUNAR_BLOOM_INCREASE = 4;
-
 // The base damage Pale Hymn adds to a reaction of the given kind, with Lauma at the given Elemental Mastery and the
 // Party's effects as given
 const readPaleHymnBaseDamageBonus = (
@@ -345,6 +337,15 @@ const readPaleHymnBaseDamageBonus = (
 };
 
 describe("pale hymn's base damage bonus", () => {
+  // Lauma's Pale Hymn Bloom and Lunar-Bloom increases of her Elemental Mastery at her burst's talent level 1,
+  // From gcsim (MIT) lauma/burst.go and the burst's proud skill group
+  const BLOOM_INCREASE = 2.7776;
+  const LUNAR_BLOOM_INCREASE = 2.2224;
+  // Constellation 2's extra Elemental Mastery ratio for each Bloom and each Lunar-Bloom,
+  // As gcsim v2.47.2 (MIT) lauma/cons.go gives them
+  const C2_BLOOM_INCREASE = 5;
+  const C2_LUNAR_BLOOM_INCREASE = 4;
+
   test("adds her Elemental Mastery times the Bloom increase to each Bloom, Hyperbloom and Burgeon while the party holds Pale Hymn", () => {
     expect.hasAssertions();
     const kitEffectState = { effects: [] };

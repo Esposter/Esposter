@@ -3,17 +3,18 @@ import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import { computeStandingMiningOutcrops } from "#src/services/gathering/computeStandingMiningOutcrops";
 import { describe, expect, test } from "vitest";
 
-// The resets, 04:00 in UTC+8 on two game days: 20:00 UTC of the day before each day, counted from the epoch
-const epoch = Temporal.Instant.fromEpochMilliseconds(0);
-const resetDay1 = epoch.add({ hours: 480_000 }).subtract({ hours: 4 });
-const resetDay2 = resetDay1.add({ hours: 24 });
-const places: GatheringPlace[] = [
-  { id: "a", kind: 101_004, position: { x: 0, z: 0 } },
-  { id: "b", kind: 101_004, position: { x: 1, z: 1 } },
-];
 const drawnAt = (at: Temporal.Instant) => ({ at, placeIds: ["a", "b"] });
 
 describe(computeStandingMiningOutcrops, () => {
+  // The resets, 04:00 in UTC+8 on two game days: 20:00 UTC of the day before each day, counted from the epoch
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+  const resetDay1 = epoch.add({ hours: 480_000 }).subtract({ hours: 4 });
+  const resetDay2 = resetDay1.add({ hours: 24 });
+  const places: GatheringPlace[] = [
+    { id: "a", kind: 101_004, position: { x: 0, z: 0 } },
+    { id: "b", kind: 101_004, position: { x: 1, z: 1 } },
+  ];
+
   test("outcrops appear at 04:00 with the day's draw", () => {
     expect.hasAssertions();
     expect(computeStandingMiningOutcrops(places, undefined, new Map(), resetDay1)).toStrictEqual([]);

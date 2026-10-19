@@ -9,19 +9,19 @@ import { createBenthicPulsePassiveModule } from "#src/services/weapon/passives/c
 import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
-const wielder: Combatant = createWielderCombatant();
-// Song of Stillness, Benthic Pulse with synthetic params: 20% more DMG for three seconds after the wielder is healed
-const benthicPulsePassiveModule = createBenthicPulsePassiveModule([0.2, 3]);
-const healthGained: KitEvent = {
-  characterId: TRAVELER_CHARACTER_ID,
-  healthShare: 0.5,
-  bondOfLifeShare: 0,
-  isFallRefused: false,
-  kind: KitEventKind.HealthChanged,
-  overflowHealthShare: 0,
-};
-
 describe(createBenthicPulsePassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Song of Stillness, Benthic Pulse with synthetic params: 20% more DMG for three seconds after the wielder is healed
+  const benthicPulsePassiveModule = createBenthicPulsePassiveModule([0.2, 3]);
+  const healthGained: KitEvent = {
+    characterId: TRAVELER_CHARACTER_ID,
+    healthShare: 0.5,
+    bondOfLifeShare: 0,
+    isFallRefused: false,
+    kind: KitEventKind.HealthChanged,
+    overflowHealthShare: 0,
+  };
+
   test("a heal of the wielder raises its DMG by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

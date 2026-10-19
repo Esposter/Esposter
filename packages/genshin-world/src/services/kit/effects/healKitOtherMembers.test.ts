@@ -12,7 +12,6 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const SIGEWINNE_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, SIGEWINNE_CHARACTER_ID);
-const MEMBER_ID = 10_000_032;
 
 const createCombatant = (characterId: number): Combatant => ({
   ascension: 0,
@@ -25,6 +24,8 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(healKitOtherMembers, () => {
+  const MEMBER_ID = 10_000_032;
+
   test("a bubble's heal restores each other deployed member by the HP given, and not its healer", () => {
     expect.hasAssertions();
     const healer = createCombatant(SIGEWINNE_CHARACTER_ID);

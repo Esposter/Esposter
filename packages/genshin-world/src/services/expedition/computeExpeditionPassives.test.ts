@@ -8,21 +8,14 @@ import {
 } from "#src/services/expedition/computeExpeditionPassives";
 import { describe, expect, test } from "vitest";
 
-const TIME_PASSIVE: ExpeditionPassive = {
-  kind: ExpeditionPassiveKind.Time,
-  percent: 25,
-  proudSkillGroupId: 3223,
-  region: ExpeditionRegion.Mondstadt,
-};
-const REWARD_PASSIVE: ExpeditionPassive = {
-  hours: 20,
-  kind: ExpeditionPassiveKind.Reward,
-  percent: 25,
-  proudSkillGroupId: 6023,
-  region: ExpeditionRegion.Liyue,
-};
-
 describe(computeExpeditionTimeReductionPercent, () => {
+  const TIME_PASSIVE: ExpeditionPassive = {
+    kind: ExpeditionPassiveKind.Time,
+    percent: 25,
+    proudSkillGroupId: 3223,
+    region: ExpeditionRegion.Mondstadt,
+  };
+
   test("a time talent shortens only the expeditions in its region", () => {
     expect.hasAssertions();
 
@@ -32,6 +25,14 @@ describe(computeExpeditionTimeReductionPercent, () => {
 });
 
 describe(computeExpeditionRewardPercent, () => {
+  const REWARD_PASSIVE: ExpeditionPassive = {
+    hours: 20,
+    kind: ExpeditionPassiveKind.Reward,
+    percent: 25,
+    proudSkillGroupId: 6023,
+    region: ExpeditionRegion.Liyue,
+  };
+
   test("a reward talent adds only to the expeditions in its region for its hours", () => {
     expect.hasAssertions();
 

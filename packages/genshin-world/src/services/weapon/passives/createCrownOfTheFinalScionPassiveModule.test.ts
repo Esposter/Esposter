@@ -24,8 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const OTHER_CHARACTER_ID = 1;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
 const createCombatant = (characterId: number, kit: Kit, attack = 0): Combatant => ({
   ascension: 0,
@@ -42,6 +40,9 @@ const castShield = (context: KitContext, characterId = TRAVELER_CHARACTER_ID) =>
 const readEnergy = (context: KitContext) => getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
 
 describe(createCrownOfTheFinalScionPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
   // Crown of the Final Scion at its first rank: a shield its wielder casts gives Pathfinder's Light for 20 seconds, the
   // Member on the field dealing 10% more DMG for each 1,000 of the wielder's ATK, up to 26%, and an off-field Hexerei
   // Member half of it, and restores the wielder 14 Energy, once every 14 seconds

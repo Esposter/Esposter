@@ -30,9 +30,6 @@ import { describe, expect, test } from "vitest";
 
 const JAHODA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, JAHODA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// A made-up character who holds a Moonsign Benediction, so the team reads as Ascendant Gleam with Jahoda's own
-const MOONSIGN_PARTNER_CHARACTER_ID = 1;
-const MOONSIGN_BENEDICTION = { lunarReactionTypes: [LunarReactionType.LunarCharged] };
 const createJahodaCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -43,37 +40,6 @@ const createJahodaCombatant = (): Combatant => ({
   level: 90,
   weaponType: WeaponType.Bow,
 });
-
-// A team of Jahoda and a partner. Jahoda's kit holds a Moonsign Benediction, as a Moonsign character's kit does.
-// Its partner's does too when the team is to be at Ascendant Gleam. One enemy holding an aura stands at the origin.
-// Jahoda's pursuit is returned, so a test can run its ticks until the flask drains
-const createConstellation6Context = (constellationCount: number, isPartnerMoonsign: boolean) => {
-  const combatant: Combatant = {
-    ...createJahodaCombatant(),
-    constellationCount,
-    kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
-  };
-  const partner: Combatant = {
-    ...createJahodaCombatant(),
-    characterId: MOONSIGN_PARTNER_CHARACTER_ID,
-    kit: { ...JAHODA_KIT, moonsignBenediction: isPartnerMoonsign ? MOONSIGN_BENEDICTION : undefined },
-  };
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  applyElement(enemy.elementalState, Element.Pyro, 1);
-  const context = createKitTestContext(combatant, {
-    characterIdCombatantMap: new Map([
-      [combatant.characterId, combatant],
-      [partner.characterId, partner],
-    ]),
-    enemyMap: new Map([[enemy.id, enemy]]),
-    enemyTables,
-    party: createParty([combatant.characterId, partner.characterId]),
-  });
-  JAHODA_KIT.elementalSkill.onStart?.(context);
-  const [pursuit] = context.kitEffectState.effects;
-  if (pursuit?.kind !== "field") throw new Error("The press casts no pursuit");
-  return { context, partner, pursuit };
-};
 
 // Runs the pursuit's ticks until the flask drains, which casts its drain's summon, within a bounded number of ticks
 const fillFlaskUntilDrained = (
@@ -87,73 +53,109 @@ const fillFlaskUntilDrained = (
   throw new Error("The flask never drains");
 };
 
-// Jahoda and a partner on a team of two, with her burst cast, each member at the health share given. Her Max HP is large,
-// So a heal moves a share too small to lift her past 70% of it over the burst's ticks
-const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number, ascension = 0) => {
-  const combatant: Combatant = {
-    ...createJahodaCombatant(),
-    ascension,
-    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
-    kit: JAHODA_KIT,
-  };
-  const partner: Combatant = { ...combatant, characterId: MOONSIGN_PARTNER_CHARACTER_ID };
-  const party = createParty([combatant.characterId, partner.characterId]);
-  const setHealthShare = (characterId: number, healthShare: number): void => {
-    const member = party.characterIdMemberMap.get(characterId);
-    if (member) party.characterIdMemberMap.set(characterId, { ...member, healthShare });
-  };
-  setHealthShare(combatant.characterId, activeHealthShare);
-  setHealthShare(partner.characterId, partnerHealthShare);
-  const context = createKitTestContext(combatant, {
-    characterIdCombatantMap: new Map([
-      [combatant.characterId, combatant],
-      [partner.characterId, partner],
-    ]),
-    party,
-  });
-  JAHODA_KIT.elementalBurst?.onStart?.(context);
-  return context;
-};
-
-// Jahoda's burst cast at Ascendant Gleam, with an enemy holding an aura at the origin for the robots to absorb and strike
-const createRobotBurstContext = () => {
-  const combatant: Combatant = {
-    ...createJahodaCombatant(),
-    kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
-  };
-  const partner: Combatant = {
-    ...createJahodaCombatant(),
-    characterId: MOONSIGN_PARTNER_CHARACTER_ID,
-    kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
-  };
-  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-  applyElement(enemy.elementalState, Element.Pyro, 1);
-  const context = createKitTestContext(combatant, {
-    characterIdCombatantMap: new Map([
-      [combatant.characterId, combatant],
-      [partner.characterId, partner],
-    ]),
-    enemyMap: new Map([[enemy.id, enemy]]),
-    party: createParty([combatant.characterId, partner.characterId]),
-  });
-  JAHODA_KIT.elementalBurst?.onStart?.(context);
-  return context;
-};
-
-// The frames, counted from the cast, on which a member's health share rises, over the burst's frames
-const readHealedFrames = (context: ReturnType<typeof createBurstHealContext>, characterId: number): number[] => {
-  const healedFrames: number[] = [];
-  let healthShare = getPartyMember(context.party, characterId).healthShare;
-  for (let frame = 1; frame <= 800; frame++) {
-    stepKitEffects(1 / 60, context);
-    const nextHealthShare = getPartyMember(context.party, characterId).healthShare;
-    if (nextHealthShare > healthShare) healedFrames.push(frame);
-    healthShare = nextHealthShare;
-  }
-  return healedFrames;
-};
-
 describe(createJahodaKitBehaviour, () => {
+  // A made-up character who holds a Moonsign Benediction, so the team reads as Ascendant Gleam with Jahoda's own
+  const MOONSIGN_PARTNER_CHARACTER_ID = 1;
+  const MOONSIGN_BENEDICTION = { lunarReactionTypes: [LunarReactionType.LunarCharged] };
+
+  // A team of Jahoda and a partner. Jahoda's kit holds a Moonsign Benediction, as a Moonsign character's kit does.
+  // Its partner's does too when the team is to be at Ascendant Gleam. One enemy holding an aura stands at the origin.
+  // Jahoda's pursuit is returned, so a test can run its ticks until the flask drains
+  const createConstellation6Context = (constellationCount: number, isPartnerMoonsign: boolean) => {
+    const combatant: Combatant = {
+      ...createJahodaCombatant(),
+      constellationCount,
+      kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
+    };
+    const partner: Combatant = {
+      ...createJahodaCombatant(),
+      characterId: MOONSIGN_PARTNER_CHARACTER_ID,
+      kit: { ...JAHODA_KIT, moonsignBenediction: isPartnerMoonsign ? MOONSIGN_BENEDICTION : undefined },
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    applyElement(enemy.elementalState, Element.Pyro, 1);
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [combatant.characterId, combatant],
+        [partner.characterId, partner],
+      ]),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      party: createParty([combatant.characterId, partner.characterId]),
+    });
+    JAHODA_KIT.elementalSkill.onStart?.(context);
+    const [pursuit] = context.kitEffectState.effects;
+    if (pursuit?.kind !== "field") throw new Error("The press casts no pursuit");
+    return { context, partner, pursuit };
+  };
+
+  // Jahoda and a partner on a team of two, with her burst cast, each member at the health share given. Her Max HP is
+  // Large, so a heal moves a share too small to lift her past 70% of it over the burst's ticks
+  const createBurstHealContext = (activeHealthShare: number, partnerHealthShare: number, ascension = 0) => {
+    const combatant: Combatant = {
+      ...createJahodaCombatant(),
+      ascension,
+      attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 100_000 }]),
+      kit: JAHODA_KIT,
+    };
+    const partner: Combatant = { ...combatant, characterId: MOONSIGN_PARTNER_CHARACTER_ID };
+    const party = createParty([combatant.characterId, partner.characterId]);
+    const setHealthShare = (characterId: number, healthShare: number): void => {
+      const member = party.characterIdMemberMap.get(characterId);
+      if (member) party.characterIdMemberMap.set(characterId, { ...member, healthShare });
+    };
+    setHealthShare(combatant.characterId, activeHealthShare);
+    setHealthShare(partner.characterId, partnerHealthShare);
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [combatant.characterId, combatant],
+        [partner.characterId, partner],
+      ]),
+      party,
+    });
+    JAHODA_KIT.elementalBurst?.onStart?.(context);
+    return context;
+  };
+
+  // Jahoda's burst cast at Ascendant Gleam, with an enemy holding an aura at the origin for the robots to
+  // Absorb and strike
+  const createRobotBurstContext = () => {
+    const combatant: Combatant = {
+      ...createJahodaCombatant(),
+      kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
+    };
+    const partner: Combatant = {
+      ...createJahodaCombatant(),
+      characterId: MOONSIGN_PARTNER_CHARACTER_ID,
+      kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
+    };
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    applyElement(enemy.elementalState, Element.Pyro, 1);
+    const context = createKitTestContext(combatant, {
+      characterIdCombatantMap: new Map([
+        [combatant.characterId, combatant],
+        [partner.characterId, partner],
+      ]),
+      enemyMap: new Map([[enemy.id, enemy]]),
+      party: createParty([combatant.characterId, partner.characterId]),
+    });
+    JAHODA_KIT.elementalBurst?.onStart?.(context);
+    return context;
+  };
+
+  // The frames, counted from the cast, on which a member's health share rises, over the burst's frames
+  const readHealedFrames = (context: ReturnType<typeof createBurstHealContext>, characterId: number): number[] => {
+    const healedFrames: number[] = [];
+    let healthShare = getPartyMember(context.party, characterId).healthShare;
+    for (let frame = 1; frame <= 800; frame++) {
+      stepKitEffects(1 / 60, context);
+      const nextHealthShare = getPartyMember(context.party, characterId).healthShare;
+      if (nextHealthShare > healthShare) healedFrames.push(frame);
+      healthShare = nextHealthShare;
+    }
+    return healedFrames;
+  };
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -334,7 +336,8 @@ describe(createJahodaKitBehaviour, () => {
       stepKitEffects(1 / 60, context);
       if (context.strikes.length > 0) strikeKitEnemies(context.strikes, context);
     }
-    // Five Meowballs fall 3.5 seconds or more after the last that gave energy: those on the 129th, 361st, 593rd, 825th and 1057th frames
+    // Five Meowballs fall 3.5 seconds or more after the last that gave energy: those on the 129th, 361st, 593rd, 825th
+    // And 1057th frames
     expect(getPartyMember(context.party, JAHODA_CHARACTER_ID).energy - energyBefore).toBe(10);
   });
 
@@ -359,7 +362,8 @@ describe(createJahodaKitBehaviour, () => {
     expect.hasAssertions();
     const { context, pursuit } = createConstellation6Context(0, true);
     fillFlaskUntilDrained(pursuit, context);
-    // The enemy stands out of the new pursuit's absorb circle, so the press refills nothing, and the Meowballs still find it
+    // The enemy stands out of the new pursuit's absorb circle, so the press refills nothing, and the Meowballs
+    // Still find it
     for (const enemy of context.enemyMap.values()) enemy.position = { x: 100, z: 0 };
     const meowballFrames: number[] = [];
     for (let frame = 1; frame <= 400; frame++)

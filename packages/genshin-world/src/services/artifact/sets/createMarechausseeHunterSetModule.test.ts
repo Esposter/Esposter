@@ -20,18 +20,9 @@ import { createDeployedCombatant } from "#src/services/party/createDeployedComba
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-});
 const healthChangedOf = (characterId: number) =>
   ({
     bondOfLifeShare: 0,
@@ -43,6 +34,16 @@ const healthChangedOf = (characterId: number) =>
   }) as const;
 
 describe(createMarechausseeHunterSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createSetWearer(KIT);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  });
+
   test("raises the DMG of its wearer's Normal and Charged Attacks by 15% from two pieces, and of no other strike", () => {
     expect.hasAssertions();
 

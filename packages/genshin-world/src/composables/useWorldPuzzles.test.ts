@@ -12,19 +12,6 @@ import { SEELIE_FOLLOW_DISTANCE, TIME_TRIAL_MARKER_REACH_DISTANCE } from "#src/s
 import { strikeTimeTrialTarget } from "#src/services/puzzle/strikeTimeTrialTarget";
 import { describe, expect, test } from "vitest";
 
-const MONUMENT_ID = "monument";
-const MONUMENT_PLACE: PuzzlePlace = {
-  id: MONUMENT_ID,
-  kind: PuzzleKind.ElementalMonument,
-  monument: { element: Element.Pyro, isProvisional: true, isTimed: false },
-  position: { x: 0, z: 0 },
-};
-// A body two metres from the monument, and a hit whose area is a full circle of ten metres about its feet
-const STRIKING_BODY: KitBody = { facing: 0, height: 0, position: { x: 2, z: 0 } };
-const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 10, radius: 10 };
-const PYRO_HIT: PuzzleHit = { element: Element.Pyro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
-const HYDRO_HIT: PuzzleHit = { element: Element.Hydro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
-
 const createSeelie = (id: string): Seelie => ({
   court: { x: 10, z: 0 },
   id,
@@ -35,6 +22,19 @@ const createSeelie = (id: string): Seelie => ({
 });
 
 describe(useWorldPuzzles, () => {
+  const MONUMENT_ID = "monument";
+  const MONUMENT_PLACE: PuzzlePlace = {
+    id: MONUMENT_ID,
+    kind: PuzzleKind.ElementalMonument,
+    monument: { element: Element.Pyro, isProvisional: true, isTimed: false },
+    position: { x: 0, z: 0 },
+  };
+  // A body two metres from the monument, and a hit whose area is a full circle of ten metres about its feet
+  const STRIKING_BODY: KitBody = { facing: 0, height: 0, position: { x: 2, z: 0 } };
+  const FULL_CIRCLE_AREA = { angle: Math.PI * 2, height: 10, radius: 10 };
+  const PYRO_HIT: PuzzleHit = { element: Element.Pyro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
+  const HYDRO_HIT: PuzzleHit = { element: Element.Hydro, gauge: 1, hitArea: FULL_CIRCLE_AREA };
+
   const SETTLED_SEELIE_ID = "settled";
   const RESTING_SEELIE_ID = "resting";
   const TIME_TRIAL_ID = "time-trial";

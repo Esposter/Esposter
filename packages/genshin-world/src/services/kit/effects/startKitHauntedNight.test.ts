@@ -6,10 +6,10 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitHauntedNight } from "#src/services/kit/effects/startKitHauntedNight";
 import { describe, expect, test } from "vitest";
 
-const CHARACTER_ID = 1;
-const OTHER_CHARACTER_ID = 2;
-
 describe(startKitHauntedNight, () => {
+  const CHARACTER_ID = 1;
+  const OTHER_CHARACTER_ID = 2;
+
   test("starts the state for its seconds, holding the stacks of Nightingale's Song it gains", () => {
     expect.hasAssertions();
 

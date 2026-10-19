@@ -12,9 +12,6 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = createWielderCombatant();
-// Infusion Needle with synthetic params, which reads its extra hit's share of ATK from the first number
-const infusionNeedlePassiveModule = createInfusionNeedlePassiveModule([0.3]);
 const createParticleCollected = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   count: 1,
@@ -27,6 +24,10 @@ const createNormalAttackLanded = () => ({
 });
 
 describe(createInfusionNeedlePassiveModule, () => {
+  const wielder: Combatant = createWielderCombatant();
+  // Infusion Needle with synthetic params, which reads its extra hit's share of ATK from the first number
+  const infusionNeedlePassiveModule = createInfusionNeedlePassiveModule([0.3]);
+
   test("a normal attack with no particle collected before it queues no extra hit", () => {
     expect.hasAssertions();
 

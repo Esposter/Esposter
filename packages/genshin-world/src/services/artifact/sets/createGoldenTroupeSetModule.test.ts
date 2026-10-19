@@ -21,19 +21,20 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const createStrike = (attackTag: AttackTag): KitStrike => ({
-  attackTag,
-  body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
-  combatant: wearer,
-  hit: KIT.plungeCollision,
-});
 const enemy = createEnemy(await readEnemyTables(GAME_DATA_LOCAL_BASE_URL), [], ENEMY_CAMP_MEMBER, "");
 
 describe(createGoldenTroupeSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createSetWearer(KIT);
+  const createStrike = (attackTag: AttackTag): KitStrike => ({
+    attackTag,
+    body: { facing: 0, height: 0, position: { x: 0, z: 0 } },
+    combatant: wearer,
+    hit: KIT.plungeCollision,
+  });
+
   test("raises Elemental Skill DMG by 20% from two pieces, and of no other strike", () => {
     expect.hasAssertions();
 

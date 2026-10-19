@@ -59,15 +59,15 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   winnerSideIndex: undefined,
 });
 
-const BLUSTERING_BLADE: GcgSkill = {
-  costs: [],
-  effect: "Effect_Damage_Cryo_1",
-  energyGain: 1,
-  id: BLUSTERING_BLADE_ID,
-  kind: GcgSkillKind.ElementalSkill,
-};
-
 describe("transcendentAutomaton", () => {
+  const BLUSTERING_BLADE: GcgSkill = {
+    costs: [],
+    effect: "Effect_Damage_Cryo_1",
+    energyGain: 1,
+    id: BLUSTERING_BLADE_ID,
+    kind: GcgSkillKind.ElementalSkill,
+  };
+
   test("Blustering Blade's switch lands Vermillion Hereafter's status on the character switched in", () => {
     expect.hasAssertions();
 

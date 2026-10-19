@@ -4,9 +4,9 @@ import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevel
 import { GAME_DAY_START_HOUR, GAME_TIME_ZONE } from "#src/services/time/constants";
 import { describe, expect, test } from "vitest";
 
-const CHALLENGE_LEVEL = { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "" }]] };
-
 describe(computeDomainLevelRows, () => {
+  const CHALLENGE_LEVEL = { defeatTarget: 1, timeLimitSeconds: 360, waves: [[{ count: 1, name: "" }]] };
+
   // The epoch fell on a Thursday in the server's zone, so the reset four days after it opens a Monday
   const DAILY_RESET = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
   const monday = DAILY_RESET.toZonedDateTimeISO(GAME_TIME_ZONE).add({ days: 4 }).toInstant();

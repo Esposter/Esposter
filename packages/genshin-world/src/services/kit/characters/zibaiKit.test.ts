@@ -32,35 +32,35 @@ import { describe, expect, test } from "vitest";
 
 const ZIBAI_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, ZIBAI_CHARACTER_ID);
 
-const MAX_HEALTH = 10_000;
-const SKILL_PRESS: KitInput = {
-  height: 0,
-  isAttackHeld: false,
-  isAttackPressed: false,
-  isBurstPressed: false,
-  isSkillHeld: false,
-  isSkillPressed: true,
-  locomotionState: LocomotionState.Idle,
-};
-
 // A combatant whose kit is a Moonsign benediction, the member a team's Ascendant Gleam counts
 const withMoonsignBenediction = (combatant: Combatant): Combatant => ({
   ...combatant,
   kit: { ...combatant.kit, moonsignBenediction: { getBaseDamageBonus: () => 0, lunarReactionTypes: [] } },
 });
 
-const createZibaiCombatant = (): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
-  characterId: ZIBAI_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: ZIBAI_KIT,
-  level: 90,
-  weaponType: WeaponType.Sword,
-});
-
 describe(createZibaiKitBehaviour, () => {
+  const MAX_HEALTH = 10_000;
+  const SKILL_PRESS: KitInput = {
+    height: 0,
+    isAttackHeld: false,
+    isAttackPressed: false,
+    isBurstPressed: false,
+    isSkillHeld: false,
+    isSkillPressed: true,
+    locomotionState: LocomotionState.Idle,
+  };
+
+  const createZibaiCombatant = (): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: MAX_HEALTH }]),
+    characterId: ZIBAI_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: ZIBAI_KIT,
+    level: 90,
+    weaponType: WeaponType.Sword,
+  });
+
   test("reads each talent multiplier from its proud skill groups", () => {
     expect.hasAssertions();
     expect([

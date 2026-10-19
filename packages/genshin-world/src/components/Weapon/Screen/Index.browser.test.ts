@@ -26,27 +26,28 @@ import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-const weaponName = props.nameText[weaponData.nameTextId] ?? "";
 const levelTextOf = (level: number, maxLevel: number) =>
   fillGameTextValues(ENGLISH_GAME_TEXT[GameTextKey.LevelFormat], `${level}/${maxLevel}`);
-const levelText = levelTextOf(1, weaponData.ascensionPhases[0]?.maxLevel ?? 1);
-// The copy in the bag sits at the level cap, whose text is the open weapon's text at the cap
-const copyLevelText = levelTextOf(atCapWeapon.level, weaponData.ascensionPhases[0]?.maxLevel ?? atCapWeapon.level);
-// The weapon the screen opens on, as its bag entry holds it, and the EXP it holds towards the level after its own
-const heldWeapon = getBagWeapon(props.inventory.items, OPEN_ENTRY_ID);
-const heldRequiredExp =
-  getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
-const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
-// The names a passive is given in the passive tests, its name and its three ranks' descriptions by their text ids
-const PASSIVE_NAMES: Record<string, string> = {
-  "passive-name": "Passive",
-  "passive-rank-1": "Rank one",
-  "passive-rank-2": "Rank two",
-  "passive-rank-3": "Rank three",
-};
-const PASSIVE_RANK_TEXT_IDS = ["passive-rank-1", "passive-rank-2", "passive-rank-3"];
 
 describe("weaponScreen", () => {
+  const weaponName = props.nameText[weaponData.nameTextId] ?? "";
+  const levelText = levelTextOf(1, weaponData.ascensionPhases[0]?.maxLevel ?? 1);
+  // The copy in the bag sits at the level cap, whose text is the open weapon's text at the cap
+  const copyLevelText = levelTextOf(atCapWeapon.level, weaponData.ascensionPhases[0]?.maxLevel ?? atCapWeapon.level);
+  // The weapon the screen opens on, as its bag entry holds it, and the EXP it holds towards the level after its own
+  const heldWeapon = getBagWeapon(props.inventory.items, OPEN_ENTRY_ID);
+  const heldRequiredExp =
+    getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
+  const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
+  // The names a passive is given in the passive tests, its name and its three ranks' descriptions by their text ids
+  const PASSIVE_NAMES: Record<string, string> = {
+    "passive-name": "Passive",
+    "passive-rank-1": "Rank one",
+    "passive-rank-2": "Rank two",
+    "passive-rank-3": "Rank three",
+  };
+  const PASSIVE_RANK_TEXT_IDS = ["passive-rank-1", "passive-rank-2", "passive-rank-3"];
+
   // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
     expect.hasAssertions();

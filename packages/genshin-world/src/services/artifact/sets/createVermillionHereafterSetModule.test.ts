@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
 const createWearer = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -51,6 +50,8 @@ const getAttackBonus = (wearer: Combatant, kitEffectState: KitEffectState): numb
     .reduce((sum, bonus) => sum + bonus.amount, 0);
 
 describe(createVermillionHereafterSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+
   test("a burst gives Nascent Light, ATK +8% for 16 seconds", () => {
     expect.hasAssertions();
 

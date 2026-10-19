@@ -25,8 +25,6 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (characterId = TRAVELER_CHARACTER_ID): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([]),
@@ -38,19 +36,6 @@ const createWearer = (characterId = TRAVELER_CHARACTER_ID): Combatant => ({
   ]),
   level: 1,
 });
-// A hit the given combatant deals of the given element, as the kit sends it
-const hitEnemy = (striker: Combatant, element: Element, context: KitContext) =>
-  emitKitEvent(
-    {
-      enemy,
-      hit: { ...KIT.plungeCollision, element },
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
-    context,
-  );
 // The DEF and Geo DMG shares the wearer's kit adds as it stands
 const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   const bonuses = wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [];
@@ -58,13 +43,29 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
     bonuses.filter((bonus) => bonus.attribute === attribute).reduce((sum, bonus) => sum + bonus.amount, 0);
   return { defense: sumOf(Attribute.DefensePercent), geo: sumOf(Attribute.GeoDamageBonus) };
 };
-const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
-  emitKitEvent(
-    { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
-    context,
-  );
 
 describe(createHuskOfOpulentDreamsSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // A hit the given combatant deals of the given element, as the kit sends it
+  const hitEnemy = (striker: Combatant, element: Element, context: KitContext) =>
+    emitKitEvent(
+      {
+        enemy,
+        hit: { ...KIT.plungeCollision, element },
+        isCritical: false,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker,
+      },
+      context,
+    );
+  const swapOff = (wearer: Combatant, context: KitContext, to = OTHER_CHARACTER_ID) =>
+    emitKitEvent(
+      { characterId: to, kind: KitEventKind.CharacterSwapped, previousCharacterId: wearer.characterId },
+      context,
+    );
+
   test("each Geo hit the wearer lands on the field adds a stack of 6% DEF and Geo DMG, up to four", () => {
     expect.hasAssertions();
 

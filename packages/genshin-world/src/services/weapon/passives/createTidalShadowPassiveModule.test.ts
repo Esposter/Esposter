@@ -9,10 +9,6 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createPass
 import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/createTidalShadowPassiveModule";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 1;
-const wielder: Combatant = createWielderCombatant();
-// Synthetic params, not the weapon's row: a quarter ATK for three seconds after the wielder is healed
-const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.25, 3, 0, 0]);
 const createHealthChanged = (characterId: number, healthShare: number): KitEvent => ({
   characterId,
   healthShare,
@@ -23,6 +19,11 @@ const createHealthChanged = (characterId: number, healthShare: number): KitEvent
 });
 
 describe(createTidalShadowPassiveModule, () => {
+  const OTHER_CHARACTER_ID = 1;
+  const wielder: Combatant = createWielderCombatant();
+  // Synthetic params, not the weapon's row: a quarter ATK for three seconds after the wielder is healed
+  const tidalShadowPassiveModule = createTidalShadowPassiveModule([0.25, 3, 0, 0]);
+
   test("a heal of the wielder raises its ATK by the rank's percentage for the rank's seconds", () => {
     expect.hasAssertions();
 

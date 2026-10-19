@@ -31,10 +31,6 @@ const {
   record: ittoRecord,
   toParameter,
 } = await readCharacterKitRecord(ITTO_CHARACTER_ID);
-const ROYAL_DESCENT_SECONDS = toKitSeconds(readFrame("royalDescent"));
-const ROYAL_DESCENT_DEFENSE_SHARE = readRecordParameter("royalDescentDefenseShare");
-// The Arataki Kesagiri at three stacks, the charged attack Itto's three normal attacks leave him holding
-const THREE_STACK_KESAGIRI = takeOne(readActions("kesagiris"), 2);
 const createIttoCombatant = (): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: 10_000 }]),
@@ -59,6 +55,11 @@ const landNormalAttacks = (context: KitContext): void => {
 };
 
 describe(createIttoKitBehaviour, () => {
+  const ROYAL_DESCENT_SECONDS = toKitSeconds(readFrame("royalDescent"));
+  const ROYAL_DESCENT_DEFENSE_SHARE = readRecordParameter("royalDescentDefenseShare");
+  // The Arataki Kesagiri at three stacks, the charged attack Itto's three normal attacks leave him holding
+  const THREE_STACK_KESAGIRI = takeOne(readActions("kesagiris"), 2);
+
   test("the burst, Royal Descent, adds its ATK per DEF and a Geo conversion with the burst's Normal ATK SPD, ending on a swap", () => {
     expect.hasAssertions();
     const combatant = createIttoCombatant();

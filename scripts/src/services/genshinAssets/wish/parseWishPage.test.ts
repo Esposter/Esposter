@@ -2,8 +2,6 @@ import { WishEventKind } from "#src/models/genshinAssets/wish/WishEventKind";
 import { parseWishPage } from "#src/services/genshinAssets/wish/parseWishPage";
 import { describe, expect, test } from "vitest";
 
-// The made-up page's title, which a refused page names
-const title = "a";
 // A banner page cut to its template and its Item Pool, its window on the epoch's first day at the offset given
 const createWishPage = (timeStartOffset: string) => `{{Wish
 |type = Weapon Event
@@ -19,6 +17,9 @@ const createWishPage = (timeStartOffset: string) => `{{Wish
 `;
 
 describe(parseWishPage, () => {
+  // The made-up page's title, which a refused page names
+  const title = "a";
+
   test("an event banner page is read into its window and featured items", () => {
     expect.hasAssertions();
 

@@ -20,7 +20,6 @@ import { computed, shallowRef } from "vue";
 
 vi.mock(import("#src/services/commission/readCommissionSlices"));
 
-const RANK = 12;
 const createSlice = (): CommissionSlice => ({
   bonuses: [],
   rewardTiers: [],
@@ -43,6 +42,8 @@ const createSlice = (): CommissionSlice => ({
 });
 
 describe(useWorldCommissions, () => {
+  const RANK = 12;
+
   // The epoch is eight in the morning in the server's zone, four hours past that day's 04:00 reset, whatever the reader's zone
   const todayReset = Temporal.Instant.fromEpochMilliseconds(0).subtract({ hours: GAME_DAY_START_HOUR });
   const afterReset = todayReset.add({ hours: 1 });

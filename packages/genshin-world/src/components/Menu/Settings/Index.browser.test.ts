@@ -9,22 +9,22 @@ import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 import { defineComponent, h, ref } from "vue";
 
-// The screen as its host holds it: the host keeps the settings and hands them back to the screen on every change
-const SettingsHost = defineComponent({
-  setup: () => {
-    const settings = ref<GenshinSettings>({ ...GENSHIN_SETTINGS_DEFAULTS });
-    return () =>
-      h(MenuSettings, {
-        ...props,
-        "onUpdate:settings": (value: GenshinSettings) => {
-          settings.value = value;
-        },
-        settings: settings.value,
-      });
-  },
-});
-
 describe("menuSettings", () => {
+  // The screen as its host holds it: the host keeps the settings and hands them back to the screen on every change
+  const SettingsHost = defineComponent({
+    setup: () => {
+      const settings = ref<GenshinSettings>({ ...GENSHIN_SETTINGS_DEFAULTS });
+      return () =>
+        h(MenuSettings, {
+          ...props,
+          "onUpdate:settings": (value: GenshinSettings) => {
+            settings.value = value;
+          },
+          settings: settings.value,
+        });
+    },
+  });
+
   // The Game Language row is the one that opens its list on the Language tab, which holds the game's fifteen languages
   test("the language list holds fifteen languages", async () => {
     expect.hasAssertions();

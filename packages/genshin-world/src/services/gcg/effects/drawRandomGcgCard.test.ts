@@ -7,11 +7,6 @@ import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterSta
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { describe, expect, test } from "vitest";
 
-const ARTIFACT_ID = 401;
-const OTHER_ARTIFACT_ID = 402;
-const ACTION_ID = 501;
-const HAND_CARD_LIMIT = 10;
-
 const createCard = (id: number, kind: GcgCardKind): GcgCard => ({
   costs: [{ count: 1, kind: GcgCostKind.Unaligned }],
   descriptionTextId: 2,
@@ -42,6 +37,11 @@ const createSide = (cards: GcgCard[], drawPile: number[]): GcgSideState => ({
 });
 
 describe(drawRandomGcgCard, () => {
+  const ARTIFACT_ID = 401;
+  const OTHER_ARTIFACT_ID = 402;
+  const ACTION_ID = 501;
+  const HAND_CARD_LIMIT = 10;
+
   test("should draw a random card of the kind from the draw pile into the hand, and take it out of the pile", () => {
     expect.hasAssertions();
     const side = createSide(

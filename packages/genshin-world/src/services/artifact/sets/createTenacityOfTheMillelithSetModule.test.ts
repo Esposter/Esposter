@@ -21,24 +21,25 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { describe, expect, test } from "vitest";
 
-const OTHER_CHARACTER_ID = 2;
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wearer = createSetWearer(KIT);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const damageDealtBy = (attackTag: AttackTag) =>
-  ({
-    attackTag,
-    enemy,
-    hit: KIT.plungeCollision,
-    isCritical: false,
-    isDefeated: false,
-    kind: KitEventKind.DamageTaken,
-    striker: wearer,
-  }) as const;
 
 describe(createTenacityOfTheMillelithSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const wearer = createSetWearer(KIT);
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const damageDealtBy = (attackTag: AttackTag) =>
+    ({
+      attackTag,
+      enemy,
+      hit: KIT.plungeCollision,
+      isCritical: false,
+      isDefeated: false,
+      kind: KitEventKind.DamageTaken,
+      striker: wearer,
+    }) as const;
+
   test("gives every deployed member 20% ATK and 30% Shield Strength for 3 seconds when its wearer's Elemental Skill hits, from four pieces", () => {
     expect.hasAssertions();
 

@@ -27,9 +27,6 @@ import { describe, expect, test } from "vitest";
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
-const ORIGIN = { x: 0, z: 0 };
-const POLESTAR_TICK_SECONDS = 4;
-const STELLAR_CONDUCT = { element: Element.Cryo, reactionType: ReactionType.StellarConduct };
 const createEnemyAt = (x: number) => createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, position: { x, z: 0 } }, "");
 // The DMG Bonus each buff of an attribute gives, in the order they were added
 const buffAmounts = (kitEffectState: KitEffectState, attribute: Attribute) =>
@@ -38,6 +35,10 @@ const buffAmounts = (kitEffectState: KitEffectState, attribute: Attribute) =>
   );
 
 describe("createPolestarFieldHooks", () => {
+  const ORIGIN = { x: 0, z: 0 };
+  const POLESTAR_TICK_SECONDS = 4;
+  const STELLAR_CONDUCT = { element: Element.Cryo, reactionType: ReactionType.StellarConduct };
+
   const combatant: Combatant = {
     ascension: 0,
     attributes: computeCharacterAttributes([]),

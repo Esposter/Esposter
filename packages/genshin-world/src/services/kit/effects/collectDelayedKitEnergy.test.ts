@@ -12,22 +12,23 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-const DELAY_ID = "seedEnergy";
 const createExpiry = (id: string): KitEvent => ({
   effect: { characterId: TRAVELER_CHARACTER_ID, id, kind: "status", secondsRemaining: 0, stacks: 6 },
   kind: KitEventKind.EffectExpired,
 });
 
 describe(collectDelayedKitEnergy, () => {
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+  const DELAY_ID = "seedEnergy";
+
   test("the delay running out gives its character the energy it held", () => {
     expect.hasAssertions();
 

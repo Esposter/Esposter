@@ -26,12 +26,6 @@ import { describe, expect, test } from "vitest";
 import { ref } from "vue";
 
 const adventureRankTables = await readAdventureRankTables(GAME_DATA_LOCAL_BASE_URL);
-const CHARACTER_ID = 1;
-const BENCHED_CHARACTER_ID = 2;
-const FRIENDSHIP_LEVELS: FriendshipLevels = [
-  { exp: 0, level: 1 },
-  { exp: 1000, level: 2 },
-];
 const createCharacter = (id: number): Character => ({
   artifacts: [],
   ascension: 0,
@@ -43,64 +37,71 @@ const createCharacter = (id: number): Character => ({
   talentLevels: { [CombatTalent.ElementalBurst]: 1, [CombatTalent.ElementalSkill]: 1, [CombatTalent.NormalAttack]: 1 },
   weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
 });
-const PLACEMENTS = [
-  { id: 1, position: { x: 0, z: 0 } },
-  { id: 2, position: { x: 100, z: 0 } },
-];
-const KIND_RULES: OutcropKindRule[] = [
-  {
-    kind: OutcropKind.Revelation,
-    playerLevel: 1,
-    unlockCityIds: [],
-    worldLevelRewards: [[{ itemId: MORA_ITEM_ID, maxCount: 100, minCount: 100 }]],
-  },
-];
-const epoch = Temporal.Instant.fromEpochMilliseconds(0);
-
-// A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
-const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
-  const events = createWorldEvents();
-  const adventureExp = ref(0);
-  const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
-  const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
-  const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
-  const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
-  const outcrops = useWorldOutcrops({
-    adventureExp,
-    adventureRankTables,
-    areaId: ref("mondstadt"),
-    characters,
-    completedMainQuestIds: ref(new Set<string>()),
-    enemyMap: new Map(),
-    events,
-    friendshipLevels,
-    gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
-    gameText: {},
-    getGroundHeight: () => 0,
-    inventory,
-    materialDataMap: new Map(),
-    nameText: {},
-    party: createParty([CHARACTER_ID]),
-    placements: ref(PLACEMENTS),
-    rank: ref(30),
-    regionStatueProgressMap: ref(new Map()),
-    setInventory: (nextInventory) => {
-      inventory.value = nextInventory;
-    },
-    setWallet: (nextWallet) => {
-      wallet.value = nextWallet;
-    },
-    wallet,
-  });
-  outcrops.kindRules.value = KIND_RULES;
-  outcrops.drawDayOutcrops(epoch, () => 0);
-  outcrops.touchOutcropsNear(0, 0, () => 0);
-  // The defeat of the camp's only enemy, which reveals the blossom
-  events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
-  return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, wallet };
-};
 
 describe("useWorldOutcrops", () => {
+  const CHARACTER_ID = 1;
+  const BENCHED_CHARACTER_ID = 2;
+  const FRIENDSHIP_LEVELS: FriendshipLevels = [
+    { exp: 0, level: 1 },
+    { exp: 1000, level: 2 },
+  ];
+  const PLACEMENTS = [
+    { id: 1, position: { x: 0, z: 0 } },
+    { id: 2, position: { x: 100, z: 0 } },
+  ];
+  const KIND_RULES: OutcropKindRule[] = [
+    {
+      kind: OutcropKind.Revelation,
+      playerLevel: 1,
+      unlockCityIds: [],
+      worldLevelRewards: [[{ itemId: MORA_ITEM_ID, maxCount: 100, minCount: 100 }]],
+    },
+  ];
+  const epoch = Temporal.Instant.fromEpochMilliseconds(0);
+
+  // A region's outcrops, with a held wallet of resin enough for two claims at a ley line, and the setters writing back
+  const createOutcrops = (resin = BlossomClaimResinMap[BlossomKind.LeyLine] * 2) => {
+    const events = createWorldEvents();
+    const adventureExp = ref(0);
+    const friendshipLevels = ref<FriendshipLevels | undefined>(FRIENDSHIP_LEVELS);
+    const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: resin });
+    const characters = ref<Character[]>([createCharacter(CHARACTER_ID), createCharacter(BENCHED_CHARACTER_ID)]);
+    const inventory = ref<Inventory>({ ...EMPTY_INVENTORY });
+    const outcrops = useWorldOutcrops({
+      adventureExp,
+      adventureRankTables,
+      areaId: ref("mondstadt"),
+      characters,
+      completedMainQuestIds: ref(new Set<string>()),
+      enemyMap: new Map(),
+      events,
+      friendshipLevels,
+      gameDataBaseUrl: GAME_DATA_LOCAL_BASE_URL,
+      gameText: {},
+      getGroundHeight: () => 0,
+      inventory,
+      materialDataMap: new Map(),
+      nameText: {},
+      party: createParty([CHARACTER_ID]),
+      placements: ref(PLACEMENTS),
+      rank: ref(30),
+      regionStatueProgressMap: ref(new Map()),
+      setInventory: (nextInventory) => {
+        inventory.value = nextInventory;
+      },
+      setWallet: (nextWallet) => {
+        wallet.value = nextWallet;
+      },
+      wallet,
+    });
+    outcrops.kindRules.value = KIND_RULES;
+    outcrops.drawDayOutcrops(epoch, () => 0);
+    outcrops.touchOutcropsNear(0, 0, () => 0);
+    // The defeat of the camp's only enemy, which reveals the blossom
+    events.emit("defeatEnemy", { campId: "outcrop-1", id: "0", state: EnemyState.Dead } as Enemy);
+    return { adventureExp, characters, events, friendshipLevels, inventory, outcrops, wallet };
+  };
+
   test("a touch spawns the outcrop's camp, and the last enemy's defeat leaves it claimable", () => {
     expect.hasAssertions();
 

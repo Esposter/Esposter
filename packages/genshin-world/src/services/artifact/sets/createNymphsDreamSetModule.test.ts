@@ -24,28 +24,12 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const OTHER_CHARACTER_ID = 2;
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createWearer = (): Combatant => ({
   ...createSetWearer(KIT),
   kit: getPassiveKit(KIT, [
     createNymphsDreamSetModule(getArtifactSetBonus(statTables, NYMPHS_DREAM_ARTIFACT_SET_ID, 4)),
   ]),
 });
-// An enemy the given combatant's attack of the given kind hits, as the kit sends it
-const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
-  emitKitEvent(
-    {
-      attackTag,
-      enemy,
-      hit: KIT.plungeCollision,
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
-    context,
-  );
 // The ATK and Hydro DMG shares the wearer's kit adds as it stands
 const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
   const bonuses = wearer.kit.getPassiveBonuses?.(wearer, 1, [], kitEffectState.effects) ?? [];
@@ -55,6 +39,23 @@ const getBonuses = (wearer: Combatant, kitEffectState: KitEffectState) => {
 };
 
 describe(createNymphsDreamSetModule, () => {
+  const OTHER_CHARACTER_ID = 2;
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  // An enemy the given combatant's attack of the given kind hits, as the kit sends it
+  const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
+    emitKitEvent(
+      {
+        attackTag,
+        enemy,
+        hit: KIT.plungeCollision,
+        isCritical: false,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker,
+      },
+      context,
+    );
+
   test("each hit the wearer's attack lands on an enemy adds a stack, and one, two and three or more stacks raise ATK and Hydro DMG by their tier", () => {
     expect.hasAssertions();
 

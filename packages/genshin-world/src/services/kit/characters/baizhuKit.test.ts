@@ -25,33 +25,6 @@ import { describe, expect, test } from "vitest";
 
 const BAIZHU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BAIZHU_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-// A member on the field beside Baizhu
-const ACTIVE_CHARACTER_ID = 10_000_050;
-// The DMG Bonus Baizhu's first strike, a Dendro hit, takes from Baizhu at the ascension while the character on the field
-// Stands at the share of their HP
-const getDendroStrikeDamageBonus = (ascension: number, activeHealthShare: number): number | undefined => {
-  const combatant: Combatant = {
-    ascension,
-    attributes: computeCharacterAttributes([]),
-    characterId: BAIZHU_CHARACTER_ID,
-    constellationCount: 0,
-    element: Element.Dendro,
-    elementalResonances: [],
-    kit: BAIZHU_KIT,
-    level: 90,
-    weaponType: WeaponType.Catalyst,
-  };
-  const party = createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]);
-  getPartyMember(party, ACTIVE_CHARACTER_ID).healthShare = activeHealthShare;
-  const hit = takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits);
-  return BAIZHU_KIT.getStrikeDamageBonus?.(
-    { body: createKitTestContext(combatant).body, combatant, hit },
-    createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-    party,
-    [],
-  );
-};
-
 describe(createBaizhuKitBehaviour, () => {
   // The effects an action's start adds to the team's, which its owner holds
   const castAction = (action: KitAction): KitEffectState => {
@@ -152,6 +125,33 @@ describe(createBaizhuKitBehaviour, () => {
 });
 
 describe("five Fortunes Forever", () => {
+  // A member on the field beside Baizhu
+  const ACTIVE_CHARACTER_ID = 10_000_050;
+  // The DMG Bonus Baizhu's first strike, a Dendro hit, takes from Baizhu at the ascension while the character on the
+  // Field stands at the share of their HP
+  const getDendroStrikeDamageBonus = (ascension: number, activeHealthShare: number): number | undefined => {
+    const combatant: Combatant = {
+      ascension,
+      attributes: computeCharacterAttributes([]),
+      characterId: BAIZHU_CHARACTER_ID,
+      constellationCount: 0,
+      element: Element.Dendro,
+      elementalResonances: [],
+      kit: BAIZHU_KIT,
+      level: 90,
+      weaponType: WeaponType.Catalyst,
+    };
+    const party = createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]);
+    getPartyMember(party, ACTIVE_CHARACTER_ID).healthShare = activeHealthShare;
+    const hit = takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits);
+    return BAIZHU_KIT.getStrikeDamageBonus?.(
+      { body: createKitTestContext(combatant).body, combatant, hit },
+      createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      party,
+      [],
+    );
+  };
+
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
@@ -171,50 +171,52 @@ describe("five Fortunes Forever", () => {
   });
 });
 
-// Gossamer Sprite: Splice is priced once the hit the active member takes reaches Baizhu's kit as an event, which is how
-// The party's kits read them, so a test sends the event as the party's kit does
-const BAIZHU_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-
-// Baizhu stands in the team beside his teammate, and the teammate's hits are the ones the kit reads, as the active member's
-const createSpliceTeam = (constellationCount: number) => {
-  const baizhu: Combatant = {
-    ascension: 0,
-    attributes: computeCharacterAttributes([]),
-    characterId: BAIZHU_CHARACTER_ID,
-    constellationCount,
-    elementalResonances: [],
-    kit: BAIZHU_KIT,
-    level: 90,
-    weaponType: WeaponType.Catalyst,
-  };
-  const teammate = { ...baizhu, characterId: ACTIVE_CHARACTER_ID };
-  const context = createKitTestContext(teammate, {
-    characterIdCombatantMap: new Map<number, Combatant>([
-      [BAIZHU_CHARACTER_ID, baizhu],
-      [ACTIVE_CHARACTER_ID, teammate],
-    ]),
-    party: createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]),
-  });
-  return { baizhu, context, teammate };
-};
-
-// The kit takes a hit of the striker's on the enemy, the event the party's kits take, with Baizhu's combatant as the kit's own
-const strikeSpliceEnemy = (context: KitContext, striker: Combatant, baizhu: Combatant): void => {
-  BAIZHU_KIT.onKitEvent?.(
-    {
-      enemy: BAIZHU_ENEMY,
-      hit: takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits),
-      isCritical: false,
-      isDefeated: false,
-      kind: KitEventKind.DamageTaken,
-      striker,
-    },
-    context,
-    baizhu,
-  );
-};
-
 describe("constellation 2's Gossamer Sprite: Splice", () => {
+  // A member on the field beside Baizhu
+  const ACTIVE_CHARACTER_ID = 10_000_050;
+  // Baizhu stands in the team beside his teammate, the active member, whose hits are the ones the kit reads
+  const createSpliceTeam = (constellationCount: number) => {
+    const baizhu: Combatant = {
+      ascension: 0,
+      attributes: computeCharacterAttributes([]),
+      characterId: BAIZHU_CHARACTER_ID,
+      constellationCount,
+      elementalResonances: [],
+      kit: BAIZHU_KIT,
+      level: 90,
+      weaponType: WeaponType.Catalyst,
+    };
+    const teammate = { ...baizhu, characterId: ACTIVE_CHARACTER_ID };
+    const context = createKitTestContext(teammate, {
+      characterIdCombatantMap: new Map<number, Combatant>([
+        [BAIZHU_CHARACTER_ID, baizhu],
+        [ACTIVE_CHARACTER_ID, teammate],
+      ]),
+      party: createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]),
+    });
+    return { baizhu, context, teammate };
+  };
+  // Gossamer Sprite: Splice is priced once the hit the active member takes reaches Baizhu's kit as an event, which is
+  // How the party's kits read them, so a test sends the event as the party's kit does
+  const BAIZHU_ENEMY = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  // The kit takes a hit of the striker's on the enemy, the event the party's kits take, with Baizhu's combatant as
+  // The kit's own
+  const strikeSpliceEnemy = (context: KitContext, striker: Combatant, baizhu: Combatant): void => {
+    BAIZHU_KIT.onKitEvent?.(
+      {
+        enemy: BAIZHU_ENEMY,
+        hit: takeOne(takeOne(BAIZHU_KIT.normalAttacks).hits),
+        isCritical: false,
+        isDefeated: false,
+        kind: KitEventKind.DamageTaken,
+        striker,
+      },
+      context,
+      baizhu,
+    );
+  };
+
   test("an active constellation's switch queues a Splice on an enemy his active member hits", () => {
     expect.hasAssertions();
     const { baizhu, context, teammate } = createSpliceTeam(2);
@@ -245,7 +247,8 @@ describe("constellation 2's Gossamer Sprite: Splice", () => {
   test("the Splice fires once every five seconds", () => {
     expect.hasAssertions();
     const { baizhu, context, teammate } = createSpliceTeam(2);
-    // A step clears the strikes queued before it, so each read counts the Splices queued on the enemy since the last step
+    // A step clears the strikes queued before it, so each read counts the Splices queued on the enemy since
+    // The last step
     const countQueuedSplices = (): number => context.strikes.filter(({ target }) => target === BAIZHU_ENEMY).length;
     strikeSpliceEnemy(context, teammate, baizhu);
     strikeSpliceEnemy(context, teammate, baizhu);
@@ -253,7 +256,8 @@ describe("constellation 2's Gossamer Sprite: Splice", () => {
     stepKitSeconds(context, 4);
     strikeSpliceEnemy(context, teammate, baizhu);
     const countWhileCoolingDown = countQueuedSplices();
-    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the Splice is read once a step past five
+    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the Splice is read once a
+    // Step past five
     stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
     strikeSpliceEnemy(context, teammate, baizhu);
 

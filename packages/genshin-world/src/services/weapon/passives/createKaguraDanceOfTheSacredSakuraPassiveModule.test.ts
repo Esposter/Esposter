@@ -20,16 +20,6 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
 
 const readPyroDamageBonus = ({ kitEffectState }: KitContext): number =>
   kitEffectState.effects
@@ -37,6 +27,17 @@ const readPyroDamageBonus = ({ kitEffectState }: KitContext): number =>
     .reduce((sum, effect) => sum + (effect.kind === "buff" ? effect.amount : 0), 0);
 
 describe(createKaguraDanceOfTheSacredSakuraPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+
   // Kagura Dance of the Sacred Sakura at its first rank: each Elemental Skill adds a stack of 12% Elemental Skill DMG
   // And 12% Stellar-Conduct DMG for 24 seconds, up to three, and three stacks give 12% All Elemental DMG Bonus
   const passiveModule = createKaguraDanceOfTheSacredSakuraPassiveModule([0.12, 24, 0.12, 0.12]);

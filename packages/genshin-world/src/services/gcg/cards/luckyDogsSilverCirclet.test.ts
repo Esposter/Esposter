@@ -10,11 +10,6 @@ import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 
-const CIRCLET_ID = 312_002;
-const MAX_HP = 10;
-const ELEMENTAL_SKILL: GcgSkill = { costs: [], effect: "", energyGain: 0, id: 1, kind: GcgSkillKind.ElementalSkill };
-const NORMAL_ATTACK: GcgSkill = { ...ELEMENTAL_SKILL, id: 2, kind: GcgSkillKind.NormalAttack };
-
 const createSide = (hp: number): GcgSideState => ({
   activeIndex: 0,
   cards: [],
@@ -34,22 +29,27 @@ const createSide = (hp: number): GcgSideState => ({
   usedSkillIds: [],
 });
 
-const createDuel = (side: GcgSideState): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
-  sides: [side, createSide(MAX_HP)],
-});
-
-const zoneCard = { cardId: CIRCLET_ID, counter: 0, rounds: 0, usages: 0 };
-
 describe("luckyDogsSilverCirclet", () => {
+  const CIRCLET_ID = 312_002;
+  const MAX_HP = 10;
+  const ELEMENTAL_SKILL: GcgSkill = { costs: [], effect: "", energyGain: 0, id: 1, kind: GcgSkillKind.ElementalSkill };
+  const NORMAL_ATTACK: GcgSkill = { ...ELEMENTAL_SKILL, id: 2, kind: GcgSkillKind.NormalAttack };
+
+  const createDuel = (side: GcgSideState): GcgDuel => ({
+    cardModules: GcgCardIdModuleMap,
+    skillModules: GcgEffectNameSkillModuleMap,
+    actingSideIndex: 0,
+    firstSideIndex: 0,
+    nextFirstSideIndex: 0,
+    phase: GcgPhase.Action,
+    random: () => 0,
+    round: 1,
+    rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
+    sides: [side, createSide(MAX_HP)],
+  });
+
+  const zoneCard = { cardId: CIRCLET_ID, counter: 0, rounds: 0, usages: 0 };
+
   test("should heal the character it is equipped to for 2 HP after an Elemental Skill", () => {
     expect.hasAssertions();
     const side = createSide(5);

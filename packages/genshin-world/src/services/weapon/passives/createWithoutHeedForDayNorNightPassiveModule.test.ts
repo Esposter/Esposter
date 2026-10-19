@@ -17,22 +17,23 @@ import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-const wielder: Combatant = {
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId: TRAVELER_CHARACTER_ID,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit: TRAVELER_KIT,
-  level: 1,
-};
-const LAWS_OF_THE_BOARD_BONUSES = [
-  { amount: 0.2, attribute: Attribute.AttackPercent },
-  { amount: 100, attribute: Attribute.ElementalMastery },
-];
 
 describe(createWithoutHeedForDayNorNightPassiveModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  const wielder: Combatant = {
+    ascension: 0,
+    attributes: computeCharacterAttributes([]),
+    characterId: TRAVELER_CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances: [],
+    kit: TRAVELER_KIT,
+    level: 1,
+  };
+  const LAWS_OF_THE_BOARD_BONUSES = [
+    { amount: 0.2, attribute: Attribute.AttackPercent },
+    { amount: 100, attribute: Attribute.ElementalMastery },
+  ];
+
   // Without Heed for Day nor Night at its first rank: an Elemental Skill gives Laws of the Board, 20% ATK and 100
   // Elemental Mastery for six seconds, once every twelve, and a Charged Attack hit extends it by six seconds, six at
   // Most

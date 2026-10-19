@@ -7,11 +7,6 @@ import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { openArchiveArtifactSets } from "#src/services/archive/openArchiveArtifactSets";
 import { describe, expect, test } from "vitest";
 
-// Made-up sets whose pieces take made-up item ids, so the test reads no game data
-const FIVE_PIECE_SET_ID = 90_001;
-const ONE_PIECE_SET_ID = 90_002;
-const NO_ENTRY_SET_ID = 90_003;
-
 const createReliquarySet = (id: number, slots: ArtifactSlot[]): ReliquarySetData => ({
   id,
   nameTextId: `TEST_SET_${id}`,
@@ -26,21 +21,26 @@ const createReliquarySet = (id: number, slots: ArtifactSlot[]): ReliquarySetData
   })),
 });
 
-const reliquarySets = [
-  createReliquarySet(FIVE_PIECE_SET_ID, [
-    ArtifactSlot.CircletOfLogos,
-    ArtifactSlot.FlowerOfLife,
-    ArtifactSlot.GobletOfEonothem,
-    ArtifactSlot.PlumeOfDeath,
-    ArtifactSlot.SandsOfEon,
-  ]),
-  createReliquarySet(ONE_PIECE_SET_ID, [ArtifactSlot.CircletOfLogos]),
-  createReliquarySet(NO_ENTRY_SET_ID, [ArtifactSlot.CircletOfLogos]),
-];
-
 const createArtifact = (setId: number, slot: ArtifactSlot): Pick<Artifact, "setId" | "slot"> => ({ setId, slot });
 
 describe(openArchiveArtifactSets, () => {
+  // Made-up sets whose pieces take made-up item ids, so the test reads no game data
+  const FIVE_PIECE_SET_ID = 90_001;
+  const ONE_PIECE_SET_ID = 90_002;
+  const NO_ENTRY_SET_ID = 90_003;
+
+  const reliquarySets = [
+    createReliquarySet(FIVE_PIECE_SET_ID, [
+      ArtifactSlot.CircletOfLogos,
+      ArtifactSlot.FlowerOfLife,
+      ArtifactSlot.GobletOfEonothem,
+      ArtifactSlot.PlumeOfDeath,
+      ArtifactSlot.SandsOfEon,
+    ]),
+    createReliquarySet(ONE_PIECE_SET_ID, [ArtifactSlot.CircletOfLogos]),
+    createReliquarySet(NO_ENTRY_SET_ID, [ArtifactSlot.CircletOfLogos]),
+  ];
+
   const EQUIPMENT_ENTRY_IDS: ReadonlySet<number> = new Set([FIVE_PIECE_SET_ID, ONE_PIECE_SET_ID]);
 
   const emptyProgress: ArchiveProgress = new Map();
