@@ -68,7 +68,7 @@ const readSwitchCooldowns = (
         checkIsGoPunctuation(tokens[index + 1], "=") &&
         !checkIsGoPunctuation(tokens[index - 1], "."),
     );
-    if (assignment < 0) return [];
+    if (assignment === -1) return [];
     const frames = readGoNumber(
       evaluateGoExpression(parseGoExpression(tokens, assignment + 2).expression, resolveName),
     );

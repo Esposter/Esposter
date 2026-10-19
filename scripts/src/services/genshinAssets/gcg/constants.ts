@@ -42,7 +42,7 @@ export const GcgElementTableNameMap: Map<string, Element> = new Map<string, Elem
 // Characters' skills create. Deck 12305's are Chonghua Frost Field, Icy Quill, Talisman Spirit and Yaksha's Mask, which its
 // Characters' skills create too. Deck 14410's are Tengu Juurai: Ambush and Stormcluster, Crowfeather Cover, Darkfire Furnace,
 // Fiery Rebirth, Aegis of Abyssal Flame, Chains of Warding Thunder, Electro Crystal Core and the three Hilichurl summons, which
-// its characters' skills and cards create
+// Its characters' skills and cards create
 export const GcgDeckIdCreatedCardIdsMap: Map<number, number[]> = new Map<number, number[]>([
   [1, [113_011, 113_031, 112_031, 112_032]],
   [2, [113_021, 113_022, 114_011, 122_010, 122_011, 122_012, 122_013]],

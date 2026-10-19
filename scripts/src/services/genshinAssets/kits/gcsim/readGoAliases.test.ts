@@ -18,9 +18,9 @@ func (c *char) attack() {
 
   const tokens = tokenizeGo(source);
   const usePosition = (occurrence: number) =>
-    tokens.reduce(
+    tokens.reduce<number[]>(
       (found, token, position) => (token.text === "mult" && found.length < occurrence ? [...found, position] : found),
-      [] as number[],
+      [],
     )[occurrence - 1];
 
   test("resolves a name bound twice to the binding nearest before each use", () => {

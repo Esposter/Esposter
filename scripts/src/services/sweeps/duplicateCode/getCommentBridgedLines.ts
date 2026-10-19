@@ -11,9 +11,8 @@ export const getCommentBridgedLines = (text: string, kindLines: Set<number>): Se
   let pendingCommentLines: number[] = [];
   for (const [index, line] of lines.entries()) {
     const lineNumber = index + 1;
-    if (commentLines.has(lineNumber)) {
-      pendingCommentLines.push(lineNumber);
-    } else if (line.trim()) {
+    if (commentLines.has(lineNumber)) pendingCommentLines.push(lineNumber);
+    else if (line.trim()) {
       if (previousCodeLine !== undefined && kindLines.has(previousCodeLine) && kindLines.has(lineNumber))
         for (const commentLine of pendingCommentLines) bridgedLines.add(commentLine);
       pendingCommentLines = [];

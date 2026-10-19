@@ -3,7 +3,7 @@ interface RegionCampsData {
 }
 
 // The kinds the regions' camps place and the extra kinds given, the bounties', the weekly bosses' and the Spiral Abyss's,
-// each once, in ascending order of its id. The enemies dataset publishes them
+// Each once, in ascending order of its id. The enemies dataset publishes them
 export const collectEnemyKindIds = (
   regionDatas: readonly RegionCampsData[],
   extraKindIds: readonly number[],

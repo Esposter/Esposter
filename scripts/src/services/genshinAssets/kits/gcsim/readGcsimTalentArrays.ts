@@ -19,13 +19,13 @@ export const readGcsimTalentArrays = (source: string): Map<string, GcsimTalentAr
     let endIndex = lineIndex;
     for (; endIndex < lines.length; endIndex++) {
       const code = (lines[endIndex] ?? "").replace(/\/\/.*$/u, "");
-      for (const token of code.match(TOKEN_REGEX) ?? []) {
+      for (const token of code.match(TOKEN_REGEX) ?? [])
         if (token === "{") openGroups.push([]);
         else if (token === "}") {
           const values = openGroups.pop() ?? [];
           if (values.length > 0) rows.push(values);
         } else if (NUMBER_REGEX.test(token)) openGroups.at(-1)?.push(Number(token));
-      }
+
       if (openGroups.length === 0) break;
     }
     talentArrayMap.set(name, { line: lineIndex + 1, rows });

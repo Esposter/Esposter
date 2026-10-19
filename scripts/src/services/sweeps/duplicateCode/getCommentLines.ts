@@ -9,9 +9,9 @@ export const getCommentLines = (lines: string[]): Set<number> => {
     if (isInBlockComment) {
       commentLines.add(index + 1);
       isInBlockComment = !trimmedLine.endsWith("*/");
-    } else if (trimmedLine.startsWith("//") || (trimmedLine.startsWith("/*") && trimmedLine.endsWith("*/"))) {
+    } else if (trimmedLine.startsWith("//") || (trimmedLine.startsWith("/*") && trimmedLine.endsWith("*/")))
       commentLines.add(index + 1);
-    } else if (trimmedLine.startsWith("/*") && !trimmedLine.includes("*/")) {
+    else if (trimmedLine.startsWith("/*") && !trimmedLine.includes("*/")) {
       commentLines.add(index + 1);
       isInBlockComment = true;
     }

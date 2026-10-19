@@ -117,6 +117,7 @@ describe(getNamedHitKitCandidates, () => {
 
     expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).size).toBe(0);
   });
+
   test("takes no call where a second site of the key makes as many calls, though its own call has no delay", () => {
     expect.hasAssertions();
 
@@ -134,6 +135,7 @@ describe(getNamedHitKitCandidates, () => {
 
     expect(getNamedHitKitCandidates(valueMap, namedHitCandidateMap).size).toBe(0);
   });
+
   test("takes no calls from keys whose calls of one site land at one delay, as their order is unknown", () => {
     expect.hasAssertions();
 

@@ -106,6 +106,7 @@ describe(buildKitPublication, () => {
       2: has no published kit]
     `);
   });
+
   test("names the kit and the record path of a talent reference its sources do not read", () => {
     expect.hasAssertions();
 

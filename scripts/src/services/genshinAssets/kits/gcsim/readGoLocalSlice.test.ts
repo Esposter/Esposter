@@ -19,7 +19,7 @@ describe(readGoLocalSlice, () => {
       ].join("\n"),
     );
 
-    expect(readGoLocalSlice(tokens, readGoNamedFunctions(tokens), "ele", tokens.length)).toStrictEqual(undefined);
+    expect(readGoLocalSlice(tokens, readGoNamedFunctions(tokens), "ele", tokens.length)).toBeUndefined();
   });
 
   test("reads the local slice a closure reads, declared in the function the closure is in before it", () => {
@@ -88,6 +88,6 @@ describe(readGoLocalSlice, () => {
     );
     const position = tokens.findLastIndex((token) => token.text === "ele");
 
-    expect(readGoLocalSlice(tokens, readGoNamedFunctions(tokens), "ele", position)).toStrictEqual(undefined);
+    expect(readGoLocalSlice(tokens, readGoNamedFunctions(tokens), "ele", position)).toBeUndefined();
   });
 });

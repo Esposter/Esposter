@@ -5,7 +5,8 @@ import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { KIT_LENGTH_KEY, UNMEASURED_HOLD_SECONDS } from "#src/services/genshinAssets/kits/constants";
-import { Element, KitPlunge, KitTargeting } from "genshin-world";
+import type { Element } from "genshin-world";
+import { KitPlunge, KitTargeting } from "genshin-world";
 
 // Every stance's normal attacks, whichever stance a kit names, by the length its normal attacks carry
 const STANCE_NORMAL_ATTACKS_LENGTH_REGEX = /^(?<actionsPath>stances\.[^.]+\.normalAttacks)\.length$/u;

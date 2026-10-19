@@ -77,6 +77,7 @@ describe(getWikiKitCandidates, () => {
       ),
     ).toStrictEqual({ "skillHolds.0.action.hits.0.poiseDamage": [100] });
   });
+
   test("joins Xiangling's rows by their titles, the skill's and burst's by the words their table labels share", () => {
     expect.hasAssertions();
 

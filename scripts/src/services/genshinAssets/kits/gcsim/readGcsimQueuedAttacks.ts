@@ -308,7 +308,7 @@ const readEnemyQueryLoops = (tokens: readonly GoToken[], scope: GoScope, file: s
 // Locals its own function gives one value resolve to a number (see `createGoScope`). A call in a loop of constant bounds
 // Is read once per iteration, its delay with the loop's variable taking that iteration's value. A call in a `Tasks.Add` or
 // `QueueCharTask` closure adds the closure's delay to its own, as the task runs its body at that delay. A loop's bound
-// reads the value a constellation gives it, the base kit's by default
+// Reads the value a constellation gives it, the base kit's by default
 export const readGcsimQueuedAttacks = (
   sources: readonly GoSource[],
   constantMap: ReadonlyMap<string, GoConstant>,

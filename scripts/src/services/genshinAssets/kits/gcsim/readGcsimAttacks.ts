@@ -207,7 +207,7 @@ export const readGcsimAttacks = (
       const literalLine = priorAttacks.at(-1)?.line;
       return priorAttacks.filter((attack) => attack.line === literalLine);
     };
-    for (const [position, token] of tokens.entries()) {
+    for (const [position, token] of tokens.entries())
       if (token.text === "AttackInfo" && checkIsGoPunctuation(tokens[position + 1], "{")) {
         // A function's result type, `func (c *char) a1AttackInfo() info.AttackInfo {`, opens its body rather than a literal
         const typeStart = checkIsGoPunctuation(tokens[position - 1], ".") ? position - 2 : position;
@@ -317,7 +317,7 @@ export const readGcsimAttacks = (
             withBranch({ ...sourceAttack, line: token.line, siteLine: token.line, variableName: token.text }, position),
           );
       }
-    }
+
     return attacks;
   });
 };

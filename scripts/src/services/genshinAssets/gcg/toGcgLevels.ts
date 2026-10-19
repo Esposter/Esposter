@@ -4,7 +4,7 @@ import type { ExcelGcgWeekLevelRow } from "#src/models/genshinAssets/gcg/ExcelGc
 import type { GcgChallengerGame, GcgLevelLock, GcgPlayerLevel } from "genshin-world";
 
 // The Player Levels, each with the total EXP that reaches it, each challenger's duels with the level that opens each, and
-// the locks that hold the Player Level until their main quest is done. A level's row gives the EXP that passes it to the
+// The locks that hold the Player Level until their main quest is done. A level's row gives the EXP that passes it to the
 // Next, so a level's total is the EXP of every level below it summed
 export const toGcgLevels = (
   levelRows: ExcelGcgLevelRow[],

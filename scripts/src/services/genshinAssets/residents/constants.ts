@@ -17,7 +17,7 @@ export const RESIDENT_DUEL_GAME_ID_MAP: ReadonlyMap<string, number> = new Map<st
 ]);
 // The week games the residents offer in their weekly guest challenge, each at the seat of the NPC who offers it. Kimiya's week
 // Row (110) names game 1103 at level 5 among the five games the row lists, and the Lucky Coins and Player EXP are the
-// week's reward at that level, from the GCGWeekReward rows at level 5
+// Week's reward at that level, from the GCGWeekReward rows at level 5
 export const RESIDENT_WEEK_GAME_MAP: ReadonlyMap<string, ResidentWeekGame> = new Map<string, ResidentWeekGame>([
   ["9715", { gameId: 1103, gcgLevel: 5, luckyCoins: 900, playerExp: 200 }],
 ]);

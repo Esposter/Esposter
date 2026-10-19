@@ -45,7 +45,7 @@ const findBlock = (tokens: readonly GoToken[], position: number): GoBlock => {
     } else if (depth === 0 && checkIsCaseClause(token)) {
       let end = tokens.length;
       let caseDepth = 0;
-      for (let next = previous + 1; next < tokens.length; next++) {
+      for (let next = previous + 1; next < tokens.length; next++)
         if (checkIsGoPunctuation(tokens[next], "{")) caseDepth++;
         else if (checkIsGoPunctuation(tokens[next], "}")) {
           if (caseDepth === 0) {
@@ -57,7 +57,7 @@ const findBlock = (tokens: readonly GoToken[], position: number): GoBlock => {
           end = next;
           break;
         }
-      }
+
       return { end, start: previous };
     }
   }

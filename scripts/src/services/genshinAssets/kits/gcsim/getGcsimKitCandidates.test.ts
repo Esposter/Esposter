@@ -666,6 +666,7 @@ describe(getGcsimKitCandidates, () => {
       ),
     ).toStrictEqual([[2], [24], [65]]);
   });
+
   test("reads each queue call of Rosaria's burst as a hit, her lance's a Mult set's copy of the attack the first fires, and no DoT tick", () => {
     expect.hasAssertions();
 
@@ -684,6 +685,7 @@ describe(getGcsimKitCandidates, () => {
       ),
     ).toStrictEqual([[2], [15], [56]]);
   });
+
   test("reads no hit from the repeated calls of a Mult set's copy in Kujou Sara's cluster loop, which are its ticks", () => {
     expect.hasAssertions();
 
@@ -702,6 +704,7 @@ describe(getGcsimKitCandidates, () => {
       ),
     ).toStrictEqual([[1], [51], undefined]);
   });
+
   test("joins a frames path the kit holds under a constant's name to that constant, and adds no path the kit lacks", () => {
     expect.hasAssertions();
 

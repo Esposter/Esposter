@@ -7,7 +7,7 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
 
 // The card game's levels slice, read from the dump's level, week-level and level-lock tables: each Player Level's total EXP,
-// each challenger's duels with the level that opens each, and the locks that hold the Player Level
+// Each challenger's duels with the level that opens each, and the locks that hold the Player Level
 export const buildGcgLevels = (): Record<string, unknown> => {
   const { challengerGames, playerLevelLocks, playerLevels } = toGcgLevels(
     readExcelTable<ExcelGcgLevelRow>("GCGLevelExcelConfigData"),

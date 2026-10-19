@@ -13,8 +13,7 @@ export const mergeKitSourceCandidates = ({
   gcsimCandidateMap: ReadonlyMap<string, KitCandidate[]>;
   tableCandidateMap: ReadonlyMap<string, KitCandidate[]>;
   wikiCandidateMap: ReadonlyMap<string, KitCandidate[]>;
-}): Map<string, KitCandidate[]> => {
+}): Map<string, KitCandidate[]> =>
   // The tables are passed first, so each path takes them first. A path only gcsim or the wiki gives has no table
   // Candidate to take first, so its gcsim then wiki order is the same either way
-  return mergeKitCandidates(tableCandidateMap, gcsimCandidateMap, wikiCandidateMap);
-};
+  mergeKitCandidates(tableCandidateMap, gcsimCandidateMap, wikiCandidateMap);

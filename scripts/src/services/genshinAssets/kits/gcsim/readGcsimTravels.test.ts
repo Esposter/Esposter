@@ -33,6 +33,7 @@ func (c *char) Skill(p map[string]int) (action.Info, error) {
       ]),
     );
   });
+
   test("gives the constant under a `windup` operand its travel, and the constants a struct field is set to its travel", () => {
     expect.hasAssertions();
 

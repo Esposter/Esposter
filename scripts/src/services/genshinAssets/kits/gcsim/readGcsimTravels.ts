@@ -15,7 +15,7 @@ const OPERAND_NAME_REGEX = /(?:(?<dot>\.)|(?<![\w.]))(?<name>[A-Za-z_]\w*)(?!\w)
 // No name either, `a` in `a.CanQueueAfter`
 const readOperandNames = (operand: string, fieldValueMap: ReadonlyMap<string, string[]>): string[] => {
   const flatOperand = operand.replaceAll(/\[[^\]]*\]/gu, "");
-  return Array.from(flatOperand.matchAll(OPERAND_NAME_REGEX)).flatMap(({ groups, index = 0 }): string[] => {
+  return [...flatOperand.matchAll(OPERAND_NAME_REGEX)].flatMap(({ groups, index = 0 }): string[] => {
     if (groups?.name === undefined) return [];
     if (groups.dot !== undefined) return fieldValueMap.get(groups.name) ?? [];
     return flatOperand[index + groups.name.length] === "." ? [] : [groups.name];

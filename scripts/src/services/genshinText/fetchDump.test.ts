@@ -51,6 +51,6 @@ describe(fetchDump, () => {
       truncated: false,
     }));
 
-    expect(await fetchDump()).toStrictEqual(["0 dump files fetched, 1 already held"]);
+    await expect(fetchDump()).resolves.toStrictEqual(["0 dump files fetched, 1 already held"]);
   });
 });
