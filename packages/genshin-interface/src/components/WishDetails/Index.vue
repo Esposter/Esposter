@@ -47,43 +47,6 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
 </template>
 
 <style scoped>
-.wish-details {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  background: rgb(0 0 0 / 0.5);
-  place-items: center;
-}
-
-.panel {
-  position: relative;
-  display: flex;
-  width: calc(var(--unit) * 1200);
-  flex-direction: column;
-  gap: calc(var(--unit) * 12);
-  padding: calc(var(--unit) * 32) calc(var(--unit) * 40);
-  box-sizing: border-box;
-  border-radius: calc(var(--unit) * 8);
-  background: rgb(28 32 42 / 0.96);
-  color: #ece5d8;
-}
-
-.title {
-  margin: 0;
-  font-size: calc(var(--unit) * 28);
-}
-
-.close {
-  position: absolute;
-  top: calc(var(--unit) * 24);
-  right: calc(var(--unit) * 24);
-  padding: 0;
-  border: none;
-  background: none;
-  color: inherit;
-  font: inherit;
-}
-
 .pool,
 .pool-items {
   margin: 0;
@@ -113,3 +76,4 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
   color: #ffd780;
 }
 </style>
+<style scoped src="../../styles/wishOverlay.css"></style>
