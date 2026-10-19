@@ -4,6 +4,7 @@ import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotati
 import { Currency } from "#src/models/inventory/Currency";
 import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import {
+  CurrencyItemIdMap,
   EMPTY_INVENTORY,
   EMPTY_WALLET,
   WEAPON_START_ASCENSION,
@@ -17,7 +18,6 @@ import { describe, expect, test } from "vitest";
 describe(buyPaimonsBargainsWeapon, () => {
   const WEAPON_ID = 13_502;
   const WEAPON_PRICE = 4;
-  const STARGLITTER_ITEM_ID = 221;
   const EPOCH = Temporal.Instant.fromEpochMilliseconds(0);
   // Forty days past the epoch, a morning in February, after the month's refresh on its first
   const NOW = EPOCH.add({ hours: 24 * 40 });
@@ -32,7 +32,7 @@ describe(buyPaimonsBargainsWeapon, () => {
   const getWeaponDefinition = () => definition;
   const good: PaimonsBargainsGood = {
     buyLimit: 3,
-    costs: [{ count: WEAPON_PRICE, itemId: STARGLITTER_ITEM_ID }],
+    costs: [{ count: WEAPON_PRICE, itemId: CurrencyItemIdMap[Currency.MasterlessStarglitter] }],
     goodsId: 102_007,
     itemCount: 1,
     itemId: WEAPON_ID,
