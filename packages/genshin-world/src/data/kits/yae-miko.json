@@ -15,11 +15,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
   },
   "hitFields.totemStrikes.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "hits.tenkoThunderbolts.length": { "cause": "Unsourced", "value": 3 },
-  "hits.tenkoThunderbolts.0.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
-  },
+  "hits.tenkoThunderbolts.length": { "cause": "DiffersFromSource", "value": 3 },
   "hits.tenkoThunderbolts.0.hitmarkFrames": { "file": "burst.go", "line": 16, "source": "Gcsim", "value": 154 },
   "hits.tenkoThunderbolts.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5839 } },
   "hits.tenkoThunderbolts.1.area": {
@@ -38,10 +34,5 @@
   "parameters.totemStrikeMultipliers.0": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 5832 } },
   "parameters.totemStrikeMultipliers.1": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 5832 } },
   "parameters.totemStrikeMultipliers.2": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 5832 } },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
-  "burst.hits.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "burst.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
-  "hits.tenkoThunderbolts.0.element": { "cause": "Unsourced", "value": "Electric" },
-  "hits.tenkoThunderbolts.1.element": { "cause": "Unsourced", "value": "Electric" },
-  "hits.tenkoThunderbolts.2.element": { "cause": "Unsourced", "value": "Electric" }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
 }
