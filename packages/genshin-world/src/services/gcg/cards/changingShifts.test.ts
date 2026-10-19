@@ -1,4 +1,3 @@
-import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 

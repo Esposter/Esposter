@@ -18,7 +18,7 @@ export const sesshouSakura: GcgCardModule = {
     return { damageType: Element.Electro, value: SESSHOU_SAKURA_DAMAGE + zoneCard.counter };
   },
   onRoundEndDeclared: (_context, zoneCard) => {
-    if (zoneCard.usages < SESSHOU_SAKURA_ROUND_END_USAGES) return;
+    if (zoneCard.usages < SESSHOU_SAKURA_ROUND_END_USAGES) return undefined;
     zoneCard.usages -= 1;
     return { damageType: Element.Electro, value: SESSHOU_SAKURA_DAMAGE + zoneCard.counter };
   },
