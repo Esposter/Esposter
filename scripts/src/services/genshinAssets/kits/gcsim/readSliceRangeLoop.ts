@@ -10,31 +10,38 @@ import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing"
 // The blank identifier, which a loop's variable may be and which names no value an iteration carries
 const GO_BLANK_IDENTIFIER = "_";
 
+// Whether a value is a slice of numbers, as each row of a slice of number slices is
+const checkIsNumberSlice = (value: GoValue): boolean =>
+  Array.isArray(value) && value.every((element) => typeof element === "number");
+
 // The `for` loop opening at the position when it ranges over a constant slice, `for i, delay := range burstHitmarks {`,
-// Its iterations the slice's indexes and elements, and its body's braces, else Undefined
+// Or `for i := range burstRows {` over a slice of number slices, a row at a time. Its iterations are the indexes,
+// With its elements as the value variable when it is a slice of numbers, and its body's braces, else Undefined
 export const readSliceRangeLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
   resolveName: (name: string) => GoValue | undefined,
 ): ConstantLoop | undefined => {
-  const [indexToken, valueToken] = [tokens[forPosition + 1], tokens[forPosition + 3]];
+  const indexToken = tokens[forPosition + 1];
+  const isValueNamed = checkIsGoPunctuation(tokens[forPosition + 2], ",");
+  const valueToken = isValueNamed ? tokens[forPosition + 3] : undefined;
+  const operatorPosition = forPosition + (isValueNamed ? 4 : 2);
   if (
     indexToken?.kind !== GoTokenKind.Identifier ||
-    !checkIsGoPunctuation(tokens[forPosition + 2], ",") ||
-    valueToken?.kind !== GoTokenKind.Identifier ||
-    !checkIsGoPunctuation(tokens[forPosition + 4], ":=") ||
-    tokens[forPosition + 5]?.text !== "range"
+    (isValueNamed && valueToken?.kind !== GoTokenKind.Identifier) ||
+    !checkIsGoPunctuation(tokens[operatorPosition], ":=") ||
+    tokens[operatorPosition + 1]?.text !== "range"
   )
     return undefined;
   // The slice is named alone, its brace opening the body rather than a composite literal
-  const sliceToken = tokens[forPosition + 6];
+  const sliceToken = tokens[operatorPosition + 2];
   const slice = sliceToken?.kind === GoTokenKind.Identifier ? resolveName(sliceToken.text) : undefined;
-  const bodyStart = forPosition + 7;
+  const bodyStart = operatorPosition + 3;
   if (
     !checkIsGoPunctuation(tokens[bodyStart], "{") ||
     !Array.isArray(slice) ||
     slice.length > GO_MAX_LOOP_ITERATIONS ||
-    !slice.every((element) => typeof element === "number")
+    !(slice.every((element) => typeof element === "number") || slice.every((row) => checkIsNumberSlice(row)))
   )
     return undefined;
   const bodyEnd = findClosing(tokens, bodyStart, "{", "}");
@@ -46,7 +53,9 @@ export const readSliceRangeLoop = (
         iterations: slice.map((element, index) => {
           const iteration = new Map<string, number>();
           if (indexToken.text !== GO_BLANK_IDENTIFIER) iteration.set(indexToken.text, index);
-          if (valueToken.text !== GO_BLANK_IDENTIFIER) iteration.set(valueToken.text, element);
+          // A row is no number, so a range over rows binds its index alone
+          if (typeof element === "number" && valueToken !== undefined && valueToken.text !== GO_BLANK_IDENTIFIER)
+            iteration.set(valueToken.text, element);
           return iteration;
         }),
       };
