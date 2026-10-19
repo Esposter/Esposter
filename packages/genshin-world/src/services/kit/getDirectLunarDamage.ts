@@ -5,7 +5,7 @@ import type { PartyMoonsign } from "#src/models/party/PartyMoonsign";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
-import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
+import { getDirectReactionDamage } from "#src/services/kit/getDirectReactionDamage";
 
 // A direct Lunar hit's damage: the Lunar formula over its talent multiplier, as its stacks leave it, of the stat it
 // Scales, raised by the Base DMG Bonus the party's Benedictions give its Lunar reaction and the reaction bonus of its
@@ -32,12 +32,12 @@ export const getDirectLunarDamage = (
     moonsign?.baseDamageBonusMap[lunarReactionType] ?? 0,
     (moonsign?.reactionBonus ?? 0) + partyBonuses.damageBonus,
   );
-  return (
-    (lunarDamage + (additiveBaseDamageBonus?.(combatant) ?? 0)) *
-    getResistanceMultiplier(resistance) *
-    (isCritical
-      ? 1 + attributeTotalMap[Attribute.CriticalDamage] + criticalDamageBonus + partyBonuses.criticalDamageBonus
-      : 1) *
-    (1 + partyBonuses.elevationBonus)
+  return getDirectReactionDamage(
+    lunarDamage,
+    additiveBaseDamageBonus?.(combatant) ?? 0,
+    resistance,
+    isCritical,
+    attributeTotalMap[Attribute.CriticalDamage] + criticalDamageBonus + partyBonuses.criticalDamageBonus,
+    partyBonuses.elevationBonus,
   );
 };
