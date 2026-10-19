@@ -13,8 +13,8 @@ export const getLineBox = ({
   const measured = childBoxes.filter((box) => box !== undefined);
   if (measured.length === 0) return undefined;
 
-  const previous = childBoxes[index - 1];
-  const next = childBoxes[index];
+  const previous = childBoxes.slice(0, index).findLast((box) => box !== undefined);
+  const next = childBoxes.slice(index).find((box) => box !== undefined);
   const left = Math.min(...measured.map((box) => box.left));
   const top = Math.min(...measured.map((box) => box.top));
   if (checkIsHorizontalSlot(childBoxes)) {

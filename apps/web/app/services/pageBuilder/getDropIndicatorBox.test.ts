@@ -16,6 +16,14 @@ describe(getDropIndicatorBox, () => {
     });
   });
 
+  test("an indicator skips an unmeasured child to sit in the gap between the measured ones", () => {
+    expect.hasAssertions();
+
+    expect(
+      getDropIndicatorBox({ childBoxes: [FIRST_BOX, undefined, SECOND_BOX], index: 2, ownerBox: OWNER_BOX }),
+    ).toStrictEqual({ box: { height: 2, left: 0, top: 44, width: 200 }, kind: DropIndicatorKind.Line });
+  });
+
   test("an indicator in an empty slot outlines its owner", () => {
     expect.hasAssertions();
 
