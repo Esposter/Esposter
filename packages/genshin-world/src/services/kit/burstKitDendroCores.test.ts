@@ -1,5 +1,6 @@
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitDendroCore } from "#src/models/kit/KitDendroCore";
 import type { Party } from "#src/models/party/Party";
@@ -22,7 +23,7 @@ import { createKitTestContext } from "#src/services/kit/createKitTestContext.tes
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { noop } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -187,7 +188,7 @@ describe(burstKitDendroCores, () => {
     (coreKind) => {
       expect.hasAssertions();
 
-      const getPartyReactionBonus = vi.fn(() => ({}));
+      const getPartyReactionBonus = vi.fn<NonNullable<Kit["getPartyReactionBonus"]>>(() => ({}));
       const traveler: Combatant = { ...combatant, kit: { ...TRAVELER_KIT, getPartyReactionBonus } };
       const context = createKitTestContext(traveler, {
         characterIdCombatantMap: new Map([[TRAVELER_CHARACTER_ID, traveler]]),
@@ -198,11 +199,16 @@ describe(burstKitDendroCores, () => {
 
       burstKitDendroCores([{ ...createCore(TransformativeReactionType.Bloom), coreKind }], context);
 
-      expect(getPartyReactionBonus).toHaveBeenCalledWith(
-        expect.objectContaining({ characterId: TRAVELER_CHARACTER_ID }),
-        expect.objectContaining({ coreKind, reactionType: TransformativeReactionType.Bloom }),
-        context,
-      );
+      const [member, reaction] = takeOne(getPartyReactionBonus.mock.calls);
+      expect({
+        characterId: member.characterId,
+        coreKind: reaction.coreKind,
+        reactionType: reaction.reactionType,
+      }).toStrictEqual({
+        characterId: TRAVELER_CHARACTER_ID,
+        coreKind,
+        reactionType: TransformativeReactionType.Bloom,
+      });
     },
   );
 });

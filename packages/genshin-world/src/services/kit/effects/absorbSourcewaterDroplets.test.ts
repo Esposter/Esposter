@@ -10,6 +10,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
+const checkIsInArea = ({ x }: { x: number }) => x > 0;
 
 describe(absorbSourcewaterDroplets, () => {
   const wielder: Combatant = {
@@ -27,7 +28,6 @@ describe(absorbSourcewaterDroplets, () => {
 
     const { kitEffectState } = createKitTestContext(wielder);
     for (const x of [1, -1, 2, 3]) castSourcewaterDroplet(kitEffectState, TRAVELER_CHARACTER_ID, { x, z: 0 });
-    const checkIsInArea = ({ x }: { x: number }) => x > 0;
     const absorbedFirst = absorbSourcewaterDroplets(kitEffectState, TRAVELER_CHARACTER_ID, checkIsInArea, 2);
     const absorbedAfter = absorbSourcewaterDroplets(kitEffectState, TRAVELER_CHARACTER_ID, checkIsInArea, 3);
     const absorbedLast = absorbSourcewaterDroplets(kitEffectState, TRAVELER_CHARACTER_ID, checkIsInArea, 3);

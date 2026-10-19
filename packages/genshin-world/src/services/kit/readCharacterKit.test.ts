@@ -9,7 +9,7 @@ import { NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";
 import { VENTI_CHARACTER_ID } from "#src/services/kit/characters/ventiKit";
 import { XIANGLING_CHARACTER_ID } from "#src/services/kit/characters/xianglingKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { takeOne } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"), async () => {
@@ -21,7 +21,7 @@ vi.mock(import("#src/generated/characterKitMap/CharacterIdCreateKitBehaviourMap"
 
 // A kit's hooks are closures a build makes anew, so two kits never hold the same function. The comparison is of the
 // Record's own fields, which the JSON of a kit keeps while it drops every function
-const toRecordFields = (kit: Kit): unknown => JSON.parse(JSON.stringify(kit));
+const toRecordFields = (kit: Kit): unknown => jsonDateParse(JSON.stringify(kit));
 
 describe(readCharacterKit, () => {
   // Its own record and multipliers hold none of the Traveler's values, so a kit built from them would differ

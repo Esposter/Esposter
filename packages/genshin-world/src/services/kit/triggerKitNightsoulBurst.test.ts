@@ -13,6 +13,7 @@ import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulB
 import { IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { createParty } from "#src/services/party/createParty";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const IANSAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, IANSAN_CHARACTER_ID);
@@ -42,7 +43,7 @@ const createTeam = (size: number, regionId = NATLAN_REGION_ID) => {
     level: 90,
     regionId,
   }));
-  const context = createKitTestContext(members[0] as Combatant, {
+  const context = createKitTestContext(takeOne(members), {
     characterIdCombatantMap: new Map(members.map((member) => [member.characterId, member])),
     party: createParty(members.map(({ characterId }) => characterId)),
   });
@@ -55,14 +56,14 @@ describe(triggerKitNightsoulBurst, () => {
   test("a party member's damage triggers the team's Nightsoul burst while a Natlan member is in the party, and the kits hear it", () => {
     expect.hasAssertions();
     const { bursts, context, members } = createTeam(1);
-    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
+    triggerKitNightsoulBurst(ENEMY, takeOne(members), context);
     expect(bursts).toStrictEqual([{ enemy: ENEMY, kind: KitEventKind.NightsoulBurst, striker: members[0] }]);
   });
 
   test("a party with no Natlan member triggers no Nightsoul burst", () => {
     expect.hasAssertions();
     const { bursts, context, members } = createTeam(2, "mondstadt");
-    triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
+    triggerKitNightsoulBurst(ENEMY, takeOne(members), context);
     expect(bursts).toHaveLength(0);
   });
 
@@ -75,12 +76,12 @@ describe(triggerKitNightsoulBurst, () => {
       [4, 9],
     ] as const) {
       const { bursts, context, members } = createTeam(size);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
+      triggerKitNightsoulBurst(ENEMY, takeOne(members), context);
       stepTeamSeconds(context, interval - 0.5);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
+      triggerKitNightsoulBurst(ENEMY, takeOne(members), context);
       expect(bursts).toHaveLength(1);
       stepTeamSeconds(context, 1);
-      triggerKitNightsoulBurst(ENEMY, members[0] as Combatant, context);
+      triggerKitNightsoulBurst(ENEMY, takeOne(members), context);
       expect(bursts).toHaveLength(2);
     }
   });
