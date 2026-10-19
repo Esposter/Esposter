@@ -14,20 +14,26 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe("block types", () => {
+  const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
+  const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
+  const registry: BlockRegistry<
+    HeadingNode | SectionNode,
+    TestRootProps,
+    BlockTypeDefinition<HeadingNode> | BlockTypeDefinition<SectionNode>
+  > = {
+    root: { content: ["section"], propsSchema: z.object({ title: z.string() }) },
+    types: [
+      { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
+      { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
+    ],
+  };
+  const renderedNodes = [{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }];
+
   test("an interface-typed node passes through the JSON layer", () => {
     expect.hasAssertions();
 
-    const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
-    const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
     const document: LooseBlockDocument = { content: [section], root: { props: {} } };
     const nodes: (HeadingNode | SectionNode)[] = [section];
-    const registry: BlockRegistry<HeadingNode | SectionNode> = {
-      root: { content: ["section"], propsSchema: z.object({}) },
-      types: [
-        { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
-        { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
-      ],
-    };
 
     expect(getBlockNode(document, "/content/0")).toStrictEqual(section);
     expect(updateBlockNodeProps("/content/0", section.props).map((operation) => operation.path)).toStrictEqual([
@@ -40,28 +46,15 @@ describe("block types", () => {
         children: Object.values(slots).flat(),
         id: node.props.id,
       })),
-    ).toStrictEqual([{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }]);
+    ).toStrictEqual(renderedNodes);
   });
 
   test("a registry of per-type definitions passes the services with no cast", () => {
     expect.hasAssertions();
 
-    const heading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
-    const section: SectionNode = { props: { children: [heading], id: TEST_SECTION_ID, title: "" }, type: "section" };
     const document: BlockDocument<HeadingNode | SectionNode, TestRootProps> = {
       content: [section],
       root: { props: { title: "" } },
-    };
-    const registry: BlockRegistry<
-      HeadingNode | SectionNode,
-      TestRootProps,
-      BlockTypeDefinition<HeadingNode> | BlockTypeDefinition<SectionNode>
-    > = {
-      root: { content: ["section"], propsSchema: z.object({ title: z.string() }) },
-      types: [
-        { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
-        { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
-      ],
     };
 
     expect(getBlockTypeDefinition(registry, "heading")?.type).toBe("heading");
@@ -73,6 +66,6 @@ describe("block types", () => {
         children: Object.values(slots).flat(),
         id: node.props.id,
       })),
-    ).toStrictEqual([{ children: [{ children: [], id: TEST_HEADING_ID }], id: TEST_SECTION_ID }]);
+    ).toStrictEqual(renderedNodes);
   });
 });
