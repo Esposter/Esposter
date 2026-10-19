@@ -21,6 +21,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -51,12 +52,7 @@ const createTeam = (characterIds: number[]) => {
       ?.damageBonus ?? 0;
   // The member uses its Elemental Skill, as the team's events send it
   const useSkill = (characterId: number) => emitKitEvent({ characterId, kind: KitEventKind.SkillUsed }, context);
-  // The Pyro DMG Bonus the four-piece's stacks give the wearer, the one buff of the attribute it holds
-  const stackPyroDamageBonus = () =>
-    kitEffectState.effects
-      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.PyroDamageBonus)
-      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
-  return { context, other, reactionDamageBonus, stackPyroDamageBonus, useSkill, wearer };
+  return { context, other, reactionDamageBonus, useSkill, wearer };
 };
 
 describe(createCrimsonWitchSetModule, () => {
@@ -90,47 +86,47 @@ describe(createCrimsonWitchSetModule, () => {
   test("each Elemental Skill the active wearer uses raises its Pyro DMG Bonus by 7.5%, up to three stacks", () => {
     expect.hasAssertions();
 
-    const { stackPyroDamageBonus, useSkill } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const { context, useSkill } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.075)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.075)]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.15)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.15)]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.225)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.225)]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.225)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.225)]);
   });
 
   test("the stacks last ten seconds from the last skill, and a skill after they lapse starts again from one", () => {
     expect.hasAssertions();
 
-    const { context, stackPyroDamageBonus, useSkill } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const { context, useSkill } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     useSkill(TRAVELER_CHARACTER_ID);
     useSkill(TRAVELER_CHARACTER_ID);
     stepKitSeconds(context, 9);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.15)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.15)]);
 
     stepKitSeconds(context, 1);
-    expect(stackPyroDamageBonus()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([expect.closeTo(0.075)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([expect.closeTo(0.075)]);
   });
 
   test("a skill another member uses, or the wearer's while off the field, adds no stack", () => {
     expect.hasAssertions();
 
-    const { stackPyroDamageBonus, useSkill } = createTeam([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
+    const { context, useSkill } = createTeam([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
 
     useSkill(TRAVELER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([]);
 
     useSkill(OTHER_CHARACTER_ID);
-    expect(stackPyroDamageBonus()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.PyroDamageBonus)).toStrictEqual([]);
   });
 });

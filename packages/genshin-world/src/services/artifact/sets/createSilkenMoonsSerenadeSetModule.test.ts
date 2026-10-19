@@ -23,6 +23,7 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -57,54 +58,49 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
   // A hit the striker lands on the enemy, dealt as the element given, if it deals one
   const hit = (striker: Combatant, element: Element | undefined) =>
     emitKitEvent({ element, enemy, kind: KitEventKind.EnemyHit, striker }, context);
-  // The Elemental Mastery each buff gives its member, in the order the buffs were given
-  const elementalMasteryBuffs = () =>
-    kitEffectState.effects
-      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.ElementalMastery)
-      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
   // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
   const teamReactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
     getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  return { context, elementalMasteryBuffs, hit, other, teamReactionDamageBonus, wearer };
+  return { context, hit, other, teamReactionDamageBonus, wearer };
 };
 
 describe(createSilkenMoonsSerenadeSetModule, () => {
   test("an Elemental DMG hit the wearer deals gives every party member 60 Elemental Mastery for eight seconds at Nascent Gleam, restarted rather than stacked", () => {
     expect.hasAssertions();
 
-    const { context, elementalMasteryBuffs, hit, wearer } = createTeam(
+    const { context, hit, wearer } = createTeam(
       [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
       [THIRD_CHARACTER_ID],
     );
 
     hit(wearer, Element.Pyro);
     hit(wearer, Element.Pyro);
-    expect(elementalMasteryBuffs()).toStrictEqual([60, 60, 60]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([60, 60, 60]);
 
     stepKitSeconds(context, 7);
-    expect(elementalMasteryBuffs()).toStrictEqual([60, 60, 60]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([60, 60, 60]);
 
     stepKitSeconds(context, 1);
-    expect(elementalMasteryBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([]);
   });
 
   test("the same hit gives 120 Elemental Mastery at Ascendant Gleam", () => {
     expect.hasAssertions();
 
-    const { elementalMasteryBuffs, hit, wearer } = createTeam(
+    const { context, hit, wearer } = createTeam(
       [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
       [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
     );
 
     hit(wearer, Element.Hydro);
 
-    expect(elementalMasteryBuffs()).toStrictEqual([120, 120, 120, 120]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([120, 120, 120, 120]);
   });
 
   test("a hit that deals no element, or one another member deals, gives no Elemental Mastery", () => {
     expect.hasAssertions();
 
-    const { elementalMasteryBuffs, hit, other, wearer } = createTeam(
+    const { context, hit, other, wearer } = createTeam(
       [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
       [THIRD_CHARACTER_ID],
     );
@@ -112,20 +108,20 @@ describe(createSilkenMoonsSerenadeSetModule, () => {
     hit(wearer, undefined);
     hit(other, Element.Cryo);
 
-    expect(elementalMasteryBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([]);
   });
 
   test("the wearer's Elemental DMG gives the effect while it is off the field", () => {
     expect.hasAssertions();
 
-    const { elementalMasteryBuffs, hit, wearer } = createTeam(
+    const { context, hit, wearer } = createTeam(
       [OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID],
       [THIRD_CHARACTER_ID],
     );
 
     hit(wearer, Element.Electro);
 
-    expect(elementalMasteryBuffs()).toStrictEqual([60, 60, 60]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.ElementalMastery)).toStrictEqual([60, 60, 60]);
   });
 
   test("while the effect lasts, every party member's Lunar Reaction DMG is raised by 10%, with no Moonsign too, and its other reactions are not", () => {

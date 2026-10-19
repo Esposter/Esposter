@@ -22,6 +22,7 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -65,28 +66,23 @@ const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHAR
   // The DMG Bonus the whole deployed team's hooks add to a reaction the given member makes
   const reactionDamageBonus = (combatant: Combatant, reactionType: ReactionType) =>
     getDeployedReactionBonuses({ combatant, element: undefined, enemy, reactionType }, context).damageBonus;
-  // The ATK% buffs the set gives the wearer, one per source at most
-  const attackBuffs = () =>
-    kitEffectState.effects
-      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.AttackPercent)
-      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
-  return { attackBuffs, context, other, reactionDamageBonus, secondWearer, trigger, wearer };
+  return { context, other, reactionDamageBonus, secondWearer, trigger, wearer };
 };
 
 describe(createHeartOfTheFurnaceSetModule, () => {
   test("a Stellar Swirl the wearer triggers gives it 12% ATK for twelve seconds", () => {
     expect.hasAssertions();
 
-    const { attackBuffs, context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const { context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     trigger(wearer, [StellarReactionType.StellarSwirl]);
-    expect(attackBuffs()).toStrictEqual([expect.closeTo(0.12)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
 
     stepKitSeconds(context, 11);
-    expect(attackBuffs()).toStrictEqual([expect.closeTo(0.12)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
 
     stepKitSeconds(context, 1);
-    expect(attackBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
   });
 
   test("while it lasts, every party member's Stellar Swirl DMG is raised by 50%, and its other reactions are not", () => {
@@ -113,49 +109,43 @@ describe(createHeartOfTheFurnaceSetModule, () => {
   test("a Stellar Swirl another member triggers gives the wearer nothing", () => {
     expect.hasAssertions();
 
-    const { attackBuffs, other, reactionDamageBonus, trigger } = createTeam([
-      TRAVELER_CHARACTER_ID,
-      OTHER_CHARACTER_ID,
-    ]);
+    const { context, other, reactionDamageBonus, trigger } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     trigger(other, [StellarReactionType.StellarSwirl]);
 
-    expect(attackBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
     expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBe(0);
   });
 
   test("the wearer's Stellar Swirl gives both effects while it is off the field", () => {
     expect.hasAssertions();
 
-    const { attackBuffs, other, reactionDamageBonus, trigger, wearer } = createTeam([
+    const { context, other, reactionDamageBonus, trigger, wearer } = createTeam([
       OTHER_CHARACTER_ID,
       TRAVELER_CHARACTER_ID,
     ]);
 
     trigger(wearer, [StellarReactionType.StellarSwirl]);
 
-    expect(attackBuffs()).toStrictEqual([expect.closeTo(0.12)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
     expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
   });
 
   test("another Stellar Swirl the wearer triggers restarts the twelve seconds", () => {
     expect.hasAssertions();
 
-    const { attackBuffs, context, reactionDamageBonus, trigger, wearer } = createTeam([
-      TRAVELER_CHARACTER_ID,
-      OTHER_CHARACTER_ID,
-    ]);
+    const { context, reactionDamageBonus, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     trigger(wearer, [StellarReactionType.StellarSwirl]);
     stepKitSeconds(context, 11);
     trigger(wearer, [StellarReactionType.StellarSwirl]);
     stepKitSeconds(context, 11);
 
-    expect(attackBuffs()).toStrictEqual([expect.closeTo(0.12)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([expect.closeTo(0.12)]);
     expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBeCloseTo(0.5);
 
     stepKitSeconds(context, 1);
-    expect(attackBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.AttackPercent)).toStrictEqual([]);
   });
 
   test("two wearers of the set give the party one 50% bonus between them, not one each", () => {

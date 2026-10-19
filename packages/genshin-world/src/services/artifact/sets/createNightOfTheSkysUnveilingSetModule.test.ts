@@ -23,6 +23,7 @@ import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactio
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -71,57 +72,52 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
       },
       context,
     );
-  // The CRIT Rate buffs the set gives the wearer, one per attribute at most
-  const critRateBuffs = () =>
-    kitEffectState.effects
-      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate)
-      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
-  return { context, critRateBuffs, enemy, other, teamReactionDamageBonus, trigger, wearer };
+  return { context, enemy, other, teamReactionDamageBonus, trigger, wearer };
 };
 
 describe(createNightOfTheSkysUnveilingSetModule, () => {
   test("a Lunar Reaction the team triggers while the wearer is on the field gives it 15% CRIT Rate for four seconds at Nascent Gleam", () => {
     expect.hasAssertions();
 
-    const { context, critRateBuffs, other, trigger } = createTeam(
+    const { context, other, trigger } = createTeam(
       [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID],
       [THIRD_CHARACTER_ID],
     );
 
     trigger(other, [LunarReactionType.LunarCharged]);
-    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.15)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([expect.closeTo(0.15)]);
 
     stepKitSeconds(context, 3);
-    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.15)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([expect.closeTo(0.15)]);
 
     stepKitSeconds(context, 1);
-    expect(critRateBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([]);
   });
 
   test("the same Lunar Reaction gives 30% CRIT Rate at Ascendant Gleam", () => {
     expect.hasAssertions();
 
-    const { critRateBuffs, other, trigger } = createTeam(
+    const { context, other, trigger } = createTeam(
       [TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
       [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID],
     );
 
     trigger(other, [LunarReactionType.LunarBloom]);
 
-    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.3)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([expect.closeTo(0.3)]);
   });
 
   test("a Lunar Reaction gives the wearer nothing while it is off the field", () => {
     expect.hasAssertions();
 
-    const { critRateBuffs, other, teamReactionDamageBonus, trigger } = createTeam(
+    const { context, other, teamReactionDamageBonus, trigger } = createTeam(
       [OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID, THIRD_CHARACTER_ID],
       [THIRD_CHARACTER_ID],
     );
 
     trigger(other, [LunarReactionType.LunarCharged]);
 
-    expect(critRateBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([]);
     expect(teamReactionDamageBonus(other, LunarReactionType.LunarCharged)).toBe(0);
   });
 

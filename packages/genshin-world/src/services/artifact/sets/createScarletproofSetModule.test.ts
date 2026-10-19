@@ -20,6 +20,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { getBuffAmounts } from "#src/services/weapon/passives/getBuffAmounts.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -58,12 +59,7 @@ const createTeam = (characterIds: number[]) => {
       },
       context,
     );
-  // The CRIT Rate the set's buffs give the wearer, one buff of the attribute at most
-  const critRateBuffs = () =>
-    kitEffectState.effects
-      .filter((effect) => effect.kind === "buff" && effect.attribute === Attribute.CriticalRate)
-      .map((effect) => (effect.kind === "buff" ? effect.amount : 0));
-  return { context, critRateBuffs, other, reactionDamageBonus, trigger, wearer };
+  return { context, other, reactionDamageBonus, trigger, wearer };
 };
 
 describe(createScarletproofSetModule, () => {
@@ -91,20 +87,20 @@ describe(createScarletproofSetModule, () => {
   test("a Stellar Swirl the wearer triggers raises its CRIT Rate by 16% for ten seconds, restarted rather than stacked", () => {
     expect.hasAssertions();
 
-    const { context, critRateBuffs, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+    const { context, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     trigger(wearer, [StellarReactionType.StellarSwirl]);
     trigger(wearer, [StellarReactionType.StellarSwirl]);
-    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.16)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([expect.closeTo(0.16)]);
 
     stepKitSeconds(context, 10);
-    expect(critRateBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([]);
   });
 
   test("a Stellar Swirl another member triggers, or a Swirl of another reaction, raises neither", () => {
     expect.hasAssertions();
 
-    const { critRateBuffs, other, reactionDamageBonus, trigger, wearer } = createTeam([
+    const { context, other, reactionDamageBonus, trigger, wearer } = createTeam([
       TRAVELER_CHARACTER_ID,
       OTHER_CHARACTER_ID,
     ]);
@@ -113,20 +109,17 @@ describe(createScarletproofSetModule, () => {
     trigger(wearer, [ReactionType.Quicken]);
 
     expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBe(0);
-    expect(critRateBuffs()).toStrictEqual([]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([]);
   });
 
   test("a Stellar Swirl a summon of the wearer's triggers counts as the wearer's, as gcsim's Stellar Swirl hook takes any attack of the wearer", () => {
     expect.hasAssertions();
 
-    const { critRateBuffs, reactionDamageBonus, trigger, wearer } = createTeam([
-      TRAVELER_CHARACTER_ID,
-      OTHER_CHARACTER_ID,
-    ]);
+    const { context, reactionDamageBonus, trigger, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 
     trigger(wearer, [StellarReactionType.StellarSwirl], true);
 
     expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBeCloseTo(0.4);
-    expect(critRateBuffs()).toStrictEqual([expect.closeTo(0.16)]);
+    expect(getBuffAmounts(context.kitEffectState, Attribute.CriticalRate)).toStrictEqual([expect.closeTo(0.16)]);
   });
 });
