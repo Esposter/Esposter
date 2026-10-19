@@ -10,12 +10,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { THUNDERING_FURY_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createThunderingFurySetModule } from "#src/services/artifact/sets/createThunderingFurySetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
@@ -29,20 +29,16 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
 const SKILL_COOLDOWN_SECONDS = 5;
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 // The wearer, who wears four pieces, and another member, in the party order given, with the wearer's skill cooled for
 // Seconds. The wearer's kit hears the events the team sends, and reads the reactions a member makes in the party's hooks
 const createTeam = (characterIds: number[]) => {
-  const wearer = createCombatant(
+  const wearer = createKitCombatant(
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [
       createThunderingFurySetModule(getArtifactSetBonus(statTables, THUNDERING_FURY_ARTIFACT_SET_ID, 4)),
     ]),
   );
-  const other = createCombatant(OTHER_CHARACTER_ID);
+  const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);
   getPartyMember(party, TRAVELER_CHARACTER_ID).skillCooldownSeconds = SKILL_COOLDOWN_SECONDS;

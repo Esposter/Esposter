@@ -11,12 +11,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createNightOfTheSkysUnveilingSetModule } from "#src/services/artifact/sets/createNightOfTheSkysUnveilingSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
@@ -33,14 +33,10 @@ const THIRD_CHARACTER_ID = 3;
 const FOURTH_CHARACTER_ID = 4;
 // A Moonsign character's kit, which counts toward the team's Moonsign level
 const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 // A wearer of four pieces with a kit holding the set's four-piece, the rest of the characters in the map, and the party in the
 // Order given. The characters given in benedictedIds carry a Moonsign benediction, which sets the team's Moonsign level
 const createWearer = () =>
-  createCombatant(
+  createKitCombatant(
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [
       createNightOfTheSkysUnveilingSetModule(
@@ -52,7 +48,7 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
   const wearer = createWearer();
   const characterIdCombatantMap = new Map<number, Combatant>([[TRAVELER_CHARACTER_ID, wearer]]);
   const createMember = (characterId: number) =>
-    createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
+    createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
   const other = createMember(OTHER_CHARACTER_ID);
   characterIdCombatantMap.set(OTHER_CHARACTER_ID, other);
   for (const characterId of [THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
@@ -152,7 +148,7 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
 
     const kitEffectState: KitEffectState = { effects: [] };
     const firstWearer = createWearer();
-    const secondWearer = createCombatant(
+    const secondWearer = createKitCombatant(
       THIRD_CHARACTER_ID,
       getPassiveKit(KIT, [
         createNightOfTheSkysUnveilingSetModule(

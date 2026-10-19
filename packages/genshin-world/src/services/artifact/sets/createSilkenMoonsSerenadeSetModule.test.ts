@@ -11,12 +11,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SILKEN_MOON_SERENADE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSilkenMoonsSerenadeSetModule } from "#src/services/artifact/sets/createSilkenMoonsSerenadeSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
@@ -33,20 +33,16 @@ const THIRD_CHARACTER_ID = 3;
 const FOURTH_CHARACTER_ID = 4;
 // A Moonsign character's kit, which counts toward the team's Moonsign level
 const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 // The wearer, who wears four pieces, and the other members in the map, the ones in benedictedIds carrying a Moonsign benediction
 const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
-  const wearer = createCombatant(
+  const wearer = createKitCombatant(
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [
       createSilkenMoonsSerenadeSetModule(getArtifactSetBonus(statTables, SILKEN_MOON_SERENADE_ARTIFACT_SET_ID, 4)),
     ]),
   );
   const createMember = (characterId: number) =>
-    createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
+    createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
   const other = createMember(OTHER_CHARACTER_ID);
   const characterIdCombatantMap = new Map<number, Combatant>([
     [FOURTH_CHARACTER_ID, createMember(FOURTH_CHARACTER_ID)],

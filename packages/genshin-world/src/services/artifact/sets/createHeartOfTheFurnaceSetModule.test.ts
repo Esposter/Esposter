@@ -10,12 +10,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { HEART_OF_THE_FURNACE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createHeartOfTheFurnaceSetModule } from "#src/services/artifact/sets/createHeartOfTheFurnaceSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
@@ -29,17 +29,13 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const OTHER_CHARACTER_ID = 2;
 const THIRD_CHARACTER_ID = 3;
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 const WEARER_KIT = getPassiveKit(KIT, [
   createHeartOfTheFurnaceSetModule(getArtifactSetBonus(statTables, HEART_OF_THE_FURNACE_ARTIFACT_SET_ID, 4)),
 ]);
 // The traveller and two other members, the given ones wearing four pieces, with the party in the order given
 const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHARACTER_ID]) => {
   const createMember = (characterId: number) =>
-    createCombatant(characterId, wearerIds.includes(characterId) ? WEARER_KIT : KIT);
+    createKitCombatant(characterId, wearerIds.includes(characterId) ? WEARER_KIT : KIT);
   const wearer = createMember(TRAVELER_CHARACTER_ID);
   const other = createMember(OTHER_CHARACTER_ID);
   const secondWearer = createMember(THIRD_CHARACTER_ID);

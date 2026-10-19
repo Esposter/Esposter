@@ -10,12 +10,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createAubadeOfMorningstarAndMoonSetModule } from "#src/services/artifact/sets/createAubadeOfMorningstarAndMoonSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
@@ -32,14 +32,10 @@ const THIRD_CHARACTER_ID = 3;
 const FOURTH_CHARACTER_ID = 4;
 // A Moonsign character's kit, which counts toward the team's Moonsign level
 const MOONSIGN_KIT: Kit = { ...KIT, moonsignBenediction: { lunarReactionTypes: [] } };
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 // A wearer of four pieces, the three other members, and the party in the order given, with the members in benedictedIds
 // Carrying a Moonsign benediction, which sets the team's Moonsign level
 const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
-  const wearer = createCombatant(
+  const wearer = createKitCombatant(
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [
       createAubadeOfMorningstarAndMoonSetModule(
@@ -51,7 +47,7 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
   for (const characterId of [OTHER_CHARACTER_ID, THIRD_CHARACTER_ID, FOURTH_CHARACTER_ID])
     characterIdCombatantMap.set(
       characterId,
-      createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT),
+      createKitCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT),
     );
   const kitEffectState: KitEffectState = { effects: [] };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
@@ -91,7 +87,7 @@ describe(createAubadeOfMorningstarAndMoonSetModule, () => {
     expect.hasAssertions();
 
     const { reactionDamageBonus, wearer } = createTeam([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]);
-    const other = createCombatant(OTHER_CHARACTER_ID);
+    const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);
 
     expect(reactionDamageBonus(wearer, LunarReactionType.LunarCharged)).toBeCloseTo(0.2);
     expect(reactionDamageBonus(wearer, LunarReactionType.LunarBloom)).toBeCloseTo(0.2);

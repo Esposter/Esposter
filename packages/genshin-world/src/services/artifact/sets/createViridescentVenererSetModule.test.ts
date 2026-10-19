@@ -9,12 +9,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { VIRIDESCENT_VENERER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createViridescentVenererSetModule } from "#src/services/artifact/sets/createViridescentVenererSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
@@ -26,21 +26,17 @@ import { describe, expect, test } from "vitest";
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const createCombatant = (characterId: number, kit = KIT): Combatant => {
-  const attributes = computeCharacterAttributes([]);
-  return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
-};
 
 // The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events
 // The Team sends, and reads the reactions a member makes in the party's hooks
 const createTeam = (characterIds: number[]) => {
-  const wearer = createCombatant(
+  const wearer = createKitCombatant(
     TRAVELER_CHARACTER_ID,
     getPassiveKit(KIT, [
       createViridescentVenererSetModule(getArtifactSetBonus(statTables, VIRIDESCENT_VENERER_ARTIFACT_SET_ID, 4)),
     ]),
   );
-  const other = createCombatant(OTHER_CHARACTER_ID);
+  const other = createKitCombatant(OTHER_CHARACTER_ID, KIT);
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);
   const characterIdCombatantMap = new Map([
