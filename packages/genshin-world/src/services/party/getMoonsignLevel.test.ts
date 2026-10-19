@@ -1,26 +1,15 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
-import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { createKitCombatant } from "#src/services/kit/createKitCombatant.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-
-const createCombatant = (characterId: number, kit: Kit): Combatant => ({
-  ascension: 0,
-  attributes: computeCharacterAttributes([]),
-  characterId,
-  constellationCount: 0,
-  elementalResonances: [],
-  kit,
-  level: 90,
-});
 
 describe(getMoonsignLevel, () => {
   const PARTY_CHARACTER_IDS = [1, 2, 3, 4];
@@ -37,7 +26,7 @@ describe(getMoonsignLevel, () => {
     const characterIdCombatantMap = new Map(
       PARTY_CHARACTER_IDS.map((characterId, index) => [
         characterId,
-        createCombatant(characterId, index < moonsignCount ? MOONSIGN_KIT : TRAVELER_KIT),
+        createKitCombatant(characterId, index < moonsignCount ? MOONSIGN_KIT : TRAVELER_KIT),
       ]),
     );
 
