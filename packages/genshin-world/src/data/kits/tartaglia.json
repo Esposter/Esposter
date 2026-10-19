@@ -62,7 +62,9 @@
   "hits.riptideBlast.hitmarkFrames": { "cause": "DiffersFromSource", "value": 48 },
   "hits.riptideBlast.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3339 } },
   "hits.riptideBurst.area": {
-    "cause": "Unclassified",
+    "file": "riptide.go",
+    "line": 264,
+    "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "hits.riptideBurst.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 3331 } },
