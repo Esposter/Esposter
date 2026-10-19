@@ -9,7 +9,7 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 - **Upward Sweep and Tamoto price their Defense share as additive base damage.** The sweep is its ATK share plus 1.866 of her Defense, and Tamoto 0.8208 of ATK plus 1.026 of Defense per attack, each added as flat damage to the base damage.
 - **The press's cooldown is the table's 16 seconds, and the burst's is 13.5 seconds on 50 energy.** Her burst strikes at 92 frames as a circle of radius 12 round her, 200 poise, its ATK share and 3.204 of Defense.
 - **Tamoto stands for gcsim's 17.5 seconds, where the table's duration reads 17.** The doll's last attack landing within the 17.5 seconds of its cast would confirm it; a stand of 17 would move it.
-- **Chiori's high plunge lands with the low plunge's 41 frames at 150 poise.** gcsim has no high plunge of its own, so `chioriKit.ts` takes the 150 poise gcsim gives Arlecchino's; provisional until a recording shows the frames and amount.
+- **Chiori's high plunge lands with the low plunge's 41 frames at 150 poise.** gcsim has no high plunge of its own, so `chioriKit.ts` takes the wiki's 150 poise; provisional until a recording shows the frames and amount.
 
 ## Not built
 

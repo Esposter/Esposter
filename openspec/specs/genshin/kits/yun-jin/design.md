@@ -4,7 +4,7 @@ Yun Jin's kit is its record and one behaviour module, `createYunjinKitBehaviour`
 
 ## Decisions
 
-- **Yun Jin's strikes, charged attack, plunges and Opening Flourish's hits deal 0 poise.** Provisional, as gcsim gives none, so `yunjinKit.ts` sets each at 0; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Yun Jin's plunges deal 0 poise, and her strikes, charged attack and Opening Flourish take the wiki's poise.** Provisional, as gcsim gives the plunges none, so `yunjinKit.ts` sets each at 0; the strikes take 23.46 to 62.66 a hit, the charged attack 120, and Opening Flourish 100 and 200, since gcsim gives them none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
 - **Opening Flourish's tap and Yun Jin's Geo burst give 1U of Geo gauge each.** Provisional, as gcsim gives no gauge, so `yunjinKit.ts` reads 1U as the other Cryo and Geo hits do.
 - **Opening Flourish's charge levels start at half a second and a second.** Provisional, as gcsim takes the levels from the input alone, so `yunjinKit.ts` uses the thresholds Bennett's Charge Levels do.
 - **Constellation 4's DEF is her own reaction's buff.** A reaction event whose striker is Yun Jin, and whose reactions include Crystallize or Lunar-Crystallize, gives her 20% DEF for 12 seconds under its own source, so a second reaction restarts it. A reaction a party member triggers gives her nothing, as the text names her own reactions.
