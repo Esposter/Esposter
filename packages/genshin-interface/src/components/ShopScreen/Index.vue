@@ -374,4 +374,5 @@ const buy = () => {
   opacity: 0.4;
 }
 </style>
+
 <style scoped src="../../styles/craftingShop.css"></style>

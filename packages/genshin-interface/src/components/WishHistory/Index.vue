@@ -55,4 +55,5 @@ const emit = defineEmits<{ close: [] }>();
   padding: calc(var(--unit) * 6) 0;
 }
 </style>
+
 <style scoped src="../../styles/wishOverlay.css"></style>

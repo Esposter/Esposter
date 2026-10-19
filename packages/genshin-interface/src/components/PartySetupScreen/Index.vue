@@ -169,4 +169,5 @@ const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; p
   font-size: calc(var(--unit) * 22);
 }
 </style>
+
 <style scoped src="../../styles/partyReputation.css"></style>

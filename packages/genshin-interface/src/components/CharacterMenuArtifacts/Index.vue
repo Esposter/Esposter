@@ -5,17 +5,17 @@ import ToastNotice from "#src/components/ToastNotice/Index.vue";
 import { GameButtonKind } from "#src/models/GameButtonKind";
 import { computed, ref } from "vue";
 
-// One line of an artifact's stats: the attribute's name in the game and its value
-interface ArtifactStatLine {
-  label: string;
-  value: string;
-}
-
 // A worn artifact's stats: its main stat with its value, its minor affixes, and whether it is locked
 interface ArtifactSlotStats {
   isLocked: boolean;
   mainStat: ArtifactStatLine;
   subStats: ArtifactStatLine[];
+}
+
+// One line of an artifact's stats: the attribute's name in the game and its value
+interface ArtifactStatLine {
+  label: string;
+  value: string;
 }
 
 interface Props {

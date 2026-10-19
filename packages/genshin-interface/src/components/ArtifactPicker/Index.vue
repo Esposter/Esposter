@@ -25,7 +25,7 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 </script>
 
 <template>
-  <PickerShell class="artifact-picker" :title="title">
+  <PickerShell class="artifact-picker" :title>
     <ul class="options">
       <li v-for="{ caption, id, name, rarity } of options" :key="id">
         <button class="option" :data-rarity="rarity" type="button" @click="emit('choose', id)">
@@ -67,4 +67,5 @@ const emit = defineEmits<{ choose: [id: string]; close: [] }>();
   align-self: flex-end;
 }
 </style>
+
 <style scoped src="../../styles/artifactPicker.css"></style>

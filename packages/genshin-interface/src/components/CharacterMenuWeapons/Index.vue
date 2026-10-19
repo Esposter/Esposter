@@ -135,4 +135,5 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
   line-height: calc(var(--unit) * 19);
 }
 </style>
+
 <style scoped src="../../styles/weaponStars.css"></style>

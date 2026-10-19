@@ -16,7 +16,7 @@ const tsdownConfiguration: UserConfig = mergeConfig(getTsdownConfigurationVue(),
       ...exports,
       "./styles/*.css": isPublish
         ? "./dist/styles/*.css"
-        : { source: "./src/styles/*.css", default: "./dist/styles/*.css" },
+        : { default: "./dist/styles/*.css", source: "./src/styles/*.css" },
     }),
   },
 });

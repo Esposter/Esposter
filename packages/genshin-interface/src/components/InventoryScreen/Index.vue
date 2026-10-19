@@ -50,21 +50,21 @@ interface Props {
   isDestroying?: true;
   // Whether the open tab offers the sort, as the weapons' and artifacts' do
   isSortable?: true;
+  // The Lock button's words, shown on an unlocked bag artifact
+  lockLabel: string;
   // The sort's order in the reader's language, which a screen reader says in place of its arrow
   orderLabel: string;
   // The destroy mode's quick selects on the open tab, each choosing every entry the bag may destroy of its rarity
   quickSelects: InventoryQuickSelect[];
   // The gadget action that equips the detail's gadget to the quick-use slot, in the reader's language
   quickUseLabel: string;
-  // The Lock button's words, shown on an unlocked bag artifact
-  lockLabel: string;
   sortLabels: Record<InventorySort, string>;
   tabLabels: Record<ItemCategory, string>;
   title: string;
-  // The detail panel's button that uses the selected entry, in the reader's language
-  useLabel: string;
   // The Unlock button's words, shown on a locked bag artifact
   unlockLabel: string;
+  // The detail panel's button that uses the selected entry, in the reader's language
+  useLabel: string;
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });
@@ -95,15 +95,15 @@ const {
   isDestroyFull,
   isDestroying,
   isSortable,
+  lockLabel,
   orderLabel,
   quickSelects,
   quickUseLabel,
-  lockLabel,
   sortLabels,
   tabLabels,
   title,
-  useLabel,
   unlockLabel,
+  useLabel,
 } = defineProps<Props>();
 const emit = defineEmits<{
   cancelDestroy: [];
@@ -674,4 +674,5 @@ watch(
   clip-path: inset(50%);
 }
 </style>
+
 <style scoped src="../../styles/confirmDialog.css"></style>

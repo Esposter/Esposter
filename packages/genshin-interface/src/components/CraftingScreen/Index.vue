@@ -404,4 +404,5 @@ const emit = defineEmits<{ close: []; craft: [] }>();
   clip-path: inset(50%);
 }
 </style>
+
 <style scoped src="../../styles/craftingShop.css"></style>

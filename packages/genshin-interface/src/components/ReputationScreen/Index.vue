@@ -311,4 +311,5 @@ const emit = defineEmits<{ accept: []; close: [] }>();
   font-size: calc(var(--unit) * 31);
 }
 </style>
+
 <style scoped src="../../styles/partyReputation.css"></style>

@@ -243,4 +243,5 @@ const emit = defineEmits<{ action: []; close: [] }>();
   line-height: 1;
 }
 </style>
+
 <style scoped src="../../styles/weaponStars.css"></style>

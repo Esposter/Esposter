@@ -35,12 +35,12 @@ interface Props {
   levelLabel: string;
   // The bag's enhancement materials, each with how many the bag holds and how many are chosen
   materials: EnhanceMaterialOption[];
-  // The notice shown over the picker while the artifact is already at its top level, undefined while it is not
-  notice?: string;
   // The Mora the enhancement costs with what is chosen
   moraCost: number;
   // The Mora label the cost is shown under
   moraLabel: string;
+  // The notice shown over the picker while the artifact is already at its top level, undefined while it is not
+  notice?: string;
   // The picker's title, the action it enhances the artifact for
   title: string;
 }
@@ -68,7 +68,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <PickerShell class="enhance-picker" :title="title">
+  <PickerShell class="enhance-picker" :title>
     <p class="summary">
       <span class="level">{{ levelLabel }}</span>
       <span class="mora">{{ moraLabel }} {{ moraCost }}</span>
@@ -158,4 +158,5 @@ const emit = defineEmits<{
   gap: calc(var(--unit) * 8);
 }
 </style>
+
 <style scoped src="../../styles/artifactPicker.css"></style>

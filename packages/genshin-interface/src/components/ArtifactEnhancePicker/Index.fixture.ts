@@ -18,5 +18,5 @@ export const props = {
 
 // The artifact is already at its top level, so the picker says so and Confirm is disabled
 export const variants = {
-  maxed: { isConfirmDisabled: true, notice: "Max level reached", fodders: [], materials: [], moraCost: 0 },
+  maxed: { fodders: [], isConfirmDisabled: true, materials: [], moraCost: 0, notice: "Max level reached" },
 };

@@ -42,4 +42,5 @@ const emit = defineEmits<{ close: []; heal: [characterId: number]; worship: [] }
   background: rgb(255 255 255 / 8%);
 }
 </style>
+
 <style scoped src="../../styles/blessingWorship.css"></style>

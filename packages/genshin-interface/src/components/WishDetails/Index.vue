@@ -76,4 +76,5 @@ const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rari
   color: #ffd780;
 }
 </style>
+
 <style scoped src="../../styles/wishOverlay.css"></style>
