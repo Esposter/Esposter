@@ -1,5 +1,5 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
-import type { PassiveStack } from "#src/services/kit/effects/addPassiveStack";
+import type { PassiveStack } from "#src/models/kit/PassiveStack";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
