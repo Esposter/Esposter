@@ -5,7 +5,7 @@ import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 import { Elements } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
-import { takeOne } from "@esposter/shared";
+import { takeOne, takeRandom } from "@esposter/shared";
 
 const PARAMETRIC_TRANSFORMER_PROGRESS = 3;
 const PARAMETRIC_TRANSFORMER_DICE = 3;
@@ -18,11 +18,10 @@ const checkIsGcgElementalHit = (hit: GcgDealtDamage): boolean =>
 const pickGcgBasicDice = (count: number, random: () => number): Element[] => {
   let remaining = [...Elements];
   const picked: Element[] = [];
-  for (let pick = 0; pick < count && remaining.length > 0; pick++) {
-    const index = Math.floor(random() * remaining.length);
-    const element = remaining[index];
-    remaining = remaining.toSpliced(index, 1);
-    if (element !== undefined) picked.push(element);
+  while (picked.length < count && remaining.length > 0) {
+    const element = takeRandom(remaining, random);
+    remaining = remaining.toSpliced(remaining.indexOf(element), 1);
+    picked.push(element);
   }
   return picked;
 };

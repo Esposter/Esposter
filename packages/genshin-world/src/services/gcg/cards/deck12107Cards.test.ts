@@ -16,6 +16,14 @@ import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import {
+  FULL_PLATE_ID,
+  RAIN_SWORD_ID,
+  RAINBOW_BLADEWORK_ID,
+  STONE_FORCE_ID,
+  STONEHIDE_ID,
+  SWEEPING_TIME_ID,
+} from "#src/services/gcg/cards/constants";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
@@ -92,7 +100,6 @@ const createSweepingTimeContext = (): GcgEffectContext => ({
 describe("rain Sword", () => {
   test("the active character takes one less DMG when it receives at least 3, for two usages", () => {
     expect.hasAssertions();
-    const RAIN_SWORD_ID = 112_021;
     const context: GcgEffectContext = {
       duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
@@ -125,7 +132,6 @@ describe("rainbow Bladework", () => {
 
   test("after the active character uses a Normal Attack it deals 1 Hydro DMG, for three usages", () => {
     expect.hasAssertions();
-    const RAINBOW_BLADEWORK_ID = 112_022;
     const context: GcgEffectContext = {
       duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
@@ -144,7 +150,6 @@ describe("rainbow Bladework", () => {
 
   test("an elemental skill does not trigger it, and spends no usage", () => {
     expect.hasAssertions();
-    const RAINBOW_BLADEWORK_ID = 112_022;
     const context: GcgEffectContext = {
       duel: createDuel([createSideState([createGcgCharacterState({ character: { id: 1202 } })]), createSideState([])]),
       sideIndex: 0,
@@ -166,7 +171,6 @@ describe("fatal Rainscreen", () => {
 
   test("the skill deals 2 Hydro DMG, puts Hydro on its character, and creates a Rain Sword onstage", () => {
     expect.hasAssertions();
-    const RAIN_SWORD_ID = 112_021;
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: 1202 } })]),
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
@@ -214,7 +218,6 @@ describe("raincutter", () => {
       id: 12_023,
       kind: GcgSkillKind.ElementalBurst,
     };
-    const RAINBOW_BLADEWORK_ID = 112_022;
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: 1202 } })]),
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
@@ -227,8 +230,6 @@ describe("raincutter", () => {
 });
 
 describe("full Plate", () => {
-  const FULL_PLATE_ID = 116_021;
-
   test("while its active character holds a shield, the Physical DMG it takes is halved, rounded up", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createShieldedDuel(2), sideIndex: 0 };
@@ -268,7 +269,6 @@ describe("breastplate", () => {
       id: 16_022,
       kind: GcgSkillKind.ElementalSkill,
     };
-    const FULL_PLATE_ID = 116_021;
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
@@ -281,8 +281,6 @@ describe("breastplate", () => {
 });
 
 describe("stonehide", () => {
-  const STONEHIDE_ID = 126_011;
-
   test("the character takes one less DMG, for three usages", () => {
     expect.hasAssertions();
     const context: GcgEffectContext = { duel: createStonehideDuel(), sideIndex: 0 };
@@ -309,9 +307,6 @@ describe("stonehide", () => {
 });
 
 describe("stone Force", () => {
-  const STONE_FORCE_ID = 126_012;
-  const STONEHIDE_ID = 126_011;
-
   test("the character's Physical DMG is converted to Geo, and its first DMG of the round is one more", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(STONE_FORCE_ID, stoneForce);
@@ -357,7 +352,6 @@ describe("infused Stonehide", () => {
 });
 
 describe("sweeping Time", () => {
-  const SWEEPING_TIME_ID = 116_022;
   const NORMAL_ATTACK: GcgSkill = {
     costs: [],
     effect: "Char_Skill_16021",
@@ -432,7 +426,6 @@ describe("sweeping Time skill", () => {
 
   test("the skill deals 4 Geo DMG, and its character gains Sweeping Time", () => {
     expect.hasAssertions();
-    const SWEEPING_TIME_ID = 116_022;
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),
@@ -448,7 +441,6 @@ describe("sweeping Time skill", () => {
 
   test("using the skill again refreshes the status rather than stacking a second one", () => {
     expect.hasAssertions();
-    const SWEEPING_TIME_ID = 116_022;
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { id: 1602 } })]),
       createSideState([createGcgCharacterState({ character: { id: 1203 } })]),

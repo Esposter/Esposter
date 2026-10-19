@@ -197,5 +197,6 @@ export const ArtifactMinorAffixWeightMap: Readonly<Partial<Record<Attribute, num
   [Attribute.Health]: 6,
   [Attribute.HealthPercent]: 4,
 };
-// Auto Add takes artifacts up to four stars, the game's default, since five-star artifacts are left out of it unless the setting allows them
+// Auto Add takes artifacts up to four stars, the game's default, since five-star artifacts are left out of it unless
+// The setting allows them
 export const ENHANCE_AUTO_ADD_MAX_RARITY = 4;

@@ -262,7 +262,7 @@ const checkIsSelectionSettled = (
 ): boolean => keys.subarray(0, count).every((key) => checkIsSettled(key));
 // The first frame waits only on the finest tiles it wants, since the coarser rings keep streaming after ready
 const checkIsFirstFrameSettled = (key: number): boolean =>
-  getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || tileStreamer.checkIsSettled(key);
+  getTerrainTileLevel(key) !== FINEST_TILE_LEVEL || checkIsTileSettled(key);
 const wanted = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const surrounding = createTerrainSelection(TILE_SELECTION_CAPACITY);
 const shown = createTerrainSelection(TILE_SELECTION_CAPACITY);

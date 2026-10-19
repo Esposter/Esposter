@@ -109,7 +109,7 @@ export const createEscoffierKitBehaviour = ({
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
   const skillTickHits = readHits("frostyParfaitTicks", { enemyStatus: getAscension4Status });
-  const surgingBladeHit = { ...readHit("surgingBlade"), enemyStatus: getAscension4Status };
+  const surgingBladeHit = readHit("surgingBlade", { enemyStatus: getAscension4Status });
   const alignedIntervalSeconds = readParameter("alignedIntervalSeconds");
   const burstHealFlat = readParameter("scoringCutsFlatHeal");
   const burstHealAttackShare = readParameter("scoringCutsHealAttackShare");

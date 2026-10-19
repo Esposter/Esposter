@@ -3,8 +3,7 @@ import { MAX_SAVE_INSTANT_LENGTH } from "#src/services/save/constants";
 import { z } from "zod";
 
 // The seeds a realm's garden holds as the save holds them: each plot, its seed and the ISO string of its planting instant.
-// A planting sits on one plot, and the realm's layout export will count the plots a realm holds. Until it does, the
-// Placements ceiling is the list's bound: a generous one the layout export may tighten
+// A planting sits on one plot, so the placements ceiling bounds the list
 export const homePlantingSaveSchema = z
   .array(
     z.object({
