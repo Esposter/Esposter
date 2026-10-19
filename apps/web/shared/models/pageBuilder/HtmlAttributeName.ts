@@ -1,26 +1,27 @@
 // The attributes a node type's render writes. No event handler, style or srcdoc is named, so the renderer cannot write one
-export type HtmlAttributeName =
-  | "alt"
-  | "aria-atomic"
-  | "aria-controls"
-  | "aria-describedby"
-  | "aria-hidden"
-  | "aria-label"
-  | "aria-labelledby"
-  | "aria-live"
-  | "aria-selected"
-  | "class"
-  | "controls"
-  | "data-end-text"
-  | "data-ends-at"
-  | "data-texts"
-  | "data-unit"
-  | "hidden"
-  | "href"
-  | "id"
-  | "preload"
-  | "role"
-  | "src"
-  | "tabindex"
-  | "title"
-  | "type";
+export enum HtmlAttributeName {
+  Alt = "alt",
+  AriaAtomic = "aria-atomic",
+  AriaControls = "aria-controls",
+  AriaDescribedBy = "aria-describedby",
+  AriaHidden = "aria-hidden",
+  AriaLabel = "aria-label",
+  AriaLabelledBy = "aria-labelledby",
+  AriaLive = "aria-live",
+  AriaSelected = "aria-selected",
+  Class = "class",
+  Controls = "controls",
+  DataEndText = "data-end-text",
+  DataEndsAt = "data-ends-at",
+  DataTexts = "data-texts",
+  DataUnit = "data-unit",
+  Hidden = "hidden",
+  Href = "href",
+  Id = "id",
+  Preload = "preload",
+  Role = "role",
+  Src = "src",
+  Tabindex = "tabindex",
+  Title = "title",
+  Type = "type",
+}

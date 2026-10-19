@@ -82,7 +82,7 @@ const countdownScript = () => {
     }, SECOND);
   };
 
-  for (const element of document.querySelectorAll<HTMLElement>(".countdown")) startCountdown(element);
+  for (const element of window.document.querySelectorAll<HTMLElement>(".countdown")) startCountdown(element);
 };
 
 const createCountdownUnit = (name: string): HtmlElement => ({
