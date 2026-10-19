@@ -8,18 +8,19 @@ import { createReadingPlayer } from "#src/services/createReadingPlayer";
 import { createViewerPlayer } from "#src/services/createViewerPlayer";
 import { describe, expect, test, vi } from "vitest";
 
+const createStockPlayer = () => {
+  const stock = {
+    close: vi.fn<AudioPlayer["close"]>(async () => {}),
+    play: vi.fn<AudioPlayer["play"]>(() => Promise.resolve("")),
+  } satisfies AudioPlayer;
+  return { createStock: vi.fn<() => AudioPlayer>(() => stock), stock };
+};
+
 describe(createReadingPlayer, () => {
   const MODEL_ID = 2;
   const CAPTION: ViewerCaption = { color: 0, durationMs: 0, text: "A line" };
   const AUDIO = new Uint8Array([1, 2]);
   const SOUND_FORM = ViewerSoundForm.WavPath;
-  const createStockPlayer = () => {
-    const stock = {
-      close: vi.fn<AudioPlayer["close"]>(async () => {}),
-      play: vi.fn<AudioPlayer["play"]>(async () => ""),
-    } satisfies AudioPlayer;
-    return { createStock: vi.fn(() => stock), stock };
-  };
 
   test("no viewer listening falls back to the stock player", async () => {
     expect.hasAssertions();

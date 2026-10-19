@@ -1,7 +1,12 @@
 import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { ViewerLink } from "#src/models/ViewerLink";
 
-import { VIEWER_DEFAULT_MODEL_ID } from "#src/services/constants";
+import {
+  VIEWER_DEFAULT_FRAME_COLOR,
+  VIEWER_DEFAULT_MODEL_ID,
+  VIEWER_PROOF_DURATION_MS,
+  VIEWER_TEXT_COLOR,
+} from "#src/services/constants";
 import { createFakeViewerLink } from "#src/services/createFakeViewerLink.test";
 import { setViewer } from "#src/services/setViewer";
 import { describe, expect, test, vi } from "vitest";
@@ -9,10 +14,10 @@ import { describe, expect, test, vi } from "vitest";
 describe(setViewer, () => {
   const ADDRESS = "ws://127.0.0.1:10086";
   const PROOF = "The viewer is set up.";
-  const createDependencies = (link: ViewerLink | undefined) => ({
-    connect: vi.fn<(address: string) => Promise<ViewerLink | undefined>>(async () => link),
+  const createDependencies = (link: undefined | ViewerLink) => ({
+    connect: vi.fn<(address: string) => Promise<undefined | ViewerLink>>(() => Promise.resolve(link)),
     proofText: PROOF,
-    readConfiguration: (): ViewerConfiguration | undefined => undefined,
+    readConfiguration: (): undefined | ViewerConfiguration => undefined,
     writeConfiguration: vi.fn<(configuration: ViewerConfiguration) => void>(),
   });
 
@@ -26,9 +31,9 @@ describe(setViewer, () => {
     expect(link.bubble).toHaveBeenCalledExactlyOnceWith(
       VIEWER_DEFAULT_MODEL_ID,
       PROOF,
-      expect.any(Number),
-      expect.any(Number),
-      expect.any(Number),
+      VIEWER_PROOF_DURATION_MS,
+      VIEWER_DEFAULT_FRAME_COLOR,
+      VIEWER_TEXT_COLOR,
     );
     expect(dependencies.writeConfiguration).toHaveBeenCalledExactlyOnceWith({
       address: ADDRESS,

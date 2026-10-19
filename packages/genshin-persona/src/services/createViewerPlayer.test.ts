@@ -1,12 +1,12 @@
 import type { ViewerCaption } from "#src/models/ViewerCaption";
 import type { ViewerLink } from "#src/models/ViewerLink";
+import type { MockInstance } from "vitest";
 
 import { VIEWER_BUBBLE_BEAT_MS, VIEWER_CLEAR_DURATION_MS, VIEWER_TEXT_COLOR } from "#src/services/constants";
 import { createFakeViewerLink } from "#src/services/createFakeViewerLink.test";
 import { createViewerPlayer } from "#src/services/createViewerPlayer";
 import { existsSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import type { MockInstance } from "vitest";
 
 const getPlayedPaths = (playSound: MockInstance<ViewerLink["playSound"]>) =>
   playSound.mock.calls.map(([, path]) => path);
@@ -41,7 +41,7 @@ describe(createViewerPlayer, () => {
       COLOR,
       VIEWER_TEXT_COLOR,
     );
-    expect(link.playSound).toHaveBeenCalledExactlyOnceWith(MODEL_ID, expect.any(String));
+    expect(link.playSound).toHaveBeenCalledExactlyOnceWith(MODEL_ID, getPlayedPaths(link.playSound)[0]);
     await expect(playing).resolves.toBe("");
   });
 
@@ -52,7 +52,7 @@ describe(createViewerPlayer, () => {
     const player = createViewerPlayer(link, MODEL_ID);
     let isFirstSettled = false;
     const playing = player.play(AUDIO, CAPTION);
-    void (async () => {
+    const settled = (async () => {
       await playing;
       isFirstSettled = true;
     })();
@@ -61,6 +61,7 @@ describe(createViewerPlayer, () => {
 
     await vi.advanceTimersByTimeAsync(1);
     expect(isFirstSettled).toBe(true);
+    await settled;
   });
 
   test("a newer turn clears the bubble", async () => {
