@@ -1,9 +1,19 @@
+import type { Kit } from "#src/models/kit/Kit";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { CombatTalent } from "#src/models/character/CombatTalent";
+import { TALENT_START_LEVELS } from "#src/services/character/constants";
 import { createDurinKitBehaviour, DURIN_CHARACTER_ID } from "#src/services/kit/characters/durinKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const DURIN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DURIN_CHARACTER_ID);
+// The white burst's three hits, then the black variant's three
+const readBurstMultipliers = ({ elementalBurst, elementalBurstVariant }: Kit): number[] =>
+  [...elementalBurst.hits, ...(elementalBurstVariant?.action.hits ?? [])].map(
+    ({ talentMultiplier }) => talentMultiplier,
+  );
 
 describe(createDurinKitBehaviour, () => {
   test("reads the strikes', charged attack's, plunges' and burst's multipliers from his proud skill groups", () => {
@@ -66,5 +76,19 @@ describe(createDurinKitBehaviour, () => {
       black: DURIN_KIT.elementalBurstVariant?.action.hits.map(({ talentMultiplier }) => talentMultiplier),
       white: DURIN_KIT.elementalBurst.hits.map(({ talentMultiplier }) => talentMultiplier),
     }).toStrictEqual({ black: [1.2544, 1.0176, 1.1184], white: [1.1896, 0.964, 1.1184] });
+  });
+
+  test("his burst's hits scale with its level", async () => {
+    expect.hasAssertions();
+    const burstKit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DURIN_CHARACTER_ID, {
+      ...TALENT_START_LEVELS,
+      [CombatTalent.ElementalBurst]: 10,
+    });
+    const levelOneMultipliers = readBurstMultipliers(DURIN_KIT);
+    const burstLevelMultipliers = readBurstMultipliers(burstKit);
+
+    expect(
+      burstLevelMultipliers.map((multiplier, index) => multiplier > takeOne(levelOneMultipliers, index)),
+    ).toStrictEqual([true, true, true, true, true, true]);
   });
 });

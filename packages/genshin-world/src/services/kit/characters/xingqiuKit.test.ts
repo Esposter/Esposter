@@ -1,4 +1,5 @@
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { Kit } from "#src/models/kit/Kit";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -6,10 +7,11 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
+import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createXingqiuKitBehaviour, XINGQIU_CHARACTER_ID } from "#src/services/kit/characters/xingqiuKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -53,6 +55,17 @@ const createTravelerCombatant = (): Combatant => ({
   kit: TRAVELER_KIT,
   level: 90,
 });
+
+// The multipliers of the Fatal Rainscreen strikes a kit lands at the given constellations, with Raincutter standing
+// For Evilsoother to raise them
+const readRainscreenMultipliers = (kit: Kit, constellationCount: number): number[] => {
+  const context = createKitTestContext({ ...createXingqiuCombatant(0, constellationCount), kit });
+  kit.elementalBurst.onStart?.(context);
+  kit.elementalSkill.onStart?.(context);
+  return stepKitTestEffects(0.6, context)
+    .map(({ hit }) => hit.talentMultiplier)
+    .filter((talentMultiplier) => talentMultiplier > 0);
+};
 
 describe(createXingqiuKitBehaviour, () => {
   const body = { x: 0, z: 0 };
@@ -197,6 +210,20 @@ describe(createXingqiuKitBehaviour, () => {
       ).toStrictEqual([expect.closeTo(first, 10), expect.closeTo(second, 10)]);
     },
   );
+
+  test("constellation 4's rainscreen hits are 1.5 times his skill's at a raised skill level", async () => {
+    expect.hasAssertions();
+    const skillKit = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, XINGQIU_CHARACTER_ID, {
+      ...TALENT_START_LEVELS,
+      [CombatTalent.ElementalSkill]: 10,
+    });
+    const rainscreenMultipliers = readRainscreenMultipliers(skillKit, 0);
+
+    expect(rainscreenMultipliers).toHaveLength(2);
+    expect(readRainscreenMultipliers(skillKit, 4)).toStrictEqual(
+      rainscreenMultipliers.map((multiplier) => multiplier * 1.5),
+    );
+  });
 
   test.each([
     [0, 0, 0.5],
