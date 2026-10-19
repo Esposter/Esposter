@@ -129,26 +129,26 @@ describe(createLyneyKitBehaviour, () => {
     expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
   });
 
-  test("ascension 4's DMG bonus a passive takes effect at its ascension phase", () => {
+  test("ascension 4's DMG bonus takes effect as a passive at its ascension phase", () => {
     expect.hasAssertions();
 
     expect(getDamageBonus(4, TEAM, [AuraType.Pyro])).toBeCloseTo(0.8);
   });
 
-  test("ascension 4's DMG bonus a passive does not take effect below its ascension phase", () => {
+  test("ascension 4's DMG bonus does not take effect as a passive below its ascension phase", () => {
     expect.hasAssertions();
 
     expect(getDamageBonus(3, TEAM, [AuraType.Pyro])).toBe(0);
   });
 
-  test("ascension 4's DMG bonus each other Pyro member adds 20%, up to 100%", () => {
+  test("ascension 4's DMG bonus adds 20% for each other Pyro member, up to 100%", () => {
     expect.hasAssertions();
 
     expect(getDamageBonus(4, [Element.Pyro], [AuraType.Pyro])).toBeCloseTo(0.6);
     expect(getDamageBonus(4, [Element.Pyro, Element.Pyro, Element.Pyro, Element.Pyro], [AuraType.Pyro])).toBe(1);
   });
 
-  test("ascension 4's DMG bonus it applies only to an enemy affected by Pyro, which a Burning enemy is", () => {
+  test("ascension 4's DMG bonus applies only to an enemy affected by Pyro, which a Burning enemy is", () => {
     expect.hasAssertions();
 
     expect(getDamageBonus(4, TEAM, [AuraType.Hydro])).toBe(0);

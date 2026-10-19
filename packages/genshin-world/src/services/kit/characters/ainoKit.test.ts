@@ -223,7 +223,7 @@ describe(createAinoKitBehaviour, () => {
     expect(castBurstInTeam(1, [AINO_CHARACTER_ID]).field?.tickIntervalSeconds).toBeCloseTo(1.5);
   });
 
-  test("constellation 4's skill energy a Constellation 4 switch gives Aino 10 energy on a skill hit, once every 10 seconds", () => {
+  test("constellation 4 gives Aino 10 energy on a skill hit, once every 10 seconds", () => {
     expect.hasAssertions();
     const combatant = { ...createAinoCombatant(0), constellationCount: 4 };
     const party = createParty([AINO_CHARACTER_ID]);
@@ -241,7 +241,7 @@ describe(createAinoKitBehaviour, () => {
     expect(energies).toStrictEqual([10, 10, 20]);
   });
 
-  test("constellation 4's skill energy a Constellation 3 switch gives Aino no energy on a skill hit", () => {
+  test("constellation 4 gives Aino no energy on a skill hit at constellation 3", () => {
     expect.hasAssertions();
     const combatant = { ...createAinoCombatant(0), constellationCount: 3 };
     const party = createParty([AINO_CHARACTER_ID]);
@@ -251,7 +251,7 @@ describe(createAinoKitBehaviour, () => {
     expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
   });
 
-  test("constellation 2's water ball an active constellation's switch queues a water ball on an enemy the active member hits while Aino is off the field", () => {
+  test("constellation 2's water ball is queued by an active constellation's switch on an enemy the active member hits while Aino is off the field", () => {
     expect.hasAssertions();
     const { aino, context, teammate } = createTeammateTeam(2);
     strikeEnemy(context, teammate, aino);
@@ -259,7 +259,7 @@ describe(createAinoKitBehaviour, () => {
     expect(context.strikes.map(({ target }) => target)).toStrictEqual([AINO_ENEMY]);
   });
 
-  test("constellation 2's water ball an inactive constellation changes nothing", () => {
+  test("constellation 2's water ball changes nothing for an inactive constellation", () => {
     expect.hasAssertions();
     const { aino, context, teammate } = createTeammateTeam(1);
     strikeEnemy(context, teammate, aino);
@@ -267,7 +267,7 @@ describe(createAinoKitBehaviour, () => {
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("constellation 2's water ball a constellation 2 water ball counts no internal cooldown", () => {
+  test("constellation 2's water ball counts no internal cooldown", () => {
     expect.hasAssertions();
     const { aino, context, teammate } = createTeammateTeam(2);
     strikeEnemy(context, teammate, aino);
@@ -275,7 +275,7 @@ describe(createAinoKitBehaviour, () => {
     expect(context.strikes[0]?.hit.internalCooldownTag).toBeUndefined();
   });
 
-  test("constellation 2's water ball the water ball queues nothing while Aino is on the field", () => {
+  test("constellation 2's water ball queues nothing while Aino is on the field", () => {
     expect.hasAssertions();
     const { aino, context, teammate } = createTeammateTeam(2);
     const onField = { ...context, activeCombatant: aino };
@@ -285,7 +285,7 @@ describe(createAinoKitBehaviour, () => {
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("constellation 2's water ball the water ball queues nothing once her burst's zone has run out", () => {
+  test("constellation 2's water ball queues nothing once her burst's zone has run out", () => {
     expect.hasAssertions();
     const { aino, context, kitEffectState, teammate } = createTeammateTeam(2);
     for (const effect of kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 0;
@@ -294,7 +294,7 @@ describe(createAinoKitBehaviour, () => {
     expect(context.strikes).toHaveLength(0);
   });
 
-  test("constellation 2's water ball the water ball fires once every five seconds", () => {
+  test("constellation 2's water ball fires once every five seconds", () => {
     expect.hasAssertions();
     const { aino, context, teammate } = createTeammateTeam(2);
     // A step clears the strikes queued before it, so each read counts the balls queued on the enemy since the last step

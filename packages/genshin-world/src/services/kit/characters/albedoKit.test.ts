@@ -277,7 +277,7 @@ describe(createAlbedoKitBehaviour, () => {
     expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
   });
 
-  test("constellation 2's Fatal Reckoning each Transient Blossom adds a stack, up to four, that the Fatal Blossoms take as flat damage", () => {
+  test("constellation 2's Fatal Reckoning adds a stack for each Transient Blossom, up to four, that the Fatal Blossoms take as flat damage", () => {
     expect.hasAssertions();
     const combatant = createAlbedoCombatant(0, 2);
     const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
@@ -293,7 +293,7 @@ describe(createAlbedoKitBehaviour, () => {
     expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(1.2 * combatant.attributes.defense);
   });
 
-  test("constellation 2's Fatal Reckoning the flat damage takes Albedo's DEF with the buffs on her", () => {
+  test("constellation 2's Fatal Reckoning takes Albedo's DEF with the buffs on her", () => {
     expect.hasAssertions();
     const combatant = createAlbedoCombatant(0, 2);
     const defenseBuff: KitBuff = {
@@ -312,7 +312,7 @@ describe(createAlbedoKitBehaviour, () => {
     expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * 1.5 * combatant.attributes.defense);
   });
 
-  test("constellation 2's Fatal Reckoning a Constellation 1 Albedo's Fatal Blossoms take no Fatal Reckoning damage", () => {
+  test("constellation 2's Fatal Reckoning deals no damage to a Constellation 1 Albedo's Fatal Blossoms", () => {
     expect.hasAssertions();
     const combatant = createAlbedoCombatant(0, 1);
     const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
@@ -324,7 +324,7 @@ describe(createAlbedoKitBehaviour, () => {
     expect(fatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
   });
 
-  test("constellation 2's Fatal Reckoning the stacks Tectonic Tide consumes leave its next Fatal Blossoms with no bonus", () => {
+  test("constellation 2's Fatal Reckoning leaves its next Fatal Blossoms with no bonus from the stacks Tectonic Tide consumes", () => {
     expect.hasAssertions();
     const combatant = createAlbedoCombatant(0, 2);
     const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };

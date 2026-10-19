@@ -175,13 +175,13 @@ describe(createTighnariKitBehaviour, () => {
     expect(getDamageBonus(createTighnariCombatant(4, 500), AttackTag.ChargedAttack)).toBeCloseTo(0.3);
   });
 
-  test("constellation 1's CRIT Rate a Constellation 1 switch raises the CRIT Rate of his charged attacks by 15%", () => {
+  test("constellation 1 raises the CRIT Rate of his charged attacks by 15%", () => {
     expect.hasAssertions();
 
     expect(getCriticalRateBonus(1, AttackTag.ChargedAttack)).toBe(0.15);
   });
 
-  test("constellation 1's CRIT Rate a Constellation 0 switch, or a normal attack at Constellation 1, changes no CRIT Rate", () => {
+  test("constellation 1 changes no CRIT Rate at constellation 0, or on a normal attack at constellation 1", () => {
     expect.hasAssertions();
 
     expect([
@@ -190,7 +190,7 @@ describe(createTighnariKitBehaviour, () => {
     ]).toStrictEqual([0, 0]);
   });
 
-  test("constellation 4's team Elemental Mastery a Constellation 4 switch gives every member 60 Elemental Mastery for 8 seconds as the burst starts", () => {
+  test("constellation 4 gives every member 60 Elemental Mastery for 8 seconds as the burst starts", () => {
     expect.hasAssertions();
 
     expect(
@@ -206,13 +206,13 @@ describe(createTighnariKitBehaviour, () => {
     ]);
   });
 
-  test("constellation 4's team Elemental Mastery a Constellation 3 switch gives no Elemental Mastery as the burst starts", () => {
+  test("constellation 4 gives no Elemental Mastery at constellation 3 as the burst starts", () => {
     expect.hasAssertions();
 
     expect(startBurst(3)).toStrictEqual([]);
   });
 
-  test("constellation 4's reaction raise a Constellation 4 burst reaction of Burning raises every member's Elemental Mastery to 120 for 8 seconds", () => {
+  test("constellation 4 raises every member's Elemental Mastery to 120 for 8 seconds on a burst reaction of Burning", () => {
     expect.hasAssertions();
 
     expect(
@@ -230,7 +230,7 @@ describe(createTighnariKitBehaviour, () => {
     ]);
   });
 
-  test("constellation 4's reaction raise a Constellation 4 burst reaction that is not raised leaves the 60 as it is", () => {
+  test("constellation 4 leaves the 60 as it is on a burst reaction that is not raised", () => {
     expect.hasAssertions();
 
     expect(
@@ -238,7 +238,7 @@ describe(createTighnariKitBehaviour, () => {
     ).toStrictEqual([60, 60]);
   });
 
-  test("constellation 4's reaction raise a Constellation 4 normal attack's reaction raises nothing", () => {
+  test("constellation 4 raises nothing on a normal attack's reaction", () => {
     expect.hasAssertions();
 
     expect(triggerReaction(ReactionType.Burning, AttackTag.NormalAttack, 4).map(({ amount }) => amount)).toStrictEqual([
@@ -246,7 +246,7 @@ describe(createTighnariKitBehaviour, () => {
     ]);
   });
 
-  test("constellation 4's reaction raise a Constellation 3 burst reaction raises nothing", () => {
+  test("constellation 4 raises nothing on a burst reaction at constellation 3", () => {
     expect.hasAssertions();
 
     expect(triggerReaction(ReactionType.Burning, AttackTag.ElementalBurst, 3)).toStrictEqual([]);

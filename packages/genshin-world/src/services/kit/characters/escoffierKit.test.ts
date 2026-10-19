@@ -127,19 +127,19 @@ describe(createEscoffierKitBehaviour, () => {
     expect(castScoringCutsFieldIds(0)).toStrictEqual(["escoffier-scoring-cuts-heal"]);
   });
 
-  test("ascension 4's Hydro and Cryo RES shred a passive takes effect at its ascension phase", () => {
+  test("ascension 4's Hydro and Cryo RES shred takes effect as a passive at its ascension phase", () => {
     expect.hasAssertions();
 
     expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Pyro, Element.Pyro])).toBeCloseTo(0.1);
   });
 
-  test("ascension 4's Hydro and Cryo RES shred a passive does not take effect below its ascension phase", () => {
+  test("ascension 4's Hydro and Cryo RES shred does not take effect as a passive below its ascension phase", () => {
     expect.hasAssertions();
 
     expect(getShred(3, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeUndefined();
   });
 
-  test("ascension 4's Hydro and Cryo RES shred the shred steps up with each Hydro or Cryo member, to 55% for four", () => {
+  test("ascension 4's Hydro and Cryo RES shred steps up with each Hydro or Cryo member, to 55% for four", () => {
     expect.hasAssertions();
 
     expect(getShred(4, [Element.Hydro, Element.Cryo, Element.Hydro, Element.Cryo])).toBeCloseTo(0.55);
