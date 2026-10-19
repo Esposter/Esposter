@@ -34,9 +34,10 @@ const getIdentifierNames = (node: ts.Node): string[] =>
     .map((identifier) => identifier.text);
 
 // Module-scope state in a test file, which a sibling suite can reach and mutate: the `testing` skill's scope rule.
-// A constant is kept out of the scope when its initializer cannot move into a describe callback, which is a
-// Function, a hoisted block, a top-level await, or a binding a hoisted `vi.mock` factory reads, and whatever one of
-// Those reads, transitively, since the reader pins it out at module scope too.
+// A function and a hoisted `vi.hoisted` block are never candidates, and a constant only a module-scope helper reads
+// Is still reported, since the helper moves into the describe with it. Kept out are a top-level await's fixture, a
+// Binding a hoisted `vi.mock` factory reads, and whatever a destructuring's initializer reads. Each kept-out
+// Constant keeps out what its own initializer reads, transitively, since the module scope pins those too.
 export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => {
   const sourceFile = ts.createSourceFile("", text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const { statements } = sourceFile;
