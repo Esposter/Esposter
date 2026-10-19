@@ -10,10 +10,19 @@ import { kitParameterSchema } from "genshin-world";
 const SLOT_HIT_PATH_REGEX =
   /^(?:(?:skill|burst)\.|stances\.[A-Za-z]+\.(?:chargedAttack|skill|normalAttacks\.\d+)\.|skillHolds\.\d+\.(?:action|variant)\.)?hits\.(?:\d+|[A-Za-z]+(?:\.\d+)?)$/u;
 
-// The table label each slot hit deals its multiplier under, by the hit's path, with the proud skill group that label belongs
-// To. A hit takes the label its first candidate's parameter names: the burst's first hit `1-Hit Swing DMG` where it reads that
-// Label's parameter. A hold's or a named hit's multiplier no candidate gives is labelled by its overlay's, as gcsim gives most
-// Of them none
+// A hit's path split into its list and its index, `burst.hits` and `5` for `burst.hits.5`
+const HIT_LIST_INDEX_REGEX = /^(?<list>.+)\.(?<index>\d+)$/u;
+
+// Whether a hit's index is at or past the length its list's overlay sets, so the record holds no hit at that index
+const checkPastListLength = (hitPath: string, overlay: KitOverlay): boolean => {
+  const listIndex = HIT_LIST_INDEX_REGEX.exec(hitPath)?.groups;
+  const length = listIndex === undefined ? undefined : overlay[`${listIndex.list}.length`]?.value;
+  return typeof length === "number" && Number(listIndex?.index) >= length;
+};
+
+// The table label each slot hit deals its multiplier under, by the hit's path, with the proud skill group that label
+// Belongs to. A hit takes the label of the multiplier the record publishes at its path, the overlay's where it sets a
+// Value and else its first candidate's, and a hit at or past the length its list's overlay sets takes none
 export const getKitHitLabelMap = (
   candidateMap: ReadonlyMap<string, KitCandidate[]>,
   { labelMap }: Pick<KitTables, "labelMap">,
@@ -25,12 +34,10 @@ export const getKitHitLabelMap = (
     const multiplierHitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
     const hitPath =
       multiplierHitPath !== undefined && SLOT_HIT_PATH_REGEX.test(multiplierHitPath) ? multiplierHitPath : undefined;
-    // A skill's or burst's hit keeps its gcsim candidate's label alone; a hold or a named hit takes its overlay's multiplier
-    // Where no candidate gives one
-    const isOverlayLabelled = hitPath?.startsWith("skillHolds.") || hitPath?.startsWith("hits.");
-    const value = candidateMap.get(path)?.[0]?.value ?? (isOverlayLabelled ? overlay[path]?.value : undefined);
+    if (hitPath === undefined || checkPastListLength(hitPath, overlay)) continue;
+    const value = overlay[path]?.value ?? candidateMap.get(path)?.[0]?.value;
     const parameter = kitParameterSchema.safeParse(value).data;
-    if (hitPath === undefined || parameter === undefined || typeof parameter === "number") continue;
+    if (parameter === undefined || typeof parameter === "number") continue;
     const tableLabel = labelMap
       .get(parameter.proudSkillGroupId)
       ?.find(({ indexes }) => indexes.includes(parameter.index));

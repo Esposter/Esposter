@@ -67,6 +67,7 @@ describe(readGcsimQueuedAttacks, () => {
           radius: 6,
           shape: GcsimHitboxShape.Circle,
         },
+        lastLine: 7,
         line: 7,
       },
       {
@@ -83,6 +84,7 @@ describe(readGcsimQueuedAttacks, () => {
           radius: 6,
           shape: GcsimHitboxShape.Circle,
         },
+        lastLine: 13,
         line: 8,
       },
     ]);
@@ -125,6 +127,7 @@ describe(readGcsimQueuedAttacks, () => {
           radius: 7.5,
           shape: GcsimHitboxShape.Circle,
         },
+        lastLine: 9,
         line: 4,
       },
     ]);
@@ -162,6 +165,7 @@ describe(readGcsimQueuedAttacks, () => {
           radius: 0,
           shape: GcsimHitboxShape.Circle,
         },
+        lastLine: 5,
         line: 5,
       },
     ]);
@@ -202,6 +206,7 @@ describe(readGcsimQueuedAttacks, () => {
           radius: 0.6,
           shape: GcsimHitboxShape.Circle,
         },
+        lastLine: 8,
         line: 8,
       },
     ]);
@@ -236,6 +241,7 @@ describe(readGcsimQueuedAttacks, () => {
         delayLine: 9,
         file: "skill.go",
         hitbox: undefined,
+        lastLine: 9,
         line: 9,
       },
     ]);

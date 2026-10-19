@@ -1,3 +1,7 @@
+import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
+import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
+import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
+import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
@@ -6,10 +10,14 @@ import type { AttackArea } from "genshin-world";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { GCSIM_CHARACTERS_PATH, GCSIM_DURABILITY_PER_GAUGE } from "#src/services/genshinAssets/kits/constants";
+import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
+import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
+import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
 import { readGcsimEnclosingLoop } from "#src/services/genshinAssets/kits/gcsim/readGcsimEnclosingLoop";
 import { readGcsimFieldIdentifier } from "#src/services/genshinAssets/kits/gcsim/readGcsimFieldIdentifier";
 import { createGcsimFileResolver } from "#src/services/genshinAssets/kits/gcsim/readGcsimFileConstant";
+import { readGcsimLineExpressionStarts } from "#src/services/genshinAssets/kits/gcsim/readGcsimLineExpressionStarts";
 import { readGcsimLineValues } from "#src/services/genshinAssets/kits/gcsim/readGcsimLineValues";
 import { readGcsimQueueDelay } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueueDelay";
 import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/readGcsimTableCells";
@@ -17,14 +25,15 @@ import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveG
 import { toGcsimAttackTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimAttackTag";
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
+import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
-import { Attribute, CombatTalent, kitParameterSchema } from "genshin-world";
+import { Attribute, CombatTalent, kitParameterSchema, toKitSeconds } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// The record's hit field measured from the action's start, as BaseKitHitRecord's schema has it: the only field a queued
-// Block's delay is added to, since a duration, an interval or a count is cited as written whatever block its line is in
+// The record's hit field measured from the action's start, as BaseKitHitRecord's schema has it: the only field an
+// Action's hit adds a queued block's delay to. A duration, an interval or a count is cited as written, in any block
 const HITMARK_FIELD = "hitmarkFrames";
 
 // The record's hit field in units of U, which gcsim writes as a durability of GCSIM_DURABILITY_PER_GAUGE to the unit
@@ -159,44 +168,119 @@ const readCitedArea = (
   return { area, line: cite?.line ?? lineIndex + 1 };
 };
 
+// The frame the action runs from, `c.Core.F`, which a line's expressions read as zero: the action's start
+const ACTION_FRAME_NAME = "c.Core.F";
+const ACTION_FRAME_VALUE = 0;
+
+// The suffix of a field that counts seconds, which a count of frames over the frame rate gives
+const SECONDS_FIELD_SUFFIX = "Seconds";
+
+// The path of an action's hit, `burst.hits.0.hitmarkFrames` and the like, as opposed to a named hit's, `hits.<name>`
+const ACTION_HIT_PATH_REGEX =
+  /^(?:normalAttacks|chargedAttack|plunges|plungeCollision|skill\.hits|skillHolds|burst\.hits)\./u;
+
+// A cited file as a cited line's value is read from it: its name below the folder as the overlay cites it, the folder's
+// Character whose constants and queue calls its names resolve through, and the file's lines and tokens
+interface CitedFile {
+  fileName: string;
+  gcsim: GcsimCharacter;
+  lines: readonly string[];
+  tokens: readonly GoToken[];
+}
+
+// The hitmarks readGcsimQueuedAttacks reads for a file's queue calls with the cited line among their lines, each the
+// Delay its call is queued at with the tasks around it, as the mechanical path writes it. Where the cited hit has a loop
+// Index, only the call of the iteration that index names is one of them
+const readQueuedHitmarks = (
+  queuedAttacks: readonly GcsimQueuedAttack[],
+  fileName: string,
+  line: number,
+  hitIndex: number | undefined,
+  loopIndex: string | undefined,
+): number[] =>
+  queuedAttacks.flatMap(({ delay, file, iterations, lastLine, line: firstLine }) =>
+    file === fileName &&
+    firstLine <= line &&
+    line <= lastLine &&
+    delay !== undefined &&
+    (hitIndex === undefined || loopIndex === undefined || iterations?.[loopIndex] === hitIndex)
+      ? [delay]
+      : [],
+  );
+
 // The value a cited line gives, in the record's units: its one value equal to the cited value, or its first where none
-// Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. In a `for` loop,
-// An array of that line's value at each index of the loop, taken at the one expression position whose values equal the
-// Cited array, or at the first position where none does; a scalar citation takes the value equal to it, as outside one.
-// A cited entry of a run of hits takes the loop's element at its index, matched as the one value its hit is cited with
+// Is. A gauge line gives its durability over GCSIM_DURABILITY_PER_GAUGE, in units of U. A seconds field gives its
+// Frames over the frame rate, with those converted values first and its frames after them. A queue call's line gives
+// First the hitmark readGcsimQueuedAttacks reads for that call, the run's index picking it, then its literal numbers,
+// And the value of each expression that starts on it, with its locals, constants and loop index resolved. In a `for`
+// Loop, an array of that line's value at each index of the loop, taken at the one expression position whose values
+// Equal the cited array, or at the first position where none does; a scalar citation takes the equal value, as outside
+// One. A cited entry of a run of hits takes the loop's element at its index, matched as its hit is cited.
 const readCitedValue = (
-  lines: readonly string[],
+  { fileName, gcsim, lines, tokens }: CitedFile,
   lineIndex: number,
   citedValue: unknown,
-  file: string,
   hitIndex: number | undefined,
-  field: string,
+  path: string,
 ): unknown => {
+  const field = path.slice(path.lastIndexOf(".") + 1);
+  const isActionHit = ACTION_HIT_PATH_REGEX.test(path);
   const lineText = lines[lineIndex] ?? "";
   const resolveName = createGcsimFileResolver(lines);
-  // A line inside a queued block is read at the time the block queues it, so a hitmark takes the block's delay
+  const scope = createGoScope(tokens, gcsim.constantMap);
+  // A line inside a queued block is read when the block queues it, so an action's hitmark takes the block's delay
   const delay = readGcsimQueueDelay(lines, lineIndex, resolveName);
   if (delay === undefined) return undefined;
-  const shift = field === HITMARK_FIELD ? delay : 0;
+  const shift = field === HITMARK_FIELD && isActionHit ? delay : 0;
+  const isSeconds = field.endsWith(SECONDS_FIELD_SUFFIX);
   const toRecordValue = (value: number) => (field === GAUGE_FIELD ? value / GCSIM_DURABILITY_PER_GAUGE : value + shift);
   const loop = readGcsimEnclosingLoop(lines, lineIndex, resolveName);
+  // A queue call's line offers the hitmark its call queues before its own values, for named and action hits alike
+  const queuedHitmarks =
+    field === HITMARK_FIELD
+      ? readQueuedHitmarks(gcsim.queuedAttacks, fileName, lineIndex + 1, hitIndex, loop?.index)
+      : [];
+  // A name resolves to the loop's index first, then to the scope of the position it is read at, the file's assignment
+  // And the package's constant, and the action's frame last
+  const readExpressionValues = (overrides: (name: string) => GoValue | undefined): number[] =>
+    readGcsimLineExpressionStarts(tokens, lineIndex + 1).flatMap((position) => {
+      const value = evaluateGoNumber(
+        parseGoExpression(tokens, position).expression,
+        (name) =>
+          overrides(name) ??
+          scope.resolveName(name, position) ??
+          resolveName(name) ??
+          gcsim.constantMap.get(name)?.value ??
+          (name === ACTION_FRAME_NAME ? ACTION_FRAME_VALUE : undefined),
+      );
+      return value === undefined ? [] : [value];
+    });
+  const readRecordValues = (overrides: (name: string) => GoValue | undefined): number[] => {
+    const values = [
+      ...readGcsimLineValues(lineText, (name) => overrides(name) ?? resolveName(name)),
+      ...readExpressionValues(overrides),
+    ].map((value) => toRecordValue(value));
+    return isSeconds ? [...values.map((value) => toKitSeconds(value)), ...values] : values;
+  };
   if (loop === undefined) {
-    const values = readGcsimLineValues(lineText, resolveName).map((value) => toRecordValue(value));
+    const values = [...queuedHitmarks, ...readRecordValues(() => undefined)];
     return values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? values[0];
   }
   if (loop.count === 0) return undefined;
   const valuesByIndex = Array.from({ length: loop.count }, (_value, index) =>
-    readGcsimLineValues(lineText, (name) => (name === loop.index ? index : resolveName(name))).map((value) =>
-      toRecordValue(value),
-    ),
+    readRecordValues((name) => (name === loop.index ? index : undefined)),
   );
   if (hitIndex !== undefined) {
-    const hitValues = valuesByIndex[hitIndex] ?? [];
+    const hitValues = [...queuedHitmarks, ...(valuesByIndex[hitIndex] ?? [])];
     return hitValues.find((value) => checkIsKitValueEqual(value, citedValue)) ?? hitValues[0];
   }
   // A scalar citation takes the loop's value equal to it, as outside a loop does, else the first index's first value
-  if (!Array.isArray(citedValue))
-    return valuesByIndex.flat().find((value) => checkIsKitValueEqual(value, citedValue)) ?? valuesByIndex[0]?.[0];
+  if (!Array.isArray(citedValue)) {
+    const values = [...queuedHitmarks, ...valuesByIndex.flat()];
+    return (
+      values.find((value) => checkIsKitValueEqual(value, citedValue)) ?? queuedHitmarks[0] ?? valuesByIndex[0]?.[0]
+    );
+  }
   const positions = Array.from(
     { length: Math.min(...valuesByIndex.map((values) => values.length)) },
     (_value, position) => position,
@@ -215,14 +299,15 @@ const readCitedValue = (
 export const readGcsimCitedCandidates = (
   overlay: KitOverlay,
   gcsimDirectory: string,
-  folder: string,
+  gcsim: GcsimCharacter,
   talentGroupIdMap: KitTables["talentGroupIdMap"],
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   for (const [path, entry] of Object.entries(overlay)) {
     if (!("file" in entry) || entry.value === undefined) continue;
-    const file = `${GCSIM_CHARACTERS_PATH}/${folder}/${entry.file}`;
-    const lines = readFileSync(join(gcsimDirectory, file), "utf8").split("\n");
+    const file = `${GCSIM_CHARACTERS_PATH}/${gcsim.folder}/${entry.file}`;
+    const source = readFileSync(join(gcsimDirectory, file), "utf8");
+    const lines = source.split("\n");
     // An area is cited by the constructor on its line, whole, with the table cells it reads cited by their rows
     if (typeof entry.value === "object" && entry.value !== null && !Array.isArray(entry.value)) {
       const cited = readCitedArea(
@@ -251,7 +336,13 @@ export const readGcsimCitedCandidates = (
         });
       continue;
     }
-    const value = readCitedValue(lines, entry.line - 1, entry.value, file, entry.index, field);
+    const value = readCitedValue(
+      { fileName: entry.file, gcsim, lines, tokens: tokenizeGo(source) },
+      entry.line - 1,
+      entry.value,
+      entry.index,
+      path,
+    );
     if (value === undefined) continue;
     addKitCandidate(candidateMap, path, { provenance: { file, line: entry.line, source: KitSource.Gcsim }, value });
   }

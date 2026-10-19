@@ -1,6 +1,8 @@
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
+import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { CombatTalent } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
@@ -47,13 +49,22 @@ describe("readGcsimCitedCandidates table cells", () => {
     return directory;
   };
 
+  const createCharacter = (source: string) =>
+    readGcsimCharacter(
+      FOLDER,
+      new Map([
+        ["attack.go", source],
+        [GCSIM_CONFIG_FILE, "name: aino\n"],
+      ]),
+    );
+
   test("a table cell read at the action's counter is cited by the line of its row", () => {
     expect.hasAssertions();
     const candidates =
       readGcsimCitedCandidates(
         overlayFor("normalAttacks.1.hits.0.area"),
         createGcsimDirectory(TABLE_GO),
-        FOLDER,
+        createCharacter(TABLE_GO),
         TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([
@@ -70,7 +81,7 @@ describe("readGcsimCitedCandidates table cells", () => {
       readGcsimCitedCandidates(
         overlayFor("normalAttacks.0.hits.0.area"),
         createGcsimDirectory(TABLE_GO),
-        FOLDER,
+        createCharacter(TABLE_GO),
         TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.0.hits.0.area") ?? [];
     expect(candidates[0]).toStrictEqual({
@@ -85,7 +96,7 @@ describe("readGcsimCitedCandidates table cells", () => {
       readGcsimCitedCandidates(
         overlayFor("normalAttacks.1.hits.0.area"),
         createGcsimDirectory(UNEVALUABLE_GO),
-        FOLDER,
+        createCharacter(UNEVALUABLE_GO),
         TALENT_GROUP_ID_MAP,
       ).get("normalAttacks.1.hits.0.area") ?? [];
     expect(candidates).toStrictEqual([]);

@@ -6,11 +6,12 @@ import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseG
 import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-const QUEUE_OPEN_REGEX = /(?:Tasks\.Add|QueueCharTask)\(func\(\)\s*\{\s*$/u;
+const QUEUE_OPEN_REGEX = /(?:Tasks\.Add|QueueCharTask|QueueEnemyTask)\(func\(\)\s*\{\s*$/u;
 const QUEUE_CLOSE_REGEX = /^\}\s*,\s*(?<delay>.+?)\s*\)\s*$/u;
 
-// The delay a `Tasks.Add(func() {` or `QueueCharTask(func() {` block gives the lines inside it, from its closing `}, delay)` line at the block's own
-// Indent, the first such line below the cited one. Undefined where that closing gives no number
+// The delay a `Tasks.Add(func() {`, `QueueCharTask(func() {` or `QueueEnemyTask(func() {` block gives the lines inside
+// It, from its closing `}, delay)` line at the block's own indent, the first such line below the cited one. Undefined
+// Where that closing gives no number
 const readClosingDelay = (
   lines: readonly string[],
   fromIndex: number,
@@ -27,9 +28,10 @@ const readClosingDelay = (
   return undefined;
 };
 
-// The delay the `Tasks.Add(func() {` and `QueueCharTask(func() {` blocks around a line add to its value, nested blocks adding up from the inside out.
-// Found by scanning up through each less-indented line to the block that opens it. Zero where no block queues the line,
-// Undefined where a queued block's delay is not a number, so the line's value is Unsourced
+// The delay the `Tasks.Add(func() {`, `QueueCharTask(func() {` and `QueueEnemyTask(func() {` blocks around a line add
+// To its value, nested blocks adding up from the inside out. Found by scanning up through each less-indented line to
+// The block that opens it. Zero where no block queues the line, undefined where a queued block's delay is not a number,
+// So the line's value is Unsourced
 export const readGcsimQueueDelay = (
   lines: readonly string[],
   lineIndex: number,

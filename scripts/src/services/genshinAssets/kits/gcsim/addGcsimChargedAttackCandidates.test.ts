@@ -70,7 +70,7 @@ describe(addGcsimChargedAttackCandidates, () => {
     folder: "iansan",
     goSources: [],
     holdCooldowns: [],
-    queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 }],
+    queuedAttacks: [{ attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", lastLine: 97, line: 97 }],
     talentArrayMap: new Map(),
     talentFile: "iansan.go",
     talentParameterMap: new Map([
@@ -122,8 +122,8 @@ describe(addGcsimChargedAttackCandidates, () => {
       constantMap: new Map([...gcsim.constantMap].filter(([name]) => name !== "chargeHitmarks")),
       goSources: [],
       queuedAttacks: [
-        { attackName: "ai", delayLine: 69, file: "charge.go", line: 60 },
-        { attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", line: 97 },
+        { attackName: "ai", delayLine: 69, file: "charge.go", lastLine: 60, line: 60 },
+        { attackName: "ai", delay: 25, delayLine: 101, file: "charge.go", lastLine: 97, line: 97 },
       ],
     };
     const candidateMap = new Map<string, KitCandidate[]>();

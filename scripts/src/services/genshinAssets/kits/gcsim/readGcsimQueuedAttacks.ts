@@ -23,6 +23,8 @@ import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOpt
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const QUEUE_CALLEES = new Set(["QueueAttack", "QueueAttackWithSnap"]);
+// The calls that queue a function as a task on a character or on an enemy, `c.QueueCharTask(` and `trg.QueueEnemyTask(`
+const TASK_QUEUE_CALLEES = new Set(["QueueCharTask", "QueueEnemyTask"]);
 // The damage delay's place among a queue call's arguments, the fourth in both of them
 const DELAY_ARGUMENT_INDEX = 3;
 // The attack pattern's place among a queue call's arguments, the second, or the third in `QueueAttackWithSnap`
@@ -73,15 +75,15 @@ const getPassedName = (expression: GoExpression): string | undefined => {
   else return undefined;
 };
 
-// A `Tasks.Add` or `QueueCharTask` closure's body and the delay written after it, `c.Core.Tasks.Add(func() {` ... `}, delay)`: the task runs
-// Its body that delay after the action, so a queue call in the body is delayed by it as well
+// A `Tasks.Add`, `QueueCharTask` or `QueueEnemyTask` closure's body and the delay written after its closing brace. The
+// Task runs its body that delay after the action, so a queue call in the body is delayed by it as well
 interface TaskClosure {
   bodyEnd: number;
   bodyStart: number;
   delayStart: number;
 }
 
-// Each `Tasks.Add` or `QueueCharTask` closure of a file, read at its `Tasks` or `QueueCharTask` token
+// Each `Tasks.Add`, `QueueCharTask` or `QueueEnemyTask` closure of a file, read at its `Tasks` or queue call token
 const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
   const closures: TaskClosure[] = [];
   for (const [position, token] of tokens.entries()) {
@@ -92,7 +94,7 @@ const readTaskClosures = (tokens: readonly GoToken[]): TaskClosure[] => {
       tokens[position + 2]?.text === "Add" &&
       checkIsGoPunctuation(tokens[position + 3], "(")
         ? position + 4
-        : token.text === "QueueCharTask" && checkIsGoPunctuation(tokens[position + 1], "(")
+        : TASK_QUEUE_CALLEES.has(token.text) && checkIsGoPunctuation(tokens[position + 1], "(")
           ? position + 2
           : undefined;
     if (funcStart === undefined) continue;
@@ -142,17 +144,18 @@ const readCallParameters = (
   );
 };
 
-// The delay a method's call gives when it is the function a `Tasks.Add` runs, `c.Core.Tasks.Add(c.burstTick(), 137)`, read
-// From its receiver through the call to the delay after its comma, else undefined
+// The delay a method's call gives when it is the function a task queues, as in `c.Core.Tasks.Add(c.burstTick(), 137)`
+// Or `trg.QueueEnemyTask(c.explode(), 120)`: read from its receiver through the call to the delay after its comma, else
+// Undefined
 const readTaskArgumentDelayStart = (tokens: readonly GoToken[], site: number): number | undefined => {
   const receiver = site - 2;
-  const isTaskAdd =
+  const isTaskQueue =
     checkIsGoPunctuation(tokens[site - 1], ".") &&
     checkIsGoPunctuation(tokens[receiver - 1], "(") &&
-    tokens[receiver - 2]?.text === "Add" &&
     checkIsGoPunctuation(tokens[receiver - 3], ".") &&
-    tokens[receiver - 4]?.text === "Tasks";
-  if (!isTaskAdd) return undefined;
+    (tokens[receiver - 2]?.text === "QueueEnemyTask" ||
+      (tokens[receiver - 2]?.text === "Add" && tokens[receiver - 4]?.text === "Tasks"));
+  if (!isTaskQueue) return undefined;
   const callEnd = parseGoExpression(tokens, receiver).end;
   return checkIsGoPunctuation(tokens[callEnd], ",") ? callEnd + 1 : undefined;
 };
@@ -331,7 +334,7 @@ export const readGcsimQueuedAttacks = (
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
-      const call = parseGoExpression(tokens, position).expression;
+      const { end: callEnd, expression: call } = parseGoExpression(tokens, position);
       if (call.kind !== GoExpressionKind.Call) continue;
       const argumentStarts = call.parameterStarts;
       const [attackStart, delayStart] = [argumentStarts[0], argumentStarts[DELAY_ARGUMENT_INDEX]];
@@ -399,6 +402,7 @@ export const readGcsimQueuedAttacks = (
             file,
             hitbox,
             ...(iteration.size > 0 && { iterations: Object.fromEntries(iteration) }),
+            lastLine: tokens[callEnd - 1]?.line ?? token.line,
             line: token.line,
             ...(holdValue !== undefined && { holdValue }),
           });
