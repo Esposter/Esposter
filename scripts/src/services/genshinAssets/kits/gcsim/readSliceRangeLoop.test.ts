@@ -3,23 +3,22 @@ import { readSliceRangeLoop } from "#src/services/genshinAssets/kits/gcsim/readS
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 
-// Durin's white burst, whose talent table lists one row per initial hit
-const config = readGcsimConfig(
-  [
-    "names:",
-    "  - durin",
-    "talents:",
-    "  - burstWhiteInitial:",
-    "      - 'burst(Principle of Purity: As the Light Shifts DMG)'",
-    "      - 'burst(Principle of Purity: As the Light Shifts DMG|1)'",
-    "      - 'burst(Principle of Purity: As the Light Shifts DMG|2)'",
-  ].join("\n"),
-);
-
 describe(readSliceRangeLoop, () => {
   test("runs a range over a talent table once per row, binding its index alone, as a row is no number", () => {
     expect.hasAssertions();
 
+    // Durin's white burst, whose talent table lists one row per initial hit
+    const config = readGcsimConfig(
+      [
+        "names:",
+        "  - durin",
+        "talents:",
+        "  - burstWhiteInitial:",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG)'",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG|1)'",
+        "      - 'burst(Principle of Purity: As the Light Shifts DMG|2)'",
+      ].join("\n"),
+    );
     const tokens = tokenizeGo(
       [
         "package durin",
