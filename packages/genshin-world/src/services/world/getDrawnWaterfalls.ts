@@ -13,7 +13,7 @@ export const getDrawnWaterfalls = (waterfalls: WaterfallSheet[]): WaterfallSheet
       ...waterfall.across.toArray(),
       waterfall.drop,
       waterfall.width,
-    ].join();
+    ].join(",");
     if (drawnWaterfallKeys.has(waterfallKey)) continue;
 
     drawnWaterfallKeys.add(waterfallKey);

@@ -27,7 +27,7 @@ describe(readRegionPalettes, () => {
     const { landmarks } = regionDataSchema.parse(mondstadtRegionJson);
     const palette = await readMondstadtPalette();
 
-    expect(await readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).toStrictEqual({
+    await expect(readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).resolves.toStrictEqual({
       [BuildingKit.Mondstadt]: { stone: parseHexColour(palette.stone.hex), timber: parseHexColour(palette.timber.hex) },
     });
   });
@@ -37,7 +37,7 @@ describe(readRegionPalettes, () => {
 
     const { landmarks } = regionDataSchema.parse(snezhnayaRegionJson);
 
-    expect(await readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).toStrictEqual({});
+    await expect(readRegionPalettes(GAME_DATA_LOCAL_BASE_URL, landmarks)).resolves.toStrictEqual({});
   });
 
   // Reads are memoized by URL, so this test names a base that no other test reads
@@ -49,7 +49,7 @@ describe(readRegionPalettes, () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ stone: palette.stone }));
     const { landmarks } = regionDataSchema.parse(mondstadtRegionJson);
 
-    expect(await readRegionPalettes("game-data-without-timber", landmarks)).toStrictEqual({
+    await expect(readRegionPalettes("game-data-without-timber", landmarks)).resolves.toStrictEqual({
       [BuildingKit.Mondstadt]: { stone: parseHexColour(palette.stone.hex), timber: MONDSTADT_TIMBER_COLOR },
     });
   });

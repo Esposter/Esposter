@@ -5,7 +5,7 @@ import { Matrix4, Vector3 } from "three";
 import { describe, expect, test } from "vitest";
 
 describe(composePlantPlaceMatrix, () => {
-  test("A placed tree stands where the game places it", () => {
+  test("a placed tree stands where the game places it", () => {
     expect.hasAssertions();
 
     const place: WindrisePlant["places"][number] = {
