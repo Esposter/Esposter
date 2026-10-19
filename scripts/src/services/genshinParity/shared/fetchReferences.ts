@@ -29,7 +29,7 @@ export const fetchReferences = async (): Promise<void> => {
         await writeCaptureFrame(capturePath, seconds, path, filter);
         return path;
       }
-      const url = urls.get(wikiTitle);
+      const url = wikiTitle === undefined ? undefined : urls.get(wikiTitle);
       const file = url ? await readWikiFile(url) : undefined;
       if (!file) return `${id}: not on the wiki as ${wikiTitle}`;
       // A crop placed in its frame is drawn on the frame's black, so the reference is the whole frame at its scale. One
