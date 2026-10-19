@@ -15,8 +15,9 @@ import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/r
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The causes saying no source gives a value: none, and no poise
+// The causes saying no source gives a value: none, no poise, and no damage
 const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([
+  KitProvisionalCause.NoDamageHit,
   KitProvisionalCause.NoPoiseSource,
   KitProvisionalCause.Unsourced,
 ]);

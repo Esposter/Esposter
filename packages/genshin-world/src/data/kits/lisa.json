@@ -244,7 +244,7 @@
   "hits.discharges.29.hitmarkFrames": { "cause": "Unclassified", "value": 989 },
   "hits.discharges.29.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.2 }
   },
   "skillHolds.0.action.hits.0.multiplier": {
@@ -274,7 +274,7 @@
   "skillHolds.0.action.hits.0.stackedHit.poiseDamages.1": { "cause": "Unsourced", "value": 195 },
   "skillHolds.0.action.hits.0.stackedHit.poiseDamages.2": { "cause": "Unsourced", "value": 240 },
   "skillHolds.0.action.hits.0.stackedHit.poiseDamages.3": { "cause": "Unsourced", "value": 300 },
-  "skillHolds.0.cooldownSeconds": { "cause": "Unclassified", "value": { "index": 4, "proudSkillGroupId": 432 } },
+  "skillHolds.0.cooldownSeconds": { "file": "skill.go", "line": 167, "source": "Gcsim", "value": 16 },
   "skillHolds.0.minimumHeldSeconds": { "cause": "Unsourced", "value": 1.9 },
   "skillMaximumHeldSeconds": { "cause": "Unsourced", "value": 4 }
 }

@@ -1,6 +1,5 @@
 {
   "frames.baronBunnySeconds": { "cause": "DiffersFromSource", "value": 529 },
-  "hits.fieryRainArrows.length": { "cause": "Unsourced", "value": 18 },
   "hits.fieryRainArrows.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
@@ -109,7 +108,6 @@
   },
   "hits.fieryRainArrows.17.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2139 } },
   "hits.fieryRainArrows.17.poiseDamage": { "cause": "Unclassified", "value": 7.22 },
-  "hits.everyArrowFindsItsTargetFieryRainArrows.length": { "cause": "Unsourced", "value": 18 },
   "hits.everyArrowFindsItsTargetFieryRainArrows.0.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2 }
