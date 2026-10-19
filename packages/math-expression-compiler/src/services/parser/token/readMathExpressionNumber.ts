@@ -1,7 +1,7 @@
 import type { MathExpressionParserState } from "#src/models/parser/MathExpressionParserState";
 
 import { MathExpressionTokenType } from "#src/models/parser/MathExpressionTokenType";
-import { DIGIT_REGEX } from "#src/services/parser/token/constants";
+import { checkIsDigitCharacter } from "#src/services/parser/token/checkIsDigitCharacter";
 import { getMathExpressionCharacter } from "#src/services/parser/token/getMathExpressionCharacter";
 import { MathExpressionRadixMap } from "#src/services/parser/token/MathExpressionRadixMap";
 import { readRadixNumber } from "#src/services/parser/token/readRadixNumber";
@@ -16,12 +16,12 @@ export const readMathExpressionNumber = (state: MathExpressionParserState): void
     return;
   }
 
-  let text = takeMathExpressionMatching(state, DIGIT_REGEX);
+  const start = state.index;
+  takeMathExpressionMatching(state, checkIsDigitCharacter);
   if (getMathExpressionCharacter(state, 0) === ".") {
-    text += ".";
     state.index++;
-    text += takeMathExpressionMatching(state, DIGIT_REGEX);
+    takeMathExpressionMatching(state, checkIsDigitCharacter);
   }
-  state.token = takeExponent(state, text);
+  state.token = takeExponent(state, state.source.slice(start, state.index));
   state.tokenType = MathExpressionTokenType.Number;
 };

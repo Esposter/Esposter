@@ -4,13 +4,13 @@ Today the dub picks **whose** voice reads a reply and nothing else: `ja` clones 
 
 ## Scope
 
-**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized and vocoded in token chunks, each chunk played as its speech is made, so the first sound follows the first chunk rather than the whole line.
+**Today:** one engine, Chatterbox Nano, loaded by model id through the Transformers.js `ChatterboxModel` class; a reply's spoken lines — one or two sentences each — dropped when no Latin letter is in one or a letter of another script is; the dub code carried on every request and used for one thing, the reference clip's wiki file prefix; each line synthesized whole and then played, so the first sound follows the whole line's synthesis.
 
 **This adds:**
 
 1. **The model** — Chatterbox Multilingual, the 0.5B checkpoint trained on 23 languages including `ja`, `zh` and `ko`, the three dubs beside English the wiki hosts. Its ONNX export exists; what does not yet exist is a Transformers.js release that loads it. That release is the gate, below.
 2. **The input** — the text's language detected from its script and handed to the model as its language token, sentence terminators of every script the roster speaks, and a sentence in a script no model reads dropped before it can be mistaken for a broken device.
-3. **The output** — the sentence synthesized and vocoded in clauses so playback starts before the last token, because the multilingual checkpoint is the 0.5B architecture, several times Nano's size, and the reading faster than real time that keeps the token-chunk streaming cheap will not survive the swap.
+3. **The output** — the sentence synthesized in clauses so playback starts before the whole sentence is synthesized, because a line synthesized whole already takes longer than it plays on the current engine, and the multilingual checkpoint is the 0.5B architecture, several times Nano's size.
 4. **The measurement** — every precision choice and every reference likeness re-measured against the new engine, since all of them were measured against Nano.
 
 Nothing here touches what the dub means to the user: `voice ja` still says whose voice, and the `VoiceLanguage` codes stay the ISO ones because the model's language tokens are spelled the same way.
@@ -28,16 +28,18 @@ flowchart TD
     Reply[A spoken line] --> Sentence[Its sentences<br/>terminators of every script]
     Sentence --> Script{Script of the sentence}
     Script -- Latin anywhere --> En["[en] token"]
-    Script -- else kana, else Han --> Ja["[ja] or [zh] token"]
+    Script -- else kana --> Ja["[ja] token"]
     Script -- else Hangul --> Ko["[ko] token"]
+    Script -- else Han --> Zh["[zh] token"]
     Script -- none the model reads --> Drop[Not spoken, logged]
     Dub[Dub file] --> Clip[Reference clip<br/>whose voice]
     En --> Engine[Multilingual engine]
     Ja --> Engine
     Ko --> Engine
+    Zh --> Engine
     Clip --> Engine
     Engine --> Clauses[Clause by clause<br/>synthesize, vocode, check]
-    Clauses --> Player[Player fed as chunks arrive]
+    Clauses --> Player[Player fed as clauses arrive]
 ```
 
 The two inputs that were one are now two: the dub decides the clip, the text decides the token. English prose in the Japanese actor's voice — today's behaviour — is `[en]` with the `ja` clip, and stays the default, since replies are English unless asked otherwise. A Japanese reply is `[ja]` with the same clip, and native.
@@ -51,14 +53,15 @@ The two inputs that were one are now two: the dub decides the clip, the text dec
 
 ### The input
 
-- **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Han → `zh`; else Hangul → `ko`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`. Han ranks below kana for the same reason, so a Japanese sentence of kanji alone, with no kana, is read as `[zh]`, a cost this order accepts unheard. A rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
+- **Script detection**, one function over the sentence with Unicode script properties, in one precedence a mixed sentence is resolved by: Latin anywhere → `en`; else Hiragana or Katakana → `ja`; else Hangul → `ko`; else Han → `zh`; else nothing the model reads → the sentence is not spoken and `voice.log` says why. The token is `[<code>]` prefixed to the text, the format the model card gives. Latin is first because replies are English unless asked otherwise, so a reply that quotes one Japanese phrase inside English prose is English; the cost is the converse, a Japanese sentence carrying one English word read as `[en]`. Han ranks last, below kana and Hangul, for the same reason: a Japanese sentence of kanji alone, with no kana, is read as `[zh]`, a cost this order accepts unheard, and a Korean sentence with a Hanja in it is read as `[ko]`. A rule that weighs the scripts rather than ranking them waits for a reply somebody has heard go wrong.
 - **Sentence terminators.** A spoken line is a sentence or two, and the clause cut below starts from its sentences: `.`, `!` and `?` followed by white space, joined by the fullwidth `。`, `！` and `？` with no white-space requirement, because those scripts put none after a sentence. Without this a Japanese line is one chunk, and the streaming that makes a longer line bearable does nothing for it.
 - **The interim gate already in place** — `checkIsReadable` drops a line with no Latin letter, or with a letter of another script in it, so the engine never sees text it cannot read and the ladder never moves for it. The script detection above replaces that gate rather than sitting beside it.
 
 ### The output
 
-- **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's tokens rather than the last sentence's. Where the [spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md) page's streaming cuts by token count to shorten the first wait of an engine that already reads faster than real time, this one cuts at punctuation, because each clause is its own synthesis where a token chunk is one more vocoder pass over everything before it — a price that pays only while the engine outruns real time, which the larger checkpoint will not.
-- **The per-chunk speech check, the device ladder it moves, the player that takes a stream and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds only the clause cut in front of them.
+- **Clauses, not sentences.** The synthesizer cuts a sentence at clause punctuation — commas, semicolons, dashes, their fullwidth forms — and synthesizes each cut in turn, so the first sound arrives after the first clause's synthesis rather than the last sentence's. Each clause is its own synthesis, so no pass re-renders what came before it.
+- **A superseded reply stops at a clause boundary.** Today a newer reply that lands during a line's synthesis waits for that line to finish: the supersession check runs after `synthesize` returns, and `synthesize` takes no cancellation signal, so the newer reply's first sound follows the older line's whole synthesis. With clauses, the check runs before each clause's synthesis, which bounds that wait to one clause. Whether a clause's own synthesis can be cancelled mid-generation is the design decision left open here: it needs the generation loop to accept a signal and stop at its next token, as the streaming path did before the whole-line change, and the signal crosses the `VoiceSynthesizer` interface.
+- **The speech check, the device ladder it moves, the player and one pending turn are already shipped** ([spoken replies](../../specs/infra/claude-interface/spoken-replies/design.md)). This proposal's output adds the clause cut in front of the synthesis and the supersession check between clauses.
 
 ### The measurement
 
@@ -86,9 +89,9 @@ The existing files the work touches, with the role each plays after the change.
 | `packages/genshin-persona/src/models/SpeechRequest.ts`            | The text's language beside the dub, two fields where there was one                                |
 | `packages/genshin-persona/src/models/VoiceLanguage.ts`            | Unchanged codes — the dub's and the model's tokens are the same ISO spelling                      |
 | `packages/genshin-persona/src/services/createAudioPlayer.ts`      | A player fed clauses rather than a whole line at a time                                           |
-| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer streaming chunks under the one-pending-turn rule                         |
+| `packages/genshin-persona/scripts/voice.ts`                       | The resident synthesizer, each line synthesized whole, under the one-pending-turn rule            |
 | `scripts/src/services/voiceMatch/measureCharacterReference.ts`    | The likeness re-measured through the new engine                                                   |
-| `openspec/specs/infra/claude-interface/spoken-replies/design.md`  | Rewritten as-built: the engine section, the ladder's memory, streaming no longer a "does not"     |
+| `openspec/specs/infra/claude-interface/spoken-replies/design.md`  | Rewritten as-built: the engine section, the ladder's memory, the whole-line synthesis             |
 
 ## Notes
 

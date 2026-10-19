@@ -52,41 +52,55 @@ A piece that never arrives SHALL hold the pieces after it for no longer than the
 - **WHEN** the pieces after it are waiting
 - **THEN** they are read once the hook's timeout has passed
 
-### Requirement: First sound starts after one chunk of speech
+### Requirement: A spoken line is synthesized whole and played in order
 
-A line's first sound SHALL start one chunk after its speech begins, rather than after the whole line is synthesized.
+A spoken line SHALL be synthesized whole before it is played, and a piece's lines SHALL be played one at a time in the order they were written.
 
-#### Scenario: Long line read aloud
+#### Scenario: Lines of a piece read aloud
 
-- **GIVEN** a spoken line is longer than one chunk of speech
-- **WHEN** the line is read
-- **THEN** its first sound plays after its first chunk is ready
-- **AND** the rest of the line follows without a click at the joins
+- **GIVEN** a piece has two spoken lines
+- **WHEN** the piece is read
+- **THEN** each line is synthesized whole
+- **AND** the second line plays after the first has finished playing
 
-### Requirement: Audio that is not speech moves the engine down a device
+### Requirement: A synthesis that does not sound like speech moves the engine down a device
 
-An audio chunk that does not sound like speech SHALL NOT be played, SHALL move the engine one device step down, and SHALL drop the rest of that line.
+A line whose synthesis does not sound like speech SHALL be synthesized again one device step down, and a line that no device step can speak SHALL be dropped.
 
-#### Scenario: Chunk fails the speech check
+#### Scenario: Synthesis is silent
 
-- **GIVEN** a chunk of a line is near silence
-- **WHEN** the chunk is checked
-- **THEN** the chunk is not played
-- **AND** the engine moves one device step down
-- **AND** the rest of that line is dropped
+- **GIVEN** a line's synthesis is silent
+- **WHEN** the synthesis is checked
+- **THEN** the engine moves one device step down
+- **AND** the line is synthesized again on that device
 
-#### Scenario: Next line on the lower device
+#### Scenario: No device step is left
 
-- **GIVEN** the engine has moved down after a failed chunk
-- **WHEN** the next line is read
-- **THEN** it is read on the lower device
+- **GIVEN** a line's synthesis is silent on the bottom device
+- **WHEN** the synthesis is checked
+- **THEN** the line is dropped
+- **AND** the rest of its piece's lines are not read
+
+#### Scenario: Failure on the GPU provider
+
+- **GIVEN** a synthesis fails on the GPU provider
+- **WHEN** the failure is raised
+- **THEN** the engine moves one device step down
+- **AND** the line is synthesized again on that device
 
 #### Scenario: Failure on a non-GPU provider
 
 - **GIVEN** a synthesis fails on a provider other than the GPU
 - **WHEN** the failure is raised
 - **THEN** that line is dropped
-- **AND** the device step is kept
+- **AND** the rest of its piece's lines are not read
+- **AND** the device is kept
+
+#### Scenario: Next reply on the lower device
+
+- **GIVEN** the engine has moved down
+- **WHEN** the next reply is read
+- **THEN** it is read on the lower device
 
 ### Requirement: Spoken replies are skipped when there is no voice or nothing would be heard
 

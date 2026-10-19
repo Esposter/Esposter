@@ -214,15 +214,6 @@ export const MIN_TURN_PAUSE_SECONDS = 0.4;
 // Lets a sentence the model finds no end for run for minutes and then hand the vocoder a sequence it rejects
 export const MAX_SPEECH_TOKENS_PER_CHARACTER = 4;
 export const MIN_SPEECH_TOKEN_CEILING = 100;
-// A streamed line is vocoded this many speech tokens at a time, each pass over the reference's tokens and the chunk's:
-// At the engine's speech-token rate this is about half a second of audio, the first sound a line makes
-export const VOICE_CHUNK_TOKENS = 13;
-// The decoder's padding after a chunk's tokens, and the token a line ends on, which the decoder never vocodes
-export const VOICE_SILENCE_TOKEN = 4299n;
-export const VOICE_DECODER_SILENCE_TOKEN_COUNT = 3;
-export const VOICE_STOP_SPEECH_TOKEN = 6562n;
-// The seam between two chunks: the held tail of one is faded into the head of the next over this long
-export const CHUNK_CROSSFADE_SECONDS = 0.01;
 // What a warm request synthesizes, so the graph's first-call cost is paid before the first reply
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
@@ -235,7 +226,7 @@ export const VIEWER_MESSAGE_ID_START = 1;
 export const VIEWER_SOUND_CHANNEL = 0;
 export const VIEWER_SOUND_VOLUME = 1;
 // The form the viewer takes a clip's sound in. The probe on the reader's install (infra-viewer-stage task 1.1)
-// decides it; until then a WAV path is the form the sink is built for, and a compressed-only form keeps the sound on
+// Decides it; until then a WAV path is the form the sink is built for, and a compressed-only form keeps the sound on
 // The stock player
 export const VIEWER_SOUND_FORM: ViewerSoundForm = ViewerSoundForm.WavPath;
 // How long the proof bubble the `viewer` verb shows stays on the model

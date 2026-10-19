@@ -10,7 +10,7 @@ import { getMathExpressionToken } from "#src/services/parser/getMathExpressionTo
 
 // The true branch is an assignment, so a conditional may nest inside it; the false branch is right associative
 export const parseConditional: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
-  const condition = parse(state, MathExpressionGrammarRule.LogicalOr);
+  const condition = parse(state, MathExpressionGrammarRule.Binary);
   if (state.error !== null || !checkIsToken(state, "?")) return condition;
 
   getMathExpressionToken(state);

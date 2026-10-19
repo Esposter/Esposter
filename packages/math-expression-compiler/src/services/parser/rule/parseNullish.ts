@@ -2,15 +2,21 @@ import type { MathExpressionRuleParser } from "#src/models/parser/MathExpression
 import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
 
 import { MathExpressionGrammarRule } from "#src/models/parser/MathExpressionGrammarRule";
-import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOperatorMap";
 import { createLogicalNode } from "#src/services/parser/createLogicalNode";
-import { parseLeftAssociative } from "#src/services/parser/parseLeftAssociative";
+import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
+import { MathExpressionOperatorMap } from "#src/services/parser/MathExpressionOperatorMap";
+import { getOwnValue } from "#src/services/shared/getOwnValue";
 
-export const parseNullish: MathExpressionRuleParser = (state, parse): MathExpressionNode =>
-  parseLeftAssociative(
-    state,
-    parse,
-    MathExpressionOperatorMap[MathExpressionGrammarRule.Nullish],
-    MathExpressionGrammarRule.LeftHand,
-    createLogicalNode,
-  );
+// Nullish coalescing groups from the left, so `a ?? b ?? c` is `(a ?? b) ?? c`
+export const parseNullish: MathExpressionRuleParser = (state, parse): MathExpressionNode => {
+  const operators = MathExpressionOperatorMap[MathExpressionGrammarRule.Nullish];
+  let node = parse(state, MathExpressionGrammarRule.LeftHand);
+  let operator = getOwnValue(operators, state.token);
+  while (state.error === null && operator !== undefined) {
+    getMathExpressionToken(state);
+    const right = parse(state, MathExpressionGrammarRule.LeftHand);
+    node = createLogicalNode(node, operator, right);
+    operator = getOwnValue(operators, state.token);
+  }
+  return node;
+};
