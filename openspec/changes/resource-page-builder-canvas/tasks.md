@@ -30,5 +30,5 @@
 
 ## 7. Shell
 
-- [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: tests named after the scenarios 'Editing a button's label in the Content panel shows on the canvas' and 'An empty page offers the palette'.
+- [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: a test named after the scenario 'Editing a button's label in the Content panel shows on the canvas'.
 - [ ] 7.2 Draw an empty page's one action as the design records: an Insert a block button in `UiEmptyState` that opens the palette's blocks as a `UiCommandScope`, in place of the palette in the slot. Verify: a test named after the scenario 'An empty page offers the palette' passes against that surface.
