@@ -39,7 +39,7 @@ const onKeydown = (event: KeyboardEvent) => {
 
 <template>
   <Treeview.Root :model-value="selectedId" :multiple="false">
-    <Treeview.List :label @focusin="(event) => onFocusin(event)" @keydown="(event) => onKeydown(event)">
+    <Treeview.List :label @focusin="onFocusin" @keydown="onKeydown">
       <UiTreeItem v-for="item of items" :key="item.id" :item />
     </Treeview.List>
   </Treeview.Root>
