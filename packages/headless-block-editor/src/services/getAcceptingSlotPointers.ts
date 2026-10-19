@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { getAcceptedTypes } from "#src/services/getAcceptedTypes";
@@ -10,7 +10,7 @@ import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 // Every slot in the document whose accepted types include the node's type: the root's content first, then each node's slots in layer-row order
 // Never a slot inside the node itself, since a node cannot move into its own subtree, and none for a pointer naming no node
 export const getAcceptingSlotPointers = (
-  document: BlockDocument,
+  document: LooseBlockDocument,
   registry: BlockRegistry,
   nodePointer: string,
 ): string[] => {

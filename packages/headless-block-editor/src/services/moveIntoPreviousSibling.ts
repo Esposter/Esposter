@@ -1,16 +1,18 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { getBlockNode } from "#src/services/getBlockNode";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
+import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
+import { getSlotTypes } from "#src/services/getSlotTypes";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
 // Moves a node to the end of the first slot of its previous sibling that accepts its type, or no operations when none does
 export const moveIntoPreviousSibling = (
-  document: BlockDocument,
+  document: LooseBlockDocument,
   registry: BlockRegistry,
   nodePointer: string,
 ): JsonPatchOperation[] => {
@@ -23,13 +25,11 @@ export const moveIntoPreviousSibling = (
   const previous = getBlockNode(document, previousPointer);
   if (!previous) return [];
 
-  const slotEntry = Object.entries(getBlockTypeDefinition(registry, previous.type)?.slots ?? {}).find(([, types]) =>
-    types.includes(node.type),
-  );
-  if (!slotEntry) return [];
+  const slots = getBlockTypeDefinition(registry, previous.type)?.slots ?? {};
+  const slot = Object.keys(slots).find((key) => getSlotTypes(slots, key).includes(node.type));
+  if (slot === undefined) return [];
 
-  const [slot] = slotEntry;
-  const children = previous.props[slot];
+  const children = getBlockPropValue(previous.props, slot);
   const childCount = Array.isArray(children) ? children.length : 0;
   const slotPointer = getBlockPropPointer(previousPointer, slot);
   return moveBlockNode(document, registry, nodePointer, slotPointer, childCount);

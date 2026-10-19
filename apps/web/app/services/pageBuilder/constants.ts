@@ -4,6 +4,8 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 export const MAX_PAGE_BUILDER_HISTORY_SIZE = 100;
 // The palette group every page builder command is listed under
 export const PAGE_BUILDER_COMMAND_GROUP = "Page builder";
+// The announcement for a block that a paste or insert cannot place where it was aimed
+export const CANNOT_GO_HERE_MESSAGE = "This block cannot go here";
 // The title each webpage node type is shown by
 export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, string>> = Object.freeze({
   [WebpageNodeType.Button]: "Button",

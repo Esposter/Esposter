@@ -4,6 +4,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
@@ -20,7 +21,7 @@ import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 export const usePageBuilderClipboard = (
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
-  deleteNode: (nodeId: string) => void,
+  deleteNode: (nodeId: string) => boolean,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
@@ -74,7 +75,7 @@ export const usePageBuilderClipboard = (
     const selection = getSelectedNode();
     if (!selection || !(await writeToClipboard(selection.node))) return;
 
-    deleteNode(selection.nodeId);
+    if (!deleteNode(selection.nodeId)) return;
     if (selection.title) announce(`Cut ${selection.title}`);
   };
   const pasteSelected = async () => {
@@ -94,7 +95,7 @@ export const usePageBuilderClipboard = (
     const type = Object.values(WebpageNodeType).find((candidate) => candidate === firstNode?.type);
     if (!document) return;
     if (!type) {
-      announce("This block cannot go here");
+      announce(CANNOT_GO_HERE_MESSAGE);
       return;
     }
 
@@ -104,7 +105,7 @@ export const usePageBuilderClipboard = (
 
     const operations = pasteBlockNodes(document, webpageRegistry, clipboard.nodes, target.slotPointer, target.index);
     if (operations.length === 0) {
-      announce("This block cannot go here");
+      announce(CANNOT_GO_HERE_MESSAGE);
       return;
     }
 

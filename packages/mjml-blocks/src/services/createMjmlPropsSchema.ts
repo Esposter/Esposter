@@ -6,13 +6,13 @@ import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSche
 import { exhaustiveGuard, sanitizeHtml } from "@esposter/shared";
 import { z } from "zod";
 
-// A node's props: its id, its children when it is a container, its content by kind, its alternative text flag and each attribute it sets
+// A node's props: its content by kind, its alternative text flag and each attribute it sets
+// Its id and its children are the branch's own, a slot's nodes, so the schema leaves both out
 export const createMjmlPropsSchema = <TContent>(
   specification: MjmlComponentSpecification,
   richText: MjmlRichTextDefinition<TContent>,
 ): z.ZodObject => {
-  const shape: Record<string, z.ZodType> = { id: z.string() };
-  if (specification.children.length > 0) shape.children = z.array(z.unknown());
+  const shape: Record<string, z.ZodType> = {};
 
   switch (specification.contentKind) {
     case MjmlContentKind.Label:

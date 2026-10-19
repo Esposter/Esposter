@@ -38,7 +38,7 @@ describe(createMjmlRegistry, () => {
         ],
         root: { props: {} },
       }),
-    ).toStrictEqual([["content", 0, "props", "children", 0]]);
+    ).toStrictEqual([["content", 0, "props", "children", 0, "type"]]);
   });
 
   test("a text at the root is refused", () => {
@@ -46,7 +46,7 @@ describe(createMjmlRegistry, () => {
 
     expect(
       getIssuePaths({ content: [{ props: { content: "", id: TEST_TEXT_ID }, type: "mj-text" }], root: { props: {} } }),
-    ).toStrictEqual([["content", 0]]);
+    ).toStrictEqual([["content", 0, "type"]]);
   });
 
   test("an attribute value MJML's type refuses", () => {
@@ -201,6 +201,6 @@ describe(createMjmlRegistry, () => {
     expect.hasAssertions();
 
     const definition = getBlockTypeDefinition(TEST_REGISTRY, "mj-raw");
-    expect(definition?.propsSchema.safeParse({ content: html, id: TEST_TEXT_ID }).success).toBe(isAccepted);
+    expect(definition?.propsSchema.safeParse({ content: html }).success).toBe(isAccepted);
   });
 });

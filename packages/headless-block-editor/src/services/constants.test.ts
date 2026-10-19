@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { describe } from "vitest";
@@ -20,7 +20,7 @@ export const TEST_REGISTRY: BlockRegistry = {
     { propsSchema: z.object({ text: z.string() }), slots: {}, type: "item" },
   ],
 };
-export const TEST_DOCUMENT: BlockDocument = {
+export const TEST_DOCUMENT: LooseBlockDocument = {
   content: [
     {
       props: { children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }], id: TEST_SECTION_ID },

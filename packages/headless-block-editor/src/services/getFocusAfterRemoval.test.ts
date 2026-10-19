@@ -1,4 +1,4 @@
-import type { BlockDocument } from "#src/models/BlockDocument";
+import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 
 import {
   TEST_DOCUMENT,
@@ -11,7 +11,7 @@ import { getFocusAfterRemoval } from "#src/services/getFocusAfterRemoval";
 import { describe, expect, test } from "vitest";
 
 describe(getFocusAfterRemoval, () => {
-  const threeSiblingsDocument: BlockDocument = {
+  const threeSiblingsDocument: LooseBlockDocument = {
     content: [
       {
         props: {
