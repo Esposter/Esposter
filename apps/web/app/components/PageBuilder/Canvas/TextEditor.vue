@@ -29,7 +29,8 @@ const getNodeContent = () => {
   const node = document && nodePointer !== undefined ? getBlockNode(document, nodePointer) : undefined;
   return node && textNodeType.propsSchema.parse(node.props).content;
 };
-// Each change is one props edit of the node's content, under one interaction, so the whole session is one history entry
+// Each session is its own interaction, so its changes are one history entry and the next session is another one
+const interactionId = crypto.randomUUID();
 const onUpdate = ({ editor }: { editor: Editor }) => {
   const document = getDocument(resourceId);
   const nodePointer = document && getNodePointer(document, nodeId);
@@ -39,7 +40,7 @@ const onUpdate = ({ editor }: { editor: Editor }) => {
     resourceId,
     updateBlockNodeProps(nodePointer, { content: editor.getJSON() }),
     "Edit text",
-    `text:${nodeId}`,
+    interactionId,
   ).match(noop, console.error);
 };
 const editor = useEditor({ autofocus: "end", content: getNodeContent(), extensions: getNoteExtensions(), onUpdate });

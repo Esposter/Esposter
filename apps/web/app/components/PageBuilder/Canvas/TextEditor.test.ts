@@ -10,7 +10,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { EditorContent } from "@tiptap/vue-3";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { nextTick } from "vue";
 
 describe("pageBuilderCanvasTextEditor", () => {
@@ -63,5 +63,35 @@ describe("pageBuilderCanvasTextEditor", () => {
       { props: { content: editor.getJSON(), id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
     ]);
     component.unmount();
+  });
+
+  test("each edit session is its own history entry", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    const pastLengthBefore = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0;
+    const editSession = async (text: string) => {
+      const component = await mountSuspended(PageBuilderCanvasTextEditor, {
+        props: { nodeId: TEST_ROOT_TEXT_ID, resourceId },
+      });
+      await nextTick();
+      const editor = component.getComponent(EditorContent).props("editor");
+      assert.exists(editor);
+
+      editor.commands.insertContent(text);
+      await component.trigger("keydown", { key: "Escape" });
+      component.unmount();
+    };
+
+    await editSession("a");
+    await editSession("b");
+
+    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length).toBe(pastLengthBefore + 2);
   });
 });
