@@ -56,7 +56,7 @@ describe(getGcsimNamedHitCandidates, () => {
     queuedAttacks: [],
     talentArrayMap: new Map(),
     talentFile: "amber.go",
-    talentParameterMap: new Map([["burst|Arrow DMG", { indexes: [0], line: 3 }]]),
+    talentParameterMap: new Map([["burst|Arrow DMG", { parameters: [{ index: 0, line: 3 }] }]]),
     travelMap: new Map(),
   };
   const tables: KitTables = {
@@ -297,7 +297,7 @@ describe(getGcsimNamedHitCandidates, () => {
                 line: 11,
               },
             ],
-            talentParameterMap: new Map([[`${type}|Arrow DMG`, { indexes: [0], line: 3 }]]),
+            talentParameterMap: new Map([[`${type}|Arrow DMG`, { parameters: [{ index: 0, line: 3 }] }]]),
           },
           {
             ...tables,
@@ -394,8 +394,8 @@ describe(getGcsimNamedHitCandidates, () => {
       goSources: [],
       queuedAttacks: [{ attackName: "ai", delay: 0, delayLine: 34, file: "skill.go", lastLine: 34, line: 34 }],
       talentParameterMap: new Map([
-        ["skill|Plume Dance Move DMG", { indexes: [4], line: 3 }],
-        ["skill|Wing Dance Move DMG", { indexes: [7], line: 4 }],
+        ["skill|Plume Dance Move DMG", { parameters: [{ index: 4, line: 3 }] }],
+        ["skill|Wing Dance Move DMG", { parameters: [{ index: 7, line: 4 }] }],
       ]),
     };
     const skillTables: KitTables = {

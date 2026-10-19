@@ -19,6 +19,7 @@ import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGc
 import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
+import { readGcsimTalentParameter } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
@@ -85,15 +86,14 @@ export const createGcsimKitCandidateWriter = (
       }
       let isLabelled = false;
       if (talentLeaf !== undefined) {
-        const { label, selector, type } = talentLeaf.reference;
-        const parameter = talentParameterMap.get(`${type}|${label}`);
-        const index = parameter?.indexes[selector] ?? parameter?.indexes[0];
-        if (parameter !== undefined && index !== undefined) {
+        const { type } = talentLeaf.reference;
+        const parameter = readGcsimTalentParameter(talentParameterMap, talentLeaf.reference);
+        if (parameter !== undefined) {
           isLabelled = true;
           add(
             `${path}.${multiplierKey}`,
             {
-              index,
+              index: parameter.index,
               proudSkillGroupId: talentGroupIdMap[GcsimTalentTypeCombatTalentMap[type]],
               ...(constellation !== undefined && { constellation }),
             },

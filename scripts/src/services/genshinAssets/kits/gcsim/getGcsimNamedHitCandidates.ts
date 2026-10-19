@@ -18,6 +18,7 @@ import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQu
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
+import { readGcsimTalentParameter } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter";
 import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { readNamedHitKey } from "#src/services/genshinAssets/kits/readNamedHitKey";
 
@@ -135,8 +136,7 @@ export const getGcsimNamedHitCandidates = (
     let isLabelled = false;
     for (const leaf of config.talentVariables.find(({ name }) => name === variable)?.leaves ?? []) {
       const { reference } = leaf;
-      const parameter = talentParameterMap.get(`${reference.type}|${reference.label}`);
-      const index = parameter?.indexes[reference.selector] ?? parameter?.indexes[0];
+      const index = readGcsimTalentParameter(talentParameterMap, reference)?.index;
       if (index === undefined) continue;
       const proudSkillGroupId = tables.talentGroupIdMap[GcsimTalentTypeCombatTalentMap[reference.type]];
       if (!namedHitCandidateMap.has(readNamedHitKey({ index, proudSkillGroupId })))

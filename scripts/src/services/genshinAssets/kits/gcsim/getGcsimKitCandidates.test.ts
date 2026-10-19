@@ -517,7 +517,7 @@ describe(getGcsimKitCandidates, () => {
       ],
       talentArrayMap: new Map(),
       talentFile: "zz_razor.go",
-      talentParameterMap: new Map([["burst|Burst DMG", { indexes: [3], line: 40 }]]),
+      talentParameterMap: new Map([["burst|Burst DMG", { parameters: [{ index: 3, line: 40 }] }]]),
       travelMap: new Map(),
     };
     const tables: KitTables = {
@@ -918,7 +918,7 @@ describe(getGcsimKitCandidates, () => {
         ["rollerOffsets", attackConstant([0.7, -0.5, -0.5, 0.6], 26)],
         ["rollerPoiseDMG", attackConstant([52.8, 51.9, 62.1, 81.1], 27)],
       ],
-      talentParameters: [["attack|Blade Roller 2-Hit DMG", { indexes: [1], line: 10 }]],
+      talentParameters: [["attack|Blade Roller 2-Hit DMG", { parameters: [{ index: 1, line: 10 }] }]],
       talentVariables: [
         {
           leaves: [0, 1, 2, 3].map((index) => ({
@@ -985,7 +985,7 @@ describe(getGcsimKitCandidates, () => {
           ),
         ],
       ],
-      talentParameters: [["skill|Loop Shot DMG", { indexes: [0], line: 161 }]],
+      talentParameters: [["skill|Loop Shot DMG", { parameters: [{ index: 0, line: 161 }] }]],
       talentVariables: [
         {
           leaves: [{ path: [0], reference: { label: "Loop Shot DMG", selector: 0, type: GcsimTalentType.Skill } }],
@@ -1032,8 +1032,8 @@ describe(getGcsimKitCandidates, () => {
       ],
       constants: [["burstSecondaryHitmark", attackConstant([103, 139, 147, 153, 157, 160], 18)]],
       talentParameters: [
-        ["burst|Soulseeker Shell DMG", { indexes: [1], line: 5 }],
-        ["burst|Radiant Soulseeker Shell DMG", { indexes: [2], line: 6 }],
+        ["burst|Soulseeker Shell DMG", { parameters: [{ index: 1, line: 5 }] }],
+        ["burst|Radiant Soulseeker Shell DMG", { parameters: [{ index: 2, line: 6 }] }],
       ],
       talentVariables: [
         {
@@ -1109,7 +1109,7 @@ describe(getGcsimKitCandidates, () => {
         ["cloudFirstHit", attackConstant(18, 34, "skill.go")],
         ["cloudHitInterval", attackConstant(45, 35, "skill.go")],
       ],
-      talentParameters: [["skill|Continuous Attack DMG", { indexes: [0], line: 3 }]],
+      talentParameters: [["skill|Continuous Attack DMG", { parameters: [{ index: 0, line: 3 }] }]],
       talentVariables: [
         {
           leaves: [
@@ -1170,8 +1170,8 @@ describe(getGcsimKitCandidates, () => {
         ["burstHitmark", attackConstant(88, 18, "burst.go")],
       ],
       talentParameters: [
-        ["skill|Fiery Passion Rush DMG", { indexes: [0], line: 3 }],
-        ["burst|Fiery Passion Flying Kick DMG", { indexes: [0], line: 4 }],
+        ["skill|Fiery Passion Rush DMG", { parameters: [{ index: 0, line: 3 }] }],
+        ["burst|Fiery Passion Flying Kick DMG", { parameters: [{ index: 0, line: 4 }] }],
       ],
       talentVariables: [
         {
