@@ -1,4 +1,7 @@
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { TextNode } from "#shared/models/pageBuilder/TextNode";
+import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -9,7 +12,9 @@ import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { z } from "zod";
 
 const textFormSchema = z.strictObject({ content: noteDocumentSchema });
-const textPropsSchema = z.object({ ...textFormSchema.shape, style: nodeStyleSchema.optional() });
+const textPropsSchema = z.object({ ...textFormSchema.shape, style: nodeStyleSchema.optional() }) satisfies z.ZodType<
+  OwnProps<TextNodeProps>
+>;
 
 // Rich text written in the Note's own writing kit, so a text node holds what a note holds
 export const textNodeType = {
@@ -17,14 +22,11 @@ export const textNodeType = {
   formSchema: textFormSchema,
   isFocusable: false,
   propsSchema: textPropsSchema,
-  render: (node) => {
-    const { content } = textPropsSchema.parse(node.props);
-    return {
-      attributes: { [HtmlAttributeName.Class]: "text" },
-      children: [{ html: renderNoteHtml(content) }],
-      tag: HtmlTag.Div,
-    };
-  },
+  render: (node) => ({
+    attributes: { [HtmlAttributeName.Class]: "text" },
+    children: [{ html: renderNoteHtml(node.props.content) }],
+    tag: HtmlTag.Div,
+  }),
   slots: {},
   type: WebpageNodeType.Text,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<TextNode>;

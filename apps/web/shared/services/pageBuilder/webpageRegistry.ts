@@ -1,4 +1,6 @@
-import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
+import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootProps";
 import type { BlockRegistry } from "headless-block-editor";
 
 import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
@@ -9,4 +11,4 @@ import { webpageNodeTypeDefinitionMap } from "#shared/services/pageBuilder/webpa
 export const webpageRegistry = {
   root: { content: WEBPAGE_PLACEABLE_NODE_TYPES, propsSchema: webpageRootPropsSchema },
   types: Object.values(webpageNodeTypeDefinitionMap),
-} satisfies BlockRegistry<NodeTypeDefinition>;
+} satisfies BlockRegistry<WebpageNode, WebpageRootProps, WebpageNodeDefinition>;

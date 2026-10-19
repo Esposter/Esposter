@@ -1,4 +1,7 @@
+import type { CountdownNode } from "#shared/models/pageBuilder/CountdownNode";
+import type { CountdownNodeProps } from "#shared/models/pageBuilder/CountdownNodeProps";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
@@ -15,7 +18,10 @@ const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
   endText: z.string(),
 });
-const countdownPropsSchema = z.object({ ...countdownFormSchema.shape, style: nodeStyleSchema.optional() });
+const countdownPropsSchema = z.object({
+  ...countdownFormSchema.shape,
+  style: nodeStyleSchema.optional(),
+}) satisfies z.ZodType<OwnProps<CountdownNodeProps>>;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. A date-only value is local
 // Midnight, as the input means it, and the date and time forms are read field by field, since Safari rejects the space form
@@ -89,29 +95,26 @@ export const countdownNodeType = {
   isFocusable: false,
   propsSchema: countdownPropsSchema,
   // The timer's live region stays off, so a screen reader is not told each tick; the script fills in the values
-  render: (node) => {
-    const { endsAt, endText } = countdownPropsSchema.parse(node.props);
-    return {
-      attributes: {
-        [HtmlAttributeName.AriaAtomic]: "false",
-        [HtmlAttributeName.AriaLive]: "off",
-        [HtmlAttributeName.Class]: "countdown",
-        [HtmlAttributeName.DataEndsAt]: endsAt,
-        [HtmlAttributeName.DataEndText]: endText,
-        [HtmlAttributeName.Role]: "timer",
+  render: (node) => ({
+    attributes: {
+      [HtmlAttributeName.AriaAtomic]: "false",
+      [HtmlAttributeName.AriaLive]: "off",
+      [HtmlAttributeName.Class]: "countdown",
+      [HtmlAttributeName.DataEndsAt]: node.props.endsAt,
+      [HtmlAttributeName.DataEndText]: node.props.endText,
+      [HtmlAttributeName.Role]: "timer",
+    },
+    children: [
+      ...["day", "hour", "minute", "second"].map((unit) => createCountdownUnit(unit)),
+      {
+        attributes: { [HtmlAttributeName.Class]: "countdown-end", [HtmlAttributeName.Hidden]: "" },
+        children: [],
+        tag: HtmlTag.Span,
       },
-      children: [
-        ...["day", "hour", "minute", "second"].map((unit) => createCountdownUnit(unit)),
-        {
-          attributes: { [HtmlAttributeName.Class]: "countdown-end", [HtmlAttributeName.Hidden]: "" },
-          children: [],
-          tag: HtmlTag.Span,
-        },
-      ],
-      tag: HtmlTag.Div,
-    };
-  },
+    ],
+    tag: HtmlTag.Div,
+  }),
   script: countdownScript,
   slots: {},
   type: WebpageNodeType.Countdown,
-} satisfies NodeTypeDefinition;
+} satisfies NodeTypeDefinition<CountdownNode>;
