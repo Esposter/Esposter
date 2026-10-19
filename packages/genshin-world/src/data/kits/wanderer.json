@@ -58,7 +58,6 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 38 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 150 },
   "stances.windfavored.burst.animationFrames": { "cause": "Unclassified", "value": 145 },
   "stances.windfavored.burst.hits.length": { "cause": "Unclassified", "value": 5 },
   "stances.windfavored.burst.hits.0.area": {

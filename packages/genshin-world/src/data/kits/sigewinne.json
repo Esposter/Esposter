@@ -54,7 +54,6 @@
   "burst.hits.5.internalCooldownTag": { "cause": "Unsourced", "value": "ElementalBurst" },
   "burst.hits.5.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 9539 } },
   "burst.hits.5.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "chargedAttack.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "hits.bolsteringBubblebalmBounces.length": { "cause": "Unsourced", "value": 5 },
   "hits.bolsteringBubblebalmBounces.0.area": {
     "cause": "Unclassified",
@@ -126,11 +125,5 @@
   },
   "hits.bolsteringBubblebalmBounces.4.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "hits.bolsteringBubblebalmBounces.4.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
-  "normalAttacks.0.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.1.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "normalAttacks.2.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plungeCollision.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.high.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
-  "plunges.low.hits.0.poiseDamage": { "cause": "DiffersFromSource", "value": 0 },
   "skillHolds.length": { "cause": "DiffersFromSource", "value": 0 }
 }

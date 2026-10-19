@@ -8,7 +8,7 @@ Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`,
 - **Spiritbreath Thorn lands with every press.** Its cooldown of 10 seconds has always run out before the skill's of 14 comes round again, so the skill lands it each time. Its hit at 62 frames falls past the skill's 37-frame animation, and lands on the action's clock as the framework has late hitmarks.
 - **Constellation 2 cuts the Dendro RES of each enemy the skill's hits strike by 30% for 10 seconds.** gcsim applies it to every enemy hit whose damage is not zero, which the kit reads as an enemy status on each hit, given Emilie's constellations.
 - **Ascension 4 adds a DMG Bonus of 0.15 per 1000 of her total ATK, to a cap of 36%, to each strike that lands on a Burning enemy.** It is read through the kit's strike damage bonus, from her attack as it stands.
-- **The plunges' reach is gcsim's**, a circle of radius 1 for the collision and of radii 3 and 5 for the low and high plunge, each centred a metre ahead of the body, with the collision at 41 frames and the plunges' hitmarks at 47 and 49. Their poise is 100 and 150, and the collision deals none.
+- **The plunges' reach is gcsim's**, a circle of radius 1 for the collision and of radii 3 and 5 for the low and high plunge, each centred a metre ahead of the body, with the collision at 41 frames and the plunges' hitmarks at 47 and 49. Their poise is 100 and 150, and the collision deals the wiki's 25.
 
 ## Not built
 
