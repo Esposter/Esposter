@@ -1,5 +1,4 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 } },
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 7239 } },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },

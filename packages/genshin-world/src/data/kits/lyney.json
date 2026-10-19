@@ -7,13 +7,10 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
-  "hitFields.pyrotechnicStrike.element": { "cause": "Unclassified", "value": "Fire" },
+  "hitFields.pyrotechnicStrike.element": { "file": "grinmalkinhat.go", "line": 42, "source": "Gcsim", "value": "Fire" },
   "hitFields.pyrotechnicStrike.gauge": { "cause": "Unsourced", "value": 1 },
-  "hitFields.pyrotechnicStrike.multiplier": {
-    "cause": "Unsourced",
-    "value": { "index": 14, "proudSkillGroupId": 8431 }
-  },
-  "hitFields.pyrotechnicStrike.poiseDamage": { "cause": "Unsourced", "value": 90 },
+  "hitFields.pyrotechnicStrike.multiplier": { "source": "Gcsim", "value": { "index": 14, "proudSkillGroupId": 8431 } },
+  "hitFields.pyrotechnicStrike.poiseDamage": { "file": "grinmalkinhat.go", "line": 92, "source": "Gcsim", "value": 90 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
   "skill.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8432 } }
 }
