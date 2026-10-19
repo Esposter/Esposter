@@ -28,3 +28,4 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ororon), MIT, at v2.47.2: Ororon's strikes' hitmarks and cancels, the Aimed Shot's and the Spirit Orb's frames, Dark Voices' Echo's ritual, soundwave and field, and Ascension 4's and Constellations 2 and 4's values.
+- [Spiritvessel Snapshot](https://genshin-impact.fandom.com/wiki/Spiritvessel_Snapshot), [Night's Sling](https://genshin-impact.fandom.com/wiki/Night%27s_Sling) and [Dark Voices Echo](https://genshin-impact.fandom.com/wiki/Dark_Voices_Echo), Genshin Impact Wiki: the poise of his strikes, Aimed Shot, collision, plunges, Spirit Orb's hit, burst and soundwave.

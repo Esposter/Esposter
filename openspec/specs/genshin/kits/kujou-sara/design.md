@@ -13,3 +13,7 @@ Kujou Sara's kit is its record and one behaviour module, `createKujouSaraKitBeha
 | File                                                                 | Role                                                                                                                               |
 | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/kujouSaraKit.ts` | `createKujouSaraKitBehaviour`, Kujou Sara's kit with the Cover and its Ambush, Constellation 2's crowfeather and the Stormclusters |
+
+## Sources
+
+- [Tengu Bowmanship](https://genshin-impact.fandom.com/wiki/Tengu_Bowmanship), [Tengu Stormcall](https://genshin-impact.fandom.com/wiki/Tengu_Stormcall) and [Subjugation: Koukou Sendou](https://genshin-impact.fandom.com/wiki/Subjugation:_Koukou_Sendou), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges, Ambush and Stormclusters.

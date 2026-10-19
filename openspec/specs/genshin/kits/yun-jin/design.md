@@ -4,7 +4,7 @@ Yun Jin's kit is its record and one behaviour module, `createYunjinKitBehaviour`
 
 ## Decisions
 
-- **Yun Jin's plunges, strikes, charged attack and Opening Flourish all take the wiki's poise.** Provisional, as gcsim gives the plunges none, so the high and low plunges take the wiki's 150 and 100; the strikes take 23.46 to 62.66 a hit, the charged attack 120, and Opening Flourish 100, 200 and 300, since gcsim gives them none; her plunges' reaches and 0.4 seconds are the other kits' stand-ins.
+- **Yun Jin's plunges, strikes, charged attack and Opening Flourish all take the wiki's poise.** gcsim gives the plunges none, so the high and low plunges take the wiki's 150 and 100; the strikes take 23.46 to 62.66 a hit, the charged attack 120, and Opening Flourish 100, 200 and 300, since gcsim gives them none; her plunges' reaches and 0.4 seconds are provisional, the other kits' stand-ins.
 - **Opening Flourish's tap and Yun Jin's Geo burst give 1U of Geo gauge each.** Provisional, as gcsim gives no gauge, so `yunjinKit.ts` reads 1U as the other Cryo and Geo hits do.
 - **Opening Flourish's charge levels start at half a second and a second.** Provisional, as gcsim takes the levels from the input alone, so `yunjinKit.ts` uses the thresholds Bennett's Charge Levels do.
 - **Constellation 4's DEF is her own reaction's buff.** A reaction event whose striker is Yun Jin, and whose reactions include Crystallize or Lunar-Crystallize, gives her 20% DEF for 12 seconds under its own source, so a second reaction restarts it. A reaction a party member triggers gives her nothing, as the text names her own reactions.
@@ -24,3 +24,4 @@ Yun Jin's kit is its record and one behaviour module, `createYunjinKitBehaviour`
 
 - The Ascension 1 window's 0.5 seconds are Unsourced: gcsim's `yunjin/asc.go` leaves Ascension 1 unimplemented, so its TODO is the only source, and it names a press the kit does not build.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yunjin), MIT: the kit's hitmarks, cancel frames and areas, Opening Flourish's hitmarks, circles, shields and animations, Cliffbreaker's Banner's circle, poise and frames, the banner's 720-frame status, its 30 stacks and its DEF share (`yunjin/burst.go` and `yunjin/zz_yunjin.dm.go`), Ascension 4's share (`yunjin/asc.go`), and the shield's expiry at its hit.
+- [Cloud-Grazing Strike](https://genshin-impact.fandom.com/wiki/Cloud-Grazing_Strike) and [Opening Flourish](https://genshin-impact.fandom.com/wiki/Opening_Flourish), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges and Opening Flourish.
