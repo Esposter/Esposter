@@ -19,18 +19,18 @@ const THUNDERING_FURY_COOLDOWN_ID = "thunderingFuryCooldown";
 const SKILL_COOLDOWN_CUT_SECONDS = 1;
 // The reactions the four-piece's first param raises the wearer's own DMG of
 const TRANSFORMATIVE_REACTION_TYPES = new Set<ReactionType>([
-  TransformativeReactionType.Overloaded,
   TransformativeReactionType.ElectroCharged,
-  TransformativeReactionType.Superconduct,
   TransformativeReactionType.Hyperbloom,
+  TransformativeReactionType.Overloaded,
+  TransformativeReactionType.Superconduct,
 ]);
 // The reactions that cut the Elemental Skill cooldown, with Quicken, as gcsim's reduce subscribes to them
 const CUT_REACTION_TYPES = new Set<ReactionType>([
   ...TRANSFORMATIVE_REACTION_TYPES,
   CatalyzeReactionType.Aggravate,
   LunarReactionType.LunarCharged,
-  ReactionType.StellarConduct,
   ReactionType.Quicken,
+  ReactionType.StellarConduct,
 ]);
 // A summon's reaction cuts only by a Hyperbloom, as gcsim's reduce takes it from any source
 const checkIsCutReaction = ({ reactionType }: Reaction, isGadget?: true): boolean =>

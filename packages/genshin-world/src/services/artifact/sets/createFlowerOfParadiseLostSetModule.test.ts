@@ -1,9 +1,9 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -36,8 +36,8 @@ const createCombatant = (characterId: number, kit = KIT): Combatant => {
   const attributes = computeCharacterAttributes([]);
   return { ascension: 0, attributes, characterId, constellationCount: 0, elementalResonances: [], kit, level: 1 };
 };
-// The wearer, who wears four pieces, and another member, in the party order given. The wearer's kit hears the events the team
-// sends, and reads the reactions a member makes in the party's hooks
+// The wearer, who wears four pieces, and another member, in the party order given.
+// The wearer's kit hears the events the team sends, and reads the reactions a member makes in the party's hooks
 const createTeam = (characterIds: number[]) => {
   const wearer = createCombatant(
     TRAVELER_CHARACTER_ID,
@@ -47,8 +47,8 @@ const createTeam = (characterIds: number[]) => {
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);
   const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });

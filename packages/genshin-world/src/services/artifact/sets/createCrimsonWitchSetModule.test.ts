@@ -1,10 +1,10 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
-import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { CRIMSON_WITCH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -45,8 +45,8 @@ const createTeam = (characterIds: number[]) => {
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);
   const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });

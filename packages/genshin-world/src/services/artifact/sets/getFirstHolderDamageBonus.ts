@@ -13,7 +13,7 @@ export const getFirstHolderDamageBonus = (
   damageBonus: number,
   { kitEffectState, party }: KitContext,
 ): { damageBonus?: number } => {
-  const [firstHolder] = getDeployedCharacterIds(party).filter((characterId) =>
+  const firstHolder = getDeployedCharacterIds(party).find((characterId) =>
     checkIsKitStatusActive(kitEffectState.effects, characterId, effectId),
   );
   return firstHolder === member.characterId ? { damageBonus } : {};

@@ -51,8 +51,8 @@ const createTeam = (characterIds: number[]) => {
   const party = createParty(characterIds);
   getPartyMember(party, TRAVELER_CHARACTER_ID).skillCooldownSeconds = SKILL_COOLDOWN_SECONDS;
   const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });

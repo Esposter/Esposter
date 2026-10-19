@@ -1,11 +1,11 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ReactionType } from "#src/models/combat/ReactionType";
+import { Attribute } from "#src/models/character/Attribute";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { HEART_OF_THE_FURNACE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createHeartOfTheFurnaceSetModule } from "#src/services/artifact/sets/createHeartOfTheFurnaceSetModule";
@@ -48,9 +48,9 @@ const createTeam = (characterIds: number[], wearerIds: number[] = [TRAVELER_CHAR
   const other = createMember(OTHER_CHARACTER_ID);
   const secondWearer = createMember(THIRD_CHARACTER_ID);
   const characterIdCombatantMap = new Map<number, Combatant>([
-    [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
     [THIRD_CHARACTER_ID, secondWearer],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const kitEffectState: KitEffectState = { effects: [] };
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");

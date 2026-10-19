@@ -20,10 +20,10 @@ const FLOWER_OF_PARADISE_LOST_COOLDOWN_ID = "flowerOfParadiseLostCooldown";
 // The rest count from any source, and the stacks count while the wearer is off the field, as the text says
 export const createFlowerOfParadiseLostSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const baseDamageBonusMap = new Map<ReactionType, number>([
-    [TransformativeReactionType.Bloom, takeOne(bonus.params, 0)],
-    [TransformativeReactionType.Hyperbloom, takeOne(bonus.params, 1)],
-    [TransformativeReactionType.Burgeon, takeOne(bonus.params, 2)],
     [LunarReactionType.LunarBloom, takeOne(bonus.params, 7)],
+    [TransformativeReactionType.Bloom, takeOne(bonus.params, 0)],
+    [TransformativeReactionType.Burgeon, takeOne(bonus.params, 2)],
+    [TransformativeReactionType.Hyperbloom, takeOne(bonus.params, 1)],
   ]);
   const stackSeconds = takeOne(bonus.params, 3);
   const maximumStacks = takeOne(bonus.params, 4);

@@ -4,9 +4,9 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import { Element } from "#src/models/Element";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { SILKEN_MOON_SERENADE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSilkenMoonsSerenadeSetModule } from "#src/services/artifact/sets/createSilkenMoonsSerenadeSetModule";
@@ -53,10 +53,10 @@ const createTeam = (characterIds: number[], benedictedIds: number[] = []) => {
     createCombatant(characterId, benedictedIds.includes(characterId) ? MOONSIGN_KIT : KIT);
   const other = createMember(OTHER_CHARACTER_ID);
   const characterIdCombatantMap = new Map<number, Combatant>([
-    [TRAVELER_CHARACTER_ID, wearer],
+    [FOURTH_CHARACTER_ID, createMember(FOURTH_CHARACTER_ID)],
     [OTHER_CHARACTER_ID, other],
     [THIRD_CHARACTER_ID, createMember(THIRD_CHARACTER_ID)],
-    [FOURTH_CHARACTER_ID, createMember(FOURTH_CHARACTER_ID)],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);

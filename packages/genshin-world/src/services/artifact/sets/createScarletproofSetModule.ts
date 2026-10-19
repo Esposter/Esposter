@@ -13,7 +13,7 @@ const SCARLETPROOF_SOURCE = "Scarletproof";
 const SCARLETPROOF_STELLAR_SWIRL_ID = "scarletproofStellarSwirl";
 
 // Scarletproof's four-piece. A Stellar Swirl its wearer triggers, from any source of the wearer's, summons' among them as gcsim's
-// OnStellarSwirl takes any attack of the wearer's, raises the wearer's CRIT Rate by the first param and its Stellar Swirl DMG by the
+// `OnStellarSwirl` takes any attack of the wearer's, raises the wearer's CRIT Rate by the first param and its Stellar Swirl DMG by the
 // Second, for the third param's seconds from that swirl, each restarted rather than stacked. The swirl that sets them off is priced
 // Without them, as the wiki's and gcsim's hooks read them after it
 export const createScarletproofSetModule = (bonus: ArtifactSetBonus): PassiveModule => {

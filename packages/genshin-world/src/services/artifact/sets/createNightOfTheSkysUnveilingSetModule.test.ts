@@ -1,3 +1,4 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -5,7 +6,6 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
@@ -156,8 +156,8 @@ describe(createNightOfTheSkysUnveilingSetModule, () => {
       getPassiveKit(KIT, [createNightOfTheSkysUnveilingSetModule(bonusOf(4))]),
     );
     const characterIdCombatantMap = new Map<number, Combatant>([
-      [TRAVELER_CHARACTER_ID, firstWearer],
       [THIRD_CHARACTER_ID, secondWearer],
+      [TRAVELER_CHARACTER_ID, firstWearer],
     ]);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const triggerWhileActive = (striker: Combatant, characterIds: number[]) =>
