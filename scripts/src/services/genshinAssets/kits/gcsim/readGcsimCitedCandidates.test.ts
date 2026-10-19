@@ -24,11 +24,16 @@ describe("readGcsimCitedCandidates", () => {
   const LOOP_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(10 + 5*i)\n\t}\n}\n";
   const MULTILINE_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tc.Core.Queue(\n\t\t\t10+i*5,\n\t\t)\n\t}\n}\n";
-  const CONSTANTS_GO = "package aino\n\nconst burstHitmark = 100\n\nconst firstTick = 20\n\nconst icdFrames = 60\n";
+  const CONSTANTS_GO =
+    "package aino\n\nconst burstHitmark = 100\n\nconst firstTick = 20\n\nconst icdFrames = 60\n\nconst skillDelay = 30\n";
   const RUN_GO = "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tadd(24*i+burstHitmark)\n\t}\n}\n";
   const PROGRESS_GO =
     "package aino\n\nfunc blossoms() {\n\tfor i := range 3 {\n\t\tprogress := i + firstTick\n\t\tadd(progress)\n\t}\n}\n";
   const ICD_GO = "package aino\n\nfunc skill() {\n\thpICD = c.Core.F + icdFrames\n}\n";
+  const QUEUED_GO =
+    "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, ap, 0, skillDelay)\n\t}, 20)\n}\n";
+  const NAMED_GO =
+    "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, ap, 0, 2)\n\t}, 113)\n}\n";
   const GO_FILES = new Map([
     ["area.go", AREA_GO],
     ["asc.go", ASC_GO],
@@ -37,8 +42,10 @@ describe("readGcsimCitedCandidates", () => {
     ["icd.go", ICD_GO],
     ["loop.go", LOOP_GO],
     ["multiline.go", MULTILINE_GO],
+    ["named.go", NAMED_GO],
     ["progress.go", PROGRESS_GO],
     ["queue.go", QUEUE_GO],
+    ["queued.go", QUEUED_GO],
     ["run.go", RUN_GO],
   ]);
   const gcsim = readGcsimCharacter(FOLDER, new Map([...GO_FILES, [GCSIM_CONFIG_FILE, "name: aino\n"]]));
@@ -176,10 +183,10 @@ describe("readGcsimCitedCandidates", () => {
   test("a cited line inside a queued block gives its value plus the block's delay", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
-      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
+      "burst.hits.0.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 145 },
     };
     const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get(
-      "hits.burst.hitmarkFrames",
+      "burst.hits.0.hitmarkFrames",
     )?.[0];
     expect(candidate?.value).toBe(145);
     expect(candidate?.provenance).toStrictEqual({
@@ -192,10 +199,10 @@ describe("readGcsimCitedCandidates", () => {
   test("a cited hitmark the queued block does not give reads as DiffersFromSource, with the block's own hitmark", () => {
     expect.hasAssertions();
     const overlay: KitOverlay = {
-      "hits.burst.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 150 },
+      "burst.hits.0.hitmarkFrames": { file: "queue.go", line: 5, source: KitSource.Gcsim, value: 150 },
     };
     const candidates =
-      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get("hits.burst.hitmarkFrames") ?? [];
+      readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get("burst.hits.0.hitmarkFrames") ?? [];
     expect(candidates[0]?.value).toBe(145);
     expect(classifyKitValue(150, candidates, [], false, {})).toStrictEqual({
       cause: KitProvisionalCause.DiffersFromSource,
@@ -277,5 +284,41 @@ describe("readGcsimCitedCandidates", () => {
       line: 4,
       source: KitSource.Gcsim,
     });
+  });
+
+  test("a cited hitmark on a queue call's line gives the hitmark that call reads, with its block's delay", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "burst.hits.0.hitmarkFrames": { file: "queued.go", line: 5, source: KitSource.Gcsim, value: 50 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get(
+      "burst.hits.0.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(50);
+    expect(candidate?.provenance).toStrictEqual({
+      file: "internal/characters/aino/queued.go",
+      line: 5,
+      source: KitSource.Gcsim,
+    });
+  });
+
+  test("a cited hitmark on a named hit's line gives the line's own value, not the delay of the tasks around it", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "hits.x.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 2 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get("hits.x.hitmarkFrames")?.[0];
+    expect(candidate?.value).toBe(2);
+  });
+
+  test("a cited hitmark on an action's hit line gives the hitmark its queue call reads, with the tasks' delay", () => {
+    expect.hasAssertions();
+    const overlay: KitOverlay = {
+      "skill.hits.0.hitmarkFrames": { file: "named.go", line: 5, source: KitSource.Gcsim, value: 115 },
+    };
+    const candidate = readGcsimCitedCandidates(overlay, createGcsimDirectory(), gcsim).get(
+      "skill.hits.0.hitmarkFrames",
+    )?.[0];
+    expect(candidate?.value).toBe(115);
   });
 });
