@@ -128,7 +128,7 @@ export const createOdetteKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
       const { body, kitEffectState } = context;
       for (const { reactionType } of event.reactions) {
         if (reactionType !== ReactionType.StellarSwirl) continue;
-        const vortex = kitEffectState.effects.find(checkIsStellarVortex);
+        const vortex = kitEffectState.effects.find((effect) => checkIsStellarVortex(effect));
         if (!vortex) {
           castKitSummon(kitEffectState, body, combatant, [], {
             id: STELLAR_VORTEX_ID,

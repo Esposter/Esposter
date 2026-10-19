@@ -171,9 +171,9 @@ const getC4Stacks = (effects: readonly KitEffect[], striker: number, attackTag: 
 };
 
 // Takes the stack a hit landed by its striker spends, as the hit lands on an enemy
-const takeC4Stack = (effects: readonly KitEffect[], { attackTag, striker }: KitEnemyHitEvent): void => {
-  if (getC4Stacks(effects, striker.characterId, attackTag) === 0) return;
-  const status = findKitStatus(effects, striker.characterId, CONSTELLATION_4_ID);
+const takeC4Stack = (effects: readonly KitEffect[], event: KitEnemyHitEvent): void => {
+  if (getC4Stacks(effects, event.striker.characterId, event.attackTag) === 0) return;
+  const status = findKitStatus(effects, event.striker.characterId, CONSTELLATION_4_ID);
   if (status) status.stacks = (status.stacks ?? 0) - 1;
 };
 
@@ -182,7 +182,7 @@ const takeC4Stack = (effects: readonly KitEffect[], { attackTag, striker }: KitE
 const scheduleProjection = (
   kitEffectState: KitEffectState,
   nicole: Combatant,
-  { enemy, striker }: KitEnemyHitEvent,
+  event: KitEnemyHitEvent,
   talentMultiplier: number,
   hitbox: KitHitbox,
 ): void =>
@@ -191,7 +191,7 @@ const scheduleProjection = (
     // Hexerei and two or more Hexerei are deployed
     const flatDamage =
       checkIsKitHexerei(nicole.characterId) &&
-      checkIsKitHexerei(striker.characterId) &&
+      checkIsKitHexerei(event.striker.characterId) &&
       checkIsKitSecretRite(getDeployedCharacterIds(tick.party))
         ? nicole.attributes.attack * 3
         : 0;
@@ -199,17 +199,17 @@ const scheduleProjection = (
       [
         {
           body: tick.body,
-          combatant: striker,
+          combatant: event.striker,
           hit: {
             additiveBaseDamageBonus: () => flatDamage,
-            element: striker.element,
+            element: event.striker.element,
             hitArea: PROJECTION_HIT_AREA,
             hitmarkSeconds: 0,
             poiseDamage: 0,
             talentMultiplier,
           },
           hitbox,
-          target: enemy,
+          target: event.enemy,
         },
       ],
       tick,

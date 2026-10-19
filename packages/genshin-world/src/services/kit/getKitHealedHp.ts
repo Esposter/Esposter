@@ -9,15 +9,15 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 // Overflow past full HP and the share a Bond of Life took counted in, as the Sea-Dyed Foam and the Song of Days Past
 // Record it. A drain, or a member the team does not build, heals nothing
 export const getKitHealedHp = (
-  { bondOfLifeShare, characterId, healthShare, overflowHealthShare }: KitHealthChangedEvent,
+  event: KitHealthChangedEvent,
   effects: readonly KitEffect[],
   party: Party,
   characterIdCombatantMap: ReadonlyMap<number, Combatant>,
 ): number => {
-  const member = characterIdCombatantMap.get(characterId);
+  const member = characterIdCombatantMap.get(event.characterId);
   if (!member) return 0;
   return (
-    Math.max(0, healthShare + overflowHealthShare + bondOfLifeShare) *
+    Math.max(0, event.healthShare + event.overflowHealthShare + event.bondOfLifeShare) *
     getKitMaxHealth(member, effects, party, characterIdCombatantMap)
   );
 };

@@ -26,9 +26,9 @@ export const strikeReactionContributors = ({
   contributorIds: ReadonlySet<number>;
   element: Element;
   enemy: Enemy;
-  owner: Combatant | undefined;
+  owner?: Combatant;
   price: (level: number, attributeTotalMap: Record<Attribute, number>, damageBonus: number) => number;
-  reaction: Except<KitReaction, "combatant"> | undefined;
+  reaction?: Except<KitReaction, "combatant">;
   total: (damages: number[]) => number;
 }): boolean => {
   const damages = priceReactionContributors(contributorIds, context, price, reaction);
