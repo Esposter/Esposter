@@ -1,8 +1,9 @@
+import type { VueWrapper } from "@vue/test-utils";
 import type { VNodeChild } from "vue";
 
 import { useCanvasFrame } from "#src/composables/useCanvasFrame";
 import { CANVAS_FRAME_SRCDOC } from "#src/services/constants";
-import { mount, type VueWrapper } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { defineComponent, h, nextTick, shallowRef, Teleport } from "vue";
 
@@ -59,8 +60,10 @@ const mountCanvasFrame = (
 const settleFrame = async (wrapper: VueWrapper<InstanceType<typeof CanvasFrameTest>>): Promise<HTMLIFrameElement> => {
   await wrapper.vm.loaded;
   await nextTick();
-  await new Promise((resolve) => requestAnimationFrame(resolve));
-  return wrapper.find("iframe").element as HTMLIFrameElement;
+  await new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+  return wrapper.find("iframe").element;
 };
 
 describe("useCanvasFrame", () => {
