@@ -17,9 +17,9 @@ export interface GrassOptions {
   cellIndex: Node<"float">;
   // The share of blades grown, which a quality tier lowers first
   density: UniformNode<"float", number>;
-  groundCapture: GroundCapture;
   // The bends the character leaves as it walks through the grass
   grassTrail: GrassTrail;
+  groundCapture: GroundCapture;
   lightUniforms: LightUniforms;
   rampTexture: DataTexture;
   ring: GrassRing;

@@ -46,13 +46,13 @@ export const createCharacterMaterial = ({
   const shadingInputs = createCharacterShadingInputs({
     color,
     mainTexture: diffuseTexture,
-    sphere:
-      sphereTexture && checkIsPmxSphereDrawn(sphereMode) ? { mode: sphereMode, texture: sphereTexture } : undefined,
     // A pack's own toon is one column read down its rows, where the shared ramps and the world's are one row across
     rampLayout: packToonTexture ? RampLayout.Vertical : RampLayout.Horizontal,
     rampTexture: packToonTexture ?? (isToonShared ? getSharedToonRamp(toonIndex) : undefined) ?? rampTexture,
     shininess: specularity,
     specularColor,
+    sphere:
+      sphereTexture && checkIsPmxSphereDrawn(sphereMode) ? { mode: sphereMode, texture: sphereTexture } : undefined,
     ...gameShadingInputs,
   });
   const toned = getToneColour(

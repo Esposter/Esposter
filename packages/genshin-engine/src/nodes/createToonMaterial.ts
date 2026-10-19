@@ -4,8 +4,8 @@ import type { ColorRepresentation } from "three";
 import type { Node } from "three/webgpu";
 
 import { ToonNodeMaterial } from "#src/models/nodes/ToonNodeMaterial";
-import { createObjectSurfaceNode } from "#src/nodes/createObjectSurfaceNode";
 import { createMaterialDetailNode } from "#src/nodes/createMaterialDetailNode";
+import { createObjectSurfaceNode } from "#src/nodes/createObjectSurfaceNode";
 import { createRimNode } from "#src/nodes/createRimNode";
 import { createWetDarkeningNode } from "#src/nodes/createWetDarkeningNode";
 import { createWetSheenNode } from "#src/nodes/createWetSheenNode";

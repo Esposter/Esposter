@@ -66,9 +66,6 @@ export interface CharacterShadingInputs {
   rampTexture: Texture;
   rampWidth: number;
   regionTints: Record<"five" | "four" | "three" | "two", Vector3Tuple>;
-  // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
-  // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
-  sphere?: { mode: PmxSphereMode.Add | PmxSphereMode.Multiply; texture: Texture };
   // The region the lightmap's alpha selects, and each region's own tint
   regionToggles: ShadingRegionToggles;
   // Each region's first shadow colour, "_FirstShadowMultColor" and its later regions, the colour a face in shadow keeps
@@ -78,6 +75,9 @@ export interface CharacterShadingInputs {
   specularColor: Vector3Tuple;
   specularInShadow: number;
   specularMultiplier: number;
+  // A PMX material's sphere map, laid over its diffuse as MMD lays it, multiplied or added, before the lit colour. It is not
+  // The metal map: a PMX file has no lightmap for the metal gate to read, so the sphere never reaches that branch
+  sphere?: { mode: PmxSphereMode.Add | PmxSphereMode.Multiply; texture: Texture };
   vertexAo: number;
   vertexRampWidth: number;
 }

@@ -12,8 +12,8 @@ interface GrassBladePointOptions {
   bladeHeight: number;
   // Where the blade's cell stands: its footing on the ground and the ground's height under it
   captured: Node<"vec4">;
-  ground: Node<"vec2">;
   grassTrail: GrassTrail;
+  ground: Node<"vec2">;
   // The blade's offset across the ground at its height share, a point's share of its width turned by its angle
   offset: Node<"vec2">;
   size: Node<"float">;
@@ -28,8 +28,8 @@ interface GrassBladePointOptions {
 export const createGrassBladePoint = ({
   bladeHeight,
   captured,
-  ground,
   grassTrail,
+  ground,
   offset,
   size,
   up,

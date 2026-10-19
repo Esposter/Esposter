@@ -7,11 +7,7 @@ import type { Vector3 } from "three";
 // Stamina is one of two: the party's pool, which the pool's owner builds with the maximum and the consumption multiplier
 // It holds and which a kit restores to too, or a pool of the body's own, built full at a maximum with the multiplier. The
 // Two never mix, so the pool a body spends from is never given a multiplier it ignores
-export type CharacterControllerOptions = {
-  ground: GroundQuery;
-  landmarkCollider: LandmarkCollider;
-  position: Vector3;
-} & (
+export type CharacterControllerOptions = (
   | {
       // The factor every stamina spend is multiplied by, read at each spend, and 1 when none is given
       getStaminaConsumptionMultiplier?: () => number;
@@ -20,4 +16,4 @@ export type CharacterControllerOptions = {
       staminaMaximum: number;
     }
   | { getStaminaConsumptionMultiplier?: never; stamina: Stamina; staminaMaximum?: never }
-);
+) & { ground: GroundQuery; landmarkCollider: LandmarkCollider; position: Vector3 };

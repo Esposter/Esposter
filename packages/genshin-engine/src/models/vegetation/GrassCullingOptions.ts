@@ -13,9 +13,9 @@ export interface GrassCullingOptions {
   // The model-to-clip matrix of the ring's mesh, which the view's frustum is tested in
   clipFromModel: UniformNode<"mat4", Matrix4>;
   density: UniformNode<"float", number>;
-  groundCapture: GroundCapture;
   // The bends the character leaves as it walks, which a blade's tip is bent by as the draw bends it
   grassTrail: GrassTrail;
+  groundCapture: GroundCapture;
   ring: GrassRing;
   // The blades' segments a side, which fix the blade's index count the draw takes
   segmentCount: number;

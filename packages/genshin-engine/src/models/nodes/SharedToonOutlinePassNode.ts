@@ -22,8 +22,8 @@ export class SharedToonOutlinePassNode extends ToonOutlinePassNode {
   // One frame's draw answers every compile asked for before it
   #drawn?: PromiseWithResolvers<void>;
   readonly #edgeOutlineMaterials = new Map<string, NodeMaterial>();
-  #outlineMaterial?: NodeMaterial;
   readonly #instancedOutlineMaterials = new WeakMap<Node<"mat4">, NodeMaterial>();
+  #outlineMaterial?: NodeMaterial;
   readonly #pixelEdgeOutlineMaterials = new WeakMap<Node<"vec4">, Map<string, NodeMaterial>>();
 
   // A placed copy is outlined through the matrix its fill reads, a material with its own edge in that edge, and every other

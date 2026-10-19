@@ -40,9 +40,6 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
     });
   })().compute(count);
   return {
-    indirect,
-    // The instance a survivor's slot draws, read by the draw's own vertex stage at its instance index
-    survivor: float(storage(survivorAttribute, "uint", count).toReadOnly().element(instanceIndex)),
     cull: (renderer: Renderer) => {
       renderer.compute(resetCount);
       renderer.compute(cullInstances);
@@ -51,5 +48,8 @@ export const createInstanceCulling = ({ count, indexCount, isVisible }: Instance
       indirect.dispose();
       survivorAttribute.dispose();
     },
+    indirect,
+    // The instance a survivor's slot draws, read by the draw's own vertex stage at its instance index
+    survivor: float(storage(survivorAttribute, "uint", count).toReadOnly().element(instanceIndex)),
   };
 };
