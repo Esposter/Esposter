@@ -4,10 +4,9 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { checkIsActiveCharacterHit } from "#src/services/artifact/sets/checkIsActiveCharacterHit";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
-import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 const NYMPHS_DREAM_ID = "nymphsDream";
@@ -50,11 +49,9 @@ export const createNymphsDreamSetModule = (bonus: ArtifactSetBonus): PassiveModu
       const { characterId } = combatant;
       const { kitEffectState, party } = context;
       if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== characterId ||
+        !checkIsActiveCharacterHit(event, party, combatant) ||
         !event.attackTag ||
-        !NYMPHS_DREAM_ATTACK_TAGS.includes(event.attackTag) ||
-        getActiveCharacterId(party) !== characterId
+        !NYMPHS_DREAM_ATTACK_TAGS.includes(event.attackTag)
       )
         return;
       addKitStatus(kitEffectState, characterId, {
