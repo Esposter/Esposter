@@ -37,7 +37,7 @@ describe("craftingScreen", () => {
       },
     });
 
-    await page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.Back], exact: true }).click();
+    await page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.Back] }).click();
 
     expect(onClose).toHaveBeenCalledExactlyOnceWith();
   });

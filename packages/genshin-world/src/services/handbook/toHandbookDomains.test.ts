@@ -11,8 +11,8 @@ import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 const entrance = (overrides: Partial<DomainEntranceLandmark>): DomainEntranceLandmark => ({
-  arrival: { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 },
   areaId: "fixture-area",
+  arrival: { heightOffset: 0, position: { x: 0, z: 0 }, rotation: 0 },
   domainKind: DomainKind.Blessing,
   entryId: 7,
   heightOffset: 0,

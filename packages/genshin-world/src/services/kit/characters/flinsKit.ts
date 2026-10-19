@@ -31,6 +31,9 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
   // Flins/attack.go and charge.go, so each group takes its kit tag
   const manifestFlame = readStance("manifestFlame");
   return {
+    // Cometh the Night's middle hits: two land always, and two more at Ascendant Gleam, as gcsim's burst reads the Moonsign
+    // Level when its initial hit lands, the team's composition not changing within the burst
+    burst: { hits: [{}, {}, {}, { landsWhen: checkIsAscendantGleam }, { landsWhen: checkIsAscendantGleam }, {}] },
     getPassiveBonuses: (combatant) => [
       ...(combatant.ascension < ASCENSION_4
         ? []
@@ -44,9 +47,6 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
         ? [{ amount: CONSTELLATION_4_ATTACK_PERCENT, attribute: Attribute.AttackPercent }]
         : []),
     ],
-    // Cometh the Night's middle hits: two land always, and two more at Ascendant Gleam, as gcsim's burst reads the Moonsign
-    // Level when its initial hit lands, the team's composition not changing within the burst
-    burst: { hits: [{}, {}, {}, { landsWhen: checkIsAscendantGleam }, { landsWhen: checkIsAscendantGleam }, {}] },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),

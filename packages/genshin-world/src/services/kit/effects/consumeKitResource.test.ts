@@ -1,7 +1,7 @@
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { describe, expect, test } from "vitest";
 

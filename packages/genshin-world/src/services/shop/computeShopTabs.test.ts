@@ -9,8 +9,8 @@ describe(computeShopTabs, () => {
   const FURNISHING_TAB_ID = 2;
   const gameText = {
     ...ENGLISH_GAME_TEXT,
-    [GameTextKey.RealmDepotTreasures]: "made up treasures",
     [GameTextKey.InventoryFurnishings]: "made up furnishings",
+    [GameTextKey.RealmDepotTreasures]: "made up treasures",
   };
 
   test("a shop's tabs are its goods' tabs in the order the goods list them, each named by its text", () => {

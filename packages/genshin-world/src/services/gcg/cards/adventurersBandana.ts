@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/constants";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-import { ADVENTURERS_BANDANA_ID } from "#src/services/gcg/cards/constants";
 
 const ADVENTURERS_BANDANA_HEAL = 1;
 const ADVENTURERS_BANDANA_HEALS_PER_ROUND = 3;

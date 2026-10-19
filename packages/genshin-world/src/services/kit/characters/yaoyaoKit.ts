@@ -303,8 +303,8 @@ const applyConstellation4 = ({
 export const createYaoyaoKitBehaviour = ({
   readHits,
   readParameter,
-  readSecondsList,
   readSeconds,
+  readSecondsList,
 }: KitRecordReader): KitBehaviour => {
   const skillRadish = takeOne(readHits("skillRadish", { onStrike: giveConstellation2Energy }));
   const skillRadishHeal: RadishHeal = {

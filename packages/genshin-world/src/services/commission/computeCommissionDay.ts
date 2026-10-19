@@ -20,6 +20,6 @@ export const computeCommissionDay = (
     : {
         claimedCommissionIds: [],
         dealtAt: now,
-        isBonusClaimed: false,
         dealtCommissions: dealCommissions(commissions, heldPlaces, rank, random),
+        isBonusClaimed: false,
       };

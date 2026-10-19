@@ -12,7 +12,10 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
@@ -26,9 +29,6 @@ import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ELECTRO_INFUSION_ID, KEQING_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -36,8 +36,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -52,9 +52,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -63,6 +62,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   round: 1,
   rule: TEST_RULE,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 
@@ -75,10 +75,10 @@ describe("sacred Cryo Pearl", () => {
     expect.hasAssertions();
     const zoneCard = createGcgZoneCard(111_011, sacredCryoPearl);
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Electro, id: OTHER_CHARACTER_ID } })]),
       createSideState([
-        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
-        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OPPOSING_CHARACTER_ID } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: KEQING_ID } }),
       ]),
     ]);
     duel.sides[0] = { ...takeOne(duel.sides, 0), summons: [zoneCard] };
@@ -145,11 +145,11 @@ describe("stellar Restoration", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
-        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OTHER_CHARACTER_ID } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: KEQING_ID } }),
       ]),
       createSideState([
-        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OPPOSING_CHARACTER_ID } }),
       ]),
     ]);
     takeOne(duel.sides, 0).activeIndex = 1;
@@ -166,11 +166,11 @@ describe("stellar Restoration", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
-        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OTHER_CHARACTER_ID } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: KEQING_ID } }),
       ]),
       createSideState([
-        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OPPOSING_CHARACTER_ID } }),
       ]),
     ]);
     const side = takeOne(duel.sides, 0);
@@ -187,11 +187,11 @@ describe("stellar Restoration", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
-        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OTHER_CHARACTER_ID } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: KEQING_ID } }),
       ]),
       createSideState([
-        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OPPOSING_CHARACTER_ID } }),
       ]),
     ]);
     const side = takeOne(duel.sides, 0);
@@ -215,11 +215,11 @@ describe("lightning Stiletto", () => {
     expect.hasAssertions();
     const duel = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: OTHER_CHARACTER_ID, element: Element.Electro } }),
-        createGcgCharacterState({ character: { id: KEQING_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OTHER_CHARACTER_ID } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: KEQING_ID } }),
       ]),
       createSideState([
-        createGcgCharacterState({ character: { id: OPPOSING_CHARACTER_ID, element: Element.Electro } }),
+        createGcgCharacterState({ character: { element: Element.Electro, id: OPPOSING_CHARACTER_ID } }),
       ]),
     ]);
     const side = takeOne(duel.sides, 0);

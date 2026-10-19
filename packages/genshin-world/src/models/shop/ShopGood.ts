@@ -18,9 +18,9 @@ export interface ShopGood {
   itemId: number;
   minPlayerLevel: number;
   refresh: ShopRefresh;
+  reputationDiscountLevel?: number;
   // The sub tab a good is shown on, where its shop has tabs: the Realm Depot's six, by the table's sub tab id
   tabId?: number;
-  reputationDiscountLevel?: number;
 }
 
 // What a good's limit is counted from: its id, its buy limit and the refresh the limit comes back on. A good with no sale
@@ -37,6 +37,6 @@ export const shopGoodSchema = z.object({
   itemId: z.int().positive(),
   minPlayerLevel: z.int().nonnegative(),
   refresh: z.enum(ShopRefresh),
-  tabId: z.int().positive().optional(),
   reputationDiscountLevel: z.int().positive().optional(),
+  tabId: z.int().positive().optional(),
 }) satisfies z.ZodType<ShopGood>;

@@ -76,9 +76,9 @@ const createKleeOffset = ({ x, z }: { x: number; z: number }): { x: number; z: n
 // Character the table does not name
 const PROJECTION_HITBOXES = new Map<number, KitHitbox>([
   [ALBEDO_CHARACTER_ID, { offset: MELEE_OFFSET, shape: { kind: "box", length: 8, width: 3 } }],
+  [KLEE_CHARACTER_ID, { offset: createKleeOffset(MELEE_OFFSET), shape: { kind: "circle", radius: PROJECTION_RADIUS } }],
   [RAZOR_CHARACTER_ID, { offset: MELEE_OFFSET, shape: { kind: "circle", radius: PROJECTION_RADIUS } }],
   [SUCROSE_CHARACTER_ID, { offset: MELEE_OFFSET, shape: { kind: "circle", radius: PROJECTION_RADIUS } }],
-  [KLEE_CHARACTER_ID, { offset: createKleeOffset(MELEE_OFFSET), shape: { kind: "circle", radius: PROJECTION_RADIUS } }],
 ]);
 const DEFAULT_PROJECTION_HITBOX: KitHitbox = {
   offset: RANGE_OFFSET,
@@ -314,6 +314,20 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         });
       },
     },
+    // Her fourth constellation's flat damage, on her own strikes and on the strikes of the member she is deployed with
+    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
+      additiveBaseDamageBonus:
+        getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
+          ? CONSTELLATION_4_RATIO * member.attributes.attack
+          : 0,
+      defenseIgnored: getC6DefenceIgnored(member.constellationCount, strike.combatant, effects),
+    }),
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
+      getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
+        ? CONSTELLATION_4_RATIO * strike.combatant.attributes.attack
+        : 0,
+    getStrikeDefenceIgnored: (strike, _enemy, _party, effects) =>
+      getC6DefenceIgnored(strike.combatant.constellationCount, strike.combatant, effects),
     // Her burst projects a copy of the active character's hit onto the enemy it struck, as gcsim's OnEnemyHit hook
     // Does, at most four times and once each 3 seconds
     onKitEvent: (event, context, combatant) => {
@@ -379,20 +393,6 @@ export const createNicoleKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         PROJECTION_HITBOXES.get(event.striker.characterId) ?? DEFAULT_PROJECTION_HITBOX,
       );
     },
-    // Her fourth constellation's flat damage, on her own strikes and on the strikes of the member she is deployed with
-    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
-      additiveBaseDamageBonus:
-        getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
-          ? CONSTELLATION_4_RATIO * member.attributes.attack
-          : 0,
-      defenseIgnored: getC6DefenceIgnored(member.constellationCount, strike.combatant, effects),
-    }),
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
-      getC4Stacks(effects, strike.combatant.characterId, strike.attackTag) > 0
-        ? CONSTELLATION_4_RATIO * strike.combatant.attributes.attack
-        : 0,
-    getStrikeDefenceIgnored: (strike, _enemy, _party, effects) =>
-      getC6DefenceIgnored(strike.combatant.constellationCount, strike.combatant, effects),
     skill: {
       // Revelation: Uncreated Light shields the team with a Pyro shield scaled by her attack, and gives each deployed member an
       // ATK buff scaled by her attack, capped at the skill's maximum

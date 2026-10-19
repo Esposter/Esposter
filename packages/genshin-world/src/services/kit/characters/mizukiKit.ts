@@ -71,11 +71,6 @@ export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   return {
     chargedAttack: { canStart: checkCanStartAttack },
     normalAttacks: kit.normalAttacks.map(() => ({ canStart: checkCanStartAttack })),
-    plungeCollision: { landsWhen: checkCanStartAttack },
-    plunges: {
-      [KitPlunge.High]: { canStart: checkCanStartAttack },
-      [KitPlunge.Low]: { canStart: checkCanStartAttack },
-    },
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (
         event.kind === KitEventKind.CharacterSwapped &&
@@ -83,6 +78,11 @@ export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
         checkIsKitStatusActive(kitEffectState.effects, characterId, DREAMDRIFTER_STATUS_ID)
       )
         endDreamdrifterState(kitEffectState, characterId);
+    },
+    plungeCollision: { landsWhen: checkCanStartAttack },
+    plunges: {
+      [KitPlunge.High]: { canStart: checkCanStartAttack },
+      [KitPlunge.Low]: { canStart: checkCanStartAttack },
     },
     skill: {
       checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>

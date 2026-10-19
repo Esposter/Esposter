@@ -34,8 +34,8 @@ describe(startJahodaRobots, () => {
   // Burst skill
   const SETTINGS = {
     absorbArea: { angle: 2 * Math.PI, height: 5, radius: 5 },
-    absorbFirstSeconds: 6 * FRAME_SECONDS,
     absorbEnergy: 0,
+    absorbFirstSeconds: 6 * FRAME_SECONDS,
     absorbIntervalSeconds: 46 * FRAME_SECONDS,
     absorbSpacingSeconds: 41 * FRAME_SECONDS,
     robotCount: 2,
@@ -128,8 +128,8 @@ describe("jahoda's robots and Constellation 4", () => {
   const BURST_SECONDS = 790 / 60;
   const SETTINGS = {
     absorbArea: { angle: 2 * Math.PI, height: 5, radius: 5 },
-    absorbFirstSeconds: 6 * FRAME_SECONDS,
     absorbEnergy: 0,
+    absorbFirstSeconds: 6 * FRAME_SECONDS,
     absorbIntervalSeconds: 46 * FRAME_SECONDS,
     absorbSpacingSeconds: 41 * FRAME_SECONDS,
     robotCount: 2,

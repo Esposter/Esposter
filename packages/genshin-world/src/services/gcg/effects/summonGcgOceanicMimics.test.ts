@@ -1,20 +1,20 @@
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { summonGcgOceanicMimics } from "#src/services/gcg/effects/summonGcgOceanicMimics";
-import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
 import {
   OCEANIC_MIMIC_FROG_ID,
   OCEANIC_MIMIC_RAPTOR_ID,
   OCEANIC_MIMIC_SQUIRREL_ID,
 } from "#src/services/gcg/cards/constants";
+import { summonGcgOceanicMimics } from "#src/services/gcg/effects/summonGcgOceanicMimics";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const createSide = (): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters: [],
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,

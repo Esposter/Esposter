@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
-import { takeOne } from "@esposter/shared";
 import { YOIMIYA_ID } from "#src/services/gcg/cards/constants";
+import { takeOne } from "@esposter/shared";
 
 // Aurous Blaze: for two rounds, after a character other than Yoimiya uses a skill, 1 Pyro DMG is dealt to the opposing
 // Active character (the wiki's Ryuukin Saxifrage (Character Card Skill))

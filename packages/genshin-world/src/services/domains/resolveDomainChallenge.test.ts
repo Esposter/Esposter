@@ -5,8 +5,8 @@ import { describe, expect, test } from "vitest";
 describe(resolveDomainChallenge, () => {
   const TIME_LIMIT_MILLISECONDS = 360_000;
   const progress = {
-    defeatTarget: 10,
     defeats: 4,
+    defeatTarget: 10,
     elapsedMilliseconds: 100_000,
     timeLimitMilliseconds: TIME_LIMIT_MILLISECONDS,
   };

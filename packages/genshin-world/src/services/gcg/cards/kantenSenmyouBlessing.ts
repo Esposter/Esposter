@@ -12,15 +12,6 @@ const KANTEN_SENMYOU_BLESSING_DAMAGE_BONUS = 1;
 // When she is switched to, the switch costs one die less, once per Round (the wiki's Kanten Senmyou Blessing (Equipment
 // Card)). Only the active character's equipment is listed for DMG, so the active character is the one it is attached to
 export const kantenSenmyouBlessing: GcgCardModule = {
-  onCostPaid: ({ duel, sideIndex }, subject) => {
-    if (checkIsGcgSwitchCost(subject)) takeOne(duel.sides, sideIndex).usedCardIds.push(KANTEN_SENMYOU_BLESSING_ID);
-  },
-  reduceCost: ({ characterIndex, duel, sideIndex }, subject) =>
-    checkIsGcgSwitchCost(subject) &&
-    subject.switchTo === characterIndex &&
-    !takeOne(duel.sides, sideIndex).usedCardIds.includes(KANTEN_SENMYOU_BLESSING_ID)
-      ? { count: 1, element: undefined }
-      : undefined,
   modifyDamageDealt: ({ duel, sideIndex }, damage) => {
     const side = takeOne(duel.sides, sideIndex);
     if (
@@ -30,4 +21,13 @@ export const kantenSenmyouBlessing: GcgCardModule = {
     if (damage.damageType !== GcgDamageKind.Physical && damage.damageType !== Element.Cryo) return damage;
     return { ...damage, value: damage.value + KANTEN_SENMYOU_BLESSING_DAMAGE_BONUS };
   },
+  onCostPaid: ({ duel, sideIndex }, subject) => {
+    if (checkIsGcgSwitchCost(subject)) takeOne(duel.sides, sideIndex).usedCardIds.push(KANTEN_SENMYOU_BLESSING_ID);
+  },
+  reduceCost: ({ characterIndex, duel, sideIndex }, subject) =>
+    checkIsGcgSwitchCost(subject) &&
+    subject.switchTo === characterIndex &&
+    !takeOne(duel.sides, sideIndex).usedCardIds.includes(KANTEN_SENMYOU_BLESSING_ID)
+      ? { count: 1, element: undefined }
+      : undefined,
 };

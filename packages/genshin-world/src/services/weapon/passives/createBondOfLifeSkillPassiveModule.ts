@@ -1,6 +1,5 @@
-import type { PassiveModule } from "#src/models/kit/PassiveModule";
-
 import type { Attribute } from "#src/models/character/Attribute";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";

@@ -141,6 +141,13 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
       return amatsumiKunitsumiSanctificationBonus + usurahiButouBonus;
     },
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({ hits: hits.map(() => snowsweptSakuraHit) })),
+    onSprint: ({ activeCombatant: combatant, kitEffectState }) =>
+      addKitEffect(kitEffectState, {
+        characterId: combatant.characterId,
+        element: Element.Cryo,
+        kind: "infusion",
+        secondsRemaining: SENHO_INFUSION_SECONDS,
+      }),
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) => {
         if (combatant.ascension < ASCENSION_1) return;
@@ -150,12 +157,5 @@ export const createAyakaKitBehaviour = ({ kit, readHits }: KitRecordReader): Kit
         });
       },
     },
-    onSprint: ({ activeCombatant: combatant, kitEffectState }) =>
-      addKitEffect(kitEffectState, {
-        characterId: combatant.characterId,
-        element: Element.Cryo,
-        kind: "infusion",
-        secondsRemaining: SENHO_INFUSION_SECONDS,
-      }),
   };
 };

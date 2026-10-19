@@ -16,7 +16,7 @@ describe(fightImaginariumStage, () => {
     vigor: IMAGINARIUM_VIGOR,
   };
   const cast = Array.from({ length: IMAGINARIUM_PERFORMER_COUNT }, () => member);
-  const progress = { defeatTarget: 3, defeats: 3, elapsedMilliseconds: 0, timeLimitMilliseconds: 1000 };
+  const progress = { defeats: 3, defeatTarget: 3, elapsedMilliseconds: 0, timeLimitMilliseconds: 1000 };
 
   test("a stage is fought by four performers with Vigor", () => {
     expect.hasAssertions();

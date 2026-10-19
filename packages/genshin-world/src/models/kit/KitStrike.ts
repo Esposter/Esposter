@@ -12,11 +12,11 @@ export interface KitStrike {
   body: KitBody;
   combatant: Combatant;
   hit: KitHit;
-  // The one enemy the hit lands on, instead of each enemy its area reaches, if it lands on one
-  target?: Enemy;
   // The reach the hit's target gives it, when it reaches the enemies about its target in a hitbox rather than alone or by the
   // Body's area
   hitbox?: KitHitbox;
   // Whether the hit is an aimed shot's, which takes an enemy's weak point when the enemy has one
   isAimed?: true;
+  // The one enemy the hit lands on, instead of each enemy its area reaches, if it lands on one
+  target?: Enemy;
 }

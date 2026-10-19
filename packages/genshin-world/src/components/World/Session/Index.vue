@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterConstellationKit } from "#src/models/character/CharacterConstellationKit";
 import type { ChestLockSource } from "#src/models/chest/ChestLockSource";
@@ -18,16 +19,15 @@ import type { ReputationProgress } from "#src/models/reputation/ReputationProgre
 import type { ReputationRequest } from "#src/models/reputation/ReputationRequest";
 import type { GenshinSave } from "#src/models/save/GenshinSave";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
+import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
+import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { RestorativePower } from "#src/models/statue/RestorativePower";
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
-import type { AttributeLine } from "#src/models/character/AttributeLine";
-import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { Trial } from "#src/models/trial/Trial";
 import type { DomainEntranceLandmark } from "#src/models/world/DomainEntranceLandmark";
 import type { Landmark } from "#src/models/world/Landmark";
 import type { WorldScreenProps } from "#src/models/world/WorldScreenProps";
 import type { WorldTables } from "#src/models/world/WorldTables";
-import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import type { PlacedDoing } from "#src/services/exploration/placeExplorationDoings";
 import type { TresCanvasInstance, TresContextWithClock, TresRendererSetupContext } from "@tresjs/core";
 
@@ -39,14 +39,12 @@ import CharacterScene from "#src/components/Character/Scene/Index.vue";
 import CharacterScreen from "#src/components/Character/Screen/Index.vue";
 import ProcessingScreen from "#src/components/Cooking/Processing/Index.vue";
 import CookingScreen from "#src/components/Cooking/Screen/Index.vue";
-import StatueScreen from "#src/components/Statue/Screen/Index.vue";
-import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import CraftingScreen from "#src/components/Crafting/Screen/Index.vue";
-import DomainScreen from "#src/components/Domain/Screen/Index.vue";
-import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import DialogueTalk from "#src/components/Dialogue/Talk/Index.vue";
+import DomainScreen from "#src/components/Domain/Screen/Index.vue";
 import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
 import FishingScreen from "#src/components/Fishing/Screen/Index.vue";
+import ForgeScreen from "#src/components/Forge/Screen/Index.vue";
 import GameOverScreen from "#src/components/GameOver/Index.vue";
 import GcgSession from "#src/components/Gcg/Session/Index.vue";
 import HandbookScreen from "#src/components/Handbook/Screen/Index.vue";
@@ -54,10 +52,9 @@ import HudNavigation from "#src/components/Hud/Navigation/Index.vue";
 import HudScreen from "#src/components/Hud/Screen/Index.vue";
 import OfferChoice from "#src/components/Interaction/OfferChoice/Index.vue";
 import InteractionPromptList from "#src/components/Interaction/PromptList/Index.vue";
-import TipPopup from "#src/components/World/Tip/Index.vue";
 import InventoryScreen from "#src/components/Inventory/Screen/Index.vue";
-import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MailScreen from "#src/components/Mail/Screen/Index.vue";
+import MapOverlay from "#src/components/Map/Overlay/Index.vue";
 import MenuScreen from "#src/components/Menu/Screen/Index.vue";
 import MenuSettings from "#src/components/Menu/Settings/Index.vue";
 import MenuTime from "#src/components/Menu/Time/Index.vue";
@@ -68,11 +65,14 @@ import ReputationScreen from "#src/components/Reputation/Screen/Index.vue";
 import ShopScreen from "#src/components/Shop/Screen/Index.vue";
 import SpiralAbyssBenediction from "#src/components/SpiralAbyss/Benediction/Index.vue";
 import SpiralAbyssEntryScreen from "#src/components/SpiralAbyss/Entry/Index.vue";
+import StatueScreen from "#src/components/Statue/Screen/Index.vue";
+import StatueWorshipScreen from "#src/components/Statue/Worship/Index.vue";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
 import WorldCharacter from "#src/components/World/Character/Index.vue";
-import WorldRealm from "#src/components/World/Realm/Index.vue";
 import WorldEnemyNameTags from "#src/components/World/EnemyNameTags/Index.vue";
 import WorldFreeCamera from "#src/components/World/FreeCamera/Index.vue";
+import WorldRealm from "#src/components/World/Realm/Index.vue";
+import TipPopup from "#src/components/World/Tip/Index.vue";
 import WorldWindrise from "#src/components/World/Windrise/Index.vue";
 import { useCharacterPacks } from "#src/composables/useCharacterPacks";
 import { useInteraction } from "#src/composables/useInteraction";
@@ -81,42 +81,44 @@ import { useStoredGenshinSettings } from "#src/composables/useStoredGenshinSetti
 import { useWorldAchievements } from "#src/composables/useWorldAchievements";
 import { useWorldAdventureRank } from "#src/composables/useWorldAdventureRank";
 import { useWorldArchive } from "#src/composables/useWorldArchive";
-import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldChests } from "#src/composables/useWorldChests";
 import { useWorldCombat } from "#src/composables/useWorldCombat";
 import { useWorldCommissionClaims } from "#src/composables/useWorldCommissionClaims";
 import { useWorldCommissions } from "#src/composables/useWorldCommissions";
 import { useWorldCooking } from "#src/composables/useWorldCooking";
+import { useWorldDishes } from "#src/composables/useWorldDishes";
+import { useWorldDomains } from "#src/composables/useWorldDomains";
+import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldForging } from "#src/composables/useWorldForging";
 import { useWorldFriendship } from "#src/composables/useWorldFriendship";
-import { useWorldDishes } from "#src/composables/useWorldDishes";
-import { useWorldFishing } from "#src/composables/useWorldFishing";
 import { useWorldGadgets } from "#src/composables/useWorldGadgets";
-import { useWorldDomains } from "#src/composables/useWorldDomains";
+import { useWorldMail } from "#src/composables/useWorldMail";
 import { useWorldMap } from "#src/composables/useWorldMap";
 import { useWorldOfferings } from "#src/composables/useWorldOfferings";
 import { useWorldOutcrops } from "#src/composables/useWorldOutcrops";
 import { useWorldPickups } from "#src/composables/useWorldPickups";
 import { useWorldPuzzles } from "#src/composables/useWorldPuzzles";
-import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldQuestRewards } from "#src/composables/useWorldQuestRewards";
-import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldQuests } from "#src/composables/useWorldQuests";
+import { useWorldReputationBounty } from "#src/composables/useWorldReputationBounty";
 import { useWorldSave } from "#src/composables/useWorldSave";
-import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldSaveSync } from "#src/composables/useWorldSaveSync";
+import { useWorldShrines } from "#src/composables/useWorldShrines";
 import { useWorldSpiralAbyss } from "#src/composables/useWorldSpiralAbyss";
 import { useWorldStatues } from "#src/composables/useWorldStatues";
 import { useWorldTalks } from "#src/composables/useWorldTalks";
+import { useWorldTips } from "#src/composables/useWorldTips";
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { useWorldTrounceBlossoms } from "#src/composables/useWorldTrounceBlossoms";
 import { ExplorationKind } from "#src/models/exploration/ExplorationKind";
 import { ReputationRequestQuestIds } from "#src/models/quest/QuestId";
-import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { QuestObjectiveKind } from "#src/models/quest/QuestObjectiveKind";
+import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOffer";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
-import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
+import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
+import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
+import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
 import { TRAVELER_BONUS_QUEST_ID } from "#src/services/character/constants";
 import { getCharacterIdConstellationsMap } from "#src/services/character/getCharacterIdConstellationsMap";
@@ -126,33 +128,28 @@ import { COOKING_PROCESSING_INTERACTABLE_ID, COOKING_STOVE_INTERACTABLE_ID } fro
 import { listOpenCookingRecipes } from "#src/services/cooking/listOpenCookingRecipes";
 import { computeCraftingCrafters } from "#src/services/crafting/computeCraftingCrafters";
 import { CRAFTING_BENCH_INTERACTABLE_ID } from "#src/services/crafting/constants";
+import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
+import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
+import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import {
   DOMAIN_ARENA_PROMPT_OFFSET,
   DOMAIN_LEAVE_INTERACTABLE_ID,
   DOMAIN_TREE_INTERACTABLE_ID,
 } from "#src/services/domains/constants";
+import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
+import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
+import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
+import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { computeForgeDefinitions } from "#src/services/forging/computeForgeDefinitions";
 import { computeForgeWeapons } from "#src/services/forging/computeForgeWeapons";
 import { FIRST_FORGE_RECIPE_ID, FORGE_CLOCK_INTERVAL_MS, FORGE_INTERACTABLE_ID } from "#src/services/forging/constants";
 import { createForgeProgress } from "#src/services/forging/createForgeProgress";
 import { grantGcgGameReward } from "#src/services/gcg/grantGcgGameReward";
 import { toGcgWeekGameRewards } from "#src/services/gcg/toGcgWeekGameRewards";
-import { computePlaceInteractables } from "#src/services/interaction/computePlaceInteractables";
-import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
-import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
-import { computeStandingPose } from "#src/services/map/computeStandingPose";
-import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
-import { getTalkScreenKind } from "#src/services/dialogue/getTalkScreenKind";
-import { getTalkVendorShopId } from "#src/services/dialogue/getTalkVendorShopId";
-import { stepElementalSight } from "#src/services/elementalSight/stepElementalSight";
-import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
-import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
-import { computeFishingInteractables } from "#src/services/fishing/computeFishingInteractables";
 import { toHandbookDomains } from "#src/services/handbook/toHandbookDomains";
 import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
 import { computeHomeRealmInteractables } from "#src/services/home/computeHomeRealmInteractables";
 import { computeHomeRealmVisit } from "#src/services/home/computeHomeRealmVisit";
-import { placeHomePot } from "#src/services/home/placeHomePot";
 import {
   HOME_POT_GADGET_ID,
   HOME_REALM_GROUND_HEIGHT,
@@ -161,11 +158,15 @@ import {
   HOME_TUBBY_NPC_ID,
 } from "#src/services/home/constants";
 import { leaveHomeRealm } from "#src/services/home/leaveHomeRealm";
+import { placeHomePot } from "#src/services/home/placeHomePot";
+import { computePlaceInteractables } from "#src/services/interaction/computePlaceInteractables";
+import { getItemDefinition } from "#src/services/inventory/getItemDefinition";
 import { useInventoryEntry } from "#src/services/inventory/useInventoryEntry";
-import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { OUTCROP_REGION_ID } from "#src/services/leyLine/constants";
 import { computeJumpLandmarkTextKey } from "#src/services/map/computeJumpLandmarkTextKey";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
+import { computeStandingPose } from "#src/services/map/computeStandingPose";
 import { TELEPORT_FADE_IN_MS, TELEPORT_FADE_OUT_MS } from "#src/services/map/constants";
 import { findAreaAt } from "#src/services/map/findAreaAt";
 import { findNearestTeleportWaypoint } from "#src/services/map/findNearestTeleportWaypoint";
@@ -176,8 +177,8 @@ import { PARTY_MEMBER_BURST_INPUT_ACTIONS, PARTY_MEMBER_INPUT_ACTIONS } from "#s
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { switchPartyMember } from "#src/services/party/switchPartyMember";
+import { computeProfileNamecardItemIds } from "#src/services/profile/computeProfileNamecardItemIds";
 import { checkIsSpecialStoryModeActive } from "#src/services/quest/checkIsSpecialStoryModeActive";
-import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { getEnteredGoToEvents } from "#src/services/quest/getEnteredGoToEvents";
 import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
@@ -188,16 +189,16 @@ import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
 import { getNextScreenKind } from "#src/services/screen/getNextScreenKind";
-import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
-import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
-import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import { ScreenBehaviourMap } from "#src/services/screen/ScreenBehaviourMap";
 import { tapActionKey } from "#src/services/shared/tapActionKey";
+import { getTeamAntiColdRatio } from "#src/services/sheerCold/getTeamAntiColdRatio";
 import { checkIsVendorHourOpen } from "#src/services/shop/checkIsVendorHourOpen";
 import { checkIsVendorShopOpen } from "#src/services/shop/checkIsVendorShopOpen";
-import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
 import { PAIMON_BARGAINS_SHOP_ID } from "#src/services/shop/constants";
 import { VendorShopTypeMap } from "#src/services/shop/VendorShopTypeMap";
+import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
+import { ABYSS_ENTRANCE_INTERACTABLE_ID, ABYSS_ENTRANCE_POSITION } from "#src/services/spiralAbyss/constants";
+import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { computeTravelerElement } from "#src/services/statue/computeTravelerElement";
 import {
   OCULUS_MINIMAP_DISTANCE,
@@ -205,7 +206,6 @@ import {
   OCULUS_TOUCH_RADIUS,
   RESTORATIVE_POWER_PER_STATUE,
 } from "#src/services/statue/constants";
-import { computeStatueInteractables } from "#src/services/statue/computeStatueInteractables";
 import { getNearOculusPlaces } from "#src/services/statue/getNearOculusPlaces";
 import { getResonatedRegionIds } from "#src/services/statue/getResonatedRegionIds";
 import { getStatueRegionId } from "#src/services/statue/getStatueRegionId";
@@ -242,17 +242,17 @@ const {
   accountFileBaseUrl,
   accountName,
   adventureRankTables,
-  cameraPose,
   artifactMainAffixPools,
   artifactRarityDataMap,
+  cameraPose,
   catalogue,
   characterPackBaseUrl,
   characterTalentKits,
   craftingBenchPlace,
   craftingRecipes,
   craftingStrongboxes,
-  domainChallengeLevels,
   createTerrainWorker,
+  domainChallengeLevels,
   enemyTables,
   frostbearingTreeLevels,
   frostbearingTreePlaces,
@@ -284,11 +284,11 @@ const {
   statTables,
   talentUpgradeMap,
   timeTrialPlaces,
+  tips,
+  tipText,
   wildlifePlaces,
   windriseData,
   wishSchedule,
-  tipText,
-  tips,
 } = defineProps<Props>();
 // Quitting the game leaves the world, which its host does. A grant is a change to the bag, the wallet, the wish counters or
 // The achievements' progress, which the host saves once per tick, and a save is every change to what the world holds,
@@ -341,11 +341,11 @@ const {
   namecardItemId,
   openedChestIds,
   processingJobs,
+  queuedTipIds,
   regionStatueProgressMap,
   setEnemyRespawnAt,
   setInventory,
   setNamecardItemId,
-  queuedTipIds,
   setWallet,
   shownTipIds,
   travelerBirthday,
@@ -589,8 +589,8 @@ const {
   serverClockOffsetMs,
   setInventory,
   setWallet,
-  weaponDataMap: statTables.weaponDataMap,
   wallet,
+  weaponDataMap: statTables.weaponDataMap,
 });
 // The Elemental Monuments of Mondstadt, the Seelies, the Time Trial Challenges and the Shrines of Depths, each lit, led,
 // Started or opened by the player, and each settled or solved where the save names it, with the chests they spawn
@@ -646,9 +646,9 @@ const { chestInteractables, digChestById, openChestById, worldChestPlaces } = us
   reliquarySets,
   setInventory,
   setWallet,
-  weaponDataMap: statTables.weaponDataMap,
   wallet,
   waterLevel: windriseData.water.level,
+  weaponDataMap: statTables.weaponDataMap,
 });
 // The gadget equipped to the quick-use slot, which Z uses once its cooldown group is ready
 const { equippedGadget, gadgetRows, getEquippedGadgetCooldown, isQuickSwapOpen, stepQuickUse } = useWorldGadgets({
@@ -767,7 +767,7 @@ const {
   onPartyDown: () => {
     // A trial's fall ends the trial, which gives the player's roster back in place of the fallen one, so nothing revives
     if (trialArena.value) {
-      const returnPose = stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
+      const returnPose = stepTrial({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false });
       if (returnPose) jumpTo(returnPose);
       return;
     }
@@ -778,7 +778,7 @@ const {
       return;
     }
     reviveFallenParty();
-    stepDomainChallenge({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
+    stepDomainChallenge({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false });
   },
   onPartyRevived: () => {
     const nearestWaypoint = findNearestTeleportWaypoint(unlockedLandmarks.value, characterBody.position);
@@ -795,7 +795,7 @@ const {
   wildlifePlaces,
 });
 // The character trials: a trial takes the player's roster for its fight, and the claims its first clears make are saved
-const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trialSecondsRemaining, trials } =
+const { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining } =
   useWorldTrials({
     artifactRarityDataMap,
     characterDataMap: statTables.characterDataMap,
@@ -1169,7 +1169,6 @@ useWorldSaveSync({
     craftedCountMap: craftedCountMap.value,
     craftingProgress: craftingProgress.value,
     encounterPoints: encounterPoints.value,
-    longTermEncounterPoints: longTermEncounterPoints.value,
     enemyRespawnMap: enemyRespawnMap.value,
     foundOculusIds: foundOculusIds.value,
     frostbearingTreeProgress: frostbearingTreeProgress.value,
@@ -1178,6 +1177,7 @@ useWorldSaveSync({
     homeProgress: savedState.homeProgress,
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
+    longTermEncounterPoints: longTermEncounterPoints.value,
     mails: mails.value,
     minedOutcrops: minedOutcrops.value,
     namecardItemId: namecardItemId.value,
@@ -1185,17 +1185,17 @@ useWorldSaveSync({
     party: playerRoster.value?.party ?? party,
     processingJobs: processingJobs.value,
     quests: questProgressMap.value,
+    queuedTipIds: queuedTipIds.value,
     regionStatueProgressMap: regionStatueProgressMap.value,
     reputation: reputation.value,
     reputationBountyClaimedAts: bountyClaimedAts.value,
     reputationBountyHunt: bountyHunt.value,
     reputationRequestClaimedAts: requestClaimedAts.value,
     settledSeelieIds: settledSeelieIds.value,
-    queuedTipIds: queuedTipIds.value,
     shopPurchases: shopPurchases.value,
     shownTipIds: shownTipIds.value,
-    spiralAbyssProgressMap: abyssProgressMap.value,
     solvedPuzzleIds: solvedPuzzleIds.value,
+    spiralAbyssProgressMap: abyssProgressMap.value,
     travelerBirthday: travelerBirthday.value,
     travelerName: savedState.travelerName,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
@@ -1345,9 +1345,9 @@ const {
   getWorldNow,
   inventory,
   jumpTo,
+  kitEffectState: kitContext.kitEffectState,
   materialDataMap,
   nameText,
-  kitEffectState: kitContext.kitEffectState,
   party,
   random: () => kitContext.random(),
   rank,
@@ -1356,8 +1356,8 @@ const {
   setInventory,
   setWallet,
   unlockedLandmarks,
-  weaponDataMap: statTables.weaponDataMap,
   wallet,
+  weaponDataMap: statTables.weaponDataMap,
   worldNow,
 });
 // The enemies in the world are the ley line outcrops' fighting camps, the domain challenge's camp and the taken bounty's camp
@@ -1947,15 +1947,15 @@ defineExpose({ jumpTo, readCameraPosition });
         ref="windrise"
         :last-teleport-at
         :trounce-blossoms
-        :jump-pose="jumpPose"
+        :jump-pose
         :mining-outcrop-places="standingMiningOutcrops"
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
         :catalogue
         :character-body="cameraPose || witness || !locomotion ? undefined : characterBody"
         :character-locomotion="locomotion"
-        :get-character="getCharacter"
-        :get-anti-cold-ratio="getAntiColdRatio"
+        :get-character
+        :get-anti-cold-ratio
         :character-pack-reader="activeCharacterPackReader"
         :create-terrain-worker
         :kit-effect-state="kitContext.kitEffectState"
@@ -1980,7 +1980,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :region-data-base-url
         :scene-export-base-url
         :frostbearing-tree-places
-        :bounty-trail-ends="bountyTrailEnds"
+        :bounty-trail-ends
         :seelies="puzzleSeelies"
         :wildlife-list="kitContext.wildlifeList"
         :windrise-data
@@ -2015,7 +2015,7 @@ defineExpose({ jumpTo, readCameraPosition });
     <div v-if="isShortcutWheelOpen" class="shortcut-wheel">
       <HudShortcutWheel
         :direction-count="shortcutWheelDirectionCount"
-        :game-text="gameText"
+        :game-text
         :picked-index="shortcutWheelPickedIndex"
       />
     </div>
@@ -2051,7 +2051,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :quick-swap-open="isQuickSwapOpen"
       :tracked-quest="trackerQuest"
       :traveler-name="savedState.travelerName"
-      :trial-seconds-remaining="trialSecondsRemaining"
+      :trial-seconds-remaining
       @map="screenKind = ScreenKind.Map"
       @menu="screenKind = ScreenKind.PaimonMenu"
     >
@@ -2059,7 +2059,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <InteractionPromptList :interaction-prompts :is-touch @press="(id) => pressInteractable(id)" />
         <TipPopup
           v-if="showingTip"
-          :game-text="gameText"
+          :game-text
           :subtitle="tipText[showingTip.subtitleTextId] || ''"
           :title="tipText[showingTip.titleTextId] || ''"
           @close="closeTip"
@@ -2106,10 +2106,10 @@ defineExpose({ jumpTo, readCameraPosition });
       :game-text
       :is-world-level-adjustable
       :is-world-level-lowered="worldLevelAdjustment.isLowered"
-      :namecard-item-id="namecardItemId"
+      :namecard-item-id
       :namecards="profileNamecards"
       :server-clock-offset-ms
-      :traveler-birthday="travelerBirthday"
+      :traveler-birthday
       :world-level
       :world-level-changed-at="worldLevelAdjustment.changedAt"
       @pick-namecard="(itemId) => setNamecardItemId(itemId)"
@@ -2172,7 +2172,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :is-bag-full="isMailBagFull"
           :mail-rows="mailData.mailRows"
           :mails
-          :material-data-map="materialDataMap"
+          :material-data-map
           :names="nameText"
           :now="worldNow"
           :text-map="mailData.textMap"
@@ -2206,11 +2206,11 @@ defineExpose({ jumpTo, readCameraPosition });
           :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && canConvertLongTermPoint"
           :day-commissions="handbookDayCommissions"
           :domains="handbookDomains"
-          :encounter-point-limit="encounterPointLimit"
+          :encounter-point-limit
           :encounter-points="wholeEncounterPoints"
           :game-text
           :investigation-rewards="[]"
-          :is-adventure-encounters-unlocked="isAdventureEncountersUnlocked"
+          :is-adventure-encounters-unlocked
           :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"
@@ -2290,7 +2290,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :inventory
           :name-text
           :stat-tables
-          :get-world-now="getWorldNow"
+          :get-world-now
           :now="worldNow"
           :wish-schedule
           :stella-fortuna-name-text-id-map
@@ -2307,7 +2307,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :adventure-rank="rank"
           :character-data-map="statTables.characterDataMap"
           :game-text
-          :get-world-now="getWorldNow"
+          :get-world-now
           :goods="shopIdShopGoodMap.get(PAIMON_BARGAINS_SHOP_ID) ?? []"
           :inventory
           :material-data-map
@@ -2477,7 +2477,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :artifact-drop-tables="craftingArtifactDropTables"
       :crafters="crafting.crafters"
       :game-text
-      :get-world-now="getWorldNow"
+      :get-world-now
       :initial-crafter-id="crafting.crafterId"
       :inventory
       :material-data-map
@@ -2486,7 +2486,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :progress="craftingProgress"
       :random="kitContext.random"
       :recipes="craftingRecipes"
-      :reliquary-piece-entry-map="reliquaryPieceEntryMap"
+      :reliquary-piece-entry-map
       :strongboxes="craftingStrongboxes"
       :wallet
       :weapon-data-map="statTables.weaponDataMap"
@@ -2524,8 +2524,8 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:recipe-id="forgeRecipeId"
       v-model:tab="forgeTab"
       :adventure-rank="rank"
-      :adventure-rank-tables="adventureRankTables"
-      :completed-main-quest-ids="completedMainQuestIds"
+      :adventure-rank-tables
+      :completed-main-quest-ids
       :definitions="forgeDefinitions"
       :game-text
       :inventory
@@ -2546,7 +2546,7 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:purchases="shopPurchases"
       :adventure-rank="rank"
       :game-text
-      :get-world-now="getWorldNow"
+      :get-world-now
       :goods="shopIdShopGoodMap.get(shopId) ?? []"
       :inventory
       :material-data-map
@@ -2563,17 +2563,17 @@ defineExpose({ jumpTo, readCameraPosition });
       v-model:expeditions="expeditions"
       :adventure-rank="rank"
       :characters="expeditionCharacters"
-      :character-passive-group-id-map="characterPassiveGroupIdMap"
+      :character-passive-group-id-map
       :completed-quest-ids="completedMainQuestIds"
-      :down-character-ids="downCharacterIds"
-      :game-data-base-url="gameDataBaseUrl"
+      :down-character-ids
+      :game-data-base-url
       :game-text
       :inventory
       :material-data-map
       :name-text
       :now="worldNow"
       :random="kitContext.random"
-      :region-statue-progress-map="regionStatueProgressMap"
+      :region-statue-progress-map
       :wallet
       @close="screenKind = ScreenKind.World"
       @update:inventory="(nextInventory) => setInventory(nextInventory)"

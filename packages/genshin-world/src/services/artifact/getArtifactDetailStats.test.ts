@@ -31,8 +31,8 @@ describe(getArtifactDetailStats, () => {
         artifactMainAffixCurves,
       ),
     ).toStrictEqual({
-      mainStat: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeMaxHealth], value: "+717" },
       isLocked: false,
+      mainStat: { label: ENGLISH_GAME_TEXT[GameTextKey.AttributeMaxHealth], value: "+717" },
       subStats: [],
     });
   });

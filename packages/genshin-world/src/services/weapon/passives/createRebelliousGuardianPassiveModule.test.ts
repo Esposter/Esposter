@@ -23,9 +23,9 @@ describe(createRebelliousGuardianPassiveModule, () => {
     const context = createKitTestContext(wielder);
     rebelliousGuardianPassiveModule.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.1,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -58,9 +58,9 @@ describe(createRebelliousGuardianPassiveModule, () => {
     const context = createKitTestContext(wielder);
     rebelliousGuardianPassiveModule.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: 0.1,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -70,9 +70,9 @@ describe(createRebelliousGuardianPassiveModule, () => {
     );
     rebelliousGuardianPassiveModule.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.1,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -90,9 +90,9 @@ describe(createRebelliousGuardianPassiveModule, () => {
 
     const context = createKitTestContext(wielder);
     const loss = {
+      bondOfLifeShare: 0,
       characterId: TRAVELER_CHARACTER_ID,
       healthShare: -0.1,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged as const,
       overflowHealthShare: 0,

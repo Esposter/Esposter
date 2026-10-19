@@ -3,6 +3,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
+import { DAWN_WINERY_ID, ICICLE_ID, LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 import { dawnWinery } from "#src/services/gcg/cards/dawnWinery";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { leaveItToMe } from "#src/services/gcg/cards/leaveItToMe";
@@ -16,7 +17,6 @@ import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-import { DAWN_WINERY_ID, ICICLE_ID, LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
 
 describe("switching characters under the field's cards", () => {
   const SEED = 5;

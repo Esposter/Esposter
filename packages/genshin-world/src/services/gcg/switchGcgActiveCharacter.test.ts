@@ -18,8 +18,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -34,9 +34,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -45,6 +44,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   round: 1,
   rule: TEST_RULE,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 

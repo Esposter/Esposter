@@ -133,4 +133,5 @@ onMounted(() => {
   line-height: calc(var(--reference-pixel) * 67);
 }
 </style>
+
 <style scoped src="../../../styles/menuDialog.css"></style>

@@ -33,13 +33,6 @@ export const createColleiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
   const leapTickIntervalSeconds = readSeconds("leapTickInterval");
   const trumpCardKittySeconds = readSeconds("trumpCardKitty");
   return {
-    // Constellation 1's Energy Recharge reads whether Collei is on the field from the deployed team's flags
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
-      const self = deployedCombatants.find(({ characterId }) => characterId === combatant.characterId);
-      return combatant.constellationCount >= CONSTELLATION_1 && self !== undefined && !self.isOnField
-        ? [{ amount: OFF_FIELD_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge }]
-        : [];
-    },
     burst: {
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState, party }) => {
         if (combatant.constellationCount >= CONSTELLATION_4)
@@ -64,6 +57,13 @@ export const createColleiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
           tickIntervalSeconds: leapTickIntervalSeconds,
         });
       },
+    },
+    // Constellation 1's Energy Recharge reads whether Collei is on the field from the deployed team's flags
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+      const self = deployedCombatants.find(({ characterId }) => characterId === combatant.characterId);
+      return combatant.constellationCount >= CONSTELLATION_1 && self !== undefined && !self.isOnField
+        ? [{ amount: OFF_FIELD_ENERGY_RECHARGE, attribute: Attribute.EnergyRecharge }]
+        : [];
     },
   };
 };

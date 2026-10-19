@@ -10,22 +10,22 @@ import type { AttackTag } from "#src/models/combat/AttackTag";
 // And not one of his action's hits. Neuvillette's and Wanderer's plunges are catalyst plunges, which the wiki does not list
 // As blunt, so the rules leave them non-blunt.
 export const CharacterIdBluntActionMap: Partial<Record<number, Partial<Record<AttackTag, boolean>>>> = {
-  // Candace: her skill
-  10_000_072: { ElementalSkill: true },
-  // Chiori: her normal attack, skill and burst
-  10_000_094: { ElementalBurst: true, ElementalSkill: true, NormalAttack: true },
+  // Ningguang: her plunge is an exception, though it deals Geo damage
+  10_000_027: { PlungingAttack: false },
+  // Klee: her normal and charged attacks (Kaboom) and her skill (Jumpy Dumpty)
+  10_000_029: { ChargedAttack: true, ElementalSkill: true, NormalAttack: true },
   // Chongyun: his skill and burst
   10_000_036: { ElementalBurst: true, ElementalSkill: true },
   // Eula: her skill and burst
   10_000_051: { ElementalBurst: true, ElementalSkill: true },
   // Gorou: his skill and burst are blunt, his Charged Attack is an exception
   10_000_055: { ChargedAttack: false, ElementalBurst: true, ElementalSkill: true },
-  // Klee: her normal and charged attacks (Kaboom) and her skill (Jumpy Dumpty)
-  10_000_029: { ChargedAttack: true, ElementalSkill: true, NormalAttack: true },
-  // Ningguang: her plunge is an exception, though it deals Geo damage
-  10_000_027: { PlungingAttack: false },
-  // Xilonen: her burst is blunt, her skill is an exception
-  10_000_103: { ElementalBurst: true, ElementalSkill: false },
   // Yun Jin: her burst (Cliffbreaker's Banner) is blunt, her skill (Opening Flourish) is an exception
   10_000_064: { ElementalBurst: true, ElementalSkill: false },
+  // Candace: her skill
+  10_000_072: { ElementalSkill: true },
+  // Chiori: her normal attack, skill and burst
+  10_000_094: { ElementalBurst: true, ElementalSkill: true, NormalAttack: true },
+  // Xilonen: her burst is blunt, her skill is an exception
+  10_000_103: { ElementalBurst: true, ElementalSkill: false },
 };

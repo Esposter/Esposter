@@ -38,12 +38,12 @@ describe("shopScreen", () => {
   const good = (goodsId: number, itemId: number, tabId: number): ShopGood => ({
     beginTime: new Date(0).toISOString(),
     buyLimit: 0,
+    costs: [{ count: 1, itemId: PRICE_ITEM_ID }],
     endTime: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 876_000 }).toString(),
     goodsId,
     itemCount: 1,
     itemId,
     minPlayerLevel: 1,
-    costs: [{ count: 1, itemId: PRICE_ITEM_ID }],
     refresh: ShopRefresh.None,
     tabId,
   });

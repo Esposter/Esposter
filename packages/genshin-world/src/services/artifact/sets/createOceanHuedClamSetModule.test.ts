@@ -128,8 +128,8 @@ describe(createOceanHuedClamSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, {
       enemyMap: new Map([
-        [near.id, near],
         [far.id, far],
+        [near.id, near],
       ]),
       enemyTables,
       kitEffectState,
@@ -185,8 +185,8 @@ describe(createOceanHuedClamSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wearer],
         [OTHER_CHARACTER_ID, otherWearer],
+        [TRAVELER_CHARACTER_ID, wearer],
       ]),
       enemyMap: new Map([[enemy.id, enemy]]),
       enemyTables,

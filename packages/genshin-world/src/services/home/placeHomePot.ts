@@ -6,9 +6,9 @@ import { checkIsDevicePlaceable } from "#src/services/gadget/checkIsDevicePlacea
 // Feet, unless the pot already stands and its caps refuse a second, in which case the point it stands at is kept
 export const placeHomePot = (
   pot: Pick<GadgetRow, "maxCountByPlayer" | "maxCountInScene">,
-  placedPoint: { x: number; z: number } | undefined,
+  placedPoint: undefined | { x: number; z: number },
   feet: { x: number; z: number },
-): { x: number; z: number } | undefined => {
+): undefined | { x: number; z: number } => {
   const placedCount = placedPoint === undefined ? 0 : 1;
   return checkIsDevicePlaceable(pot, placedCount, placedCount) ? { x: feet.x, z: feet.z } : placedPoint;
 };

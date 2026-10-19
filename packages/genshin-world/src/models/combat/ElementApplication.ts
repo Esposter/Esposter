@@ -9,9 +9,9 @@ export interface ElementApplication {
   // Raises above one, none at one
   auraDecayRateScale?: number;
   lunarReactionTypes?: readonly LunarReactionType[];
+  selfAuraSeconds?: number;
+  sourceId?: number;
   // The Stellar reactions the applying party's Stellar Jubilee passives enable, which a Cryo Swirl and a Superconduct take
   // The form of
   stellarReactionTypes?: readonly StellarReactionType[];
-  selfAuraSeconds?: number;
-  sourceId?: number;
 }

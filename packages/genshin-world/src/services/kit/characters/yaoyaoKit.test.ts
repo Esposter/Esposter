@@ -8,16 +8,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createEnemy } from "#src/services/enemy/createEnemy";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createYaoyaoKitBehaviour, YAOYAO_CHARACTER_ID } from "#src/services/kit/characters/yaoyaoKit";
 import { createKitTestContext, stepKitSecondsStriking } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -197,8 +197,8 @@ describe(createYaoyaoKitBehaviour, () => {
     for (const characterId of [YAOYAO_CHARACTER_ID, MEMBER_ID]) getPartyMember(party, characterId).healthShare = 0.5;
     const context = createKitTestContext(yaoyao, {
       characterIdCombatantMap: new Map([
-        [YAOYAO_CHARACTER_ID, yaoyao],
         [MEMBER_ID, member],
+        [YAOYAO_CHARACTER_ID, yaoyao],
       ]),
       party,
     });
@@ -371,7 +371,7 @@ describe(createYaoyaoKitBehaviour, () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(
       0.8,
-      { enemyTables, enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]) },
+      { enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]), enemyTables },
       { constellationCount: 2 },
     );
     YAOYAO_KIT.elementalBurst.onStart?.(context);
@@ -388,7 +388,7 @@ describe(createYaoyaoKitBehaviour, () => {
     expect.hasAssertions();
     const context = createYaoyaoContext(
       0.8,
-      { enemyTables, enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]) },
+      { enemyMap: new Map([["enemy", createEnemyAt(0, -4)]]), enemyTables },
       { constellationCount: 2 },
     );
     YAOYAO_KIT.elementalBurst.onStart?.(context);
@@ -413,11 +413,11 @@ describe(createYaoyaoKitBehaviour, () => {
     const context = createYaoyaoContext(
       0.8,
       {
-        enemyTables,
         enemyMap: new Map([
           ["first", createEnemyAt(0, -4)],
           ["second", createEnemyAt(0, -4)],
         ]),
+        enemyTables,
       },
       { constellationCount: 2 },
     );

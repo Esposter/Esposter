@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { TALISMAN_SPIRIT_ID } from "#src/services/gcg/cards/constants";
+import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
 import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgSummonAfterDamage";
 
 const DIVINE_MAIDENS_DELIVERANCE_DAMAGE = 1;

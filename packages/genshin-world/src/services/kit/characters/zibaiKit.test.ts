@@ -115,8 +115,8 @@ describe(createZibaiKitBehaviour, () => {
     const gleamZibai = withMoonsignBenediction(zibai);
     const gleamContext = createKitTestContext(gleamZibai, {
       characterIdCombatantMap: new Map([
-        [ZIBAI_CHARACTER_ID, gleamZibai],
         [TRAVELER_CHARACTER_ID, withMoonsignBenediction({ ...zibai, characterId: TRAVELER_CHARACTER_ID })],
+        [ZIBAI_CHARACTER_ID, gleamZibai],
       ]),
       party: createParty([ZIBAI_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
     });

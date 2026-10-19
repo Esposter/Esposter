@@ -21,8 +21,8 @@ import {
   GcgReactionKindBonusMap,
 } from "#src/services/gcg/constants";
 import { createGcgActiveCharacterSwitch } from "#src/services/gcg/createGcgActiveCharacterSwitch";
-import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { applyGcgNonDamageReactionEffects } from "#src/services/gcg/effects/applyGcgNonDamageReactionEffects";
+import { checkIsGcgElementImmune } from "#src/services/gcg/effects/checkIsGcgElementImmune";
 import { findGcgPermanentAura } from "#src/services/gcg/effects/findGcgPermanentAura";
 import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { listGcgFieldCards } from "#src/services/gcg/effects/listGcgFieldCards";

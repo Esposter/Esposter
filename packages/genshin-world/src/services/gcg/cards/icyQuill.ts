@@ -2,7 +2,7 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { MYSTICAL_ABANDON_ID, ICY_QUILL_ID } from "#src/services/gcg/cards/constants";
+import { ICY_QUILL_ID, MYSTICAL_ABANDON_ID } from "#src/services/gcg/cards/constants";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { takeOne } from "@esposter/shared";
 

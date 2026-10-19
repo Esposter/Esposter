@@ -13,8 +13,8 @@ describe(checkIsDomainLevelOpen, () => {
   const MONDAY = RESET_ZONED.add({ days: 4 }).toInstant();
   const TUESDAY = RESET_ZONED.add({ days: 5 }).toInstant();
   const LEVEL: DomainLevel = {
-    dungeonId: 1001,
     disorder: "",
+    dungeonId: 1001,
     enemyLevel: 37,
     recommendedRank: 30,
     resinCost: 0,

@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import { TENKO_KENSHIN_ID, YAKAN_EVOCATION_ID, YAE_MIKO_ID } from "#src/services/gcg/cards/constants";
+import { TENKO_KENSHIN_ID, YAE_MIKO_ID, YAKAN_EVOCATION_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 
 const SHRINES_SACRED_SHADE_REDUCTION = 2;

@@ -19,12 +19,12 @@ const ATTACK_EXTENSION_COOLDOWN_ID = "dolorousStrokeAttackExtensionCooldown";
 const SKILL_EXTENSION_COOLDOWN_ID = "dolorousStrokeSkillExtensionCooldown";
 // The seconds between two extensions of either kind, the text's own figure, as gcsim's 0.1 s statuses hold them
 const EXTENSION_COOLDOWN_SECONDS = 0.1;
-const ATTACK_TAGS = new Set<AttackTag | undefined>([AttackTag.NormalAttack, AttackTag.ChargedAttack]);
-const SKILL_TAGS = new Set<AttackTag | undefined>([AttackTag.ElementalSkill, AttackTag.ElementalBurst]);
+const ATTACK_TAGS = new Set<AttackTag | undefined>([AttackTag.ChargedAttack, AttackTag.NormalAttack]);
+const SKILL_TAGS = new Set<AttackTag | undefined>([AttackTag.ElementalBurst, AttackTag.ElementalSkill]);
 
 // The status a hit of the given kind extends, with the cooldown its extensions keep: a normal or charged attack's
 // Irreparable, a skill's or burst's Unforgivable, and none for any other hit
-const getExtendedStatus = (attackTag: AttackTag | undefined): { cooldownId: string; id: string } | undefined => {
+const getExtendedStatus = (attackTag: AttackTag | undefined): undefined | { cooldownId: string; id: string } => {
   if (ATTACK_TAGS.has(attackTag)) return { cooldownId: ATTACK_EXTENSION_COOLDOWN_ID, id: IRREPARABLE_ID };
   if (SKILL_TAGS.has(attackTag)) return { cooldownId: SKILL_EXTENSION_COOLDOWN_ID, id: UNFORGIVABLE_ID };
   return undefined;

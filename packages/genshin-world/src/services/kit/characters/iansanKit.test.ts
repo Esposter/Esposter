@@ -1,24 +1,24 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import {
+  createIansanKitBehaviour,
+  IANSAN_CHARACTER_ID,
+  IANSAN_WARMING_UP_ID,
+} from "#src/services/kit/characters/iansanKit";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitAction, createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import {
-  createIansanKitBehaviour,
-  IANSAN_CHARACTER_ID,
-  IANSAN_WARMING_UP_ID,
-} from "#src/services/kit/characters/iansanKit";
+import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { triggerKitNightsoulBurst } from "#src/services/kit/triggerKitNightsoulBurst";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";

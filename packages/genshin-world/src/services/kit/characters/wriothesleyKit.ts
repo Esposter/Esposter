@@ -88,7 +88,7 @@ const startIcefangRush = (context: KitContext): void => {
 // Gives Prosecution Edict a stack for a self-drain, or a heal that restores HP, of his while Icefang Rush holds and he is
 // On the field
 const gainProsecutionEdictStack = (context: KitContext, combatant: Combatant, event: KitHealthChangedEvent): void => {
-  const { characterId, ascension } = combatant;
+  const { ascension, characterId } = combatant;
   if (ascension < ASCENSION_4 || event.characterId !== characterId) return;
   const isGain = event.healthShare > 0 || (event.healthShare < 0 && event.sourceCharacterId === characterId);
   if (!isGain || context.activeCombatant.characterId !== characterId) return;

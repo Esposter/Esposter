@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { INSTRUCTORS_CAP_ID } from "#src/services/gcg/cards/constants";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
-import { INSTRUCTORS_CAP_ID } from "#src/services/gcg/cards/constants";
 
 const INSTRUCTORS_CAP_LIMIT = 3;
 

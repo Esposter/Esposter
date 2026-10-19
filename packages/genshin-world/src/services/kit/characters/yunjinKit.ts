@@ -119,6 +119,20 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
           stacks: BANNER_STACKS,
         }),
     },
+    // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
+      if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};
+      const buffedMember = getBuffedCombatant(member, effects, party, characterIdCombatantMap);
+      return { additiveBaseDamageBonus: getBannerIncrease(buffedMember, party, characterIdCombatantMap) };
+    },
+    // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
+      strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
+        ? getBannerIncrease(strike.combatant, party, characterIdCombatantMap)
+        : 0,
+    // While the window stands, her skill's release plays its top level, whatever seconds it was held
+    jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>
+      checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, ASCENSION_1_COUNTER_WINDOW_ID),
     // True to Oneself, from Ascension 1: a hit on her while her skill is held opens the window its release reads
     onKitEvent: (event, context, combatant) => {
       if (
@@ -150,20 +164,6 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
         source: CONSTELLATION_4_SOURCE,
       });
     },
-    // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
-      strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
-        ? getBannerIncrease(strike.combatant, party, characterIdCombatantMap)
-        : 0,
-    // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
-    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
-      if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};
-      const buffedMember = getBuffedCombatant(member, effects, party, characterIdCombatantMap);
-      return { additiveBaseDamageBonus: getBannerIncrease(buffedMember, party, characterIdCombatantMap) };
-    },
-    // While the window stands, her skill's release plays its top level, whatever seconds it was held
-    jumpsSkillHoldToTop: ({ activeCombatant, kitEffectState }) =>
-      checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, ASCENSION_1_COUNTER_WINDOW_ID),
     skill: { onStart: createShieldOnStart(kit.elementalSkill) },
     skillHolds: (kit.elementalSkillHolds ?? []).map(({ action }) => ({ onStart: createShieldOnStart(action) })),
   };

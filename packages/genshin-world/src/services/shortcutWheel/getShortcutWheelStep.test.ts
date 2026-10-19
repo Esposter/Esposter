@@ -1,6 +1,7 @@
+import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
+
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
-import type { ShortcutWheelStep } from "#src/models/shortcutWheel/ShortcutWheelStep";
 import { getShortcutWheelStep } from "#src/services/shortcutWheel/getShortcutWheelStep";
 import { describe, expect, test } from "vitest";
 

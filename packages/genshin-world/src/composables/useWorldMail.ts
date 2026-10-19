@@ -1,9 +1,9 @@
+import type { TextChunk } from "#src/models/data/TextChunk";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
-import type { TextChunk } from "#src/models/data/TextChunk";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 import type { GameLanguage } from "genshin-text";
 import type { Ref } from "vue";

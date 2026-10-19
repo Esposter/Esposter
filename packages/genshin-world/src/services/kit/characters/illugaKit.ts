@@ -4,9 +4,9 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
-import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { HAUNTED_NIGHT_STATUS_ID, NIGHTINGALE_SONG_STATUS_ID } from "#src/services/kit/constants";
@@ -109,8 +109,6 @@ export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): Ki
         giveLightkeepersOath(context);
       },
     },
-    skill: { onStart: giveLightkeepersOath },
-    skillHolds: [{ onStart: giveLightkeepersOath }],
     getPartyStrikeBonus: (combatant, { combatant: striker, hit }, _enemy, party, effects) => {
       if (hit.element !== Element.Geo) return {};
       const isOathed = findKitStatus(effects, striker.characterId, LIGHTKEEPERS_OATH_STATUS_ID) !== undefined;
@@ -196,5 +194,7 @@ export const createIllugaKitBehaviour = ({ readParameter }: KitRecordReader): Ki
           });
       }
     },
+    skill: { onStart: giveLightkeepersOath },
+    skillHolds: [{ onStart: giveLightkeepersOath }],
   };
 };

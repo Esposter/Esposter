@@ -1,5 +1,6 @@
 import type { ItemCount } from "#src/models/inventory/ItemCount";
 
+import { computeWeeklyBossRow } from "#src/services/bosses/computeWeeklyBossRow";
 import {
   WEEKLY_BOSS_BILLET_CHANCE,
   WEEKLY_BOSS_BILLET_ITEM_IDS,
@@ -11,7 +12,6 @@ import {
   WEEKLY_BOSS_TALENT_DROPS,
   WEEKLY_BOSS_TALENT_ITEM_IDS,
 } from "#src/services/bosses/constants";
-import { computeWeeklyBossRow } from "#src/services/bosses/computeWeeklyBossRow";
 import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { takeOne, takeRandom } from "@esposter/shared";
 

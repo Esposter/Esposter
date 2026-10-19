@@ -9,56 +9,56 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
-import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
 import { baneOfAllEvil } from "#src/services/gcg/cards/baneOfAllEvil";
 import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
-import { liuSu } from "#src/services/gcg/cards/liuSu";
-import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
-import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
-import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
-import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
 import {
+  DUNYARZAD_ID,
   FROSTFLAKE_SEKI_NO_TO_ID,
   ICY_QUILL_ID,
-  MYSTICAL_ABANDON_ID,
-  TALISMAN_SPIRIT_ID,
-  YAKSHAS_MASK_ID,
-  DUNYARZAD_ID,
   LIU_SU_ID,
+  MYSTICAL_ABANDON_ID,
   RANA_ID,
   SHENHE_ID,
   STONE_AND_CONTRACTS_ID,
+  TALISMAN_SPIRIT_ID,
   VERMILLION_HEREAFTER_ID,
   XIAO_ID,
+  YAKSHAS_MASK_ID,
 } from "#src/services/gcg/cards/constants";
+import { divineMaidensDeliverance } from "#src/services/gcg/cards/divineMaidensDeliverance";
+import { dunyarzad } from "#src/services/gcg/cards/dunyarzad";
+import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { icyQuill } from "#src/services/gcg/cards/icyQuill";
+import { lithicSpear } from "#src/services/gcg/cards/lithicSpear";
+import { liuSu } from "#src/services/gcg/cards/liuSu";
+import { mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
 import { rana } from "#src/services/gcg/cards/rana";
 import { shatteringIce } from "#src/services/gcg/cards/shatteringIce";
-import { mysticalAbandon } from "#src/services/gcg/cards/mysticalAbandon";
-import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
-import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
+import { stoneAndContracts } from "#src/services/gcg/cards/stoneAndContracts";
 import { talismanSpirit } from "#src/services/gcg/cards/talismanSpirit";
+import { vermillionHereafter } from "#src/services/gcg/cards/vermillionHereafter";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
 import { GCG_SHIELD_LIMIT, GCG_SPREAD_DAMAGE } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { playGcgCard } from "#src/services/gcg/playGcgCard";
+import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { runGcgActionPhase } from "#src/services/gcg/runGcgActionPhase";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
-import { playGcgCard } from "#src/services/gcg/playGcgCard";
-import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { switchGcgCharacter } from "#src/services/gcg/switchGcgCharacter";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -66,8 +66,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -82,9 +82,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
 });
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -93,6 +92,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   round: 1,
   rule: TEST_RULE,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 
@@ -119,12 +119,12 @@ const createSwitchDuel = (): GcgDuel => {
   const duel = createDuel([
     createSideState([
       {
-        ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+        ...createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } }),
         statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
       },
-      createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
     ]),
-    createSideState([createGcgCharacterState({ character: { id: 1107, element: Element.Cryo } })]),
+    createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1107 } })]),
   ]);
   takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
   return duel;
@@ -135,7 +135,7 @@ describe("spring Spirit Summoning", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
       createSideState([]),
     ]);
     const context = { duel, sideIndex: 0 };
@@ -148,7 +148,7 @@ describe("spring Spirit Summoning", () => {
   test("a second Icy Quill on its side refreshes the one there to its usages, and adds no second copy", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.onstages.push({ ...createGcgZoneCard(ICY_QUILL_ID, icyQuill), usages: 1 });
     const duel = createDuel([side, createSideState([])]);
 
@@ -177,7 +177,7 @@ describe("icy Quill", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
@@ -199,7 +199,7 @@ describe("icy Quill", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = { ...createGcgZoneCard(ICY_QUILL_ID, icyQuill), usages };
@@ -214,7 +214,7 @@ describe("icy Quill", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
@@ -227,7 +227,7 @@ describe("icy Quill", () => {
   test("with Mystical Abandon equipped to a character of its side, the first Normal Attack each Round spends no usage", () => {
     expect.hasAssertions();
 
-    const shenhe = createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } });
+    const shenhe = createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } });
     shenhe.equipments = [createGcgZoneCard(MYSTICAL_ABANDON_ID, mysticalAbandon)];
     const duel = createDuel([createSideState([shenhe]), createSideState([])]);
     const zoneCard = createGcgZoneCard(ICY_QUILL_ID, icyQuill);
@@ -251,13 +251,13 @@ describe("icy Quill", () => {
 
     const duel = createDuel([
       {
-        ...createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+        ...createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
         onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)],
       },
       createSideState([
-        { ...createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }), aura: Element.Cryo },
-        createGcgCharacterState({ character: { id: 1203, element: Element.Cryo } }),
-        createGcgCharacterState({ character: { id: 1204, element: Element.Cryo } }),
+        { ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }), aura: Element.Cryo },
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1203 } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1204 } }),
       ]),
     ]);
 
@@ -272,12 +272,12 @@ describe("icy Quill", () => {
 
     const duel = createDuel([
       {
-        ...createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+        ...createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
         onstages: [createGcgZoneCard(ICY_QUILL_ID, icyQuill)],
       },
       createSideState([
-        { ...createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }), aura: Element.Cryo },
-        createGcgCharacterState({ character: { id: 1203, element: Element.Cryo } }),
+        { ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }), aura: Element.Cryo },
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1203 } }),
       ]),
     ]);
 
@@ -292,7 +292,7 @@ describe("divine Maiden's Deliverance", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
       createSideState([]),
     ]);
     const context = { duel, sideIndex: 0 };
@@ -305,7 +305,7 @@ describe("divine Maiden's Deliverance", () => {
   test("a Talisman Spirit already on its side is refreshed rather than doubled", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.summons.push({ ...createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit), usages: 0 });
     const duel = createDuel([side, createSideState([])]);
 
@@ -338,7 +338,7 @@ describe("talisman Spirit", () => {
           createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit),
         ],
       },
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     runGcgEndPhase(duel);
@@ -350,7 +350,7 @@ describe("talisman Spirit", () => {
 
     const duel = createDuel([
       { ...createSideState([]), summons: [createGcgZoneCard(TALISMAN_SPIRIT_ID, talismanSpirit)] },
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     runGcgEndPhase(duel);
@@ -385,7 +385,7 @@ describe("mystical Abandon", () => {
   test("it equips to Shenhe while she is active, and has her use Spring Spirit Summoning at once", () => {
     expect.hasAssertions();
 
-    const shenhe = createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } });
+    const shenhe = createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } });
     shenhe.character.skills = [SPRING_SPIRIT_SUMMONING];
     const context = { duel: createDuel([createSideState([shenhe]), createSideState([])]), sideIndex: 0 };
 
@@ -398,7 +398,7 @@ describe("bane of All Evil", () => {
   test("it deals 4 Anemo DMG, then Xiao gains Yaksha's Mask for two Rounds", () => {
     expect.hasAssertions();
 
-    const xiao = createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } });
+    const xiao = createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } });
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
     const context = { duel, sideIndex: 0 };
 
@@ -413,7 +413,7 @@ describe("bane of All Evil", () => {
     expect.hasAssertions();
 
     const xiao = {
-      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+      ...createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } }),
       statuses: [{ ...createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask), rounds: 1, usages: 0 }],
     };
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
@@ -432,7 +432,7 @@ describe("yaksha's Mask", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
@@ -447,7 +447,7 @@ describe("yaksha's Mask", () => {
     expect.hasAssertions();
 
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask);
@@ -517,7 +517,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
   test("it equips to Xiao while she is active, and has her use Bane of All Evil at once", () => {
     expect.hasAssertions();
 
-    const xiao = createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } });
+    const xiao = createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } });
     xiao.character.skills = [BANE_OF_ALL_EVIL];
     const context = { duel: createDuel([createSideState([xiao]), createSideState([])]), sideIndex: 0 };
 
@@ -529,7 +529,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
     expect.hasAssertions();
 
     const xiao = {
-      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+      ...createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } }),
       statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
     };
     const duel = createDuel([createSideState([xiao]), createSideState([])]);
@@ -549,7 +549,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
     expect.hasAssertions();
 
     const bare = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } })]),
       createSideState([]),
     ]);
     const zoneCard = createGcgZoneCard(CONQUEROR_OF_EVIL_ID, conquerorOfEvilGuardianYaksha);
@@ -562,7 +562,7 @@ describe("conqueror of Evil: Guardian Yaksha", () => {
     ).toBeUndefined();
 
     const xiao = {
-      ...createGcgCharacterState({ character: { id: XIAO_ID, element: Element.Cryo } }),
+      ...createGcgCharacterState({ character: { element: Element.Cryo, id: XIAO_ID } }),
       statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
     };
     const masked = createDuel([createSideState([xiao]), createSideState([])]);
@@ -612,7 +612,7 @@ describe("lithic Spear", () => {
         createGcgCharacterState({
           character: { element: Element.Cryo, id: 1104, nation: "LIYUE", weapon: "CLAYMORE" },
         }),
-        createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }),
       ]),
       createSideState([]),
     ]);
@@ -666,7 +666,7 @@ describe("vermillion Hereafter", () => {
     const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
     const duel = createDuel([
       createSideState([
-        { ...createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }), equipments: [zoneCard] },
+        { ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }), equipments: [zoneCard] },
       ]),
       createSideState([]),
     ]);
@@ -683,7 +683,7 @@ describe("vermillion Hereafter", () => {
 
     const zoneCard = createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter);
     const duel = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } })]),
       createSideState([]),
     ]);
     const context = { characterIndex: 0, duel, sideIndex: 0 };
@@ -705,12 +705,12 @@ describe("vermillion Hereafter", () => {
     const duel = createDuel([
       createSideState([
         {
-          ...createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+          ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
           equipments: [createGcgZoneCard(VERMILLION_HEREAFTER_ID, vermillionHereafter)],
         },
-        createGcgCharacterState({ character: { id: 1504, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1504 } }),
       ]),
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     switchGcgActiveCharacter(duel, 0, 1);
@@ -725,7 +725,7 @@ describe("stone and Contracts", () => {
   test("when the next Action Phase begins, it creates 3 Omni dice and draws a card", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } })]);
     side.drawPile = [DRAWN_CARD_ID];
     const duel = createDuel([side, createSideState([])]);
 
@@ -751,13 +751,13 @@ describe("elemental Resonance: Shattering Ice", () => {
     expect.hasAssertions();
 
     const one = createDuel([
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
       createSideState([]),
     ]);
     const two = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }),
-        createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
       ]),
       createSideState([]),
     ]);
@@ -771,10 +771,10 @@ describe("elemental Resonance: Shattering Ice", () => {
 
     const duel = createDuel([
       createSideState([
-        createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } }),
-        createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } }),
+        createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
       ]),
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     shatteringIce.play?.({ duel, sideIndex: 0 }, undefined);
@@ -789,8 +789,8 @@ describe("liu Su", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
-      createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
     ]);
     side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
     const duel = createDuel([side, createSideState([])]);
@@ -806,8 +806,8 @@ describe("liu Su", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
-      createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
     ]);
     takeOne(side.characters, 1).energy = 2;
     side.supports.push(createGcgZoneCard(LIU_SU_ID, liuSu));
@@ -828,7 +828,7 @@ describe("dunyarzad", () => {
   test("a companion played spends one die less, once per Round, and a card that is not a companion spends none less", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     const zoneCard = takeOne(side.supports, 0);
     const context = { duel: createDuel([side, createSideState([])]), sideIndex: 0 };
@@ -849,7 +849,7 @@ describe("dunyarzad", () => {
   test("a companion played through the hand is paid for at one die less", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     side.cards.push({ ...createCompanion(LIU_SU_ID), costs: [{ count: 1, kind: GcgCostKind.Unaligned }] });
     side.hand.push(LIU_SU_ID);
@@ -862,7 +862,7 @@ describe("dunyarzad", () => {
   test("after a companion is played, it draws a random companion from the pile, once per match", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.supports.push(createGcgZoneCard(DUNYARZAD_ID, dunyarzad));
     side.cards.push({ ...TALENT_CARD, id: PLAIN_SUPPORT_ID, kind: GcgCardKind.Support }, createCompanion(RANA_ID), {
       ...createCompanion(LIU_SU_ID),
@@ -888,7 +888,7 @@ describe("dunyarzad", () => {
   test("a second Dunyarzad does not draw again once one has spent the match's draw", () => {
     expect.hasAssertions();
 
-    const side = createSideState([createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } })]);
+    const side = createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]);
     side.supports.push(
       { ...createGcgZoneCard(DUNYARZAD_ID, dunyarzad), counter: 0 },
       createGcgZoneCard(DUNYARZAD_ID, dunyarzad),
@@ -926,13 +926,13 @@ describe("rana", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } }),
       createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
     ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
     const duel = createDuel([
       side,
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
@@ -945,14 +945,14 @@ describe("rana", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
-      { ...createGcgCharacterState({ character: { id: 1104, element: Element.Cryo } }), hp: 0 },
+      createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } }),
+      { ...createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }), hp: 0 },
       createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
     ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
     const duel = createDuel([
       side,
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, HYOUKA);
@@ -963,13 +963,13 @@ describe("rana", () => {
     expect.hasAssertions();
 
     const side = createSideState([
-      createGcgCharacterState({ character: { id: SHENHE_ID, element: Element.Cryo } }),
+      createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } }),
       createGcgCharacterState({ character: { element: Element.Anemo, id: XIAO_ID } }),
     ]);
     side.supports.push(createGcgZoneCard(RANA_ID, rana));
     const duel = createDuel([
       side,
-      createSideState([createGcgCharacterState({ character: { id: 1202, element: Element.Cryo } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1202 } })]),
     ]);
 
     runGcgSkillUse({ duel, sideIndex: 0 }, KABUKI);

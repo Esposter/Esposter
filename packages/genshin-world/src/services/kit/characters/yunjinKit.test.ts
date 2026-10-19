@@ -388,8 +388,8 @@ describe("cliffbreaker's Banner's DMG Increase", () => {
     const combatant = createYunjinCombatant();
     const teammate = createTeammate(OTHER_CHARACTER_ID);
     const characterIdCombatantMap = new Map([
-      [YUNJIN_CHARACTER_ID, combatant],
       [OTHER_CHARACTER_ID, teammate],
+      [YUNJIN_CHARACTER_ID, combatant],
     ]);
     const context = createKitTestContext(combatant, { characterIdCombatantMap, party: teamParty });
     YUNJIN_KIT.elementalBurst.onStart?.(context);
@@ -404,8 +404,8 @@ describe("cliffbreaker's Banner's DMG Increase", () => {
     const combatant = createYunjinCombatant();
     const teammate = createTeammate(OTHER_CHARACTER_ID);
     const characterIdCombatantMap = new Map([
-      [YUNJIN_CHARACTER_ID, combatant],
       [OTHER_CHARACTER_ID, teammate],
+      [YUNJIN_CHARACTER_ID, combatant],
     ]);
     const context = createKitTestContext(combatant, { characterIdCombatantMap, party: teamParty });
     YUNJIN_KIT.elementalBurst.onStart?.(context);

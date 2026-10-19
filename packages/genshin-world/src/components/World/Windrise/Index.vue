@@ -8,10 +8,10 @@ import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { EnemyDrops } from "#src/models/enemy/EnemyDrops";
 import type { EnemyTables } from "#src/models/enemy/EnemyTables";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
+import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { Interactable } from "#src/models/interaction/Interactable";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitTaunt } from "#src/models/kit/KitTaunt";
-import type { GatheringPlace } from "#src/models/gathering/GatheringPlace";
 import type { OculusPlace } from "#src/models/oculus/OculusPlace";
 import type { FrostbearingTreePlace } from "#src/models/offering/FrostbearingTreePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
@@ -20,7 +20,6 @@ import type { Wildlife } from "#src/models/wildlife/Wildlife";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { Catalogue } from "#src/models/world/Catalogue";
 import type { RegionGround } from "#src/models/world/RegionGround";
-import { StandInShape } from "#src/models/world/StandInShape";
 import type { TerrainWorkerGround } from "#src/models/world/TerrainWorkerGround";
 import type {
   GrassTrail,
@@ -40,10 +39,10 @@ import WorldFrostbearingTree from "#src/components/World/FrostbearingTree/Index.
 import WorldGrass from "#src/components/World/Grass/Index.vue";
 import WorldInteractables from "#src/components/World/Interactables/Index.vue";
 import WorldLandmarks from "#src/components/World/Landmarks/Index.vue";
-import WorldStandIns from "#src/components/World/StandIns/Index.vue";
 import WorldPlants from "#src/components/World/Plants/Index.vue";
 import WorldRivers from "#src/components/World/Rivers/Index.vue";
 import WorldSightTrails from "#src/components/World/SightTrails/Index.vue";
+import WorldStandIns from "#src/components/World/StandIns/Index.vue";
 import WorldTerrain from "#src/components/World/Terrain/Index.vue";
 import WorldWater from "#src/components/World/Water/Index.vue";
 import WorldWaterfalls from "#src/components/World/Waterfalls/Index.vue";
@@ -63,6 +62,7 @@ import { useSunShadow } from "#src/composables/useSunShadow";
 import { SeelieState } from "#src/models/puzzle/SeelieState";
 import { WindrisePartFamily } from "#src/models/windrise/WindrisePartFamily";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { StandInShape } from "#src/models/world/StandInShape";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
@@ -72,6 +72,7 @@ import { createMondstadtWindUniforms } from "#src/services/mondstadt/createMonds
 import { findQuestTargetPosition } from "#src/services/quest/findQuestTargetPosition";
 import { LEAF_SHADER, SCENE_FAMILY_KEY } from "#src/services/scene/constants";
 import { SceneWitnessKey } from "#src/services/scene/SceneWitnessKey";
+import { OCULUS_STAND_IN_COLOR, OCULUS_STAND_IN_RADIUS } from "#src/services/statue/constants";
 import {
   CLOUD_COVERAGE,
   FOG_DENSITY,
@@ -98,7 +99,6 @@ import {
   WINDRISE_SKY_KEYFRAMES,
   WINDRISE_START_MINUTES,
 } from "#src/services/windrise/constants";
-import { OCULUS_STAND_IN_COLOR, OCULUS_STAND_IN_RADIUS } from "#src/services/statue/constants";
 import { createWindrisePavingGeometry } from "#src/services/windrise/createWindrisePavingGeometry";
 import { createWindriseTerrainOptions } from "#src/services/windrise/createWindriseTerrainOptions";
 import { LandmarkKindWindrisePartFamilyMap } from "#src/services/windrise/LandmarkKindWindrisePartFamilyMap";
@@ -128,6 +128,8 @@ import { HemisphereLight, Scene } from "three";
 interface Props {
   // The character on the field, whose game model the host's exports draw in place of the pack's when it is the Traveler
   activeCharacterId: number;
+  // The spots of the bounties' targets standing in the world, which the sight leads a trail to while it is on
+  bountyTrailEnds: GroundPoint[];
   // The regions and their areas, whose outlines bring a region's data within reach and set the weather the camera
   // Stands in
   catalogue: Catalogue;
@@ -136,9 +138,6 @@ interface Props {
   characterBody?: Object3D;
   // How the character on the field moves, whose body's capsule is drawn where it has no pack
   characterLocomotion?: Locomotion;
-  // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
-  getCharacter: () => { maxHealth: number; phase: LocomotionPhase } | undefined;
-  getAntiColdRatio: () => number;
   // Where the pack of the character on the field is read from, which it is drawn on the body from, or as its body's
   // Capsule where it has none or its model fails to load
   characterPackReader?: CharacterPackReader;
@@ -156,6 +155,9 @@ interface Props {
   frostbearingTreePlaces: FrostbearingTreePlace[];
   // Where the hosted game data is read from, which each region's palettes are read from as it comes within reach
   gameDataBaseUrl: string;
+  getAntiColdRatio: () => number;
+  // Where the locomotion phase of the character on the field is read, which the Sheer Cold gauge reads its swimming off
+  getCharacter: () => undefined | { maxHealth: number; phase: LocomotionPhase };
   // The world's ground at a point in its own coordinates, which everything placed in the world stands on
   getGroundHeight: (x: number, z: number) => number;
   // The world's clock, which each defeat and each camp's load is read against
@@ -196,8 +198,6 @@ interface Props {
   sceneExportBaseUrl?: string;
   // The Seelies of Mondstadt, whose courts the sight leads a trail to while each rests
   seelies: Seelie[];
-  // The spots of the bounties' targets standing in the world, which the sight leads a trail to while it is on
-  bountyTrailEnds: GroundPoint[];
   // Each defeated boss's Trounce Blossom where it fell, which holds the boss until it is claimed or a teleport comes
   trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   // The animals in the world, each stood at its place or fallen, which the session holds
@@ -212,6 +212,7 @@ interface Props {
 
 const {
   activeCharacterId,
+  bountyTrailEnds,
   catalogue,
   characterBody,
   characterLocomotion,
@@ -244,7 +245,6 @@ const {
   questTargetId,
   regionDataBaseUrl,
   sceneExportBaseUrl,
-  bountyTrailEnds,
   seelies,
   trounceBlossoms,
   wildlifeList,

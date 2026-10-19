@@ -6,16 +6,16 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { wagner } from "#src/services/gcg/cards/wagner";
 import { WAGNER_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { wagner } from "#src/services/gcg/cards/wagner";
+import { GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { playGcgCard } from "#src/services/gcg/playGcgCard";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const createSide = (): GcgSideState => ({
   activeIndex: 0,
@@ -47,9 +47,8 @@ const createSide = (): GcgSideState => ({
 });
 
 const createDuel = (): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   phase: GcgPhase.Action,
@@ -57,6 +56,7 @@ const createDuel = (): GcgDuel => ({
   round: 1,
   rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
   sides: [createSide(), createSide()],
+  skillModules: GcgEffectNameSkillModuleMap,
 });
 
 describe(playGcgCard, () => {

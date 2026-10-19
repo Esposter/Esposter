@@ -1,10 +1,10 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { ICICLE_ID } from "#src/services/gcg/cards/constants";
 import { icicle } from "#src/services/gcg/cards/icicle";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { ICICLE_ID } from "#src/services/gcg/cards/constants";
 
 // Glacial Waltz, Kaeya's elemental burst: 1 Cryo DMG, and an Icicle is created (the wiki's Glacial Waltz (Character Card
 // Skill))

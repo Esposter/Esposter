@@ -355,12 +355,12 @@ describe(readGenshinSave, () => {
       commissionDay: {
         claimedCommissionIds: [1],
         dealtAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
-        isBonusClaimed: false,
         dealtCommissions: Array.from({ length: COMMISSIONS_PER_DAY }, (_value, index) => ({
           commissionId: index + 1,
           count: 0,
           dealtRank: COMMISSION_UNLOCK_RANK,
         })),
+        isBonusClaimed: false,
       },
     };
 
@@ -491,7 +491,6 @@ describe(readGenshinSave, () => {
     const save: GenshinSave = {
       ...EMPTY_GENSHIN_SAVE,
       reputationBountyClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString()],
-      reputationRequestClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
       reputationBountyHunt: {
         bountyId: 1,
         isTargetDefeated: true,
@@ -499,6 +498,7 @@ describe(readGenshinSave, () => {
         spawn: [1, 2, 3],
         targetEnemyKindId: 20_101,
       },
+      reputationRequestClaimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
     };
 
     expect(toGenshinSave(readGenshinSave(save, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(save);

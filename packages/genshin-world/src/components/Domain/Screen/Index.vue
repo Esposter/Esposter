@@ -7,12 +7,12 @@ import { GameScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The game's words in the reader's language
+  gameText: GameText;
   // Whether the player is inside the domain, whose screen then asks to leave it instead of listing its levels
   isInDomain: boolean;
   // The domain's levels, each with the state the player finds it in at their rank and today
   levels: DomainLevelRow[];
-  // The game's words in the reader's language
-  gameText: GameText;
 }
 
 const { gameText, isInDomain, levels } = defineProps<Props>();

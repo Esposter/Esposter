@@ -1,7 +1,7 @@
 import type { ElementalNode } from "#src/models/elementalNode/ElementalNode";
 
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { Element } from "#src/models/Element";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { stepElementalNode } from "#src/services/elementalNode/stepElementalNode";
 import { describe, expect, test } from "vitest";
 

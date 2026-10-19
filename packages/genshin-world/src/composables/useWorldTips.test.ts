@@ -51,7 +51,7 @@ describe(useWorldTips, () => {
   test("a triggered tip is shown once when its quest finishes and is kept shown in the save", () => {
     expect.hasAssertions();
     const tipShown = vi.fn<(tip: Tip) => void>();
-    const { events, shownTipIds, showingTip } = createWorldTips([tip(1)]);
+    const { events, showingTip, shownTipIds } = createWorldTips([tip(1)]);
     events.on("tipShown", tipShown);
     events.emit("finishQuest", quest(QUEST_ID), PROGRESS, PROGRESS);
     expect(showingTip.value).toStrictEqual(tip(1));

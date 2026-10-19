@@ -11,8 +11,8 @@ describe(getDeployedElements, () => {
       getDeployedElements(
         [10_000_084, 10_000_003],
         new Map([
-          [10_000_084, { element: Element.Pyro }],
           [10_000_003, { element: Element.Anemo }],
+          [10_000_084, { element: Element.Pyro }],
         ]),
         undefined,
       ),

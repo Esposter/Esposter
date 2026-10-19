@@ -1,13 +1,13 @@
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import type { Combatant } from "#src/models/kit/Combatant";
 
+import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { createMavuikaKitBehaviour, MAVUIKA_CHARACTER_ID } from "#src/services/kit/characters/mavuikaKit";
 import { NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
-import { createMavuikaKitBehaviour, MAVUIKA_CHARACTER_ID } from "#src/services/kit/characters/mavuikaKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

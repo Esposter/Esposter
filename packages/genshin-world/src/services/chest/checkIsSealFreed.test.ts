@@ -1,11 +1,11 @@
 import type { KitHit } from "#src/models/kit/KitHit";
 
 import { ChestSeal } from "#src/models/chest/ChestSeal";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { checkIsSealFreed } from "#src/services/chest/checkIsSealFreed";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
-import { AttackTag } from "#src/models/combat/AttackTag";
+import { checkIsSealFreed } from "#src/services/chest/checkIsSealFreed";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSealFreed, () => {

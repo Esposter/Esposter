@@ -139,6 +139,19 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
         castKitSummon(kitEffectState, body, combatant, [ambushHit], { attackTag: AttackTag.ElementalSkill });
       },
     },
+    getPartyReactionBonus: (_member, { combatant, reactionType }, { kitEffectState }) => ({
+      criticalDamageBonus:
+        reactionType === LunarReactionType.LunarCharged &&
+        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, KUJOU_SARA_C6_MARK_ID)
+          ? C6_CRITICAL_DAMAGE
+          : 0,
+    }),
+    getPartyStrikeBonus: (_member, strike, _enemy, _party, effects) => ({
+      criticalDamageBonus: getMarkedElectroCriticalDamage(strike, effects),
+    }),
+    // Constellation 6's mark gives Sara's own Electro strikes CRIT DMG while she holds it, and gives the party's Electro strikes
+    // And Lunar-Charged reactions by a marked character the same
+    getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) => getMarkedElectroCriticalDamage(strike, effects),
     skill: {
       // The Cover lasts its seconds, and from Constellation 2 a weaker crowfeather is set out where Sara stands
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
@@ -155,18 +168,5 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
           });
       },
     },
-    // Constellation 6's mark gives Sara's own Electro strikes CRIT DMG while she holds it, and gives the party's Electro strikes
-    // And Lunar-Charged reactions by a marked character the same
-    getStrikeCriticalDamageBonus: (strike, _enemy, _party, effects) => getMarkedElectroCriticalDamage(strike, effects),
-    getPartyStrikeBonus: (_member, strike, _enemy, _party, effects) => ({
-      criticalDamageBonus: getMarkedElectroCriticalDamage(strike, effects),
-    }),
-    getPartyReactionBonus: (_member, { combatant, reactionType }, { kitEffectState }) => ({
-      criticalDamageBonus:
-        reactionType === LunarReactionType.LunarCharged &&
-        checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, KUJOU_SARA_C6_MARK_ID)
-          ? C6_CRITICAL_DAMAGE
-          : 0,
-    }),
   };
 };

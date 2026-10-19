@@ -14,9 +14,9 @@ describe(createTipOfTheSpearPassiveModule, () => {
   // Synthetic params, not the weapon's row: three Energy for a heal of the wielder, once every two seconds
   const tipOfTheSpearPassiveModule = createTipOfTheSpearPassiveModule([3, 2, 0, 0]);
   const healthGained: KitEvent = {
+    bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0.5,
-    bondOfLifeShare: 0,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,

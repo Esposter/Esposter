@@ -1,7 +1,7 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
-import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 import { chonghuasLayeredFrost } from "#src/services/gcg/cards/chonghuasLayeredFrost";
+import { CHONGHUA_FROST_FIELD_ID } from "#src/services/gcg/cards/constants";
 import { describe, expect, test } from "vitest";
 
 describe("chonghuasLayeredFrost", () => {

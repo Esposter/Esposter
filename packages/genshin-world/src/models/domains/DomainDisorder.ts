@@ -9,7 +9,6 @@ import type { DomainDisorderBase } from "#src/models/domains/DomainDisorderBase"
 // A trigger inside the cooldown changes nothing. A disorder with maxStacks gives each trigger a stack of its own up to
 // That limit, each stack ending on its own clock. One without restarts its bonus on each trigger
 export type DomainDisorder =
-  | (DomainDisorderBase & { kind: "constant" })
   | (DomainDisorderBase & { cooldownSeconds: number; kind: "healthChange"; maxStacks?: number; seconds: number })
   | (DomainDisorderBase & {
       cooldownSeconds: number;
@@ -17,4 +16,5 @@ export type DomainDisorder =
       matches: (reaction: Reaction) => boolean;
       maxStacks?: number;
       seconds: number;
-    });
+    })
+  | (DomainDisorderBase & { kind: "constant" });

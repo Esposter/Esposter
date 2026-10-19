@@ -1,11 +1,11 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { FULL_PLATE_ID } from "#src/services/gcg/cards/constants";
 import { fullPlate } from "#src/services/gcg/cards/fullPlate";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { FULL_PLATE_ID } from "#src/services/gcg/cards/constants";
 
 const BREASTPLATE_DAMAGE = 1;
 const FULL_PLATE_SHIELD = 2;

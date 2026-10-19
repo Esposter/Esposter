@@ -123,8 +123,8 @@ describe(createFlinsKitBehaviour, () => {
     const gleamFlins = withBenediction(flins);
     const gleamContext = createKitTestContext(gleamFlins, {
       characterIdCombatantMap: new Map([
-        [FLINS_CHARACTER_ID, gleamFlins],
         [10_000_002, withBenediction({ ...flins, characterId: 10_000_002 })],
+        [FLINS_CHARACTER_ID, gleamFlins],
       ]),
       party: createParty([FLINS_CHARACTER_ID, 10_000_002]),
     });

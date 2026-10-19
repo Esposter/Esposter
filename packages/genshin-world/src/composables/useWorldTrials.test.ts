@@ -3,17 +3,17 @@ import type { Character } from "#src/models/character/Character";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Kit } from "#src/models/kit/Kit";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { Trial } from "#src/models/trial/Trial";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 
 import { useWorldTrials } from "#src/composables/useWorldTrials";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
+import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
-import { CurrencyItemIdMap, EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
 import { toCharacterTrialSave } from "#src/services/save/toCharacterTrialSave";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
@@ -58,8 +58,8 @@ describe(useWorldTrials, () => {
   const RETURN_POSE: WorldJumpPose = { heightOffset: 0, point: { x: 12, z: -3 }, yaw: 1 };
   const TIMED_OUT_STEP = {
     deltaMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
-    isPlaying: true,
     isPartyDown: false,
+    isPlaying: true,
   };
 
   // The world's inputs the trials read and write, each a fresh one a test can keep a hold of
@@ -144,7 +144,7 @@ describe(useWorldTrials, () => {
     await flushReads();
 
     await enterTrial(takeOne(trials.value), RETURN_POSE);
-    stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true });
+    stepTrial({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false });
     expect(trialArena.value).toBeUndefined();
     expect(characters.value).toBe(ownedCharacters);
     expect(trialClaimedStageIds.value.size).toBe(0);
@@ -177,7 +177,7 @@ describe(useWorldTrials, () => {
     await flushReads();
     await enterTrial(takeOne(trials.value), RETURN_POSE);
 
-    expect(stepTrial({ deltaMilliseconds: 1, isPlaying: true, isPartyDown: false })).toBeUndefined();
+    expect(stepTrial({ deltaMilliseconds: 1, isPartyDown: false, isPlaying: true })).toBeUndefined();
     expect(stepTrial(TIMED_OUT_STEP)).toStrictEqual(RETURN_POSE);
   });
 
@@ -187,17 +187,17 @@ describe(useWorldTrials, () => {
     await flushReads();
     await enterTrial(takeOne(trials.value), RETURN_POSE);
 
-    expect(stepTrial({ deltaMilliseconds: 0, isPlaying: false, isPartyDown: true })).toStrictEqual(RETURN_POSE);
+    expect(stepTrial({ deltaMilliseconds: 0, isPartyDown: true, isPlaying: false })).toStrictEqual(RETURN_POSE);
   });
 
   test("a trial's countdown reads the seconds its clock has left", async () => {
     expect.hasAssertions();
-    const { enterTrial, stepTrial, trialSecondsRemaining, trials } = setUpTrials();
+    const { enterTrial, stepTrial, trials, trialSecondsRemaining } = setUpTrials();
     await flushReads();
     await enterTrial(takeOne(trials.value), RETURN_POSE);
     expect(trialSecondsRemaining.value).toBe(300);
 
-    stepTrial({ deltaMilliseconds: 1500, isPlaying: true, isPartyDown: false });
+    stepTrial({ deltaMilliseconds: 1500, isPartyDown: false, isPlaying: true });
     expect(trialSecondsRemaining.value).toBe(299);
     stepTrial(TIMED_OUT_STEP);
     expect(trialSecondsRemaining.value).toBeUndefined();

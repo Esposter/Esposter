@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { JUEYUN_GUOBA_ID } from "#src/services/gcg/cards/constants";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
-import { JUEYUN_GUOBA_ID } from "#src/services/gcg/cards/constants";
 
 // Jueyun Guoba: the target character's next Normal Attack this round deals one DMG more, and a character eats one food a
 // Round

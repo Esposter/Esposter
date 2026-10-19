@@ -198,8 +198,8 @@ describe("lisa kit", () => {
     const far = createLisaEnemy(0, 6);
     const context = createKitTestContext(combatant, {
       enemyMap: new Map([
-        ["near", near],
         ["far", far],
+        ["near", near],
       ]),
     });
 

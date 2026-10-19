@@ -29,8 +29,8 @@ export const strikeLunarReaction = (
   const element = LunarReactionElementMap[lunarReactionType];
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   return strikeReactionContributors({
-    contributorIds,
     context,
+    contributorIds,
     element,
     enemy,
     owner,

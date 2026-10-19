@@ -3,9 +3,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { SHIMENAWAS_REMINISCENCE_ID } from "#src/services/gcg/cards/constants";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 import { takeOne } from "@esposter/shared";
-import { SHIMENAWAS_REMINISCENCE_ID } from "#src/services/gcg/cards/constants";
 
 const SHIMENAWAS_REMINISCENCE_ENERGY = 2;
 const SHIMENAWAS_REMINISCENCE_DAMAGE_BONUS = 1;

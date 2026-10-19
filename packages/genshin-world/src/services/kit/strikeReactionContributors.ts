@@ -13,8 +13,8 @@ import { strikeReactionDamage } from "#src/services/kit/strikeReactionDamage";
 // `price` in the order the team lists them, the priced damages are totalled by `total`, and the total is taken against
 // The enemy's RES to the element. With no contributor it strikes nothing
 export const strikeReactionContributors = ({
-  contributorIds,
   context,
+  contributorIds,
   element,
   enemy,
   owner,
@@ -22,8 +22,8 @@ export const strikeReactionContributors = ({
   reaction,
   total,
 }: {
-  contributorIds: ReadonlySet<number>;
   context: KitContext;
+  contributorIds: ReadonlySet<number>;
   element: Element;
   enemy: Enemy;
   owner: Combatant | undefined;

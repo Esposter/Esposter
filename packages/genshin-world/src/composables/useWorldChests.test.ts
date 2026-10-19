@@ -30,12 +30,12 @@ const createChests = (puzzleChestPlaces: Parameters<typeof useWorldChests>[0]["p
       placeWorldDrops: vi.fn<() => void>(),
       puzzleChestPlaces,
       reliquaryPieceEntryMap: new Map(),
-      weaponDataMap: new Map(),
       reliquarySets: [],
       setInventory: vi.fn<() => void>(),
       setWallet: vi.fn<() => void>(),
       wallet: ref({ ...EMPTY_WALLET }),
       waterLevel: -1,
+      weaponDataMap: new Map(),
     }),
   };
 };

@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { takeOne } from "@esposter/shared";
-import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { LEAVE_IT_TO_ME_ID } from "#src/services/gcg/cards/constants";
+import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
+import { takeOne } from "@esposter/shared";
 
 // Leave It to Me!: the next time its side switches characters, the switch is a fast action, for one usage
 export const leaveItToMe: GcgCardModule = {

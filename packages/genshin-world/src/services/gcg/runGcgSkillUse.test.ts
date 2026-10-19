@@ -10,9 +10,10 @@ import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { XIAO_ID, YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { yakshasMask } from "#src/services/gcg/cards/yakshasMask";
-import { YAKSHAS_MASK_ID, XIAO_ID } from "#src/services/gcg/cards/constants";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
@@ -28,7 +29,6 @@ import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 describe("a skill's on-use hooks", () => {
   const SEED = 9;
@@ -96,9 +96,8 @@ const createDuel = (
   sides: [GcgSideState, GcgSideState] = [createSide(), createSide()],
   rule: GcgRule = { drawCount: 2, handCardLimit: 10, reactions: [] },
 ): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   phase: GcgPhase.Action,
@@ -106,6 +105,7 @@ const createDuel = (
   round: 1,
   rule,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
 });
 
 describe("a skill's any-side hooks", () => {

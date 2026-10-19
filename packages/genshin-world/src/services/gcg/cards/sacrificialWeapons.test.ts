@@ -8,6 +8,8 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { sacrificialBow } from "#src/services/gcg/cards/sacrificialBow";
 import { sacrificialGreatsword } from "#src/services/gcg/cards/sacrificialGreatsword";
 import { sacrificialSword } from "#src/services/gcg/cards/sacrificialSword";
@@ -16,8 +18,6 @@ import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -34,8 +34,8 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
     activeIndex: 0,
     cards: [],
     characters: [createGcgCharacterState({ character: { element } })],
-    dice: [],
     deckCardIds: [],
+    dice: [],
     drawPile: [],
     hand: [],
     hasDeclaredEnd: false,
@@ -49,9 +49,8 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
     usedSkillIds: [],
   };
   const duel: GcgDuel = {
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     outcome: undefined,
@@ -60,6 +59,7 @@ const useWeapon = (module: GcgCardModule, cardId: number, element: Element) => {
     round: 1,
     rule: TEST_RULE,
     sides: [side, side],
+    skillModules: GcgEffectNameSkillModuleMap,
     winnerSideIndex: undefined,
   };
   const context: GcgEffectContext = { duel, sideIndex: 0 };

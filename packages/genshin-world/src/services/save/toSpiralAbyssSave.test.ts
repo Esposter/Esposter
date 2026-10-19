@@ -9,11 +9,11 @@ describe(toSpiralAbyssSave, () => {
   test("each cycle's progress reads back, through the save schema, as it was written", () => {
     expect.hasAssertions();
     const progressMap = new Map<string, AbyssProgress>([
+      ["124", { chamberIdProgressMap: new Map(), claimedRewardIds: new Set() }],
       [
         "corridor",
         { chamberIdProgressMap: new Map([[1, { isCleared: true, stars: 2 }]]), claimedRewardIds: new Set([101, 102]) },
       ],
-      ["124", { chamberIdProgressMap: new Map(), claimedRewardIds: new Set() }],
     ]);
 
     expect(toSpiralAbyssProgressMap(spiralAbyssSaveSchema.parse(toSpiralAbyssSave(progressMap)))).toStrictEqual(

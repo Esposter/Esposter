@@ -17,14 +17,15 @@ import { capriciousVisage } from "#src/services/gcg/cards/capriciousVisage";
 import { catalyzingField } from "#src/services/gcg/cards/catalyzingField";
 import { ceremonialGarment } from "#src/services/gcg/cards/ceremonialGarment";
 import { chainsOfWardingThunder } from "#src/services/gcg/cards/chainsOfWardingThunder";
-import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
+import { changTheNinth } from "#src/services/gcg/cards/changTheNinth";
 import { chinjuForest } from "#src/services/gcg/cards/chinjuForest";
 import { chonghuaFrostField } from "#src/services/gcg/cards/chonghuaFrostField";
 import { conquerorOfEvilGuardianYaksha } from "#src/services/gcg/cards/conquerorOfEvilGuardianYaksha";
 import { crimsonWitchOfFlames } from "#src/services/gcg/cards/crimsonWitchOfFlames";
 import { crossfire } from "#src/services/gcg/cards/crossfire";
 import { crowfeatherCover } from "#src/services/gcg/cards/crowfeatherCover";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { cryoHilichurlShooter } from "#src/services/gcg/cards/cryoHilichurlShooter";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { dandelionField } from "#src/services/gcg/cards/dandelionField";
@@ -47,24 +48,22 @@ import { ellin } from "#src/services/gcg/cards/ellin";
 import { embersRekindled } from "#src/services/gcg/cards/embersRekindled";
 import { emblemOfSeveredFate } from "#src/services/gcg/cards/emblemOfSeveredFate";
 import { favoniusCathedral } from "#src/services/gcg/cards/favoniusCathedral";
-import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { fieryRebirth } from "#src/services/gcg/cards/fieryRebirth";
+import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
+import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { frostflakeSekiNoTo } from "#src/services/gcg/cards/frostflakeSekiNoTo";
+import { fullPlate } from "#src/services/gcg/cards/fullPlate";
+import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
 import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
 import { generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
 import { grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
-import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
-import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
-import { icyQuill } from "#src/services/gcg/cards/icyQuill";
-import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
-import { fullPlate } from "#src/services/gcg/cards/fullPlate";
-import { gamblersEarrings } from "#src/services/gcg/cards/gamblersEarrings";
-import { flowfireEdge } from "#src/services/gcg/cards/flowfireEdge";
-import { flowingFlame } from "#src/services/gcg/cards/flowingFlame";
 import { guardiansOath } from "#src/services/gcg/cards/guardiansOath";
 import { guoba } from "#src/services/gcg/cards/guoba";
+import { hanachirusato } from "#src/services/gcg/cards/hanachirusato";
+import { hilichurlBerserker } from "#src/services/gcg/cards/hilichurlBerserker";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { icicle } from "#src/services/gcg/cards/icicle";
+import { icyQuill } from "#src/services/gcg/cards/icyQuill";
 import { iHaventLostYet } from "#src/services/gcg/cards/iHaventLostYet";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { inspirationField } from "#src/services/gcg/cards/inspirationField";
@@ -73,6 +72,7 @@ import { ironTongueTian } from "#src/services/gcg/cards/ironTongueTian";
 import { jadeChamber } from "#src/services/gcg/cards/jadeChamber";
 import { jadeScreen } from "#src/services/gcg/cards/jadeScreen";
 import { jueyunGuoba } from "#src/services/gcg/cards/jueyunGuoba";
+import { kamisatoArtSenho } from "#src/services/gcg/cards/kamisatoArtSenho";
 import { kantenSenmyouBlessing } from "#src/services/gcg/cards/kantenSenmyouBlessing";
 import { katheryne } from "#src/services/gcg/cards/katheryne";
 import { kidKujirai } from "#src/services/gcg/cards/kidKujirai";
@@ -175,16 +175,16 @@ import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } fro
 
 // Every card a duel's module covers, by the card's id in the game's table
 export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, GcgCardModule>([
+  [11_054, kamisatoArtSenho],
   [111_011, sacredCryoPearl],
   [111_012, iceLotus],
   [111_023, drunkenMist],
   [111_031, icicle],
   [111041, chonghuaFrostField],
-  [111071, icyQuill],
-  [111073, talismanSpirit],
-  [11_054, kamisatoArtSenho],
   [111_051, frostflakeSekiNoTo],
   [111_052, cryoElementalInfusion],
+  [111071, icyQuill],
+  [111073, talismanSpirit],
   [112_021, rainSword],
   [112_022, rainbowBladework],
   [112_031, reflection],
@@ -208,20 +208,24 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [114_083, tenkoThunderbolts],
   [115_011, largeWindSpirit],
   [115_021, dandelionField],
+  [115041, yakshasMask],
   [116_011, jadeScreen],
   [116_021, fullPlate],
   [116_022, sweepingTime],
   [116_051, ushi],
   [116_053, ragingOniKing],
   [116_054, superlativeSuperstrength],
+  [116_061, generalsWarBanner],
+  [116_062, generalsGlory],
   [117_011, cuileinAnbar],
-  [115041, yakshasMask],
   [122011, oceanicMimicSquirrel],
   [122012, oceanicMimicRaptor],
   [122013, oceanicMimicFrog],
   [123_021, darkfireFurnace],
   [123_022, fieryRebirth],
   [123_024, aegisOfAbyssalFlame],
+  [123_031, pyroScorpion],
+  [123_032, scorpionBlessing],
   [124_013, chainsOfWardingThunder],
   [124_014, electroCrystalCore],
   [125011, shadowswordLoneGale],
@@ -231,27 +235,33 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [133_021, flowfireEdge],
   [134_061, elementalLifeformElectro],
   [211_051, kantenSenmyouBlessing],
+  [211071, mysticalAbandon],
   [213_011, flowingFlame],
   [213_021, crossfire],
-  [211071, mysticalAbandon],
   [213051, naganoharaMeteorSwarm],
   [214_061, sinOfPride],
   [214_081, theShrinesSacredShade],
   [215041, conquerorOfEvilGuardianYaksha],
+  [216_061, rushingHound],
   [222011, streamingSurge],
   [223_021, embersRekindled],
+  [223_031, scorpocalypse],
   [224_011, absorbingPrism],
   [225011, transcendentAutomaton],
+  [301_103, kingsSquireInEffect],
   [303_211, cryoHilichurlShooter],
   [303_213, hilichurlBerserker],
   [303_214, electroHilichurlShooter],
   [303_305, mushroomPizzaInEffect],
   [311_101, magicGuide],
   [311201, ravenBow],
-  [311301, whiteIronGreatsword],
   [311_202, sacrificialBow],
+  [311_206, kingsSquire],
+  [311301, whiteIronGreatsword],
   [311_302, sacrificialGreatsword],
+  [311_306, beaconOfTheReedSea],
   [311_401, whiteTassel],
+  [311402, lithicSpear],
   [311_501, travelersHandySword],
   [311_502, sacrificialSword],
   [311_503, aquilaFavonia],
@@ -260,27 +270,18 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [312_004, gamblersEarrings],
   [312_005, instructorsCap],
   [312_008, emblemOfSeveredFate],
-  [312_013, capriciousVisage],
-  [311402, lithicSpear],
   [312012, vermillionHereafter],
+  [312_013, capriciousVisage],
   [312_014, shimenawasReminiscence],
-  [321_012, chinjuForest],
-  [322012, liuSu],
-  [322_013, hanachirusato],
-  [322_014, kidKujirai],
-  [322016, dunyarzad],
-  [322017, rana],
-  [331_402, elementalResonanceHighVoltage],
-  [332_015, abyssalSummons],
-  [3120111, vermillionHereafterBonus],
+  [312_022, vourukashasGlow],
   [312101, brokenRimesEcho],
   [312_201, wineStainedTricorne],
   [312_301, witchsScorchingHat],
   [312_302, crimsonWitchOfFlames],
-  [312_602, archaicPetra],
   [312401, thunderSummonersCrown],
   [312501, viridescentVenerersDiadem],
   [312_601, maskOfSolitudeBasalt],
+  [312_602, archaicPetra],
   [312_701, laurelCoronet],
   [321001, liyueHarborWharf],
   [321_002, knightsOfFavoniusLibrary],
@@ -288,6 +289,12 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [321_004, dawnWinery],
   [321005, wangshuInn],
   [321_006, favoniusCathedral],
+  [321_007, tenshukaku],
+  [321_008, grandNarukamiShrine],
+  [321_009, sangonomiyaShrine],
+  [321_010, sumeruCity],
+  [321_012, chinjuForest],
+  [321_016, weepingWillowOfTheLake],
   [322_001, paimon],
   [322002, katheryne],
   [322_003, timaeus],
@@ -298,16 +305,24 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [322_009, changTheNinth],
   [322_010, ellin],
   [322011, ironTongueTian],
+  [322012, liuSu],
+  [322_013, hanachirusato],
+  [322_014, kidKujirai],
+  [322016, dunyarzad],
+  [322017, rana],
   [323_001, parametricTransformer],
   [331_101, elementalResonanceWovenIce],
+  [331102, shatteringIce],
   [331_301, elementalResonanceWovenFlames],
   [331_401, elementalResonanceWovenThunder],
+  [331_402, elementalResonanceHighVoltage],
+  [331_601, elementalResonanceWovenStone],
+  [331_602, elementalResonanceEnduringRock],
+  [331802, stoneAndContracts],
+  [331_803, thunderAndEternity],
   [332_001, theBestestTravelCompanion],
   [332_002, changingShifts],
-  [331_803, thunderAndEternity],
   [332_003, tossUp],
-  [331102, shatteringIce],
-  [331802, stoneAndContracts],
   [332004, strategize],
   [332_005, iHaventLostYet],
   [332_006, leaveItToMe],
@@ -319,32 +334,17 @@ export const GcgCardIdModuleMap: Map<number, GcgCardModule> = new Map<number, Gc
   [332_012, quickKnit],
   [332_013, sendOff],
   [332_014, guardiansOath],
+  [332_015, abyssalSummons],
   [333001, jueyunGuoba],
-  [333004, northernSmokedChicken],
   [333_003, lotusFlowerCrisp],
+  [333004, northernSmokedChicken],
   [333_005, sweetMadame],
   [333_006, mondstadtHashBrown],
   [333_007, mushroomPizza],
   [333_008, mintyMeatRolls],
   [333_009, teyvatFriedEgg],
+  [3120111, vermillionHereafterBonus],
   [GCG_BURNING_FLAME_ID, burningFlame],
   [GCG_CATALYZING_FIELD_ID, catalyzingField],
   [GCG_DENDRO_CORE_ID, dendroCore],
-  [116_061, generalsWarBanner],
-  [116_062, generalsGlory],
-  [123_031, pyroScorpion],
-  [123_032, scorpionBlessing],
-  [216_061, rushingHound],
-  [223_031, scorpocalypse],
-  [301_103, kingsSquireInEffect],
-  [311_206, kingsSquire],
-  [311_306, beaconOfTheReedSea],
-  [312_022, vourukashasGlow],
-  [321_007, tenshukaku],
-  [321_008, grandNarukamiShrine],
-  [321_009, sangonomiyaShrine],
-  [321_010, sumeruCity],
-  [321_016, weepingWillowOfTheLake],
-  [331_601, elementalResonanceWovenStone],
-  [331_602, elementalResonanceEnduringRock],
 ]);

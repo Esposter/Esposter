@@ -1,8 +1,8 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBuff } from "#src/models/kit/KitBuff";
-import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitDamageTakenEvent } from "#src/models/kit/KitDamageTakenEvent";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -111,8 +111,8 @@ const createConstellation4Fixture = (constellationCount = 4, teammate?: Combatan
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(teammate ? [ALBEDO_CHARACTER_ID, teammate.characterId] : [ALBEDO_CHARACTER_ID]);
   const characterIdCombatantMap = new Map<number, Combatant>([
-    [ALBEDO_CHARACTER_ID, combatant],
     [activeCombatant.characterId, activeCombatant],
+    [ALBEDO_CHARACTER_ID, combatant],
   ]);
   // The member stands at the given x, the cast being made from the origin
   const createContext = (member: Combatant, x: number) =>

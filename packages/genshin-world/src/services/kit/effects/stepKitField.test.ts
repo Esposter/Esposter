@@ -3,8 +3,8 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitField } from "#src/models/kit/KitField";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitField } from "#src/services/kit/effects/stepKitField";

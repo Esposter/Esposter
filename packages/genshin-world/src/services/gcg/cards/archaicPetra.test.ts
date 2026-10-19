@@ -9,20 +9,20 @@ import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { archaicPetra } from "#src/services/gcg/cards/archaicPetra";
+import { ARCHAIC_PETRA_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { runGcgRollPhase } from "#src/services/gcg/runGcgRollPhase";
 import { describe, expect, test } from "vitest";
-import { ARCHAIC_PETRA_ID } from "#src/services/gcg/cards/constants";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice,
   deckCardIds: [],
+  dice,
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -38,9 +38,8 @@ const createSide = (characters: GcgCharacterState[], dice: Element[]) => ({
 
 // A duel with the first side holding Archaic Petra on its active character and the given starting dice
 const createDuel = (dice: Element[]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -60,6 +59,7 @@ const createDuel = (dice: Element[]): GcgDuel => ({
     ),
     createSide([createGcgCharacterState({ character: { element: Element.Geo } })], []),
   ],
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 

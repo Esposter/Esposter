@@ -8,9 +8,9 @@ import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
-import { Element } from "#src/models/Element";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -18,8 +18,8 @@ import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import {
   createKujouSaraKitBehaviour,
-  KUJOU_SARA_CHARACTER_ID,
   KUJOU_SARA_C6_MARK_ID,
+  KUJOU_SARA_CHARACTER_ID,
 } from "#src/services/kit/characters/kujouSaraKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";

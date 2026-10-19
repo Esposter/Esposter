@@ -11,9 +11,8 @@ import { describe } from "vitest";
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 export const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -22,6 +21,7 @@ export const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   round: 1,
   rule: TEST_RULE,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 

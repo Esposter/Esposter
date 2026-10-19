@@ -1,6 +1,6 @@
+import type { Attribute } from "#src/models/character/Attribute";
 import type { Combatant } from "#src/models/kit/Combatant";
 
-import type { Attribute } from "#src/models/character/Attribute";
 import { computeCharacterStats } from "#src/services/character/computeCharacterStats";
 
 // The combatant with each bonus added to its attribute total, and its Max HP, ATK and DEF built from those totals

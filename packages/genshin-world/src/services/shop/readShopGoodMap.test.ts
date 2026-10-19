@@ -17,12 +17,12 @@ describe(readShopGoodMap, () => {
   const createGood = (goodsId: number): ShopGood => ({
     beginTime: EPOCH_TIME,
     buyLimit: 0,
+    costs: [{ count: 1, itemId: 1 }],
     endTime: EPOCH_TIME,
     goodsId,
     itemCount: 1,
     itemId: 1,
     minPlayerLevel: 1,
-    costs: [{ count: 1, itemId: 1 }],
     refresh: ShopRefresh.None,
   });
 

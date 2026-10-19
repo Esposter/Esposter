@@ -61,7 +61,6 @@ export interface GenshinSaveState {
   craftedCountMap: ReadonlyMap<number, number>;
   craftingProgress: CraftingProgress;
   encounterPoints: EncounterPoints;
-  longTermEncounterPoints: LongTermEncounterPoints;
   enemyRespawnMap: ReadonlyMap<string, string>;
   foundOculusIds: ReadonlySet<string>;
   frostbearingTreeProgress: OfferingProgressSave;
@@ -70,6 +69,7 @@ export interface GenshinSaveState {
   homeProgress: HomeProgress;
   inventory: Inventory;
   investigationDay: InvestigationDay;
+  longTermEncounterPoints: LongTermEncounterPoints;
   mails: MailSave[];
   minedOutcrops: readonly MinedOutcrop[];
   namecardItemId: number;
@@ -77,18 +77,18 @@ export interface GenshinSaveState {
   party: Party;
   processingJobs: Record<number, ProcessingJob>;
   quests: ReadonlyMap<string, QuestProgress>;
+  queuedTipIds: readonly number[];
   regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
   reputationBountyClaimedAts: readonly Temporal.Instant[];
   reputationBountyHunt: ReputationBountyHunt | undefined;
-  queuedTipIds: readonly number[];
   reputationRequestClaimedAts: readonly Temporal.Instant[];
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
   shownTipIds: ReadonlySet<number>;
+  solvedPuzzleIds: ReadonlySet<string>;
   // The Abyss's progress by cycle, keyed as the save keys it
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
-  solvedPuzzleIds: ReadonlySet<string>;
   travelerBirthday: TravelerBirthdaySave | undefined;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;

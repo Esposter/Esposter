@@ -1,11 +1,11 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { MUSHROOM_PIZZA_ID, MUSHROOM_PIZZA_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 import { mushroomPizzaInEffect } from "#src/services/gcg/cards/mushroomPizzaInEffect";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-import { MUSHROOM_PIZZA_ID, MUSHROOM_PIZZA_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 
 const HEAL_VALUE = 1;
 

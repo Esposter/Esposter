@@ -10,20 +10,19 @@ import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgReactionKind } from "#src/models/gcg/GcgReactionKind";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { GCG_BURNING_FLAME_ID, GCG_CATALYZING_FIELD_ID, GCG_DENDRO_CORE_ID } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
 const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -32,6 +31,7 @@ const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
   round: 1,
   rule: TEST_RULE,
   sides,
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 
@@ -39,8 +39,8 @@ const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
   activeIndex: 0,
   cards: [],
   characters,
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -66,7 +66,7 @@ describe(applyGcgDamage, () => {
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Pyro } })]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Cryo }, aura: Element.Cryo })]),
+      createSideState([createGcgCharacterState({ aura: Element.Cryo, character: { element: Element.Cryo } })]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
 
@@ -100,7 +100,7 @@ describe(applyGcgDamage, () => {
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Cryo } })]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Hydro }, aura: Element.Hydro })]),
+      createSideState([createGcgCharacterState({ aura: Element.Hydro, character: { element: Element.Hydro } })]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Cryo, value: ELEMENT_VALUE }, rule);
     const frozenHp = takeOne(takeOne(duel.sides, 1).characters, 0)?.hp;
@@ -148,7 +148,7 @@ describe(applyGcgDamage, () => {
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Pyro } })]),
       createSideState([
-        createGcgCharacterState({ character: { element: Element.Electro }, aura: Element.Electro }),
+        createGcgCharacterState({ aura: Element.Electro, character: { element: Element.Electro } }),
         createGcgCharacterState({ character: { element: Element.Hydro } }),
       ]),
     ]);
@@ -168,7 +168,7 @@ describe(applyGcgDamage, () => {
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Electro } })]),
       createSideState([
-        createGcgCharacterState({ character: { element: Element.Cryo }, aura: Element.Cryo }),
+        createGcgCharacterState({ aura: Element.Cryo, character: { element: Element.Cryo } }),
         createGcgCharacterState({ character: { element: Element.Hydro } }),
       ]),
     ]);
@@ -234,7 +234,7 @@ describe(applyGcgDamage, () => {
     const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Pyro } })]);
     const duel = createDuel([
       attacker,
-      createSideState([createGcgCharacterState({ character: { element: Element.Hydro }, aura: Element.Dendro })]),
+      createSideState([createGcgCharacterState({ aura: Element.Dendro, character: { element: Element.Hydro } })]),
     ]);
     applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule);
     const usagesAfterOne = attacker.summons.map(({ usages }) => usages);
@@ -287,7 +287,7 @@ describe(applyGcgDamage, () => {
     const rule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Pyro } })]),
-      createSideState([createGcgCharacterState({ character: { element: Element.Cryo }, aura: Element.Cryo })]),
+      createSideState([createGcgCharacterState({ aura: Element.Cryo, character: { element: Element.Cryo } })]),
     ]);
 
     expect(applyGcgDamage(duel, 0, { damageType: Element.Pyro, value: PYRO_VALUE }, rule)).toStrictEqual([
@@ -302,7 +302,7 @@ describe(applyGcgDamage, () => {
     const duel = createDuel([
       createSideState([createGcgCharacterState({ character: { element: Element.Electro } })]),
       createSideState([
-        createGcgCharacterState({ character: { element: Element.Cryo }, aura: Element.Cryo }),
+        createGcgCharacterState({ aura: Element.Cryo, character: { element: Element.Cryo } }),
         createGcgCharacterState({ character: { element: Element.Hydro } }),
       ]),
     ]);

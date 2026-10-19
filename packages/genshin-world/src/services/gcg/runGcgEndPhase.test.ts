@@ -1,11 +1,11 @@
 import { Element } from "#src/models/Element";
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 import { GCG_BURNING_FLAME_ID } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { createDuel } from "#src/services/gcg/cards/createDuel.test";
-import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 
 describe(runGcgEndPhase, () => {
   const FULL_HP = 10;

@@ -94,14 +94,14 @@ export const createYaeMikoKitBehaviour = ({
         });
       },
     },
+    getStrikeDamageBonus: ({ attackTag, combatant }) =>
+      combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
+        ? elementalMasteryMultiplier(combatant, ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY)
+        : 0,
     // Constellation 6 ignores a share of each enemy's DEF on Sesshou Sakura's strikes, which are Elemental Skill DMG
     getStrikeDefenceIgnored: ({ attackTag, combatant }) =>
       combatant.constellationCount >= CONSTELLATION_6 && attackTag === AttackTag.ElementalSkill
         ? CONSTELLATION_6_DEFENCE_IGNORED
-        : 0,
-    getStrikeDamageBonus: ({ attackTag, combatant }) =>
-      combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
-        ? elementalMasteryMultiplier(combatant, ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY)
         : 0,
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {

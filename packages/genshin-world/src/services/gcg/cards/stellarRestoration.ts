@@ -2,10 +2,10 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { ELECTRO_INFUSION_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 import { electroInfusion } from "#src/services/gcg/cards/electroInfusion";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { takeOne } from "@esposter/shared";
-import { ELECTRO_INFUSION_ID, LIGHTNING_STILETTO_ID } from "#src/services/gcg/cards/constants";
 
 const STELLAR_RESTORATION_DAMAGE = 3;
 

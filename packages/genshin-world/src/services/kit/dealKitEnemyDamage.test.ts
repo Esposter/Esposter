@@ -9,9 +9,9 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
-import { IANSAN_CHARACTER_ID } from "#src/services/kit/characters/iansanKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { createParty } from "#src/services/party/createParty";

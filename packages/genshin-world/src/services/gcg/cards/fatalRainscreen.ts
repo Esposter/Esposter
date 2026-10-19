@@ -1,9 +1,9 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { RAIN_SWORD_ID } from "#src/services/gcg/cards/constants";
 import { rainSword } from "#src/services/gcg/cards/rainSword";
 import { createGcgApplicationOnstageAfterDamage } from "#src/services/gcg/effects/createGcgApplicationOnstageAfterDamage";
-import { RAIN_SWORD_ID } from "#src/services/gcg/cards/constants";
 
 const FATAL_RAINSCREEN_DAMAGE = 2;
 

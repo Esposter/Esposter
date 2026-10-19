@@ -6,14 +6,14 @@ import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgOutcome } from "#src/models/gcg/GcgOutcome";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { GCG_ROUND_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { declareGcgRoundEnd } from "#src/services/gcg/declareGcgRoundEnd";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -25,8 +25,8 @@ describe(declareGcgRoundEnd, () => {
     activeIndex: 0,
     cards: [],
     characters: [createGcgCharacterState({ character: { element: Element.Pyro } })],
-    dice: [Element.Pyro],
     deckCardIds: [],
+    dice: [Element.Pyro],
     drawPile: [...DRAW_PILE_CARD_IDS],
     hand: [101],
     hasDeclaredEnd: false,
@@ -40,9 +40,8 @@ describe(declareGcgRoundEnd, () => {
     usedSkillIds: [],
   });
   const createDuel = (round = 1): GcgDuel => ({
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     outcome: undefined,
@@ -51,6 +50,7 @@ describe(declareGcgRoundEnd, () => {
     round,
     rule: TEST_RULE,
     sides: [createSideState(), createSideState()],
+    skillModules: GcgEffectNameSkillModuleMap,
     winnerSideIndex: undefined,
   });
 

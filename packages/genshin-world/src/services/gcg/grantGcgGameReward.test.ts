@@ -1,5 +1,5 @@
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { GcgRewardState } from "#src/models/gcg/GcgRewardState";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 
 import { MaterialType } from "#src/models/inventory/MaterialType";
 import { GCG_LUCKY_COIN_ITEM_ID, GCG_PLAYER_EXP_ITEM_ID } from "#src/services/gcg/constants";

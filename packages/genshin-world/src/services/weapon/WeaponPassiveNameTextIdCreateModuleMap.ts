@@ -30,9 +30,9 @@ import { createDeterminationPassiveModule } from "#src/services/weapon/passives/
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
 import { createDolorousStrokePassiveModule } from "#src/services/weapon/passives/createDolorousStrokePassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
-import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
 import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/createEchoingBalladPassiveModule";
+import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createEssenceOfFalsityPassiveModule } from "#src/services/weapon/passives/createEssenceOfFalsityPassiveModule";
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
@@ -130,40 +130,289 @@ const createBaneOfFlameAndWaterPassiveModule = (params: number[]): PassiveModule
 export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   Partial<Record<string, (params: number[]) => PassiveModule>>
 > = {
-  // Full HP Critic Up
-  "2866125259": createFullHPCriticUpPassiveModule,
-  // Infusion Scroll
-  "1663313163": createInfusionScrollPassiveModule,
+  // Windfall (Favonius Sword)
+  "1914259": createCritEnergyPassiveModule,
+  // Determination
+  "94261419": createDeterminationPassiveModule,
+  // Unbending
+  "99463579": createUnbendingPassiveModule,
+  // Heritage
+  "110253283": createHeritagePassiveModule,
+  // Extinguishing Precept (Calamity Queller)
+  "131958235": createExtinguishingPreceptPassiveModule,
+  // Decimate
+  "174540131": createDecimatePassiveModule,
+  // Daylight's Augury (Polar Star)
+  "303626691": createDaylightsAuguryPassiveModule,
+  // Benthic Pulse (Song of Stillness)
+  "369700907": createBenthicPulsePassiveModule,
+  // Gokadaiou Otogibanashi (Redhorn Stonethresher)
+  "372854075": createGokadaiouOtogibanashiPassiveModule,
+  // Cadence of Days Gone By (Song of the Vigil)
+  "385807483": createSongOfTheVigilPassiveModule,
+  // Without Heed for Day nor Night (Clash of Kings)
+  "407790963": createWithoutHeedForDayNorNightPassiveModule,
+  // Boundless Blessing (Lost Prayer to the Sacred Winds)
+  "483941803": createBoundlessBlessingPassiveModule,
   // Bane of Water and Ice
   "523615731": createBaneOfWaterAndIcePassiveModule,
-  // Bane of Fire and Thunder
-  "2101250155": createBaneOfFireAndThunderPassiveModule,
-  // Bane of Storm and Tide
-  "2612787355": createBaneOfStormAndTidePassiveModule,
-  // Bane of Flame and Water
-  "1958685971": createBaneOfFlameAndWaterPassiveModule,
-  // Smashed Stone
-  "2507863163": createSmashedStonePassiveModule,
-  // Infusion Blade
-  "2323524931": createInfusionBladePassiveModule,
-  // Infusion Arrow
-  "2843293987": createInfusionArrowPassiveModule,
-  // Infusion Stinger
-  "3208149443": createInfusionStingerPassiveModule,
-  // Crush
-  "2430074939": createCrushPassiveModule,
+  // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
+  "641137867": createSmokeAndMirrorMysteryPassiveModule,
+  // Offering Unto Wind and Sun (Starcaller's Watch)
+  "646104387": createOfferingUntoWindAndSunPassiveModule,
+  // Bane of the Soft
+  "651784635": createBaneOfTheSoftPassiveModule,
+  // Fall Into Place (Master Key)
+  "706623635": createFallIntoPlacePassiveModule,
   // Magic Affinity
   "734556419": createMagicAffinityPassiveModule,
-  // Infusion Needle
-  "1859047483": createInfusionNeedlePassiveModule,
-  // Gilding
-  "1373283795": createGildingPassiveModule,
+  // Crown of the Final Scion (Angelos' Heptades)
+  "788659619": createCrownOfTheFinalScionPassiveModule,
+  // Mournful Tribute (Bloodsoaked Ruins)
+  "867694867": createMournfulTributePassiveModule,
+  // Rebellious Guardian (The Bell)
+  "896844259": createRebelliousGuardianPassiveModule,
+  // Focus (Royal Grimoire)
+  "916503587": createFocusPassiveModule,
+  // Starfire Upon the Snowplains (Emberwell)
+  "953016699": createStarfireUponTheSnowplainsPassiveModule,
+  // Traveler's Path (Exaiphanes Blade)
+  "1043198987": createTravelersPathPassiveModule,
+  // Sunken Song of the Sands (Key of Khaj-Nisut)
+  "1054220683": createSunkenSongOfTheSandsPassiveModule,
+  // Justice (The Black Sword)
+  "1092738259": createJusticePassiveModule,
   // Unreturning
   "1166144531": createUnreturningPassiveModule,
-  // Journey
-  "3982568907": createParticleHealPassiveModule,
+  // Busybody's Running Light (Tamayuratei no Ohanashi)
+  "1169232075": (params) =>
+    createSkillBuffPassiveModule(params, {
+      attributes: [Attribute.AttackPercent, Attribute.MovementSpeed],
+      source: "busybodysRunningLight",
+    }),
+  // At the End of the Beast-Paths (Hunter's Path)
+  "1173973395": createAtTheEndOfTheBeastPathsPassiveModule,
+  // Windfall (Favonius Lance)
+  "1244741843": createCritEnergyPassiveModule,
+  // Byakuya Kougetsu (Everlasting Moonglow)
+  "1301139739": createByakuyaKougetsuPassiveModule,
+  // Spotless Heart (Cinnabar Spindle)
+  "1348697123": createSpotlessHeartPassiveModule,
+  // Falcon's Defiance (Aquila Favonia)
+  "1362579531": createFalconsDefiancePassiveModule,
+  // Heavy
+  "1364561971": createHeavyPassiveModule,
+  // Gilding
+  "1373283795": createGildingPassiveModule,
+  // Samurai Conduct (Kitain Cross Spear)
+  "1395787867": createSamuraiConductPassiveModule,
+  // Undying Admiration (Festering Desire)
+  "1399609651": createUndyingAdmirationPassiveModule,
+  // The Law's Equilibrium (Covenant of Frost and Snow)
+  "1419973003": createLawsEquilibriumPassiveModule,
+  // Press the Advantage (Blackcliff Warbow)
+  "1421912251": createPressTheAdvantagePassiveModule,
+  // Infusion Scroll
+  "1663313163": createInfusionScrollPassiveModule,
+  // Whitehill's Bestowal (Azurelight)
+  "1741516147": createWhitehillsBestowalPassiveModule,
+  // Press the Advantage (Blackcliff Agate)
+  "1776215435": createPressTheAdvantagePassiveModule,
+  // Samurai Conduct (Katsuragikiri Nagamasa)
+  "1828182147": createSamuraiConductPassiveModule,
+  // The Stringless
+  "1839966563": createSkillAndBurstDamagePassiveModule,
+  // Precise
+  "1849455683": createPrecisePassiveModule,
+  // Infusion Needle
+  "1859047483": createInfusionNeedlePassiveModule,
+  // Protector's Virtue (Primordial Jade Cutter)
+  "1901402467": createProtectorsVirtuePassiveModule,
+  // Elemental Mastery
+  "1944680691": createElementalMasteryPassiveModule,
+  // Bane of Flame and Water
+  "1958685971": createBaneOfFlameAndWaterPassiveModule,
+  // Focus (Royal Spear)
+  "1960420595": createFocusPassiveModule,
+  // Composed (Sacrificial Fragments)
+  "1971972187": createComposedPassiveModule,
+  // Fangs Flying To and Fro (Waveriding Whirl)
+  "2004975019": createFangsFlyingToAndFroPassiveModule,
+  // Wandering Clouds (Skyward Atlas)
+  "2012979451": createWanderingCloudsPassiveModule,
+  // Composed (Sacrificial Sword)
+  "2041230531": createComposedPassiveModule,
+  // Deathly Pact (Absolution)
+  "2056241443": createDeathlyPactPassiveModule,
+  // Echo (Eye of Perception)
+  "2057933859": createBoltOfPerceptionPassiveModule,
+  // Bane of Fire and Thunder
+  "2101250155": createBaneOfFireAndThunderPassiveModule,
+  // Focus (Royal Longsword)
+  "2129974699": createFocusPassiveModule,
+  // Focus (Royal Bow)
+  "2136204531": createFocusPassiveModule,
+  // Windfall (Favonius Codex)
+  "2196159603": createCritEnergyPassiveModule,
+  // Timeless Dream: Eternal Stove (Engulfing Lightning)
+  "2229628147": createTimelessDreamEternalStovePassiveModule,
+  // Windblume Wish (Windblume Ode)
+  "2243731691": (params) =>
+    createSkillBuffPassiveModule(params, { attributes: [Attribute.AttackPercent], source: "windblumeWish" }),
+  // People of the Faltering Light (Oathsworn Eye)
+  "2254346691": (params) =>
+    createSkillBuffPassiveModule(params, {
+      attributes: [Attribute.EnergyRecharge],
+      source: "peopleOfTheFalteringLight",
+    }),
+  // Bathhouses, Hawks, and Narukami (Sunny Morning Sleep-In)
+  "2260847683": createBathhousesHawksAndNarukamiPassiveModule,
+  // Repentance and Redemption (Blade of Atonement)
+  "2270410107": createRepentanceAndRedemptionPassiveModule,
+  // Blunt Conclusion
+  "2276876379": createBluntConclusionPassiveModule,
+  // Solemn Silence (Serenity's Call)
+  "2280400315": createSolemnSilencePassiveModule,
+  // Infusion Blade
+  "2323524931": createInfusionBladePassiveModule,
+  // Bane of Flame and Water (Dragon's Bane)
+  "2359918763": createBaneOfFlameAndWaterPassiveModule,
+  // Many Oaths of Dawn and Dusk (Verdict)
+  "2378883547": createManyOathsOfDawnAndDuskPassiveModule,
+  // Black Wing (Skyward Spine)
+  "2421341659": createBlackWingPassiveModule,
+  // Crush
+  "2430074939": createCrushPassiveModule,
   // Energy Shower
   "2433054179": createParticleHealPassiveModule,
+  // Cull the Weak (White Iron Greatsword)
+  "2479230075": createCullTheWeakPassiveModule,
+  // Smashed Stone
+  "2507863163": createSmashedStonePassiveModule,
+  // Bane of Fire and Thunder (Lion's Roar)
+  "2541719715": createBaneOfFireAndThunderPassiveModule,
+  // An End Sublime (Finale of the Deep)
+  "2548633643": createFinaleOfTheDeepPassiveModule,
+  // Press the Advantage (Blackcliff Slasher)
+  "2584261683": createPressTheAdvantagePassiveModule,
+  // Primordial Jade Regalia (Jadefall's Splendor)
+  "2612600955": createPrimordialJadeRegaliaPassiveModule,
+  // Bane of Storm and Tide
+  "2612787355": createBaneOfStormAndTidePassiveModule,
+  // Guerilla Tactics
+  "2615715275": createGuerillaTacticsPassiveModule,
+  // Echo of a Vow (Echoes of the Heart)
+  "2626267635": createEchoOfAVowPassiveModule,
+  // Windfall (Favonius Greatsword)
+  "2638835051": createCritEnergyPassiveModule,
+  // Whitemoon Bristle (Light of Foliar Incision)
+  "2646627715": createWhitemoonBristlePassiveModule,
+  // Wolfish Tracker (Wolf's Gravestone)
+  "2660534475": createWolfishTrackerPassiveModule,
+  // Seasoned Symphony (Symphonist of Scents)
+  "2664303051": createSeasonedSymphonyPassiveModule,
+  // Iwakura Succession (Amenoma Kageuchi)
+  "2700351571": createIwakuraSuccessionPassiveModule,
+  // Sky-Piercing Fang (Skyward Blade)
+  "2711925235": createSkyPiercingFangPassiveModule,
+  // Labyrinth Lord's Instruction (King's Squire)
+  "2741602795": createLabyrinthLordsInstructionPassiveModule,
+  // Focus (Royal Greatsword)
+  "2759911603": createFocusPassiveModule,
+  // Essence of Falsity (Reliquary of Truth)
+  "2787405899": createEssenceOfFalsityPassiveModule,
+  // Tip of the Spear (Rightful Reward)
+  "2803637475": createTipOfTheSpearPassiveModule,
+  // Oath of Qhapaq Nan (Earth Shaker)
+  "2824611011": createOathOfQhapaqNanPassiveModule,
+  // Infusion Arrow
+  "2843293987": createInfusionArrowPassiveModule,
+  // Full HP Critic Up
+  "2866125259": createFullHPCriticUpPassiveModule,
+  // Last Singer (Etherlight Spindlelute)
+  "2931799059": (params) =>
+    createSkillBuffPassiveModule(params, { attributes: [Attribute.ElementalMastery], source: "lastSinger" }),
+  // Cull the Weak (The Flagstaff; its name text is TBD in the dump)
+  "2951249275": createCullTheWeakPassiveModule,
+  // Echoing Ballad (Skyward Harp)
+  "2971867387": createEchoingBalladPassiveModule,
+  // Diffusing Boundary (Calamity of Eshu)
+  "2988769779": createDiffusingBoundaryPassiveModule,
+  // Chord (The Flute)
+  "3057490131": createChordPassiveModule,
+  // Bane of Storm and Tide (Rainslasher)
+  "3070185899": createBaneOfStormAndTidePassiveModule,
+  // Full Draw (Hamayumi)
+  "3099408603": createHamayumiPassiveModule,
+  // Purifying Crown (Fractured Halo)
+  "3108076563": createPurifyingCrownPassiveModule,
+  // Press the Advantage (Blackcliff Longsword)
+  "3117685819": createPressTheAdvantagePassiveModule,
+  // Phantom Flash (Snare Hook)
+  "3123029499": createPhantomFlashPassiveModule,
+  // Ironbone (Fleuve Cendre Ferryman)
+  "3150572971": createIronbonePassiveModule,
+  // Echoes of the Plentiful Land (Ring of Yaxche)
+  "3167933899": createEchoesOfThePlentifulLandPassiveModule,
+  // The Parting Refrain (Elegy for the End)
+  "3170252851": createThePartingRefrainPassiveModule,
+  // Courage
+  "3197151587": createCouragePassiveModule,
+  // Itinerant Hero (The Alley Flash)
+  "3197835587": createItinerantHeroPassiveModule,
+  // Aeon Wave (Tome of the Eternal Flow)
+  "3205793275": createAeonWavePassiveModule,
+  // Infusion Stinger
+  "3208149443": createInfusionStingerPassiveModule,
+  // Parsifal the Great (The First Great Magic)
+  "3257922883": createTheFirstGreatMagicPassiveModule,
+  // Sky-ripping Dragon Spine (Skyward Pride)
+  "3265578323": createSkyRippingDragonSpinePassiveModule,
+  // Turquoise Hunt (Fang of the Mountain King)
+  "3276718187": createTurquoiseHuntPassiveModule,
+  // Reckless Cinnabar (Staff of Homa)
+  "3284643059": createStaffOfHomaPassiveModule,
+  // Unfinished Masterpiece (Flowing Purity)
+  "3335241819": createFlowingPurityPassiveModule,
+  // Gash
+  "3397833923": createGashPassiveModule,
+  // Golden Majesty (Vortex Vanquisher)
+  "3573861603": createGoldenMajestyPassiveModule,
+  // Residual Heat
+  "3668842531": (params) =>
+    createReactionAttackPassiveModule(
+      [
+        { reactionType: ReactionType.Overloaded },
+        { reactionType: ReactionType.Melt },
+        { reactionType: ReactionType.Burning },
+        { reactionType: ReactionType.Vaporize },
+        { reactionType: ReactionType.Burgeon },
+        { element: Element.Pyro, reactionType: ReactionType.Swirl },
+      ],
+      params,
+    ),
+  // Cull the Weak (Recurve Bow)
+  "3707047091": createCullTheWeakPassiveModule,
+  // Rust
+  "3717831139": createRustPassiveModule,
+  // Dolorous Stroke (Disaster and Remorse)
+  "3742127275": createDolorousStrokePassiveModule,
+  // Radiance on the Water (Silver Light)
+  "3814375507": createRadianceOnTheWaterPassiveModule,
+  // Eagle Spear of Justice (Primordial Jade Winged-Spear)
+  "3835416843": createEagleSpearOfJusticePassiveModule,
+  // Archer's Message (Messenger)
+  "3847632939": createArchersMessagePassiveModule,
+  // Legacy of Lang-Gan (Lightbearing Moonshard)
+  "3882258923": createLegacyOfLangGanPassiveModule,
+  // Kagura Dance of the Sacred Sakura (Kagura's Verity)
+  "3901432203": createKaguraDanceOfTheSacredSakuraPassiveModule,
+  // Sunset Reignites the Dawn (A Thousand Blazing Suns)
+  "3945977923": createSunsetReignitesTheDawnPassiveModule,
+  // Windfall (Favonius Warbow)
+  "3964029091": createCritEnergyPassiveModule,
+  // Journey
+  "3982568907": createParticleHealPassiveModule,
   // Overloaded
   "4047629611": (params) =>
     createReactionAttackPassiveModule(
@@ -180,19 +429,18 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
       ],
       params,
     ),
-  // Residual Heat
-  "3668842531": (params) =>
-    createReactionAttackPassiveModule(
-      [
-        { reactionType: ReactionType.Overloaded },
-        { reactionType: ReactionType.Melt },
-        { reactionType: ReactionType.Burning },
-        { reactionType: ReactionType.Vaporize },
-        { reactionType: ReactionType.Burgeon },
-        { element: Element.Pyro, reactionType: ReactionType.Swirl },
-      ],
-      params,
-    ),
+  // White Cruising Wave (Tidal Shadow)
+  "4049199251": createTidalShadowPassiveModule,
+  // Sharp
+  "4054406475": createSharpPassiveModule,
+  // Pact of Flowing Springs (Footprint of the Rainbow)
+  "4067649747": createPactOfFlowingSpringsPassiveModule,
+  // Flower-Feather Song (Chain Breaker)
+  "4131533283": createFlowerFeatherSongPassiveModule,
+  // Composed (Sacrificial Bow)
+  "4136879547": createComposedPassiveModule,
+  // Debut (The Widsith)
+  "4145255819": createDebutPassiveModule,
   // Rapids
   "4164346355": (params) =>
     createReactionAttackPassiveModule(
@@ -207,256 +455,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
       ],
       params,
     ),
-  // Gash
-  "3397833923": createGashPassiveModule,
-  // Determination
-  "94261419": createDeterminationPassiveModule,
-  // Unbending
-  "99463579": createUnbendingPassiveModule,
-  // Cull the Weak (White Iron Greatsword)
-  "2479230075": createCullTheWeakPassiveModule,
-  // Cull the Weak (Recurve Bow)
-  "3707047091": createCullTheWeakPassiveModule,
-  // Cull the Weak (The Flagstaff; its name text is TBD in the dump)
-  "2951249275": createCullTheWeakPassiveModule,
-  // Blunt Conclusion
-  "2276876379": createBluntConclusionPassiveModule,
-  // Courage
-  "3197151587": createCouragePassiveModule,
-  // Sharp
-  "4054406475": createSharpPassiveModule,
-  // Heavy
-  "1364561971": createHeavyPassiveModule,
-  // Bane of the Soft
-  "651784635": createBaneOfTheSoftPassiveModule,
-  // Heritage
-  "110253283": createHeritagePassiveModule,
-  // Guerilla Tactics
-  "2615715275": createGuerillaTacticsPassiveModule,
-  // Elemental Mastery
-  "1944680691": createElementalMasteryPassiveModule,
-  // Precise
-  "1849455683": createPrecisePassiveModule,
-  // Decimate
-  "174540131": createDecimatePassiveModule,
-  // Windfall (Favonius Sword)
-  "1914259": createCritEnergyPassiveModule,
-  // Windfall (Favonius Greatsword)
-  "2638835051": createCritEnergyPassiveModule,
-  // Windfall (Favonius Lance)
-  "1244741843": createCritEnergyPassiveModule,
-  // Windfall (Favonius Codex)
-  "2196159603": createCritEnergyPassiveModule,
-  // Windfall (Favonius Warbow)
-  "3964029091": createCritEnergyPassiveModule,
-  // Bane of Fire and Thunder (Lion's Roar)
-  "2541719715": createBaneOfFireAndThunderPassiveModule,
-  // Bane of Storm and Tide (Rainslasher)
-  "3070185899": createBaneOfStormAndTidePassiveModule,
-  // Bane of Flame and Water (Dragon's Bane)
-  "2359918763": createBaneOfFlameAndWaterPassiveModule,
-  // Rust
-  "3717831139": createRustPassiveModule,
-  // The Stringless
-  "1839966563": createSkillAndBurstDamagePassiveModule,
-  // Echo (Eye of Perception)
-  "2057933859": createBoltOfPerceptionPassiveModule,
-  // Archer's Message (Messenger)
-  "3847632939": createArchersMessagePassiveModule,
-  // Composed (Sacrificial Sword)
-  "2041230531": createComposedPassiveModule,
-  // Composed (Sacrificial Greatsword)
-  "4267154851": createComposedPassiveModule,
-  // Composed (Sacrificial Fragments)
-  "1971972187": createComposedPassiveModule,
-  // Composed (Sacrificial Bow)
-  "4136879547": createComposedPassiveModule,
-  // Chord (The Flute)
-  "3057490131": createChordPassiveModule,
-  // Rebellious Guardian (The Bell)
-  "896844259": createRebelliousGuardianPassiveModule,
-  // Debut (The Widsith)
-  "4145255819": createDebutPassiveModule,
-  // Press the Advantage (Blackcliff Longsword)
-  "3117685819": createPressTheAdvantagePassiveModule,
-  // Press the Advantage (Blackcliff Slasher)
-  "2584261683": createPressTheAdvantagePassiveModule,
   // Press the Advantage (Blackcliff Pole)
   "4236194011": createPressTheAdvantagePassiveModule,
-  // Press the Advantage (Blackcliff Agate)
-  "1776215435": createPressTheAdvantagePassiveModule,
-  // Press the Advantage (Blackcliff Warbow)
-  "1421912251": createPressTheAdvantagePassiveModule,
-  // Justice (The Black Sword)
-  "1092738259": createJusticePassiveModule,
-  // Itinerant Hero (The Alley Flash)
-  "3197835587": createItinerantHeroPassiveModule,
-  // Focus (Royal Longsword)
-  "2129974699": createFocusPassiveModule,
-  // Focus (Royal Greatsword)
-  "2759911603": createFocusPassiveModule,
-  // Focus (Royal Spear)
-  "1960420595": createFocusPassiveModule,
-  // Focus (Royal Grimoire)
-  "916503587": createFocusPassiveModule,
-  // Focus (Royal Bow)
-  "2136204531": createFocusPassiveModule,
-  // Undying Admiration (Festering Desire)
-  "1399609651": createUndyingAdmirationPassiveModule,
-  // Spotless Heart (Cinnabar Spindle)
-  "1348697123": createSpotlessHeartPassiveModule,
-  // Iwakura Succession (Amenoma Kageuchi)
-  "2700351571": createIwakuraSuccessionPassiveModule,
-  // Wolfish Tracker (Wolf's Gravestone)
-  "2660534475": createWolfishTrackerPassiveModule,
-  // Black Wing (Skyward Spine)
-  "2421341659": createBlackWingPassiveModule,
-  // Echoing Ballad (Skyward Harp)
-  "2971867387": createEchoingBalladPassiveModule,
-  // Falcon's Defiance (Aquila Favonia)
-  "1362579531": createFalconsDefiancePassiveModule,
-  // Sky-Piercing Fang (Skyward Blade)
-  "2711925235": createSkyPiercingFangPassiveModule,
-  // Sky-ripping Dragon Spine (Skyward Pride)
-  "3265578323": createSkyRippingDragonSpinePassiveModule,
-  // Wandering Clouds (Skyward Atlas)
-  "2012979451": createWanderingCloudsPassiveModule,
-  // Boundless Blessing (Lost Prayer to the Sacred Winds)
-  "483941803": createBoundlessBlessingPassiveModule,
-  // Eagle Spear of Justice (Primordial Jade Winged-Spear)
-  "3835416843": createEagleSpearOfJusticePassiveModule,
-  // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
-  "641137867": createSmokeAndMirrorMysteryPassiveModule,
-  // Pact of Flowing Springs (Footprint of the Rainbow)
-  "4067649747": createPactOfFlowingSpringsPassiveModule,
-  // The Law's Equilibrium (Covenant of Frost and Snow)
-  "1419973003": createLawsEquilibriumPassiveModule,
-  // White Cruising Wave (Tidal Shadow)
-  "4049199251": createTidalShadowPassiveModule,
-  // Benthic Pulse (Song of Stillness)
-  "369700907": createBenthicPulsePassiveModule,
-  // Tip of the Spear (Rightful Reward)
-  "2803637475": createTipOfTheSpearPassiveModule,
-  // Fall Into Place (Master Key)
-  "706623635": createFallIntoPlacePassiveModule,
-  // Phantom Flash (Snare Hook)
-  "3123029499": createPhantomFlashPassiveModule,
-  // Solemn Silence (Serenity's Call)
-  "2280400315": createSolemnSilencePassiveModule,
-  // Full Draw (Hamayumi)
-  "3099408603": createHamayumiPassiveModule,
-  // Cadence of Days Gone By (Song of the Vigil)
-  "385807483": createSongOfTheVigilPassiveModule,
-  // Repentance and Redemption (Blade of Atonement)
-  "2270410107": createRepentanceAndRedemptionPassiveModule,
-  // An End Sublime (Finale of the Deep)
-  "2548633643": createFinaleOfTheDeepPassiveModule,
-  // Unfinished Masterpiece (Flowing Purity)
-  "3335241819": createFlowingPurityPassiveModule,
-  // Starfire Upon the Snowplains (Emberwell)
-  "953016699": createStarfireUponTheSnowplainsPassiveModule,
-  // Echo of a Vow (Echoes of the Heart)
-  "2626267635": createEchoOfAVowPassiveModule,
-  // Samurai Conduct (Kitain Cross Spear)
-  "1395787867": createSamuraiConductPassiveModule,
-  // Samurai Conduct (Katsuragikiri Nagamasa)
-  "1828182147": createSamuraiConductPassiveModule,
-  // Echoes of the Plentiful Land (Ring of Yaxche)
-  "3167933899": createEchoesOfThePlentifulLandPassiveModule,
-  // Flower-Feather Song (Chain Breaker)
-  "4131533283": createFlowerFeatherSongPassiveModule,
-  // Protector's Virtue (Primordial Jade Cutter)
-  "1901402467": createProtectorsVirtuePassiveModule,
-  // Timeless Dream: Eternal Stove (Engulfing Lightning)
-  "2229628147": createTimelessDreamEternalStovePassiveModule,
-  // Bathhouses, Hawks, and Narukami (Sunny Morning Sleep-In)
-  "2260847683": createBathhousesHawksAndNarukamiPassiveModule,
-  // Seasoned Symphony (Symphonist of Scents)
-  "2664303051": createSeasonedSymphonyPassiveModule,
-  // Essence of Falsity (Reliquary of Truth)
-  "2787405899": createEssenceOfFalsityPassiveModule,
-  // Reckless Cinnabar (Staff of Homa)
-  "3284643059": createStaffOfHomaPassiveModule,
-  // Parsifal the Great (The First Great Magic)
-  "3257922883": createTheFirstGreatMagicPassiveModule,
-  // Turquoise Hunt (Fang of the Mountain King)
-  "3276718187": createTurquoiseHuntPassiveModule,
-  // Daylight's Augury (Polar Star)
-  "303626691": createDaylightsAuguryPassiveModule,
-  // The Parting Refrain (Elegy for the End)
-  "3170252851": createThePartingRefrainPassiveModule,
-  // Golden Majesty (Vortex Vanquisher)
-  "3573861603": createGoldenMajestyPassiveModule,
-  // Gokadaiou Otogibanashi (Redhorn Stonethresher)
-  "372854075": createGokadaiouOtogibanashiPassiveModule,
-  // Whitemoon Bristle (Light of Foliar Incision)
-  "2646627715": createWhitemoonBristlePassiveModule,
-  // Aeon Wave (Tome of the Eternal Flow)
-  "3205793275": createAeonWavePassiveModule,
-  // Oath of Qhapaq Nan (Earth Shaker)
-  "2824611011": createOathOfQhapaqNanPassiveModule,
-  // Traveler's Path (Exaiphanes Blade)
-  "1043198987": createTravelersPathPassiveModule,
-  // At the End of the Beast-Paths (Hunter's Path)
-  "1173973395": createAtTheEndOfTheBeastPathsPassiveModule,
-  // Byakuya Kougetsu (Everlasting Moonglow)
-  "1301139739": createByakuyaKougetsuPassiveModule,
-  // Extinguishing Precept (Calamity Queller)
-  "131958235": createExtinguishingPreceptPassiveModule,
-  // Deathly Pact (Absolution)
-  "2056241443": createDeathlyPactPassiveModule,
-  // Sunken Song of the Sands (Key of Khaj-Nisut)
-  "1054220683": createSunkenSongOfTheSandsPassiveModule,
-  // Primordial Jade Regalia (Jadefall's Splendor)
-  "2612600955": createPrimordialJadeRegaliaPassiveModule,
-  // Offering Unto Wind and Sun (Starcaller's Watch)
-  "646104387": createOfferingUntoWindAndSunPassiveModule,
-  // Purifying Crown (Fractured Halo)
-  "3108076563": createPurifyingCrownPassiveModule,
-  // Many Oaths of Dawn and Dusk (Verdict)
-  "2378883547": createManyOathsOfDawnAndDuskPassiveModule,
-  // Crown of the Final Scion (Angelos' Heptades)
-  "788659619": createCrownOfTheFinalScionPassiveModule,
-  // Diffusing Boundary (Calamity of Eshu)
-  "2988769779": createDiffusingBoundaryPassiveModule,
-  // People of the Faltering Light (Oathsworn Eye)
-  "2254346691": (params) =>
-    createSkillBuffPassiveModule(params, {
-      attributes: [Attribute.EnergyRecharge],
-      source: "peopleOfTheFalteringLight",
-    }),
-  // Windblume Wish (Windblume Ode)
-  "2243731691": (params) =>
-    createSkillBuffPassiveModule(params, { attributes: [Attribute.AttackPercent], source: "windblumeWish" }),
-  // Last Singer (Etherlight Spindlelute)
-  "2931799059": (params) =>
-    createSkillBuffPassiveModule(params, { attributes: [Attribute.ElementalMastery], source: "lastSinger" }),
-  // Busybody's Running Light (Tamayuratei no Ohanashi)
-  "1169232075": (params) =>
-    createSkillBuffPassiveModule(params, {
-      attributes: [Attribute.AttackPercent, Attribute.MovementSpeed],
-      source: "busybodysRunningLight",
-    }),
-  // Ironbone (Fleuve Cendre Ferryman)
-  "3150572971": createIronbonePassiveModule,
-  // Radiance on the Water (Silver Light)
-  "3814375507": createRadianceOnTheWaterPassiveModule,
-  // Legacy of Lang-Gan (Lightbearing Moonshard)
-  "3882258923": createLegacyOfLangGanPassiveModule,
-  // Kagura Dance of the Sacred Sakura (Kagura's Verity)
-  "3901432203": createKaguraDanceOfTheSacredSakuraPassiveModule,
-  // Whitehill's Bestowal (Azurelight)
-  "1741516147": createWhitehillsBestowalPassiveModule,
-  // Without Heed for Day nor Night (Clash of Kings)
-  "407790963": createWithoutHeedForDayNorNightPassiveModule,
-  // Fangs Flying To and Fro (Waveriding Whirl)
-  "2004975019": createFangsFlyingToAndFroPassiveModule,
-  // Labyrinth Lord's Instruction (King's Squire)
-  "2741602795": createLabyrinthLordsInstructionPassiveModule,
-  // Mournful Tribute (Bloodsoaked Ruins)
-  "867694867": createMournfulTributePassiveModule,
-  // Sunset Reignites the Dawn (A Thousand Blazing Suns)
-  "3945977923": createSunsetReignitesTheDawnPassiveModule,
-  // Dolorous Stroke (Disaster and Remorse)
-  "3742127275": createDolorousStrokePassiveModule,
+  // Composed (Sacrificial Greatsword)
+  "4267154851": createComposedPassiveModule,
 };

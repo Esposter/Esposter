@@ -4,14 +4,14 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AuraType } from "#src/models/combat/AuraType";
 import { Attribute } from "#src/models/character/Attribute";
+import { AuraType } from "#src/models/combat/AuraType";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { CITLALI_CHARACTER_ID, createCitlaliKitBehaviour } from "#src/services/kit/characters/citlaliKit";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { castKitField } from "#src/services/kit/effects/castKitField";

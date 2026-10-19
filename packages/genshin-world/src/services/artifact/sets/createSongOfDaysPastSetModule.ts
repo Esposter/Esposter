@@ -18,11 +18,11 @@ const WAVES_ID = `songOfDaysPast${ID_SEPARATOR}waves`;
 const SNAPSHOT_ID = `songOfDaysPast${ID_SEPARATOR}snapshot`;
 // The attack tags a Waves stage's hits are counted from: a Normal, Charged or Plunging attack, or an elemental skill or burst
 const WAVES_ATTACK_TAGS: ReadonlySet<AttackTag> = new Set([
-  AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
-  AttackTag.PlungingAttack,
-  AttackTag.ElementalSkill,
   AttackTag.ElementalBurst,
+  AttackTag.ElementalSkill,
+  AttackTag.NormalAttack,
+  AttackTag.PlungingAttack,
 ]);
 
 const checkIsWavesAttackTag = (attackTag: AttackTag | undefined): boolean =>

@@ -35,10 +35,10 @@ describe(buyPaimonsBargainsCharacter, () => {
   const characterDataMap = new Map([[CHARACTER_ID, createCharacterData(CHARACTER_ID)]]);
   const good: PaimonsBargainsGood = {
     buyLimit: 1,
+    costs: [{ count: CHARACTER_PRICE, itemId: STARGLITTER_ITEM_ID }],
     goodsId: 102_005,
     itemCount: 1,
     itemId: CHARACTER_ID,
-    costs: [{ count: CHARACTER_PRICE, itemId: STARGLITTER_ITEM_ID }],
     refresh: ShopRefresh.Monthly,
   };
   const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: CHARACTER_PRICE * 2 };

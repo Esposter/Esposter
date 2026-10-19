@@ -1,6 +1,5 @@
-import type { PassiveModule } from "#src/models/kit/PassiveModule";
-
 import type { Attribute } from "#src/models/character/Attribute";
+import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { checkIsStellarGlimmerReaction } from "#src/services/kit/checkIsStellarGlimmerReaction";
 import { createReactionBuffPassiveModule } from "#src/services/weapon/passives/createReactionBuffPassiveModule";

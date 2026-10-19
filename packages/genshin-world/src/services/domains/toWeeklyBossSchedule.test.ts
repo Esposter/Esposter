@@ -11,8 +11,8 @@ describe(toWeeklyBossSchedule, () => {
       kind: DomainKind.Trounce,
       levels: [
         {
-          dungeonId: 1,
           disorder: "",
+          dungeonId: 1,
           enemyLevel: 2,
           recommendedRank: 3,
           resinCost: 0,

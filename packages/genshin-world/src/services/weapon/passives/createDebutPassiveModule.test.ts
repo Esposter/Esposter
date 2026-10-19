@@ -4,8 +4,8 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createDebutPassiveModule } from "#src/services/weapon/passives/createDebutPassiveModule";
 import {
   createWielderCombatant,
   OTHER_CHARACTER_ID,

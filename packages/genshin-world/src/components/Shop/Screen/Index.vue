@@ -129,13 +129,13 @@ const buy = (good: ShopGoodCell, buyCount: number) => {
     <ShopScreen
       v-model:count="count"
       v-model:good-id="goodId"
+      v-model:tab-id="tabId"
       :balances
       :buy-label="gameText[GameTextKey.ShopPurchase]"
       :close-label="gameText[GameTextKey.Back]"
       :count-label="gameText[GameTextKey.CraftingAmount]"
       :count-maximum
       :goods="goodCells"
-      v-model:tab-id="tabId"
       :tabs
       :title="gameText[GameTextKey.Shop]"
       @buy="(good, count) => buy(good, count)"

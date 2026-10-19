@@ -92,8 +92,8 @@ describe(claimCommissionWithPoints, () => {
   const dayWith = (count: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: NOW,
-    isBonusClaimed: false,
     dealtCommissions: [{ commissionId: 1, count, dealtRank: DEALT_RANK }],
+    isBonusClaimed: false,
   });
   const pointsOf = (halfPoints: number) => ({ earnedOn: NOW, halfPoints });
   const base = {

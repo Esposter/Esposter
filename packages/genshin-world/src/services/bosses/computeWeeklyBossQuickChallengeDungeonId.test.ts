@@ -1,5 +1,5 @@
-import { WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK } from "#src/services/bosses/constants";
 import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
+import { WEEKLY_BOSS_QUICK_CHALLENGE_ADVENTURE_RANK } from "#src/services/bosses/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeWeeklyBossQuickChallengeDungeonId, () => {

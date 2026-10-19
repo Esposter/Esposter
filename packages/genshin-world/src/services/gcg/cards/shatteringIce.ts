@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
+import { SHATTERING_ICE_ID } from "#src/services/gcg/cards/constants";
 import { checkCanPlayGcgElementalResonance } from "#src/services/gcg/effects/checkCanPlayGcgElementalResonance";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { SHATTERING_ICE_ID } from "#src/services/gcg/cards/constants";
 
 const SHATTERING_ICE_BONUS = 2;
 

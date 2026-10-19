@@ -1,9 +1,8 @@
 import type { Resident } from "#src/models/world/Resident";
 
-import { describe, expect, test } from "vitest";
-
 import { checkIsExpeditionTalk } from "#src/services/expedition/checkIsExpeditionTalk";
 import { KATHERYNE_NPC_ID } from "#src/services/expedition/constants";
+import { describe, expect, test } from "vitest";
 
 describe(checkIsExpeditionTalk, () => {
   const KATHERYNE_TALK_ID = "6151202";

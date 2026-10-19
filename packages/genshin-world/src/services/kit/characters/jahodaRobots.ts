@@ -1,14 +1,14 @@
+import type { Element } from "#src/models/Element";
 import type { AttackArea } from "#src/models/kit/AttackArea";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { Element } from "#src/models/Element";
 
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { createKitBody } from "#src/services/kit/createKitBody";
+import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemies";
-import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 

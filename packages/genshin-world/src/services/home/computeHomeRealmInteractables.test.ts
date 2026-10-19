@@ -6,8 +6,8 @@ import {
   HOME_REALM_STEWARD_POINT,
   HOME_TUBBY_NPC_ID,
 } from "#src/services/home/constants";
-import { GameTextKey, ENGLISH_GAME_TEXT } from "genshin-text";
 import { InteractionKind } from "genshin-interface";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 describe(computeHomeRealmInteractables, () => {

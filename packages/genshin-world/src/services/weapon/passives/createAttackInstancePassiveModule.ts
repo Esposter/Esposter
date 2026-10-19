@@ -16,8 +16,8 @@ export interface AttackInstancePassive {
   checkIsObtainedBy: (event: KitDamageTakenEvent) => boolean;
   cooldownSeconds: number;
   id: string;
-  maximumInstances: number;
   masteryShare: number;
+  maximumInstances: number;
   seconds: number;
 }
 
@@ -29,8 +29,8 @@ export const createAttackInstancePassiveModule = ({
   checkIsObtainedBy,
   cooldownSeconds,
   id,
-  maximumInstances,
   masteryShare,
+  maximumInstances,
   seconds,
 }: AttackInstancePassive): PassiveModule => {
   const cooldownId = `${id}Cooldown`;

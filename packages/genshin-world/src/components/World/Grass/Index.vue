@@ -34,10 +34,10 @@ import { uniform } from "three/tsl";
 interface Props {
   bladeHeight: number;
   bladeWidth: number;
-  // The ground under the camera from above, which this redraws as the camera moves and the rain's splashes read too
-  groundCapture: GroundCapture;
   // The bends the character leaves as it walks, which the grass parts round
   grassTrail: GrassTrail;
+  // The ground under the camera from above, which this redraws as the camera moves and the rain's splashes read too
+  groundCapture: GroundCapture;
   lightUniforms: LightUniforms;
   // The world coordinate the scene's origin stands on, which the floating origin moves
   origin: Vector3;
@@ -54,8 +54,8 @@ interface Props {
 const {
   bladeHeight,
   bladeWidth,
-  groundCapture,
   grassTrail,
+  groundCapture,
   lightUniforms,
   origin,
   qualityTier,
@@ -79,8 +79,8 @@ const grassRings = rings.map((ring) => {
     cameraGround,
     clipFromModel,
     density,
-    groundCapture,
     grassTrail,
+    groundCapture,
     ring,
     segmentCount: GRASS_BLADE_SEGMENT_COUNT,
     waterUniforms,
@@ -96,8 +96,8 @@ const grassRings = rings.map((ring) => {
       cameraGround,
       cellIndex: culling.survivor,
       density,
-      groundCapture,
       grassTrail,
+      groundCapture,
       lightUniforms,
       rampTexture,
       ring,

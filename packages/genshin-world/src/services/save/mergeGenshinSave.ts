@@ -190,12 +190,6 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     commissionDay: checkIsLaterCommissionDay(guest.commissionDay, account.commissionDay)
       ? guest.commissionDay
       : account.commissionDay,
-    investigationDay: account.investigationDay,
-    encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
-    longTermEncounterPoints: mergeLongTermEncounterPoints(
-      account.longTermEncounterPoints,
-      guest.longTermEncounterPoints,
-    ),
     companionshipExp,
     cooking: {
       learnedRecipeIds: [...new Set([...account.cooking.learnedRecipeIds, ...guest.cooking.learnedRecipeIds])],
@@ -206,16 +200,22 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
       craftedCounts: account.crafting.craftedCounts,
       learnedRecipeIds: [...new Set([...account.crafting.learnedRecipeIds, ...guest.crafting.learnedRecipeIds])],
     },
+    encounterPoints: mergeEncounterPoints(account.encounterPoints, guest.encounterPoints),
     enemyRespawns: account.enemyRespawns,
     homePlacements: account.homePlacements,
     homePlantings: account.homePlantings,
     homeProgress: account.homeProgress,
     inventory: account.inventory,
+    investigationDay: account.investigationDay,
+    longTermEncounterPoints: mergeLongTermEncounterPoints(
+      account.longTermEncounterPoints,
+      guest.longTermEncounterPoints,
+    ),
+    mails,
     offerings: account.offerings,
     openedChests: account.openedChests,
     party: account.party,
     puzzles: account.puzzles,
-    mails,
     ...(minedOutcrops.length > 0 && { minedOutcrops }),
     namecardItemId: account.namecardItemId || guest.namecardItemId,
     quests: account.quests,

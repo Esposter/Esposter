@@ -26,10 +26,10 @@ interface Props {
   // The namecard the player equipped, 0 for none, and the held namecards the profile can show
   namecardItemId: number;
   namecards: ProfileNamecard[];
-  // The Traveler's birthday once it is set, which the profile card shows and its setter sets once
-  travelerBirthday?: TravelerBirthdaySave;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
+  // The Traveler's birthday once it is set, which the profile card shows and its setter sets once
+  travelerBirthday?: TravelerBirthdaySave;
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;
 }

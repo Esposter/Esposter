@@ -1,5 +1,5 @@
-import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { drawWeeklyBossReward } from "#src/services/bosses/drawWeeklyBossReward";
+import { MORA_ITEM_ID } from "#src/services/inventory/constants";
 import { describe, expect, test } from "vitest";
 
 // A random draw that always returns the value given, so each chance lands or misses as the value is set against it

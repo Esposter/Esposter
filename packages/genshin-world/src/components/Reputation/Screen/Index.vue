@@ -13,14 +13,14 @@ import { GameScreen, ReputationScreen } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
+  // The bounty the keeper offers ahead of her request: its claim once its target is defeated, or one to take
+  bountyOffer?: ReputationBountyOffer;
   // The game's words in the reader's language
   gameText: GameText;
   // The game's material table by item id, whose rarity colours each reward's slot
   materialDataMap: ReadonlyMap<number, MaterialData>;
   // The names of the items in the reader's language, by their game text ids
   nameText: Readonly<Record<string, string>>;
-  // The bounty the keeper offers ahead of her request: its claim once its target is defeated, or one to take
-  bountyOffer?: ReputationBountyOffer;
   // The request the keeper offers, its title in the reader's language, or none where she offers none
   offerTitle?: string;
   // The nation's Reputation the player holds: its level, and the EXP toward the next

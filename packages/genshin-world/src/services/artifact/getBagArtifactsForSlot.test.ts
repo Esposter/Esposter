@@ -1,6 +1,6 @@
 import type { Artifact } from "#src/models/artifact/Artifact";
-import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { InventoryItem } from "#src/models/inventory/InventoryItem";
 
 import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { createArtifact } from "#src/services/artifact/createArtifact.test";

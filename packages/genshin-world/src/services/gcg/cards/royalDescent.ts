@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
 import { RAGING_ONI_KING_ID } from "#src/services/gcg/cards/constants";
+import { ragingOniKing } from "#src/services/gcg/cards/ragingOniKing";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 

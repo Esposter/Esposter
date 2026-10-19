@@ -35,12 +35,12 @@ describe(computeEncounterPointStorage, () => {
   const createDay = (finishedCount: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: Temporal.Instant.fromEpochMilliseconds(0),
-    isBonusClaimed: false,
     dealtCommissions: COMMISSION_IDS.map((commissionId) => ({
       commissionId,
       count: commissionId <= finishedCount ? 1 : 0,
       dealtRank: 12,
     })),
+    isBonusClaimed: false,
   });
 
   test("the storage shrinks by one Encounter Point for each daily commission finished", () => {

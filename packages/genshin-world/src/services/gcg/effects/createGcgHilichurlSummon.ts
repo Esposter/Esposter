@@ -1,5 +1,5 @@
-import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { Element } from "#src/models/Element";
+import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { createGcgEndPhaseDamageSummon } from "#src/services/gcg/effects/createGcgEndPhaseDamageSummon";
 

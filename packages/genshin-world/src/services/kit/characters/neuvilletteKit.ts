@@ -5,7 +5,6 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
-
 import { createEquitableJudgementLength } from "#src/services/kit/characters/neuvilletteEquitableJudgement";
 import { castSourcewaterDroplet } from "#src/services/kit/effects/castSourcewaterDroplet";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";

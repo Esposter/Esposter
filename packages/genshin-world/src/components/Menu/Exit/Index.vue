@@ -114,4 +114,5 @@ onMounted(() => {
   border-radius: 50%;
 }
 </style>
+
 <style scoped src="../../../styles/menuDialog.css"></style>

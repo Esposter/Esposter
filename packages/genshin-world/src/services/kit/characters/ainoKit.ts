@@ -111,6 +111,7 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
           combatant.ascension >= ASCENSION_1 &&
           getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam;
         const burstField = castKitField(kitEffectState, combatant.characterId, position, {
+          id: BURST_FIELD_ID,
           isFollowing: true,
           nextTickSeconds: burstFirstTickSeconds,
           onTick: ({ kitEffectState: tickKitEffectState }) =>
@@ -121,7 +122,6 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
               [isAscendantBurst ? ascendantWaterBall : waterBall],
               { attackTag: AttackTag.ElementalBurst },
             ),
-          id: BURST_FIELD_ID,
           radius: burstRadius,
           secondsRemaining: burstFirstTickSeconds + burstSeconds,
           tickIntervalSeconds: isAscendantBurst ? ASCENSION_1_WATER_BALL_INTERVAL_SECONDS : burstTickIntervalSeconds,

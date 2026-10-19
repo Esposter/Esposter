@@ -1,8 +1,8 @@
-import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { TrialStageClaim } from "#src/models/trial/TrialStageClaim";
+import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 
 import { claimRewards } from "#src/services/reward/claimRewards";
 import { InvalidOperationError, Operation } from "@esposter/shared";

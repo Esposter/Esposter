@@ -129,8 +129,6 @@ export const createNahidaKitBehaviour = ({
         });
       },
     },
-    skill: { hits: [markHitBehaviour], onStart: startSkillCast },
-    skillHolds: [{ hits: [markHitBehaviour], onStart: startSkillCast }],
     onKitEvent: (event, context, combatant) => {
       if (event.kind !== KitEventKind.ReactionTriggered || !checkHasSeeds(event.enemy)) return;
       const { characterId } = combatant;
@@ -159,5 +157,7 @@ export const createNahidaKitBehaviour = ({
         );
       }
     },
+    skill: { hits: [markHitBehaviour], onStart: startSkillCast },
+    skillHolds: [{ hits: [markHitBehaviour], onStart: startSkillCast }],
   };
 };

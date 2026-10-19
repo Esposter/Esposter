@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
-import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { DARKFIRE_FURNACE_ID } from "#src/services/gcg/cards/constants";
+import { darkfireFurnace } from "#src/services/gcg/cards/darkfireFurnace";
 import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgSummonAfterDamage";
 
 const OMINOUS_STAR_DAMAGE = 3;

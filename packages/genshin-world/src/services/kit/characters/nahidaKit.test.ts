@@ -299,7 +299,7 @@ describe("tri-Karma Purification", () => {
     stepKitSeconds(context, 5);
     react();
 
-    expect({ first, withinSevenSeconds, afterSevenSeconds: particleEvents() }).toStrictEqual({
+    expect({ afterSevenSeconds: particleEvents(), first, withinSevenSeconds }).toStrictEqual({
       afterSevenSeconds: 2,
       first: 1,
       withinSevenSeconds: 1,

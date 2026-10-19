@@ -1,8 +1,9 @@
+import type { Kit } from "#src/models/kit/Kit";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { GameDataset } from "#src/models/data/GameDataset";
 import { skillGlyphsSchema } from "#src/models/hud/SkillGlyphs";
-import type { Kit } from "#src/models/kit/Kit";
 import { TALENT_START_LEVELS, TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
 import { NEFER_CHARACTER_ID } from "#src/services/kit/characters/neferKit";

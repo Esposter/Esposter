@@ -36,9 +36,9 @@ const drainDehya = (ascension: number): { context: KitContext; partyMember: Part
   partyMember.healthShare = 0.35;
   createDehyaKitBehaviour().onKitEvent?.(
     {
+      bondOfLifeShare: 0,
       characterId: DEHYA_CHARACTER_ID,
       healthShare: -0.1,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,

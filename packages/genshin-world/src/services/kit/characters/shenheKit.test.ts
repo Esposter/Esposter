@@ -7,15 +7,15 @@ import type { KitField } from "#src/models/kit/KitField";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createEnemy } from "#src/services/enemy/createEnemy";
+import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import {
   createShenheKitBehaviour,
@@ -23,12 +23,12 @@ import {
   SHENHE_CHARACTER_ID,
   SKYFROST_MANTRA_STATUS_ID,
 } from "#src/services/kit/characters/shenheKit";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { takeOne } from "@esposter/shared";
@@ -87,8 +87,8 @@ const createMemberCombatant = (): Combatant => ({
 const createQuillContext = (kitEffectState: KitEffectState, shenhe: Combatant, member: Combatant): KitContext =>
   createKitTestContext(shenhe, {
     characterIdCombatantMap: new Map([
-      [shenhe.characterId, shenhe],
       [member.characterId, member],
+      [shenhe.characterId, shenhe],
     ]),
     kitEffectState,
     party: createParty([shenhe.characterId, member.characterId]),

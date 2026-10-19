@@ -63,7 +63,6 @@ export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecor
     hitmarkSeconds: readSeconds("miracleParadePyrotechnicStrikeHitmark"),
   };
   return {
-    getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castKitSummon(kitEffectState, body, combatant, [miracleParadePyrotechnicStrike], {
@@ -76,5 +75,6 @@ export const createLyneyKitBehaviour = ({ readHitFields, readSeconds }: KitRecor
           attackTag: AttackTag.ChargedAttack,
         }),
     },
+    getStrikeDamageBonus: ({ combatant }, enemy) => getAscension4DamageBonus(combatant, enemy),
   };
 };

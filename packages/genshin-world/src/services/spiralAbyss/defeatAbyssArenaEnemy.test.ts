@@ -43,9 +43,9 @@ describe(defeatAbyssArenaEnemy, () => {
     const advanced = defeatAbyssArenaEnemy(arena, arena.camp?.id);
 
     expect(advanced.challenge).toStrictEqual({
-      monolithPercent: undefined,
       defeatedHalfCount: 1,
       halfCount: floor.teamCount,
+      monolithPercent: undefined,
       secondsLeft: getAbyssChamberSeconds(floor.index),
     });
     expect(advanced.camp?.id).not.toBe(arena.camp?.id);

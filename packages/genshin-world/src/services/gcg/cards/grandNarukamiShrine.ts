@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
+import { GRAND_NARUKAMI_SHRINE_ID } from "#src/services/gcg/cards/constants";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
-import { GRAND_NARUKAMI_SHRINE_ID } from "#src/services/gcg/cards/constants";
 
 const GRAND_NARUKAMI_SHRINE_ROUND_LIMIT = 2;
 

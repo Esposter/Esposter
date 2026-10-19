@@ -27,12 +27,12 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { landReactionReach } from "#src/services/kit/landReactionReach";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { NATLAN_REGION_ID } from "#src/services/natlan/constants";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { createParty } from "#src/services/party/createParty";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { VOURUKASHAS_GLOW_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-import { VOURUKASHAS_GLOW_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 
 const VOURUKASHAS_GLOW_HEAL = 1;
 

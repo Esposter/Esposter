@@ -1,7 +1,7 @@
-import { props } from "#src/components/Menu/Paimon/Index.fixture";
-import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
 
+import { props } from "#src/components/Menu/Paimon/Index.fixture";
+import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { BIRTHDAY_MONTHS } from "#src/services/profile/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";

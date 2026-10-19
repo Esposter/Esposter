@@ -14,7 +14,7 @@ export const takeKatheryneBonus = (
   slice: CommissionSlice,
   rank: number,
   random: () => number,
-): { bonus: ItemCount[]; day: CommissionDay } | undefined => {
+): undefined | { bonus: ItemCount[]; day: CommissionDay } => {
   if (day.isBonusClaimed || day.claimedCommissionIds.length < COMMISSIONS_PER_DAY) return undefined;
   return {
     bonus: drawRewardItems(takeBandItems(slice.bonuses, computeCommissionBand(rank), "the daily bonus"), random),

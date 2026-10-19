@@ -1,10 +1,10 @@
 import type { Element } from "#src/models/Element";
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
+import type { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
-import type { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 
 // A once-per-round reduction of one die of an element, spent by the first talent card played or skill used in a round that

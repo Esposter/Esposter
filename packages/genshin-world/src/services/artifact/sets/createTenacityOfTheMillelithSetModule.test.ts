@@ -1,12 +1,10 @@
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-
 import { TENACITY_OF_THE_MILLELITH_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { createTenacityOfTheMillelithSetModule } from "#src/services/artifact/sets/createTenacityOfTheMillelithSetModule";

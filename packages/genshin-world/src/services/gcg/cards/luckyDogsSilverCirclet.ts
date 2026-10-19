@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { LUCKY_DOGS_SILVER_CIRCLET_ID } from "#src/services/gcg/cards/constants";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { takeOne } from "@esposter/shared";
-import { LUCKY_DOGS_SILVER_CIRCLET_ID } from "#src/services/gcg/cards/constants";
 
 const HEAL_VALUE = 2;
 

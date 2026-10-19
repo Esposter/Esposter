@@ -27,10 +27,6 @@ export const getPassiveKit = (
     [kit, ...passiveModules].flatMap(
       ({ getConversionBonuses }) => getConversionBonuses?.(combatant, healthShare) ?? [],
     ),
-  getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) =>
-    [kit, ...passiveModules].flatMap(
-      ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
-    ),
   getPartyReactionBonus: (member, reaction, context) =>
     sumKitBonuses(
       {},
@@ -42,6 +38,10 @@ export const getPassiveKit = (
       [kit, ...passiveModules].map(({ getPartyStrikeBonus }) =>
         getPartyStrikeBonus?.(member, strike, enemy, party, effects, characterIdCombatantMap),
       ),
+    ),
+  getPassiveBonuses: (combatant, healthShare, deployedCombatants, effects) =>
+    [kit, ...passiveModules].flatMap(
+      ({ getPassiveBonuses }) => getPassiveBonuses?.(combatant, healthShare, deployedCombatants, effects) ?? [],
     ),
   getStrikeAdditiveBaseDamageBonus: (strike, enemy, party, effects, characterIdCombatantMap) =>
     sumHookValues(

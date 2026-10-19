@@ -203,22 +203,6 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
   const sprintPhantomHits = readHits("sprintPhantom");
   return {
     burst: { hits: [{ bubbleOmenId: OMEN_STATUS_ID }] },
-    // Constellation 2: the last hit of a normal attack may be followed by her Charged Attack's hit, once every 5 seconds
-    getNormalAttackExtraHit: ({ activeCombatant, kitEffectState, random }, hit, chainIndex) => {
-      const { characterId, constellationCount } = activeCombatant;
-      if (
-        constellationCount < CONSTELLATION_2 ||
-        hit !== kit.normalAttacks[chainIndex]?.hits.at(-1) ||
-        checkIsKitStatusActive(kitEffectState.effects, characterId, FOLLOW_UP_STATUS_ID) ||
-        random() >= FOLLOW_UP_CHANCE
-      )
-        return undefined;
-      addKitStatus(kitEffectState, characterId, {
-        id: FOLLOW_UP_STATUS_ID,
-        secondsRemaining: FOLLOW_UP_COOLDOWN_SECONDS,
-      });
-      return { ...takeOne(kit.chargedAttack.hits), hitmarkSeconds: hit.hitmarkSeconds };
-    },
     // Constellation 6: her Charged Attack's damage grows with her sprint's stacks, and the attack that strikes resets them
     chargedAttack: {
       hits: kit.chargedAttack.hits.map((_hit, index, hits) =>
@@ -236,14 +220,21 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
           : {},
       ),
     },
-    // Constellation 1: a hit on an enemy under the Omen gives its striker the Hydro-related reactions' bonus for 8 seconds
-    onKitEvent: (event, context, combatant) => {
-      if (combatant.constellationCount < CONSTELLATION_1 || event.kind !== KitEventKind.EnemyHit) return;
-      if (!event.enemy.statuses.some(({ id }) => id === OMEN_STATUS_ID)) return;
-      addKitStatus(context.kitEffectState, event.striker.characterId, {
-        id: CONSTELLATION_1_STATUS_ID,
-        secondsRemaining: CONSTELLATION_1_SECONDS,
+    // Constellation 2: the last hit of a normal attack may be followed by her Charged Attack's hit, once every 5 seconds
+    getNormalAttackExtraHit: ({ activeCombatant, kitEffectState, random }, hit, chainIndex) => {
+      const { characterId, constellationCount } = activeCombatant;
+      if (
+        constellationCount < CONSTELLATION_2 ||
+        hit !== kit.normalAttacks[chainIndex]?.hits.at(-1) ||
+        checkIsKitStatusActive(kitEffectState.effects, characterId, FOLLOW_UP_STATUS_ID) ||
+        random() >= FOLLOW_UP_CHANCE
+      )
+        return undefined;
+      addKitStatus(kitEffectState, characterId, {
+        id: FOLLOW_UP_STATUS_ID,
+        secondsRemaining: FOLLOW_UP_COOLDOWN_SECONDS,
       });
+      return { ...takeOne(kit.chargedAttack.hits), hitmarkSeconds: hit.hitmarkSeconds };
     },
     // Constellation 1: a struck member's Hydro-related reactions gain 15% DMG while its bonus holds, 160% of that for an off-field
     // Member when Mona is Hexerei with a second Hexerei member
@@ -255,15 +246,24 @@ export const createMonaKitBehaviour = ({ kit, readHits }: KitRecordReader): KitB
     // Constellation 4: a party member's strike on an enemy under the Omen or her bubble, Mona's own strikes read here
     getPartyStrikeBonus: (member, strike, enemy, party, effects) =>
       getConstellation4Bonus(member, strike.combatant, enemy, party, effects),
+    getPassiveBonuses,
     getStrikeCriticalDamageBonus: (strike, enemy, party, effects) =>
       getConstellation4Bonus(strike.combatant, strike.combatant, enemy, party, effects).criticalDamageBonus ?? 0,
     getStrikeCriticalRateBonus: (strike, enemy, party, effects) =>
       getConstellation4Bonus(strike.combatant, strike.combatant, enemy, party, effects).criticalRateBonus ?? 0,
-    getPassiveBonuses,
     getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects = []) =>
       combatant.constellationCount >= CONSTELLATION_6 && attackTag === AttackTag.ChargedAttack
         ? CONSTELLATION_6_BONUS_PER_STACK * getConstellation6Stacks(effects, combatant.characterId)
         : 0,
+    // Constellation 1: a hit on an enemy under the Omen gives its striker the Hydro-related reactions' bonus for 8 seconds
+    onKitEvent: (event, context, combatant) => {
+      if (combatant.constellationCount < CONSTELLATION_1 || event.kind !== KitEventKind.EnemyHit) return;
+      if (!event.enemy.statuses.some(({ id }) => id === OMEN_STATUS_ID)) return;
+      addKitStatus(context.kitEffectState, event.striker.characterId, {
+        id: CONSTELLATION_1_STATUS_ID,
+        secondsRemaining: CONSTELLATION_1_SECONDS,
+      });
+    },
     // Ascension 1: a phantom for every 2 seconds of sprint, which the kit spends from the sprint's seconds as it goes,
     // Lasting until its explosion
     onSprint: (context, kitState) => {

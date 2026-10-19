@@ -13,9 +13,9 @@ import { createTidalShadowPassiveModule } from "#src/services/weapon/passives/cr
 import { describe, expect, test } from "vitest";
 
 const createHealthChanged = (characterId: number, healthShare: number): KitEvent => ({
+  bondOfLifeShare: 0,
   characterId,
   healthShare,
-  bondOfLifeShare: 0,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,

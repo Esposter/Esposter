@@ -1,5 +1,5 @@
-import type { Combatant } from "#src/models/kit/Combatant";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
@@ -7,14 +7,14 @@ import type { KitInput } from "#src/models/kit/KitInput";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
-import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
-import { createJeanKitBehaviour, JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { BARBARA_CHARACTER_ID } from "#src/services/kit/characters/barbaraKit";
+import { createJeanKitBehaviour, JEAN_CHARACTER_ID } from "#src/services/kit/characters/jeanKit";
 import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { healKitParty } from "#src/services/kit/effects/healKitParty";
@@ -253,8 +253,8 @@ describe(createJeanKitBehaviour, () => {
     const far = createJeanEnemy(30, 0);
     const context = createKitTestContext(combatant, {
       enemyMap: new Map([
-        ["near", near],
         ["far", far],
+        ["near", near],
       ]),
     });
     JEAN_KIT.elementalBurst.onStart?.(context);

@@ -126,9 +126,9 @@ describe(createFurinaKitBehaviour, () => {
     });
     const { kitEffectState } = context;
     const drain: KitHealthChangedEvent = {
+      bondOfLifeShare: 0,
       characterId: TEAMMATE_CHARACTER_ID,
       healthShare: -0.1,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
@@ -170,9 +170,9 @@ describe(createFurinaKitBehaviour, () => {
       party,
     });
     const overheal: KitHealthChangedEvent = {
+      bondOfLifeShare: 0,
       characterId: FURINA_CHARACTER_ID,
       healthShare: 0,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0.1,
@@ -202,9 +202,9 @@ describe(createFurinaKitBehaviour, () => {
     });
     FURINA_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: FURINA_CHARACTER_ID,
         healthShare: 0,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0.1,

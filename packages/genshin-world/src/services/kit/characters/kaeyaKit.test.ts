@@ -62,9 +62,9 @@ const drainKaeya = (combatant: Combatant, context: KitContext, remainingHealthSh
   getPartyMember(context.party, KAEYA_CHARACTER_ID).healthShare = remainingHealthShare;
   KAEYA_KIT.onKitEvent?.(
     {
+      bondOfLifeShare: 0,
       characterId: KAEYA_CHARACTER_ID,
       healthShare: -0.25,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,

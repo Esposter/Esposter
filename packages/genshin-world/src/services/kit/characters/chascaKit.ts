@@ -22,7 +22,7 @@ const NIGHTSOUL_DRAIN_PER_SECOND = 8;
 const NIGHTSOUL_SPRINT_DRAIN = 13.3;
 
 // The elements a Radiant shell takes from the team, as gcsim's Pyro, Hydro, Electro and Cryo bullet types do
-const RADIANT_ELEMENTS = new Set<Element>([Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo]);
+const RADIANT_ELEMENTS = new Set<Element>([Element.Cryo, Element.Electro, Element.Hydro, Element.Pyro]);
 
 // The team's Radiant shells in the order the world's random source deals them: each Pyro, Hydro, Electro or Cryo member's
 // Element twice over, as galesplitting's bullets are (burst.go:69-74), shuffled by that source as gcsim shuffles them

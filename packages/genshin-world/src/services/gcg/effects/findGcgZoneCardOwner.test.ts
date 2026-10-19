@@ -1,6 +1,6 @@
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
-import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
+import { findGcgZoneCardOwner } from "#src/services/gcg/effects/findGcgZoneCardOwner";
 import { describe, expect, test } from "vitest";
 
 describe(findGcgZoneCardOwner, () => {

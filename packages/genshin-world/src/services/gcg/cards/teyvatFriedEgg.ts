@@ -1,11 +1,11 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { TEYVAT_FRIED_EGG_ID } from "#src/services/gcg/cards/constants";
 import { GCG_FOOD_STATUS_CARD_IDS } from "#src/services/gcg/constants";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { healGcgCharacter } from "#src/services/gcg/effects/healGcgCharacter";
 import { reviveGcgCharacter } from "#src/services/gcg/effects/reviveGcgCharacter";
 import { takeOne } from "@esposter/shared";
-import { TEYVAT_FRIED_EGG_ID } from "#src/services/gcg/cards/constants";
 
 // Teyvat Fried Egg, a food: a defeated target is revived to 1 HP and healed for 1 HP more, and the food is held as a status
 // Until the round ends. One character a round is revived this way, and a food-holding character eats no other food

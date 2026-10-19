@@ -14,14 +14,14 @@ export const QuestLoaderMap: Record<QuestId, (gameDataBaseUrl: string) => Promis
   [QuestIdValues.LiyueOpening]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/2211102", z.unknown()),
   [QuestIdValues.NewHorizonsOfAdventure]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/22111", z.unknown()),
+  [QuestIdValues.ReputationParent384]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/384", z.unknown()),
+  [QuestIdValues.ReputationParent396]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/396", z.unknown()),
   [QuestIdValues.ReputationParent20740]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/20740", z.unknown()),
   [QuestIdValues.ReputationParent20741]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/20741", z.unknown()),
   [QuestIdValues.ReputationParent20743]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/20743", z.unknown()),
-  [QuestIdValues.ReputationParent384]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/384", z.unknown()),
-  [QuestIdValues.ReputationParent396]: (gameDataBaseUrl) => readGameData(gameDataBaseUrl, "quests/396", z.unknown()),
   [QuestIdValues.ReputationParent70102]: (gameDataBaseUrl) =>
     readGameData(gameDataBaseUrl, "quests/70102", z.unknown()),
   [QuestIdValues.ReputationParent70104]: (gameDataBaseUrl) =>

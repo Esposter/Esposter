@@ -5,8 +5,8 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 
 import { Currency } from "#src/models/inventory/Currency";
 import { ChestKindRewardMap } from "#src/services/chest/ChestKindRewardMap";
-import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 import { rollChestDrops } from "#src/services/chest/rollChestDrops";
+import { drawRangeCount } from "#src/services/reward/drawRangeCount";
 
 // Opening a chest once: its Primogems, Mora and Sigils roll within their ranges into the wallet, the Sigils being the
 // Region's own, `sigilCurrency`, its Adventure EXP is paid to the Adventure Rank, and what it holds is rolled from its

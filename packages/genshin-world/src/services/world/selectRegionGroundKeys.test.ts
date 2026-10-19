@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { selectRegionGroundKeys } from "#src/services/world/selectRegionGroundKeys";
+import { describe, expect, test } from "vitest";
 
 describe(selectRegionGroundKeys, () => {
   test("selects a region's plateau alone while its lock holds one", () => {

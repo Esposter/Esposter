@@ -1,10 +1,10 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { ILLUSORY_BUBBLE_ID } from "#src/services/gcg/cards/constants";
 import { illusoryBubble } from "#src/services/gcg/cards/illusoryBubble";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { ILLUSORY_BUBBLE_ID } from "#src/services/gcg/cards/constants";
 
 // Stellaris Phantasm, Mona's burst: 4 Hydro DMG, and an Illusory Bubble is created once the damage is dealt (the wiki's
 // Stellaris Phantasm (Character Card Skill))

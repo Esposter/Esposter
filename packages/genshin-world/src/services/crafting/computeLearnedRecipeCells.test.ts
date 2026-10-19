@@ -1,8 +1,8 @@
 import type { CraftingRecipe } from "#src/models/crafting/CraftingRecipe";
 
 import { CraftingRecipeKind } from "#src/models/crafting/CraftingRecipeKind";
-import { CONVERSION_TAB_ID_OFFSET } from "#src/services/crafting/constants";
 import { computeLearnedRecipeCells } from "#src/services/crafting/computeLearnedRecipeCells";
+import { CONVERSION_TAB_ID_OFFSET } from "#src/services/crafting/constants";
 import { describe, expect, test } from "vitest";
 
 const recipe = (overrides: Partial<CraftingRecipe> & Pick<CraftingRecipe, "id" | "nameTextId">): CraftingRecipe => ({

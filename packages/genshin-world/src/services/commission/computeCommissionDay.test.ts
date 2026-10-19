@@ -34,8 +34,8 @@ describe(computeCommissionDay, () => {
     const day = {
       claimedCommissionIds: [1],
       dealtAt: dailyReset.subtract({ minutes: 1 }),
-      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
+      isBonusClaimed: false,
     };
     const dealtDay = computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0);
     expect(dealtDay.claimedCommissionIds).toStrictEqual([]);
@@ -59,8 +59,8 @@ describe(computeCommissionDay, () => {
     const day = {
       claimedCommissionIds: [],
       dealtAt: dailyReset,
-      isBonusClaimed: false,
       dealtCommissions: [{ commissionId: 2, count: 0, dealtRank: RANK }],
+      isBonusClaimed: false,
     };
     expect(computeCommissionDay(day, now, commissions, new Set(), RANK, () => 0)).toBe(day);
   });

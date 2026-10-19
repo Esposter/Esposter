@@ -2,8 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ReactionType } from "#src/models/combat/ReactionType";
 import { Attribute } from "#src/models/character/Attribute";
+import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";

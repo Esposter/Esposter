@@ -38,14 +38,14 @@ const NO_ELEMENT_EFFECTS: JahodaElementEffects = {
 
 const getElementEffects = (element: Element | undefined): JahodaElementEffects => {
   switch (element) {
-    case Element.Pyro:
-      return { ...NO_ELEMENT_EFFECTS, damageMultiplier: ASCENSION_1_DAMAGE_MULTIPLIER };
-    case Element.Hydro:
-      return { ...NO_ELEMENT_EFFECTS, healMultiplier: ASCENSION_1_HEAL_MULTIPLIER };
-    case Element.Electro:
-      return { ...NO_ELEMENT_EFFECTS, extraRobots: ASCENSION_1_EXTRA_ROBOTS };
     case Element.Cryo:
       return { ...NO_ELEMENT_EFFECTS, intervalMultiplier: ASCENSION_1_INTERVAL_MULTIPLIER };
+    case Element.Electro:
+      return { ...NO_ELEMENT_EFFECTS, extraRobots: ASCENSION_1_EXTRA_ROBOTS };
+    case Element.Hydro:
+      return { ...NO_ELEMENT_EFFECTS, healMultiplier: ASCENSION_1_HEAL_MULTIPLIER };
+    case Element.Pyro:
+      return { ...NO_ELEMENT_EFFECTS, damageMultiplier: ASCENSION_1_DAMAGE_MULTIPLIER };
     default:
       return NO_ELEMENT_EFFECTS;
   }

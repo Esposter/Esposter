@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { CRYO_ELEMENTAL_INFUSION_ID, SENHO_STATUS_ID } from "#src/services/gcg/cards/constants";
+import { cryoElementalInfusion } from "#src/services/gcg/cards/cryoElementalInfusion";
 import { countGcgCardUses } from "#src/services/gcg/effects/countGcgCardUses";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

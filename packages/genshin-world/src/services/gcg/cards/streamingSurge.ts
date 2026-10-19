@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { RHODEIA_OF_LOCH_ID, TIDE_AND_TORRENT_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
-import { RHODEIA_OF_LOCH_ID, TIDE_AND_TORRENT_ID } from "#src/services/gcg/cards/constants";
 
 // Streaming Surge: Rhodeia of Loch, while active, equips it, and Tide and Torrent is used at once; each use of Tide and
 // Torrent by her gives every summon of her side one usage

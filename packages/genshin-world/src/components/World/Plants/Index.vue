@@ -37,6 +37,15 @@ import {
 import { Group, Matrix4, Mesh, PlaneGeometry, SphereGeometry, Vector3 } from "three";
 import { uniform } from "three/tsl";
 
+// Each kind of plant is one culling pass and one draw of all its places, the pass keeping the places in view
+interface PlantBatch {
+  attribute: StorageBufferAttribute;
+  clipFromModel: UniformNode<"mat4", Matrix4>;
+  culling: InstanceCulling;
+  material: ToonNodeMaterial;
+  mesh: Mesh;
+}
+
 interface Props {
   // The world's ground at a point in its own coordinates, which each plant stands on
   getGroundHeight: (x: number, z: number) => number;
@@ -50,15 +59,6 @@ interface Props {
   surfaces: WindriseSurfaces;
   // Each species as the tree kit's parameters, the great oak's baked into the trees' impostor
   treeSpeciesOptionsMap: Record<TreeSpecies, TreeOptions>;
-}
-
-// Each kind of plant is one culling pass and one draw of all its places, the pass keeping the places in view
-interface PlantBatch {
-  attribute: StorageBufferAttribute;
-  clipFromModel: UniformNode<"mat4", Matrix4>;
-  culling: InstanceCulling;
-  material: ToonNodeMaterial;
-  mesh: Mesh;
 }
 
 const { getGroundHeight, lightUniforms, origin, plants, rampTexture, surfaces, treeSpeciesOptionsMap } =

@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { BEACON_DAMAGE_TRIGGER_ID, BEACON_SKILL_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { takeOne } from "@esposter/shared";
-import { BEACON_DAMAGE_TRIGGER_ID, BEACON_SKILL_TRIGGER_ID } from "#src/services/gcg/cards/constants";
 
 const BEACON_DAMAGE = 1;
 // The two effects the card names, each once per Round, keyed by the id of the skill that gives each

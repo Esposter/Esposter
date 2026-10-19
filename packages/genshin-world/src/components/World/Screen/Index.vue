@@ -20,8 +20,8 @@ import { readStatTables } from "#src/services/character/readStatTables";
 import { readTalentTables } from "#src/services/character/readTalentTables";
 import { readCraftingRecipes } from "#src/services/crafting/readCraftingRecipes";
 import { readCraftingStrongboxes } from "#src/services/crafting/readCraftingStrongboxes";
-import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
 import { readMondstadtCraftingBenchPlace } from "#src/services/crafting/readMondstadtCraftingBenchPlace";
+import { readDomainChallengeLevels } from "#src/services/domains/readDomainChallengeLevels";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { readHudInterfaceRects } from "#src/services/hud/readHudInterfaceRects";
 import { readMaterialDataMap } from "#src/services/inventory/readMaterialDataMap";
@@ -37,10 +37,10 @@ import { readReliquarySets } from "#src/services/reliquary/readReliquarySets";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readPaimonsBargainsRotation } from "#src/services/shop/readPaimonsBargainsRotation";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
-import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
-import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readTips } from "#src/services/tip/readTips";
 import { TipTextLoaderMap } from "#src/services/tip/TipTextLoaderMap";
+import { readMondstadtWildlifePlaces } from "#src/services/wildlife/readMondstadtWildlifePlaces";
+import { readWindriseData } from "#src/services/windrise/readWindriseData";
 import { readWishSchedule } from "#src/services/wish/readWishSchedule";
 import { readCatalogue } from "#src/services/world/readCatalogue";
 import { getResultAsync } from "@esposter/shared";
@@ -174,8 +174,8 @@ getResultAsync(() =>
       statTables,
       talentUpgradeMap: talentTables.talentUpgradeMap,
       timeTrialPlaces: puzzlePlaces.filter(({ kind }) => kind === PuzzleKind.TimeTrialChallenge),
-      tipText,
       tips,
+      tipText,
       wildlifePlaces,
       windriseData,
       wishSchedule,

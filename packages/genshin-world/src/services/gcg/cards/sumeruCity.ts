@@ -2,9 +2,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { SUMERU_CITY_ID } from "#src/services/gcg/cards/constants";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
 import { takeOne } from "@esposter/shared";
-import { SUMERU_CITY_ID } from "#src/services/gcg/cards/constants";
 
 const SUMERU_CITY_REDUCTION = 1;
 

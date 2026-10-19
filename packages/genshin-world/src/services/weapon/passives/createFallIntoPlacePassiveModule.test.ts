@@ -59,8 +59,8 @@ describe(createFallIntoPlacePassiveModule, () => {
     const moonsignWielder = { ...wielder, kit: MOONSIGN_KIT };
     const context = createKitTestContext(moonsignWielder, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, moonsignWielder],
         [OTHER_CHARACTER_ID, { ...wielder, characterId: OTHER_CHARACTER_ID, kit: MOONSIGN_KIT }],
+        [TRAVELER_CHARACTER_ID, moonsignWielder],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });

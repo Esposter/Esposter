@@ -13,12 +13,13 @@ import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
 import { applyGcgDamage, applyGcgStandbyPiercing } from "#src/services/gcg/applyGcgDamage";
-import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
 import { beaconOfTheReedSea } from "#src/services/gcg/cards/beaconOfTheReedSea";
 import {
   BEACON_OF_THE_REED_SEA_ID,
+  ELLIN_ID,
   GENERALS_GLORY_ID,
   GENERALS_WAR_BANNER_ID,
+  GOROU_ID,
   GRAND_NARUKAMI_SHRINE_ID,
   KINGS_SQUIRE_ID,
   KINGS_SQUIRE_IN_EFFECT_ID,
@@ -31,24 +32,25 @@ import {
   TENSHUKAKU_ID,
   VOURUKASHAS_GLOW_ID,
   WEEPING_WILLOW_OF_THE_LAKE_ID,
-  ELLIN_ID,
-  GOROU_ID,
 } from "#src/services/gcg/cards/constants";
 import { elementalResonanceEnduringRock } from "#src/services/gcg/cards/elementalResonanceEnduringRock";
 import { elementalResonanceWovenStone } from "#src/services/gcg/cards/elementalResonanceWovenStone";
 import { ellin } from "#src/services/gcg/cards/ellin";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { generalsGlory } from "#src/services/gcg/cards/generalsGlory";
 import { generalsWarBanner } from "#src/services/gcg/cards/generalsWarBanner";
 import { grandNarukamiShrine } from "#src/services/gcg/cards/grandNarukamiShrine";
 import { kingsSquire, kingsSquireInEffect } from "#src/services/gcg/cards/kingsSquire";
-import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { rushingHound } from "#src/services/gcg/cards/rushingHound";
 import { sangonomiyaShrine } from "#src/services/gcg/cards/sangonomiyaShrine";
 import { scorpocalypse } from "#src/services/gcg/cards/scorpocalypse";
+import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { sumeruCity } from "#src/services/gcg/cards/sumeruCity";
 import { tenshukaku } from "#src/services/gcg/cards/tenshukaku";
 import { vourukashasGlow } from "#src/services/gcg/cards/vourukashasGlow";
 import { weepingWillowOfTheLake } from "#src/services/gcg/cards/weepingWillowOfTheLake";
+import { GCG_SHIELD_LIMIT } from "#src/services/gcg/constants";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { payGcgSubjectCost } from "#src/services/gcg/payGcgSubjectCost";
@@ -58,8 +60,6 @@ import { runGcgSkillUse } from "#src/services/gcg/runGcgSkillUse";
 import { useGcgSkill } from "#src/services/gcg/useGcgSkill";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -92,9 +92,8 @@ const createSideState = (
   usedSkillIds: [],
 });
 const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -103,6 +102,7 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
   round: 1,
   rule: TEST_RULE,
   sides: [attacker, defender],
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 const defenderOf = (duel: GcgDuel): GcgCharacterState => takeOne(takeOne(duel.sides, 1).characters, 0);
@@ -116,11 +116,11 @@ describe("inuzaka All-Round Defense", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo, weapon: BOW } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID, weapon: BOW } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, INUZAKA);
@@ -135,11 +135,11 @@ describe("inuzaka All-Round Defense", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo, weapon: BOW } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID, weapon: BOW } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, INUZAKA);
@@ -155,10 +155,10 @@ describe("juuga Forward Unto Victory", () => {
   test("should deal 2 Geo DMG, create a General's War Banner and summon General's Glory", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })]);
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
@@ -173,10 +173,10 @@ describe("juuga Forward Unto Victory", () => {
   test("should stack the banner's rounds by 2, up to 3", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })]);
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
@@ -188,10 +188,10 @@ describe("juuga Forward Unto Victory", () => {
   test("should keep one banner at 3 rounds when it is played a fourth time", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })]);
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, JUUGA);
@@ -213,14 +213,14 @@ describe("general's Glory", () => {
 
     const attacker = createSideState(
       [
-        createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } }),
-        createGcgCharacterState({ character: { id: ITTO_ID, element: Element.Geo } }),
+        createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
+        createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
       ],
       { summons: [createGcgZoneCard(GENERALS_GLORY_ID, generalsGlory)] },
     );
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -234,12 +234,12 @@ describe("general's Glory", () => {
   test("should deal its 1 Geo DMG but create no shield with one Geo character", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       summons: [createGcgZoneCard(GENERALS_GLORY_ID, generalsGlory)],
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -259,7 +259,7 @@ describe("rushing Hound: Swift as the Wind", () => {
     expect.hasAssertions();
 
     const gorou = createGcgCharacterState({
-      character: { id: GOROU_ID, element: Element.Geo },
+      character: { element: Element.Geo, id: GOROU_ID },
       equipments: [createGcgZoneCard(RUSHING_HOUND_ID, rushingHound)],
     });
     const attacker = createSideState([gorou], {
@@ -268,7 +268,7 @@ describe("rushing Hound: Swift as the Wind", () => {
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, INUZAKA);
@@ -286,11 +286,11 @@ describe("searing Glare", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: EREMITE_ID, element: Element.Pyro } }),
+      createGcgCharacterState({ character: { element: Element.Pyro, id: EREMITE_ID } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, SEARING);
@@ -307,11 +307,11 @@ describe("blazing Strike", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: EREMITE_ID, element: Element.Pyro } }),
+      createGcgCharacterState({ character: { element: Element.Pyro, id: EREMITE_ID } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, BLAZING);
@@ -332,11 +332,11 @@ describe("spirit of Omen's Awakening", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: EREMITE_ID, element: Element.Pyro } }),
+      createGcgCharacterState({ character: { element: Element.Pyro, id: EREMITE_ID } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, AWAKENING);
@@ -358,12 +358,12 @@ describe("spirit of Omen's Power", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro, skills: [SPIRIT_POWER] },
+      character: { element: Element.Pyro, id: EREMITE_ID, skills: [SPIRIT_POWER] },
     });
     const attacker = createSideState([eremite]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 3 }, TEST_RULE);
@@ -376,16 +376,16 @@ describe("spirit of Omen's Power", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro, skills: [SPIRIT_POWER] },
+      character: { element: Element.Pyro, id: EREMITE_ID, skills: [SPIRIT_POWER] },
       hp: 8,
     });
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: ITTO_ID, element: Element.Geo } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
       eremite,
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     applyGcgStandbyPiercing(duel, 1, 2);
@@ -401,14 +401,14 @@ describe("spirit of Omen: Pyro Scorpion", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       energy: 1,
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
     const attacker = createSideState([eremite]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 3 }, TEST_RULE);
@@ -429,7 +429,7 @@ describe("burning Assault", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
     const attacker = createSideState([eremite], {
@@ -438,7 +438,7 @@ describe("burning Assault", () => {
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     const result = useGcgSkill(duel, 0, BURNING.id, [0, 1]);
@@ -454,7 +454,7 @@ describe("burning Assault", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
     const attacker = createSideState([eremite], {
@@ -463,7 +463,7 @@ describe("burning Assault", () => {
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     const first = useGcgSkill(duel, 0, BURNING.id, [0, 1]);
@@ -482,7 +482,7 @@ describe("scorpocalypse", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [
         createGcgZoneCard(SCORPOCALYPSE_ID, scorpocalypse),
         createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion),
@@ -491,7 +491,7 @@ describe("scorpocalypse", () => {
     const attacker = createSideState([eremite], { dice: [Element.Pyro, Element.Pyro] });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 2 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 2 })]),
     );
 
     useGcgSkill(duel, 0, BURNING.id, [0, 1]);
@@ -503,7 +503,7 @@ describe("scorpocalypse", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [
         createGcgZoneCard(SCORPOCALYPSE_ID, scorpocalypse),
         createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion),
@@ -512,7 +512,7 @@ describe("scorpocalypse", () => {
     const attacker = createSideState([eremite], { dice: [Element.Pyro, Element.Pyro] });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 20 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 20 })]),
     );
 
     useGcgSkill(duel, 0, BURNING.id, [0, 1]);
@@ -524,13 +524,13 @@ describe("scorpocalypse", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [createGcgZoneCard(SCORPOCALYPSE_ID, scorpocalypse)],
     });
     const attacker = createSideState([eremite]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -552,7 +552,7 @@ describe("king's Squire", () => {
     expect.hasAssertions();
 
     const squire = createGcgCharacterState({
-      character: { id: ITTO_ID, element: Element.Geo, weapon: BOW },
+      character: { element: Element.Geo, id: ITTO_ID, weapon: BOW },
       equipments: [createGcgZoneCard(KINGS_SQUIRE_ID, kingsSquire)],
     });
     const attacker = createSideState([squire], {
@@ -560,7 +560,7 @@ describe("king's Squire", () => {
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
     const pay = (dice: Element[]): boolean => {
       attacker.dice = dice;
@@ -586,13 +586,13 @@ describe("beacon of the Reed Sea", () => {
     expect.hasAssertions();
 
     const itto = createGcgCharacterState({
-      character: { id: ITTO_ID, element: Element.Geo, weapon: CLAYMORE },
+      character: { element: Element.Geo, id: ITTO_ID, weapon: CLAYMORE },
       equipments: [createGcgZoneCard(BEACON_OF_THE_REED_SEA_ID, beaconOfTheReedSea)],
     });
     const attacker = createSideState([itto]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro }, hp: 30 })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 }, hp: 30 })]),
     );
 
     runGcgSkillUse({ duel, sideIndex: 0 }, ELECTRO_SKILL);
@@ -611,13 +611,13 @@ describe("vourukasha's Glow", () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [createGcgZoneCard(VOURUKASHAS_GLOW_ID, vourukashasGlow)],
     });
     const attacker = createSideState([eremite], { drawPile: [CARD_ID] });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     applyGcgDamage(duel, 1, { damageType: GcgDamageKind.Physical, value: 3 }, TEST_RULE);
@@ -632,12 +632,12 @@ describe("tenshukaku", () => {
   test("should create an Omni Elemental Die at the Action Phase start with 5 different Elemental Dice", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       dice: [Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo, Element.Geo],
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     tenshukaku.onActionPhase?.({ duel, sideIndex: 0 }, createGcgZoneCard(TENSHUKAKU_ID, tenshukaku));
@@ -648,12 +648,12 @@ describe("tenshukaku", () => {
   test("should create no die with only 4 different Elemental Dice", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       dice: [Element.Pyro, Element.Hydro, Element.Electro, Element.Cryo],
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     tenshukaku.onActionPhase?.({ duel, sideIndex: 0 }, createGcgZoneCard(TENSHUKAKU_ID, tenshukaku));
@@ -668,12 +668,12 @@ describe("grand Narukami Shrine", () => {
   test("should generate an Omni Elemental Die after a skill while the dice are odd, twice per Round", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       dice: [Element.Pyro, Element.Pyro, Element.Pyro],
     });
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
     const zoneCard = createGcgZoneCard(GRAND_NARUKAMI_SHRINE_ID, grandNarukamiShrine);
     const use = (): void =>
@@ -696,13 +696,13 @@ describe("sangonomiya Shrine", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo }, hp: 5 }),
-      createGcgCharacterState({ character: { id: ITTO_ID, element: Element.Geo }, hp: 5 }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID }, hp: 5 }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID }, hp: 5 }),
     ]);
     attacker.supports = [createGcgZoneCard(SANGONOMIYA_SHRINE_ID, sangonomiyaShrine)];
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -728,13 +728,13 @@ describe("sumeru City", () => {
     expect.hasAssertions();
 
     const attacker = createSideState(
-      [createGcgCharacterState({ character: { id: EREMITE_ID, element: Element.Pyro } })],
+      [createGcgCharacterState({ character: { element: Element.Pyro, id: EREMITE_ID } })],
       { hand: [CARD_ID, CARD_ID] },
     );
     attacker.supports = [createGcgZoneCard(SUMERU_CITY_ID, sumeruCity)];
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
     const pay = (dice: Element[]): boolean => {
       attacker.dice = dice;
@@ -760,13 +760,13 @@ describe("weeping Willow of the Lake", () => {
   test("should draw 2 cards at the End Phase with at most 2 cards in hand, and spend a usage", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       drawPile: [CARD_ID, CARD_ID, CARD_ID],
     });
     attacker.supports = [createGcgZoneCard(WEEPING_WILLOW_OF_THE_LAKE_ID, weepingWillowOfTheLake)];
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -780,14 +780,14 @@ describe("weeping Willow of the Lake", () => {
   test("should draw nothing with 3 cards in hand", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })], {
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })], {
       drawPile: [CARD_ID],
       hand: [CARD_ID, CARD_ID, CARD_ID],
     });
     attacker.supports = [createGcgZoneCard(WEEPING_WILLOW_OF_THE_LAKE_ID, weepingWillowOfTheLake)];
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     runGcgEndPhase(duel);
@@ -803,12 +803,12 @@ describe("elemental Resonance: Woven Stone", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } }),
-      createGcgCharacterState({ character: { id: ITTO_ID, element: Element.Geo } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     const canPlay = elementalResonanceWovenStone.canPlay?.({ duel, sideIndex: 0 }, undefined);
@@ -820,10 +820,10 @@ describe("elemental Resonance: Woven Stone", () => {
   test("should not be playable with one Geo character", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState([createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } })]);
+    const attacker = createSideState([createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } })]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     expect(elementalResonanceWovenStone.canPlay?.({ duel, sideIndex: 0 }, undefined)).toBe(false);
@@ -837,12 +837,12 @@ describe("elemental Resonance: Enduring Rock", () => {
     expect.hasAssertions();
 
     const attacker = createSideState([
-      createGcgCharacterState({ character: { id: GOROU_ID, element: Element.Geo } }),
-      createGcgCharacterState({ character: { id: ITTO_ID, element: Element.Geo } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: GOROU_ID } }),
+      createGcgCharacterState({ character: { element: Element.Geo, id: ITTO_ID } }),
     ]);
     const duel = createDuel(
       attacker,
-      createSideState([createGcgCharacterState({ character: { id: 2101, element: Element.Hydro } })]),
+      createSideState([createGcgCharacterState({ character: { element: Element.Hydro, id: 2101 } })]),
     );
 
     elementalResonanceEnduringRock.play?.({ duel, sideIndex: 0 }, undefined);

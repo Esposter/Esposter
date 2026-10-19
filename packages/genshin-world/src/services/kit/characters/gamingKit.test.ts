@@ -29,9 +29,9 @@ const reportHealing = (combatant: Combatant, overflowHealthShare: number): KitEf
   const kitEffectState: KitEffectState = { effects: [] };
   GAMING_KIT.onKitEvent?.(
     {
+      bondOfLifeShare: 0,
       characterId: GAMING_CHARACTER_ID,
       healthShare: 0.1,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare,

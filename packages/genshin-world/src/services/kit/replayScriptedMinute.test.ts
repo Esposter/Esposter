@@ -118,16 +118,16 @@ export const replayScriptedMinute = ({
     enemyMap,
     enemyTables,
     expiredEffects: [],
+    isSkillHeld: false,
     kitEffectState: { effects: [] },
     locomotionState: LocomotionState.Idle,
-    isSkillHeld: false,
-    stamina: createStamina(STAMINA_MAX),
     oreStrikes: [],
     outbox: [],
     party,
     placeWildlifeDrops: noop,
     random: createSeededRandom(WORLD_RANDOM_SEED),
     reactionTriggers: [],
+    stamina: createStamina(STAMINA_MAX),
     strikes: [],
     wildlifeList: [],
   };
@@ -179,8 +179,8 @@ export const replayScriptedMinute = ({
         landedHits,
         strikeOre: noop,
         strikePuzzle: noop,
-        triggerReaction: noop,
         triggerHealthChange: noop,
+        triggerReaction: noop,
       },
     );
   }

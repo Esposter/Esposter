@@ -1,10 +1,10 @@
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStatus } from "#src/models/kit/KitStatus";
 
-import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
+import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 // Adds a hold of a passive's id to a character, in the first place of its id that is free. Each hold runs its own seconds, so
 // One added later outlives an earlier one that runs out first, and the holds of an id stop at its maximum, adding none past it,

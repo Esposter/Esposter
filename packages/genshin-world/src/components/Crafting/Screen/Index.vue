@@ -196,16 +196,16 @@ const craft = () => {
        takes the screen while that tab is picked -->
   <CraftingStrongbox
     v-if="isMysticOfferingPicked"
-    :artifact-drop-tables="artifactDropTables"
-    :game-text="gameText"
-    :inventory="inventory"
-    :material-data-map="materialDataMap"
+    :artifact-drop-tables
+    :game-text
+    :inventory
+    :material-data-map
     :names="nameText"
-    :random="random"
-    :reliquary-piece-entry-map="reliquaryPieceEntryMap"
-    :strongboxes="strongboxes"
-    :wallet="wallet"
-    :weapon-data-map="weaponDataMap"
+    :random
+    :reliquary-piece-entry-map
+    :strongboxes
+    :wallet
+    :weapon-data-map
     @close="closeMysticOffering"
     @craft="applyOfferingPickUp"
   />

@@ -115,9 +115,9 @@ const createDomains = (clock = createWorldClock(Temporal.Instant.fromEpochMillis
     events,
     gameDataBaseUrl: "",
     getWorldNow: clock.getWorldNow,
-    kitEffectState: { effects: [] },
     inventory: ref<Inventory>({ items: [], nextId: 0, quickSwapItemIds: [] }),
     jumpTo,
+    kitEffectState: { effects: [] },
     materialDataMap: new Map(),
     nameText: {},
     party: createParty([TRAVELER_CHARACTER_ID]),
@@ -146,7 +146,7 @@ describe("stepDomainChallenge", () => {
     // The fight there
     await expect(domains.quickChallengeDomain(domainEntrance, 40, true)).resolves.toBe(true);
     const campId = domains.domainCamps.value[0]?.id ?? "";
-    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPlaying: true, isPartyDown: false });
+    const step = () => domains.stepDomainChallenge({ deltaMilliseconds: 1000, isPartyDown: false, isPlaying: true });
 
     expect(step()).toStrictEqual([]);
     events.emit("shieldBreak", createBrokenBoss(campId));

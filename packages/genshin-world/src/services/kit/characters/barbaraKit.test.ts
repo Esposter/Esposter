@@ -65,9 +65,9 @@ const collectParticles = (
 const reportJeanFall = (combatant: Combatant, party: Party, kitEffectState: KitEffectState): void =>
   BARBARA_KIT.onKitEvent?.(
     {
+      bondOfLifeShare: 0,
       characterId: JEAN_CHARACTER_ID,
       healthShare: -1,
-      bondOfLifeShare: 0,
       isFallRefused: false,
       kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,

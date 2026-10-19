@@ -1,7 +1,7 @@
+import type { Element } from "#src/models/Element";
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import type { Element } from "#src/models/Element";
 import { applyGcgApplication } from "#src/services/gcg/effects/applyGcgApplication";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";

@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { WHEN_THE_CRANE_RETURNED_ID } from "#src/services/gcg/cards/constants";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
-import { WHEN_THE_CRANE_RETURNED_ID } from "#src/services/gcg/cards/constants";
 
 // When the Crane Returned: the next time its side uses a skill, the next standing character is switched in after it
 export const whenTheCraneReturned: GcgCardModule = {

@@ -65,7 +65,6 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
         });
     },
   },
-  skill: { onStart: createNightsoulBlessingStart(NIGHTSOUL_POINTS, NIGHTSOUL_DRAIN_PER_SECOND) },
   getPartyReactionBonus: (member, { reactionType }, context) => {
     const { effects } = context.kitEffectState;
     if (member.ascension < 1 || !checkHasKitStatus(effects, member.characterId, NIGHTSOUL_BLESSING_STATUS_ID))
@@ -83,4 +82,5 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
       return { damageBonus: points * RESCUE_ESSENTIALS_LUNAR_CHARGED_DAMAGE_BONUS };
     return {};
   },
+  skill: { onStart: createNightsoulBlessingStart(NIGHTSOUL_POINTS, NIGHTSOUL_DRAIN_PER_SECOND) },
 });

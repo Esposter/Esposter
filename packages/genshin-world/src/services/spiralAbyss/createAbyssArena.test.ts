@@ -33,9 +33,9 @@ describe(createAbyssArena, () => {
 
     expect(arena?.camp?.members.map(({ enemyKindId }) => enemyKindId)).toStrictEqual([EnemyKindId.HilichurlFighter]);
     expect(arena?.challenge).toStrictEqual({
-      monolithPercent: undefined,
       defeatedHalfCount: 0,
       halfCount: floor.teamCount,
+      monolithPercent: undefined,
       secondsLeft: getAbyssChamberSeconds(floor.index),
     });
   });

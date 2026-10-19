@@ -32,9 +32,9 @@ const createBeidouCombatant = (constellationCount: number): Combatant => ({
 
 // Beidou losing a tenth of her Max HP to an enemy's strike, which names no source
 const createDamageTakenEvent = (characterId: number): KitHealthChangedEvent => ({
+  bondOfLifeShare: 0,
   characterId,
   healthShare: -0.1,
-  bondOfLifeShare: 0,
   isFallRefused: false,
   kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,

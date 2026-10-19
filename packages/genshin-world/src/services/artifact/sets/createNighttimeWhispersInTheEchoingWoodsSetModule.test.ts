@@ -47,8 +47,8 @@ describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
   const createContext = (): KitContext =>
     createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wearer],
         [OTHER_CHARACTER_ID, other],
+        [TRAVELER_CHARACTER_ID, wearer],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });

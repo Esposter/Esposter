@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
 import { SESSHOU_SAKURA_ID } from "#src/services/gcg/cards/constants";
+import { sesshouSakura } from "#src/services/gcg/cards/sesshouSakura";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 

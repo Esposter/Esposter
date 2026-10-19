@@ -2,6 +2,7 @@ import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 
 // The Experience page of the English client's Adventurer Handbook, Chapter 9, with every investigation done
 export const props = {
+  canUseLongTermEncounterPoints: false,
   commissions: [
     {
       progress: 3,
@@ -49,9 +50,11 @@ export const props = {
       total: 8,
     },
   ],
-  canUseLongTermEncounterPoints: false,
   completedCount: 11,
   dayCommissions: [],
+  domains: [],
+  encounterPointLimit: 4,
+  encounterPoints: 2,
   gameText: ENGLISH_GAME_TEXT,
   investigationRewards: [
     { count: 1, rarity: 5 },
@@ -59,9 +62,6 @@ export const props = {
     { count: 50000, rarity: 3 },
     { count: 150, rarity: 5 },
   ],
-  domains: [],
-  encounterPointLimit: 4,
-  encounterPoints: 2,
   isAdventureEncountersUnlocked: true,
   isRewardClaimed: true,
   longTermEncounterPoints: 0,

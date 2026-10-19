@@ -92,8 +92,8 @@ const createControls = (stamina = createStamina(STAMINA_MAX)): ActiveKitControls
   landedHits: [],
   strikeOre: noop,
   strikePuzzle: noop,
-  triggerReaction: noop,
   triggerHealthChange: noop,
+  triggerReaction: noop,
 });
 
 describe(stepActiveKit, () => {
@@ -291,9 +291,9 @@ describe(stepActiveKit, () => {
     expect(onKitEvent.mock.calls.map(([event]) => event)).toStrictEqual([
       { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.CharacterSwapped, previousCharacterId: undefined },
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: -0.25,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,

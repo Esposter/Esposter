@@ -1,3 +1,4 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
@@ -8,7 +9,6 @@ import { Attribute } from "#src/models/character/Attribute";
 import { AmplifyingReactionType } from "#src/models/combat/AmplifyingReactionType";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import type { ReactionType } from "#src/models/combat/ReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -567,11 +567,11 @@ describe("mona kit", () => {
 
     expect({
       hexereiStrike: readPartyDamage(hexereiParty, hexerei),
+      otherStrike: readPartyDamage(hexereiParty, createOther()),
       ownStrike:
         MONA_KIT.getStrikeCriticalDamageBonus?.({ body: kitBody, combatant: mona, hit }, omened, hexereiParty, []) ?? 0,
       plainTeam: readPartyDamage(plainParty, hexerei),
-      otherStrike: readPartyDamage(hexereiParty, createOther()),
-    }).toStrictEqual({ hexereiStrike: 0.15, ownStrike: 0.15, otherStrike: 0, plainTeam: 0 });
+    }).toStrictEqual({ hexereiStrike: 0.15, otherStrike: 0, ownStrike: 0.15, plainTeam: 0 });
   });
 
   test("constellation 4 gives no CRIT DMG to a Hexerei strike while a second Hexerei character is owned but not deployed", () => {

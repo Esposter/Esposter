@@ -224,6 +224,10 @@ export const createXingqiuKitBehaviour = ({
         standRainSwords(context, body, combatant, seconds, rainSwordsBurstFirstTickSeconds);
       },
     },
+    getPassiveBonuses: (combatant) =>
+      combatant.ascension < BLADES_AMIDST_RAINDROPS_ASCENSION
+        ? []
+        : [{ amount: BLADES_AMIDST_RAINDROPS_HYDRO_DAMAGE_BONUS, attribute: Attribute.HydroDamageBonus }],
     // A normal attack of the character on the field sets off a wave of swords where that character stands, while
     // Raincutter stands: the first strike of a string 7 frames on from its start, as gcsim's watcher casts it, and a
     // Later one as it starts
@@ -235,10 +239,6 @@ export const createXingqiuKitBehaviour = ({
         );
       else castRaincutterWave(context, combatant.characterId);
     },
-    getPassiveBonuses: (combatant) =>
-      combatant.ascension < BLADES_AMIDST_RAINDROPS_ASCENSION
-        ? []
-        : [{ amount: BLADES_AMIDST_RAINDROPS_HYDRO_DAMAGE_BONUS, attribute: Attribute.HydroDamageBonus }],
     // Fatal Rainscreen's hits land from a summon cast where Xingqiu stands, so Evilsoother can raise them as the skill
     // Starts, from four constellations while his Raincutter stands. The skill stands the Rain Swords for the table's
     // Seconds

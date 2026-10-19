@@ -53,8 +53,8 @@ describe(createSongOfDaysPastSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const party = createParty(characterIds);
     const characterIdCombatantMap = new Map([
-      [TRAVELER_CHARACTER_ID, wearer],
       [OTHER_CHARACTER_ID, other],
+      [TRAVELER_CHARACTER_ID, wearer],
     ]);
     const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
     // A heal of the given share of the wearer's Max HP by the given member, as the party records it
@@ -98,7 +98,7 @@ describe(createSongOfDaysPastSetModule, () => {
       emitKitEvent({ attackTag, element: undefined, enemy, kind: KitEventKind.EnemyHit, striker }, context);
       return bonus;
     };
-    return { heal, land, priceStrike, stepSeconds, wearer, other };
+    return { heal, land, other, priceStrike, stepSeconds, wearer };
   };
 
   test("a heal its wearer gives opens a Yearning that records it, and the Waves stage it leads to adds 8% of the record to the active member's next hits", () => {

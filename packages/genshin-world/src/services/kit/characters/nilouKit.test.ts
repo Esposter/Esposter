@@ -370,10 +370,10 @@ describe(createNilouKitBehaviour, () => {
 
     expect({
       atAscension3: getBonus(3, 40_000, DendroCoreKind.Bountiful),
+      atFortyThousand: getBonus(4, 40_000, DendroCoreKind.Bountiful),
       atThreshold: getBonus(4, 30_000, DendroCoreKind.Bountiful),
       bloomCore: getBonus(4, 40_000, DendroCoreKind.Bloom),
       capped: getBonus(4, 100_000, DendroCoreKind.Bountiful),
-      atFortyThousand: getBonus(4, 40_000, DendroCoreKind.Bountiful),
     }).toStrictEqual({ atAscension3: 0, atFortyThousand: 0.9, atThreshold: 0, bloomCore: 0, capped: 4 });
   });
 

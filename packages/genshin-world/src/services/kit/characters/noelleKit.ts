@@ -1,7 +1,7 @@
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitInfusion } from "#src/models/kit/KitInfusion";

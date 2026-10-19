@@ -76,26 +76,6 @@ export const createAmberKitBehaviour = ({
   let secondArrowFired = false;
 
   return {
-    // Constellation 1: the first arrow's hit queues a second arrow once per shot, however many opponents it strikes
-    chargedAttack: {
-      hits: [
-        {
-          onStrike: (context, { combatant, hit }) => {
-            if (combatant.constellationCount < CONSTELLATION_1 || secondArrowFired) return;
-            secondArrowFired = true;
-            queueKitPassiveHit(context, combatant, {
-              ...hit,
-              attackTag: undefined,
-              onStrike: undefined,
-              talentMultiplier: hit.talentMultiplier * CONSTELLATION_1_SECOND_ARROW_SHARE,
-            });
-          },
-        },
-      ],
-      onStart: () => {
-        secondArrowFired = false;
-      },
-    },
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
         const hasEveryArrowFindsItsTarget = combatant.ascension >= EVERY_ARROW_FINDS_ITS_TARGET_ASCENSION;
@@ -116,6 +96,26 @@ export const createAmberKitBehaviour = ({
           buffKitTeam(kitEffectState, party, { ...buff, attribute: Attribute.MovementSpeed });
           buffKitTeam(kitEffectState, party, { ...buff, attribute: Attribute.AttackPercent });
         }
+      },
+    },
+    // Constellation 1: the first arrow's hit queues a second arrow once per shot, however many opponents it strikes
+    chargedAttack: {
+      hits: [
+        {
+          onStrike: (context, { combatant, hit }) => {
+            if (combatant.constellationCount < CONSTELLATION_1 || secondArrowFired) return;
+            secondArrowFired = true;
+            queueKitPassiveHit(context, combatant, {
+              ...hit,
+              attackTag: undefined,
+              onStrike: undefined,
+              talentMultiplier: hit.talentMultiplier * CONSTELLATION_1_SECOND_ARROW_SHARE,
+            });
+          },
+        },
+      ],
+      onStart: () => {
+        secondArrowFired = false;
       },
     },
     getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_4),

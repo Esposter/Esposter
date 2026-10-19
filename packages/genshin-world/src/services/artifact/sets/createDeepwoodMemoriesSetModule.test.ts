@@ -1,10 +1,7 @@
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
-
 import { AttackTag } from "#src/models/combat/AttackTag";
-
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-
 import { DEEPWOOD_MEMORIES_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createDeepwoodMemoriesSetModule } from "#src/services/artifact/sets/createDeepwoodMemoriesSetModule";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";

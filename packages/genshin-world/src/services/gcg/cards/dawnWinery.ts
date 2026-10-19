@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { DAWN_WINERY_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { takeOne } from "@esposter/shared";
-import { DAWN_WINERY_ID } from "#src/services/gcg/cards/constants";
 
 const DAWN_WINERY_SWITCH_LIMIT = 2;
 

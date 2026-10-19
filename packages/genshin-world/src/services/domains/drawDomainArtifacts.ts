@@ -1,5 +1,5 @@
-import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { ArtifactDropTables } from "#src/models/chest/ArtifactDropTables";
+import type { TreeArtifact } from "#src/models/domains/TreeArtifact";
 import type { DroppedItem } from "#src/models/enemy/DroppedItem";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 

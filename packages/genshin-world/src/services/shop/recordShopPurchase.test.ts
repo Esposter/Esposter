@@ -11,12 +11,12 @@ describe(recordShopPurchase, () => {
   const GOOD: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 3,
+    costs: [{ count: 2, itemId: 202 }],
     endTime: EPOCH.add({ hours: 876_000 }).toString(),
     goodsId: 7,
     itemCount: 1,
     itemId: 1,
     minPlayerLevel: 1,
-    costs: [{ count: 2, itemId: 202 }],
     refresh: ShopRefresh.Daily,
   };
 

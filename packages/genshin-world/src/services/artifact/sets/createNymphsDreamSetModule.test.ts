@@ -2,8 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AttackTag } from "#src/models/combat/AttackTag";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NYMPHS_DREAM_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createNymphsDreamSetModule } from "#src/services/artifact/sets/createNymphsDreamSetModule";

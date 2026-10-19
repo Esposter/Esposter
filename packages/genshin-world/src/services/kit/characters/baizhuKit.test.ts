@@ -12,12 +12,12 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
-import { BAIZHU_CHARACTER_ID, createBaizhuKitBehaviour } from "#src/services/kit/characters/baizhuKit";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
-import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
+import { BAIZHU_CHARACTER_ID, createBaizhuKitBehaviour } from "#src/services/kit/characters/baizhuKit";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
@@ -189,8 +189,8 @@ describe("constellation 2's Gossamer Sprite: Splice", () => {
     const teammate = { ...baizhu, characterId: ACTIVE_CHARACTER_ID };
     const context = createKitTestContext(teammate, {
       characterIdCombatantMap: new Map<number, Combatant>([
-        [BAIZHU_CHARACTER_ID, baizhu],
         [ACTIVE_CHARACTER_ID, teammate],
+        [BAIZHU_CHARACTER_ID, baizhu],
       ]),
       party: createParty([ACTIVE_CHARACTER_ID, BAIZHU_CHARACTER_ID]),
     });

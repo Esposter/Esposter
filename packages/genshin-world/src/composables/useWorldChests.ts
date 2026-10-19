@@ -52,9 +52,9 @@ export const useWorldChests = ({
   reliquarySets,
   setInventory,
   setWallet,
-  weaponDataMap,
   wallet,
   waterLevel,
+  weaponDataMap,
 }: {
   artifactMainAffixPools: readonly ArtifactMainAffixPool[];
   artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
@@ -74,9 +74,9 @@ export const useWorldChests = ({
   reliquarySets: readonly ReliquarySetData[];
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
   waterLevel: number;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   const chestPlaces = shallowRef<ChestPlace[]>([]);
   // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it

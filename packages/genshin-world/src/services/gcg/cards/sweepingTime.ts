@@ -3,9 +3,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { createGcgElementCostReduction } from "#src/services/gcg/effects/createGcgElementCostReduction";
-import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 
 const SWEEPING_TIME_BONUS = 2;
 const SWEEPING_TIME_ROUNDS = 2;

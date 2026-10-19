@@ -7,8 +7,8 @@ import type { Interactable } from "#src/models/interaction/Interactable";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { KitBody } from "#src/models/kit/KitBody";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 import type { MaterialSourcePlace } from "#src/models/wildlife/MaterialSourcePlace";
 import type { WorldDrop } from "#src/models/world/WorldDrop";
@@ -57,8 +57,8 @@ export const useWorldPickups = ({
   serverClockOffsetMs,
   setInventory,
   setWallet,
-  weaponDataMap,
   wallet,
+  weaponDataMap,
 }: {
   archive: { archiveData: ShallowRef<ArchiveData | undefined>; archiveProgressMap: ShallowRef<ArchiveProgress> };
   events: WorldEvents;
@@ -68,13 +68,13 @@ export const useWorldPickups = ({
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   materialDataMap: ReadonlyMap<number, MaterialData>;
-  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   nameText: Readonly<Record<string, string>>;
+  reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   serverClockOffsetMs: number;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
 }) => {
   // The drops lying in the world, which each defeated enemy's are placed among, and how many drops the page has placed,
   // Which numbers the next ones

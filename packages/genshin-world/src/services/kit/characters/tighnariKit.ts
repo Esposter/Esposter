@@ -55,6 +55,19 @@ export const createTighnariKitBehaviour = (): KitBehaviour => ({
       });
     },
   },
+  // Beginnings Determined at the Roots, from Constellation 1: his charged attacks crit 15% more often
+  getStrikeCriticalRateBonus: ({ attackTag, combatant }) =>
+    combatant.constellationCount >= CONSTELLATION_1 && attackTag === AttackTag.ChargedAttack
+      ? CONSTELLATION_1_CRIT_RATE_BONUS
+      : 0,
+  getStrikeDamageBonus: ({ attackTag, combatant }) =>
+    combatant.ascension >= ASCENSION_4 &&
+    (attackTag === AttackTag.ChargedAttack || attackTag === AttackTag.ElementalBurst)
+      ? Math.min(
+          elementalMasteryMultiplier(combatant, ASCENSION_4_DAMAGE_PER_ELEMENTAL_MASTERY),
+          ASCENSION_4_DAMAGE_MAX,
+        )
+      : 0,
   // Constellation 4: a reaction the burst triggers raises every member's Elemental Mastery to 120, refreshing its 8 seconds
   onKitEvent: (event, { kitEffectState, party }, combatant) => {
     if (
@@ -72,17 +85,4 @@ export const createTighnariKitBehaviour = (): KitBehaviour => ({
       source: CONSTELLATION_4_SOURCE,
     });
   },
-  // Beginnings Determined at the Roots, from Constellation 1: his charged attacks crit 15% more often
-  getStrikeCriticalRateBonus: ({ attackTag, combatant }) =>
-    combatant.constellationCount >= CONSTELLATION_1 && attackTag === AttackTag.ChargedAttack
-      ? CONSTELLATION_1_CRIT_RATE_BONUS
-      : 0,
-  getStrikeDamageBonus: ({ attackTag, combatant }) =>
-    combatant.ascension >= ASCENSION_4 &&
-    (attackTag === AttackTag.ChargedAttack || attackTag === AttackTag.ElementalBurst)
-      ? Math.min(
-          elementalMasteryMultiplier(combatant, ASCENSION_4_DAMAGE_PER_ELEMENTAL_MASTERY),
-          ASCENSION_4_DAMAGE_MAX,
-        )
-      : 0,
 });

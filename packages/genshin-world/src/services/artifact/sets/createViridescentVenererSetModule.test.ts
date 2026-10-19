@@ -2,9 +2,9 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
 import { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { VIRIDESCENT_VENERER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createViridescentVenererSetModule } from "#src/services/artifact/sets/createViridescentVenererSetModule";
@@ -44,19 +44,19 @@ const createTeam = (characterIds: number[]) => {
   const kitEffectState: KitEffectState = { effects: [] };
   const party = createParty(characterIds);
   const characterIdCombatantMap = new Map([
-    [TRAVELER_CHARACTER_ID, wearer],
     [OTHER_CHARACTER_ID, other],
+    [TRAVELER_CHARACTER_ID, wearer],
   ]);
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const context = createKitTestContext(wearer, { characterIdCombatantMap, kitEffectState, party });
   // The DMG Bonus the wearer's kit adds to a reaction the given member makes, as the party's hook reads it
-  const reactionDamageBonus = (combatant: Combatant, reactionType: TransformativeReactionType | StellarReactionType) =>
+  const reactionDamageBonus = (combatant: Combatant, reactionType: StellarReactionType | TransformativeReactionType) =>
     wearer.kit.getPartyReactionBonus?.(wearer, { combatant, element: Element.Cryo, enemy, reactionType }, context)
       ?.damageBonus ?? 0;
   // A hit the striker lands on the enemy, which triggers the given reactions on it
   const trigger = (
     striker: Combatant,
-    reactions: { element?: Element; reactionType: TransformativeReactionType | StellarReactionType }[],
+    reactions: { element?: Element; reactionType: StellarReactionType | TransformativeReactionType }[],
   ) => emitKitEvent({ enemy, kind: KitEventKind.ReactionTriggered, reactions, striker }, context);
   return { enemy, other, reactionDamageBonus, trigger, wearer };
 };

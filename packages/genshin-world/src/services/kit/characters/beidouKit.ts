@@ -135,6 +135,19 @@ export const createBeidouKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castDischarges(body, combatant, kitEffectState, chargedAttackHits),
     },
+    getNormalAttackExtraHit: ({ activeCombatant, kitEffectState }, hit) =>
+      activeCombatant.constellationCount >= CONSTELLATION_4 &&
+      checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, CONSTELLATION_4_STATUS_ID)
+        ? {
+            element: Element.Electro,
+            gauge: 1,
+            hitArea: hit.hitArea,
+            hitmarkSeconds: hit.hitmarkSeconds,
+            internalCooldownTag: InternalCooldownTag.ElementalBurst,
+            poiseDamage: CONSTELLATION_4_POISE_DAMAGE,
+            talentMultiplier: CONSTELLATION_4_DAMAGE_MULTIPLIER,
+          }
+        : undefined,
     normalAttacks: kit.normalAttacks.map(({ hits }) => ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castDischarges(body, combatant, kitEffectState, hits),
@@ -156,19 +169,6 @@ export const createBeidouKitBehaviour = ({
         secondsRemaining: CONSTELLATION_4_SECONDS,
       });
     },
-    getNormalAttackExtraHit: ({ activeCombatant, kitEffectState }, hit) =>
-      activeCombatant.constellationCount >= CONSTELLATION_4 &&
-      checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, CONSTELLATION_4_STATUS_ID)
-        ? {
-            element: Element.Electro,
-            gauge: 1,
-            hitArea: hit.hitArea,
-            hitmarkSeconds: hit.hitmarkSeconds,
-            internalCooldownTag: InternalCooldownTag.ElementalBurst,
-            poiseDamage: CONSTELLATION_4_POISE_DAMAGE,
-            talentMultiplier: CONSTELLATION_4_DAMAGE_MULTIPLIER,
-          }
-        : undefined,
     // Tidecaller's Electro shield is set at the press, of the group's share of Beidou's Max HP plus its flat HP, and
     // Stands until the hit, as gcsim's does
     skill: {

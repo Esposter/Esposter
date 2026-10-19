@@ -31,8 +31,8 @@ describe(getKitHealedHp, () => {
     bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0,
-    kind: KitEventKind.HealthChanged,
     isFallRefused: false,
+    kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
   } as const;
   const party = createParty([TRAVELER_CHARACTER_ID]);

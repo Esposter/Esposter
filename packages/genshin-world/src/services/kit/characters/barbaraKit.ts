@@ -153,18 +153,6 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
       combatant.constellationCount >= VITALITY_BURST_CONSTELLATION ? VITALITY_BURST_COOLDOWN_MULTIPLIER : 1,
     normalAttacks: [strikeBehaviour, strikeBehaviour, strikeBehaviour, strikeBehaviour],
-    // Gleeful Songs' clock arms on each step she is in the team, and its expiry gives the Energy
-    onStep: ({ kitEffectState }, combatant) => {
-      if (
-        combatant.constellationCount < GLEEFUL_SONGS_CONSTELLATION ||
-        findKitStatus(kitEffectState.effects, combatant.characterId, GLEEFUL_SONGS_STATUS_ID)
-      )
-        return;
-      addKitStatus(kitEffectState, combatant.characterId, {
-        id: GLEEFUL_SONGS_STATUS_ID,
-        secondsRemaining: GLEEFUL_SONGS_SECONDS,
-      });
-    },
     // Encore lengthens the Melody Loop as particles are collected, up to its maximum extension
     // Dedicating Everything to You revives a downed member once every fifteen minutes while Barbara is off the field
     onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
@@ -203,6 +191,18 @@ export const createBarbaraKitBehaviour = ({ readHits, readParameter, readSeconds
         )
       )
         getPartyMember(party, event.characterId).healthShare = DEDICATING_EVERYTHING_TO_YOU_HEALTH_SHARE;
+    },
+    // Gleeful Songs' clock arms on each step she is in the team, and its expiry gives the Energy
+    onStep: ({ kitEffectState }, combatant) => {
+      if (
+        combatant.constellationCount < GLEEFUL_SONGS_CONSTELLATION ||
+        findKitStatus(kitEffectState.effects, combatant.characterId, GLEEFUL_SONGS_STATUS_ID)
+      )
+        return;
+      addKitStatus(kitEffectState, combatant.characterId, {
+        id: GLEEFUL_SONGS_STATUS_ID,
+        secondsRemaining: GLEEFUL_SONGS_SECONDS,
+      });
     },
     // The droplets are a summon and the Melody Loop a field, both cast where Barbara stands and priced by her as she
     // Stood then

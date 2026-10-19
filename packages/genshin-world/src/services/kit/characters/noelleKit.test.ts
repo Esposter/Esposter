@@ -256,9 +256,9 @@ describe("noelle kit", () => {
     });
     NOELLE_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: NOELLE_CHARACTER_ID,
         healthShare: -0.5,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -287,9 +287,9 @@ describe("noelle kit", () => {
     getPartyMember(shieldedContext.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
     NOELLE_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: NOELLE_CHARACTER_ID,
         healthShare: -0.5,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -330,9 +330,9 @@ describe("noelle kit", () => {
     getPartyMember(context.party, NOELLE_CHARACTER_ID).healthShare = 0.2;
     NOELLE_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: NOELLE_CHARACTER_ID,
         healthShare: -0.5,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,
@@ -365,9 +365,9 @@ describe("noelle kit", () => {
     getPartyMember(party, NOELLE_CHARACTER_ID).healthShare = 0.2;
     NOELLE_KIT.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: BACKGROUND_CHARACTER_ID,
         healthShare: -0.5,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,

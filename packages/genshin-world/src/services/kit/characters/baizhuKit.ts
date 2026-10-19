@@ -93,12 +93,6 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
     });
   };
   return {
-    getStrikeDamageBonus: ({ combatant, hit }, _enemy, party) =>
-      combatant.ascension >= FIVE_FORTUNES_FOREVER_ASCENSION &&
-      getKitHitElement(hit, combatant) === Element.Dendro &&
-      getPartyMember(party, getActiveCharacterId(party)).healthShare >= FIVE_FORTUNES_FOREVER_HEALTH_SHARE
-        ? FIVE_FORTUNES_FOREVER_DENDRO_DAMAGE_BONUS
-        : 0,
     burst: {
       onStart: (context) => {
         const { activeCombatant: combatant, body, kitEffectState, party } = context;
@@ -119,6 +113,13 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         });
       },
     },
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
+    getStrikeDamageBonus: ({ combatant, hit }, _enemy, party) =>
+      combatant.ascension >= FIVE_FORTUNES_FOREVER_ASCENSION &&
+      getKitHitElement(hit, combatant) === Element.Dendro &&
+      getPartyMember(party, getActiveCharacterId(party)).healthShare >= FIVE_FORTUNES_FOREVER_HEALTH_SHARE
+        ? FIVE_FORTUNES_FOREVER_DENDRO_DAMAGE_BONUS
+        : 0,
     // Constellation 2: a hit the active member lands on an enemy queues a Splice at that enemy, once the cooldown
     // Is off. The cooldown starts as the Splice is queued, so the Splice's own hit cannot queue another
     onKitEvent: (event, context, combatant) => {
@@ -135,6 +136,5 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         return;
       queueKitPassiveHit(context, combatant, gossamerSpliceHit, event.enemy);
     },
-    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
   };
 };

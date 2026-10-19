@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import { takeOne } from "@esposter/shared";
 import { ILLUSORY_TORRENT_ID } from "#src/services/gcg/cards/constants";
+import { takeOne } from "@esposter/shared";
 
 // Illusory Torrent, Mona's passive: once a round, while Mona is active, switching away from her is a fast action
 export const illusoryTorrent: GcgSkillModule = {

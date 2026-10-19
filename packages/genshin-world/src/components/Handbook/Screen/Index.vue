@@ -13,12 +13,12 @@ import { CHECK_MARK_PATH, GameScreen, ItemTile } from "genshin-interface";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
+  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
+  canUseLongTermEncounterPoints: boolean;
   // The investigation's commissions, top to bottom
   commissions: HandbookCommission[];
   // The panel's ring and bar: how many of its investigations are done out of how many
   completedCount: number;
-  // Whether a Long-Term Encounter Point can be converted now, so its button is enabled
-  canUseLongTermEncounterPoints: boolean;
   // The day's four commissions, top to bottom, as the Commissions tab lists them
   dayCommissions: HandbookDayCommission[];
   // The Domains tab's rows, top to bottom: each domain with the one action the player can take with it
@@ -35,10 +35,10 @@ interface Props {
   isAdventureEncountersUnlocked: boolean;
   // The panel's reward footer, shown once every reward is taken
   isRewardClaimed?: true;
-  // The names the commissions' titles cite, by their name text id, in the reader's language
-  nameText: Readonly<Record<string, string>>;
   // The Long-Term Encounter Points held, as whole points, which the Commissions tab's stage rewards count
   longTermEncounterPoints: number;
+  // The names the commissions' titles cite, by their name text id, in the reader's language
+  nameText: Readonly<Record<string, string>>;
   totalCount: number;
 }
 

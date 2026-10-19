@@ -234,9 +234,9 @@ describe(createLaylaKitBehaviour, () => {
 
     stepKitSeconds(context, 13);
     expect({
-      nightStars: countNightStars(context.kitEffectState),
       isShooting: checkIsKitStatusActive(context.kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_SHOOTING_STARS_ID),
-    }).toStrictEqual({ nightStars: 4, isShooting: true });
+      nightStars: countNightStars(context.kitEffectState),
+    }).toStrictEqual({ isShooting: true, nightStars: 4 });
   });
 
   test("a skill used while the shield lasts adds two Night Stars, and none without a shield", () => {
@@ -286,9 +286,9 @@ describe(createLaylaKitBehaviour, () => {
       travelFrames: casts.map(({ hit }) => Math.round(hit.hitmarkSeconds * 60)),
     }).toStrictEqual({ frames: [36, 63, 90, 117], travelFrames: [35, 33, 30, 28] });
     expect({
-      nightStars: countNightStars(context.kitEffectState),
       isShooting: checkIsKitStatusActive(context.kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_SHOOTING_STARS_ID),
-    }).toStrictEqual({ nightStars: 0, isShooting: false });
+      nightStars: countNightStars(context.kitEffectState),
+    }).toStrictEqual({ isShooting: false, nightStars: 0 });
   });
 
   test("each Shooting Star flies at the nearest enemy within 10 metres", () => {

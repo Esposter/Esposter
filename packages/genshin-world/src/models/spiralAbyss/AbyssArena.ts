@@ -13,7 +13,7 @@ export interface AbyssArena {
   challenge: AbyssChallenge;
   chamber: AbyssChamber;
   defeatsInHalf: number;
-  floor: AbyssFloor;
   enemyKindIds: Readonly<Record<string, number>>;
+  floor: AbyssFloor;
   startedAt: number;
 }

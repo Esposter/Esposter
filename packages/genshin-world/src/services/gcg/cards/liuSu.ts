@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { takeOne } from "@esposter/shared";
 import { LIU_SU_ID } from "#src/services/gcg/cards/constants";
+import { takeOne } from "@esposter/shared";
 
 const LIU_SU_USES = 2;
 

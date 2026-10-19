@@ -1,6 +1,6 @@
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
-import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { checkIsExpeditionPlaceOpen } from "#src/services/expedition/checkIsExpeditionPlaceOpen";
 import { GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";

@@ -47,10 +47,10 @@ interface Props {
   // The namecard the player equipped by its item id, 0 for none, and the held namecards the profile can show
   namecardItemId: number;
   namecards: ProfileNamecard[];
-  // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
-  travelerBirthday?: TravelerBirthdaySave;
   // The server's clock minus this machine's, which the World Level's cooldown is read against
   serverClockOffsetMs?: number;
+  // The Traveler's birthday once it is set, which the row shows; until then the row offers the button that sets it
+  travelerBirthday?: TravelerBirthdaySave;
   // When the World Level last changed, for the cooldown its dialog's button waits on
   worldLevel: number;
   worldLevelChangedAt?: Temporal.Instant;

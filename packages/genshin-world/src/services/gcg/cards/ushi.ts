@@ -2,9 +2,9 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 
 import { Element } from "#src/models/Element";
+import { ARATAKI_ITTO_ID } from "#src/services/gcg/cards/constants";
 import { attachSuperlativeSuperstrength } from "#src/services/gcg/cards/superlativeSuperstrength";
 import { takeOne } from "@esposter/shared";
-import { ARATAKI_ITTO_ID } from "#src/services/gcg/cards/constants";
 
 const USHI_DAMAGE = 1;
 const USHI_REDUCTION = 1;

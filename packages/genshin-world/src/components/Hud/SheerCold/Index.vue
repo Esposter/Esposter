@@ -6,10 +6,10 @@ import { SHEER_COLD_MAXIMUM } from "#src/services/sheerCold/constants";
 import { GameTextKey } from "genshin-text";
 
 interface Props {
-  // The game's words in the reader's language, which name the gauge
-  gameText: GameText;
   // The world's frame, whose Sheer Cold gauge the bar fills by
   frame: HudFrame;
+  // The game's words in the reader's language, which name the gauge
+  gameText: GameText;
 }
 
 const { frame, gameText } = defineProps<Props>();

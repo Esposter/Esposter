@@ -2,7 +2,6 @@ import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
-import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { Element } from "#src/models/Element";
@@ -12,6 +11,7 @@ import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { CharacterLevelMultiplierMap } from "#src/services/combat/damage/CharacterLevelMultiplierMap";
 import { getLunarDamage } from "#src/services/combat/damage/getLunarDamage";
 import { getResistanceMultiplier } from "#src/services/combat/damage/getResistanceMultiplier";
+import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";

@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
+import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/constants";
 import { addGcgShield } from "#src/services/gcg/effects/addGcgShield";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
-import { AEGIS_OF_ABYSSAL_FLAME_ID } from "#src/services/gcg/cards/constants";
 
 const AEGIS_SHIELD_POINTS = 2;
 const AEGIS_PIERCING_DAMAGE = 1;

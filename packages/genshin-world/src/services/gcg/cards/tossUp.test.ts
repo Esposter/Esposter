@@ -5,12 +5,12 @@ import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { Element } from "#src/models/Element";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { tossUp } from "#src/services/gcg/cards/tossUp";
 import { GCG_DIE_FACES } from "#src/services/gcg/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 // A random source that rolls the given die face in turn, each as the middle of its slice of the faces
 const createFaceRandom = (faceIndices: number[]): (() => number) => {
@@ -38,9 +38,8 @@ const createSide = (dice: GcgSideState["dice"]): GcgSideState => ({
 });
 
 const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   phase: GcgPhase.Action,
@@ -48,6 +47,7 @@ const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
   round: 1,
   rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
   sides: [side, createSide([])],
+  skillModules: GcgEffectNameSkillModuleMap,
 });
 
 const playTossUp = (side: GcgSideState, random: () => number, choice?: GcgPlayChoice): void => {

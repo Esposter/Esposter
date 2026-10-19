@@ -7,8 +7,8 @@ import {
   INUZAKA_ALL_ROUND_DEFENSE_SKILL_ID,
   RUSHING_HOUND_ID,
 } from "#src/services/gcg/cards/constants";
-import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
+import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { takeOne } from "@esposter/shared";
 
 // Rushing Hound: Swift as the Wind, Gorou's Talent: it is equipped to her and uses her Elemental Skill at once. While it is

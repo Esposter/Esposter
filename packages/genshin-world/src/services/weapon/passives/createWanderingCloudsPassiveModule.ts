@@ -1,8 +1,8 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { createChanceProcPassiveModule } from "#src/services/weapon/passives/createChanceProcPassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createChanceProcPassiveModule } from "#src/services/weapon/passives/createChanceProcPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const WANDERING_CLOUDS_COOLDOWN_ID = "wanderingClouds";

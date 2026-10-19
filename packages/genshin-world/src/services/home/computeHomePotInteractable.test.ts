@@ -1,5 +1,5 @@
-import { HOME_POT_GADGET_ID } from "#src/services/home/constants";
 import { computeHomePotInteractable } from "#src/services/home/computeHomePotInteractable";
+import { HOME_POT_GADGET_ID } from "#src/services/home/constants";
 import { InteractionKind } from "genshin-interface";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";

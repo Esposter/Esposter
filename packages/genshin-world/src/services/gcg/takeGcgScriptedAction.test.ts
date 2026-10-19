@@ -7,16 +7,16 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { GcgActionResult } from "#src/models/gcg/GcgActionResult";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { takeGcgScriptedAction } from "#src/services/gcg/takeGcgScriptedAction";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
 
@@ -39,9 +39,8 @@ const createSideState = (characters: GcgCharacterState[], dice: Element[] = []):
   usedSkillIds: [],
 });
 const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -50,6 +49,7 @@ const createDuel = (attacker: GcgSideState, defender: GcgSideState): GcgDuel => 
   round: 1,
   rule: TEST_RULE,
   sides: [attacker, defender],
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 
@@ -61,12 +61,12 @@ describe(takeGcgScriptedAction, () => {
     expect.hasAssertions();
 
     const eremite = createGcgCharacterState({
-      character: { id: EREMITE_ID, element: Element.Pyro },
+      character: { element: Element.Pyro, id: EREMITE_ID },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
     const attacker = createSideState([eremite], [Element.Pyro, Element.Pyro]);
     const defender = createSideState([
-      createGcgCharacterState({ character: { id: HYDRO_ID, element: Element.Hydro } }),
+      createGcgCharacterState({ character: { element: Element.Hydro, id: HYDRO_ID } }),
     ]);
     const duel = createDuel(attacker, defender);
 

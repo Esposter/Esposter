@@ -34,8 +34,8 @@ export const createCombatant = (
     ),
     characterId: character.id,
     constellationCount: character.constellationCount,
-    element,
     deployedElements,
+    element,
     elementalResonances,
     kit: getWeaponPassiveKit(
       getArtifactSetKit(kit, character.artifacts, statTables.artifactSetDataMap),

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { OreHit } from "#src/models/gathering/OreHit";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
+import type { OreHit } from "#src/models/gathering/OreHit";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitHit } from "#src/models/kit/KitHit";
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { PuzzleHit } from "#src/models/puzzle/PuzzleHit";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type {
@@ -51,7 +52,6 @@ import {
 } from "genshin-engine";
 import { PerspectiveCamera, Vector2, Vector3 } from "three";
 import { onBeforeUnmount } from "vue";
-import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 
 interface Props {
   // What the character is drawn on, which the scene places in the floating origin's group: it is stood at the body's
@@ -209,9 +209,9 @@ const fixedStepLoop = createFixedStepLoop(FIXED_STEP_SECONDS, () => {
       isAimHeld: inputState.heldActions.has(InputAction.Aim),
       landedHits,
       strikeOre: (kitBody, oreHit) => emit("strikeOre", kitBody, oreHit),
-      triggerReaction: (enemy, reactions) => emit("reactionTriggered", enemy, reactions),
-      triggerHealthChange: (change) => emit("partyHealthChanged", change),
       strikePuzzle: (kitBody, puzzleHit) => emit("strikePuzzle", kitBody, puzzleHit),
+      triggerHealthChange: (change) => emit("partyHealthChanged", change),
+      triggerReaction: (enemy, reactions) => emit("reactionTriggered", enemy, reactions),
     },
   );
 });
@@ -265,6 +265,10 @@ const placedPosition = new Vector3();
 // A jump stands the body on the ground at its pose's point, facing the pose's yaw, with the camera level behind it. A
 // Jump ends an action in progress. The party's stamina is read by the HUD's meter
 defineExpose({
+  // The locomotion phase the Sheer Cold gauge reads its swimming off
+  get phase() {
+    return characterController.phase;
+  },
   place: ({ point, yaw }: WorldJumpPose) => {
     characterController.place(placedPosition.set(point.x, getGroundHeight(point.x, point.z), point.z), yaw);
     kitState = createKitState();
@@ -272,10 +276,6 @@ defineExpose({
     followCamera?.reset(yaw);
   },
   returnToDefaultDistance: () => followCamera?.returnToDefaultDistance(),
-  // The locomotion phase the Sheer Cold gauge reads its swimming off
-  get phase() {
-    return characterController.phase;
-  },
   stamina: characterController.stamina,
 });
 </script>

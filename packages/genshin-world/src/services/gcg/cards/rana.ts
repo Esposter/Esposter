@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { RANA_ID } from "#src/services/gcg/cards/constants";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { takeOne } from "@esposter/shared";
-import { RANA_ID } from "#src/services/gcg/cards/constants";
 
 // Rana, a companion: after her side's character uses an Elemental Skill, a die of the element of the next off-field character
 // Is created, once per Round (the wiki's Rana (Support Card)). The skill counts only when her side is the acting side

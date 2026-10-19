@@ -2,6 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
+import { ReactionType } from "#src/models/combat/ReactionType";
+import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
@@ -12,12 +14,10 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { shredPolestarEnemies } from "#src/services/kit/shredPolestarEnemies";
-import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
-import { ReactionType } from "#src/models/combat/ReactionType";
-import { Element } from "#src/models/Element";
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);

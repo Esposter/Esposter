@@ -21,12 +21,12 @@ describe(buyShopGoodCount, () => {
   const GOOD: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
+    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     endTime: EPOCH.add({ hours: 876_000 }).toString(),
     goodsId: 1,
     itemCount: 1,
     itemId: ANEMO_SIGIL_ITEM_ID,
     minPlayerLevel: 1,
-    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     refresh: ShopRefresh.None,
   };
 

@@ -1,8 +1,8 @@
+import type { Attribute } from "#src/models/character/Attribute";
+import type { Reaction } from "#src/models/combat/Reaction";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import type { Attribute } from "#src/models/character/Attribute";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
-import type { Reaction } from "#src/models/combat/Reaction";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";

@@ -12,10 +12,10 @@ const ASHEN_NIGHTSTAR_ID = "ashenNightstar";
 const ASHEN_NIGHTSTAR_MAXIMUM_STACKS = 4;
 
 const STACKING_ATTACK_TAGS = new Set([
-  AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
-  AttackTag.ElementalSkill,
   AttackTag.ElementalBurst,
+  AttackTag.ElementalSkill,
+  AttackTag.NormalAttack,
 ]);
 const checkIsStackingHit = (attackTag: AttackTag | undefined): boolean =>
   attackTag !== undefined && STACKING_ATTACK_TAGS.has(attackTag);
@@ -35,7 +35,7 @@ export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveMod
       },
     ],
     getStrikeDamageBonus: (strike) =>
-      strike.attackTag !== undefined && [AttackTag.ElementalSkill, AttackTag.ElementalBurst].includes(strike.attackTag)
+      strike.attackTag !== undefined && [AttackTag.ElementalBurst, AttackTag.ElementalSkill].includes(strike.attackTag)
         ? damageBonus
         : 0,
     onKitEvent: (event, { kitEffectState }, combatant) => {

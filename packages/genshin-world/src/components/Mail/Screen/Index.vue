@@ -21,6 +21,11 @@ import { ID_SEPARATOR } from "@esposter/shared";
 import { GameButton, GameButtonKind } from "genshin-interface";
 import { fillGameTextValues, GameTextKey } from "genshin-text";
 
+interface MailEntry {
+  mail: MailSave;
+  row: Mail;
+}
+
 interface Props {
   // The held mails that are the Traveler's birthday mails, which the Gift Mail Box keeps once claimed
   birthdayMailIds: ReadonlySet<number>;
@@ -40,11 +45,6 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-interface MailEntry {
-  mail: MailSave;
-  row: Mail;
-}
-
 const { birthdayMailIds, gameText, isBagFull, mailRows, mails, materialDataMap, names, now, textMap } =
   defineProps<Props>();
 const emit = defineEmits<{
@@ -53,8 +53,8 @@ const emit = defineEmits<{
   close: [];
   deleteGift: [mail: MailSave];
   deleteRead: [];
-  read: [mail: MailSave];
   pin: [mail: MailSave];
+  read: [mail: MailSave];
 }>();
 // Each held mail with its row, pinned first, so a mail with no row is never listed
 const sortedEntries = computed<MailEntry[]>(() =>
@@ -313,4 +313,5 @@ const getStatusText = ({ mail, row }: MailEntry): string => {
   margin-top: calc(var(--unit) * 20);
 }
 </style>
+
 <style scoped src="genshin-interface/styles/confirmDialog.css"></style>

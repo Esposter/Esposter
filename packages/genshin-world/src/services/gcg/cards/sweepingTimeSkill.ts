@@ -1,10 +1,10 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 import { sweepingTime } from "#src/services/gcg/cards/sweepingTime";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { SWEEPING_TIME_ID } from "#src/services/gcg/cards/constants";
 
 const SWEEPING_TIME_DAMAGE = 4;
 

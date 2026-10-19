@@ -1,5 +1,5 @@
-import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 import type { SceneExport } from "#src/models/scene/SceneExport";
+import type { LoadedRegion } from "#src/models/world/LoadedRegion";
 
 import { getOwnRegionData } from "#src/services/world/getOwnRegionData";
 import { describe, expect, test } from "vitest";

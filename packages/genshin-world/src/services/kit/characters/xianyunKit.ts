@@ -101,17 +101,6 @@ const checkIsCooldownFreePressActive = (context: KitContext): boolean =>
 // Constellations 1, 2, 4 and 6. Starwicker, the Burst's heals, her airborne buff and her passives are not built
 // Her four strikes, charged attack, plunges and Stars Gather at Dusk's hit are her record's alone
 export const createXianyunKitBehaviour = (): KitBehaviour => ({
-  // Purifying Wind, from Constellation 1: White Clouds at Dawn gains one more charge
-  getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
-  getSkillCooldownMultiplier: (context) => (checkIsCooldownFreePressActive(context) ? 0 : 1),
-  checkIsSkillCooldownWaived: checkIsCooldownFreePressActive,
-  // Constellation 6: a Driftcloud Wave's hit gains CRIT DMG for the presses made in its state
-  getStrikeCriticalDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) => {
-    if (combatant.constellationCount < CONSTELLATION_6 || attackTag !== AttackTag.PlungingAttack) return 0;
-
-    const presses = countKitResource(effects, combatant.characterId, XIANYUN_DRIFTCLOUD_ID);
-    return presses > 0 ? takeOne(CONSTELLATION_6_CRIT_DAMAGE, presses - 1) : 0;
-  },
   // Constellation 6: the Burst gives eight presses that cost no cooldown for 16 seconds
   burst: {
     onStart: ({ activeCombatant, kitEffectState }) => {
@@ -124,6 +113,18 @@ export const createXianyunKitBehaviour = (): KitBehaviour => ({
       });
     },
   },
+  checkIsSkillCooldownWaived: checkIsCooldownFreePressActive,
+  // Purifying Wind, from Constellation 1: White Clouds at Dawn gains one more charge
+  getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
+  getSkillCooldownMultiplier: (context) => (checkIsCooldownFreePressActive(context) ? 0 : 1),
+  // Constellation 6: a Driftcloud Wave's hit gains CRIT DMG for the presses made in its state
+  getStrikeCriticalDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) => {
+    if (combatant.constellationCount < CONSTELLATION_6 || attackTag !== AttackTag.PlungingAttack) return 0;
+
+    const presses = countKitResource(effects, combatant.characterId, XIANYUN_DRIFTCLOUD_ID);
+    return presses > 0 ? takeOne(CONSTELLATION_6_CRIT_DAMAGE, presses - 1) : 0;
+  },
+  plungeVariants: [1, 2, 3].map((presses) => createDriftcloudVariant(presses)),
   skill: {
     // A press spends one of Constellation 6's presses that cost no cooldown, if it holds any, and starts the state
     onStart: ({ activeCombatant, kitEffectState }) => {
@@ -152,5 +153,4 @@ export const createXianyunKitBehaviour = (): KitBehaviour => ({
         startSkyladderPress(kitEffectState, activeCombatant.characterId, 3),
     },
   ],
-  plungeVariants: [1, 2, 3].map((presses) => createDriftcloudVariant(presses)),
 });

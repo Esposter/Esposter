@@ -4,20 +4,20 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 
 import { Element } from "#src/models/Element";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
-import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
-import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
-import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
+import { teyvatFriedEgg } from "#src/services/gcg/cards/teyvatFriedEgg";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 const createSide = (sideCharacters: GcgCharacterState[]) => ({
   activeIndex: 0,
   cards: [],
   characters: sideCharacters,
-  dice: [],
   deckCardIds: [],
+  dice: [],
   drawPile: [],
   hand: [],
   hasDeclaredEnd: false,
@@ -33,9 +33,8 @@ const createSide = (sideCharacters: GcgCharacterState[]) => ({
 
 // A duel of two sides, the first with the given characters, the round in progress
 const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
   actingSideIndex: 0,
+  cardModules: GcgCardIdModuleMap,
   firstSideIndex: 0,
   nextFirstSideIndex: 0,
   outcome: undefined,
@@ -44,6 +43,7 @@ const createDuel = (characters: GcgCharacterState[]): GcgDuel => ({
   round: 1,
   rule: { handCardLimit: 10 } as GcgDuel["rule"],
   sides: [createSide(characters), createSide([])],
+  skillModules: GcgEffectNameSkillModuleMap,
   winnerSideIndex: undefined,
 });
 

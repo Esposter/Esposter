@@ -1,8 +1,8 @@
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { AuraType } from "#src/models/combat/AuraType";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { AuraType } from "#src/models/combat/AuraType";
 import { THUNDERSOOTHER_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
 import { createThundersootherSetModule } from "#src/services/artifact/sets/createThundersootherSetModule";

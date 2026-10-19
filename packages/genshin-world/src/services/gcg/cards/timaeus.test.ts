@@ -8,13 +8,13 @@ import { Element } from "#src/models/Element";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { timaeus } from "#src/services/gcg/cards/timaeus";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 describe("timaeus", () => {
   const ARTIFACT_IDS = [401, 402, 403, 404, 405, 406];
@@ -57,9 +57,8 @@ describe("timaeus", () => {
   });
 
   const createDuel = (side: GcgSideState, random: () => number): GcgDuel => ({
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     outcome: undefined,
@@ -68,6 +67,7 @@ describe("timaeus", () => {
     round: 1,
     rule: { drawCount: 2, handCardLimit: HAND_CARD_LIMIT, reactions: [] },
     sides: [side, createSide([], [])],
+    skillModules: GcgEffectNameSkillModuleMap,
     winnerSideIndex: undefined,
   });
 

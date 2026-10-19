@@ -3,10 +3,10 @@ import type { Reaction } from "#src/models/combat/Reaction";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { ClearedCamp } from "#src/models/exploration/ClearedCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestEvent } from "#src/models/quest/QuestEvent";
 import type { QuestProgress } from "#src/models/quest/QuestProgress";
-import type { PartyHealthChange } from "#src/models/party/PartyHealthChange";
 import type { Tip } from "#src/models/tip/Tip";
 import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 

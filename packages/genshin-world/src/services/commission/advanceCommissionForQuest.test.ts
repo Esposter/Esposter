@@ -32,8 +32,8 @@ describe(advanceCommissionForQuest, () => {
   const day: CommissionDay = {
     claimedCommissionIds: [],
     dealtAt: Temporal.Instant.fromEpochMilliseconds(0),
-    isBonusClaimed: false,
     dealtCommissions: [{ commissionId: questTask.id, count: 0, dealtRank: DEALT_RANK }],
+    isBonusClaimed: false,
   };
 
   test("a quest task finishes with its quest", () => {

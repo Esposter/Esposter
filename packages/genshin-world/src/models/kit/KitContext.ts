@@ -28,28 +28,28 @@ export interface KitContext {
   enemyTables: EnemyTables;
   // The effects that ran out on the step, which it sends as expired and bursts the Dendro Cores of
   expiredEffects: KitEffect[];
-  kitEffectState: KitEffectState;
-  // The active character's locomotion state as the step's input gives it, which a kit reads to tell a dash or a jump from standing
-  locomotionState: LocomotionState;
   // Whether the active character's skill is held as the step's input gives it, which a counter window reads
   // On a hit it takes
   isSkillHeld: boolean;
-  // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written each step
-  stamina: Stamina;
+  kitEffectState: KitEffectState;
+  // The active character's locomotion state as the step's input gives it, which a kit reads to tell a dash or a jump from standing
+  locomotionState: LocomotionState;
   // The ores the step's reactions strike, each from where its reaction landed, sent once its strikes have landed
   oreStrikes: OreStrike[];
-  // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed
-  reactionTriggers: KitReactionTrigger[];
   // The events raised outside a kit's own calls: between steps, as a taunt is struck, and as the enemies' statuses tick
   outbox: KitEvent[];
   party: Party;
+  // Where the drops a struck animal gives lie, given the animal and the drops it gives
+  placeWildlifeDrops: (wildlife: Wildlife, droppedItems: DroppedItem[]) => void;
   // The enemy the character on the field's last action that targeted turned to, as gcsim's primary target is the one its
   // Attacks fall on, which a kit places a hit on that no action of its own targets. It outlasts its action and a swap, and
   // Is let go once it dies or leaves the world, none until an action targets one
   primaryTarget?: Enemy;
-  // Where the drops a struck animal gives lie, given the animal and the drops it gives
-  placeWildlifeDrops: (wildlife: Wildlife, droppedItems: DroppedItem[]) => void;
   random: () => number;
+  // The reactions the step's hits and ticks triggered on enemies, sent to the world once the step's strikes have landed
+  reactionTriggers: KitReactionTrigger[];
+  // The character controller's stamina pool, which the team's kits spend from and a kit's effect restores to, written each step
+  stamina: Stamina;
   // The strikes the step lands, the summons' and then its own, which keep only those that struck an enemy once struck
   strikes: KitStrike[];
   // The birds and beasts in the world, each struck down by a hit its area reaches, as the enemies are

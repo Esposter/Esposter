@@ -25,6 +25,8 @@ import { fillGameTextValues, GameTextKey } from "genshin-text";
 
 interface Props {
   adventureRank: number;
+  // The expedition talents each character has unlocked, by character id, which shorten its expeditions and add to their rewards
+  characterExpeditionPassives: ReadonlyMap<number, readonly ExpeditionPassive[]>;
   // The characters the picker lists, each by its id and its name in the reader's language
   characters: { id: number; name: string }[];
   completedQuestIds: ReadonlySet<string>;
@@ -42,8 +44,6 @@ interface Props {
   now: Temporal.Instant;
   // Each place's pin at 1080 high in the frame, by its id; a place with no position is not drawn
   pinPositions: ReadonlyMap<number, { x: number; y: number }>;
-  // The expedition talents each character has unlocked, by character id, which shorten its expeditions and add to their rewards
-  characterExpeditionPassives: ReadonlyMap<number, readonly ExpeditionPassive[]>;
   // Mondstadt's expedition places as the game's tables hold them
   places: ExpeditionPlace[];
   // The world's seeded random source, which each claim's counts are drawn from

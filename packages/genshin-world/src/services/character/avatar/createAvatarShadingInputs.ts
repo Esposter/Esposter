@@ -34,7 +34,7 @@ const readKnots = (colors: Readonly<Record<string, Vector4Tuple>>, name: string)
 
 // An outline's width knots as one value, or none where the material names neither. A material that names one of the two
 // Keeps the unit knots for the other
-const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): undefined | OutlineWidthKnots => {
+const readOutlineWidthKnots = (colors: Readonly<Record<string, Vector4Tuple>>): OutlineWidthKnots | undefined => {
   const depths = readKnots(colors, "_OutlineWidthAdjustZs");
   const scales = readKnots(colors, "_OutlineWidthAdjustScales");
   if (!depths && !scales) return undefined;

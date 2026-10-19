@@ -6,9 +6,9 @@ import type { Party } from "#src/models/party/Party";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { getEnergyGain } from "#src/services/combat/energy/getEnergyGain";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
-import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // An enemy's drop of energy, written into each standing member of the deployed team: the drop's count of what each one
 // Gains from it, by its element, its energy recharge and whether it is on the field, up to what its burst costs. A

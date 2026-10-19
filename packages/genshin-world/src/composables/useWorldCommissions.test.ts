@@ -89,8 +89,8 @@ describe(useWorldCommissions, () => {
       savedCommissionDay: {
         claimedCommissionIds: [],
         dealtAt: todayReset,
-        isBonusClaimed: false,
         dealtCommissions: [2, 3, 4, 5].map((commissionId) => ({ commissionId, count: 0, dealtRank: RANK })),
+        isBonusClaimed: false,
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 2 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: LONG_TERM_MAJOR_VERSION },
@@ -113,8 +113,8 @@ describe(useWorldCommissions, () => {
       savedCommissionDay: {
         claimedCommissionIds: [1],
         dealtAt: todayReset.subtract({ minutes: 1 }),
-        isBonusClaimed: false,
         dealtCommissions: [{ commissionId: 1, count: 3, dealtRank: RANK }],
+        isBonusClaimed: false,
       },
       savedEncounterPoints: { earnedOn: todayReset, halfPoints: 0 },
       savedLongTermEncounterPoints: { halfPoints: 0, majorVersion: 0 },

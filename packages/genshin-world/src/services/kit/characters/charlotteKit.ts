@@ -128,18 +128,6 @@ export const createCharlotteKitBehaviour = ({
         });
       },
     },
-    // Each Snappy Silhouette tick is a hit on the enemy it ticks on
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.StatusTicked || event.status.id !== SNAPPY_MARK_STATUS_ID) return;
-      const { enemy } = event;
-      castKitSummon(
-        kitEffectState,
-        createKitBody({ x: enemy.position.x, z: enemy.position.z }),
-        combatant,
-        [snappyMarkHit],
-        { attackTag: AttackTag.ElementalSkill, target: enemy },
-      );
-    },
     getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
       if (combatant.ascension < ASCENSION_4) return [];
       const otherMembers = deployedCombatants.filter(({ characterId }) => characterId !== combatant.characterId);
@@ -151,6 +139,18 @@ export const createCharlotteKitBehaviour = ({
           attribute: Attribute.CryoDamageBonus,
         },
       ];
+    },
+    // Each Snappy Silhouette tick is a hit on the enemy it ticks on
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (event.kind !== KitEventKind.StatusTicked || event.status.id !== SNAPPY_MARK_STATUS_ID) return;
+      const { enemy } = event;
+      castKitSummon(
+        kitEffectState,
+        createKitBody({ x: enemy.position.x, z: enemy.position.z }),
+        combatant,
+        [snappyMarkHit],
+        { attackTag: AttackTag.ElementalSkill, target: enemy },
+      );
     },
     // Framing's press and its hold share the press's Snappy Silhouette marks. The hold's Focused Impression is not
     // Built Yet, as its hit falls a held duration later, which a skill's fixed hold levels cannot give (see its Page)

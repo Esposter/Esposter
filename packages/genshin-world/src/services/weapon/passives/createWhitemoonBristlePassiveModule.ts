@@ -15,7 +15,7 @@ export const createWhitemoonBristlePassiveModule = (params: number[]): PassiveMo
     checkIsObtainedBy: (event) => event.attackTag === AttackTag.NormalAttack && event.hit.element !== undefined,
     cooldownSeconds: takeOne(params, 4),
     id: "foliarIncision",
-    maximumInstances: takeOne(params, 2),
     masteryShare: takeOne(params, 1),
+    maximumInstances: takeOne(params, 2),
     seconds: takeOne(params, 3),
   });

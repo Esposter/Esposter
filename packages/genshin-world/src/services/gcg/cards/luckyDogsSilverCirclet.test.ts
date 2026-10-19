@@ -4,11 +4,11 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { luckyDogsSilverCirclet } from "#src/services/gcg/cards/luckyDogsSilverCirclet";
-import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
+import { luckyDogsSilverCirclet } from "#src/services/gcg/cards/luckyDogsSilverCirclet";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
+import { describe, expect, test } from "vitest";
 
 const createSide = (hp: number): GcgSideState => ({
   activeIndex: 0,
@@ -36,9 +36,8 @@ describe("luckyDogsSilverCirclet", () => {
   const NORMAL_ATTACK: GcgSkill = { ...ELEMENTAL_SKILL, id: 2, kind: GcgSkillKind.NormalAttack };
 
   const createDuel = (side: GcgSideState): GcgDuel => ({
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     phase: GcgPhase.Action,
@@ -46,6 +45,7 @@ describe("luckyDogsSilverCirclet", () => {
     round: 1,
     rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
     sides: [side, createSide(MAX_HP)],
+    skillModules: GcgEffectNameSkillModuleMap,
   });
 
   const zoneCard = { cardId: CIRCLET_ID, counter: 0, rounds: 0, usages: 0 };

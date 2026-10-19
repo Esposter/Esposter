@@ -56,9 +56,9 @@ import { burningAssault } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion
 import { spiritOfOmensAwakening } from "#src/services/gcg/cards/spiritOfOmensAwakening";
 import { spiritOfOmensPower } from "#src/services/gcg/cards/spiritOfOmensPower";
 import { springSpiritSummoning } from "#src/services/gcg/cards/springSpiritSummoning";
-import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
 import { starwardSword } from "#src/services/gcg/cards/starwardSword";
 import { stellarisPhantasm } from "#src/services/gcg/cards/stellarisPhantasm";
+import { stellarRestoration, stellarRestorationFromCard } from "#src/services/gcg/cards/stellarRestoration";
 import { sweepingTimeSkill } from "#src/services/gcg/cards/sweepingTimeSkill";
 import { tenguStormcall } from "#src/services/gcg/cards/tenguStormcall";
 import { tenkoKenshin } from "#src/services/gcg/cards/tenkoKenshin";
@@ -69,6 +69,7 @@ import { yakanEvocation } from "#src/services/gcg/cards/yakanEvocation";
 
 // Every character skill's own script, by the effect name the game gives the skill
 export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<string, GcgSkillModule>([
+  ["Card_Vehicle_1230311", burningAssault],
   ["Char_Skill_11022", icyPaws],
   ["Char_Skill_11023", signatureMix],
   ["Char_Skill_11032", frostgnaw],
@@ -112,6 +113,8 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_16023", sweepingTimeSkill],
   ["Char_Skill_16052", masatsuZetsugi],
   ["Char_Skill_16053", royalDescent],
+  ["Char_Skill_16062", inuzakaAllRoundDefense],
+  ["Char_Skill_16063", juugaForwardUntoVictory],
   ["Char_Skill_17012", floralBrush],
   ["Char_Skill_17013", trumpCardKitty],
   ["Char_Skill_22012", oceanidMimicSummoning],
@@ -119,6 +122,10 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_22014", tideAndTorrent],
   ["Char_Skill_23023", ominousStar],
   ["Char_Skill_23024", fieryRebirthSkill],
+  ["Char_Skill_23031", searingGlare],
+  ["Char_Skill_23032", blazingStrike],
+  ["Char_Skill_23033", spiritOfOmensAwakening],
+  ["Char_Skill_23034", spiritOfOmensPower],
   ["Char_Skill_24012", rockPaperScissorsCombo],
   ["Char_Skill_24013", lightningLockdown],
   ["Char_Skill_24014", electroCrystalCoreSkill],
@@ -129,11 +136,4 @@ export const GcgEffectNameSkillModuleMap: Map<string, GcgSkillModule> = new Map<
   ["Char_Skill_30023", hide],
   ["Char_Skill_33024", flowfireEdgeSkill],
   ["Char_Skill_34063", elementalSedimentation],
-  ["Card_Vehicle_1230311", burningAssault],
-  ["Char_Skill_16062", inuzakaAllRoundDefense],
-  ["Char_Skill_16063", juugaForwardUntoVictory],
-  ["Char_Skill_23031", searingGlare],
-  ["Char_Skill_23032", blazingStrike],
-  ["Char_Skill_23033", spiritOfOmensAwakening],
-  ["Char_Skill_23034", spiritOfOmensPower],
 ]);

@@ -140,8 +140,8 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wearer],
         [OTHER_CHARACTER_ID, createWearer(OTHER_CHARACTER_ID)],
+        [TRAVELER_CHARACTER_ID, wearer],
       ]),
       kitEffectState,
       party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
@@ -161,8 +161,8 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     const context = createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wearer],
         [OTHER_CHARACTER_ID, createWearer(OTHER_CHARACTER_ID)],
+        [TRAVELER_CHARACTER_ID, wearer],
       ]),
       kitEffectState,
       party: createParty([OTHER_CHARACTER_ID, TRAVELER_CHARACTER_ID]),
@@ -182,8 +182,8 @@ describe(createHuskOfOpulentDreamsSetModule, () => {
     const wearer = createWearer();
     const otherWearer = createWearer(OTHER_CHARACTER_ID);
     const characterIdCombatantMap = new Map([
-      [TRAVELER_CHARACTER_ID, wearer],
       [OTHER_CHARACTER_ID, otherWearer],
+      [TRAVELER_CHARACTER_ID, wearer],
     ]);
     const kitEffectState: KitEffectState = { effects: [] };
     const awayContext = createKitTestContext(otherWearer, {

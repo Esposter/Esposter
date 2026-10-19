@@ -1,6 +1,6 @@
+import type { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
-import type { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";

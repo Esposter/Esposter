@@ -119,13 +119,6 @@ export const createEscoffierKitBehaviour = ({
   const rehabDietIntervalSeconds = readSeconds("rehabDietInterval");
   const rehabDietLastTickSeconds = readSeconds("rehabDietLastTick");
   return {
-    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo attack
-    getStrikeCriticalDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
-      getConstellation1CriticalDamage(combatant.characterId, combatant, hit, effects),
-    // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is open
-    getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
-      criticalDamageBonus: getConstellation1CriticalDamage(member.characterId, combatant, hit, effects),
-    }),
     burst: {
       hits: [{ enemyStatus: getAscension4Status }],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
@@ -165,6 +158,13 @@ export const createEscoffierKitBehaviour = ({
         });
       },
     },
+    // Constellation 1 reaches a deployed member's Cryo strike while the window of its member, whose kit this is, is open
+    getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
+      criticalDamageBonus: getConstellation1CriticalDamage(member.characterId, combatant, hit, effects),
+    }),
+    // Constellation 1: a Cryo strike of hers gets 60% CRIT DMG while her window is open, as gcsim's c1 buffs every Cryo attack
+    getStrikeCriticalDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
+      getConstellation1CriticalDamage(combatant.characterId, combatant, hit, effects),
     skill: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         startConstellation1(combatant, kitEffectState);

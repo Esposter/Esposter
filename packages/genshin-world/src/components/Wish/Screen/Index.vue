@@ -289,7 +289,7 @@ const wish = (count: number) => {
       :shop-label="gameText[GameTextKey.Shop]"
       :sets
       :title="gameText[GameTextKey.Wish]"
-      :trial-label="trialLabel"
+      :trial-label
       @buy="buyFate()"
       @close="emit('close')"
       @dismiss="results = []"

@@ -4,8 +4,8 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsActiveCharacterHit } from "#src/services/artifact/sets/checkIsActiveCharacterHit";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 

@@ -23,8 +23,8 @@ describe(equipBagArtifact, () => {
     reliquarySets: [
       {
         id: 1,
-        needCounts: [2, 4],
         nameTextId: "1",
+        needCounts: [2, 4],
         pieces: [
           {
             itemId: 101,

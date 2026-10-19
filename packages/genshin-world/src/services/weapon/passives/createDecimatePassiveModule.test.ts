@@ -2,8 +2,8 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { EnemyFamily } from "#src/models/enemy/EnemyFamily";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";

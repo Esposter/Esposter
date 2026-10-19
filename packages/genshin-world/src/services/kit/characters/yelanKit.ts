@@ -88,6 +88,20 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
           );
       },
     },
+    // Ascension 1's Max HP bonus, read from the team's Elemental Types, herself included, as the pricing adds it
+    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
+      if (combatant.ascension < ASCENSION_1) return [];
+      const elementTypeCount = new Set(
+        deployedCombatants.flatMap(({ element }) => (element === undefined ? [] : [element])),
+      ).size;
+      const amount =
+        elementTypeCount >= ASCENSION_1_FULL_ELEMENT_COUNT
+          ? ASCENSION_1_FULL_HEALTH_PERCENT
+          : elementTypeCount * ASCENSION_1_HEALTH_PERCENT_PER_ELEMENT;
+      return [{ amount, attribute: Attribute.HealthPercent }];
+    },
+    // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
+    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
     // Ascension 4's damage bonus goes to the active character, so a swap moves it on the next step. Its amount is set
     // By the whole seconds the status has run, which its remaining seconds count down
     onStep: ({ activeCombatant, kitEffectState }, combatant) => {
@@ -105,20 +119,6 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         source: ASCENSION_4_STATUS_ID,
       });
     },
-    // Ascension 1's Max HP bonus, read from the team's Elemental Types, herself included, as the pricing adds it
-    getPassiveBonuses: (combatant, _healthShare, deployedCombatants) => {
-      if (combatant.ascension < ASCENSION_1) return [];
-      const elementTypeCount = new Set(
-        deployedCombatants.flatMap(({ element }) => (element === undefined ? [] : [element])),
-      ).size;
-      const amount =
-        elementTypeCount >= ASCENSION_1_FULL_ELEMENT_COUNT
-          ? ASCENSION_1_FULL_HEALTH_PERCENT
-          : elementTypeCount * ASCENSION_1_HEALTH_PERCENT_PER_ELEMENT;
-      return [{ amount, attribute: Attribute.HealthPercent }];
-    },
-    // Enter the Plotters, from Constellation 1: Lingering Lifeline gains one more charge
-    getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
     // A Lingering Lifeline hit throws an Exquisite Throw from her body while the burst's field stands, as gcsim's marked
     // Hit does while its burst status holds
     skill: {

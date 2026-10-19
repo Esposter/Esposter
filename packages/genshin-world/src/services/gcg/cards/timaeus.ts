@@ -2,10 +2,10 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
 import { countGcgDiceCost } from "#src/services/gcg/countGcgDiceCost";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { takeOne } from "@esposter/shared";
-import { TIMAEUS_ID } from "#src/services/gcg/cards/constants";
 
 const ARTIFACTS_IN_DECK_TO_DRAW = 6;
 

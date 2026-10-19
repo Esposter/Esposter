@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
+import { TIMMIE_ID } from "#src/services/gcg/cards/constants";
 import { drawGcgCards } from "#src/services/gcg/drawGcgCards";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
-import { TIMMIE_ID } from "#src/services/gcg/cards/constants";
 
 const PIGEONS_TO_DISCARD = 3;
 

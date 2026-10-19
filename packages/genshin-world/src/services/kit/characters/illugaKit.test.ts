@@ -10,12 +10,12 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
-import { createEnemy } from "#src/services/enemy/createEnemy";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
-import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import {
   createIllugaKitBehaviour,
   ILLUGA_CHARACTER_ID,

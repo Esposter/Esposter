@@ -38,7 +38,7 @@ describe(unequipArtifactToBag, () => {
   const options = {
     names: { "101": "Flower Piece", "102": variantName },
     reliquarySets: [
-      { id: 1, needCounts: [2, 4], nameTextId: "1", pieces: [flowerPiece, variantPiece] },
+      { id: 1, nameTextId: "1", needCounts: [2, 4], pieces: [flowerPiece, variantPiece] },
     ] satisfies ReliquarySetData[],
   };
   const rarityData: ArtifactRarityData = {

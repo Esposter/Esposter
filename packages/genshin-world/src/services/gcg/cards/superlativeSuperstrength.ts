@@ -2,11 +2,11 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
 
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgChargedAttack } from "#src/services/gcg/effects/checkIsGcgChargedAttack";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { SUPERLATIVE_SUPERSTRENGTH_ID } from "#src/services/gcg/cards/constants";
 
 const SUPERLATIVE_SUPERSTRENGTH_BONUS = 1;
 const SUPERLATIVE_SUPERSTRENGTH_MAX_USAGES = 3;

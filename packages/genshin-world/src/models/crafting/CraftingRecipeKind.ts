@@ -3,8 +3,8 @@
 // Conversion of one material into another with a catalyst
 export enum CraftingRecipeKind {
   Bait = "Bait",
-  Convert = "Convert",
   CondensedResin = "CondensedResin",
+  Convert = "Convert",
   Gadget = "Gadget",
   Potion = "Potion",
   Tier = "Tier",

@@ -26,9 +26,9 @@ export const createLongNightsOathSetModule = (bonus: ArtifactSetBonus): PassiveM
   if (bonus.pieceCount === 2)
     return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.PlungingAttack });
   const stacksByAttackTag = new Map<AttackTag, number>([
-    [AttackTag.PlungingAttack, takeOne(params, 0)],
     [AttackTag.ChargedAttack, takeOne(params, 1)],
     [AttackTag.ElementalSkill, takeOne(params, 2)],
+    [AttackTag.PlungingAttack, takeOne(params, 0)],
   ]);
   const damageBonusPerStack = takeOne(params, 3);
   const stackSeconds = takeOne(params, 4);

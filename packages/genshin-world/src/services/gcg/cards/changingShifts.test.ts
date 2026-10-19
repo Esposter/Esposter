@@ -1,8 +1,8 @@
 import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import type { GcgZoneCard } from "#src/models/gcg/GcgZoneCard";
 
-import { CHANGING_SHIFTS_ID } from "#src/services/gcg/cards/constants";
 import { changingShifts } from "#src/services/gcg/cards/changingShifts";
+import { CHANGING_SHIFTS_ID } from "#src/services/gcg/cards/constants";
 import { describe, expect, test } from "vitest";
 
 describe("changingShifts", () => {

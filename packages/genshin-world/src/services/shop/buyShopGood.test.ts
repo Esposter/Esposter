@@ -37,12 +37,12 @@ describe(buyShopGood, () => {
   const fateGood: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
+    costs: [{ count: STARGLITTER_PRICE, itemId: 221 }],
     endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
     goodsId: 102_003,
     itemCount: 1,
     itemId: 223,
     minPlayerLevel: ADVENTURE_RANK,
-    costs: [{ count: STARGLITTER_PRICE, itemId: 221 }],
     refresh: ShopRefresh.Monthly,
   };
   const limitedGood: ShopGood = { ...fateGood, buyLimit: 1 };
@@ -68,12 +68,12 @@ describe(buyShopGood, () => {
   const groceryGood: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 0,
+    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
     goodsId: 3001,
     itemCount: 1,
     itemId: GROCERY_ITEM_ID,
     minPlayerLevel: ADVENTURE_RANK,
-    costs: [{ count: MORA_PRICE, itemId: MORA_ITEM_ID }],
     refresh: ShopRefresh.None,
   };
 
@@ -211,10 +211,10 @@ describe(buyShopGood, () => {
     const wallet = { ...EMPTY_WALLET, [Currency.AnemoSigil]: SIGIL_PRICE * 2 };
     const moraGood: ShopGood = {
       ...groceryGood,
+      costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
       goodsId: 3002,
       itemCount: SIGIL_MORA_COUNT,
       itemId: MORA_ITEM_ID,
-      costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
     };
     const moraResult = buyShopGood(
       wallet,
@@ -230,8 +230,8 @@ describe(buyShopGood, () => {
     expect(moraResult?.wallet[Currency.Mora]).toBe(SIGIL_MORA_COUNT);
     const materialGood: ShopGood = {
       ...groceryGood,
-      goodsId: 3003,
       costs: [{ count: SIGIL_PRICE, itemId: ANEMO_SIGIL_ITEM_ID }],
+      goodsId: 3003,
     };
     const materialResult = buyShopGood(
       wallet,
@@ -274,7 +274,7 @@ describe(buyShopGood, () => {
   });
   const FISH_ITEM_ID = 9001;
   // A good a player buys with fish from the bag, as a Fishing Association's bait is bought with Medaka
-  const fishPricedGood: ShopGood = { ...groceryGood, goodsId: 3002, costs: [{ count: 2, itemId: FISH_ITEM_ID }] };
+  const fishPricedGood: ShopGood = { ...groceryGood, costs: [{ count: 2, itemId: FISH_ITEM_ID }], goodsId: 3002 };
 
   test("a good priced in a fish is paid from the bag and gives its item", () => {
     expect.hasAssertions();
@@ -319,13 +319,13 @@ describe(buyShopGood, () => {
   const FOURTH_FISH_ITEM_ID = 9004;
   const multiFishGood: ShopGood = {
     ...groceryGood,
-    goodsId: 3003,
     costs: [
       { count: 2, itemId: FISH_ITEM_ID },
       { count: 1, itemId: SECOND_FISH_ITEM_ID },
       { count: 1, itemId: THIRD_FISH_ITEM_ID },
       { count: 1, itemId: FOURTH_FISH_ITEM_ID },
     ],
+    goodsId: 3003,
   };
 
   test("a good priced in several fish is paid from the bag only when the bag holds every fish", () => {
@@ -384,17 +384,17 @@ describe(buyShopGood, () => {
   const getCardShopItemDefinition = (itemId: number) =>
     getItemDefinition(
       itemId,
-      { [GROCERY_NAME_TEXT_ID]: GROCERY_NAME, [CARD_NAME_TEXT_ID]: CARD_NAME },
+      { [CARD_NAME_TEXT_ID]: CARD_NAME, [GROCERY_NAME_TEXT_ID]: GROCERY_NAME },
       new Map([
-        [LUCKY_COIN_ITEM_ID, luckyCoinMaterial],
         [CARD_ITEM_ID, cardMaterial],
+        [LUCKY_COIN_ITEM_ID, luckyCoinMaterial],
       ]),
     );
   const cardShopGood: ShopGood = {
     ...groceryGood,
+    costs: [{ count: 2, itemId: LUCKY_COIN_ITEM_ID }],
     goodsId: 9001,
     itemId: CARD_ITEM_ID,
-    costs: [{ count: 2, itemId: LUCKY_COIN_ITEM_ID }],
   };
 
   test("a card is bought with Lucky Coins", () => {

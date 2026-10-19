@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Character } from "#src/models/character/Character";
 import type { CharacterTalentKit } from "#src/models/character/CharacterTalentKit";
@@ -14,7 +15,6 @@ import type { GameText } from "genshin-text";
 
 import CharacterAttributeList from "#src/components/Character/AttributeList/Index.vue";
 import CharacterProfile from "#src/components/Character/Profile/Index.vue";
-import { ArtifactSlot } from "#src/models/artifact/ArtifactSlot";
 import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
@@ -22,12 +22,12 @@ import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotG
 import { enhanceArtifact } from "#src/services/artifact/enhanceArtifact";
 import { enhanceCharacterArtifact } from "#src/services/artifact/enhanceCharacterArtifact";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
-import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
-import { getAutoAddFodders } from "#src/services/artifact/getAutoAddFodders";
-import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
 import { getActiveArtifactSetBonuses } from "#src/services/artifact/getActiveArtifactSetBonuses";
 import { getArtifactDetailStats } from "#src/services/artifact/getArtifactDetailStats";
+import { getArtifactRarityData } from "#src/services/artifact/getArtifactRarityData";
 import { getArtifactSetBonusLines } from "#src/services/artifact/getArtifactSetBonusLines";
+import { getAutoAddFodders } from "#src/services/artifact/getAutoAddFodders";
+import { getBagArtifactsForSlot } from "#src/services/artifact/getBagArtifactsForSlot";
 import { getEnhancementMoraCost } from "#src/services/artifact/getEnhancementMoraCost";
 import { getMaterialExperience } from "#src/services/artifact/getMaterialExperience";
 import { takeFodderArtifacts } from "#src/services/artifact/takeFodderArtifacts";
@@ -499,13 +499,13 @@ const isActivateDisabled = computed(
       <CharacterMenuArtifacts
         v-else-if="character && tab === CharacterMenuTab.Artifacts"
         :enhance-label="gameText[GameTextKey.ArtifactActionEnhance]"
-        :equip-disabled-slots="equipDisabledSlots"
+        :equip-disabled-slots
         :notice="artifactNotice"
         :equip-label="gameText[GameTextKey.ArtifactActionEquip]"
         :lock-label="gameText[GameTextKey.ArtifactActionLock]"
-        :no-set-bonus-label="noSetBonusLabel"
+        :no-set-bonus-label
         :set-bonus-heading="gameText[GameTextKey.ArtifactSetBonusHeading]"
-        :set-bonus-lines="setBonusLines"
+        :set-bonus-lines
         :slot-names="artifactSlotNames"
         :slot-stats="artifactSlotStats"
         :unequip-label="gameText[GameTextKey.ArtifactActionUnequip]"

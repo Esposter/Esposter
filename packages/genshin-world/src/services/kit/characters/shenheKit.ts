@@ -168,53 +168,6 @@ export const createShenheKitBehaviour = ({
     createBurstTickHit(burstTickSecondHitSeconds + offsetSeconds),
   ]);
   return {
-    skill: {
-      onStart: (context) => {
-        grantIcyQuill(context, icyQuillPressSeconds, icyQuillPressTriggers);
-        empowerSpringSpiritSummoning(context);
-      },
-    },
-    skillHolds: [
-      {
-        onStart: (context) => {
-          grantIcyQuill(context, icyQuillHoldSeconds, icyQuillHoldTriggers);
-          empowerSpringSpiritSummoning(context);
-        },
-      },
-    ],
-    // Her Spring Spirit Summoning's hits gain 5% DMG for each Skyfrost Mantra stack it consumed as it started
-    getStrikeDamageBonus: (strike, _enemy, _party, effects) =>
-      strike.attackTag === AttackTag.ElementalSkill
-        ? (findKitStatus(effects, strike.combatant.characterId, SKYFROST_EMPOWERMENT_STATUS_ID)?.stacks ?? 0) *
-          SKYFROST_MANTRA_DAMAGE_BONUS
-        : 0,
-    // Each Cryo hit a member carrying the Icy Quill strikes adds Shenhe's current ATK times its ratio to the hit's base damage
-    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
-      if (
-        getKitHitElement(strike.hit, strike.combatant) !== Element.Cryo ||
-        !checkIsIcyQuillAttack(strike.attackTag) ||
-        !checkHasKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
-      )
-        return {};
-      const { attack } = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes;
-      return { additiveBaseDamageBonus: attack * icyQuillAttackRatio };
-    },
-    // Each Cryo hit from an attack kind a member carrying the Icy Quill lands on an enemy triggers it, spending one of its
-    // Triggers unless Constellation 6 exempts a normal or charged attack, and gives Shenhe a Skyfrost Mantra stack from
-    // Constellation 4
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (
-        event.kind !== KitEventKind.EnemyHit ||
-        event.element !== Element.Cryo ||
-        !checkIsIcyQuillAttack(event.attackTag)
-      )
-        return;
-      const { characterId } = event.striker;
-      if (!checkHasKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID)) return;
-      if (combatant.constellationCount < CONSTELLATION_6 || !checkIsNormalOrChargedAttack(event.attackTag))
-        spendIcyQuillTrigger(kitEffectState, characterId);
-      if (combatant.constellationCount >= CONSTELLATION_4) gainSkyfrostMantra(kitEffectState, combatant.characterId);
-    },
     burst: {
       // The field is cast ahead of the body, as far across as its DoT reaches, and its DoT and buff are summoned there, so
       // It stands where gcsim places it
@@ -253,7 +206,54 @@ export const createShenheKitBehaviour = ({
         });
       },
     },
+    // Each Cryo hit a member carrying the Icy Quill strikes adds Shenhe's current ATK times its ratio to the hit's base damage
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
+      if (
+        getKitHitElement(strike.hit, strike.combatant) !== Element.Cryo ||
+        !checkIsIcyQuillAttack(strike.attackTag) ||
+        !checkHasKitStatus(effects, strike.combatant.characterId, ICY_QUILL_STATUS_ID)
+      )
+        return {};
+      const { attack } = getBuffedCombatant(member, effects, party, characterIdCombatantMap).attributes;
+      return { additiveBaseDamageBonus: attack * icyQuillAttackRatio };
+    },
     // Clarity of Heart, from Constellation 1, lets Spring Spirit Summoning be used one more time
     getSkillChargeBonus: createConstellationSkillChargeBonus(CONSTELLATION_1),
+    // Her Spring Spirit Summoning's hits gain 5% DMG for each Skyfrost Mantra stack it consumed as it started
+    getStrikeDamageBonus: (strike, _enemy, _party, effects) =>
+      strike.attackTag === AttackTag.ElementalSkill
+        ? (findKitStatus(effects, strike.combatant.characterId, SKYFROST_EMPOWERMENT_STATUS_ID)?.stacks ?? 0) *
+          SKYFROST_MANTRA_DAMAGE_BONUS
+        : 0,
+    // Each Cryo hit from an attack kind a member carrying the Icy Quill lands on an enemy triggers it, spending one of its
+    // Triggers unless Constellation 6 exempts a normal or charged attack, and gives Shenhe a Skyfrost Mantra stack from
+    // Constellation 4
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (
+        event.kind !== KitEventKind.EnemyHit ||
+        event.element !== Element.Cryo ||
+        !checkIsIcyQuillAttack(event.attackTag)
+      )
+        return;
+      const { characterId } = event.striker;
+      if (!checkHasKitStatus(kitEffectState.effects, characterId, ICY_QUILL_STATUS_ID)) return;
+      if (combatant.constellationCount < CONSTELLATION_6 || !checkIsNormalOrChargedAttack(event.attackTag))
+        spendIcyQuillTrigger(kitEffectState, characterId);
+      if (combatant.constellationCount >= CONSTELLATION_4) gainSkyfrostMantra(kitEffectState, combatant.characterId);
+    },
+    skill: {
+      onStart: (context) => {
+        grantIcyQuill(context, icyQuillPressSeconds, icyQuillPressTriggers);
+        empowerSpringSpiritSummoning(context);
+      },
+    },
+    skillHolds: [
+      {
+        onStart: (context) => {
+          grantIcyQuill(context, icyQuillHoldSeconds, icyQuillHoldTriggers);
+          empowerSpringSpiritSummoning(context);
+        },
+      },
+    ],
   };
 };

@@ -3,11 +3,11 @@ import type { WishItem } from "#src/models/wish/WishItem";
 
 import { props } from "#src/components/Wish/Screen/Index.fixture";
 import WishScreen from "#src/components/Wish/Screen/Index.vue";
-import { GameTextKey } from "genshin-text";
 import { WishItemKind } from "#src/models/wish/WishItemKind";
 import { createBanners } from "#src/services/wish/createBanners";
 import { getOpenEventBanners } from "#src/services/wish/getOpenEventBanners";
 import { BannerKind } from "genshin-interface";
+import { GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";

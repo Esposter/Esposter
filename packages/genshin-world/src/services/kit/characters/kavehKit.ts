@@ -28,22 +28,6 @@ export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
   const paintedDome = readStance("paintedDome");
   const paintedDomeSeconds = readSeconds("paintedDome");
   return {
-    // Constellation 1's buff is on Kaveh himself
-    skill: {
-      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
-        if (combatant.constellationCount < CONSTELLATION_1) return;
-        buffKitMember(kitEffectState, combatant.characterId, {
-          amount: ARTISTIC_INGENUITY_DENDRO_RESISTANCE,
-          attribute: Attribute.DendroResistance,
-          secondsRemaining: ARTISTIC_INGENUITY_BUFF_SECONDS,
-        });
-        buffKitMember(kitEffectState, combatant.characterId, {
-          amount: ARTISTIC_INGENUITY_INCOMING_HEALING_BONUS,
-          attribute: Attribute.IncomingHealingBonus,
-          secondsRemaining: ARTISTIC_INGENUITY_BUFF_SECONDS,
-        });
-      },
-    },
     burst: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, paintedDome, paintedDomeSeconds, { isEndedOnSwap: true }),
@@ -60,5 +44,21 @@ export const createKavehKitBehaviour = ({ readSeconds, readStance }: KitRecordRe
       reactionType === TransformativeReactionType.Bloom
         ? { damageBonus: BLOOM_DAMAGE_BONUS }
         : {},
+    // Constellation 1's buff is on Kaveh himself
+    skill: {
+      onStart: ({ activeCombatant: combatant, kitEffectState }) => {
+        if (combatant.constellationCount < CONSTELLATION_1) return;
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: ARTISTIC_INGENUITY_DENDRO_RESISTANCE,
+          attribute: Attribute.DendroResistance,
+          secondsRemaining: ARTISTIC_INGENUITY_BUFF_SECONDS,
+        });
+        buffKitMember(kitEffectState, combatant.characterId, {
+          amount: ARTISTIC_INGENUITY_INCOMING_HEALING_BONUS,
+          attribute: Attribute.IncomingHealingBonus,
+          secondsRemaining: ARTISTIC_INGENUITY_BUFF_SECONDS,
+        });
+      },
+    },
   };
 };

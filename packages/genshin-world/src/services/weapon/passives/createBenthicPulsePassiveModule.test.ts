@@ -14,9 +14,9 @@ describe(createBenthicPulsePassiveModule, () => {
   // Song of Stillness, Benthic Pulse with synthetic params: 20% more DMG for three seconds after the wielder is healed
   const benthicPulsePassiveModule = createBenthicPulsePassiveModule([0.2, 3]);
   const healthGained: KitEvent = {
+    bondOfLifeShare: 0,
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0.5,
-    bondOfLifeShare: 0,
     isFallRefused: false,
     kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,

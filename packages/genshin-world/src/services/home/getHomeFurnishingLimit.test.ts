@@ -3,8 +3,8 @@ import type { HomeFurnishing } from "#src/models/home/HomeFurnishing";
 import type { HomePlacement } from "#src/models/home/HomePlacement";
 
 import { HomeFurnishingLimit } from "#src/models/home/HomeFurnishingLimit";
-import { getHomeFurnishingLimit } from "#src/services/home/getHomeFurnishingLimit";
 import { HOME_INTERIOR_FURNISHING_LIMIT } from "#src/services/home/constants";
+import { getHomeFurnishingLimit } from "#src/services/home/getHomeFurnishingLimit";
 import { describe, expect, test } from "vitest";
 
 describe(getHomeFurnishingLimit, () => {

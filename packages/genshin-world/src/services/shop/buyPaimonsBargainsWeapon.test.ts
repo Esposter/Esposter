@@ -32,10 +32,10 @@ describe(buyPaimonsBargainsWeapon, () => {
   const getWeaponDefinition = () => definition;
   const good: PaimonsBargainsGood = {
     buyLimit: 3,
+    costs: [{ count: WEAPON_PRICE, itemId: STARGLITTER_ITEM_ID }],
     goodsId: 102_007,
     itemCount: 1,
     itemId: WEAPON_ID,
-    costs: [{ count: WEAPON_PRICE, itemId: STARGLITTER_ITEM_ID }],
     refresh: ShopRefresh.Monthly,
   };
   const wallet = { ...EMPTY_WALLET, [Currency.MasterlessStarglitter]: WEAPON_PRICE * 2 };

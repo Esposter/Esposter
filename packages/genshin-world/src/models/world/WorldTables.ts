@@ -17,21 +17,25 @@ import type { OfferingLevel } from "#src/models/offering/OfferingLevel";
 import type { PuzzlePlace } from "#src/models/puzzle/PuzzlePlace";
 import type { Seelie } from "#src/models/puzzle/Seelie";
 import type { ShrineKeySource } from "#src/models/puzzle/ShrineKeySource";
+import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
+import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { PaimonsBargainsRotation } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopGood } from "#src/models/shop/ShopGood";
+import type { Tip } from "#src/models/tip/Tip";
 import type { WildlifePlace } from "#src/models/wildlife/WildlifePlace";
 import type { WindriseData } from "#src/models/windrise/WindriseData";
 import type { WishScheduleEvent } from "#src/models/wish/WishScheduleEvent";
-import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
-import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
 import type { Catalogue } from "#src/models/world/Catalogue";
-import type { Tip } from "#src/models/tip/Tip";
 
 // The game's names and tables and the world's own records, read from the hosted game data before the world's screen
 // Opens its session
 export interface WorldTables {
   // The game's rank, lock and world level tables, which the rank, the World Level and the camps' levels are read from
   adventureRankTables: AdventureRankTables;
+  // The main affix pool of each artifact slot, which an artifact a chest drops rolls its main affix from
+  artifactMainAffixPools: ArtifactMainAffixPool[];
+  // The rarity data of each star count of artifact, which an artifact a chest drops rolls its stats from
+  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   // The regions and their areas, which the map draws, the region data is fetched by and the weather is read from
   catalogue: Catalogue;
   // Each character's kit as the game's tables hold it, the proud skill group of each combat talent, which the Talents tab
@@ -63,10 +67,6 @@ export interface WorldTables {
   paimonsBargainsRotation: PaimonsBargainsRotation;
   // The artifact pieces of the reliquary tables by item id, each with its set, which a bag entry of an artifact is defined from
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
-  // The main affix pool of each artifact slot, which an artifact a chest drops rolls its main affix from
-  artifactMainAffixPools: ArtifactMainAffixPool[];
-  // The rarity data of each star count of artifact, which an artifact a chest drops rolls its stats from
-  artifactRarityDataMap: ReadonlyMap<number, ArtifactRarityData>;
   // The artifact sets of the reliquary tables, each with its pieces, which the chests roll their artifacts from
   reliquarySets: readonly ReliquarySetData[];
   // The Seelies of Mondstadt, each paired with its court, which a sight trail leads to while it rests
@@ -86,10 +86,10 @@ export interface WorldTables {
   talentUpgradeMap: TalentUpgradeMap;
   // The Time Trial Challenges of Mondstadt, each started from its marker in the world
   timeTrialPlaces: PuzzlePlace[];
-  // The tutorial tips' titles and subtitles in the reader's language, by their text ids, which the tip popup reads from
-  tipText: Readonly<Record<string, string>>;
   // The tutorial tips the game's tables hold, each shown when its trigger's quest finishes
   tips: Tip[];
+  // The tutorial tips' titles and subtitles in the reader's language, by their text ids, which the tip popup reads from
+  tipText: Readonly<Record<string, string>>;
   // The Mondstadt animals the official map marks
   wildlifePlaces: WildlifePlace[];
   // Windrise's records and the regions' grounds, which the world's one ground and everything drawn on it are built from

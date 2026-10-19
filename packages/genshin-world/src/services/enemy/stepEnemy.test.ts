@@ -1,4 +1,5 @@
 import type { BossMove } from "#src/models/bosses/BossMove";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";

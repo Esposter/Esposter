@@ -115,12 +115,12 @@ const emit = defineEmits<{
   // The party entering combat once an enemy is aggravated on it, and leaving it once none has been for the grace period
   enterCombat: [];
   leaveCombat: [];
-  // An enemy whose shield a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
-  shieldBreak: [enemy: Enemy];
   // A boss comes back at its spawn, so the blossom it left is gone
   respawn: [spawnKey: string];
   // A defeated member of a camp with no boss comes back at this instant, which the save keeps
   saveRespawn: [spawnKey: string, respawnAt: string];
+  // An enemy whose shield a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
+  shieldBreak: [enemy: Enemy];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
 }>();
 const { onBeforeRender } = useLoop();

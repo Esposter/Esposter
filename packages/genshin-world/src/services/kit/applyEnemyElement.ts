@@ -1,6 +1,6 @@
 import type { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { Reaction } from "#src/models/combat/Reaction";
+import type { StellarReactionType } from "#src/models/combat/StellarReactionType";
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 

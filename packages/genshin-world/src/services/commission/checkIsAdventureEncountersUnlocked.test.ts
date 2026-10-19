@@ -1,5 +1,5 @@
-import { ADVENTURE_ENCOUNTERS_UNLOCK_RANK } from "#src/services/commission/constants";
 import { checkIsAdventureEncountersUnlocked } from "#src/services/commission/checkIsAdventureEncountersUnlocked";
+import { ADVENTURE_ENCOUNTERS_UNLOCK_RANK } from "#src/services/commission/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsAdventureEncountersUnlocked, () => {

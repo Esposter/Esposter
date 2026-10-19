@@ -13,6 +13,16 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
 import { Element } from "#src/models/Element";
+import {
+  getJahodaConstellationFourEnergy,
+  getJahodaElementEffects,
+  JAHODA_ASCENSION_4,
+  JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
+  JAHODA_ASCENSION_4_SECONDS,
+  JAHODA_ASCENSION_4_SOURCE,
+  JAHODA_CONSTELLATION_6_SOURCE,
+} from "#src/services/kit/characters/jahodaAscension";
+import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
 import { createKitBody } from "#src/services/kit/createKitBody";
@@ -27,16 +37,6 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
 import { getNearestLivingEnemies } from "#src/services/kit/getNearestLivingEnemies";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
-import {
-  getJahodaConstellationFourEnergy,
-  getJahodaElementEffects,
-  JAHODA_ASCENSION_4,
-  JAHODA_ASCENSION_4_ELEMENTAL_MASTERY,
-  JAHODA_ASCENSION_4_SECONDS,
-  JAHODA_ASCENSION_4_SOURCE,
-  JAHODA_CONSTELLATION_6_SOURCE,
-} from "#src/services/kit/characters/jahodaAscension";
-import { startJahodaRobots } from "#src/services/kit/characters/jahodaRobots";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
@@ -98,7 +98,7 @@ const removeMeowballs = (kitEffectState: KitEffectState): void =>
 
 // The deployed member with the lowest share of its health that still stands, as gcsim's lowest-HP pick finds it
 const findLowestHealthCharacterId = (party: Party): number | undefined => {
-  let lowest: { characterId: number; healthShare: number } | undefined;
+  let lowest: undefined | { characterId: number; healthShare: number };
   for (const characterId of getDeployedCharacterIds(party)) {
     const { healthShare } = getPartyMember(party, characterId);
     if (healthShare > 0 && (lowest === undefined || healthShare < lowest.healthShare))

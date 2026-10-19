@@ -1,8 +1,8 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { createAttackInstancePassiveModule } from "#src/services/weapon/passives/createAttackInstancePassiveModule";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createAttackInstancePassiveModule } from "#src/services/weapon/passives/createAttackInstancePassiveModule";
 import { takeOne } from "@esposter/shared";
 
 // At the End of the Beast-Paths at its rank: the rank's All Elemental DMG Bonus is a passive bonus on each element. After a
@@ -15,8 +15,8 @@ export const createAtTheEndOfTheBeastPathsPassiveModule = (params: number[]): Pa
     checkIsObtainedBy: (event) => event.attackTag === AttackTag.ChargedAttack,
     cooldownSeconds: takeOne(params, 4),
     id: "tirelessHunt",
-    maximumInstances: takeOne(params, 2),
     masteryShare: takeOne(params, 1),
+    maximumInstances: takeOne(params, 2),
     seconds: takeOne(params, 3),
   });
   return {

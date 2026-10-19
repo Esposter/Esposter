@@ -26,12 +26,12 @@ describe(buyHomeDepotGood, () => {
   const good: ShopGood = {
     beginTime: EPOCH.toString(),
     buyLimit: 1,
+    costs: [{ count: PRICE_COUNT, itemId: 204 }],
     endTime: EPOCH.add({ hours: 24 * 365 }).toString(),
     goodsId: 213_001,
     itemCount: 1,
     itemId: FURNISHING_ID,
     minPlayerLevel: ADVENTURE_RANK,
-    costs: [{ count: PRICE_COUNT, itemId: 204 }],
     refresh: ShopRefresh.None,
   };
 

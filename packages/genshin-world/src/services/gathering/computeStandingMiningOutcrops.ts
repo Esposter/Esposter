@@ -7,7 +7,7 @@ import { checkIsDailyResetDayCurrent } from "#src/services/time/checkIsDailyRese
 // Reset, and a place mined since stands again only from its respawn. A draw from a day before this one stands nowhere
 export const computeStandingMiningOutcrops = (
   places: readonly GatheringPlace[],
-  drawn: { at: Temporal.Instant; placeIds: readonly string[] } | undefined,
+  drawn: undefined | { at: Temporal.Instant; placeIds: readonly string[] },
   minedAtMap: ReadonlyMap<string, Temporal.Instant>,
   now: Temporal.Instant,
 ): GatheringPlace[] => {

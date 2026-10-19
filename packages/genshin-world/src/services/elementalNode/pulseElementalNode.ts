@@ -1,5 +1,5 @@
-import type { Element } from "#src/models/Element";
 import type { Reaction } from "#src/models/combat/Reaction";
+import type { Element } from "#src/models/Element";
 import type { Enemy } from "#src/models/enemy/Enemy";
 
 import { applyElement } from "#src/services/combat/aura/applyElement";

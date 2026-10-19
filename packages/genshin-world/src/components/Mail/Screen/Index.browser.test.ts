@@ -1,6 +1,7 @@
 import type { Mail } from "#src/models/mail/Mail";
 import type { MailSave } from "#src/models/mail/MailSave";
 
+import MailScreen from "#src/components/Mail/Screen/Index.vue";
 import { Currency } from "#src/models/inventory/Currency";
 import { CurrencyItemIdMap } from "#src/services/inventory/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
@@ -8,8 +9,6 @@ import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 import { defineComponent, h } from "vue";
-
-import MailScreen from "#src/components/Mail/Screen/Index.vue";
 
 describe("mailScreen", () => {
   const BIRTHDAY_MAIL_ID = 35;
@@ -30,9 +29,9 @@ describe("mailScreen", () => {
     ],
   ]);
   const textMap = {
-    [BIRTHDAY_TITLE_ID]: "Best Wishes on Your Birthday",
     "102": "Mailing System",
     "103": "Happy birthday, Traveler.",
+    [BIRTHDAY_TITLE_ID]: "Best Wishes on Your Birthday",
   };
   const props = {
     birthdayMailIds: new Set([BIRTHDAY_MAIL_ID]),

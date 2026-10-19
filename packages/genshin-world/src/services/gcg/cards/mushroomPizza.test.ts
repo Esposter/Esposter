@@ -3,12 +3,12 @@ import type { GcgEffectContext } from "#src/models/gcg/GcgEffectContext";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
 import { GcgPhase } from "#src/models/gcg/GcgPhase";
+import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
+import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { mushroomPizza } from "#src/services/gcg/cards/mushroomPizza";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { runGcgEndPhase } from "#src/services/gcg/runGcgEndPhase";
 import { describe, expect, test } from "vitest";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 
 describe("mushroomPizza", () => {
   const MAX_HP = 10;
@@ -38,9 +38,8 @@ describe("mushroomPizza", () => {
   });
 
   const createDuel = (side: GcgSideState): GcgDuel => ({
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     phase: GcgPhase.Action,
@@ -48,6 +47,7 @@ describe("mushroomPizza", () => {
     round: 1,
     rule: { drawCount: 2, handCardLimit: 10, reactions: [] },
     sides: [side, createSide()],
+    skillModules: GcgEffectNameSkillModuleMap,
   });
 
   test("should heal the target character for one HP on play", () => {

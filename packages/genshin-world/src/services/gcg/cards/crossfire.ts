@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
-import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { GUOBA_ATTACK_ID, XIANGLING_ID } from "#src/services/gcg/cards/constants";
+import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 
 const CROSSFIRE_DAMAGE = 1;
 

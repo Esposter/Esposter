@@ -1,6 +1,6 @@
-import type { Element } from "#src/models/Element";
 import type { Reaction } from "#src/models/combat/Reaction";
 import type { TransformativeReaction } from "#src/models/combat/TransformativeReaction";
+import type { Element } from "#src/models/Element";
 import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 
 // What a kit hit, or a reaction reaching an enemy, leaves from its strike on one enemy: the element the hit applied, if

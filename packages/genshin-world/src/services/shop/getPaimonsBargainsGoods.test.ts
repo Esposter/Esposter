@@ -34,18 +34,18 @@ describe(getPaimonsBargainsGoods, () => {
     expect(characterGoods).toStrictEqual([
       {
         buyLimit: 1,
+        costs: [{ count: 3, itemId: 221 }],
         goodsId: 41,
         itemCount: 1,
         itemId: 7,
-        costs: [{ count: 3, itemId: 221 }],
         refresh: ShopRefresh.Monthly,
       },
       {
         buyLimit: 1,
+        costs: [{ count: 3, itemId: 221 }],
         goodsId: 42,
         itemCount: 1,
         itemId: 8,
-        costs: [{ count: 3, itemId: 221 }],
         refresh: ShopRefresh.Monthly,
       },
     ]);

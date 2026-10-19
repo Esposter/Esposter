@@ -2,6 +2,7 @@ import type { AttributeLine } from "#src/models/character/AttributeLine";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
+import type { Party } from "#src/models/party/Party";
 import type { AbyssArena } from "#src/models/spiralAbyss/AbyssArena";
 import type { AbyssBenedictionChoice } from "#src/models/spiralAbyss/AbyssBenedictionChoice";
 import type { AbyssBlessingState } from "#src/models/spiralAbyss/AbyssBlessingState";
@@ -11,7 +12,6 @@ import type { AbyssFloor } from "#src/models/spiralAbyss/AbyssFloor";
 import type { AbyssPeriod } from "#src/models/spiralAbyss/AbyssPeriod";
 import type { AbyssProgress } from "#src/models/spiralAbyss/AbyssProgress";
 import type { AbyssRewards } from "#src/models/spiralAbyss/AbyssRewards";
-import type { Party } from "#src/models/party/Party";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
 
@@ -19,6 +19,11 @@ import { applyAbyssBlessingReaction } from "#src/services/spiralAbyss/applyAbyss
 import { applyAbyssCarry } from "#src/services/spiralAbyss/applyAbyssCarry";
 import { checkIsAbyssChallengeCleared } from "#src/services/spiralAbyss/checkIsAbyssChallengeCleared";
 import { checkIsAbyssChallengeFailed } from "#src/services/spiralAbyss/checkIsAbyssChallengeFailed";
+import {
+  ABYSS_CORRIDOR_LAST_FLOOR_INDEX,
+  ABYSS_CORRIDOR_REWARD_GROUP,
+  ABYSS_ENTRANCE_POSITION,
+} from "#src/services/spiralAbyss/constants";
 import { createAbyssArena } from "#src/services/spiralAbyss/createAbyssArena";
 import { defeatAbyssArenaEnemy } from "#src/services/spiralAbyss/defeatAbyssArenaEnemy";
 import { findAbyssPeriodAt } from "#src/services/spiralAbyss/findAbyssPeriodAt";
@@ -27,11 +32,6 @@ import { getAbyssChamberBlessing } from "#src/services/spiralAbyss/getAbyssChamb
 import { getAbyssChamberSeconds } from "#src/services/spiralAbyss/getAbyssChamberSeconds";
 import { getAbyssCycleKey } from "#src/services/spiralAbyss/getAbyssCycleKey";
 import { getAbyssFloorsOffered } from "#src/services/spiralAbyss/getAbyssFloorsOffered";
-import {
-  ABYSS_CORRIDOR_LAST_FLOOR_INDEX,
-  ABYSS_CORRIDOR_REWARD_GROUP,
-  ABYSS_ENTRANCE_POSITION,
-} from "#src/services/spiralAbyss/constants";
 import { readAbyssBenedictionChoices } from "#src/services/spiralAbyss/readAbyssBenedictionChoices";
 import { readAbyssEnemyKinds } from "#src/services/spiralAbyss/readAbyssEnemyKinds";
 import { readAbyssFloorRewards } from "#src/services/spiralAbyss/readAbyssFloorRewards";
@@ -285,12 +285,12 @@ export const useWorldSpiralAbyss = ({
   // Party down ends the chamber without its stars
   const stepAbyss = ({
     deltaMilliseconds,
-    isPlaying,
     isPartyDown,
+    isPlaying,
   }: {
     deltaMilliseconds: number;
-    isPlaying: boolean;
     isPartyDown: boolean;
+    isPlaying: boolean;
   }) => {
     const arena = abyssArena.value;
     if (!arena) return;

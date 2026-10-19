@@ -1,11 +1,11 @@
 import type { GcgCard } from "#src/models/gcg/GcgCard";
 import type { GcgPlayChoice } from "#src/models/gcg/GcgPlayChoice";
 
-import GcgScreen from "#src/components/Gcg/Screen/Index.vue";
 import { props as screenFixtureProps } from "#src/components/Gcg/Screen/Index.fixture";
+import GcgScreen from "#src/components/Gcg/Screen/Index.vue";
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
+import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { GCG_OPPONENT_SIDE_INDEX, GCG_PLAYER_SIDE_INDEX, GCG_TOSS_UP_CARD_ID } from "#src/services/gcg/constants";
 import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";

@@ -2,10 +2,10 @@ import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { Element } from "#src/models/Element";
 import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgActiveHolder } from "#src/services/gcg/effects/checkIsGcgActiveHolder";
 import { checkIsGcgSwitchCost } from "#src/services/gcg/effects/checkIsGcgSwitchCost";
 import { createGcgOncePerRoundCostReduction } from "#src/services/gcg/effects/createGcgOncePerRoundCostReduction";
-import { YAKSHAS_MASK_ID } from "#src/services/gcg/cards/constants";
 
 const YAKSHAS_MASK_ROUNDS = 2;
 // Its usages are the Lemniscatic Wind Cycling reductions each attachment of the mask allows Conqueror of Evil: Guardian Yaksha

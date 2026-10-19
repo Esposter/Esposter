@@ -1,7 +1,7 @@
 import type { CraftingCell } from "genshin-interface";
 
-import { MYSTIC_OFFERING_TAB_ID } from "#src/services/crafting/constants";
 import { computeCraftingTabCells } from "#src/services/crafting/computeCraftingTabCells";
+import { MYSTIC_OFFERING_TAB_ID } from "#src/services/crafting/constants";
 import { describe, expect, test } from "vitest";
 
 describe(computeCraftingTabCells, () => {

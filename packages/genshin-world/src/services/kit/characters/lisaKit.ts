@@ -6,8 +6,8 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
-import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 

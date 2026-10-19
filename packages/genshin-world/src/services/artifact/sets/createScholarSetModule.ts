@@ -5,8 +5,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { checkIsCharacterDown } from "#src/services/party/checkIsCharacterDown";
-import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { takeOne } from "@esposter/shared";
 
 const SCHOLAR_COOLDOWN_ID = "scholarCooldown";

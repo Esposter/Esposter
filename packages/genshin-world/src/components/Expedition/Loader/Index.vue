@@ -18,10 +18,10 @@ import { getResultAsync } from "@esposter/shared";
 
 interface Props {
   adventureRank: number;
-  // The characters the picker lists in the game's order, each by its id and its name in the reader's language
-  characters: { id: number; name: string }[];
   // The proud skill groups each character has unlocked, by character id, which picks its expedition talents
   characterPassiveGroupIdMap: ReadonlyMap<number, ReadonlySet<number>>;
+  // The characters the picker lists in the game's order, each by its id and its name in the reader's language
+  characters: { id: number; name: string }[];
   completedQuestIds: ReadonlySet<string>;
   downCharacterIds: ReadonlySet<number>;
   // The hosted game data's base, which the expedition places and the limit's steps are read from
@@ -102,20 +102,20 @@ onMounted(() => {
     v-model:expeditions="expeditions"
     v-model:inventory="inventory"
     v-model:wallet="wallet"
-    :adventure-rank="adventureRank"
-    :character-expedition-passives="characterExpeditionPassives"
+    :adventure-rank
+    :character-expedition-passives
     :characters
-    :completed-quest-ids="completedQuestIds"
-    :down-character-ids="downCharacterIds"
-    :expedition-limit-adds="expeditionLimitAdds"
+    :completed-quest-ids
+    :down-character-ids
+    :expedition-limit-adds
     :game-text
-    :material-data-map="materialDataMap"
-    :name-text="nameText"
+    :material-data-map
+    :name-text
     :now
-    :pin-positions="pinPositions"
+    :pin-positions
     :places
     :random
-    :statue-regions="statueRegions"
+    :statue-regions
     @close="emit('close')"
   />
 </template>

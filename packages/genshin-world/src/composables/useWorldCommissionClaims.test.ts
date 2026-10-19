@@ -22,8 +22,8 @@ import { EMPTY_INVENTORY, EMPTY_WALLET, MORA_ITEM_ID } from "#src/services/inven
 import { ORIGINAL_RESIN_REGEN_MINUTES } from "#src/services/originalResin/constants";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
-import { computed, shallowRef } from "vue";
 import { describe, expect, test, vi } from "vitest";
+import { computed, shallowRef } from "vue";
 
 describe(useWorldCommissionClaims, () => {
   // No Adventure EXP is routed by these claims, so the rank's tables are left empty rather than read from the game data
@@ -85,8 +85,8 @@ describe(useWorldCommissionClaims, () => {
   const dayWith = (count: number): CommissionDay => ({
     claimedCommissionIds: [],
     dealtAt: NOW,
-    isBonusClaimed: false,
     dealtCommissions: [{ commissionId: 1, count, dealtRank: DEALT_RANK }],
+    isBonusClaimed: false,
   });
   const pointsOf = (halfPoints: number): EncounterPoints => ({ earnedOn: NOW, halfPoints });
   const createClaims = ({

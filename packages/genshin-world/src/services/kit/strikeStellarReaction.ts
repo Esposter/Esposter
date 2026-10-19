@@ -44,8 +44,8 @@ export const strikeStellarReaction = (
     context.body.position,
   );
   return strikeReactionContributors({
-    contributorIds,
     context,
+    contributorIds,
     element,
     enemy,
     owner,

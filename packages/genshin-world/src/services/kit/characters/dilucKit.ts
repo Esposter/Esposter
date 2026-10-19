@@ -3,8 +3,8 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
@@ -228,20 +228,6 @@ export const createDilucKitBehaviour = ({
         );
       },
     },
-    // Searing Ember: a hit on Diluc takes a stack once the interval after the last one has run out. A hit is one that costs
-    // Him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team that names
-    // Its source for the HP loss, such as Furina's skill, is not a hit
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (combatant.constellationCount < CONSTELLATION_2) return;
-      const { characterId } = combatant;
-      if (!checkIsStrikeOn(event, characterId)) return;
-      if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
-      addKitStatus(kitEffectState, characterId, {
-        id: CONSTELLATION_2_INTERVAL_STATUS_ID,
-        secondsRemaining: CONSTELLATION_2_INTERVAL_SECONDS,
-      });
-      addSearingEmberStack(kitEffectState, characterId);
-    },
     // Relentless, from Ascension 1: his charged attacks cost half their stamina
     // Its +3s duration clause is not built, since the talent text does not name what that duration is
     getChargedAttackStaminaMultiplier: ({ activeCombatant }) =>
@@ -269,6 +255,20 @@ export const createDilucKitBehaviour = ({
       activeCombatant.constellationCount >= CONSTELLATION_6 &&
       (action === kit.elementalSkill || kit.elementalSkillChain?.followUps.includes(action) === true),
     normalAttacks: kit.normalAttacks.map((action) => ({ onStart: createNormalAttackStart(action.seconds) })),
+    // Searing Ember: a hit on Diluc takes a stack once the interval after the last one has run out. A hit is one that costs
+    // Him HP, or that a shield takes whole or in part, which names him as the member struck. A kit of the team that names
+    // Its source for the HP loss, such as Furina's skill, is not a hit
+    onKitEvent: (event, { kitEffectState }, combatant) => {
+      if (combatant.constellationCount < CONSTELLATION_2) return;
+      const { characterId } = combatant;
+      if (!checkIsStrikeOn(event, characterId)) return;
+      if (checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_2_INTERVAL_STATUS_ID)) return;
+      addKitStatus(kitEffectState, characterId, {
+        id: CONSTELLATION_2_INTERVAL_STATUS_ID,
+        secondsRemaining: CONSTELLATION_2_INTERVAL_SECONDS,
+      });
+      addSearingEmberStack(kitEffectState, characterId);
+    },
     skill: { onStart: createSearingOnslaughtPress(false) },
     skillChain: kit.elementalSkillChain?.followUps.map(() => ({ onStart: createSearingOnslaughtPress(true) })),
   };

@@ -3,17 +3,17 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { Element } from "#src/models/Element";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
+import { Element } from "#src/models/Element";
 import { DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createDisenchantmentInDeepShadowSetModule } from "#src/services/artifact/sets/createDisenchantmentInDeepShadowSetModule";
 import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
-import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { addSuperconductStatus } from "#src/services/enemy/addSuperconductStatus";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
@@ -47,8 +47,8 @@ describe(createDisenchantmentInDeepShadowSetModule, () => {
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
     const context = createKitTestContext(wearer, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wearer],
         [OTHER_CHARACTER_ID, other],
+        [TRAVELER_CHARACTER_ID, wearer],
       ]),
       party,
     });

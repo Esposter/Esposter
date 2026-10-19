@@ -2,8 +2,8 @@ import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 
 import { Element } from "#src/models/Element";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { BURNING_ASSAULT_SKILL, pyroScorpion } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { listGcgActiveSkills } from "#src/services/gcg/effects/listGcgActiveSkills";
@@ -29,7 +29,7 @@ describe(listGcgActiveSkills, () => {
     expect.hasAssertions();
 
     const character = createGcgCharacterState({
-      character: { skills: [NORMAL_ATTACK, PASSIVE], element: Element.Pyro, id: 2303 },
+      character: { element: Element.Pyro, id: 2303, skills: [NORMAL_ATTACK, PASSIVE] },
       equipments: [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)],
     });
 
@@ -42,7 +42,7 @@ describe(listGcgActiveSkills, () => {
     expect(
       listGcgActiveSkills(
         createGcgCharacterState({
-          character: { skills: [NORMAL_ATTACK], element: Element.Pyro, id: 2303 },
+          character: { element: Element.Pyro, id: 2303, skills: [NORMAL_ATTACK] },
           equipments: [],
         }),
       ),

@@ -7,19 +7,18 @@ import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { elementalResonanceWovenFlames } from "#src/services/gcg/cards/elementalResonanceWovenFlames";
 import { elementalResonanceWovenIce } from "#src/services/gcg/cards/elementalResonanceWovenIce";
 import { elementalResonanceWovenThunder } from "#src/services/gcg/cards/elementalResonanceWovenThunder";
-import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
 import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
 import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
 
 // Plays a resonance card on a side whose characters have the given elements, and reports whether it may be played and the
 // Dice the side holds afterwards
 const playResonance = (module: GcgCardModule, elements: Element[]) => {
   const duel: GcgDuel = {
-    cardModules: GcgCardIdModuleMap,
-    skillModules: GcgEffectNameSkillModuleMap,
     actingSideIndex: 0,
+    cardModules: GcgCardIdModuleMap,
     firstSideIndex: 0,
     nextFirstSideIndex: 0,
     outcome: undefined,
@@ -34,8 +33,8 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
         characters: elements.map((element, index) =>
           createGcgCharacterState({ character: { element, id: index + 1 } }),
         ),
-        dice: [],
         deckCardIds: [],
+        dice: [],
         drawPile: [],
         hand: [],
         hasDeclaredEnd: false,
@@ -52,8 +51,8 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
         activeIndex: 0,
         cards: [],
         characters: [],
-        dice: [],
         deckCardIds: [],
+        dice: [],
         drawPile: [],
         hand: [],
         hasDeclaredEnd: false,
@@ -67,6 +66,7 @@ const playResonance = (module: GcgCardModule, elements: Element[]) => {
         usedSkillIds: [],
       },
     ],
+    skillModules: GcgEffectNameSkillModuleMap,
     winnerSideIndex: undefined,
   };
   const context: GcgEffectContext = { duel, sideIndex: 0 };

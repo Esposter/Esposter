@@ -11,7 +11,7 @@ import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 export const computeDefeatWeeklyBossTrounceBlossom = (
   enemyKindId: number,
   position: GroundPoint,
-): WeeklyBossTrounceBlossom | undefined =>
+): undefined | WeeklyBossTrounceBlossom =>
   checkIsEnemyKindId(enemyKindId) && WEEKLY_BOSS_ENEMY_KIND_IDS.includes(enemyKindId)
     ? { claimedAts: [], kind: BlossomKind.WeeklyBoss, place: { x: position.x, z: position.z } }
     : undefined;

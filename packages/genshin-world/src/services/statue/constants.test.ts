@@ -1,4 +1,5 @@
 import type { StatueLevel } from "#src/models/statue/StatueLevel";
+
 import { describe } from "vitest";
 
 // The Oculus the statue suites offer and touch, by its item id

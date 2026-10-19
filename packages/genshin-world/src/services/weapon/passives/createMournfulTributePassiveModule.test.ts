@@ -47,8 +47,8 @@ describe(createMournfulTributePassiveModule, () => {
   const createContext = (): KitContext =>
     createKitTestContext(wielder, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wielder],
         [OTHER_CHARACTER_ID, other],
+        [TRAVELER_CHARACTER_ID, wielder],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });

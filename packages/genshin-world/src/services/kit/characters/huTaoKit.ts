@@ -156,11 +156,6 @@ export const createHuTaoKitBehaviour = ({
         ? 0
         : 1,
     getPassiveBonuses,
-    // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim v2.47.2
-    // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
-    refusesFall: (combatant, kitEffectState) =>
-      combatant.constellationCount >= CONSTELLATION_6 &&
-      startConstellation6Cooldown(kitEffectState, combatant.characterId),
     // Blood Blossom's tick strikes the enemy it is on, and the Paramita's end gives the allies Flutter By's CRIT Rate
     onKitEvent: (event, { kitEffectState, party }, combatant) => {
       if (event.kind === KitEventKind.EffectExpired) {
@@ -224,6 +219,11 @@ export const createHuTaoKitBehaviour = ({
         target: event.enemy,
       });
     },
+    // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim v2.47.2
+    // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal
+    refusesFall: (combatant, kitEffectState) =>
+      combatant.constellationCount >= CONSTELLATION_6 &&
+      startConstellation6Cooldown(kitEffectState, combatant.characterId),
     skill: {
       onStart: ({ activeCombatant: combatant, characterIdCombatantMap, kitEffectState, party }) => {
         // Guide to Afterlife takes its HP share of her current HP, but never below GUIDE_MINIMUM_HP

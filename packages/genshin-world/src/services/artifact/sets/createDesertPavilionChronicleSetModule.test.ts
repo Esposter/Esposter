@@ -4,9 +4,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-
 import { DESERT_PAVILION_CHRONICLE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createDesertPavilionChronicleSetModule } from "#src/services/artifact/sets/createDesertPavilionChronicleSetModule";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";

@@ -1,10 +1,10 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { THE_WOLF_WITHIN_ID } from "#src/services/gcg/cards/constants";
 import { theWolfWithin } from "#src/services/gcg/cards/theWolfWithin";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { THE_WOLF_WITHIN_ID } from "#src/services/gcg/cards/constants";
 
 // Lightning Fang, Razor's burst: 3 Electro DMG, and the active character gains The Wolf Within once the damage is dealt
 // (the wiki's Lightning Fang (Character Card Skill))

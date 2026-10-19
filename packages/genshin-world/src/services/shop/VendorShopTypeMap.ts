@@ -2,6 +2,8 @@
 // Region, Mondstadt first, then each Fishing Association's shop, matched to its member by the stock the wiki lists for them.
 // The dump links no NPC to a shop, so each entry is provisional until a recording confirms it
 export const VendorShopTypeMap: Partial<Record<string, number>> = {
+  // Sara, the waitress at Good Hunter in Mondstadt, on the Good Hunter shop
+  "1419": 1005,
   // Blanche, the Mondstadt general goods vendor, on the grocery's shop
   "1423": 1004,
   // Flora, Mondstadt, on the Flora shop
@@ -20,8 +22,6 @@ export const VendorShopTypeMap: Partial<Record<string, number>> = {
   "1640": 1013,
   // Chloris, Mondstadt, on the Chloris shop
   "1657": 1018,
-  // Sara, the waitress at Good Hunter in Mondstadt, on the Good Hunter shop
-  "1419": 1005,
   // Nantuck, Mondstadt's Fishing Association, on the Mondstadt fishing shop
   "1673": 1064,
   // Jiawei, Liyue's Fishing Association, on the Liyue fishing shop

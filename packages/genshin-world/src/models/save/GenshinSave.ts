@@ -29,6 +29,7 @@ import { puzzleProgressSaveSchema } from "#src/models/puzzle/PuzzleProgressSave"
 import { questProgressSaveSchema } from "#src/models/quest/QuestProgressSave";
 import { reputationBountyHuntSaveSchema } from "#src/models/reputation/ReputationBountyHuntSave";
 import { reputationProgressSaveSchema } from "#src/models/reputation/ReputationProgressSave";
+import { travelerBirthdaySaveSchema } from "#src/models/save/TravelerBirthdaySave";
 import { shopPurchaseSaveSchema } from "#src/models/shop/ShopPurchaseSave";
 import { spiralAbyssSaveSchema } from "#src/models/spiralAbyss/SpiralAbyssSave";
 import { statueProgressSaveSchema } from "#src/models/statue/StatueProgressSave";
@@ -36,7 +37,6 @@ import { tipSaveSchema } from "#src/models/tip/TipSave";
 import { characterTrialSaveSchema } from "#src/models/trial/CharacterTrialSave";
 import { wishDrawSaveSchema } from "#src/models/wish/WishDrawSave";
 import { wishPityMapSaveSchema } from "#src/models/wish/WishPityMapSave";
-import { travelerBirthdaySaveSchema } from "#src/models/save/TravelerBirthdaySave";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { GCG_REWARDABLE_GAME_COUNT } from "#src/services/gcg/constants";
 import { MAX_MAIL_COUNT } from "#src/services/mail/constants";
@@ -46,8 +46,8 @@ import {
   MAX_CLEARED_CAMP_COUNT,
   MAX_GENSHIN_SAVE_LENGTH,
   MAX_MINED_OUTCROP_COUNT,
-  MAX_SHOP_PURCHASE_COUNT,
   MAX_SAVE_INSTANT_LENGTH,
+  MAX_SHOP_PURCHASE_COUNT,
   MAX_TRAVELER_NAME_LENGTH,
   MAX_WISH_HISTORY_COUNT,
 } from "#src/services/save/constants";
@@ -83,26 +83,28 @@ export const genshinSaveSchema = z
     crafting: craftingSaveSchema,
     // The Encounter Points held and the daily reset they were earned on, with no default, as the other slices have none
     encounterPoints: encounterPointsSaveSchema,
-    // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
-    longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
-    // The realm's progress: the Trust EXP, blueprints, queues, companions, one-time rewards given, and the stores as they stood
-    homeProgress: homeProgressSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
     homePlantings: homePlantingSaveSchema,
+    // The realm's progress: the Trust EXP, blueprints, queues, companions, one-time rewards given, and the stores as they stood
+    homeProgress: homeProgressSaveSchema,
+    inventory: inventorySaveSchema,
+    // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
+    // (empty before the day's first investigation)
+    investigationDay: investigationDaySaveSchema,
+    // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
+    longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
     // Claimed and read
     mails: createUniqueArraySchema(mailSaveSchema, ["id", "deliveredAt"]).max(MAX_MAIL_COUNT),
     // The mining outcrops mined since the last reset, each once by its place's id, absent while none is mined
     minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
-    inventory: inventorySaveSchema,
-    // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
-    // (empty before the day's first investigation)
-    investigationDay: investigationDaySaveSchema,
+    // The namecard the profile shows, by its item id
+    namecardItemId: z.number().int().nonnegative(),
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
     // The party: its teams, the one deployed, the member on the field and the characters down
@@ -131,8 +133,6 @@ export const genshinSaveSchema = z
     tips: tipSaveSchema,
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
-    // The namecard the profile shows, by its item id
-    namecardItemId: z.number().int().nonnegative(),
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,

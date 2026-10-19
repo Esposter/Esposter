@@ -3,10 +3,10 @@ import type { GcgCostSubject } from "#src/models/gcg/GcgCostSubject";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
+import { KINGS_SQUIRE_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 import { createGcgWeaponCard } from "#src/services/gcg/effects/createGcgWeaponCard";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { KINGS_SQUIRE_IN_EFFECT_ID } from "#src/services/gcg/cards/constants";
 
 const KINGS_SQUIRE_REDUCTION = 2;
 

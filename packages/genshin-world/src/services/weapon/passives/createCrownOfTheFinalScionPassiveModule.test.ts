@@ -54,9 +54,9 @@ describe(createCrownOfTheFinalScionPassiveModule, () => {
     const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]), attack);
     const context = createKitTestContext(wielder, {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, wielder],
-        [OTHER_CHARACTER_ID, other],
         [FISCHL_CHARACTER_ID, hexerei],
+        [OTHER_CHARACTER_ID, other],
+        [TRAVELER_CHARACTER_ID, wielder],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID, FISCHL_CHARACTER_ID]),
     });

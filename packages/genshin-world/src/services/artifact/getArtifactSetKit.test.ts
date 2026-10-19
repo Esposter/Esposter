@@ -3,15 +3,15 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
-import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { WildlifeKind } from "#src/models/wildlife/WildlifeKind";
 import {
   ADVENTURER_ARTIFACT_SET_ID,
   BERSERKER_ARTIFACT_SET_ID,

@@ -1,9 +1,9 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { RAINBOW_BLADEWORK_ID } from "#src/services/gcg/cards/constants";
 import { rainbowBladework } from "#src/services/gcg/cards/rainbowBladework";
 import { createGcgApplicationOnstageAfterDamage } from "#src/services/gcg/effects/createGcgApplicationOnstageAfterDamage";
-import { RAINBOW_BLADEWORK_ID } from "#src/services/gcg/cards/constants";
 
 const RAINCUTTER_DAMAGE = 2;
 

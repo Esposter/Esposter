@@ -1,8 +1,8 @@
 import type { Expedition } from "#src/models/expedition/Expedition";
 import type { ExpeditionContext } from "#src/models/expedition/ExpeditionContext";
 import type { ExpeditionPlace } from "#src/models/expedition/ExpeditionPlace";
-import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 
+import { ExpeditionRegion } from "#src/models/expedition/ExpeditionRegion";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { EXPEDITION_UNLOCK_RANK } from "#src/services/expedition/constants";
 import { sendExpedition } from "#src/services/expedition/sendExpedition";

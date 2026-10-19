@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgDieFace } from "#src/models/gcg/GcgDieFace";
+import { I_HAVENT_LOST_YET_ID } from "#src/services/gcg/cards/constants";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
 import { takeOne } from "@esposter/shared";
-import { I_HAVENT_LOST_YET_ID } from "#src/services/gcg/cards/constants";
 
 // I Haven't Lost Yet!: playable only once one of its side's characters is defeated this round, and once a round. It creates
 // An Omni die, and the active character gains one energy

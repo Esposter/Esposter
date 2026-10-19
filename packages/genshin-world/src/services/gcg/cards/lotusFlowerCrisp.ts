@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { LOTUS_FLOWER_CRISP_ID } from "#src/services/gcg/cards/constants";
 import { addGcgZoneCardToCharacter } from "#src/services/gcg/effects/addGcgZoneCardToCharacter";
 import { checkIsGcgFoodEatable } from "#src/services/gcg/effects/checkIsGcgFoodEatable";
-import { LOTUS_FLOWER_CRISP_ID } from "#src/services/gcg/cards/constants";
 
 const DAMAGE_REDUCTION = 3;
 

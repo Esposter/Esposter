@@ -20,8 +20,8 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { countDew } from "#src/services/party/countDew";
 import { spendDew } from "#src/services/party/spendDew";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
@@ -77,10 +77,10 @@ const C2_BLOOM_INCREASE = 5;
 const C2_LUNAR_BLOOM_INCREASE = 4;
 // The reactions a Pale Hymn is spent on: Bloom and its kin, and the Lunar-Bloom her Benediction turns Bloom into
 const PALE_HYMN_REACTION_TYPES = new Set<ReactionType>([
+  LunarReactionType.LunarBloom,
   TransformativeReactionType.Bloom,
   TransformativeReactionType.Burgeon,
   TransformativeReactionType.Hyperbloom,
-  LunarReactionType.LunarBloom,
 ]);
 
 // Whether the team holds any Pale Hymn, the burst's or Moon Song's
@@ -206,17 +206,17 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
         });
       },
     },
-    onKitEvent: (event, { kitEffectState }, { characterId }) => {
-      if (event.kind === KitEventKind.EffectExpired) {
-        const { effect } = event;
-        if (effect.kind === "status" && effect.id === PALE_HYMN_GAIN_ID && effect.characterId === characterId)
-          gainBurstPaleHymn(kitEffectState, characterId);
-      } else if (event.kind === KitEventKind.ReactionTriggered) {
-        const reactionCount = event.reactions.filter(({ reactionType }) =>
-          PALE_HYMN_REACTION_TYPES.has(reactionType),
-        ).length;
-        for (let spendIndex = 0; spendIndex < reactionCount; spendIndex++) spendPaleHymn(kitEffectState, characterId);
-      }
+    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
+    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery, and Constellation 2 adds to each ratio as
+    // Lauma/cons.go does
+    getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
+      if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
+        return {};
+      const isLunar = reactionType === LunarReactionType.LunarBloom;
+      const increase =
+        (isLunar ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease) +
+        readConstellationPaleHymnIncrease(member.constellationCount, isLunar);
+      return { additiveBaseDamageBonus: elementalMasteryMultiplier(member, increase) };
     },
     getStrikeDamageBonus: ({ attackTag, combatant }) =>
       combatant.ascension < ASCENSION_4 || attackTag !== AttackTag.ElementalSkill
@@ -232,19 +232,19 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
         ),
     },
-    skill: pressBehaviour,
-    // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
-    // Any, as gcsim (MIT) lauma/burst.go does, with her own Elemental Mastery, and Constellation 2 adds to each ratio as
-    // Lauma/cons.go does
-    getPartyReactionBonus: (member, { reactionType }, { kitEffectState }) => {
-      if (!PALE_HYMN_REACTION_TYPES.has(reactionType) || !checkHasPaleHymn(kitEffectState.effects, member.characterId))
-        return {};
-      const isLunar = reactionType === LunarReactionType.LunarBloom;
-      const increase =
-        (isLunar ? paleHymnLunarBloomIncrease : paleHymnBloomIncrease) +
-        readConstellationPaleHymnIncrease(member.constellationCount, isLunar);
-      return { additiveBaseDamageBonus: elementalMasteryMultiplier(member, increase) };
+    onKitEvent: (event, { kitEffectState }, { characterId }) => {
+      if (event.kind === KitEventKind.EffectExpired) {
+        const { effect } = event;
+        if (effect.kind === "status" && effect.id === PALE_HYMN_GAIN_ID && effect.characterId === characterId)
+          gainBurstPaleHymn(kitEffectState, characterId);
+      } else if (event.kind === KitEventKind.ReactionTriggered) {
+        const reactionCount = event.reactions.filter(({ reactionType }) =>
+          PALE_HYMN_REACTION_TYPES.has(reactionType),
+        ).length;
+        for (let spendIndex = 0; spendIndex < reactionCount; spendIndex++) spendPaleHymn(kitEffectState, characterId);
+      }
     },
+    skill: pressBehaviour,
     // A hold with no Dew plays the press, and with Dew Hymn of Eternal Rest, spending it on its Lunar-Bloom hit
     skillHolds: [
       {

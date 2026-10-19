@@ -27,9 +27,9 @@ export const getPaimonsBargainsGoods = (
 
 const toGood = (goodsId: number, price: PaimonsBargainsPrice, itemId: number): PaimonsBargainsGood => ({
   buyLimit: price.buyLimit,
+  costs: price.costs,
   goodsId,
   itemCount: 1,
   itemId,
-  costs: price.costs,
   refresh: price.refresh,
 });

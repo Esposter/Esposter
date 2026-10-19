@@ -1,7 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
-import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
 import type { Stamina } from "genshin-engine";
@@ -12,8 +12,8 @@ import { Element } from "#src/models/Element";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { BENNETT_CHARACTER_ID } from "#src/services/kit/characters/bennettKit";
-import { createKitState } from "#src/services/kit/createKitState";
 import { CHARGED_ATTACK_HOLD_SECONDS, STRIKE_TARGETING_AREA } from "#src/services/kit/constants";
+import { createKitState } from "#src/services/kit/createKitState";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";

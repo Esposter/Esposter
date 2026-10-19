@@ -22,7 +22,7 @@ describe("craftingStrongbox", () => {
         },
       },
     });
-    const candidate = page.getByRole("button", { name: props.names.TEST_PIECE, exact: true });
+    const candidate = page.getByRole("button", { exact: true, name: props.names.TEST_PIECE });
 
     await candidate.nth(0).click();
     await candidate.nth(1).click();
@@ -30,7 +30,7 @@ describe("craftingStrongbox", () => {
 
     await expect.element(candidate.nth(3)).toBeDisabled();
     await expect
-      .element(page.getByRole("button", { name: ENGLISH_GAME_TEXT[GameTextKey.MysticOfferingCreate], exact: true }))
+      .element(page.getByRole("button", { exact: true, name: ENGLISH_GAME_TEXT[GameTextKey.MysticOfferingCreate] }))
       .toBeEnabled();
   });
 });

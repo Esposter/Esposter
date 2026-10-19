@@ -1,9 +1,9 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { CUILEIN_ANBAR_ID } from "#src/services/gcg/cards/constants";
 import { cuileinAnbar } from "#src/services/gcg/cards/cuileinAnbar";
 import { createGcgSummonAfterDamage } from "#src/services/gcg/effects/createGcgSummonAfterDamage";
-import { CUILEIN_ANBAR_ID } from "#src/services/gcg/cards/constants";
 
 // Trump-Card Kitty, Collei's elemental burst: 2 Dendro DMG, and a Cuilein-Anbar is summoned once the damage is dealt
 // (the wiki's Trump-Card Kitty (Character Card Skill))

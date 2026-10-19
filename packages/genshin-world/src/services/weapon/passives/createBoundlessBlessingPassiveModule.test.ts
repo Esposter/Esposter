@@ -8,8 +8,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
-import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
+import { createBoundlessBlessingPassiveModule } from "#src/services/weapon/passives/createBoundlessBlessingPassiveModule";
 import {
   createWielderCombatant,
   OTHER_CHARACTER_ID,
@@ -85,9 +85,9 @@ describe(createBoundlessBlessingPassiveModule, () => {
     stepKitSeconds(context, 4.5);
     boundlessBlessingPassiveModule.onKitEvent?.(
       {
+        bondOfLifeShare: 0,
         characterId: TRAVELER_CHARACTER_ID,
         healthShare: 0,
-        bondOfLifeShare: 0,
         isFallRefused: false,
         kind: KitEventKind.HealthChanged,
         overflowHealthShare: 0,

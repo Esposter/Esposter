@@ -277,13 +277,13 @@ export const createCynoKitBehaviour = ({
       )
         ? WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS
         : 0,
+    getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
+      findKitStance(kitEffectState.effects, combatant.characterId) ? mortuaryRiteCooldownMultiplier : 1,
     // Judication's 35% on the hit Mortuary Rite lands, while the status its press sets under Endseer holds
     getStrikeDamageBonus: ({ combatant, hit }, _enemy, _party, effects) =>
       hit === mortuaryRiteHit && checkHasKitStatus(effects, combatant.characterId, JUDICATION_DAMAGE_STATUS_ID)
         ? JUDICATION_DAMAGE_BONUS
         : 0,
-    getSkillCooldownMultiplier: ({ activeCombatant: combatant, kitEffectState }) =>
-      findKitStance(kitEffectState.effects, combatant.characterId) ? mortuaryRiteCooldownMultiplier : 1,
     normalAttacks: [
       { hits: [invokerStrikeHit] },
       { hits: [invokerStrikeHit] },

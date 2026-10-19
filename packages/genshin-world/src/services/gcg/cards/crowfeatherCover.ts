@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
+import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
 import { checkIsGcgElementalUse } from "#src/services/gcg/effects/checkIsGcgElementalUse";
 import { placeGcgZoneCard } from "#src/services/gcg/effects/placeGcgZoneCard";
 import { takeOne } from "@esposter/shared";
-import { CROWFEATHER_COVER_ID } from "#src/services/gcg/cards/constants";
 
 const CROWFEATHER_COVER_DAMAGE_BONUS = 1;
 

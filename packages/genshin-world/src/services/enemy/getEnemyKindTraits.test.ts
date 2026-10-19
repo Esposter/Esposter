@@ -34,8 +34,8 @@ describe(getEnemyKindTraits, () => {
     ]);
 
     expect(getEnemyKindTraits(unplacedKinds, UNPLACED_ENEMY_KIND_ID)).toStrictEqual({
-      energyDrops: [],
       enemyDropFamily: EnemyDropFamily.Hilichurls,
+      energyDrops: [],
       poiseType: PoiseType.Minion,
     });
   });

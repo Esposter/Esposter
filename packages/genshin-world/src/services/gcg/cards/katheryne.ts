@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { takeOne } from "@esposter/shared";
 import { KATHERYNE_ID } from "#src/services/gcg/cards/constants";
+import { takeOne } from "@esposter/shared";
 
 // Katheryne: once a round, a switch of character is a fast action instead of a combat action
 export const katheryne: GcgCardModule = {

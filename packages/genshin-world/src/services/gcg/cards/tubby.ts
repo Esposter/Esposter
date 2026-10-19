@@ -1,7 +1,7 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
-import { takeOne } from "@esposter/shared";
 import { TUBBY_ID } from "#src/services/gcg/cards/constants";
+import { takeOne } from "@esposter/shared";
 
 const TUBBY_REDUCTION = 2;
 

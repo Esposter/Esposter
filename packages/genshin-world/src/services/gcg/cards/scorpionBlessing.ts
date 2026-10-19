@@ -1,8 +1,8 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 
-import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 import { SCORPION_BLESSING_ID } from "#src/services/gcg/cards/constants";
+import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 
 const findScorpionBlessing = (side: GcgSideState) =>
   side.onstages.find(({ cardId }) => cardId === SCORPION_BLESSING_ID);

@@ -1,9 +1,9 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
 import { GcgCardKind } from "#src/models/gcg/GcgCardKind";
+import { DUNYARZAD_ID } from "#src/services/gcg/cards/constants";
 import { drawRandomGcgCard } from "#src/services/gcg/effects/drawRandomGcgCard";
 import { takeOne } from "@esposter/shared";
-import { DUNYARZAD_ID } from "#src/services/gcg/cards/constants";
 
 // Dunyarzad, a companion: a companion costs one die less to play, once per Round, and after a companion is played, a random
 // Companion is drawn from the pile, once per match (the wiki's Dunyarzad (Support Card)). The draw is kept in the card's

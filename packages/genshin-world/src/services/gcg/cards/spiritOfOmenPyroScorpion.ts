@@ -7,7 +7,7 @@ import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 import { Element } from "#src/models/Element";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { SCORPOCALYPSE_ID, BURNING_ASSAULT_ID, PYRO_SCORPION_ID } from "#src/services/gcg/cards/constants";
+import { BURNING_ASSAULT_ID, PYRO_SCORPION_ID, SCORPOCALYPSE_ID } from "#src/services/gcg/cards/constants";
 import {
   addScorpionBlessingStack,
   readScorpionBlessingStacks,

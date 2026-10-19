@@ -3,6 +3,7 @@ import type { GcgDuel } from "#src/models/gcg/GcgDuel";
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
 import { applyGcgDamage } from "#src/services/gcg/applyGcgDamage";
+import { LARGE_WIND_SPIRIT_ID } from "#src/services/gcg/cards/constants";
 import { largeWindSpirit } from "#src/services/gcg/cards/largeWindSpirit";
 import { createGcgDuel } from "#src/services/gcg/createGcgDuel";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
@@ -13,7 +14,6 @@ import { rerollGcgDice } from "#src/services/gcg/rerollGcgDice";
 import { takeOne } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { describe, expect, test } from "vitest";
-import { LARGE_WIND_SPIRIT_ID } from "#src/services/gcg/cards/constants";
 
 describe("the Large Wind Spirit's Swirl conversion", () => {
   const SEED = 6;

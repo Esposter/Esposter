@@ -161,8 +161,8 @@ describe(getWeaponPassiveKit, () => {
       level: 90,
     };
     const characterIdCombatantMap = new Map([
-      [TRAVELER_CHARACTER_ID, combatant],
       [OTHER_CHARACTER_ID, { ...combatant, characterId: OTHER_CHARACTER_ID, kit: KIT }],
+      [TRAVELER_CHARACTER_ID, combatant],
     ]);
     const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
 

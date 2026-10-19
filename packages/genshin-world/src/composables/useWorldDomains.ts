@@ -12,8 +12,8 @@ import type { EnemyCamp } from "#src/models/enemy/EnemyCamp";
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { Party } from "#src/models/party/Party";
 import type { ReliquaryPieceEntry } from "#src/models/reliquary/ReliquaryPieceEntry";
 import type { ReliquarySetData } from "#src/models/reliquary/ReliquarySetData";
@@ -26,38 +26,38 @@ import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { GroundPoint } from "genshin-engine";
 import type { Ref } from "vue";
 
+import { GameDataset } from "#src/models/data/GameDataset";
 import { DomainChallengeOutcome } from "#src/models/domains/DomainChallengeOutcome";
 import { DomainKind } from "#src/models/domains/DomainKind";
-import { GameDataset } from "#src/models/data/GameDataset";
 import { domainScheduleSchema } from "#src/models/domains/DomainSchedule";
 import { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
+import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
+import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
+import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
+import { stepStormterrorFight, STORMTERROR_FIGHT_START } from "#src/services/bosses/stepStormterrorFight";
 import { readGameDataEntry } from "#src/services/data/readGameDataEntry";
+import { applyDomainDisorder } from "#src/services/domains/applyDomainDisorder";
 import { checkIsDomainLevelOpen } from "#src/services/domains/checkIsDomainLevelOpen";
 import { claimPetrifiedTree } from "#src/services/domains/claimPetrifiedTree";
+import { clearDomainDisorders } from "#src/services/domains/clearDomainDisorders";
 import { computeDomainChallengeElapsed } from "#src/services/domains/computeDomainChallengeElapsed";
 import { computeDomainLevelRows } from "#src/services/domains/computeDomainLevelRows";
 import { computeDomainScenePose } from "#src/services/domains/computeDomainScenePose";
 import { computeDomainWaveAfterDefeat } from "#src/services/domains/computeDomainWaveAfterDefeat";
 import { createDomainArenaCamp } from "#src/services/domains/createDomainArenaCamp";
-import { applyDomainDisorder } from "#src/services/domains/applyDomainDisorder";
-import { clearDomainDisorders } from "#src/services/domains/clearDomainDisorders";
-import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisorder";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { readWeeklyBossDomains } from "#src/services/domains/readWeeklyBossDomains";
 import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChallenge";
 import { toWeeklyBossSchedule } from "#src/services/domains/toWeeklyBossSchedule";
+import { triggerDomainDisorder } from "#src/services/domains/triggerDomainDisorder";
 import { addDroppedItem } from "#src/services/inventory/addDroppedItem";
 import { getDroppedItemDefinition } from "#src/services/inventory/getDroppedItemDefinition";
 import { computeJumpPose } from "#src/services/map/computeJumpPose";
-import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
-import { checkIsWeeklyBossFirstClaimable } from "#src/services/bosses/checkIsWeeklyBossFirstClaimable";
-import { computeWeeklyBossQuickChallengeDungeonId } from "#src/services/bosses/computeWeeklyBossQuickChallengeDungeonId";
-import { markWeeklyBossTopClear } from "#src/services/bosses/markWeeklyBossTopClear";
-import { STORMTERROR_FIGHT_START, stepStormterrorFight } from "#src/services/bosses/stepStormterrorFight";
-import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
+import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -65,17 +65,17 @@ import { computed, shallowRef } from "vue";
 // Tree grants when cleared
 interface DomainArena {
   areaId: string;
+  artifactSetIds: readonly number[];
   center: GroundPoint;
+  disorder: string;
   domainKind: DomainKind;
   enemyLevel: number;
-  disorder: string;
   entryId: number;
   // Whether the level is its domain's highest tier, which a weekly boss's clear of marks for its first clear to claim
   isTopTier: boolean;
+  level: DomainChallengeLevel;
   // The epoch millisecond the arena was entered, which names each wave's camp apart from the one before
   startedAt: number;
-  artifactSetIds: readonly number[];
-  level: DomainChallengeLevel;
   treeArtifacts: TreeArtifact[];
   treeRewards: RewardItem[];
 }
@@ -107,12 +107,12 @@ export const useWorldDomains = ({
   events,
   gameDataBaseUrl,
   getWorldNow,
-  kitEffectState,
-  party,
   inventory,
   jumpTo,
+  kitEffectState,
   materialDataMap,
   nameText,
+  party,
   random,
   rank,
   reliquaryPieceEntryMap,
@@ -120,8 +120,8 @@ export const useWorldDomains = ({
   setInventory,
   setWallet,
   unlockedLandmarks,
-  weaponDataMap,
   wallet,
+  weaponDataMap,
   worldNow,
 }: {
   adventureExp: Ref<number>;
@@ -136,19 +136,19 @@ export const useWorldDomains = ({
   getWorldNow: () => Temporal.Instant;
   inventory: Ref<Inventory>;
   jumpTo: (pose: WorldJumpPose) => void;
+  kitEffectState: KitEffectState;
   materialDataMap: ReadonlyMap<number, MaterialData>;
   nameText: Readonly<Record<string, string>>;
-  random: () => number;
-  kitEffectState: KitEffectState;
   party: Party;
+  random: () => number;
   rank: Ref<number>;
   reliquaryPieceEntryMap: ReadonlyMap<number, ReliquaryPieceEntry>;
   reliquarySets: readonly ReliquarySetData[];
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   unlockedLandmarks: Ref<Landmark[]>;
-  weaponDataMap: ReadonlyMap<number, WeaponData>;
   wallet: Ref<Wallet>;
+  weaponDataMap: ReadonlyMap<number, WeaponData>;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
   const unlockedDomainEntrances = computed(() =>
@@ -271,6 +271,7 @@ export const useWorldDomains = ({
     const scenePose = computeDomainScenePose(entrance.arrival);
     const arena: DomainArena = {
       areaId: entrance.areaId,
+      artifactSetIds: schedule.artifactSetIds,
       center: scenePose.point,
       disorder: scheduledLevel.disorder,
       domainKind: entrance.domainKind,
@@ -280,7 +281,6 @@ export const useWorldDomains = ({
         scheduledLevel.recommendedRank >= Math.max(...schedule.levels.map(({ recommendedRank }) => recommendedRank)),
       level,
       startedAt: now.epochMilliseconds,
-      artifactSetIds: schedule.artifactSetIds,
       treeArtifacts: scheduledLevel.treeArtifacts,
       treeRewards: scheduledLevel.treeRewards,
     };
@@ -315,12 +315,12 @@ export const useWorldDomains = ({
   // Raises the tree and keeps the player in the arena, while a timed-out or wiped run returns the player to the entrance
   const stepDomainChallenge = ({
     deltaMilliseconds,
-    isPlaying,
     isPartyDown,
+    isPlaying,
   }: {
     deltaMilliseconds: number;
-    isPlaying: boolean;
     isPartyDown: boolean;
+    isPlaying: boolean;
   }): string[] => {
     const arena = domainArena.value;
     if (!arena) return [];
@@ -344,8 +344,8 @@ export const useWorldDomains = ({
       : undefined;
     const outcome = resolveDomainChallenge(
       {
-        defeatTarget: arena.level.defeatTarget,
         defeats: challenge.defeats,
+        defeatTarget: arena.level.defeatTarget,
         elapsedMilliseconds,
         timeLimitMilliseconds: arena.level.timeLimitSeconds * 1000,
       },

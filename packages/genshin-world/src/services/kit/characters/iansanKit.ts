@@ -16,8 +16,8 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { generateKitNightsoulPoints } from "#src/services/kit/effects/generateKitNightsoulPoints";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
-import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { schedulePeriodicKitTask } from "#src/services/kit/effects/schedulePeriodicKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
@@ -118,6 +118,35 @@ const restorePreciseMovementPoints = (kitEffectState: KitEffectState, characterI
 // Constellation 4 needs the Surging Force stacks after another character's burst, which the kit does not read
 // Constellation 6 needs the Kinetic Energy Scale's extra 3 seconds and Extreme Force on overflow, not built
 export const createIansanKitBehaviour = (): KitBehaviour => ({
+  burst: {
+    onStart: ({ activeCombatant, kitEffectState }) => {
+      const { characterId } = activeCombatant;
+      scheduleKitTask(kitEffectState, characterId, toKitSeconds(BURST_POINTS_FRAMES), (context) => {
+        if (checkHasKitStatus(context.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
+          generateKitNightsoulPoints(context, BURST_POINTS, NIGHTSOUL_POINTS, characterId);
+        else
+          enterKitNightsoulBlessing(context.kitEffectState, characterId, {
+            nightsoulRate: NIGHTSOUL_RATE,
+            points: BURST_POINTS,
+            secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
+          });
+      });
+      addKitStatus(kitEffectState, characterId, { id: BURST_RESTORE_ID, secondsRemaining: BURST_RESTORE_SECONDS });
+      schedulePeriodicKitTask(
+        kitEffectState,
+        characterId,
+        { firstSeconds: 1, intervalSeconds: 1, untilSeconds: BURST_RESTORE_SECONDS },
+        (context) => {
+          // The restore stops once the blessing it lands in exits, which ends its status, as gcsim's does with burstSrc
+          if (!checkIsKitStatusActive(context.kitEffectState.effects, characterId, BURST_RESTORE_ID)) return;
+          const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
+          if (points <= 0) return;
+          generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
+          healWarmingUp(context, characterId);
+        },
+      );
+    },
+  },
   // The Electro Swift Stormflight plays in place of her charged attack while her blessing lasts
   chargedAttackVariant: {
     checkIsActive: ({ activeCombatant, kitEffectState }) =>
@@ -199,35 +228,6 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     });
     startKitCooldown(kitEffectState, characterId, CONSTELLATION_1_COOLDOWN_ID, CONSTELLATION_1_COOLDOWN_SECONDS);
     gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
-  },
-  burst: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
-      scheduleKitTask(kitEffectState, characterId, toKitSeconds(BURST_POINTS_FRAMES), (context) => {
-        if (checkHasKitStatus(context.kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
-          generateKitNightsoulPoints(context, BURST_POINTS, NIGHTSOUL_POINTS, characterId);
-        else
-          enterKitNightsoulBlessing(context.kitEffectState, characterId, {
-            nightsoulRate: NIGHTSOUL_RATE,
-            points: BURST_POINTS,
-            secondsRemaining: NIGHTSOUL_BLESSING_SECONDS,
-          });
-      });
-      addKitStatus(kitEffectState, characterId, { id: BURST_RESTORE_ID, secondsRemaining: BURST_RESTORE_SECONDS });
-      schedulePeriodicKitTask(
-        kitEffectState,
-        characterId,
-        { firstSeconds: 1, intervalSeconds: 1, untilSeconds: BURST_RESTORE_SECONDS },
-        (context) => {
-          // The restore stops once the blessing it lands in exits, which ends its status, as gcsim's does with burstSrc
-          if (!checkIsKitStatusActive(context.kitEffectState.effects, characterId, BURST_RESTORE_ID)) return;
-          const points = restorePreciseMovementPoints(context.kitEffectState, characterId);
-          if (points <= 0) return;
-          generateKitNightsoulPoints(context, points, NIGHTSOUL_POINTS, characterId);
-          healWarmingUp(context, characterId);
-        },
-      );
-    },
   },
   skill: {
     onStart: ({ activeCombatant, kitEffectState }) =>

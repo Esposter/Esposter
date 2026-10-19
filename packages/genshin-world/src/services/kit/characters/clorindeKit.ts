@@ -5,13 +5,13 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
-import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
-import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { grantPartyMemberBondOfLife } from "#src/services/party/grantPartyMemberBondOfLife";
 
 export const CLORINDE_CHARACTER_ID = 10_000_098;
 

@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { toGcgRemainingDiceIndices } from "#src/services/gcg/toGcgRemainingDiceIndices";
+import { describe, expect, test } from "vitest";
 
 describe(toGcgRemainingDiceIndices, () => {
   test("should number each group's dice among the dice left once the payment is taken", () => {

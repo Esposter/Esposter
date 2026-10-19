@@ -2,11 +2,8 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-
 import { AttackTag } from "#src/models/combat/AttackTag";
-
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-
 import { GOLDEN_TROUPE_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
 import { createGoldenTroupeSetModule } from "#src/services/artifact/sets/createGoldenTroupeSetModule";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";

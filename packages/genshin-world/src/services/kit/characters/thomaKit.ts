@@ -50,8 +50,8 @@ const CONSTELLATION_6_DAMAGE_BONUS = 0.15;
 const CONSTELLATION_6_SECONDS = 6;
 const CONSTELLATION_6_STATUS_ID = "thoma-c6-damage";
 const CONSTELLATION_6_ATTACK_TAGS = new Set<AttackTag | undefined>([
-  AttackTag.NormalAttack,
   AttackTag.ChargedAttack,
+  AttackTag.NormalAttack,
   AttackTag.PlungingAttack,
 ]);
 
@@ -153,6 +153,15 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
           });
       },
     },
+    // Constellation 6's DMG Bonus on Thoma's own attacks, and on the attacks of each other member through the party hook
+    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
+      damageBonus: getConstellation6DamageBonus(member.characterId, strike, effects),
+    }),
+    getStrikeDamageBonus: (strike, _enemy, _party, effects) =>
+      getConstellation6DamageBonus(strike.combatant.characterId, strike, effects),
+    // Constellation 4's energy goes to Thoma when its delay runs out
+    onKitEvent: (event, context, combatant) =>
+      collectDelayedKitEnergy(event, context, combatant, CONSTELLATION_4_ENERGY_STATUS_ID),
     // Blazing Blessing sets its shield as it starts, from Thoma's Max HP and the table's share and flat HP, for its
     // Seconds. It also infuses his own attacks with Pyro for the infusion's seconds
     skill: {
@@ -173,14 +182,5 @@ export const createThomaKitBehaviour = ({ readHit, readParameter, readSeconds }:
           });
       },
     },
-    // Constellation 4's energy goes to Thoma when its delay runs out
-    onKitEvent: (event, context, combatant) =>
-      collectDelayedKitEnergy(event, context, combatant, CONSTELLATION_4_ENERGY_STATUS_ID),
-    // Constellation 6's DMG Bonus on Thoma's own attacks, and on the attacks of each other member through the party hook
-    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
-      damageBonus: getConstellation6DamageBonus(member.characterId, strike, effects),
-    }),
-    getStrikeDamageBonus: (strike, _enemy, _party, effects) =>
-      getConstellation6DamageBonus(strike.combatant.characterId, strike, effects),
   };
 };

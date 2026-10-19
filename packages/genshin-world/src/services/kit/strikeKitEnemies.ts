@@ -14,6 +14,7 @@ import { checkHasEnemyWeakPoints } from "#src/services/enemy/checkHasEnemyWeakPo
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
+import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { checkIsInKitHitbox } from "#src/services/kit/checkIsInKitHitbox";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
@@ -32,7 +33,6 @@ import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { strikeKitDendroCores } from "#src/services/kit/strikeKitDendroCores";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
 import { addEnduringRockStatus } from "#src/services/party/addEnduringRockStatus";
-import { addPolestarField } from "#src/services/kit/addPolestarField";
 import { addSprawlingGreeneryBuffs } from "#src/services/party/addSprawlingGreeneryBuffs";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { getPartyMoonsign } from "#src/services/party/getPartyMoonsign";
@@ -115,9 +115,9 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
         ) ?? 0) + deployedBonuses.additiveBaseDamageBonus;
       const pricedHit = {
         ...enemyHit,
+        additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
         // The strike's attack tag, which a summon's hits leave untagged, falls back to the hit's own
         attackTag: attackTag ?? enemyHit.attackTag,
-        additiveBaseDamageBonus: (striker: Combatant) => (additiveBaseDamageBonus?.(striker) ?? 0) + flatDamage,
         criticalDamageBonus:
           (enemyHit.criticalDamageBonus ?? 0) +
           getElementCriticalDamageBonus(

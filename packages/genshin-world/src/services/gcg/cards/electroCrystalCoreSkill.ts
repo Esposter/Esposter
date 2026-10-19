@@ -1,7 +1,7 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
-import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { ELECTRO_CRYSTAL_CORE_ID } from "#src/services/gcg/cards/constants";
+import { electroCrystalCore } from "#src/services/gcg/cards/electroCrystalCore";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
 
 // Electro Crystal Core, Electro Hypostasis' passive: when the battle begins, the character gains the Electro Crystal Core state

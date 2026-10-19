@@ -1,10 +1,10 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
 
+import { BLUSTERING_BLADE_ID, FROSTY_ASSAULT_ID, MAGUU_KENKI_ID } from "#src/services/gcg/cards/constants";
 import { createGcgTalentCard } from "#src/services/gcg/effects/createGcgTalentCard";
 import { findGcgAdjacentCharacterIndex } from "#src/services/gcg/findGcgAdjacentCharacterIndex";
 import { switchGcgActiveCharacter } from "#src/services/gcg/switchGcgActiveCharacter";
 import { takeOne } from "@esposter/shared";
-import { BLUSTERING_BLADE_ID, FROSTY_ASSAULT_ID, MAGUU_KENKI_ID } from "#src/services/gcg/cards/constants";
 
 // Transcendent Automaton: Maguu Kenki, while active, equips it, and Blustering Blade is used at once. Her Blustering Blade
 // Switches to the next standing character, and her Frosty Assault to the previous one

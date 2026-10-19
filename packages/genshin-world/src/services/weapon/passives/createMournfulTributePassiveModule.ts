@@ -6,8 +6,8 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
 const MOURNFUL_TRIBUTE_ID = "mournfulTribute";

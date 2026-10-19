@@ -9,8 +9,8 @@ import type { Party } from "#src/models/party/Party";
 import type { Trial } from "#src/models/trial/Trial";
 import type { TrialArena } from "#src/models/trial/TrialArena";
 import type { TrialRoster } from "#src/models/trial/TrialRoster";
-import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
+import type { WorldJumpPose } from "#src/models/world/WorldJumpPose";
 import type { CharacterTrialTables } from "#src/services/trial/readCharacterTrials";
 import type { Ref } from "vue";
 
@@ -21,8 +21,8 @@ import { resolveDomainChallenge } from "#src/services/domains/resolveDomainChall
 import { readCharacterKits } from "#src/services/kit/readCharacterKits";
 import { createParty } from "#src/services/party/createParty";
 import { createWorldParty } from "#src/services/party/createWorldParty";
-import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { claimTrialStageReward } from "#src/services/trial/claimTrialStageReward";
+import { TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS } from "#src/services/trial/constants";
 import { createTrialCharacter } from "#src/services/trial/createTrialCharacter";
 import { readCharacterTrials } from "#src/services/trial/readCharacterTrials";
 import { getResultAsync } from "@esposter/shared";
@@ -168,20 +168,20 @@ export const useWorldTrials = ({
   // The pose the player was at when the trial was entered, which the world jumps them to; none while the trial runs on
   const stepTrial = ({
     deltaMilliseconds,
-    isPlaying,
     isPartyDown,
+    isPlaying,
   }: {
     deltaMilliseconds: number;
-    isPlaying: boolean;
     isPartyDown: boolean;
-  }): WorldJumpPose | undefined => {
+    isPlaying: boolean;
+  }): undefined | WorldJumpPose => {
     const arena = trialArena.value;
     if (!arena) return undefined;
     const elapsedMilliseconds = computeDomainChallengeElapsed(arena.elapsedMilliseconds, deltaMilliseconds, isPlaying);
     const outcome = resolveDomainChallenge(
       {
-        defeatTarget: Number.POSITIVE_INFINITY,
         defeats: 0,
+        defeatTarget: Number.POSITIVE_INFINITY,
         elapsedMilliseconds,
         timeLimitMilliseconds: TRIAL_PROVISIONAL_TIME_LIMIT_MILLISECONDS,
       },
@@ -197,5 +197,5 @@ export const useWorldTrials = ({
     return arena.returnPose;
   };
 
-  return { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trialSecondsRemaining, trials };
+  return { enterTrial, playerRoster, stepTrial, trialArena, trialClaimedStageIds, trials, trialSecondsRemaining };
 };

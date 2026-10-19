@@ -4,9 +4,9 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { PaimonsBargainsGood } from "#src/models/shop/PaimonsBargainsRotation";
 import type { ShopPurchase } from "#src/models/shop/ShopPurchase";
 
-import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { addStellaFortuna } from "#src/services/character/addStellaFortuna";
 import { createCharacter } from "#src/services/character/createCharacter";
+import { EMPTY_INVENTORY } from "#src/services/inventory/constants";
 import { checkIsCurrencyOnlyGood } from "#src/services/shop/checkIsCurrencyOnlyGood";
 import { checkIsPaimonsBargainsCharacterBuyable } from "#src/services/shop/checkIsPaimonsBargainsCharacterBuyable";
 import { payShopGoodCosts } from "#src/services/shop/payShopGoodCosts";

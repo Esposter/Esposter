@@ -30,9 +30,9 @@ describe(stepDeployedKits, () => {
     });
     const context = createKitTestContext(createCombatant(TRAVELER_CHARACTER_ID), {
       characterIdCombatantMap: new Map([
-        [TRAVELER_CHARACTER_ID, createCombatant(TRAVELER_CHARACTER_ID)],
         [OFF_FIELD_CHARACTER_ID, createCombatant(OFF_FIELD_CHARACTER_ID)],
         [OUTSIDE_CHARACTER_ID, createCombatant(OUTSIDE_CHARACTER_ID)],
+        [TRAVELER_CHARACTER_ID, createCombatant(TRAVELER_CHARACTER_ID)],
       ]),
       party: createParty([TRAVELER_CHARACTER_ID, OFF_FIELD_CHARACTER_ID]),
     });

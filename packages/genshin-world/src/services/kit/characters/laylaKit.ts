@@ -8,8 +8,8 @@ import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { Element } from "#src/models/Element";
+import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
