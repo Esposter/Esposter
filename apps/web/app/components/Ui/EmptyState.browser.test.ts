@@ -3,7 +3,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { render } from "@nuxt/test-utils/browser";
 import { describe, expect, test } from "vitest";
 
-describe("UiEmptyState", () => {
+describe("uiEmptyState", () => {
   test("an empty state lays out its title in the browser", async () => {
     expect.hasAssertions();
 

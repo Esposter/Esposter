@@ -27,13 +27,13 @@ const typedTextScript = () => {
       if (!element.isConnected) return;
 
       let delay = TYPE_DELAY;
-      if (deleting) {
+      if (deleting)
         if (count > 0) count--;
         else {
           deleting = false;
           index = (index + 1) % texts.length;
         }
-      } else if (count < (texts[index] ?? "").length) count++;
+      else if (count < (texts[index] ?? "").length) count++;
       else {
         deleting = true;
         delay = HOLD_DELAY;

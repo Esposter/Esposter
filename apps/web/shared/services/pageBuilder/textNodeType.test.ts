@@ -10,8 +10,8 @@ describe("textNodeType", () => {
 
     const content = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
 
-    expect(
-      serializeHtml([textNodeType.render({ props: { content, id: TEST_ID }, type: WebpageNodeType.Text })]),
-    ).toStrictEqual('<div class="text"><p>a</p></div>');
+    expect(serializeHtml([textNodeType.render({ props: { content, id: TEST_ID }, type: WebpageNodeType.Text })])).toBe(
+      '<div class="text"><p>a</p></div>',
+    );
   });
 });

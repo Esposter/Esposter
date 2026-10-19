@@ -23,8 +23,6 @@ describe("surveyInviteNodeType", () => {
           TEST_CONTEXT,
         ),
       ]),
-    ).toStrictEqual(
-      `<a class="survey-invite" href="${getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`,
-    );
+    ).toBe(`<a class="survey-invite" href="${getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`);
   });
 });

@@ -33,7 +33,7 @@ describe(AgentConsoleSheet, () => {
       },
     ]);
 
-  test("The chord opens the side chat", async () => {
+  test("the chord opens the side chat", async () => {
     expect.hasAssertions();
 
     pairConsole();
@@ -47,7 +47,7 @@ describe(AgentConsoleSheet, () => {
     expect(component.findAll('textarea[aria-label="Ask the side chat"]')).toHaveLength(1);
   });
 
-  test("The chord backgrounds the console's session while the console's turn runs", async () => {
+  test("the chord backgrounds the console's session while the console's turn runs", async () => {
     expect.hasAssertions();
 
     const sendCommand = pairConsole();
@@ -60,7 +60,7 @@ describe(AgentConsoleSheet, () => {
     expect(sendCommand).toHaveBeenCalledExactlyOnceWith({ sessionId, type: CommandType.BackgroundTasks });
   });
 
-  test("The chord backgrounds the side chat's session while the side chat's turn runs, and leaves the console's", async () => {
+  test("the chord backgrounds the side chat's session while the side chat's turn runs, and leaves the console's", async () => {
     expect.hasAssertions();
 
     const sendCommand = pairConsole();

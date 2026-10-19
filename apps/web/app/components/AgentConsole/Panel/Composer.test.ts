@@ -5,7 +5,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe(AgentConsolePanelComposer, () => {
-  test("A side chat's composer offers no mode to change", async () => {
+  test("a side chat's composer offers no mode to change", async () => {
     expect.hasAssertions();
 
     useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();
@@ -16,7 +16,7 @@ describe(AgentConsolePanelComposer, () => {
     ]);
   });
 
-  test("The console's composer offers the mode to change", async () => {
+  test("the console's composer offers the mode to change", async () => {
     expect.hasAssertions();
 
     useAgentConsoleSessionStore().currentSessionId = crypto.randomUUID();

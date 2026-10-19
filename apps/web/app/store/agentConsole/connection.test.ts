@@ -381,7 +381,7 @@ describe(useAgentConsoleConnectionStore, () => {
       return { agentConsoleConnectionStore, agentConsoleSessionStore, forkCommand, sessionId, socket };
     };
 
-    test("A side chat question leaves the main conversation unchanged", async () => {
+    test("a side chat question leaves the main conversation unchanged", async () => {
       expect.hasAssertions();
 
       const { agentConsoleSessionStore, forkCommand, sessionId, socket } = await askSideChat();
@@ -407,7 +407,7 @@ describe(useAgentConsoleConnectionStore, () => {
       ]);
     });
 
-    test("Closing the drawer discards its answers", async () => {
+    test("closing the drawer discards its answers", async () => {
       expect.hasAssertions();
 
       const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await askSideChat();

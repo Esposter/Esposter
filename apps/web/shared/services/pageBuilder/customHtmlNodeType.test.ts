@@ -12,7 +12,7 @@ describe("customHtmlNodeType", () => {
   test("custom html is cleaned before it is published", () => {
     expect.hasAssertions();
 
-    expect(renderCustomHtml('<p onclick="alert(1)">Hi <b>there</b></p>')).toStrictEqual(
+    expect(renderCustomHtml('<p onclick="alert(1)">Hi <b>there</b></p>')).toBe(
       '<div class="custom-html"><p>Hi <b>there</b></p></div>',
     );
   });
@@ -20,7 +20,7 @@ describe("customHtmlNodeType", () => {
   test("a javascript url behind a leading space or in mixed case is removed", () => {
     expect.hasAssertions();
 
-    expect(renderCustomHtml('<a href=" javascript:alert(1)">x</a><a href="JaVaScRiPt:alert(1)">y</a>')).toStrictEqual(
+    expect(renderCustomHtml('<a href=" javascript:alert(1)">x</a><a href="JaVaScRiPt:alert(1)">y</a>')).toBe(
       '<div class="custom-html"><a rel="noopener noreferrer nofollow" target="_blank">x</a><a rel="noopener noreferrer nofollow" target="_blank">y</a></div>',
     );
   });
@@ -28,15 +28,13 @@ describe("customHtmlNodeType", () => {
   test("a srcdoc attribute is removed", () => {
     expect.hasAssertions();
 
-    expect(renderCustomHtml('<div srcdoc="<b>x</b>">y</div>')).toStrictEqual(
-      '<div class="custom-html"><div>y</div></div>',
-    );
+    expect(renderCustomHtml('<div srcdoc="<b>x</b>">y</div>')).toBe('<div class="custom-html"><div>y</div></div>');
   });
 
   test("an svg xlink href is removed", () => {
     expect.hasAssertions();
 
-    expect(renderCustomHtml('<svg><a xlink:href="javascript:alert(1)">x</a></svg>')).toStrictEqual(
+    expect(renderCustomHtml('<svg><a xlink:href="javascript:alert(1)">x</a></svg>')).toBe(
       '<div class="custom-html">x</div>',
     );
   });

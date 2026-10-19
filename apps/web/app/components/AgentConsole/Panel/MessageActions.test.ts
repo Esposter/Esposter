@@ -12,7 +12,7 @@ describe(AgentConsolePanelMessageActions, () => {
   const sessionId = crypto.randomUUID();
   const messageUuid = crypto.randomUUID();
 
-  test("Fork on a side chat's message forks it as a side chat", async () => {
+  test("fork on a side chat's message forks it as a side chat", async () => {
     expect.hasAssertions();
 
     useAgentConsoleSessionStore().currentSessionId = sessionId;
@@ -30,7 +30,7 @@ describe(AgentConsolePanelMessageActions, () => {
     });
   });
 
-  test("Fork on a console message forks it as a session of its own", async () => {
+  test("fork on a console message forks it as a session of its own", async () => {
     expect.hasAssertions();
 
     useAgentConsoleSessionStore().currentSessionId = sessionId;

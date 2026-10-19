@@ -462,7 +462,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   };
 
   // The side chat's first question forks the session at its latest message and is asked of the fork once it has opened;
-  // every question after that is asked of the fork, which holds the conversation it was forked from. Returns whether the
+  // Every question after that is asked of the fork, which holds the conversation it was forked from. Returns whether the
   // Question was taken, so a question refused — the fork still opening, or no host reached — is kept by the reader
   const askSideChat = (text: string, attachments: Attachment[]) => {
     if (agentConsoleSideChatStore.sideChatSessionId)

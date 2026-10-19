@@ -6,8 +6,8 @@ import { render } from "@nuxt/test-utils/browser";
 import { assert, describe, expect, test, vi } from "vitest";
 import { h } from "vue";
 
-describe("PageBuilderCanvasFrame", () => {
-  // constants.test declares a suite when imported, which only the default run holds, so the values are declared here
+describe("pageBuilderCanvasFrame", () => {
+  // Constants.test declares a suite when imported, which only the default run holds, so the values are declared here
   const TEST_CONTEXT = { origin: "https://esposter.test" };
   const TEST_ID = "a";
   const TEST_ROOT = { props: { lang: "en" } };
@@ -118,6 +118,6 @@ describe("PageBuilderCanvasFrame", () => {
     await expect.poll(() => frame.contentDocument?.querySelector("button")).not.toBeNull();
     frame.contentDocument?.querySelector<HTMLButtonElement>("button")?.click();
 
-    expect(onClick).toHaveBeenCalledOnce();
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
