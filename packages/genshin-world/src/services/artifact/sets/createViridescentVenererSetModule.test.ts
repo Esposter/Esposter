@@ -71,6 +71,15 @@ describe(createViridescentVenererSetModule, () => {
     expect(reactionDamageBonus(other, TransformativeReactionType.Swirl)).toBe(0);
   });
 
+  test("the wearer's own Stellar Swirl DMG is raised by 20%, and another member's is not", () => {
+    expect.hasAssertions();
+
+    const { other, reactionDamageBonus, wearer } = createTeam([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
+
+    expect(reactionDamageBonus(wearer, StellarReactionType.StellarSwirl)).toBeCloseTo(0.2);
+    expect(reactionDamageBonus(other, StellarReactionType.StellarSwirl)).toBe(0);
+  });
+
   test("a Swirl the active wearer triggers lowers the RES of the element it swirls by 40% for 10 seconds", () => {
     expect.hasAssertions();
 

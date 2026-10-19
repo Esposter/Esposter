@@ -64,7 +64,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
   const moonsign = getPartyMoonsign(characterIdCombatantMap, kitEffectState.effects, party, context.body.position);
   const stellarReactionTypes = getPartyStellarReactionTypes(characterIdCombatantMap, party);
   for (const strike of strikes) {
-    const { attackTag, body, combatant, hit } = strike;
+    const { attackTag, body, combatant, hit, isGadget } = strike;
     const target = strike.target ?? selectKitHitTarget(hit, body, enemyMap.values());
     const targetedStrike: KitStrike = { ...strike, target };
     const pricedCombatant = getBuffedCombatant(
@@ -184,7 +184,14 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       if (reactions.length > 0) {
         context.reactionTriggers.push({ enemy, reactions });
         emitKitEvent(
-          { attackTag, enemy, kind: KitEventKind.ReactionTriggered, reactions, striker: combatant },
+          {
+            attackTag,
+            enemy,
+            kind: KitEventKind.ReactionTriggered,
+            reactions,
+            striker: combatant,
+            ...(isGadget ? { isGadget } : {}),
+          },
           context,
         );
       }

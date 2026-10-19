@@ -93,6 +93,22 @@ export const DISENCHANTMENT_IN_DEEP_SHADOW_ARTIFACT_SET_ID = 15_046;
 // The sets whose module answers a hit on wildlife, as the wiki says of Bloodstained Chivalry; no other set's module
 // Hears it
 export const WILDLIFE_ANSWERING_ARTIFACT_SET_IDS = [BLOODSTAINED_CHIVALRY_ARTIFACT_SET_ID];
+// Thundering Fury's id in the set table
+export const THUNDERING_FURY_ARTIFACT_SET_ID = 15_005;
+// Crimson Witch of Flames' id in the set table
+export const CRIMSON_WITCH_ARTIFACT_SET_ID = 15_006;
+// Scarletproof's id in the set table
+export const SCARLETPROOF_ARTIFACT_SET_ID = 15_047;
+// Night of the Sky's Unveiling's id in the set table
+export const NIGHT_OF_THE_SKYS_UNVEILING_ARTIFACT_SET_ID = 15_041;
+// Silken Moon's Serenade's id in the set table
+export const SILKEN_MOON_SERENADE_ARTIFACT_SET_ID = 15_042;
+// Flower of Paradise Lost's id in the set table
+export const FLOWER_OF_PARADISE_LOST_ARTIFACT_SET_ID = 15_028;
+// Aubade of Morningstar and Moon's id in the set table
+export const AUBADE_OF_MORNINGSTAR_AND_MOON_ARTIFACT_SET_ID = 15_043;
+// Heart of the Furnace's id in the set table
+export const HEART_OF_THE_FURNACE_ARTIFACT_SET_ID = 15_048;
 // The share of the EXP a fodder artifact was levelled with that the enhancement gives back, the rest of it spent
 export const FODDER_RECOVERY_RATE = 0.8;
 // The most minor affixes an artifact holds: past four, a level raises one rather than adding one

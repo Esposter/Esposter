@@ -36,5 +36,5 @@ export const stepKitSummon = (
   // A hit whose hitmark is the cast itself falls at the seconds the first step begins at, so it lands on that step
   const landedHits: KitHit[] = [];
   summon.nextHitIndex = landKitHits(hits, summon.nextHitIndex, summon.elapsedSeconds, landedHits, context);
-  for (const hit of landedHits) strikes.push({ attackTag, body: summon.body, combatant, hit, target });
+  for (const hit of landedHits) strikes.push({ attackTag, body: summon.body, combatant, hit, isGadget: true, target });
 };

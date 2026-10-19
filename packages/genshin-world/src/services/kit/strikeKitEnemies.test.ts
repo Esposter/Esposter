@@ -151,6 +151,34 @@ describe(strikeKitEnemies, () => {
     });
   });
 
+  test("sends the team's kits a reaction a gadget's hit triggers, marked as a gadget's", () => {
+    expect.hasAssertions();
+
+    const onKitEvent = vi.fn<NonNullable<Kit["onKitEvent"]>>();
+    const combatant = createCombatant(onKitEvent);
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    enemy.elementalState.auras.set(AuraType.Dendro, { decayRate: 0, gauge: 1, isImmutable: false });
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
+    const strikes: KitStrike[] = [
+      {
+        body: context.body,
+        combatant,
+        hit: { ...KIT_HIT, element: Element.Pyro, gauge: 1 },
+        isGadget: true,
+        target: enemy,
+      },
+    ];
+    strikeKitEnemies(strikes, context);
+
+    expect(onKitEvent.mock.calls.map(([event]) => event)).toContainEqual({
+      enemy,
+      isGadget: true,
+      kind: KitEventKind.ReactionTriggered,
+      reactions: [{ element: Element.Pyro, reactionType: ReactionType.Burning }],
+      striker: combatant,
+    });
+  });
+
   test("prices the striker with its buffs on before the kit's strike hooks read it", () => {
     expect.hasAssertions();
     const getStrikeDamageBonus = vi.fn<NonNullable<Kit["getStrikeDamageBonus"]>>(() => 0);

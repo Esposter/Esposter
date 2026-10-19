@@ -15,12 +15,13 @@ const VIRIDESCENT_VENERER_RES_ID = `viridescentVenerer${ID_SEPARATOR}res`;
 // Viridescent Venerer's four-piece. It raises the DMG the wearer's own Swirl reactions deal by the first param, and each Swirl
 // The wearer triggers while it is the active character lowers the RES of the element it swirls by the second param for the
 // Third param's seconds, as a Stellar Swirl lowers Cryo RES by the same. Each element's debuff is one, refreshed rather than
-// Stacked, as gcsim's vvfunc keys its debuff by element. The fourth param, the Stellar Swirl's own DMG bonus, is not read:
-// Stellar reactions are not priced, so it is the blocker the set names
+// Stacked, as gcsim's vvfunc keys its debuff by element. The fourth param is the Stellar Swirl's own DMG bonus, which the Stellar
+// Swirl's party hook raises in its Glimmer term, as gcsim's wearer-only ReactBonus does for DirectStellarSwirl
 export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): PassiveModule => {
   const swirlDamageBonus = takeOne(bonus.params, 0);
   const resistanceReduction = takeOne(bonus.params, 1);
   const resistanceSeconds = takeOne(bonus.params, 2);
+  const stellarSwirlDamageBonus = takeOne(bonus.params, 3);
   const reduceResistance = (enemy: Enemy, element: Element): void =>
     addEnemyStatus(enemy, {
       damageTakenBonus: 0,
@@ -29,10 +30,12 @@ export const createViridescentVenererSetModule = (bonus: ArtifactSetBonus): Pass
       secondsRemaining: resistanceSeconds,
     });
   return {
-    getPartyReactionBonus: (member, { combatant, reactionType }) =>
-      member.characterId === combatant.characterId && reactionType === TransformativeReactionType.Swirl
-        ? { damageBonus: swirlDamageBonus }
-        : {},
+    getPartyReactionBonus: (member, { combatant, reactionType }) => {
+      if (member.characterId !== combatant.characterId) return {};
+      if (reactionType === TransformativeReactionType.Swirl) return { damageBonus: swirlDamageBonus };
+      if (reactionType === StellarReactionType.StellarSwirl) return { damageBonus: stellarSwirlDamageBonus };
+      return {};
+    },
     onKitEvent: (event, context, combatant) => {
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
