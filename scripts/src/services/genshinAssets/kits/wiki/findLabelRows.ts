@@ -6,14 +6,16 @@ import { readHitNumber } from "#src/services/genshinAssets/kits/wiki/readHitNumb
 import { toExactTitle } from "#src/services/genshinAssets/kits/wiki/toExactTitle";
 import { toWordSet } from "#src/services/genshinAssets/kits/wiki/toWordSet";
 
+// A place after a label in a row's title, one whole number or one letter, as in `4-Hit DMG 1` or `4-Hit DMG B`
+const PLACE_TOKEN_REGEX = /^(?:\d+|[a-z])$/u;
 // The rows a hit's table label finds on its talent's page, from the first of four tiers that finds any. The first tier
-// Is the rows whose title equals the label exactly, case and whitespace runs aside, since the wiki's title often shares
-// The label's words, its hit numbers included, which the word tiers drop: `Skill 1-Hit DMG` and `Skill 2-Hit DMG` both
-// Read `skill`. The second is the rows whose title words equal the label's. The third is the rows whose title words,
-// Without the title's bracketed part, equal the label's, as the wiki names a variant in brackets the table's label does
-// Not. The fourth is the rows whose title words all appear among the label's, or that hold all of them, as the
-// Wiki names a hit with or without its talent's own word. A label with no words has no word tier, so only its exact
-// Title finds a row
+// Is the rows whose title equals the label exactly, case and whitespace runs aside, or equals it followed by a place,
+// Like `4-Hit DMG 1` for `4-Hit DMG`, since the wiki's title often shares the label's words, its hit numbers included,
+// Which the word tiers drop: `Skill 1-Hit DMG` and `Skill 2-Hit DMG` both read `skill`. The second is the rows
+// Whose title words equal the label's. The third is the rows whose title words, without the title's bracketed part,
+// Equal the label's, as the wiki names a variant in brackets the table's label does not. The fourth is the rows whose
+// Title words all appear among the label's, or that hold all of them, as the wiki names a hit with or without its
+// Talent's own word. A label with no words has no word tier, so only the first tier finds a row
 export const findLabelRows = (label: string, properties: readonly WikiAdvancedProperty[]): WikiAdvancedProperty[] => {
   const exactLabel = toExactTitle(label);
   const labelWords = toWordSet(label);
@@ -37,5 +39,12 @@ export const findLabelRows = (label: string, properties: readonly WikiAdvancedPr
             return words.size > 0 && (checkIsWordSubset(words, labelWords) || checkIsWordSubset(labelWords, words));
           },
         ];
-  return findFirstTierRows(numberedRows, [(title) => toExactTitle(title) === exactLabel, ...wordTiers]);
+  const checkIsExactLabel = (title: string) => {
+    const exactTitle = toExactTitle(title);
+    return (
+      exactTitle === exactLabel ||
+      (exactTitle.startsWith(`${exactLabel} `) && PLACE_TOKEN_REGEX.test(exactTitle.slice(exactLabel.length + 1)))
+    );
+  };
+  return findFirstTierRows(numberedRows, [checkIsExactLabel, ...wordTiers]);
 };
