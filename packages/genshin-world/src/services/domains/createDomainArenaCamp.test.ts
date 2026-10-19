@@ -8,8 +8,8 @@ describe(createDomainArenaCamp, () => {
     expect.hasAssertions();
 
     const wave = [
-      { count: 2, name: "Hydro Slime" },
-      { count: 1, name: "Large Hydro Slime" },
+      { count: 2, name: "" },
+      { count: 1, name: "" },
     ];
     const camp = createDomainArenaCamp("starfell-valley", "domain-13-1-0", { x: 0, z: 0 }, wave, 60, () => 0);
     expect(
