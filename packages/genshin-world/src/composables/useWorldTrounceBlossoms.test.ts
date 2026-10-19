@@ -14,13 +14,25 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { computeAdventureExpAtRank } from "#src/services/adventureRank/computeAdventureExpAtRank";
 import { MAX_ADVENTURE_RANK, MORA_PER_EXCESS_ADVENTURE_EXP } from "#src/services/adventureRank/constants";
 import { readAdventureRankTables } from "#src/services/adventureRank/readAdventureRankTables";
-import { NORMAL_BOSS_ADVENTURE_EXP, NORMAL_BOSS_MORA } from "#src/services/bosses/constants";
+import {
+  NORMAL_BOSS_ADVENTURE_EXP,
+  NORMAL_BOSS_MORA,
+  WEEKLY_BOSS_ADVENTURE_EXP,
+  WEEKLY_BOSS_BILLET_ITEM_IDS,
+  WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID,
+  WEEKLY_BOSS_GEM_ITEM_IDS,
+  WEEKLY_BOSS_MORA,
+  WEEKLY_BOSS_TALENT_DROPS,
+  WEEKLY_BOSS_TALENT_ITEM_IDS,
+} from "#src/services/bosses/constants";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { checkIsEnemyKindId } from "#src/services/enemy/checkIsEnemyKindId";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { EMPTY_INVENTORY, EMPTY_WALLET } from "#src/services/inventory/constants";
+import { countInventoryItem } from "#src/services/inventory/countInventoryItem";
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
+import { computeBlossomClaimOffers } from "#src/services/originalResin/computeBlossomClaimOffers";
 import { createParty } from "#src/services/party/createParty";
 import { EMPTY_GENSHIN_SAVE } from "#src/services/save/constants";
 import { readGenshinSave } from "#src/services/save/readGenshinSave";
@@ -219,5 +231,69 @@ describe(useWorldTrounceBlossoms, () => {
     expect(wallet.value[Currency.Mora]).toBe(
       takeOne(NORMAL_BOSS_MORA, 0) + NORMAL_BOSS_ADVENTURE_EXP * MORA_PER_EXCESS_ADVENTURE_EXP,
     );
+  });
+
+  test("a weekly boss's claim spends its offer's resin and pays its talent materials and Mora", () => {
+    expect.hasAssertions();
+
+    // The row a World Level reads, Domain Level VI, is the one of the constants that pays both a talent count and a chance
+    const WORLD_LEVEL = 6;
+    const ROW = 5;
+    // Every item a draw can pay, since a zero draw hits each chance, so each one needs its material row to be granted
+    const itemIds = [
+      ...WEEKLY_BOSS_TALENT_ITEM_IDS,
+      ...WEEKLY_BOSS_BILLET_ITEM_IDS,
+      ...WEEKLY_BOSS_GEM_ITEM_IDS.flat(),
+      WEEKLY_BOSS_DREAM_SOLVENT_ITEM_ID,
+    ];
+    const names: Readonly<Record<string, string>> = Object.fromEntries(
+      itemIds.map((id) => [String(id), `Test Item ${id}`]),
+    );
+    const weeklyMaterialDataMap = new Map<number, MaterialData>(
+      itemIds.map((id) => [
+        id,
+        { id, materialType: MaterialType.Exchange, nameTextId: String(id), rank: 0, rarity: 0, stackLimit: 99 },
+      ]),
+    );
+    const offer = takeOne(computeBlossomClaimOffers(BlossomKind.WeeklyBoss, 0), 0);
+    const adventureExp = ref(0);
+    const wallet = ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: offer.resin + 1 });
+    const inventory = ref<Inventory>(EMPTY_INVENTORY);
+    const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
+      characters: ref([]),
+      enemyKindMap: new Map(),
+      events: createWorldEvents(),
+      friendshipLevels: ref<FriendshipLevel[]>([{ exp: 0, level: 1 }]),
+      gainWorldAdventureExp: (amount) => {
+        adventureExp.value += amount;
+      },
+      gameText: {},
+      getGroundHeight: () => 0,
+      getWorldNow: () => epoch,
+      inventory,
+      materialDataMap: weeklyMaterialDataMap,
+      nameText: names,
+      party: createParty([TRAVELER_CHARACTER_ID]),
+      setInventory: (nextInventory) => {
+        inventory.value = nextInventory;
+      },
+      setWallet: (nextWallet) => {
+        wallet.value = nextWallet;
+      },
+      wallet,
+      worldNow: ref(epoch),
+    });
+    trounceBlossoms.value = new Map<string, TrounceBlossom>([
+      [SPAWN_KEY, { claimedAts: [], kind: BlossomKind.WeeklyBoss, place: { x: 1, z: 2 } }],
+    ]);
+    openTrounceBlossomClaim(SPAWN_KEY, epoch);
+    chooseTrounceBlossomClaim(epoch, WORLD_LEVEL, () => 0);
+
+    expect(wallet.value[Currency.OriginalResin]).toBe(1);
+    expect(wallet.value[Currency.Mora]).toBe(takeOne(WEEKLY_BOSS_MORA, ROW));
+    expect(countInventoryItem(inventory.value.items, takeOne(WEEKLY_BOSS_TALENT_ITEM_IDS, 0))).toBe(
+      takeOne(WEEKLY_BOSS_TALENT_DROPS, ROW).count + 1,
+    );
+    expect(adventureExp.value).toStrictEqual(WEEKLY_BOSS_ADVENTURE_EXP);
   });
 });

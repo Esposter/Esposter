@@ -1,31 +1,25 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
+import type { ItemCount } from "#src/models/inventory/ItemCount";
 import type { MaterialData } from "#src/models/inventory/MaterialData";
 import type { Wallet } from "#src/models/inventory/Wallet";
 import type { ResinClaim } from "#src/models/originalResin/ResinClaim";
 
-import { BlossomKind } from "#src/models/originalResin/BlossomKind";
-import { drawNormalBossReward } from "#src/services/bosses/drawNormalBossReward";
-import { payTrounceBlossomClaim } from "#src/services/bosses/payTrounceBlossomClaim";
-import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
+import { spendOriginalResin } from "#src/services/originalResin/spendOriginalResin";
+import { grantRewardItems } from "#src/services/reward/grantRewardItems";
 
-// A claim at a normal boss's Trounce Blossom: the boss's price in Original Resin, and the reward its World Level and its
-// Own drop draw. Undefined where the resin or the bag cannot pay it, as any resin claim is refused
+// Pays a Trounce Blossom's claim: `resin` of Original Resin spent at `now`, then the rewards taken into the bag and the
+// Wallet. The boss's Adventure EXP is granted through the rank by the caller, so the resin gains none here, and no Mora
+// Is paid twice past rank 60. Undefined where the resin is not held or the bag cannot take an item whole
 export const claimTrounceBlossom = (
   wallet: Wallet,
   inventory: Inventory,
-  worldLevel: number,
-  uniqueDropId: number,
+  resin: number,
+  rewards: ItemCount[],
   now: Temporal.Instant,
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
-  random: () => number,
-): Pick<ResinClaim, "inventory" | "wallet"> | undefined =>
-  payTrounceBlossomClaim(
-    wallet,
-    inventory,
-    BlossomClaimResinMap[BlossomKind.NormalBoss],
-    drawNormalBossReward(worldLevel, uniqueDropId, random),
-    now,
-    names,
-    materialDataMap,
-  );
+): Pick<ResinClaim, "inventory" | "wallet"> | undefined => {
+  const spentWallet = spendOriginalResin(wallet, resin, now);
+  if (!spentWallet) return undefined;
+  return grantRewardItems(spentWallet, inventory, rewards, names, materialDataMap);
+};
