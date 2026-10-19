@@ -4,12 +4,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSmokeAndMirrorMysteryPassiveModule } from "#src/services/weapon/passives/createSmokeAndMirrorMysteryPassiveModule";
 import { describe, expect, test } from "vitest";
 
 describe(createSmokeAndMirrorMysteryPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder: Combatant = createWielderCombatant();
   // A synthetic DEF raise of a fifth for three seconds after an Elemental Skill, not the weapon's row
   const smokeAndMirrorMysteryPassiveModule = createSmokeAndMirrorMysteryPassiveModule([0.2, 3, 0, 0]);

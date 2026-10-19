@@ -12,7 +12,7 @@ import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
-import { getBuff } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import { getBuff, OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createPrimordialJadeRegaliaPassiveModule } from "#src/services/weapon/passives/createPrimordialJadeRegaliaPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -22,7 +22,6 @@ describe(createPrimordialJadeRegaliaPassiveModule, () => {
   // Primordial Jade Regalia at its first rank: for 3 seconds after its wielder's burst or a shield it casts, 0.3% of
   // Its element's DMG Bonus for each 1,000 Max HP, up to 12%, and 4.5 energy restored
   const passiveModule = createPrimordialJadeRegaliaPassiveModule([0.003, 0.12, 3, 2.5, 4.5]);
-  const OTHER_CHARACTER_ID = 1;
   const createWielder = (maxHealth: number): Combatant => ({
     ascension: 0,
     attributes: computeCharacterAttributes([{ attribute: Attribute.BaseHealth, value: maxHealth }]),

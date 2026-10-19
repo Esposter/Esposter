@@ -9,6 +9,7 @@ import { computeCharacterAttributes } from "#src/services/character/computeChara
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -23,8 +24,6 @@ const createCombatant = (characterId: number): Combatant => ({
 });
 
 describe(createAfterSkillAttackDamageSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
-
   const wearer = createCombatant(TRAVELER_CHARACTER_ID);
   const skillModule = createAfterSkillAttackDamageSetModule({ amount: 0.25, seconds: 8, source: "Set" });
   const useSkill = (kitEffectState: KitEffectState, characterId = TRAVELER_CHARACTER_ID) =>

@@ -19,6 +19,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -43,7 +44,6 @@ const createStrike = (combatant: Combatant, attackTag: AttackTag): KitStrike => 
 });
 
 describe(createLongNightsOathSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const hitEnemy = (striker: Combatant, attackTag: AttackTag, context: ReturnType<typeof createKitTestContext>) =>
     emitKitEvent(

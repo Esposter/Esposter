@@ -20,6 +20,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createCrownOfTheFinalScionPassiveModule } from "#src/services/weapon/passives/createCrownOfTheFinalScionPassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -40,7 +41,6 @@ const castShield = (context: KitContext, characterId = TRAVELER_CHARACTER_ID) =>
 const readEnergy = (context: KitContext) => getPartyMember(context.party, TRAVELER_CHARACTER_ID).energy;
 
 describe(createCrownOfTheFinalScionPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   // Crown of the Final Scion at its first rank: a shield its wielder casts gives Pathfinder's Light for 20 seconds, the

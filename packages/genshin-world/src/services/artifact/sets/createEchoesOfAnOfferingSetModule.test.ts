@@ -19,6 +19,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -46,7 +47,6 @@ const landNormalAttack = (context: ReturnType<typeof createKitTestContext>) =>
   emitKitEvent({ action: takeOne(KIT.normalAttacks, 0), kind: KitEventKind.NormalAttackLanded }, context);
 
 describe(createEchoesOfAnOfferingSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   // The flat base DMG a Normal Attack of the wearer's adds as it stands, against the enemy
   const getValleyRiteBonus = (wearer: Combatant, kitEffectState: KitEffectState): number =>

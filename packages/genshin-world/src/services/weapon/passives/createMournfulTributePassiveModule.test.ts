@@ -19,6 +19,7 @@ import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
@@ -40,7 +41,6 @@ describe(createMournfulTributePassiveModule, () => {
   // Mournful Tribute at its first rank: for 3.5 seconds after its wielder's burst, its Lunar-Charged DMG rises 36%, and
   // A Lunar-Charged it triggers gives Requiem of Ruin, 28% CRIT DMG for 6 seconds, and 12 Energy once every 14 seconds
   const passiveModule = createMournfulTributePassiveModule([3.5, 0.36, 6, 0.28, 12, 14]);
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
   const other = createCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);

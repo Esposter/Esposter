@@ -2,12 +2,14 @@ import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createSkillBuffPassiveModule } from "#src/services/weapon/passives/createSkillBuffPassiveModule";
 import { describe, expect, test } from "vitest";
 
 describe(createSkillBuffPassiveModule, () => {
-  const OTHER_CHARACTER_ID = 1;
   const wielder = createWielderCombatant();
 
   // Busybody's Running Light at its first rank: 20% ATK and 10% Movement SPD for ten seconds after an Elemental Skill

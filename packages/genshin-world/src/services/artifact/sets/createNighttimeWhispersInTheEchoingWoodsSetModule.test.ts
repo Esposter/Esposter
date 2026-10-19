@@ -4,9 +4,9 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID } from "#src/services/artifact/constants";
-import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { createNighttimeWhispersInTheEchoingWoodsSetModule } from "#src/services/artifact/sets/createNighttimeWhispersInTheEchoingWoodsSetModule";
 import { createSetWearer } from "#src/services/artifact/sets/createSetWearer.test";
+import { getArtifactSetBonus } from "#src/services/artifact/sets/getArtifactSetBonus.test";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { readStatTables } from "#src/services/character/readStatTables";
 import { createKitTestContext, stepKitSecondsSendingExpiries } from "#src/services/kit/createKitTestContext.test";
@@ -14,8 +14,9 @@ import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
-import { createParty } from "#src/services/party/createParty";
 import { MOONDRIFT_SECONDS } from "#src/services/party/constants";
+import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -26,7 +27,6 @@ const useSkill = (context: KitContext) =>
 describe(createNighttimeWhispersInTheEchoingWoodsSetModule, () => {
   const bonus = getArtifactSetBonus(statTables, NIGHTTIME_WHISPERS_IN_THE_ECHOING_WOODS_ARTIFACT_SET_ID, 4);
 
-  const OTHER_CHARACTER_ID = 2;
   const wearer = createSetWearer(getPassiveKit(KIT, [createNighttimeWhispersInTheEchoingWoodsSetModule(bonus)]));
   const other = { ...createSetWearer(KIT), characterId: OTHER_CHARACTER_ID };
   // The team of the wearer, on the field, and another member

@@ -20,6 +20,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
@@ -50,8 +51,6 @@ const getAttackBonus = (wearer: Combatant, kitEffectState: KitEffectState): numb
     .reduce((sum, bonus) => sum + bonus.amount, 0);
 
 describe(createVermillionHereafterSetModule, () => {
-  const OTHER_CHARACTER_ID = 2;
-
   test("a burst gives Nascent Light, ATK +8% for 16 seconds", () => {
     expect.hasAssertions();
 

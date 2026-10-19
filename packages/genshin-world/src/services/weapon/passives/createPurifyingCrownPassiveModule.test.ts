@@ -19,6 +19,7 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 import { getPassiveKit } from "#src/services/kit/getPassiveKit";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
+import { OTHER_CHARACTER_ID } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { createPurifyingCrownPassiveModule } from "#src/services/weapon/passives/createPurifyingCrownPassiveModule";
 import { describe, expect, test } from "vitest";
 
@@ -45,7 +46,6 @@ describe(createPurifyingCrownPassiveModule, () => {
   // Shield it casts while that holds gives Electrifying Edict for 20 seconds, every member's Lunar-Charged dealing 40%
   // More DMG
   const passiveModule = createPurifyingCrownPassiveModule([0.24, 20, 0.4, 20]);
-  const OTHER_CHARACTER_ID = 1;
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wielder = createCombatant(TRAVELER_CHARACTER_ID, getPassiveKit(TRAVELER_KIT, [passiveModule]));
   const other = createCombatant(OTHER_CHARACTER_ID, TRAVELER_KIT);

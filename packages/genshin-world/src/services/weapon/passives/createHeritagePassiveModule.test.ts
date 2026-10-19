@@ -7,7 +7,10 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { createHeritagePassiveModule } from "#src/services/weapon/passives/createHeritagePassiveModule";
-import { createWielderCombatant } from "#src/services/weapon/passives/createPassiveTestHelpers.test";
+import {
+  createWielderCombatant,
+  OTHER_CHARACTER_ID,
+} from "#src/services/weapon/passives/createPassiveTestHelpers.test";
 import { describe, expect, test } from "vitest";
 
 const getAttackBuffs = (kitEffectState: KitEffectState): KitBuff[] =>
@@ -16,7 +19,6 @@ const getAttackBuffs = (kitEffectState: KitEffectState): KitBuff[] =>
   );
 
 describe(createHeritagePassiveModule, () => {
-  const OTHER_CHARACTER_ID = 10_000_066;
   const wielder: Combatant = createWielderCombatant();
   // Heritage with synthetic params: the ATK percentage, its seconds and the cooldown on its wielder
   const heritagePassiveModule = createHeritagePassiveModule([0.2, 8, 15]);
