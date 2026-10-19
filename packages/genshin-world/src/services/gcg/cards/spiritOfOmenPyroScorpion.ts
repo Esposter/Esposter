@@ -1,18 +1,16 @@
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
 import type { GcgSkill } from "#src/models/gcg/GcgSkill";
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
 import { GcgCostKind } from "#src/models/gcg/GcgCostKind";
 import { GcgSkillKind } from "#src/models/gcg/GcgSkillKind";
-import { BURNING_ASSAULT_ID, PYRO_SCORPION_ID, SCORPOCALYPSE_ID } from "#src/services/gcg/cards/constants";
-import {
-  addScorpionBlessingStack,
-  readScorpionBlessingStacks,
-  spendScorpionBlessingStacks,
-} from "#src/services/gcg/cards/scorpionBlessing";
+import { addPyroScorpionToHand } from "#src/services/gcg/cards/addPyroScorpionToHand";
+import { addScorpionBlessingStack } from "#src/services/gcg/cards/addScorpionBlessingStack";
+import { BURNING_ASSAULT_ID } from "#src/services/gcg/cards/constants";
+import { findActiveScorpocalypse } from "#src/services/gcg/cards/findActiveScorpocalypse";
+import { readScorpionBlessingStacks } from "#src/services/gcg/cards/readScorpionBlessingStacks";
+import { spendScorpionBlessingStacks } from "#src/services/gcg/cards/spendScorpionBlessingStacks";
 import { takeOne } from "@esposter/shared";
 
 const BURNING_ASSAULT_DAMAGE = 2;
@@ -28,16 +26,6 @@ export const BURNING_ASSAULT_SKILL: GcgSkill = {
   id: BURNING_ASSAULT_ID,
   kind: GcgSkillKind.Technique,
 };
-
-// Adds a Pyro Scorpion to a side's hand, which a full hand takes no card into
-export const addPyroScorpionToHand = (duel: GcgDuel, sideIndex: number): void => {
-  const side = takeOne(duel.sides, sideIndex);
-  if (side.hand.length < duel.rule.handCardLimit) side.hand.push(PYRO_SCORPION_ID);
-};
-
-// The Scorpocalypse a side's active character holds, whose counter marks that Burning Assault defeated an opposing character
-const findActiveScorpocalypse = (side: GcgSideState) =>
-  side.characters.at(side.activeIndex)?.equipments.find(({ cardId }) => cardId === SCORPOCALYPSE_ID);
 
 // Burning Assault: its damage is read before it is dealt, and the Scorpocalypse's mark is cleared then, so only a defeat this
 // Use makes is heard after it

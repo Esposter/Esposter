@@ -1,8 +1,8 @@
 import type { GcgSkillModule } from "#src/models/gcg/GcgSkillModule";
 
 import { Element } from "#src/models/Element";
+import { addPyroScorpionToHand } from "#src/services/gcg/cards/addPyroScorpionToHand";
 import { SPIRIT_OF_OMENS_AWAKENING_ID } from "#src/services/gcg/cards/constants";
-import { addPyroScorpionToHand } from "#src/services/gcg/cards/spiritOfOmenPyroScorpion";
 import { takeOne } from "@esposter/shared";
 
 const SPIRIT_OF_OMENS_AWAKENING_DAMAGE = 3;

@@ -10,13 +10,11 @@ Only an artifact a host downloads and parses at every cold start is worth compre
 
 ## What gets vendored is recorded, not allowlisted
 
-The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hint that an allowlist of inlinable packages is missing. The list it asks for already exists in a better form: tsdown writes every package it vendored into the manifest's `inlinedDependencies`, and that field is committed, so anything newly inlined turns up in a reviewed diff beside the change that caused it. A second, hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown itself generates — the check runs before the manifest is written, so the first build of a new package could never pass. Read `inlinedDependencies` when you want to know what a bundle swallowed.
+The base sets `deps: { onlyBundle: false }`, which silences tsdown's standing hint that an allowlist of inlinable packages is missing. The list it asks for already exists in a better form: tsdown writes every package it vendored into the manifest's `inlinedDependencies`, and that field is committed, so anything newly inlined turns up in a reviewed diff beside the change that caused it. A second, hand-maintained copy could only ever be bootstrapped by hand-writing the versions tsdown itself generates — the check runs before the manifest is written, so the first build of a new package could never pass. Read `inlinedDependencies` when you want to know what a bundle swallowed. A Vue package's base also bundles every stylesheet request, a sibling's that a style block names included (`getTsdownConfigurationVue`, which gives the reason).
 
 ## The opt-outs
 
 Declared in the package's own `tsdown.config.ts`, never in `configuration`. There is one rule and one exception.
-
-**A stylesheet is not a dependency.** `getTsdownConfigurationVue` bundles every `.css` request (`STYLESHEET_REQUEST_REGEX`), a sibling package's one that a style block's `src` names included, since a built script importing a `.css` file is one Node cannot load.
 
 **A self-contained bundle vendors; a library externalizes.** A package whose `dist` is run directly — a CLI installed with one command, a deploy artifact dropped into a host that installs nothing — has no package manager on the other side to resolve an import with, so it bundles what it uses. Derive `alwaysBundle` from the manifest rather than listing names, so a newly added dependency is vendored without anyone remembering to. Three things still stay external:
 

@@ -1,30 +1,12 @@
-import type { Element } from "#src/models/Element";
 import type { GcgCardModule } from "#src/models/gcg/GcgCardModule";
-import type { GcgDealtDamage } from "#src/models/gcg/GcgDealtDamage";
 
-import { Elements } from "#src/models/Element";
-import { GcgDamageKind } from "#src/models/gcg/GcgDamageKind";
+import { checkIsGcgElementalHit } from "#src/services/gcg/cards/checkIsGcgElementalHit";
+import { pickGcgBasicDice } from "#src/services/gcg/cards/pickGcgBasicDice";
 import { createGcgDice } from "#src/services/gcg/effects/createGcgDice";
-import { takeOne, takeRandom } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 const PARAMETRIC_TRANSFORMER_PROGRESS = 3;
 const PARAMETRIC_TRANSFORMER_DICE = 3;
-
-// Whether a hit a Skill dealt is Elemental DMG, which is neither Physical nor Piercing
-const checkIsGcgElementalHit = (hit: GcgDealtDamage): boolean =>
-  hit.damageType !== GcgDamageKind.Physical && hit.damageType !== GcgDamageKind.Piercing;
-
-// Picks count different basic Elemental Dice from the duel's random source, each taken one leaving the choice
-const pickGcgBasicDice = (count: number, random: () => number): Element[] => {
-  let remaining = [...Elements];
-  const picked: Element[] = [];
-  while (picked.length < count && remaining.length > 0) {
-    const element = takeRandom(remaining, random);
-    remaining = remaining.toSpliced(remaining.indexOf(element), 1);
-    picked.push(element);
-  }
-  return picked;
-};
 
 // Parametric Transformer, an item: after either side uses a Skill that deals Elemental DMG, it gains 1 Qualitative Progress.
 // At three it is discarded, and its side creates three different basic Elemental Dice (the wiki's Parametric Transformer)
