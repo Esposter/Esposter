@@ -1,58 +1,14 @@
-import type { GcgCharacterState } from "#src/models/gcg/GcgCharacterState";
-import type { GcgDuel } from "#src/models/gcg/GcgDuel";
-import type { GcgRule } from "#src/models/gcg/GcgRule";
-import type { GcgSideState } from "#src/models/gcg/GcgSideState";
-
-import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Element } from "#src/models/Element";
-import { GcgPhase } from "#src/models/gcg/GcgPhase";
 import { iceLotus } from "#src/services/gcg/cards/iceLotus";
 import { lotusFlowerCrisp } from "#src/services/gcg/cards/lotusFlowerCrisp";
 import { createGcgCharacterState } from "#src/services/gcg/createGcgCharacterState.test";
 import { createGcgZoneCard } from "#src/services/gcg/effects/createGcgZoneCard";
-import { readGcgStandardRule } from "#src/services/gcg/readGcgStandardRule";
 import { reduceGcgReceivedDamage } from "#src/services/gcg/reduceGcgReceivedDamage";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { LOTUS_FLOWER_CRISP_ID } from "#src/services/gcg/cards/constants";
-import { GcgCardIdModuleMap } from "#src/services/gcg/cards/gcgCardIdModuleMap";
-import { GcgEffectNameSkillModuleMap } from "#src/services/gcg/cards/gcgEffectNameSkillModuleMap";
-
-const TEST_RULE: GcgRule = await readGcgStandardRule(GAME_DATA_LOCAL_BASE_URL);
-
-const createSideState = (characters: GcgCharacterState[]): GcgSideState => ({
-  activeIndex: 0,
-  cards: [],
-  characters,
-  dice: [],
-  deckCardIds: [],
-  drawPile: [],
-  hand: [],
-  hasDeclaredEnd: false,
-  hasPrepared: true,
-  hasRolled: true,
-  isReplacementPending: false,
-  onstages: [],
-  summons: [],
-  supports: [],
-  usedCardIds: [],
-  usedSkillIds: [],
-});
-
-const createDuel = (sides: [GcgSideState, GcgSideState]): GcgDuel => ({
-  cardModules: GcgCardIdModuleMap,
-  skillModules: GcgEffectNameSkillModuleMap,
-  actingSideIndex: 0,
-  firstSideIndex: 0,
-  nextFirstSideIndex: 0,
-  outcome: undefined,
-  phase: GcgPhase.Action,
-  random: () => 0,
-  round: 1,
-  rule: TEST_RULE,
-  sides,
-  winnerSideIndex: undefined,
-});
+import { createDuel } from "#src/services/gcg/cards/createDuel.test";
+import { createSideState } from "#src/services/gcg/cards/createSideState.test";
 
 describe(reduceGcgReceivedDamage, () => {
   test("an onstage card reduces the damage its side's active character takes, and spends a usage", () => {
