@@ -13,6 +13,11 @@ vi.mock(import("#src/services/drivers/claudeAgentSdk/watchSession"), () => ({
   watchSession: vi.fn<typeof watchSession>(),
 }));
 
+const readQueryOptions = () => {
+  const [{ options }] = takeOne(vi.mocked(query).mock.calls);
+  return options;
+};
+
 describe(createSessionOpener, () => {
   const cwd = "/repo";
   const sessionId = crypto.randomUUID();
@@ -25,10 +30,6 @@ describe(createSessionOpener, () => {
       openSessionMap: new Map(),
       taskRegistry: createTaskRegistry(),
     })({ cwd, isFork: true, isSideChat, resumeAt: "", resumeFrom: sessionId, sessionId: forkedSessionId });
-  const readQueryOptions = () => {
-    const [{ options }] = takeOne(vi.mocked(query).mock.calls);
-    return options;
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();
