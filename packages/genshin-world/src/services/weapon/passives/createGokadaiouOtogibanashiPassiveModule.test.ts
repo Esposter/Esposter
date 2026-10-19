@@ -66,7 +66,7 @@ describe(createGokadaiouOtogibanashiPassiveModule, () => {
     );
     expect(
       gokadaiouOtogibanashiPassiveModule.getStrikeAdditiveBaseDamageBonus?.(
-        { ...createKitStrike(wielder, AttackTag.NormalAttack), combatant: pricedWielder },
+        createKitStrike(pricedWielder, AttackTag.NormalAttack),
         enemy,
         context.party,
         context.kitEffectState.effects,
