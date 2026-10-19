@@ -5,32 +5,32 @@
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.0.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.1.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.1.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.2.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.2.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.3.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.3.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.4.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.4.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "hits.signatureMixTicks.5.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6.5 }
   },
-  "hits.signatureMixTicks.5.multiplier": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3939 } },
+  "hits.signatureMixTicks.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3939 } },
   "normalAttacks.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 3931 } },
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 3931 } },
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 3931 } },
