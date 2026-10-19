@@ -1,4 +1,3 @@
-import type { AdventureRankTables } from "#src/models/adventureRank/AdventureRankTables";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { Enemy } from "#src/models/enemy/Enemy";
@@ -41,10 +40,7 @@ import { computed, shallowRef } from "vue";
 // And grants its World Level's rewards and its own drop, the claim setting the boss's respawn five seconds on. Choosing
 // A claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
 export const useWorldTrounceBlossoms = ({
-  adventureExp,
-  adventureRankTables,
   characters,
-  completedMainQuestIds,
   enemyKindMap,
   events,
   friendshipLevels,
@@ -61,10 +57,7 @@ export const useWorldTrounceBlossoms = ({
   wallet,
   worldNow,
 }: {
-  adventureExp: Ref<number>;
-  adventureRankTables: AdventureRankTables;
   characters: Ref<Character[]>;
-  completedMainQuestIds: Readonly<Ref<ReadonlySet<string>>>;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
   friendshipLevels: Readonly<Ref<FriendshipLevel[]>>;
@@ -161,26 +154,20 @@ export const useWorldTrounceBlossoms = ({
     const claim =
       trounceBlossom.kind === BlossomKind.WeeklyBoss
         ? claimWeeklyBossTrounceBlossom(
-            adventureRankTables,
             wallet.value,
             inventory.value,
             takeOne(prompt.offers, 0),
             worldLevel,
-            adventureExp.value,
-            completedMainQuestIds.value,
             now,
             nameText,
             materialDataMap,
             random,
           )
         : claimTrounceBlossom(
-            adventureRankTables,
             wallet.value,
             inventory.value,
             worldLevel,
             trounceBlossom.uniqueDropId,
-            adventureExp.value,
-            completedMainQuestIds.value,
             now,
             nameText,
             materialDataMap,
