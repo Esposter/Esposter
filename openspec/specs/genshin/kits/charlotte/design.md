@@ -14,7 +14,7 @@ Not built yet:
 - **Constellation 4**, the extra DMG and energy on the burst's hits against marked enemies, waits on a count kept over a kit's own hits within a window and on the energy one of them gives.
 - **Constellation 6**, the summation strike and heal on hold-marked enemies, waits on Focused Impression's mark.
 
-Gcsim gives her strikes, charged attack and plunges no poise, so each deals none, and her Snappy Silhouette mark's hit takes the wiki's 20, as gcsim gives it none too. The charged attack's stamina is the table's flat value at index 4, which gcsim does not give. Each is provisional until a recording settles it.
+Gcsim gives her strikes, charged attack and plunges no poise, so each takes the wiki's: 8.133 to 12.113 on the three strikes, 80 on the charged attack, 5 on the collision, and 50 and 100 on the low and high plunges. Her Snappy Silhouette mark's hit takes the wiki's 20, as gcsim gives it none too. The charged attack's stamina is the table's flat value at index 4, which gcsim does not give. Each is provisional until a recording settles it.
 
 ## Key files
 
