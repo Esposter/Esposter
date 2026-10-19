@@ -1,12 +1,12 @@
+import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { DropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import type { BlockDocument } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
-import { insertAt } from "@/composables/pageBuilder/usePageBuilderInsert";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { insertAt } from "@/services/pageBuilder/insertAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";

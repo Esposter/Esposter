@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { OverlayBox } from "@/services/pageBuilder/getOverlayBox";
-import type { DropTarget } from "@/services/pageBuilder/resolveDropTarget";
+import type { DropTarget } from "@/models/pageBuilder/DropTarget";
+import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DropTarget } from "@/services/pageBuilder/resolveDropTarget";
-import type { OverlayBox } from "@/services/pageBuilder/getOverlayBox";
+import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
+import type { DropTarget } from "@/models/pageBuilder/DropTarget";
+import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { BlockDocument } from "headless-block-editor";
-import type { DropIndicator } from "@/services/pageBuilder/getDropIndicatorBox";
 
 import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
 import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";

@@ -21,6 +21,8 @@ export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, strin
   [WebpageNodeType.TypedText]: "Typed text",
   [WebpageNodeType.Video]: "Video",
 });
+// The thickness of the line a drop indicator draws between two children
+export const LINE_THICKNESS = 2;
 // The palette's categories, each with the node types it lists in the order shown. Column and Tab are not listed, since
 // Only Columns and Tabs hold them
 export const WEBPAGE_PALETTE_CATEGORY_MAP: Readonly<Record<string, readonly WebpageNodeType[]>> = Object.freeze({
