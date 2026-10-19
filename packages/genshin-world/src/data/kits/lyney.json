@@ -1,8 +1,8 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8439 } },
   "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 10, "proudSkillGroupId": 8431 } },
-  "frames.propArrowPyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 387 },
-  "frames.miracleParadePyrotechnicStrikeHitmark": { "cause": "Unclassified", "value": 563 },
+  "frames.propArrowPyrotechnicStrikeHitmark": { "cause": "Unsourced", "value": 387 },
+  "frames.miracleParadePyrotechnicStrikeHitmark": { "cause": "Unsourced", "value": 563 },
   "hitFields.pyrotechnicStrike.area": {
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
