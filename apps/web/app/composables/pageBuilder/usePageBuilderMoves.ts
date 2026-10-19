@@ -1,0 +1,137 @@
+import type { UiCommand } from "@/models/ui/UiCommand";
+import type { UiCommandScope } from "@/models/ui/UiCommandScope";
+import type { JsonPatchOperation } from "@esposter/shared";
+import type { BlockDocument } from "headless-block-editor";
+
+import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
+import {
+  getAcceptingSlotPointers,
+  getBlockLayerRows,
+  getBlockNode,
+  getFocusAfterRemoval,
+  moveBlockNode,
+  moveIntoPreviousSibling,
+  moveOutAfterParent,
+  removeBlockNode,
+} from "headless-block-editor";
+
+// The id a node carries, or the empty id when the pointer names no node
+const getNodeId = (document: BlockDocument | undefined, nodePointer: string | undefined): string => {
+  if (!document || !nodePointer) return "";
+  const id = getBlockNode(document, nodePointer)?.props.id;
+  return typeof id === "string" ? id : "";
+};
+
+// The pointer of the node a selection holds. A selection holds an id, since a move changes a node's pointer but not its id
+const getNodePointer = (document: BlockDocument, nodeId: string) =>
+  getBlockLayerRows(document, webpageRegistry)
+    .map(({ nodePointer }) => nodePointer)
+    .find((nodePointer) => getNodeId(document, nodePointer) === nodeId);
+
+// The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
+const getSiblingMoveOperations = (
+  document: BlockDocument,
+  nodePointer: string,
+  offset: number,
+): JsonPatchOperation[] => {
+  const segments = parseJsonPointer(nodePointer);
+  const slotPointer = toJsonPointer(segments.slice(0, -1));
+  const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
+  if (index === undefined || index + offset < 0 || !getBlockNode(document, `${slotPointer}/${index + offset}`))
+    return [];
+
+  return moveBlockNode(document, webpageRegistry, nodePointer, slotPointer, index + offset);
+};
+
+// The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
+// Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
+// It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move
+export const usePageBuilderMoves = (resourceId: string) => {
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const { getDocument } = pageBuilderDocumentStore;
+  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+  const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
+  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { applyEdit } = pageBuilderHistoryStore;
+  // The document and the node the selection holds, or none when nothing is selected or the node is gone
+  const getSelection = () => {
+    const document = getDocument(resourceId);
+    const nodeId = getSelectedNodeId(resourceId);
+    if (!document || !nodeId) return undefined;
+
+    const nodePointer = getNodePointer(document, nodeId);
+    return nodePointer === undefined ? undefined : { document, nodeId, nodePointer };
+  };
+  // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
+  const moveSelected = (
+    label: string,
+    getOperations: (document: BlockDocument, nodePointer: string) => JsonPatchOperation[],
+  ) => {
+    const selection = getSelection();
+    if (!selection) return;
+
+    const operations = getOperations(selection.document, selection.nodePointer);
+    if (operations.length === 0) return;
+
+    applyEdit(resourceId, operations, label).match(() => {
+      setSelectedNodeId(resourceId, selection.nodeId);
+    }, console.error);
+  };
+  const moveDown = () =>
+    moveSelected("Move block", (document, nodePointer) => getSiblingMoveOperations(document, nodePointer, 1));
+  const moveUp = () =>
+    moveSelected("Move block", (document, nodePointer) => getSiblingMoveOperations(document, nodePointer, -1));
+  const moveRight = () =>
+    moveSelected("Move block", (document, nodePointer) =>
+      moveIntoPreviousSibling(document, webpageRegistry, nodePointer),
+    );
+  const moveLeft = () =>
+    moveSelected("Move block", (document, nodePointer) => moveOutAfterParent(document, webpageRegistry, nodePointer));
+  const moveTo = (slotPointer: string) =>
+    moveSelected("Move to", (document, nodePointer) => {
+      const children = readJsonValue(document, parseJsonPointer(slotPointer));
+      const nodeSlotPointer = toJsonPointer(parseJsonPointer(nodePointer).slice(0, -1));
+      // A node taken out of its own slot leaves that slot one shorter, so the end of it is one index less
+      const childCount = Array.isArray(children) ? children.length - (slotPointer === nodeSlotPointer ? 1 : 0) : 0;
+      return moveBlockNode(document, webpageRegistry, nodePointer, slotPointer, childCount);
+    });
+  // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt presses
+  const moveToScope: UiCommandScope = {
+    commands: () => {
+      const selection = getSelection();
+      if (!selection) return [];
+
+      return getAcceptingSlotPointers(selection.document, webpageRegistry, selection.nodePointer).map(
+        (slotPointer): UiCommand => ({
+          group: PAGE_BUILDER_COMMAND_GROUP,
+          id: `page-builder-move-to${slotPointer}`,
+          meaning: UiIconMeaning.ArrowRight,
+          run: () => moveTo(slotPointer),
+          title: getSlotPath(selection.document, slotPointer),
+        }),
+      );
+    },
+    placeholder: "Search slots",
+    query: ref(""),
+    title: "Move to",
+  };
+  // Focus lands where getFocusAfterRemoval says, found in the document the removal leaves; the root's empty pointer clears the selection
+  const deleteSelected = () => {
+    const selection = getSelection();
+    if (!selection) return;
+
+    const focusPointer = getFocusAfterRemoval(selection.document, selection.nodePointer);
+    applyEdit(resourceId, removeBlockNode(selection.nodePointer), "Delete block").match(() => {
+      setSelectedNodeId(resourceId, getNodeId(getDocument(resourceId), focusPointer));
+    }, console.error);
+  };
+
+  return { deleteSelected, moveDown, moveLeft, moveRight, moveTo, moveToScope, moveUp };
+};
