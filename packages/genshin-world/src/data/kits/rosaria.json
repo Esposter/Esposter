@@ -14,6 +14,6 @@
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 2 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4532 } },
   "skill.hits.1.element": { "cause": "Unclassified", "value": "Ice" },
-  "skill.hits.1.gauge": { "cause": "Unclassified", "value": 1 },
+  "skill.hits.1.gauge": { "file": "skill.go", "line": 74, "source": "Gcsim", "value": 1 },
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4532 } }
 }
