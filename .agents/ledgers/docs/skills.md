@@ -45,7 +45,7 @@
 | `readme-standards`        | —     |       |
 | `recreation-tooling`      | —     |       |
 | `responsive`              | —     |       |
-| `resuming`                |       |       |
+| `resuming`                | —     |       |
 | `review-queue`            | —     |       |
 | `routing`                 | —     |       |
 | `run-app`                 | —     |       |
@@ -62,7 +62,7 @@
 | `sweeps`                  | —     |       |
 | `test-values`             | —     |       |
 | `testing`                 | —     |       |
-| `throughput`              |       |       |
+| `throughput`              | —     |       |
 | `tiptap`                  | —     |       |
 | `todos`                   | —     |       |
 | `trpc`                    | —     |       |
