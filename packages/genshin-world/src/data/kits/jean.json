@@ -8,6 +8,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
   },
   "hits.fieldDamage.0.element": { "file": "burst.go", "line": 40, "source": "Gcsim", "value": "Wind" },
+  "hits.fieldDamage.0.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
   "hits.fieldDamage.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 339 } },
   "hits.fieldDamage.1.area": {
     "cause": "DiffersFromSource",
@@ -15,7 +16,7 @@
   },
   "hits.fieldDamage.1.element": { "file": "burst.go", "line": 40, "source": "Gcsim", "value": "Wind" },
   "hits.fieldDamage.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 339 } },
-  "hits.fieldDamage.1.hitmarkFrames": { "file": "burst.go", "line": 50, "source": "Gcsim", "value": 640 },
+  "hits.fieldDamage.1.hitmarkFrames": { "file": "burst.go", "line": 62, "source": "Gcsim", "value": 640 },
   "normalAttacks.0.hits.0.healParty.attackShare": { "file": "asc.go", "line": 29, "source": "Gcsim", "value": 0.15 },
   "normalAttacks.0.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.0.hits.0.healParty.flatHealth": { "cause": "Unsourced", "value": 0 },
