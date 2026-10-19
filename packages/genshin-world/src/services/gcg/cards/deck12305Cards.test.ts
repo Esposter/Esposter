@@ -124,7 +124,7 @@ const createSwitchDuel = (): GcgDuel => {
       },
       createGcgCharacterState({ character: { element: Element.Cryo, id: 1104 } }),
     ]),
-    createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: 1107 } })]),
+    createSideState([createGcgCharacterState({ character: { element: Element.Cryo, id: SHENHE_ID } })]),
   ]);
   takeOne(duel.sides, 0).dice = [Element.Cryo, Element.Cryo, Element.Cryo];
   return duel;
