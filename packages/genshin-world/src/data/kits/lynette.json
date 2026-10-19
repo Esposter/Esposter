@@ -1,15 +1,10 @@
 {
-  "burst.hits.0.area": { "cause": "Unsourced", "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8339 } },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.bogglecatFirstTick": { "cause": "Unsourced", "value": 122 },
   "frames.bogglecatBoxDuration": { "file": "burst.go", "line": 13, "source": "Gcsim", "value": 754 },
   "frames.bogglecatTickInterval": { "cause": "Unsourced", "value": 59 },
-  "hits.bogglecatTick.area": {
-    "cause": "Unsourced",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 6 }
-  },
   "hits.bogglecatTick.hitmarkFrames": { "cause": "Unsourced", "value": 0 },
   "hits.bogglecatTick.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8339 } },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 46.0575 },

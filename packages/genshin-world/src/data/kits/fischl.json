@@ -40,7 +40,7 @@
     "file": "asc.go",
     "line": 64,
     "source": "Gcsim",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 0.5 }
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 15.5 }
   },
   "hits.thunderingRetribution.element": { "cause": "Unsourced", "value": "Electric" },
   "hits.thunderingRetribution.gauge": { "file": "asc.go", "line": 55, "source": "Gcsim", "value": 1 },
