@@ -1,18 +1,14 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffAttackAndMovementSpeed } from "#src/services/weapon/passives/buffAttackAndMovementSpeed";
-import { takeOne } from "@esposter/shared";
+import { createSpeedBuffPassiveModule } from "#src/services/weapon/passives/createSpeedBuffPassiveModule";
 
-// Guerilla Tactics at its rank: defeating an opponent raises its wielder's ATK and Movement SPD by the rank's percentage for
-// The rank's seconds
-export const createGuerillaTacticsPassiveModule = (params: number[]): PassiveModule => {
-  const percentage = takeOne(params, 0);
-  const seconds = takeOne(params, 1);
-  return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.EnemyDefeated || event.striker?.characterId !== combatant.characterId) return;
-      buffAttackAndMovementSpeed(kitEffectState, combatant.characterId, percentage, seconds, "guerillaTactics");
-    },
-  };
-};
+// Guerilla Tactics at its rank: defeating an opponent raises its wielder's ATK and Movement SPD by the rank's
+// Percentage for the rank's seconds
+export const createGuerillaTacticsPassiveModule = (params: number[]): PassiveModule =>
+  createSpeedBuffPassiveModule(
+    params,
+    "guerillaTactics",
+    (event, combatant) =>
+      event.kind === KitEventKind.EnemyDefeated && event.striker?.characterId === combatant.characterId,
+  );
