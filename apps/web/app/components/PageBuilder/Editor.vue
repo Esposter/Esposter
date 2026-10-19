@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
+import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { getBlockNode } from "headless-block-editor";
 
 interface Props {
   resourceId: string;
@@ -20,6 +24,8 @@ const panelItems: UiTabItem<string>[] = [{ title: CONTENT_PANEL, value: CONTENT_
 const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
+const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+const shell = useTemplateRef("shell");
 const leftWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
 const rightWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
 const panel = ref(CONTENT_PANEL);
@@ -53,10 +59,33 @@ const getAltMove = (key: string) => {
       return undefined;
   }
 };
+// Enter edits the selected node in place when it is a text node, and does nothing for any other node
+const startTextEdit = () => {
+  const document = pageBuilderDocumentStore.getDocument(resourceId);
+  const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const nodePointer = document && getNodePointer(document, nodeId);
+  if (!document || nodePointer === undefined) return;
+  if (getBlockNode(document, nodePointer)?.type !== WebpageNodeType.Text) return;
+
+  pageBuilderCanvasStore.setEditingNodeId(resourceId, nodeId);
+};
+// Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame
+watch(
+  () => pageBuilderCanvasStore.getEditingNodeId(resourceId),
+  (nodeId, previousNodeId) => {
+    if (nodeId || !previousNodeId) return;
+
+    shell.value?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)?.focus();
+  },
+);
 // Keys are not taken while the user types in a field, so Delete and the arrows keep their own meaning there
 const onKeydown = (event: KeyboardEvent) => {
   if (checkIsEditableTarget(event.target)) return;
 
+  if (event.key === "Enter") {
+    startTextEdit();
+    return;
+  }
   if (event.altKey) {
     const move = getAltMove(event.key);
     if (!move) return;
@@ -73,7 +102,7 @@ const onKeydown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div v-if="pageDocument" flex gap-2 h-full min-h-0 @keydown="onKeydown">
+  <div v-if="pageDocument" ref="shell" flex gap-2 h-full min-h-0 @keydown="onKeydown">
     <div :style="{ width: `${leftWidth}px` }" relative flex flex-col gap-4 shrink-0 min-h-0>
       <div flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto>
         <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />

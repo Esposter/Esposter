@@ -10,7 +10,7 @@ import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORY_MAP } from "@/ser
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 import { nextTick } from "vue";
@@ -113,6 +113,64 @@ describe("pageBuilderEditor", () => {
     expect(component.get('[role="status"]').text()).toBe(
       `Moved ${WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text]} 2 to position 2 of 2 in The page`,
     );
+  });
+
+  test("enter edits a selected text node in place", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+
+    await component.trigger("keydown", { key: "Enter" });
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe(TEST_ROOT_TEXT_ID);
+  });
+
+  test("enter does nothing on a button", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+
+    await component.trigger("keydown", { key: "Enter" });
+
+    expect(pageBuilderCanvasStore.getEditingNodeId(resourceId)).toBe("");
+  });
+
+  test("leaving a text edit focuses the node's row in the layers tree", async () => {
+    expect.hasAssertions();
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+
+    const resourceId = crypto.randomUUID();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    const component = await mountSuspended(PageBuilderEditor, { attachTo: document.body, props: { resourceId } });
+    pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
+    await nextTick();
+
+    pageBuilderCanvasStore.setEditingNodeId(resourceId, "");
+    await nextTick();
+
+    expect(document.activeElement).toBe(component.get(`[data-item-id="${TEST_ROOT_TEXT_ID}"]`).element);
+    component.unmount();
   });
 
   test("an empty page shows the palette instead of the canvas", async () => {

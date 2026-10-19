@@ -24,12 +24,32 @@ const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
 const selectedNodeId = computed(() => pageBuilderCanvasStore.getSelectedNodeId(resourceId));
+const editingNodeId = computed(() => pageBuilderCanvasStore.getEditingNodeId(resourceId));
+// The document the frame draws. While a text node is edited it stays as it was when the edit began, since each change would
+// Otherwise reset the node's rendered html, which the editor is mounted inside
+const drawnDocument = shallowRef<WebpageDocument>();
+watch(
+  [pageDocument, editingNodeId],
+  ([document, nodeId]) => {
+    if (!nodeId) drawnDocument.value = document;
+  },
+  { immediate: true },
+);
 const contentRoot = useTemplateRef("contentRoot");
 // The node under the pointer, held here rather than in the store since only this canvas outlines it
 const hoveredNodeId = ref<string>();
 const selectionBox = ref<OverlayBox>();
 const getElement = (nodeId: string) =>
   contentRoot.value?.ownerDocument.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`) ?? null;
+// The node element the editor is mounted in, found once the draw has put it in the frame
+const editingElement = shallowRef<Element | null>(null);
+watch(
+  [editingNodeId, contentRoot, drawnDocument],
+  ([nodeId]) => {
+    editingElement.value = nodeId ? getElement(nodeId) : null;
+  },
+  { flush: "post" },
+);
 const getFrameElement = () => {
   const frameElement = contentRoot.value?.ownerDocument.defaultView?.frameElement;
   return frameElement instanceof HTMLIFrameElement ? frameElement : undefined;
@@ -65,9 +85,16 @@ const getFrameGeometry = (): FrameGeometry | undefined => {
   };
 };
 defineExpose({ getFrameGeometry });
-const css = computed(() =>
-  pageDocument.value ? getWebpageCss(pageDocument.value, getPresentDefinitions(pageDocument.value)) : "",
-);
+// While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
+const css = computed(() => {
+  const document = drawnDocument.value;
+  if (!document) return "";
+
+  const pageCss = getWebpageCss(document, getPresentDefinitions(document));
+  return editingNodeId.value
+    ? `${pageCss}\n[data-node-id="${CSS.escape(editingNodeId.value)}"] > :not([data-text-editor]) { display: none; }`
+    : pageCss;
+});
 const device = computed(() => pageBuilderCanvasStore.getDevice(resourceId));
 // The nodes are rendered by the frame's content, so the render is a functional component over the document it draws
 const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
@@ -88,7 +115,10 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
       @pointerleave="hoveredNodeId = undefined"
       @pointerover="hoveredNodeId = getNodeIdFromElement($event.target as Element | null)"
     >
-      <CanvasNodes :document="pageDocument" :origin />
+      <CanvasNodes v-if="drawnDocument" :document="drawnDocument" :origin />
+      <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
+        <PageBuilderCanvasTextEditor :key="editingNodeId" :node-id="editingNodeId" :resource-id />
+      </Teleport>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
         :get-element
