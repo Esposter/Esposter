@@ -62,7 +62,7 @@ const listHeldBinaryFiles = async (questListing: readonly DumpFile[]): Promise<D
   const directories = new Set(Array.from(heldPaths, (path) => path.slice(0, path.lastIndexOf("/"))));
   const listings = await Promise.all(
     Array.from(directories, (directory) =>
-      directory === QUEST_BINARY_DIRECTORY_PATH ? questListing : listRemoteDirectory(directory),
+      directory === QUEST_BINARY_DIRECTORY_PATH ? Promise.resolve(questListing) : listRemoteDirectory(directory),
     ),
   );
   return listings.flat().filter(({ path }) => heldPaths.has(path));

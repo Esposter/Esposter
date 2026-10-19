@@ -5,12 +5,18 @@ import { compareScreen } from "#src/services/genshinParity/reference/compareScre
 import { runCommand } from "citty";
 import { describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({ compareScreen: vi.fn() }));
-vi.mock(import("#src/services/genshinParity/reference/getMissingReferenceInputs"), () => ({
-  getMissingReferenceInputs: vi.fn(() => []),
+vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
+  compareScreen: vi.fn<typeof compareScreen>(),
 }));
-vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({ writeParityScores: vi.fn() }));
-vi.mock(import("#src/services/genshinParity/shared/fetchReferences"), () => ({ fetchReferences: vi.fn() }));
+vi.mock(import("#src/services/genshinParity/reference/getMissingReferenceInputs"), () => ({
+  getMissingReferenceInputs: vi.fn<() => string[]>(() => []),
+}));
+vi.mock(import("#src/services/genshinParity/reference/writeParityScores"), () => ({
+  writeParityScores: vi.fn<() => Promise<void>>(),
+}));
+vi.mock(import("#src/services/genshinParity/shared/fetchReferences"), () => ({
+  fetchReferences: vi.fn<() => Promise<void>>(),
+}));
 vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => ({
   ParityReferenceMap: {
     "cooking-screen": { pending: "no recording yet", screen: "CookingScreen" },
