@@ -11,6 +11,7 @@ A headless canvas frame: `useCanvasFrame` draws its content in an isolated docum
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Usage](#usage)
+- 📖 [Documentation](#documentation)
 - 🧪 [Tests](#tests)
 - ⚖️ [License](#license)
 
@@ -44,6 +45,10 @@ const { frameBody, frameStyle } = useCanvasFrame({ css: pageCss, fill: true, fra
 ```
 
 `getFrameWidth` and `getFrameScale` are the pure geometry the composable uses, exported on their own.
+
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
 ## <a name="tests">🧪 Tests</a>
 
