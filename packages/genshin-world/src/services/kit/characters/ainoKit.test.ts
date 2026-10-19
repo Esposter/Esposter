@@ -223,97 +223,93 @@ describe(createAinoKitBehaviour, () => {
     expect(castBurstInTeam(1, [AINO_CHARACTER_ID]).field?.tickIntervalSeconds).toBeCloseTo(1.5);
   });
 
-  describe("constellation 4's skill energy", () => {
-    test("a Constellation 4 switch gives Aino 10 energy on a skill hit, once every 10 seconds", () => {
-      expect.hasAssertions();
-      const combatant = { ...createAinoCombatant(0), constellationCount: 4 };
-      const party = createParty([AINO_CHARACTER_ID]);
-      const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
-      const energy = (): number => getPartyMember(party, AINO_CHARACTER_ID).energy;
-      const energies: number[] = [];
-      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
-      energies.push(energy());
-      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits.slice(1)));
-      energies.push(energy());
-      stepKitTestEffects(10, context);
-      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
-      energies.push(energy());
+  test("constellation 4's skill energy a Constellation 4 switch gives Aino 10 energy on a skill hit, once every 10 seconds", () => {
+    expect.hasAssertions();
+    const combatant = { ...createAinoCombatant(0), constellationCount: 4 };
+    const party = createParty([AINO_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+    const energy = (): number => getPartyMember(party, AINO_CHARACTER_ID).energy;
+    const energies: number[] = [];
+    strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
+    energies.push(energy());
+    strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits.slice(1)));
+    energies.push(energy());
+    stepKitTestEffects(10, context);
+    strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
+    energies.push(energy());
 
-      expect(energies).toStrictEqual([10, 10, 20]);
-    });
-
-    test("a Constellation 3 switch gives Aino no energy on a skill hit", () => {
-      expect.hasAssertions();
-      const combatant = { ...createAinoCombatant(0), constellationCount: 3 };
-      const party = createParty([AINO_CHARACTER_ID]);
-      const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
-      strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
-
-      expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
-    });
+    expect(energies).toStrictEqual([10, 10, 20]);
   });
 
-  describe("constellation 2's water ball", () => {
-    test("an active constellation's switch queues a water ball on an enemy the active member hits while Aino is off the field", () => {
-      expect.hasAssertions();
-      const { aino, context, teammate } = createTeammateTeam(2);
-      strikeEnemy(context, teammate, aino);
+  test("constellation 4's skill energy a Constellation 3 switch gives Aino no energy on a skill hit", () => {
+    expect.hasAssertions();
+    const combatant = { ...createAinoCombatant(0), constellationCount: 3 };
+    const party = createParty([AINO_CHARACTER_ID]);
+    const context = createKitTestContext(combatant, { kitEffectState: { effects: [] }, party });
+    strikeEnemy(context, combatant, combatant, takeOne(AINO_KIT.elementalSkill.hits));
 
-      expect(context.strikes.map(({ target }) => target)).toStrictEqual([AINO_ENEMY]);
-    });
+    expect(getPartyMember(party, AINO_CHARACTER_ID).energy).toBe(0);
+  });
 
-    test("an inactive constellation changes nothing", () => {
-      expect.hasAssertions();
-      const { aino, context, teammate } = createTeammateTeam(1);
-      strikeEnemy(context, teammate, aino);
+  test("constellation 2's water ball an active constellation's switch queues a water ball on an enemy the active member hits while Aino is off the field", () => {
+    expect.hasAssertions();
+    const { aino, context, teammate } = createTeammateTeam(2);
+    strikeEnemy(context, teammate, aino);
 
-      expect(context.strikes).toHaveLength(0);
-    });
+    expect(context.strikes.map(({ target }) => target)).toStrictEqual([AINO_ENEMY]);
+  });
 
-    test("a constellation 2 water ball counts no internal cooldown", () => {
-      expect.hasAssertions();
-      const { aino, context, teammate } = createTeammateTeam(2);
-      strikeEnemy(context, teammate, aino);
+  test("constellation 2's water ball an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const { aino, context, teammate } = createTeammateTeam(1);
+    strikeEnemy(context, teammate, aino);
 
-      expect(context.strikes[0]?.hit.internalCooldownTag).toBeUndefined();
-    });
+    expect(context.strikes).toHaveLength(0);
+  });
 
-    test("the water ball queues nothing while Aino is on the field", () => {
-      expect.hasAssertions();
-      const { aino, context, teammate } = createTeammateTeam(2);
-      const onField = { ...context, activeCombatant: aino };
-      strikeEnemy(onField, aino, aino);
-      strikeEnemy(onField, teammate, aino);
+  test("constellation 2's water ball a constellation 2 water ball counts no internal cooldown", () => {
+    expect.hasAssertions();
+    const { aino, context, teammate } = createTeammateTeam(2);
+    strikeEnemy(context, teammate, aino);
 
-      expect(context.strikes).toHaveLength(0);
-    });
+    expect(context.strikes[0]?.hit.internalCooldownTag).toBeUndefined();
+  });
 
-    test("the water ball queues nothing once her burst's zone has run out", () => {
-      expect.hasAssertions();
-      const { aino, context, kitEffectState, teammate } = createTeammateTeam(2);
-      for (const effect of kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 0;
-      strikeEnemy(context, teammate, aino);
+  test("constellation 2's water ball the water ball queues nothing while Aino is on the field", () => {
+    expect.hasAssertions();
+    const { aino, context, teammate } = createTeammateTeam(2);
+    const onField = { ...context, activeCombatant: aino };
+    strikeEnemy(onField, aino, aino);
+    strikeEnemy(onField, teammate, aino);
 
-      expect(context.strikes).toHaveLength(0);
-    });
+    expect(context.strikes).toHaveLength(0);
+  });
 
-    test("the water ball fires once every five seconds", () => {
-      expect.hasAssertions();
-      const { aino, context, teammate } = createTeammateTeam(2);
-      // A step clears the strikes queued before it, so each read counts the balls queued on the enemy since the last step
-      const countQueuedBalls = (): number => context.strikes.filter(({ target }) => target === AINO_ENEMY).length;
-      strikeEnemy(context, teammate, aino);
-      strikeEnemy(context, teammate, aino);
-      const countBeforeCooldown = countQueuedBalls();
-      stepKitSeconds(context, 4);
-      strikeEnemy(context, teammate, aino);
-      const countWhileCoolingDown = countQueuedBalls();
-      // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the ball is read once a step past five
-      stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
-      strikeEnemy(context, teammate, aino);
+  test("constellation 2's water ball the water ball queues nothing once her burst's zone has run out", () => {
+    expect.hasAssertions();
+    const { aino, context, kitEffectState, teammate } = createTeammateTeam(2);
+    for (const effect of kitEffectState.effects) if (effect.kind === "field") effect.secondsRemaining = 0;
+    strikeEnemy(context, teammate, aino);
 
-      expect([countBeforeCooldown, countWhileCoolingDown, countQueuedBalls()]).toStrictEqual([1, 0, 1]);
-    });
+    expect(context.strikes).toHaveLength(0);
+  });
+
+  test("constellation 2's water ball the water ball fires once every five seconds", () => {
+    expect.hasAssertions();
+    const { aino, context, teammate } = createTeammateTeam(2);
+    // A step clears the strikes queued before it, so each read counts the balls queued on the enemy since the last step
+    const countQueuedBalls = (): number => context.strikes.filter(({ target }) => target === AINO_ENEMY).length;
+    strikeEnemy(context, teammate, aino);
+    strikeEnemy(context, teammate, aino);
+    const countBeforeCooldown = countQueuedBalls();
+    stepKitSeconds(context, 4);
+    strikeEnemy(context, teammate, aino);
+    const countWhileCoolingDown = countQueuedBalls();
+    // Five steps of a sixtieth of a second leave the cooldown a sliver above zero, so the ball is read once a step past five
+    stepKitSeconds(context, 1 + FIXED_STEP_SECONDS);
+    strikeEnemy(context, teammate, aino);
+
+    expect([countBeforeCooldown, countWhileCoolingDown, countQueuedBalls()]).toStrictEqual([1, 0, 1]);
   });
 });
 

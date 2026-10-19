@@ -48,6 +48,27 @@ describe(createLyneyKitBehaviour, () => {
 
   const MAX_HEALTH = 10_000;
 
+  const strikeBody = createKitBody({ x: 0, z: 0 });
+  // The DMG bonus a strike of his gains on an enemy with the given auras, as his team stands
+  const getDamageBonus = (ascension: number, deployedElements: (Element | undefined)[], auras: AuraType[]): number => {
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    for (const aura of auras) enemy.elementalState.auras.set(aura, { decayRate: 0, gauge: 1, isImmutable: false });
+    return (
+      LYNEY_KIT.getStrikeDamageBonus?.(
+        {
+          body: strikeBody,
+          combatant: { ...createLyneyCombatant(), ascension, deployedElements },
+          hit: takeOne(LYNEY_KIT.chargedAttack.hits),
+        },
+        enemy,
+        createParty([LYNEY_CHARACTER_ID]),
+        [],
+      ) ?? 0
+    );
+  };
+  // Lyney with another Pyro member, and a Hydro and a Cryo one
+  const TEAM = [Element.Pyro, Element.Pyro, Element.Hydro, Element.Cryo];
+
   test("reads the strikes', Prop Arrow's and plunges' multipliers from his proud attack group", () => {
     expect.hasAssertions();
     const multipliers = [
@@ -107,56 +128,30 @@ describe(createLyneyKitBehaviour, () => {
 
     expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
   });
-  describe("ascension 4's DMG bonus", () => {
-    const strikeBody = createKitBody({ x: 0, z: 0 });
-    // The DMG bonus a strike of his gains on an enemy with the given auras, as his team stands
-    const getDamageBonus = (
-      ascension: number,
-      deployedElements: (Element | undefined)[],
-      auras: AuraType[],
-    ): number => {
-      const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-      for (const aura of auras) enemy.elementalState.auras.set(aura, { decayRate: 0, gauge: 1, isImmutable: false });
-      return (
-        LYNEY_KIT.getStrikeDamageBonus?.(
-          {
-            body: strikeBody,
-            combatant: { ...createLyneyCombatant(), ascension, deployedElements },
-            hit: takeOne(LYNEY_KIT.chargedAttack.hits),
-          },
-          enemy,
-          createParty([LYNEY_CHARACTER_ID]),
-          [],
-        ) ?? 0
-      );
-    };
-    // Lyney with another Pyro member, and a Hydro and a Cryo one
-    const TEAM = [Element.Pyro, Element.Pyro, Element.Hydro, Element.Cryo];
 
-    test("a passive takes effect at its ascension phase", () => {
-      expect.hasAssertions();
+  test("ascension 4's DMG bonus a passive takes effect at its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getDamageBonus(4, TEAM, [AuraType.Pyro])).toBeCloseTo(0.8);
-    });
+    expect(getDamageBonus(4, TEAM, [AuraType.Pyro])).toBeCloseTo(0.8);
+  });
 
-    test("a passive does not take effect below its ascension phase", () => {
-      expect.hasAssertions();
+  test("ascension 4's DMG bonus a passive does not take effect below its ascension phase", () => {
+    expect.hasAssertions();
 
-      expect(getDamageBonus(3, TEAM, [AuraType.Pyro])).toBe(0);
-    });
+    expect(getDamageBonus(3, TEAM, [AuraType.Pyro])).toBe(0);
+  });
 
-    test("each other Pyro member adds 20%, up to 100%", () => {
-      expect.hasAssertions();
+  test("ascension 4's DMG bonus each other Pyro member adds 20%, up to 100%", () => {
+    expect.hasAssertions();
 
-      expect(getDamageBonus(4, [Element.Pyro], [AuraType.Pyro])).toBeCloseTo(0.6);
-      expect(getDamageBonus(4, [Element.Pyro, Element.Pyro, Element.Pyro, Element.Pyro], [AuraType.Pyro])).toBe(1);
-    });
+    expect(getDamageBonus(4, [Element.Pyro], [AuraType.Pyro])).toBeCloseTo(0.6);
+    expect(getDamageBonus(4, [Element.Pyro, Element.Pyro, Element.Pyro, Element.Pyro], [AuraType.Pyro])).toBe(1);
+  });
 
-    test("it applies only to an enemy affected by Pyro, which a Burning enemy is", () => {
-      expect.hasAssertions();
+  test("ascension 4's DMG bonus it applies only to an enemy affected by Pyro, which a Burning enemy is", () => {
+    expect.hasAssertions();
 
-      expect(getDamageBonus(4, TEAM, [AuraType.Hydro])).toBe(0);
-      expect(getDamageBonus(4, TEAM, [AuraType.Burning])).toBeCloseTo(0.8);
-    });
+    expect(getDamageBonus(4, TEAM, [AuraType.Hydro])).toBe(0);
+    expect(getDamageBonus(4, TEAM, [AuraType.Burning])).toBeCloseTo(0.8);
   });
 });

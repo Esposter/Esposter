@@ -63,7 +63,7 @@ const createTeam = (constellationCount: number, others: Combatant[], gorou = cre
 
 // The centre of the team's one field, the General's War Banner or Juuga's field
 const readFieldCentre = (kitEffectState: KitEffectState): GroundPoint =>
-  takeOne(kitEffectState.effects.filter(checkIsField)).centre;
+  takeOne(kitEffectState.effects.filter((effect) => checkIsField(effect))).centre;
 
 // The team DEF buffs Juuga's cast gives as Gorou stands at the ascension
 const getA1Buffs = (ascension: number): KitEffect[] =>

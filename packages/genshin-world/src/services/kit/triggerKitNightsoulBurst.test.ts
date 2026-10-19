@@ -28,7 +28,7 @@ const stepTeamSeconds = (context: KitContext, seconds: number) => {
 // Team's kits hear, which the first member's kit alone records, since every kit of the team hears each one
 const createTeam = (size: number, regionId = NATLAN_REGION_ID) => {
   const bursts: KitEvent[] = [];
-  const members: Combatant[] = Array.from({ length: size }, (_, index) => ({
+  const members: Combatant[] = Array.from({ length: size }, (_value, index) => ({
     ascension: 0,
     attributes: computeCharacterAttributes([]),
     characterId: IANSAN_CHARACTER_ID + index,

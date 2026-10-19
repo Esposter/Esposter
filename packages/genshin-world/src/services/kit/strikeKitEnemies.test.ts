@@ -178,7 +178,7 @@ describe(strikeKitEnemies, () => {
 
   test("gives a hit's onStrike the enemy each strike lands on, a targeted hit's and an area hit's alike", () => {
     expect.hasAssertions();
-    const combatant = createCombatant(vi.fn());
+    const combatant = createCombatant(vi.fn<NonNullable<Kit["onKitEvent"]>>());
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
     const targetedOnStrike = vi.fn<NonNullable<KitHit["onStrike"]>>();
     strikeWithHit({ ...KIT_HIT, onStrike: targetedOnStrike }, enemy, combatant);

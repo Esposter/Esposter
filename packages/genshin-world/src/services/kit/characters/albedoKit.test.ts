@@ -276,68 +276,67 @@ describe(createAlbedoKitBehaviour, () => {
 
     expect(tectonicTideBuffs(createAlbedoCombatant(3))).toStrictEqual([]);
   });
-  describe("constellation 2's Fatal Reckoning", () => {
-    test("each Transient Blossom adds a stack, up to four, that the Fatal Blossoms take as flat damage", () => {
-      expect.hasAssertions();
-      const combatant = createAlbedoCombatant(0, 2);
-      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
-      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
-      strikeInsideField(context, combatant);
-      strikeInsideField(context, combatant);
-      strikeInsideField(context, combatant);
-      strikeInsideField(context, combatant);
-      strikeInsideField(context, combatant);
-      const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
-      const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
 
-      expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(1.2 * combatant.attributes.defense);
-    });
+  test("constellation 2's Fatal Reckoning each Transient Blossom adds a stack, up to four, that the Fatal Blossoms take as flat damage", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 2);
+    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+    strikeInsideField(context, combatant);
+    strikeInsideField(context, combatant);
+    strikeInsideField(context, combatant);
+    strikeInsideField(context, combatant);
+    strikeInsideField(context, combatant);
+    const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+    const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
 
-    test("the flat damage takes Albedo's DEF with the buffs on her", () => {
-      expect.hasAssertions();
-      const combatant = createAlbedoCombatant(0, 2);
-      const defenseBuff: KitBuff = {
-        amount: 0.5,
-        attribute: Attribute.DefensePercent,
-        characterId: ALBEDO_CHARACTER_ID,
-        kind: "buff",
-        secondsRemaining: 20,
-      };
-      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma(), defenseBuff] };
-      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
-      strikeInsideField(context, combatant);
-      ALBEDO_KIT.elementalBurst.onStart?.(context);
-      const [fatalBlossom] = findLastSummon(kitEffectState.effects)?.hits ?? [];
+    expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(1.2 * combatant.attributes.defense);
+  });
 
-      expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * 1.5 * combatant.attributes.defense);
-    });
+  test("constellation 2's Fatal Reckoning the flat damage takes Albedo's DEF with the buffs on her", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 2);
+    const defenseBuff: KitBuff = {
+      amount: 0.5,
+      attribute: Attribute.DefensePercent,
+      characterId: ALBEDO_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 20,
+    };
+    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma(), defenseBuff] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+    strikeInsideField(context, combatant);
+    ALBEDO_KIT.elementalBurst.onStart?.(context);
+    const [fatalBlossom] = findLastSummon(kitEffectState.effects)?.hits ?? [];
 
-    test("a Constellation 1 Albedo's Fatal Blossoms take no Fatal Reckoning damage", () => {
-      expect.hasAssertions();
-      const combatant = createAlbedoCombatant(0, 1);
-      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
-      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
-      strikeInsideField(context, combatant);
-      const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
-      const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
+    expect(fatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * 1.5 * combatant.attributes.defense);
+  });
 
-      expect(fatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
-    });
+  test("constellation 2's Fatal Reckoning a Constellation 1 Albedo's Fatal Blossoms take no Fatal Reckoning damage", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 1);
+    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+    strikeInsideField(context, combatant);
+    const burstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+    const [fatalBlossom] = findLastSummon(burstEffects)?.hits ?? [];
 
-    test("the stacks Tectonic Tide consumes leave its next Fatal Blossoms with no bonus", () => {
-      expect.hasAssertions();
-      const combatant = createAlbedoCombatant(0, 2);
-      const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
-      const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
-      strikeInsideField(context, combatant);
-      const firstBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
-      const [firstFatalBlossom] = findLastSummon(firstBurstEffects)?.hits ?? [];
-      const secondBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, firstBurstEffects, combatant);
-      const [secondFatalBlossom] = findLastSummon(secondBurstEffects)?.hits ?? [];
+    expect(fatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
+  });
 
-      expect(firstFatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * combatant.attributes.defense);
-      expect(secondFatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
-    });
+  test("constellation 2's Fatal Reckoning the stacks Tectonic Tide consumes leave its next Fatal Blossoms with no bonus", () => {
+    expect.hasAssertions();
+    const combatant = createAlbedoCombatant(0, 2);
+    const kitEffectState: KitEffectState = { effects: [createStandingSolarIsotoma()] };
+    const context = createKitTestContext(combatant, { kitEffectState, party: createParty([ALBEDO_CHARACTER_ID]) });
+    strikeInsideField(context, combatant);
+    const firstBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, kitEffectState.effects, combatant);
+    const [firstFatalBlossom] = findLastSummon(firstBurstEffects)?.hits ?? [];
+    const secondBurstEffects = castEffects(ALBEDO_KIT.elementalBurst, firstBurstEffects, combatant);
+    const [secondFatalBlossom] = findLastSummon(secondBurstEffects)?.hits ?? [];
+
+    expect(firstFatalBlossom?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(0.3 * combatant.attributes.defense);
+    expect(secondFatalBlossom?.additiveBaseDamageBonus).toBeUndefined();
   });
 
   test("constellation 4 raises the active member's plunging attacks 30% while it stands in the standing Solar Isotoma's field", () => {
