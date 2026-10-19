@@ -29,6 +29,7 @@ export const KIBIBYTE: number = 2 ** 10;
 // Imports and be tested against another.
 export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // A request for a stylesheet: a `.css` file, or a component's style block, whose request ends in `lang.css`
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const STYLESHEET_REQUEST_REGEX: RegExp = /\.css(?:\?|$)/u;
 // The export condition under which a package resolves to its own TypeScript source rather than its build.
 // Every tool that can read source opts into it — the tsconfig preset, the shared Vitest config — while Node's
