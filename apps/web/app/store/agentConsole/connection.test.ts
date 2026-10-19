@@ -57,6 +57,11 @@ const readNonce = (socket: FakeWebSocket) =>
   // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
   (JSON.parse(takeOne(socket.send.mock.calls)[0]) as { nonce: string }).nonce;
 
+// The last command the page sent the host, read back as the host would
+const readLastCommand = (socket: FakeWebSocket) =>
+  // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
+  JSON.parse(takeOne(socket.send.mock.calls, socket.send.mock.calls.length - 1)[0]) as Record<string, unknown>;
+
 // A host proving itself and admitting the page, resolved with the credential message the page sent it
 const admit = async (socket: FakeWebSocket, privateKey: CryptoKey, port = DEFAULT_PORT) => {
   const nonce = readNonce(socket);
@@ -345,11 +350,6 @@ describe(useAgentConsoleConnectionStore, () => {
       type: AgentEventType.AssistantMessage,
     };
 
-    // The last command the page sent the host, read back as the host would
-    const readLastCommand = (socket: FakeWebSocket) =>
-      // oxlint-disable-next-line no-restricted-properties -- the page's message, read back as the test's host would
-      JSON.parse(takeOne(socket.send.mock.calls, socket.send.mock.calls.length - 1)[0]) as Record<string, unknown>;
-
     // One paired host with one session open in the console, which the side chat forks from
     const openConsole = async () => {
       const { privateKey, publicKey } = await createHostKeyPair();
@@ -369,7 +369,8 @@ describe(useAgentConsoleConnectionStore, () => {
     // Opens the side chat with one question, which the host's fork answers, with one session open in the console
     const askSideChat = async () => {
       const { agentConsoleConnectionStore, agentConsoleSessionStore, sessionId, socket } = await openConsole();
-      useAgentConsoleSideChatStore().isSideChatOpen = true;
+      const agentConsoleSideChatStore = useAgentConsoleSideChatStore();
+      agentConsoleSideChatStore.isSideChatOpen = true;
       agentConsoleConnectionStore.askSideChat("what does this render?", []);
       const forkCommand = readLastCommand(socket);
       dispatchMessage(socket, {
@@ -387,20 +388,18 @@ describe(useAgentConsoleConnectionStore, () => {
       const { agentConsoleSessionStore, forkCommand, sessionId, socket } = await askSideChat();
       const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
 
-      expect(forkCommand).toStrictEqual({
-        id: expect.any(String),
-        isSideChat: true,
-        messageUuid: "",
-        sessionId,
-        type: CommandType.Fork,
-      });
-      expect(readLastCommand(socket)).toStrictEqual({
+      const { id: forkCommandId, ...forkCommandRest } = forkCommand;
+      const { id: promptCommandId, ...promptCommand } = readLastCommand(socket);
+
+      expect(forkCommandRest).toStrictEqual({ isSideChat: true, messageUuid: "", sessionId, type: CommandType.Fork });
+      expect(forkCommandId).toBeTypeOf("string");
+      expect(promptCommand).toStrictEqual({
         attachments: [],
-        id: expect.any(String),
         sessionId: sideChatSessionId,
         text: "what does this render?",
         type: CommandType.Prompt,
       });
+      expect(promptCommandId).toBeTypeOf("string");
       expect(conversationEvents.value).toStrictEqual([mainMessage]);
       expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([
         sideAnswer,
@@ -415,11 +414,10 @@ describe(useAgentConsoleConnectionStore, () => {
       const { conversationEvents } = storeToRefs(agentConsoleSessionStore);
       agentConsoleConnectionStore.closeSideChat();
 
-      expect(readLastCommand(socket)).toStrictEqual({
-        id: expect.any(String),
-        sessionId: sideChatSessionId,
-        type: CommandType.CloseSession,
-      });
+      const { id: closeCommandId, ...closeCommand } = readLastCommand(socket);
+
+      expect(closeCommand).toStrictEqual({ sessionId: sideChatSessionId, type: CommandType.CloseSession });
+      expect(closeCommandId).toBeTypeOf("string");
       expect(agentConsoleSideChatStore.isSideChatOpen).toBe(false);
       expect(agentConsoleSessionStore.getDataRef(sideChatSessionId).value.conversationEvents).toStrictEqual([]);
       expect(conversationEvents.value).toStrictEqual([mainMessage]);
