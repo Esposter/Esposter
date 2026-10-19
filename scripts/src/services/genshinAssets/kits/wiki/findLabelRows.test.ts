@@ -104,6 +104,7 @@ describe(findLabelRows, () => {
 
     expect(findLabelRows("1-Hit DMG", properties)).toStrictEqual([properties[0]]);
   });
+
   test("finds only the 2-Hit row for `Lunar Phase Shift 2-Hit DMG`, not the 1-Hit or 4-Hit rows that share its words", () => {
     expect.hasAssertions();
 
@@ -125,5 +126,28 @@ describe(findLabelRows, () => {
     ];
 
     expect(findLabelRows("Spirit Steed's Stride 1-Hit DMG", properties)).toStrictEqual([properties[0]]);
+  });
+
+  test("finds the rows titled as the label and a place, `4-Hit DMG 1` and `4-Hit DMG 2` for `4-Hit DMG`", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "4-Hit DMG 1" },
+      { row: 2, title: "4-Hit DMG 2" },
+      { row: 3, title: "Press DMG" },
+    ];
+
+    expect(findLabelRows("4-Hit DMG", properties)).toStrictEqual([properties[0], properties[1]]);
+  });
+
+  test("finds the rows titled as the label and a letter, `4-Hit DMG A` and `4-Hit DMG B` for `4-Hit DMG`", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { row: 1, title: "4-Hit DMG A" },
+      { row: 2, title: "4-Hit DMG B" },
+    ];
+
+    expect(findLabelRows("4-Hit DMG", properties)).toStrictEqual([properties[0], properties[1]]);
   });
 });

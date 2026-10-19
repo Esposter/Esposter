@@ -118,7 +118,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Sayu's short hold begins at 0.5 seconds** — [Sayu](../../specs/genshin/kits/sayu/design.md): a recording of her Skill held for half a second plays the short hold.
 - [ ] **Sayu's charged attack and plunges** — [Sayu](../../specs/genshin/kits/sayu/design.md): a recording of them matches the table's charged slots and the half-second plunges.
 - [ ] **Kokomi's plunges land at half a second** — [Kokomi](../../specs/genshin/kits/kokomi/design.md): a recording of her plunge lands at that point.
-- [ ] **Raiden Shogun's hits deal no poise** — [Raiden Shogun](../../specs/genshin/kits/raiden-shogun/design.md): a recording against a poised enemy shows none staggering it.
+- [x] **Raiden Shogun's hits deal no poise** — [Raiden Shogun](../../specs/genshin/kits/raiden-shogun/design.md): a recording against a poised enemy shows none staggering it. Answered by the wiki's rows, which the record takes.
 - [ ] **Masatsu Zetsugi gives 2U of Geo gauge** — [Itto](../../specs/genshin/kits/itto/design.md): a recording of the hit shows a Geo gauge of 2U, not 1U.
 - [ ] **Heartstopper's short hold gives fewer stacks** — [Heizou](../../specs/genshin/kits/heizou/design.md): a hold released before three seconds gives its own stack count, not the press's.
 - [ ] **Electro-Charged arcs to the nearest Wet enemy** — [Combat](../../specs/genshin/combat/design.md): among three Wet enemies within 5 metres the arc goes to the nearest.
