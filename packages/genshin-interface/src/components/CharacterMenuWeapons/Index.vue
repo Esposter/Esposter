@@ -78,8 +78,6 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
 .star {
   width: calc(var(--unit) * 20);
   height: calc(var(--unit) * 20);
-  background: #f5c542;
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%, 50% 0%);
 }
 
 .stats {
@@ -125,18 +123,6 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
   background: rgb(0 0 0 / 0.45);
 }
 
-/* The six ascension phases, each a small star the phases reached light */
-.spark {
-  width: calc(var(--unit) * 14);
-  height: calc(var(--unit) * 14);
-  background: rgb(255 255 255 / 0.3);
-  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%, 50% 0%);
-}
-
-.spark.lit {
-  background: #fff;
-}
-
 .refinement {
   position: absolute;
   top: calc(var(--unit) * 289);
@@ -149,3 +135,4 @@ const { ascension, baseAttack, levelText, name, rarity, refinement, subStatValue
   line-height: calc(var(--unit) * 19);
 }
 </style>
+<style scoped src="../../styles/weaponStars.css"></style>
