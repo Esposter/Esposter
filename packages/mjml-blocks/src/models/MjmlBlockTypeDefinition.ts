@@ -1,10 +1,16 @@
+import type { MjmlContentKind } from "#src/models/MjmlContentKind";
 import type { MjmlJson } from "#src/models/MjmlJson";
 import type { BlockNode, BlockTypeDefinition } from "headless-block-editor";
 
-// A registry entry for an MJML block type, with the attributes MJML takes on it and how it renders to MJML's JSON form. A
-// Consumer's own leaf type renders with the consumer's context, which the document's render passes through untouched
-export interface MjmlBlockTypeDefinition<TContext = undefined> extends BlockTypeDefinition {
+// A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's JSON form
+// Its render receives the node as the core holds it, and reads the props it needs through its own schema
+export interface MjmlBlockTypeDefinition<
+  TNode extends BlockNode = BlockNode,
+  TContext = unknown,
+> extends BlockTypeDefinition<TNode> {
   allowedAttributes: Record<string, string>;
+  contentKind?: MjmlContentKind;
   defaultAttributes: Record<string, string>;
+  hasAlternativeText: boolean;
   render: (node: BlockNode, slots: Record<string, MjmlJson[]>, context: TContext) => MjmlJson;
 }
