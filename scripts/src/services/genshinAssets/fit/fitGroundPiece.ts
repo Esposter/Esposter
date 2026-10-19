@@ -51,7 +51,7 @@ const GROUND_FADE_CELL_SIZE = 64;
 
 // A piece of a region's ground as our Gaussian hills over its terrain tiles' heightfields, in the world's axes round the
 // Oak's foot, which every region shares: Three's, x as the game's and z its mirror, every height over the foot's. Fitted
-// Over the samples of its square inside `isInside`, so no piece runs
+// Over the samples of its square inside `checkIsInside`, so no piece runs
 // Into another's outline. The piece's own ground is its gate's and its bar's: the gate is the RMS of its detail finer
 // Than the fit's step over the samples the bar is read on, the roughness no hill of the fit's widths follows, and the
 // Bar is the RMS of its hills and features, without the residual, over the same samples. A capital's city is no piece's
@@ -64,7 +64,7 @@ const GROUND_FADE_CELL_SIZE = 64;
 export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): Promise<GroundPieceFit> => {
   const { getGameHeight, origin } = source;
   const [originX, originY, originZ] = origin;
-  const { centre, half, isInside, key } = piece;
+  const { centre, checkIsInside, half, key } = piece;
   const getCentreDistance = (x: number, z: number): number => Math.hypot(x - centre.x, z - centre.z);
   const { cityAreas, footprints } = await readGroundFootprints(source, centre, half, GROUND_BAR_RADIUS);
   // How far a place stands from the nearest of the cities' areas, none inside one
@@ -82,7 +82,7 @@ export const fitGroundPiece = async (piece: GroundPiece, source: GroundSource): 
       step: GROUND_STEP,
       values: new Float64Array(size * size),
     },
-    (x, z) => (isInside(x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN),
+    (x, z) => (checkIsInside(x, z) ? getGameHeight(originX + x, originZ - z) - originY : Number.NaN),
   );
   const cityDistances = mapTerrainResidualGrid(tileGrid, getCityDistance).values;
   // The piece's own ground, NaN inside a city, and the land a city stands on: its tiles smoothed at the narrowest hills'

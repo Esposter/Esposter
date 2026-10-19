@@ -43,8 +43,8 @@ export const fitWindriseScene = (only: readonly string[], options: DryRunOptions
           await fitGroundPieces(
             {
               centre: { x: 0, z: 0 },
+              checkIsInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
               half: GROUND_RADIUS,
-              isInside: (x, z) => Math.hypot(x, z) <= GROUND_RADIUS,
               key: `${GameDataset.Ground}/${DerivedAssetComponent.Windrise}`,
             },
             source,

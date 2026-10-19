@@ -14,7 +14,7 @@ export const readLuaChunk = (bytes: Uint8Array, dialect: LuaDialect): LuaFunctio
   // The main closure's upvalue count, which the chunk's own function already describes
   reader.readByte();
   const luaFunction = readLuaFunction(reader, "");
-  if (!reader.isAtEnd)
+  if (!reader.checkIsAtEnd())
     throw new InvalidOperationError(Operation.Read, LUA_CHUNK_NAME, "has bytes after its main function");
   return luaFunction;
 };

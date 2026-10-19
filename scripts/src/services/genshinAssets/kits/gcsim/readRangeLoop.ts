@@ -34,7 +34,7 @@ export const readRangeLoop = (
     : {
         bodyEnd,
         bodyStart: bound.end,
-        iterations: Array.from({ length: Math.max(0, boundValue) }, (_, value) =>
+        iterations: Array.from({ length: Math.max(0, boundValue) }, (_value, value) =>
           variable === undefined ? new Map<string, number>() : new Map([[variable.text, value]]),
         ),
       };

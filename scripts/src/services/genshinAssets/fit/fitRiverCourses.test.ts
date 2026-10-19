@@ -20,7 +20,7 @@ describe(fitRiverCourses, () => {
     expect.hasAssertions();
 
     const placement = { position: [0, 0, 0], rotation: [0, 0, 0, 1], scale: [1, 1, 1] };
-    const river = Array.from({ length: 7 }, (_, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
+    const river = Array.from({ length: 7 }, (_value, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
     const pond = [0, 4].flatMap((x) => [0, 4].map((z) => [x, 0, z]));
     vi.mocked(readFile)
       .mockResolvedValueOnce(
@@ -43,7 +43,7 @@ describe(fitRiverCourses, () => {
     expect(vi.mocked(readObjMesh)).toHaveBeenCalledTimes(2);
     expect(vi.mocked(writeWorldData).mock.calls[0]?.[1]).toStrictEqual({
       enemyCamps: [],
-      rivers: [Array.from({ length: 7 }, (_, x) => ({ level: 10 - x / 2, width: 2, x, z: 0 }))],
+      rivers: [Array.from({ length: 7 }, (_value, x) => ({ level: 10 - x / 2, width: 2, x, z: 0 }))],
     });
   });
 
@@ -56,7 +56,7 @@ describe(fitRiverCourses, () => {
       rotation: [0, 0, 0, 1],
       scale: [1, 1, 1],
     };
-    const river = Array.from({ length: 7 }, (_, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
+    const river = Array.from({ length: 7 }, (_value, x) => [-1, 1].map((z) => [x, 10 - x / 2, z])).flat();
     vi.mocked(readFile)
       .mockResolvedValueOnce(JSON.stringify({ placements: [placement] }))
       .mockResolvedValueOnce(JSON.stringify({ enemyCamps: [] }));

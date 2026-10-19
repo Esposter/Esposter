@@ -2,11 +2,11 @@ import { readWorldGroundHeight } from "#src/services/genshinAssets/shared/readWo
 import { TerrainFeatureKind } from "genshin-engine";
 import { describe, expect, test, vi } from "vitest";
 
-const { lockObjects, readKeys, records } = vi.hoisted(() => ({
+const { lockObjects, records } = vi.hoisted(() => ({
   lockObjects: { "ground/liyue": "liyue", "ground/mondstadt": "mondstadt", "ground/windrise": "windrise" },
-  readKeys: [] as string[],
   records: {} as Record<string, object>,
 }));
+let readKeys: string[] = [];
 
 vi.mock(import("#src/services/gameData/readGameDataLock"), () => ({
   readGameDataLock: () => Promise.resolve({ indexes: {}, objects: lockObjects }),
@@ -41,7 +41,7 @@ describe(readWorldGroundHeight, () => {
     records["ground/windrise"] = { base: WINDRISE_BASE, features: [], hills: [] };
     records["ground/liyue"] = { base: 0, features: [plateau(LIYUE_PLACE, LIYUE_HEIGHT)], hills: [] };
     records["ground/mondstadt"] = { base: 0, features: [plateau(MONDSTADT_PLACE, MONDSTADT_HEIGHT)], hills: [] };
-    readKeys.splice(0);
+    readKeys = [];
 
     const getHeight = await readWorldGroundHeight();
 

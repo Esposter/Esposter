@@ -6,10 +6,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export class LuaByteReader {
   readonly dialect: LuaDialect;
 
-  get isAtEnd(): boolean {
-    return this.#offset === this.#bytes.byteLength;
-  }
-
   readonly #bytes: Uint8Array;
   #offset = 0;
 
@@ -19,6 +15,10 @@ export class LuaByteReader {
     this.#bytes = bytes;
     this.dialect = dialect;
     this.#view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  }
+
+  checkIsAtEnd(): boolean {
+    return this.#offset === this.#bytes.byteLength;
   }
 
   readByte(): number {

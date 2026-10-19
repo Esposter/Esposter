@@ -17,13 +17,13 @@ import { Vector3 } from "three";
 // In three's axes round the origin already
 export const readWitnessWorldMeshes = async (
   component: DerivedAssetComponent,
-  isKept: (mesh: string) => boolean,
+  checkIsKept: (mesh: string) => boolean,
 ): Promise<Vector3[][]> => {
   const { assets, root } = getComponentDirectory(component);
   const layout = parseMachineJson<SceneLayout>(await readFile(join(root, WITNESS_LAYOUT_FILE_NAME), "utf8"));
   return Promise.all(
     layout.placements
-      .filter(({ mesh }) => isKept(mesh))
+      .filter(({ mesh }) => checkIsKept(mesh))
       .map(async (placement) => {
         const { vertices } = await readObjMesh(join(assets, AssetType.Mesh, `${placement.mesh}.obj`));
         const world = toWorldVertices(

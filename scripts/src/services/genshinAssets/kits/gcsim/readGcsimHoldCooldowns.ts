@@ -24,7 +24,7 @@ const readGoNames = (expression: GoExpression): string[] => {
     case GoExpressionKind.Binary:
       return [...readGoNames(expression.left), ...readGoNames(expression.right)];
     case GoExpressionKind.Call:
-      return expression.parameters.flatMap(readGoNames);
+      return expression.parameters.flatMap((parameter) => readGoNames(parameter));
     case GoExpressionKind.Identifier:
       return [expression.name];
     case GoExpressionKind.Index:

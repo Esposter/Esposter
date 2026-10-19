@@ -25,7 +25,7 @@ const createTables = (
 
 // The first candidate's value of each path, the way the builder's record reads the candidates it chooses by default
 const readCandidateValues = (candidates: Map<string, KitCandidate[]>) =>
-  Object.fromEntries([...candidates].map(([path, [candidate]]) => [path, candidate?.value]));
+  Object.fromEntries(Array.from(candidates, ([path, [candidate]]) => [path, candidate?.value]));
 
 describe(getTableKitCandidates, () => {
   const LINNEA_BURST_GROUP_ID = 13_039;

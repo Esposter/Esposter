@@ -11,7 +11,7 @@ export const computeGroundColour = (
   silhouettes: readonly ImageRegion[],
 ): number[] => {
   const pixelCount = width * height;
-  const isInSilhouette = (pixel: number): boolean => {
+  const checkIsInSilhouette = (pixel: number): boolean => {
     const x = pixel % width;
     const y = Math.floor(pixel / width);
     return silhouettes.some(
@@ -23,7 +23,7 @@ export const computeGroundColour = (
     );
   };
   const allPixels = Array.from({ length: pixelCount }, (_value, pixel) => pixel);
-  const outsidePixels = allPixels.filter((pixel) => !isInSilhouette(pixel));
+  const outsidePixels = allPixels.filter((pixel) => !checkIsInSilhouette(pixel));
   const sample = outsidePixels.length > 0 ? outsidePixels : allPixels;
   return Array.from({ length: channels }, (_value, channel) => {
     const values = sample

@@ -64,7 +64,7 @@ export const readKitInputs = async ({
       : [...new Set([...(isEveryPublishedKitRead ? publishedIds : []), ...characterIds.map(String)])];
   // The donors of each requested kit are read beside it, since a borrower is built after its donors
   const tablesMap = await readKitTablesWithDonors(requestedIds.map(Number));
-  const ids = [...tablesMap.keys()].map(String);
+  const ids = Array.from(tablesMap.keys(), String);
   const publishedRecordMap = await readPublishedGameDataEntries<KitRecord>(
     GameDataset.Kits,
     ids.filter((id) => publishedIds.has(id)),

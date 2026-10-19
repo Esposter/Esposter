@@ -33,7 +33,7 @@ const HITBOX_ARGUMENT_INDEX_MAP = new Map([
 // The delay a call of a method adds to the queue calls it runs, from the closures it is in, and the line of the
 // Innermost one's delay. A call outside every closure adds none, and has no line
 interface CallTiming {
-  delay: number | undefined;
+  delay?: number;
   line?: number;
 }
 // One way a method's queue call is run, by one call of the method: the delay its call adds, and the values its call
@@ -254,7 +254,7 @@ const ENEMIES_WITHIN_AREA_CALLEE = "EnemiesWithinArea";
 interface EnemyQueryLoop {
   bodyEnd: number;
   bodyStart: number;
-  hitbox: GcsimHitbox | undefined;
+  hitbox?: GcsimHitbox;
 }
 
 // The `{` a `range` header's expression is followed by, the first at no parenthesis depth so a `func` filter's own body

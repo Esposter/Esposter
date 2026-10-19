@@ -47,7 +47,7 @@ export const buildTrials = ({
         .map((reliquary) => [reliquary.id, reliquary]),
     ),
     [`${GameDataset.CharacterTrials}/rewards`]: Object.fromEntries(
-      [...rewardIds].map((rewardId) => [rewardId, toQuestRewardItems([rewardId], rewardMap)]),
+      Array.from(rewardIds, (rewardId) => [rewardId, toQuestRewardItems([rewardId], rewardMap)]),
     ),
     [`${GameDataset.CharacterTrials}/stages`]: Object.fromEntries(stages.map((stage) => [stage.id, stage])),
     [`${GameDataset.CharacterTrials}/templates`]: templateRows

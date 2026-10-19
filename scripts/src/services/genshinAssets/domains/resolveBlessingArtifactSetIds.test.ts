@@ -12,11 +12,11 @@ describe(resolveBlessingArtifactSetIds, () => {
   const EQUIP_AFFIX_ID_OFFSET = 200_000;
   // One set for each distinct name the wiki gives, named by its own equip affix, so every domain's four names resolve
   const NAMES = [...new Set(Object.values(BLESSING_ARTIFACT_SET_NAMES).flat())];
-  const equipAffixes: ExcelEquipAffixRow[] = NAMES.map((_, index) => ({
+  const equipAffixes: ExcelEquipAffixRow[] = NAMES.map((_value, index) => ({
     id: EQUIP_AFFIX_ID_OFFSET + index,
     nameTextMapHash: NAME_HASH_OFFSET + index,
   }));
-  const reliquarySets: ExcelReliquarySetRow[] = NAMES.map((_, index) => ({
+  const reliquarySets: ExcelReliquarySetRow[] = NAMES.map((_value, index) => ({
     containsList: [],
     equipAffixId: EQUIP_AFFIX_ID_OFFSET + index,
     setId: SET_ID_OFFSET + index,

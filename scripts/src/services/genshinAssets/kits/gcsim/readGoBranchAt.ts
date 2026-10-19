@@ -9,9 +9,9 @@ interface GoBranchBody extends GoOpenBody {
 }
 
 interface GoBranchOpening {
-  branch: GoBranchPlace | undefined;
+  branch?: GoBranchPlace;
   openPosition: number;
-  switchFrame: GoSwitchFrame | undefined;
+  switchFrame?: GoSwitchFrame;
 }
 
 interface GoBranchPlace {
@@ -26,7 +26,7 @@ interface GoOpenBody extends GoBranchPlace {
 // The clauses a switch has opened so far: its chain, how many clauses have started, and the clause the cursor is in
 interface GoSwitchFrame {
   chain: number;
-  clause: GoOpenBody | undefined;
+  clause?: GoOpenBody;
   clauseCount: number;
 }
 

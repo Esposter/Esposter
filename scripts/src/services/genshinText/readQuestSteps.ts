@@ -34,7 +34,10 @@ export const readQuestSteps = (
         Array.isArray(field) && field.every((item) => typeof item === "object" && item !== null),
     )
     .filter((subQuestList) => countConditioned(subQuestList) > 0)
-    .toSorted((first, second) => countConditioned(second) - countConditioned(first));
+    .toSorted(
+      (firstSubQuestList, secondSubQuestList) =>
+        countConditioned(secondSubQuestList) - countConditioned(firstSubQuestList),
+    );
   if (!subQuests) return { notes: [`${questId} has no sub quests`], offerTalkIds: [], steps: [] };
   const conditionKeys = subQuests.flatMap((subQuest) =>
     Object.keys(subQuest).filter((key) => readQuestConditions(subQuest[key]).length > 0),

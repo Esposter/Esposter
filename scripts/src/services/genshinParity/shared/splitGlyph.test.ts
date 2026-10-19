@@ -21,17 +21,17 @@ describe(splitGlyph, () => {
     const paper = [170, 210, 215];
     const size = 7;
     const pixelCount = size * size;
-    const isInterior = (pixel: number): boolean => {
+    const checkIsInterior = (pixel: number): boolean => {
       const x = pixel % size;
       const y = Math.floor(pixel / size);
       return x > 0 && x < size - 1 && y > 0 && y < size - 1;
     };
     const data = Uint8Array.from(
-      Array.from({ length: pixelCount }, (_value, pixel) => (isInterior(pixel) ? ink : paper)).flat(),
+      Array.from({ length: pixelCount }, (_value, pixel) => (checkIsInterior(pixel) ? ink : paper)).flat(),
     );
 
     expect(splitGlyph(data, 3, size, size, ink, paper)).toStrictEqual(
-      Uint8Array.from({ length: pixelCount }, (_value, pixel) => Number(isInterior(pixel))),
+      Uint8Array.from({ length: pixelCount }, (_value, pixel) => Number(checkIsInterior(pixel))),
     );
   });
 });
