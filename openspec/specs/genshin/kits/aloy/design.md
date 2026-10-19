@@ -18,4 +18,4 @@ Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, ava
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/aloy), MIT: Aloy's strikes' hitmarks, travel and cancel frames, the fully charged shot's frames, Freeze Bomb's frames, its bomblets' hitmarks and circles, the coil stacks and Rushing Ice's threshold, and Prophecies of Dawn's frames and circle.
-- [Rapid Fire](https://genshin-impact.fandom.com/wiki/Rapid_Fire), [Frozen Wilds](https://genshin-impact.fandom.com/wiki/Frozen_Wilds) and [Prophecies of Dawn](https://genshin-impact.fandom.com/wiki/Prophecies_of_Dawn), Genshin Impact Wiki: the poise of her strikes, fully charged shot, collision and plunges, of Freeze Bomb and its bomblets, and of Prophecies of Dawn.
+- [Rapid Fire](https://genshin-impact.fandom.com/wiki/Rapid_Fire), [Frozen Wilds](https://genshin-impact.fandom.com/wiki/Frozen_Wilds) and [Prophecies of Dawn](https://genshin-impact.fandom.com/wiki/Prophecies_of_Dawn), Genshin Impact Wiki: the poise of Freeze Bomb and its bomblets and of Prophecies of Dawn, and of her plunges, collision, strikes and fully charged shot.

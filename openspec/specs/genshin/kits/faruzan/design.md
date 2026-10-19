@@ -28,4 +28,4 @@ Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/faruzan), MIT: Faruzan's strikes' hitmarks and cancel frames, the fully charged shot's frames, Wind Realm of Nasamjnin's frames and hit, The Wind's Secret Ways' frames, initial hit, the polyhedron's 745 frames, its Pulses and gadgets, and Prayerful Wind's Gift and Perfidious Wind's Ruin.
-- [Parthian Shot](https://genshin-impact.fandom.com/wiki/Parthian_Shot), Genshin Impact Wiki: the poise of her strikes, fully charged shot and plunges.
+- [Parthian Shot](https://genshin-impact.fandom.com/wiki/Parthian_Shot), Genshin Impact Wiki: the poise her plunges, strikes and fully charged shot deal.
