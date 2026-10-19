@@ -6,6 +6,7 @@ export const sumKitBonuses = <Bonus extends Partial<Record<string, number>>>(
 ): Bonus => {
   const sum: Partial<Record<string, number>> = { ...zero };
   for (const bonus of bonuses)
-    for (const [key, value] of Object.entries(bonus ?? {})) sum[key] = (sum[key] ?? 0) + (value ?? 0);
+    for (const [key, value] of Object.entries<number | undefined>(bonus ?? {}))
+      sum[key] = (sum[key] ?? 0) + (value ?? 0);
   return sum as Bonus;
 };
