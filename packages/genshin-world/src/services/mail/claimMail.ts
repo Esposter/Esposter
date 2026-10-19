@@ -6,7 +6,7 @@ import type { MailboxState } from "#src/models/mail/MailboxState";
 import type { MailSave } from "#src/models/mail/MailSave";
 
 import { addRewardItem } from "#src/services/inventory/addRewardItem";
-import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
+import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 
 // The items of one held mail into the bag and the wallet, and that delivery of it marked claimed and read. Undefined
 // When that delivery is already claimed or not held, or when the bag cannot take all its items whole, so a claim gives
@@ -18,7 +18,7 @@ export const claimMail = (
   names: Readonly<Record<string, string>>,
   materialDataMap: ReadonlyMap<number, MaterialData>,
 ): MailboxState | undefined => {
-  const heldMail = state.mails.find((mail) => isSameHeldMail(mail, held));
+  const heldMail = state.mails.find((mail) => checkIsSameHeldMail(mail, held));
   if (heldMail === undefined || heldMail.isClaimed) return undefined;
   let granted: { inventory: Inventory; wallet: Wallet } = state;
   for (const { itemId, quantity } of mailRow.items) {
@@ -28,7 +28,9 @@ export const claimMail = (
   }
   return {
     inventory: granted.inventory,
-    mails: state.mails.map((mail) => (isSameHeldMail(mail, held) ? { ...mail, isClaimed: true, isRead: true } : mail)),
+    mails: state.mails.map((mail) =>
+      checkIsSameHeldMail(mail, held) ? { ...mail, isClaimed: true, isRead: true } : mail,
+    ),
     wallet: granted.wallet,
   };
 };

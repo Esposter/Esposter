@@ -4,7 +4,7 @@ import type { DroppedItemPickUp } from "#src/models/interaction/DroppedItemPickU
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
 
-import { canOfferForStrongbox } from "#src/services/crafting/canOfferForStrongbox";
+import { checkIsOfferableForStrongbox } from "#src/services/crafting/checkIsOfferableForStrongbox";
 import { rollStrongboxArtifact } from "#src/services/crafting/rollStrongboxArtifact";
 import { pickUpDroppedItem } from "#src/services/interaction/pickUpDroppedItem";
 
@@ -20,7 +20,7 @@ export const craftStrongbox = (
 ): DroppedItemPickUp | undefined => {
   const isCountRight = pickedIds.length === strongbox.needCount && new Set(pickedIds).size === pickedIds.length;
   const isOfferable = pickedIds.every((id) =>
-    canOfferForStrongbox(
+    checkIsOfferableForStrongbox(
       inventory.items.find((item) => item.id === id),
       strongbox.rarity,
     ),

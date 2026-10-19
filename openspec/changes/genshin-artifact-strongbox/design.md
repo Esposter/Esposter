@@ -36,26 +36,26 @@ flowchart LR
 
 ## Key files
 
-| File                                                                          | Role                                                                                |
-| :---------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `scripts/src/services/genshinAssets/crafting/toCraftingStrongboxes.ts`        | Joins the four tables into one record per strongbox                                 |
-| `scripts/src/services/genshinAssets/crafting/buildCraftingStrongboxes.ts`     | Reads the tables and returns the record under `crafting/strongboxes`                |
-| `scripts/src/models/genshinAssets/crafting/ExcelReliquaryDecomposeRow.ts`     | The decompose row: artifact count, rank, reward preview                             |
-| `scripts/src/models/genshinAssets/crafting/ExcelReliquaryOfferPurchaseRow.ts` | The offer row: the set link and the per-slot piece pairs                            |
-| `scripts/src/models/genshinAssets/crafting/ExcelDisplayItemRow.ts`            | The display item: its name text and its set id                                      |
-| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`              | Publishes the strongbox record with the recipes                                     |
-| `packages/genshin-world/src/models/crafting/CraftingStrongboxData.ts`         | The record and its schema                                                           |
-| `packages/genshin-world/src/services/crafting/readCraftingStrongboxes.ts`     | Reads the record by its key, checked against its shape                              |
-| `packages/genshin-world/src/services/artifact/rollPieceArtifact.ts`           | The piece-to-artifact step through `rollArtifact`, shared with the chest            |
-| `packages/genshin-world/src/services/chest/rollChestDrops.ts`                 | The chest's artifact roll, now calling the shared step                              |
-| `packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts`       | Picks the set's piece and rolls it at five stars                                    |
-| `packages/genshin-world/src/services/crafting/canOfferForStrongbox.ts`        | An unlocked five-star artifact of the bag                                           |
-| `packages/genshin-world/src/services/crafting/craftStrongbox.ts`              | Removes the three artifacts and takes in the rolled one                             |
-| `packages/genshin-world/src/services/crafting/constants.ts`                   | `MYSTIC_OFFERING_ADVENTURE_RANK`, from the wiki                                     |
-| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`     | The bench's tab list, with the Mystic Offering's tab after the recipe tabs          |
-| `packages/genshin-world/src/components/Crafting/Screen/Index.vue`             | The bench's screen, which takes the Mystic Offering's panel while its tab is picked |
-| `packages/genshin-world/src/components/Crafting/Strongbox/Index.vue`          | The Mystic Offering panel                                                           |
-| `packages/genshin-text/src/models/GameTextKey.ts`                             | The panel's words by their text ids                                                 |
+| File                                                                           | Role                                                                                |
+| :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `scripts/src/services/genshinAssets/crafting/toCraftingStrongboxes.ts`         | Joins the four tables into one record per strongbox                                 |
+| `scripts/src/services/genshinAssets/crafting/buildCraftingStrongboxes.ts`      | Reads the tables and returns the record under `crafting/strongboxes`                |
+| `scripts/src/models/genshinAssets/crafting/ExcelReliquaryDecomposeRow.ts`      | The decompose row: artifact count, rank, reward preview                             |
+| `scripts/src/models/genshinAssets/crafting/ExcelReliquaryOfferPurchaseRow.ts`  | The offer row: the set link and the per-slot piece pairs                            |
+| `scripts/src/models/genshinAssets/crafting/ExcelDisplayItemRow.ts`             | The display item: its name text and its set id                                      |
+| `scripts/src/services/genshinAssets/commands/craftingCommand.ts`               | Publishes the strongbox record with the recipes                                     |
+| `packages/genshin-world/src/models/crafting/CraftingStrongboxData.ts`          | The record and its schema                                                           |
+| `packages/genshin-world/src/services/crafting/readCraftingStrongboxes.ts`      | Reads the record by its key, checked against its shape                              |
+| `packages/genshin-world/src/services/artifact/rollPieceArtifact.ts`            | The piece-to-artifact step through `rollArtifact`, shared with the chest            |
+| `packages/genshin-world/src/services/chest/rollChestDrops.ts`                  | The chest's artifact roll, now calling the shared step                              |
+| `packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts`        | Picks the set's piece and rolls it at five stars                                    |
+| `packages/genshin-world/src/services/crafting/checkIsOfferableForStrongbox.ts` | An unlocked five-star artifact of the bag                                           |
+| `packages/genshin-world/src/services/crafting/craftStrongbox.ts`               | Removes the three artifacts and takes in the rolled one                             |
+| `packages/genshin-world/src/services/crafting/constants.ts`                    | `MYSTIC_OFFERING_ADVENTURE_RANK`, from the wiki                                     |
+| `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`      | The bench's tab list, with the Mystic Offering's tab after the recipe tabs          |
+| `packages/genshin-world/src/components/Crafting/Screen/Index.vue`              | The bench's screen, which takes the Mystic Offering's panel while its tab is picked |
+| `packages/genshin-world/src/components/Crafting/Strongbox/Index.vue`           | The Mystic Offering panel                                                           |
+| `packages/genshin-text/src/models/GameTextKey.ts`                              | The panel's words by their text ids                                                 |
 
 ## Rollout
 

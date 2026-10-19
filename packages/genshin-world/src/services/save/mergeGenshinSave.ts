@@ -13,7 +13,7 @@ import type { SpiralAbyssCycleSave, SpiralAbyssSave } from "#src/models/spiralAb
 import type { TipSave } from "#src/models/tip/TipSave";
 
 import { ArchiveSection } from "#src/models/archive/ArchiveSection";
-import { isSameHeldMail } from "#src/services/mail/isSameHeldMail";
+import { checkIsSameHeldMail } from "#src/services/mail/checkIsSameHeldMail";
 
 // Whether an ISO instant is later than another
 const checkIsLaterInstant = (instant: string, than: string): boolean =>
@@ -160,7 +160,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
     companionshipExp[characterId] = Math.max(companionshipExp[characterId] ?? 0, guestExp);
   // A mail is kept once per delivery, and a read or pinned mail stays so whichever save it was read or pinned in
   const mails = account.mails.map((accountMail) => {
-    const guestMail = guest.mails.find((mail) => isSameHeldMail(mail, accountMail));
+    const guestMail = guest.mails.find((mail) => checkIsSameHeldMail(mail, accountMail));
     return guestMail
       ? {
           ...accountMail,
@@ -171,7 +171,7 @@ export const mergeGenshinSave = (account: GenshinSave, guest: GenshinSave): Gens
   });
   mails.push(
     ...guest.mails
-      .filter((guestMail) => !account.mails.some((mail) => isSameHeldMail(mail, guestMail)))
+      .filter((guestMail) => !account.mails.some((mail) => checkIsSameHeldMail(mail, guestMail)))
       // oxlint-disable-next-line oxc/no-map-spread -- each mail is a new object, never a guest's held mail mutated in place
       .map((guestMail) => ({ ...guestMail, isClaimed: false })),
   );
