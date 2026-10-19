@@ -63,7 +63,7 @@ const readFeaturedNames = (value: string): string[] =>
     .filter((name) => name !== "");
 
 // Whether an Item Pool holds the featured five-stars of a kind of banner, which is what settles a page's type
-const holdsFeaturedFiveStars = (poolParameters: Map<string, string[]>, kind: WishEventKind): boolean =>
+const checkHasFeaturedFiveStars = (poolParameters: Map<string, string[]>, kind: WishEventKind): boolean =>
   readFeaturedNames(readValue(poolParameters, WishEventKindFeaturedParametersMap[kind].fiveStar) ?? "").length > 0;
 
 // The kind of a page's banner. A page naming its type once is read as that type, and a page naming it more than once as
@@ -79,7 +79,7 @@ const readKind = (
   const matchingKinds = new Set(
     types.flatMap((type) => {
       const kind = WikiTypeWishEventKindMap[type];
-      return kind !== undefined && holdsFeaturedFiveStars(poolParameters, kind) ? [kind] : [];
+      return kind !== undefined && checkHasFeaturedFiveStars(poolParameters, kind) ? [kind] : [];
     }),
   );
   if (matchingKinds.size !== 1)
