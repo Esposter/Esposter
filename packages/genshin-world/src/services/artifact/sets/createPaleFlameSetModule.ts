@@ -3,12 +3,11 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { checkIsActiveCharacterHit } from "#src/services/artifact/sets/checkIsActiveCharacterHit";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
-import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
 import { takeOne } from "@esposter/shared";
 
 const PALE_FLAME_STACKS_ID = "paleFlameStacks";
@@ -41,10 +40,8 @@ export const createPaleFlameSetModule = (bonus: ArtifactSetBonus): PassiveModule
       const { characterId } = combatant;
       const { kitEffectState, party } = context;
       if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== characterId ||
+        !checkIsActiveCharacterHit(event, party, combatant) ||
         event.attackTag !== AttackTag.ElementalSkill ||
-        getActiveCharacterId(party) !== characterId ||
         !startKitCooldown(kitEffectState, characterId, PALE_FLAME_COOLDOWN_ID, cooldownSeconds)
       )
         return;

@@ -6,12 +6,11 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { NIGHTSOUL_BLESSING_STATUS_ID } from "#src/services/kit/constants";
+import { createNightsoulBlessingStart } from "#src/services/kit/createNightsoulBlessingStart";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { drainKitSprintNightsoulPoints } from "#src/services/kit/effects/drainKitSprintNightsoulPoints";
-import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { shuffleWithRandom } from "#src/services/shared/shuffleWithRandom";
 
 export const CHASCA_CHARACTER_ID = 10_000_104;
@@ -73,17 +72,7 @@ export const createChascaKitBehaviour = ({ readHit, readSecondsList }: KitRecord
     skill: {
       checkIsStateEndingPress: ({ activeCombatant, kitEffectState }) =>
         checkHasKitStatus(kitEffectState.effects, activeCombatant.characterId, NIGHTSOUL_BLESSING_STATUS_ID),
-      onStart: ({ activeCombatant, kitEffectState }) => {
-        const { characterId } = activeCombatant;
-        if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
-          exitKitNightsoulBlessing(kitEffectState, characterId);
-        else
-          enterKitNightsoulBlessing(kitEffectState, characterId, {
-            nightsoulRate: { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
-            points: NIGHTSOUL_POINTS,
-            secondsRemaining: Number.POSITIVE_INFINITY,
-          });
-      },
+      onStart: createNightsoulBlessingStart(NIGHTSOUL_POINTS, NIGHTSOUL_DRAIN_PER_SECOND),
     },
   };
 };

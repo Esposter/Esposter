@@ -1,18 +1,13 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { buffAttackAndMovementSpeed } from "#src/services/weapon/passives/buffAttackAndMovementSpeed";
-import { takeOne } from "@esposter/shared";
+import { createSpeedBuffPassiveModule } from "#src/services/weapon/passives/createSpeedBuffPassiveModule";
 
 // Determination at its rank: a burst its wielder uses raises its ATK and Movement SPD by the rank's percentage for the
 // Rank's seconds
-export const createDeterminationPassiveModule = (params: number[]): PassiveModule => {
-  const percentage = takeOne(params, 0);
-  const seconds = takeOne(params, 1);
-  return {
-    onKitEvent: (event, { kitEffectState }, combatant) => {
-      if (event.kind !== KitEventKind.BurstUsed || event.characterId !== combatant.characterId) return;
-      buffAttackAndMovementSpeed(kitEffectState, combatant.characterId, percentage, seconds, "determination");
-    },
-  };
-};
+export const createDeterminationPassiveModule = (params: number[]): PassiveModule =>
+  createSpeedBuffPassiveModule(
+    params,
+    "determination",
+    (event, combatant) => event.kind === KitEventKind.BurstUsed && event.characterId === combatant.characterId,
+  );

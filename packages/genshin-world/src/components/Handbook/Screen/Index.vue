@@ -140,11 +140,11 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
             {{ gameText[GameTextKey.HandbookRewardsClaimed] }}
           </p>
         </section>
-        <ol class="commissions" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Experience]]">
+        <ol class="commissions handbook-list" :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Experience]]">
           <li
             v-for="(commission, index) of commissions"
             :key="index"
-            class="commission"
+            class="commission handbook-card"
             :style="{ top: `calc(var(--reference-pixel) * ${index * COMMISSION_STEP})` }"
           >
             <div class="commission-text">
@@ -167,13 +167,13 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
       </template>
       <ol
         v-else-if="tab === HandbookTab.Commissions"
-        class="commissions"
+        class="commissions handbook-list"
         :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Commissions]]"
       >
         <li
           v-for="(commission, index) of dayCommissions"
           :key="index"
-          class="commission"
+          class="commission handbook-card"
           :style="{ top: `calc(var(--reference-pixel) * ${index * COMMISSION_STEP})` }"
         >
           <div class="commission-text">
@@ -214,10 +214,10 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
       </ol>
       <ol
         v-else-if="tab === HandbookTab.Domains"
-        class="domains"
+        class="domains handbook-list"
         :aria-label="gameText[HandbookTabGameTextKeyMap[HandbookTab.Domains]]"
       >
-        <li v-for="domain of domains" :key="domain.entryId" class="domain">
+        <li v-for="domain of domains" :key="domain.entryId" class="domain handbook-card">
           <p class="domain-title">{{ gameText[domain.titleTextKey] }}</p>
           <button
             v-if="domain.isQuickChallengeable"
@@ -554,27 +554,34 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   place-items: center;
 }
 
-.commissions {
+.handbook-list {
   position: absolute;
   top: calc(var(--reference-pixel) * 317);
   left: calc(var(--reference-pixel) * 1121);
   width: calc(var(--reference-pixel) * 1670);
-  height: calc(var(--reference-pixel) * 1230);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Each row a card 242 tall: a 5 pixel edge with a pale line inside it, over the card's own fill */
+.commissions {
+  height: calc(var(--reference-pixel) * 1230);
+}
+
+/* Each card's fill, with a 5 pixel edge and a pale line inside it */
+.handbook-card {
+  background: #ebe3d8;
+  box-shadow:
+    inset 0 0 0 calc(var(--reference-pixel) * 5) #dfd8cc,
+    inset 0 0 0 calc(var(--reference-pixel) * 6) #f7f2e8;
+}
+
+/* Each row a card 242 tall */
 .commission {
   position: absolute;
   left: 0;
   width: calc(var(--reference-pixel) * 1670);
   height: calc(var(--reference-pixel) * 242);
-  background: #ebe3d8;
-  box-shadow:
-    inset 0 0 0 calc(var(--reference-pixel) * 5) #dfd8cc,
-    inset 0 0 0 calc(var(--reference-pixel) * 6) #f7f2e8;
 }
 
 /* The title's lines 59 apart, centred on 88 down whether it takes one line or two, with the progress pill 19.5 under
@@ -717,16 +724,9 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
 }
 /* The Domains tab's rows stack under the tab's top, each a card with its title and its one action on the right */
 .domains {
-  position: absolute;
-  top: calc(var(--reference-pixel) * 317);
-  left: calc(var(--reference-pixel) * 1121);
-  width: calc(var(--reference-pixel) * 1670);
   display: flex;
   flex-direction: column;
   gap: calc(var(--reference-pixel) * 20);
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .domain {
@@ -735,10 +735,6 @@ const progressSegments = computed(() => Array.from({ length: totalCount }, (_val
   justify-content: space-between;
   gap: calc(var(--reference-pixel) * 24);
   padding: calc(var(--reference-pixel) * 24) calc(var(--reference-pixel) * 40);
-  background: #ebe3d8;
-  box-shadow:
-    inset 0 0 0 calc(var(--reference-pixel) * 5) #dfd8cc,
-    inset 0 0 0 calc(var(--reference-pixel) * 6) #f7f2e8;
 }
 
 .domain-title {

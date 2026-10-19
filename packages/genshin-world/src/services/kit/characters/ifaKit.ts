@@ -4,11 +4,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
+import { createNightsoulBlessingStart } from "#src/services/kit/createNightsoulBlessingStart";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
-import { enterKitNightsoulBlessing } from "#src/services/kit/effects/enterKitNightsoulBlessing";
-import { exitKitNightsoulBlessing } from "#src/services/kit/effects/exitKitNightsoulBlessing";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 
 export const IFA_CHARACTER_ID = 10_000_113;
@@ -66,19 +65,7 @@ export const createIfaKitBehaviour = (): KitBehaviour => ({
         });
     },
   },
-  skill: {
-    onStart: ({ activeCombatant, kitEffectState }) => {
-      const { characterId } = activeCombatant;
-      if (checkHasKitStatus(kitEffectState.effects, characterId, NIGHTSOUL_BLESSING_STATUS_ID))
-        exitKitNightsoulBlessing(kitEffectState, characterId);
-      else
-        enterKitNightsoulBlessing(kitEffectState, characterId, {
-          nightsoulRate: { maximum: NIGHTSOUL_POINTS, perSecond: -NIGHTSOUL_DRAIN_PER_SECOND },
-          points: NIGHTSOUL_POINTS,
-          secondsRemaining: Number.POSITIVE_INFINITY,
-        });
-    },
-  },
+  skill: { onStart: createNightsoulBlessingStart(NIGHTSOUL_POINTS, NIGHTSOUL_DRAIN_PER_SECOND) },
   getPartyReactionBonus: (member, { reactionType }, context) => {
     const { effects } = context.kitEffectState;
     if (member.ascension < 1 || !checkHasKitStatus(effects, member.characterId, NIGHTSOUL_BLESSING_STATUS_ID))

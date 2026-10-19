@@ -2,10 +2,10 @@
 import type { GroundPoint, LightUniforms } from "genshin-engine";
 import type { DataTexture } from "three";
 
+import { useStandInInstances } from "#src/composables/useStandInInstances";
 import { StandInShape } from "#src/models/world/StandInShape";
-import { watchImmediate } from "@vueuse/core";
 import { createInstancedMesh, createToonMaterial } from "genshin-engine";
-import { DodecahedronGeometry, Matrix4, Quaternion, SphereGeometry, Vector3 } from "three";
+import { DodecahedronGeometry, SphereGeometry } from "three";
 
 interface Props {
   // The stand-in's colour
@@ -33,27 +33,8 @@ const standInMesh = createInstancedMesh(
   places.length,
 );
 standInMesh.frustumCulled = false;
-const matrix = new Matrix4();
-const point = new Vector3();
-const rotation = new Quaternion();
-const scale = new Vector3(1, 1, 1);
 // The places change as the stand-ins are found, mined or drawn again, so the instances are written for the ones standing
-watchImmediate(
-  () => places,
-  (newPlaces) => {
-    for (const [index, { position }] of newPlaces.entries()) {
-      point.set(position.x, getGroundHeight(position.x, position.z) + radius, position.z);
-      standInMesh.setMatrixAt(index, matrix.compose(point, rotation, scale));
-    }
-    standInMesh.count = newPlaces.length;
-    standInMesh.instanceMatrix.needsUpdate = true;
-  },
-);
-onUnmounted(() => {
-  standInMesh.geometry.dispose();
-  standInMesh.material.dispose();
-  standInMesh.dispose();
-});
+useStandInInstances(standInMesh, () => places, getGroundHeight, radius);
 </script>
 
 <template>
