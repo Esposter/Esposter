@@ -27,8 +27,8 @@ export const buildBlockNodeSchema = <TNode extends BlockNode>(
 
   const typeNames = definitions.map((definition) => definition.type).join(", ");
   // The union is built at runtime from the registry's definitions, so the compiler cannot derive its type from them
-  // The registry is typed and each branch is one of its definitions, so the union is the registry's node type: one of the schema path's two assertions, the other read back in createBlockNodeSchema
-  // A single assertion is refused (TS2352): the union's output does not overlap a generic TNode, so the cast passes through unknown
+  // The branches' output is a loose props object keyed by the consumer's slot and field names, which no generic TNode relates to,
+  // So a single assertion is refused (TS2352) and the cast passes through unknown; the union is the registry's node type by construction
   // eslint-disable-next-line no-restricted-syntax -- the union's output is the registry's node type, which the compiler cannot derive from definitions looked up by type name; the cast is on the return expression, where it starts
   return z.discriminatedUnion(
     "type",

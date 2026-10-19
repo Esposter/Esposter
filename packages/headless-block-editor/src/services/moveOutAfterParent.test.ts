@@ -23,9 +23,9 @@ describe(moveOutAfterParent, () => {
     const operations = moveOutAfterParent(TEST_DOCUMENT, headingRootRegistry, "/content/0/props/children/0");
 
     expect(applyPatches(TEST_DOCUMENT, operations).document.content).toStrictEqual([
-      { props: { children: [], id: TEST_SECTION_ID }, type: "section" },
+      { props: { children: [], id: TEST_SECTION_ID, title: "" }, type: "section" },
       { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
-      { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },
+      { props: { children: [], id: TEST_SECTION_OTHER_ID, title: "" }, type: "section" },
     ]);
   });
 

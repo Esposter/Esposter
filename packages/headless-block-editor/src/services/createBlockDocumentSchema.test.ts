@@ -1,5 +1,5 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
+import type { TestDocument } from "#src/services/constants.test";
 
 import {
   TEST_DOCUMENT,
@@ -18,7 +18,7 @@ describe(createBlockDocumentSchema, () => {
   test("a child its slot does not allow", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [
         {
           props: {
@@ -29,6 +29,7 @@ describe(createBlockDocumentSchema, () => {
               },
             ],
             id: TEST_SECTION_ID,
+            title: "",
           },
           type: "section",
         },
@@ -46,7 +47,7 @@ describe(createBlockDocumentSchema, () => {
   test("a root holding a type its content does not accept", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
       root: TEST_DOCUMENT.root,
     };
@@ -59,20 +60,26 @@ describe(createBlockDocumentSchema, () => {
   test("root props its schema refuses", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = { content: TEST_DOCUMENT.content, root: { props: {} } };
+    // The root props are malformed on purpose, so the fixture is the raw JSON a schema checks, not a typed document
+    const document: unknown = { content: TEST_DOCUMENT.content, root: { props: {} } };
     const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["root", "props", "title"]]);
   });
 
-  test.each<[string, LooseBlockDocument, (number | string)[]]>([
+  // The malformed nodes are raw JSON on purpose: a typed document cannot hold the shapes these cases refuse
+  test.each<[string, unknown, (number | string)[]]>([
     [
       "a prop its type's schema refuses",
       {
         content: [
           {
-            props: { children: [{ props: { id: TEST_HEADING_ID, text: 5 }, type: "heading" }], id: TEST_SECTION_ID },
+            props: {
+              children: [{ props: { id: TEST_HEADING_ID, text: 5 }, type: "heading" }],
+              id: TEST_SECTION_ID,
+              title: "",
+            },
             type: "section",
           },
         ],
@@ -84,7 +91,10 @@ describe(createBlockDocumentSchema, () => {
       "a node with no string id",
       {
         content: [
-          { props: { children: [{ props: { text: "" }, type: "heading" }], id: TEST_SECTION_ID }, type: "section" },
+          {
+            props: { children: [{ props: { text: "" }, type: "heading" }], id: TEST_SECTION_ID, title: "" },
+            type: "section",
+          },
         ],
         root: TEST_DOCUMENT.root,
       },
@@ -92,7 +102,10 @@ describe(createBlockDocumentSchema, () => {
     ],
     [
       "a slot that is not a list",
-      { content: [{ props: { children: "", id: TEST_SECTION_ID }, type: "section" }], root: TEST_DOCUMENT.root },
+      {
+        content: [{ props: { children: "", id: TEST_SECTION_ID, title: "" }, type: "section" }],
+        root: TEST_DOCUMENT.root,
+      },
       ["content", 0, "props", "children"],
     ],
   ])("%s", (_title, document, expectedPath) => {
@@ -110,15 +123,19 @@ describe(createBlockDocumentSchema, () => {
     const otherRegistry: BlockRegistry = {
       ...TEST_REGISTRY,
       types: [
-        { propsSchema: z.object({}), slots: { children: ["heading"] }, type: "section" },
+        { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
         { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
         { propsSchema: z.object({ text: z.string() }), slots: {}, type: "item" },
       ],
     };
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [
         {
-          props: { children: [{ props: { id: TEST_LIST_ID, items: [] }, type: "list" }], id: TEST_SECTION_ID },
+          props: {
+            children: [{ props: { id: TEST_LIST_ID, items: [] }, type: "list" }],
+            id: TEST_SECTION_ID,
+            title: "",
+          },
           type: "section",
         },
       ],
@@ -145,8 +162,8 @@ describe(createBlockDocumentSchema, () => {
   test("a repeated id is refused across slots", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
-      content: [...TEST_DOCUMENT.content, { props: { children: [], id: TEST_HEADING_ID }, type: "section" }],
+    const document: TestDocument = {
+      content: [...TEST_DOCUMENT.content, { props: { children: [], id: TEST_HEADING_ID, title: "" }, type: "section" }],
       root: TEST_DOCUMENT.root,
     };
     const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 1).safeParse(
@@ -162,13 +179,14 @@ describe(createBlockDocumentSchema, () => {
   test("a document with a repeated id", () => {
     expect.hasAssertions();
 
-    const document: LooseBlockDocument = {
+    const document: TestDocument = {
       content: [
         ...TEST_DOCUMENT.content,
         {
           props: {
             children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
             id: TEST_SECTION_OTHER_ID,
+            title: "",
           },
           type: "section",
         },

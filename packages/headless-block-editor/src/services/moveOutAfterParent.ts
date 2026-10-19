@@ -1,4 +1,5 @@
-import type { LooseBlockDocument } from "#src/models/LooseBlockDocument";
+import type { BlockDocument } from "#src/models/BlockDocument";
+import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { JsonPatchOperation } from "@esposter/shared";
 
@@ -7,9 +8,9 @@ import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shar
 
 // Moves a node to just after its parent, in the slot that holds the parent: the parent's index is not shifted by the node's removal
 // No operations when the node sits in the root's content, since it has no parent, or when that slot refuses the node's type
-export const moveOutAfterParent = (
-  document: LooseBlockDocument,
-  registry: BlockRegistry,
+export const moveOutAfterParent = <TNode extends BlockNode>(
+  document: BlockDocument<TNode>,
+  registry: BlockRegistry<TNode>,
   nodePointer: string,
 ): JsonPatchOperation[] => {
   const segments = parseJsonPointer(nodePointer);

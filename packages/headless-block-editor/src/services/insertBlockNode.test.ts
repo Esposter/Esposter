@@ -8,7 +8,7 @@ describe(insertBlockNode, () => {
 
     expect(
       insertBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/1/props/children", 0, {
-        props: { children: [], id: TEST_SECTION_ID },
+        props: { children: [], id: TEST_SECTION_ID, title: "" },
         type: "section",
       }),
     ).toStrictEqual([]);

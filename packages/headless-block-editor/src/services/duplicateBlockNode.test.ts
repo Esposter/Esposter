@@ -1,8 +1,16 @@
+import type { HeadingNodeProps } from "#src/services/constants.test";
+
 import { applyBlockEdit } from "#src/services/applyBlockEdit";
-import { TEST_DOCUMENT, TEST_DOCUMENT_NODE_COUNT, TEST_HEADING_ID, TEST_REGISTRY } from "#src/services/constants.test";
+import {
+  TEST_DOCUMENT,
+  TEST_DOCUMENT_NODE_COUNT,
+  TEST_HEADING_ID,
+  TEST_REGISTRY,
+  TEST_SECTION_ID,
+  TEST_SECTION_OTHER_ID,
+} from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { duplicateBlockNode } from "#src/services/duplicateBlockNode";
-import { getBlockPropValue } from "#src/services/getBlockPropValue";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { assert, describe, expect, test } from "vitest";
 
@@ -25,16 +33,26 @@ describe(duplicateBlockNode, () => {
     const edited = applyBlockEdit(
       schema,
       duplicated,
-      updateBlockNodeProps("/content/0/props/children/1", { text: "copied" }),
+      updateBlockNodeProps<HeadingNodeProps>("/content/0/props/children/1", { text: "copied" }),
     ).match(
       ({ document }) => document,
       () => undefined,
     );
     assert.exists(edited);
 
-    expect(getBlockPropValue(edited.content[0]?.props ?? {}, "children")).toStrictEqual([
-      { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
-      { props: { id: expect.not.stringMatching(TEST_HEADING_ID), text: "copied" }, type: "heading" },
+    expect(edited.content).toStrictEqual([
+      {
+        props: {
+          children: [
+            { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" },
+            { props: { id: expect.not.stringMatching(TEST_HEADING_ID), text: "copied" }, type: "heading" },
+          ],
+          id: TEST_SECTION_ID,
+          title: "",
+        },
+        type: "section",
+      },
+      { props: { children: [], id: TEST_SECTION_OTHER_ID, title: "" }, type: "section" },
     ]);
   });
 

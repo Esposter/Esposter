@@ -3,7 +3,13 @@ import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";
-import type { HeadingNodeProps, SectionNode, SectionNodeProps } from "#src/services/constants.test";
+import type {
+  HeadingNode,
+  HeadingNodeProps,
+  ListNode,
+  SectionNode,
+  SectionNodeProps,
+} from "#src/services/constants.test";
 import type { z } from "zod";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
@@ -35,7 +41,9 @@ describe("blockTypes type", () => {
   test("a definition's slots name the node types of every slot", () => {
     expect.hasAssertions();
 
-    expectTypeOf<BlockTypeDefinition<SectionNode>["slots"]>().toEqualTypeOf<{ children: "heading"[] }>();
+    expectTypeOf<BlockTypeDefinition<SectionNode>["slots"]>().toEqualTypeOf<{
+      children: (HeadingNode | ListNode)["type"][];
+    }>();
   });
 
   test("a definition missing a slot its props hold is refused", () => {

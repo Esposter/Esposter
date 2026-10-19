@@ -6,10 +6,14 @@ import { createBlockNodeSchema } from "#src/services/createBlockNodeSchema";
 import { z } from "zod";
 
 // A slot's children checked as a list by the same typed node schema as a document: each copy's type and props, then the ids across the copies
-export const createBlockNodesSchema = <TNode extends BlockNode, TRootProps extends object>(
-  registry: BlockRegistry<TNode, TRootProps>,
+// The ids are checked only on a list that parsed clean, so every copy the refinement walks is typed
+export const createBlockNodesSchema = <TNode extends BlockNode>(
+  registry: BlockRegistry<TNode>,
   acceptedTypes: string[],
 ): z.ZodType<TNode[]> =>
-  z.array(createBlockNodeSchema(registry, acceptedTypes)).superRefine((nodes, context) => {
-    checkBlockNodeIds(context, registry, nodes, [], { count: 0, ids: new Set() });
-  });
+  z.array(createBlockNodeSchema(registry, acceptedTypes)).superRefine(
+    (nodes, context) => {
+      checkBlockNodeIds(context, registry, nodes, [], { count: 0, ids: new Set() });
+    },
+    { when: ({ issues }) => issues.length === 0 },
+  );
