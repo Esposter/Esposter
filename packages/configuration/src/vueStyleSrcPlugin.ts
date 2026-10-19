@@ -1,3 +1,4 @@
+// @TODO: https://github.com/unplugin/unplugin-vue/issues/201
 import type { Plugin } from "rolldown";
 
 import { readFileSync } from "node:fs";

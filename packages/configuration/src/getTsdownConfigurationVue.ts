@@ -26,6 +26,7 @@ export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig 
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
     ...(readPackageManifest().private ? {} : { dts: { eager: true, tsconfig: "tsconfig.build.json", vue: true } }),
     plugins: [
+      // @TODO: https://github.com/unplugin/unplugin-vue/issues/201
       vueStyleSrcPlugin,
       AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
       Vue({ ...vueOptions, isProduction: true }),

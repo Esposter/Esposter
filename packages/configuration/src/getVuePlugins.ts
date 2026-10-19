@@ -11,6 +11,7 @@ import Vue from "unplugin-vue/vite";
 // Compile a component differently from how the build ships it — the compiler options included, which a package whose
 // Templates hold a renderer's own elements (TresJS's `TresMesh`) passes to both
 export const getVuePlugins = (vueOptions: Options = {}): PluginOption[] => [
+  // @TODO: https://github.com/unplugin/unplugin-vue/issues/201
   { ...vueStyleSrcPlugin, enforce: "pre" },
   AutoImport({ imports: [...VUE_AUTO_IMPORTS] }),
   Vue(vueOptions),
