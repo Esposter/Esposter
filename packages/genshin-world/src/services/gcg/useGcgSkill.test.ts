@@ -60,6 +60,9 @@ const createSideState = (character: GcgCharacterState, dice: Element[]): GcgSide
   usedSkillIds: [],
 });
 
+const createPyroCharacter = (skills: GcgSkill[]) =>
+  createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001, skills } });
+
 describe(useGcgSkill, () => {
   const NORMAL_ATTACK_ID = 13_011;
   const BURST_ID = 13_013;
@@ -81,21 +84,8 @@ describe(useGcgSkill, () => {
   test("should pay the skill's dice, gain its energy, and pass the turn to the other side", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState(
-      createGcgCharacterState({
-        character: { skills: [normalAttack], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-      }),
-      [Element.Pyro, Element.Hydro],
-    );
-    const duel = createDuel(
-      attacker,
-      createSideState(
-        createGcgCharacterState({
-          character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-        }),
-        [],
-      ),
-    );
+    const attacker = createSideState(createPyroCharacter([normalAttack]), [Element.Pyro, Element.Hydro]);
+    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
 
     expect({
@@ -109,20 +99,10 @@ describe(useGcgSkill, () => {
   test("should refuse a skill its active character cannot use while Frozen, leaving the duel as it was", () => {
     expect.hasAssertions();
 
-    const character = createGcgCharacterState({
-      character: { skills: [normalAttack], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-    });
+    const character = createPyroCharacter([normalAttack]);
     character.isFrozen = true;
     const attacker = createSideState(character, [Element.Pyro]);
-    const duel = createDuel(
-      attacker,
-      createSideState(
-        createGcgCharacterState({
-          character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-        }),
-        [],
-      ),
-    );
+    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
 
     expect({ dice: attacker.dice, result: useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]) }).toStrictEqual({
       dice: [Element.Pyro],
@@ -133,20 +113,10 @@ describe(useGcgSkill, () => {
   test("should refuse a burst its character has not the energy for", () => {
     expect.hasAssertions();
 
-    const character = createGcgCharacterState({
-      character: { skills: [burst], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-    });
+    const character = createPyroCharacter([burst]);
     character.energy = 1;
     const attacker = createSideState(character, []);
-    const duel = createDuel(
-      attacker,
-      createSideState(
-        createGcgCharacterState({
-          character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-        }),
-        [],
-      ),
-    );
+    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
 
     expect(useGcgSkill(duel, 0, BURST_ID, [])).toBe(GcgActionResult.Unpayable);
   });
@@ -155,26 +125,11 @@ describe(useGcgSkill, () => {
     expect.hasAssertions();
 
     const unalignedAttack: GcgSkill = { ...normalAttack, costs: [{ count: 1, kind: GcgCostKind.Unaligned }] };
-    const active = createGcgCharacterState({
-      character: { skills: [unalignedAttack], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-    });
+    const active = createPyroCharacter([unalignedAttack]);
     const minty = createGcgZoneCard(MINTY_MEAT_ROLLS_ID, mintyMeatRolls);
-    const standby = {
-      ...createGcgCharacterState({
-        character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-      }),
-      statuses: [minty],
-    };
+    const standby = { ...createPyroCharacter([]), statuses: [minty] };
     const attacker = { ...createSideState(active, [Element.Pyro]), characters: [active, standby] };
-    const duel = createDuel(
-      attacker,
-      createSideState(
-        createGcgCharacterState({
-          character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-        }),
-        [],
-      ),
-    );
+    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
     const usagesBefore = minty.usages;
 
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
@@ -193,26 +148,11 @@ describe(useGcgSkill, () => {
       ...normalAttack,
       costs: [{ count: 1, element: Element.Geo, kind: GcgCostKind.Dice }],
     };
-    const active = createGcgCharacterState({
-      character: { skills: [geoAttack], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-    });
+    const active = createPyroCharacter([geoAttack]);
     const sweeping = createGcgZoneCard(SWEEPING_TIME_ID, sweepingTime);
-    const standby = {
-      ...createGcgCharacterState({
-        character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-      }),
-      statuses: [sweeping],
-    };
+    const standby = { ...createPyroCharacter([]), statuses: [sweeping] };
     const attacker = { ...createSideState(active, [Element.Geo]), characters: [active, standby] };
-    const duel = createDuel(
-      attacker,
-      createSideState(
-        createGcgCharacterState({
-          character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-        }),
-        [],
-      ),
-    );
+    const duel = createDuel(attacker, createSideState(createPyroCharacter([]), []));
 
     const result = useGcgSkill(duel, 0, NORMAL_ATTACK_ID, [0]);
 
@@ -226,17 +166,10 @@ describe(useGcgSkill, () => {
   test("should use the Technique its equipped card gives the character, paying its Matching dice", () => {
     expect.hasAssertions();
 
-    const character = createGcgCharacterState({
-      character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-    });
+    const character = createPyroCharacter([]);
     character.equipments = [createGcgZoneCard(PYRO_SCORPION_ID, pyroScorpion)];
     const attacker = createSideState(character, [Element.Pyro, Element.Pyro]);
-    const defender = createSideState(
-      createGcgCharacterState({
-        character: { skills: [], descriptionTextId: 1002, element: Element.Pyro, nameTextId: 1001 },
-      }),
-      [],
-    );
+    const defender = createSideState(createPyroCharacter([]), []);
     const duel = createDuel(attacker, defender);
 
     const result = useGcgSkill(duel, 0, BURNING_ASSAULT_SKILL.id, [0, 1]);

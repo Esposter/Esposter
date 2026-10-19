@@ -60,19 +60,14 @@ describe(passGcgTurn, () => {
     id: 24_016,
     kind: GcgSkillKind.ElementalSkill,
   };
+  const ELECTRO_CHARACTER = { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 };
 
   test("should keep a side's prepared skill for its next turn while the opponent has declared its end", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState(
-      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
-      [],
-    );
+    const attacker = createSideState(createGcgCharacterState({ character: ELECTRO_CHARACTER }), []);
     attacker.preparedSkills = [{ characterIndex: 0, skill: PREPARED_SKILL }];
-    const defender = createSideState(
-      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
-      [],
-    );
+    const defender = createSideState(createGcgCharacterState({ character: ELECTRO_CHARACTER }), []);
     defender.hasDeclaredEnd = true;
     const duel = createDuel(attacker, defender);
 
@@ -88,15 +83,9 @@ describe(passGcgTurn, () => {
   test("should run a side's prepared skill as the turn passes to it", () => {
     expect.hasAssertions();
 
-    const attacker = createSideState(
-      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
-      [],
-    );
+    const attacker = createSideState(createGcgCharacterState({ character: ELECTRO_CHARACTER }), []);
     attacker.preparedSkills = [{ characterIndex: 0, skill: PREPARED_SKILL }];
-    const defender = createSideState(
-      createGcgCharacterState({ character: { descriptionTextId: 1002, element: Element.Electro, nameTextId: 1001 } }),
-      [],
-    );
+    const defender = createSideState(createGcgCharacterState({ character: ELECTRO_CHARACTER }), []);
     const duel = createDuel(attacker, defender);
     duel.actingSideIndex = 1;
 

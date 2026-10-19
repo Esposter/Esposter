@@ -2,7 +2,11 @@ import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { AuraType } from "#src/models/combat/AuraType";
 import { Element } from "#src/models/Element";
 import { applyElement } from "#src/services/combat/aura/applyElement";
-import { ELEMENTAL_NODE_MAX_GAUGE, ELEMENTAL_NODE_PULSE_GAUGE } from "#src/services/elementalNode/constants";
+import {
+  ELEMENTAL_NODE_BUFFED_PULSE_GAUGE,
+  ELEMENTAL_NODE_MAX_GAUGE,
+  ELEMENTAL_NODE_PULSE_GAUGE,
+} from "#src/services/elementalNode/constants";
 import { pulseElementalNode } from "#src/services/elementalNode/pulseElementalNode";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
@@ -31,7 +35,7 @@ describe(pulseElementalNode, () => {
     expect(enemy.statuses[0]?.secondsRemaining).toBe(Infinity);
   });
 
-  test("A buffed enemy gains 1.2 more gauge, up to 3.6", () => {
+  test("A buffed enemy gains the buffed pulse gauge more, up to the node's most", () => {
     expect.hasAssertions();
 
     const enemy = createTestEnemy();
@@ -44,7 +48,7 @@ describe(pulseElementalNode, () => {
     pulseElementalNode(enemy, Element.Pyro);
 
     expect(enemy.elementalState.auras.get(AuraType.Pyro)?.gauge).toBeCloseTo(
-      Math.min(ELEMENTAL_NODE_MAX_GAUGE, gaugeBefore + 1.2),
+      Math.min(ELEMENTAL_NODE_MAX_GAUGE, gaugeBefore + ELEMENTAL_NODE_BUFFED_PULSE_GAUGE),
     );
   });
 

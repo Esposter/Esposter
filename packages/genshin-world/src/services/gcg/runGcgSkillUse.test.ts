@@ -181,6 +181,11 @@ describe("a Plunging Attack", () => {
     id: 11_052,
     kind: GcgSkillKind.ElementalSkill,
   };
+  const createMaskedXiao = () =>
+    createGcgCharacterState({
+      character: { id: XIAO_ID },
+      statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
+    });
 
   // Xiao with Yaksha's Mask: a Physical hit of 2 is dealt as 3 Anemo, and a Plunging Attack's hit 2 more
   const readHp = (duel: GcgDuel) => takeOne(duel.sides, 1).characters.map(({ hp }) => hp);
@@ -190,13 +195,7 @@ describe("a Plunging Attack", () => {
 
     const duel = createDuel(
       [
-        createSide([
-          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
-          createGcgCharacterState({
-            character: { id: XIAO_ID },
-            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-          }),
-        ]),
+        createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
         createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
       ],
       PLUNGE_RULE,
@@ -212,16 +211,7 @@ describe("a Plunging Attack", () => {
 
     const duel = createDuel(
       [
-        createSide(
-          [
-            createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
-            createGcgCharacterState({
-              character: { id: XIAO_ID },
-              statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-            }),
-          ],
-          1,
-        ),
+        createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()], 1),
         createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
       ],
       PLUNGE_RULE,
@@ -236,13 +226,7 @@ describe("a Plunging Attack", () => {
 
     const duel = createDuel(
       [
-        createSide([
-          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
-          createGcgCharacterState({
-            character: { id: XIAO_ID },
-            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-          }),
-        ]),
+        createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
         createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
       ],
       PLUNGE_RULE,
@@ -259,13 +243,7 @@ describe("a Plunging Attack", () => {
 
     const duel = createDuel(
       [
-        createSide([
-          createGcgCharacterState({ character: { id: CHONGYUN_ID } }),
-          createGcgCharacterState({
-            character: { id: XIAO_ID },
-            statuses: [createGcgZoneCard(YAKSHAS_MASK_ID, yakshasMask)],
-          }),
-        ]),
+        createSide([createGcgCharacterState({ character: { id: CHONGYUN_ID } }), createMaskedXiao()]),
         createSide([createGcgCharacterState({ character: { id: 1_202 } })]),
       ],
       PLUNGE_RULE,
