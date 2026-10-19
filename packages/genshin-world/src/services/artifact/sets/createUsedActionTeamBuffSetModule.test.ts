@@ -3,8 +3,8 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
-import { ElementalAction } from "#src/models/artifact/ElementalAction";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createUsedActionTeamBuffSetModule } from "#src/services/artifact/sets/createUsedActionTeamBuffSetModule";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -30,7 +30,7 @@ describe(createUsedActionTeamBuffSetModule, () => {
   const wearer = createCombatant(TRAVELER_CHARACTER_ID);
   const party = createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]);
   const module = createUsedActionTeamBuffSetModule({
-    actions: [ElementalAction.Skill, ElementalAction.Burst],
+    actions: [CombatTalent.ElementalSkill, CombatTalent.ElementalBurst],
     amount: 0.2,
     attribute: Attribute.IncomingHealingBonus,
     seconds: 10,

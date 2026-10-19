@@ -1,23 +1,23 @@
-import { StatueLevelState } from "#src/models/statue/StatueLevelState";
 import { getStatueLevelState } from "#src/services/statue/getStatueLevelState";
+import { WorshipLevelState } from "genshin-interface";
 import { describe, expect, test } from "vitest";
 
 describe(getStatueLevelState, () => {
   test("a level at or below the claimed level is claimed", () => {
     expect.hasAssertions();
 
-    expect(getStatueLevelState(1, 3, 1)).toBe(StatueLevelState.Claimed);
+    expect(getStatueLevelState(1, 3, 1)).toBe(WorshipLevelState.Claimed);
   });
 
   test("a level the region has reached and not yet claimed is claimable", () => {
     expect.hasAssertions();
 
-    expect(getStatueLevelState(2, 3, 1)).toBe(StatueLevelState.Claimable);
+    expect(getStatueLevelState(2, 3, 1)).toBe(WorshipLevelState.Claimable);
   });
 
   test("a level past the one the region has reached is locked", () => {
     expect.hasAssertions();
 
-    expect(getStatueLevelState(4, 3, 1)).toBe(StatueLevelState.Locked);
+    expect(getStatueLevelState(4, 3, 1)).toBe(WorshipLevelState.Locked);
   });
 });

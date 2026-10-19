@@ -1,8 +1,8 @@
 import type { ArtifactSetBonus } from "#src/models/artifact/ArtifactSetBonus";
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import { ElementalAction } from "#src/models/artifact/ElementalAction";
 import { Attribute } from "#src/models/character/Attribute";
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { createAttackTagDamageSetModule } from "#src/services/artifact/sets/createAttackTagDamageSetModule";
 import { createUsedActionTeamBuffSetModule } from "#src/services/artifact/sets/createUsedActionTeamBuffSetModule";
@@ -16,7 +16,7 @@ export const createNoblesseObligeSetModule = (bonus: ArtifactSetBonus): PassiveM
   if (bonus.pieceCount === 2)
     return createAttackTagDamageSetModule({ amount: takeOne(params, 0), attackTag: AttackTag.ElementalBurst });
   return createUsedActionTeamBuffSetModule({
-    actions: [ElementalAction.Burst],
+    actions: [CombatTalent.ElementalBurst],
     amount: takeOne(params, 0),
     attribute: Attribute.AttackPercent,
     seconds: takeOne(params, 1),
