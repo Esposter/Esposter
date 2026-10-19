@@ -8,23 +8,29 @@ import { Attribute } from "#src/models/character/Attribute";
 import { drawDomainArtifacts } from "#src/services/domains/drawDomainArtifacts";
 import { describe, expect, test } from "vitest";
 
-// A made-up set with a piece for every slot at three stars and each starting minor affix count, so every artifact drawn
-// Has its piece
+// A made-up set with a piece for every slot at three, four and five stars and each starting minor affix count those
+// Stars start with, so every artifact drawn has its piece
 const SET_ID = 10_020;
 const SLOTS = Object.values(ArtifactSlot);
 const SET: ReliquarySetData = {
   id: SET_ID,
   nameTextId: "TEST_SET",
   needCounts: [2, 4],
-  pieces: SLOTS.flatMap((slot, slotIndex) =>
-    [0, 1, 2].map((startingMinorCount) => ({
-      itemId: SET_ID * 100 + slotIndex * 10 + startingMinorCount,
-      nameTextId: "TEST_PIECE",
-      rank: 1,
-      rarity: 3,
-      slot,
-      startingMinorCount,
-    })),
+  pieces: [
+    { rarity: 3, startingMinorCounts: [0, 1, 2] },
+    { rarity: 4, startingMinorCounts: [2, 3] },
+    { rarity: 5, startingMinorCounts: [3, 4] },
+  ].flatMap(({ rarity, startingMinorCounts }) =>
+    SLOTS.flatMap((slot, slotIndex) =>
+      startingMinorCounts.map((startingMinorCount) => ({
+        itemId: SET_ID * 1000 + rarity * 100 + slotIndex * 10 + startingMinorCount,
+        nameTextId: "TEST_PIECE",
+        rank: 1,
+        rarity,
+        slot,
+        startingMinorCount,
+      })),
+    ),
   ),
 };
 const MAIN_AFFIX_POOLS: ArtifactMainAffixPool[] = [
@@ -42,10 +48,20 @@ const RARITY_DATA: ArtifactRarityData = {
   minorAffixGroups: [
     { attribute: Attribute.Attack, values: [10] },
     { attribute: Attribute.Defense, values: [20] },
+    { attribute: Attribute.Health, values: [30] },
+    { attribute: Attribute.EnergyRecharge, values: [40] },
+    { attribute: Attribute.ElementalMastery, values: [50] },
   ],
   rarity: 3,
 };
-const TABLES = { artifactMainAffixPools: MAIN_AFFIX_POOLS, artifactRarityDataMap: new Map([[3, RARITY_DATA]]) };
+const TABLES = {
+  artifactMainAffixPools: MAIN_AFFIX_POOLS,
+  artifactRarityDataMap: new Map([
+    [3, RARITY_DATA],
+    [4, { ...RARITY_DATA, rarity: 4 }],
+    [5, { ...RARITY_DATA, rarity: 5 }],
+  ]),
+};
 const TREE_ARTIFACTS: TreeArtifact[] = [{ chance: 0.5, guaranteedCount: 2, rarity: 3 }];
 
 describe(drawDomainArtifacts, () => {
@@ -65,5 +81,21 @@ describe(drawDomainArtifacts, () => {
       [3, SET_ID, 1],
       [3, SET_ID, 1],
     ]);
+  });
+
+  test("a claim's four- and five-star artifacts draw their pieces, as its three-star ones do", () => {
+    expect.hasAssertions();
+
+    const artifacts = drawDomainArtifacts(
+      [
+        { chance: 0, guaranteedCount: 1, rarity: 4 },
+        { chance: 0, guaranteedCount: 1, rarity: 5 },
+      ],
+      [SET_ID],
+      [SET],
+      () => 0.9,
+      TABLES,
+    );
+    expect(artifacts.map(({ artifact }) => artifact?.rarity)).toStrictEqual([4, 5]);
   });
 });

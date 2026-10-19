@@ -104,9 +104,11 @@ export const EXPERIENCE_BONUS_WEIGHTS: readonly WeightedValue<number>[] = [
   { value: 5, weight: 1 },
 ];
 // The starting minor affix counts an artifact a chest or a domain drops is drawn among by its stars, each with its
-// Weight. The wiki's Artifact_Drop_Distribution gives these for an artifact a domain drops, its Domains row: two stars
-// Start with none at 80% and with one at 20%, three stars with one at 80% and with two at 20%. It names no chest row,
-// So these are provisional. One star names no count, so it is taken to start with none
+// Weight. The wiki's Loot System/Artifact Drop Distribution gives these for an artifact a domain drops, in its Domains
+// Row, where two stars start with none at 80% and with one at 20%, three stars with one at 80% and with two at 20%,
+// Four stars with two at 80% and with three at 20%, and five stars with three at 80% and with four at 20%. It names no
+// Chest row for the one to three stars a chest drops, so these are provisional. One star names no count, so it starts
+// With none
 export const ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS: Readonly<
   Partial<Record<number, readonly WeightedValue<number>[]>>
 > = {
@@ -118,6 +120,14 @@ export const ARTIFACT_INITIAL_MINOR_AFFIX_COUNT_WEIGHTS: Readonly<
   3: [
     { value: 1, weight: 0.8 },
     { value: 2, weight: 0.2 },
+  ],
+  4: [
+    { value: 2, weight: 0.8 },
+    { value: 3, weight: 0.2 },
+  ],
+  5: [
+    { value: 3, weight: 0.8 },
+    { value: 4, weight: 0.2 },
   ],
 };
 // Each slot's main affixes by the wiki's Artifact/Distribution page. Only the attributes a slot's pool holds are drawn,
