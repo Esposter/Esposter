@@ -92,7 +92,7 @@ describe("genshinSaveSchema", () => {
       artifact: {
         experience: maxNumber,
         isLocked: true,
-        itemId: maxNumber,
+        itemId: maxNumber - index,
         level: maxNumber,
         mainAffix: Attribute.StellarGlimmerReactionDamageBonus,
         minorAffixes: Attributes.slice(0, MAX_MINOR_AFFIX_COUNT).map((attribute) => ({
