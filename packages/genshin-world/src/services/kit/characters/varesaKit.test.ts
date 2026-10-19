@@ -15,7 +15,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { readCharacterKitRecord } from "#src/services/kit/readCharacterKitRecord.test";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const VARESA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, VARESA_CHARACTER_ID);
 const { record: varesaRecord, toParameter } = await readCharacterKitRecord(VARESA_CHARACTER_ID);
@@ -71,7 +71,9 @@ describe(createVaresaKitBehaviour, () => {
     expect(VARESA_KIT.elementalSkillCharges).toBe(2);
     expect(VARESA_KIT.skillCooldownSeconds).toBe(toParameter(varesaRecord.skillCooldownSeconds));
     expect(VARESA_KIT.burstCooldownSeconds).toBe(toParameter(varesaRecord.burstCooldownSeconds));
-    expect(VARESA_KIT.burstEnergyCost).toBe(toParameter(varesaRecord.burstEnergyCost));
+    const { burstEnergyCost } = varesaRecord;
+    assert(burstEnergyCost !== undefined);
+    expect(VARESA_KIT.burstEnergyCost).toBe(toParameter(burstEnergyCost));
   });
 
   test("the plunges land at their record's hitmarks, and the collision at its record's", () => {

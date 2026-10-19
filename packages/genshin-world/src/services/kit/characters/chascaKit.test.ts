@@ -28,7 +28,7 @@ import { getPartyMember } from "#src/services/party/getPartyMember";
 import { stepPartyCooldowns } from "#src/services/party/stepPartyCooldowns";
 import { takeOne } from "@esposter/shared";
 import { createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const CHASCA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, CHASCA_CHARACTER_ID);
 const { readFrameList, record: chascaRecord, toParameter } = await readCharacterKitRecord(CHASCA_CHARACTER_ID);
@@ -153,7 +153,9 @@ describe(createChascaKitBehaviour, () => {
     expect(CHASCA_KIT.elementalBurst.hits.map(({ hitmarkSeconds }) => toFrames(hitmarkSeconds))).toStrictEqual(
       chascaRecord.burst.hits.map(({ hitmarkFrames }) => hitmarkFrames),
     );
-    expect(CHASCA_KIT.burstEnergyCost).toBe(toParameter(chascaRecord.burstEnergyCost));
+    const { burstEnergyCost } = chascaRecord;
+    assert(burstEnergyCost !== undefined);
+    expect(CHASCA_KIT.burstEnergyCost).toBe(toParameter(burstEnergyCost));
     expect(CHASCA_KIT.burstCooldownSeconds).toBe(toParameter(chascaRecord.burstCooldownSeconds));
   });
 

@@ -25,7 +25,7 @@ import { stepDeployedKits } from "#src/services/kit/stepDeployedKits";
 import { createDeployedCombatant } from "#src/services/party/createDeployedCombatant.test";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const YELAN_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, YELAN_CHARACTER_ID);
@@ -102,7 +102,9 @@ describe(createYelanKitBehaviour, () => {
         0.1,
     );
     expect(field?.tickIntervalSeconds).toBe(1);
-    expect(YELAN_KIT.burstEnergyCost).toBe(toParameter(yelanRecord.burstEnergyCost));
+    const { burstEnergyCost } = yelanRecord;
+    assert(burstEnergyCost !== undefined);
+    expect(YELAN_KIT.burstEnergyCost).toBe(toParameter(burstEnergyCost));
     expect(throws?.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual(
       readHits("exquisiteThrow").map(({ hitmarkFrames }) => hitmarkFrames),
     );
