@@ -134,7 +134,7 @@
   },
   "stances.meleeStance.chargedAttack.hits.1.gauge": { "file": "charge.go", "line": 50, "source": "Gcsim", "value": 1 },
   "stances.meleeStance.chargedAttack.hits.1.multiplier": {
-    "cause": "Unsourced",
+    "source": "Gcsim",
     "value": { "index": 9, "proudSkillGroupId": 3332 }
   },
   "stances.meleeStance.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
