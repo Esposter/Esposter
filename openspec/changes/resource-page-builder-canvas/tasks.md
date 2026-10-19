@@ -1,7 +1,7 @@
 ## 1. Frame
 
 - [x] 1.1 Give the frame's browser checks a package of their own, on the shared browser configuration with no Nuxt, apart from the package's default run, in packages/vue-canvas-frame-headless. Verify: the package's test:browser script runs its browser tests, and its unit tests start no browser.
-- [x] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: tests named after the scenarios 'Switching to tablet draws the page at tablet width' and 'A narrow pane scales the desktop canvas down'.
+- [x] 1.2 Draw the page in an isolated frame at tablet and mobile width, and at desktop width no narrower than 992 pixels, scaling a narrow pane down, with the widths and breakpoints named once. Verify: the tests 'a tablet frame draws at its fixed width', 'a desktop frame is never narrower than its least width' and 'a narrow pane scales the frame down', in packages/vue-canvas-frame-headless.
 - [ ] 1.3 Keep the page's styles out of the editor and the editor's styles out of the page, and stop custom HTML scripts from running in the canvas, in the frame's browser checks once it is extracted. Verify: browser tests named after the scenarios 'A page's body style does not restyle the editor' and 'A script inside a custom HTML block does not run in the canvas'.
 
 ## 2. Selection and overlays
