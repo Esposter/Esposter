@@ -6,9 +6,9 @@ The editing model of a block editor: a registry-checked document whose root decl
 
 ```mermaid
 flowchart TD
-  REG["a consumer's registry: its root's content types and props schema, and each type's props schema and slots"] --> SCHEMA["createBlockDocumentSchema: shape with the root's props parsed by its schema, then the slot walk over the content"]
+  REG["a consumer's registry: its root and its types"] --> SCHEMA["createBlockDocumentSchema: the slot walk over the content"]
   CMD["a command: insert, remove, move, move into the previous sibling, update props or paste"] --> GATE{"getAcceptedTypes: does the slot the command fills accept the node?"}
-  PASTE["a paste's copies, with fresh ids"] --> COPIES{"createBlockNodesSchema: the same slot walk over the copies, as the destination slot's children"}
+  PASTE["a paste's copies, with fresh ids"] --> COPIES{"createBlockNodesSchema: the slot walk over the copies"}
   GATE -->|no| NONE["no operations, and the document is unchanged"]
   COPIES -->|no| NONE
   GATE -->|yes| OPS["JSON Patch operations"]

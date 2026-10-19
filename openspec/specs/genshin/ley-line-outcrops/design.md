@@ -8,8 +8,8 @@ The rules a region's two ley line blossoms follow, read from the game's tables b
 flowchart TD
   D["Dump: the blossom refresh, group and section order tables"] -->|"genshin:assets outcrops"| R["leyLine/regions: one record per city, by its city id"]
   R --> O{"computeOutcropKindOpen: the rank and nations' areas"}
-  R --> S["computeDailyOutcrops: each kind's place drawn from the fitted places, the day's random picking"]
-  R --> N["computeNextOutcropPlace: the nearest other fitted place, not the one the other kind stands at"]
+  R --> S["computeDailyOutcrops: each kind's fitted place"]
+  R --> N["computeNextOutcropPlace: the nearest other fitted place"]
 ```
 
 ## Decisions

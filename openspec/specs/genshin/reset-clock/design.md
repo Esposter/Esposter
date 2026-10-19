@@ -13,7 +13,7 @@ flowchart TD
   LW --> NW["computeNextWeeklyReset: the Monday 04:00 a week after"]
   LD --> LM["computeLastMonthlyReset: the first's 04:00 at or before"]
   LM --> NM["computeNextMonthlyReset: the first's 04:00 a month after"]
-  GD --> G["Game-day callers: Primogem refills, the Forging cap, investigations, commissions, the bargains' month"]
+  GD --> G["Game-day callers: each reader of the game day"]
   LD --> D["Reset callers: shops, enemies, mining outcrops, bosses, weekly claims, reputation"]
 ```
 
