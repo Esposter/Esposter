@@ -23,7 +23,11 @@ import {
   LAYLA_NIGHT_STARS_ID,
   LAYLA_SHOOTING_STARS_ID,
 } from "#src/services/kit/characters/laylaKit";
-import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
+import {
+  createKitTestContext,
+  stepKitSeconds,
+  stepKitSecondsSendingExpiries,
+} from "#src/services/kit/createKitTestContext.test";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
@@ -63,15 +67,6 @@ const stepRecordingCasts = (context: KitContext, frames: number, fromFrame = 0) 
       }
   }
   return casts;
-};
-
-// Steps the team's effects as the world does, sending each effect that ran out to the kit as an EffectExpired event
-const stepLaylaSeconds = (context: KitContext, seconds: number) => {
-  for (let stepIndex = 0; stepIndex < Math.round(seconds / FIXED_STEP_SECONDS); stepIndex++) {
-    stepKitEffects(FIXED_STEP_SECONDS, context);
-    for (const effect of context.expiredEffects)
-      LAYLA_KIT.onKitEvent?.({ effect, kind: KitEventKind.EffectExpired }, context, context.activeCombatant);
-  }
 };
 
 describe(createLaylaKitBehaviour, () => {
@@ -219,11 +214,11 @@ describe(createLaylaKitBehaviour, () => {
     const context = createLaylaContext({ effects: [] }, {}, [createEnemyAt(3, 0)]);
     LAYLA_KIT.elementalSkill.onStart?.(context);
 
-    stepLaylaSeconds(context, 11.5);
+    stepKitSecondsSendingExpiries(context, 11.5);
     expect(countNightStars(context.kitEffectState)).toBe(2);
-    stepLaylaSeconds(context, 1.5);
+    stepKitSecondsSendingExpiries(context, 1.5);
     expect(countNightStars(context.kitEffectState)).toBe(0);
-    stepLaylaSeconds(context, 3);
+    stepKitSecondsSendingExpiries(context, 3);
     expect(countNightStars(context.kitEffectState)).toBe(0);
   });
 
@@ -263,7 +258,7 @@ describe(createLaylaKitBehaviour, () => {
     const starlightSlug = context.kitEffectState.effects.find(
       (effect): effect is KitSummon => effect.kind === "summon",
     );
-    assert(starlightSlug);
+    assert.exists(starlightSlug);
     const [strike] = starlightSlug.hits;
     const strikeEnemy = () =>
       strike?.onStrike?.(context, { body: context.body, combatant: starlightSlug.combatant, hit: strike }, enemy);
