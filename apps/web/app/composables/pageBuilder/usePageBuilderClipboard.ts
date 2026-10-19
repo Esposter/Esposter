@@ -4,6 +4,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
@@ -14,8 +15,6 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { getResultAsync, parseJsonPointer } from "@esposter/shared";
 import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
-
-const CANNOT_GO_HERE_MESSAGE = "This block cannot go here";
 
 // Copy, cut and paste of the selected node in one open resource's webpage. The clipboard carries the node as JSON, and a
 // Paste lands where an insert would, as a copy with fresh ids. Each landed edit is announced once through announce
