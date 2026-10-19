@@ -1,10 +1,11 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { SOURCE_CONDITION } from "#src/constants";
+import { BROWSER_TEST_GLOB, SOURCE_CONDITION } from "#src/constants";
 import { getBenchmarkTestConfiguration } from "#src/getBenchmarkTestConfiguration";
 import { getVitestProjectName } from "#src/getVitestProjectName";
 import { getVueTestConfiguration } from "#src/getVueTestConfiguration";
 import { defaultServerConditions } from "vite";
+import { configDefaults } from "vitest/config";
 
 // `projectDirectory` is the caller's own `import.meta.dirname`, and only the repository-root config — which is
 // The `projects` list rather than a project — has none to give. `projectTestConfiguration` is the member's own test
@@ -24,6 +25,7 @@ export const getVitestConfiguration = (
       conditions: [SOURCE_CONDITION, ...defaultServerConditions],
     },
     test: {
+      exclude: [...configDefaults.exclude, BROWSER_TEST_GLOB],
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
