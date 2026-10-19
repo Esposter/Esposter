@@ -16,7 +16,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "burst.hits.5.hitmarkFrames": { "cause": "Unclassified", "value": 164 },
+  "burst.hits.5.hitmarkFrames": { "file": "burst.go", "line": 88, "source": "Gcsim", "value": 164 },
   "burstCooldownSeconds": { "cause": "DiffersFromSource", "value": 15 },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 46 },
