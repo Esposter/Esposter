@@ -10,7 +10,6 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
-import { KIT_FRAMES_PER_SECOND } from "#src/services/kit/constants";
 import { createAheadBody } from "#src/services/kit/createAheadBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -19,6 +18,7 @@ import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { KIT_FRAMES_PER_SECOND } from "#src/services/shared/constants";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
