@@ -7,6 +7,7 @@ import { getNodeStyleClass } from "#shared/services/pageBuilder/getNodeStyleClas
 import { getNodeStyleCss } from "#shared/services/pageBuilder/getNodeStyleCss";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
+import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { escapeAttribute } from "@esposter/shared";
@@ -16,7 +17,7 @@ import { renderBlockNodes } from "headless-block-editor";
 // Output runs the same in the browser that exports it and on the server that publishes it
 export const renderWebpageDocument = (document: WebpageDocument, context: RenderContext): string => {
   const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, definition, slots) => {
-    const rendered = definition.render(node, slots, context);
+    const rendered = renderWebpageNode(node, slots, context);
     if (getNodeStyleCss(node, definition) === "" || typeof rendered === "string" || !("tag" in rendered))
       return rendered;
 
