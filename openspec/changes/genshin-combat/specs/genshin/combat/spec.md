@@ -18,7 +18,7 @@ A Stellar Swirl's own damage SHALL be weighted across the four highest contribut
 
 ### Requirement: Direct Stellar Hits
 
-A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimmer formula over its talent multiplier of its striker's ATK, raised by the Base DMG Bonus of the deployed team's Stellar Jubilees, its elemental mastery and its Stellar Glimmer reaction DMG Bonus, cut by the enemy's RES alone with no Defence. Its coefficient SHALL be 1 for a Stellar Swirl and, for a Stellar-Conduct, the Starlight Prism's by the count of hits its striker carries. It SHALL take the party reaction bonuses its reaction takes, with the Elevation last.
+A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimmer formula over its talent multiplier of its striker's ATK, raised by the Base DMG Bonus of the deployed team's Stellar Jubilees, its elemental mastery and its Stellar Glimmer reaction DMG Bonus, cut by the enemy's RES alone with no Defence. Its coefficient SHALL be 1 for a Stellar Swirl and, for a Stellar-Conduct, the Starlight Prism's by the count of hits its striker carries.
 
 #### Scenario: prices a direct Stellar-Conduct hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
 
@@ -31,6 +31,10 @@ A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimme
 - **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
 - **WHEN** its direct Stellar Swirl hit strikes an enemy
 - **THEN** it is priced at a coefficient of 1, which the count does not raise
+
+### Requirement: Direct Stellar Hits take the party reaction bonuses
+
+A talent's or a constellation's direct Stellar hit SHALL take the party reaction bonuses its reaction takes, with the Elevation last.
 
 #### Scenario: a direct Stellar-Conduct hit takes the party reaction bonuses Stellar-Conduct takes, and its Elevation last
 

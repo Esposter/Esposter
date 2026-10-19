@@ -116,15 +116,19 @@ The Mail screen SHALL let the player pin a held mail to the top of the list, and
 - **WHEN** the mailbox loads
 - **THEN** the mail is deleted
 
-### Requirement: The Gift Mail Box keeps the important mail once its rewards are claimed
+### Requirement: The Gift Mail Box lists a claimed important mail
 
-The Mail screen SHALL move an important mail whose rewards are claimed into the Gift Mail Box, which lists it under its own tab apart from the Mailbox. The important mail is the birthday mail, and the mail the game's mail table flags, which the wiki calls important mail. A mail in the Gift Mail Box SHALL NOT expire and SHALL NOT be removed by Delete Read. The wiki's Mail page says birthday wishes "will be automatically transferred into the Gift Mail Box after the player has collected the rewards" and that mail in the box "will not be quick-deleted, and will not expire over time" (https://genshin-impact.fandom.com/wiki/Mail).
+The Mail screen SHALL move an important mail whose rewards are claimed into the Gift Mail Box, which lists it under its own tab apart from the Mailbox. The important mail is the birthday mail, and the mail the game's mail table flags, which the wiki calls important mail. The wiki's Mail page (https://genshin-impact.fandom.com/wiki/Mail) says birthday wishes "will be automatically transferred into the Gift Mail Box after the player has collected the rewards".
 
 #### Scenario: A claimed birthday mail moves to the Gift Mail Box
 
 - **GIVEN** the player holds a birthday mail
 - **WHEN** the player claims its rewards
 - **THEN** the mail is listed under the Gift Mail Box tab and no longer under the Mailbox tab
+
+### Requirement: A Gift Mail Box mail does not expire
+
+A mail in the Gift Mail Box SHALL NOT expire. The same page says mail in the box "will not be quick-deleted, and will not expire over time".
 
 #### Scenario: A claimed mail the table flags is kept past its expiry
 
@@ -137,6 +141,10 @@ The Mail screen SHALL move an important mail whose rewards are claimed into the 
 - **GIVEN** the player has a claimed birthday mail that is past its expiry
 - **WHEN** the mailbox loads
 - **THEN** the mail is kept
+
+### Requirement: Delete Read keeps a Gift Mail Box mail
+
+A mail in the Gift Mail Box SHALL NOT be removed by Delete Read.
 
 #### Scenario: Delete Read keeps a claimed birthday mail
 

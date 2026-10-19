@@ -68,9 +68,9 @@ A refused action SHALL leave the duel unchanged and SHALL say why it was refused
 - **WHEN** the player uses the burst
 - **THEN** the action is refused, the dice it would have paid stay in the dice, and the refusal says why
 
-### Requirement: A reduction a card names its holder for applies while the holder is active
+### Requirement: A card's cost reduction applies to the payer its text names
 
-A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it. The wiki's Equipment Card pages read "the character" for Vermillion Hereafter and Capricious Visage, and the game's text names the side for Shimenawa's Reminiscence, so the holder reading is the wiki's and the side reading is the game's, as the decks design records.
+A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it. The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records.
 
 #### Scenario: A standby holder's status reduces no Normal Attack of the active character
 

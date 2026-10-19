@@ -62,7 +62,7 @@ While the Ceremonial Garment stands, Kokomi's normal attacks, charged attack and
 
 ### Requirement: Constellation 4's garment speed
 
-While Kokomi wears the Ceremonial Garment at Constellation 4, her Normal Attack SPD is raised by 10%. The energy her landed Normal Attacks give is not built.
+While Kokomi wears the Ceremonial Garment at Constellation 4, her Normal Attack SPD SHALL be raised by 10%. The energy her landed Normal Attacks give is not built.
 
 #### Scenario: Garment raises Normal Attack SPD at Constellation 4
 

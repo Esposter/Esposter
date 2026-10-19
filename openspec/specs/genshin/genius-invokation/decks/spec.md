@@ -112,9 +112,9 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 - **WHEN** the dice are rolled
 - **THEN** the two guaranteed dice are set
 
-### Requirement: A summon or combat status placed again is refreshed or stacks, and a support takes a slot of its own
+### Requirement: A summon or combat status placed again is refreshed or stacks
 
-A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most. An onstage is a combat status and SHALL follow the same rule, so a second copy of an onstage SHALL NOT take a slot of its own, and the copy already there SHALL keep its counter. A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own.
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most.
 
 #### Scenario: A summon placed again refreshes the one on the field
 
@@ -128,11 +128,19 @@ A summon or combat status SHALL be placed by its id: a card of that id already o
 - **WHEN** Kurage's Oath summons a Bake-Kurage again
 - **THEN** the one Bake-Kurage on the field has four usages, and no second copy appears
 
+### Requirement: An onstage placed again takes no slot of its own
+
+An onstage is a combat status and SHALL follow the same rule, so a second copy of an onstage SHALL NOT take a slot of its own, and the copy already there SHALL keep its counter.
+
 #### Scenario: An onstage placed again refreshes the one on the field
 
 - **GIVEN** a Changing Shifts is on a side's onstages with no usage left
 - **WHEN** the side plays Changing Shifts again
 - **THEN** the one Changing Shifts on the field has its usage back, and no second copy appears
+
+### Requirement: A support placed again takes a slot of its own
+
+A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own.
 
 #### Scenario: A support played again takes its own slot
 
@@ -236,7 +244,7 @@ A character about to fall SHALL first be offered to the cards attached to it. A 
 
 ### Requirement: A skill prepared for a side runs as its turn begins
 
-A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn. While the opponent has declared its round's end, the side keeps the turn without a new one beginning, so its prepared skills SHALL wait for the turn it next takes. The cards on a preparer's field hear its prepared skill as a skill used, so a Crowfeather Cover on that character spends a usage on a prepared Elemental Skill.
+A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn.
 
 #### Scenario: Rock-Paper-Scissors Combo's preparations run at the next turn
 
@@ -244,11 +252,19 @@ A side's prepared skills SHALL run when the turn passes to that side, before its
 - **WHEN** the turn passes to that side
 - **THEN** Scissors deals 2 Electro DMG and Paper deals 3 Electro DMG to the opposing active character before the side chooses, and Scissors' own preparation of Paper waits for the turn after
 
+### Requirement: A side's prepared skills wait while the opponent has declared its end
+
+While the opponent has declared its round's end, the side keeps the turn without a new one beginning, so its prepared skills SHALL wait for the turn it next takes.
+
 #### Scenario: A prepared skill waits while the opponent has declared its end
 
 - **GIVEN** Electro Hypostasis prepared Paper in its own Combat Action, and the opposing side has declared its Round end
 - **WHEN** Electro Hypostasis keeps taking actions
 - **THEN** Paper deals nothing and stays prepared, and it deals its 3 Electro DMG when the turn next passes to that side
+
+### Requirement: A prepared skill is heard as a skill used by its preparer's cards
+
+The cards on a preparer's field SHALL hear its prepared skill as a skill used, so a Crowfeather Cover on that character spends a usage on a prepared Elemental Skill.
 
 #### Scenario: A prepared skill is recorded as used this round
 

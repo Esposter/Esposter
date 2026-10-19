@@ -104,14 +104,18 @@ From Ascension 4, Lauma's Elemental Skill, its press and the Frostgrove Sanctuar
 - **WHEN** a Frostgrove Sanctuary tick strikes
 - **THEN** it takes 0.04% DMG Bonus for each point of her Elemental Mastery, at most 32%
 
-### Requirement: Her burst gives Pale Hymn, which Moon Song and reactions spend
+### Requirement: Her burst gives the party Pale Hymn
 
-Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasting 15 seconds. A Dew Hymn of Eternal Rest spends during the burst SHALL give Moon Song six Pale Hymn a Dew, once in each burst, and a Dew spent outside it SHALL wait for the burst's gain for 15 seconds. Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction SHALL spend one Pale Hymn, Moon Song's before the burst's. While the party holds Pale Hymn, each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction the party makes SHALL take base damage of her Elemental Mastery times the burst's increase at her talent level: the Bloom increase for Bloom, Hyperbloom and Burgeon, and the Lunar-Bloom increase for Lunar-Bloom.
+Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasting 15 seconds.
 
 #### Scenario: The burst gives 18 Pale Hymn after 96 frames
 
 - **WHEN** the player casts the elemental burst
 - **THEN** the party holds 18 Pale Hymn 96 frames later, for 15 seconds
+
+### Requirement: Moon Song gives Pale Hymn for a Dew spent in the burst
+
+A Dew Hymn of Eternal Rest spends during the burst SHALL give Moon Song six Pale Hymn a Dew, once in each burst, and a Dew spent outside it SHALL wait for the burst's gain for 15 seconds.
 
 #### Scenario: Moon Song gives one Dew's Pale Hymn once in each burst
 
@@ -119,11 +123,19 @@ Lauma's burst SHALL give the party 18 Pale Hymn 96 frames after it starts, lasti
 - **WHEN** Hymn of Eternal Rest spends Dew
 - **THEN** Moon Song gives no more Pale Hymn in that burst
 
+### Requirement: Pale Hymn raises each Bloom the party makes by her Elemental Mastery
+
+While the party holds Pale Hymn, each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction the party makes SHALL take base damage of her Elemental Mastery times the burst's increase at her talent level: the Bloom increase for Bloom, Hyperbloom and Burgeon, and the Lunar-Bloom increase for Lunar-Bloom.
+
 #### Scenario: Pale Hymn adds her Elemental Mastery to each Bloom the party makes
 
 - **GIVEN** the party holds Pale Hymn
 - **WHEN** a Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction triggers
 - **THEN** its base damage takes her Elemental Mastery times the burst's increase for that reaction
+
+### Requirement: A Bloom or Lunar-Bloom reaction spends one Pale Hymn
+
+Each Bloom, Hyperbloom, Burgeon or Lunar-Bloom reaction SHALL spend one Pale Hymn, Moon Song's before the burst's.
 
 #### Scenario: A reaction spends Moon Song's Pale Hymn first
 
