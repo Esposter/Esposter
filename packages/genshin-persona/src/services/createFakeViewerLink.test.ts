@@ -4,7 +4,11 @@ import type { Mock } from "vitest";
 import { describe, vi } from "vitest";
 
 type FakeViewerLink = { [Method in keyof ViewerLink]: Mock<ViewerLink[Method]> };
-type FakeViewerLinkSink = { drop: () => void; fireTap: () => void; link: FakeViewerLink };
+interface FakeViewerLinkSink {
+  drop: () => void;
+  fireTap: () => void;
+  link: FakeViewerLink;
+}
 
 // The viewer's link as a sink drives it: each message recorded by its method, the open state the test sets, and the
 // Taps the test fires at the listeners the sink registered

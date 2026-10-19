@@ -16,7 +16,7 @@ describe(setViewer, () => {
     writeConfiguration: vi.fn<(configuration: ViewerConfiguration) => void>(),
   });
 
-  test("The viewer verb proves the connection with one bubble", async () => {
+  test("the viewer verb proves the connection with one bubble", async () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
@@ -35,10 +35,10 @@ describe(setViewer, () => {
       modelId: VIEWER_DEFAULT_MODEL_ID,
       motions: {},
     });
-    expect(link.close).toHaveBeenCalledOnce();
+    expect(link.close).toHaveBeenCalledTimes(1);
   });
 
-  test("The viewer verb reports a viewer that did not answer", async () => {
+  test("the viewer verb reports a viewer that did not answer", async () => {
     expect.hasAssertions();
 
     const dependencies = createDependencies(undefined);

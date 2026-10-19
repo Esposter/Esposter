@@ -26,7 +26,7 @@ describe(createViewerPlayer, () => {
     vi.useRealTimers();
   });
 
-  test("A spoken line appears on the model", async () => {
+  test("a spoken line appears on the model", async () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
@@ -45,7 +45,7 @@ describe(createViewerPlayer, () => {
     await expect(playing).resolves.toBe("");
   });
 
-  test("The next line waits for the clip's own length", async () => {
+  test("the next line waits for the clip's own length", async () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
@@ -63,7 +63,7 @@ describe(createViewerPlayer, () => {
     expect(isFirstSettled).toBe(true);
   });
 
-  test("A newer turn clears the bubble", async () => {
+  test("a newer turn clears the bubble", async () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
@@ -76,7 +76,7 @@ describe(createViewerPlayer, () => {
     expect(link.bubble).toHaveBeenLastCalledWith(MODEL_ID, "", VIEWER_CLEAR_DURATION_MS, COLOR, VIEWER_TEXT_COLOR);
   });
 
-  test("A tap replays the last line", async () => {
+  test("a tap replays the last line", async () => {
     expect.hasAssertions();
 
     const { fireTap, link } = createFakeViewerLink();
@@ -98,7 +98,7 @@ describe(createViewerPlayer, () => {
     expect(link.playSound).toHaveBeenLastCalledWith(MODEL_ID, getPlayedPaths(link.playSound)[0]);
   });
 
-  test("A tap sends no turn to the session", async () => {
+  test("a tap sends no turn to the session", async () => {
     expect.hasAssertions();
 
     const { fireTap, link } = createFakeViewerLink();

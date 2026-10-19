@@ -21,7 +21,7 @@ describe(createReadingPlayer, () => {
     return { createStock: vi.fn(() => stock), stock };
   };
 
-  test("No viewer listening falls back to the stock player", async () => {
+  test("no viewer listening falls back to the stock player", async () => {
     expect.hasAssertions();
 
     const { createStock, stock } = createStockPlayer();
@@ -33,7 +33,7 @@ describe(createReadingPlayer, () => {
     expect(stock.play).toHaveBeenCalledExactlyOnceWith(AUDIO);
   });
 
-  test("A compressed-only path keeps the sound on the stock player", async () => {
+  test("a compressed-only path keeps the sound on the stock player", async () => {
     expect.hasAssertions();
 
     const { createStock, stock } = createStockPlayer();
@@ -52,7 +52,7 @@ describe(createReadingPlayer, () => {
     expect(stock.play).toHaveBeenCalledExactlyOnceWith(AUDIO);
   });
 
-  test("A viewer dropping mid-reply moves the rest to the player", async () => {
+  test("a viewer dropping mid-reply moves the rest to the player", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0 });
@@ -66,8 +66,8 @@ describe(createReadingPlayer, () => {
     await player.play(AUDIO, CAPTION);
     vi.useRealTimers();
 
-    expect(link.bubble).toHaveBeenCalledOnce();
-    expect(createStock).toHaveBeenCalledOnce();
+    expect(link.bubble).toHaveBeenCalledTimes(1);
+    expect(createStock).toHaveBeenCalledTimes(1);
     expect(stock.play).toHaveBeenCalledExactlyOnceWith(AUDIO);
   });
 });

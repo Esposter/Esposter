@@ -8,12 +8,12 @@ vi.mock(import("#src/services/connectVoiceServer"), () => ({ connectVoiceServer:
 vi.mock(import("node:fs"), () => ({ rmSync: vi.fn() }));
 
 describe(deleteVoiceState, () => {
-  test("Teardown removes the viewer setup", async () => {
+  test("teardown removes the viewer setup", async () => {
     expect.hasAssertions();
 
     await deleteVoiceState();
 
-    expect(connectVoiceServer).toHaveBeenCalledOnce();
+    expect(connectVoiceServer).toHaveBeenCalledTimes(1);
     expect(rmSync).toHaveBeenCalledWith(VIEWER_PATH, expect.objectContaining({ force: true }));
   });
 });

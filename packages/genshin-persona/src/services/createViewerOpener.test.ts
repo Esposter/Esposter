@@ -12,7 +12,7 @@ describe(createViewerOpener, () => {
   const MODEL_ID = 0;
   const OTHER_MODEL_ID = 1;
 
-  test("A machine with no viewer is unchanged", async () => {
+  test("a machine with no viewer is unchanged", async () => {
     expect.hasAssertions();
 
     const connect = vi.fn<(address: string) => Promise<ViewerLink | undefined>>();
@@ -28,7 +28,7 @@ describe(createViewerOpener, () => {
     expect(createPlayer).not.toHaveBeenCalled();
   });
 
-  test("A second open of the same viewer reuses its link", async () => {
+  test("a second open of the same viewer reuses its link", async () => {
     expect.hasAssertions();
 
     const { link } = createFakeViewerLink();
@@ -43,7 +43,7 @@ describe(createViewerOpener, () => {
     expect(createPlayer).toHaveBeenCalledExactlyOnceWith(link, MODEL_ID);
   });
 
-  test("A second open with a different modelId builds a new player for that model", async () => {
+  test("a second open with a different modelId builds a new player for that model", async () => {
     expect.hasAssertions();
 
     const first = createFakeViewerLink();

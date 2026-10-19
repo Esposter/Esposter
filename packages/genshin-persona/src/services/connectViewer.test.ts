@@ -43,7 +43,7 @@ describe(connectViewer, () => {
     expect(JSON.parse(sent[0] ?? "")).toStrictEqual({ msg: ViewerMessage.Register, msgId: 1 });
   });
 
-  test("A malformed frame is ignored and the listener does not throw", async () => {
+  test("a malformed frame is ignored and the listener does not throw", async () => {
     expect.hasAssertions();
 
     const { emit, sent, socket } = createSocket(false);

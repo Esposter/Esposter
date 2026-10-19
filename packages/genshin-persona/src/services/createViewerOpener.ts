@@ -9,7 +9,7 @@ export interface ViewerOpenerDependencies {
 }
 
 // The viewer a reading is shown on: read from the file at each reading, connected only while no connection is open,
-// and nothing at all while no viewer is on file, so a machine without one never tries a socket
+// And nothing at all while no viewer is on file, so a machine without one never tries a socket
 export const createViewerOpener = ({ connect, createPlayer, readConfiguration }: ViewerOpenerDependencies) => {
   let player: ViewerPlayer | undefined;
   let connected: Pick<ViewerConfiguration, "address" | "modelId"> | undefined;
