@@ -4,8 +4,8 @@ const TALENT_COMMENT_REGEX = /\/\/ (?<type>attack|burst|skill): .+? - (?<label>.
 const PARAMETER_REGEX = /\{(?<index>\d+)\}/gu;
 
 // The labels gcsim's generated talent file names beside its multipliers, `// attack: DoughFu - 3-Hit DMG: {2}+{2}`, by
-// `<talent>|<label>`: the game's parameter indexes each label reads, in order, each with the line citing it
-export const readGcsimTalentParameters = (source: string): Map<string, GcsimTalentParameter> => {
+// `<talent>|<label>`: the parameters each label reads, in order, with the line citing each
+export const readGcsimTalentParameters = (source: string): Map<string, GcsimTalentParameter[]> => {
   const talentRowMap = new Map<string, { indexes: number[]; lines: [number, ...number[]] }>();
   for (const [lineIndex, line] of source.split("\n").entries()) {
     const groups = TALENT_COMMENT_REGEX.exec(line.trim())?.groups;
@@ -20,10 +20,11 @@ export const readGcsimTalentParameters = (source: string): Map<string, GcsimTale
       });
     else row.lines.push(lineNumber);
   }
-  const talentParameterMap = new Map<string, GcsimTalentParameter>();
+  const talentParameterMap = new Map<string, GcsimTalentParameter[]>();
   for (const [key, { indexes, lines }] of talentRowMap)
-    talentParameterMap.set(key, {
-      parameters: indexes.map((index, parameterIndex) => ({ index, line: lines[parameterIndex] ?? lines[0] })),
-    });
+    talentParameterMap.set(
+      key,
+      indexes.map((index, parameterIndex) => ({ index, line: lines[parameterIndex] ?? lines[0] })),
+    );
   return talentParameterMap;
 };

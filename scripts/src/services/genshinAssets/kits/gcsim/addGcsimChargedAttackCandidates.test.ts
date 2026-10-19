@@ -74,8 +74,8 @@ describe(addGcsimChargedAttackCandidates, () => {
     talentArrayMap: new Map(),
     talentFile: "iansan.go",
     talentParameterMap: new Map([
-      ["attack|Charged Attack DMG", { parameters: [{ index: 3, line: 4 }] }],
-      ["attack|Swift Stormflight DMG", { parameters: [{ index: 4, line: 5 }] }],
+      ["attack|Charged Attack DMG", [{ index: 3, line: 4 }]],
+      ["attack|Swift Stormflight DMG", [{ index: 4, line: 5 }]],
     ]),
     travelMap: new Map(),
   };

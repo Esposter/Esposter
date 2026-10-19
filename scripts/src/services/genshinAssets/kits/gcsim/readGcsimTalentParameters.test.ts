@@ -12,35 +12,31 @@ describe(readGcsimTalentParameters, () => {
 
     expect(readGcsimTalentParameters(source)).toStrictEqual(
       new Map([
-        ["attack|1-Hit DMG", { parameters: [{ index: 0, line: 4 }] }],
-        ["attack|2-Hit DMG", { parameters: [{ index: 1, line: 5 }] }],
+        ["attack|1-Hit DMG", [{ index: 0, line: 4 }]],
+        ["attack|2-Hit DMG", [{ index: 1, line: 5 }]],
         [
           "attack|3-Hit DMG",
-          {
-            parameters: [
-              { index: 2, line: 6 },
-              { index: 2, line: 7 },
-            ],
-          },
+          [
+            { index: 2, line: 6 },
+            { index: 2, line: 7 },
+          ],
         ],
-        ["attack|4-Hit DMG", { parameters: [{ index: 3, line: 8 }] }],
-        ["attack|5-Hit DMG", { parameters: [{ index: 4, line: 12 }] }],
-        ["attack|Charged Attack DMG", { parameters: [{ index: 5, line: 13 }] }],
+        ["attack|4-Hit DMG", [{ index: 3, line: 8 }]],
+        ["attack|5-Hit DMG", [{ index: 4, line: 12 }]],
+        ["attack|Charged Attack DMG", [{ index: 5, line: 13 }]],
         [
           "attack|Low/High Plunge DMG",
-          {
-            parameters: [
-              { index: 8, line: 15 },
-              { index: 9, line: 16 },
-            ],
-          },
+          [
+            { index: 8, line: 15 },
+            { index: 9, line: 16 },
+          ],
         ],
-        ["attack|Plunge DMG", { parameters: [{ index: 7, line: 14 }] }],
-        ["burst|1-Hit Swing DMG", { parameters: [{ index: 0, line: 18 }] }],
-        ["burst|2-Hit Swing DMG", { parameters: [{ index: 1, line: 19 }] }],
-        ["burst|3-Hit Swing DMG", { parameters: [{ index: 2, line: 20 }] }],
-        ["burst|Pyronado DMG", { parameters: [{ index: 3, line: 21 }] }],
-        ["skill|Flame DMG", { parameters: [{ index: 0, line: 17 }] }],
+        ["attack|Plunge DMG", [{ index: 7, line: 14 }]],
+        ["burst|1-Hit Swing DMG", [{ index: 0, line: 18 }]],
+        ["burst|2-Hit Swing DMG", [{ index: 1, line: 19 }]],
+        ["burst|3-Hit Swing DMG", [{ index: 2, line: 20 }]],
+        ["burst|Pyronado DMG", [{ index: 3, line: 21 }]],
+        ["skill|Flame DMG", [{ index: 0, line: 17 }]],
       ]),
     );
   });
@@ -66,13 +62,11 @@ describe(readGcsimTalentParameters, () => {
       new Map([
         [
           "burst|Principle of Purity: As the Light Shifts DMG",
-          {
-            parameters: [
-              { index: 0, line: 2 },
-              { index: 1, line: 5 },
-              { index: 2, line: 8 },
-            ],
-          },
+          [
+            { index: 0, line: 2 },
+            { index: 1, line: 5 },
+            { index: 2, line: 8 },
+          ],
         ],
       ]),
     );
@@ -93,12 +87,10 @@ describe(readGcsimTalentParameters, () => {
       new Map([
         [
           "burst|Blast DMG",
-          {
-            parameters: [
-              { index: 0, line: 2 },
-              { index: 1, line: 2 },
-            ],
-          },
+          [
+            { index: 0, line: 2 },
+            { index: 1, line: 2 },
+          ],
         ],
       ]),
     );
