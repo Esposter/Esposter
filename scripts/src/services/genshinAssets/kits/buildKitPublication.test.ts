@@ -26,13 +26,13 @@ describe(buildKitPublication, () => {
     [CombatTalent.ElementalSkill]: 1,
     [CombatTalent.NormalAttack]: 1,
   };
-  // A kit built from those values, its tables as the build reads them
+  // A kit built from those values, its tables as the build reads them, and the multiplier group its hits name
   const createTables = (characterId: number): KitTables => ({
     characterId,
     labelMap: new Map(),
     name: String(characterId),
     talentGroupIdMap,
-    talentMultiplierMap: {},
+    talentMultiplierMap: { 1: [{ level: 1, paramList: [1] }] },
     weaponType: WeaponType.Sword,
   });
   const borrowFrom = (characterId: number): KitOverlayEntry => ({
@@ -62,39 +62,39 @@ describe(buildKitPublication, () => {
     };
   };
 
-  test("builds a kit yet to be published that the publish names, beside the published ones", () => {
+  test("builds a kit yet to be published that the publish names, beside the published ones", async () => {
     expect.hasAssertions();
 
-    const { indexes } = buildKitPublication([createInput(1, true), createInput(2, false)], [2]);
+    const { indexes } = await buildKitPublication([createInput(1, true), createInput(2, false)], [2]);
 
     expect(Object.keys(indexes[GameDataset.Kits] ?? {})).toStrictEqual(["1", "2"]);
   });
 
-  test("fails on a kit yet to be published that the publish does not name", () => {
+  test("fails on a kit yet to be published that the publish does not name", async () => {
     expect.hasAssertions();
 
-    expect(() => buildKitPublication([createInput(1, true), createInput(2, false)]))
+    await expect(buildKitPublication([createInput(1, true), createInput(2, false)])).rejects
       .toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Create, name: buildKitPublication, the records differ from their published ones, so name each kit meant to change in --only:
       2: has no published kit]
     `);
   });
 
-  test("names the kit and the record path of a talent reference its sources do not read", () => {
+  test("names the kit and the record path of a talent reference its sources do not read", async () => {
     expect.hasAssertions();
 
     // Amber's first overlay entry sourced from gcsim is a reference to a talent group none of the sources give
-    expect(() =>
+    await expect(
       buildKitPublication([{ ...createInput(1, false, readKitOverlay("amber")), name: "Amber", overlayName: "amber" }]),
-    ).toThrowErrorMatchingInlineSnapshot(
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.multiplier, has no Gcsim value for the overlay to choose]`,
     );
   });
 
-  test("builds a borrower after its donor, so the value it borrows is the donor's own resolved one", () => {
+  test("builds a borrower after its donor, so the value it borrows is the donor's own resolved one", async () => {
     expect.hasAssertions();
 
-    const { indexes } = buildKitPublication(
+    const { indexes } = await buildKitPublication(
       [createInput(1, false, { [HITMARK_PATH]: borrowFrom(2) }), createInput(2, false, {}, DONOR_CANDIDATE_MAP)],
       [1, 2],
     );
@@ -108,10 +108,10 @@ describe(buildKitPublication, () => {
     });
   });
 
-  test("fails a chain of donors that borrows back to a kit already being built", () => {
+  test("fails a chain of donors that borrows back to a kit already being built", async () => {
     expect.hasAssertions();
 
-    expect(() =>
+    await expect(
       buildKitPublication(
         [
           createInput(1, false, { [HITMARK_PATH]: borrowFrom(2) }),
@@ -119,12 +119,12 @@ describe(buildKitPublication, () => {
         ],
         [1, 2],
       ),
-    ).toThrowErrorMatchingInlineSnapshot(
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Create, name: 1, its record cannot be built: Invalid operation: Read, name: 2, borrows from 1, which borrows back to a kit already being built]`,
     );
   });
 
-  test("publishes a multiplier without the constellation its overlay joins it by", () => {
+  test("publishes a multiplier without the constellation its overlay joins it by", async () => {
     expect.hasAssertions();
 
     // Gcsim's multiplier for the first strike names the constellation its talent variable reads at
@@ -141,11 +141,24 @@ describe(buildKitPublication, () => {
       ],
     ]);
 
-    const { indexes } = buildKitPublication([createInput(1, false, {}, sourceCandidateMap)], [1]);
+    const { indexes } = await buildKitPublication([createInput(1, false, {}, sourceCandidateMap)], [1]);
 
     expect(indexes[GameDataset.Kits]).toHaveProperty(["1", "normalAttacks", 0, "hits", 0, "multiplier"], {
       index: 0,
       proudSkillGroupId: 1,
     });
+  });
+
+  // Freminet's id, whose behaviour module reads Spiritbreath Thorn by name
+  const FREMINET_CHARACTER_ID = 10_000_085;
+
+  test("fails the publish naming a kit whose behaviour reads a value its record lacks", async () => {
+    expect.hasAssertions();
+
+    await expect(buildKitPublication([createInput(FREMINET_CHARACTER_ID, false)], [FREMINET_CHARACTER_ID])).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Create, name: buildKitPublication, the records differ from their published ones, so name each kit meant to change in --only:
+      10000085: its kit cannot be built: Invalid operation: Read, name: hits.spiritbreathThorn, is not in its kit's record]
+    `);
   });
 });

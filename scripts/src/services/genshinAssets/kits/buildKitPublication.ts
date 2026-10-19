@@ -5,8 +5,14 @@ import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
 import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
 import { throwCollectedFailures } from "#src/services/shared/throwCollectedFailures";
-import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import { GameDataset } from "genshin-world";
+import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import {
+  buildKit,
+  createTalentLevelMap,
+  GameDataset,
+  readCreateKitBehaviour,
+  TALENT_START_LEVELS,
+} from "genshin-world";
 
 // A multiplier's constellation is the join key its build reads a talent variable at, which the published shape omits
 const omitConstellation = (value: unknown): unknown => {
@@ -21,13 +27,14 @@ const omitConstellation = (value: unknown): unknown => {
 
 // Every kit's record and sources from its sources and committed overlay, as the entries of the `kits` and `kitSources`
 // Indexes by avatar id, each kit built after the donors its overlay borrows from. A record must reproduce its published
-// Values exactly unless its kit is one the publish means to change, so a kit whose overlay or sources moved unasked fails
-// The publish, naming the paths that differ. A kit with no published record is one the publish means to add, so it must
-// Be named among the changed ones too
-export const buildKitPublication = (
+// Values exactly unless its kit is one the publish means to change, so a kit whose overlay or sources moved unasked
+// Fails the publish, naming the paths that differ. A kit with no published record is one the publish means to add, so
+// It must be named among the changed ones too. Every kit, named or not, also builds into a kit from its behaviour
+// Module, so a record that module cannot read fails the publish
+export const buildKitPublication = async (
   inputs: readonly KitInput[],
   changedCharacterIds: readonly number[] = [],
-): GameDataPublication => {
+): Promise<GameDataPublication> => {
   const inputMap = new Map(inputs.map((input) => [input.characterId, input]));
   const builtMap = new Map<number, BuiltKit>();
   const kits: Record<string, unknown> = {};
@@ -40,6 +47,17 @@ export const buildKitPublication = (
         throw new InvalidOperationError(Operation.Create, name, `its record cannot be built: ${error.message}`);
       },
     );
+    const createBehaviour = await readCreateKitBehaviour(characterId);
+    getResult(() =>
+      buildKit(
+        record,
+        tables.talentMultiplierMap,
+        createTalentLevelMap(tables.talentGroupIdMap, TALENT_START_LEVELS),
+        createBehaviour,
+      ),
+    ).match(noop, (error) => {
+      failures.push(`${name}: its kit cannot be built: ${error.message}`);
+    });
     kits[String(characterId)] = omitConstellation(record);
     kitSources[String(characterId)] = sources;
     if (changedCharacterIds.includes(characterId)) continue;
