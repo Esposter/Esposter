@@ -10,21 +10,24 @@ describe(getWebpageCss, () => {
   test("the page css holds each type's css once and then the style rules", () => {
     expect.hasAssertions();
 
-    const css = getWebpageCss({
-      content: [
-        { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
-        {
-          props: {
-            href: TEST_URL,
-            id: TEST_OTHER_ID,
-            label: TEST_LABEL,
-            style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } },
+    const css = getWebpageCss(
+      {
+        content: [
+          { props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button },
+          {
+            props: {
+              href: TEST_URL,
+              id: TEST_OTHER_ID,
+              label: TEST_LABEL,
+              style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } },
+            },
+            type: WebpageNodeType.Button,
           },
-          type: WebpageNodeType.Button,
-        },
-      ],
-      root: TEST_ROOT,
-    });
+        ],
+        root: TEST_ROOT,
+      },
+      [buttonNodeType],
+    );
 
     expect(css).toBe(`${buttonNodeType.css}\n.pb-${TEST_OTHER_ID} {\n  color: red;\n}`);
   });

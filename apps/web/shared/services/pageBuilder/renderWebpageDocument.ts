@@ -34,5 +34,5 @@ export const renderWebpageDocument = (document: WebpageDocument, context: Render
   );
   const scripts = definitions.flatMap(({ script }) => (script ? [`<script>(${script})()</script>`] : []));
 
-  return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${getWebpageCss(document)}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;
+  return `<!doctype html><html lang="${escapeAttribute(document.root.props.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${getWebpageCss(document, definitions)}</style></head><body>${serializeHtml(content)}${scripts.join("")}</body></html>`;
 };

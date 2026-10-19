@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
@@ -16,7 +17,9 @@ const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
-const css = computed(() => (pageDocument.value ? getWebpageCss(pageDocument.value) : ""));
+const css = computed(() =>
+  pageDocument.value ? getWebpageCss(pageDocument.value, getPresentDefinitions(pageDocument.value)) : "",
+);
 const device = computed(() => pageBuilderCanvasStore.getDevice(resourceId));
 // The nodes are rendered by the frame's content, so the render is a functional component over the document it draws
 const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
