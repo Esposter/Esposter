@@ -12,6 +12,7 @@ import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/cand
 import { getRuleKitCandidates } from "#src/services/genshinAssets/kits/candidates/getRuleKitCandidates";
 import { mergeKitCandidateSources } from "#src/services/genshinAssets/kits/candidates/mergeKitCandidateSources";
 import { checkIsCitedBy } from "#src/services/genshinAssets/kits/record/checkIsCitedBy";
+import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -103,19 +104,27 @@ export const resolveKitValues = (
   const namedHitKitCandidateMap = getNamedHitKitCandidates(valueMap, namedHitCandidateMap);
   for (const [path, entry] of joinedChoiceMap)
     if (!chooseCandidate(path, entry, namedHitKitCandidateMap.get(path))) throw refuseChoice(path, entry);
-  // A cause saying no source gives the value is refused where one does
-  for (const [path, entry] of Object.entries(overlay))
-    if ("cause" in entry && NO_SOURCE_CAUSES.has(entry.cause)) {
-      const candidate = [...(sourceCandidateMap.get(path) ?? []), ...(namedHitKitCandidateMap.get(path) ?? [])].find(
-        ({ provenance }) => provenance.source !== KitSource.Rule,
+  // A cause saying no source gives the value is refused where one does, and a value said to differ from its sources is
+  // Refused where one gives that very value, as a choice of that source names it. A reference equal to another only in
+  // The numbers it reads is a different value, as its talent's level is the one it plays at
+  for (const [path, entry] of Object.entries(overlay)) {
+    if (!("cause" in entry)) continue;
+    const sourceCandidates = [
+      ...(sourceCandidateMap.get(path) ?? []),
+      ...(namedHitKitCandidateMap.get(path) ?? []),
+    ].filter(({ provenance }) => provenance.source !== KitSource.Rule);
+    const candidate = NO_SOURCE_CAUSES.has(entry.cause)
+      ? sourceCandidates[0]
+      : entry.cause === KitProvisionalCause.DiffersFromSource && entry.value !== undefined
+        ? sourceCandidates.find(({ value }) => checkIsKitValueEqual(value, entry.value))
+        : undefined;
+    if (candidate !== undefined)
+      throw new InvalidOperationError(
+        Operation.Read,
+        path,
+        `names ${entry.cause}, but ${candidate.provenance.source} gives ${JSON.stringify(candidate.value)}`,
       );
-      if (candidate !== undefined)
-        throw new InvalidOperationError(
-          Operation.Read,
-          path,
-          `names ${entry.cause}, but ${candidate.provenance.source} gives ${JSON.stringify(candidate.value)}`,
-        );
-    }
+  }
   chooseDefaults(namedHitKitCandidateMap);
   const ruleCandidateMap = getRuleKitCandidates(valueMap, tables.element);
   chooseDefaults(ruleCandidateMap);

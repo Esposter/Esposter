@@ -85,6 +85,47 @@ describe(resolveKitValues, () => {
     );
   });
 
+  test("refuses a DiffersFromSource value a gcsim candidate gives at its path, which a choice of gcsim names", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      resolveKitValues(
+        sourceCandidateMap,
+        { "burst.hits.length": { cause: KitProvisionalCause.DiffersFromSource, value: 3 } },
+        new Map(),
+        new Map(),
+        TABLES,
+        false,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: burst.hits.length, names DiffersFromSource, but Gcsim gives 3]`,
+    );
+  });
+
+  test("keeps a DiffersFromSource reference that reads the same numbers as a source's reference to another group", () => {
+    expect.hasAssertions();
+
+    const sameRowTables = {
+      ...tables,
+      talentMultiplierMap: { "2138": [{ level: 1, paramList: [2.456] }], "2139": [{ level: 1, paramList: [2.456] }] },
+    } as unknown as KitTables;
+    const { valueMap } = resolveKitValues(
+      sourceCandidateMap,
+      {
+        "hits.fieryRainArrows.0.multiplier": {
+          cause: KitProvisionalCause.DiffersFromSource,
+          value: { index: 0, proudSkillGroupId: 2138 },
+        },
+      },
+      new Map(),
+      new Map(),
+      sameRowTables,
+      false,
+    );
+
+    expect(valueMap.get("hits.fieryRainArrows.0.multiplier")).toStrictEqual({ index: 0, proudSkillGroupId: 2138 });
+  });
+
   test("refuses a NoPoiseSource value the wiki gives at its path, naming the wiki", () => {
     expect.hasAssertions();
 
