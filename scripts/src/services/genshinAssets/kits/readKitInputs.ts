@@ -88,7 +88,9 @@ export const readKitInputs = async ({
       gcsim === undefined
         ? getFallbackPlungeKitCandidates(plungeFallback, tables)
         : getGcsimKitCandidates(gcsim, tables, plungeFallback, getKitBagPaths(publishedRecord ?? {}, overlay)),
-      gcsimFolder === undefined ? new Map() : readGcsimCitedCandidates(overlay, gcsimDirectory, gcsimFolder),
+      gcsimFolder === undefined
+        ? new Map()
+        : readGcsimCitedCandidates(overlay, gcsimDirectory, gcsimFolder, tables.talentGroupIdMap),
     );
     const namedHitCandidateMap =
       gcsim === undefined ? new Map() : getGcsimNamedHitCandidates(gcsim, tables, readOverlayConstellations(overlay));

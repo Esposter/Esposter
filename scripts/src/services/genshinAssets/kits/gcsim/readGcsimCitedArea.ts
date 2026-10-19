@@ -1,26 +1,23 @@
 import type { AttackArea } from "genshin-world";
 
-import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
+import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
-// Every kit area is built at this height, a shared rule of the builders, as a gcsim hitbox carries none
-const AREA_HEIGHT = 2;
-
-// The area a circle constructor on a line gives: its radius, its fan angle in radians or a whole circle's 2π, and the
-// Shared height. The first `combat` hitbox constructor the line calls is the one read, and a box or no constructor has no
-// Area in the kit's shape, so it gives none
-export const readGcsimCitedArea = (line: string, file: string): AttackArea | undefined => {
+// The area the first `combat` hitbox constructor a line calls gives, priced as the mechanical reader prices the same
+// Hitbox, at the targeting area its action's reach is measured from. A constructor no kit area gives has none. The
+// Cause its pricing gives is not kept, as a cited value carries its citation as its provenance
+export const readGcsimCitedArea = (line: string, file: string, targetingArea: AttackArea): AttackArea | undefined => {
   const tokens = tokenizeGo(line);
   for (let position = 0; position < tokens.length; position++) {
-    const hitbox = readGoHitbox(tokens, position, () => undefined, file);
-    if (hitbox === undefined) continue;
-    if (hitbox.shape !== GcsimHitboxShape.Circle || hitbox.radius === undefined) return undefined;
-    return {
-      angle: hitbox.fanAngle === undefined ? 2 * Math.PI : (hitbox.fanAngle * Math.PI) / 180,
-      height: AREA_HEIGHT,
-      radius: hitbox.radius,
-    };
+    const hitbox = readGoHitbox(
+      tokens,
+      position,
+      () => undefined,
+      file,
+      () => undefined,
+    );
+    if (hitbox !== undefined) return toGcsimArea(hitbox, targetingArea)?.area;
   }
   return undefined;
 };

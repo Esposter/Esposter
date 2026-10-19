@@ -1,5 +1,6 @@
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
+import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { AttackArea } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
@@ -16,8 +17,9 @@ import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveG
 import { toGcsimAttackTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimAttackTag";
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
+import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
-import { Attribute } from "genshin-world";
+import { Attribute, CombatTalent, kitParameterSchema } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -50,6 +52,55 @@ const readNormalCounter = (path: string): number | undefined => {
   const counter = NORMAL_ATTACK_PATH_REGEX.exec(path)?.groups?.counter;
   return counter === undefined ? undefined : Number(counter);
 };
+
+// The path segments that name the normal attack's group: its normal attacks, its charged attacks, its plunges and
+// Their collisions, the actions a strike's reach is measured from as the mechanical reader measures each
+const checkIsNormalAttackPath = (path: string): boolean =>
+  path
+    .split(".")
+    .some(
+      (segment) =>
+        segment === "normalAttacks" ||
+        segment.startsWith("chargedAttack") ||
+        segment === "plungeCollision" ||
+        segment === "plunges",
+    );
+
+// A named hit's path, `hits.<name>` with or without a run index, which names the hit and the run it is
+const HIT_PATH_REGEX = /^hits\.(?<name>[^.]+)(?:\.(?<index>\d+))?\./u;
+
+// The proud skill group an overlay's multiplier names, the one a named hit joins its talent by
+const readMultiplierGroupId = (overlay: KitOverlay, key: string): number | undefined => {
+  const parameter = kitParameterSchema.safeParse(overlay[key]?.value).data;
+  return typeof parameter === "object" ? parameter.proudSkillGroupId : undefined;
+};
+
+// The proud skill group of the hit a `hits.<name>` path names: its run's multiplier's where the path names a run and
+// The overlay gives one, else the name's
+const readHitGroupId = (path: string, overlay: KitOverlay): number | undefined => {
+  const groups = HIT_PATH_REGEX.exec(path)?.groups;
+  if (groups === undefined) return undefined;
+  const { index, name } = groups;
+  if (index === undefined) return readMultiplierGroupId(overlay, `hits.${name}.multiplier`);
+  return (
+    readMultiplierGroupId(overlay, `hits.${name}.${index}.multiplier`) ??
+    readMultiplierGroupId(overlay, `hits.${name}.multiplier`)
+  );
+};
+
+// The targeting area a cited area's reach on a target is measured from, by the group of the action it belongs to: the
+// Normal attack's group for a strike's path, the group of a hit's multiplier for a named hit, the skill's for any other
+const readCitedTargetingArea = (
+  path: string,
+  overlay: KitOverlay,
+  talentGroupIdMap: KitTables["talentGroupIdMap"],
+): AttackArea =>
+  getTalentTargetingArea(
+    checkIsNormalAttackPath(path)
+      ? talentGroupIdMap[CombatTalent.NormalAttack]
+      : (readHitGroupId(path, overlay) ?? talentGroupIdMap[CombatTalent.ElementalSkill]),
+    talentGroupIdMap,
+  );
 
 // A module-scope table's declaration, `name = [][]float64{` or `name = []float64{`
 const TABLE_DECLARATION_REGEX = /^\s*(?:var |const )?(?<name>[A-Za-z_]\w*)\s*(?::=|=)\s*\[\]/u;
@@ -92,6 +143,7 @@ const readCitedArea = (
   lineIndex: number,
   file: string,
   counter: number | undefined,
+  targetingArea: AttackArea,
 ): undefined | { area: AttackArea; line: number } => {
   const constructorText = readConstructorText(lines, lineIndex);
   // The arguments are read with the locals they name resolved, the constructor's own name and its left side left as they are
@@ -101,7 +153,7 @@ const readCitedArea = (
   if (argumentText === undefined) return undefined;
   const table = substituteGoTableCells(`${constructorText.slice(0, open + 1)}${argumentText}`, lines, counter);
   if (table === undefined) return undefined;
-  const area = readGcsimCitedArea(table.text, file);
+  const area = readGcsimCitedArea(table.text, file, targetingArea);
   if (area === undefined) return undefined;
   const cite = table.cites.find(({ value }) => value === area.radius) ?? table.cites[0];
   return { area, line: cite?.line ?? lineIndex + 1 };
@@ -164,6 +216,7 @@ export const readGcsimCitedCandidates = (
   overlay: KitOverlay,
   gcsimDirectory: string,
   folder: string,
+  talentGroupIdMap: KitTables["talentGroupIdMap"],
 ): Map<string, KitCandidate[]> => {
   const candidateMap = new Map<string, KitCandidate[]>();
   for (const [path, entry] of Object.entries(overlay)) {
@@ -172,7 +225,13 @@ export const readGcsimCitedCandidates = (
     const lines = readFileSync(join(gcsimDirectory, file), "utf8").split("\n");
     // An area is cited by the constructor on its line, whole, with the table cells it reads cited by their rows
     if (typeof entry.value === "object" && entry.value !== null && !Array.isArray(entry.value)) {
-      const cited = readCitedArea(lines, readConstructorIndex(lines, entry.line - 1), file, readNormalCounter(path));
+      const cited = readCitedArea(
+        lines,
+        readConstructorIndex(lines, entry.line - 1),
+        file,
+        readNormalCounter(path),
+        readCitedTargetingArea(path, overlay, talentGroupIdMap),
+      );
       if (cited !== undefined)
         addKitCandidate(candidateMap, path, {
           provenance: { file, line: cited.line, source: KitSource.Gcsim },

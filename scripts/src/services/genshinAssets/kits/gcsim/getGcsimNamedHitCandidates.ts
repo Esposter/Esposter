@@ -18,8 +18,8 @@ import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQu
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
+import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { readNamedHitKey } from "#src/services/genshinAssets/kits/readNamedHitKey";
-import { CombatTalent, SKILL_TARGETING_AREA, STRIKE_TARGETING_AREA } from "genshin-world";
 
 // The candidates a hit's writer gives at its key, by their field names
 const readFieldMap = (
@@ -119,12 +119,7 @@ export const getGcsimNamedHitCandidates = (
     });
     const addNamedHit = (parameter: { index: number; proudSkillGroupId: number }, talentLeaf?: GcsimTalentLeaf) => {
       const key = readNamedHitKey(parameter);
-      // The zone a hit's talent targets within, as its action's does: the strikes' for a normal attack's group, which a
-      // Charged attack and a plunge belong to, and the skill's for a skill's or a burst's
-      const targetingArea =
-        parameter.proudSkillGroupId === tables.talentGroupIdMap[CombatTalent.NormalAttack]
-          ? STRIKE_TARGETING_AREA
-          : SKILL_TARGETING_AREA;
+      const targetingArea = getTalentTargetingArea(parameter.proudSkillGroupId, tables.talentGroupIdMap);
       namedHitCandidateMap.set(
         key,
         readNamedHit(key, attackCalls, { attack: joinedAttack, talentLeaf }, targetingArea),
