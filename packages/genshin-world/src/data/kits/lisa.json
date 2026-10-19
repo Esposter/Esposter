@@ -244,7 +244,7 @@
   "hits.discharges.29.hitmarkFrames": { "cause": "Unclassified", "value": 989 },
   "hits.discharges.29.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "skillHolds.0.action.hits.0.area": {
-    "cause": "Unsourced",
+    "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.2 }
   },
   "skillHolds.0.action.hits.0.multiplier": {
