@@ -41,7 +41,7 @@
   "hits.duststalkerBolt.multiplier": { "cause": "Unsourced", "value": 1 },
   "hits.duststalkerBolt.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "normalAttacks.2.hits.1.multiplier": { "source": "Tables" },
-  "parameters.extensionSeconds": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 7132 } },
+  "parameters.extensionSeconds": { "file": "skill.go", "line": 143, "source": "Gcsim", "value": 4 },
   "parameters.burstSeconds": { "cause": "Unsourced", "value": { "index": 12, "proudSkillGroupId": 7139 } },
   "parameters.pactswornPathclearerElementalMastery": {
     "cause": "Unsourced",
@@ -62,7 +62,6 @@
     "source": "Gcsim",
     "value": { "index": 6, "proudSkillGroupId": 7139 }
   },
-  "stances.pactswornPathclearer.chargedAttack.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
   "stances.pactswornPathclearer.chargedAttack.targeting": { "cause": "Unsourced", "value": "Strike" },
   "stances.pactswornPathclearer.normalAttacks.length": { "cause": "Unsourced", "value": 5 },
   "stances.pactswornPathclearer.normalAttacks.0.animationFrames": { "cause": "Unsourced", "value": 28 },
@@ -71,7 +70,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.0.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 12 },
   "stances.pactswornPathclearer.normalAttacks.0.hits.0.multiplier": {
     "source": "Gcsim",
@@ -85,7 +83,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.1.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
   "stances.pactswornPathclearer.normalAttacks.1.hits.0.multiplier": {
     "source": "Gcsim",
@@ -99,7 +96,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5.933169473392783 }
   },
-  "stances.pactswornPathclearer.normalAttacks.2.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 18 },
   "stances.pactswornPathclearer.normalAttacks.2.hits.0.multiplier": {
     "source": "Gcsim",
@@ -125,8 +121,12 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.3 }
   },
-  "stances.pactswornPathclearer.normalAttacks.3.hits.1.element": { "cause": "Unclassified", "value": "Electric" },
-  "stances.pactswornPathclearer.normalAttacks.3.hits.1.gauge": { "cause": "Unsourced", "value": 1 },
+  "stances.pactswornPathclearer.normalAttacks.3.hits.1.element": {
+    "file": "attack.go",
+    "line": 140,
+    "source": "Gcsim",
+    "value": "Electric"
+  },
   "stances.pactswornPathclearer.normalAttacks.3.hits.1.hitmarkFrames": { "cause": "Unsourced", "value": 14 },
   "stances.pactswornPathclearer.normalAttacks.3.hits.1.multiplier": {
     "cause": "Unsourced",
@@ -140,7 +140,6 @@
     "cause": "Unsourced",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 5 }
   },
-  "stances.pactswornPathclearer.normalAttacks.4.hits.0.gauge": { "cause": "Unsourced", "value": 1 },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
   "stances.pactswornPathclearer.normalAttacks.4.hits.0.multiplier": {
     "source": "Gcsim",
