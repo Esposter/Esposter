@@ -1,7 +1,6 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { Kit } from "#src/models/kit/Kit";
 import type { KitField } from "#src/models/kit/KitField";
-import type { KitRecord } from "#src/models/kit/record/KitRecord";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -32,38 +31,6 @@ import { describe, expect, test, vi } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createNahidaKit = async (): Promise<Kit> => {
-  // Named entries the record holds for Tri-Karma Purification, Illusory Heart and the burst's per-count rows, read off
-  // The Skill and burst proud skill groups by the builder. The hosted record gains them once its kits are published
-  const NAHIDA_RECORD_NAMES: Partial<KitRecord> = {
-    areas: { illusoryHeart: { angle: 2 * Math.PI, height: 2, radius: 20 } },
-    frames: { illusoryHeartFirstTick: 96, illusoryHeartStart: 66, illusoryHeartTickInterval: 30 },
-    hits: {
-      triKarmaPurification: {
-        area: { angle: 2 * Math.PI, height: 2, radius: 4.8 },
-        element: Element.Dendro,
-        gauge: 1,
-        hitmarkFrames: 3,
-        multiplier: { index: 2, proudSkillGroupId: 7332 },
-        poiseDamage: 0,
-      },
-    },
-    parameters: {
-      illusoryHeartHydroExtension: [
-        { index: 4, proudSkillGroupId: 7339 },
-        { index: 5, proudSkillGroupId: 7339 },
-      ],
-      illusoryHeartSeconds: 15,
-      triKarmaElectroIntervalCut: [
-        { index: 2, proudSkillGroupId: 7339 },
-        { index: 3, proudSkillGroupId: 7339 },
-      ],
-      triKarmaElementalMastery: { index: 3, proudSkillGroupId: 7332 },
-      triKarmaPyroDamageBonus: [
-        { index: 0, proudSkillGroupId: 7339 },
-        { index: 1, proudSkillGroupId: 7339 },
-      ],
-    },
-  };
   const [record, talentMultiplierMap, characterTalentKits] = await Promise.all([
     readGameDataEntry(GAME_DATA_LOCAL_BASE_URL, GameDataset.Kits, String(NAHIDA_CHARACTER_ID), kitRecordSchema),
     readTalentMultipliers(GAME_DATA_LOCAL_BASE_URL, [NAHIDA_CHARACTER_ID]),
@@ -76,7 +43,7 @@ const createNahidaKit = async (): Promise<Kit> => {
   const talentLevelMap = Object.fromEntries(
     COMBAT_TALENT_ORDER.map((talent) => [talentGroupIds[talent], TALENT_START_LEVELS[talent]]),
   );
-  return buildKit({ ...record, ...NAHIDA_RECORD_NAMES }, talentMultiplierMap, talentLevelMap, createNahidaKitBehaviour);
+  return buildKit(record, talentMultiplierMap, talentLevelMap, createNahidaKitBehaviour);
 };
 const KIT = await createNahidaKit();
 const createCombatant = (characterId: number, element: Element, elementMastery = 0, kit: Kit = KIT): Combatant => ({
