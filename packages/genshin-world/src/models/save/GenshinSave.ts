@@ -104,7 +104,7 @@ export const genshinSaveSchema = z
     // The mining outcrops mined since the last reset, each once by its place's id, absent while none is mined
     minedOutcrops: createUniqueArraySchema(minedOutcropSaveSchema, "id").max(MAX_MINED_OUTCROP_COUNT).optional(),
     // The namecard the profile shows, by its item id
-    namecardItemId: z.number().int().nonnegative(),
+    namecardItemId: z.int().nonnegative(),
     offerings: z.object({ frostbearingTree: offeringProgressSaveSchema }),
     openedChests: openedChestSaveSchema,
     // The party: its teams, the one deployed, the member on the field and the characters down

@@ -8,7 +8,7 @@ import type { GroundPoint } from "genshin-engine";
 // Beside the entrance and is dropped once the chamber clears or fails. The defeats of that camp count toward its half
 export interface AbyssArena {
   areaId: string;
-  camp: EnemyCamp | undefined;
+  camp?: EnemyCamp;
   center: GroundPoint;
   challenge: AbyssChallenge;
   chamber: AbyssChamber;

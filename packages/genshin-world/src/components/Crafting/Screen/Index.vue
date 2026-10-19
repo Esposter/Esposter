@@ -206,8 +206,8 @@ const craft = () => {
     :strongboxes
     :wallet
     :weapon-data-map
-    @close="closeMysticOffering"
-    @craft="applyOfferingPickUp"
+    @close="closeMysticOffering()"
+    @craft="(pickUp) => applyOfferingPickUp(pickUp)"
   />
   <GameScreen v-else role="dialog" aria-modal="true" :aria-label="gameText[GameTextKey.CraftingTitle]">
     <CraftingScreen

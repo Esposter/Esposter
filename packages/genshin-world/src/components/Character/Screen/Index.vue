@@ -19,6 +19,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { ArtifactSlotGameTextKeyMap } from "#src/services/artifact/ArtifactSlotGameTextKeyMap";
+import { ENHANCE_AUTO_ADD_MAX_RARITY } from "#src/services/artifact/constants";
 import { enhanceArtifact } from "#src/services/artifact/enhanceArtifact";
 import { enhanceCharacterArtifact } from "#src/services/artifact/enhanceCharacterArtifact";
 import { equipBagArtifact } from "#src/services/artifact/equipBagArtifact";
@@ -333,13 +334,11 @@ const equipOptions = computed(() =>
     : [],
 );
 // The notice the artifact panel shows, the game's card for a refusal, cleared by the next artifact action
-const artifactNotice = ref<string>();
+const artifactNotice = ref("");
 // The Enhance picker's state: the slot it is open for, the bag's artifacts chosen as fodder, and the ore counts chosen by item id
 const enhanceSlot = ref<ArtifactSlot>();
 const enhanceFodderIds = ref<number[]>([]);
 const enhanceMaterialCounts = ref<Record<number, number>>({});
-// Auto Add takes artifacts up to four stars, the game's default, since five-star artifacts are left out of it unless the setting allows them
-const ENHANCE_AUTO_ADD_MAX_RARITY = 4;
 const enhanceArtifactWorn = computed(() => character.value?.artifacts.find((worn) => worn.slot === enhanceSlot.value));
 const enhanceFodders = computed(() =>
   inventory.value.items.flatMap(({ artifact, id }) =>
@@ -350,7 +349,11 @@ const enhanceFodders = computed(() =>
 const enhanceFodderOptions = computed(() =>
   inventory.value.items
     .flatMap(({ artifact, definition, id }) => (artifact && !artifact.isLocked ? [{ artifact, definition, id }] : []))
-    .toSorted((a, b) => a.artifact.rarity - b.artifact.rarity || a.artifact.level - b.artifact.level)
+    .toSorted(
+      (firstFodder, secondFodder) =>
+        firstFodder.artifact.rarity - secondFodder.artifact.rarity ||
+        firstFodder.artifact.level - secondFodder.artifact.level,
+    )
     .map(({ artifact, definition, id }) => ({
       caption: `+${artifact.level}`,
       id: String(id),
@@ -513,7 +516,7 @@ const isActivateDisabled = computed(
         @enhance="
           (index) => {
             // The Enhance button opens the picker over the worn artifact's slot, with nothing chosen yet
-            artifactNotice = undefined;
+            artifactNotice = '';
             enhanceSlot = ARTIFACT_SLOT_ORDER[index];
             enhanceFodderIds = [];
             enhanceMaterialCounts = {};
@@ -521,7 +524,7 @@ const isActivateDisabled = computed(
         "
         @equip="
           (index) => {
-            artifactNotice = undefined;
+            artifactNotice = '';
             equipSlot = ARTIFACT_SLOT_ORDER[index];
           }
         "
@@ -530,7 +533,7 @@ const isActivateDisabled = computed(
             // The picked slot's worn artifact is locked or unlocked, which keeps it out of fodder
             const slot = ARTIFACT_SLOT_ORDER[index];
             if (!character || !slot) return;
-            artifactNotice = undefined;
+            artifactNotice = '';
             replaceCharacter(toggleCharacterArtifactLock(character, slot));
           }
         "
@@ -545,7 +548,7 @@ const isActivateDisabled = computed(
               artifactNotice = gameText[GameTextKey.ArtifactInventoryFull];
               return;
             }
-            artifactNotice = undefined;
+            artifactNotice = '';
             replaceCharacter(unequipped.character);
             inventory = unequipped.inventory;
           }
@@ -567,7 +570,7 @@ const isActivateDisabled = computed(
         v-else-if="talentPanel && tab === CharacterMenuTab.Talents"
         :="talentPanel"
         :upgrade-label="gameText[GameTextKey.TalentLevelUp]"
-        @upgrade="upgradeTalentAt"
+        @upgrade="(index) => upgradeTalentAt(index)"
       />
       <CharacterProfile
         v-else-if="character && tab === CharacterMenuTab.Profile"
@@ -610,7 +613,7 @@ const isActivateDisabled = computed(
       :mora-label="gameText[GameTextKey.Mora]"
       :notice="enhanceNotice"
       :title="gameText[GameTextKey.ArtifactActionEnhance]"
-      @auto-add="autoAddEnhanceFodders"
+      @auto-add="autoAddEnhanceFodders()"
       @cancel="enhanceSlot = undefined"
       @confirm="
         () => {
@@ -631,8 +634,8 @@ const isActivateDisabled = computed(
           enhanceSlot = undefined;
         }
       "
-      @fodder="toggleEnhanceFodder"
-      @material="changeEnhanceMaterial"
+      @fodder="(id) => toggleEnhanceFodder(id)"
+      @material="(id, delta) => changeEnhanceMaterial(id, delta)"
     />
     <span class="grid" />
     <p class="training-guide">{{ gameText[GameTextKey.TrainingGuide] }}</p>

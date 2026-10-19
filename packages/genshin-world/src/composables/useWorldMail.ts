@@ -18,7 +18,7 @@ import { readBirthdayMailRows } from "#src/services/mail/readBirthdayMailRows";
 import { readMailRows } from "#src/services/mail/readMailRows";
 import { readMailText } from "#src/services/mail/readMailText";
 import { removeExpiredMails } from "#src/services/mail/removeExpiredMails";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { shallowRef } from "vue";
 
 // The mailbox's rows and texts, read as the world starts, with the Traveler's birthday mail delivered and the expired mails
@@ -44,7 +44,7 @@ export const useWorldMail = ({
   materialDataMap: ReadonlyMap<number, MaterialData>;
   names: Readonly<Record<string, string>>;
   savedMails: MailSave[];
-  savedTravelerBirthday: TravelerBirthdaySave | undefined;
+  savedTravelerBirthday?: TravelerBirthdaySave;
   setInventory: (nextInventory: Inventory) => void;
   setWallet: (nextWallet: Wallet) => void;
   wallet: Ref<Wallet>;
@@ -69,12 +69,9 @@ export const useWorldMail = ({
     const held = removeExpiredMails(savedMails, mailRows, birthdayMailIds, now);
     mails.value = deliverBirthdayMail(held, savedTravelerBirthday, birthdayMailRows, now);
     mailData.value = { birthdayMailIds, mailRows, textMap };
-  }).match(
-    () => {},
-    (error) => {
-      console.error(error);
-    },
-  );
+  }).match(noop, (error) => {
+    console.error(error);
+  });
 
   const applyMailboxState = (nextState: { inventory: Inventory; mails: MailSave[]; wallet: Wallet }) => {
     setInventory(nextState.inventory);

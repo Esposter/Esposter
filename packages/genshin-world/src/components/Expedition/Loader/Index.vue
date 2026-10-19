@@ -83,7 +83,7 @@ onMounted(() => {
       places.value = loadedPlaces;
       expeditionLimitAdds.value = loadedLimitAdds;
       characterExpeditionPassives.value = new Map(
-        [...characterPassiveGroupIdMap].map(([characterId, groupIds]) => [
+        Array.from(characterPassiveGroupIdMap, ([characterId, groupIds]) => [
           characterId,
           loadedPassives.filter(({ proudSkillGroupId }) => groupIds.has(proudSkillGroupId)),
         ]),

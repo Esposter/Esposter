@@ -672,10 +672,10 @@ const { claimLevel, collectOculus, getRegionProgress, offerOculi, readRegionLeve
 });
 // The Worship Statue on screen: the statue it was opened at and the region's levels as the screen read them, which its
 // Offer and claim act on
-const worshipLandmarkId = ref<string>();
+const worshipLandmarkId = ref("");
 const worshipLevels = shallowRef<StatueLevel[]>([]);
 const worshipRegionId = computed(() =>
-  worshipLandmarkId.value === undefined ? undefined : getStatueRegionId(worshipLandmarkId.value),
+  worshipLandmarkId.value ? getStatueRegionId(worshipLandmarkId.value) : undefined,
 );
 // F on a resonated statue opens its Worship Statue, its levels read first so the screen shows each level and its rewards
 const openWorship = (landmarkId: string) => {
@@ -693,7 +693,7 @@ const offerWorship = () => {
 // A claim takes the next level the region has reached, its rewards dropping where the Worship Statue was opened if the bag
 // Has no room for them
 const claimWorship = () => {
-  if (worshipRegionId.value === undefined || worshipLandmarkId.value === undefined) return;
+  if (worshipRegionId.value === undefined || !worshipLandmarkId.value) return;
   claimLevel(worshipRegionId.value, worshipLevels.value, {
     id: worshipLandmarkId.value,
     position: characterBody.position,
@@ -839,7 +839,7 @@ const { cookingRecipes, cookingStovePlace, cookingTalents, instructionRecipeMap,
 const { blacksmithPlace, forgeRecipes } = useWorldForging(gameDataBaseUrl);
 const { friendshipLevels, friendshipNamecards } = useWorldFriendship(gameDataBaseUrl);
 // The claims a commission makes with the points held, from the handbook's Commissions tab
-const { canConvertLongTermPoint, claimCommission, claimKatheryneBonus, convertLongTermPoint } =
+const { claimCommission, claimKatheryneBonus, convertLongTermPoint, isLongTermPointConvertible } =
   useWorldCommissionClaims({
     adventureExp,
     adventureRankTables,
@@ -2062,7 +2062,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :game-text
           :subtitle="tipText[showingTip.subtitleTextId] || ''"
           :title="tipText[showingTip.titleTextId] || ''"
-          @close="closeTip"
+          @close="closeTip()"
         />
         <OfferChoice
           v-if="claimPrompt"
@@ -2092,7 +2092,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :offers="domainClaimOffers"
           :original-label="gameText[GameTextKey.UseOriginalResin]"
           @choose="(offer) => chooseDomainTreeClaim(offer, getWorldNow())"
-          @close="closeDomainTreeClaim"
+          @close="closeDomainTreeClaim()"
         />
         <p v-if="bagFullHint" class="bag-full-hint">{{ bagFullHint }}</p>
       </template>
@@ -2166,6 +2166,7 @@ defineExpose({ jumpTo, readCameraPosition });
         />
       </template>
       <template v-if="mailData" #[ScreenKind.Mail]>
+        <!-- eslint-disable vue/no-restricted-syntax -- the Mail screen's own confirm dialog asks first and emits a delete only once the player confirms -->
         <MailScreen
           :birthday-mail-ids="mailData.birthdayMailIds"
           :game-text
@@ -2184,6 +2185,7 @@ defineExpose({ jumpTo, readCameraPosition });
           @read="(mail) => markMailRead(mail)"
           @pin="(mail) => toggleMailPin(mail)"
         />
+        <!-- eslint-enable vue/no-restricted-syntax -->
       </template>
       <template #[ScreenKind.Quests]>
         <QuestScreen
@@ -2203,7 +2205,7 @@ defineExpose({ jumpTo, readCameraPosition });
         <HandbookScreen
           :commissions="[]"
           :completed-count="0"
-          :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && canConvertLongTermPoint"
+          :can-use-long-term-encounter-points="isAdventureEncountersUnlocked && isLongTermPointConvertible"
           :day-commissions="handbookDayCommissions"
           :domains="handbookDomains"
           :encounter-point-limit
@@ -2214,9 +2216,9 @@ defineExpose({ jumpTo, readCameraPosition });
           :long-term-encounter-points="wholeLongTermEncounterPoints"
           :name-text
           :total-count="0"
-          @challenge="challengeWeeklyBoss"
+          @challenge="(landmark) => challengeWeeklyBoss(landmark)"
           @claim-commission="(commissionId) => claimCommission(commissionId)"
-          @claim-first-clear="claimWeeklyBossFirstClearReward"
+          @claim-first-clear="(entryId) => claimWeeklyBossFirstClearReward(entryId)"
           @close="screenKind = ScreenKind.World"
           @use-long-term-encounter-points="convertLongTermPoint()"
         />
@@ -2296,7 +2298,7 @@ defineExpose({ jumpTo, readCameraPosition });
           :stella-fortuna-name-text-id-map
           :trials
           @close="screenKind = ScreenKind.World"
-          @trial="openTrial"
+          @trial="(trial) => openTrial(trial)"
           @update:inventory="(nextInventory) => setInventory(nextInventory)"
         />
       </template>
@@ -2390,7 +2392,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :offer-title="reputationOfferTitle"
       :progress="reputation"
       :reputation="reputationCity"
-      @accept="acceptReputationOffer"
+      @accept="acceptReputationOffer()"
       @close="screenKind = ScreenKind.World"
     />
     <GcgSession
@@ -2426,9 +2428,9 @@ defineExpose({ jumpTo, readCameraPosition });
       :levels="worshipLevels"
       :progress="getRegionProgress(worshipRegionId)"
       @blessing="screenKind = ScreenKind.Blessing"
-      @claim="claimWorship"
+      @claim="claimWorship()"
       @close="screenKind = ScreenKind.World"
-      @offer="offerWorship"
+      @offer="offerWorship()"
     />
     <CookingScreen
       v-if="screenKind === ScreenKind.Cooking && cookingRecipe"
@@ -2464,7 +2466,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :is-in-domain="domainArena !== undefined"
       :levels="domainLevelRows"
       @close="screenKind = ScreenKind.World"
-      @enter="enterDomainLevel"
+      @enter="(dungeonId) => enterDomainLevel(dungeonId)"
       @leave="
         leaveDomain();
         screenKind = ScreenKind.World;
@@ -2514,7 +2516,7 @@ defineExpose({ jumpTo, readCameraPosition });
       :choices="abyssChoices"
       :game-text
       :name-text
-      @choose="chooseAbyssBenediction"
+      @choose="(towerBuffId) => chooseAbyssBenediction(towerBuffId)"
     />
     <ForgeScreen
       v-if="screenKind === ScreenKind.Forge"

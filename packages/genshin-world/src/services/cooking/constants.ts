@@ -5,6 +5,8 @@ import { WeatherKind } from "genshin-engine";
 export const COOKING_BATCH_LIMIT = 99;
 // The milliseconds between two collects while the processing screen is open, each moving the units done by now into the bag
 export const PROCESSING_COLLECT_INTERVAL_MS = 1000;
+// The milliseconds in a second, read from Temporal's own unit rather than typed out
+export const MILLISECONDS_PER_SECOND: number = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 // The percent a chance in a specialty row is out of
 export const PERCENT_TOTAL = 100;
 // The one character the game refuses to cook at all, so no dish is made with her

@@ -169,12 +169,13 @@ export const useWorldDomains = ({
       : [],
   );
   // A weekly boss's trounce domain is read from the weekly record, which holds none before a publish, so its schedule is empty then
-  const readDomainSchedule = (landmark: DomainEntranceLandmark): Promise<DomainSchedule> =>
-    landmark.domainKind === DomainKind.Trounce
-      ? readWeeklyBossDomains(gameDataBaseUrl).then((domains) =>
-          toWeeklyBossSchedule(domains[String(landmark.entryId)] ?? { levels: [] }),
-        )
-      : readGameDataEntry(gameDataBaseUrl, GameDataset.Domains, String(landmark.entryId), domainScheduleSchema);
+  const readDomainSchedule = async (landmark: DomainEntranceLandmark): Promise<DomainSchedule> => {
+    if (landmark.domainKind === DomainKind.Trounce) {
+      const domains = await readWeeklyBossDomains(gameDataBaseUrl);
+      return toWeeklyBossSchedule(domains[String(landmark.entryId)] ?? { levels: [] });
+    }
+    return readGameDataEntry(gameDataBaseUrl, GameDataset.Domains, String(landmark.entryId), domainScheduleSchema);
+  };
   const openDomain = (landmark: DomainEntranceLandmark) => {
     domainEntrance.value = landmark;
     domainSchedule.value = undefined;

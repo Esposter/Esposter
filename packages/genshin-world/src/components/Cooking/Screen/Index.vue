@@ -8,6 +8,7 @@ import type { GameText } from "genshin-text";
 
 import { autoCookRecipe } from "#src/services/cooking/autoCookRecipe";
 import { checkCanAutoCook } from "#src/services/cooking/checkCanAutoCook";
+import { MILLISECONDS_PER_SECOND } from "#src/services/cooking/constants";
 import { cookRecipeByHand } from "#src/services/cooking/cookRecipeByHand";
 import { getCookingPointerPosition } from "#src/services/cooking/getCookingPointerPosition";
 import { readCookingZones } from "#src/services/cooking/readCookingZones";
@@ -45,7 +46,6 @@ const selectDish = (id: number) => {
   const selected = recipes.find((dish) => dish.id === id);
   if (selected) recipe.value = selected;
 };
-const MILLISECONDS_PER_SECOND = 1000;
 // The indicator's pointer swings from the moment the screen opens, and its place at a press is the one shown then
 const openedAt = performance.now();
 const pointer = ref(0);

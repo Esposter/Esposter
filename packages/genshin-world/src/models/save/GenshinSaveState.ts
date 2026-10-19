@@ -81,7 +81,7 @@ export interface GenshinSaveState {
   regionStatueProgressMap: ReadonlyMap<string, StatueRegionProgressSave>;
   reputation: ReputationProgress;
   reputationBountyClaimedAts: readonly Temporal.Instant[];
-  reputationBountyHunt: ReputationBountyHunt | undefined;
+  reputationBountyHunt?: ReputationBountyHunt;
   reputationRequestClaimedAts: readonly Temporal.Instant[];
   settledSeelieIds: ReadonlySet<string>;
   shopPurchases: ShopPurchase[];
@@ -89,7 +89,7 @@ export interface GenshinSaveState {
   solvedPuzzleIds: ReadonlySet<string>;
   // The Abyss's progress by cycle, keyed as the save keys it
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
-  travelerBirthday: TravelerBirthdaySave | undefined;
+  travelerBirthday?: TravelerBirthdaySave;
   travelerName: string;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;

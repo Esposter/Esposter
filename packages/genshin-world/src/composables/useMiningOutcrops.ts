@@ -111,6 +111,8 @@ export const useMiningOutcrops = ({
       standingMiningOutcrops.value = standingMiningOutcrops.value.filter((place) => place.id !== id);
     }
   };
-  const minedOutcrops = computed<MinedOutcrop[]>(() => [...minedAtMap.value].map(([id, minedAt]) => ({ id, minedAt })));
+  const minedOutcrops = computed<MinedOutcrop[]>(() =>
+    Array.from(minedAtMap.value, ([id, minedAt]) => ({ id, minedAt })),
+  );
   return { minedOutcrops, placesMap, refreshMiningOutcrops, standingMiningOutcrops, strikeMiningOutcrops };
 };

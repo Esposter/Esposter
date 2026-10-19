@@ -82,6 +82,5 @@
   "skillChain.windowSeconds": { "cause": "Unsourced", "value": 6.566666666666666 },
   "stellarJubilee.stellarReactionTypes.length": { "cause": "Unsourced", "value": 2 },
   "stellarJubilee.stellarReactionTypes.0": { "cause": "Unsourced", "value": "StellarConduct" },
-  "stellarJubilee.stellarReactionTypes.1": { "cause": "Unsourced", "value": "StellarSwirl" },
-  "stellarJubilee.stellarReactionTypes.length": { "cause": "Unsourced", "value": 2 }
+  "stellarJubilee.stellarReactionTypes.1": { "cause": "Unsourced", "value": "StellarSwirl" }
 }

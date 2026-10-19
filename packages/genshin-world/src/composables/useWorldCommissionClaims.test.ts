@@ -204,7 +204,7 @@ describe(useWorldCommissionClaims, () => {
       longTermHalfPoints: 2,
       resin: LONG_TERM_RESIN_COST,
     });
-    expect(claims.canConvertLongTermPoint.value).toBe(true);
+    expect(claims.isLongTermPointConvertible.value).toBe(true);
 
     claims.convertLongTermPoint();
 
@@ -223,11 +223,11 @@ describe(useWorldCommissionClaims, () => {
       longTermHalfPoints: 2,
       resin: LONG_TERM_RESIN_COST - 1,
     });
-    expect(claims.canConvertLongTermPoint.value).toBe(false);
+    expect(claims.isLongTermPointConvertible.value).toBe(false);
 
     clock.moveTo(NOW.add({ minutes: ORIGINAL_RESIN_REGEN_MINUTES }));
 
-    expect(claims.canConvertLongTermPoint.value).toBe(true);
+    expect(claims.isLongTermPointConvertible.value).toBe(true);
   });
 
   test("should refuse Katheryne's bonus until the day's four commissions are claimed", () => {

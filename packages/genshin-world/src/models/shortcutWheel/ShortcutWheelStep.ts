@@ -5,6 +5,6 @@ import type { ScreenKind } from "#src/models/screen/ScreenKind";
 export interface ShortcutWheelStep {
   isOpen: boolean;
   move: { x: number; y: number };
-  openedScreenKind: ScreenKind | undefined;
-  pickedIndex: number | undefined;
+  openedScreenKind?: ScreenKind;
+  pickedIndex?: number;
 }

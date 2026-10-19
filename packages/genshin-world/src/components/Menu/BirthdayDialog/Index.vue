@@ -21,7 +21,10 @@ const emit = defineEmits<{ close: []; confirm: [birthday: TravelerBirthdaySave] 
 const month = ref<number>();
 const day = ref<number>();
 const days = computed(() =>
-  Array.from({ length: month.value === undefined ? 0 : getBirthdayDayCount(month.value) }, (_, index) => index + 1),
+  Array.from(
+    { length: month.value === undefined ? 0 : getBirthdayDayCount(month.value) },
+    (_value, index) => index + 1,
+  ),
 );
 const birthday = computed<TravelerBirthdaySave | undefined>(() =>
   month.value !== undefined && day.value !== undefined ? { day: day.value, month: month.value } : undefined,
