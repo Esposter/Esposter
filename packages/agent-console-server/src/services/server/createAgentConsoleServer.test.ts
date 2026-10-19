@@ -94,7 +94,7 @@ describe(createAgentConsoleServer, () => {
     stateDirectory = mkdtempSync(join(tmpdir(), "agent-console-server-"));
     fakeTerminal = createFakeTerminal();
     createSession.mockImplementation(() => {
-      callbacks.onSessionOpen(sessionId);
+      callbacks.onSessionOpen(sessionId, false);
       // The same events twice — a driver reporting one event by two paths — reach the page once
       callbacks.onEvents(sessionId, events);
       callbacks.onEvents(sessionId, events);
@@ -420,7 +420,7 @@ describe(createAgentConsoleServer, () => {
     callbacks.onEvents(sessionId, [
       { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
     ]);
-    callbacks.onSessionOpen(sessionId);
+    callbacks.onSessionOpen(sessionId, false);
     const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
     webSocket.send(
       JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
