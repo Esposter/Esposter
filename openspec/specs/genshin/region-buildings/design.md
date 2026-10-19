@@ -32,24 +32,24 @@ flowchart TD
 
 ## Key files
 
-| File                                                                             | Role                                                                        |
-| :------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/world/BuildingLandmark.ts`                    | A building landmark: its region's kit and the options that kit takes        |
-| `packages/genshin-world/src/models/world/RegionBuilding.ts`                      | The kit and its options, checked against the kit's own schema               |
-| `packages/genshin-world/src/models/world/BuildingKit.ts`                         | The kit each region builds with                                             |
-| `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`               | Each kit's geometries as parts in its region's colours                      |
-| `packages/genshin-world/src/models/world/RegionPaletteMap.ts`                    | The palette colours each kit reads, by region                               |
-| `packages/genshin-world/src/services/world/readRegionPalettes.ts`                | The palettes of the kits a region's buildings are built by                  |
-| `packages/genshin-world/src/services/world/readLoadedRegion.ts`                  | A region as it loads in reach: its data and ground, then its kits' palettes |
-| `packages/genshin-world/src/services/world/readRegionGround.ts`                  | A region's ground laid over Windrise's, read as it comes within reach       |
-| `packages/genshin-world/src/components/World/Landmark/Building/Index.vue`        | A building drawn on the ground, one material per part                       |
-| `packages/genshin-world/src/services/world/createWorldHeight.ts`                 | The world's one ground: every region's laid over Windrise's                 |
-| `packages/genshin-world/src/models/world/RegionGround.ts`                        | A region's ground: fitted hills, or plateaus where no fit has drawn         |
-| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                    | Every capital stood at its waypoints, and an unfitted plateau raised        |
-| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                     | Each region's first landmark and the game's areas that place it             |
-| `scripts/src/services/genshinAssets/palette/PaletteFamilyMap.ts`                 | Each region's kit fields and the texture families sampled for them          |
-| `packages/genshin-world/src/services/fontaine/FontainePartFamilyMeshRegexMap.ts` | The Court's buildings and ground, matched by mesh name                      |
-| `packages/genshin-world/src/services/fontaine/FontaineUndrawnMeshRegexMap.ts`    | The Court's other meshes, sorted by kind as not drawn yet                   |
+| File                                                                             | Role                                                                  |
+| :------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/world/BuildingLandmark.ts`                    | A building landmark: its region's kit and the options that kit takes  |
+| `packages/genshin-world/src/models/world/RegionBuilding.ts`                      | The kit and its options, checked against the kit's own schema         |
+| `packages/genshin-world/src/models/world/BuildingKit.ts`                         | The kit each region builds with                                       |
+| `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`               | Each kit's geometries as parts in its region's colours                |
+| `packages/genshin-world/src/models/world/RegionPaletteMap.ts`                    | The palette colours each kit reads, by region                         |
+| `packages/genshin-world/src/services/world/readRegionPalettes.ts`                | The palettes of the kits a region's buildings are built by            |
+| `packages/genshin-world/src/services/world/readLoadedRegion.ts`                  | A region as it loads in reach: its data, then its kits' palettes      |
+| `packages/genshin-world/src/composables/useRegionData.ts`                        | A region's ground laid over Windrise's, read as it comes within reach |
+| `packages/genshin-world/src/components/World/Landmark/Building/Index.vue`        | A building drawn on the ground, one material per part                 |
+| `packages/genshin-world/src/services/world/createWorldHeight.ts`                 | The world's one ground: every region's laid over Windrise's           |
+| `packages/genshin-world/src/models/world/RegionGround.ts`                        | A region's ground: fitted hills, or plateaus where no fit has drawn   |
+| `scripts/src/services/genshinAssets/fit/fitRegionCapitals.ts`                    | Every capital stood at its waypoints, and an unfitted plateau raised  |
+| `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                     | Each region's first landmark and the game's areas that place it       |
+| `scripts/src/services/genshinAssets/palette/PaletteFamilyMap.ts`                 | Each region's kit fields and the texture families sampled for them    |
+| `packages/genshin-world/src/services/fontaine/FontainePartFamilyMeshRegexMap.ts` | The Court's buildings and ground, matched by mesh name                |
+| `packages/genshin-world/src/services/fontaine/FontaineUndrawnMeshRegexMap.ts`    | The Court's other meshes, sorted by kind as not drawn yet             |
 
 ## Notes
 

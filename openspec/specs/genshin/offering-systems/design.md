@@ -39,7 +39,7 @@ flowchart TD
 | `packages/genshin-world/src/components/World/FrostbearingTree/Index.vue`      | The tree's stand-in at its place                                                                                    |
 | `packages/genshin-world/src/models/offering/OfferingOffer.ts`                 | What an offer leaves: the bag, the wallet, the progress and the rewards left over                                   |
 | `packages/genshin-world/src/models/offering/OfferingReward.ts`                | One item a level pays                                                                                               |
-| `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreeLevels.ts` | Builds the tree's levels, each reward joined from the reward table                                                  |
+| `scripts/src/services/genshinAssets/offerings/buildOfferingLevels.ts`         | Builds every offering's levels, the tree's among them, each reward joined from the reward table                     |
 | `scripts/src/services/genshinAssets/offerings/buildFrostbearingTreePlaces.ts` | Builds the tree's place from the official map's point and the fit                                                   |
 | `scripts/src/services/genshinAssets/offerings/toOfferingLevelRow.ts`          | One level's row: the item and count it takes, its rewards                                                           |
 | `scripts/src/services/genshinAssets/rewards/readRewardMap.ts`                 | The reward table keyed by reward id, shared by the level builders                                                   |

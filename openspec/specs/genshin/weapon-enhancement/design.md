@@ -56,7 +56,7 @@ A bag weapon's entry holds its level, EXP, ascension and refinement, so the [wea
 | `packages/genshin-world/src/models/weapon/WeaponAscensionPhase.ts`          | A phase with the Mora, items and Adventure Rank that entering it costs                  |
 | `packages/genshin-world/src/models/weapon/RarityRequiredExpsMap.ts`         | Each rarity's EXP to rise past each level                                               |
 | `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`               | Paid EXP at Mora, levels gained, and the excess returned as ores                        |
-| `packages/genshin-world/src/services/weapon/getAscendableNextPhase.ts`      | The next phase an ascension may enter, the one gate the offer and the ascension share   |
+| `packages/genshin-world/src/services/character/getAscendableNextPhase.ts`   | The next phase an ascension may enter, the one gate the offer and the ascension share   |
 | `packages/genshin-world/src/services/weapon/checkCanRefineWeapon.ts`        | Whether a weapon can be refined at all, the one gate the offer and the refinement share |
 | `packages/genshin-world/src/services/weapon/ascendWeapon.ts`                | The next phase's gate, and its Mora and items taken                                     |
 | `packages/genshin-world/src/services/weapon/refineWeapon.ts`                | Ranks gained at each rank's Mora, past the fifth lost                                   |

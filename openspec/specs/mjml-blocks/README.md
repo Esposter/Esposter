@@ -4,6 +4,8 @@
 
 The email editor's canvas, preview and fields belong to the [email change](../../changes/resource-page-builder-email/design.md), and the server's compile to the document model. What the package does not own is MJML's own, so each rule is held equal to the installed MJML rather than copied from it.
 
+- [Block types](block-types/design.md) — each MJML component as a block type, its attributes and content kind, and the files each part of the behaviour lives in.
+
 ## How a document becomes MJML and back
 
 ```mermaid

@@ -102,4 +102,4 @@ The MIDI writer was [@tonejs/midi](https://github.com/Tonejs/Midi) until it was 
 - [ONNX Runtime — JavaScript API](https://onnxruntime.ai/docs/api/js/) — `InferenceSession`, `Tensor`, and `onnxruntime-common` as the interface shared by `onnxruntime-node` and `onnxruntime-web`.
 - [tensorflow/tfjs — releases](https://github.com/tensorflow/tfjs/releases) — 4.22.0, October 2024, the last.
 - [A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription and Multipitch Estimation](https://arxiv.org/abs/2203.09893), Bittner et al., ICASSP 2022 — the network and its three readings.
-- [`scipy.signal.argrelmax`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.
+- [scipy.signal.argrelmax](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.
