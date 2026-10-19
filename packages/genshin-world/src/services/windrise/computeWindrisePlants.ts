@@ -8,7 +8,9 @@ import {
   FLOWER_MIN_GRASS,
   FLOWER_MIN_SIZE,
   FLOWER_SPACING,
+  UP,
 } from "#src/services/windrise/constants";
+import { getSlope } from "#src/services/windrise/getSlope";
 import {
   computeScatterPoints,
   createSeededRandom,
@@ -18,22 +20,12 @@ import {
 } from "genshin-engine/terrainWorker";
 import { Color, MathUtils, Matrix4, Quaternion, Vector3 } from "three";
 
-// How far either side of a point its slope is read across, in metres
-const SLOPE_REACH = 0.5;
 // Converted to the linear working space once
 const flowerColors = FLOWER_COLORS.map((flowerColor) => new Color(flowerColor));
-const UP = new Vector3(0, 1, 0);
 const matrix = new Matrix4();
 const rotation = new Quaternion();
 const scale = new Vector3();
 const translation = new Vector3();
-// How steep the ground is at a point, from 0 flat to 1 sheer, as the terrain reads a vertex's
-const getSlope = (getHeight: WindrisePlantsGround["getHeight"], x: number, z: number): number => {
-  const acrossX = getHeight(x - SLOPE_REACH, z) - getHeight(x + SLOPE_REACH, z);
-  const acrossZ = getHeight(x, z - SLOPE_REACH) - getHeight(x, z + SLOPE_REACH);
-  const up = SLOPE_REACH * 2;
-  return 1 - up / Math.hypot(acrossX, up, acrossZ);
-};
 // Windrise's flowers on one finest tile, scattered over its square where the ground is grass above the water, the
 // Tile's key their seed, so the same tile always grows the same flowers. Each stands on the ground, turned and sized
 // At random, in one of the palette's colours
