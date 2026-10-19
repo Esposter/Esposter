@@ -1,5 +1,3 @@
-import type { FunctionalComponent } from "vue";
-
 import { props } from "#src/components/Menu/Paimon/Index.fixture";
 import MenuPaimon from "#src/components/Menu/Paimon/Index.vue";
 import type { TravelerBirthdaySave } from "#src/models/save/TravelerBirthdaySave";
@@ -13,8 +11,6 @@ import { page, userEvent } from "vitest/browser";
 import { defineComponent, h } from "vue";
 
 describe("menuPaimon", () => {
-  const global = { components: { NuxtImg } };
-
   // The side bar's Settings entry opens the Settings screen, which the world's menu names by its own screen kind
   test("settings opens from the side bar", async () => {
     expect.hasAssertions();
@@ -173,10 +169,11 @@ describe("menuPaimon", () => {
   test("tab from the namecard dialog never reaches the menu behind it", async () => {
     expect.hasAssertions();
 
-    const namecards = [{ itemId: 1, name: "Aether" }];
-    render(MenuPaimon, { props: { ...props, namecardItemId: namecards[0].itemId, namecards } });
+    const namecard = { itemId: 1, name: "Aether" };
+    const namecards = [namecard];
+    render(MenuPaimon, { props: { ...props, namecardItemId: namecard.itemId, namecards } });
     const menu = document.querySelector(".menu");
-    await page.getByRole("button", { exact: true, name: namecards[0].name }).click();
+    await page.getByRole("button", { exact: true, name: namecard.name }).click();
 
     for (let index = 0; index < namecards.length + 2; index++) {
       await userEvent.tab();
