@@ -4,7 +4,6 @@ Each kit's overlay derives its row (`scripts/src/services/sweeps/ledgerCoverage/
 
 ```bash
 grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
-grep -n 'gcsim/\(tree\|blob\)/main' openspec/specs/genshin/kits/<kit>/design.md
 ```
 
 | Unit                 | Swept                  | Notes                                                                    |
