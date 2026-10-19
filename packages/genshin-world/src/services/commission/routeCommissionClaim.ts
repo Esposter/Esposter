@@ -20,8 +20,8 @@ import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacte
 
 // The state after a commission claim's items are routed as a blossom's claim routes its draws: the Mora and the Mora
 // Its Adventure EXP pays past rank 60 into the wallet, the Adventure EXP into the rank, the Companionship EXP into the
-// Deployed team's friendship, and every other item into the bag. Undefined where the bag cannot take an item whole, which
-// Refuses the claim, so nothing is routed and the claim is not recorded
+// Deployed team's friendship, and every other item into the bag. Undefined where the bag cannot take an item whole, or
+// The Friendship levels are not loaded yet, which refuses the claim, so nothing is routed or recorded
 export const routeCommissionClaim = (
   adventureRankTables: AdventureRankTables,
   adventureExp: number,
@@ -35,6 +35,8 @@ export const routeCommissionClaim = (
   party: Party,
   wallet: Wallet,
 ): CommissionRouting | undefined => {
+  // The Companionship EXP has no top to stop at until the levels load, so the claim waits for them
+  if (friendshipLevels.length === 0) return undefined;
   let claimedInventory = inventory;
   let moraCount = 0;
   let adventureExpCount = 0;
