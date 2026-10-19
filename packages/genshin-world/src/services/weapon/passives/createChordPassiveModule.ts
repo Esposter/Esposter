@@ -3,9 +3,9 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { queueKitPassiveHit } from "#src/services/kit/queueKitPassiveHit";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 import { CHORD_HARMONIC_ID, SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 

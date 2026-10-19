@@ -3,9 +3,9 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
 import { BOUNDLESS_BLESSING_ID, ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 

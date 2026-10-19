@@ -1,7 +1,7 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { ELEMENTAL_DAMAGE_BONUS_ATTRIBUTES } from "#src/services/weapon/passives/constants";
 import { takeOne } from "@esposter/shared";
 

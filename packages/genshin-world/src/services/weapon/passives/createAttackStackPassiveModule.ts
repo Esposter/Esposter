@@ -1,9 +1,9 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
-import type { PassiveStack } from "#src/services/weapon/passives/addPassiveStack";
+import type { PassiveStack } from "#src/services/kit/effects/addPassiveStack";
 
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 
 const ATTACK_STACK_MAXIMUM_STACKS = 4;
 const ATTACK_STACK_SECONDS = 6;

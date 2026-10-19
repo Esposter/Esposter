@@ -2,7 +2,7 @@ import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { addPassiveStack } from "#src/services/weapon/passives/addPassiveStack";
+import { addPassiveStack } from "#src/services/kit/effects/addPassiveStack";
 import { takeOne } from "@esposter/shared";
 
 const MAGIC_AFFINITY_MAXIMUM_STACKS = 2;
