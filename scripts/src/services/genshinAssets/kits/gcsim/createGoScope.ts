@@ -1,5 +1,6 @@
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
+import type { GoScope } from "#src/models/genshinAssets/kits/gcsim/GoScope";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 import type { GoNamedFunction } from "#src/models/genshinAssets/kits/gcsim/GoNamedFunction";
@@ -223,7 +224,7 @@ const readClampValues = (expression: GoExpression): number[] | undefined => {
 // The value of each name a Go source's references read at a position: a parameter's from its callers' arguments, a
 // Local's from its dominating assignment, else a constant's. A name no assignment reaches, or a branch may skip, has none,
 // So a local of another function is never read
-export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyMap<string, GoConstant>) => {
+export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyMap<string, GoConstant>): GoScope => {
   const callPositionsByName = new Map<string, number[]>();
   for (const [position, token] of tokens.entries())
     if (token.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[position + 1], "(")) {
@@ -296,8 +297,6 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
   };
 
   return {
-    // The numbers an argument of a call takes at the call's position: each of the two a clamp of the action's hold bounds
-    // A local to, else the one number it evaluates to, and none where it evaluates to none
     readArgumentValues: (callPosition: number, argumentStart: number): number[] | undefined => {
       const argument = parseGoExpression(tokens, argumentStart).expression;
       const clampValues = readClampedArgument(argument, callPosition);
@@ -305,8 +304,6 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       const value = evaluateGoNumber(argument, (name) => resolveAt(name, callPosition, 0, undefined));
       return value === undefined ? undefined : [value];
     },
-    // Every combination of the numbers a position's function's parameters take at their call sites, a parameter no
-    // Single number reaches left out of each
     readParameterIterations: (position: number): Map<string, number>[] => {
       const scope = findScope(position);
       if (scope === undefined) return [new Map()];
@@ -321,13 +318,8 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
       );
     },
     resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, undefined),
-    // The value a name takes at a constellation at a position, where each constellation branch the constellation does
-    // Not reach has its `=` left out and each it reaches takes its own, so a loop bounded by a local one raises reads the
-    // Value that constellation gives it
     resolveConstellationName: (name: string, position: number, constellation: number): GoValue | undefined =>
       resolveAt(name, position, 0, constellation),
-    // The first token of a local's value at a position, where one assignment dominates it, as a call passing `ap` reads
-    // The constructor `ap := combat.NewCircleHitOnTarget(...)` gave it
     resolveAssignment: (name: string, position: number): number | undefined => {
       const scope = findScope(position);
       if (scope === undefined || scope.parameters.includes(name)) return undefined;
