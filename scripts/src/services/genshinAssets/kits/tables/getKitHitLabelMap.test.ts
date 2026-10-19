@@ -87,7 +87,7 @@ describe(getKitHitLabelMap, () => {
       },
     };
 
-    expect(getKitHitLabelMap(new Map(), { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
+    expect(getKitHitLabelMap(new Map(), createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
       new Map([["skillHolds.0.action.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
@@ -102,7 +102,7 @@ describe(getKitHitLabelMap, () => {
       },
     };
 
-    expect(getKitHitLabelMap(new Map(), { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
+    expect(getKitHitLabelMap(new Map(), createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
       new Map([["hits.judgement.0", { label: "Press DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
@@ -128,7 +128,7 @@ describe(getKitHitLabelMap, () => {
       },
     };
 
-    expect(getKitHitLabelMap(candidateMap, { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
+    expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
       new Map([["skill.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
@@ -154,7 +154,7 @@ describe(getKitHitLabelMap, () => {
       },
     };
 
-    expect(getKitHitLabelMap(candidateMap, { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(
+    expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(
       new Map([["burst.hits.0", { label: "Hold DMG", proudSkillGroupId: PRESS_AND_HOLD_GROUP_ID }]]),
     );
   });
@@ -175,6 +175,25 @@ describe(getKitHitLabelMap, () => {
     ]);
     const overlay: KitOverlay = { "burst.hits.length": { cause: KitProvisionalCause.Unclassified, value: 3 } };
 
-    expect(getKitHitLabelMap(candidateMap, { labelMap: pressAndHoldLabelMap }, overlay)).toStrictEqual(new Map());
+    expect(getKitHitLabelMap(candidateMap, createTables(pressAndHoldLabelMap), overlay)).toStrictEqual(new Map());
+  });
+
+  test("takes no label for a skill hit whose list a named list's hits empty, so the named hit keeps the label", () => {
+    expect.hasAssertions();
+
+    const overlay: KitOverlay = {
+      "hits.dragonTicks.0.multiplier": {
+        cause: KitProvisionalCause.Unsourced,
+        value: { index: 0, proudSkillGroupId: SKILL_GROUP_ID },
+      },
+    };
+
+    expect(
+      getKitHitLabelMap(
+        new Map([["skill.hits.0.multiplier", [createCandidate(0)]]]),
+        createTables(new Map([[SKILL_GROUP_ID, [{ indexes: [0], label: "Dragon DMG" }]]])),
+        overlay,
+      ),
+    ).toStrictEqual(new Map([["hits.dragonTicks.0", { label: "Dragon DMG", proudSkillGroupId: SKILL_GROUP_ID }]]));
   });
 });

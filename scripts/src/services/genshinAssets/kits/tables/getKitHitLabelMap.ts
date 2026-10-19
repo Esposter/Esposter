@@ -3,6 +3,7 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitHitLabel } from "#src/models/genshinAssets/kits/tables/KitHitLabel";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
+import { getNamedListKitCandidates } from "#src/services/genshinAssets/kits/candidates/getNamedListKitCandidates";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { kitParameterSchema } from "genshin-world";
 
@@ -13,29 +14,30 @@ const SLOT_HIT_PATH_REGEX =
 // A hit's path split into its list and its index, `burst.hits` and `5` for `burst.hits.5`
 const HIT_LIST_INDEX_REGEX = /^(?<list>.+)\.(?<index>\d+)$/u;
 
-// Whether a hit's index is at or past the length its list's overlay sets, so the record holds no hit at that index
-const checkPastListLength = (hitPath: string, overlay: KitOverlay): boolean => {
-  const listIndex = HIT_LIST_INDEX_REGEX.exec(hitPath)?.groups;
-  const length = listIndex === undefined ? undefined : overlay[`${listIndex.list}.length`]?.value;
-  return typeof length === "number" && Number(listIndex?.index) >= length;
-};
-
 // The table label each slot hit deals its multiplier under, by the hit's path, with the proud skill group that label
 // Belongs to. A hit takes the label of the multiplier the record publishes at its path, the overlay's where it sets a
-// Value and else its first candidate's, and a hit at or past the length its list's overlay sets takes none
+// Value and else its first candidate's. A hit at or past its list's length takes none: the overlay's length, else the
+// Named list rule's empty list, which the resolver gives the slot a named list joins to
 export const getKitHitLabelMap = (
   candidateMap: ReadonlyMap<string, KitCandidate[]>,
-  { labelMap }: Pick<KitTables, "labelMap">,
+  { labelMap, talentGroupIdMap }: Pick<KitTables, "labelMap" | "talentGroupIdMap">,
   overlay: KitOverlay,
 ): Map<string, KitHitLabel> => {
+  const multiplierMap = new Map<string, unknown>();
+  for (const path of new Set([...candidateMap.keys(), ...Object.keys(overlay)]))
+    if (KIT_HIT_MULTIPLIER_REGEX.test(path))
+      multiplierMap.set(path, overlay[path]?.value ?? candidateMap.get(path)?.[0]?.value);
+  const namedListCandidateMap = getNamedListKitCandidates(multiplierMap, talentGroupIdMap);
   const hitLabelMap = new Map<string, KitHitLabel>();
-  const multiplierPaths = new Set([...candidateMap.keys(), ...Object.keys(overlay)]);
-  for (const path of multiplierPaths) {
-    const multiplierHitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
-    const hitPath =
-      multiplierHitPath !== undefined && SLOT_HIT_PATH_REGEX.test(multiplierHitPath) ? multiplierHitPath : undefined;
-    if (hitPath === undefined || checkPastListLength(hitPath, overlay)) continue;
-    const value = overlay[path]?.value ?? candidateMap.get(path)?.[0]?.value;
+  for (const [path, value] of multiplierMap) {
+    const hitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
+    if (hitPath === undefined || !SLOT_HIT_PATH_REGEX.test(hitPath)) continue;
+    const listIndex = HIT_LIST_INDEX_REGEX.exec(hitPath)?.groups;
+    if (listIndex !== undefined) {
+      const lengthPath = `${listIndex.list}.length`;
+      const length = overlay[lengthPath]?.value ?? namedListCandidateMap.get(lengthPath)?.[0]?.value;
+      if (typeof length === "number" && Number(listIndex.index) >= length) continue;
+    }
     const parameter = kitParameterSchema.safeParse(value).data;
     if (parameter === undefined || typeof parameter === "number") continue;
     const tableLabel = labelMap
