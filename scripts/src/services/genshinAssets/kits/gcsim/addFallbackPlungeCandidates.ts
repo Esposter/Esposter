@@ -8,10 +8,11 @@ import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { readHitmarkSpread } from "#src/services/genshinAssets/kits/gcsim/readHitmarkSpread";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
-// The plunges and collision of a character with no plunge file of its own, which take the fallback character's, Bennett's:
-// Each landing's frames and hit, and the collision's, each cited at the fallback's file and line as NoActionFile, and the
-// Areas are the fallback's hitboxes priced as its own build prices them. The writer is one that defaults its cause to
-// NoActionFile, over the fallback character
+// The plunges and collision of a character with no plunge file of its own, which stand in for the fallback character's,
+// Bennett's: each landing's frames and hit, and the collision's, each cited at the fallback's file and line as
+// NoActionFile, and the areas are the fallback's hitboxes priced as its own build prices them. The writer is one that
+// Defaults its cause to NoActionFile, over the fallback character. The fallback's values stand in only where the kit's
+// Own wiki row gives nothing.
 export const addFallbackPlungeCandidates = (writer: GcsimKitCandidateWriter, plungeFallback: GcsimCharacter): void => {
   // A hit of the fallback's, its attack and hitmark both read from the fallback character's plunge file
   const addFallbackHit = (
