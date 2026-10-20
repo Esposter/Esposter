@@ -1,7 +1,8 @@
 import type { MjmlDocument } from "mjml-blocks";
 
 import { compileEmailDocument } from "#server/services/emailEditor/compileEmailDocument";
-import { TEST_CONTEXT, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
+import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
+import { TEST_CONTEXT, TEST_LABEL, TEST_SURVEY_ID } from "#shared/services/pageBuilder/constants.test";
 import { noop } from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
@@ -86,5 +87,52 @@ describe(compileEmailDocument, () => {
     );
 
     expect(html).toMatch(/^<!doctype html>/iu);
+  });
+
+  test("an email whose survey invite has an empty label is refused as an Err, not thrown", async () => {
+    expect.hasAssertions();
+
+    const document: MjmlDocument = {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: { id: crypto.randomUUID(), label: "", surveyId: TEST_SURVEY_ID },
+                      type: EmailNodeType.SurveyInvite,
+                    },
+                  ],
+                  id: crypto.randomUUID(),
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: crypto.randomUUID(),
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    };
+
+    await compileEmailDocument(document, TEST_CONTEXT).match(noop, (error) => {
+      expect(error.message).toMatchInlineSnapshot(`
+        "[
+          {
+            "origin": "string",
+            "code": "too_small",
+            "minimum": 1,
+            "inclusive": true,
+            "path": [
+              "label"
+            ],
+            "message": "Too small: expected string to have >=1 characters"
+          }
+        ]"
+      `);
+    });
   });
 });
