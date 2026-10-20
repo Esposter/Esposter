@@ -10,10 +10,11 @@ import type { z } from "zod";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { createMjmlRichTextPropsSchema } from "#src/services/components/createMjmlRichTextPropsSchema";
 import { createMjmlRichTextType } from "#src/services/components/createMjmlRichTextType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 
 // The attributes MJML takes on the text component, each in MJML's grammar
-export const textAttributes = {
+const textBaseAttributes = {
   align: "enum(left,right,center,justify)",
   "background-color": "color",
   color: "color",
@@ -26,13 +27,14 @@ export const textAttributes = {
   "letter-spacing": "unitWithNegative(px,em)",
   "line-height": "unit(px,%,)",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   "text-decoration": "string",
   "text-transform": "string",
   "vertical-align": "enum(top,bottom,middle)",
+};
+
+export const textAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof textBaseAttributes = {
+  ...textBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const createMjmlTextPropsSchema = <TContent extends MjmlRichText>(

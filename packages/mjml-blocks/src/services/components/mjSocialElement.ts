@@ -6,12 +6,13 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the social element component, each in MJML's grammar
-export const socialElementAttributes = {
+const socialElementBaseAttributes = {
   align: "enum(left,center,right)",
   alt: "string",
   "background-color": "color",
@@ -30,10 +31,6 @@ export const socialElementAttributes = {
   "line-height": "unit(px,%,)",
   name: "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   rel: "string",
   sizes: "string",
   src: "string",
@@ -43,6 +40,11 @@ export const socialElementAttributes = {
   "text-padding": "unit(px,%){1,4}",
   title: "string",
   "vertical-align": "enum(top,middle,bottom)",
+};
+
+export const socialElementAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof socialElementBaseAttributes = {
+  ...socialElementBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const socialElementPropsSchema: z.ZodObject<

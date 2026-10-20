@@ -6,12 +6,13 @@ import type { MjmlLeafNode } from "#src/models/MjmlLeafNode";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the hero component, each in MJML's grammar
-export const heroAttributes = {
+const heroBaseAttributes = {
   "background-color": "color",
   "background-height": "unit(px,%)",
   "background-position": "string",
@@ -27,11 +28,12 @@ export const heroAttributes = {
   "inner-padding-top": "unit(px,%)",
   mode: "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   "vertical-align": "enum(top,bottom,middle)",
+};
+
+export const heroAttributes: typeof heroBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...heroBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const heroPropsSchema: z.ZodObject<{ [K in keyof typeof heroAttributes]: MjmlAttributeSchema }, z.core.$strict> =

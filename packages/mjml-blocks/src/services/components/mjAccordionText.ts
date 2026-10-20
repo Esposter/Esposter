@@ -10,10 +10,11 @@ import type { z } from "zod";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { createMjmlRichTextPropsSchema } from "#src/services/components/createMjmlRichTextPropsSchema";
 import { createMjmlRichTextType } from "#src/services/components/createMjmlRichTextType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 
 // The attributes MJML takes on the accordion text component, each in MJML's grammar
-export const accordionTextAttributes = {
+const accordionTextBaseAttributes = {
   "background-color": "color",
   color: "color",
   "font-family": "string",
@@ -22,10 +23,11 @@ export const accordionTextAttributes = {
   "letter-spacing": "unitWithNegative(px,em)",
   "line-height": "unit(px,%,)",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
+};
+
+export const accordionTextAttributes: typeof accordionTextBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...accordionTextBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const createMjmlAccordionTextPropsSchema = <TContent extends MjmlRichText>(

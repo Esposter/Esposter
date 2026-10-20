@@ -5,22 +5,19 @@ import type { MjmlCarouselProps } from "#src/models/MjmlCarouselProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the carousel component, each in MJML's grammar
-export const carouselAttributes = {
+const carouselBaseAttributes = {
   align: "enum(left,center,right)",
   "border-radius": "string",
   "container-background-color": "color",
   "icon-width": "unit(px,%)",
   "left-icon": "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   "right-icon": "string",
   "tb-border": "string",
   "tb-border-radius": "string",
@@ -28,6 +25,11 @@ export const carouselAttributes = {
   "tb-selected-border-color": "color",
   "tb-width": "unit(px,%)",
   thumbnails: "enum(visible,hidden,supported)",
+};
+
+export const carouselAttributes: typeof carouselBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...carouselBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const carouselPropsSchema: z.ZodObject<

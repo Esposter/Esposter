@@ -6,12 +6,13 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the navbar link component, each in MJML's grammar
-export const navbarLinkAttributes = {
+const navbarLinkBaseAttributes = {
   color: "color",
   "font-family": "string",
   "font-size": "unit(px)",
@@ -22,14 +23,15 @@ export const navbarLinkAttributes = {
   "line-height": "unit(px,%,)",
   name: "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   rel: "string",
   target: "string",
   "text-decoration": "string",
   "text-transform": "string",
+};
+
+export const navbarLinkAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarLinkBaseAttributes = {
+  ...navbarLinkBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const navbarLinkPropsSchema: z.ZodObject<

@@ -5,12 +5,13 @@ import type { MjmlSpacerProps } from "#src/models/MjmlSpacerProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the spacer component, each in MJML's grammar
-export const spacerAttributes = {
+const spacerBaseAttributes = {
   border: "string",
   "border-bottom": "string",
   "border-left": "string",
@@ -19,10 +20,11 @@ export const spacerAttributes = {
   "container-background-color": "color",
   height: "unit(px,%)",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
+};
+
+export const spacerAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof spacerBaseAttributes = {
+  ...spacerBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const spacerPropsSchema: z.ZodObject<

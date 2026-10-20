@@ -6,12 +6,13 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { checkMjmlAlternativeText } from "#src/services/checkMjmlAlternativeText";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the image component, each in MJML's grammar
-export const imageAttributes = {
+const imageBaseAttributes = {
   align: "enum(left,center,right)",
   alt: "string",
   border: "string",
@@ -28,10 +29,6 @@ export const imageAttributes = {
   "max-height": "unit(px,%)",
   name: "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   rel: "string",
   sizes: "string",
   src: "string",
@@ -40,6 +37,11 @@ export const imageAttributes = {
   title: "string",
   usemap: "string",
   width: "unit(px)",
+};
+
+export const imageAttributes: typeof imageBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...imageBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const imagePropsSchema: z.ZodObject<

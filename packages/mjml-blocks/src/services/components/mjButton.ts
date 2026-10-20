@@ -6,12 +6,13 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the button component, each in MJML's grammar
-export const buttonAttributes = {
+const buttonBaseAttributes = {
   align: "enum(left,center,right)",
   "background-color": "color",
   border: "string",
@@ -33,10 +34,6 @@ export const buttonAttributes = {
   "line-height": "unit(px,%,)",
   name: "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   rel: "string",
   target: "string",
   "text-align": "enum(left,right,center)",
@@ -45,6 +42,11 @@ export const buttonAttributes = {
   title: "string",
   "vertical-align": "enum(top,bottom,middle)",
   width: "unit(px,%)",
+};
+
+export const buttonAttributes: typeof buttonBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...buttonBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const buttonPropsSchema: z.ZodObject<

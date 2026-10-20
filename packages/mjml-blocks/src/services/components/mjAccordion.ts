@@ -5,12 +5,13 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the accordion component, each in MJML's grammar
-export const accordionAttributes = {
+const accordionBaseAttributes = {
   border: "string",
   "container-background-color": "color",
   "font-family": "string",
@@ -23,10 +24,11 @@ export const accordionAttributes = {
   "icon-wrapped-alt": "string",
   "icon-wrapped-url": "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
+};
+
+export const accordionAttributes: typeof accordionBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...accordionBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const accordionPropsSchema: z.ZodObject<

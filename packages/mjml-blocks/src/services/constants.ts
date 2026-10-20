@@ -20,6 +20,13 @@ export const MJML_BODY_CHILDREN: MjmlNodeType[] = [
   MjmlNodeType.Hero,
 ];
 export const MJML_BREAKPOINT_ATTRIBUTES: Record<string, string> = { width: "unit(px)" };
+// The four side paddings every component takes, spread into each component's attributes. Left unannotated so each key stays literal
+export const MJML_PADDING_ATTRIBUTES = {
+  "padding-bottom": "unit(px,%)",
+  "padding-left": "unit(px,%)",
+  "padding-right": "unit(px,%)",
+  "padding-top": "unit(px,%)",
+};
 // The head tags read once: a second of one is refused under its name rather than kept over the first
 export const MJML_HEAD_SINGLE_TAGS: string[] = ["mj-breakpoint", "mj-preview", "mj-title"];
 // The colour names MJML's validator accepts, as its own list has them

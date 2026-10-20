@@ -5,23 +5,25 @@ import type { MjmlDividerProps } from "#src/models/MjmlDividerProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the divider component, each in MJML's grammar
-export const dividerAttributes = {
+const dividerBaseAttributes = {
   align: "enum(left,center,right)",
   "border-color": "color",
   "border-style": "string",
   "border-width": "unit(px)",
   "container-background-color": "color",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   width: "unit(px,%)",
+};
+
+export const dividerAttributes: typeof dividerBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...dividerBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const dividerPropsSchema: z.ZodObject<

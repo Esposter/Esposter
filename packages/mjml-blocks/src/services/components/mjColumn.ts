@@ -6,12 +6,13 @@ import type { MjmlLeafNode } from "#src/models/MjmlLeafNode";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the column component, each in MJML's grammar
-export const columnAttributes = {
+const columnBaseAttributes = {
   "background-color": "color",
   border: "string",
   "border-bottom": "string",
@@ -28,12 +29,13 @@ export const columnAttributes = {
   "inner-border-right": "string",
   "inner-border-top": "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
   "vertical-align": "enum(top,bottom,middle)",
   width: "unit(px,%)",
+};
+
+export const columnAttributes: typeof columnBaseAttributes & typeof MJML_PADDING_ATTRIBUTES = {
+  ...columnBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const columnPropsSchema: z.ZodObject<
