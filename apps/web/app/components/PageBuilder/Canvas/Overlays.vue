@@ -29,6 +29,13 @@ const pageDocument = computed(() => getDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
+// The drop indicator's box as the style that places it over the layer, whichever of its two kinds draws it
+const dropIndicatorStyle = computed(() => {
+  if (!dropIndicator.value) return undefined;
+
+  const { box } = dropIndicator.value;
+  return { height: `${box.height}px`, left: `${box.left}px`, top: `${box.top}px`, width: `${box.width}px` };
+});
 let pendingFrame = 0;
 
 // The box of a node's element inside the layer, or none when the node has no element in the frame
@@ -102,12 +109,7 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
       data-drop-indicator="line"
       bg-current
       absolute
-      :style="{
-        height: `${dropIndicator.box.height}px`,
-        left: `${dropIndicator.box.left}px`,
-        top: `${dropIndicator.box.top}px`,
-        width: `${dropIndicator.box.width}px`,
-      }"
+      :style="dropIndicatorStyle"
     />
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Outline"
@@ -116,12 +118,7 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
       b-current
       b-dashed
       absolute
-      :style="{
-        height: `${dropIndicator.box.height}px`,
-        left: `${dropIndicator.box.left}px`,
-        top: `${dropIndicator.box.top}px`,
-        width: `${dropIndicator.box.width}px`,
-      }"
+      :style="dropIndicatorStyle"
     />
     <div
       v-if="selectionBox"
