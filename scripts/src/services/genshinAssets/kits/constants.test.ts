@@ -3,7 +3,7 @@ import type { KitActionRecord, KitHitRecord, KitRecord } from "genshin-world";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { flattenKitValues } from "#src/services/genshinAssets/kits/record/flattenKitValues";
-import { KitPlunge, KitTargeting } from "genshin-world";
+import { CombatTalent, KitPlunge, KitTargeting } from "genshin-world";
 import { describe } from "vitest";
 
 // The kit record the build suites share: one hit in every action, and a record whose every value the build reads back,
@@ -28,7 +28,7 @@ export const RECORD: KitRecord = {
   skillHolds: [],
 };
 // Every value of the record as gcsim gives it, each at a line of its own
-export const SOURCE_CANDIDATE_MAP: Map<string, KitCandidate[]> = new Map(
+export const SOURCE_CANDIDATE_MAP = new Map<string, KitCandidate[]>(
   Array.from(flattenKitValues(RECORD), ([path, value], index) => [
     path,
     [{ provenance: { file: "kit.go", line: index + 1, source: KitSource.Gcsim }, value }],
@@ -37,3 +37,11 @@ export const SOURCE_CANDIDATE_MAP: Map<string, KitCandidate[]> = new Map(
 
 // Fixtures only: a suite here would run again in every file that imports them
 describe.todo("constants");
+
+// The talents' proud skill groups, by which a named hit's targeting area is read: the normal attack's group takes the
+// Strikes'
+export const TALENT_GROUP_ID_MAP = {
+  [CombatTalent.ElementalBurst]: 3,
+  [CombatTalent.ElementalSkill]: 2,
+  [CombatTalent.NormalAttack]: 1,
+};

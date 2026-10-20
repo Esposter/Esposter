@@ -2,10 +2,10 @@ import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GCSIM_CONFIG_FILE, GO_COMPOUND_ASSIGNMENT_OPERATORS } from "#src/services/genshinAssets/kits/constants";
+import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
 import { readGcsimCitedCandidates } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedCandidates";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
-import { CombatTalent } from "genshin-world";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -18,12 +18,6 @@ const overlayFor = (path: string): KitOverlay => ({
 describe("readGcsimCitedCandidates local aliases", () => {
   const FOLDER = "aino";
 
-  // The talents' proud skill groups, as the cited reader reads a named hit's targeting area by them
-  const TALENT_GROUP_ID_MAP = {
-    [CombatTalent.ElementalBurst]: 3,
-    [CombatTalent.ElementalSkill]: 2,
-    [CombatTalent.NormalAttack]: 1,
-  };
   const createGcsimDirectory = (source: string) => {
     const directory = mkdtempSync(join(tmpdir(), "gcsim-locals-"));
     mkdirSync(join(directory, "internal", "characters", FOLDER), { recursive: true });

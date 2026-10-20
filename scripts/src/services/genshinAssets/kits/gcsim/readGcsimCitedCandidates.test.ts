@@ -4,6 +4,7 @@ import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayE
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { GCSIM_CONFIG_FILE } from "#src/services/genshinAssets/kits/constants";
+import { TALENT_GROUP_ID_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { createBoxReach } from "#src/services/genshinAssets/kits/gcsim/createBoxReach";
 import { createTargetedHitArea } from "#src/services/genshinAssets/kits/gcsim/createTargetedHitArea";
 import { readGcsimCharacter } from "#src/services/genshinAssets/kits/gcsim/readGcsimCharacter";
@@ -63,13 +64,6 @@ describe("readGcsimCitedCandidates", () => {
   const NAMED_GO =
     "package aino\n\nfunc burst() {\n\tc.Core.Tasks.Add(func() {\n\t\tc.Core.QueueAttack(ai, ap, 0, 2)\n\t}, 113)\n}\n";
   const STATUS_GO = "package aino\n\nfunc burst() {\n\tc.Core.Status.Add(stilettoKey, 5*60+20)\n}\n";
-  // The talents' proud skill groups, by which a named hit's targeting area is read: the normal attack's group takes the
-  // Strikes'
-  const TALENT_GROUP_ID_MAP = {
-    [CombatTalent.ElementalBurst]: 3,
-    [CombatTalent.ElementalSkill]: 2,
-    [CombatTalent.NormalAttack]: 1,
-  };
   const GO_FILES = new Map([
     ["area.go", AREA_GO],
     ["asc.go", ASC_GO],
