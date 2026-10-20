@@ -29,12 +29,6 @@ import {
   removeBlockNode,
 } from "headless-block-editor";
 
-// The id a node carries, or the empty id when the pointer names no node
-const getNodeId = (document: undefined | WebpageDocument, nodePointer: string | undefined): string => {
-  if (!document || !nodePointer) return "";
-  return getNodeIdAt(document, nodePointer);
-};
-
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
   document: WebpageDocument,
@@ -166,7 +160,8 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const title = getNodeTitle(selection.document, segments);
     applyEdit(toValue(resourceId), operations, "Duplicate block").match(() => {
       const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${index + 1}`;
-      setSelectedNodeId(toValue(resourceId), getNodeId(getDocument(toValue(resourceId)), copyPointer));
+      const copiedDocument = getDocument(toValue(resourceId));
+      setSelectedNodeId(toValue(resourceId), copiedDocument ? getNodeIdAt(copiedDocument, copyPointer) : "");
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
   };
@@ -182,7 +177,8 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const title = getNodeTitle(document, parseJsonPointer(nodePointer));
     return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
       () => {
-        setSelectedNodeId(resourceIdValue, getNodeId(getDocument(resourceIdValue), focusPointer));
+        const focusDocument = getDocument(resourceIdValue);
+        setSelectedNodeId(resourceIdValue, focusDocument ? getNodeIdAt(focusDocument, focusPointer) : "");
         if (title) announce(`Deleted ${title}`);
         return true;
       },

@@ -9,6 +9,7 @@ import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
@@ -16,7 +17,7 @@ import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
-import { getAdjacentBlockNodePointer, getBlockLayerRows, getBlockNode } from "headless-block-editor";
+import { getAdjacentBlockNodePointer, getBlockLayerRows } from "headless-block-editor";
 import { getFrameScale } from "vue-canvas-frame-headless";
 
 interface Props {
@@ -101,9 +102,8 @@ const selectAdjacentNode = (offset: number) => {
     nodePointer === undefined
       ? getBlockLayerRows(document, webpageNodeChildren)[0]?.nodePointer
       : getAdjacentBlockNodePointer(document, webpageNodeChildren, nodePointer, offset);
-  const adjacentId =
-    adjacentPointer === undefined ? undefined : getBlockNode(document, adjacentPointer, webpageNodeChildren)?.props.id;
-  if (typeof adjacentId === "string") setSelectedNodeId(resourceId, adjacentId);
+  const adjacentId = adjacentPointer === undefined ? "" : getNodeIdAt(document, adjacentPointer);
+  if (adjacentId) setSelectedNodeId(resourceId, adjacentId);
 };
 const selectParent = () => {
   const document = pageDocument.value;

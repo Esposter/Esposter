@@ -7,6 +7,7 @@ import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
@@ -120,8 +121,8 @@ export const usePageBuilderClipboard = (
     const pastedPointer = `${target.slotPointer}/${target.index}`;
     applyEdit(resourceIdValue, operations, "Paste block").match(() => {
       const pastedDocument = getDocument(resourceIdValue);
-      const pastedId = pastedDocument && getBlockNode(pastedDocument, pastedPointer, webpageNodeChildren)?.props.id;
-      if (pastedId !== undefined) setSelectedNodeId(resourceIdValue, pastedId);
+      const pastedId = pastedDocument ? getNodeIdAt(pastedDocument, pastedPointer) : "";
+      if (pastedId) setSelectedNodeId(resourceIdValue, pastedId);
       const title = pastedDocument ? getNodeTitle(pastedDocument, parseJsonPointer(pastedPointer)) : "";
       if (title) announce(`Pasted ${title}`);
     }, console.error);
