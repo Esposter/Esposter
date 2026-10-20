@@ -83,8 +83,13 @@ export const usePageBuilderClipboard = (
   const pasteSelected = async () => {
     const resourceIdValue = toValue(resourceId);
     const text = await readFromClipboard();
-    const clipboard = text === undefined ? undefined : parseClipboardNodes(text);
-    if (!clipboard) return;
+    if (text === undefined) return;
+
+    const clipboard = parseClipboardNodes(text);
+    if (!clipboard) {
+      announce(CANNOT_GO_HERE_MESSAGE);
+      return;
+    }
 
     const refusal = refuseClipboardPaste({ source: clipboard.editor, target: PageBuilderEditor.Webpage });
     if (refusal) {

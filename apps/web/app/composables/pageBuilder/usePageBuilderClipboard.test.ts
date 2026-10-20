@@ -8,6 +8,7 @@ import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilde
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
 import { serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -108,7 +109,20 @@ describe(usePageBuilderClipboard, () => {
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
   });
 
-  test("a clipboard node of a type no webpage holds is ignored on paste", async () => {
+  test("empty clipboard text is announced as a block that cannot go here on paste", async () => {
+    expect.hasAssertions();
+    setActivePinia(createPinia());
+    stubClipboard();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const targetId = await openResource([]);
+    const announce = vi.fn<(message: string) => void>();
+    await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
+
+    expect(announce.mock.calls).toStrictEqual([[CANNOT_GO_HERE_MESSAGE]]);
+    expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
+  });
+
+  test("a clipboard node of a type no webpage holds is announced as a block that cannot go here on paste", async () => {
     expect.hasAssertions();
     setActivePinia(createPinia());
     const clipboard = stubClipboard();
@@ -121,7 +135,7 @@ describe(usePageBuilderClipboard, () => {
     const announce = vi.fn<(message: string) => void>();
     await usePageBuilderClipboard(targetId, announce, vi.fn<(nodeId: string) => boolean>()).pasteSelected();
 
-    expect(announce.mock.calls).toStrictEqual([]);
+    expect(announce.mock.calls).toStrictEqual([[CANNOT_GO_HERE_MESSAGE]]);
     expect(pageBuilderDocumentStore.getDocument(targetId)?.content).toStrictEqual([]);
   });
 
