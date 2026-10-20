@@ -1,4 +1,6 @@
 import { getNonEmptyLines } from "#src/services/shared/getNonEmptyLines";
+import { readDeletedPaths } from "#src/services/shared/readDeletedPaths";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runGit } from "#src/services/shared/runGit";
 import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNames";
@@ -15,18 +17,21 @@ import { readVendoredSkillNames } from "#src/services/sweeps/readVendoredSkillNa
 // Two only once, where a spawn per pathspec pays the process start each time and hands back the overlap to dedupe.
 //
 // A tracked file deleted in the working tree is still `--cached`, and a scan that opens it throws — so between an
-// `rm` and its commit every scan would be red. The deleted set is one more listing rather than a stat per path.
+// `rm` and its commit every scan would be red. The deleted ones are read from the directories the listing names, one
+// Listing each, rather than from git's own deleted walk, which stats every tracked file whatever the pathspec.
 //
 // A vendored skill is tracked so every checkout has it, and it is still a dependency: its prose and its citations are
 // Its publisher's, so it is left out here the way `node_modules` is, and no scan reports on it.
 export const readSweepFilePaths = (...pathspecs: string[]): string[] => {
-  const deletedPaths = new Set(getNonEmptyLines(runGit(["ls-files", "--deleted", ...pathspecs])));
   const vendoredSkillDirectories = readVendoredSkillNames().map((name) => `${SKILLS_DIRECTORY}/${name}/`);
-  return getNonEmptyLines(runGit(["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs])).filter(
+  const listedPaths = getNonEmptyLines(
+    runGit(["ls-files", "--cached", "--others", "--exclude-standard", ...pathspecs]),
+  ).filter(
     (path) =>
       !path.includes("node_modules/") &&
       !path.includes("/.nuxt/") &&
-      !deletedPaths.has(path) &&
       !vendoredSkillDirectories.some((directory) => path.startsWith(directory)),
   );
+  const deletedPaths = readDeletedPaths(listedPaths, REPOSITORY_ROOT);
+  return listedPaths.filter((path) => !deletedPaths.has(path));
 };

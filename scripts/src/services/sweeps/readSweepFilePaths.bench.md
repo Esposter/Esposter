@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-20T03:53:48.433Z
-- Commit: 1128416ea4
+- Date: 2026-10-20T03:58:54.077Z
+- Commit: 419cf58799
 - Node: v26.12.0
 - OS: win32 10.0.26300 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -18,7 +18,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## readSweepFilePaths > list the tracked and untracked files a pathspec matches
 
-| task            | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| --------------- | ------- | --------- | ------ | --------- | ------- |
-| whole tree      | 1.00×   | 1799.9332 | ±2.15% | 1909.7532 | 10      |
-| narrow pathspec | 0.97×   | 1857.8424 | ±5.92% | 2032.0248 | 10      |
+| task            | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
+| --------------- | ------- | --------- | ------- | --------- | ------- |
+| narrow pathspec | 1.00×   | 492.5688  | ±1.39%  | 509.7112  | 10      |
+| whole tree      | 0.29×   | 1689.8226 | ±13.38% | 2265.9542 | 10      |

@@ -1,4 +1,4 @@
-import { LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { CACHE_DIRECTORY, LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { createHash } from "node:crypto";
@@ -6,8 +6,6 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join, relative, sep } from "node:path";
 
 const STORE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".pnpm");
-// Beside pnpm's own cache directories, under the install it is derived from
-const CACHE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 const DECLARATION_REGEX = /\.d\.[cm]?ts$/u;
 // The packages pnpm's store holds, each a real directory under `<name@version>/node_modules/` beside symlinks to
 // Its own dependencies — the symlinks are skipped, since each points at another entry the walk reaches itself.

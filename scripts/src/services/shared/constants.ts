@@ -28,6 +28,8 @@ export const REPOSITORY_ROOT: string = findRepositoryRoot(import.meta.dirname);
 // And its ignore rule passes a file under `generated/` through as it was written, so a writer's output there is kept.
 export const OXFMT_BINARY_PATH: string = join(REPOSITORY_ROOT, "node_modules", "oxfmt", "bin", "oxfmt");
 export const OXFMT_CONFIGURATION_PATH: string = join(REPOSITORY_ROOT, "oxfmt.config.ts");
+// Beside pnpm's own cache directories, under the install it is derived from: what the scripts keep between runs
+export const CACHE_DIRECTORY: string = join(REPOSITORY_ROOT, "node_modules", ".cache", "@esposter", "scripts");
 // The wiki answers this many titles in one imageinfo call, and this many file reads at once is as many as a run asks of
 // Its file host
 export const MAX_WIKI_TITLES_PER_QUERY = 50;
