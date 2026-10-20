@@ -2,12 +2,11 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import type { MjmlCarouselImageNode } from "#src/models/MjmlCarouselImageNode";
 import type { MjmlCarouselImageProps } from "#src/models/MjmlCarouselImageProps";
 import type { OwnProps } from "headless-block-editor";
+import type { z } from "zod";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
-import { checkMjmlAlternativeText } from "#src/services/checkMjmlAlternativeText";
-import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlAlternativeTextPropsSchema } from "#src/services/createMjmlAlternativeTextPropsSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
-import { z } from "zod";
 
 // The attributes MJML takes on the carousel image component, each in MJML's grammar
 const carouselImageAttributes = {
@@ -29,9 +28,9 @@ export const mjmlCarouselImageType: MjmlBlockTypeDefinition<MjmlCarouselImageNod
   contentKind: undefined,
   defaultAttributes: { alt: "", target: "_blank" },
   hasAlternativeText: true,
-  propsSchema: z
-    .strictObject({ ...createMjmlAttributeShape(carouselImageAttributes), decorative: z.boolean().optional() })
-    .superRefine(checkMjmlAlternativeText) satisfies z.ZodType<OwnProps<MjmlCarouselImageProps>>,
+  propsSchema: createMjmlAlternativeTextPropsSchema(carouselImageAttributes) satisfies z.ZodType<
+    OwnProps<MjmlCarouselImageProps>
+  >,
   render: renderMjmlNode({
     allowedAttributes: carouselImageAttributes,
     contentKind: undefined,

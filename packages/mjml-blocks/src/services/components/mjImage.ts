@@ -2,12 +2,11 @@ import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinitio
 import type { MjmlImageNode } from "#src/models/MjmlImageNode";
 import type { MjmlImageProps } from "#src/models/MjmlImageProps";
 import type { OwnProps } from "headless-block-editor";
+import type { z } from "zod";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
-import { checkMjmlAlternativeText } from "#src/services/checkMjmlAlternativeText";
-import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlAlternativeTextPropsSchema } from "#src/services/createMjmlAlternativeTextPropsSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
-import { z } from "zod";
 
 // The attributes MJML takes on the image component, each in MJML's grammar
 const imageAttributes = {
@@ -55,9 +54,7 @@ export const mjmlImageType: MjmlBlockTypeDefinition<MjmlImageNode> = {
     target: "_blank",
   },
   hasAlternativeText: true,
-  propsSchema: z
-    .strictObject({ ...createMjmlAttributeShape(imageAttributes), decorative: z.boolean().optional() })
-    .superRefine(checkMjmlAlternativeText) satisfies z.ZodType<OwnProps<MjmlImageProps>>,
+  propsSchema: createMjmlAlternativeTextPropsSchema(imageAttributes) satisfies z.ZodType<OwnProps<MjmlImageProps>>,
   render: renderMjmlNode({
     allowedAttributes: imageAttributes,
     contentKind: undefined,

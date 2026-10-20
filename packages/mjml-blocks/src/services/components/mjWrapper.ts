@@ -9,17 +9,20 @@ import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
+// The attributes the wrapper takes: its section's, and its gap
+const wrapperAttributes = { ...sectionAttributes.allowedAttributes, gap: "unit(px)" };
+
 // The wrapper component: the attributes it takes, the props its schema reads and what it renders
 export const mjmlWrapperType: MjmlBlockTypeDefinition<MjmlWrapperNode> = {
-  allowedAttributes: { ...sectionAttributes.allowedAttributes, gap: "unit(px)" },
+  allowedAttributes: wrapperAttributes,
   contentKind: undefined,
   defaultAttributes: sectionAttributes.defaultAttributes,
   hasAlternativeText: false,
-  propsSchema: z.strictObject({
-    ...createMjmlAttributeShape({ ...sectionAttributes.allowedAttributes, gap: "unit(px)" }),
-  }) satisfies z.ZodType<OwnProps<MjmlWrapperProps>>,
+  propsSchema: z.strictObject({ ...createMjmlAttributeShape(wrapperAttributes) }) satisfies z.ZodType<
+    OwnProps<MjmlWrapperProps>
+  >,
   render: renderMjmlNode({
-    allowedAttributes: { ...sectionAttributes.allowedAttributes, gap: "unit(px)" },
+    allowedAttributes: wrapperAttributes,
     contentKind: undefined,
     hasAlternativeText: false,
     hasChildren: true,

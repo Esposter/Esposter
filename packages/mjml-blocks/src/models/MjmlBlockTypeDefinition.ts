@@ -3,7 +3,7 @@ import type { MjmlJson } from "#src/models/MjmlJson";
 import type { BlockNode, BlockTypeDefinition } from "headless-block-editor";
 
 // A registry entry for an MJML block type: its attributes and defaults in MJML's grammar, and how it renders to MJML's JSON form
-// Its render receives the node as the core holds it, and reads the props it needs through its own schema
+// Its render receives the node as the core holds it, and reads each prop it needs with getBlockPropValue and a per-field parse
 export interface MjmlBlockTypeDefinition<
   TNode extends BlockNode = BlockNode,
   TContext = unknown,
