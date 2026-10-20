@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/sweeps/readSweepFilePaths.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 1799.9332100000008,
+              "name": "whole tree",
+              "p99": 1909.7532129999997,
+              "rme": 2.153199839430636,
+              "sampleCount": 10
+            },
+            {
+              "mean": 1857.8424400000008,
+              "name": "narrow pathspec",
+              "p99": 2032.0248150000004,
+              "rme": 5.919444931112146,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readSweepFilePaths > list the tracked and untracked files a pathspec matches"
+        }
+      ]
+    }
+  ]
+}
