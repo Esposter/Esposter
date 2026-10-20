@@ -13,7 +13,7 @@ import { z } from "zod";
 
 // The attributes the wrapper takes: its section's, and its gap
 export const wrapperGapAttributes = { gap: "unit(px)" };
-export const wrapperAttributes: Record<string, string> = {
+export const wrapperAttributes: typeof sectionAttributes.allowedAttributes & typeof wrapperGapAttributes = {
   ...sectionAttributes.allowedAttributes,
   ...wrapperGapAttributes,
 };
