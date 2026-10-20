@@ -1,6 +1,5 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { parseArrayIndex, readJsonValue, toJsonPointer } from "@esposter/shared";
@@ -10,7 +9,7 @@ import { getBlockNode } from "headless-block-editor";
 // Sibling, so a path can tell "Column 1" from "Column 2" in the same slot. Empty when the node is not of a known type
 export const getNodeTitle = (document: WebpageDocument, nodeSegments: string[]): string => {
   const node = getBlockNode(document, toJsonPointer(nodeSegments), webpageNodeChildren);
-  const nodeType = Object.values(WebpageNodeType).find((type) => type === node?.type);
+  const nodeType = node?.type;
   const index = parseArrayIndex(nodeSegments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
   const siblings = readJsonValue(document, nodeSegments.slice(0, -1));
   if (!nodeType || index === undefined || !Array.isArray(siblings)) return "";
