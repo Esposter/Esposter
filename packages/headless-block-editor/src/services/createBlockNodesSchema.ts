@@ -1,19 +1,26 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
-import type { BlockRegistry } from "#src/models/BlockRegistry";
 
 import { checkBlockNodeIds } from "#src/services/checkBlockNodeIds";
-import { createBlockNodeSchema } from "#src/services/createBlockNodeSchema";
 import { z } from "zod";
 
-// A slot's children checked as a list by the same typed node schema as a document: each copy's type and props, then the ids across the copies
-// The ids are checked only on a list that parsed clean, so every copy the refinement walks is typed
+// A list of nodes checked by the consumer's typed node schema, then against the types the slot accepts, then the ids across the nodes
+// The accepted types and ids are checked only on a list that parsed clean, so every node the refinement walks is typed
 export const createBlockNodesSchema = <TNode extends BlockNode>(
-  registry: BlockRegistry<TNode>,
+  nodeSchema: z.ZodType<TNode>,
+  children: BlockChildren<TNode>,
   acceptedTypes: string[],
 ): z.ZodType<TNode[]> =>
-  z.array(createBlockNodeSchema(registry, acceptedTypes)).superRefine(
+  z.array(nodeSchema).superRefine(
     (nodes, context) => {
-      checkBlockNodeIds(context, registry, nodes, [], { count: 0, ids: new Set() });
+      for (const [index, node] of nodes.entries())
+        if (!acceptedTypes.includes(node.type))
+          context.addIssue({
+            code: "custom",
+            message: `type must be one of ${acceptedTypes.join(", ")}`,
+            path: [index, "type"],
+          });
+      if (context.issues.length === 0) checkBlockNodeIds(context, children, nodes, [], { count: 0, ids: new Set() });
     },
     { when: ({ issues }) => issues.length === 0 },
   );

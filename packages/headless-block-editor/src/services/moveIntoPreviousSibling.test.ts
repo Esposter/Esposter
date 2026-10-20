@@ -1,6 +1,12 @@
 import type { TestDocument } from "#src/services/constants.test";
 
-import { TEST_HEADING_ID, TEST_LIST_ID, TEST_REGISTRY, TEST_SECTION_ID } from "#src/services/constants.test";
+import {
+  TEST_CHILDREN,
+  TEST_HEADING_ID,
+  TEST_LIST_ID,
+  TEST_REGISTRY,
+  TEST_SECTION_ID,
+} from "#src/services/constants.test";
 import { moveIntoPreviousSibling } from "#src/services/moveIntoPreviousSibling";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -25,13 +31,13 @@ describe(moveIntoPreviousSibling, () => {
       root: { props: { title: "" } },
     };
 
-    expect(moveIntoPreviousSibling(document, TEST_REGISTRY, "/content/1")).toStrictEqual([]);
+    expect(moveIntoPreviousSibling(document, TEST_REGISTRY, TEST_CHILDREN, "/content/1")).toStrictEqual([]);
   });
 
   test("moving into a sibling whose slot accepts the node", () => {
     expect.hasAssertions();
 
-    const operations = moveIntoPreviousSibling(sectionAndHeadingDocument, TEST_REGISTRY, "/content/1");
+    const operations = moveIntoPreviousSibling(sectionAndHeadingDocument, TEST_REGISTRY, TEST_CHILDREN, "/content/1");
 
     expect(applyPatches(sectionAndHeadingDocument, operations).document.content).toStrictEqual([
       {

@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -13,12 +14,13 @@ import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 export const getAcceptedTypes = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   slotPointer: string,
 ): string[] => {
   if (slotPointer === "/content") return getRootAcceptedTypes(registry);
 
   const segments = parseJsonPointer(slotPointer);
-  const owner = getBlockNode(document, toJsonPointer(segments.slice(0, -2)));
+  const owner = getBlockNode(document, toJsonPointer(segments.slice(0, -2)), children);
   const slot = segments.at(-1);
   if (!owner || slot === undefined) return [];
 

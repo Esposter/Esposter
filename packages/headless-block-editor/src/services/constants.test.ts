@@ -1,8 +1,11 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 
+import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
+import { exhaustiveGuard } from "@esposter/shared";
 import { describe } from "vitest";
 import { z } from "zod";
 
@@ -46,6 +49,60 @@ export const TEST_REGISTRY: BlockRegistry<TestNode, TestRootProps> = {
     { propsSchema: z.object({ text: z.string() }), slots: {}, type: "item" },
   ],
 };
+
+// The consumer's static node schemas, one per type, the way a consumer writes them: each satisfies its node type
+const TEST_HEADING_SCHEMA = z.object({
+  props: z.strictObject({ id: z.string(), text: z.string() }),
+  type: z.literal("heading"),
+}) satisfies z.ZodType<HeadingNode>;
+const TEST_IMAGE_SCHEMA = z.object({
+  props: z.strictObject({ id: z.string() }),
+  type: z.literal("image"),
+}) satisfies z.ZodType<ImageNode>;
+const TEST_ITEM_SCHEMA = z.object({
+  props: z.strictObject({ id: z.string(), text: z.string() }),
+  type: z.literal("item"),
+}) satisfies z.ZodType<ItemNode>;
+const TEST_LIST_SCHEMA = z.object({
+  props: z.strictObject({ id: z.string(), items: z.array(TEST_ITEM_SCHEMA) }),
+  type: z.literal("list"),
+}) satisfies z.ZodType<ListNode>;
+const TEST_SECTION_SCHEMA = z.object({
+  props: z.strictObject({
+    children: z.array(z.discriminatedUnion("type", [TEST_HEADING_SCHEMA, TEST_LIST_SCHEMA])),
+    id: z.string(),
+    title: z.string(),
+  }),
+  type: z.literal("section"),
+}) satisfies z.ZodType<SectionNode>;
+export const TEST_NODE_SCHEMA: z.ZodType<TestNode> = z.discriminatedUnion("type", [
+  TEST_HEADING_SCHEMA,
+  TEST_IMAGE_SCHEMA,
+  TEST_ITEM_SCHEMA,
+  TEST_LIST_SCHEMA,
+  TEST_SECTION_SCHEMA,
+]);
+
+// The consumer's children port: one exhaustive switch over the node's type
+export const TEST_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
+  switch (node.type) {
+    case "heading":
+    case "image":
+    case "item":
+      return {};
+    case "list":
+      return { items: node.props.items };
+    case "section":
+      return { children: node.props.children };
+    default:
+      return exhaustiveGuard(node);
+  }
+};
+
+// The document schema of the test registry, with a node limit
+export const createTestDocumentSchema = (maxNodes: number): z.ZodType<BlockDocument<TestNode, TestRootProps>> =>
+  createBlockDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_REGISTRY.root.propsSchema, TEST_CHILDREN, maxNodes);
+
 export const TEST_DOCUMENT: TestDocument = {
   content: [
     {

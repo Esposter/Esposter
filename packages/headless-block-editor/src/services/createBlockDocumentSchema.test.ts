@@ -1,20 +1,37 @@
 import type { BlockRegistry } from "#src/models/BlockRegistry";
-import type { TestDocument } from "#src/services/constants.test";
+import type { TestDocument, TestNode, TestRootProps } from "#src/services/constants.test";
 
 import {
+  createTestDocumentSchema,
+  TEST_CHILDREN,
   TEST_DOCUMENT,
   TEST_DOCUMENT_NODE_COUNT,
   TEST_HEADING_ID,
   TEST_LIST_ID,
+  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
-import { describe, expect, test } from "vitest";
-import { z } from "zod";
+import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe(createBlockDocumentSchema, () => {
+  test("a document is typed by its consumer's node schema", () => {
+    expect.hasAssertions();
+
+    const schema = createBlockDocumentSchema(
+      TEST_REGISTRY,
+      TEST_NODE_SCHEMA,
+      TEST_REGISTRY.root.propsSchema,
+      TEST_CHILDREN,
+      TEST_DOCUMENT_NODE_COUNT,
+    );
+
+    expectTypeOf(schema.parse(TEST_DOCUMENT)).toEqualTypeOf<TestDocument>();
+    expect(schema.parse(TEST_DOCUMENT)).toStrictEqual(TEST_DOCUMENT);
+  });
+
   test("a child its slot does not allow", () => {
     expect.hasAssertions();
 
@@ -36,7 +53,7 @@ describe(createBlockDocumentSchema, () => {
       ],
       root: TEST_DOCUMENT.root,
     };
-    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+    const { error, success } = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([
@@ -51,7 +68,7 @@ describe(createBlockDocumentSchema, () => {
       content: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "heading" }],
       root: TEST_DOCUMENT.root,
     };
-    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+    const { error, success } = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0, "type"]]);
@@ -62,7 +79,7 @@ describe(createBlockDocumentSchema, () => {
 
     // The root props are malformed on purpose, so the fixture is the raw JSON a schema checks, not a typed document
     const document: unknown = { content: TEST_DOCUMENT.content, root: { props: {} } };
-    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+    const { error, success } = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["root", "props", "title"]]);
@@ -111,52 +128,36 @@ describe(createBlockDocumentSchema, () => {
   ])("%s", (_title, document, expectedPath) => {
     expect.hasAssertions();
 
-    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(document);
+    const { error, success } = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([expectedPath]);
   });
 
-  test("a document from another registry", () => {
+  test("a document whose registry's root accepts another type is refused", () => {
     expect.hasAssertions();
 
-    const otherRegistry: BlockRegistry = {
+    const headingRootRegistry: BlockRegistry<TestNode, TestRootProps> = {
       ...TEST_REGISTRY,
-      types: [
-        { propsSchema: z.object({ title: z.string() }), slots: { children: ["heading"] }, type: "section" },
-        { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
-        { propsSchema: z.object({ text: z.string() }), slots: {}, type: "item" },
-      ],
-    };
-    const document: TestDocument = {
-      content: [
-        {
-          props: {
-            children: [{ props: { id: TEST_LIST_ID, items: [] }, type: "list" }],
-            id: TEST_SECTION_ID,
-            title: "",
-          },
-          type: "section",
-        },
-      ],
-      root: TEST_DOCUMENT.root,
+      root: { ...TEST_REGISTRY.root, content: ["heading"] },
     };
 
-    expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(TEST_DOCUMENT).success).toBe(
-      true,
-    );
-    expect(createBlockDocumentSchema(otherRegistry, TEST_DOCUMENT_NODE_COUNT).safeParse(document).success).toBe(false);
+    expect(
+      createBlockDocumentSchema(
+        headingRootRegistry,
+        TEST_NODE_SCHEMA,
+        TEST_REGISTRY.root.propsSchema,
+        TEST_CHILDREN,
+        TEST_DOCUMENT_NODE_COUNT,
+      ).safeParse(TEST_DOCUMENT).success,
+    ).toBe(false);
   });
 
   test("a document past its node limit", () => {
     expect.hasAssertions();
 
-    expect(
-      createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT - 1).safeParse(TEST_DOCUMENT).success,
-    ).toBe(false);
-    expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT).safeParse(TEST_DOCUMENT).success).toBe(
-      true,
-    );
+    expect(createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT - 1).safeParse(TEST_DOCUMENT).success).toBe(false);
+    expect(createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT).safeParse(TEST_DOCUMENT).success).toBe(true);
   });
 
   test("a repeated id is refused across slots", () => {
@@ -166,9 +167,7 @@ describe(createBlockDocumentSchema, () => {
       content: [...TEST_DOCUMENT.content, { props: { children: [], id: TEST_HEADING_ID, title: "" }, type: "section" }],
       root: TEST_DOCUMENT.root,
     };
-    const { error, success } = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 1).safeParse(
-      document,
-    );
+    const { error, success } = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT + 1).safeParse(document);
 
     expect(success).toBe(false);
     expect(error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
@@ -194,8 +193,6 @@ describe(createBlockDocumentSchema, () => {
       root: TEST_DOCUMENT.root,
     };
 
-    expect(createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 2).safeParse(document).success).toBe(
-      false,
-    );
+    expect(createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT + 2).safeParse(document).success).toBe(false);
   });
 });

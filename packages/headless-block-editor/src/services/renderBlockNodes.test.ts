@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -5,18 +6,19 @@ import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 
 import { TEST_HEADING_ID, TEST_SECTION_ID, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
 import { renderBlockNodes } from "#src/services/renderBlockNodes";
+import { exhaustiveGuard } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+type HeadingNode = BlockNode<"heading", HeadingNodeProps>;
 interface HeadingNodeProps extends BlockNodeProps {
   text: string;
 }
+type ImageNode = BlockNode<"image">;
+type SectionNode = BlockNode<"section", SectionNodeProps>;
 interface SectionNodeProps extends BlockNodeProps {
   children: HeadingNode[];
 }
-type HeadingNode = BlockNode<"heading", HeadingNodeProps>;
-type ImageNode = BlockNode<"image">;
-type SectionNode = BlockNode<"section", SectionNodeProps>;
 type TestNode = HeadingNode | ImageNode | SectionNode;
 
 const TEST_RENDER_REGISTRY: BlockRegistry<TestNode> = {
@@ -27,6 +29,19 @@ const TEST_RENDER_REGISTRY: BlockRegistry<TestNode> = {
   ],
 };
 
+// The consumer's children port for the test nodes: one exhaustive switch over the node's type
+const TEST_RENDER_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
+  switch (node.type) {
+    case "heading":
+    case "image":
+      return {};
+    case "section":
+      return { children: node.props.children };
+    default:
+      return exhaustiveGuard(node);
+  }
+};
+
 const render = (node: TestNode, _definition: BlockTypeDefinition, slots: Record<string, unknown[]>) => ({
   children: Object.values(slots).flat(),
   id: node.props.id,
@@ -35,7 +50,7 @@ const render = (node: TestNode, _definition: BlockTypeDefinition, slots: Record<
 describe(renderBlockNodes, () => {
   const TEST_HEADING_OTHER_ID: string = crypto.randomUUID();
 
-  test("rendering a nested document", () => {
+  test("a renderer reads a child through the port", () => {
     expect.hasAssertions();
 
     const nodes: TestNode[] = [
@@ -51,7 +66,7 @@ describe(renderBlockNodes, () => {
       },
     ];
 
-    expect(renderBlockNodes(nodes, TEST_RENDER_REGISTRY, render)).toStrictEqual([
+    expect(renderBlockNodes(nodes, TEST_RENDER_REGISTRY, TEST_RENDER_CHILDREN, render)).toStrictEqual([
       {
         children: [
           { children: [], id: TEST_HEADING_ID },
@@ -70,7 +85,7 @@ describe(renderBlockNodes, () => {
       { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },
     ];
 
-    expect(renderBlockNodes(nodes, TEST_RENDER_REGISTRY, render)).toStrictEqual([
+    expect(renderBlockNodes(nodes, TEST_RENDER_REGISTRY, TEST_RENDER_CHILDREN, render)).toStrictEqual([
       { children: [], id: TEST_SECTION_OTHER_ID },
     ]);
   });

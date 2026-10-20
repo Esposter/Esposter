@@ -1,11 +1,11 @@
 import type { TestDocument } from "#src/services/constants.test";
 
 import {
+  TEST_CHILDREN,
   TEST_DOCUMENT,
   TEST_HEADING_ID,
   TEST_ITEM_ID,
   TEST_LIST_ID,
-  TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
@@ -16,7 +16,7 @@ describe(getBlockLayerRows, () => {
   test("the layer rows of the test document", () => {
     expect.hasAssertions();
 
-    expect(getBlockLayerRows(TEST_DOCUMENT, TEST_REGISTRY)).toStrictEqual([
+    expect(getBlockLayerRows(TEST_DOCUMENT, TEST_CHILDREN)).toStrictEqual([
       { depth: 0, nodePointer: "/content/0", type: "section" },
       { depth: 1, nodePointer: "/content/0/props/children/0", type: "heading" },
       { depth: 0, nodePointer: "/content/1", type: "section" },
@@ -47,7 +47,7 @@ describe(getBlockLayerRows, () => {
       root: { props: { title: "" } },
     };
 
-    expect(getBlockLayerRows(document, TEST_REGISTRY)).toStrictEqual([
+    expect(getBlockLayerRows(document, TEST_CHILDREN)).toStrictEqual([
       { depth: 0, nodePointer: "/content/0", type: "section" },
       { depth: 1, nodePointer: "/content/0/props/children/0", type: "heading" },
       { depth: 1, nodePointer: "/content/0/props/children/1", type: "list" },

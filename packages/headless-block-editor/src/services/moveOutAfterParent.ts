@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -11,11 +12,19 @@ import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shar
 export const moveOutAfterParent = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   nodePointer: string,
 ): JsonPatchOperation[] => {
   const segments = parseJsonPointer(nodePointer);
   const parentIndex = parseArrayIndex(segments.at(-4) ?? "", Number.MAX_SAFE_INTEGER);
   if (parentIndex === undefined) return [];
 
-  return moveBlockNode(document, registry, nodePointer, toJsonPointer(segments.slice(0, -4)), parentIndex + 1);
+  return moveBlockNode(
+    document,
+    registry,
+    children,
+    nodePointer,
+    toJsonPointer(segments.slice(0, -4)),
+    parentIndex + 1,
+  );
 };

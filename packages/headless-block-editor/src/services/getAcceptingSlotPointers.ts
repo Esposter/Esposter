@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -13,14 +14,15 @@ import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 export const getAcceptingSlotPointers = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   nodePointer: string,
 ): string[] => {
-  const node = getBlockNode(document, nodePointer);
+  const node = getBlockNode(document, nodePointer, children);
   if (!node) return [];
 
   const slotPointers = [
     "/content",
-    ...getBlockLayerRows(document, registry).flatMap((row) =>
+    ...getBlockLayerRows(document, children).flatMap((row) =>
       Object.keys(getBlockTypeDefinition(registry, row.type)?.slots ?? {}).map((slot) =>
         getBlockPropPointer(row.nodePointer, slot),
       ),
@@ -29,6 +31,6 @@ export const getAcceptingSlotPointers = <TNode extends BlockNode>(
   return slotPointers.filter(
     (slotPointer) =>
       !slotPointer.startsWith(`${nodePointer}/`) &&
-      getAcceptedTypes(document, registry, slotPointer).includes(node.type),
+      getAcceptedTypes(document, registry, children, slotPointer).includes(node.type),
   );
 };

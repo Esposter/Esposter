@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 
@@ -8,7 +9,8 @@ import { parseJsonPointer } from "@esposter/shared";
 export const getBlockNode = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   nodePointer: string,
+  children: BlockChildren<TNode>,
 ): TNode | undefined => {
   const [rootSegment, ...nodeSegments] = parseJsonPointer(nodePointer);
-  return rootSegment === "content" ? getBlockNodeAt(document.content, nodeSegments) : undefined;
+  return rootSegment === "content" ? getBlockNodeAt(document.content, nodeSegments, children) : undefined;
 };

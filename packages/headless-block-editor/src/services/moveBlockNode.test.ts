@@ -1,6 +1,7 @@
 import type { TestDocument } from "#src/services/constants.test";
 
 import {
+  TEST_CHILDREN,
   TEST_DOCUMENT,
   TEST_HEADING_ID,
   TEST_REGISTRY,
@@ -18,6 +19,7 @@ describe(moveBlockNode, () => {
     const operations = moveBlockNode(
       TEST_DOCUMENT,
       TEST_REGISTRY,
+      TEST_CHILDREN,
       `/content/0/props/children/0`,
       `/content/1/props/children`,
       0,
@@ -41,7 +43,9 @@ describe(moveBlockNode, () => {
   test("a node into a slot that refuses its type", () => {
     expect.hasAssertions();
 
-    expect(moveBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/1", "/content/0/props/children", 0)).toStrictEqual([]);
+    expect(
+      moveBlockNode(TEST_DOCUMENT, TEST_REGISTRY, TEST_CHILDREN, "/content/1", "/content/0/props/children", 0),
+    ).toStrictEqual([]);
   });
 
   test("moving a node into a later sibling", () => {
@@ -54,7 +58,14 @@ describe(moveBlockNode, () => {
       ],
       root: { props: { title: "" } },
     };
-    const operations = moveBlockNode(document, TEST_REGISTRY, "/content/0", "/content/1/props/children", 0);
+    const operations = moveBlockNode(
+      document,
+      TEST_REGISTRY,
+      TEST_CHILDREN,
+      "/content/0",
+      "/content/1/props/children",
+      0,
+    );
 
     expect(applyPatches(document, operations).document.content).toStrictEqual([
       {

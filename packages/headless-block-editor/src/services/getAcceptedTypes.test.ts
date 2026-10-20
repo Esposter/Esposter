@@ -1,4 +1,4 @@
-import { TEST_DOCUMENT, TEST_REGISTRY } from "#src/services/constants.test";
+import { TEST_CHILDREN, TEST_DOCUMENT, TEST_REGISTRY } from "#src/services/constants.test";
 import { getAcceptedTypes } from "#src/services/getAcceptedTypes";
 import { describe, expect, test } from "vitest";
 
@@ -9,6 +9,6 @@ describe(getAcceptedTypes, () => {
   ])("%s", (_title, slotPointer) => {
     expect.hasAssertions();
 
-    expect(getAcceptedTypes(TEST_DOCUMENT, TEST_REGISTRY, slotPointer)).toStrictEqual([]);
+    expect(getAcceptedTypes(TEST_DOCUMENT, TEST_REGISTRY, TEST_CHILDREN, slotPointer)).toStrictEqual([]);
   });
 });

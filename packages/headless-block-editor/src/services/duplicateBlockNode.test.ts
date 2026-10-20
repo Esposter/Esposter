@@ -2,21 +2,23 @@ import type { HeadingNodeProps } from "#src/services/constants.test";
 
 import { applyBlockEdit } from "#src/services/applyBlockEdit";
 import {
+  createTestDocumentSchema,
+  TEST_CHILDREN,
   TEST_DOCUMENT,
   TEST_DOCUMENT_NODE_COUNT,
   TEST_HEADING_ID,
+  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
-import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { duplicateBlockNode } from "#src/services/duplicateBlockNode";
 import { updateBlockNodeProps } from "#src/services/updateBlockNodeProps";
 import { assert, describe, expect, test } from "vitest";
 
 describe(duplicateBlockNode, () => {
   // A duplicate adds one node to the document, so the schema allows one more
-  const schema = createBlockDocumentSchema(TEST_REGISTRY, TEST_DOCUMENT_NODE_COUNT + 1);
+  const schema = createTestDocumentSchema(TEST_DOCUMENT_NODE_COUNT + 1);
 
   test("duplicating a node places its copy after it", () => {
     expect.hasAssertions();
@@ -24,7 +26,7 @@ describe(duplicateBlockNode, () => {
     const duplicated = applyBlockEdit(
       schema,
       TEST_DOCUMENT,
-      duplicateBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/0/props/children/0"),
+      duplicateBlockNode(TEST_DOCUMENT, TEST_REGISTRY, TEST_CHILDREN, TEST_NODE_SCHEMA, "/content/0/props/children/0"),
     ).match(
       ({ document }) => document,
       () => undefined,
@@ -59,6 +61,8 @@ describe(duplicateBlockNode, () => {
   test("duplicating a pointer naming no node", () => {
     expect.hasAssertions();
 
-    expect(duplicateBlockNode(TEST_DOCUMENT, TEST_REGISTRY, "/content/5")).toStrictEqual([]);
+    expect(
+      duplicateBlockNode(TEST_DOCUMENT, TEST_REGISTRY, TEST_CHILDREN, TEST_NODE_SCHEMA, "/content/5"),
+    ).toStrictEqual([]);
   });
 });

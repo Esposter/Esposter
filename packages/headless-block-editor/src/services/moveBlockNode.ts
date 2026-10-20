@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -30,15 +31,16 @@ const getSlotPointerAfterRemoval = (nodePointer: string, slotPointer: string): s
 export const moveBlockNode = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   nodePointer: string,
   slotPointer: string,
   index: number,
 ): JsonPatchOperation[] => {
-  const node = getBlockNode(document, nodePointer);
+  const node = getBlockNode(document, nodePointer, children);
   if (
     !node ||
     slotPointer.startsWith(`${nodePointer}/`) ||
-    !getAcceptedTypes(document, registry, slotPointer).includes(node.type)
+    !getAcceptedTypes(document, registry, children, slotPointer).includes(node.type)
   )
     return [];
   return [

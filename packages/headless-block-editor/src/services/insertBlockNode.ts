@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -10,10 +11,11 @@ import { JsonPatchOperationType } from "@esposter/shared";
 export const insertBlockNode = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   slotPointer: string,
   index: number,
   node: TNode,
 ): JsonPatchOperation[] => {
-  if (!getAcceptedTypes(document, registry, slotPointer).includes(node.type)) return [];
+  if (!getAcceptedTypes(document, registry, children, slotPointer).includes(node.type)) return [];
   return [{ op: JsonPatchOperationType.Add, path: `${slotPointer}/${index}`, value: node }];
 };

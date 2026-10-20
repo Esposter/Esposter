@@ -1,6 +1,7 @@
 import type { TestDocument } from "#src/services/constants.test";
 
 import {
+  TEST_CHILDREN,
   TEST_DOCUMENT,
   TEST_HEADING_ID,
   TEST_ITEM_ID,
@@ -32,7 +33,7 @@ describe(getFocusAfterRemoval, () => {
   test("removing the last child", () => {
     expect.hasAssertions();
 
-    expect(getFocusAfterRemoval(TEST_DOCUMENT, "/content/0/props/children/0")).toBe("/content/0");
+    expect(getFocusAfterRemoval(TEST_DOCUMENT, TEST_CHILDREN, "/content/0/props/children/0")).toBe("/content/0");
   });
 
   test.each<[string, string, string]>([
@@ -47,6 +48,6 @@ describe(getFocusAfterRemoval, () => {
   ])("%s", (_title, nodePointer, expected) => {
     expect.hasAssertions();
 
-    expect(getFocusAfterRemoval(threeSiblingsDocument, nodePointer)).toBe(expected);
+    expect(getFocusAfterRemoval(threeSiblingsDocument, TEST_CHILDREN, nodePointer)).toBe(expected);
   });
 });

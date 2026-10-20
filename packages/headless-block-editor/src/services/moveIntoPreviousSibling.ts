@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockDocument } from "#src/models/BlockDocument";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
@@ -6,7 +7,7 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import { getBlockNode } from "#src/services/getBlockNode";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
-import { getParsedSlotNodes } from "#src/services/getParsedSlotNodes";
+import { getSlotChildren } from "#src/services/getSlotChildren";
 import { getSlotTypes } from "#src/services/getSlotTypes";
 import { moveBlockNode } from "#src/services/moveBlockNode";
 import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shared";
@@ -15,15 +16,16 @@ import { parseArrayIndex, parseJsonPointer, toJsonPointer } from "@esposter/shar
 export const moveIntoPreviousSibling = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,
+  children: BlockChildren<TNode>,
   nodePointer: string,
 ): JsonPatchOperation[] => {
   const segments = parseJsonPointer(nodePointer);
   const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-  const node = getBlockNode(document, nodePointer);
+  const node = getBlockNode(document, nodePointer, children);
   if (!node || index === undefined || index === 0) return [];
 
   const previousPointer = `${toJsonPointer(segments.slice(0, -1))}/${index - 1}`;
-  const previous = getBlockNode(document, previousPointer);
+  const previous = getBlockNode(document, previousPointer, children);
   if (!previous) return [];
 
   const slots = getBlockTypeDefinition(registry, previous.type)?.slots ?? {};
@@ -31,5 +33,12 @@ export const moveIntoPreviousSibling = <TNode extends BlockNode>(
   if (slot === undefined) return [];
 
   const slotPointer = getBlockPropPointer(previousPointer, slot);
-  return moveBlockNode(document, registry, nodePointer, slotPointer, getParsedSlotNodes(previous, slot).length);
+  return moveBlockNode(
+    document,
+    registry,
+    children,
+    nodePointer,
+    slotPointer,
+    getSlotChildren(children, previous, slot).length,
+  );
 };
