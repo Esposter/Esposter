@@ -11,16 +11,16 @@ import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing"
 // The blank identifier, which a loop's variable may be and which names no value an iteration carries
 const GO_BLANK_IDENTIFIER = "_";
 
-// The rows of a talent variable's table: one more than the highest row any of its leaves names. A variable the config
-// Names as one reference is one row of levels rather than a list of rows, so it has none
+// The rows of a talent variable's table: one more than the highest row any of its leaves names.
+// A variable the config names as one reference is one row of levels rather than a list of rows, so it has none
 const readTalentRowCount = (config: GcsimConfig, name: string): number | undefined => {
   const leaves = config.talentVariables.find((variable) => variable.name === name)?.leaves;
   if (leaves === undefined || leaves.length === 0 || leaves.some(({ path }) => path.length === 0)) return undefined;
   return Math.max(...leaves.map(({ path: [row = 0] }) => row + 1));
 };
 
-// The elements a range runs once each over: a constant slice of numbers, else the rows of a talent table, which no
-// Constant gives and whose rows are not numbers. Undefined where the range is neither
+// The elements a range runs once each over: a constant slice of numbers, else the rows of a talent table.
+// A talent table's rows are not numbers, and no constant gives them. Undefined where the range is neither
 const readRangedElements = (
   slice: GoValue | undefined,
   rowCount: number | undefined,
@@ -30,9 +30,9 @@ const readRangedElements = (
 };
 
 // The `for` loop opening at the position when it ranges over a constant slice of numbers, as in
-// `for i, delay := range burstHitmarks {`, or over a talent table, as in `for i, mult := range burstWhiteInitial {`,
-// Which the config gives one row per entry it lists. Its iterations are the indexes, with its elements as the value
-// Variable when they are numbers, and its body's braces, else Undefined
+// `for i, delay := range burstHitmarks {`, or over a talent table, as in `for i, mult := range burstWhiteInitial {`.
+// The config gives a talent table one row per entry it lists. Its iterations are the indexes, with the value variable
+// Holding its elements when they are numbers, and its body's braces, else undefined
 export const readSliceRangeLoop = (
   tokens: readonly GoToken[],
   forPosition: number,
