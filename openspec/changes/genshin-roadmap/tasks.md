@@ -198,7 +198,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **HUD hidden** — `world-hud-hidden.mkv`, waits on [HUD](../genshin-hud/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Elemental Sight** — `elemental-sight.mkv`, waits on [elemental sight](../genshin-elemental-sight/design.md).
 - [ ] **Stamina refill** — `world-stamina.mkv`, waits on [HUD](../genshin-hud/design.md). The climb it reads, `captures/yt-hRR2yoP3uY0-world-stamina.mp4`, is not in `captures` yet, so the stamina meter's scoring waits on it. Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, waits on [combat](../archive/2026-10-20-genshin-combat/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, waits on [combat](../genshin-combat/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Bennett's Charge Levels** — `bennett-charge-levels.mkv`, waits on [character kits](../genshin-character-kits/design.md).
 - [ ] **Lisa's Violet Arc hold** — `lisa-violet-arc-hold.mkv`, waits on [character kits](../genshin-character-kits/design.md).
 - [ ] **Razor's Claw and Thunder** — `razor-claw-and-thunder.mkv`, waits on [character kits](../genshin-character-kits/design.md).
@@ -224,7 +224,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](../genshin-follow-camera/design.md).
 - [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](../../specs/genshin/dialogue/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Camp wake** — `world-camp.mkv`, waits on [enemies](../../specs/genshin/enemies/design.md).
-- [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](../archive/2026-10-20-genshin-combat/design.md).
+- [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](../genshin-combat/design.md).
 - [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](../genshin-menu-quit-prompt/design.md). Searched 2026-10-11, none found: the searches are on [the Paimon menu's compute page](../../specs/genshin/compute/paimon/design.md).
 - [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](../genshin-menu-paimon/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](../genshin-character-screen/design.md).
@@ -241,7 +241,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Weapon levelling** — `weapon-levelling.mkv`, the [weapon screen](../genshin-weapon-screen/design.md) over [weapon enhancement](../genshin-weapon-enhancement/design.md)'s rules.
 - [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](../archive/2026-10-20-genshin-adventure-rank/design.md).
+- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](../genshin-adventure-rank/design.md).
 - [ ] **Liyue outcrops by rank** — `liyue-outcrop-rank.mkv`, waits on [ley line outcrops](../genshin-ley-line-outcrops/design.md).
 - [ ] **Ley line claim** — `ley-line-claim.mkv`, waits on [ley line outcrops](../genshin-ley-line-outcrops/design.md).
 - [ ] **Exploration percentage steps** — `exploration-steps.mkv`, waits on [exploration progress](../genshin-exploration-progress/design.md).
@@ -318,7 +318,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Windrise re-derived from the game's own data.** [Windrise derivation](../genshin-windrise-derivation/design.md) needs every object the tile streams at its place, the dais and pedestals named, then each stand-in ranked and rebuilt, and each hour's light and haze calibrated over them.
 - [ ] **Windrise's ground detail, and every region's ground layers.** Every surface's detail is drawn at its own texture's metres per texel; [ground detail](../genshin-ground-detail/design.md) needs the Ground's structure read with its layers, then each layer's own texture's detail at its repeat, and each other region's layers once its base maps are exported.
 - [ ] **Each region's render pass, in build order.** [Recreation passes](../genshin-recreation-passes/design.md) runs each region's compare and rank over its references once they are named in `ParityReferenceMap`, Inazuma's first.
-- [ ] **The Change World Level prompt.** [Adventure rank](../archive/2026-10-20-genshin-adventure-rank/design.md) needs the prompt's layout, measured from `world-level-dialog-2024.mkv`, its Confirm state and its text ids from the dump.
+- [ ] **The Change World Level prompt.** [Adventure rank](../genshin-adventure-rank/design.md) needs the prompt's layout, measured from `world-level-dialog-2024.mkv`, its Confirm state and its text ids from the dump.
 - [x] **Map: the zoom slider, the teleport panel and the region tag.** [Exploring](../../specs/genshin/exploring/design.md) needs the map to zoom and pan, the teleport panel's reference (`world-map.mkv`), and the region tag's text.
 - [x] **A locked waypoint's F prompt, named by its own text.** [Exploring](../../specs/genshin/exploring/design.md) offers each locked jump landmark under the Statue of The Seven's name, so a Teleport Waypoint's prompt reads as a statue's. Its name needs reading from the game's text.
 - [x] **A waypoint's first-unlock reward.** [Exploring](../../specs/genshin/exploring/design.md) unlocks a waypoint and pays nothing, as `LandmarkIdStatuePointIdMap` names only Windrise's statue's point. Each waypoint's point needs naming there, and its reward checking against the open world's transport point rewards.

@@ -22,7 +22,7 @@ Paimon floats beside the menu once an official model is held, and the profile ca
 
 - Paimon's official model pack, which the user downloads among the developer's extracted packs, read as every character's is.
 - The characters' reader, which draws Paimon beside the menu: `openspec/changes/genshin-characters/`.
-- The Adventure Rank system, which supplies the profile card's rank and World Level: `openspec/changes/archive/2026-10-20-genshin-adventure-rank/`.
+- The Adventure Rank system, which supplies the profile card's rank and World Level: `openspec/changes/genshin-adventure-rank/`.
 - The signature, namecard, birthday and UID systems, each joining the profile card as it lands.
 
 ## Impact
