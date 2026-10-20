@@ -120,7 +120,7 @@ export const createMjmlNodeSchema = <TContent>({
     {},
   ) satisfies z.ZodType<MjmlSpacerNode>;
   const tableNode = createMjmlNodeBranch(MjmlNodeType.Table, tablePropsSchema, {}) satisfies z.ZodType<MjmlTableNode>;
-  // A column takes the flow nodes and a raw beside its leaf, and a hero the same flow nodes without a raw
+  // A column and a hero take the flow nodes and a raw beside their leaf, as their registry lists them
   const columnChildrenSchema = createMjmlSlotSchema([
     accordionNode,
     buttonNode,
@@ -141,6 +141,7 @@ export const createMjmlNodeSchema = <TContent>({
     carouselNode,
     dividerNode,
     imageNode,
+    rawNode,
     socialNode,
     spacerNode,
     tableNode,
