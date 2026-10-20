@@ -10,4 +10,5 @@ Hu Tao's kit is its record and one behaviour module, `createHuTaoKitBehaviour`, 
 
 ## Sources
 
+- [gcsim v2.47.2 Hu Tao plunge file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/plunge.go), MIT: the plunges' poise, 150 for the high plunge and 100 for the low.
 - [Secret Spear of Wangsheng](https://genshin-impact.fandom.com/wiki/Secret_Spear_of_Wangsheng), [Spirit Soother](https://genshin-impact.fandom.com/wiki/Spirit_Soother) and [Guide to Afterlife](https://genshin-impact.fandom.com/wiki/Guide_to_Afterlife), Genshin Impact Wiki: the poise of her strikes, charged attack and collision, the Paramita's charged attack, Spirit Soother's hit and Blood Blossom.
