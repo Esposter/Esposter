@@ -77,7 +77,7 @@ describe("blockTypes type", () => {
     expect.hasAssertions();
 
     expectTypeOf(sectionChildren(section)).toEqualTypeOf<{ children: readonly SectionNode[] }>();
-    // @ts-expect-error: TS7053 - a section holds children, not a gallery
-    expectTypeOf(sectionChildren(section)["gallery"]).toBeAny();
+    // @ts-expect-error: TS2339 - a section holds children, not a gallery
+    expectTypeOf(sectionChildren(section).gallery).toBeAny();
   });
 });

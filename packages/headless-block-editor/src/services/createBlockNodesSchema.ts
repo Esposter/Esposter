@@ -6,8 +6,8 @@ import { checkAcceptedType } from "#src/services/checkAcceptedType";
 import { checkBlockNodeIds } from "#src/services/checkBlockNodeIds";
 import { z } from "zod";
 
-// A list of nodes checked by the consumer's typed node schema, then against the types the slot accepts, then the ids across the nodes
-// and the types each nested slot accepts in the registry. The accepted types and ids are checked only on a list that parsed clean, so every node the refinement walks is typed
+// A list of nodes checked by the consumer's typed node schema, then against the types the slot accepts.
+// Then the ids across the nodes and the types each nested slot accepts in the registry. The accepted types and ids are checked only on a list that parsed clean, so every node the refinement walks is typed
 export const createBlockNodesSchema = <TNode extends BlockNode>(
   nodeSchema: z.ZodType<TNode>,
   registry: BlockRegistry<TNode>,
