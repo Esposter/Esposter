@@ -11,7 +11,10 @@ import { describe, expect, test } from "vitest";
 // Nuxt fall back. A value import is in that graph and a type import is not, so the check loads the real entry rather
 // Than scanning for an enum: whatever the entry reaches, Node either loads or refuses.
 describe("nuxt module entries load natively", () => {
-  test("load under plain node from their package directory", () => {
+  // Each entry is a node process of its own, and the parallel workspace run starts them beside every sibling's read
+  const LOAD_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 15 }).total("milliseconds");
+
+  test("load under plain node from their package directory", { timeout: LOAD_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const MODULE_ENTRY_PATH = "src/module.ts";

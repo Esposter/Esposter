@@ -1,4 +1,5 @@
 import { readRunOnBulletFindings } from "#src/services/sweeps/runOnBullets/readRunOnBulletFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -7,9 +8,13 @@ import { describe, expect, test } from "vitest";
  * specs' bullets have run together twice before any reader noticed.
  */
 describe("runOnBullets", () => {
-  test("no markdown page opens a bullet on the line of the sentence before it", () => {
-    expect.hasAssertions();
+  test(
+    "no markdown page opens a bullet on the line of the sentence before it",
+    { timeout: TREE_READ_TIMEOUT_MS },
+    () => {
+      expect.hasAssertions();
 
-    expect(readRunOnBulletFindings()).toStrictEqual([]);
-  });
+      expect(readRunOnBulletFindings()).toStrictEqual([]);
+    },
+  );
 });

@@ -1,4 +1,5 @@
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { basename, dirname } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -9,7 +10,7 @@ describe("openspecIndexes", () => {
   const SPECS_DIRECTORY = "openspec/specs";
   const CAPABILITY_PAGE_REGEX = /^openspec\/specs\/.+\/(?:design|spec)\.md$/u;
 
-  test("every capability is linked from the index above it", async () => {
+  test("every capability is linked from the index above it", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
     expect.hasAssertions();
 
     const pages = await readHandWrittenPages();

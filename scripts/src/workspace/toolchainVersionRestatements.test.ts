@@ -1,5 +1,6 @@
 import { getLineMatches } from "#src/services/workspace/getLineMatches";
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe("getToolchainVersionRestatements", () => {
@@ -46,7 +47,7 @@ describe("getToolchainVersionRestatements", () => {
   });
 
   // Why the check exists: nothing else fails when a version in prose drifts from the manifest that declares it
-  test("no hand-written page in the repository states one", async () => {
+  test("no hand-written page in the repository states one", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
     expect.hasAssertions();
 
     const files = await readHandWrittenPages();

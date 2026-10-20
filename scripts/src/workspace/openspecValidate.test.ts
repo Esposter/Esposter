@@ -1,6 +1,7 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { spawnPnpm } from "#src/services/shared/spawnPnpm";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { describe, expect, test } from "vitest";
 
 /**
@@ -9,7 +10,7 @@ import { describe, expect, test } from "vitest";
  * (the `openspec` skill, `references/spec-tests.md`).
  */
 describe("openspecValidate", () => {
-  test("every change and spec passes strict validation", () => {
+  test("every change and spec passes strict validation", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const { stdout } = spawnPnpm(["exec", "openspec", "validate", "--all", "--strict", "--no-interactive", "--json"], {

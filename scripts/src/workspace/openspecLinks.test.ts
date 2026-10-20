@@ -1,5 +1,6 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readHandWrittenPages } from "#src/services/workspace/readHandWrittenPages";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -13,7 +14,7 @@ describe("openspecLinks", () => {
   const SCHEME_REGEX = /^[a-z][\d+.a-z-]*:/iu;
   const OPENSPEC_PATH_PREFIX = "openspec/";
 
-  test("every relative link resolves", async () => {
+  test("every relative link resolves", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
     expect.hasAssertions();
 
     const pages = await readHandWrittenPages();

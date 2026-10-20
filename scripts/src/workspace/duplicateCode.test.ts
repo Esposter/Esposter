@@ -6,6 +6,7 @@ import {
   MIN_DUPLICATE_TOKENS,
 } from "#src/services/sweeps/duplicateCode/constants";
 import { readDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/readDuplicateCodeFindings";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -16,7 +17,7 @@ import { describe, expect, test } from "vitest";
  * fails here, and CI's Duplicate Code job runs this file as its gate (`.agents/ledgers/quality/duplicate-code.md`)
  */
 describe(readDuplicateCodeFindings, () => {
-  test("finds no clone in the scan", () => {
+  test("finds no clone in the scan", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     expect(readDuplicateCodeFindings()).toStrictEqual([]);

@@ -24,10 +24,7 @@ at those three:
   several times more over the repository's bytes and reads no clearer. It is the pass that finds _nothing_ that
   has to be fast, since that is the one every clean run makes; work priced per finding (a line number, a slice)
   is free by comparison and belongs there rather than in the walk.
-- **A whole-tree suite declares `TREE_READ_TIMEOUT_MS`** (`scripts/src/workspace/constants.test.ts`). Several of
-  them run at once, so each one's wall time is its own read plus every sibling contending with it, and Vitest's
-  5s default is what they sit just under — a new one arriving fails the others rather than itself. The timeout is
-  not the budget: `pnpm bench` is.
+- **A whole-tree suite declares `TREE_READ_TIMEOUT_MS`** (`scripts/src/workspace/constants.test.ts`), and only where the parallel `scripts/src/workspace` run exceeds Vitest's 5s default. Those suites run at once, so each one's wall time is its own read plus every sibling contending with it: a suite that passes alone can fail there, and a new one arriving fails the others rather than itself. The timeout is not the budget: `pnpm bench` is.
 
 A unit earns a bench only where its cost outgrows the corpus (the `bench` skill, `references/running-benchmarks.md`); one that scans a file with a regex
 does not, whatever the tree's size, and neither does a wrapper whose cost is a unit already benched underneath it.
