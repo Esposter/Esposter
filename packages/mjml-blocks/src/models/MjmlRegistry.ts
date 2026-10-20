@@ -1,5 +1,5 @@
-import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlNode } from "#src/models/MjmlNode";
+import type { MjmlNodeDefinition } from "#src/models/MjmlNodeDefinition";
 import type { MjmlRootProps } from "#src/models/MjmlRootProps";
 import type { BlockChildren, BlockRegistry } from "headless-block-editor";
 
@@ -7,7 +7,7 @@ import type { BlockChildren, BlockRegistry } from "headless-block-editor";
 export interface MjmlRegistry<TContext = unknown> extends BlockRegistry<
   MjmlNode,
   MjmlRootProps,
-  MjmlBlockTypeDefinition<MjmlNode, TContext>
+  MjmlNodeDefinition<MjmlNode, TContext>
 > {
   children: BlockChildren<MjmlNode>;
 }
