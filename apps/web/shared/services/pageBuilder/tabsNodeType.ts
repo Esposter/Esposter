@@ -1,17 +1,13 @@
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
 import type { TabsNode } from "#shared/models/pageBuilder/TabsNode";
-import type { TabsNodeProps } from "#shared/models/pageBuilder/TabsNodeProps";
-import type { OwnProps } from "headless-block-editor";
 
 import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
-import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { containerPropsSchema } from "#shared/services/pageBuilder/containerPropsSchema";
 import { hidePanel } from "#shared/services/pageBuilder/hidePanel";
 import { z } from "zod";
-
-const tabsPropsSchema = z.object({ style: nodeStyleSchema.optional() }) satisfies z.ZodType<OwnProps<TabsNodeProps>>;
 
 // Serialised with toString() and run in the page, so it names nothing outside its own body. Arrow keys move between the
 // Tabs and wrap at either end, Home and End move to the first and the last, and a click selects a tab
@@ -58,7 +54,7 @@ export const tabsNodeType = {
 .tabs [role="tab"][aria-selected="true"] { font-weight: 600; }`,
   formSchema: z.strictObject({}),
   isFocusable: true,
-  propsSchema: tabsPropsSchema,
+  propsSchema: containerPropsSchema,
   render: (node, slots) => {
     const buttons = node.props.children.map(({ props: { id, label } }, index): HtmlElement => ({
       attributes: {
