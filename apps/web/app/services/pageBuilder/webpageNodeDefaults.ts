@@ -17,7 +17,7 @@ const webpageNodeDefaultsMap: { [K in WebpageNodeType]: (id: string) => Extract<
   [WebpageNodeType.Column]: (id) => ({ props: { children: [], id }, type: WebpageNodeType.Column }),
   [WebpageNodeType.Columns]: (id) => ({ props: { children: [], id }, type: WebpageNodeType.Columns }),
   [WebpageNodeType.Countdown]: (id) => ({
-    props: { endText: "", endsAt: Temporal.Now.plainDateISO().toString(), id },
+    props: { endsAt: Temporal.Now.plainDateISO().toString(), endText: "", id },
     type: WebpageNodeType.Countdown,
   }),
   [WebpageNodeType.CustomHtml]: (id) => ({ props: { html: "", id }, type: WebpageNodeType.CustomHtml }),

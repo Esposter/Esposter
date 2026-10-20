@@ -1,10 +1,10 @@
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { describe, expect, test } from "vitest";
 
 const TEST_NODE: WebpageNode = { props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text };

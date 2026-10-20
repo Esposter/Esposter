@@ -1,5 +1,5 @@
-import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";

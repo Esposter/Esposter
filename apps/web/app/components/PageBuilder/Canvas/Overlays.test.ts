@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
+import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasOverlays from "@/components/PageBuilder/Canvas/Overlays.vue";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 

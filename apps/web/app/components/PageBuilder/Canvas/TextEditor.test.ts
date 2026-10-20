@@ -1,13 +1,13 @@
 // @vitest-environment nuxt
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { EditorContent } from "@tiptap/vue-3";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { EditorContent } from "@tiptap/vue-3";
 import { assert, describe, expect, test } from "vitest";
 import { nextTick } from "vue";
 

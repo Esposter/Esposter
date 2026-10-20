@@ -1,16 +1,16 @@
 // @vitest-environment nuxt
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
-import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
-import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 

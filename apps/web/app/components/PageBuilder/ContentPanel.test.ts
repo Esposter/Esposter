@@ -1,18 +1,18 @@
 // @vitest-environment nuxt
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
-import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
-import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
+import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
+import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { mount } from "@vue/test-utils";
-import { defineComponent, h } from "vue";
 import { describe, expect, test } from "vitest";
+import { defineComponent, h } from "vue";
 
 const createButtonDocument = (): WebpageDocument => ({
   content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],

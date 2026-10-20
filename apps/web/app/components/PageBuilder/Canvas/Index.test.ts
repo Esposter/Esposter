@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
 

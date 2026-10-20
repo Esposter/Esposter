@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
-import PageBuilderEmptyPage from "@/components/PageBuilder/EmptyPage.vue";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import PageBuilderEmptyPage from "@/components/PageBuilder/EmptyPage.vue";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";

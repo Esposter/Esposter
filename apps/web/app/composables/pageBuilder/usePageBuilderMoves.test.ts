@@ -63,7 +63,7 @@ describe(usePageBuilderMoves, () => {
   test("alt Down moves the selected node after its next sibling", async () => {
     expect.hasAssertions();
 
-    const { moveDown, resourceId, pageBuilderDocumentStore } = await setup("s1");
+    const { moveDown, pageBuilderDocumentStore, resourceId } = await setup("s1");
     moveDown();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
@@ -78,7 +78,7 @@ describe(usePageBuilderMoves, () => {
   test("alt Right moves a node into the previous sibling", async () => {
     expect.hasAssertions();
 
-    const { moveRight, resourceId, pageBuilderDocumentStore } = await setup("s2");
+    const { moveRight, pageBuilderDocumentStore, resourceId } = await setup("s2");
     moveRight();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
@@ -92,7 +92,7 @@ describe(usePageBuilderMoves, () => {
   test("alt Left moves a node out after its parent", async () => {
     expect.hasAssertions();
 
-    const { moveLeft, resourceId, pageBuilderDocumentStore } = await setup("i1");
+    const { moveLeft, pageBuilderDocumentStore, resourceId } = await setup("i1");
     moveLeft();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
@@ -129,7 +129,7 @@ describe(usePageBuilderMoves, () => {
   test("deleting a node moves focus to a neighbour", async () => {
     expect.hasAssertions();
 
-    const { pageBuilderCanvasStore, deleteSelected, pageBuilderDocumentStore, resourceId } = await setup("s1");
+    const { deleteSelected, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId } = await setup("s1");
     deleteSelected();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)).toStrictEqual({
