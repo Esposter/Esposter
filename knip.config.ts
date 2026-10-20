@@ -78,6 +78,7 @@ const knipConfiguration: KnipConfig = {
     // Follow it
     "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },
     // A type bench is run by `pnpm bench:types` and imported by nothing, as its fixture is imported by the benches alone
+    "packages/headless-block-editor": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
     // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
     // Optional on purpose

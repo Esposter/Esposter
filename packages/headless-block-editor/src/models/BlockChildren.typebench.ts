@@ -1,5 +1,4 @@
-import type { BlockChildren } from "#src/models/BlockChildren";
-import type { BlockSlots } from "#src/models/BlockChildren";
+import type { BlockChildren, BlockSlots } from "#src/models/BlockChildren";
 import type { SectionNode, TestNode } from "#src/services/constants.test";
 
 export type PortReturnForSection = ReturnType<BlockChildren<SectionNode>>["children"];
