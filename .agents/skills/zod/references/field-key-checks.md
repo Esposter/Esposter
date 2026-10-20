@@ -13,3 +13,7 @@ An object key naming another schema's field is inherited where nothing else chec
 | `[src.keyof().enum.field]`                           | caught at the site (`TS2551`)                       |
 
 So the computed key `[src.keyof().enum.field]: src.shape.field.optional()` is **required** in the first two rows and is the only guard those positions have — a resolver taking `schema: z.ZodObject` and a `*Form` schema layering `.meta()` onto a shared field are both in that set. Everywhere else a literal key is correct and the computed form is noise: `.pick()` already checks itself, and a plain `z.object` field is pinned by the consumers that destructure it. A key that **deliberately differs** from the source (`targetUserId: selectUserInAuthSchema.shape.id`) is never a candidate — it is not mirroring a name.
+
+## A key mirroring a table, not a schema
+
+An attribute table is a runtime record, so no schema is checked against its keys, and a props schema built by mapping over those keys types every value as one union. Each `mjml-blocks` props schema therefore writes its keys as literals, `createMjmlAttributeSchema(table.key, "key").optional()`, so each value keeps its name and its type and `satisfies` checks it against its prop. `satisfies` does not refuse a key that matches no field, so a key test compares the literal names with the table's keys (`packages/mjml-blocks/src/services/components/componentPropsSchema.test.ts`).

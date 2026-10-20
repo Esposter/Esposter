@@ -116,3 +116,7 @@ TS2590 fires where a large component instance type meets a composable's element 
 with the code and message:
 `// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.` Never move a template ref to another element to dodge it — the directive fails the build once the
 error stops firing, where the workaround silently changes what the ref points at.
+
+## A union of per-type definitions distributes over its members
+
+A registry holds one definition per node type, so its union must pair each type with its own props schema. Write the definition as a distributive conditional over the node union, `TNode extends MjmlNode ? MjmlBlockTypeDefinition<TNode> : never`, so each member carries only its own type's props. A non-distributive form types every member by the whole union, and a text's props schema given to a button's definition is then not refused. The pattern is `packages/mjml-blocks/src/models/MjmlNodeDefinition.ts`, and its refusal is pinned in the `.test-d.ts` beside it (the `testing` skill, `references/type-tests.md`).

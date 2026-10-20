@@ -18,7 +18,7 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions — the 
 - `references/generic-factories.md` — when a schema needs a type parameter, forms a discriminated union, wraps many payloads in one envelope, or shares a field with only some union members.
 - `references/string-normalization.md` — when a string is trimmed or lowercased before validation: the two shared helpers and the hand-written chain.
 - `references/numeric-constraints.md` — when adding a numeric field: which constraint its meaning earns.
-- `references/field-key-checks.md` — when an object key mirrors another schema's field and the choice is a literal key or the computed `[src.keyof().enum.field]`.
+- `references/field-key-checks.md` — when an object key mirrors another schema's field or a table's entry, and the choice is a literal key or the computed `[src.keyof().enum.field]`.
 - `references/arrays.md` — when a schema holds an array.
 - `references/zod-4-apis.md` — when writing a format validator, an enum schema, a refinement's error text, or an issue on a `ZodError`.
 - `references/defaults.md` — when a field is about to take `.default()`.
