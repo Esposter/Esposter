@@ -30,13 +30,13 @@ Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a packag
 
 - **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — refreshing the bundle-size snapshots is the standing case, `-t "size" index.test.ts` (`references/bundle-size.md`) — narrow it by path in the same command.
 
-## Measuring one test alone
+## Probing one test alone
 
-A test's own cost is read from its file run alone, with the JSON reporter writing each test's `duration` in milliseconds to a file outside the repo:
+A test's own duration is read from its file run alone, with the JSON reporter writing each test's `duration` in milliseconds to a file outside the repo:
 
 `pnpm test <file> --run --fileParallelism=false --reporter=json --outputFile=<path>`
 
-Each entry under `testResults[].assertionResults` carries its `title` and `duration`. `--fileParallelism=false` keeps other files off the cores, so the number is the test's cost rather than the contention `timeouts.md` warns about.
+Each entry under `testResults[].assertionResults` carries its `title` and `duration`. `--fileParallelism=false` keeps other files off the cores, so the reading is free of the contention `timeouts.md` warns about. It is a probe only: it locates where a file's time goes. The number a session quotes or gates a timeout on lives in a committed `*.bench.md` (`timeouts.md` step 1, the `bench` skill).
 
 ## Scoping a local run
 
