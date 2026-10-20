@@ -3,10 +3,6 @@ import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
-import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilderClipboard";
-import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
-import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
-import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import {
   CONTENT_PANEL,
   DEFAULT_SIDE_PANE_WIDTH,

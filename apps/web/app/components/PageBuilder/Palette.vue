@@ -2,7 +2,6 @@
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
-import { usePageBuilderInsert } from "@/composables/pageBuilder/usePageBuilderInsert";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
 
 interface Props {
