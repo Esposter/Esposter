@@ -45,4 +45,20 @@ describe(httpLink, () => {
 
     await expect(client.fail.query()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCClientError: Rejected]`);
   });
+
+  test("sends over the network to the request's own origin, cookies included, when the request event has no app", async () => {
+    expect.hasAssertions();
+
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
+    useRequestEvent.mockReturnValueOnce(
+      new H3Event(new Request("http://localhost/", { headers: { cookie: "session=1" } })),
+    );
+    const client = createTRPCClient<typeof router>({ links: [httpLink({ url: endpoint })] });
+
+    await expect(client.read.query()).resolves.toBe(0);
+    const [requested, init] = fetchSpy.mock.calls[0] ?? [];
+    expect(String(requested)).toBe("http://localhost/read");
+    expect(new Headers(init?.headers).get("cookie")).toBe("session=1");
+    fetchSpy.mockRestore();
+  });
 });
