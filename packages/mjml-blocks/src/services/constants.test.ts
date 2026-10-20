@@ -1,10 +1,11 @@
 import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
+import type { MjmlRichTextAttributeValue } from "#src/models/MjmlRichTextAttributeValue";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
 import type { BlockChildren, BlockNode } from "headless-block-editor";
 
-import { mjmlRichTextSchema } from "#src/models/MjmlRichTextSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { createMjmlNodeSchema } from "#src/services/mjmlNodeSchema";
@@ -28,6 +29,24 @@ export const TEST_GROUP_ID: string = crypto.randomUUID();
 export const TEST_HERO_ID: string = crypto.randomUUID();
 export const TEST_WRAPPER_ID: string = crypto.randomUUID();
 export const TEST_MAX_NODES: number = Number.MAX_SAFE_INTEGER;
+const mjmlRichTextAttributeValueSchema: z.ZodType<MjmlRichTextAttributeValue> = z.lazy(() =>
+  z.union([
+    z.boolean(),
+    z.number(),
+    z.string(),
+    z.array(mjmlRichTextAttributeValueSchema),
+    z.record(z.string(), mjmlRichTextAttributeValueSchema),
+  ]),
+);
+const mjmlRichTextAttributesSchema = z.record(z.string(), mjmlRichTextAttributeValueSchema);
+// The rich text document a test writes: a tree that parses as MjmlRichText, its recursion declared on the annotation
+const mjmlRichTextSchema: z.ZodType<MjmlRichText> = z.object({
+  attrs: mjmlRichTextAttributesSchema.optional(),
+  content: z.array(z.lazy(() => mjmlRichTextSchema)).optional(),
+  marks: z.array(z.object({ attrs: mjmlRichTextAttributesSchema.optional(), type: z.string() })).optional(),
+  text: z.string().optional(),
+  type: z.string().optional(),
+});
 export const TEST_RICH_TEXT: MjmlRichTextDefinition = {
   parseHtml: (html) => ({ text: html }),
   renderHtml: (content) => content.text ?? "",
