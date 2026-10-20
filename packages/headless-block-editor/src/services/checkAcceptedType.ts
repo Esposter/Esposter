@@ -1,6 +1,8 @@
 import type { z } from "zod";
 
-// Refuses a node at a path whose type none of the accepted types names, listing the accepted types sorted and each once
+import { getAcceptedTypesMessage } from "#src/services/getAcceptedTypesMessage";
+
+// Refuses a node at a path whose type none of the accepted types names, listing the accepted types as they are given
 export const checkAcceptedType = (
   context: z.RefinementCtx,
   type: string,
@@ -9,9 +11,5 @@ export const checkAcceptedType = (
 ): void => {
   if (acceptedTypes.includes(type)) return;
 
-  context.addIssue({
-    code: "custom",
-    message: `type must be one of ${[...new Set(acceptedTypes)].toSorted().join(", ")}`,
-    path: [...path, "type"],
-  });
+  context.addIssue({ code: "custom", message: getAcceptedTypesMessage(acceptedTypes), path: [...path, "type"] });
 };

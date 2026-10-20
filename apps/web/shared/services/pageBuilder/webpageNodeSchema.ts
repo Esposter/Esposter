@@ -31,13 +31,8 @@ import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
 import { tooltipNodeType } from "#shared/services/pageBuilder/tooltipNodeType";
 import { typedTextNodeType } from "#shared/services/pageBuilder/typedTextNodeType";
 import { videoNodeType } from "#shared/services/pageBuilder/videoNodeType";
+import { createAcceptedTypesError } from "headless-block-editor";
 import { z } from "zod";
-
-// A union refuses a node whose type it does not accept with the types it does accept, as the refusal names them
-const acceptedTypesError = (types: readonly string[]) => ({
-  error: (issue: z.core.$ZodRawIssue) =>
-    issue.code === "invalid_union" ? `type must be one of ${types.join(", ")}` : undefined,
-});
 
 // A placeable node's schema, reached lazily since a placeable node holds placeable nodes, so the recursion closes through the union below
 const placeableNodeSchema = z.lazy((): z.ZodType<WebpagePlaceableNode> => webpagePlaceableNodeSchema);
@@ -59,7 +54,9 @@ const columnNodeSchema = z.object({
 const columnsNodeSchema = z.object({
   props: z.strictObject({
     ...columnsNodeType.propsSchema.shape,
-    children: z.array(z.discriminatedUnion("type", [columnNodeSchema], acceptedTypesError([WebpageNodeType.Column]))),
+    children: z.array(
+      z.discriminatedUnion("type", [columnNodeSchema], createAcceptedTypesError([WebpageNodeType.Column])),
+    ),
     id: z.string(),
   }),
   type: z.literal(WebpageNodeType.Columns),
@@ -105,7 +102,7 @@ const tabNodeSchema = z.object({
 const tabsNodeSchema = z.object({
   props: z.strictObject({
     ...tabsNodeType.propsSchema.shape,
-    children: z.array(z.discriminatedUnion("type", [tabNodeSchema], acceptedTypesError([WebpageNodeType.Tab]))),
+    children: z.array(z.discriminatedUnion("type", [tabNodeSchema], createAcceptedTypesError([WebpageNodeType.Tab]))),
     id: z.string(),
   }),
   type: z.literal(WebpageNodeType.Tabs),
@@ -151,12 +148,12 @@ const webpagePlaceableNodeOptions = [
 export const webpagePlaceableNodeSchema = z.discriminatedUnion(
   "type",
   webpagePlaceableNodeOptions,
-  acceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),
+  createAcceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),
 ) satisfies z.ZodType<WebpagePlaceableNode>;
 
 // Any node a webpage holds, of whichever of its fourteen types, checked by its type tag and then by its own schema
 export const webpageNodeSchema = z.discriminatedUnion(
   "type",
   [...webpagePlaceableNodeOptions, columnNodeSchema, tabNodeSchema],
-  acceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),
+  createAcceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),
 ) satisfies z.ZodType<WebpageNode>;
