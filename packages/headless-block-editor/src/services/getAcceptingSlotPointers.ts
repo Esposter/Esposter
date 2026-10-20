@@ -11,6 +11,7 @@ import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
 // Every slot in the document whose accepted types include the node's type: the root's content first, then each node's slots in layer-row order
 // Never a slot inside the node itself, since a node cannot move into its own subtree, and none for a pointer naming no node
+// The slot keys are the registry's, since acceptance is a registry fact; the layer rows read the port's children
 export const getAcceptingSlotPointers = <TNode extends BlockNode>(
   document: BlockDocument<TNode>,
   registry: BlockRegistry<TNode>,

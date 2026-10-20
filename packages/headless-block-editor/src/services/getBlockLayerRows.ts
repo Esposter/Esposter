@@ -6,6 +6,7 @@ import type { BlockNode } from "#src/models/BlockNode";
 import { getBlockPropPointer } from "#src/services/getBlockPropPointer";
 
 // The rows of a list of children one depth down: each child's row, then the rows of its slots in the order its port returns them
+// The slot keys are the port's, since a row lists the children a node holds; the accepting-slot search reads the registry's slot lists instead
 const getChildRows = <TNode extends BlockNode>(
   children: BlockChildren<TNode>,
   nodes: readonly TNode[],
