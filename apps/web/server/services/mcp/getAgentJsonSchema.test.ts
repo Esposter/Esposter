@@ -4,6 +4,8 @@ import type { JSONSchema } from "zod/v4/core";
 import { checkIsUnwritableJsonSchema } from "#server/services/mcp/checkIsUnwritableJsonSchema";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { getReferencedJsonSchema } from "#server/services/mcp/getReferencedJsonSchema";
+import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
+import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
@@ -101,6 +103,29 @@ describe(getAgentJsonSchema, () => {
 
     expect(() => getAgentJsonSchema(z.set(z.string()))).toThrowErrorMatchingInlineSnapshot(
       `[Error: Set cannot be represented in JSON Schema]`,
+    );
+  });
+
+  // A slot's content is a union with one branch per type it takes, and a slot that recurses reads its branch by reference
+  test("lists the types a webpage root's content takes, a branch by reference where a slot recurses", () => {
+    expect.hasAssertions();
+
+    const { $defs = {}, properties = {} } = getAgentJsonSchema(webpageDocumentSchema);
+    const resolveSchema = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema | undefined =>
+      typeof schema === "object" && schema.$ref !== undefined ? $defs[schema.$ref.replace("#/$defs/", "")] : schema;
+    const readBranchType = (branch: JSONSchema._JSONSchema | undefined): string | undefined => {
+      const resolved = resolveSchema(branch);
+      if (resolved === undefined || typeof resolved === "boolean") return undefined;
+      const { type } = resolved.properties ?? {};
+      return type === undefined || typeof type === "boolean" || typeof type.const !== "string" ? undefined : type.const;
+    };
+    const readOneOf = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema[] =>
+      schema === undefined || typeof schema === "boolean" ? [] : (schema.oneOf ?? []);
+    const { content } = properties;
+    const items = typeof content === "object" && !Array.isArray(content.items) ? content.items : undefined;
+
+    expect(readOneOf(resolveSchema(items)).map((branch) => readBranchType(branch))).toStrictEqual(
+      WEBPAGE_PLACEABLE_NODE_TYPES,
     );
   });
 });

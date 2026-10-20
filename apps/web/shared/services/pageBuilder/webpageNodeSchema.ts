@@ -148,7 +148,7 @@ const webpagePlaceableNodeOptions = [
   videoNodeSchema,
 ] satisfies readonly [z.core.$ZodTypeDiscriminable, ...z.core.$ZodTypeDiscriminable[]];
 
-const webpagePlaceableNodeSchema = z.discriminatedUnion(
+export const webpagePlaceableNodeSchema = z.discriminatedUnion(
   "type",
   webpagePlaceableNodeOptions,
   acceptedTypesError(WEBPAGE_PLACEABLE_NODE_TYPES),

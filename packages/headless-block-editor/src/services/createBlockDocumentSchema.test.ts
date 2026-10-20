@@ -1,5 +1,4 @@
-import type { BlockRegistry } from "#src/models/BlockRegistry";
-import type { TestDocument, TestNode, TestRootProps } from "#src/services/constants.test";
+import type { TestDocument } from "#src/services/constants.test";
 
 import {
   createTestDocumentSchema,
@@ -8,8 +7,8 @@ import {
   TEST_DOCUMENT_NODE_COUNT,
   TEST_HEADING_ID,
   TEST_LIST_ID,
-  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
+  TEST_ROOT_CONTENT_SCHEMA,
   TEST_SECTION_ID,
   TEST_SECTION_OTHER_ID,
 } from "#src/services/constants.test";
@@ -17,12 +16,11 @@ import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSche
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe(createBlockDocumentSchema, () => {
-  test("a document is typed by its consumer's node schema", () => {
+  test("a document is typed by its consumer's root content schema", () => {
     expect.hasAssertions();
 
     const schema = createBlockDocumentSchema(
-      TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_ROOT_CONTENT_SCHEMA,
       TEST_REGISTRY.root.propsSchema,
       TEST_CHILDREN,
       TEST_DOCUMENT_NODE_COUNT,
@@ -132,25 +130,6 @@ describe(createBlockDocumentSchema, () => {
 
     expect(success).toBe(false);
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([expectedPath]);
-  });
-
-  test("a document whose registry's root accepts another type is refused", () => {
-    expect.hasAssertions();
-
-    const headingRootRegistry: BlockRegistry<TestNode, TestRootProps> = {
-      ...TEST_REGISTRY,
-      root: { ...TEST_REGISTRY.root, content: ["heading"] },
-    };
-
-    expect(
-      createBlockDocumentSchema(
-        headingRootRegistry,
-        TEST_NODE_SCHEMA,
-        TEST_REGISTRY.root.propsSchema,
-        TEST_CHILDREN,
-        TEST_DOCUMENT_NODE_COUNT,
-      ).safeParse(TEST_DOCUMENT).success,
-    ).toBe(false);
   });
 
   test("a document past its node limit", () => {

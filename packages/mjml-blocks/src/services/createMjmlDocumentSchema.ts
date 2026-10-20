@@ -5,10 +5,10 @@ import type { z } from "zod";
 
 import { createBlockDocumentSchema } from "headless-block-editor";
 
-// The email's document schema: its content parsed by the static node schema, its root props by the registry's root schema, and its nodes walked through the children port
+// The email's document schema: its content parsed by the body's children schema, its root props by the registry's root schema, and its nodes walked through the children port
 export const createMjmlDocumentSchema = <TContext>(
   registry: MjmlRegistry<TContext>,
-  nodeSchema: z.ZodType<MjmlNode>,
+  bodyChildrenSchema: z.ZodType<MjmlNode>,
   maxNodes: number,
 ): z.ZodType<MjmlDocument> =>
-  createBlockDocumentSchema(registry, nodeSchema, registry.root.propsSchema, registry.children, maxNodes);
+  createBlockDocumentSchema(bodyChildrenSchema, registry.root.propsSchema, registry.children, maxNodes);

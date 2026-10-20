@@ -16,7 +16,7 @@ import { parse } from "node-html-parser";
 export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
   source: string,
   registry: MjmlRegistry<TContext>,
-  nodeSchema: z.ZodType<MjmlNode>,
+  bodyChildrenSchema: z.ZodType<MjmlNode>,
   richText: MjmlRichTextDefinition<TContent>,
   maxNodes: number,
 ): z.ZodSafeParseResult<MjmlDocument> => {
@@ -31,5 +31,5 @@ export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
     mjml?.rawTagName === "mjml" && topLevelEntries.length === 0
       ? readMjmlRoot(mjml, registry, richText)
       : { content: [], root: { props: Object.fromEntries(topLevelEntries) } };
-  return createMjmlDocumentSchema(registry, nodeSchema, maxNodes).safeParse(candidate);
+  return createMjmlDocumentSchema(registry, bodyChildrenSchema, maxNodes).safeParse(candidate);
 };

@@ -59,10 +59,10 @@ export const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
   props: z.strictObject({ id: z.string() }),
   type: z.literal("test-leaf"),
 }) satisfies z.ZodType<TestLeafNode>;
-export const TEST_NODE_SCHEMA: z.ZodType<MjmlNode> = createMjmlNodeSchema({
-  leafNodeSchema: TEST_LEAF_NODE_SCHEMA,
-  richText: TEST_RICH_TEXT,
-});
+const TEST_SCHEMAS = createMjmlNodeSchema({ leafNodeSchema: TEST_LEAF_NODE_SCHEMA, richText: TEST_RICH_TEXT });
+export const TEST_NODE_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.nodeSchema;
+// The schema of a document's content: the children the body takes
+export const TEST_BODY_CHILDREN_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.bodyChildrenSchema;
 // The children port a test registry composes: the test leaf holds no slot, and every built-in node is MJML's own
 export const TEST_CHILDREN: BlockChildren<MjmlNode> = (node) =>
   node.type === "test-leaf" ? {} : mjmlNodeChildren(node);

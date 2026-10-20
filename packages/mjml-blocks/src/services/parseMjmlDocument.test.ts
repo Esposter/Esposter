@@ -2,8 +2,8 @@ import type { BlockDocument, BlockNode } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
+  TEST_BODY_CHILDREN_SCHEMA,
   TEST_MAX_NODES,
-  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_RENDER_OPTIONS,
   TEST_RICH_TEXT,
@@ -118,7 +118,7 @@ describe(parseMjmlDocument, () => {
       },
     },
   };
-  const EVERY_TYPE_DOCUMENT = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse(
+  const EVERY_TYPE_DOCUMENT = createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES).parse(
     EVERY_TYPE_CONTENT,
   );
 
@@ -129,7 +129,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       serializeMjml(json),
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -144,7 +144,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-include path="./header.mjml"></mj-include></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -158,7 +158,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       "<mjml><mj-body><mj-raw><script>alert(1)</script><p>kept</p></mj-raw></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -172,7 +172,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       "<mjml><mj-body><mj-section><mj-column><mj-button><b>Go</b></mj-button></mj-column></mj-section></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -187,7 +187,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-body><mj-section><mj-column><mj-image src="https://example.com/a.png" alt="A" /><mj-text>After</mj-text></mj-column></mj-section></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -222,7 +222,7 @@ describe(parseMjmlDocument, () => {
     const inContainer = parseMjmlDocument(
       "<mjml><mj-body><mj-section>Hi</mj-section></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -233,7 +233,7 @@ describe(parseMjmlDocument, () => {
     const inHead = parseMjmlDocument(
       "<mjml><mj-head>Hi</mj-head><mj-body></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -246,7 +246,7 @@ describe(parseMjmlDocument, () => {
     const secondDocument = parseMjmlDocument(
       "<mjml><mj-body></mj-body></mjml><mjml><mj-body></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -255,7 +255,7 @@ describe(parseMjmlDocument, () => {
     const outsideText = parseMjmlDocument(
       "<mjml><mj-body></mj-body></mjml>a",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -268,7 +268,7 @@ describe(parseMjmlDocument, () => {
     const body = parseMjmlDocument(
       '<mjml><mj-body></mj-body><mj-body width="600px"></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -277,7 +277,7 @@ describe(parseMjmlDocument, () => {
     const head = parseMjmlDocument(
       "<mjml><mj-head></mj-head><mj-head></mj-head><mj-body></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -290,7 +290,7 @@ describe(parseMjmlDocument, () => {
     const secondBody = parseMjmlDocument(
       '<mjml><mj-body width="600px"></mj-body><body width="300px"></body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -299,7 +299,7 @@ describe(parseMjmlDocument, () => {
     const bodyWithSection = parseMjmlDocument(
       "<mjml><body><mj-section></mj-section></body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -312,7 +312,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml title="x"><mj-head><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -325,7 +325,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       "<mjml><mj-head><mj-title>a</mj-title><mj-title>b</mj-title></mj-head><mj-body></mj-body></mjml>",
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -338,7 +338,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-attributes><mj-text color="red"></mj-text><mj-text color="blue"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -351,7 +351,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-attributes><all padding="0px"></all></mj-attributes></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -364,7 +364,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-title foo="a">a</mj-title></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -377,7 +377,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-body><mj-section id="hero"></mj-section></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -402,7 +402,7 @@ describe(parseMjmlDocument, () => {
   ])("a source attribute named %s is refused by name, not written over the node's own prop", (_name, source, key) => {
     expect.hasAssertions();
 
-    const result = parseMjmlDocument(source, TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_RICH_TEXT, TEST_MAX_NODES);
+    const result = parseMjmlDocument(source, TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_RICH_TEXT, TEST_MAX_NODES);
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([`Unrecognized key: "${key}"`]);
   });
 
@@ -412,7 +412,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-style media="print">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -425,7 +425,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-style inline="true">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -438,7 +438,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head foo="x"><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );
@@ -451,7 +451,7 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(
       '<mjml><mj-head><mj-attributes foo="x"><mj-text color="red"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
       TEST_REGISTRY,
-      TEST_NODE_SCHEMA,
+      TEST_BODY_CHILDREN_SCHEMA,
       TEST_RICH_TEXT,
       TEST_MAX_NODES,
     );

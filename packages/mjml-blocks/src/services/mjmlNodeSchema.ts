@@ -57,7 +57,10 @@ import { z } from "zod";
 export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   leafNodeSchema,
   richText,
-}: CreateMjmlNodeSchemaOptions<TContent>): z.ZodType<MjmlNode> => {
+}: CreateMjmlNodeSchemaOptions<TContent>): {
+  bodyChildrenSchema: z.ZodType<MjmlNode>;
+  nodeSchema: z.ZodType<MjmlNode>;
+} => {
   const textNode = createMjmlNodeBranch(
     MjmlNodeType.Text,
     createMjmlTextPropsSchema(richText),
@@ -152,7 +155,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     children: z.array(createMjmlSlotSchema([heroNode, rawNode, sectionNode])),
   }) satisfies z.ZodType<MjmlWrapperNode>;
 
-  return z.discriminatedUnion("type", [
+  const nodeSchema = z.discriminatedUnion("type", [
     accordionElementNode,
     accordionNode,
     accordionTextNode,
@@ -177,4 +180,13 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     wrapperNode,
     leafNodeSchema,
   ]) satisfies z.ZodType<MjmlNode>;
+  // The body's children are the types MJML's body takes, each reached through its own branch, so the document's root reads them
+  const bodyChildrenSchema = createMjmlSlotSchema([
+    rawNode,
+    sectionNode,
+    wrapperNode,
+    heroNode,
+  ]) satisfies z.ZodType<MjmlNode>;
+
+  return { bodyChildrenSchema, nodeSchema };
 };

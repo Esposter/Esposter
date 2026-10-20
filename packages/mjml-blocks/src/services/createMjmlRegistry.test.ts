@@ -1,12 +1,12 @@
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
+  TEST_BODY_CHILDREN_SCHEMA,
   TEST_BUTTON_ID,
   TEST_COLUMN_ID,
   TEST_GROUP_ID,
   TEST_HERO_ID,
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
-  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_TEXT_ID,
@@ -19,7 +19,7 @@ import { describe, expect, test } from "vitest";
 
 // A document as it arrives from its JSON, which the document schema narrows, so its issues name what the schema refused
 const getIssuePaths = (document: unknown): PropertyKey[][] =>
-  createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES)
+  createMjmlDocumentSchema(TEST_REGISTRY, TEST_BODY_CHILDREN_SCHEMA, TEST_MAX_NODES)
     .safeParse(document)
     .error?.issues.map((issue) => issue.path) ?? [];
 
@@ -215,5 +215,13 @@ describe(createMjmlRegistry, () => {
 
     const definition = getBlockTypeDefinition(TEST_REGISTRY, MjmlNodeType.Raw);
     expect(definition?.propsSchema.safeParse({ content: html }).success).toBe(isAccepted);
+  });
+
+  test("the document's content takes exactly the body children the registry's root lists", () => {
+    expect.hasAssertions();
+
+    expect(TEST_BODY_CHILDREN_SCHEMA.safeParse({ props: {}, type: "unregistered" }).error?.issues[0]?.message).toBe(
+      `type must be one of ${[...TEST_REGISTRY.root.content].toSorted().join(", ")}`,
+    );
   });
 });

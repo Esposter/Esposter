@@ -83,6 +83,9 @@ export const TEST_NODE_SCHEMA: z.ZodType<TestNode> = z.discriminatedUnion("type"
   TEST_SECTION_SCHEMA,
 ]);
 
+// The root's content schema: only the types the test registry's root accepts
+export const TEST_ROOT_CONTENT_SCHEMA: z.ZodType<TestNode> = z.discriminatedUnion("type", [TEST_SECTION_SCHEMA]);
+
 // The consumer's children port: one exhaustive switch over the node's type
 export const TEST_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
   switch (node.type) {
@@ -101,7 +104,7 @@ export const TEST_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode
 
 // The document schema of the test registry, with a node limit
 export const createTestDocumentSchema = (maxNodes: number): z.ZodType<BlockDocument<TestNode, TestRootProps>> =>
-  createBlockDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_REGISTRY.root.propsSchema, TEST_CHILDREN, maxNodes);
+  createBlockDocumentSchema(TEST_ROOT_CONTENT_SCHEMA, TEST_REGISTRY.root.propsSchema, TEST_CHILDREN, maxNodes);
 
 export const TEST_DOCUMENT: TestDocument = {
   content: [

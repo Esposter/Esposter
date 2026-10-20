@@ -52,7 +52,7 @@ const richText: MjmlRichTextDefinition<{ text?: string }> = {
   renderHtml: (content) => content.text ?? "",
   schema: z.object({ text: z.string().optional() }),
 };
-const nodeSchema = createMjmlNodeSchema({
+const { bodyChildrenSchema } = createMjmlNodeSchema({
   leafNodeSchema: z.strictObject({
     props: z.strictObject({ href: z.string(), id: z.string() }),
     type: z.literal("link"),
@@ -64,7 +64,7 @@ const registry = createMjmlRegistry({
   leafTypes: [],
   richText,
 });
-const document = createMjmlDocumentSchema(registry, nodeSchema, Number.MAX_SAFE_INTEGER).parse({
+const document = createMjmlDocumentSchema(registry, bodyChildrenSchema, Number.MAX_SAFE_INTEGER).parse({
   content: [
     {
       props: {
