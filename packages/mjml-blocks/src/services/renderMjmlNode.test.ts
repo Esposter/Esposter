@@ -1,8 +1,10 @@
 import type { MjmlColumnNode } from "#src/models/MjmlColumnNode";
 import type { MjmlImageNode } from "#src/models/MjmlImageNode";
+import type { MjmlNavbarNode } from "#src/models/MjmlNavbarNode";
 import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { mjmlNavbarType } from "#src/services/components/mjNavbar";
 import { TEST_COLUMN_ID, TEST_IMAGE_ID, TEST_REGISTRY } from "#src/services/constants.test";
 import { getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -70,6 +72,23 @@ describe("renderMjmlNode", () => {
     expect(definition?.render(image, {}, undefined)).toStrictEqual({
       attributes: { alt: "A", title: "&lt;b&gt;&amp;&quot;" },
       tagName: "mj-image",
+    });
+  });
+
+  test.each([
+    ["ico-close", "⊗"],
+    ["ico-open", "☰"],
+  ])("a navbar's default %s renders as its icon, not as the entity's text", (name, icon) => {
+    expect.hasAssertions();
+
+    const navbar: MjmlNavbarNode = {
+      props: { children: [], id: crypto.randomUUID(), [name]: mjmlNavbarType.defaultAttributes[name] },
+      type: MjmlNodeType.Navbar,
+    };
+    expect(mjmlNavbarType.render(navbar, {}, undefined)).toStrictEqual({
+      attributes: { [name]: icon },
+      children: [],
+      tagName: "mj-navbar",
     });
   });
 });

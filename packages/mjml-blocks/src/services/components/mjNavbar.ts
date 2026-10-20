@@ -5,12 +5,13 @@ import type { MjmlNavbarProps } from "#src/models/MjmlNavbarProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the navbar component, each in MJML's grammar
-export const navbarAttributes = {
+const navbarBaseAttributes = {
   align: "enum(left,center,right)",
   "base-url": "string",
   hamburger: "string",
@@ -29,10 +30,11 @@ export const navbarAttributes = {
   "ico-text-decoration": "string",
   "ico-text-transform": "string",
   padding: "unit(px,%){1,4}",
-  "padding-bottom": "unit(px,%)",
-  "padding-left": "unit(px,%)",
-  "padding-right": "unit(px,%)",
-  "padding-top": "unit(px,%)",
+};
+
+export const navbarAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navbarBaseAttributes = {
+  ...navbarBaseAttributes,
+  ...MJML_PADDING_ATTRIBUTES,
 };
 
 export const navbarPropsSchema: z.ZodObject<
@@ -79,12 +81,12 @@ const mjmlNavbarTypeFields = {
   defaultAttributes: {
     align: "center",
     "ico-align": "center",
-    "ico-close": "&#8855;",
+    "ico-close": "⊗",
     "ico-color": "#000000",
     "ico-font-family": "Ubuntu, Helvetica, Arial, sans-serif",
     "ico-font-size": "30px",
     "ico-line-height": "30px",
-    "ico-open": "&#9776;",
+    "ico-open": "☰",
     "ico-padding": "10px",
     "ico-text-decoration": "none",
     "ico-text-transform": "uppercase",

@@ -6,9 +6,14 @@ import {
 } from "#src/services/constants";
 import { TEST_CHILDREN, TEST_REGISTRY, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
+import { parse } from "node-html-parser";
 import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
+
+// MJML writes some defaults as entities, which the read back decodes, so each default is compared as the character it names
+const decodeDefault = (value: string): string =>
+  parse(`<i value="${value}"></i>`).querySelector("i")?.getAttribute("value") ?? value;
 
 const readComponent = (component: object) => ({
   allowedAttributes: z.record(z.string(), z.string()).optional().parse(Reflect.get(component, "allowedAttributes")),
@@ -52,7 +57,11 @@ describe("components", () => {
     const component = components.find((candidate) => candidate.componentName === type);
     assert.exists(component);
     expect(definition.defaultAttributes).toStrictEqual(
-      Object.fromEntries(Object.entries(component.defaultAttributes).filter(([, value]) => typeof value === "string")),
+      Object.fromEntries(
+        Object.entries(component.defaultAttributes).flatMap(([name, value]) =>
+          typeof value === "string" ? [[name, decodeDefault(value)] satisfies [string, string]] : [],
+        ),
+      ),
     );
   });
 
