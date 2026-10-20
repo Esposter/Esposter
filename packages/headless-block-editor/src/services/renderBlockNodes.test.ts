@@ -21,14 +21,6 @@ interface SectionNodeProps extends BlockNodeProps {
 }
 type TestNode = HeadingNode | ImageNode | SectionNode;
 
-const TEST_RENDER_REGISTRY: BlockRegistry<TestNode> = {
-  root: { content: ["section"], propsSchema: z.object({}) },
-  types: [
-    { propsSchema: z.object({}), slots: { children: ["heading"] }, type: "section" },
-    { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
-  ],
-};
-
 // The consumer's children port for the test nodes: one exhaustive switch over the node's type
 const TEST_RENDER_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode>> => {
   switch (node.type) {
@@ -48,6 +40,14 @@ const render = (node: TestNode, _definition: BlockTypeDefinition, slots: Record<
 });
 
 describe(renderBlockNodes, () => {
+  const TEST_RENDER_REGISTRY: BlockRegistry<TestNode> = {
+    root: { content: ["section"], propsSchema: z.object({}) },
+    types: [
+      { propsSchema: z.object({}), slots: { children: ["heading"] }, type: "section" },
+      { propsSchema: z.object({ text: z.string() }), slots: {}, type: "heading" },
+    ],
+  };
+
   const TEST_HEADING_OTHER_ID: string = crypto.randomUUID();
 
   test("a renderer reads a child through the port", () => {

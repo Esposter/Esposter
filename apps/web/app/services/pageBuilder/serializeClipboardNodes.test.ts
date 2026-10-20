@@ -7,9 +7,9 @@ import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { parseClipboardNodes, serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { describe, expect, test } from "vitest";
 
-const TEST_NODE: WebpageNode = { props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text };
-
 describe(serializeClipboardNodes, () => {
+  const TEST_NODE: WebpageNode = { props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text };
+
   test("a serialized node parses back to the same editor and nodes", () => {
     expect.hasAssertions();
 

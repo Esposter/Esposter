@@ -21,10 +21,6 @@ vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOrig
   return { refuseClipboardPaste: vi.fn<typeof original>(original) };
 });
 
-const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
-// A type name no webpage node holds, written over a copied text node's tag in the clipboard text
-const UNKNOWN_NODE_TYPE = "UnknownNodeType";
-
 const createTextNode = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
   type: WebpageNodeType.Text,
@@ -53,6 +49,10 @@ const openResource = async (content: WebpageDocument["content"]) => {
 };
 
 describe(usePageBuilderClipboard, () => {
+  const REFUSAL_MESSAGE = "A webpage block cannot be pasted into an email";
+  // A type name no webpage node holds, written over a copied text node's tag in the clipboard text
+  const UNKNOWN_NODE_TYPE = "UnknownNodeType";
+
   afterEach(() => {
     vi.unstubAllGlobals();
   });

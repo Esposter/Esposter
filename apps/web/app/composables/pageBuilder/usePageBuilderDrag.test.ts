@@ -16,35 +16,15 @@ import { describe, expect, test, vi } from "vitest";
 
 const TEXT_ONE = "text-one";
 const TEXT_TWO = "text-two";
-const COLUMN_SLOT = "/content/0/props/children/0/props/children";
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
   type: WebpageNodeType.Text,
 });
-const COLUMN_DOCUMENT: WebpageDocument = {
-  content: [
-    {
-      props: {
-        children: [
-          {
-            props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
-            type: WebpageNodeType.Column,
-          },
-        ],
-        id: "columns",
-      },
-      type: WebpageNodeType.Columns,
-    },
-  ],
-  root: TEST_ROOT,
-};
-const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
 const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
   [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
   [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
 };
 const RESOURCE_ID = "resource";
-const TEXT_TITLE = WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text];
 
 const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
   frameRect: { height: 500, left: 0, top: 0, width: 500 },
@@ -66,6 +46,27 @@ const setup = (document: WebpageDocument) => {
 const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
 
 describe("usePageBuilderDrag", () => {
+  const COLUMN_SLOT = "/content/0/props/children/0/props/children";
+  const COLUMN_DOCUMENT: WebpageDocument = {
+    content: [
+      {
+        props: {
+          children: [
+            {
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: "column" },
+              type: WebpageNodeType.Column,
+            },
+          ],
+          id: "columns",
+        },
+        type: WebpageNodeType.Columns,
+      },
+    ],
+    root: TEST_ROOT,
+  };
+  const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
+  const TEXT_TITLE = WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text];
+
   test("escape cancels a drag", () => {
     expect.hasAssertions();
     const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(COLUMN_DOCUMENT);

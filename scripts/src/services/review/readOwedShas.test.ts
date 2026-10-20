@@ -8,9 +8,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const COMMIT_ARGUMENTS = ["-c", "user.name=Test", "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false"];
-
 describe(readOwedShas, () => {
+  const COMMIT_ARGUMENTS = ["-c", "user.name=Test", "-c", "user.email=test@example.com", "-c", "commit.gpgsign=false"];
+
   let repositoryPath: string;
 
   beforeEach(async () => {

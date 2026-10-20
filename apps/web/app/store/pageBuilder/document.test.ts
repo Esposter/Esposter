@@ -8,10 +8,10 @@ import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { describe, expect, test, vi } from "vitest";
 
-const TEST_OTHER_LANG = "fr";
-const TEST_CHANGED_LANG = "de";
-
 describe(usePageBuilderDocumentStore, () => {
+  const TEST_OTHER_LANG = "fr";
+  const TEST_CHANGED_LANG = "de";
+
   test("two open webpages keep their own documents", async () => {
     expect.hasAssertions();
 

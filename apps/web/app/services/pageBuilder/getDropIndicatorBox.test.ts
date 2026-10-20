@@ -2,11 +2,11 @@ import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
 import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
 import { describe, expect, test } from "vitest";
 
-const FIRST_BOX = { height: 40, left: 0, top: 0, width: 200 };
-const SECOND_BOX = { height: 40, left: 0, top: 50, width: 200 };
-const OWNER_BOX = { height: 300, left: 0, top: 0, width: 200 };
-
 describe(getDropIndicatorBox, () => {
+  const FIRST_BOX = { height: 40, left: 0, top: 0, width: 200 };
+  const SECOND_BOX = { height: 40, left: 0, top: 50, width: 200 };
+  const OWNER_BOX = { height: 300, left: 0, top: 0, width: 200 };
+
   test("an indicator between two children sits in the gap between them", () => {
     expect.hasAssertions();
 

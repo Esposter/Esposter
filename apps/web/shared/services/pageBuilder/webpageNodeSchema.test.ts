@@ -6,10 +6,10 @@ import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchem
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
-const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";
-const STYLE = { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "#333" } } };
-
 describe("webpageNodeSchema", () => {
+  const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";
+  const STYLE = { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "#333" } } };
+
   test("a stored webpage parses under the static node schema", () => {
     expect.hasAssertions();
 
