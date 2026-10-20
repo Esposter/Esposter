@@ -9,15 +9,15 @@
 
 ## 2. Webpage
 
-- [ ] 2.1 Write `webpageNodeChildren.ts`: one exhaustive switch over the webpage node type tag, each case returning its slots as typed lists, ending in `exhaustiveGuard`. Verify: a test named after the scenario 'Each webpage node's children come from its own slots', failing first, then passing.
-- [ ] 2.2 Write each webpage node's static schema, satisfying its node interface, and `webpageNodeSchema` as the union, satisfying `WebpageNode`, with each slot's accepted union built statically and recursion through `z.lazy` with an explicit annotation. Verify: the existing `webpageDocumentSchema.test.ts` passes, and a test named after the scenario 'A stored webpage parses under the static node schema', failing first, then passing.
-- [ ] 2.3 Add the one runtime test that the registry's slot lists equal the static schema's accepted tags for every slot. Verify: a test named after the scenario 'A registry's slot lists match the node schema's accepted types', failing first, then passing.
-- [ ] 2.4 Replace the webpage renderer's and canvas's calls to read children with the port. Verify: `renderWebpageDocument.test.ts` and the canvas renderer test pass with unchanged expectations.
+- [x] 2.1 Write `webpageNodeChildren.ts`: one exhaustive switch over the webpage node type tag, each case returning its slots as typed lists, ending in `exhaustiveGuard`. Verify: a test named after the scenario 'Each webpage node's children come from its own slots', failing first, then passing.
+- [x] 2.2 Write each webpage node's static schema, satisfying its node interface, and `webpageNodeSchema` as the union, satisfying `WebpageNode`, with each slot's accepted union built statically and recursion through `z.lazy` with an explicit annotation. Verify: the existing `webpageDocumentSchema.test.ts` passes, and a test named after the scenario 'A stored webpage parses under the static node schema', failing first, then passing.
+- [x] 2.3 Add the one runtime test that the registry's slot lists equal the static schema's accepted tags for every slot. Verify: a test named after the scenario 'A registry's slot lists match the node schema's accepted types', failing first, then passing.
+- [x] 2.4 Replace the webpage renderer's and canvas's calls to read children with the port. Verify: `renderWebpageDocument.test.ts` and the canvas renderer test pass with unchanged expectations.
 
 ## 3. Email
 
-- [ ] 3.1 Write `mjmlNodeChildren.ts` and `mjmlNodeSchema.ts` for the email node types, following tasks 2.1 to 2.3. Verify: the email document schema and parse tests pass, and the registry equality test passes for the email registry.
-- [ ] 3.2 Remove the email's runtime builder path so the email document schema is built from the static node schema. Verify: `parseMjmlDocument.test.ts` and `compileEmailDocument.test.ts` pass with unchanged expectations.
+- [x] 3.1 Write `mjmlNodeChildren.ts` and `mjmlNodeSchema.ts` for the email node types, following tasks 2.1 to 2.3. Verify: the email document schema and parse tests pass, and the registry equality test passes for the email registry.
+- [x] 3.2 Remove the email's runtime builder path so the email document schema is built from the static node schema. Verify: `parseMjmlDocument.test.ts` and `compileEmailDocument.test.ts` pass with unchanged expectations.
 
 ## 4. Archive
 

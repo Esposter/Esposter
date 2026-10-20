@@ -15,22 +15,22 @@ Puck's is the minimal of these, so the document takes its shape rather than inve
 
 ```ts
 // A node: its type names an entry of the registry, and its props hold its id, its own fields and each slot's children
-interface BlockNode {
-  props: Record<string, unknown>;
-  type: string;
+interface BlockNode<TType extends string, TProps extends BlockNodeProps> {
+  props: TProps;
+  type: TType;
 }
 // A document: its content, and its root's props, typed by the registry's root schema once parsed
-interface BlockDocument<TRootProps> {
-  content: BlockNode[];
+interface BlockDocument<TNode extends BlockNode, TRootProps extends BlockRootProps> {
+  content: TNode[];
   root: { props: TRootProps };
 }
 ```
 
-The two editors' documents are these, each with its root's props typed by its registry: `WebpageDocument` is `BlockDocument<WebpageRootProps>`, and an email is `MjmlDocument`, the MJML blocks' `BlockDocument<MjmlRootProps>`, which the email uses without an alias of its own.
+The two editors' documents are these, each typed by its own node union and root props: `WebpageDocument` is `BlockDocument<WebpageNode, WebpageRootProps>`, and an email is `MjmlDocument`, the MJML blocks' `BlockDocument<MjmlNode, MjmlRootProps>`, which the email uses without an alias of its own.
 
 ## Schemas
 
-Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry. The node's shape and the root's props, parsed by the root's own schema, come first. Then a refinement walks the tree and checks each node's type against the registry and its slot, its props against its type's schema, that ids are unique within the document, and that the node count stays within a named limit the editor passes in: `MAX_WEBPAGE_NODES` for the webpage and `MAX_EMAIL_NODES` for the email. A refusal names the slot or the field that refused.
+Each editor's document schema is the core's `createBlockDocumentSchema` over that editor's registry, its static node schema, its root's props schema, its children port and a named node limit: `MAX_WEBPAGE_NODES` for the webpage and `MAX_EMAIL_NODES` for the email, the email reaching the core through the MJML blocks' `createMjmlDocumentSchema`. Each node type's schema is written statically in its editor's code, and the editor's node union is built from those schemas, so the document type is one the compiler checks and nothing is built from the registry at run time. The node's shape and props parse first, with the root's props parsed by the root's own schema inside the document's shape. Then a refinement, which runs only on a parse that raised no issue, checks each root content node's type against the root's content types, and walks the tree through the port for unique ids and a node count within the limit. A refusal names the slot or the field that refused. Each editor's registry keeps its slot lists as runtime strings, and one test per editor holds each list equal to the tags its node schema accepts in that slot.
 
 An id is short, unique within its document and minted by one helper, since it also names the node's class in the emitted CSS. The text inside a text node is the ProseMirror JSON the Note stores, validated by the Note's own document schema, which the webpage's text node and the email's rich text both read. Portable Text was weighed for the text node and lost: it would need an editor of its own, since Portable Text's is React, or a converter each way, against a format the app already stores, edits and renders on the server.
 
@@ -38,8 +38,8 @@ An id is short, unique within its document and minted by one helper, since it al
 
 A registry is the core's `BlockRegistry`: the types its content accepts at the top of a document, the root's props schema, and each type's definition. The two editors' registries are built differently because the two types of node are different.
 
-- **The webpage registry** (`webpageRegistry`) takes every placeable type at the root and a `lang` as its root's props. Its types are collected in `webpageNodeTypeDefinitionMap`, a `Record` over the `WebpageNodeType` enum, so a type the enum names with no definition in the map fails the typecheck. A Column is held only by Columns and a Tab only by Tabs, so neither is placeable at the root.
-- **The email registry** (`emailRegistry`) is the MJML blocks' `createMjmlRegistry`, given the app's survey invite as its one leaf type and the Note's writing kit as its rich text. The root takes only what MJML's body takes, and the head is the root's props.
+- **The webpage registry** (`webpageRegistry`) takes every placeable type at the root and a `lang` as its root's props. Its types are collected in `webpageNodeTypeDefinitionMap`, a mapped type over each node's type tag, so a node type with no definition in the map fails the typecheck. A Column is held only by Columns and a Tab only by Tabs, so neither is placeable at the root.
+- **The email registry** (`emailRegistry`) is the MJML blocks' `createMjmlRegistry`, given the app's survey invite as its one leaf type, the Note's writing kit as its rich text and `emailNodeChildren` as its children port, which holds the survey invite as a leaf with no slot and hands every other node to MJML's built-in port. The root takes only what MJML's body takes, and the head is the root's props.
 
 A webpage registration has two halves, because two runtimes read it: the server renders a type when it publishes, and only the editor draws one. The shared half is the `NodeTypeDefinition` the server and editor both import, which extends the core's `BlockTypeDefinition` with the type's structural CSS, its form schema, its pure `render` and an optional script. The editor's half, the palette entry and the canvas component, belongs to the [canvas](../../../../changes/resource-page-builder-canvas/design.md), and the style fields belong to the [style panel](../../../../changes/resource-page-builder-style-panel/design.md).
 
@@ -92,28 +92,35 @@ The document store, `usePageBuilderDocumentStore`, holds each open document unde
 
 ## Key files
 
-| File                                                                       | Role                                                    |
-| -------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `apps/web/shared/models/resource/note/NoteDocument.ts`                     | the Note's ProseMirror document schema, the text node's |
-| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                    | the webpage document, the core's document over its root |
-| `apps/web/shared/models/pageBuilder/NodeTypeDefinition.ts`                 | the shared half of a webpage node type                  |
-| `apps/web/shared/services/pageBuilder/webpageRegistry.ts`                  | the webpage registry                                    |
-| `apps/web/shared/services/pageBuilder/webpageDocumentSchema.ts`            | the webpage's document schema                           |
-| `apps/web/shared/services/pageBuilder/renderWebpageDocument.ts`            | the webpage renderer                                    |
-| `apps/web/shared/services/pageBuilder/serializeHtml.ts`                    | the serialiser every render goes through                |
-| `apps/web/shared/services/pageBuilder/email/emailRegistry.ts`              | the email registry                                      |
-| `apps/web/shared/services/pageBuilder/email/emailDocumentSchema.ts`        | the email's document schema                             |
-| `apps/web/shared/services/pageBuilder/email/emailSurveyInviteType.ts`      | the survey invite as an MJML button                     |
-| `apps/web/shared/services/pageBuilder/email/noteRichText.ts`               | the Note's writing kit as the email's rich text         |
-| `apps/web/shared/services/resource/note/renderNoteHtml.ts`                 | the sanitised HTML of a note document                   |
-| `apps/web/server/services/emailEditor/compileEmailDocument.ts`             | the server's strict MJML compile                        |
-| `apps/web/app/store/pageBuilder/document.ts`                               | the open documents, keyed by resource                   |
-| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | each editor's document schema, over its registry        |
-| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`                  | the email's render to MJML's JSON form                  |
-| `packages/shared/src/services/sanitizeHtml/escapeText.ts`                  | escapes every text node the serialiser writes           |
-| `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`             | escapes every attribute value the serialiser writes     |
-| `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`           | the check every URL prop's schema runs                  |
-| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw-HTML type stores and publishes             |
+| File                                                                       | Role                                                                                        |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/note/NoteDocument.ts`                     | the Note's ProseMirror document schema, the text node's                                     |
+| `apps/web/shared/models/pageBuilder/WebpageDocument.ts`                    | the webpage document, the core's document over its root                                     |
+| `apps/web/shared/models/pageBuilder/NodeTypeDefinition.ts`                 | the shared half of a webpage node type                                                      |
+| `apps/web/shared/services/pageBuilder/webpageRegistry.ts`                  | the webpage registry                                                                        |
+| `apps/web/shared/services/pageBuilder/webpageNodeChildren.ts`              | the webpage's children port, one exhaustive switch over its node types                      |
+| `apps/web/shared/services/pageBuilder/webpageNodeSchema.ts`                | the webpage's node union, built statically from one schema per node type                    |
+| `apps/web/shared/services/pageBuilder/webpageDocumentSchema.ts`            | the webpage's document schema                                                               |
+| `apps/web/shared/services/pageBuilder/renderWebpageDocument.ts`            | the webpage renderer                                                                        |
+| `apps/web/shared/services/pageBuilder/serializeHtml.ts`                    | the serialiser every render goes through                                                    |
+| `apps/web/shared/services/pageBuilder/email/emailRegistry.ts`              | the email registry                                                                          |
+| `apps/web/shared/services/pageBuilder/email/emailNodeChildren.ts`          | the email's children port: the survey invite's leaf, then MJML's built-in port              |
+| `apps/web/shared/services/pageBuilder/email/emailNodeSchema.ts`            | the email's node union, built statically over MJML's node schema and the survey invite      |
+| `apps/web/shared/services/pageBuilder/email/emailDocumentSchema.ts`        | the email's document schema                                                                 |
+| `apps/web/shared/services/pageBuilder/email/emailSurveyInviteType.ts`      | the survey invite as an MJML button                                                         |
+| `apps/web/shared/services/pageBuilder/email/noteRichText.ts`               | the Note's writing kit as the email's rich text                                             |
+| `apps/web/shared/services/resource/note/renderNoteHtml.ts`                 | the sanitised HTML of a note document                                                       |
+| `apps/web/server/services/emailEditor/compileEmailDocument.ts`             | the server's strict MJML compile                                                            |
+| `apps/web/app/store/pageBuilder/document.ts`                               | the open documents, keyed by resource                                                       |
+| `packages/headless-block-editor/src/services/createBlockDocumentSchema.ts` | the generic document schema each editor passes its registry, node schema, port and limit to |
+| `packages/mjml-blocks/src/services/mjmlNodeChildren.ts`                    | MJML's built-in children port, one exhaustive switch over its node types                    |
+| `packages/mjml-blocks/src/services/mjmlNodeSchema.ts`                      | MJML's node union, built statically with one branch per built-in type                       |
+| `packages/mjml-blocks/src/services/createMjmlDocumentSchema.ts`            | the email's document schema: the core's over the registry's port and root schema            |
+| `packages/mjml-blocks/src/services/renderMjmlDocument.ts`                  | the email's render to MJML's JSON form                                                      |
+| `packages/shared/src/services/sanitizeHtml/escapeText.ts`                  | escapes every text node the serialiser writes                                               |
+| `packages/shared/src/services/sanitizeHtml/escapeAttribute.ts`             | escapes every attribute value the serialiser writes                                         |
+| `packages/shared/src/services/sanitizeHtml/checkIsAllowedUrl.ts`           | the check every URL prop's schema runs                                                      |
+| `packages/shared/src/services/sanitizeHtml/sanitizeHtml.ts`                | what the raw-HTML type stores and publishes                                                 |
 
 ## Sources
 
