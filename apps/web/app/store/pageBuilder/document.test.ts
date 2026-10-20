@@ -1,9 +1,15 @@
 // @vitest-environment nuxt
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
-import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
+import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { TEST_LANG, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { describe, expect, test, vi } from "vitest";
+
+const TEST_OTHER_LANG = "fr";
+const TEST_CHANGED_LANG = "de";
 
 describe(usePageBuilderDocumentStore, () => {
   test("two open webpages keep their own documents", async () => {
@@ -11,9 +17,9 @@ describe(usePageBuilderDocumentStore, () => {
 
     const firstResourceId = crypto.randomUUID();
     const secondResourceId = crypto.randomUUID();
-    const firstDocument: WebpageDocument = { content: [], root: { props: { lang: "" } } };
-    const secondDocument: WebpageDocument = { content: [], root: { props: { lang: " " } } };
-    const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
+    const firstDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
+    const secondDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_OTHER_LANG } } };
+    const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_CHANGED_LANG } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument, setDocument } = pageBuilderDocumentStore;
     await loadDocument(firstResourceId, () => Promise.resolve(firstDocument));
@@ -24,11 +30,43 @@ describe(usePageBuilderDocumentStore, () => {
     expect(getDocument(secondResourceId)).toStrictEqual(secondDocument);
   });
 
+  test("a loaded document with a section that has no children is refused at load", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getDocument, loadDocument } = pageBuilderDocumentStore;
+
+    await expect(
+      loadDocument(resourceId, () =>
+        Promise.resolve({
+          content: [{ props: { id: TEST_SECTION_ID, tag: HtmlTag.Section }, type: WebpageNodeType.Section }],
+          root: TEST_ROOT,
+        }),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "expected": "array",
+          "code": "invalid_type",
+          "path": [
+            "content",
+            0,
+            "props",
+            "children"
+          ],
+          "message": "Invalid input: expected array, received undefined"
+        }
+      ]]
+    `);
+    expect(getDocument(resourceId)).toBeUndefined();
+  });
+
   test("a save hands the writer the document held for its resource", async () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const document: WebpageDocument = { content: [], root: { props: { lang: "" } } };
+    const document: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
     const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument, saveDocument } = pageBuilderDocumentStore;
