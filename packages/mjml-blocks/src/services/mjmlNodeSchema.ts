@@ -122,21 +122,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   ) satisfies z.ZodType<MjmlSpacerNode>;
   const tableNode = createMjmlNodeBranch(MjmlNodeType.Table, tablePropsSchema, {}) satisfies z.ZodType<MjmlTableNode>;
   // A column and a hero take the flow nodes and a raw beside their leaf, as their registry lists them
-  const columnChildrenSchema = createMjmlSlotSchema([
-    accordionNode,
-    buttonNode,
-    carouselNode,
-    dividerNode,
-    imageNode,
-    rawNode,
-    socialNode,
-    spacerNode,
-    tableNode,
-    textNode,
-    navbarNode,
-    leafNodeSchema,
-  ]);
-  const heroChildrenSchema = createMjmlSlotSchema([
+  const flowChildrenSchema = createMjmlSlotSchema([
     accordionNode,
     buttonNode,
     carouselNode,
@@ -151,13 +137,13 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     leafNodeSchema,
   ]);
   const columnNode = createMjmlNodeBranch(MjmlNodeType.Column, columnPropsSchema, {
-    children: z.array(columnChildrenSchema),
+    children: z.array(flowChildrenSchema),
   }) satisfies z.ZodType<MjmlColumnNode>;
   const groupNode = createMjmlNodeBranch(MjmlNodeType.Group, groupPropsSchema, {
     children: z.array(createMjmlSlotSchema([columnNode, rawNode])),
   }) satisfies z.ZodType<MjmlGroupNode>;
   const heroNode = createMjmlNodeBranch(MjmlNodeType.Hero, heroPropsSchema, {
-    children: z.array(heroChildrenSchema),
+    children: z.array(flowChildrenSchema),
   }) satisfies z.ZodType<MjmlHeroNode>;
   const sectionNode = createMjmlNodeBranch(MjmlNodeType.Section, sectionPropsSchema, {
     children: z.array(createMjmlSlotSchema([columnNode, groupNode, rawNode])),

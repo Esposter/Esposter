@@ -2,22 +2,12 @@ import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlJson } from "#src/models/MjmlJson";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
-import type { BlockNode } from "headless-block-editor";
 
 import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
-import { escapeAttribute } from "@esposter/shared";
+import { stampNode } from "#src/services/stampNode";
 import { renderBlockNodes } from "headless-block-editor";
-import { z } from "zod";
-
-// A node's output gains its id as its css-class when the render stamps ids, so the proof can find its box in the email
-const stampNode = (output: MjmlJson, node: BlockNode, isStampingIds: boolean): MjmlJson => {
-  if (!isStampingIds) return output;
-
-  const id = z.string().parse(node.props.id);
-  return { ...output, attributes: { ...output.attributes, "css-class": escapeAttribute(id) } };
-};
 
 // A validated document in MJML's JSON form: the root's language and direction, its head when it sets any, and the body
 export const renderMjmlDocument = <TContext>(
