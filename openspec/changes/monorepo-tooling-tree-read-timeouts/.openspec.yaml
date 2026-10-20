@@ -1,0 +1,10 @@
+schema: spec-driven
+created: 2026-10-20
+affected_areas: [architecture]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "scripts/src/workspace/**",
+    ".agents/skills/runtime-efficiency/references/script-clock.md",
+    ".agents/skills/testing/references/timeouts.md",
+  ]
