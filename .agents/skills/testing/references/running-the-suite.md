@@ -30,6 +30,14 @@ Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a packag
 
 - **`-t "name"` is not a scope — pass paths as well.** A name filter picks which tests _execute_; every test file in range is still collected, transformed and imported first, so `-t` alone spends a full suite's startup to run a handful of assertions. Whenever a run is narrowed by name — refreshing the bundle-size snapshots is the standing case, `-t "size" index.test.ts` (`references/bundle-size.md`) — narrow it by path in the same command.
 
+## Measuring one test alone
+
+A test's own cost is read from its file run alone, with the JSON reporter writing each test's `duration` in milliseconds to a file outside the repo:
+
+`pnpm test <file> --run --fileParallelism=false --reporter=json --outputFile=<path>`
+
+Each entry under `testResults[].assertionResults` carries its `title` and `duration`. `--fileParallelism=false` keeps other files off the cores, so the number is the test's cost rather than the contention `timeouts.md` warns about.
+
 ## Scoping a local run
 
 - **Never run the full suite locally** — `pnpm test <paths> --run` with the paths the change touched, and `-u` only when refreshing a snapshot on purpose. CI is the regression net and shards it across runners; a local run answers one question about one change. The scope is what the diff touched: the files changed, their direct consumers, and any suite whose snapshots the change moves — when unsure whether a distant suite is affected, name it in the same invocation rather than widening to everything, since a second path argument costs seconds and the full sweep costs the session.
