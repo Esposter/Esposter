@@ -43,6 +43,7 @@ What the terminal shows and does, and where the console carries each part, is [t
 | [Session windows](session-windows/design.md)                 | each session in a console window of its own, the loopback gate, and stopping from either end |
 | [Claude Agent SDK driver](claude-agent-sdk-driver/design.md) | sessions, the one place SDK messages become events, permissions, resume and fork             |
 | [Side pane](side-pane/design.md)                             | any page of the app beside the conversation, opened with the embed flag and no code          |
+| [Side chat](side-chat/spec.md)                               | a question asked beside the conversation, in plan mode, never saved or added back to it      |
 | [Console overlay](console-overlay/design.md)                 | the bar, the keys, the console sheet, the pause menu, the loading screen and what they cost  |
 | [Diff comments](diff-comments/design.md)                     | a comment on any line of a file's whole diff in the changes tab, sent together as one prompt |
 | [Repository files](repository-files/design.md)               | @ to mention a file in the composer, and a read-only view of any file the session holds      |

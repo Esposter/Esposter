@@ -22,7 +22,7 @@ Make each domain entrance a place the player can open and enter, run its challen
 ## Waiting on
 
 - `openspec/specs/genshin/original-resin/`: the Petrified Tree is claimed with resin.
-- `openspec/changes/genshin-adventure-rank/`: the domains open by Adventure Rank.
+- `openspec/changes/archive/2026-10-20-genshin-adventure-rank/`: the domains open by Adventure Rank.
 - `openspec/changes/genshin-character-kits/`: the domains are fought with the character kits.
 - `openspec/changes/genshin-map-unlocking/`: an entrance joins the jumps once it is unlocked.
 - The scene export the other machine is making, which lays out each domain's scene.

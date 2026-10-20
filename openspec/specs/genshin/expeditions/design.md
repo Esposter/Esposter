@@ -1,6 +1,6 @@
 # Expeditions
 
-The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game, and the talents are applied; the other nations' places are not built, and the bonus is its chance only.
+The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/archive/2026-10-20-genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game, and the talents are applied; the other nations' places are not built, and the bonus is its chance only.
 
 ## How it works
 
