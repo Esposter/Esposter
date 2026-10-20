@@ -42,7 +42,10 @@ export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
         entries.push(...readMjmlHeadText(child, "preview"));
         break;
       case "mj-style":
-        styles.push({ css: child.rawText, inline: child.attributes.inline === "inline" });
+        // Only the inline attribute is modelled, so a style carrying any other is refused under its name, as a title with one is
+        if (Object.keys(child.attributes).some((name) => name !== "inline"))
+          entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
+        else styles.push({ css: child.rawText, inline: child.attributes.inline === "inline" });
         break;
       case "mj-title":
         entries.push(...readMjmlHeadText(child, "title"));

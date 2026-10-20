@@ -405,4 +405,17 @@ describe(parseMjmlDocument, () => {
     const result = parseMjmlDocument(source, TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_RICH_TEXT, TEST_MAX_NODES);
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([`Unrecognized key: "${key}"`]);
   });
+
+  test("an attribute on the style other than inline is refused by name", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-style media="print">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_NODE_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-style>"']);
+  });
 });
