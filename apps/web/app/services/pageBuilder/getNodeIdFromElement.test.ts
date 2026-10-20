@@ -15,6 +15,18 @@ describe(getNodeIdFromElement, () => {
     expect(getNodeIdFromElement(inner)).toBe(TEST_ID);
   });
 
+  test("a click inside a node of another document selects that node", () => {
+    expect.hasAssertions();
+
+    const otherDocument = document.implementation.createHTMLDocument("");
+    const node = otherDocument.createElement("div");
+    node.dataset.nodeId = TEST_ID;
+    const inner = otherDocument.createElement("span");
+    node.append(inner);
+
+    expect(getNodeIdFromElement(inner)).toBe(TEST_ID);
+  });
+
   test("a click outside any node selects nothing", () => {
     expect.hasAssertions();
 
