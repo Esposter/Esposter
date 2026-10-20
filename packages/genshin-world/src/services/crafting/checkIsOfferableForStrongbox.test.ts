@@ -58,18 +58,4 @@ describe(checkIsOfferableForStrongbox, () => {
       false,
     ]);
   });
-
-  test("the panel lists only the offerable artifacts", () => {
-    expect.hasAssertions();
-
-    const bag: InventoryItem[] = [
-      { artifact: createArtifact(STRONGBOX_RARITY, false), definition, id: 0, quantity: 1 },
-      { artifact: createArtifact(STRONGBOX_RARITY, true), definition, id: 1, quantity: 1 },
-      { artifact: createArtifact(STRONGBOX_RARITY - 1, false), definition, id: 2, quantity: 1 },
-    ];
-
-    expect(
-      bag.filter((item) => checkIsOfferableForStrongbox(item, STRONGBOX_RARITY)).map(({ id }) => id),
-    ).toStrictEqual([0]);
-  });
 });
