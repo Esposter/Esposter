@@ -5,7 +5,10 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { exhaustiveGuard } from "@esposter/shared";
 
 // The children port of a webpage: each node type's slots as the typed list of nodes that slot holds, switched on the type tag
-export const webpageNodeChildren = (node: WebpageNode): ReturnType<BlockChildren<WebpageNode>> => {
+// A node with no slot holds no children, typed as the port's own record so the switch's return unions stay assignable to it
+const noSlots: Readonly<Record<string, readonly WebpageNode[]>> = {};
+
+export const webpageNodeChildren: BlockChildren<WebpageNode> = (node) => {
   switch (node.type) {
     case WebpageNodeType.Button:
     case WebpageNodeType.Countdown:
@@ -16,7 +19,7 @@ export const webpageNodeChildren = (node: WebpageNode): ReturnType<BlockChildren
     case WebpageNodeType.Tooltip:
     case WebpageNodeType.TypedText:
     case WebpageNodeType.Video:
-      return {};
+      return noSlots;
     case WebpageNodeType.Column:
     case WebpageNodeType.Columns:
     case WebpageNodeType.Section:
