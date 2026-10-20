@@ -7,6 +7,7 @@ import type { VNode } from "vue";
 
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { renderBlockNodes } from "headless-block-editor";
 import { createStaticVNode, createTextVNode, h } from "vue";
@@ -19,11 +20,16 @@ const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== 
 // Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML
 export const renderCanvasVNodes = (document: WebpageDocument, context: RenderContext): VNode[] => {
   const nodeIds = new WeakMap<HtmlElement, string>();
-  const content: HtmlNode[] = renderBlockNodes(document.content, webpageRegistry, (node, _definition, slots) => {
-    const rendered = renderWebpageNode(node, slots, context);
-    if (checkIsElement(rendered)) nodeIds.set(rendered, node.props.id);
-    return rendered;
-  });
+  const content: HtmlNode[] = renderBlockNodes(
+    document.content,
+    webpageRegistry,
+    webpageNodeChildren,
+    (node, _definition, slots) => {
+      const rendered = renderWebpageNode(node, slots, context);
+      if (checkIsElement(rendered)) nodeIds.set(rendered, node.props.id);
+      return rendered;
+    },
+  );
 
   const toVNode = (node: HtmlNode): VNode => {
     if (typeof node === "string") return createTextVNode(node);
