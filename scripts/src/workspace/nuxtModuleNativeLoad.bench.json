@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "src/workspace/nuxtModuleNativeLoad.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 429.7544899999997,
+              "name": "packages/trpc-nuxt-module",
+              "p99": 551.3827840000001,
+              "rme": 15.174602948589854,
+              "sampleCount": 10
+            },
+            {
+              "mean": 433.0312599999998,
+              "name": "packages/tresjs-nuxt",
+              "p99": 564.1728950000004,
+              "rme": 9.322400400803602,
+              "sampleCount": 10
+            },
+            {
+              "mean": 824.7597199999998,
+              "name": "packages/nuxt-security-module",
+              "p99": 1670.9153119999992,
+              "rme": 29.888396727478067,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "nuxt module entries load natively > load under plain node from their package directory"
+        }
+      ]
+    }
+  ]
+}
