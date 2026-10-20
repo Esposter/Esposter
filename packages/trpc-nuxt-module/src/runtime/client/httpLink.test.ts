@@ -1,4 +1,4 @@
-import type { useRequestEvent as baseUseRequestEvent } from "nuxt/app";
+import type { NuxtApp, useNuxtApp as baseUseNuxtApp, useRequestEvent as baseUseRequestEvent } from "nuxt/app";
 
 import { httpLink } from "#src/runtime/client/httpLink";
 import { createTRPCClient } from "@trpc/client";
@@ -7,8 +7,11 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { H3, H3Event } from "nitro/h3";
 import { describe, expect, test, vi } from "vitest";
 
-const { useRequestEvent } = vi.hoisted(() => ({ useRequestEvent: vi.fn<typeof baseUseRequestEvent>() }));
-vi.mock(import("nuxt/app"), () => ({ useRequestEvent }));
+const { useNuxtApp, useRequestEvent } = vi.hoisted(() => ({
+  useNuxtApp: vi.fn<typeof baseUseNuxtApp>(),
+  useRequestEvent: vi.fn<typeof baseUseRequestEvent>(),
+}));
+vi.mock(import("nuxt/app"), () => ({ useNuxtApp, useRequestEvent }));
 
 describe(httpLink, () => {
   const t = initTRPC.create();
@@ -46,19 +49,21 @@ describe(httpLink, () => {
     await expect(client.fail.query()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCClientError: Rejected]`);
   });
 
-  test("sends over the network to the request's own origin, cookies included, when the request event has no app", async () => {
+  test("sends through the Nitro app in-process, cookies included, when the request event has no app", async () => {
     expect.hasAssertions();
 
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
+    const trpcServerFetch = vi
+      .fn<NuxtApp["$trpcServerFetch"]>()
+      .mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
+    useNuxtApp.mockReturnValueOnce({ $trpcServerFetch: trpcServerFetch } as unknown as NuxtApp);
     useRequestEvent.mockReturnValueOnce(
       new H3Event(new Request("http://localhost/", { headers: { cookie: "session=1" } })),
     );
     const client = createTRPCClient<typeof router>({ links: [httpLink({ url: endpoint })] });
 
     await expect(client.read.query()).resolves.toBe(0);
-    const [requested, init] = fetchSpy.mock.calls[0] ?? [];
-    expect(String(requested)).toBe("http://localhost/read");
+    const [resource, init] = trpcServerFetch.mock.calls[0] ?? [];
+    expect(String(resource)).toBe("http://localhost/read");
     expect(new Headers(init?.headers).get("cookie")).toBe("session=1");
-    fetchSpy.mockRestore();
   });
 });

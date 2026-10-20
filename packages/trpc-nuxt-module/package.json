@@ -168,6 +168,10 @@
       "source": "./src/runtime/server/models/WebSocketServerAdapter.ts",
       "default": "./dist/runtime/server/models/WebSocketServerAdapter.js"
     },
+    "./runtime/server/plugins/trpcServerFetch": {
+      "source": "./src/runtime/server/plugins/trpcServerFetch.ts",
+      "default": "./dist/runtime/server/plugins/trpcServerFetch.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -206,6 +210,7 @@
       "./runtime/server/models/TRPCWebSocketHandler": "./dist/runtime/server/models/TRPCWebSocketHandler.js",
       "./runtime/server/models/TRPCWebSocketHandlerOptions": "./dist/runtime/server/models/TRPCWebSocketHandlerOptions.js",
       "./runtime/server/models/WebSocketServerAdapter": "./dist/runtime/server/models/WebSocketServerAdapter.js",
+      "./runtime/server/plugins/trpcServerFetch": "./dist/runtime/server/plugins/trpcServerFetch.js",
       "./package.json": "./package.json"
     },
     "access": "public"
