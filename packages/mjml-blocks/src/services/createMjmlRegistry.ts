@@ -1,5 +1,6 @@
 import type { CreateMjmlRegistryOptions } from "#src/models/CreateMjmlRegistryOptions";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 
 import { mjmlAccordionType } from "#src/services/components/mjAccordion";
 import { mjmlAccordionElementType } from "#src/services/components/mjAccordionElement";
@@ -28,7 +29,7 @@ import { createMjmlRootPropsSchema } from "#src/services/createMjmlRootPropsSche
 
 // MJML's component set as block types, with the consumer's leaf types beside them and the body's children as the root's content
 // A column and a hero take the leaf types' names as their children beside MJML's own, so the leaves are named where the containers are built
-export const createMjmlRegistry = <TContent, TContext = unknown>(
+export const createMjmlRegistry = <TContent extends MjmlRichText, TContext = unknown>(
   options: CreateMjmlRegistryOptions<TContent, TContext>,
 ): MjmlRegistry<TContext> => {
   const leafTypeNames = options.leafTypes.map((leafType) => leafType.type);

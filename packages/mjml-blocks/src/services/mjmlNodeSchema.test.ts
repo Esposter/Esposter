@@ -13,7 +13,7 @@ describe("mjmlNodeSchema", () => {
         children: [
           {
             props: {
-              children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+              children: [{ props: { content: { text: "Hi" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
               id: TEST_COLUMN_ID,
             },
             type: MjmlNodeType.Column,

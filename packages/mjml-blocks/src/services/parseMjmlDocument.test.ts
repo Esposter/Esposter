@@ -36,7 +36,7 @@ describe(parseMjmlDocument, () => {
       createNode("mj-raw", { content: "<p>kept</p>", position: "file-start" }),
       createNode("mj-hero", {
         "background-color": "#ffffff",
-        children: [createNode("mj-text", { color: "#000000", content: "Hero" })],
+        children: [createNode("mj-text", { color: "#000000", content: { text: "Hero" } })],
       }),
       createNode("mj-wrapper", {
         "background-url": "https://example.com/bg.png",
@@ -49,7 +49,7 @@ describe(parseMjmlDocument, () => {
                 children: [
                   createNode("mj-text", {
                     align: "left",
-                    content: 'Hi <a href="https://example.com" style="color:red">link</a>',
+                    content: { text: 'Hi <a href="https://example.com" style="color:red">link</a>' },
                   }),
                   createNode("mj-button", { content: "Go & stop", href: 'https://example.com/?a="1"&b=2' }),
                   createNode("mj-image", { alt: "A cat", src: "https://example.com/a.png", width: "300px" }),
@@ -74,7 +74,7 @@ describe(parseMjmlDocument, () => {
                       createNode("mj-accordion-element", {
                         children: [
                           createNode("mj-accordion-title", { content: "Title" }),
-                          createNode("mj-accordion-text", { content: "<p>Text</p>" }),
+                          createNode("mj-accordion-text", { content: { text: "<p>Text</p>" } }),
                         ],
                       }),
                     ],
@@ -89,7 +89,9 @@ describe(parseMjmlDocument, () => {
           createNode("mj-section", {
             children: [
               createNode("mj-group", {
-                children: [createNode("mj-column", { children: [createNode("mj-text", { content: "Grouped" })] })],
+                children: [
+                  createNode("mj-column", { children: [createNode("mj-text", { content: { text: "Grouped" } })] }),
+                ],
                 direction: "ltr",
               }),
             ],
@@ -198,7 +200,7 @@ describe(parseMjmlDocument, () => {
                 props: {
                   children: [
                     { props: { alt: "A", id: "<id>", src: "https://example.com/a.png" }, type: MjmlNodeType.Image },
-                    { props: { content: "After", id: "<id>" }, type: MjmlNodeType.Text },
+                    { props: { content: { text: "After" }, id: "<id>" }, type: MjmlNodeType.Text },
                   ],
                   id: "<id>",
                 },

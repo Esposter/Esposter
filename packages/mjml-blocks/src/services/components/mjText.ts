@@ -1,5 +1,6 @@
 import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { MjmlTextNode } from "#src/models/MjmlTextNode";
 import type { MjmlTextProps } from "#src/models/MjmlTextProps";
@@ -34,7 +35,7 @@ export const textAttributes = {
   "vertical-align": "enum(top,bottom,middle)",
 };
 
-export const createMjmlTextPropsSchema = <TContent>(
+export const createMjmlTextPropsSchema = <TContent extends MjmlRichText>(
   richText: MjmlRichTextDefinition<TContent>,
 ): z.ZodObject<
   { [K in keyof typeof textAttributes]: MjmlAttributeSchema } & { content: z.ZodType<TContent> },
@@ -67,7 +68,7 @@ export const createMjmlTextPropsSchema = <TContent>(
   }) satisfies z.ZodType<OwnProps<MjmlTextProps>>;
 
 // The text component: the attributes it takes, the props its schema reads and what it renders
-export const createMjmlTextType = <TContent>(
+export const createMjmlTextType = <TContent extends MjmlRichText>(
   richText: MjmlRichTextDefinition<TContent>,
 ): MjmlBlockTypeDefinition<MjmlTextNode> => ({
   allowedAttributes: textAttributes,

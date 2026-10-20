@@ -4,6 +4,7 @@ import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition"
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
 import type { BlockChildren, BlockNode } from "headless-block-editor";
 
+import { mjmlRichTextSchema } from "#src/models/MjmlRichTextSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { createMjmlNodeSchema } from "#src/services/mjmlNodeSchema";
@@ -27,10 +28,10 @@ export const TEST_GROUP_ID: string = crypto.randomUUID();
 export const TEST_HERO_ID: string = crypto.randomUUID();
 export const TEST_WRAPPER_ID: string = crypto.randomUUID();
 export const TEST_MAX_NODES: number = Number.MAX_SAFE_INTEGER;
-export const TEST_RICH_TEXT: MjmlRichTextDefinition<string> = {
-  parseHtml: (html) => html,
-  renderHtml: (html) => html,
-  schema: z.string(),
+export const TEST_RICH_TEXT: MjmlRichTextDefinition = {
+  parseHtml: (html) => ({ text: html }),
+  renderHtml: (content) => content.text ?? "",
+  schema: mjmlRichTextSchema,
 };
 export const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
   { props: z.ZodObject<{ id: z.ZodString }, z.core.$strict>; type: z.ZodLiteral<"test-leaf"> },

@@ -1,4 +1,5 @@
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { Node } from "node-html-parser";
 
@@ -11,7 +12,7 @@ import { HTMLElement, TextNode } from "node-html-parser";
 // A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its children
 // Are read when its definition has a slot or it holds any, so a child that no slot takes is refused by name
 // The node is the candidate the document schema parses, so it is unknown until that parse narrows it
-const readMjmlNode = <TContext, TContent>(
+const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   element: HTMLElement,
   registry: MjmlRegistry<TContext>,
   richText: MjmlRichTextDefinition<TContent>,
@@ -36,7 +37,7 @@ const readMjmlNode = <TContext, TContent>(
 };
 
 // The nodes of a list of children: each element a node, each text that is not blank a node no registry holds
-export const readMjmlNodes = <TContext, TContent>(
+export const readMjmlNodes = <TContext, TContent extends MjmlRichText>(
   children: Node[],
   registry: MjmlRegistry<TContext>,
   richText: MjmlRichTextDefinition<TContent>,

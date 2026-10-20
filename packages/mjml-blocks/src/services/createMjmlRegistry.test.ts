@@ -35,7 +35,7 @@ describe(createMjmlRegistry, () => {
         content: [
           {
             props: {
-              children: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+              children: [{ props: { content: { text: "" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
               id: TEST_SECTION_ID,
             },
             type: MjmlNodeType.Section,
@@ -51,7 +51,7 @@ describe(createMjmlRegistry, () => {
 
     expect(
       getIssuePaths({
-        content: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+        content: [{ props: { content: { text: "" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
         root: { props: {} },
       }),
     ).toStrictEqual([["content", 0, "type"]]);
@@ -172,7 +172,9 @@ describe(createMjmlRegistry, () => {
                           children: [
                             {
                               props: {
-                                children: [{ props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+                                children: [
+                                  { props: { content: { text: "" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text },
+                                ],
                                 id: TEST_COLUMN_ID,
                               },
                               type: MjmlNodeType.Column,
@@ -194,7 +196,7 @@ describe(createMjmlRegistry, () => {
           },
           {
             props: {
-              children: [{ props: { content: "", id: crypto.randomUUID() }, type: MjmlNodeType.Text }],
+              children: [{ props: { content: { text: "" }, id: crypto.randomUUID() }, type: MjmlNodeType.Text }],
               id: TEST_HERO_ID,
             },
             type: MjmlNodeType.Hero,

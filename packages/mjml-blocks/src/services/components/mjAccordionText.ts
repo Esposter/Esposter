@@ -2,6 +2,7 @@ import type { MjmlAccordionTextNode } from "#src/models/MjmlAccordionTextNode";
 import type { MjmlAccordionTextProps } from "#src/models/MjmlAccordionTextProps";
 import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { OwnProps } from "headless-block-editor";
 
@@ -27,7 +28,7 @@ export const accordionTextAttributes = {
   "padding-top": "unit(px,%)",
 };
 
-export const createMjmlAccordionTextPropsSchema = <TContent>(
+export const createMjmlAccordionTextPropsSchema = <TContent extends MjmlRichText>(
   richText: MjmlRichTextDefinition<TContent>,
 ): z.ZodObject<
   { [K in keyof typeof accordionTextAttributes]: MjmlAttributeSchema } & { content: z.ZodType<TContent> },
@@ -53,7 +54,7 @@ export const createMjmlAccordionTextPropsSchema = <TContent>(
   }) satisfies z.ZodType<OwnProps<MjmlAccordionTextProps>>;
 
 // The accordion text component: the attributes it takes, the props its schema reads and what it renders
-export const createMjmlAccordionTextType = <TContent>(
+export const createMjmlAccordionTextType = <TContent extends MjmlRichText>(
   richText: MjmlRichTextDefinition<TContent>,
 ): MjmlBlockTypeDefinition<MjmlAccordionTextNode> => ({
   allowedAttributes: accordionTextAttributes,

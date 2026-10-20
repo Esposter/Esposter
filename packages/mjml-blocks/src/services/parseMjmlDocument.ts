@@ -1,6 +1,7 @@
 import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
@@ -15,7 +16,7 @@ import { parse } from "node-html-parser";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
 // The mjml element takes two attributes as root props, and any other is refused under its own name
-const readMjmlRoot = <TContext, TContent>(
+const readMjmlRoot = <TContext, TContent extends MjmlRichText>(
   mjml: HTMLElement,
   registry: MjmlRegistry<TContext>,
   richText: MjmlRichTextDefinition<TContent>,
@@ -66,7 +67,7 @@ const readMjmlTopLevel = (root: HTMLElement): [string, unknown][] => {
 
 // The MJML source as a document, read by the registry's document schema: a tag the package leaves out, an attribute it does not take
 // Or a value its type refuses is refused there, at the node it names
-export const parseMjmlDocument = <TContext, TContent>(
+export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
   source: string,
   registry: MjmlRegistry<TContext>,
   nodeSchema: z.ZodType<MjmlNode>,

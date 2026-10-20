@@ -15,6 +15,7 @@ import type { MjmlNavbarLinkNode } from "#src/models/MjmlNavbarLinkNode";
 import type { MjmlNavbarNode } from "#src/models/MjmlNavbarNode";
 import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRawNode } from "#src/models/MjmlRawNode";
+import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlSectionNode } from "#src/models/MjmlSectionNode";
 import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
 import type { MjmlSocialNode } from "#src/models/MjmlSocialNode";
@@ -53,7 +54,7 @@ import { z } from "zod";
 // The email's node schema: one static branch per MJML node type, each satisfying its node interface, and each slot's accepted types a static union over their branches
 // Nothing is built from the registry at runtime, so the compiler checks every branch and the union satisfies the node union. The MJML node graph has no cycle, so each branch is defined after the branches it holds
 // The consumer's leaf node and rich text are passed in, since a leaf is named only by the consumer and a text's content is read by its rich text's schema
-export const createMjmlNodeSchema = <TContent>({
+export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   leafNodeSchema,
   richText,
 }: CreateMjmlNodeSchemaOptions<TContent>): z.ZodType<MjmlNode> => {

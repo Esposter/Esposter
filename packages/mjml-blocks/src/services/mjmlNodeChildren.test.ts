@@ -13,7 +13,7 @@ describe(mjmlNodeChildren, () => {
 
     const column: MjmlColumnNode = { props: { children: [], id: TEST_COLUMN_ID }, type: MjmlNodeType.Column };
     const section: MjmlSectionNode = { props: { children: [column], id: TEST_SECTION_ID }, type: MjmlNodeType.Section };
-    const text: MjmlTextNode = { props: { content: "", id: TEST_TEXT_ID }, type: MjmlNodeType.Text };
+    const text: MjmlTextNode = { props: { content: { text: "" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text };
 
     expect(mjmlNodeChildren(section)).toStrictEqual({ children: [column] });
     expect(mjmlNodeChildren(text)).toStrictEqual({});

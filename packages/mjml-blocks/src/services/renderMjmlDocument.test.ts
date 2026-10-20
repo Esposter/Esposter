@@ -31,7 +31,7 @@ const createTextSection = (textProps: Partial<MjmlTextProps> = {}) => ({
     children: [
       {
         props: {
-          children: [{ props: { content: "Hi", id: TEST_TEXT_ID, ...textProps }, type: MjmlNodeType.Text }],
+          children: [{ props: { content: { text: "Hi" }, id: TEST_TEXT_ID, ...textProps }, type: MjmlNodeType.Text }],
           id: TEST_COLUMN_ID,
         },
         type: MjmlNodeType.Column,
@@ -51,7 +51,7 @@ describe(renderMjmlDocument, () => {
             {
               props: {
                 children: [
-                  { props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text },
+                  { props: { content: { text: "Hi" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text },
                   {
                     props: { content: "Go", href: 'https://example.com/?a=1&b="2"', id: TEST_BUTTON_ID },
                     type: MjmlNodeType.Button,
@@ -162,7 +162,7 @@ describe(renderMjmlDocument, () => {
                   children: [
                     {
                       props: {
-                        children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+                        children: [{ props: { content: { text: "Hi" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
                         id: TEST_COLUMN_ID,
                       },
                       type: MjmlNodeType.Column,
@@ -232,7 +232,9 @@ describe(renderMjmlDocument, () => {
                         children: [
                           {
                             props: {
-                              children: [{ props: { content: "Hi", id: TEST_TEXT_ID }, type: MjmlNodeType.Text }],
+                              children: [
+                                { props: { content: { text: "Hi" }, id: TEST_TEXT_ID }, type: MjmlNodeType.Text },
+                              ],
                               id: TEST_COLUMN_ID,
                             },
                             type: MjmlNodeType.Column,
