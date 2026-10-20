@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
+import { runInNewContext } from "node:vm";
 import { describe, expect, test } from "vitest";
 
 describe(getNodeIdFromElement, () => {
@@ -15,16 +16,16 @@ describe(getNodeIdFromElement, () => {
     expect(getNodeIdFromElement(inner)).toBe(TEST_ID);
   });
 
-  test("a click inside a node of another document selects that node", () => {
+  test("a click inside a node of another realm selects that node", () => {
     expect.hasAssertions();
 
-    const otherDocument = document.implementation.createHTMLDocument("");
-    const node = otherDocument.createElement("div");
-    node.dataset.nodeId = TEST_ID;
-    const inner = otherDocument.createElement("span");
-    node.append(inner);
+    // An element built in another JavaScript realm, as the PiP window's is: its prototypes are not this window's, so instanceof fails
+    const foreignElement: EventTarget = runInNewContext(
+      "({ tagName: 'SPAN', closest: () => ({ dataset: { nodeId } }) })",
+      { nodeId: TEST_ID },
+    );
 
-    expect(getNodeIdFromElement(inner)).toBe(TEST_ID);
+    expect(getNodeIdFromElement(foreignElement)).toBe(TEST_ID);
   });
 
   test("a click outside any node selects nothing", () => {
