@@ -9,7 +9,7 @@ describe("@esposter/shared", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 68.36 KB (70002 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 68.36 KB (70005 bytes)"`);
   });
 
   test("types size", () => {
