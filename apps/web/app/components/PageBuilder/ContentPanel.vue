@@ -16,7 +16,7 @@ const jsonSchema = computed(() => formSchema.value && zodToJsonSchema(formSchema
     v-if="jsonSchema && formValue"
     :model-value="formValue"
     :schema="jsonSchema"
-    :validation-schema="validationSchema"
-    @update:model-value="setFormValue"
+    :validation-schema
+    @update:model-value="(value) => setFormValue(value)"
   />
 </template>
