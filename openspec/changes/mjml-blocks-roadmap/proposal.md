@@ -2,7 +2,7 @@
 
 ## Why
 
-Open mjml-blocks work — the prioritized index over the proposal specs.
+Open mjml-blocks work, ordered by priority.
 
 ## What Changes
 

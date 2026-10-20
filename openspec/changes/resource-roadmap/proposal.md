@@ -2,7 +2,7 @@
 
 ## Why
 
-Open resource work — the prioritized index over the proposal specs.
+Open resource work, ordered by priority.
 
 ## What Changes
 
