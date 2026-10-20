@@ -2,6 +2,7 @@
 import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -26,7 +27,8 @@ const { applyEdit } = pageBuilderHistoryStore;
 const getNodeContent = () => {
   const document = getDocument(resourceId);
   const nodePointer = document && getNodePointer(document, nodeId);
-  const node = document && nodePointer !== undefined ? getBlockNode(document, nodePointer) : undefined;
+  const node =
+    document && nodePointer !== undefined ? getBlockNode(document, nodePointer, webpageNodeChildren) : undefined;
   return node?.type === WebpageNodeType.Text ? node.props.content : undefined;
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one

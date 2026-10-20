@@ -8,6 +8,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
@@ -40,7 +41,8 @@ describe(usePageBuilderHistoryStore, () => {
     await loadDocument(resourceId, () => Promise.resolve(TEST_DOCUMENT));
     return resourceId;
   };
-  const moveFirstToEnd = () => moveBlockNode(TEST_DOCUMENT, webpageRegistry, "/content/0", "/content", 1);
+  const moveFirstToEnd = () =>
+    moveBlockNode(TEST_DOCUMENT, webpageRegistry, webpageNodeChildren, "/content/0", "/content", 1);
 
   test("undo restores the document before the last edit", async () => {
     expect.hasAssertions();

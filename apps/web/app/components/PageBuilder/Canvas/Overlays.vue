@@ -4,6 +4,7 @@ import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
 import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
 import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
@@ -46,7 +47,7 @@ const getSlotOwnerBox = (document: WebpageDocument, slotPointer: string): Overla
     return layerRect === undefined ? undefined : { height: layerRect.height, left: 0, top: 0, width: layerRect.width };
   }
 
-  return getNodeBox(getBlockNode(document, getSlotOwnerPointer(slotPointer))?.props.id);
+  return getNodeBox(getBlockNode(document, getSlotOwnerPointer(slotPointer), webpageNodeChildren)?.props.id);
 };
 // The indicator of the drop target, drawn among the boxes of its slot's children that are in the frame
 const getDropIndicator = (): DropIndicator | undefined => {

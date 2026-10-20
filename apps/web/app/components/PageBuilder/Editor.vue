@@ -2,6 +2,7 @@
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilderClipboard";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
@@ -84,7 +85,7 @@ const startTextEdit = () => {
   const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
   const nodePointer = document && getNodePointer(document, nodeId);
   if (!document || nodePointer === undefined) return;
-  if (getBlockNode(document, nodePointer)?.type !== WebpageNodeType.Text) return;
+  if (getBlockNode(document, nodePointer, webpageNodeChildren)?.type !== WebpageNodeType.Text) return;
 
   pageBuilderCanvasStore.setEditingNodeId(resourceId, nodeId);
 };

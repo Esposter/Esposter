@@ -7,7 +7,7 @@ import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
@@ -101,9 +101,10 @@ const selectAdjacentNode = (offset: number) => {
   const nodePointer = nodeId ? getNodePointer(document, nodeId) : undefined;
   const adjacentPointer =
     nodePointer === undefined
-      ? getBlockLayerRows(document, webpageRegistry)[0]?.nodePointer
-      : getAdjacentBlockNodePointer(document, webpageRegistry, nodePointer, offset);
-  const adjacentId = adjacentPointer === undefined ? undefined : getBlockNode(document, adjacentPointer)?.props.id;
+      ? getBlockLayerRows(document, webpageNodeChildren)[0]?.nodePointer
+      : getAdjacentBlockNodePointer(document, webpageNodeChildren, nodePointer, offset);
+  const adjacentId =
+    adjacentPointer === undefined ? undefined : getBlockNode(document, adjacentPointer, webpageNodeChildren)?.props.id;
   if (typeof adjacentId === "string") pageBuilderCanvasStore.setSelectedNodeId(resourceId, adjacentId);
 };
 const selectParent = () => {
