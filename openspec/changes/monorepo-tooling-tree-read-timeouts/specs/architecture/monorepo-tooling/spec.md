@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: A whole-tree workspace suite's timeout is the one its contended run earns
 
