@@ -33,7 +33,7 @@ Repo prose records the size of a cost and what it changed, never the raw figures
 
 - **Removed, measured under the default.** The math compiler's long-list case builds its tree directly, since the cost sat in the parser. `publishedFiles` runs its packs concurrently. The nine tree-walking checks that list the working tree once each, the git-fixture suites, the nuxt module load check and the db-mock migration snapshot all run under the default when measured one file at a time.
 - **Kept on the shared tree-read constant.** Seven tree-walking checks take longer than the default alone (`todos`, `restatedPointers`, `gcsimLinks`, `duplicateProse`, `sharedExportConsumers`, `lineEndings`, `controlCharacters`). The slowest is the one that sets the constant's margin. Their cost is the check's own reading of many files, not the listing, so a shared listing would not retire them.
-- **Kept on the stale-names limit.** `staleNames` reads the store's declarations cold before its cache exists; the warm read is well under the default.
+- **Kept on the stale-names limit.** `staleNames` reads the installed packages' declarations cold before their cache exists, which is the read the limit covers. The source-name read is cached by file, and its committed bench records the warm read at a few seconds and the cold one at about twice that.
 - **Kept on the type-measurement limit.** `typeBenchResults` measures the compiler over the repo. Its limit is oversized against its measured magnitude, and it stays until a bench across runs sizes it.
 
 ## What is not measured yet

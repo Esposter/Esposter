@@ -28,7 +28,7 @@ export const RECORD: KitRecord = {
   skillHolds: [],
 };
 // Every value of the record as gcsim gives it, each at a line of its own
-export const SOURCE_CANDIDATE_MAP = new Map<string, KitCandidate[]>(
+export const SOURCE_CANDIDATE_MAP: Map<string, KitCandidate[]> = new Map<string, KitCandidate[]>(
   Array.from(flattenKitValues(RECORD), ([path, value], index) => [
     path,
     [{ provenance: { file: "kit.go", line: index + 1, source: KitSource.Gcsim }, value }],
@@ -40,7 +40,7 @@ describe.todo("constants");
 
 // The talents' proud skill groups, by which a named hit's targeting area is read: the normal attack's group takes the
 // Strikes'
-export const TALENT_GROUP_ID_MAP = {
+export const TALENT_GROUP_ID_MAP: Record<CombatTalent, number> = {
   [CombatTalent.ElementalBurst]: 3,
   [CombatTalent.ElementalSkill]: 2,
   [CombatTalent.NormalAttack]: 1,
