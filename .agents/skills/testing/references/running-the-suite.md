@@ -36,7 +36,7 @@ A test's own duration is read from its file run alone, with the JSON reporter wr
 
 `pnpm test <file> --run --fileParallelism=false --reporter=json --outputFile=<path>`
 
-Each entry under `testResults[].assertionResults` carries its `title` and `duration`. `--fileParallelism=false` keeps other files off the cores, so the reading is free of the contention `timeouts.md` warns about. It is a probe only: it locates where a file's time goes. The number a session quotes or gates a timeout on lives in a committed `*.bench.md` (`timeouts.md` step 1, the `bench` skill).
+Each entry under `testResults[].assertionResults` carries its `title` and `duration`. `--fileParallelism=false` keeps other files off the cores, so the reading is free of the contention `timeouts.md` warns about. It is a probe only: it locates where a file's time goes, and what a timeout rests on is in `timeouts.md` step 1 and the `bench` skill.
 
 ## Scoping a local run
 
