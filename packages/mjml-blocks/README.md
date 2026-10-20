@@ -18,29 +18,60 @@ MJML's components as block types on the headless block editor — each component
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i mjml-blocks mjml headless-block-editor zod
+pnpm i mjml-blocks mjml zod
 ```
 
-The compile is the consumer's, so `mjml` is installed beside the package, and so are the two packages the example imports. This example registers MJML's components, renders a one-section email to MJML's JSON form and compiles it under strict validation:
+The compile is the consumer's, so `mjml` is installed beside the package, and so is `zod`, the peer the schemas are written in. This example declares one leaf type, which a node schema needs, registers MJML's components beside it, renders a one-section email to MJML's JSON form and compiles it under strict validation:
 
 ```ts
-import { createBlockDocumentSchema } from "headless-block-editor";
 import mjml2html from "mjml";
-import { createMjmlRegistry, renderMjmlDocument } from "mjml-blocks";
+import {
+  createMjmlDocumentSchema,
+  createMjmlNodeSchema,
+  createMjmlRegistry,
+  mjmlNodeChildren,
+  renderMjmlDocument,
+} from "mjml-blocks";
+import type { MjmlRichTextDefinition } from "mjml-blocks";
 import { z } from "zod";
 
-const registry = createMjmlRegistry({
-  leafTypes: [],
-  richText: { parseHtml: (html) => html, renderHtml: (html) => html, schema: z.string() },
+// A leaf a column or a hero may hold beside MJML's own nodes, declared by merging its type tag into MjmlLeafNodes
+interface LinkNode {
+  props: { href: string; id: string };
+  type: "link";
+}
+
+declare module "mjml-blocks" {
+  interface MjmlLeafNodes {
+    link: LinkNode;
+  }
+}
+
+const richText: MjmlRichTextDefinition<{ text?: string }> = {
+  parseHtml: (html) => ({ text: html }),
+  renderHtml: (content) => content.text ?? "",
+  schema: z.object({ text: z.string().optional() }),
+};
+const nodeSchema = createMjmlNodeSchema({
+  leafNodeSchema: z.strictObject({
+    props: z.strictObject({ href: z.string(), id: z.string() }),
+    type: z.literal("link"),
+  }),
+  richText,
 });
-const document = createBlockDocumentSchema(registry, Number.MAX_SAFE_INTEGER).parse({
+const registry = createMjmlRegistry({
+  children: (node) => (node.type === "link" ? {} : mjmlNodeChildren(node)),
+  leafTypes: [],
+  richText,
+});
+const document = createMjmlDocumentSchema(registry, nodeSchema, Number.MAX_SAFE_INTEGER).parse({
   content: [
     {
       props: {
         children: [
           {
             props: {
-              children: [{ props: { content: "Hello", id: crypto.randomUUID() }, type: "mj-text" }],
+              children: [{ props: { content: { text: "Hello" }, id: crypto.randomUUID() }, type: "mj-text" }],
               id: crypto.randomUUID(),
             },
             type: "mj-column",

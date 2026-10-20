@@ -157,6 +157,53 @@ A document the registry accepts SHALL render to MJML that compiles under MJML's 
 - **THEN** the read is refused
 - **AND** the refusal names `all` as a type the registry does not hold
 
+### Requirement: The head and its defaults take no attribute of their own
+
+The MJML blocks SHALL refuse an attribute on the `mjml` element beyond `lang` and `dir`, on the head, or on the defaults element, and SHALL refuse a style that carries an attribute other than `inline` set to `inline`, each refusal naming the element.
+
+#### Scenario: An attribute on the head is refused by name
+
+- **GIVEN** MJML source whose `mj-head` carries an attribute
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `mj-head`
+
+#### Scenario: An attribute on the defaults element is refused by name
+
+- **GIVEN** MJML source whose `mj-attributes` carries an attribute
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `mj-attributes`
+
+#### Scenario: A style with an attribute other than inline is refused by name
+
+- **GIVEN** MJML source whose `mj-style` carries a `media` attribute
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `mj-style`
+
+### Requirement: A source attribute cannot overwrite a prop the node writes
+
+The MJML blocks SHALL refuse a source attribute named after a prop the node writes itself, such as one of its slots, under the attribute's name, and SHALL NOT read it into that prop.
+
+#### Scenario: A source attribute named after a slot is refused by name
+
+- **GIVEN** MJML source whose `mj-section` carries a `children` attribute
+- **WHEN** it is read into a document
+- **THEN** the read is refused
+- **AND** the refusal names the `children` attribute, and the section's children are kept
+
+### Requirement: A navbar's default icons are the characters they name
+
+A navbar that sets no open or close icon SHALL resolve its icons to the characters they name, with the open icon `☰` and the close icon `⊗`, and not to MJML's entities for them.
+
+#### Scenario: A navbar with no icon set resolves the characters
+
+- **GIVEN** a navbar that sets neither its open icon nor its close icon
+- **WHEN** its icons are resolved through the cascade
+- **THEN** the open icon is `☰`
+- **AND** the close icon is `⊗`
+
 ### Requirement: The blocks run where there is no document object model
 
 The MJML blocks SHALL check, render, serialise and read back an email with no document object model and no UI framework present.
