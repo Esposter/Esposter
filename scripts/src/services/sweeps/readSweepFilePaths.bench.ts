@@ -6,7 +6,7 @@ import { describe, test } from "vitest";
 // And its worktree rather than this repo's code, at a cost of about a minute, so it is off once its numbers are
 // Committed. Flip it on when the listing itself changes: set `IS_ENABLED`, run `pnpm bench` in this package, commit the
 // Artifact, and flip it back. A narrow pathspec and the whole tree cost about the same, because git stats every tracked
-// File for its deleted check whatever the pathspec, so the comparison is kept to show that
+// File for its deleted check whatever the pathspec, so the comparison is kept as proof they cost the same
 const IS_CI = Boolean(process.env.CI);
 const IS_ENABLED = false;
 const isBenchable = IS_ENABLED && !IS_CI;
