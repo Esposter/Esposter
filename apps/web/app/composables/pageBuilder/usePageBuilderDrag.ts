@@ -4,14 +4,11 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { MaybeRefOrGetter } from "vue";
 
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { DRAG_THRESHOLD, WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-
-// The distance a palette press must travel before it is a drag rather than a click on the block's button
-const DRAG_THRESHOLD = 4;
 
 const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeometry["frameRect"]) =>
   point.x >= frameRect.left &&
@@ -22,7 +19,7 @@ const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeo
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type
 const getDropTargetAt = (
-  document: WebpageDocument | undefined,
+  document: undefined | WebpageDocument,
   type: WebpageNodeType,
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,

@@ -27,26 +27,33 @@ export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, strin
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
+// The distance a palette press must travel before it is a drag rather than a click on the block's button
+export const DRAG_THRESHOLD = 4;
 // The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are not
 // Listed, since only Columns and Tabs hold them
-export const WEBPAGE_PALETTE_CATEGORIES: readonly WebpagePaletteCategory[] = [
-  { category: "Layout", types: [WebpageNodeType.Section, WebpageNodeType.Columns] },
-  {
+export const WEBPAGE_PALETTE_CATEGORIES: readonly WebpagePaletteCategory[] = Object.freeze([
+  Object.freeze({ category: "Layout", types: Object.freeze([WebpageNodeType.Section, WebpageNodeType.Columns]) }),
+  Object.freeze({
     category: "Content",
-    types: [
+    types: Object.freeze([
       WebpageNodeType.Text,
       WebpageNodeType.Button,
       WebpageNodeType.Image,
       WebpageNodeType.Video,
       WebpageNodeType.CustomHtml,
-    ],
-  },
-  {
+    ]),
+  }),
+  Object.freeze({
     category: "Extra",
-    types: [WebpageNodeType.Countdown, WebpageNodeType.Tabs, WebpageNodeType.Tooltip, WebpageNodeType.TypedText],
-  },
-  { category: "Survey", types: [WebpageNodeType.SurveyInvite] },
-];
+    types: Object.freeze([
+      WebpageNodeType.Countdown,
+      WebpageNodeType.Tabs,
+      WebpageNodeType.Tooltip,
+      WebpageNodeType.TypedText,
+    ]),
+  }),
+  Object.freeze({ category: "Survey", types: Object.freeze([WebpageNodeType.SurveyInvite]) }),
+]);
 // The pointer and history interaction of the root, whose props are edited when no node is selected
 export const ROOT_POINTER = "/root";
 export const ROOT_INTERACTION_ID = "content:root";
