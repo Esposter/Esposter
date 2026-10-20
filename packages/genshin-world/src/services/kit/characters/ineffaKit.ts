@@ -33,7 +33,7 @@ import { takeOne } from "@esposter/shared";
 export const INEFFA_CHARACTER_ID = 10_000_116;
 
 const CONSTELLATION_2 = 2;
-// Constellation 2, as gcsim (MIT, main) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65). The
+// Constellation 2, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65). The
 // First enemy her burst hits is marked for a Punishment Edit, a Lunar-Charged hit of 3 times her ATK in a radius of 6
 // Metres, which fires on the marked enemy's next hit or 60 frames on, whichever comes first (lines 97, 107, 111)
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/cons.go
@@ -47,7 +47,7 @@ const CONSTELLATION_4_COOLDOWN_ID = "ineffa-constellation-4-cooldown";
 const CONSTELLATION_4_ENERGY = 5;
 const CONSTELLATION_4_SECONDS = 4;
 
-// Birgitta discharges ten times while she stands, with no poise, as gcsim (MIT, main) ineffa/skill.go gives her. Each
+// Birgitta discharges ten times while she stands, with no poise, as gcsim v2.47.2 (MIT) ineffa/skill.go gives her. Each
 // Discharge that lands gives an Electro particle two times in three, which lands 100 frames later as gcsim's particle
 // Callback gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/skill.go
@@ -61,14 +61,14 @@ const BIRGITTA_PARTICLE_CHANCE = 0.66;
 const BIRGITTA_PARTICLE_DELAY_ID = "ineffa-particle-delay";
 const BIRGITTA_PARTICLE_DELAY_SECONDS = toKitSeconds(100);
 
-// Measured: gcsim (MIT, main) ineffa/asc.go, her Moonsign Benediction turns the party's Electro-Charged into
+// Measured: gcsim v2.47.2 (MIT) ineffa/asc.go, her Moonsign Benediction turns the party's Electro-Charged into
 // Lunar-Charged and adds 0.7% Base DMG Bonus to its Lunar-Charged for each 100 of her ATK, at most 14%
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK = 0.007 / 100;
 const BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS = 0.14;
 
 // Panoramic Permutation Protocol, Ineffa's Ascension 4 passive: Supreme Instruction: Cyclonic Exterminator gives Ineffa and
-// The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim (MIT, main) ineffa/asc.go gives it.
+// The active party member Elemental Mastery of 6% of her ATK for 20 seconds, as gcsim v2.47.2 (MIT) ineffa/asc.go gives it.
 // The amount is priced from her ATK as the burst is cast, and the buff moves to whoever comes on the field
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ineffa/asc.go
 const ASCENSION_4 = 4;
@@ -133,7 +133,7 @@ const movePermutation = (event: KitEvent, kitEffectState: KitEffectState, combat
 // Exterminator summons her again at its hit, ending the one on the field. Her Moonsign Benediction adds its Base DMG
 // Bonus by her ATK, and from Ascension 4 her burst gives her and the active member Elemental Mastery by her ATK.
 // Her Constellation 4 energy is built, from any Lunar-Charged reaction of her party once every 4 seconds, as gcsim
-// (MIT, main) ineffa/cons.go gives it
+// V2.47.2 (MIT) ineffa/cons.go gives it
 // Constellation 1 needs the Carrier Flow Composite team status and its Lunar-Charged DMG bonus, not built
 // Constellation 2 places its shield and marks the first enemy the burst hits for its Punishment Edit, as built above
 // Constellation 6 needs the Carrier Flow Composite status and the thunderclouds' bursts, not built

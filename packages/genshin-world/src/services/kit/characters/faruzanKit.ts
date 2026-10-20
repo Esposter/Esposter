@@ -12,7 +12,7 @@ import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 
-// Measured: gcsim (MIT, main) faruzan/burst.go, the three gadgets' places, offset from the body at the cast as gcsim's
+// Measured: gcsim v2.47.2 (MIT) faruzan/burst.go, the three gadgets' places, offset from the body at the cast as gcsim's
 // CalcOffsetPoint places them: the top right, the top left, then the bottom middle, cycled through by each Pulse
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/faruzan/burst.go
 const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] = [
@@ -21,7 +21,7 @@ const WHIRLWIND_GADGET_OFFSETS: readonly { forward: number; lateral: number }[] 
   { forward: 1.5, lateral: 0 },
 ];
 
-// Measured: gcsim (MIT, main) faruzan/burst.go, Prayerful Wind's Gift's Anemo DMG Bonus, refreshed by each Pulse and given
+// Measured: gcsim v2.47.2 (MIT) faruzan/burst.go, Prayerful Wind's Gift's Anemo DMG Bonus, refreshed by each Pulse and given
 // At the cast too
 const PRAYERFUL_WIND_SOURCE = "faruzan-prayerful-wind";
 
