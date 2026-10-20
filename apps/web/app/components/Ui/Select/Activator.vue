@@ -4,7 +4,6 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY, SELECT_TRIGGER_TITLE_LIMIT } from "@/services/ui/constants";
-import { takeOne } from "@esposter/shared";
 import { Select, useSelectContext } from "@vuetify/v0";
 
 interface Props {
@@ -13,9 +12,9 @@ interface Props {
 }
 
 const { items, label } = defineProps<Props>();
-// Inside the select's root, where its context can be read: the primitive walks the options by arrow and by Home and
-// End, and typing a title's first letters is added here
-const { close, isOpen, modelValue, popover, virtualFocus } = useSelectContext("v0:select");
+// Inside the select's root, where its context can be read: the primitive walks the options by arrow, Home and End, and
+// by the first letters typed
+const { close, isOpen, modelValue, popover } = useSelectContext("v0:select");
 // The trigger is no invoker of the list, so a press on it while the list is open counts as outside it: the browser's
 // Light dismiss closes the list on the release, and on touch it does so before the click lands, which the primitive
 // Then reads as a press on a closed select and opens it again. A press that began on an open list closes it
@@ -33,8 +32,6 @@ const title = computed(() => {
   else if (selectedItems.value.length > SELECT_TRIGGER_TITLE_LIMIT) return `${selectedItems.value.length} selected`;
   else return selectedItems.value.map((item) => item.title).join(", ");
 });
-const typeahead = useTypeahead();
-
 popover.positionArea.value = POPOVER_POSITION_AREA;
 popover.positionTry.value = POPOVER_POSITION_TRY;
 </script>
@@ -50,17 +47,6 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
       () => {
         if (isOpenOnPointerDown) close();
         isOpenOnPointerDown = false;
-      }
-    "
-    @keydown="
-      (event: KeyboardEvent) => {
-        if (!isOpen) return;
-        const index = typeahead(
-          event,
-          items.map(({ title }) => title),
-          items.findIndex(({ value }) => value === virtualFocus.highlightedId.value),
-        );
-        if (index !== undefined) virtualFocus.highlight(takeOne(items, index).value);
       }
     "
   >
