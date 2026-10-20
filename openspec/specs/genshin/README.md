@@ -177,6 +177,7 @@ What is still to build is the [Genshin proposal](../../changes/genshin-program/d
 - Exploring: Teleport Waypoints paired with the scene's transport points and written into Mondstadt's data, each jump landing at the game's own arrival place.
 - Adventurer's four-piece: a chest opened in the world restores its wearer 6% of its Max HP each second for five seconds, the set's bonus in combat built as a module that answers the chest's event.
 - The world's one reset clock: the daily, weekly and monthly resets read at the server's 04:00 in UTC+8, and the game day counted from the daily reset, in place of each system's own zone and constants.
+- The Mystic Offering at the Crafting Bench from Adventure Rank 45: three unlocked five-star artifacts from the bag become a strongbox that rolls a random piece of the set the player chose, with the piece's odds and the batch of thirty-nine not yet built.
 
 ## Key files
 
