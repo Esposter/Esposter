@@ -7,11 +7,9 @@ import { createTravelerKitBehaviour } from "#src/services/kit/travelerKit";
 
 // A character's behaviour module as its kit builds from its record: its own module, the Traveler's for her, and for a
 // Character with none of its own a behaviour that adds nothing to the record's kit
-export const readCreateKitBehaviour = async (
-  characterId: number,
-): Promise<(reader: KitRecordReader) => KitBehaviour> => {
+export const readCreateKitBehaviour = (characterId: number): Promise<(reader: KitRecordReader) => KitBehaviour> => {
   const loadCreateBehaviour = CharacterIdCreateKitBehaviourMap[characterId];
   if (loadCreateBehaviour) return loadCreateBehaviour();
-  if (characterId === TRAVELER_CHARACTER_ID) return createTravelerKitBehaviour;
-  return () => ({});
+  if (characterId === TRAVELER_CHARACTER_ID) return Promise.resolve(createTravelerKitBehaviour);
+  return Promise.resolve(() => ({}));
 };

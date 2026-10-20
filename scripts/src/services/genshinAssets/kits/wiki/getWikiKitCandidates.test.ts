@@ -370,6 +370,7 @@ describe(getWikiKitCandidates, () => {
 
     expect(readCandidateValues(candidateMap)).toStrictEqual({ "normalAttacks.0.hits.0.poiseDamage": [40.5] });
   });
+
   test("gives each of two hits sharing a label the numbered row of its place, where those rows disagree on poise", () => {
     expect.hasAssertions();
 

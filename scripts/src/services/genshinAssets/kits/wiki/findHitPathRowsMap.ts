@@ -18,9 +18,8 @@ export const findHitPathRowsMap = (
     group.hitPaths.push(hitPath);
     actionLabelGroupMap.set(key, group);
   }
-  return new Map(
-    [...actionLabelGroupMap.values()].flatMap(({ hitPaths, label }) => [
-      ...findSharedLabelRows(label, properties, hitPaths),
-    ]),
-  );
+  const hitPathRowsMap = new Map<string, WikiAdvancedProperty[]>();
+  for (const { hitPaths, label } of actionLabelGroupMap.values())
+    for (const [hitPath, rows] of findSharedLabelRows(label, properties, hitPaths)) hitPathRowsMap.set(hitPath, rows);
+  return hitPathRowsMap;
 };

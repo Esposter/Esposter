@@ -1,6 +1,7 @@
 import { PNPM_ARGS, PNPM_FILE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readWorkspacePackages } from "#src/services/shared/readWorkspacePackages";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { NON_SOURCE_SUFFIXES } from "@esposter/configuration";
 import { execFileSync } from "@esposter/shared-node/child-process";
 import { join } from "node:path";
@@ -26,7 +27,7 @@ const readPackedPaths = (packageDirectory: string): string[] => {
 describe("publishedFiles", () => {
   const publishedPackages = readWorkspacePackages(REPOSITORY_ROOT).filter(({ manifest }) => !manifest.private);
 
-  test("pack no test, benchmark or fixture", () => {
+  test("pack no test, benchmark or fixture", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     // Named rather than counted: the failure names the file and the package that would ship it

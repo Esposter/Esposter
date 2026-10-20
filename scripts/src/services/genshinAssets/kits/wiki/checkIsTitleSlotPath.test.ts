@@ -30,6 +30,6 @@ describe(checkIsTitleSlotPath, () => {
 
     const path = getSlotPath(title);
     assert.exists(path);
-    expect(checkIsTitleSlotPath(path)).toStrictEqual(true);
+    expect(checkIsTitleSlotPath(path)).toBe(true);
   });
 });

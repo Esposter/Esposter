@@ -1,3 +1,6 @@
+import type { MathExpressionNode } from "#src/models/shared/MathExpressionNode";
+
+import { MathExpressionNodeType } from "#src/models/shared/MathExpressionNodeType";
 import { compileMathExpression } from "#src/services/compiler/compileMathExpression";
 import { parseNode } from "#src/services/compiler/parseNode.fixture";
 import { getMathExpressionNames } from "#src/services/names/getMathExpressionNames";
@@ -5,6 +8,8 @@ import { describe, expect, test } from "vitest";
 
 const evaluateFormula = (formula: string, scope: Record<string, number> = {}): number =>
   compileMathExpression(parseNode(formula), Object.keys(scope))(Object.values(scope));
+const evaluateCall = (name: string, args: MathExpressionNode[]): number =>
+  compileMathExpression({ arguments: args, name, type: MathExpressionNodeType.Call }, [])([]);
 
 describe(compileMathExpression, () => {
   const SCOPE = { col0: 3, col1: -2.5 };
@@ -263,12 +268,18 @@ describe("counting and primality", () => {
   test("a list or a call past the engine's limit on spread arguments is read whole", () => {
     expect.hasAssertions();
 
-    const ones = Array.from({ length: 200_000 }, () => "1").join(", ");
+    // The tree is built directly, since parsing a formula this long is the parser's cost and not the compiler's
+    const ones: MathExpressionNode[] = Array.from({ length: 200_000 }, () => ({
+      type: MathExpressionNodeType.Number,
+      value: 1,
+    }));
+    const evaluateList = (name: string): number =>
+      evaluateCall(name, [{ elements: ones, type: MathExpressionNodeType.List }]);
 
-    expect(evaluateFormula(`count([${ones}])`)).toBe(200_000);
-    expect(evaluateFormula(`sum(${ones})`)).toBe(200_000);
-    expect(evaluateFormula(`max([${ones}])`)).toBe(1);
-    expect(evaluateFormula(`hypot(${ones})`)).toBe(Math.sqrt(200_000));
+    expect(evaluateList("count")).toBe(200_000);
+    expect(evaluateCall("sum", ones)).toBe(200_000);
+    expect(evaluateList("max")).toBe(1);
+    expect(evaluateCall("hypot", ones)).toBe(Math.sqrt(200_000));
   });
 
   test("a factorial is the product mathjs computes, to the last bit", () => {

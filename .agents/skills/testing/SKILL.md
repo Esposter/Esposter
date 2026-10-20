@@ -49,6 +49,7 @@ Environment and running:
 - `references/platform-and-bundle-tests.md` — when a suite is skipped on some hosts, or its output depends on the host.
 - `references/bundle-size.md` — when a size snapshot fails or moves, or a new library package needs one.
 - `references/running-the-suite.md` — when narrowing a run with `-t` or `-u`, or reading a failure only the full parallel run produces.
+- `references/timeouts.md` — when a test, suite or config sets a timeout, or a test fails with `Test timed out`: the measurement and the ladder that decide whether a timeout is earned at all.
 
 ## Structure
 

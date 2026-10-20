@@ -8,10 +8,10 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { buildKitPublication } from "#src/services/genshinAssets/kits/buildKitPublication";
-import { HIT_RECORD, RECORD, SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
+import { SOURCE_CANDIDATE_MAP } from "#src/services/genshinAssets/kits/constants.test";
 import { readKitOverlay } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { buildKitRecord } from "#src/services/genshinAssets/kits/record/buildKitRecord";
-import { CombatTalent, GameDataset, KitPlunge, WeaponType } from "genshin-world";
+import { CombatTalent, GameDataset, WeaponType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
 describe(buildKitPublication, () => {

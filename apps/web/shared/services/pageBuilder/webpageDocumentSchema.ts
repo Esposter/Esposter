@@ -9,8 +9,8 @@ import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChi
 import { webpagePlaceableNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { createBlockDocumentSchema } from "headless-block-editor";
 
-// A webpage document: its root takes the placeable types only, so the schema an agent reads lists exactly those, refused on a
-// duplicate id, a node a slot does not allow, props its type refuses, or too many nodes
+// A webpage document: its root takes the placeable types only, so the schema an agent reads lists exactly those
+// Refused on a duplicate id, a node a slot does not allow, props its type refuses, or too many nodes
 export const webpageDocumentSchema = createBlockDocumentSchema<WebpageNode, WebpageRootProps>(
   webpagePlaceableNodeSchema,
   webpageRootPropsSchema,

@@ -40,14 +40,16 @@ export const buildKitPublication = async (
   const kits: Record<string, unknown> = {};
   const kitSources: Record<string, unknown> = {};
   const failures: string[] = [];
-  for (const { characterId, name, publishedRecord, tables } of inputs) {
+  const behaviouredInputs = await Promise.all(
+    inputs.map(async (input) => ({ ...input, createBehaviour: await readCreateKitBehaviour(input.characterId) })),
+  );
+  for (const { characterId, createBehaviour, name, publishedRecord, tables } of behaviouredInputs) {
     const { record, sources } = getResult(() => buildKitRecordWithDonors(characterId, inputMap, builtMap)).match(
       (built) => built,
       (error) => {
         throw new InvalidOperationError(Operation.Create, name, `its record cannot be built: ${error.message}`);
       },
     );
-    const createBehaviour = await readCreateKitBehaviour(characterId);
     getResult(() =>
       buildKit(
         record,

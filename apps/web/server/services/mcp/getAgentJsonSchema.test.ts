@@ -54,6 +54,9 @@ const readUnwritablePaths = (
   ];
 };
 
+const readOneOf = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema[] =>
+  schema === undefined || typeof schema === "boolean" ? [] : (schema.oneOf ?? []);
+
 describe(getAgentJsonSchema, () => {
   // What each type's agent may not write: a new undescribed or read-only node fails here until it is described or
   // Recorded, so no type's reach widens or narrows unseen
@@ -119,8 +122,6 @@ describe(getAgentJsonSchema, () => {
       const { type } = resolved.properties ?? {};
       return type === undefined || typeof type === "boolean" || typeof type.const !== "string" ? undefined : type.const;
     };
-    const readOneOf = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema[] =>
-      schema === undefined || typeof schema === "boolean" ? [] : (schema.oneOf ?? []);
     const { content } = properties;
     const items = typeof content === "object" && !Array.isArray(content.items) ? content.items : undefined;
 
