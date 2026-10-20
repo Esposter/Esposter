@@ -1,6 +1,6 @@
 # Side Chat
 
-A sub-spec of the [agent console](../infra-agent-console-program/design.md). A question about the work in progress — what a function the agent just wrote does, whether a name is used elsewhere — asked in the session becomes part of it, spends its context and can steer the next turn. The Code tab's side chat "lets you ask Claude a question that uses your session's context but doesn't add anything back to the main conversation", opened with `Ctrl+;`.
+A sub-spec of the [agent console](../../infra-agent-console-program/design.md). A question about the work in progress — what a function the agent just wrote does, whether a name is used elsewhere — asked in the session becomes part of it, spends its context and can steer the next turn. The Code tab's side chat "lets you ask Claude a question that uses your session's context but doesn't add anything back to the main conversation", opened with `Ctrl+;`.
 
 ## What it changes
 
