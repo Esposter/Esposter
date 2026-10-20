@@ -57,5 +57,9 @@ export const createMjmlRegistry = <TContent, TContext = unknown>(
     mjmlWrapperType,
     ...options.leafTypes,
   ];
-  return { root: { content: MJML_BODY_CHILDREN, propsSchema: createMjmlRootPropsSchema(types) }, types };
+  return {
+    children: options.children,
+    root: { content: MJML_BODY_CHILDREN, propsSchema: createMjmlRootPropsSchema(types) },
+    types,
+  };
 };

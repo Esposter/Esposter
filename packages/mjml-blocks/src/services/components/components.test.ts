@@ -4,7 +4,7 @@ import {
   MJML_BODY_CHILDREN,
   MJML_BREAKPOINT_ATTRIBUTES,
 } from "#src/services/constants";
-import { TEST_REGISTRY, TEST_RICH_TEXT } from "#src/services/constants.test";
+import { TEST_CHILDREN, TEST_REGISTRY, TEST_RICH_TEXT } from "#src/services/constants.test";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { createRequire } from "node:module";
 import { assert, describe, expect, test } from "vitest";
@@ -74,9 +74,9 @@ describe("components", () => {
         .parse(dependencies["mj-body"])
         .filter((tag) => !EXCLUDED_MJML_TAGS.includes(tag)),
     );
-    expect(createMjmlRegistry({ leafTypes: [], richText: TEST_RICH_TEXT }).root.content).toStrictEqual(
-      MJML_BODY_CHILDREN,
-    );
+    expect(
+      createMjmlRegistry({ children: TEST_CHILDREN, leafTypes: [], richText: TEST_RICH_TEXT }).root.content,
+    ).toStrictEqual(MJML_BODY_CHILDREN);
   });
 
   test("the root's body and breakpoint take MJML's attributes", () => {

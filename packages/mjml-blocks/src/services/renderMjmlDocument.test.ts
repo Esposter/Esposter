@@ -6,6 +6,7 @@ import type { TestLeafNode } from "#src/services/constants.test";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
   TEST_BUTTON_ID,
+  TEST_CHILDREN,
   TEST_COLUMN_ID,
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
@@ -324,7 +325,7 @@ describe(renderMjmlDocument, () => {
       slots: {},
       type: "test-leaf",
     } satisfies MjmlBlockTypeDefinition<TestLeafNode, string>;
-    const registry = createMjmlRegistry({ leafTypes: [inviteType], richText: TEST_RICH_TEXT });
+    const registry = createMjmlRegistry({ children: TEST_CHILDREN, leafTypes: [inviteType], richText: TEST_RICH_TEXT });
     const document: MjmlDocument = {
       content: [
         {

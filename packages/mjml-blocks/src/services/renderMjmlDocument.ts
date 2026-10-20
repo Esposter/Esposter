@@ -6,7 +6,6 @@ import type { BlockNode } from "headless-block-editor";
 
 import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
-import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { escapeAttribute } from "@esposter/shared";
 import { renderBlockNodes } from "headless-block-editor";
@@ -30,7 +29,7 @@ export const renderMjmlDocument = <TContext>(
   const content: MjmlJson[] = renderBlockNodes(
     document.content,
     registry,
-    mjmlNodeChildren,
+    registry.children,
     (node, definition, slots) => {
       const output = definition.render(node, slots, options.context);
       return stampNode(output, node, options.isStampingIds);

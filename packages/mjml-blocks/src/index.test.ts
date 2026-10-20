@@ -9,12 +9,12 @@ describe("mjml-blocks", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 95.13 KB (97412 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 95.18 KB (97463 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 45.34 KB (46424 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 45.57 KB (46663 bytes)"`);
   });
 });

@@ -1,10 +1,12 @@
+import type { MjmlBuiltInNode } from "#src/models/MjmlBuiltInNode";
 import type { MjmlNode } from "#src/models/MjmlNode";
-import type { BlockChildren } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
+import { exhaustiveGuard } from "@esposter/shared";
 
-// The children port of the email: each built-in node's slots as the typed lists its type holds, switched on the node's type tag
-export const mjmlNodeChildren: BlockChildren<MjmlNode> = (node): Readonly<Record<string, readonly MjmlNode[]>> => {
+// The children port of MJML's built-in nodes: each type's slots as the typed lists its type holds, switched on the type tag over every built-in type
+// A consumer's leaf type is not here, since the leaf types are open: the consumer composes its own port over this one
+export const mjmlNodeChildren = (node: MjmlBuiltInNode): Readonly<Record<string, readonly MjmlNode[]>> => {
   switch (node.type) {
     case MjmlNodeType.Accordion:
     case MjmlNodeType.AccordionElement:
@@ -31,7 +33,6 @@ export const mjmlNodeChildren: BlockChildren<MjmlNode> = (node): Readonly<Record
     case MjmlNodeType.Text:
       return {};
     default:
-      // A consumer's leaf type holds no slot: the leaf types are open, so the switch cannot name them
-      return {};
+      return exhaustiveGuard(node);
   }
 };
