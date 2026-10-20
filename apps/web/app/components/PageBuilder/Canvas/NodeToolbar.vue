@@ -15,7 +15,9 @@ interface Props {
 
 const { announce, position, resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
@@ -24,34 +26,44 @@ const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = use
 );
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
+const isDeleteOpen = ref(false);
 // The node holding the selected one, which the selection moves to; the page itself clears the selection
 const selectParent = () => {
-  const document = pageBuilderDocumentStore.getDocument(resourceId);
-  const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const document = getDocument(resourceId);
+  const nodeId = getSelectedNodeId(resourceId);
   if (!document || !nodeId) return;
 
   const parentId = getParentNodeId(document, nodeId);
-  if (parentId !== undefined) pageBuilderCanvasStore.setSelectedNodeId(resourceId, parentId);
+  if (parentId !== undefined) setSelectedNodeId(resourceId, parentId);
 };
 </script>
 
 <!-- Above the selected node, so the toolbar never covers the node it acts on -->
 <template>
   <div
-    fixed
-    flex
-    gap-1
     p-1
     b-border
     bg-background
+    flex
+    gap-1
+    fixed
     class="-translate-y-full"
     :style="{ left: `${position.left}px`, top: `${position.top}px` }"
   >
-    <UiIconButton label="Select parent" :meaning="UiIconMeaning.Collapse" @click="selectParent" />
-    <UiIconButton label="Move up" :meaning="UiIconMeaning.ArrowUp" @click="moveUp" />
-    <UiIconButton label="Move down" :meaning="UiIconMeaning.ArrowDown" @click="moveDown" />
-    <UiIconButton label="Move to…" :meaning="UiIconMeaning.Forward" @click="openCommandPalette" />
-    <UiIconButton label="Duplicate" :meaning="UiIconMeaning.Copy" @click="duplicateSelected" />
-    <UiIconButton label="Delete" :meaning="UiIconMeaning.Delete" @click="deleteSelected" />
+    <UiIconButton label="Select parent" :meaning="UiIconMeaning.Collapse" @click="selectParent()" />
+    <UiIconButton label="Move up" :meaning="UiIconMeaning.ArrowUp" @click="moveUp()" />
+    <UiIconButton label="Move down" :meaning="UiIconMeaning.ArrowDown" @click="moveDown()" />
+    <UiIconButton label="Move to…" :meaning="UiIconMeaning.Forward" @click="openCommandPalette()" />
+    <UiIconButton label="Duplicate" :meaning="UiIconMeaning.Copy" @click="duplicateSelected()" />
+    <UiIconButton label="Delete" :meaning="UiIconMeaning.Delete" @click="isDeleteOpen = true" />
   </div>
+  <UiConfirmDialog
+    v-model="isDeleteOpen"
+    confirm-label="Delete"
+    is-optimistic
+    title="Delete node"
+    :confirm="() => deleteSelected()"
+  >
+    <p>Delete this node and everything in it from the page?</p>
+  </UiConfirmDialog>
 </template>
