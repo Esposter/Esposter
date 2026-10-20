@@ -278,4 +278,36 @@ describe(sanitizeHtml, () => {
 
     expect(sanitizeHtml(`<p>4 <= 5</p>`)).toBe("<p>4 &lt;= 5</p>");
   });
+
+  test("ghsa-374f-7chj-9948: a namespace-prefixed SVG animation of a link's href is dropped with its foreign elements", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeHtml(
+        `<svg:svg xmlns:svg="http://www.w3.org/2000/svg"><svg:a><svg:set attributeName="href" to="javascript:alert(1)"></svg:set>x</svg:a></svg:svg>`,
+      ),
+    ).toBe("x");
+  });
+
+  test("ghsa-cv27-6wvh-8x7j: a meta refresh's content is never kept, so its javascript: address does not navigate", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeHtml(`<meta http-equiv="refresh" content="0;url=javascript:alert(1)">after`, {
+        allowedAttributes: { meta: ["http-equiv", "content"] },
+        allowedTags: ["meta"],
+      }),
+    ).toBe(`<meta http-equiv="refresh">after`);
+  });
+
+  test("ghsa-x3q4-9hxx-gx8m: a noscript an implied close splits is dropped with its content, not rendered", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeHtml(`<noscript><p><noscript></p><img src=x onerror=alert(1)></noscript>`, {
+        allowedAttributes: { img: ["src", "onerror"] },
+        allowedTags: ["p", "img"],
+      }),
+    ).toBe("");
+  });
 });

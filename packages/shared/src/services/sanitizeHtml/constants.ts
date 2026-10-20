@@ -154,4 +154,4 @@ export const ESCAPED_ATTRIBUTE_CHARACTERS_REGEX: RegExp = /[&"<>]/gu;
 
 // The day the sanitiser last read its packages' advisories. Its advisory watch test fails on any advisory for sanitize-html
 // Or dompurify published after it, so a new one starts a session through the next CI run
-export const SANITIZER_ADVISORY_WATCH_SINCE = "2026-10-11";
+export const SANITIZER_ADVISORY_WATCH_SINCE = "2026-10-21";
