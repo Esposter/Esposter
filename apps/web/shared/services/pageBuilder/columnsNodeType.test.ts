@@ -2,6 +2,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { insertBlockNode } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
@@ -26,13 +27,13 @@ describe("columnsNodeType", () => {
     const newId = crypto.randomUUID();
 
     expect(
-      insertBlockNode(document, webpageRegistry, columnsSlot, 1, {
+      insertBlockNode(document, webpageRegistry, webpageNodeChildren, columnsSlot, 1, {
         props: { href: TEST_URL, id: newId, label: TEST_LABEL },
         type: WebpageNodeType.Button,
       }),
     ).toStrictEqual([]);
     expect(
-      insertBlockNode(document, webpageRegistry, columnsSlot, 1, {
+      insertBlockNode(document, webpageRegistry, webpageNodeChildren, columnsSlot, 1, {
         props: { children: [], id: newId },
         type: WebpageNodeType.Column,
       }),

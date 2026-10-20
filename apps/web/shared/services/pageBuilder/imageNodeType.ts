@@ -11,7 +11,7 @@ import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema"
 import { z } from "zod";
 
 // An image needs its alternative text or an explicit decorative flag, so a reader who cannot see it is never left without it
-const refineImageAlternative = (
+export const refineImageAlternative = (
   { alt, decorative }: { alt: string; decorative: boolean },
   context: z.RefinementCtx,
 ) => {
