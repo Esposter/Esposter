@@ -6,5 +6,5 @@ export type BlockChildren<TNode extends BlockNode> = (node: TNode) => BlockSlots
 
 // A node's own slots, each the list of child nodes that slot holds, keyed by the slots its type's props declare
 export type BlockSlots<TNode extends BlockNode, TChild extends BlockNode = TNode> = TNode extends BlockNode
-  ? Record<SlotKeys<TNode["props"]>, readonly TChild[]>
+  ? { [TSlot in SlotKeys<TNode["props"]>]: readonly TChild[] }
   : never;
