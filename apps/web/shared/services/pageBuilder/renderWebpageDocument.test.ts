@@ -77,4 +77,77 @@ describe(renderWebpageDocument, () => {
 }</style></head><body><a class="button pb-${TEST_ID}" href="${TEST_URL}">${TEST_LABEL}</a></body></html>`,
     );
   });
+
+  test("a button whose address runs a script is refused rather than written into the link", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      renderWebpageDocument(
+        {
+          content: [
+            {
+              // oxlint-disable-next-line no-script-url -- the render is shown refusing this URL
+              props: { href: "javascript:alert(1)", id: TEST_ID, label: TEST_LABEL },
+              type: WebpageNodeType.Button,
+            },
+          ],
+          root: TEST_ROOT,
+        },
+        TEST_CONTEXT,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "path": [
+            "content",
+            0,
+            "props",
+            "href"
+          ],
+          "message": "uses a scheme that is not allowed"
+        }
+      ]]
+    `);
+  });
+
+  test("a style value that closes the stylesheet is refused rather than written into it", () => {
+    expect.hasAssertions();
+
+    expect(() =>
+      renderWebpageDocument(
+        {
+          content: [
+            {
+              props: {
+                href: TEST_URL,
+                id: TEST_ID,
+                label: TEST_LABEL,
+                style: { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red}</style><script>alert(1)" } } },
+              },
+              type: WebpageNodeType.Button,
+            },
+          ],
+          root: TEST_ROOT,
+        },
+        TEST_CONTEXT,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "code": "custom",
+          "path": [
+            "content",
+            0,
+            "props",
+            "style",
+            "Base",
+            "Default",
+            "color"
+          ],
+          "message": "Invalid input"
+        }
+      ]]
+    `);
+  });
 });
