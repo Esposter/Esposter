@@ -1,8 +1,5 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { NUXT_MODULE_ENTRY_PATH, readNuxtModulePackagePaths } from "#src/services/shared/readNuxtModulePackagePaths";
-import { spawnSync } from "@esposter/shared-node/child-process";
-import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { readNuxtModulePackagePaths } from "#src/services/shared/readNuxtModulePackagePaths";
+import { spawnNuxtModuleEntryLoad } from "#src/services/shared/spawnNuxtModuleEntryLoad";
 import { describe, expect, test } from "vitest";
 
 // Nuxt reads a Nuxt module's `module.ts` straight from source, through Node's own type stripping, and falls back to
@@ -20,13 +17,7 @@ describe("nuxt module entries load natively", () => {
 
     const modulePackagePaths = readNuxtModulePackagePaths();
     const loadFailures = modulePackagePaths.flatMap((packagePath) => {
-      const packageDirectory = resolve(REPOSITORY_ROOT, packagePath);
-      const moduleEntryUrl = pathToFileURL(resolve(packageDirectory, NUXT_MODULE_ENTRY_PATH)).href;
-      const result = spawnSync(
-        process.execPath,
-        ["--input-type=module", "-e", `await import(${JSON.stringify(moduleEntryUrl)})`],
-        { cwd: packageDirectory, encoding: "utf8" },
-      );
+      const result = spawnNuxtModuleEntryLoad(packagePath);
 
       return result.status === 0 ? [] : [{ packagePath, stderr: result.stderr }];
     });
