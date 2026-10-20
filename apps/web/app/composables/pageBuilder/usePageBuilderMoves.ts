@@ -4,6 +4,8 @@ import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
+import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
@@ -42,10 +44,14 @@ const getSiblingMoveOperations = (
   const segments = parseJsonPointer(nodePointer);
   const slotPointer = getNodeSlotPointer(nodePointer);
   const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-  if (index === undefined || index + offset < 0 || !getBlockNode(document, `${slotPointer}/${index + offset}`))
+  if (
+    index === undefined ||
+    index + offset < 0 ||
+    !getBlockNode(document, `${slotPointer}/${index + offset}`, webpageNodeChildren)
+  )
     return [];
 
-  return moveBlockNode(document, webpageRegistry, nodePointer, slotPointer, index + offset);
+  return moveBlockNode(document, webpageRegistry, webpageNodeChildren, nodePointer, slotPointer, index + offset);
 };
 
 // The keyboard and command moves of the selected node in one open resource's webpage: Alt with an arrow moves it among
@@ -104,17 +110,19 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     moveSelected("Move block", (document, nodePointer) => getSiblingMoveOperations(document, nodePointer, -1));
   const moveRight = () =>
     moveSelected("Move block", (document, nodePointer) =>
-      moveIntoPreviousSibling(document, webpageRegistry, nodePointer),
+      moveIntoPreviousSibling(document, webpageRegistry, webpageNodeChildren, nodePointer),
     );
   const moveLeft = () =>
-    moveSelected("Move block", (document, nodePointer) => moveOutAfterParent(document, webpageRegistry, nodePointer));
+    moveSelected("Move block", (document, nodePointer) =>
+      moveOutAfterParent(document, webpageRegistry, webpageNodeChildren, nodePointer),
+    );
   const moveTo = (slotPointer: string) =>
     moveSelected("Move to", (document, nodePointer) => {
       const children = readJsonValue(document, parseJsonPointer(slotPointer));
       const nodeSlotPointer = getNodeSlotPointer(nodePointer);
       // A node taken out of its own slot leaves that slot one shorter, so the end of it is one index less
       const childCount = Array.isArray(children) ? children.length - (slotPointer === nodeSlotPointer ? 1 : 0) : 0;
-      return moveBlockNode(document, webpageRegistry, nodePointer, slotPointer, childCount);
+      return moveBlockNode(document, webpageRegistry, webpageNodeChildren, nodePointer, slotPointer, childCount);
     });
   // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt presses
   const moveToScope: UiCommandScope = {
@@ -122,15 +130,18 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
       const selection = getSelection();
       if (!selection) return [];
 
-      return getAcceptingSlotPointers(selection.document, webpageRegistry, selection.nodePointer).map(
-        (slotPointer): UiCommand => ({
-          group: PAGE_BUILDER_COMMAND_GROUP,
-          id: `page-builder-move-to${slotPointer}`,
-          meaning: UiIconMeaning.ArrowRight,
-          run: () => moveTo(slotPointer),
-          title: getSlotPath(selection.document, slotPointer),
-        }),
-      );
+      return getAcceptingSlotPointers(
+        selection.document,
+        webpageRegistry,
+        webpageNodeChildren,
+        selection.nodePointer,
+      ).map((slotPointer): UiCommand => ({
+        group: PAGE_BUILDER_COMMAND_GROUP,
+        id: `page-builder-move-to${slotPointer}`,
+        meaning: UiIconMeaning.ArrowRight,
+        run: () => moveTo(slotPointer),
+        title: getSlotPath(selection.document, slotPointer),
+      }));
     },
     placeholder: "Search slots",
     query: ref(""),
@@ -141,7 +152,13 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const selection = getSelection();
     if (!selection) return;
 
-    const operations = duplicateBlockNode(selection.document, webpageRegistry, selection.nodePointer);
+    const operations = duplicateBlockNode(
+      selection.document,
+      webpageRegistry,
+      webpageNodeChildren,
+      webpageNodeSchema,
+      selection.nodePointer,
+    );
     const segments = parseJsonPointer(selection.nodePointer);
     const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
     if (operations.length === 0 || index === undefined) return;
@@ -161,7 +178,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const nodePointer = document && getNodePointer(document, nodeId);
     if (!document || nodePointer === undefined) return false;
 
-    const focusPointer = getFocusAfterRemoval(document, nodePointer);
+    const focusPointer = getFocusAfterRemoval(document, webpageNodeChildren, nodePointer);
     const title = getNodeTitle(document, parseJsonPointer(nodePointer));
     return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
       () => {

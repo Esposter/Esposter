@@ -1,5 +1,6 @@
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -18,6 +19,7 @@ export const insertAt = (resourceId: string, slotPointer: string, index: number,
   const operations = insertBlockNode(
     document,
     webpageRegistry,
+    webpageNodeChildren,
     slotPointer,
     index,
     createWebpageNode(type, insertedId),

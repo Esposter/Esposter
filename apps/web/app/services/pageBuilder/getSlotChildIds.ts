@@ -1,5 +1,6 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { getResult, parseJsonPointer, readJsonValue } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
@@ -8,7 +9,7 @@ export const getSlotChildIds = (document: WebpageDocument, slotPointer: string):
   getResult(() => readJsonValue(document, parseJsonPointer(slotPointer))).match(
     (value) =>
       (Array.isArray(value) ? value : [])
-        .map((_, index) => getBlockNode(document, `${slotPointer}/${index}`)?.props.id)
+        .map((_value, index) => getBlockNode(document, `${slotPointer}/${index}`, webpageNodeChildren)?.props.id)
         .filter((id): id is string => typeof id === "string"),
     () => [],
   );

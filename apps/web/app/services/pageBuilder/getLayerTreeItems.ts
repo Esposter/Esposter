@@ -2,7 +2,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
 
@@ -12,8 +12,8 @@ export const getLayerTreeItems = (document: WebpageDocument): UiTreeItem[] => {
   const roots: UiTreeItem[] = [];
   // The open ancestors of the row being placed, the deepest last
   const ancestors: { depth: number; item: UiTreeItem }[] = [];
-  for (const row of getBlockLayerRows(document, webpageRegistry)) {
-    const node = getBlockNode(document, row.nodePointer);
+  for (const row of getBlockLayerRows(document, webpageNodeChildren)) {
+    const node = getBlockNode(document, row.nodePointer, webpageNodeChildren);
     // A row's type is a string the document holds, so its title is looked up only for a type the enum names
     const nodeType = Object.values(WebpageNodeType).find((type) => type === row.type);
     const id = node?.props.id;

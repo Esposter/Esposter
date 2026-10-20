@@ -3,6 +3,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -35,12 +36,13 @@ describe(usePageBuilderHistoryCommands, () => {
     );
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit } = pageBuilderHistoryStore;
-    applyEdit(resourceId, moveBlockNode(document, webpageRegistry, "/content/0", "/content", 1), "Move block").match(
-      noop,
-      (error) => {
-        throw error;
-      },
-    );
+    applyEdit(
+      resourceId,
+      moveBlockNode(document, webpageRegistry, webpageNodeChildren, "/content/0", "/content", 1),
+      "Move block",
+    ).match(noop, (error) => {
+      throw error;
+    });
     const commandStore = useCommandStore();
     const { commands } = storeToRefs(commandStore);
 

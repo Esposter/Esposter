@@ -1,6 +1,7 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { getEmptyContainerSlotPointer } from "@/services/pageBuilder/getEmptyContainerSlotPointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
@@ -14,7 +15,7 @@ export const getInsertTarget = (document: WebpageDocument, type: WebpageNodeType
     nodePointer === undefined ? undefined : getEmptyContainerSlotPointer(document, nodePointer);
   if (
     containerSlotPointer !== undefined &&
-    getAcceptedTypes(document, webpageRegistry, containerSlotPointer).includes(type)
+    getAcceptedTypes(document, webpageRegistry, webpageNodeChildren, containerSlotPointer).includes(type)
   )
     return { index: 0, slotPointer: containerSlotPointer };
   if (nodePointer === undefined) return { index: document.content.length, slotPointer: "/content" };

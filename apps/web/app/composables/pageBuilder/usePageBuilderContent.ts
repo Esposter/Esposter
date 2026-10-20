@@ -6,6 +6,7 @@ import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
 import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -43,7 +44,7 @@ const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTar
       propsSchema: webpageRootPropsSchema,
     };
 
-  const node = getBlockNode(document, nodePointer);
+  const node = getBlockNode(document, nodePointer, webpageNodeChildren);
   const definition = node && getBlockTypeDefinition(webpageRegistry, node.type);
   if (!node || !definition) return undefined;
 

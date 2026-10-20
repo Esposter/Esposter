@@ -1,6 +1,7 @@
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { DropTargetInput } from "@/models/pageBuilder/DropTargetInput";
 
+import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { getCandidateSlotPointers } from "@/services/pageBuilder/getCandidateSlotPointers";
 import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
@@ -21,7 +22,7 @@ export const resolveDropTarget = ({
   const candidateSlotPointers =
     hoveredNodePointer === undefined ? ["/content"] : getCandidateSlotPointers(document, hoveredNodePointer);
   const slotPointer = candidateSlotPointers.find((candidate) =>
-    getAcceptedTypes(document, webpageRegistry, candidate).includes(draggedType),
+    getAcceptedTypes(document, webpageRegistry, webpageNodeChildren, candidate).includes(draggedType),
   );
   if (slotPointer === undefined) return undefined;
 
