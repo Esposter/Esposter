@@ -418,4 +418,43 @@ describe(parseMjmlDocument, () => {
     );
     expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-style>"']);
   });
+
+  test("a style whose inline is not inline is refused by name", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-style inline="true">a{}</mj-style></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_NODE_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-style>"']);
+  });
+
+  test("an attribute on the head is refused by name, not dropped", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head foo="x"><mj-title>a</mj-title></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_NODE_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-head>"']);
+  });
+
+  test("an attribute on the defaults is refused by name, not dropped", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      '<mjml><mj-head><mj-attributes foo="x"><mj-text color="red"></mj-text></mj-attributes></mj-head><mj-body></mj-body></mjml>',
+      TEST_REGISTRY,
+      TEST_NODE_SCHEMA,
+      TEST_RICH_TEXT,
+      TEST_MAX_NODES,
+    );
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual(['Unrecognized key: "<mj-attributes>"']);
+  });
 });

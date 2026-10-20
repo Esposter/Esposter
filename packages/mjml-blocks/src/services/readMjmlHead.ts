@@ -1,32 +1,32 @@
 import type { HTMLElement } from "node-html-parser";
 
+import { checkIsRepeatedMjmlTag } from "#src/services/checkIsRepeatedMjmlTag";
 import { MJML_HEAD_SINGLE_TAGS } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
+import { readMjmlHeadText } from "#src/services/readMjmlHeadText";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
-
-// A head tag read as its text under its prop, unless it carries an attribute the text would drop: then it is refused under its own name
-const readMjmlHeadText = (tag: HTMLElement, propName: string): [string, unknown][] =>
-  Object.keys(tag.attributes).length > 0
-    ? [[getMjmlRefusalKey(tag.rawTagName), tag.attributes]]
-    : [[propName, tag.text]];
 
 // A head's components as the root's props, each one the root's schema reads, and a component it does not name refused under its own name
 export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
   const entries: [string, unknown][] = Object.entries(readMjmlStrayText(head));
+  // The head has no prop of its own to take an attribute, so one it carries is refused under its name, as a title's is
+  if (Object.keys(head.attributes).length > 0) entries.push([getMjmlRefusalKey(head.rawTagName), head.attributes]);
   const readTagNames = new Set<string>();
   const typeAttributesMap = new Map<string, Record<string, string>>();
   const fonts: Record<string, string>[] = [];
   const styles: { css: string; inline: boolean }[] = [];
   for (const child of head.children) {
     // A tag read once is refused under its name when a second follows it, rather than replacing the first
-    if (MJML_HEAD_SINGLE_TAGS.includes(child.rawTagName) && readTagNames.has(child.rawTagName)) {
+    if (MJML_HEAD_SINGLE_TAGS.includes(child.rawTagName) && checkIsRepeatedMjmlTag(child.rawTagName, readTagNames)) {
       entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
       continue;
     }
 
-    readTagNames.add(child.rawTagName);
     switch (child.rawTagName) {
       case "mj-attributes":
+        // The defaults element takes no attributes of its own, so one it carries is refused under its name, as a title's is
+        if (Object.keys(child.attributes).length > 0)
+          entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
         // Each default sits under its tag, mj-all included, and a second default for one tag is refused under its name
         for (const { attributes, rawTagName } of child.children)
           if (typeAttributesMap.has(rawTagName)) entries.push([getMjmlRefusalKey(rawTagName), attributes]);
@@ -42,10 +42,10 @@ export const readMjmlHead = (head: HTMLElement): [string, unknown][] => {
         entries.push(...readMjmlHeadText(child, "preview"));
         break;
       case "mj-style":
-        // Only the inline attribute is modelled, so a style carrying any other is refused under its name, as a title with one is
-        if (Object.keys(child.attributes).some((name) => name !== "inline"))
-          entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
-        else styles.push({ css: child.rawText, inline: child.attributes.inline === "inline" });
+        // Only the inline attribute set to inline is modelled, so a style carrying anything else is refused under its name, as a title with one is
+        if (Object.entries(child.attributes).every(([name, value]) => name === "inline" && value === "inline"))
+          styles.push({ css: child.rawText, inline: child.attributes.inline === "inline" });
+        else entries.push([getMjmlRefusalKey(child.rawTagName), child.attributes]);
         break;
       case "mj-title":
         entries.push(...readMjmlHeadText(child, "title"));
