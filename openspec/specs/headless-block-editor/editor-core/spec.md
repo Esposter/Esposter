@@ -247,6 +247,18 @@ The editor core SHALL read a node's children through the consumer's children por
 - **WHEN** a slot name that the node does not declare is passed to it
 - **THEN** the typecheck fails at the call
 
+#### Scenario: A read of a slot the node's type lacks fails the typecheck
+
+- **GIVEN** a children port for a section, whose only slot is its children
+- **WHEN** the port's result is read by a slot name the section does not declare
+- **THEN** the typecheck fails at the read
+
+#### Scenario: A permissive node schema still refuses a nested child its slot does not accept
+
+- **GIVEN** a consumer whose node schema accepts any node, and a registry whose section's children slot allows headings and lists
+- **WHEN** a document holding a section with an item in its children slot is parsed
+- **THEN** the parse fails at the item's type, naming the slot
+
 ### Requirement: The typed path contains no assertion
 
 The editor core's typed path SHALL contain no `as` assertion, no double assertion, and no non-null assertion, and an `unknown` value SHALL be used as typed only after a guard or a schema parse.

@@ -104,7 +104,7 @@ export const TEST_CHILDREN = (node: TestNode): ReturnType<BlockChildren<TestNode
 
 // The document schema of the test registry, with a node limit
 export const createTestDocumentSchema = (maxNodes: number): z.ZodType<BlockDocument<TestNode, TestRootProps>> =>
-  createBlockDocumentSchema(TEST_ROOT_CONTENT_SCHEMA, TEST_REGISTRY.root.propsSchema, TEST_CHILDREN, maxNodes);
+  createBlockDocumentSchema(TEST_ROOT_CONTENT_SCHEMA, TEST_REGISTRY, TEST_CHILDREN, maxNodes);
 
 export const TEST_DOCUMENT: TestDocument = {
   content: [

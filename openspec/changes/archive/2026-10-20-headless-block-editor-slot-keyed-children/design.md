@@ -20,7 +20,7 @@ The port's return becomes the node type's own slot record, so a read of a slot t
 
 **Rejected: keeping the record and rewording the archived design's claim.** The claim is the guarantee the typed slot ports change set out to prove, and rewording it would accept the hole the change closed.
 
-**Open: whether the registry's slot names should carry the types instead.** If the registry's slot names were typed per node type, the core could walk by those names and the string-keyed view would go. That moves the correlation into the registry, which the archived design rejected for the runtime tag. Settling it is the design call this change is waiting on.
+**Decided: the registry's slot names stay strings.** The core's walks read every slot through one string-keyed view, `getBlockSlots`, derived once from the port, and the port's per-type return keeps the typed read. **Rejected: typing the registry's slot names per node type.** The core could then walk by those names and drop the view, but that moves the correlation between a name and a typed slot into the registry, which the archived design rejected for the runtime tag. The view costs one helper; the registry keeps no type it cannot check.
 
 ## Key files
 

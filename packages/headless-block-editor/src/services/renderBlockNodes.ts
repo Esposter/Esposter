@@ -2,6 +2,7 @@ import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 
+import { getBlockSlots } from "#src/services/getBlockSlots";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 
 // Renders each node once its slots have rendered, in the order of the nodes, and nothing for a node whose type the
@@ -17,7 +18,7 @@ export const renderBlockNodes = <TNode extends BlockNode, TDefinition extends Bl
     if (!definition) return [];
 
     const slots = Object.fromEntries(
-      Object.entries(children(node)).map(([slot, slotNodes]) => [
+      Object.entries(getBlockSlots(children, node)).map(([slot, slotNodes]) => [
         slot,
         renderBlockNodes(slotNodes, registry, children, render),
       ]),

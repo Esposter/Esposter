@@ -1,4 +1,4 @@
-import type { TestDocument } from "#src/services/constants.test";
+import type { TestDocument, TestNode } from "#src/services/constants.test";
 
 import {
   createTestDocumentSchema,
@@ -14,6 +14,7 @@ import {
 } from "#src/services/constants.test";
 import { createBlockDocumentSchema } from "#src/services/createBlockDocumentSchema";
 import { describe, expect, expectTypeOf, test } from "vitest";
+import { z } from "zod";
 
 describe(createBlockDocumentSchema, () => {
   test("a document is typed by its consumer's root content schema", () => {
@@ -21,7 +22,7 @@ describe(createBlockDocumentSchema, () => {
 
     const schema = createBlockDocumentSchema(
       TEST_ROOT_CONTENT_SCHEMA,
-      TEST_REGISTRY.root.propsSchema,
+      TEST_REGISTRY,
       TEST_CHILDREN,
       TEST_DOCUMENT_NODE_COUNT,
     );
@@ -57,6 +58,35 @@ describe(createBlockDocumentSchema, () => {
     expect(error?.issues.map((issue) => issue.path)).toStrictEqual([
       ["content", 0, "props", "children", 0, "props", "items", 0, "type"],
     ]);
+  });
+
+  test("a permissive node schema still refuses a nested child its slot does not accept", () => {
+    expect.hasAssertions();
+
+    // The consumer's node schema accepts any node, so only the registry's slot declarations refuse the item in the section
+    const schema = createBlockDocumentSchema(
+      z.custom<TestNode>(),
+      TEST_REGISTRY,
+      TEST_CHILDREN,
+      TEST_DOCUMENT_NODE_COUNT,
+    );
+    const document: unknown = {
+      content: [
+        {
+          props: {
+            children: [{ props: { id: TEST_HEADING_ID, text: "" }, type: "item" }],
+            id: TEST_SECTION_ID,
+            title: "",
+          },
+          type: "section",
+        },
+      ],
+      root: TEST_DOCUMENT.root,
+    };
+    const { error, success } = schema.safeParse(document);
+
+    expect(success).toBe(false);
+    expect(error?.issues.map((issue) => issue.path)).toStrictEqual([["content", 0, "props", "children", 0, "type"]]);
   });
 
   test("a root holding a type its content does not accept", () => {

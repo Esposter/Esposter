@@ -23,7 +23,7 @@ export const pasteBlockNodes = <TNode extends BlockNode>(
 ): JsonPatchOperation[] => {
   const copies = nodes.map((node) => remintBlockNode(children, node));
   const acceptedTypes = getAcceptedTypes(document, registry, children, slotPointer);
-  if (!createBlockNodesSchema(nodeSchema, children, acceptedTypes).safeParse(copies).success) return [];
+  if (!createBlockNodesSchema(nodeSchema, registry, children, acceptedTypes).safeParse(copies).success) return [];
 
   return copies.map((copy, offset) => ({
     op: JsonPatchOperationType.Add,

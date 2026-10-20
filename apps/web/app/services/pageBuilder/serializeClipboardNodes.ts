@@ -3,6 +3,7 @@ import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
+import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { getResult, SITE_NAME } from "@esposter/shared";
 import { createBlockNodesSchema } from "headless-block-editor";
@@ -13,7 +14,12 @@ const CLIPBOARD_MARKER = `${SITE_NAME.toLowerCase()}-page-builder`;
 const clipboardNodesSchema = z.object({
   editor: z.enum(PageBuilderEditor),
   marker: z.literal(CLIPBOARD_MARKER),
-  nodes: createBlockNodesSchema<WebpageNode>(webpageNodeSchema, webpageNodeChildren, Object.values(WebpageNodeType)),
+  nodes: createBlockNodesSchema<WebpageNode>(
+    webpageNodeSchema,
+    webpageRegistry,
+    webpageNodeChildren,
+    Object.values(WebpageNodeType),
+  ),
 });
 
 export const serializeClipboardNodes = ({ editor, nodes }: { editor: PageBuilderEditor; nodes: WebpageNode[] }) =>

@@ -10,5 +10,4 @@ export const createMjmlDocumentSchema = <TContext>(
   registry: MjmlRegistry<TContext>,
   bodyChildrenSchema: z.ZodType<MjmlNode>,
   maxNodes: number,
-): z.ZodType<MjmlDocument> =>
-  createBlockDocumentSchema(bodyChildrenSchema, registry.root.propsSchema, registry.children, maxNodes);
+): z.ZodType<MjmlDocument> => createBlockDocumentSchema(bodyChildrenSchema, registry, registry.children, maxNodes);

@@ -1,3 +1,4 @@
+import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
@@ -15,6 +16,8 @@ import type { z } from "zod";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 declare const ownPropsSchema: z.ZodType<OwnProps<SectionNodeProps>>;
+declare const section: SectionNode;
+declare const sectionChildren: BlockChildren<SectionNode>;
 
 describe("blockTypes type", () => {
   test("a node's props default to the id alone", () => {
@@ -68,5 +71,13 @@ describe("blockTypes type", () => {
       type: "section",
     };
     expectTypeOf(definition).toEqualTypeOf<BlockTypeDefinition<SectionNode>>();
+  });
+
+  test("a read of an absent slot fails the typecheck", () => {
+    expect.hasAssertions();
+
+    expectTypeOf(sectionChildren(section)).toEqualTypeOf<{ children: readonly SectionNode[] }>();
+    // @ts-expect-error: TS7053 - a section holds children, not a gallery
+    expectTypeOf(sectionChildren(section)["gallery"]).toBeAny();
   });
 });
