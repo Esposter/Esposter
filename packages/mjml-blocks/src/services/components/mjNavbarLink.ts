@@ -8,7 +8,7 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
-import { createMjmlLabelContentSchema } from "#src/services/createMjmlLabelContentSchema";
+import { labelContentSchema } from "#src/services/labelContentSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -40,7 +40,7 @@ export const navbarLinkPropsSchema: z.ZodObject<
   z.core.$strict
 > = z.strictObject({
   ...createMjmlAttributeShape(navbarLinkAttributes),
-  content: createMjmlLabelContentSchema(),
+  content: labelContentSchema,
 }) satisfies z.ZodType<OwnProps<MjmlNavbarLinkProps>>;
 
 // The navbar link component: the attributes it takes, the props its schema reads and what it renders
