@@ -111,7 +111,7 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
-Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets, and the buffs it grants last 4 seconds: the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the characters in the field, and the Physical RES reduction of the enemies in it.
+Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets, and the buffs it grants last 4 seconds: the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
 
 #### Scenario: a recorded hit raises the Stellar-Conduct's coefficient
 
@@ -121,12 +121,12 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 #### Scenario: a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus
 
 - **WHEN** no Cryo or Electro hit is recorded
-- **THEN** the characters in the field have a 20% Cryo and Electro DMG Bonus
+- **THEN** the body in the field has a 20% Cryo and Electro DMG Bonus
 
 #### Scenario: a field with recorded hits gives 28% plus 1% a hit
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the characters in the field have a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
+- **THEN** the body in the field has a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
 
 #### Scenario: a member's Radiance: Stellar-Conduct carries the count of hits the last tick took
 
@@ -140,7 +140,7 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 
 ### Requirement: Stellar Swirl Places a Stellar Vortex
 
-A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds, and a standing vortex SHALL NOT be doubled. A vortex SHALL explode after a delay for AoE Cryo damage. The third Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and three further Stellar Swirls SHALL explode it at once.
+A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds, and a standing vortex SHALL NOT be doubled. A vortex SHALL explode at its expiry for AoE Cryo damage. The third Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and three further Stellar Swirls SHALL explode it at once.
 
 #### Scenario: a Stellar Swirl leaves one Stellar Vortex for 3 seconds
 
