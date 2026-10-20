@@ -5,7 +5,6 @@ import { SKILLS_DIRECTORY } from "#src/services/sweeps/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
 import { checkHasGlobMatch } from "#src/workspace/checkHasGlobMatch.test";
-import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { AGENT_WORKTREES_DIRECTORY, APP_RELATIVE_PREFIXES } from "@esposter/configuration";
 import { takeOne } from "@esposter/shared";
 import { existsSync, readdirSync } from "node:fs";
@@ -59,7 +58,7 @@ describe("citations", () => {
   };
   const pages = readCitingPages();
 
-  test("every cited path exists", { timeout: TREE_READ_TIMEOUT_MS }, async () => {
+  test("every cited path exists", async () => {
     expect.hasAssertions();
 
     const citations = pages.flatMap(({ path, text }) =>

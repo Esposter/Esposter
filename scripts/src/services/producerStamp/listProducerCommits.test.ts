@@ -1,10 +1,10 @@
 import { listProducerCommits } from "#src/services/producerStamp/listProducerCommits";
-import { FIXTURE_TEST_TIMEOUT_MS, TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
+import { TEST_FILENAME } from "#src/services/shared/fixtureConstants.test";
 import { runGit } from "#src/services/shared/runGit";
 import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { describe, expect, test } from "vitest";
 
-describe(listProducerCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
+describe(listProducerCommits, () => {
   const { commitFile, getCwd, readSha, switchTo } = setupFixtureRepository();
   // Every fixture commit is titled by the path it touches, so the stamp's commit and each one touching the producer
   // Share a subject

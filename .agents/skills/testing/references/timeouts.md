@@ -1,6 +1,6 @@
 # Timeouts
 
-A timeout is a claim: this test takes that long, and the default is too short for it. The claim is earned by a measurement, and the measurement is a committed benchmark, not a stopwatch. A timeout raised because a loaded CI shard was slow is not evidence; it hides the cost instead of measuring it.
+Read when a test, suite or config sets a timeout, or a test fails with `Test timed out`. A timeout is a claim: this test takes that long, and the default is too short for it. The claim is earned by a measurement, and the measurement is a committed benchmark, not a stopwatch. A timeout raised because a loaded CI shard was slow is not evidence; it hides the cost instead of measuring it.
 
 ## The ladder
 
@@ -27,17 +27,16 @@ flowchart TD
   G -->|no| I["named constant sized to the bench"]
 ```
 
-## What this round found, by magnitude
+## Where the overrides stand
 
-Repo prose records the size of a cost and what it changed, never the raw figures; those live in the reply and in the bench's own generated output.
+Repo prose records the size of a cost and what it changed, never the raw figures; those live in the reply, the commit body, and the benches' own generated output.
 
-- **The math compiler's long-list case.** The cost sat in parsing a formula of that length, which runs at a multiple of compile time. The tree is built directly, and no timeout was added. The committed compile bench carries the parse-to-compile ratio.
-- **The tree-walking checks** (`citations`, `stackConfig`) each start with one listing of the working tree (`readSweepFilePaths`). Its committed bench shows a narrow pathspec costs about the same as the whole tree, so the scope of a check does not shorten it. Most of the listing is git's stat of every tracked file for the deleted check, which is inherent to reading the working tree. The checks stay on `TREE_READ_TIMEOUT_MS` until the listing is shared across a run rather than repeated per check.
-- **`publishedFiles`** packed its packages one after another. Packing them concurrently moved the check from over the default to well under it, so its override was removed.
-- **`staleNames`** keeps its long limit for the cold read before its cache exists; the warm read is well under the default.
+- **Removed, measured under the default.** The math compiler's long-list case builds its tree directly, since the cost sat in the parser. `publishedFiles` runs its packs concurrently. The nine tree-walking checks that list the working tree once each, the git-fixture suites, the nuxt module load check and the db-mock migration snapshot all run under the default when measured one file at a time.
+- **Kept on the shared tree-read constant.** Seven tree-walking checks take longer than the default alone (`todos`, `restatedPointers`, `gcsimLinks`, `duplicateProse`, `sharedExportConsumers`, `lineEndings`, `controlCharacters`). The slowest is the one that sets the constant's margin. Their cost is the check's own reading of many files, not the listing, so a shared listing would not retire them.
+- **Kept on the stale-names limit.** `staleNames` reads the store's declarations cold before its cache exists; the warm read is well under the default.
+- **Kept on the type-measurement limit.** `typeBenchResults` measures the compiler over the repo. Its limit is oversized against its measured magnitude, and it stays until a bench across runs sizes it.
 
-## What the ladder does not cover yet
+## What is not measured yet
 
-- The browser suites in `packages/genshin-world` (`Opening/Index.browser.test.ts`, `World/Screen/Index.browser.test.ts`) set their own `timeoutMs` for real UI waits. They have no bench yet.
-- `packages/db-mock/src/createMockDb.test.ts` sets one minute on a single test. It has no bench yet.
+- The browser suites in `packages/genshin-world` (`Opening/Index.browser.test.ts`, `World/Screen/Index.browser.test.ts`) set their own `timeoutMs` for real UI waits. They run in a browser that does not run locally, so they have no bench yet.
 - The repo-wide defaults in `apps/web/vitest.config.ts` and `getVitestConfiguration.ts` need a bench across the suites they govern before they change.

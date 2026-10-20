@@ -1,13 +1,12 @@
 import { landCommits } from "#src/services/review/git/landCommits";
 import { QUEUE_BRANCH } from "#src/services/shared/constants";
-import { FIXTURE_TEST_TIMEOUT_MS } from "#src/services/shared/fixtureConstants.test";
 import { runGit } from "#src/services/shared/runGit";
 import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 
-describe(landCommits, { timeout: FIXTURE_TEST_TIMEOUT_MS }, () => {
+describe(landCommits, () => {
   const PATH = "README.md";
   const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
 

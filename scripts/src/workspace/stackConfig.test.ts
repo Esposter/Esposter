@@ -1,6 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -17,7 +16,7 @@ describe("stackConfig", () => {
   // What `pulumi config set --secret` writes into a stack file
   const SECURE_VALUE_REGEX = /^\s*secure:/mu;
 
-  test("no stack file carries an encrypted value", { timeout: TREE_READ_TIMEOUT_MS }, () => {
+  test("no stack file carries an encrypted value", () => {
     expect.hasAssertions();
 
     const stackPaths = readSweepFilePaths("Pulumi.*.yaml", "**/Pulumi.*.yaml");
