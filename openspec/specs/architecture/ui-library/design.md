@@ -170,7 +170,7 @@ The Styled components are the app's composites over the library, each with a rol
 - **An event calendar** is a region named by its label. Its view is a toggle group, switched by Ctrl+Alt+1 to 4 as well, and T, J and K go to today and to the next and previous view. Each view is a grid with one stop in the tab order: the month's days walked as the date grid's are, the hours' slots by the arrows a slot or a day, Home and End to the day's ends and Page Up and Page Down a view, the cell walked to selected and Enter on it creating there where the calendar can create. Each event is a button named by its time and title, which a click or Enter opens and Alt and an arrow move, its new time read out in a polite live region; the button over each day names its full date and opens that day.
 - **A resize handle** is the window splitter: a vertical separator named after the pane it sizes, one stop in the tab order, saying the width and its range. The arrows step it toward the side they point, Home and End send it to the narrowest and the widest, and a drag follows the pointer within the range.
 - **A token field** is a text field named by its label, which says whether its panel is expanded. Each token's remove button is its own stop in the tab order, named after the token, and Backspace in empty text takes the last token back. Focus opens the panel, Enter submits, Escape closes the panel and then leaves the field, Escape inside the panel returns to the text, and the panel closes once focus is in neither.
-- **Typeahead** is the library's own: one composable the menu and the select share, since Vuetify 0's select has none. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
+- **Typeahead** is the library's own: one composable the menu, the list and the tree share. The select's typing is Vuetify 0's own, which moves to and selects the option whose title matches, so the select has none of ours. The menu's whole contract is `useMenu`, which `UiMenu` and the context menu share.
 
 ### Popovers
 
@@ -301,7 +301,7 @@ flowchart TD
 | `apps/web/app/services/ui/UiIconMap.ts`               | Each style's class for every meaning                                                                                 |
 | `apps/web/app/components/Ui/Icon.vue`                 | The icon element, by meaning, decorative unless labelled                                                             |
 | `apps/web/app/models/shared/Item.ts`                  | One action a menu or a list shows, by meaning or a whole class                                                       |
-| `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu and the select share                                                                          |
+| `apps/web/app/composables/ui/useTypeahead.ts`         | The typeahead the menu, the list and the tree share                                                                  |
 | `apps/web/app/composables/ui/useDragReorder.ts`       | The pointer half of a reorderable list, table or sidebar: [Drag reorder](../drag-reorder/design.md)                  |
 | `apps/web/app/models/ui/UiMenuItem.ts`                | One choice in a menu, a select or suggestions                                                                        |
 | `apps/web/app/models/ui/UiDialogPlacement.ts`         | Where a dialog stands: high, in the middle, as a drawer from one edge, or over the page                              |
