@@ -24,40 +24,39 @@ import { sectionAttributes } from "#src/services/components/sectionAttributes";
 import { TEST_RICH_TEXT } from "#src/services/constants.test";
 import { describe, expect, test } from "vitest";
 
-// The keys a props schema holds beside its attributes: the content, the decorative flag, the children and the id
-const NON_ATTRIBUTE_KEYS = new Set(["children", "content", "decorative", "id"]);
-
 describe("componentPropsSchema", () => {
+  // Each component lists the non-attribute keys its own props schema holds: its content or its decorative flag, its slots being the branch's
   test.each([
-    ["mj-accordion", accordionPropsSchema, accordionAttributes],
-    ["mj-accordion-element", accordionElementPropsSchema, accordionElementAttributes],
-    ["mj-accordion-text", createMjmlAccordionTextPropsSchema(TEST_RICH_TEXT), accordionTextAttributes],
-    ["mj-accordion-title", accordionTitlePropsSchema, accordionTitleAttributes],
-    ["mj-button", buttonPropsSchema, buttonAttributes],
-    ["mj-carousel", carouselPropsSchema, carouselAttributes],
-    ["mj-carousel-image", carouselImagePropsSchema, carouselImageAttributes],
-    ["mj-column", columnPropsSchema, columnAttributes],
-    ["mj-divider", dividerPropsSchema, dividerAttributes],
-    ["mj-group", groupPropsSchema, groupAttributes],
-    ["mj-hero", heroPropsSchema, heroAttributes],
-    ["mj-image", imagePropsSchema, imageAttributes],
-    ["mj-navbar", navbarPropsSchema, navbarAttributes],
-    ["mj-navbar-link", navbarLinkPropsSchema, navbarLinkAttributes],
-    ["mj-raw", rawPropsSchema, rawAttributes],
-    ["mj-section", sectionPropsSchema, sectionAttributes.allowedAttributes],
-    ["mj-social", socialPropsSchema, socialAttributes],
-    ["mj-social-element", socialElementPropsSchema, socialElementAttributes],
-    ["mj-spacer", spacerPropsSchema, spacerAttributes],
-    ["mj-table", tablePropsSchema, tableAttributes],
-    ["mj-text", createMjmlTextPropsSchema(TEST_RICH_TEXT), textAttributes],
-    ["mj-wrapper", wrapperPropsSchema, wrapperAttributes],
-  ])("%s's props schema keys are its allowed attributes", (_type, propsSchema, allowedAttributes) => {
-    expect.hasAssertions();
+    ["mj-accordion", accordionPropsSchema, accordionAttributes, []],
+    ["mj-accordion-element", accordionElementPropsSchema, accordionElementAttributes, []],
+    ["mj-accordion-text", createMjmlAccordionTextPropsSchema(TEST_RICH_TEXT), accordionTextAttributes, ["content"]],
+    ["mj-accordion-title", accordionTitlePropsSchema, accordionTitleAttributes, ["content"]],
+    ["mj-button", buttonPropsSchema, buttonAttributes, ["content"]],
+    ["mj-carousel", carouselPropsSchema, carouselAttributes, []],
+    ["mj-carousel-image", carouselImagePropsSchema, carouselImageAttributes, ["decorative"]],
+    ["mj-column", columnPropsSchema, columnAttributes, []],
+    ["mj-divider", dividerPropsSchema, dividerAttributes, []],
+    ["mj-group", groupPropsSchema, groupAttributes, []],
+    ["mj-hero", heroPropsSchema, heroAttributes, []],
+    ["mj-image", imagePropsSchema, imageAttributes, ["decorative"]],
+    ["mj-navbar", navbarPropsSchema, navbarAttributes, []],
+    ["mj-navbar-link", navbarLinkPropsSchema, navbarLinkAttributes, ["content"]],
+    ["mj-raw", rawPropsSchema, rawAttributes, ["content"]],
+    ["mj-section", sectionPropsSchema, sectionAttributes.allowedAttributes, []],
+    ["mj-social", socialPropsSchema, socialAttributes, []],
+    ["mj-social-element", socialElementPropsSchema, socialElementAttributes, ["content"]],
+    ["mj-spacer", spacerPropsSchema, spacerAttributes, []],
+    ["mj-table", tablePropsSchema, tableAttributes, ["content"]],
+    ["mj-text", createMjmlTextPropsSchema(TEST_RICH_TEXT), textAttributes, ["content"]],
+    ["mj-wrapper", wrapperPropsSchema, wrapperAttributes, []],
+  ])(
+    "%s's props schema keys are its allowed attributes and its own non-attribute keys",
+    (_type, propsSchema, allowedAttributes, nonAttributeKeys) => {
+      expect.hasAssertions();
 
-    expect(
-      Object.keys(propsSchema.shape)
-        .filter((key) => !NON_ATTRIBUTE_KEYS.has(key))
-        .toSorted(),
-    ).toStrictEqual(Object.keys(allowedAttributes).toSorted());
-  });
+      expect(Object.keys(propsSchema.shape).toSorted()).toStrictEqual(
+        [...Object.keys(allowedAttributes), ...nonAttributeKeys].toSorted(),
+      );
+    },
+  );
 });
