@@ -1,15 +1,9 @@
 import type { TRPCFetch } from "@trpc/client";
-import type { serverFetch } from "nitro/app";
 
+import { useTrpcServerFetch } from "#src/runtime/client/services/useTrpcServerFetch";
 import { checkIsServer } from "@esposter/shared";
 import { fetchWithEvent, getProxyRequestHeaders } from "nitro/h3";
-import { useNuxtApp, useRequestEvent } from "nuxt/app";
-
-declare module "nuxt/app" {
-  interface NuxtApp {
-    $trpcServerFetch: typeof serverFetch;
-  }
-}
+import { useRequestEvent } from "nuxt/app";
 
 // During server rendering, a fetch through the request's own event: the app answers a path in-process, the incoming
 // Request's headers forwarded, and returns a real `Response`, headers included. An event no app built has no app to
@@ -21,11 +15,11 @@ export const getLinkFetch = (): TRPCFetch => {
     const event = useRequestEvent();
     if (event?.app) return (url, options) => fetchWithEvent(event, url, options);
     if (event) {
-      const nuxtApp = useNuxtApp();
+      const serverFetchInProcess = useTrpcServerFetch();
       return (url, options) => {
         const headers = new Headers(getProxyRequestHeaders(event, { host: true }));
         new Headers(options?.headers).forEach((value, name) => headers.set(name, value));
-        return nuxtApp.$trpcServerFetch(new URL(url, event.url), { ...options, headers }, event.context);
+        return serverFetchInProcess(new URL(url, event.url), { ...options, headers }, event.context);
       };
     }
   }
