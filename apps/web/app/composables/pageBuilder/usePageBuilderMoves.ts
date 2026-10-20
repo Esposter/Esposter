@@ -161,7 +161,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     applyEdit(toValue(resourceId), operations, "Duplicate block").match(() => {
       const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${index + 1}`;
       const copiedDocument = getDocument(toValue(resourceId));
-      setSelectedNodeId(toValue(resourceId), copiedDocument ? getNodeIdAt(copiedDocument, copyPointer) : "");
+      setSelectedNodeId(toValue(resourceId), getNodeIdAt(copiedDocument, copyPointer));
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
   };
@@ -178,7 +178,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
       () => {
         const focusDocument = getDocument(resourceIdValue);
-        setSelectedNodeId(resourceIdValue, focusDocument ? getNodeIdAt(focusDocument, focusPointer) : "");
+        setSelectedNodeId(resourceIdValue, getNodeIdAt(focusDocument, focusPointer));
         if (title) announce(`Deleted ${title}`);
         return true;
       },

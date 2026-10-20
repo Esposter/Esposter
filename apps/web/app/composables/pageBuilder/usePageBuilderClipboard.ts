@@ -126,7 +126,7 @@ export const usePageBuilderClipboard = (
     const pastedPointer = `${target.slotPointer}/${target.index}`;
     applyEdit(resourceIdValue, operations, "Paste block").match(() => {
       const pastedDocument = getDocument(resourceIdValue);
-      const pastedId = pastedDocument ? getNodeIdAt(pastedDocument, pastedPointer) : "";
+      const pastedId = getNodeIdAt(pastedDocument, pastedPointer);
       if (pastedId) setSelectedNodeId(resourceIdValue, pastedId);
       const title = pastedDocument ? getNodeTitle(pastedDocument, parseJsonPointer(pastedPointer)) : "";
       if (title) announce(`Pasted ${title}`);
