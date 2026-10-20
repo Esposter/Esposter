@@ -6,4 +6,4 @@ Open work in the shared utilities — the decisions the replaced-dependency util
 
 ## What Changes
 
-The area's open work that is not yet a change of its own, in priority order, kept as `tasks.md`. Each item that grows a design becomes its own change under `openspec/changes/`.
+The Shared area's open work, prioritized in `tasks.md`. It carries no spec delta.
