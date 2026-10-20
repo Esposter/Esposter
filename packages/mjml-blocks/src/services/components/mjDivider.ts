@@ -6,7 +6,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -29,22 +29,7 @@ export const dividerAttributes: typeof dividerBaseAttributes & typeof MJML_PADDI
 export const dividerPropsSchema: z.ZodObject<
   { [K in keyof typeof dividerAttributes]: MjmlAttributeSchema },
   z.core.$strict
-> = z.strictObject({
-  align: createMjmlAttributeSchema(dividerAttributes.align, "align").optional(),
-  "border-color": createMjmlAttributeSchema(dividerAttributes["border-color"], "border-color").optional(),
-  "border-style": createMjmlAttributeSchema(dividerAttributes["border-style"], "border-style").optional(),
-  "border-width": createMjmlAttributeSchema(dividerAttributes["border-width"], "border-width").optional(),
-  "container-background-color": createMjmlAttributeSchema(
-    dividerAttributes["container-background-color"],
-    "container-background-color",
-  ).optional(),
-  padding: createMjmlAttributeSchema(dividerAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(dividerAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(dividerAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(dividerAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(dividerAttributes["padding-top"], "padding-top").optional(),
-  width: createMjmlAttributeSchema(dividerAttributes.width, "width").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlDividerProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(dividerAttributes) }) satisfies z.ZodType<OwnProps<MjmlDividerProps>>;
 
 // The divider component: the attributes it takes, the props its schema reads and what it renders
 const mjmlDividerTypeFields = {

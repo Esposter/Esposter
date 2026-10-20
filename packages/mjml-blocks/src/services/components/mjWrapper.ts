@@ -7,7 +7,7 @@ import type { OwnProps } from "headless-block-editor";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { sectionPropsSchema } from "#src/services/components/mjSection";
 import { sectionAttributes } from "#src/services/components/sectionAttributes";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -23,7 +23,7 @@ export const wrapperPropsSchema: z.ZodObject<
   z.core.$strict
 > = z.strictObject({
   ...sectionPropsSchema.shape,
-  gap: createMjmlAttributeSchema(wrapperGapAttributes.gap, "gap").optional(),
+  ...createMjmlAttributeShape(wrapperGapAttributes),
 }) satisfies z.ZodType<OwnProps<MjmlWrapperProps>>;
 
 // The wrapper component: the attributes it takes, the props its schema reads and what it renders

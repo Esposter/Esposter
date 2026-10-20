@@ -6,7 +6,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -42,35 +42,7 @@ export const socialAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof socialBas
 export const socialPropsSchema: z.ZodObject<
   { [K in keyof typeof socialAttributes]: MjmlAttributeSchema },
   z.core.$strict
-> = z.strictObject({
-  align: createMjmlAttributeSchema(socialAttributes.align, "align").optional(),
-  border: createMjmlAttributeSchema(socialAttributes.border, "border").optional(),
-  "border-radius": createMjmlAttributeSchema(socialAttributes["border-radius"], "border-radius").optional(),
-  color: createMjmlAttributeSchema(socialAttributes.color, "color").optional(),
-  "container-background-color": createMjmlAttributeSchema(
-    socialAttributes["container-background-color"],
-    "container-background-color",
-  ).optional(),
-  "font-family": createMjmlAttributeSchema(socialAttributes["font-family"], "font-family").optional(),
-  "font-size": createMjmlAttributeSchema(socialAttributes["font-size"], "font-size").optional(),
-  "font-style": createMjmlAttributeSchema(socialAttributes["font-style"], "font-style").optional(),
-  "font-weight": createMjmlAttributeSchema(socialAttributes["font-weight"], "font-weight").optional(),
-  "icon-height": createMjmlAttributeSchema(socialAttributes["icon-height"], "icon-height").optional(),
-  "icon-padding": createMjmlAttributeSchema(socialAttributes["icon-padding"], "icon-padding").optional(),
-  "icon-size": createMjmlAttributeSchema(socialAttributes["icon-size"], "icon-size").optional(),
-  "inner-padding": createMjmlAttributeSchema(socialAttributes["inner-padding"], "inner-padding").optional(),
-  "line-height": createMjmlAttributeSchema(socialAttributes["line-height"], "line-height").optional(),
-  mode: createMjmlAttributeSchema(socialAttributes.mode, "mode").optional(),
-  padding: createMjmlAttributeSchema(socialAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(socialAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(socialAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(socialAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(socialAttributes["padding-top"], "padding-top").optional(),
-  "table-layout": createMjmlAttributeSchema(socialAttributes["table-layout"], "table-layout").optional(),
-  "text-decoration": createMjmlAttributeSchema(socialAttributes["text-decoration"], "text-decoration").optional(),
-  "text-padding": createMjmlAttributeSchema(socialAttributes["text-padding"], "text-padding").optional(),
-  "vertical-align": createMjmlAttributeSchema(socialAttributes["vertical-align"], "vertical-align").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlSocialProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(socialAttributes) }) satisfies z.ZodType<OwnProps<MjmlSocialProps>>;
 
 // The social component: the attributes it takes, the props its schema reads and what it renders
 const mjmlSocialTypeFields = {

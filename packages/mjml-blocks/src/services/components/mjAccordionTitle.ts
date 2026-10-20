@@ -7,7 +7,7 @@ import type { OwnProps } from "headless-block-editor";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -29,22 +29,9 @@ export const accordionTitleAttributes: typeof accordionTitleBaseAttributes & typ
 export const accordionTitlePropsSchema: z.ZodObject<
   { [K in keyof typeof accordionTitleAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
-> = z.strictObject({
-  "background-color": createMjmlAttributeSchema(
-    accordionTitleAttributes["background-color"],
-    "background-color",
-  ).optional(),
-  color: createMjmlAttributeSchema(accordionTitleAttributes.color, "color").optional(),
-  content: z.string(),
-  "font-family": createMjmlAttributeSchema(accordionTitleAttributes["font-family"], "font-family").optional(),
-  "font-size": createMjmlAttributeSchema(accordionTitleAttributes["font-size"], "font-size").optional(),
-  "font-weight": createMjmlAttributeSchema(accordionTitleAttributes["font-weight"], "font-weight").optional(),
-  padding: createMjmlAttributeSchema(accordionTitleAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(accordionTitleAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(accordionTitleAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(accordionTitleAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(accordionTitleAttributes["padding-top"], "padding-top").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlAccordionTitleProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(accordionTitleAttributes), content: z.string() }) satisfies z.ZodType<
+  OwnProps<MjmlAccordionTitleProps>
+>;
 
 // The accordion title component: the attributes it takes, the props its schema reads and what it renders
 const mjmlAccordionTitleTypeFields = {

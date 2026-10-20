@@ -7,7 +7,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -37,43 +37,7 @@ export const heroAttributes: typeof heroBaseAttributes & typeof MJML_PADDING_ATT
 };
 
 export const heroPropsSchema: z.ZodObject<{ [K in keyof typeof heroAttributes]: MjmlAttributeSchema }, z.core.$strict> =
-  z.strictObject({
-    "background-color": createMjmlAttributeSchema(heroAttributes["background-color"], "background-color").optional(),
-    "background-height": createMjmlAttributeSchema(heroAttributes["background-height"], "background-height").optional(),
-    "background-position": createMjmlAttributeSchema(
-      heroAttributes["background-position"],
-      "background-position",
-    ).optional(),
-    "background-url": createMjmlAttributeSchema(heroAttributes["background-url"], "background-url").optional(),
-    "background-width": createMjmlAttributeSchema(heroAttributes["background-width"], "background-width").optional(),
-    "border-radius": createMjmlAttributeSchema(heroAttributes["border-radius"], "border-radius").optional(),
-    height: createMjmlAttributeSchema(heroAttributes.height, "height").optional(),
-    "inner-background-color": createMjmlAttributeSchema(
-      heroAttributes["inner-background-color"],
-      "inner-background-color",
-    ).optional(),
-    "inner-padding": createMjmlAttributeSchema(heroAttributes["inner-padding"], "inner-padding").optional(),
-    "inner-padding-bottom": createMjmlAttributeSchema(
-      heroAttributes["inner-padding-bottom"],
-      "inner-padding-bottom",
-    ).optional(),
-    "inner-padding-left": createMjmlAttributeSchema(
-      heroAttributes["inner-padding-left"],
-      "inner-padding-left",
-    ).optional(),
-    "inner-padding-right": createMjmlAttributeSchema(
-      heroAttributes["inner-padding-right"],
-      "inner-padding-right",
-    ).optional(),
-    "inner-padding-top": createMjmlAttributeSchema(heroAttributes["inner-padding-top"], "inner-padding-top").optional(),
-    mode: createMjmlAttributeSchema(heroAttributes.mode, "mode").optional(),
-    padding: createMjmlAttributeSchema(heroAttributes.padding, "padding").optional(),
-    "padding-bottom": createMjmlAttributeSchema(heroAttributes["padding-bottom"], "padding-bottom").optional(),
-    "padding-left": createMjmlAttributeSchema(heroAttributes["padding-left"], "padding-left").optional(),
-    "padding-right": createMjmlAttributeSchema(heroAttributes["padding-right"], "padding-right").optional(),
-    "padding-top": createMjmlAttributeSchema(heroAttributes["padding-top"], "padding-top").optional(),
-    "vertical-align": createMjmlAttributeSchema(heroAttributes["vertical-align"], "vertical-align").optional(),
-  }) satisfies z.ZodType<OwnProps<MjmlHeroProps>>;
+  z.strictObject({ ...createMjmlAttributeShape(heroAttributes) }) satisfies z.ZodType<OwnProps<MjmlHeroProps>>;
 
 // The hero component: the attributes it takes, the props its schema reads and what it renders
 export const createMjmlHeroType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlockTypeDefinition<MjmlHeroNode> => {

@@ -5,7 +5,7 @@ import type { MjmlGroupProps } from "#src/models/MjmlGroupProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -20,12 +20,7 @@ export const groupAttributes = {
 export const groupPropsSchema: z.ZodObject<
   { [K in keyof typeof groupAttributes]: MjmlAttributeSchema },
   z.core.$strict
-> = z.strictObject({
-  "background-color": createMjmlAttributeSchema(groupAttributes["background-color"], "background-color").optional(),
-  direction: createMjmlAttributeSchema(groupAttributes.direction, "direction").optional(),
-  "vertical-align": createMjmlAttributeSchema(groupAttributes["vertical-align"], "vertical-align").optional(),
-  width: createMjmlAttributeSchema(groupAttributes.width, "width").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlGroupProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(groupAttributes) }) satisfies z.ZodType<OwnProps<MjmlGroupProps>>;
 
 // The group component: the attributes it takes, the props its schema reads and what it renders
 const mjmlGroupTypeFields = {

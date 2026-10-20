@@ -7,7 +7,7 @@ import type { OwnProps } from "headless-block-editor";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -37,27 +37,9 @@ export const navbarLinkAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof navba
 export const navbarLinkPropsSchema: z.ZodObject<
   { [K in keyof typeof navbarLinkAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
-> = z.strictObject({
-  color: createMjmlAttributeSchema(navbarLinkAttributes.color, "color").optional(),
-  content: z.string(),
-  "font-family": createMjmlAttributeSchema(navbarLinkAttributes["font-family"], "font-family").optional(),
-  "font-size": createMjmlAttributeSchema(navbarLinkAttributes["font-size"], "font-size").optional(),
-  "font-style": createMjmlAttributeSchema(navbarLinkAttributes["font-style"], "font-style").optional(),
-  "font-weight": createMjmlAttributeSchema(navbarLinkAttributes["font-weight"], "font-weight").optional(),
-  href: createMjmlAttributeSchema(navbarLinkAttributes.href, "href").optional(),
-  "letter-spacing": createMjmlAttributeSchema(navbarLinkAttributes["letter-spacing"], "letter-spacing").optional(),
-  "line-height": createMjmlAttributeSchema(navbarLinkAttributes["line-height"], "line-height").optional(),
-  name: createMjmlAttributeSchema(navbarLinkAttributes.name, "name").optional(),
-  padding: createMjmlAttributeSchema(navbarLinkAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(navbarLinkAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(navbarLinkAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(navbarLinkAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(navbarLinkAttributes["padding-top"], "padding-top").optional(),
-  rel: createMjmlAttributeSchema(navbarLinkAttributes.rel, "rel").optional(),
-  target: createMjmlAttributeSchema(navbarLinkAttributes.target, "target").optional(),
-  "text-decoration": createMjmlAttributeSchema(navbarLinkAttributes["text-decoration"], "text-decoration").optional(),
-  "text-transform": createMjmlAttributeSchema(navbarLinkAttributes["text-transform"], "text-transform").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlNavbarLinkProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(navbarLinkAttributes), content: z.string() }) satisfies z.ZodType<
+  OwnProps<MjmlNavbarLinkProps>
+>;
 
 // The navbar link component: the attributes it takes, the props its schema reads and what it renders
 const mjmlNavbarLinkTypeFields = {

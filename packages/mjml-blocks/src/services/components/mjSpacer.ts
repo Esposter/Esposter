@@ -6,7 +6,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -30,23 +30,7 @@ export const spacerAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof spacerBas
 export const spacerPropsSchema: z.ZodObject<
   { [K in keyof typeof spacerAttributes]: MjmlAttributeSchema },
   z.core.$strict
-> = z.strictObject({
-  border: createMjmlAttributeSchema(spacerAttributes.border, "border").optional(),
-  "border-bottom": createMjmlAttributeSchema(spacerAttributes["border-bottom"], "border-bottom").optional(),
-  "border-left": createMjmlAttributeSchema(spacerAttributes["border-left"], "border-left").optional(),
-  "border-right": createMjmlAttributeSchema(spacerAttributes["border-right"], "border-right").optional(),
-  "border-top": createMjmlAttributeSchema(spacerAttributes["border-top"], "border-top").optional(),
-  "container-background-color": createMjmlAttributeSchema(
-    spacerAttributes["container-background-color"],
-    "container-background-color",
-  ).optional(),
-  height: createMjmlAttributeSchema(spacerAttributes.height, "height").optional(),
-  padding: createMjmlAttributeSchema(spacerAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(spacerAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(spacerAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(spacerAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(spacerAttributes["padding-top"], "padding-top").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlSpacerProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(spacerAttributes) }) satisfies z.ZodType<OwnProps<MjmlSpacerProps>>;
 
 // The spacer component: the attributes it takes, the props its schema reads and what it renders
 const mjmlSpacerTypeFields = {

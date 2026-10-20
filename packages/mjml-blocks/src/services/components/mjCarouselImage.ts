@@ -6,7 +6,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { checkMjmlAlternativeText } from "#src/services/checkMjmlAlternativeText";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -28,22 +28,7 @@ export const carouselImagePropsSchema: z.ZodObject<
   { [K in keyof typeof carouselImageAttributes]: MjmlAttributeSchema } & { decorative: z.ZodOptional<z.ZodBoolean> },
   z.core.$strict
 > = z
-  .strictObject({
-    alt: createMjmlAttributeSchema(carouselImageAttributes.alt, "alt").optional(),
-    "border-radius": createMjmlAttributeSchema(carouselImageAttributes["border-radius"], "border-radius").optional(),
-    decorative: z.boolean().optional(),
-    href: createMjmlAttributeSchema(carouselImageAttributes.href, "href").optional(),
-    rel: createMjmlAttributeSchema(carouselImageAttributes.rel, "rel").optional(),
-    src: createMjmlAttributeSchema(carouselImageAttributes.src, "src").optional(),
-    target: createMjmlAttributeSchema(carouselImageAttributes.target, "target").optional(),
-    "tb-border": createMjmlAttributeSchema(carouselImageAttributes["tb-border"], "tb-border").optional(),
-    "tb-border-radius": createMjmlAttributeSchema(
-      carouselImageAttributes["tb-border-radius"],
-      "tb-border-radius",
-    ).optional(),
-    "thumbnails-src": createMjmlAttributeSchema(carouselImageAttributes["thumbnails-src"], "thumbnails-src").optional(),
-    title: createMjmlAttributeSchema(carouselImageAttributes.title, "title").optional(),
-  })
+  .strictObject({ ...createMjmlAttributeShape(carouselImageAttributes), decorative: z.boolean().optional() })
   .superRefine(checkMjmlAlternativeText) satisfies z.ZodType<OwnProps<MjmlCarouselImageProps>>;
 
 // The carousel image component: the attributes it takes, the props its schema reads and what it renders

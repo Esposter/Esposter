@@ -6,7 +6,7 @@ import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -34,33 +34,9 @@ export const accordionAttributes: typeof accordionBaseAttributes & typeof MJML_P
 export const accordionPropsSchema: z.ZodObject<
   { [K in keyof typeof accordionAttributes]: MjmlAttributeSchema },
   z.core.$strict
-> = z.strictObject({
-  border: createMjmlAttributeSchema(accordionAttributes.border, "border").optional(),
-  "container-background-color": createMjmlAttributeSchema(
-    accordionAttributes["container-background-color"],
-    "container-background-color",
-  ).optional(),
-  "font-family": createMjmlAttributeSchema(accordionAttributes["font-family"], "font-family").optional(),
-  "icon-align": createMjmlAttributeSchema(accordionAttributes["icon-align"], "icon-align").optional(),
-  "icon-height": createMjmlAttributeSchema(accordionAttributes["icon-height"], "icon-height").optional(),
-  "icon-position": createMjmlAttributeSchema(accordionAttributes["icon-position"], "icon-position").optional(),
-  "icon-unwrapped-alt": createMjmlAttributeSchema(
-    accordionAttributes["icon-unwrapped-alt"],
-    "icon-unwrapped-alt",
-  ).optional(),
-  "icon-unwrapped-url": createMjmlAttributeSchema(
-    accordionAttributes["icon-unwrapped-url"],
-    "icon-unwrapped-url",
-  ).optional(),
-  "icon-width": createMjmlAttributeSchema(accordionAttributes["icon-width"], "icon-width").optional(),
-  "icon-wrapped-alt": createMjmlAttributeSchema(accordionAttributes["icon-wrapped-alt"], "icon-wrapped-alt").optional(),
-  "icon-wrapped-url": createMjmlAttributeSchema(accordionAttributes["icon-wrapped-url"], "icon-wrapped-url").optional(),
-  padding: createMjmlAttributeSchema(accordionAttributes.padding, "padding").optional(),
-  "padding-bottom": createMjmlAttributeSchema(accordionAttributes["padding-bottom"], "padding-bottom").optional(),
-  "padding-left": createMjmlAttributeSchema(accordionAttributes["padding-left"], "padding-left").optional(),
-  "padding-right": createMjmlAttributeSchema(accordionAttributes["padding-right"], "padding-right").optional(),
-  "padding-top": createMjmlAttributeSchema(accordionAttributes["padding-top"], "padding-top").optional(),
-}) satisfies z.ZodType<OwnProps<MjmlAccordionProps>>;
+> = z.strictObject({ ...createMjmlAttributeShape(accordionAttributes) }) satisfies z.ZodType<
+  OwnProps<MjmlAccordionProps>
+>;
 
 // The accordion component: the attributes it takes, the props its schema reads and what it renders
 const mjmlAccordionTypeFields = {

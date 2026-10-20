@@ -11,7 +11,7 @@ import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { createMjmlRichTextPropsSchema } from "#src/services/components/createMjmlRichTextPropsSchema";
 import { createMjmlRichTextType } from "#src/services/components/createMjmlRichTextType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
-import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
+import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
 
 // The attributes MJML takes on the accordion text component, each in MJML's grammar
 const accordionTextBaseAttributes = {
@@ -36,32 +36,9 @@ export const createMjmlAccordionTextPropsSchema = <TContent extends MjmlRichText
   { [K in keyof typeof accordionTextAttributes]: MjmlAttributeSchema } & { content: z.ZodType<TContent> },
   z.core.$strict
 > =>
-  createMjmlRichTextPropsSchema(
-    {
-      "background-color": createMjmlAttributeSchema(
-        accordionTextAttributes["background-color"],
-        "background-color",
-      ).optional(),
-      color: createMjmlAttributeSchema(accordionTextAttributes.color, "color").optional(),
-      "font-family": createMjmlAttributeSchema(accordionTextAttributes["font-family"], "font-family").optional(),
-      "font-size": createMjmlAttributeSchema(accordionTextAttributes["font-size"], "font-size").optional(),
-      "font-weight": createMjmlAttributeSchema(accordionTextAttributes["font-weight"], "font-weight").optional(),
-      "letter-spacing": createMjmlAttributeSchema(
-        accordionTextAttributes["letter-spacing"],
-        "letter-spacing",
-      ).optional(),
-      "line-height": createMjmlAttributeSchema(accordionTextAttributes["line-height"], "line-height").optional(),
-      padding: createMjmlAttributeSchema(accordionTextAttributes.padding, "padding").optional(),
-      "padding-bottom": createMjmlAttributeSchema(
-        accordionTextAttributes["padding-bottom"],
-        "padding-bottom",
-      ).optional(),
-      "padding-left": createMjmlAttributeSchema(accordionTextAttributes["padding-left"], "padding-left").optional(),
-      "padding-right": createMjmlAttributeSchema(accordionTextAttributes["padding-right"], "padding-right").optional(),
-      "padding-top": createMjmlAttributeSchema(accordionTextAttributes["padding-top"], "padding-top").optional(),
-    },
-    richText,
-  ) satisfies z.ZodType<OwnProps<MjmlAccordionTextProps>>;
+  createMjmlRichTextPropsSchema({ ...createMjmlAttributeShape(accordionTextAttributes) }, richText) satisfies z.ZodType<
+    OwnProps<MjmlAccordionTextProps>
+  >;
 
 // The accordion text component: the attributes it takes, the props its schema reads and what it renders
 export const createMjmlAccordionTextType = <TContent extends MjmlRichText>(
