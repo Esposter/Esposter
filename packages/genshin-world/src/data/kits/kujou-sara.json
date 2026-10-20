@@ -8,6 +8,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 21.6 }
   },
   "hits.stormclusterTicks.0.hitmarkFrames": { "file": "burst.go", "line": 17, "source": "Gcsim", "value": 100 },
+  "hits.stormclusterTicks.0-5.element": { "file": "burst.go", "line": 45, "source": "Gcsim", "value": "Electric" },
   "hits.stormclusterTicks.0-5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 5639 } },
   "hits.stormclusterTicks.1.area": {
     "cause": "TargetCentred",
