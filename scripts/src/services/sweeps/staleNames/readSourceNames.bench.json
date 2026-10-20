@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/sweeps/staleNames/readSourceNames.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 4196.175289999999,
+              "name": "warm",
+              "p99": 4486.663022000001,
+              "rme": 3.5648956869534247,
+              "sampleCount": 10
+            },
+            {
+              "mean": 8866.661659999996,
+              "name": "cold",
+              "p99": 10983.431797000007,
+              "rme": 11.04646071649901,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "readSourceNames > read the names the tracked tree holds"
+        }
+      ]
+    }
+  ]
+}
