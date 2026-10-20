@@ -15,6 +15,6 @@ describe("headless-block-editor", () => {
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 10.04 KB (10283 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 10.03 KB (10275 bytes)"`);
   });
 });
