@@ -1,8 +1,9 @@
 import { CACHE_DIRECTORY, LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const STORE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".pnpm");
@@ -56,7 +57,6 @@ export const readDependencyNames = (): Set<string> => {
     for (const declarationPath of readDeclarationPaths(packageDirectory))
       addWords(names, readFileSync(declarationPath, "utf8"));
 
-  mkdirSync(CACHE_DIRECTORY, { recursive: true });
-  writeFileSync(cachePath, JSON.stringify([...names]));
+  writeCacheFile(cachePath, JSON.stringify([...names]));
   return names;
 };

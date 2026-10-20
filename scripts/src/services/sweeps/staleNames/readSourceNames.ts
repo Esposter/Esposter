@@ -3,11 +3,12 @@ import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEn
 
 import { CACHE_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
 import { getComponentName } from "#src/services/sweeps/staleNames/getComponentName";
 import { readFileWords } from "#src/services/sweeps/staleNames/readFileWords";
-import { existsSync, globSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, globSync, readFileSync, statSync } from "node:fs";
 import { join, matchesGlob, resolve } from "node:path";
 
 // oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
@@ -78,9 +79,6 @@ export const readSourceNames = (): Set<string> => {
   for (const declarationPath of globSync("**/*.d.ts", { cwd: NUXT_DECLARATIONS_DIRECTORY }))
     addWords(names, readFileSync(join(NUXT_DECLARATIONS_DIRECTORY, declarationPath), "utf8"));
 
-  if (!isCacheUnchanged) {
-    mkdirSync(CACHE_DIRECTORY, { recursive: true });
-    writeFileSync(SOURCE_WORD_CACHE_PATH, JSON.stringify({ entries, generatedPatterns, words }));
-  }
+  if (!isCacheUnchanged) writeCacheFile(SOURCE_WORD_CACHE_PATH, JSON.stringify({ entries, generatedPatterns, words }));
   return names;
 };
