@@ -85,7 +85,7 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // Oak's prefab at the one placement of Windrise's own area, the oak's finest meshes, which no prefab holds, and the
   // Four terrain tiles under the valley and the slopes north of it, with their base maps
   [DerivedAssetComponent.Windrise]: {
-    namePattern: "^(Stages_Unique_CyTree01_(Bark|Leaf)_Lod0|BigWorldTerrain_(1|2)_-(1|2)\\.bin_BaseMap)$",
+    namePattern: String.raw`^(Stages_Unique_CyTree01_(Bark|Leaf)_Lod0|BigWorldTerrain_(1|2)_-(1|2)\.bin_BaseMap)$`,
     roots: [],
     screen: "WorldScreen",
     world: {

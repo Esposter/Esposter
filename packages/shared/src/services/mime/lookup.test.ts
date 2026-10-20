@@ -27,11 +27,11 @@ describe(lookup, () => {
   test.each([
     { expected: "text/html", input: "page.html" },
     { expected: "text/html", input: "path/to/page.html" },
-    { expected: "text/html", input: "path\\to\\page.html" },
+    { expected: "text/html", input: String.raw`path\to\page.html` },
     { expected: "text/html", input: "/path/to/page.html" },
-    { expected: "text/html", input: "C:\\path\\to\\page.html" },
+    { expected: "text/html", input: String.raw`C:\path\to\page.html` },
     { expected: "text/html", input: "/path/to/PAGE.HTML" },
-    { expected: "text/html", input: "C:\\path\\to\\PAGE.HTML" },
+    { expected: "text/html", input: String.raw`C:\path\to\PAGE.HTML` },
   ])("resolves the path $input to $expected", ({ expected, input }) => {
     expect.hasAssertions();
     expect(lookup(input)).toBe(expected);

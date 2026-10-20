@@ -18,6 +18,6 @@ export const checkIsAllowedUrl = (url: string, allowedSchemes: string[]): boolea
   const separatorIndex = beforePath.indexOf(SCHEME_SEPARATOR);
   if (separatorIndex === -1) return true;
 
-  const scheme = beforePath.slice(0, separatorIndex).replace(NON_SCHEME_CHARACTERS_REGEX, "").toLowerCase();
+  const scheme = beforePath.slice(0, separatorIndex).replaceAll(NON_SCHEME_CHARACTERS_REGEX, "").toLowerCase();
   return allowedSchemes.includes(scheme);
 };

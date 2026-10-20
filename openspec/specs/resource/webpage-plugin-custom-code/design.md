@@ -70,4 +70,4 @@ The open vectors reach the stored HTML the editor saves, so a published page wit
 ## Sources
 
 - Upstream repository: `GrapesJS/components-custom-code` (version 1.0.2, read from its published source map).
-- grapesjs 0.23.6 for the parser's sanitising ("sanitizeNode", `allowScripts`), `resetFromString` and the component types.
+- grapesjs 0.23.8 for the parser's sanitising ("sanitizeNode", `allowScripts`), `resetFromString` and the component types.

@@ -59,7 +59,7 @@ export const resolveGoLocals = (text: string, lines: readonly string[], lineInde
   const functionLines = readFunctionLines(lines, lineIndex);
   if (functionLines === undefined) return text;
   let isResolved = true;
-  const resolved = text.replace(LOCAL_NAME_REGEX, (match, name: string) => {
+  const resolved = text.replaceAll(LOCAL_NAME_REGEX, (match, name: string) => {
     if (!isResolved) return match;
     const bindings = readBindings(lines, functionLines, name);
     if (bindings.length === 0) return match;

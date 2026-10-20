@@ -7,5 +7,5 @@ export const generateRandomToken = (byteLength: number): string => {
   return btoa(String.fromCodePoint(...bytes))
     .replaceAll("+", "-")
     .replaceAll("/", "_")
-    .replace(/=+$/u, "");
+    .replace(/[=]+$/u, "");
 };

@@ -47,7 +47,7 @@ export const SlashCommandDefinitionMap = {
     type: SlashCommandType.Schedule,
   },
   [SlashCommandType.Shrug]: {
-    description: "Appends ¯\\_(ツ)_/¯ to your message",
+    description: String.raw`Appends ¯\_(ツ)_/¯ to your message`,
     icon: "i-mdi:emoticon-confused-outline",
     parameters: [{ description: "Optional text to prepend before the shrug", isRequired: false, name: "text" }],
     title: "Shrug",

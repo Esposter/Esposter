@@ -35,7 +35,7 @@ describe(getBasicAuthCredentials, () => {
   test("an unpadded value decodes as its padded form does", () => {
     expect.hasAssertions();
 
-    expect(getBasicAuthCredentials(`Basic ${btoa("user:pa").replace(/=+$/u, "")}`)).toStrictEqual({
+    expect(getBasicAuthCredentials(`Basic ${btoa("user:pa").replace(/[=]+$/u, "")}`)).toStrictEqual({
       name: "user",
       pass: "pa",
     });

@@ -91,22 +91,25 @@ export const substituteGoTableCells = (
 ): undefined | { cites: GcsimTableCite[]; text: string } => {
   const cites: GcsimTableCite[] = [];
   let isEvaluable = true;
-  const substituted = text.replace(TABLE_INDEX_REGEX, (match, name: string, indexText: string, cellText?: string) => {
-    if (!isEvaluable) return match;
-    const rows = readGcsimTableRows(lines, name);
-    if (rows === undefined) return match;
-    const rowIndex = readIndex(indexText, counter);
-    const row = rowIndex === undefined ? undefined : rows[rowIndex];
-    // A one-dimensional table's index is its row, and a two-dimensional one's cell is the index after its row
-    const cellIndex = cellText === undefined ? 0 : readIndex(cellText, counter);
-    const cell = cellIndex === undefined ? undefined : row?.cells[cellIndex];
-    const value = cell === undefined ? undefined : Number(cell);
-    if (row === undefined || value === undefined || !Number.isFinite(value)) {
-      isEvaluable = false;
-      return match;
-    }
-    cites.push({ line: row.line, value });
-    return cell ?? match;
-  });
+  const substituted = text.replaceAll(
+    TABLE_INDEX_REGEX,
+    (match, name: string, indexText: string, cellText?: string) => {
+      if (!isEvaluable) return match;
+      const rows = readGcsimTableRows(lines, name);
+      if (rows === undefined) return match;
+      const rowIndex = readIndex(indexText, counter);
+      const row = rowIndex === undefined ? undefined : rows[rowIndex];
+      // A one-dimensional table's index is its row, and a two-dimensional one's cell is the index after its row
+      const cellIndex = cellText === undefined ? 0 : readIndex(cellText, counter);
+      const cell = cellIndex === undefined ? undefined : row?.cells[cellIndex];
+      const value = cell === undefined ? undefined : Number(cell);
+      if (row === undefined || value === undefined || !Number.isFinite(value)) {
+        isEvaluable = false;
+        return match;
+      }
+      cites.push({ line: row.line, value });
+      return cell ?? match;
+    },
+  );
   return isEvaluable ? { cites, text: substituted } : undefined;
 };

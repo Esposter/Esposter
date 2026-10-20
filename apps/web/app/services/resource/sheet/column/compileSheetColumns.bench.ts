@@ -40,7 +40,7 @@ const digitColumn = new ComputedColumn({
   sourceName: "digit",
   transformation: {
     groupIndex: 1,
-    pattern: "(\\d)",
+    pattern: String.raw`(\d)`,
     sourceColumnId: textColumn.id,
     type: ColumnTransformationType.RegexMatch,
   },

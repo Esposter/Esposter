@@ -22,7 +22,7 @@ const parseComparatorTexts = (set: string, includePrerelease: boolean): Comparat
       : undefined;
   }
 
-  const tokens = set.replace(SPACED_OPERATOR_REGEX, "$<operator>").split(/\s+/u).filter(Boolean);
+  const tokens = set.replaceAll(SPACED_OPERATOR_REGEX, "$<operator>").split(/\s+/u).filter(Boolean);
   const texts: ComparatorText[] = [];
   for (const token of tokens) {
     const comparatorToken = parseComparatorToken(token);
