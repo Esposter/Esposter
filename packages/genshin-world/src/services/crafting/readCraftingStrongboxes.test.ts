@@ -32,6 +32,30 @@ describe(readCraftingStrongboxes, () => {
     `);
   });
 
+  test("a strongbox record lacking a piece's item id is refused", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      Response.json([{ id: 90_001, nameTextId: "90_002", needCount: 3, pieceItemIds: [null], rarity: 5 }]),
+    );
+
+    await expect(readCraftingStrongboxes("crafting-strongboxes-missing-piece")).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [ZodError: [
+        {
+          "expected": "number",
+          "code": "invalid_type",
+          "path": [
+            0,
+            "pieceItemIds",
+            0
+          ],
+          "message": "Invalid input: expected number, received null"
+        }
+      ]]
+    `);
+  });
+
   test("reads the strongbox records of the hosted game data by their key", async () => {
     expect.hasAssertions();
 

@@ -1,6 +1,7 @@
 import type { CraftingStrongboxData } from "#src/models/crafting/CraftingStrongboxData";
 
 import { computeMysticOfferingText } from "#src/services/crafting/computeMysticOfferingText";
+import { ENGLISH_GAME_TEXT, GameTextKey } from "genshin-text";
 import { describe, expect, test } from "vitest";
 
 describe(computeMysticOfferingText, () => {
@@ -22,6 +23,18 @@ describe(computeMysticOfferingText, () => {
     expect(computeMysticOfferingText(REQUIREMENT, STRONGBOX, NAMES)).toBe(
       "Every 3 4-star artifacts offered will create a strongbox",
     );
+  });
+
+  test("the offering's tip fills its artifact counts with three artifacts of five stars", () => {
+    expect.hasAssertions();
+
+    expect(
+      computeMysticOfferingText(
+        ENGLISH_GAME_TEXT[GameTextKey.MysticOfferingRequirement],
+        { ...STRONGBOX, rarity: 5 },
+        NAMES,
+      ),
+    ).toBe("Every 3 5-star artifacts offered will create an Artifact Strongbox");
   });
 
   test("the confirm fills the artifacts it consumes, the one strongbox it makes and that strongbox's name", () => {
