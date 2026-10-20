@@ -5,6 +5,7 @@ import { getDependencyType } from "#src/services/outdatedDependencies/getDepende
 import { checkIsPnpmOutdatedDependency } from "#src/services/outdatedDependencies/pnpm/checkIsPnpmOutdatedDependency";
 import { getOutdatedDependents } from "#src/services/outdatedDependencies/pnpm/getOutdatedDependents";
 import { getPnpmOutdatedFailure } from "#src/services/outdatedDependencies/pnpm/getPnpmOutdatedFailure";
+import { getPnpmPackageName } from "#src/services/outdatedDependencies/pnpm/getPnpmPackageName";
 import { runPnpmOutdated } from "#src/services/outdatedDependencies/pnpm/runPnpmOutdated";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
@@ -34,16 +35,16 @@ export const getRegularOutdatedDependencies = async (root: string): Promise<Outd
       if (!outdatedJson || typeof outdatedJson !== "object") return getPnpmOutdatedFailure(UNEXPECTED_JSON_OUTPUT);
 
       const outdatedDependencies: OutdatedDependency[] = [];
-      for (const [packageName, dependency] of Object.entries(outdatedJson)) {
+      for (const [key, dependency] of Object.entries(outdatedJson)) {
         if (!checkIsPnpmOutdatedDependency(dependency))
-          return getPnpmOutdatedFailure(`unexpected JSON entry for ${packageName}`);
+          return getPnpmOutdatedFailure(`unexpected JSON entry for ${key}`);
 
         outdatedDependencies.push({
           current: dependency.current ?? "",
           dependencyType: getDependencyType(dependency.dependencyType ?? ""),
           dependents: getOutdatedDependents(dependency.dependentPackages),
           latest: dependency.latest,
-          packageName,
+          packageName: getPnpmPackageName(key, dependency.current ?? ""),
         });
       }
 
