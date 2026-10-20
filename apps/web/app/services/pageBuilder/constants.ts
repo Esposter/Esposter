@@ -1,3 +1,5 @@
+import type { WebpagePaletteCategory } from "@/models/pageBuilder/WebpagePaletteCategory";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 // The most edits one open resource's undo history keeps, the oldest dropping first
@@ -25,20 +27,26 @@ export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, strin
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
-// The palette's categories, each with the node types it lists in the order shown. Column and Tab are not listed, since
-// Only Columns and Tabs hold them
-export const WEBPAGE_PALETTE_CATEGORY_MAP: Readonly<Record<string, readonly WebpageNodeType[]>> = Object.freeze({
-  Layout: [WebpageNodeType.Section, WebpageNodeType.Columns],
-  Content: [
-    WebpageNodeType.Text,
-    WebpageNodeType.Button,
-    WebpageNodeType.Image,
-    WebpageNodeType.Video,
-    WebpageNodeType.CustomHtml,
-  ],
-  Extra: [WebpageNodeType.Countdown, WebpageNodeType.Tabs, WebpageNodeType.Tooltip, WebpageNodeType.TypedText],
-  Survey: [WebpageNodeType.SurveyInvite],
-});
+// The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are not
+// Listed, since only Columns and Tabs hold them
+export const WEBPAGE_PALETTE_CATEGORIES: readonly WebpagePaletteCategory[] = [
+  { category: "Layout", types: [WebpageNodeType.Section, WebpageNodeType.Columns] },
+  {
+    category: "Content",
+    types: [
+      WebpageNodeType.Text,
+      WebpageNodeType.Button,
+      WebpageNodeType.Image,
+      WebpageNodeType.Video,
+      WebpageNodeType.CustomHtml,
+    ],
+  },
+  {
+    category: "Extra",
+    types: [WebpageNodeType.Countdown, WebpageNodeType.Tabs, WebpageNodeType.Tooltip, WebpageNodeType.TypedText],
+  },
+  { category: "Survey", types: [WebpageNodeType.SurveyInvite] },
+];
 // The pointer and history interaction of the root, whose props are edited when no node is selected
 export const ROOT_POINTER = "/root";
 export const ROOT_INTERACTION_ID = "content:root";

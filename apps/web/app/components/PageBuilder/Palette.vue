@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
 import { usePageBuilderInsert } from "@/composables/pageBuilder/usePageBuilderInsert";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORY_MAP } from "@/services/pageBuilder/constants";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
 
 interface Props {
   announce: (message: string) => void;
@@ -29,7 +29,7 @@ const startDrag = (type: WebpageNodeType, event: PointerEvent) => {
 
 <template>
   <div flex flex-col gap-4>
-    <section v-for="(types, category) of WEBPAGE_PALETTE_CATEGORY_MAP" :key="category" flex flex-col gap-2>
+    <section v-for="{ category, types } of WEBPAGE_PALETTE_CATEGORIES" :key="category" flex flex-col gap-2>
       <h3 text-sm text-muted>{{ category }}</h3>
       <div flex flex-wrap gap-2>
         <UiButton v-for="type of types" :key="type" @click="insert(type)" @pointerdown="startDrag(type, $event)">{{

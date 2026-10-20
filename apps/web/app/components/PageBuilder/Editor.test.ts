@@ -1,19 +1,19 @@
 // @vitest-environment nuxt
-import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
-import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
-import {
-  TEST_ROOT_TEXT_ID,
-  TEST_TEXT_CONTENT,
-  TEST_NESTED_TEXT_ID,
-  TEST_SECTION_ID,
-} from "@/services/pageBuilder/constants.test";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORY_MAP } from "@/services/pageBuilder/constants";
-import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
-import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import PageBuilderCanvas from "@/components/PageBuilder/Canvas/Index.vue";
+import PageBuilderEditor from "@/components/PageBuilder/Editor.vue";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
+import {
+  TEST_NESTED_TEXT_ID,
+  TEST_ROOT_TEXT_ID,
+  TEST_SECTION_ID,
+  TEST_TEXT_CONTENT,
+} from "@/services/pageBuilder/constants.test";
+import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { nextTick } from "vue";
@@ -45,7 +45,7 @@ describe("pageBuilderEditor", () => {
     const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
 
     expect(component.findAll("h3").map((heading) => heading.text())).toStrictEqual(
-      Object.keys(WEBPAGE_PALETTE_CATEGORY_MAP),
+      WEBPAGE_PALETTE_CATEGORIES.map(({ category }) => category),
     );
     expect(component.find("iframe").exists()).toBe(true);
     expect(component.get('[role="tab"]').text()).toBe("Content");
