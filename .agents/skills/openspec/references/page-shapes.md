@@ -80,6 +80,8 @@ GitHub's folder listing is the index of either tree.
 
 An area's roadmap is the change `<area>-roadmap`, with `skip_specs: true`. Its `tasks.md` is prioritized top-down and checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`), each item linking the change that designs it.
 
+A roadmap exists only while its area has open work. When the last item is built, moved to a change or decided against, the `<area>-roadmap` folder is deleted in the same change, never kept with an empty `## Later`.
+
 The Genshin roadmap's `## Manual verification` list is one line an item (the question, a link to the page that holds its source, the one fact to judge it by), its detail a decision on that page; `scripts/src/workspace/manualVerification.test.ts` enforces it, since a hundred paragraph-long questions cannot be read as a batch.
 
 ## Lifecycle map

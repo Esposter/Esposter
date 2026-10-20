@@ -11,4 +11,4 @@ Achievements reward activity across every Esposter product — posts, likes, mes
 
 See [unlock pipeline](unlock-pipeline/design.md) for how a mutation becomes a toast, and [points leaderboard](points-leaderboard/design.md) for the global ranking by total unlocked points, and [rarity](rarity/design.md) for the share of users who have unlocked each one.
 
-Open work: [roadmap](../../changes/achievement-roadmap/tasks.md). Decided ideas: [rejected](../../rejected/achievement/).
+Decided ideas: [rejected](../../rejected/achievement/).
