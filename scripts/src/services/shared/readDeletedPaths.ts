@@ -7,7 +7,7 @@ import { join, posix } from "node:path";
 // Listing lacks is stat'd too, since a case-only difference from the index is a file git still finds on a
 // Case-insensitive filesystem, and skipping it would be the silent pass a scan exists to rule out
 export const readDeletedPaths = (paths: readonly string[], root: string): Set<string> => {
-  const entryNamesByDirectory = new Map(
+  const directoryEntryNamesMap = new Map(
     Array.from(new Set(paths.map((path) => posix.dirname(path))), (directory): [string, Set<string>] => {
       const directoryPath = join(root, directory);
       return [directory, new Set(existsSync(directoryPath) ? readdirSync(directoryPath) : [])];
@@ -16,7 +16,7 @@ export const readDeletedPaths = (paths: readonly string[], root: string): Set<st
   return new Set(
     paths.filter(
       (path) =>
-        !entryNamesByDirectory.get(posix.dirname(path))?.has(posix.basename(path)) && !existsSync(join(root, path)),
+        !directoryEntryNamesMap.get(posix.dirname(path))?.has(posix.basename(path)) && !existsSync(join(root, path)),
     ),
   );
 };

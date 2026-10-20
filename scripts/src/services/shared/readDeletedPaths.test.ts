@@ -36,6 +36,6 @@ describe(readDeletedPaths, () => {
 
     expect(
       readDeletedPaths([`${GONE_DIRECTORY}/${KEPT_FILENAME}`, `${GONE_DIRECTORY}/${DELETED_FILENAME}`], root),
-    ).toStrictEqual(new Set([`${GONE_DIRECTORY}/${KEPT_FILENAME}`, `${GONE_DIRECTORY}/${DELETED_FILENAME}`]));
+    ).toStrictEqual(new Set([`${GONE_DIRECTORY}/${DELETED_FILENAME}`, `${GONE_DIRECTORY}/${KEPT_FILENAME}`]));
   });
 });
