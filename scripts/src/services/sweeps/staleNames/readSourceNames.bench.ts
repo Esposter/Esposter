@@ -7,7 +7,7 @@ import { describe, test } from "vitest";
 
 // The names a stale-names scan reads from the tree, warm from the cache its last run left and cold with that cache
 // Removed first. What it measures is the host's disk and its worktree beside this repo's code, at a cost of minutes,
-// so it is off once its numbers are committed. Flip it on when the scan changes: set `IS_ENABLED`, run `pnpm bench`
+// So it is off once its numbers are committed. Flip it on when the scan changes: set `IS_ENABLED`, run `pnpm bench`
 // In this package, commit the artifact, and flip it back. The warm task runs first, so it reads the cache left before
 // The bench started
 const IS_CI = Boolean(process.env.CI);
