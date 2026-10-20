@@ -28,19 +28,17 @@ export const groupPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlGroupProps>>;
 
 // The group component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlGroupType: MjmlBlockTypeDefinition<MjmlGroupNode> = {
+const mjmlGroupTypeFields = {
   allowedAttributes: groupAttributes,
   contentKind: undefined,
   defaultAttributes: { direction: "ltr" },
   hasAlternativeText: false,
   propsSchema: groupPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: groupAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Group,
-  }),
   slots: { children: [MjmlNodeType.Column, MjmlNodeType.Raw] },
   type: MjmlNodeType.Group,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlGroupNode>>;
+
+export const mjmlGroupType: MjmlBlockTypeDefinition<MjmlGroupNode> = {
+  ...mjmlGroupTypeFields,
+  render: renderMjmlNode({ ...mjmlGroupTypeFields, hasChildren: true, tagName: MjmlNodeType.Group }),
 };

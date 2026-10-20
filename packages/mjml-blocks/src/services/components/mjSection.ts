@@ -88,19 +88,17 @@ export const sectionPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlSectionProps>>;
 
 // The section component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlSectionType: MjmlBlockTypeDefinition<MjmlSectionNode> = {
+const mjmlSectionTypeFields = {
   allowedAttributes: sectionAttributes.allowedAttributes,
   contentKind: undefined,
   defaultAttributes: sectionAttributes.defaultAttributes,
   hasAlternativeText: false,
   propsSchema: sectionPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: sectionAttributes.allowedAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Section,
-  }),
   slots: { children: [MjmlNodeType.Column, MjmlNodeType.Group, MjmlNodeType.Raw] },
   type: MjmlNodeType.Section,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlSectionNode>>;
+
+export const mjmlSectionType: MjmlBlockTypeDefinition<MjmlSectionNode> = {
+  ...mjmlSectionTypeFields,
+  render: renderMjmlNode({ ...mjmlSectionTypeFields, hasChildren: true, tagName: MjmlNodeType.Section }),
 };

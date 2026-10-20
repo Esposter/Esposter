@@ -71,7 +71,7 @@ export const socialPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlSocialProps>>;
 
 // The social component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlSocialType: MjmlBlockTypeDefinition<MjmlSocialNode> = {
+const mjmlSocialTypeFields = {
   allowedAttributes: socialAttributes,
   contentKind: undefined,
   defaultAttributes: {
@@ -88,13 +88,11 @@ export const mjmlSocialType: MjmlBlockTypeDefinition<MjmlSocialNode> = {
   },
   hasAlternativeText: false,
   propsSchema: socialPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: socialAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Social,
-  }),
   slots: { children: [MjmlNodeType.SocialElement, MjmlNodeType.Raw] },
   type: MjmlNodeType.Social,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlSocialNode>>;
+
+export const mjmlSocialType: MjmlBlockTypeDefinition<MjmlSocialNode> = {
+  ...mjmlSocialTypeFields,
+  render: renderMjmlNode({ ...mjmlSocialTypeFields, hasChildren: true, tagName: MjmlNodeType.Social }),
 };

@@ -47,19 +47,17 @@ export const spacerPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlSpacerProps>>;
 
 // The spacer component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlSpacerType: MjmlBlockTypeDefinition<MjmlSpacerNode> = {
+const mjmlSpacerTypeFields = {
   allowedAttributes: spacerAttributes,
   contentKind: undefined,
   defaultAttributes: { height: "20px" },
   hasAlternativeText: false,
   propsSchema: spacerPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: spacerAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.Spacer,
-  }),
   slots: {},
   type: MjmlNodeType.Spacer,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlSpacerNode>>;
+
+export const mjmlSpacerType: MjmlBlockTypeDefinition<MjmlSpacerNode> = {
+  ...mjmlSpacerTypeFields,
+  render: renderMjmlNode({ ...mjmlSpacerTypeFields, hasChildren: false, tagName: MjmlNodeType.Spacer }),
 };

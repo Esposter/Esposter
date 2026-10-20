@@ -23,19 +23,17 @@ export const rawPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlRawProps>>;
 
 // The raw component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlRawType: MjmlBlockTypeDefinition<MjmlRawNode> = {
+const mjmlRawTypeFields = {
   allowedAttributes: rawAttributes,
   contentKind: MjmlContentKind.Raw,
   defaultAttributes: {},
   hasAlternativeText: false,
   propsSchema: rawPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: rawAttributes,
-    contentKind: MjmlContentKind.Raw,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.Raw,
-  }),
   slots: {},
   type: MjmlNodeType.Raw,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlRawNode>>;
+
+export const mjmlRawType: MjmlBlockTypeDefinition<MjmlRawNode> = {
+  ...mjmlRawTypeFields,
+  render: renderMjmlNode({ ...mjmlRawTypeFields, hasChildren: false, tagName: MjmlNodeType.Raw }),
 };

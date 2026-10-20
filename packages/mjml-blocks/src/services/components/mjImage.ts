@@ -83,7 +83,7 @@ export const imagePropsSchema: z.ZodObject<
   .superRefine(checkMjmlAlternativeText) satisfies z.ZodType<OwnProps<MjmlImageProps>>;
 
 // The image component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlImageType: MjmlBlockTypeDefinition<MjmlImageNode> = {
+const mjmlImageTypeFields = {
   allowedAttributes: imageAttributes,
   contentKind: undefined,
   defaultAttributes: {
@@ -97,13 +97,11 @@ export const mjmlImageType: MjmlBlockTypeDefinition<MjmlImageNode> = {
   },
   hasAlternativeText: true,
   propsSchema: imagePropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: imageAttributes,
-    contentKind: undefined,
-    hasAlternativeText: true,
-    hasChildren: false,
-    tagName: MjmlNodeType.Image,
-  }),
   slots: {},
   type: MjmlNodeType.Image,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlImageNode>>;
+
+export const mjmlImageType: MjmlBlockTypeDefinition<MjmlImageNode> = {
+  ...mjmlImageTypeFields,
+  render: renderMjmlNode({ ...mjmlImageTypeFields, hasChildren: false, tagName: MjmlNodeType.Image }),
 };

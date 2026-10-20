@@ -63,7 +63,7 @@ export const carouselPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlCarouselProps>>;
 
 // The carousel component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
+const mjmlCarouselTypeFields = {
   allowedAttributes: carouselAttributes,
   contentKind: undefined,
   defaultAttributes: {
@@ -80,13 +80,11 @@ export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
   },
   hasAlternativeText: false,
   propsSchema: carouselPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: carouselAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Carousel,
-  }),
   slots: { children: [MjmlNodeType.CarouselImage] },
   type: MjmlNodeType.Carousel,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlCarouselNode>>;
+
+export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
+  ...mjmlCarouselTypeFields,
+  render: renderMjmlNode({ ...mjmlCarouselTypeFields, hasChildren: true, tagName: MjmlNodeType.Carousel }),
 };

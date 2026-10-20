@@ -47,19 +47,17 @@ export const carouselImagePropsSchema: z.ZodObject<
   .superRefine(checkMjmlAlternativeText) satisfies z.ZodType<OwnProps<MjmlCarouselImageProps>>;
 
 // The carousel image component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlCarouselImageType: MjmlBlockTypeDefinition<MjmlCarouselImageNode> = {
+const mjmlCarouselImageTypeFields = {
   allowedAttributes: carouselImageAttributes,
   contentKind: undefined,
   defaultAttributes: { alt: "", target: "_blank" },
   hasAlternativeText: true,
   propsSchema: carouselImagePropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: carouselImageAttributes,
-    contentKind: undefined,
-    hasAlternativeText: true,
-    hasChildren: false,
-    tagName: MjmlNodeType.CarouselImage,
-  }),
   slots: {},
   type: MjmlNodeType.CarouselImage,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlCarouselImageNode>>;
+
+export const mjmlCarouselImageType: MjmlBlockTypeDefinition<MjmlCarouselImageNode> = {
+  ...mjmlCarouselImageTypeFields,
+  render: renderMjmlNode({ ...mjmlCarouselImageTypeFields, hasChildren: false, tagName: MjmlNodeType.CarouselImage }),
 };

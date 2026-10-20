@@ -57,19 +57,21 @@ export const accordionElementPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlAccordionElementProps>>;
 
 // The accordion element component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlAccordionElementType: MjmlBlockTypeDefinition<MjmlAccordionElementNode> = {
+const mjmlAccordionElementTypeFields = {
   allowedAttributes: accordionElementAttributes,
   contentKind: undefined,
   defaultAttributes: {},
   hasAlternativeText: false,
   propsSchema: accordionElementPropsSchema,
+  slots: { children: [MjmlNodeType.AccordionTitle, MjmlNodeType.AccordionText, MjmlNodeType.Raw] },
+  type: MjmlNodeType.AccordionElement,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlAccordionElementNode>>;
+
+export const mjmlAccordionElementType: MjmlBlockTypeDefinition<MjmlAccordionElementNode> = {
+  ...mjmlAccordionElementTypeFields,
   render: renderMjmlNode({
-    allowedAttributes: accordionElementAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
+    ...mjmlAccordionElementTypeFields,
     hasChildren: true,
     tagName: MjmlNodeType.AccordionElement,
   }),
-  slots: { children: [MjmlNodeType.AccordionTitle, MjmlNodeType.AccordionText, MjmlNodeType.Raw] },
-  type: MjmlNodeType.AccordionElement,
 };

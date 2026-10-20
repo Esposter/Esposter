@@ -58,7 +58,7 @@ export const navbarLinkPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlNavbarLinkProps>>;
 
 // The navbar link component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlNavbarLinkType: MjmlBlockTypeDefinition<MjmlNavbarLinkNode> = {
+const mjmlNavbarLinkTypeFields = {
   allowedAttributes: navbarLinkAttributes,
   contentKind: MjmlContentKind.Label,
   defaultAttributes: {
@@ -74,13 +74,11 @@ export const mjmlNavbarLinkType: MjmlBlockTypeDefinition<MjmlNavbarLinkNode> = {
   },
   hasAlternativeText: false,
   propsSchema: navbarLinkPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: navbarLinkAttributes,
-    contentKind: MjmlContentKind.Label,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.NavbarLink,
-  }),
   slots: {},
   type: MjmlNodeType.NavbarLink,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlNavbarLinkNode>>;
+
+export const mjmlNavbarLinkType: MjmlBlockTypeDefinition<MjmlNavbarLinkNode> = {
+  ...mjmlNavbarLinkTypeFields,
+  render: renderMjmlNode({ ...mjmlNavbarLinkTypeFields, hasChildren: false, tagName: MjmlNodeType.NavbarLink }),
 };

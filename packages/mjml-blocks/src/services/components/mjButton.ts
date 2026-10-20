@@ -91,7 +91,7 @@ export const buttonPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlButtonProps>>;
 
 // The button component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlButtonType: MjmlBlockTypeDefinition<MjmlButtonNode> = {
+const mjmlButtonTypeFields = {
   allowedAttributes: buttonAttributes,
   contentKind: MjmlContentKind.Label,
   defaultAttributes: {
@@ -113,13 +113,11 @@ export const mjmlButtonType: MjmlBlockTypeDefinition<MjmlButtonNode> = {
   },
   hasAlternativeText: false,
   propsSchema: buttonPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: buttonAttributes,
-    contentKind: MjmlContentKind.Label,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.Button,
-  }),
   slots: {},
   type: MjmlNodeType.Button,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlButtonNode>>;
+
+export const mjmlButtonType: MjmlBlockTypeDefinition<MjmlButtonNode> = {
+  ...mjmlButtonTypeFields,
+  render: renderMjmlNode({ ...mjmlButtonTypeFields, hasChildren: false, tagName: MjmlNodeType.Button }),
 };

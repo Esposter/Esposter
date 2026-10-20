@@ -74,41 +74,41 @@ export const heroPropsSchema: z.ZodObject<{ [K in keyof typeof heroAttributes]: 
   }) satisfies z.ZodType<OwnProps<MjmlHeroProps>>;
 
 // The hero component: the attributes it takes, the props its schema reads and what it renders
-export const createMjmlHeroType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlockTypeDefinition<MjmlHeroNode> => ({
-  allowedAttributes: heroAttributes,
-  contentKind: undefined,
-  defaultAttributes: {
-    "background-color": "#ffffff",
-    "background-position": "center center",
-    height: "0px",
-    mode: "fixed-height",
-    padding: "0px",
-    "vertical-align": "top",
-  },
-  hasAlternativeText: false,
-  propsSchema: heroPropsSchema,
-  render: renderMjmlNode({
+export const createMjmlHeroType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlockTypeDefinition<MjmlHeroNode> => {
+  const heroTypeFields = {
     allowedAttributes: heroAttributes,
     contentKind: undefined,
+    defaultAttributes: {
+      "background-color": "#ffffff",
+      "background-position": "center center",
+      height: "0px",
+      mode: "fixed-height",
+      padding: "0px",
+      "vertical-align": "top",
+    },
     hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Hero,
-  }),
-  slots: {
-    children: [
-      MjmlNodeType.Accordion,
-      MjmlNodeType.Button,
-      MjmlNodeType.Carousel,
-      MjmlNodeType.Divider,
-      MjmlNodeType.Image,
-      MjmlNodeType.Social,
-      MjmlNodeType.Spacer,
-      MjmlNodeType.Table,
-      MjmlNodeType.Text,
-      MjmlNodeType.Navbar,
-      MjmlNodeType.Raw,
-      ...leafTypes,
-    ],
-  },
-  type: MjmlNodeType.Hero,
-});
+    propsSchema: heroPropsSchema,
+    slots: {
+      children: [
+        MjmlNodeType.Accordion,
+        MjmlNodeType.Button,
+        MjmlNodeType.Carousel,
+        MjmlNodeType.Divider,
+        MjmlNodeType.Image,
+        MjmlNodeType.Social,
+        MjmlNodeType.Spacer,
+        MjmlNodeType.Table,
+        MjmlNodeType.Text,
+        MjmlNodeType.Navbar,
+        MjmlNodeType.Raw,
+        ...leafTypes,
+      ],
+    },
+    type: MjmlNodeType.Hero,
+  } satisfies Partial<MjmlBlockTypeDefinition<MjmlHeroNode>>;
+
+  return {
+    ...heroTypeFields,
+    render: renderMjmlNode({ ...heroTypeFields, hasChildren: true, tagName: MjmlNodeType.Hero }),
+  };
+};

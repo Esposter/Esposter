@@ -73,7 +73,7 @@ export const navbarPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlNavbarProps>>;
 
 // The navbar component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlNavbarType: MjmlBlockTypeDefinition<MjmlNavbarNode> = {
+const mjmlNavbarTypeFields = {
   allowedAttributes: navbarAttributes,
   contentKind: undefined,
   defaultAttributes: {
@@ -91,13 +91,11 @@ export const mjmlNavbarType: MjmlBlockTypeDefinition<MjmlNavbarNode> = {
   },
   hasAlternativeText: false,
   propsSchema: navbarPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: navbarAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Navbar,
-  }),
   slots: { children: [MjmlNodeType.NavbarLink, MjmlNodeType.Raw] },
   type: MjmlNodeType.Navbar,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlNavbarNode>>;
+
+export const mjmlNavbarType: MjmlBlockTypeDefinition<MjmlNavbarNode> = {
+  ...mjmlNavbarTypeFields,
+  render: renderMjmlNode({ ...mjmlNavbarTypeFields, hasChildren: true, tagName: MjmlNodeType.Navbar }),
 };

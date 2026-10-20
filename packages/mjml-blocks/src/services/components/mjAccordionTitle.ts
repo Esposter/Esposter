@@ -45,19 +45,17 @@ export const accordionTitlePropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlAccordionTitleProps>>;
 
 // The accordion title component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlAccordionTitleType: MjmlBlockTypeDefinition<MjmlAccordionTitleNode> = {
+const mjmlAccordionTitleTypeFields = {
   allowedAttributes: accordionTitleAttributes,
   contentKind: MjmlContentKind.Label,
   defaultAttributes: { "font-size": "13px", padding: "16px" },
   hasAlternativeText: false,
   propsSchema: accordionTitlePropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: accordionTitleAttributes,
-    contentKind: MjmlContentKind.Label,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.AccordionTitle,
-  }),
   slots: {},
   type: MjmlNodeType.AccordionTitle,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlAccordionTitleNode>>;
+
+export const mjmlAccordionTitleType: MjmlBlockTypeDefinition<MjmlAccordionTitleNode> = {
+  ...mjmlAccordionTitleTypeFields,
+  render: renderMjmlNode({ ...mjmlAccordionTitleTypeFields, hasChildren: false, tagName: MjmlNodeType.AccordionTitle }),
 };

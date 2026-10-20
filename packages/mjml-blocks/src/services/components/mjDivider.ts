@@ -45,7 +45,7 @@ export const dividerPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlDividerProps>>;
 
 // The divider component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlDividerType: MjmlBlockTypeDefinition<MjmlDividerNode> = {
+const mjmlDividerTypeFields = {
   allowedAttributes: dividerAttributes,
   contentKind: undefined,
   defaultAttributes: {
@@ -58,13 +58,11 @@ export const mjmlDividerType: MjmlBlockTypeDefinition<MjmlDividerNode> = {
   },
   hasAlternativeText: false,
   propsSchema: dividerPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: dividerAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.Divider,
-  }),
   slots: {},
   type: MjmlNodeType.Divider,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlDividerNode>>;
+
+export const mjmlDividerType: MjmlBlockTypeDefinition<MjmlDividerNode> = {
+  ...mjmlDividerTypeFields,
+  render: renderMjmlNode({ ...mjmlDividerTypeFields, hasChildren: false, tagName: MjmlNodeType.Divider }),
 };

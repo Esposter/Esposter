@@ -64,7 +64,7 @@ export const tablePropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlTableProps>>;
 
 // The table component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlTableType: MjmlBlockTypeDefinition<MjmlTableNode> = {
+const mjmlTableTypeFields = {
   allowedAttributes: tableAttributes,
   contentKind: MjmlContentKind.Raw,
   defaultAttributes: {
@@ -82,13 +82,11 @@ export const mjmlTableType: MjmlBlockTypeDefinition<MjmlTableNode> = {
   },
   hasAlternativeText: false,
   propsSchema: tablePropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: tableAttributes,
-    contentKind: MjmlContentKind.Raw,
-    hasAlternativeText: false,
-    hasChildren: false,
-    tagName: MjmlNodeType.Table,
-  }),
   slots: {},
   type: MjmlNodeType.Table,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlTableNode>>;
+
+export const mjmlTableType: MjmlBlockTypeDefinition<MjmlTableNode> = {
+  ...mjmlTableTypeFields,
+  render: renderMjmlNode({ ...mjmlTableTypeFields, hasChildren: false, tagName: MjmlNodeType.Table }),
 };

@@ -77,34 +77,34 @@ export const columnPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlColumnProps>>;
 
 // The column component: the attributes it takes, the props its schema reads and what it renders
-export const createMjmlColumnType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlockTypeDefinition<MjmlColumnNode> => ({
-  allowedAttributes: columnAttributes,
-  contentKind: undefined,
-  defaultAttributes: { direction: "ltr", "vertical-align": "top" },
-  hasAlternativeText: false,
-  propsSchema: columnPropsSchema,
-  render: renderMjmlNode({
+export const createMjmlColumnType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlockTypeDefinition<MjmlColumnNode> => {
+  const columnTypeFields = {
     allowedAttributes: columnAttributes,
     contentKind: undefined,
+    defaultAttributes: { direction: "ltr", "vertical-align": "top" },
     hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Column,
-  }),
-  slots: {
-    children: [
-      MjmlNodeType.Accordion,
-      MjmlNodeType.Button,
-      MjmlNodeType.Carousel,
-      MjmlNodeType.Divider,
-      MjmlNodeType.Image,
-      MjmlNodeType.Raw,
-      MjmlNodeType.Social,
-      MjmlNodeType.Spacer,
-      MjmlNodeType.Table,
-      MjmlNodeType.Text,
-      MjmlNodeType.Navbar,
-      ...leafTypes,
-    ],
-  },
-  type: MjmlNodeType.Column,
-});
+    propsSchema: columnPropsSchema,
+    slots: {
+      children: [
+        MjmlNodeType.Accordion,
+        MjmlNodeType.Button,
+        MjmlNodeType.Carousel,
+        MjmlNodeType.Divider,
+        MjmlNodeType.Image,
+        MjmlNodeType.Raw,
+        MjmlNodeType.Social,
+        MjmlNodeType.Spacer,
+        MjmlNodeType.Table,
+        MjmlNodeType.Text,
+        MjmlNodeType.Navbar,
+        ...leafTypes,
+      ],
+    },
+    type: MjmlNodeType.Column,
+  } satisfies Partial<MjmlBlockTypeDefinition<MjmlColumnNode>>;
+
+  return {
+    ...columnTypeFields,
+    render: renderMjmlNode({ ...columnTypeFields, hasChildren: true, tagName: MjmlNodeType.Column }),
+  };
+};

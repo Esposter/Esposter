@@ -27,19 +27,17 @@ export const wrapperPropsSchema: z.ZodObject<
 }) satisfies z.ZodType<OwnProps<MjmlWrapperProps>>;
 
 // The wrapper component: the attributes it takes, the props its schema reads and what it renders
-export const mjmlWrapperType: MjmlBlockTypeDefinition<MjmlWrapperNode> = {
+const mjmlWrapperTypeFields = {
   allowedAttributes: wrapperAttributes,
   contentKind: undefined,
   defaultAttributes: sectionAttributes.defaultAttributes,
   hasAlternativeText: false,
   propsSchema: wrapperPropsSchema,
-  render: renderMjmlNode({
-    allowedAttributes: wrapperAttributes,
-    contentKind: undefined,
-    hasAlternativeText: false,
-    hasChildren: true,
-    tagName: MjmlNodeType.Wrapper,
-  }),
   slots: { children: [MjmlNodeType.Hero, MjmlNodeType.Raw, MjmlNodeType.Section] },
   type: MjmlNodeType.Wrapper,
+} satisfies Partial<MjmlBlockTypeDefinition<MjmlWrapperNode>>;
+
+export const mjmlWrapperType: MjmlBlockTypeDefinition<MjmlWrapperNode> = {
+  ...mjmlWrapperTypeFields,
+  render: renderMjmlNode({ ...mjmlWrapperTypeFields, hasChildren: true, tagName: MjmlNodeType.Wrapper }),
 };
