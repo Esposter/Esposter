@@ -10,20 +10,9 @@ export const MAX_WEBPAGE_NODES = 2000;
 export const SURVEY_INVITE_BUTTON_COLOR = "#F63A4D";
 
 // Every type a webpage slot may hold but a Column, which only Columns holds, and a Tab, which only Tabs holds
-export const WEBPAGE_PLACEABLE_NODE_TYPES = [
-  WebpageNodeType.Button,
-  WebpageNodeType.Columns,
-  WebpageNodeType.Countdown,
-  WebpageNodeType.CustomHtml,
-  WebpageNodeType.Image,
-  WebpageNodeType.Section,
-  WebpageNodeType.SurveyInvite,
-  WebpageNodeType.Tabs,
-  WebpageNodeType.Text,
-  WebpageNodeType.Tooltip,
-  WebpageNodeType.TypedText,
-  WebpageNodeType.Video,
-] satisfies WebpagePlaceableNode["type"][];
+export const WEBPAGE_PLACEABLE_NODE_TYPES = Object.values(WebpageNodeType).filter(
+  (type): type is WebpagePlaceableNode["type"] => type !== WebpageNodeType.Column && type !== WebpageNodeType.Tab,
+);
 
 // The most characters a style value may hold, so one value cannot grow a rule past what a render writes
 export const MAX_STYLE_VALUE_LENGTH = 200;
