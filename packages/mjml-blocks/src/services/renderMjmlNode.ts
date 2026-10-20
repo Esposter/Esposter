@@ -6,6 +6,7 @@ import type { BlockNode } from "headless-block-editor";
 
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
+import { createMjmlLabelContentSchema } from "#src/services/createMjmlLabelContentSchema";
 import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { escapeAttribute, escapeText, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import { getBlockPropValue } from "headless-block-editor";
@@ -36,7 +37,7 @@ export const renderMjmlNode = <TContent extends MjmlRichText>(
 
     switch (specification.contentKind) {
       case MjmlContentKind.Label: {
-        const parsedLabel = z.string().parse(getBlockPropValue(node.props, "content"));
+        const parsedLabel = createMjmlLabelContentSchema().parse(getBlockPropValue(node.props, "content"));
         return { ...element, content: escapeText(parsedLabel) };
       }
       case MjmlContentKind.Raw:
