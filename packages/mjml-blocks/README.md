@@ -35,7 +35,8 @@ import {
 import type { MjmlRichTextDefinition } from "mjml-blocks";
 import { z } from "zod";
 
-// A leaf a column or a hero may hold beside MJML's own nodes, declared by merging its type tag into MjmlLeafNodes
+// A leaf the document holds beside MJML's own nodes, declared by merging its type tag into MjmlLeafNodes. A column or a hero names a leaf only
+// when the registry is given its full definition as leafTypes, which this example leaves empty, so here they hold MJML's own nodes alone
 interface LinkNode {
   props: { href: string; id: string };
   type: "link";
