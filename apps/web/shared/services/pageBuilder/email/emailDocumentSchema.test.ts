@@ -8,7 +8,7 @@ import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDoc
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { applyBlockEdit, insertBlockNode } from "headless-block-editor";
-import { MjmlNodeType } from "mjml-blocks";
+import { mjmlNodeChildren, MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 const createRawNode = (id: string): MjmlRawNode => ({ props: { content: "", id }, type: MjmlNodeType.Raw });
@@ -56,7 +56,7 @@ describe("emailDocumentSchema", () => {
       props: { id: crypto.randomUUID(), label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
       type: EmailNodeType.SurveyInvite,
     };
-    const operations = insertBlockNode(document, emailRegistry, columnSlot, 0, surveyInvite);
+    const operations = insertBlockNode(document, emailRegistry, mjmlNodeChildren, columnSlot, 0, surveyInvite);
     const edited = applyBlockEdit(emailDocumentSchema, document, operations).match(
       ({ document: editedDocument }) => editedDocument,
       (error) => {
