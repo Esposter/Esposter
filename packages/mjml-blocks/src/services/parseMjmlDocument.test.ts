@@ -386,4 +386,23 @@ describe(parseMjmlDocument, () => {
       { message: 'Unrecognized key: "#id"', path: ["content", 0, "props"] },
     ]);
   });
+
+  test.each([
+    [
+      "content",
+      '<mjml><mj-body><mj-section><mj-column><mj-text content="x">Hi</mj-text></mj-column></mj-section></mj-body></mjml>',
+      "<content>",
+    ],
+    ["children", '<mjml><mj-body><mj-section children="x"></mj-section></mj-body></mjml>', "<children>"],
+    [
+      "decorative",
+      '<mjml><mj-body><mj-section><mj-column><mj-image decorative="true" src="https://example.com/a.png"></mj-image></mj-column></mj-section></mj-body></mjml>',
+      "<decorative>",
+    ],
+  ])("a source attribute named %s is refused by name, not written over the node's own prop", (_name, source, key) => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(source, TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_RICH_TEXT, TEST_MAX_NODES);
+    expect(result.error?.issues.map((issue) => issue.message)).toStrictEqual([`Unrecognized key: "${key}"`]);
+  });
 });

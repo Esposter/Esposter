@@ -4,6 +4,7 @@ import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition"
 import type { Node } from "node-html-parser";
 
 import { STRAY_ID_ATTRIBUTE_KEY, STRAY_TEXT_TYPE } from "#src/services/constants";
+import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlContent } from "#src/services/readMjmlContent";
 import { normalizeString } from "@esposter/shared";
 import { getBlockTypeDefinition } from "headless-block-editor";
@@ -21,8 +22,15 @@ const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   const definition = getBlockTypeDefinition(registry, type);
   const { alt, id: idAttribute, ...attributes } = element.attributes;
   const isDecorative = definition?.hasAlternativeText === true && alt === "";
+  // A source attribute named after a prop the node writes itself is refused under its name, so it cannot overwrite that prop
+  const reservedNames = new Set([
+    ...Object.keys(definition?.slots ?? {}),
+    ...(definition?.contentKind === undefined ? [] : ["content"]),
+    ...(definition?.hasAlternativeText === true ? ["decorative"] : []),
+  ]);
   const entries: [string, unknown][] = [];
-  for (const name of Object.keys(attributes)) entries.push([name, attributes[name]]);
+  for (const name of Object.keys(attributes))
+    entries.push([reservedNames.has(name) ? getMjmlRefusalKey(name) : name, attributes[name]]);
   if (isDecorative) entries.push(["decorative", true]);
   else if (alt !== undefined) entries.push(["alt", alt]);
   if (idAttribute !== undefined) entries.push([STRAY_ID_ATTRIBUTE_KEY, idAttribute]);
