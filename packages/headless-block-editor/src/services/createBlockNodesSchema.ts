@@ -1,6 +1,7 @@
 import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
 
+import { checkAcceptedType } from "#src/services/checkAcceptedType";
 import { checkBlockNodeIds } from "#src/services/checkBlockNodeIds";
 import { z } from "zod";
 
@@ -9,17 +10,11 @@ import { z } from "zod";
 export const createBlockNodesSchema = <TNode extends BlockNode>(
   nodeSchema: z.ZodType<TNode>,
   children: BlockChildren<TNode>,
-  acceptedTypes: string[],
+  acceptedTypes: readonly string[],
 ): z.ZodType<TNode[]> =>
   z.array(nodeSchema).superRefine(
     (nodes, context) => {
-      for (const [index, node] of nodes.entries())
-        if (!acceptedTypes.includes(node.type))
-          context.addIssue({
-            code: "custom",
-            message: `type must be one of ${acceptedTypes.join(", ")}`,
-            path: [index, "type"],
-          });
+      for (const [index, node] of nodes.entries()) checkAcceptedType(context, node.type, acceptedTypes, [index]);
       if (context.issues.length === 0) checkBlockNodeIds(context, children, nodes, [], { count: 0, ids: new Set() });
     },
     { when: ({ issues }) => issues.length === 0 },

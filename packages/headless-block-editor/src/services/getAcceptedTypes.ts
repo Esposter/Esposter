@@ -6,7 +6,7 @@ import type { BlockRegistry } from "#src/models/BlockRegistry";
 import { getBlockNode } from "#src/services/getBlockNode";
 import { getBlockTypeDefinition } from "#src/services/getBlockTypeDefinition";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
-import { getSlotTypes } from "#src/services/getSlotTypes";
+import { getSlotItems } from "#src/services/getSlotItems";
 import { parseJsonPointer, toJsonPointer } from "@esposter/shared";
 
 // The types a slot accepts: the content types the registry's root declares for the root, and a node's slot the types its definition allows
@@ -16,7 +16,7 @@ export const getAcceptedTypes = <TNode extends BlockNode>(
   registry: BlockRegistry<TNode>,
   children: BlockChildren<TNode>,
   slotPointer: string,
-): string[] => {
+): readonly string[] => {
   if (slotPointer === "/content") return getRootAcceptedTypes(registry);
 
   const segments = parseJsonPointer(slotPointer);
@@ -24,5 +24,5 @@ export const getAcceptedTypes = <TNode extends BlockNode>(
   const slot = segments.at(-1);
   if (!owner || slot === undefined) return [];
 
-  return getSlotTypes(getBlockTypeDefinition(registry, owner.type)?.slots ?? {}, slot);
+  return getSlotItems(getBlockTypeDefinition(registry, owner.type)?.slots ?? {}, slot);
 };

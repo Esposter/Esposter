@@ -5,6 +5,7 @@ import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { BlockRootProps } from "#src/models/BlockRootProps";
 
+import { checkAcceptedType } from "#src/services/checkAcceptedType";
 import { checkBlockNodeIds } from "#src/services/checkBlockNodeIds";
 import { getRootAcceptedTypes } from "#src/services/getRootAcceptedTypes";
 import { z } from "zod";
@@ -23,12 +24,7 @@ export const createBlockDocumentSchema = <TNode extends BlockNode, TRootProps ex
     (document, context) => {
       const acceptedTypes = getRootAcceptedTypes(registry);
       for (const [index, node] of document.content.entries())
-        if (!acceptedTypes.includes(node.type))
-          context.addIssue({
-            code: "custom",
-            message: `type must be one of ${acceptedTypes.join(", ")}`,
-            path: ["content", index, "type"],
-          });
+        checkAcceptedType(context, node.type, acceptedTypes, ["content", index]);
       if (context.issues.length > 0) return;
 
       const collection: BlockCollection = { count: 0, ids: new Set() };
