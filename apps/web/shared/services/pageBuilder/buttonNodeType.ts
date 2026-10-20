@@ -1,13 +1,13 @@
 import type { ButtonNode } from "#shared/models/pageBuilder/ButtonNode";
 import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps";
 import type { NodeTypeDefinition } from "#shared/models/pageBuilder/NodeTypeDefinition";
+import type { OwnProps } from "headless-block-editor";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageUrlSchema } from "#shared/services/pageBuilder/webpageUrlSchema";
 import { z } from "zod";
-import type { OwnProps } from "headless-block-editor";
 
 const buttonFormSchema = z.strictObject({ href: webpageUrlSchema, label: z.string().min(1) });
 const buttonPropsSchema = z.object({

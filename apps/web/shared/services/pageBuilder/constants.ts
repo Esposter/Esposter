@@ -1,5 +1,6 @@
-import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePlaceableNode";
+
+import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 // The most nodes a webpage may hold, counted across every slot, so a document cannot grow past what a render walks

@@ -14,38 +14,37 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 
-const TEXT_ONE = "text-one";
-const TEXT_TWO = "text-two";
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
   type: WebpageNodeType.Text,
 });
-const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
-  [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
-  [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
-};
-const RESOURCE_ID = "resource";
-
-const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
-  frameRect: { height: 500, left: 0, top: 0, width: 500 },
-  getChildRect: (nodeId) => RECTS[nodeId],
-  hoveredNodeId,
-  scale: 1,
-});
-
-const setup = (document: WebpageDocument) => {
-  setActivePinia(createPinia());
-  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  pageBuilderDocumentStore.setDocument(RESOURCE_ID, document);
-  const announce = vi.fn<(message: string) => void>();
-  const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
-  return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
-};
 
 const pointerAt = (type: string, x: number, y: number) => new PointerEvent(type, { clientX: x, clientY: y });
 
 describe("usePageBuilderDrag", () => {
+  const TEXT_ONE = "text-one";
+  const TEXT_TWO = "text-two";
+  const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
+    [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
+    [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
+  };
+  const RESOURCE_ID = "resource";
+  const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
+    frameRect: { height: 500, left: 0, top: 0, width: 500 },
+    getChildRect: (nodeId) => RECTS[nodeId],
+    hoveredNodeId,
+    scale: 1,
+  });
+  const setup = (document: WebpageDocument) => {
+    setActivePinia(createPinia());
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(RESOURCE_ID, document);
+    const announce = vi.fn<(message: string) => void>();
+    const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
+    return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
+  };
+
   const COLUMN_SLOT = "/content/0/props/children/0/props/children";
   const COLUMN_DOCUMENT: WebpageDocument = {
     content: [
