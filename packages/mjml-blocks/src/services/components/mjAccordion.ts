@@ -1,15 +1,16 @@
 import type { MjmlAccordionNode } from "#src/models/MjmlAccordionNode";
 import type { MjmlAccordionProps } from "#src/models/MjmlAccordionProps";
+import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
-import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the accordion component, each in MJML's grammar
-const accordionAttributes = {
+export const accordionAttributes = {
   border: "string",
   "container-background-color": "color",
   "font-family": "string",
@@ -27,6 +28,37 @@ const accordionAttributes = {
   "padding-right": "unit(px,%)",
   "padding-top": "unit(px,%)",
 };
+
+export const accordionPropsSchema: z.ZodObject<
+  { [K in keyof typeof accordionAttributes]: MjmlAttributeSchema },
+  z.core.$strict
+> = z.strictObject({
+  border: createMjmlAttributeSchema(accordionAttributes.border, "border").optional(),
+  "container-background-color": createMjmlAttributeSchema(
+    accordionAttributes["container-background-color"],
+    "container-background-color",
+  ).optional(),
+  "font-family": createMjmlAttributeSchema(accordionAttributes["font-family"], "font-family").optional(),
+  "icon-align": createMjmlAttributeSchema(accordionAttributes["icon-align"], "icon-align").optional(),
+  "icon-height": createMjmlAttributeSchema(accordionAttributes["icon-height"], "icon-height").optional(),
+  "icon-position": createMjmlAttributeSchema(accordionAttributes["icon-position"], "icon-position").optional(),
+  "icon-unwrapped-alt": createMjmlAttributeSchema(
+    accordionAttributes["icon-unwrapped-alt"],
+    "icon-unwrapped-alt",
+  ).optional(),
+  "icon-unwrapped-url": createMjmlAttributeSchema(
+    accordionAttributes["icon-unwrapped-url"],
+    "icon-unwrapped-url",
+  ).optional(),
+  "icon-width": createMjmlAttributeSchema(accordionAttributes["icon-width"], "icon-width").optional(),
+  "icon-wrapped-alt": createMjmlAttributeSchema(accordionAttributes["icon-wrapped-alt"], "icon-wrapped-alt").optional(),
+  "icon-wrapped-url": createMjmlAttributeSchema(accordionAttributes["icon-wrapped-url"], "icon-wrapped-url").optional(),
+  padding: createMjmlAttributeSchema(accordionAttributes.padding, "padding").optional(),
+  "padding-bottom": createMjmlAttributeSchema(accordionAttributes["padding-bottom"], "padding-bottom").optional(),
+  "padding-left": createMjmlAttributeSchema(accordionAttributes["padding-left"], "padding-left").optional(),
+  "padding-right": createMjmlAttributeSchema(accordionAttributes["padding-right"], "padding-right").optional(),
+  "padding-top": createMjmlAttributeSchema(accordionAttributes["padding-top"], "padding-top").optional(),
+}) satisfies z.ZodType<OwnProps<MjmlAccordionProps>>;
 
 // The accordion component: the attributes it takes, the props its schema reads and what it renders
 export const mjmlAccordionType: MjmlBlockTypeDefinition<MjmlAccordionNode> = {
@@ -46,9 +78,7 @@ export const mjmlAccordionType: MjmlBlockTypeDefinition<MjmlAccordionNode> = {
     padding: "10px 25px",
   },
   hasAlternativeText: false,
-  propsSchema: z.strictObject({ ...createMjmlAttributeShape(accordionAttributes) }) satisfies z.ZodType<
-    OwnProps<MjmlAccordionProps>
-  >,
+  propsSchema: accordionPropsSchema,
   render: renderMjmlNode({
     allowedAttributes: accordionAttributes,
     contentKind: undefined,

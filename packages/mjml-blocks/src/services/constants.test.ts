@@ -1,10 +1,21 @@
+import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { RenderMjmlDocumentOptions } from "#src/models/RenderMjmlDocumentOptions";
+import type { BlockNode } from "headless-block-editor";
 
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
+import { createMjmlNodeSchema } from "#src/services/mjmlNodeSchema";
 import { describe } from "vitest";
 import { z } from "zod";
+
+// A leaf a consumer declares beside MJML's own, which a column takes as a child
+export type TestLeafNode = BlockNode<"test-leaf">;
+declare module "#src/models/MjmlLeafNodes" {
+  interface MjmlLeafNodes {
+    "test-leaf": TestLeafNode;
+  }
+}
 
 export const TEST_SECTION_ID: string = crypto.randomUUID();
 export const TEST_COLUMN_ID: string = crypto.randomUUID();
@@ -20,6 +31,17 @@ export const TEST_RICH_TEXT: MjmlRichTextDefinition<string> = {
   renderHtml: (html) => html,
   schema: z.string(),
 };
+export const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
+  { props: z.ZodObject<{ id: z.ZodString }, z.core.$strict>; type: z.ZodLiteral<"test-leaf"> },
+  z.core.$strict
+> = z.strictObject({
+  props: z.strictObject({ id: z.string() }),
+  type: z.literal("test-leaf"),
+}) satisfies z.ZodType<TestLeafNode>;
+export const TEST_NODE_SCHEMA: z.ZodType<MjmlNode> = createMjmlNodeSchema({
+  leafNodeSchema: TEST_LEAF_NODE_SCHEMA,
+  richText: TEST_RICH_TEXT,
+});
 export const TEST_REGISTRY: MjmlRegistry = createMjmlRegistry({ leafTypes: [], richText: TEST_RICH_TEXT });
 export const TEST_RENDER_OPTIONS: RenderMjmlDocumentOptions = { context: undefined, isStampingIds: false };
 

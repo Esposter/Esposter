@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+// A node's branch of its union: its type tag, its props checked by the props schema's own refinements once the shape passes, its id and each slot's children
+export const createMjmlNodeBranch = <
+  TType extends string,
+  TPropsShape extends z.core.$ZodLooseShape,
+  TSlotShape extends z.core.$ZodLooseShape,
+>(
+  type: TType,
+  propsSchema: z.ZodObject<TPropsShape, z.core.$strict>,
+  slots: TSlotShape,
+): z.ZodObject<{
+  props: z.ZodObject<TPropsShape & TSlotShape & { id: z.ZodString }, z.core.$strict>;
+  type: z.ZodLiteral<TType>;
+}> => {
+  const declaredKeys = Object.keys(propsSchema.shape);
+  const props = z.strictObject({ ...propsSchema.shape, id: z.string(), ...slots }).superRefine(
+    (value, context) => {
+      const declaredProps = Object.fromEntries(
+        Object.entries(value).filter(([key]) => declaredKeys.includes(String(key))),
+      );
+      for (const { message, path } of propsSchema.safeParse(declaredProps).error?.issues ?? [])
+        context.addIssue({ code: "custom", message, path });
+    },
+    { when: ({ issues }) => issues.length === 0 },
+  );
+  return z.object({ props, type: z.literal(type) });
+};

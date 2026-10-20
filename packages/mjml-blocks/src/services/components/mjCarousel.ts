@@ -1,15 +1,16 @@
+import type { MjmlAttributeSchema } from "#src/models/MjmlAttributeSchema";
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlCarouselNode } from "#src/models/MjmlCarouselNode";
 import type { MjmlCarouselProps } from "#src/models/MjmlCarouselProps";
 import type { OwnProps } from "headless-block-editor";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
-import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
 // The attributes MJML takes on the carousel component, each in MJML's grammar
-const carouselAttributes = {
+export const carouselAttributes = {
   align: "enum(left,center,right)",
   "border-radius": "string",
   "container-background-color": "color",
@@ -29,6 +30,38 @@ const carouselAttributes = {
   thumbnails: "enum(visible,hidden,supported)",
 };
 
+export const carouselPropsSchema: z.ZodObject<
+  { [K in keyof typeof carouselAttributes]: MjmlAttributeSchema },
+  z.core.$strict
+> = z.strictObject({
+  align: createMjmlAttributeSchema(carouselAttributes.align, "align").optional(),
+  "border-radius": createMjmlAttributeSchema(carouselAttributes["border-radius"], "border-radius").optional(),
+  "container-background-color": createMjmlAttributeSchema(
+    carouselAttributes["container-background-color"],
+    "container-background-color",
+  ).optional(),
+  "icon-width": createMjmlAttributeSchema(carouselAttributes["icon-width"], "icon-width").optional(),
+  "left-icon": createMjmlAttributeSchema(carouselAttributes["left-icon"], "left-icon").optional(),
+  padding: createMjmlAttributeSchema(carouselAttributes.padding, "padding").optional(),
+  "padding-bottom": createMjmlAttributeSchema(carouselAttributes["padding-bottom"], "padding-bottom").optional(),
+  "padding-left": createMjmlAttributeSchema(carouselAttributes["padding-left"], "padding-left").optional(),
+  "padding-right": createMjmlAttributeSchema(carouselAttributes["padding-right"], "padding-right").optional(),
+  "padding-top": createMjmlAttributeSchema(carouselAttributes["padding-top"], "padding-top").optional(),
+  "right-icon": createMjmlAttributeSchema(carouselAttributes["right-icon"], "right-icon").optional(),
+  "tb-border": createMjmlAttributeSchema(carouselAttributes["tb-border"], "tb-border").optional(),
+  "tb-border-radius": createMjmlAttributeSchema(carouselAttributes["tb-border-radius"], "tb-border-radius").optional(),
+  "tb-hover-border-color": createMjmlAttributeSchema(
+    carouselAttributes["tb-hover-border-color"],
+    "tb-hover-border-color",
+  ).optional(),
+  "tb-selected-border-color": createMjmlAttributeSchema(
+    carouselAttributes["tb-selected-border-color"],
+    "tb-selected-border-color",
+  ).optional(),
+  "tb-width": createMjmlAttributeSchema(carouselAttributes["tb-width"], "tb-width").optional(),
+  thumbnails: createMjmlAttributeSchema(carouselAttributes.thumbnails, "thumbnails").optional(),
+}) satisfies z.ZodType<OwnProps<MjmlCarouselProps>>;
+
 // The carousel component: the attributes it takes, the props its schema reads and what it renders
 export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
   allowedAttributes: carouselAttributes,
@@ -46,9 +79,7 @@ export const mjmlCarouselType: MjmlBlockTypeDefinition<MjmlCarouselNode> = {
     thumbnails: "visible",
   },
   hasAlternativeText: false,
-  propsSchema: z.strictObject({ ...createMjmlAttributeShape(carouselAttributes) }) satisfies z.ZodType<
-    OwnProps<MjmlCarouselProps>
-  >,
+  propsSchema: carouselPropsSchema,
   render: renderMjmlNode({
     allowedAttributes: carouselAttributes,
     contentKind: undefined,

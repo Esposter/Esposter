@@ -1,7 +1,7 @@
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlTextProps } from "#src/models/MjmlTextProps";
-import type { BlockNode } from "headless-block-editor";
+import type { TestLeafNode } from "#src/services/constants.test";
 
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import {
@@ -9,6 +9,7 @@ import {
   TEST_COLUMN_ID,
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
+  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_RENDER_OPTIONS,
   TEST_RICH_TEXT,
@@ -16,20 +17,12 @@ import {
   TEST_TEXT_ID,
   TEST_WRAPPER_ID,
 } from "#src/services/constants.test";
+import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
-import { createBlockDocumentSchema } from "headless-block-editor";
 import mjml2html from "mjml";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-
-// A leaf a consumer declares beside MJML's own, which a column takes as a child
-type TestLeafNode = BlockNode<"test-leaf">;
-declare module "#src/models/MjmlLeafNodes" {
-  interface MjmlLeafNodes {
-    "test-leaf": TestLeafNode;
-  }
-}
 
 // A section of one column holding one text, with the props given set on that text
 const createTextSection = (textProps: Partial<MjmlTextProps> = {}) => ({
@@ -85,7 +78,7 @@ describe(renderMjmlDocument, () => {
 
     expect(Reflect.has(globalThis, "document")).toBe(false);
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [createTextSection()],
       root: { props: {} },
     });
@@ -117,7 +110,7 @@ describe(renderMjmlDocument, () => {
   test("an attribute holding a quote is escaped once", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
     const { html } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
@@ -127,7 +120,7 @@ describe(renderMjmlDocument, () => {
   test("a valid email compiles under strict validation", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse(EMAIL_DOCUMENT);
     const { errors } = await mjml2html(renderMjmlDocument(document, TEST_REGISTRY, TEST_RENDER_OPTIONS), {
       validationLevel: "strict",
     });
@@ -138,7 +131,7 @@ describe(renderMjmlDocument, () => {
     expect.hasAssertions();
 
     const id = 'id"1';
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [{ props: { children: [], id }, type: MjmlNodeType.Section }],
       root: { props: {} },
     });
@@ -158,7 +151,7 @@ describe(renderMjmlDocument, () => {
   test("#56 #268 #304 #307 a section and a wrapper take full-width and compile", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [
         {
           props: {
@@ -225,7 +218,7 @@ describe(renderMjmlDocument, () => {
   test("#184 #150 #185 a section in a wrapper compiles with no body of its own", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [
         {
           props: {
@@ -271,7 +264,7 @@ describe(renderMjmlDocument, () => {
   test("#35 #4 #118 #124 #207 #208 #248 #249 #284 #351 #370 #371 a head's font, preview and style reach the compiled email", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [
         {
           props: { children: [createTextSection({ "font-family": "Test" })], id: TEST_WRAPPER_ID },
@@ -295,7 +288,7 @@ describe(renderMjmlDocument, () => {
   test("#388 #269 #358 #367 #368 mj-attributes applies, and MJML's defaults fill what a node sets none", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [{ props: { children: [createTextSection()], id: TEST_WRAPPER_ID }, type: MjmlNodeType.Wrapper }],
       root: { props: { attributes: { "mj-all": { "font-family": "Arial" } } } },
     });
@@ -308,7 +301,7 @@ describe(renderMjmlDocument, () => {
   test("#202 a body width caps the email at the width it sets", async () => {
     expect.hasAssertions();
 
-    const document = createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES).parse({
+    const document = createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES).parse({
       content: [createTextSection()],
       root: { props: { body: { width: "800px" } } },
     });

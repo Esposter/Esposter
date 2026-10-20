@@ -1,15 +1,16 @@
 import type { MjmlDocument } from "#src/models/MjmlDocument";
+import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { HTMLElement } from "node-html-parser";
 import type { z } from "zod";
 
 import { DIRECTION_ATTRIBUTE_KEY, MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
+import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlHead } from "#src/services/readMjmlHead";
 import { readMjmlNodes } from "#src/services/readMjmlNodes";
 import { readMjmlStrayText } from "#src/services/readMjmlStrayText";
-import { createBlockDocumentSchema } from "headless-block-editor";
 import { parse } from "node-html-parser";
 
 // The document's root props and body from its mjml element, the head read into the root's props and the body into its content
@@ -68,6 +69,7 @@ const readMjmlTopLevel = (root: HTMLElement): [string, unknown][] => {
 export const parseMjmlDocument = <TContext, TContent>(
   source: string,
   registry: MjmlRegistry<TContext>,
+  nodeSchema: z.ZodType<MjmlNode>,
   richText: MjmlRichTextDefinition<TContent>,
   maxNodes: number,
 ): z.ZodSafeParseResult<MjmlDocument> => {
@@ -82,5 +84,5 @@ export const parseMjmlDocument = <TContext, TContent>(
     mjml?.rawTagName === "mjml" && topLevelEntries.length === 0
       ? readMjmlRoot(mjml, registry, richText)
       : { content: [], root: { props: Object.fromEntries(topLevelEntries) } };
-  return createBlockDocumentSchema(registry, maxNodes).safeParse(candidate);
+  return createMjmlDocumentSchema(registry, nodeSchema, maxNodes).safeParse(candidate);
 };

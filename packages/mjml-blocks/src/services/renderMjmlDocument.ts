@@ -6,6 +6,7 @@ import type { BlockNode } from "headless-block-editor";
 
 import { DIRECTION_ATTRIBUTE_KEY } from "#src/services/constants";
 import { escapeMjmlAttributes } from "#src/services/escapeMjmlAttributes";
+import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { renderMjmlHead } from "#src/services/renderMjmlHead";
 import { escapeAttribute } from "@esposter/shared";
 import { renderBlockNodes } from "headless-block-editor";
@@ -26,10 +27,15 @@ export const renderMjmlDocument = <TContext>(
   options: RenderMjmlDocumentOptions<TContext>,
 ): MjmlJson => {
   const rootProps = document.root.props;
-  const content: MjmlJson[] = renderBlockNodes(document.content, registry, (node, definition, slots) => {
-    const output = definition.render(node, slots, options.context);
-    return stampNode(output, node, options.isStampingIds);
-  });
+  const content: MjmlJson[] = renderBlockNodes(
+    document.content,
+    registry,
+    mjmlNodeChildren,
+    (node, definition, slots) => {
+      const output = definition.render(node, slots, options.context);
+      return stampNode(output, node, options.isStampingIds);
+    },
+  );
   const head = renderMjmlHead(rootProps);
   const rootAttributes: Record<string, string> = {};
   if (rootProps.lang !== undefined) rootAttributes.lang = rootProps.lang;

@@ -6,18 +6,20 @@ import {
   TEST_HERO_ID,
   TEST_IMAGE_ID,
   TEST_MAX_NODES,
+  TEST_NODE_SCHEMA,
   TEST_REGISTRY,
   TEST_SECTION_ID,
   TEST_TEXT_ID,
   TEST_WRAPPER_ID,
 } from "#src/services/constants.test";
+import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
-import { createBlockDocumentSchema, getBlockTypeDefinition } from "headless-block-editor";
+import { getBlockTypeDefinition } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
 // A document as it arrives from its JSON, which the document schema narrows, so its issues name what the schema refused
 const getIssuePaths = (document: unknown): PropertyKey[][] =>
-  createBlockDocumentSchema(TEST_REGISTRY, TEST_MAX_NODES)
+  createMjmlDocumentSchema(TEST_REGISTRY, TEST_NODE_SCHEMA, TEST_MAX_NODES)
     .safeParse(document)
     .error?.issues.map((issue) => issue.path) ?? [];
 
