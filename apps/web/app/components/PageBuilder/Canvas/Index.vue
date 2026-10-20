@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
+import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
-import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
+import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
 import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
@@ -29,23 +29,21 @@ const { announce, dropTarget, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
-const selectedNodeId = computed(() => pageBuilderCanvasStore.getSelectedNodeId(resourceId));
-const editingNodeId = computed(() => pageBuilderCanvasStore.getEditingNodeId(resourceId));
+const { getDevice, getEditingNodeId, getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
+const pageDocument = computed(() => getDocument(resourceId));
+const selectedNodeId = computed(() => getSelectedNodeId(resourceId));
+const editingNodeId = computed(() => getEditingNodeId(resourceId));
 // The document the frame draws. While a text node is edited it stays as it was when the edit began.
 // Otherwise each change would reset the node's rendered html, which the editor is mounted inside
 const drawnDocument = shallowRef<WebpageDocument>();
-watch(
-  [pageDocument, editingNodeId],
-  ([document, nodeId]) => {
-    if (!nodeId) drawnDocument.value = document;
-  },
-  { immediate: true },
-);
+watchImmediate([pageDocument, editingNodeId], ([document, nodeId]) => {
+  if (!nodeId) drawnDocument.value = document;
+});
 const contentRoot = useTemplateRef("contentRoot");
 // The node under the pointer, held here rather than in the store since only this canvas outlines it
-const hoveredNodeId = ref<string>();
+const hoveredNodeId = ref("");
 const selectionBox = ref<OverlayBox>();
 const getElement = (nodeId: string) =>
   contentRoot.value?.ownerDocument.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`) ?? null;
@@ -97,7 +95,7 @@ const selectAdjacentNode = (offset: number) => {
   const document = pageDocument.value;
   if (!document) return;
 
-  const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const nodeId = getSelectedNodeId(resourceId);
   const nodePointer = nodeId ? getNodePointer(document, nodeId) : undefined;
   const adjacentPointer =
     nodePointer === undefined
@@ -105,14 +103,14 @@ const selectAdjacentNode = (offset: number) => {
       : getAdjacentBlockNodePointer(document, webpageNodeChildren, nodePointer, offset);
   const adjacentId =
     adjacentPointer === undefined ? undefined : getBlockNode(document, adjacentPointer, webpageNodeChildren)?.props.id;
-  if (typeof adjacentId === "string") pageBuilderCanvasStore.setSelectedNodeId(resourceId, adjacentId);
+  if (typeof adjacentId === "string") setSelectedNodeId(resourceId, adjacentId);
 };
 const selectParent = () => {
   const document = pageDocument.value;
   if (!document) return;
 
-  const parentId = getParentNodeId(document, pageBuilderCanvasStore.getSelectedNodeId(resourceId));
-  pageBuilderCanvasStore.setSelectedNodeId(resourceId, parentId ?? "");
+  const parentId = getParentNodeId(document, getSelectedNodeId(resourceId));
+  setSelectedNodeId(resourceId, parentId ?? "");
 };
 // The canvas takes its own keys, and forwards every other key to the editor
 // A text edit's own keys stay with it, and a modified key keeps the meaning the editor gives it, so an Alt chord still moves the node
@@ -148,7 +146,7 @@ const css = computed(() => {
     ? `${pageCss}\n[data-node-id="${CSS.escape(editingNodeId.value)}"] > :not([data-text-editor]) { display: none; }`
     : pageCss;
 });
-const device = computed(() => pageBuilderCanvasStore.getDevice(resourceId));
+const device = computed(() => getDevice(resourceId));
 // The nodes are rendered by the frame's content, so the render is a functional component over the document it draws
 const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
   renderCanvasVNodes(props.document, { origin: props.origin });
@@ -159,9 +157,9 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
     <div
       ref="contentRoot"
       relative
-      @click="pageBuilderCanvasStore.setSelectedNodeId(resourceId, getNodeIdFromElement($event.target) ?? '')"
-      @pointerleave="hoveredNodeId = undefined"
-      @pointerover="hoveredNodeId = getNodeIdFromElement($event.target)"
+      @click="setSelectedNodeId(resourceId, getNodeIdFromElement($event.target) ?? '')"
+      @pointerleave="hoveredNodeId = ''"
+      @pointerover="hoveredNodeId = getNodeIdFromElement($event.target) ?? ''"
     >
       <CanvasNodes v-if="drawnDocument" :document="drawnDocument" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
@@ -170,7 +168,7 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
         :get-element
-        :drop-target="dropTarget"
+        :drop-target
         :hovered-node-id
         :resource-id
         :selected-node-id

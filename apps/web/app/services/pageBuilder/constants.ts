@@ -39,3 +39,12 @@ export const WEBPAGE_PALETTE_CATEGORY_MAP: Readonly<Record<string, readonly Webp
   Extra: [WebpageNodeType.Countdown, WebpageNodeType.Tabs, WebpageNodeType.Tooltip, WebpageNodeType.TypedText],
   Survey: [WebpageNodeType.SurveyInvite],
 });
+// The pointer and history interaction of the root, whose props are edited when no node is selected
+export const ROOT_POINTER = "/root";
+export const ROOT_INTERACTION_ID = "content:root";
+// The bounds and starting width of the page builder's side panes, in pixels
+export const MIN_SIDE_PANE_WIDTH = 200;
+export const MAX_SIDE_PANE_WIDTH = 480;
+export const DEFAULT_SIDE_PANE_WIDTH = 260;
+// The content panel's title, which is also its value in the node settings tabs
+export const CONTENT_PANEL = "Content";

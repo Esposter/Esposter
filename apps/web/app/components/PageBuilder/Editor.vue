@@ -7,6 +7,12 @@ import { usePageBuilderClipboard } from "@/composables/pageBuilder/usePageBuilde
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
+import {
+  CONTENT_PANEL,
+  DEFAULT_SIDE_PANE_WIDTH,
+  MAX_SIDE_PANE_WIDTH,
+  MIN_SIDE_PANE_WIDTH,
+} from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -18,16 +24,14 @@ interface Props {
   resourceId: string;
 }
 
-const MIN_SIDE_PANE_WIDTH = 200;
-const MAX_SIDE_PANE_WIDTH = 480;
-const DEFAULT_SIDE_PANE_WIDTH = 260;
-const CONTENT_PANEL = "Content";
 const panelItems: UiTabItem<string>[] = [{ title: CONTENT_PANEL, value: CONTENT_PANEL }];
 
 const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
+const { getDocument } = pageBuilderDocumentStore;
+const pageDocument = computed(() => getDocument(resourceId));
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+const { getEditingNodeId, getSelectedNodeId, setEditingNodeId } = pageBuilderCanvasStore;
 const shell = useTemplateRef("shell");
 const leftWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
 const rightWidth = ref(DEFAULT_SIDE_PANE_WIDTH);
@@ -81,17 +85,17 @@ const getClipboardCommand = (key: string) => {
 };
 // Enter edits the selected node in place when it is a text node, and does nothing for any other node
 const startTextEdit = () => {
-  const document = pageBuilderDocumentStore.getDocument(resourceId);
-  const nodeId = pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  const document = getDocument(resourceId);
+  const nodeId = getSelectedNodeId(resourceId);
   const nodePointer = document && getNodePointer(document, nodeId);
   if (!document || nodePointer === undefined) return;
   if (getBlockNode(document, nodePointer, webpageNodeChildren)?.type !== WebpageNodeType.Text) return;
 
-  pageBuilderCanvasStore.setEditingNodeId(resourceId, nodeId);
+  setEditingNodeId(resourceId, nodeId);
 };
 // Leaving a text edit returns focus to the node's row in the layers tree, since the edit held it inside the frame
 watch(
-  () => pageBuilderCanvasStore.getEditingNodeId(resourceId),
+  () => getEditingNodeId(resourceId),
   (nodeId, previousNodeId) => {
     if (nodeId || !previousNodeId) return;
 
@@ -140,10 +144,10 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
     gap-2
     h-full
     min-h-0
-    @keydown="handleEditorKeydown"
+    @keydown="handleEditorKeydown($event)"
   >
-    <div :style="{ width: `${leftWidth}px` }" relative flex flex-col gap-4 shrink-0 min-h-0>
-      <div flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto>
+    <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col gap-4 min-h-0 relative>
+      <div flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
         <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />
         <PageBuilderLayers :resource-id />
       </div>
@@ -154,19 +158,19 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         :min="MIN_SIDE_PANE_WIDTH"
       />
     </div>
-    <div flex flex-col gap-2 flex-1 min-w-0 min-h-0>
+    <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
       <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" :announce :resource-id />
       <PageBuilderCanvas
         v-else
         ref="canvas"
         :announce
-        :drop-target="dropTarget"
+        :drop-target
         :resource-id
-        @canvas-keydown="handleEditorKeydown"
+        @canvas-keydown="handleEditorKeydown($event)"
       />
     </div>
-    <div :style="{ width: `${rightWidth}px` }" relative shrink-0 min-h-0>
+    <div :style="{ width: `${rightWidth}px` }" shrink-0 min-h-0 relative>
       <UiResizeHandle
         v-model="rightWidth"
         is-reversed

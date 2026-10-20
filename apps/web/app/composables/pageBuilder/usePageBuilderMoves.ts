@@ -9,9 +9,9 @@ import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchem
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
+import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
-import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -30,7 +30,7 @@ import {
 } from "headless-block-editor";
 
 // The id a node carries, or the empty id when the pointer names no node
-const getNodeId = (document: WebpageDocument | undefined, nodePointer: string | undefined): string => {
+const getNodeId = (document: undefined | WebpageDocument, nodePointer: string | undefined): string => {
   if (!document || !nodePointer) return "";
   return getNodeIdAt(document, nodePointer);
 };

@@ -25,7 +25,8 @@ const { dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } = de
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox>("selectionBox");
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const pageDocument = computed(() => pageBuilderDocumentStore.getDocument(resourceId));
+const { getDocument } = pageBuilderDocumentStore;
+const pageDocument = computed(() => getDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
@@ -81,15 +82,15 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 
 <!-- The layer covers the content it outlines, so its own box is the box the outlines are placed in -->
 <template>
-  <div ref="layer" absolute inset-0 pointer-events-none>
+  <div ref="layer" pointer-events-none inset-0 absolute>
     <div
       v-if="hoverBox"
       data-outline="hover"
-      absolute
       outline-1
-      outline-solid
       outline-current
+      outline-solid
       op-50
+      absolute
       :style="{
         height: `${hoverBox.height}px`,
         left: `${hoverBox.left}px`,
@@ -100,8 +101,8 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Line"
       data-drop-indicator="line"
-      absolute
       bg-current
+      absolute
       :style="{
         height: `${dropIndicator.box.height}px`,
         left: `${dropIndicator.box.left}px`,
@@ -112,10 +113,10 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
     <div
       v-if="dropIndicator?.kind === DropIndicatorKind.Outline"
       data-drop-indicator="outline"
+      b-2
+      b-current
+      b-dashed
       absolute
-      border-2
-      border-dashed
-      border-current
       :style="{
         height: `${dropIndicator.box.height}px`,
         left: `${dropIndicator.box.left}px`,
@@ -126,13 +127,13 @@ onScopeDispose(() => cancelAnimationFrame(pendingFrame));
     <div
       v-if="selectionBox"
       data-outline="selection"
-      absolute
-      border-2
-      border-solid
-      border-current
       outline-1
-      outline-solid
       outline-white
+      outline-solid
+      b-2
+      b-current
+      b-solid
+      absolute
       :style="{
         height: `${selectionBox.height}px`,
         left: `${selectionBox.left}px`,

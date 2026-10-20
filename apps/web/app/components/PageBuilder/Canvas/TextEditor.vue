@@ -60,7 +60,7 @@ const onKeydown = (event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div data-text-editor @keydown="onKeydown">
+  <div data-text-editor @keydown="onKeydown($event)">
     <EditorContent :editor />
   </div>
 </template>
