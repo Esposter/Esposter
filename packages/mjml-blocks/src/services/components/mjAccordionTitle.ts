@@ -8,6 +8,7 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlLabelContentSchema } from "#src/services/createMjmlLabelContentSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -29,9 +30,10 @@ export const accordionTitleAttributes: typeof accordionTitleBaseAttributes & typ
 export const accordionTitlePropsSchema: z.ZodObject<
   { [K in keyof typeof accordionTitleAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
-> = z.strictObject({ ...createMjmlAttributeShape(accordionTitleAttributes), content: z.string() }) satisfies z.ZodType<
-  OwnProps<MjmlAccordionTitleProps>
->;
+> = z.strictObject({
+  ...createMjmlAttributeShape(accordionTitleAttributes),
+  content: createMjmlLabelContentSchema(),
+}) satisfies z.ZodType<OwnProps<MjmlAccordionTitleProps>>;
 
 // The accordion title component: the attributes it takes, the props its schema reads and what it renders
 const mjmlAccordionTitleTypeFields = {

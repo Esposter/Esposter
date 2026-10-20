@@ -5,7 +5,7 @@ import type { MjmlRichText } from "#src/models/MjmlRichText";
 import type { MjmlRichTextDefinition } from "#src/models/MjmlRichTextDefinition";
 import type { z } from "zod";
 
-import { MJML_BLOCK_TEXT_TAGS } from "#src/services/constants";
+import { MJML_HEAD_TEXT_TAGS } from "#src/services/constants";
 import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { readMjmlRoot } from "#src/services/readMjmlRoot";
 import { readMjmlTopLevel } from "#src/services/readMjmlTopLevel";
@@ -20,8 +20,12 @@ export const parseMjmlDocument = <TContext, TContent extends MjmlRichText>(
   richText: MjmlRichTextDefinition<TContent>,
   maxNodes: number,
 ): z.ZodSafeParseResult<MjmlDocument> => {
+  const contentTagNames = [
+    ...registry.types.filter((type) => type.contentKind !== undefined).map((type) => type.type),
+    ...MJML_HEAD_TEXT_TAGS,
+  ];
   const root = parse(source, {
-    blockTextElements: Object.fromEntries(MJML_BLOCK_TEXT_TAGS.map((tagName) => [tagName, true])),
+    blockTextElements: Object.fromEntries(contentTagNames.map((tagName) => [tagName, true])),
     comment: false,
     lowerCaseTagName: false,
   });

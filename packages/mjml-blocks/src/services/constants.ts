@@ -188,20 +188,8 @@ export const MJML_COLOR_MATCHERS: RegExp[] = [
   /^#(?:[0-9a-f]{3}){1,2}$/iu,
   new RegExp(`^(${MJML_COLOR_NAMES.join("|")})$`, "u"),
 ];
-// The tags whose content is read raw: each content kind's type, and the head's title, preview and style
-export const MJML_BLOCK_TEXT_TAGS: string[] = [
-  MjmlNodeType.AccordionText,
-  MjmlNodeType.AccordionTitle,
-  MjmlNodeType.Button,
-  MjmlNodeType.NavbarLink,
-  MjmlNodeType.Raw,
-  MjmlNodeType.SocialElement,
-  MjmlNodeType.Table,
-  MjmlNodeType.Text,
-  "mj-preview",
-  "mj-style",
-  "mj-title",
-];
+// The head's tags whose content is read raw: a head component is a root prop rather than a block type, so the registry does not hold it
+export const MJML_HEAD_TEXT_TAGS: string[] = ["mj-preview", "mj-style", "mj-title"];
 // The type a text between an element's children takes when it is not blank: no registry holds it, so the refusal names it
 export const STRAY_TEXT_TYPE = "#text";
 // The key an imported id attribute is kept under: no body component takes one, and a node's own id is the core's, so the

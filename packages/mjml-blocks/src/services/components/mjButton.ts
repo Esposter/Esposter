@@ -8,6 +8,7 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlLabelContentSchema } from "#src/services/createMjmlLabelContentSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -52,9 +53,10 @@ export const buttonAttributes: typeof buttonBaseAttributes & typeof MJML_PADDING
 export const buttonPropsSchema: z.ZodObject<
   { [K in keyof typeof buttonAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
-> = z.strictObject({ ...createMjmlAttributeShape(buttonAttributes), content: z.string() }) satisfies z.ZodType<
-  OwnProps<MjmlButtonProps>
->;
+> = z.strictObject({
+  ...createMjmlAttributeShape(buttonAttributes),
+  content: createMjmlLabelContentSchema(),
+}) satisfies z.ZodType<OwnProps<MjmlButtonProps>>;
 
 // The button component: the attributes it takes, the props its schema reads and what it renders
 const mjmlButtonTypeFields = {

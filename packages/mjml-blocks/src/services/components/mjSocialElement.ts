@@ -8,6 +8,7 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
+import { createMjmlLabelContentSchema } from "#src/services/createMjmlLabelContentSchema";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -50,9 +51,10 @@ export const socialElementAttributes: typeof MJML_PADDING_ATTRIBUTES & typeof so
 export const socialElementPropsSchema: z.ZodObject<
   { [K in keyof typeof socialElementAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
-> = z.strictObject({ ...createMjmlAttributeShape(socialElementAttributes), content: z.string() }) satisfies z.ZodType<
-  OwnProps<MjmlSocialElementProps>
->;
+> = z.strictObject({
+  ...createMjmlAttributeShape(socialElementAttributes),
+  content: createMjmlLabelContentSchema(),
+}) satisfies z.ZodType<OwnProps<MjmlSocialElementProps>>;
 
 // The social element component: the attributes it takes, the props its schema reads and what it renders
 const mjmlSocialElementTypeFields = {
