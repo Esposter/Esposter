@@ -1,6 +1,6 @@
 ---
 name: claude-permissions
-description: Apply when editing settings.local.json or debugging why a command still prompts. Esposter Claude Code permission-rule conventions for the allow-only .agents/settings.local.json — the shipped file is the standard (a command taking arguments is the trailing space-star form, colon sub-scripts get their own rule), mirroring rules across Bash and PowerShell, and sorting. Generic harness semantics live in the update-config skill.
+description: Apply when editing settings.local.json or debugging why a command still prompts. Esposter Claude Code permission-rule conventions for the allow-only .agents/settings.local.json. Generic harness semantics live in the update-config skill.
 ---
 
 # Claude Code Permission Rules (`.agents/settings.local.json`)
@@ -18,7 +18,7 @@ Permissions are all it holds. The sibling `.agents/settings.json` is the checked
 
 ## The one non-obvious rule: use `command *`, and give colon sub-scripts their own rule
 
-**The shipped `settings.local.json` is the standard — copy its shape.** A command that takes arguments is the trailing `space + *` form (`Bash(pnpm lint *)`, `Bash(az resource show *)`); a command run as one fixed string is its exact text (`Bash(pnpm i)`, `Bash(pnpm graph:gen)`), and that file is known to work.
+**The shipped `settings.local.json` is the standard — copy its shape.** A command that takes arguments is the trailing `space + *` form (`Bash(pnpm lint *)`, `Bash(az resource show *)`); a command run as one fixed string is its exact text (`Bash(pnpm i)`), and that file is known to work.
 
 `pnpm lint *` covers `pnpm lint` and `pnpm lint --fix`, but **not** `pnpm lint:fix` — hence the file's separate `pnpm lint:fix *`, `pnpm lint:fix:packages *`, and `pnpm outdated:dependencies *` entries. Each colon sub-script you actually invoke needs its own rule. That is the first thing to check when a command still prompts.
 
