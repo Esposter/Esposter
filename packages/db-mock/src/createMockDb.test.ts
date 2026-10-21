@@ -21,13 +21,13 @@ describe(createMockDb, () => {
   const introspect = async (client: PGlite) => (await client.query(introspectQuery)).rows;
 
   let db: Database;
+  let migratedIntrospection: Awaited<ReturnType<typeof introspect>>;
+  let snapshotIntrospection: Awaited<ReturnType<typeof introspect>>;
 
+  // Both PGlite boots and the replay of every statement are set up here rather than in the test, so they run under
+  // The hook timeout a PGlite boot is given, not the per-test one a loaded run starves
   beforeAll(async () => {
     db = await createMockDb();
-  });
-
-  test("snapshot matches a freshly generated migration", async () => {
-    expect.hasAssertions();
 
     const migratedPGlite = new PGlite({ extensions: { pg_trgm } });
     // Mirrors generateSnapshot.ts — the generated DDL includes the resources trigram index,
@@ -37,15 +37,19 @@ describe(createMockDb, () => {
     const statements = await generateMigration(previousJson, await generateDrizzleJson(schema, previousJson.id));
     // oxlint-disable-next-line no-await-in-loop -- Order is the contract: a migration's statements run in the order they were generated
     for (const statement of statements) await migratedPGlite.exec(statement);
+    migratedIntrospection = await introspect(migratedPGlite);
 
     const snapshotPGlite = new PGlite({
       extensions: { pg_trgm },
       loadDataDir: new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]),
     });
+    snapshotIntrospection = await introspect(snapshotPGlite);
+  });
 
-    const snapshotIntrospection = await introspect(snapshotPGlite);
+  test("snapshot matches a freshly generated migration", () => {
+    expect.hasAssertions();
 
-    expect(snapshotIntrospection).toStrictEqual(await introspect(migratedPGlite));
+    expect(snapshotIntrospection).toStrictEqual(migratedIntrospection);
   });
 
   test("returns a queryable db", async () => {
