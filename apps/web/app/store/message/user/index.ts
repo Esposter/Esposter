@@ -6,12 +6,13 @@ import { useRoomStore } from "@/store/message/room";
 export const useUserStore = defineStore("message/user", () => {
   const roomStore = useRoomStore();
   const userMap = ref(new Map<string, PublicUser>());
-  // Each room's member rows as the room's reads returned them, keyed by user id. A user's name differs from room to
-  // Room, so the row carries the name its own room gave it and nothing here derives one
+  // Each room's member rows as the room's reads returned them, keyed by user id
+  // A user's name differs by room, so each row carries the name its own room gave it and nothing here derives one
   const { getData: getRoomMemberMap, setData: setRoomMemberMap } = useDataMap(
     () => roomStore.currentRoomId,
     () => new Map<string, MemberInRoom>(),
   );
+  const getRoomMemberName = (roomId: string, userId: string) => getRoomMemberMap(roomId)?.get(userId)?.displayName;
   const storeUser = (user: PublicUser) => {
     userMap.value.set(user.id, user);
   };
@@ -24,5 +25,5 @@ export const useUserStore = defineStore("message/user", () => {
     setRoomMemberMap(roomId, roomMemberMap);
   };
 
-  return { getRoomMemberMap, storeRoomMembers, storeUser, storeUsers, userMap };
+  return { getRoomMemberMap, getRoomMemberName, storeRoomMembers, storeUser, storeUsers, userMap };
 });

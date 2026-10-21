@@ -23,8 +23,8 @@ const {
   upsertMemberPermissionOverride,
 } = roleStore;
 const userStore = useUserStore();
-const { getRoomMemberMap } = userStore;
-const memberName = computed(() => getRoomMemberMap(roomId)?.get(userId)?.displayName ?? "");
+const { getRoomMemberName } = userStore;
+const memberName = computed(() => getRoomMemberName(roomId, userId) ?? "");
 // Administrator is answered from the roles alone, so an override cannot hold it and no row offers it
 const categories = RoomPermissionCategoryItems.map(({ category, permissions }) => ({
   category,

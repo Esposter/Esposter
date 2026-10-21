@@ -14,16 +14,13 @@ export const useCallRoomParticipantMap = () => {
   const participantStore = useParticipantStore();
   const { callSessionParticipantsMap } = storeToRefs(participantStore);
   const userStore = useUserStore();
-  const { getRoomMemberMap } = userStore;
+  const { getRoomMemberName } = userStore;
   return computed(
     () =>
       new Map<string, CallParticipant>(
         Array.from(callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? [], ([id, participant]) => [
           id,
-          {
-            ...participant,
-            name: getRoomMemberMap(currentRoomId.value)?.get(participant.userId)?.displayName ?? participant.name,
-          },
+          { ...participant, name: getRoomMemberName(currentRoomId.value, participant.userId) ?? participant.name },
         ]),
       ),
   );

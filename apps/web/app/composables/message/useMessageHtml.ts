@@ -18,7 +18,7 @@ import { parse } from "node-html-parser";
 export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: MaybeRefOrGetter<string>) => {
   const userStore = useUserStore();
   const { userMap } = storeToRefs(userStore);
-  const { getRoomMemberMap } = userStore;
+  const { getRoomMemberName } = userStore;
   const roomEmojiStore = useRoomEmojiStore();
   const { customEmojiMap } = storeToRefs(roomEmojiStore);
   return computed(() => {
@@ -29,9 +29,7 @@ export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: Maybe
       const memberId = mention.getAttribute(MENTION_ID_ATTRIBUTE);
       if (!memberId) continue;
       // A room's mention reads the name its member row carries there; with no room, the account name
-      const displayName = roomIdValue
-        ? getRoomMemberMap(roomIdValue)?.get(memberId)?.displayName
-        : userMap.value.get(memberId)?.name;
+      const displayName = roomIdValue ? getRoomMemberName(roomIdValue, memberId) : userMap.value.get(memberId)?.name;
       if (!displayName) continue;
       if (displayName === mention.textContent.slice(1)) continue;
 

@@ -55,7 +55,7 @@ A reaction is a **pressed toggle**: a field-toned pill button holding the emoji 
 
 A tooltip cannot be clicked through, so everyone who reacted is the reaction's own [context menu](../../architecture/context-menus/design.md) — a right-click, long press or menu key offers **View Reactions**. The gestures stop at the reaction, so the message around it opens nothing of its own. View Reactions opens the **Reactions dialog** — one instance mounted at the list level and targeted through `messageDialogStore.reactionsRowKey` beside `reactionsRoomId` — the reaction's own room, since the thread pane renders messages beside whichever room is on screen — per [singleton dialogs](../../architecture/singleton-dialogs/design.md), never one per reaction. A rail of reactions sorted by count sits beside the reactors of whichever is selected. The selection is _derived_ rather than assigned when the dialog opens, so a reaction that overtakes another — or that disappears while the dialog is open — never leaves the rail pointing at nothing; and a message whose last reaction goes closes the dialog with it.
 
-Each reactor renders under the room's resolved display name (`getMemberName`), with the account name on a second line only when the two differ.
+Each reactor renders under the room's resolved display name (the room member row's `displayName`, read through `getRoomMemberName`, with the account name for a reactor the room has no row for), with the account name on a second line only when the two differ.
 
 ### Search
 

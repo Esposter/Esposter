@@ -10,12 +10,12 @@ interface Props {
 
 const { roomId, userId } = defineProps<Props>();
 const userStore = useUserStore();
-const { getRoomMemberMap } = userStore;
+const { getRoomMemberName } = userStore;
 const { userMap } = storeToRefs(userStore);
 const user = computed(() => userMap.value.get(userId));
 // The room display name — a displayName where one is set, which is what the rest of the room shows this person as.
 // A reactor with no membership in the room is named by the account
-const memberName = computed(() => getRoomMemberMap(roomId)?.get(userId)?.displayName ?? user.value?.name ?? "");
+const memberName = computed(() => getRoomMemberName(roomId, userId) ?? user.value?.name ?? "");
 </script>
 
 <template>

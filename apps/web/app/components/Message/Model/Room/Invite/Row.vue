@@ -18,9 +18,9 @@ const runtimeConfig = useRuntimeConfig();
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 const userStore = useUserStore();
-const { getRoomMemberMap } = userStore;
+const { getRoomMemberName } = userStore;
 // The creator is named as the room knows them, and an account with no membership in the room by its own name
-const creatorName = computed(() => getRoomMemberMap(roomId)?.get(invite.user.id)?.displayName ?? invite.user.name);
+const creatorName = computed(() => getRoomMemberName(roomId, invite.user.id) ?? invite.user.name);
 // The cap belongs beside the count rather than in a column of its own, which is where Discord puts a bare number
 const usesText = computed(() => (invite.maxUses ? `${invite.uses} / ${invite.maxUses}` : String(invite.uses)));
 // Discord's column is a clock rather than a phrase — the reader is watching a link run out, and "in 2 hours"

@@ -13,7 +13,7 @@ export const useCallParticipantTiles = () => {
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const userStore = useUserStore();
-  const { getRoomMemberMap } = userStore;
+  const { getRoomMemberName } = userStore;
   const mediaStore = useMediaStore();
   const {
     activeScreenShareParticipantId,
@@ -32,10 +32,7 @@ export const useCallParticipantTiles = () => {
         Array.from(callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? [], ([id, participant]) => [
           id,
           callRoomId.value
-            ? {
-                ...participant,
-                name: getRoomMemberMap(callRoomId.value)?.get(participant.userId)?.displayName ?? participant.name,
-              }
+            ? { ...participant, name: getRoomMemberName(callRoomId.value, participant.userId) ?? participant.name }
             : participant,
         ]),
       ),
