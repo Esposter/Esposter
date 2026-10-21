@@ -30,7 +30,7 @@ layer down: gate on the total, which is the only value that speaks for the pages
 
 `readItems(query, { key })` adopts the payload on the hydrating render and **never calls `query`** there, so
 anything the closure writes besides its returned page is written on the server only. That is fine — and the
-reason the aggregate above may live in the closure — **as long as the destination is Pinia store state**, which
+reason the aggregate under "A total over a paginated list is the server's, never the loaded rows" may live in the closure — **as long as the destination is Pinia store state**, which
 rides the payload and is restored on hydration. A closure that writes a module-level ref, a component ref or
 anything else outside a store loses that value at hydration and leaves the surface rendering a default nobody
 can explain. Anything read on the client goes in the store; the closure returns the page and writes store state,
