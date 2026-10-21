@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** resolve workspace lint and typecheck failures ([7a226bb](https://github.com/Esposter/Esposter/commit/7a226bb0be7d0a908b9ef8611a99243ce35d85fe))
+* **packages:** the absorbed packages typecheck and lint clean ([7483a70](https://github.com/Esposter/Esposter/commit/7483a70c65b614ed0a8c43f2e3180215c9c246e2))
+* **pitch-transcription:** a note's velocity is clamped to 1..127, so a quiet note still sounds and a loud one is not a status byte ([46bceaf](https://github.com/Esposter/Esposter/commit/46bceaf4e2fdf86f299c2078a00bd679aafc1312)), closes [#174](https://github.com/Esposter/Esposter/issues/174)
+* **pitch-transcription:** each read test runs its own read, and the README says a runtime takes another copy's tensors ([7630f23](https://github.com/Esposter/Esposter/commit/7630f23c7f35e8becd81fb07a839fbaebf1b8a5a))
+* **workspace:** a required peer is listed once, and a test holds every manifest to it ([8823f95](https://github.com/Esposter/Esposter/commit/8823f95e44a66baaafc7684fb1a277b85c759e17))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package pitch-transcription

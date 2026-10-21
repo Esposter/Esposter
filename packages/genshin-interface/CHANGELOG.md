@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **genshin-interface:** the bag-full fixture's notice is a placeholder, not the game's sentence ([e8893ab](https://github.com/Esposter/Esposter/commit/e8893ab15bb2fab0a782a3488c12081d6029bc56))
+* **genshin-interface:** the Blessing screen fixture gives the Worship button its title ([2708978](https://github.com/Esposter/Esposter/commit/2708978c84b875e802da0d88093225e78416616b))
+* **genshin-interface:** the dev styles export is hoisted, and its ordering directive sits on its own line ([0a5b0ef](https://github.com/Esposter/Esposter/commit/0a5b0ef7a59bec02a502fc06c272ad63f8897b70))
+* **genshin-interface:** the Shop screen imports computed ([9fa97c9](https://github.com/Esposter/Esposter/commit/9fa97c9df0f68d71b4201921f22efaea1e137a17))
+* **genshin-interface:** the styles export lists its source arm before its default ([faa4280](https://github.com/Esposter/Esposter/commit/faa42804eeb4fa0e88c42302ff1a7e25643d7fdb))
+* **genshin-interface:** the Vitest config keeps the shared exclude, which already leaves the visual suite out ([a86e19f](https://github.com/Esposter/Esposter/commit/a86e19f47c447334617a4e8a829e592b75587f0a))
+* **genshin-interface:** the worship level state is a string enum in its own model file ([da67521](https://github.com/Esposter/Esposter/commit/da67521e8f00f7a313f3f86b97d7d6f60f6eef70))
+* **genshin-world:** the crafting bench's prompt is a Use row, so using it opens the bench rather than unlocking a waypoint ([2edc0b6](https://github.com/Esposter/Esposter/commit/2edc0b66521d0ee6607fb2b5e3787c7fdc49f3ea))
+* **genshin:** the merged changes typecheck, lint and pass together ([c8bb4ef](https://github.com/Esposter/Esposter/commit/c8bb4ef1fd59ebb73caf686f8f1cd9b0c0a9c8ff))
+* **genshin:** the merged wave typechecks and follows lint ([b073f71](https://github.com/Esposter/Esposter/commit/b073f717b477ec27fd03d3ae73e0d52c83514ab2))
+* **genshin:** the shop goods are read by their typed key, the quest fixtures carry their chapter, and the cooking arc's radii are the constants' ([8930058](https://github.com/Esposter/Esposter/commit/893005882ad8debe5f064ba6e0c94b4f7a52ca7d))
+
+### Features
+
+* **genshin-interface:** Party Setup's layout follows the public clip's frame, with a name plate over each standing member ([8f52f46](https://github.com/Esposter/Esposter/commit/8f52f46430d18693f32b3c30b9851e08fdcb7b34))
+* **genshin-interface:** the Artifacts panel shows the five slots, the picked slot's name, the set block and its actions ([e2fea3e](https://github.com/Esposter/Esposter/commit/e2fea3e608ef78574462d0508621571066b08a83))
+* **genshin-interface:** the expedition screen lays out its nations, places and picked place from the public clip ([acb7595](https://github.com/Esposter/Esposter/commit/acb7595ea578010fb5153959449a4d2c5cfcc1ad))
+* **genshin-interface:** the Shop screen's pixels are measured from a public clip, and task 3.2 is closed ([024a146](https://github.com/Esposter/Esposter/commit/024a146c63f81637c5e2a14d1eade8467f649301))
+* **genshin-interface:** the weapon menu frame, its tabs and its action, measured from the English PC clip ([0b67f0d](https://github.com/Esposter/Esposter/commit/0b67f0d91bb77da3854d874c0665733812d65708))
+* **genshin-interface:** the Wish banner's link row takes a trial button ([5cfb3c8](https://github.com/Esposter/Esposter/commit/5cfb3c8e2ef6ff74c3749b81164cd5cf32be3d07))
+* **genshin-world:** a buried chest offers Dig at its place and appears once dug ([484a9ec](https://github.com/Esposter/Esposter/commit/484a9ec8a958967f5dc07e2f88327f14b25ddb1e))
+* **genshin-world:** a city vendor's talk opens their shop, and the Shop screen buys its goods ([26c8574](https://github.com/Esposter/Esposter/commit/26c85748cf819e390d49eedeb5de3872e15ec33f))
+* **genshin-world:** a result card shows the Stella Fortuna its draw brings ([5078c6c](https://github.com/Esposter/Esposter/commit/5078c6c9614be780c7624a197dd22d88af5d465d))
+* **genshin-world:** a shop good is bought with every cost it lists, from the wallet or the bag ([b8f755b](https://github.com/Esposter/Esposter/commit/b8f755bd1013122eb8bfce0137fe6f37c99b33ef))
+* **genshin-world:** a waiting outcrop is touched within reach, its cleared blossom is offered to claim, and the claim pays and moves it on ([ab18925](https://github.com/Esposter/Esposter/commit/ab18925504423e93d36e6669232fcaaedc65cd10))
+* **genshin-world:** an artifact's lock is toggled in the bag, saved on the artifact ([2f1dbda](https://github.com/Esposter/Esposter/commit/2f1dbdafba5a32d2d5d72a8085f134d690ecc94e))
+* **genshin-world:** an artifact's lock is toggled on the Artifacts tab, saved on the artifact ([3ffdff5](https://github.com/Esposter/Esposter/commit/3ffdff55b50311ef1e587e2f33853bf76a312661))
+* **genshin-world:** an artifact's main stat is valued at its rarity's curve and level ([bb7ed68](https://github.com/Esposter/Esposter/commit/bb7ed68a2958d659b6daa0e335f8082c6cd7b837))
+* **genshin-world:** Enhance opens the fodder picker of the bag's artifacts and EXP ores, with Auto Add, the level reached and the Mora (task 6.2) ([af17d9b](https://github.com/Esposter/Esposter/commit/af17d9b280fe9d5f9b21b454049a4635b9b09da7))
+* **genshin-world:** Equip and Unequip move artifacts between the bag and the Artifacts tab ([92d20da](https://github.com/Esposter/Esposter/commit/92d20da0a70fd55da2640b0018c24d20cbcf4973))
+* **genshin-world:** Equip opens the bag's pieces for the slot, and the player chooses one (task 6.2) ([01ea729](https://github.com/Esposter/Esposter/commit/01ea729a74ca424cb2db4ce60412ad908c8590da))
+* **genshin-world:** F on a resonated statue opens the Statue's Blessing ([ce1efe9](https://github.com/Esposter/Esposter/commit/ce1efe9f95f24388f5a955cbfe8eeba0cdbd535e))
+* **genshin-world:** Party Setup shows the deployed team's four slots with arrows, Deploy, Configure Team and Quick Setup, and the menu's Party Setup slot opens it ([9691b72](https://github.com/Esposter/Esposter/commit/9691b72060db2fce319fc9c43700466c0cc81d58))
+* **genshin-world:** the Artifacts panel draws each set bonus as its line and the picked artifact's stats ([ddaa7a2](https://github.com/Esposter/Esposter/commit/ddaa7a2f2d2d4ff5e8805efbf8905a1f11ce12ae))
+* **genshin-world:** the bag's gadget tab equips an equipable gadget to the quick-use slot ([2726b18](https://github.com/Esposter/Esposter/commit/2726b18d5cab45a59c100d2d3829a5074eee0db7))
+* **genshin-world:** the bench lists learned recipes with their crafted counts ([1d3c454](https://github.com/Esposter/Esposter/commit/1d3c4541354951d70d351b007d7f4f997f4023e2))
+* **genshin-world:** the Constellation tab's Activate spends a Stella Fortuna on the next constellation, and a duplicate's Stella Fortuna reaches its character as the draw lands ([c02d599](https://github.com/Esposter/Esposter/commit/c02d59988c186660257eadc292e6144113cd5f10))
+* **genshin-world:** the cooking indicator lays its zones out from each recipe's parameters ([ec8a3ad](https://github.com/Esposter/Esposter/commit/ec8a3adb3c87e03ab6048ed0aff2f7604b91da14))
+* **genshin-world:** the element mark shows the chosen character's element at the name, the Traveler's its alignment's ([2c28284](https://github.com/Esposter/Esposter/commit/2c2828443165744047439569f8012e33c102737f))
+* **genshin-world:** the expedition screen opens over the world, listing Mondstadt's open places and sending, claiming and recalling expeditions ([5b9e7c4](https://github.com/Esposter/Esposter/commit/5b9e7c48485870f6b492a394e80dcfd68a2e038e))
+* **genshin-world:** the forge screen lists its queues from the forge state, obtains a finished order and shows the refusal words ([43ae504](https://github.com/Esposter/Esposter/commit/43ae50487708efe0ce8a5ba1b23ccebcc90f5a89))
+* **genshin-world:** the keeper offers a delivery request the player has not started, and accepting it starts its quest ([5d37537](https://github.com/Esposter/Esposter/commit/5d3753748bee6fab6a6774503b15e57e185110de))
+* **genshin-world:** the stove lists the dishes the cook knows, an instruction in the bag teaches its dish, and Auto Cook is offered at full proficiency ([ecb2529](https://github.com/Esposter/Esposter/commit/ecb25292448dbb4ea002807d2aa43be5aa722117))
+* **genshin-world:** the Talents tab shows each combat talent's next level and presses its upgrade ([b76473c](https://github.com/Esposter/Esposter/commit/b76473c07a0a643a658233a15359fa6e29ce19e9))
+* **genshin-world:** the wish History lists the year's draws, newest first, with their banner, name, rarity and minute ([98fa814](https://github.com/Esposter/Esposter/commit/98fa814c59a812fc14b6ddd461c2a29c4963b88c))
+* **genshin-world:** the Wish trial button is labelled with the game's "Go to Trial" ([c35ff69](https://github.com/Esposter/Esposter/commit/c35ff69039eb0e10386186a74b6c5dd927c5cdf2))
+* **genshin-world:** two character event banners are offered together, each tab keyed by its banner and labelled by its number ([7f13dad](https://github.com/Esposter/Esposter/commit/7f13dada38d3f08304d85659b2b4e8beeac3a3a4))
+* **genshin-world:** Unequip into a full artifact tab shows the artifact inventory's own notice (task 6.2) ([c00bf7a](https://github.com/Esposter/Esposter/commit/c00bf7a3a1fefbdc97afbf7e94e4214f765acf57))
+* **genshin-world:** Unequip with a full bag shows the game's "Inventory full" notice and leaves the piece worn (task 6.2) ([4305324](https://github.com/Esposter/Esposter/commit/43053247529a6350b9e58228941d882c97487c94))
+* **genshin-world:** using a food from the bag eats it and applies its heal to its target within the party's health ([dfbf56d](https://github.com/Esposter/Esposter/commit/dfbf56d6a895cf1de59fed33420b4d649a84976e))
+* **genshin:** the Worship Statue offers held Oculi and claims each reached level, and F on a resonated statue opens it ([c1b4ac1](https://github.com/Esposter/Esposter/commit/c1b4ac1ab594537869993d7a0ec2d5296f496138))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 ### Bug Fixes

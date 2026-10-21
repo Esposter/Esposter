@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** resolve failed release checks ([af5f20d](https://github.com/Esposter/Esposter/commit/af5f20d9c504f97ae8b2f23523cdcad2614deb38))
+* **genshin-engine:** boolean functions are check* across the engine, persona and world ([72d792d](https://github.com/Esposter/Esposter/commit/72d792d083ae3a7d37d8993c39f36e923ca67595))
+* **genshin-persona:** a hook exits zero whatever its command throws ([99079df](https://github.com/Esposter/Esposter/commit/99079df8b592bfdd7cb0cec6a8224f8810ec64f3))
+* **genshin-persona:** a line is synthesized whole and played, not streamed in chunks ([ec813c2](https://github.com/Esposter/Esposter/commit/ec813c2556831d94252b463044f89dada244e1a8))
+* **genshin-persona:** a streamed chunk is checked for audio, not for a pause a whole sentence has ([5b9e12d](https://github.com/Esposter/Esposter/commit/5b9e12d4793f9e360118798b83314d0585c59496))
+* **genshin-persona:** a viewer frame that is not JSON is ignored, not thrown into the message listener ([8090c70](https://github.com/Esposter/Esposter/commit/8090c707a37c89c55220b4ef0df3ccd11091b6ba))
+* **genshin-persona:** an open reads the viewer on file each time and connects again when its model or address changed ([adcd6e1](https://github.com/Esposter/Esposter/commit/adcd6e11305c8291371a7636b5202d7d5d1f5623))
+* **genshin-persona:** checkIsAudible takes the frame energies its caller measured, so a speech check measures each frame once ([212d359](https://github.com/Esposter/Esposter/commit/212d3594bf6aa7383965b5bc58067a4dfd53edd0))
+* **genshin-persona:** only a sentence's opening chunk is checked for audio, since a pause mid-sentence is silence too ([b03b9b2](https://github.com/Esposter/Esposter/commit/b03b9b23ea3bfe0bd4d7b186bf435809a446c272))
+* **genshin-persona:** the hook command answers --help as runMain does, since runCommand does not ([6da9bbd](https://github.com/Esposter/Esposter/commit/6da9bbd0c93b8a6fd3764b1d163dd65f148ceb2f))
+* **genshin-persona:** the synthesizer disposes its viewer before it exits, so the last clip does not stay in tmpdir ([9b5c55e](https://github.com/Esposter/Esposter/commit/9b5c55e27dd4ba973228c187c4009ce821056c88))
+* **genshin-persona:** the viewer opener and fake link name their return types for isolated declarations ([0b076a8](https://github.com/Esposter/Esposter/commit/0b076a8711324737b98a1c5b74ad8af6a903b379))
+* **genshin-persona:** the viewer suites assert the arguments they capture, and the hook reads its moment under a directive ([12722e8](https://github.com/Esposter/Esposter/commit/12722e899ecc60c4684001790c04da48038789c3))
+* **genshin-text:** Jump and a quest's distance read 7.1's own lines, since its manual text map dropped the minigame's two ([d4dfc90](https://github.com/Esposter/Esposter/commit/d4dfc9082fed6625df47cc53fa2bd1397168bdb0))
+* **genshin-text:** the GameTextKey members sit in alphabetical order, and the persona's copy follows ([4f7d386](https://github.com/Esposter/Esposter/commit/4f7d386e603c3269aab362338b766a3d1e5e5119))
+
+### Features
+
+* **agent-console:** apply element palette to sheet ([9c00ed0](https://github.com/Esposter/Esposter/commit/9c00ed0f442d93f72a06f66bd3fb22c3c713f91f))
+* **agent-console:** expose character element in session context ([32e9234](https://github.com/Esposter/Esposter/commit/32e92340d9cb56ce12180f79f7345d8340434492))
+* **agent-console:** the wish banner drops a star for a lore pick, and its rates ([883fa12](https://github.com/Esposter/Esposter/commit/883fa1249ec5af43b7ec82aaa7f1af7618622a96))
+* **genshin-persona:** a compressed-only viewer path keeps the sound on the stock player and shows the bubble alone ([2aa7175](https://github.com/Esposter/Esposter/commit/2aa7175477b15a71e7ceed2f7289609eed401ff6))
+* **genshin-persona:** a viewer verb sets the address and the motions, and teardown removes it ([fcd4265](https://github.com/Esposter/Esposter/commit/fcd4265609355781d0ca0b8840990f9dab0a67e5))
+* **genshin-persona:** spoken lines show as a bubble and play on a Live2DViewerEX model when one is on file ([593e755](https://github.com/Esposter/Esposter/commit/593e755afa94e22d25681e02310d8309330322c0))
+* **genshin:** the Worship Statue offers held Oculi and claims each reached level, and F on a resonated statue opens it ([841a5e5](https://github.com/Esposter/Esposter/commit/841a5e5fb41db27621ff100b95952cf13583523d))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package genshin-persona

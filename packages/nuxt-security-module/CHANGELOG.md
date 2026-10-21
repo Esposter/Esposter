@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **workspace:** a required peer is listed once, and a test holds every manifest to it ([8823f95](https://github.com/Esposter/Esposter/commit/8823f95e44a66baaafc7684fb1a277b85c759e17))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package nuxt-security-module

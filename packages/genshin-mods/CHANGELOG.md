@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **genshin-mods:** count every file write a read command makes as a write ([b08267d](https://github.com/Esposter/Esposter/commit/b08267d2457c055a2e6b4fd7ab13a782c408f7f4))
+* **genshin-mods:** refuse a recursive scan written with an abbreviated long option ([f82e709](https://github.com/Esposter/Esposter/commit/f82e709a02624f09ba0883a7d7de6d899c2d1f4e))
+* **genshin-mods:** refuse ls --recursive over a root as the capital -R already is ([f40e915](https://github.com/Esposter/Esposter/commit/f40e915bb8b90bf79a054529958d2d64f9c7a415))
+* **genshin-mods:** stop counting a write made by a read command as a lookup ([ebb4ff8](https://github.com/Esposter/Esposter/commit/ebb4ff8e0a7ff229048a7a2e88cc52f3093c5936))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 ### Bug Fixes

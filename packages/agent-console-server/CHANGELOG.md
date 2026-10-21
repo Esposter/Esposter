@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **agent-console-server:** a closed session leaves the side-chat set with its events, as it leaves the event map ([98514a5](https://github.com/Esposter/Esposter/commit/98514a5deb2455d67da9f9d9db2b2b861ad41d3c))
+* **agent-console-server:** the driver's option type is type-fest's Except, and the suites' helpers sit at module scope ([6684113](https://github.com/Esposter/Esposter/commit/668411377b926529753560fb5e78f0f109bd7c74))
+* **agent-console:** a side chat never leaves plan mode ([10421b3](https://github.com/Esposter/Esposter/commit/10421b3666919aeb87efddc5b3e4fea6284d4179))
+
+### Features
+
+* **agent-console:** a side chat's fork opens unsaved in plan mode, and the sessions list leaves it out ([df8ad6e](https://github.com/Esposter/Esposter/commit/df8ad6eab792a2e4a4baf8abd9cced07150a0c31))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 ### Bug Fixes

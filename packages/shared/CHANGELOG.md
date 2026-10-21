@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** lint order, the boolean check name and the shared size snapshot ([f1a07a4](https://github.com/Esposter/Esposter/commit/f1a07a4647bd880d28d3204d44de0c20f9b217cf))
+* **genshin-world:** a held mail is kept once per delivery, so a birthday mail delivered again is kept beside its claimed copy ([feea138](https://github.com/Esposter/Esposter/commit/feea1381d809d6dfe0259da6b40614dcef3c2ff1))
+* **packages:** the absorbed packages typecheck and lint clean ([7483a70](https://github.com/Esposter/Esposter/commit/7483a70c65b614ed0a8c43f2e3180215c9c246e2))
+* **shared:** a meta refresh's content is dropped, and three new sanitize-html advisories are pinned ([2b8c2a2](https://github.com/Esposter/Esposter/commit/2b8c2a2af3b98a56963fc65cae0a62059d2d4504))
+* **shared:** a move from a missing key throws even when it moves onto itself ([27d671c](https://github.com/Esposter/Esposter/commit/27d671c9c6a28b0a3ed00b3cab468cb181be263f))
+* **shared:** an upgrade failure is logged once, with its own message ([fb7bf88](https://github.com/Esposter/Esposter/commit/fb7bf88c04de47595e7738c81a4648ec2096941c))
+* **shared:** name the meta refresh check as a check, as the naming rule requires ([4ae2278](https://github.com/Esposter/Esposter/commit/4ae22783297acd23e8f9975ce8a02b70eb735905))
+* **shared:** the JSON Patch schemas stay in the app beside their consumers ([5ebdf66](https://github.com/Esposter/Esposter/commit/5ebdf6680cc996b92e84524778e79a8e83bdf390))
+* **shared:** the log gamma of infinity is infinite, as the gamma function is ([fb8c88e](https://github.com/Esposter/Esposter/commit/fb8c88ece38da15f02a65a29912c4e62f0e15d46))
+* **shared:** the upgrade logging rules join the IndexedDB capability, and its tests pass lint ([2756d0d](https://github.com/Esposter/Esposter/commit/2756d0da6132325e995efb4cf4b048d8abc3b56f))
+* **vue-pdfjs-headless:** a canvas swapped in at the same width is drawn, and the viewer's own listeners go with it ([bae1073](https://github.com/Esposter/Esposter/commit/bae1073e4899ff6529154662c334bfd556234865))
+* **web:** the last lint reds outside the PDF tests ([6b145d5](https://github.com/Esposter/Esposter/commit/6b145d5bca37eeea623de07e740dd83e0a3eb4f8))
+
+### Features
+
+* **shared:** a math expression parser and evaluator held to parity with mathjs's recorded answers ([fd513ff](https://github.com/Esposter/Esposter/commit/fd513ff337c557fec8c0c7cfa367aaf96fd261bd)), closes [#3563](https://github.com/Esposter/Esposter/issues/3563) [#2851](https://github.com/Esposter/Esposter/issues/2851) [#3282](https://github.com/Esposter/Esposter/issues/3282) [#204](https://github.com/Esposter/Esposter/issues/204) [#513](https://github.com/Esposter/Esposter/issues/513) [#2936](https://github.com/Esposter/Esposter/issues/2936) [#2374](https://github.com/Esposter/Esposter/issues/2374) [#3421](https://github.com/Esposter/Esposter/issues/3421) [#2483](https://github.com/Esposter/Esposter/issues/2483) [#2464](https://github.com/Esposter/Esposter/issues/2464) [#2967](https://github.com/Esposter/Esposter/issues/2967) [#2011](https://github.com/Esposter/Esposter/issues/2011)
+* **shared:** takeRandom draws an even entry from a list by a random source ([b618a66](https://github.com/Esposter/Esposter/commit/b618a6621bf156bb5d65accc27ebfca2a1ae6fb3))
+* **web:** mount ApexCharts in the app's own chart component ([aad94bb](https://github.com/Esposter/Esposter/commit/aad94bbbb334fa8cf849fe3333dbc699601356c6))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package @esposter/shared

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **trpc-nuxt-module:** a server-rendered tRPC call with no app on its request event goes to the request's own origin ([107b52d](https://github.com/Esposter/Esposter/commit/107b52dc18b789c79cbdccdc7ecdb32c967a700c))
+* **trpc-nuxt-module:** a server-rendered tRPC call with no app on its request event runs the Nitro app in-process ([631d94b](https://github.com/Esposter/Esposter/commit/631d94b99272e88df17a8f0ff158b7201ad85c8c))
+* **trpc-nuxt-module:** the in-process fetch loads Nitro's app behind import.meta.server, not a server plugin ([7071973](https://github.com/Esposter/Esposter/commit/7071973845459177d36a0e8c730ca21db29cdbf2))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package trpc-nuxt-module

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** resolve failed release checks ([af5f20d](https://github.com/Esposter/Esposter/commit/af5f20d9c504f97ae8b2f23523cdcad2614deb38))
+
+### Features
+
+* **esbabbler:** filter search by author type ([d8a6a43](https://github.com/Esposter/Esposter/commit/d8a6a43c3ba2404cec290697bb86b1599966de29))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 ### Bug Fixes

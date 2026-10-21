@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **genshin-engine:** a leaf card's crown normal is unturned on its back, and its cut is a mask its shadow keeps ([b56227f](https://github.com/Esposter/Esposter/commit/b56227f74eb4905d85ae8679d8cd03967c084147))
+* **genshin-engine:** a placed copy's outline leaves along the normal its fill turns ([f1359b1](https://github.com/Esposter/Esposter/commit/f1359b1b38a1d6abab97623ff5a6204d0bcb8308))
+* **genshin-engine:** a PMX sphere is laid over the diffuse by its mode, not read as the metal map ([6271931](https://github.com/Esposter/Esposter/commit/6271931d57af922d01920bbf4a2b688a61131305))
+* **genshin-engine:** a sphere texture is read and kept only in a mode that draws it ([d47753f](https://github.com/Esposter/Esposter/commit/d47753f927c5d7f846607e276ea6959cc815fe8f))
+* **genshin-engine:** boolean functions are check* across the engine, persona and world ([72d792d](https://github.com/Esposter/Esposter/commit/72d792d083ae3a7d37d8993c39f36e923ca67595))
+* **genshin-engine:** the culling matrix element count is annotated, so the declaration build passes ([d8f3a9d](https://github.com/Esposter/Esposter/commit/d8f3a9d0380039ff7347ce5dd03a3a565fb3a0fa))
+* **genshin-engine:** the follow camera's eye drops to the ground's clearance under the arm, and the minimum distance guards only a landmark ([3104112](https://github.com/Esposter/Esposter/commit/3104112cde5071dfcdaf6161e013c8620daa8a45))
+* **genshin-engine:** the game outline offset has one reference, the pure equation, and its TSL node is named as that rule's form ([0b92ff2](https://github.com/Esposter/Esposter/commit/0b92ff2052a44eb4600b2aed3101732691e9ea0f)), closes [#createGameOffsetNode](https://github.com/Esposter/Esposter/issues/createGameOffsetNode)
+* **genshin-engine:** the grass trail suite compares typed arrays, and the culling dispose listener is typed ([e64b652](https://github.com/Esposter/Esposter/commit/e64b652e4d438a6e3146e90546f233fbaa5d3259))
+* **genshin-engine:** the grass trail's bend reads are typed under noUncheckedIndexedAccess, as the engine reads its arrays elsewhere ([1a30403](https://github.com/Esposter/Esposter/commit/1a304035be04e3243636eb36ac0448a5a275e06c))
+* **genshin-engine:** the gust band has one reference, computeWindGust, and the wind node is its GPU form ([f7b6736](https://github.com/Esposter/Esposter/commit/f7b673632f5cc66404e39922739a98eaa6cf1576))
+* **genshin-engine:** the input target is an interface of what the input reads, so tests need no window cast ([712fe8b](https://github.com/Esposter/Esposter/commit/712fe8b166c0c772dee562816f8b8d32e932d1a0))
+* **genshin-engine:** the outline's width knots are one value, and a material with none takes the unit knots ([ede46d7](https://github.com/Esposter/Esposter/commit/ede46d77e3e30faa7218be06e9df7720e13f8d93))
+* **genshin-engine:** the slope pitch settles a baseline and the player's look holds on it as an offset ([8d63e01](https://github.com/Esposter/Esposter/commit/8d63e019ec4d5fe3d133e4ab4f4dba95c24586f5))
+* **genshin-engine:** the terrain material's detail is built once, not also in the toon material it overwrites ([fe14ef0](https://github.com/Esposter/Esposter/commit/fe14ef03780279d44c928b1203574b9603fe2296))
+* **genshin-world:** an exported leaf card's mapped normal is turned back to the crown's on its back face ([da94a69](https://github.com/Esposter/Esposter/commit/da94a69d8dbd4fed96c1c8e36988fc3befb301c2))
+* **genshin-world:** the party's shared stamina pool is built with Impetuous Winds' cut, and a controller takes a pool or the means to build one, never both ([5a5f5d8](https://github.com/Esposter/Esposter/commit/5a5f5d86382617c5dd1674dd0789952957e66c5c))
+* **genshin-world:** the party's stamina pool is one the character controller and the kit share, so a restore persists ([f4d50af](https://github.com/Esposter/Esposter/commit/f4d50af591eee32b9ffcc196ebfe77a8d189a470))
+* **genshin-world:** the plants and the grass release their culling buffers when they unmount ([ef6df7d](https://github.com/Esposter/Esposter/commit/ef6df7d39c14bbca77dc3cd1b9efbdc621d5886e))
+* **genshin-world:** the Traveler's model stands at the game's height, each character's unit is data keyed by id, and the reckoned unit holds for the rest ([63396c8](https://github.com/Esposter/Esposter/commit/63396c88c6ac07f245a895897aca7372391610ec))
+* **genshin:** a placed copy is outlined through the matrix its fill reads, so the domes keep their outlines ([36ca5bd](https://github.com/Esposter/Esposter/commit/36ca5bdb5643602ef7cb57f80b4b0d8d8aaecb13))
+* **genshin:** a plant's draw covers every place on WebGL, where no culling pass runs ([6ac65ea](https://github.com/Esposter/Esposter/commit/6ac65ea7e07596a047c30945aa64e18c16061f24))
+* **genshin:** an unculled survivor list is every instance in order, so WebGL draws every grass cell rather than cell zero ([e9fc34a](https://github.com/Esposter/Esposter/commit/e9fc34a4bda99bccba7209a25f38fa3e4cbf8434))
+
+### Features
+
+* **genshin-engine:** a far tree shows its impostor, by the fade the engine computes ([323f40a](https://github.com/Esposter/Esposter/commit/323f40ae58a135c583c16b81ba9eb84492bfcc20))
+* **genshin-engine:** a kit's effect restores stamina to the party's one pool ([0b71843](https://github.com/Esposter/Esposter/commit/0b718432856d00020acd3697ad64f84ef6740c41))
+* **genshin-engine:** the weather kinds name the snowstorm, which only Dragonspine's Subzero Climate has ([71d04a2](https://github.com/Esposter/Esposter/commit/71d04a285cd4cb28a337d37fa4cd3e53c2dccfb2))
+* **genshin-world,genshin-engine:** a river's ribbon is drawn in the water's material beside the still water, in each region its game export does not stand in ([9449d57](https://github.com/Esposter/Esposter/commit/9449d5714933754a6487b67b6cf16e904196c39a))
+* **genshin-world:** the capitals' falls are drawn as streaked sheets, with no flat or zero-width sheet and a repeated placement once ([7dd16b5](https://github.com/Esposter/Esposter/commit/7dd16b5e44621b77ff99deb5275b7d1ed29de082))
+* **genshin-world:** the party enters combat once an enemy is aggravated on it and leaves after a grace, and the camera returns its distance on entering combat ([55c6586](https://github.com/Esposter/Esposter/commit/55c6586aedfbaf6be611559ea582caad8fa7016f))
+* **genshin-world:** the surface detail's octaves are solved against the engine's own noise, and the ground draws its export's detail ([8fe5371](https://github.com/Esposter/Esposter/commit/8fe537172a1e3ceeebf675091b503e5c1aa1b2cd))
+* **genshin-world:** the Y-axis reset is a switch the Settings screen keeps, and the follow camera's pitch settles on the slope while it is on ([7d023f3](https://github.com/Esposter/Esposter/commit/7d023f31dc1e563a0a569ef3adec6ef81938198a))
+* **genshin:** a grass blade the wind and the trail bend is culled where it is drawn ([663fa0e](https://github.com/Esposter/Esposter/commit/663fa0e84a5edec66184c6a5734163104aed8370))
+* **genshin:** a plant is culled on the graphics card when it is out of view or past the draw distance ([1935a12](https://github.com/Esposter/Esposter/commit/1935a12edfd5c15f54c71d917d783f4ab15162a3))
+* **genshin:** grass is culled on the graphics card and bends where the character walks ([70d0658](https://github.com/Esposter/Esposter/commit/70d0658cb8a9f3e8d7e48669b27af78ef624629c))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 ### Bug Fixes

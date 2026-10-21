@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** resolve failed release checks ([af5f20d](https://github.com/Esposter/Esposter/commit/af5f20d9c504f97ae8b2f23523cdcad2614deb38))
+
+### Features
+
+* **esbabbler:** rename room nicknames to display names ([3c8e622](https://github.com/Esposter/Esposter/commit/3c8e622de1c60c47ca9583c053eed5daff1c253a))
+* **resource:** assets are addressed by the hash of their bytes and kept while any version references them ([b3d01bc](https://github.com/Esposter/Esposter/commit/b3d01bc25e785b2e89e5399580111bb502d4e5de))
+* **resource:** working-copy asset references under the content save lock ([b7b7cce](https://github.com/Esposter/Esposter/commit/b7b7cce3dd5ba8d1944603ff9a96148d26dfbd47))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package @esposter/db-mock

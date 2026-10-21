@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/Esposter/Esposter/compare/v4.2.0...v4.3.0) (2026-10-21)
+
+### Bug Fixes
+
+* **ci:** resolve workspace lint and typecheck failures ([7a226bb](https://github.com/Esposter/Esposter/commit/7a226bb0be7d0a908b9ef8611a99243ce35d85fe))
+* **configuration:** a Vue package bundles every stylesheet, a sibling package's one a style block names included ([290825b](https://github.com/Esposter/Esposter/commit/290825b742cc25b5d35a22734dbdd9d8f8120c75))
+* **configuration:** the browser suite's exclude is written once, in the shared Vitest factory ([49cb6a0](https://github.com/Esposter/Esposter/commit/49cb6a03a8edb9ea7870765af7c5519f18935bc1))
+* **configuration:** the stylesheet request pattern keeps the annotation isolatedDeclarations demands ([2401f80](https://github.com/Esposter/Esposter/commit/2401f807301d14c0e19239936d32cacd9a297000))
+* **configuration:** the Vitest Vue plugins serve a style src the way the build does ([8257d36](https://github.com/Esposter/Esposter/commit/8257d3670d5510eb71ec6178c94ce63c49e97320))
+* **configuration:** the Vue build serves a style src from its component ([c816ac2](https://github.com/Esposter/Esposter/commit/c816ac235fd236dcd275905ce1c3b19ff9650115))
+* **genshin-engine:** boolean functions are check* across the engine, persona and world ([72d792d](https://github.com/Esposter/Esposter/commit/72d792d083ae3a7d37d8993c39f36e923ca67595))
+* **workspace:** a required peer is listed once, and a test holds every manifest to it ([8823f95](https://github.com/Esposter/Esposter/commit/8823f95e44a66baaafc7684fb1a277b85c759e17))
+
+### Features
+
+* **configuration:** array methods reject a bare function reference as their callback ([bb73d82](https://github.com/Esposter/Esposter/commit/bb73d82b6abc21f3c15455c0abe1742d52efdbf8))
+* **configuration:** the browser's dynamic JSON imports load without the type attribute Node needs ([0e24877](https://github.com/Esposter/Esposter/commit/0e2487710caa3e69d399624832a9384cf5ca26e1))
+
 # [4.2.0](https://github.com/Esposter/Esposter/compare/v4.1.2...v4.2.0) (2026-10-14)
 
 **Note:** Version bump only for package @esposter/configuration
