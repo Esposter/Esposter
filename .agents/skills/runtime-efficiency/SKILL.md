@@ -1,6 +1,6 @@
 ---
 name: runtime-efficiency
-description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from, when a payload can outgrow one request body, when a tooling script or sweep feels slow, and when reviewing any of them. Esposter's runtime efficiency — where work is placed and how it is shaped so it stays cheap: a fact resolved once at its consumer, derivable work off the request path, an index ordered by its lookup, one statement per set, independent reads overlapped, cheapest rejection first, growth bounded on the write path, large documents kept off the server, and a script measured end to end before any unit in it is benched.
+description: Apply when adding a query, an index, a fan-out, a background handler, or a table nothing deletes from, when a payload can outgrow one request body, when a tooling script or sweep feels slow, and when reviewing any of them. Esposter's runtime efficiency — where work is placed and how it is shaped so it stays cheap.
 ---
 
 # Runtime Efficiency

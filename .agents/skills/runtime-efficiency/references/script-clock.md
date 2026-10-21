@@ -26,5 +26,4 @@ at those three:
   is free by comparison and belongs there rather than in the walk.
 - **A whole-tree suite declares `TREE_READ_TIMEOUT_MS`** (`scripts/src/workspace/constants.test.ts`), and only where the parallel `scripts/src/workspace` run exceeds Vitest's 5s default. Those suites run at once, so each one's wall time is its own read plus every sibling contending with it: a suite that passes alone can fail there, and a new one arriving fails the others rather than itself. The timeout is not the budget: `pnpm bench` is.
 
-A unit earns a bench only where its cost outgrows the corpus (the `bench` skill, `references/running-benchmarks.md`); one that scans a file with a regex
-does not, whatever the tree's size, and neither does a wrapper whose cost is a unit already benched underneath it.
+Which units earn a bench is the `bench` skill's rule (`references/running-benchmarks.md`), and a script whose clock is boot, spawns and reads is one of the cases it excludes.
