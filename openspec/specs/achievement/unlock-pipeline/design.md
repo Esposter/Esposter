@@ -18,7 +18,7 @@ flowchart LR
 
 The plugin runs **after** `next()` and only for successful mutations. For each definition whose `triggerPath` equals the called path (and whose `check` passes: the raw input parses against the trigger's schema, and the definition's condition, if any, holds for the parsed input): lazily insert the `achievements` row on first encounter, upsert the caller's `userAchievements` counter, skip entirely if already unlocked, stamp `unlockedAt` when the threshold is met, and finally emit one `updateAchievement` event with everything that changed. The subscription filters events to the session user and the toast list shows progress/unlocks live anywhere in the app.
 
-The achievement router is merged separately from the main root router to break a circular dependency — the plugin needs `TRPCPaths` derived from the routers it wraps.
+The achievement router sits in the one root router beside the others. Each trigger path is a `TRPCPath`, a key of `TRPCProcedureInputs`, so the plugin reads no type derived from the routers it wraps.
 
 ## Procedures
 
