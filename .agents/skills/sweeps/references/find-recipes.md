@@ -47,7 +47,7 @@ agent tree, living where the toolchain already looks.
 ## A scan that reports nothing
 
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep, and every shape in the section above is silent.
+sweep, and every shape in "How a scan comes back empty without being clean", on this page, is silent.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test (`references/what-earns-a-test.md`) applies to a new recipe —

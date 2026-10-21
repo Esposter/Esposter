@@ -48,8 +48,8 @@ git log --since=<Last swept date> --name-only --pretty=format: -- '<pathspec>' |
 one, so a resume dated before a relocation reports only what changed after it. Pass both paths for any window that straddles a move, and map the old prefix onto the new before dedupe.
 
 Left unchecked this is the silent scan of `references/find-recipes.md` inverted — rather than reporting nothing and reading as
-clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is four
-files of real work gets deferred as several sittings.
+clean, it reports everything and reads as a tree nobody can afford to sweep, which is how a row that is a handful
+of files of real work gets deferred as several sittings.
 
 ## Scope is the convention's domain, not the union of the rows
 

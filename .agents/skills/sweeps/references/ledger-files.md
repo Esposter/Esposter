@@ -68,4 +68,4 @@ A rule that oxlint or typecheck checks needs no coverage table — it fails on t
 that earn their file are the read-only-detectable ones: a helper that already exists, a name that means the wrong
 thing, a guard held on one path and not its sibling.
 
-**A new convention joins the ledger that already asks its question** — the one whose owning skill now states it — and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what decides this; the section above is.
+**A new convention joins the ledger that already asks its question** — the one whose owning skill now states it — and adding it resets that ledger's dates, because a unit swept against a narrower rule set is not swept against the current one and there is no partially-swept state. Sharing a file set with an existing ledger is not what decides this; the question does, as the section "A ledger is keyed by its question, never by its address" on this page sets out.

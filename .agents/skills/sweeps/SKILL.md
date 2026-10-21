@@ -1,6 +1,6 @@
 ---
 name: sweeps
-description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter's repo-wide sweeps — a settled convention carried across old code one behaviour-preserving unit per commit, its progress a ledger in .agents/ledgers/ dated from Ledger trailers by ai:sweep:ledger-coverage; a find recipe proven able to fail, every sweep standing, a row an older model read open again, and a finding written twice handed to an enforcer.
+description: Apply when running, resuming, ticking, adding or retiring a repo-wide sweep or its ledger, or when deciding whether a mechanical pass needs one. Esposter's repo-wide sweeps — a settled convention carried across old code one behaviour-preserving unit at a time, its progress kept as a ledger in .agents/ledgers/ and dated from commit trailers.
 ---
 
 # Sweeps
