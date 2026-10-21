@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -33,9 +33,6 @@ const { checkHasSentFriendRequest } = friendRequestStore;
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId } = storeToRefs(moderationNoteStore);
 const isSelf = computed(() => session.value?.user.id === user.id);
-// The row this card pops out of already shows the room displayName, so the card reads the same field — otherwise
-// Opening a renamed member swaps the name out from under the cursor
-const displayName = computed(() => user.displayName);
 const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(
   () => user,
   currentRoomId,
@@ -70,17 +67,17 @@ watchImmediate(isKickable, async (newIsKickable) => {
 <template>
   <div w="[min(18rem,80dvw)]" flex flex-col gap-3>
     <div flex gap-2 items-start>
-      <MessageModelMemberStatusAvatar :id="user.id" :image="user.image" :name="displayName" is-large />
+      <MessageModelMemberStatusAvatar :id="user.id" :image="user.image" :name="user.displayName" is-large />
       <div flex-1 />
       <template v-if="!isSelf">
         <UiButton v-if="friendItem" :variant="UiButtonVariant.Accent" @click="friendItem.onClick?.($event)">
           {{ friendItem.title }}
         </UiButton>
-        <UiOverflowMenu :items="overflowItems" :label="`${displayName} actions`" />
+        <UiOverflowMenu :items="overflowItems" :label="`${user.displayName} actions`" />
       </template>
     </div>
     <div flex flex-col>
-      <h2 truncate ui-heading>{{ displayName }}</h2>
+      <h2 truncate ui-heading>{{ user.displayName }}</h2>
       <p text-muted>{{ getStatusMessage(user.id) || getUserStatus(user.id) }}</p>
     </div>
     <template v-if="!isSelf">
