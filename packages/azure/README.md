@@ -26,6 +26,8 @@ pnpm add @esposter/azure
 
 ## <a name="documentation">📖 Documentation</a>
 
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+
 ### Clauses
 
 A `Clause<T>` is a filter condition expressed against a property of `T`, and it is what the OData string is
