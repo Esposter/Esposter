@@ -4,7 +4,7 @@ Read when changing how a command's parameters are entered, validated, focused or
 
 There is **no `UiForm` and no `UiRules`** anywhere in this feature. Parameters render as inline chips built from raw `<input>` elements, and validation is manual.
 
-Components (`app/components/Message/Model/Message/Input/`):
+Components (`apps/web/app/components/Message/Model/Message/Input/`):
 
 | File                                       | Role                                                                           |
 | ------------------------------------------ | ------------------------------------------------------------------------------ |
@@ -25,13 +25,13 @@ setErrors(
 );
 ```
 
-`REQUIRED_ERROR_MESSAGE` comes from `app/services/message/slashCommands/constants.ts` — never inline the string.
+`REQUIRED_ERROR_MESSAGE` comes from `apps/web/app/services/message/slashCommands/constants.ts` — never inline the string.
 
-`useSubmitSlashCommand` (`app/composables/message/slashCommand/useSubmitSlashCommand.ts`) re-validates every required parameter on submit, and if any required one is missing it **reveals** the hidden chip (appends to `activeParameterNames`) and returns instead of sending; `Index.vue` only calls it. Parameter mutations (`createParameter`, `deleteParameter`, `collapseToText`, `clearPendingSlashCommand`) all live in the store, not the components.
+`useSubmitSlashCommand` (`apps/web/app/composables/message/slashCommand/useSubmitSlashCommand.ts`) re-validates every required parameter on submit, and if any required one is missing it **reveals** the hidden chip (appends to `activeParameterNames`) and returns instead of sending; `Index.vue` only calls it. Parameter mutations (`createParameter`, `deleteParameter`, `collapseToText`, `clearPendingSlashCommand`) all live in the store, not the components.
 
 ## Focus model
 
-`focusedIndex` in the store is the single source of truth: `COMMAND_INPUT_INDEX` = the command name input, `0..n-1` = chips, `n` = trailing input, `NO_FOCUSED_INDEX` = blurred — the two sentinels are named in `app/services/message/slashCommands/constants.ts`, never written as numbers. Navigation is emit-driven (`navigate:previous` / `navigate:next`), fired from `Chip.vue` only when the caret sits at the very start/end of the input.
+`focusedIndex` in the store is the single source of truth: `COMMAND_INPUT_INDEX` = the command name input, `0..n-1` = chips, `n` = trailing input, `NO_FOCUSED_INDEX` = blurred — the two sentinels are named in `apps/web/app/services/message/slashCommands/constants.ts`, never written as numbers. Navigation is emit-driven (`navigate:previous` / `navigate:next`), fired from `Chip.vue` only when the caret sits at the very start/end of the input.
 
 ## Dismissal — collapse to text, never discard
 

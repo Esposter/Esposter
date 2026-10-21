@@ -1,14 +1,14 @@
 ---
 name: slash-commands
-description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter's slash commands — a command's definition, how it runs and how its parameters are entered as chips, with SlashCommandDefinitionMap as the inventory rather than any page that mirrors it; a posting case assigns markdown and nothing else, and a command takes inline parameters or a dialog, never both.
+description: Apply when writing or modifying slash commands, useExecuteSlashCommand, SlashCommandDefinitionMap, or the SlashCommandParameters components. Esposter's slash commands — a command's definition, how it runs and how its parameters are entered as chips.
 ---
 
 # Slash Command Conventions
 
 ## Core Types
 
-- **A `SlashCommandParameter` always carries a `name` and a `description`** (it extends `Description`), and its value is validated by the shared `slashCommandParameterValueSchema` — normalized, then non-empty (`app/models/message/slashCommands/SlashCommandParameter.ts`).
-- **A `SlashCommand`'s `parameters` is always present**, `[]` for a command that takes none — never optional or omitted (`app/models/message/slashCommands/SlashCommand.ts`).
+- **A `SlashCommandParameter` always carries a `name` and a `description`** (it extends `Description`), and its value is validated by the shared `slashCommandParameterValueSchema` — normalized, then non-empty (`apps/web/app/models/message/slashCommands/SlashCommandParameter.ts`).
+- **A `SlashCommand`'s `parameters` is always present**, `[]` for a command that takes none — never optional or omitted (`apps/web/app/models/message/slashCommands/SlashCommand.ts`).
 
 ## Message Format
 
