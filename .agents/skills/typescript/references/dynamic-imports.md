@@ -12,8 +12,12 @@ finds mid-session: `apps/web/configuration/vite.ts` lists the Genshin world's an
 lazy component's own imports are found only as it mounts and each late find re-runs the optimiser.
 
 `no-restricted-syntax` (`packages/configuration/eslint/restrictedSourceSyntaxes.js`) flags `await import(...)` in source;
-tests are exempt. Two exceptions: a library-mandated lazy-loader contract, and a heavy dependency whose only entry
-point is a module the app always loads — a codec behind a format map, a devtool behind a settings panel, a
-character's kit behaviour behind the kit behaviour map. Per-component chunking has no boundary to split those at,
-so the dynamic import _is_ the split. Each exception is a `// eslint-disable-next-line no-restricted-syntax -- <reason>`
-directly above it, and the reason says what it keeps out of the eager graph (or why the import must be lazy).
+tests are exempt. Two exceptions, each with a cause outside the repository: a library-mandated lazy-loader contract
+(codemirror's `LanguageDescription.load`, in `apps/web/app/services/codemirror/constants.ts`), and a heavy dependency
+reached only through a module the app always loads. The second's cause is the bundler: a statically imported module
+is bundled into the chunk of the module that imports it, and the build splits only at a dynamic `import()`. The xlsx
+parsers `read-excel-file/browser` and `write-excel-file/browser` are reached through the format map in
+`apps/web/app/services/resource/sheet/dataSource/DataSourceConfigurationMap.ts`, which the command bar reaches on every
+resource page, so a static import would put both parsers in that eager chunk. Each exception is a
+`// eslint-disable-next-line no-restricted-syntax -- <reason>` directly above the import, and the reason says what it
+keeps out of the eager graph (or why the import must be lazy).
