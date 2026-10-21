@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Apply when writing any TypeScript in this project. Esposter's TypeScript conventions — the banned patterns and what replaces each, the newest platform API over the form it replaces, enums over string-literal unions, arrow functions, guard clauses and exhaustive switches, and modelling a type instead of casting it.
+description: Apply when writing any TypeScript in this project. Esposter's TypeScript conventions.
 ---
 
 # TypeScript Conventions
@@ -48,7 +48,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
-- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`. The unions that are not sets, and what a genuine disable has to say: `references/enums.md`. **An `as const` object is never an enum's stand-in to keep a file runnable under node's type stripping** — the file's entry moves to `tsx` (the `package-scripts` skill). The exception is a file the app's `nuxt.config.ts` imports, which Nuxt loads natively. Code Node loads natively by type stripping must be erasable, which `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` enforces for every Nuxt module's entry; no tsconfig flag does (`references/enums.md`).
+- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`; the unions that are not sets, and the Nuxt-configuration `as const` exception, are `references/enums.md`.
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Functions
@@ -67,7 +67,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Control Flow
 
-- **Guard clauses first, one guard per outcome, and a chain runs `if/else if/else` from its first branch to its last** — a balanced `if/else` stays balanced, and no negated test sits before a terminal `else` (`no-negated-condition`). A guard that is one `return` over a fall-through that is one `return` closes with `else`, a formatter wrap included; a fall-through that is a block, or a `return` carrying a body of its own, is the happy path and stays behind the guard, and whether consecutive guards are one chain is read. Writing or reshaping a branch: `references/control-flow.md`.
+- **Guard clauses first, one guard per outcome, and a chain runs `if/else if/else` from its first branch to its last** — a balanced `if/else` stays balanced, and no negated test sits before a terminal `else` (`no-negated-condition`). Where each shape stops being right: `references/control-flow.md`.
 - **`switch` for type-based branching, every one on an enum ending in `default: exhaustiveGuard(value)`**; per-case logic is a map keyed by the discriminant (`references/control-flow.md`).
 - **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
 
