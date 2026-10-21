@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure — one Azure resource per file named after it, under a folder mirroring its resource id; protect on imported resources, a parent on every new one, resource outputs over repeated identifier literals, namespace provider imports, no alias ever, a preview before every up, and the security hardenings and observability deliberately declined.
+description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure — how a resource is declared, referenced, renamed and applied, and the hardenings and observability the estate declines.
 ---
 
 # Pulumi Infrastructure
@@ -37,7 +37,7 @@ One private package, one `prod` stack, `src/` split by provider with a generated
 
 ## Provider Imports (namespace, not named)
 
-Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`. A named import off `@pulumi/*` is a `no-restricted-syntax` error.
+Provider packages are imported as a namespace (`import * as azure_native from "@pulumi/azure-native"`), and a named import off `@pulumi/*` is a `no-restricted-syntax` error (`packages/configuration/eslint/restrictedImportSyntaxes.js`).
 
 The one exception to named imports from libraries, and a review suggestion to switch is closed: why is `references/provider-quirks.md`.
 

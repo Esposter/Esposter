@@ -4,7 +4,7 @@ Read when picking an Azure Native resource token, naming a Logic App API connect
 
 ## Azure Native resource tokens
 
-Use tokens matching the installed provider version. For Azure Native v3:
+Use tokens matching the installed provider version. The Azure Native ones are:
 
 - Action Groups: `azure-native:monitor:ActionGroup`
 - Budgets: `azure-native:consumption:Budget`
