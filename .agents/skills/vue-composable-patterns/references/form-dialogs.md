@@ -7,12 +7,12 @@ Read when a dialog edits an entity: a selector that switches which schema render
 A schema form validates with its Zod schema, so a rule that reads live component state — a name unique among the
 sheet's other columns — is a `superRefine` on the form schema, built in the composable the create and edit dialogs
 share, with the issue's `path` naming the field. The dialog hands the refined schema to the form's
-`validation-schema` and to its error icon. Reference wiring: `useColumnForm`. The schema-form rules are the
-`ui-library` skill's `references/schema-forms.md`.
+`validation-schema` and to its error icon. Reference wiring: `useColumnForm`. The schema-form rules are in
+`.agents/skills/ui-library/references/schema-forms.md`.
 
 ## Schema-controlling selectors go in `#prepend-form`
 
-When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `UiForm`, so the selector isn't part of the form it reshapes. Canonical: `Dashboard/Visual/Preview/EditFormDialog.vue`.
+When a dialog has a selector (column type, chart type) that controls **which schema** a schema form renders, put it in the `#prepend-form` slot — not the default slot alongside schema content. `StyledEditFormDialog` renders `#prepend-form` above the `UiForm`, so the selector isn't part of the form it reshapes. Canonical: `apps/web/app/components/Dashboard/Visual/Preview/EditFormDialog.vue`.
 
 ```vue
 <!-- WRONG: type selector mixed into default slot with the schema form -->
@@ -32,7 +32,7 @@ When a dialog has a selector (column type, chart type) that controls **which sch
 
 ## Type-driven state reset: watch + create map
 
-When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the `typescript` skill's discriminant-keyed-map rule (`references/type-modelling.md`); the per-type form schemas it pairs with are the `ui-library` skill's `references/schema-forms.md`.
+When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, `watch` it and rebuild through a **create map** in `services/` keyed by the discriminant, each entry a `create` taking a `Partial` of the target minus its discriminant. The map's shape (`as const satisfies` over a mapped type, so each key returns its own subtype) is the discriminant-keyed-map rule in `.agents/skills/typescript/references/type-modelling.md`; the per-type form schemas it pairs with are in `.agents/skills/ui-library/references/schema-forms.md`.
 
 ```ts
 const fooType = ref(FooType.Bar);

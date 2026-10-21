@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter's Vue 3 composable patterns — the primitives that already own a job (useMutation, useCachedRead, useSave, useWorkerInterval, usePanZoom, createContentData) and the ban on hand-rolling them, with a hand-kept count of in-flight anything as the tell; no pass-through composables, no module-scope refs, MaybeRefOrGetter only for what a composable watches, and no persistence call for an unchanged payload.
+description: Apply when writing or reviewing a composable, a form dialog, browser-aware reactive code, or any state that spans an await, a tick or a mount. Esposter's Vue 3 composable and form-dialog patterns, built on the primitives that already own async sequencing, persistence and teardown.
 ---
 
 # Vue Composable & Form Patterns
@@ -90,7 +90,7 @@ Every API call must be necessary. **Never fire a persistence call — tRPC mutat
 
 ## Async Sequencing — One Primitive
 
-A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`composables/shared/useMutation.ts`) derives the rest. A composable that seems to need its own ordering needs the right `key`.
+A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the rest. A composable that seems to need its own ordering needs the right `key`.
 
 **A store is a call site too.** A store that both reads a value and receives it pushed — a subscription, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake.
 
