@@ -1,6 +1,6 @@
 ---
 name: genshin-data
-description: Apply when adding or changing a dataset genshin-world reads — a game table, a word list, a fitted scene record or an authored world file — writing its builder, reader or the boundary that awaits it, running a genshin:assets, genshin:text or genshin:data publish, a fit or a parity loop that publishes, editing packages/genshin-world/src/generated/gameDataLock.json, scripts/src/services/gameData or packages/genshin-world/scripts, or testing anything that reads the game data. Esposter's hosted game data — every static dataset published to Blob storage as content-addressed objects under a committed lock, read by key with a schema at an async boundary, and read by the suites through a local mirror.
+description: Apply when adding or changing a dataset genshin-world reads — a game table, a word list, a fitted scene record or an authored world file — writing its builder, reader or the boundary that awaits it, running a genshin:assets, genshin:text or genshin:data publish, a fit or a parity loop that publishes, editing packages/genshin-world/src/generated/gameDataLock.json, scripts/src/services/gameData or packages/genshin-world/scripts, or testing anything that reads the game data. Esposter's hosted game data — the static datasets genshin-world reads, published to Blob storage under a committed lock.
 ---
 
 # Genshin Data
