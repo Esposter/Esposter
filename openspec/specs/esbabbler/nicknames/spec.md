@@ -1,6 +1,6 @@
 ## Purpose
 
-Per-room display names and the getDisplayName resolution rule. A member may set a name that applies only inside one room, and every surface that names a member uses it, falling back to the account name when none is set.
+Per-room display names and the getRoomMemberName resolution rule. A member may set a name that applies only inside one room, and every surface that names a member uses it, falling back to the account name when none is set.
 
 ## Requirements
 
