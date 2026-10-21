@@ -59,7 +59,7 @@ needs only the trigger, and adding the second line there invents a split that do
 
 ## A split breaks inbound pointers, so fix them in the same change
 
-Other skills cite sections by heading (``see the `pinia` skill ("Cursor Pagination in Stores")``), and a heading
+Other skills cite sections by heading (``see the `x` skill ("Heading")``), and a heading
 that moved or was reworded leaves that citation pointing at nothing. `scripts/src/workspace/citations.test.ts`
 fails on a cited heading or bold rule the skill no longer holds; the fix is to repoint the citation at the page
 (``see the `pinia` skill (`references/keyed-state-and-pagination.md`)``), which is stable across later edits to

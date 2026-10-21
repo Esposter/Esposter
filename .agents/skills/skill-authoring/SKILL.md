@@ -1,6 +1,6 @@
 ---
 name: skill-authoring
-description: Apply when creating, editing, splitting, merging, or reviewing any SKILL.md or references page, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in. Esposter skill-writing conventions for .agents/skills — one topic per page with SKILL.md as the one-line always-on layer and an index, every rule in exactly one skill and one page, session learnings captured in the owning skill rather than memory, and a Settled list against size-first splitting, shaving prose, markdown links, paths: frontmatter and hand-kept copies of what a script derives.
+description: Apply when creating, editing, splitting, merging, or reviewing any SKILL.md or references page, when a session discovers or corrects a convention, or when deciding which skill a new rule belongs in. Esposter skill-writing conventions for .agents/skills.
 ---
 
 # Skill Authoring
@@ -19,7 +19,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **Citing a page as a markdown link** — a relative hop or a `github.com/.../blob/...` url. Nothing resolves a link out of a skill; the repo-relative path in backticks is what a reader greps (`references/citations.md`).
 - **A check requiring every backticked filename to be spelled as its repo path.** A bare name the tree holds once is already held by `scripts/src/workspace/staleNames.test.ts`, which fails the day the file is renamed, so the check buys spelling alone, at the price of every well-known name (`uno.config.ts`, `globals.css`) written out in full (`references/citations.md`).
 - **A diagram to make a rule list scannable.** A diagram of a list is decoration; only an ordered cycle with a gate earns one (`references/diagrams.md`).
-- **Keeping a session's learning in private memory or the conversation** rather than the owning skill. It dies with the session that learned it (`references/session-learnings.md`).
+- **Keeping a session's learning in the agent's own notes or the conversation** rather than the owning skill. It dies with the session that learned it (`references/session-learnings.md`).
 - **A `description` that enumerates the body's sections.** The listing shows a fixed prefix of it and a trigger written last is the first thing cut, and every section edit becomes a description edit too. The trigger opens it, the domain is a sentence, and the body indexes itself with its headings (`references/frontmatter.md`).
 - **Scoping a skill with `paths:` frontmatter.** Claude Code then loads it only while a file matching the globs is being worked on, so a question asked with no file in hand never loads it. Which skills a review window's files hit is the `code-review` skill's routing table, and that table is a rule rather than a copy of anything.
 - **Stamping a skill or a page with the model that wrote it** — a `model:` frontmatter key, a byline, a date. Claude Code reads `model` in a skill's frontmatter as the model to _run_ it on, so the key changes behaviour, and any other stamp is a hand copy of the commit's `Co-Authored-By` trailer. The stamp is the skill's row in `.agents/ledgers/docs/skills.md`, which `pnpm ai:sweep:ledger-coverage` dates and names from the trailers (`references/skill-coverage.md`).
@@ -30,7 +30,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **One topic per page, each page the single source of its topic.** `SKILL.md` holds the rules every task in the domain needs, one line each, and an index; every narrower topic — a procedure, a file type, a sub-task, a rule's full argument — is a `references/` page, however small (`references/splitting-a-skill.md`).
 - **The index line names the trigger, not the topic** — _when a test fakes the clock_, never "see X for more detail", which guarantees the page is never opened; a page cited only inside a rule has no index line, which `pnpm ai:sweep:skill-docs` reports (`references/splitting-a-skill.md`).
 - **A rule lives in exactly one skill and one page**; every other mention is a one-line pointer to it, never a paraphrase. `pnpm ai:sweep:duplicate-prose` lists the copies (`references/one-owner-per-topic.md`).
-- **A convention a session discovers or corrects lands in the owning skill in the same session**, never in private memory; a claim the evidence contradicts is verified and fixed, never obeyed (`references/session-learnings.md`).
+- **A convention a session discovers or corrects lands in the owning skill in the same session**, never in the agent's own notes; a claim the evidence contradicts is verified and fixed, never obeyed (`references/session-learnings.md`).
 - **A rule is added only after a run without it shows the failure it prevents**: the same task with the skill absent, then present. A rule that changes no outcome is not written, which keeps every page lean.
 - **A rule an enforcer checks is owned by the enforcer**: one line with the non-obvious why and the enforcer's name, never the banned forms or the error text (`references/enforced-rules.md`).
 - **A citation is the repo-relative path in backticks**, never a markdown link, and another skill is cited by name plus its page; `scripts/src/workspace/citations.test.ts` resolves every one (`references/citations.md`).
@@ -44,7 +44,7 @@ How to write and maintain a `.agents/skills/*/SKILL.md`. Which skill owns what i
 - **Only an ordered cycle with a gate earns a diagram** (`references/diagrams.md`).
 - **A commit that reads a whole skill — `SKILL.md` and every page — against these rules carries `Ledger: docs/skills | `<skill>``**; a change to these rules carries `Reopens: docs/skills`, so every skill an older rule set or an older model read is open again (`references/skill-coverage.md`).
 - **Tight, not fluffy**: a why only where it is non-obvious and load-bearing, a worked example only where the prose is ambiguous without it, and no example values that will rot.
-- **Repo skills and `~/.claude/rules/*.md` can contradict each other** — the precedence and the current split are `.agents/skills/README.md` ("Skills vs global rules").
+- **A convention lives in one skill, and no skill leans on a file outside the repository** — `.agents/skills/README.md` ("One source of conventions").
 
 ## Reference pages
 
