@@ -1,6 +1,6 @@
 ---
 name: building-proposals
-description: Apply when choosing what to build next, asked for low-hanging fruit or the cheapest proposal, picking up a proposal, a refactor plan or a ready-for-agent issue, building a feature asked for with no proposal behind it, or when the spec being built turns out to be wrong. Esposter's build loop — the consuming half of the product-review loop, taking a written spec to a shipped feature page and handing the area it moved back to the next review, with every cost it chooses by read off `pnpm ai:proposals:report` rather than kept by hand.
+description: Apply when choosing what to build next, asked for low-hanging fruit or the cheapest proposal, picking up a proposal, a refactor plan or a ready-for-agent issue, building a feature asked for with no proposal behind it, or when the spec being built turns out to be wrong. Esposter's build loop — the consuming half of the product-review loop, taking a written spec to a shipped feature page.
 ---
 
 # Building Proposals

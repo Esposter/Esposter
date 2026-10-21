@@ -1,6 +1,6 @@
 # Building One
 
-Read before the first edit of a build, when a feature is asked for with no proposal behind it, and when the spec turns out to be wrong halfway through.
+Read when a build is about to make its first edit, when a feature is asked for with no proposal behind it, and when the spec turns out to be wrong halfway through.
 
 ## Before the first edit
 

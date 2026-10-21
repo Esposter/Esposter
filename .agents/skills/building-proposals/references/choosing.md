@@ -7,7 +7,7 @@ Read when asked what to build next or for the low-hanging fruit, when reading `p
 `pnpm ai:proposals:report` reads every open proposal and prints one line each, cheapest first:
 
 - **Files** — the rows of its Key files table, which lists the existing files the work touches (the `openspec` skill, `references/page-shapes.md`). A proposal with no table prints **unsized** and sorts last: nothing can be read off it, and a product-review pass owes it the table (the `product-review` skill, `references/verifying-proposals.md`).
-- **Signals** — the costs past the files themselves, each read off a Key files path: `server` (a procedure or server service), `schema` (a migration), `azure` (a Function or infrastructure deploy), `dependency` (a manifest, so a package argued through dependency admission).
+- **Signals** — the costs past the files themselves, each read off a Key files path; the set and what each one reads is `scripts/src/models/proposals/ProposalSignal.ts`.
 - **after** — the open proposals its lead paragraph links, which have to ship first. A folder's own index is its umbrella, never a blocker.
 
 Then one line per area owed a product-review pass (`references/shipping.md`).
