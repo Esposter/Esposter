@@ -2,17 +2,15 @@
 
 Read when running a script from `apps/web`, or reaching past `nuxt typecheck` or the root lint for the binary under it. What each script wraps is its line in `apps/web/package.json`.
 
-| Command             | When to use                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| `pnpm lint`         | CI/check-only lint verification                                    |
-| `pnpm lint:fix`     | ESLint only, this package only — never the last lint a change runs |
-| `pnpm typecheck`    | TypeScript type checking — never `vue-tsc` directly                |
-| `pnpm test`         | Run this package's tests in watch mode                             |
-| `pnpm format`       | Format code                                                        |
-| `pnpm format:check` | Check formatting without writing                                   |
-| `pnpm dev`          | Start dev server, after bringing each package it loads up to date  |
-| `pnpm bench`        | Run this package's benchmarks                                      |
-| `pnpm build`        | Build for production                                               |
+| Command          | When to use                                                        |
+| ---------------- | ------------------------------------------------------------------ |
+| `pnpm lint`      | CI/check-only lint verification                                    |
+| `pnpm lint:fix`  | ESLint only, this package only — never the last lint a change runs |
+| `pnpm typecheck` | TypeScript type checking — never `vue-tsc` directly                |
+| `pnpm test`      | Run this package's tests in watch mode                             |
+| `pnpm dev`       | Start dev server, after bringing each package it loads up to date  |
+| `pnpm bench`     | Run this package's benchmarks                                      |
+| `pnpm build`     | Build for production                                               |
 
 **`nuxt typecheck` is the only typecheck, and `vp run lint` from the repo root is the only lint.** Reaching past
 either for the underlying binary — `vue-tsc -p tsconfig.json` in `apps/web`, `oxlint` over a path — checks
@@ -31,6 +29,6 @@ build case. How a backgrounded run's result is read at all, and why the completi
 never it, is the `running-checks` skill's (`references/reading-results.md`); an output file that comes back empty is that run not yet flushed,
 never a clean one.
 
-> `oxfmt` formats markdown too — a table whose cells changed width is realigned by `pnpm format` (or `pnpm exec oxfmt <paths>`
+> `oxfmt` formats markdown too — a table whose cells changed width is realigned by the root `pnpm format` (or `pnpm exec oxfmt <paths>`
 > for a few files). No prettier binary is installed, so `pnpm exec prettier` fails — and `npx prettier` is not the
 > fallback: `npx` is unsupported here, and rather than failing it would fetch an unpinned prettier from the registry.

@@ -30,7 +30,9 @@ Nothing _imports_ an app's `dist`, but two suites read one: the Functions packag
 
 Esposter uses **pnpm workspaces** as the package manager and workspace script runner. Workspace packages are declared in `pnpm-workspace.yaml`, and package versions are centralized in the root catalog.
 
-Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`) so root recursive commands can compose them. Coverage is not a package-local script — it is owned entirely by the root `vitest` `projects` run.
+Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`) so root recursive commands can compose them. Coverage is not a package-local script — it is owned entirely by the root `vitest` `projects` run. Formatting is the root's alone: `vp fmt` over the whole tree, with one config, so a package carries no `format` script of its own.
+
+A package's scripts run the binaries the root declares (`vitest`, `oxfmt`, `eslint`, `tsc`), which pnpm leaves on every package's path, so a package declares one only where it reaches for it directly: a plugin it lists that peers on `vitest` (`@nuxt/test-utils`, `vitest-browser-vue`, `@vitest/browser-playwright`), or its own build tool. The publish gates `publint` and `@arethetypeswrong/core` are declared once, by `@esposter/configuration`, the package whose factory runs them.
 
 The root scripts run their tools directly, on every platform.
 

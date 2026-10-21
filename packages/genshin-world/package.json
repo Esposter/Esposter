@@ -77,8 +77,6 @@
     "bench": "vitest bench --run",
     "build": "tsdown",
     "build:parity": "vite build --config parity/vite.config.ts --mode production --outDir parity-build --emptyOutDir",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "game-data:mirror": "node scripts/gameData/mirror/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

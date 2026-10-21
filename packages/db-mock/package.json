@@ -54,8 +54,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "snapshot:gen": "tsx scripts/generateSnapshot.ts",
@@ -67,8 +65,7 @@
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
-    "tsx": "catalog:",
-    "vitest": "catalog:"
+    "tsx": "catalog:"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "catalog:",

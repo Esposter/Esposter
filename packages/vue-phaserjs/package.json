@@ -52,21 +52,16 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "vue-tsc"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
-    "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
-    "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
   "peerDependencies": {

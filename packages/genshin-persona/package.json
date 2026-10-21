@@ -47,8 +47,6 @@
     "access": "public"
   },
   "scripts": {
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",

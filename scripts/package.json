@@ -66,8 +66,6 @@
     "bench": "vitest bench --run",
     "bench:types": "tsx src/benchTypes/index.ts",
     "crossOS": "node src/crossOS/index.ts",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "genshin:animestudio:build": "tsx src/animeStudio/index.ts",
     "genshin:assets": "tsx src/genshinAssets/index.ts",
     "genshin:data": "tsx src/gameData/index.ts",
@@ -119,7 +117,6 @@
     "three": "catalog:",
     "tsx": "catalog:",
     "type-fest": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   }
 }

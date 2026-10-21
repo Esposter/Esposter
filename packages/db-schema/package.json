@@ -58,8 +58,6 @@
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "registry:gen": "node scripts/generateRegistry.ts",
@@ -71,8 +69,7 @@
     "@esposter/configuration": "workspace:*",
     "drizzle-kit": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
-    "vitest": "catalog:"
+    "type-fest": "catalog:"
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",

@@ -47,8 +47,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -58,13 +56,10 @@
     "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",
-    "publint": "catalog:",
-    "tsdown": "catalog:",
-    "vitest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "pdfjs-dist": "catalog:",

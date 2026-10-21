@@ -49,8 +49,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "infra:preview": "pnpm build && pulumi preview",
     "infra:refresh": "pnpm build && pulumi refresh",
     "infra:up": "pnpm build && pulumi up",
@@ -67,8 +65,7 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
-    "vitest": "catalog:"
+    "type-fest": "catalog:"
   },
   "peerDependencies": {
     "@pulumi/azure-native": "catalog:",

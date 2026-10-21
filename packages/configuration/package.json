@@ -52,14 +52,13 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@arethetypeswrong/core": "catalog:",
     "@dxup/nuxt": "catalog:",
     "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",
@@ -74,6 +73,7 @@
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
     "playwright": "catalog:",
+    "publint": "catalog:",
     "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",

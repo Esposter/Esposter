@@ -98,8 +98,6 @@
   "scripts": {
     "build": "tsdown",
     "bench": "vitest bench --run",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -113,15 +111,12 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@nuxt/nitro-server": "catalog:",
     "@types/node": "catalog:",
     "h3": "catalog:",
-    "publint": "catalog:",
-    "tsdown": "catalog:",
-    "vitest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "nitro": "catalog:",

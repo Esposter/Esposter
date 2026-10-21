@@ -40,8 +40,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -52,11 +50,8 @@
     "neverthrow": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
-    "publint": "catalog:",
-    "tsdown": "catalog:",
-    "vitest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "zod": "catalog:"

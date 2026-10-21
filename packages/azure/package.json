@@ -45,8 +45,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -56,12 +54,9 @@
     "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
-    "publint": "catalog:",
     "tsdown": "catalog:",
-    "type-fest": "catalog:",
-    "vitest": "catalog:"
+    "type-fest": "catalog:"
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",

@@ -47,8 +47,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -61,16 +59,13 @@
     "parse5": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "fake-indexeddb": "catalog:",
     "happy-dom": "catalog:",
-    "publint": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
-    "vitest": "catalog:",
     "vue": "catalog:"
   },
   "peerDependencies": {

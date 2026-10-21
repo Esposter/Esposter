@@ -61,15 +61,7 @@ describe(createPackage, () => {
     );
     expect(manifest.version).toBe(version);
     expect(manifest.sideEffects).toBe(false);
-    expect(Object.keys(manifest.scripts as object)).toStrictEqual([
-      "build",
-      "format",
-      "format:check",
-      "lint",
-      "lint:fix",
-      "test",
-      "typecheck",
-    ]);
+    expect(Object.keys(manifest.scripts as object)).toStrictEqual(["build", "lint", "lint:fix", "test", "typecheck"]);
   });
 
   test("lists the library in the agent guide and the root README, cell by cell", () => {

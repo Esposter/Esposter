@@ -55,8 +55,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -69,12 +67,9 @@
     "mlly": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
-    "publint": "catalog:",
     "tsdown": "catalog:",
-    "vite-plugin-glsl": "catalog:",
-    "vitest": "catalog:"
+    "vite-plugin-glsl": "catalog:"
   },
   "peerDependencies": {
     "@tresjs/core": "catalog:",

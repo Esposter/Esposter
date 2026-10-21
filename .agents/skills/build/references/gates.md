@@ -15,7 +15,7 @@ Read when `deps.onlyImport`, `publint` or `attw` fails a build, or when a consum
 
 ## `publint` and `attw` — a published package is gated further
 
-Absence of `private` in the manifest switches on `publint` and `attw`. Never disable one to get a build through — each marks a package that would fail on someone else's machine:
+Absence of `private` in the manifest switches on `publint` and `attw`, in the shared factory. Both are declared once, in `@esposter/configuration`'s devDependencies, the package that owns the factory — not in each published package, and tsdown resolves them from there, so a library's manifest never lists them. Never disable one to get a build through — each marks a package that would fail on someone else's machine:
 
 - `publint` — the manifest points at a file the package does not ship.
 - `attw` — the declarations break under a resolution mode a consumer might use.

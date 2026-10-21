@@ -53,8 +53,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -84,8 +82,7 @@
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
     "azure-mock": "workspace:*",
-    "tsdown": "catalog:",
-    "vitest": "catalog:"
+    "tsdown": "catalog:"
   },
   "inlinedDependencies": {
     "@azure/abort-controller": "2.2.0",

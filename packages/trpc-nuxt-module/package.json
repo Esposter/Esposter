@@ -213,8 +213,6 @@
   "scripts": {
     "bench": "vitest bench --run",
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -228,17 +226,14 @@
     "type-fest": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@nuxt/nitro-server": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@types/node": "catalog:",
     "happy-dom": "catalog:",
-    "publint": "catalog:",
     "superjson": "catalog:",
     "tsdown": "catalog:",
-    "vitest": "catalog:",
     "zod": "catalog:"
   },
   "peerDependencies": {

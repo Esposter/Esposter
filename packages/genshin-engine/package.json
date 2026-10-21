@@ -56,8 +56,6 @@
   "scripts": {
     "bench": "vitest bench --run",
     "build": "tsdown",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
@@ -67,15 +65,12 @@
     "three-mesh-bvh": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/core": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "@types/three": "catalog:",
-    "publint": "catalog:",
     "tsdown": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:"
+    "vite": "catalog:"
   },
   "peerDependencies": {
     "three": "catalog:"
