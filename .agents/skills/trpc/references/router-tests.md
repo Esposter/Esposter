@@ -1,6 +1,6 @@
 # Testing a tRPC router
 
-Read when writing or reviewing a test that drives a tRPC caller. General Vitest conventions (caller naming, creating resources via callers rather than `db.insert`, mock cleanup) belong to the `testing` skill (`references/router-test-setup.md`).
+Read when writing or reviewing a test that drives a tRPC caller. General Vitest conventions (caller naming, creating resources via callers rather than `db.insert`, mock cleanup) belong to `.agents/skills/testing/references/router-test-setup.md`.
 
 ## `setupRoomSuite()` fixture
 

@@ -1,6 +1,6 @@
 # Read endpoints, pagination inputs and `useRead*` composables
 
-Read when writing a `read*` procedure, building its pagination input schema, or writing the `useRead*` composable that calls it. The client-side list/infinite-scroll layering belongs to the `pagination` skill (`references/cursor-pagination.md`).
+Read when writing a `read*` procedure, building its pagination input schema, or writing the `useRead*` composable that calls it. The client-side list/infinite-scroll layering belongs to `.agents/skills/pagination/references/cursor-pagination.md`.
 
 ## Pagination Params Schemas
 
@@ -11,7 +11,7 @@ Two factory functions in `shared/models/pagination/`:
 
 Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must satisfy the minimum.
 
-**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT` and `cursor: z.string().default("")` — never override them. A parsed input therefore always carries a string, so the first page is `!cursor`, never `cursor === undefined`; `.optional()` here would also break the `""` sentinel rule (the `absent-values` skill, `references/string-sentinel.md`). Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, still pass a non-empty `defaultSortBy` (the factory's `min(1)` rejects `[]`), then omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), [{ key: "rowKey", order: SortOrder.Desc }]).omit({ sortBy: true })`.
+**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT` and `cursor: z.string().default("")` — never override them. A parsed input therefore always carries a string, so the first page is `!cursor`, never `cursor === undefined`; `.optional()` here would also break the `""` sentinel rule (`.agents/skills/absent-values/references/string-sentinel.md`). Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, still pass a non-empty `defaultSortBy` (the factory's `min(1)` rejects `[]`), then omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), [{ key: "rowKey", order: SortOrder.Desc }]).omit({ sortBy: true })`.
 
 ```ts
 // CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object

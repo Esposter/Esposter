@@ -1,6 +1,6 @@
 ---
 name: trpc
-description: Apply when writing tRPC routers, procedures, or router tests. Esposter's tRPC conventions — how a router, a procedure and its input are laid out, named and guarded; the return-type generic on the method, useQuery/useMutation for every client read and write, read*/search*/generate* query names, a single-entity procedure replaced by a batch only when a caller acts on a set, the room RBAC builders, and the error constructors a router rejects with.
+description: Apply when writing tRPC routers, procedures, or router tests. Esposter's tRPC conventions — how a router, a procedure and its input are laid out, named and guarded, and how a client calls one.
 ---
 
 # tRPC Conventions
@@ -51,7 +51,7 @@ Every query names its verb — `read*`, `search*`, `generate*` (`trpc-procedure/
 
 ## Procedure Helpers (Room RBAC)
 
-`getMemberProcedure`, `getPermissionsProcedure` or `getOwnerProcedure` from `server/trpc/procedure/room/`, and a read takes the builder its **data** deserves, never the one its caller's UI implies (`references/room-procedures.md`).
+`getMemberProcedure` or `getPermissionsProcedure` from `server/trpc/procedure/room/`, and a read takes the builder its **data** deserves, never the one its caller's UI implies (`references/room-procedures.md`).
 
 ## Ownership Guards in Mutations
 
@@ -63,5 +63,5 @@ One router and one Pinia store per table, named after the table (`references/rou
 
 ## Error Handling
 
-- **`BAD_REQUEST` always carries a message, and the router never assembles it** — `throw getInvalidOperationError(Operation.X, EntityType, name)` from `server/trpc/guards/`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID). A missing entity is `getNotFoundError`; the constructors and the one bare code are the `error-handling` skill's (`references/server-guards.md`).
-- The `typescript` skill's `if/else if` chain rule (`references/control-flow.md`) applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.
+- **`BAD_REQUEST` always carries a message, and the router never assembles it** — `throw getInvalidOperationError(Operation.X, EntityType, name)` from `server/trpc/guards/`, picking the `Operation` matching the procedure (`Operation.Read` for a query; `Create`/`Update`/`Delete` for mutations), the entity type, and a `name` identifying the invalid value (`JSON.stringify(input)`, the relevant ID). A missing entity is `getNotFoundError`; the constructors and the one bare code are owned by `.agents/skills/error-handling/references/server-guards.md`.
+- The `if/else if` chain rule in `.agents/skills/typescript/references/control-flow.md` applies inside procedure bodies: an early-exit `if` that throws is followed by `else if`, even when the conditions are logically independent.

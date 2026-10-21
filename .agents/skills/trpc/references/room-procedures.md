@@ -6,7 +6,6 @@ The builders in `server/trpc/procedure/room/`:
 
 - `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; standard message/room operations.
 - `getPermissionsProcedure(permission, schema, roomIdKey, rateLimiterType?)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
-- `getOwnerProcedure(schema, roomIdKey, rateLimiterType?)` — verifies caller owns the room; destructive room operations.
 
 `rateLimiterType` defaults to `RateLimiterType.Standard`; pass another only to opt into a different limiter.
 
