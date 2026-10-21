@@ -1,6 +1,6 @@
 ---
 name: pagination
-description: Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache. Esposter's paginated lists — a store, a useRead* composable and a StyledWaypoint for every list, useAutoSearch/useCursorSearcher as the only search-as-you-type stack, ancillary reads bundled into the primary read, a total the server's rather than a count of loaded rows, and an offline IndexedDB cache nothing outside it touches.
+description: Apply when building or reviewing a paginated list, an infinite-scroll feed, a search-as-you-type input, or an offline list cache. Esposter's paginated lists, search-as-you-type inputs and offline list cache.
 ---
 
 # Pagination, Search & Offline List Cache
