@@ -1,11 +1,11 @@
 ---
 name: resuming
-description: Apply when a session starts or picks work back up — after a compaction, a /login or an account switch, a usage lockout, a crash, or on another machine — and before taking up any new unit of work. Esposter's resume — the machine brought back in sync with `ai/queue` and the fleet before anything new starts, `pnpm ai:resume` listing every leftover with its action, each one finished, recorded or released from the handoff it left, and only a clean report opening new work.
+description: Apply when a session starts or picks work back up — after a compaction, a /login or an account switch, a usage lockout, a crash, or on another machine — and before taking up any new unit of work. Esposter's resume — the machine brought back in sync with `ai/queue` and the fleet through `pnpm ai:resume`, before anything new starts.
 ---
 
 # Resuming — In Sync Before Anything New
 
-A session that ends mid-change — a compaction, a usage lockout, a dead agent, a machine switch — leaves its work in four places: the tree, the queue, the fleet's claims and the processes it started. The next session starts from those, never from memory. The handoffs it reads are the ones the throughput skill's wind-down writes, so the two halves meet: the wind-down records every open item where a resume finds it, and the resume reads it there rather than re-deriving it.
+A session that ends mid-change — a compaction, a usage lockout, a dead agent, a machine switch — leaves its work in four places: the tree, the queue, the fleet's claims and the processes it started. The next session starts from those, never from memory. The handoffs it reads are the ones the `throughput` skill ("Wind-down") writes, so the two halves meet: the wind-down records every open item where a resume finds it, and the resume reads it there rather than re-deriving it.
 
 ## Settled — do not re-propose
 
@@ -30,7 +30,7 @@ flowchart LR
 
 ## Rules
 
-- **`pnpm ai:resume` runs first**, before the backlog is read. It prints one row per check (tree, queue, worktrees, claims, holds, plugins), each `ok` or the leftovers with their action, and exits non-zero while any row needs one. A clean report is the gate to `pnpm ai:fleet:next` and to the engineering-loops page's "What runs next" (`openspec/specs/architecture/engineering-loops/design.md`).
+- **`pnpm ai:resume` runs first**, before the backlog is read. It prints one row per check, each `ok` or the leftovers with their action, and exits non-zero while any row needs one. A clean report is the gate to `pnpm ai:fleet:next` and to the engineering-loops page's "What runs next when nothing is asked" (`openspec/specs/architecture/engineering-loops/design.md`).
 - **Rows are worked in the order printed.** A missing plugin is installed first, since its mods (the usage reserve, the collision guard) load only in a session started after the install. A dead hold or a worktree is cleared before the tree, so nothing still running holds a path being judged.
 - **An uncommitted path is read before it is judged.** Its handoff is, in order:
   - the item that names it on its area's roadmap or proposal page;
