@@ -10,7 +10,7 @@ Read when a write's body is computed from an entity the same request just read �
 
 A rejected conditional write is a `412`, meaning only that the version is stale — the caller's intent is still valid, so re-read and re-apply rather than surfacing it. **`updateEntityConditionally` owns that loop — do not hand-roll it.**
 
-**Classify a rejection with the `checkIs*` helpers in `@esposter/db`, and take `RestError` from `@azure/core-rest-pipeline`** — never from `@azure/storage-blob` or `@azure/data-tables`, which both re-export that one class (`no-restricted-syntax`). The helpers classify errors from both SDKs, so an `instanceof` against a re-export depends on the two resolving one shared copy, and the day a version bump splits them the check silently stops recognising the other SDK's errors.
+**Classify a rejection with the `checkIs*` helpers in `@esposter/db`, and take `RestError` from `@azure/core-rest-pipeline`** (`no-restricted-syntax` rejects a storage SDK's re-export, `packages/configuration/eslint/restrictedImportSyntaxes.js`). The helpers classify errors from both SDKs, so an `instanceof` against a re-export stops recognising the other SDK's errors the day the two copies split.
 
 ## The loop
 

@@ -1,6 +1,6 @@
 ---
 name: azure-table
-description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter's conventions for how a table row is keyed, written, filtered and counted — the shared helpers (submitTransactionBatches, updateEntityConditionally, serializeClauses) own each of those jobs and are never hand-rolled, and a count of rows is only ever a bounded floor.
+description: Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code. Esposter's Azure Table Storage conventions, where the shared `@esposter/db` and `@esposter/azure` helpers own each table job and are never hand-rolled.
 ---
 
 # Azure Table Storage Patterns
