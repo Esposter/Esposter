@@ -1,6 +1,6 @@
 # Settings Panels
 
-Read when adding a settings panel, or deciding whether a create action belongs in one. The one-line rule is in `SKILL.md`; this page is its full statement and the administrative case.
+Read when adding a settings panel, or deciding whether a create action belongs in one. `SKILL.md` has the one-line rule; this page adds the administrative case.
 
 ## A feature whose first want is administrative has no second surface
 

@@ -12,7 +12,7 @@ The full list of sources, with what each gave the app and the order they are con
 
 ## What a first draft gets wrong
 
-Each of these is a finding in review, whatever the rules above say about the parts.
+Each of these is a finding in review, whatever the placement rules and the `ui-library` skill say about the parts.
 
 - **Everything boxed.** Borders, cards, chips and expansion panels on every item flatten the hierarchy until nothing leads. Group with space and type roles first, and give a surface to the one region that needs it.
 - **Chips as labels.** A chip is a control or a count. A state or a figure beside a title is text in a lower-emphasis role.

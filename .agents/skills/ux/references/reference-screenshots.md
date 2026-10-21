@@ -13,7 +13,7 @@ idea — it is the spec, and it is being handed over precisely because reading i
   addition nobody asked for is neither, and it is the first thing that gets deleted by the next reader comparing
   the two.
 - **A control we cannot back yet is left out, not mocked.** A button whose write does not exist is worse than a
-  missing one, and it fails the rule above about a surface whose actions can succeed.
+  missing one, and it fails the `ux` skill's rule that a management surface exists only where its actions can succeed.
 - **A string that would be false here is a missing feature, not a wording problem.** Discord's `revoke any one`
   says its panel can revoke. Either that ships or the line is adapted to what ours does — it is never quietly
   rewritten into our own voice while the arrangement claims to be theirs.
