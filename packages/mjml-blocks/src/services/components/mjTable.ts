@@ -8,7 +8,7 @@ import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { MJML_PADDING_ATTRIBUTES } from "#src/services/constants";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
-import { createMjmlRawContentSchema } from "#src/services/createMjmlRawContentSchema";
+import { MjmlContentKindSchemaMap } from "#src/services/MjmlContentKindSchemaMap";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -41,7 +41,7 @@ export const tablePropsSchema: z.ZodObject<
   z.core.$strict
 > = z.strictObject({
   ...createMjmlAttributeShape(tableAttributes),
-  content: createMjmlRawContentSchema(),
+  content: MjmlContentKindSchemaMap[MjmlContentKind.Raw],
 }) satisfies z.ZodType<OwnProps<MjmlTableProps>>;
 
 // The table component: the attributes it takes, the props its schema reads and what it renders

@@ -7,7 +7,7 @@ import type { OwnProps } from "headless-block-editor";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { createMjmlAttributeShape } from "#src/services/createMjmlAttributeShape";
-import { createMjmlRawContentSchema } from "#src/services/createMjmlRawContentSchema";
+import { MjmlContentKindSchemaMap } from "#src/services/MjmlContentKindSchemaMap";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
 import { z } from "zod";
 
@@ -18,7 +18,7 @@ export const rawPropsSchema: z.ZodObject<
   { [K in keyof typeof rawAttributes]: MjmlAttributeSchema } & { content: z.ZodString },
   z.core.$strict
 > = z.strictObject({
-  content: createMjmlRawContentSchema(),
+  content: MjmlContentKindSchemaMap[MjmlContentKind.Raw],
   ...createMjmlAttributeShape(rawAttributes),
 }) satisfies z.ZodType<OwnProps<MjmlRawProps>>;
 

@@ -50,6 +50,16 @@ An attribute the author did not set SHALL stay absent from the node, and SHALL r
 - **WHEN** the font size of a text that sets its own is resolved
 - **THEN** it resolves to the text's own font size
 
+### Requirement: A label or raw block is read by its kind's one schema
+
+A label-kind or raw-kind block SHALL hold its content as the one kind-to-schema map gives it, and the render SHALL refuse content that schema refuses. A definition whose kind is a label or a raw SHALL NOT carry a content schema that is not a string, and the type of the definition SHALL refuse one.
+
+#### Scenario: A raw block holding a script is refused at render
+
+- **GIVEN** a raw block whose content holds a script element
+- **WHEN** the document is rendered
+- **THEN** the render is refused
+
 ### Requirement: Content is safe before it reaches MJML
 
 An image SHALL carry its alternative text or be marked decorative, raw HTML SHALL be stored only as the sanitiser returns it, and every attribute value SHALL reach MJML escaped exactly once.

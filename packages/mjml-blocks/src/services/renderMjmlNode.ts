@@ -6,11 +6,10 @@ import type { BlockNode } from "headless-block-editor";
 
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
-import { labelContentSchema } from "#src/services/labelContentSchema";
+import { MjmlContentKindSchemaMap } from "#src/services/MjmlContentKindSchemaMap";
 import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { escapeAttribute, escapeText, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 import { getBlockPropValue } from "headless-block-editor";
-import { z } from "zod";
 
 // A built-in component's render: its set attributes, the alternative text its flag writes, its children or its content, each escaped once
 // Each prop is unknown until its guard or parse narrows it, so the render reads the node as the core holds it and never as a typed props object
@@ -37,11 +36,16 @@ export const renderMjmlNode = <TContent extends MjmlRichText>(
 
     switch (specification.contentKind) {
       case MjmlContentKind.Label: {
-        const parsedLabel = labelContentSchema.parse(getBlockPropValue(node.props, "content"));
+        const parsedLabel = MjmlContentKindSchemaMap[MjmlContentKind.Label].parse(
+          getBlockPropValue(node.props, "content"),
+        );
         return { ...element, content: escapeText(parsedLabel) };
       }
       case MjmlContentKind.Raw:
-        return { ...element, content: z.string().parse(getBlockPropValue(node.props, "content")) };
+        return {
+          ...element,
+          content: MjmlContentKindSchemaMap[MjmlContentKind.Raw].parse(getBlockPropValue(node.props, "content")),
+        };
       case MjmlContentKind.RichText: {
         if (richText === undefined)
           throw new InvalidOperationError(

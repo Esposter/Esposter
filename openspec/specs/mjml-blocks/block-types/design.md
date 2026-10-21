@@ -39,6 +39,7 @@ The package's block types as built. The requirements are in [the spec](spec.md),
 | `packages/mjml-blocks/src/services/readMjmlNodes.ts`                        | each element a node, and each stray text a node that no registry holds                                               |
 | `packages/mjml-blocks/src/services/readMjmlHead.ts`                         | the head's components as the root's props, refusing the attributes the head and its defaults take                    |
 | `packages/mjml-blocks/src/services/readMjmlContent.ts`                      | a content-kind tag's raw content, read by its kind                                                                   |
+| `packages/mjml-blocks/src/services/MjmlContentKindSchemaMap.ts`             | the one kind-to-schema map: the label's and the raw's content schema, which a component takes rather than declares   |
 | `packages/mjml-blocks/src/services/getMjmlRefusalKey.ts`                    | the key a refused tag or attribute is kept under: its name in angle brackets                                         |
 | `packages/mjml-blocks/src/services/checkMjmlAlternativeText.ts`             | the alternative text rule an image-like node runs over its alt and decorative flag                                   |
 | `packages/mjml-blocks/src/services/escapeMjmlAttributes.ts`                 | each attribute value escaped once, as the render writes it                                                           |
