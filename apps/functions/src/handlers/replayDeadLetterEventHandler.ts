@@ -52,7 +52,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Decoded and JSON-parsed once and reused: a dead-letter blob carries up to a megabyte of events, and the
     // Raw objects are needed again below to write a quarantine copy that keeps Event Grid's diagnostics
     // oxlint-disable-next-line no-restricted-properties -- a dead-letter payload is replayed and quarantined verbatim, so no value is rewritten on the way through
-    const rawEvents = getResult(() => JSON.parse(content.toString("utf8")) as unknown)
+    const rawEvents: unknown = getResult(() => JSON.parse(content.toString("utf8")))
       .orTee((error) => {
         parseError = error;
       })
