@@ -4,9 +4,9 @@ import { resourceVersionsInResource, snapshotChannelEnum } from "#src/schema/res
 import { sql } from "drizzle-orm";
 import { check, foreignKey, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 
-// One row per asset a stored version's content embeds, keyed by the version and the asset's content hash. An asset
-// Lives under its hash for as long as a row names it, so collection asks this table rather than reading content: a
-// Version's rows are written from a scan of its plaintext when the version is stored, and cascade with the version
+// One row per asset a stored version's content embeds, keyed by the version and the asset's content hash.
+// An asset lives under its hash for as long as a row names it. Collection asks this table rather than reading content.
+// A version's rows are written from a scan of its plaintext when the version is stored, and cascade with the version.
 // Design: openspec/specs/resource/content-addressed-assets/design.md
 export const resourceVersionAssetsInResource = pgTable(
   "resourceVersionAssets",
@@ -19,8 +19,8 @@ export const resourceVersionAssetsInResource = pgTable(
   },
   {
     extraConfig: ({ assetHash, channel, resourceId, version }) => [
-      // Also the index every read takes: a version's rows are replaced under the resource lock, and collection reads
-      // A resource's rows by its id, which is the leading column
+      // Also the index every read takes: a version's rows are replaced under the resource lock.
+      // Collection reads a resource's rows by its id, which is the leading column
       primaryKey({ columns: [resourceId, channel, version, assetHash] }),
       foreignKey({
         columns: [resourceId, channel, version],
