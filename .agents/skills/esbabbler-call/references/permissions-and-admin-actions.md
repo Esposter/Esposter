@@ -23,4 +23,4 @@ AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
 });
 ```
 
-`KickFromCall` does not check `callRoomId` — it always leaves regardless of room.
+`KickFromCall` checks `callRoomId` like the other leave hooks — the kick is from that room's call, never from a call the user is in elsewhere.
