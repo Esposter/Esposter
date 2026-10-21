@@ -44,8 +44,8 @@ Each direction's full statement, with the pointers it carries, is `references/se
 
 ## Rules
 
-- **Numbers before looking.** Run `pnpm -C scripts genshin:parity compare <reference>` and read the mean and the grid; zoom only on a cell that stands out. Target a mean of hundredths of a percent, with any remainder explained (antialiasing along an edge). The run rewrites its row of the committed `ParityReferenceMap.snapshot.md` (`--all` every row), which is committed with the change that moved it and is the only score a session quotes.
-- **An agent approves a screen's image with `genshin:parity approve` once its compare is clean against a stored reference, and fetches a missing reference first.** No person approves images, and nothing is approved blind (`references/approval.md`).
+- **Numbers before looking:** run `pnpm -C scripts genshin:parity compare <reference>` and read the mean and the grid; zoom only on a cell that stands out (`references/compare.md`).
+- **An agent approves a screen's image with `genshin:parity approve` once its compare is clean against a stored reference, and fetches a missing reference first** — `references/approval.md`.
 - **A screen's load is held to its budget by the load bench**, `pnpm -C scripts genshin:parity load <screen>` (`openspec/specs/genshin/load-budget/design.md`).
 
 ## Reference pages
@@ -65,3 +65,4 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - `references/deriving.md` — when deriving a screen, a surface or a scene in passes.
 - `references/parity-page.md` — when a command renders the world, a frame stalls, or the parity page is served.
 - `references/tools-and-estimates.md` — when a loop has not converged, a tool is built or pruned, or a value is estimated.
+- `references/compare.md` — when a screen's `compare` score is judged against its target, or its snapshot row is rewritten.
