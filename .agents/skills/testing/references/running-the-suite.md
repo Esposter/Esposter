@@ -12,7 +12,7 @@ This is the one risk of _this_ page's kind — collateral damage a green targete
 
 Heavy seeded tests can blow the default timeout purely from full-suite parallel load. Rerun the file in isolation first: if it passes comfortably there and CI is green, leave it alone — **never** bump `testTimeout` or add a per-test `{ timeout }` to paper over machine load.
 
-The inflation is not marginal, so a duration read off the full run says nothing about the test that produced it. A run spawns a worker per file and the repository has far more files than the machine has cores, so every heavy file — a PGlite-seeded suite, a snapshot over a parsed corpus, a compression suite — costs the better part of an order of magnitude more there than alone, and a test that takes a fraction of a second on its own can fail the default timeout. Nothing about such a test is slow; it is starved. The two settings that exist for this — the shared `hookTimeout` and the one per-test `{ timeout }` in `db-mock` — are the bound a PGlite boot needs while the rest of the suite competes for cores, and they are the exception the rule above names, not licence for a third.
+The inflation is not marginal, so a duration read off the full run says nothing about the test that produced it. A run spawns a worker per file and the repository has far more files than the machine has cores, so every heavy file — a PGlite-seeded suite, a snapshot over a parsed corpus, a compression suite — costs the better part of an order of magnitude more there than alone, and a test that takes a fraction of a second on its own can fail the default timeout. Nothing about such a test is slow; it is starved. The setting that exists for this — the shared `hookTimeout` — is the bound a PGlite boot needs while the rest of the suite competes for cores, and it is the exception the rule above names, not licence for a second.
 
 ## Runner settings
 
@@ -22,7 +22,7 @@ The inflation is not marginal, so a duration read off the full run says nothing 
 
 ## Environment
 
-Tests run on Windows: `configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
+Tests run on Windows: `apps/web/configuration/modules.ts` allowlists a minimal set of Nuxt modules under `process.env.VITEST`, so a test needing an excluded module adds it to that branch.
 
 Every runner reads the host: root `pnpm test`, `pnpm test:packages` and a package's own `pnpm test` all invoke vitest natively, so `process.platform` reads `win32` on a Windows host and a test gated on it selects the Windows case.
 

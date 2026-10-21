@@ -2,7 +2,7 @@
 
 Read when a test creates, reads or names a real filesystem path.
 
-A test file or directory name carries **no meaning**; a distinct one is pure noise and a decision nobody should have to make. Where a package tests real filesystem paths, it declares one canonical file name in the nearest `constants.test.ts` — `TEST_FILENAME`, named with a single character since the name carries nothing — and uses it for **every** test path. **Never invent a custom name** alongside it (`"marker"`, `"helper.cjs"`, `"dist"`, `"nested"`…); diverse names are a recurring mistake. A package with no filesystem tests needs no such constant — don't introduce it speculatively.
+A test file or directory name carries **no meaning**; a distinct one is pure noise and a decision nobody should have to make. Where a package tests real filesystem paths, it declares one canonical file name in the nearest `constants.test.ts` (`fixtureConstants.test.ts` under `scripts/`) — `TEST_FILENAME`, named with a single character since the name carries nothing — and uses it for **every** test path. **Never invent a custom name** alongside it (`"marker"`, `"helper.cjs"`, `"dist"`, `"nested"`…); diverse names are a recurring mistake. A package with no filesystem tests needs no such constant — don't introduce it speculatively.
 
 - **Extension only when the code under test depends on it** (module resolution, parser/format tests) — then `` `${TEST_FILENAME}.cjs` ``. Otherwise the bare `TEST_FILENAME`.
 - **A path that must be absent** (missing-file / non-existent tests) — build it from `TEST_FILENAME` under a directory that does not exist, e.g. ``join(<missing directory>, `${TEST_FILENAME}.cjs`)``. Never a custom `"missing.cjs"`.
