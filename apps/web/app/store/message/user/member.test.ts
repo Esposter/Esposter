@@ -87,14 +87,15 @@ describe(useMemberStore, () => {
     expect(members.value).toStrictEqual([]);
   });
 
-  test("uses the server-resolved display name for a member", () => {
+  test("keeps the server-resolved display name on the member row", () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
-    const { getMemberName, storeCreateMember } = memberStore;
+    const { storeCreateMember } = memberStore;
+    const { members } = storeToRefs(memberStore);
     storeCreateMember(roomId, { ...member, displayName: "Ally" });
 
-    expect(getMemberName(member.id)).toBe("Ally");
+    expect(members.value).toStrictEqual([{ ...member, displayName: "Ally" }]);
   });
 
   test("deletes a roleless member without touching the role groups", () => {

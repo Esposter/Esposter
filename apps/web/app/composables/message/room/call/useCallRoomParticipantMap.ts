@@ -3,7 +3,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { useUserStore } from "@/store/message/user";
 
 // The viewed room's call, each participant named as the room knows them
 export const useCallRoomParticipantMap = () => {
@@ -13,8 +13,8 @@ export const useCallRoomParticipantMap = () => {
   const { currentRoomCallSessionId } = storeToRefs(callStore);
   const participantStore = useParticipantStore();
   const { callSessionParticipantsMap } = storeToRefs(participantStore);
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
+  const userStore = useUserStore();
+  const { getRoomMemberMap } = userStore;
   return computed(
     () =>
       new Map<string, CallParticipant>(
@@ -22,7 +22,7 @@ export const useCallRoomParticipantMap = () => {
           id,
           {
             ...participant,
-            name: getDisplayName({ id: participant.userId, name: participant.name }, currentRoomId.value),
+            name: getRoomMemberMap(currentRoomId.value)?.get(participant.userId)?.displayName ?? participant.name,
           },
         ]),
       ),

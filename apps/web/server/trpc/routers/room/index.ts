@@ -1,7 +1,7 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
@@ -334,10 +334,14 @@ export const baseRoomRouter = router({
       return getCursorPaginationData(members, limit, sortBy);
     },
   ),
-  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<PublicUser[]>(
+  // Only the ids that are members of the room come back, which is how a caller tells who has joined
+  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query<MemberInRoom[]>(
     ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
-        .select(getPublicUserColumns(usersInAuth))
+        .select({
+          ...getPublicUserColumns(usersInAuth),
+          displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
+        })
         .from(usersInAuth)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
         .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(usersInAuth.id, userIds))),

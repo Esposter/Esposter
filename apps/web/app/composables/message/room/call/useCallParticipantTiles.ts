@@ -5,15 +5,15 @@ import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { useUserStore } from "@/store/message/user";
 
 export const useCallParticipantTiles = () => {
   const session = authClient.useSession();
   const sessionId = computed(() => session.value.data?.session.id);
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
+  const userStore = useUserStore();
+  const { getRoomMemberMap } = userStore;
   const mediaStore = useMediaStore();
   const {
     activeScreenShareParticipantId,
@@ -34,7 +34,7 @@ export const useCallParticipantTiles = () => {
           callRoomId.value
             ? {
                 ...participant,
-                name: getDisplayName({ id: participant.userId, name: participant.name }, callRoomId.value),
+                name: getRoomMemberMap(callRoomId.value)?.get(participant.userId)?.displayName ?? participant.name,
               }
             : participant,
         ]),

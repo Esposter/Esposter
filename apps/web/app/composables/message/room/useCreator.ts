@@ -1,6 +1,5 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
 import { MessageType } from "@esposter/db-schema";
@@ -8,10 +7,9 @@ import { MessageType } from "@esposter/db-schema";
 export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>) => {
   const userStore = useUserStore();
   const { userMap } = storeToRefs(userStore);
+  const { getRoomMemberMap } = userStore;
   const appUserStore = useAppUserStore();
   const { appUserMap } = storeToRefs(appUserStore);
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
   return computed(() => {
     const messageValue = toValue(message);
     if (!messageValue) return undefined;
@@ -23,9 +21,10 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
     }
 
     const user = userMap.value.get(messageValue.userId);
-    // The creator is named on every message it wrote, so it resolves the room display name exactly like the member
-    // Sidebar and the settings Members panel — otherwise a renamed member is two different people in one room
-    if (user) return { ...user, name: getDisplayName(user, messageValue.partitionKey) };
+    // The creator is named on every message it wrote, so it takes the room display name its member row carries,
+    // Exactly like the member sidebar and the settings Members panel — otherwise a renamed member is two people in one room
+    if (user)
+      return { ...user, name: getRoomMemberMap(messageValue.partitionKey)?.get(user.id)?.displayName ?? user.name };
     else return undefined;
   });
 };

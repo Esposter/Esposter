@@ -3,7 +3,6 @@ import type { PublicUser } from "@esposter/db-schema";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -14,12 +13,10 @@ export const useReadMembers = () => {
   const memberStore = useMemberStore();
   const { getBoundMemberCounts, readItems, readMoreItems } = memberStore;
   const userStore = useUserStore();
-  const { storeUsers } = userStore;
+  const { storeRoomMembers, storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
-  const userToRoomStore = useUserToRoomStore();
-  const { setDisplayName } = userToRoomStore;
   // The term the rows on screen came from, so paging carries it with the cursor — a member who joins mid-scroll
   // Cannot appear in a later page of a search they do not match
   const searchedName = ref("");
@@ -40,9 +37,7 @@ export const useReadMembers = () => {
       cursorPaginationData.items.map(({ id }) => id),
     );
     storeUsers(cursorPaginationData.items);
-    // The render path resolves a member's name from the overlay, which the read's own display name fills, so
-    // Nothing else has to fetch displayNames
-    for (const { displayName, id } of cursorPaginationData.items) setDisplayName(roomId, id, displayName);
+    storeRoomMembers(roomId, cursorPaginationData.items);
     return cursorPaginationData;
   };
   // The room's own totals, which a search must never re-read: the roleless group is derived from a count of

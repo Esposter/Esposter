@@ -18,12 +18,15 @@ import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
+import { useUserStore } from "@/store/message/user";
 import { checkHasPermission } from "@esposter/db-schema";
 import { ID_SEPARATOR, noop } from "@esposter/shared";
 
 export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
+  const userStore = useUserStore();
+  const { storeRoomMembers } = userStore;
   const {
     data: roles,
     getData: baseGetRoles,
@@ -169,6 +172,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
       input.roomId,
       new Map(overrides.map(({ allow, deny, userId }) => [userId, { allow, deny }])),
     );
+    // An override names no one, so the room's member rows for the overridden members are read alongside it
+    if (overrides.length === 0) return;
+
+    const members = await $trpc.room.readMembersByIds.query({
+      roomId: input.roomId,
+      userIds: overrides.map(({ userId }) => userId),
+    });
+    storeRoomMembers(input.roomId, members);
   };
   // The write's answer is the state the server left, so the entry is right whatever order the events arrived in
   const upsertMemberPermissionOverride = async (input: UpsertMemberPermissionOverrideInput) => {

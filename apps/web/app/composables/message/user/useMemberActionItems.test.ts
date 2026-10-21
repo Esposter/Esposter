@@ -9,7 +9,7 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe(useMemberActionItems, () => {
   const userId = crypto.randomUUID();
-  const member = createUser();
+  const member = { ...createUser(), displayName: "" };
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: { user: { id: userId } } }));
@@ -40,7 +40,7 @@ describe(useMemberActionItems, () => {
     expect.hasAssertions();
 
     const { friendItem, moderationItems } = useMemberActionItems(
-      createUser({ id: userId }),
+      { ...createUser({ id: userId }), displayName: "" },
       crypto.randomUUID(),
       vi.fn<() => void>(),
     );

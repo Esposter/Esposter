@@ -32,9 +32,15 @@ export const useReadMessageMetadata = () => {
         roomId,
         standardMessages.flatMap(({ files }) => files),
       ),
+      // A reactor is named by its member row, so the reactors of the emojis read are read as members too
       readEmojis(
         roomId,
         messages.map(({ rowKey }) => rowKey),
+      ).then((emojis) =>
+        readMembersByIds(
+          roomId,
+          emojis.flatMap(({ userIds }) => userIds),
+        ),
       ),
     ]);
   };

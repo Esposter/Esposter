@@ -36,6 +36,7 @@ const selectedEmoji = computed(
         <MessageModelMessageReactionsDialogUserListItem
           v-for="userId of selectedEmoji.userIds"
           :key="userId"
+          :room-id="reactionsRoomId"
           :user-id
         />
       </div>

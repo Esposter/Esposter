@@ -766,14 +766,20 @@ describe("roomRouter", () => {
     expect(takeOne(globalNameMembers.items).displayName).toBe(displayName);
   });
 
-  test("reads members by ids", async () => {
+  test("reads members by ids with the display name they have in the room", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const user = getMockSession().user;
+    const { user } = getMockSession();
+    const displayName = "Ally";
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName })
+      .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, user.id)));
     const members = await roomCaller.readMembersByIds({ roomId: newRoom.id, userIds: [user.id] });
 
     expect(takeOne(members).id).toBe(user.id);
+    expect(takeOne(members).displayName).toBe(displayName);
   });
 
   test("fails read members by ids with wrong user", async () => {

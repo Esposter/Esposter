@@ -256,6 +256,8 @@ describe("moderationRouter", () => {
 
     expect(result.items).toHaveLength(1);
     expect(takeOne(result.items).userId).toBe(member.id);
+    // A banned member has left the room, so their name is the account name
+    expect(takeOne(result.items).user.displayName).toBe(member.name);
   });
 
   // The panel paginates every ban a room has ever placed, so without a predicate finding one person means
@@ -394,6 +396,19 @@ describe("moderationRouter", () => {
     expect(result.items).toHaveLength(1);
     expect(moderationNote.note).toBe(note);
     expect(moderationNote.targetUserId).toBe(member.id);
+    expect(moderationNote.actorDisplayName).toBe(getMockSession().user.name);
+  });
+
+  test("readModerationLog names the actor and the target in the room", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+
+    const result = await moderationCaller.readModerationLog({ ...emptyFilters, roomId });
+
+    expect(takeOne(result.items).actorDisplayName).toBe(getMockSession().user.name);
+    expect(takeOne(result.items).targetDisplayName).toBe(member.name);
   });
 
   test("readModerationNotes returns only the target member's notes", async () => {

@@ -9,7 +9,7 @@ export const useMemberCache = () => {
   const memberStore = useMemberStore();
   const { getMemberCountsRef, getSlice } = memberStore;
   const userStore = useUserStore();
-  const { storeUsers } = userStore;
+  const { storeRoomMembers, storeUsers } = userStore;
   useCursorPaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
     getSlice,
@@ -19,6 +19,7 @@ export const useMemberCache = () => {
     onHydrate: (cachedMembers, partitionKey) => {
       getMemberCountsRef(partitionKey).value.count = cachedMembers.length;
       storeUsers(cachedMembers);
+      storeRoomMembers(partitionKey, cachedMembers);
     },
     partitionKey: currentRoomId,
   });

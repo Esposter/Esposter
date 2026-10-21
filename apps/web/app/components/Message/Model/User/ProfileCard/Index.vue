@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useStatusStore } from "@/store/message/user/status";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 interface Props {
-  user: Pick<PublicUser, "id" | "image" | "name">;
+  user: Pick<MemberInRoom, "displayName" | "id" | "image" | "name">;
 }
 
 const { user } = defineProps<Props>();
@@ -25,8 +24,6 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
 const { readMemberRoles } = roleStore;
-const userToRoomStore = useUserToRoomStore();
-const { getDisplayName } = userToRoomStore;
 const statusStore = useStatusStore();
 const { getStatusMessage, getUserStatus } = statusStore;
 const friendStore = useFriendStore();
@@ -36,9 +33,9 @@ const { checkHasSentFriendRequest } = friendRequestStore;
 const moderationNoteStore = useModerationNoteStore();
 const { currentTargetUserId } = storeToRefs(moderationNoteStore);
 const isSelf = computed(() => session.value?.user.id === user.id);
-// The row this card pops out of already shows the room displayName, so the card has to resolve the same way —
-// Otherwise opening a renamed member swaps the name out from under the cursor
-const displayName = computed(() => getDisplayName(user, currentRoomId.value));
+// The row this card pops out of already shows the room displayName, so the card reads the same field — otherwise
+// Opening a renamed member swaps the name out from under the cursor
+const displayName = computed(() => user.displayName);
 const { copyUserIdItem, friendItem, isKickable, moderationItems } = useMemberActionItems(
   () => user,
   currentRoomId,

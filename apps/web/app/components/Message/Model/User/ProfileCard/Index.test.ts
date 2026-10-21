@@ -3,7 +3,6 @@ import MessageModelUserProfileCard from "@/components/Message/Model/User/Profile
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -20,11 +19,8 @@ describe("messageModelUserProfileCard", () => {
     expect.hasAssertions();
 
     trpcMsw.room.readMutualRooms.query(() => []);
-    const component = await mountSuspended(MessageModelUserProfileCard, { props: { user } });
+    const component = await mountSuspended(MessageModelUserProfileCard, { props: { user: { ...user, displayName } } });
     setCurrentRoomId(roomId);
-    const userToRoomStore = useUserToRoomStore();
-    const { setDisplayName } = userToRoomStore;
-    setDisplayName(roomId, user.id, displayName);
     await flushPromises();
 
     expect(component.text()).toContain(displayName);

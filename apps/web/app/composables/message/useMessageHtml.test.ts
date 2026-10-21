@@ -46,12 +46,12 @@ describe(useMessageHtml, () => {
 
   // The tree that is queried has to be the tree that is serialized: query one and serialize a second and every
   // Mutation lands on a copy nobody reads, so a renamed member still renders the label it was authored with
-  test("resolves a mention to the name the reader's client knows", () => {
+  test("resolves a mention to the name the room gives that member", () => {
     expect.hasAssertions();
 
     const userStore = useUserStore();
-    const { storeUser } = userStore;
-    storeUser(createUser({ id: userId, name: displayName }));
+    const { storeRoomMembers } = userStore;
+    storeRoomMembers(roomId, [{ ...createUser({ id: userId }), displayName }]);
     const messageHtml = useMessageHtml(createMention(userId), roomId);
 
     expect(messageHtml.value).toContain(`@${displayName}`);

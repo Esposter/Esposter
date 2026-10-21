@@ -1,7 +1,10 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Clause } from "@esposter/azure";
-import type { BanInMessage, BanInMessageWithUsers } from "@esposter/db-schema";
+import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
+import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogInRoom";
+import type { ModerationNoteInRoom } from "#shared/models/db/room/ModerationNoteInRoom";
+import type { BanInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
@@ -14,6 +17,7 @@ import { updateLiveKitTrackSources } from "#server/services/livekit/updateLiveKi
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
 import { readRoomCallParticipantMaps } from "#server/services/message/call/readRoomCallParticipantMaps";
 import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
+import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNameMap";
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
@@ -233,7 +237,7 @@ export const moderationRouter = router({
     }
   }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
-    CursorPaginationData<BanInMessageWithUsers>
+    CursorPaginationData<BanInRoom>
   >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
     const sortBy: SortItem<keyof BanInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
@@ -254,11 +258,27 @@ export const moderationRouter = router({
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bansInMessage, sortBy))
       .limit(limit + 1);
-    return getCursorPaginationData(bans, limit, sortBy);
+    const page = getCursorPaginationData(bans, limit, sortBy);
+    const displayNameMap = await getRoomDisplayNameMap(
+      ctx.db,
+      roomId,
+      page.items.flatMap(({ bannedByUser, user }) => (bannedByUser ? [bannedByUser.id, user.id] : [user.id])),
+    );
+    return {
+      ...page,
+      items: page.items.map((ban) => ({
+        ...ban,
+        bannedByUser: ban.bannedByUser && {
+          ...ban.bannedByUser,
+          displayName: displayNameMap.get(ban.bannedByUser.id) ?? "",
+        },
+        user: { ...ban.user, displayName: displayNameMap.get(ban.user.id) ?? "" },
+      })),
+    };
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
-    CursorPaginationData<ModerationLogEntity>
-  >(async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
+    CursorPaginationData<ModerationLogInRoom>
+  >(async ({ ctx, input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
     const clauses = getLivePartitionClauses<ModerationLogEntity>(roomId);
     if (actorUserId)
       clauses.push({
@@ -275,18 +295,31 @@ export const moderationRouter = router({
     if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.Eq, value: type });
 
     const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-    return readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+    const page = await readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
       clauses,
       cursor,
       limit,
       sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
     });
+    const displayNameMap = await getRoomDisplayNameMap(
+      ctx.db,
+      roomId,
+      page.items.flatMap(({ actorUserId, targetUserId }) => [actorUserId, targetUserId]),
+    );
+    return {
+      ...page,
+      items: page.items.map((item) => ({
+        ...item,
+        actorDisplayName: displayNameMap.get(item.actorUserId) ?? "",
+        targetDisplayName: displayNameMap.get(item.targetUserId) ?? "",
+      })),
+    };
   }),
   readModerationNotes: getPermissionsProcedure(
     RoomPermission.KickMembers,
     readModerationNotesInputSchema,
     "roomId",
-  ).query<CursorPaginationData<ModerationNoteEntity>>(
+  ).query<CursorPaginationData<ModerationNoteInRoom>>(
     async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
       const [moderationNotesClient] = await Promise.all([
         useTableClient(AzureTable.ModerationNotes),
@@ -297,12 +330,21 @@ export const moderationRouter = router({
         ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
         { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.Eq, value: targetUserId },
       ];
-      return readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
+      const page = await readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,
         cursor,
         limit,
         sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
       });
+      const displayNameMap = await getRoomDisplayNameMap(
+        ctx.db,
+        roomId,
+        page.items.map(({ actorUserId }) => actorUserId),
+      );
+      return {
+        ...page,
+        items: page.items.map((note) => ({ ...note, actorDisplayName: displayNameMap.get(note.actorUserId) ?? "" })),
+      };
     },
   ),
   readModerationNotesCount: getPermissionsProcedure(

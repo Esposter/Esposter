@@ -5,7 +5,7 @@ import { PermissionOverrideState } from "@/models/message/room/role/PermissionOv
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { RoomPermissionCategoryItems } from "@/services/message/room/role/RoomPermissionCategoryItems";
 import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { useUserStore } from "@/store/message/user";
 import { checkHasPermission, RoomPermission } from "@esposter/db-schema";
 
 interface Props {
@@ -22,8 +22,9 @@ const {
   getRoles,
   upsertMemberPermissionOverride,
 } = roleStore;
-const memberStore = useMemberStore();
-const { getMemberName } = memberStore;
+const userStore = useUserStore();
+const { getRoomMemberMap } = userStore;
+const memberName = computed(() => getRoomMemberMap(roomId)?.get(userId)?.displayName ?? "");
 // Administrator is answered from the roles alone, so an override cannot hold it and no row offers it
 const categories = RoomPermissionCategoryItems.map(({ category, permissions }) => ({
   category,
@@ -60,13 +61,13 @@ const setState = (permission: bigint, state: PermissionOverrideState) =>
 <template>
   <div flex flex-col gap-4>
     <div flex gap-4 items-center>
-      <h3 flex-1 truncate ui-heading>{{ getMemberName(userId) }}</h3>
+      <h3 flex-1 truncate ui-heading>{{ memberName }}</h3>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isRemoveOpen = true">Remove override</UiButton>
       <UiConfirmDialog
         v-model="isRemoveOpen"
         confirm-label="Remove"
         :confirm="() => deleteMemberPermissionOverride({ roomId, userId })"
-        :title="`Remove ${getMemberName(userId)}'s overrides?`"
+        :title="`Remove ${memberName}'s overrides?`"
       >
         Their roles decide every permission again.
       </UiConfirmDialog>

@@ -10,7 +10,6 @@ import { getMemberGroups } from "@/services/message/member/getMemberGroups";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
 
@@ -22,8 +21,6 @@ const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
-const userToRoomStore = useUserToRoomStore();
-const { getDisplayName } = userToRoomStore;
 const statusStore = useStatusStore();
 const { getStatusMessage } = statusStore;
 const memberMap = computed(() => new Map(members.value.map((member) => [member.id, member])));
@@ -81,8 +78,6 @@ const profileAnchor = ref<HTMLElement>();
 // The profile's popover
 const memberId = ref("");
 const member = computed(() => memberMap.value.get(memberId.value));
-const getMemberDisplayName = (user?: typeof member.value) =>
-  user && currentRoom.value ? getDisplayName(user, currentRoom.value.id) : "";
 const openedDialogType = ref<MemberDialogType>();
 // Kept apart from the member above, which a right-click on another row moves while the dialog is still open
 const dialogMember = ref<typeof member.value>();
@@ -91,7 +86,7 @@ const openDialog = (type: MemberDialogType) => {
   openedDialogType.value = type;
 };
 const { copyUserIdItem, friendItem, moderationItems } = useMemberActionItems(
-  () => member.value ?? { id: "", name: "" },
+  () => member.value ?? { displayName: "", id: "", name: "" },
   () => currentRoom.value?.id ?? "",
   openDialog,
 );
@@ -158,7 +153,7 @@ const getContextMenuItems = (userId: string): Item[] => {
       <UiPopover
         v-model:is-open="isProfileOpen"
         :anchor="profileAnchor"
-        :label="getMemberDisplayName(profileMember)"
+        :label="profileMember?.displayName ?? ''"
         :position-area="MEMBER_PROFILE_POSITION_AREA"
       >
         <MessageModelUserProfileCard v-if="profileMember" :user="profileMember" @open:dialog="openDialog($event)" />
@@ -166,7 +161,7 @@ const getContextMenuItems = (userId: string): Item[] => {
       <MessageModelMemberActionDialog
         v-if="openedDialogType && dialogMember"
         v-model:type="openedDialogType"
-        :display-name="getMemberDisplayName(dialogMember)"
+        :display-name="dialogMember.displayName"
         :room-id="currentRoom.id"
         :user="dialogMember"
       />

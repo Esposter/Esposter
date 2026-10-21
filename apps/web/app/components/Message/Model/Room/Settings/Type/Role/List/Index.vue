@@ -3,7 +3,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
-import { useMemberStore } from "@/store/message/user/member";
+import { useUserStore } from "@/store/message/user";
 
 interface Props {
   roles: RoomRoleInMessage[];
@@ -14,8 +14,8 @@ const { roles, roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { selectMember, selectRole } = roleStore;
 const { memberPermissionOverrideMap, selectedMemberId, selectedRoleId } = storeToRefs(roleStore);
-const memberStore = useMemberStore();
-const { getMemberName } = memberStore;
+const userStore = useUserStore();
+const { getRoomMemberMap } = userStore;
 const roleMap = computed(() => new Map(roles.map((role) => [role.id, role])));
 // Each row is marked by the role's own colour, which the mark's slot draws
 const roleItems = computed(() =>
@@ -37,7 +37,7 @@ const memberItems = computed(() =>
   memberIds.value.map<UiListItem<string>>((userId) => ({
     hasMarkSlot: true,
     isCurrent: userId === selectedMemberId.value,
-    title: getMemberName(userId),
+    title: getRoomMemberMap(roomId)?.get(userId)?.displayName ?? "",
     value: userId,
   })),
 );

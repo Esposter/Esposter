@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import { useCreator } from "@/composables/message/room/useCreator";
 import { createUser } from "@/services/message/user/createUser.test";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
@@ -24,9 +23,9 @@ describe(useCreator, () => {
   test("names the creator the way its room does", () => {
     expect.hasAssertions();
 
-    const userToRoomStore = useUserToRoomStore();
-    const { setDisplayName } = userToRoomStore;
-    setDisplayName(roomId, user.id, displayName);
+    const userStore = useUserStore();
+    const { storeRoomMembers } = userStore;
+    storeRoomMembers(roomId, [{ ...user, displayName }]);
     const message = createMessageEntity({ roomId, type: MessageType.Message, userId: user.id });
     const creator = useCreator(() => message);
 
@@ -34,19 +33,19 @@ describe(useCreator, () => {
   });
 
   // The displayName is per room, so a message from another room keeps the global name
-  test("keeps the global name where the room has no displayName for the creator", () => {
+  test("keeps the global name where the room has no member row for the creator", () => {
     expect.hasAssertions();
 
-    const userToRoomStore = useUserToRoomStore();
-    const { setDisplayName } = userToRoomStore;
-    setDisplayName(otherRoomId, user.id, displayName);
+    const userStore = useUserStore();
+    const { storeRoomMembers } = userStore;
+    storeRoomMembers(otherRoomId, [{ ...user, displayName }]);
     const message = createMessageEntity({ roomId, type: MessageType.Message, userId: user.id });
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(user.name);
   });
 
-  // An app user is not a member of the room, so there is no displayName map entry to overlay onto its name
+  // An app user is not a member of the room, so there is no member row to take its name from
   test("names a webhook creator from its app user", () => {
     expect.hasAssertions();
 

@@ -1,7 +1,6 @@
 import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useUserStore } from "@/store/message/user";
 import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
@@ -19,8 +18,7 @@ import { parse } from "node-html-parser";
 export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: MaybeRefOrGetter<string>) => {
   const userStore = useUserStore();
   const { userMap } = storeToRefs(userStore);
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
+  const { getRoomMemberMap } = userStore;
   const roomEmojiStore = useRoomEmojiStore();
   const { customEmojiMap } = storeToRefs(roomEmojiStore);
   return computed(() => {
@@ -30,9 +28,11 @@ export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: Maybe
     for (const mention of messageHtml.querySelectorAll(MENTION_SELECTOR)) {
       const memberId = mention.getAttribute(MENTION_ID_ATTRIBUTE);
       if (!memberId) continue;
-      const member = userMap.value.get(memberId);
-      if (!member) continue;
-      const displayName = roomIdValue ? getDisplayName(member, roomIdValue) : member.name;
+      // A room's mention reads the name its member row carries there; with no room, the account name
+      const displayName = roomIdValue
+        ? getRoomMemberMap(roomIdValue)?.get(memberId)?.displayName
+        : userMap.value.get(memberId)?.name;
+      if (!displayName) continue;
       if (displayName === mention.textContent.slice(1)) continue;
 
       mention.textContent = `@${displayName}`;

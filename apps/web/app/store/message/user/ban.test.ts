@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import type { BanInMessageWithUsers, PublicUser } from "@esposter/db-schema";
+import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -10,9 +11,9 @@ import { describe, expect, test } from "vitest";
 describe(useBanStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const first = createUser({ name: "first" });
-  const second = createUser({ name: "second" });
-  const createBan = (user: PublicUser): BanInMessageWithUsers => ({
+  const first = { ...createUser({ name: "first" }), displayName: "first" };
+  const second = { ...createUser({ name: "second" }), displayName: "second" };
+  const createBan = (user: MemberInRoom): BanInRoom => ({
     bannedByUser: null,
     bannedByUserId: null,
     createdAt: new Date(0),

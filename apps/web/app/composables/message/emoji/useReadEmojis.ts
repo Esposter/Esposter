@@ -7,7 +7,7 @@ export const useReadEmojis = () => {
   const emojiStore = useEmojiStore();
   const { setEmojis } = emojiStore;
   return async (roomId: RoomInMessage["id"], messageRowKeys: MessageEntity["rowKey"][]) => {
-    if (messageRowKeys.length === 0) return;
+    if (messageRowKeys.length === 0) return [];
 
     const emojis = await $trpc.message.emoji.readEmojis.query({ messageRowKeys, roomId });
     for (const messageRowKey of messageRowKeys)
@@ -16,5 +16,6 @@ export const useReadEmojis = () => {
         messageRowKey,
         emojis.filter((emoji) => emoji.messageRowKey === messageRowKey),
       );
+    return emojis;
   };
 };

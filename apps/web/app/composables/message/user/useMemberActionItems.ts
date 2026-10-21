@@ -1,6 +1,7 @@
 // @unocss-include
 import type { Item } from "@/models/shared/Item";
-import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { MemberDialogType } from "@/models/message/user/MemberDialogType";
@@ -12,7 +13,6 @@ import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { useRoomStore } from "@/store/message/room";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useRoleStore } from "@/store/message/room/role";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/db-schema";
@@ -20,7 +20,7 @@ import { AdminActionType, checkHasPermission, RoomPermission } from "@esposter/d
 // What can be done to a member, behind their profile's overflow menu and their row's context menu alike, so the two
 // Never disagree. A dialog an action opens belongs to the row, which outlives the profile's popover
 export const useMemberActionItems = (
-  user: MaybeRefOrGetter<Pick<PublicUser, "id" | "name">>,
+  user: MaybeRefOrGetter<Pick<MemberInRoom, "displayName" | "id" | "name">>,
   // Empty outside a room, where no moderation applies
   roomId: MaybeRefOrGetter<RoomInMessage["id"]>,
   openDialog: (type: MemberDialogType) => void,
@@ -38,13 +38,11 @@ export const useMemberActionItems = (
   const { rooms } = storeToRefs(roomStore);
   const roleStore = useRoleStore();
   const { getMemberRoleMap, getMyPermissions } = roleStore;
-  const userToRoomStore = useUserToRoomStore();
-  const { getDisplayName } = userToRoomStore;
   const moderationNoteStore = useModerationNoteStore();
   const { getModerationNoteCount } = moderationNoteStore;
   const isSelf = computed(() => session.value.data?.user.id === toValue(user).id);
   // The moderator picked this member off a list that names them by displayName, so every action names them the same way
-  const displayName = computed(() => getDisplayName(toValue(user), toValue(roomId)));
+  const displayName = computed(() => toValue(user).displayName);
   // Discord leads a stranger's profile with adding them and a friend's with messaging them, and a direct message is
   // Only ever opened with a friend
   const friendItem = computed<Item | undefined>(() => {

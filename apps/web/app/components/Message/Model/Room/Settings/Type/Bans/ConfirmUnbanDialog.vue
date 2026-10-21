@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useBanStore } from "@/store/message/user/ban";
 import { useBanDialogStore } from "@/store/message/user/banDialog";
 
@@ -11,8 +10,6 @@ const { unbanningUserId } = storeToRefs(banDialogStore);
 const { isOpen, item: ban } = useSingletonDialog(unbanningUserId, () =>
   items.value.find(({ userId }) => userId === unbanningUserId.value),
 );
-const userToRoomStore = useUserToRoomStore();
-const { getDisplayName } = userToRoomStore;
 </script>
 
 <template>
@@ -24,6 +21,6 @@ const { getDisplayName } = userToRoomStore;
     :confirm="() => ban && deleteBan({ roomId: ban.roomId, userId: ban.userId })"
     is-optimistic
   >
-    <p>Are you sure you want to unban {{ getDisplayName(ban.user, ban.roomId) }}?</p>
+    <p>Are you sure you want to unban {{ ban.user.displayName }}?</p>
   </UiConfirmDialog>
 </template>

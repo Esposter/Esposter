@@ -1,28 +1,25 @@
 <script setup lang="ts">
-import type { ModerationLogEntity } from "@esposter/db-schema";
+import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogInRoom";
 
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
-import { useMemberStore } from "@/store/message/user/member";
 import { formatDuration } from "@/util/date/formatDuration";
 import { AUTOMOD_USER_ID } from "@esposter/db-schema";
 
 interface Props {
-  item: ModerationLogEntity;
+  item: ModerationLogInRoom;
 }
 
 const { item } = defineProps<Props>();
-const memberStore = useMemberStore();
-const { getMemberName } = memberStore;
 // The actor may be the reserved AutoMod id (word-filter warn/timeout) — render it as "AutoMod".
-const getActorLabel = (userId: string) => (userId === AUTOMOD_USER_ID ? "AutoMod" : getMemberName(userId));
+const actorLabel = computed(() => (item.actorUserId === AUTOMOD_USER_ID ? "AutoMod" : item.actorDisplayName));
 </script>
 
 <template>
   <div role="listitem" ui-row>
     <UiItemContent
       :description="item.durationMs ? formatDuration(item.durationMs) : undefined"
-      :title="`${item.type} — ${getActorLabel(item.actorUserId)} acted on ${getMemberName(item.targetUserId)}`"
+      :title="`${item.type} — ${actorLabel} acted on ${item.targetDisplayName}`"
     >
       <!-- The action's own colour, so a glance down the log picks the bans out of the warnings -->
       <template #mark>

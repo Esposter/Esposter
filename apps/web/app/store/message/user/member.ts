@@ -29,10 +29,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
         EN_US_COMPARATOR.compare(firstMember.id, secondMember.id),
     ),
   );
-  // Single source of truth for resolving a member id to its room display name (displayName over global name),
-  // Falling back to the raw id for actors/targets no longer in the loaded member list.
-  const getMemberName = (userId: PublicUser["id"]) =>
-    members.value.find(({ id }) => id === userId)?.displayName ?? userId;
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
   // Switch made offline would otherwise leave the room being entered wearing the totals of the one just left
@@ -89,7 +85,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
   return {
     getBoundMemberCounts,
     getMemberCountsRef,
-    getMemberName,
     getSlice,
     memberCount,
     memberCountsByTopRole,
