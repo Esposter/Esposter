@@ -37,7 +37,7 @@ There are two tiers and no middle one: `opus` thinks in the main session, and `h
 
 ## A reading pass is delegated by who decides the edit
 
-A pass over a whole tree goes to haiku readers, one per batch of units and in parallel, whether a find recipe or a reading decides its edits; the readers report every call they could not settle, and the main session judges each diff before it lands (`references/reading-passes.md`).
+A pass over a whole tree is split by who decides each edit. A find recipe or an exact rename map decides it, and one `haiku` agent per leaf runs it. A reading decides it, and `haiku` readers take it, one per batch of units and in parallel; they report every call they could not settle, and the main session judges each diff before it lands (`references/reading-passes.md`).
 
 ## Writing the delegation prompt
 

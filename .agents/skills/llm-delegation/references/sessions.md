@@ -1,6 +1,6 @@
 # Headless Sessions
 
-Read when automation launches a headless session: its one launcher, its two roles and the gate that must be able to decline each spawn.
+Read when automation launches a headless session: its one launcher, its roles and the gate that must be able to decline each spawn.
 
 `scripts/src/services/review/runSession.ts` is the one launcher. It takes a role and a prompt, and the role's model comes from `ReviewSessionRoleModelMap` (`scripts/src/services/review/constants.ts`). Every role is haiku, the unversioned alias. Its wall clock is `REVIEWER_TIMEOUT_MS`, `FIXER_TIMEOUT_MS` or `SETTLER_TIMEOUT_MS` from the same file, by role.
 
