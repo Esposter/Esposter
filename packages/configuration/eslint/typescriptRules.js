@@ -332,7 +332,7 @@ export default {
       // SDK's payload — and never one a schema this repo authors picks. A schema refining a boundary's own nullable
       // Value disables this, naming the boundary
       message:
-        "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the typescript skill's absent-values page.",
+        "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the absent-values skill.",
       selector: "CallExpression[callee.property.name='nullable']",
     },
     {
