@@ -37,13 +37,18 @@ flowchart TD
 - **Its input keeps a file of its own.** Two batch procedures over the same shape still take one input schema each
   (`references/file-placement.md`).
 
-## The resource router as the reference
+## The arity rule
 
-`resource.deleteResources` and `resource.restoreResources` are batches because the list's selection deletes many
-and its toast undoes all of them. The bin's row restore sends one id, and no single restore exists beside it.
-`purgeResource` stays single: the bin has no bulk purge, so nothing has promoted it.
+Read the input schema, not the name: a batch takes `ids`, a unique array of at least one capped at `MAX_READ_LIMIT`,
+and scopes its where to the caller. A single takes one `id` and is built on `getOwnerProcedure`, which sets
+`ctx.resource` for the handler. Two routers hold the rule:
 
-**The one exception is a single form that carries what the batch cannot.** Each type's router keeps its own
-`deleteResource` beside the batch, because its path names the type: an achievement keys on `survey.deleteResource`,
-which a typeless `resource.deleteResources` cannot say. The resource page's delete goes through it for that reason.
-Anything that keys on a path is the test: with nothing keyed on the single form's path, it goes.
+- `apps/web/server/trpc/routers/resource.ts` — `deleteResources` and `restoreResources` take `ids`; `purgeResource`
+  takes `id` through `getOwnerProcedure`.
+- The per-type routers `createResourceProcedures` builds (`apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`,
+  e.g. `apps/web/server/trpc/routers/note.ts`) — `deleteResource` takes `id` through `getOwnerProcedure(type, …)`.
+
+**The one exception is a single form that carries what the batch cannot.** A form keyed on its path stays beside the
+batch: a type's `deleteResource` names the type in its path, which a typeless `resource.deleteResources` cannot say,
+and the resource page calls it through the type's router for that reason. Anything that keys on a path is the test:
+with nothing keyed on the single form's path, it goes.
