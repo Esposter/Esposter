@@ -28,7 +28,7 @@ Release. Every path that can leave a file unreferenced hands its candidate hashe
 
 ```mermaid
 flowchart TD
-  released["An eviction, an unpublish, a file delete, a rewritten version or a save that drops references releases hashes"] --> lock["Under the resource lock, read the version rows and the working-copy rows"]
+  released["Release, on every path"] --> lock["Under the resource lock, read the version rows and the working-copy rows"]
   lock --> held{"Named by a version or working-copy row, or written within the grace window?"}
   held -->|yes| keep["Kept"]
   held -->|no| gate{"Collection enabled?"}
@@ -67,7 +67,7 @@ A reserve names the old content's assets and the new content's together, so a wr
 - **A published version never names a missing object.** Under the same lock, `writeSnapshotVersion` touches every hash it is about to reference and fails a published write when one is not stored, with "cannot store content naming a missing asset". A publish that races a file delete therefore fails cleanly instead of publishing a page with broken images. Other channels keep the content as the owner wrote it: a revision or a restore naming a gone file is data, not a failed write, so a restore is never blocked by a broken reference in the working copy.
 - **Release is one function for every path.** `releaseResourceAssets` is called by an eviction, an unpublish, a file delete, a version write that replaces its own rows, and a save that drops working-copy rows. It reads only the two row sets, version rows and working-copy rows, under the resource lock. It never downloads or scans the working content blob. A candidate is deleted only if neither set names it and its blob was not written within the grace window. The grace window is `ASSET_GRACE_MS`.
 - **Grace protects an upload until its save.** An upload that dedupes onto an old object touches it, which starts the grace window, so a collection cannot take the object between that upload and the save that names it. That is the window's whole job. Working content does not depend on it: the working-copy rows keep what the working copy embeds.
-- **Counting-only is a shared constant.** `isAssetCollectionEnabled()` in the shared resource constants returns false, so release computes the same candidate set, logs its count as unreferenced, and deletes nothing. Enabling collection is a change to that one function.
+- **Counting-only is a shared constant.** `checkIsAssetCollectionEnabled()` in the shared resource constants returns false, so release computes the same candidate set, logs its count as unreferenced, and deletes nothing. Enabling collection is a change to that one function.
 - **Publishing neither clones nor rewrites.** A publish stores the content its transform returns and writes that version's reference rows. Unpublish deletes the published channel's version rows, and the files those rows named go to the one release. There is no `{id}/published/` prefix and no sweep of one.
 - **Read access.** The owner reads any `{resourceId}/files/{hash}`. Anyone else reads one only while the resource has a publication and its current published version row names the hash. The check runs on every request and is never cached, so an unpublish revokes access at once. A refused anonymous request is 401, and a signed-in caller who may not read is 404.
 - **Duplicate still copies.** A duplicate holds its own copies because the copy must own its objects, so `cloneContentAssets` survives for that one caller. It copies each referenced file the caller can read to the destination's own hash name, skipping any name the destination already holds, and charges the copying owner before each copy. A url the caller cannot read is carried over verbatim. The copies reach the new resource's working copy through `saveResourceContent`, which reserves them there.
@@ -92,7 +92,7 @@ A reserve names the old content's assets and the new content's together, so a wr
 | `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`            | writes the version reference rows and checks the addresses exist                |
 | `apps/web/server/services/resource/snapshot/touchSnapshotAssets.ts`             | touches the stored assets a write names and hands back the missing ones         |
 | `apps/web/server/services/resource/snapshot/releaseResourceAssets.ts`           | the one release, with the lock, the grace window and the counting-only gate     |
-| `apps/web/shared/services/resource/constants.ts`                                | `ASSET_GRACE_MS` and `isAssetCollectionEnabled()`                               |
+| `apps/web/shared/services/resource/constants.ts`                                | `ASSET_GRACE_MS` and `checkIsAssetCollectionEnabled()`                          |
 | `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`             | the one read-access question, asked by the endpoint and by duplicate            |
 | `apps/web/server/services/resource/cloneContentAssets.ts`                       | duplicate's copy of referenced files                                            |
 
