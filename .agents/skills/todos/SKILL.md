@@ -1,11 +1,11 @@
 ---
 name: todos
-description: Apply when writing, reading or removing an `@TODO`, when a workaround waits on something outside the repo, when a fix belongs in another project's repository, or when a bump or a closed issue may have ended one. Esposter's `@TODO` convention — a marker only for a workaround something external forces, linked to what ends it and revisited when that may have happened.
+description: Apply when writing, reading or removing an `@TODO`, when a workaround waits on something outside the repo, when a fix belongs in another project's repository, or when a bump or a closed issue may have ended one. Esposter's `@TODO` convention — a marker only for a workaround something external forces.
 ---
 
 # TODOs
 
-An `@TODO` marks a workaround the repository carries because something outside it is not ready yet — an upstream bug, a browser feature, a dependency's release. It is the one comment that states a future, and it may only because the future belongs to someone else and a link says how to know it arrived.
+An `@TODO` marks a workaround the repository carries because something outside it is not ready yet — an upstream bug, a browser feature, a dependency's release. It is the one comment that states a future, and it is written only because the future belongs to someone else and a link says how to know it arrived.
 
 ## Settled — do not re-propose
 
