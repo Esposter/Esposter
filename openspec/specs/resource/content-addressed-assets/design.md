@@ -99,6 +99,7 @@ A reserve names the old content's assets and the new content's together, so a wr
 ## Notes
 
 - The scan is the sharp edge, and it runs at write time: a scan that misses a reference leaves a row unwritten, and release then deletes a file a version or the working copy still embeds, which fails as a broken image in a published page rather than as an error. The counting-only period is the guard: an undercount shows up as a file nothing deletes.
+- **The working-copy rows start empty.** The migration does not backfill them, so a working copy saved before this design has no rows until its next save. Collection is counting-only until `isAssetCollectionEnabled()` flips, and nothing is deleted before then. The flip is gated on every resource having been saved once since this design shipped: a release that runs earlier can delete an asset the working copy embeds, since no row names it.
 - The grace window is judged by the blob's last-modified time at the moment release decides, so an upload that dedupes onto a file moves it out of collection before the save that names it is stored.
 - A held upload is free. Only a fresh address reserves quota, and a duplicate charges each copy it makes.
 - Anonymous reads are not a grant. The published channel's current row is the only thing that makes a file public, so a file a revision or the working copy alone holds is refused to anonymous callers.
