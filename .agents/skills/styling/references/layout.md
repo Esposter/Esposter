@@ -24,7 +24,7 @@ A hardcoded rem dimension on a **layout region** is banned — it doesn't adapt 
 **A page never paints a background of its own** — it sits on the ground `body` paints, and which part draws every other surface is `openspec/specs/architecture/page-layout/design.md`. A list that seems to want a panel behind the whole page belongs in a drawer.
 
 - **`bg-panel` on a plain `<div>` is banned.** A `<div>` standing in for a surface region wears the library's `ui-frame`, which draws the style's panel. An element that merely needs an opaque backdrop, such as a sticky bar content scrolls under, sets `background-color: var(--ui-background)` in its scoped style, as the data table's header does — never a component just for colour. A control whose own fill is part of its design — a picker tile showing `bg-panel` behind an absent image, a chip swapping its fill to read as selected — keeps the utility on the control itself, which is the same carve-out the hover-tint rule states (`references/state-variants.md`).
-- **A page uses its full width** — a readable measure holds running prose alone (the `ui-library` skill, `references/design-pass.md`); a hero or search field is centred with a `flex justify-center` wrapper and a `max-width`, not full-bleed.
+- **A page uses its full width** — a readable measure holds running prose alone (`.agents/skills/ui-library/references/design-pass.md`); a hero or search field is centred with a `flex justify-center` wrapper and a `max-width`, not full-bleed.
 
 ## Borders drawn exactly once
 
@@ -34,7 +34,7 @@ Prefer keeping shared primitives borderless and letting the consumer supply the 
 
 ## The border reset is preset-wind4's
 
-`uno.config.ts` keeps preset-wind4's preflight reset, which starts every element and pseudo-element at `border: 0 solid`. So a width utility alone draws a solid border on the sides it names — `b-1`, `b-b-1` — and never needs a `b-solid` or a leading `b-0` beside it. A global border rule of our own is never added on top: the reset already owns the starting point, and a second rule in another layer is what a component would have to fight.
+`apps/web/uno.config.ts` keeps preset-wind4's preflight reset, which starts every element and pseudo-element at `border: 0 solid`. So a width utility alone draws a solid border on the sides it names — `b-1`, `b-b-1` — and never needs a `b-solid` or a leading `b-0` beside it. A global border rule of our own is never added on top: the reset already owns the starting point, and a second rule in another layer is what a component would have to fight.
 
 ## State-dependent border colour
 
