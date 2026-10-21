@@ -1,13 +1,13 @@
 ---
 name: product-review
-description: Apply when asked to review the products for gaps, generate or regenerate proposals, double-check the existing proposals, compare a product against the best one in its domain, or judge whether an area is finished. Esposter's product review loop — each surface held against its reference product, every gap triaged into a fix, proposal, deferred or rejected page, and convergence as the goal.
+description: Apply when asked to review the products for gaps, generate or regenerate proposals, double-check the existing proposals, compare a product against the best one in its domain, or judge whether an area is finished. Esposter's product review loop.
 ---
 
 # Product Review
 
 The repeatable pass that turns "what is missing from our products" into proposals, fixes and decisions, run the same way every time so its output can be compared with the last run's. The design philosophy it serves is a finished product: **each pass should find less than the one before, and an area whose pass finds nothing is done.** Churn — a new proposal, a reversed decision — is the measure of how far an area still is from that.
 
-What a change, a deferred idea and a rejected idea look like, and the rule that ideation runs in the main session one area at a time, are the `openspec` skill's (`references/area-passes.md`, `references/page-shapes.md`); this skill is the loop that feeds them, and the `building-proposals` skill is the loop that empties them and hands each shipped area back here.
+What a change, a deferred idea and a rejected idea look like, and the rule that ideation runs in the main session one area at a time, are the `openspec` skill's (`.agents/skills/openspec/references/area-passes.md`, `.agents/skills/openspec/references/page-shapes.md`); this skill is the loop that feeds them, and the `building-proposals` skill (`.agents/skills/building-proposals/SKILL.md`) is the loop that empties them and hands each shipped area back here.
 
 ## Settled — do not re-propose
 
@@ -47,7 +47,7 @@ flowchart TD
 - **Every area has a reference product**, and a surface is judged against it before it is judged against taste; the table of them is `openspec/specs/architecture/design-sources/design.md`, and a pick not yet in it travels in the proposal's `## Sources` until the surface ships (`references/reference-products.md`).
 - **Inventory from the code, not the docs** — the store, the content schema and the components say what exists; a feature page can be stale (`references/gap-inventory.md`).
 - **Every open proposal is re-verified each pass** — still unbuilt, still consistent with the code, sources still resolving (`references/verifying-proposals.md`).
-- **A proposal built in the same session** follows the ship lifecycle at once: archived into its capability with the design rewritten as built, and its roadmap line deleted (the `openspec` skill, `references/page-shapes.md`).
+- **A proposal built in the same session** follows the ship lifecycle at once: archived into its capability with the design rewritten as built, and its roadmap line deleted (`.agents/skills/openspec/references/page-shapes.md`).
 - **The pass reports its churn**: proposals added, decisions changed, bugs fixed, and — when all three are zero — that the area converged (`references/convergence.md`).
 - **Starting a pass** uses the prompt in `references/prompts.md`, so every run asks the same questions.
 
