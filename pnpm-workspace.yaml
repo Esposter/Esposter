@@ -155,6 +155,8 @@ catalog:
   crossws: ^0.4.15
   defu: ^6.1.7
   diff: ^9.0.0
+  # @TODO: drizzle's 1.0.0 is a release candidate, and rc.4 broke most of the types here, so the pair stays pinned until
+  # 1.0.0 reaches `latest`, the renovate.json rule that moves them as one (drizzle-team/drizzle-orm)
   drizzle-kit: 1.0.0-rc.4
   drizzle-orm: 1.0.0-rc.4
   emojilib: ^4.0.3
