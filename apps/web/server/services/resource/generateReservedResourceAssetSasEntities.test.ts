@@ -1,6 +1,6 @@
-import type { ContainerClient } from "@azure/storage-blob";
-import type { Context } from "#server/trpc/context";
 import type { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
+import type { Context } from "#server/trpc/context";
+import type { ContainerClient } from "@azure/storage-blob";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
@@ -40,10 +40,11 @@ describe(generateReservedResourceAssetSasEntities, () => {
     goneBlobNames = new Set();
     containerClientMock.current = {
       getBlobClient: (name: string) => ({
-        exists: () => Promise.resolve(heldBlobNames.has(name)),
         setMetadata: (metadata: Record<string, string>) => {
           setMetadataMock(name, metadata);
-          return goneBlobNames.has(name) ? Promise.reject(new MockRestError("", 404)) : Promise.resolve({});
+          return heldBlobNames.has(name) && !goneBlobNames.has(name)
+            ? Promise.resolve({})
+            : Promise.reject(new MockRestError("", 404));
         },
       }),
       getBlockBlobClient: (name: string) => ({ generateSasUrl: () => Promise.resolve(`https://sas.example/${name}`) }),
