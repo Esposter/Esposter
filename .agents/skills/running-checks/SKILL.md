@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the session and CI — the session runs only the tests of what it touched, in the background, once after all the edits going out together, and CI runs typecheck, lint, format and the whole suite on the push. The session does not watch that run unless the user asks for verification.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the checks a session runs and the checks CI runs on the push.
 ---
 
 # Running Checks
@@ -15,7 +15,7 @@ which checks a session runs and how it waits on them.
 ## Settled — do not re-propose
 
 - **Typecheck and lint before a push.** CI runs them on every push at no session cost, while a local run takes
-  minutes per change and the root type-aware lint needs more memory than WSL gives it here. Nothing waits on them
+  minutes per change and the root type-aware lint needs more memory than a local session should spend. Nothing waits on them
   either way: the push already went out beside them, so a local run only moved the finding earlier by the length of
   a CI run, at the session's price.
 - **Dropping the touched tests with them.** Their cost scales with the change rather than the repository, and they
@@ -68,7 +68,7 @@ failed job's log (`gh run view <id> --log-failed`) names the package whose typec
 included, and the reproduction is `pnpm typecheck` from that package rather than the whole repository; a lint red is
 reproduced by `vp run lint:fix` from the repo root, the one scope matching CI's
 (the `package-scripts` skill's `references/check-suite.md`). A check that writes — `lint:fix`, `pnpm format` — owns
-the files it covers until its exit line, so nothing is edited under it meanwhile. A worktree installed without the app has no `apps/web/.nuxt`, and every package's ESLint config imports `withNuxt` from the `eslint.config.mjs` Nuxt generates there, so ESLint cannot load until the shared checkout's is linked in: `ln -s "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/apps/web/.nuxt" apps/web/.nuxt` from the worktree's root. Node resolves the generated file's relative imports from the link's real path, so they reach the shared checkout's installs. On Windows, long paths must be enabled once (see monorepo-tooling.md, Windows long paths), or `vp lint` fails on a worktree's deep node_modules; a worktree lives at `.agents/worktrees/<lane>`.
+the files it covers until its exit line, so nothing is edited under it meanwhile. A worktree installed without the app has no `apps/web/.nuxt`, and every package's ESLint config imports `withNuxt` from the `eslint.config.mjs` Nuxt generates there, so ESLint cannot load until the shared checkout's is linked in: `ln -s "$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")/apps/web/.nuxt" apps/web/.nuxt` from the worktree's root. Node resolves the generated file's relative imports from the link's real path, so they reach the shared checkout's installs. On Windows, long paths must be enabled once (see `openspec/specs/architecture/monorepo-tooling/design.md`, "Windows long paths"), or `vp lint` fails on a worktree's deep node_modules; a worktree lives at `.agents/worktrees/<lane>`.
 
 ## Reading the result
 
