@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter's messaging calls — a persistent callSessionsInMessage row whose id is the join code, with participants held only in memory; room, thread and standalone calls joined by different procedures, and room navigation never leaving a call.
+description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter's messaging calls.
 ---
 
 # Esbabbler Calls — Implementation
@@ -13,7 +13,7 @@ A call is one persistent `callSessionsInMessage` row whose `id` is the join code
 
 ## Random id terminology
 
-A call's join code is the row's `id`, made by `createId(CALL_ID_LENGTH)` — the random-id key rule is the `drizzle` skill's (`references/primary-keys.md`).
+A call's join code is the row's `id`, made by `createId(CALL_ID_LENGTH)` — the random-id key rule is the `drizzle` skill's (`.agents/skills/drizzle/references/primary-keys.md`).
 
 ## Standalone vs room calls
 

@@ -16,4 +16,4 @@ Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 - `admitKnocker`, `dismissKnocker` and the `onKnockCall` subscription answer only the doorkeeper — who that is, and the one guard all three pass through, is `requireCallDoorkeeper` (`openspec/specs/esbabbler/calls/README.md`, "Standalone knock lobby"). `admitKnocker` adds a one-time session admission in `callAdmittedParticipantMap`, then emits `onKnockerAdmitted` to the knocker.
 - `/calls/[id]` states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
 - The creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.
-- `Message/Content/Call/JoinNotice/Index.vue` shows "Let In" / "Dismiss" per knocker.
+- `Message/Content/Call/JoinNotice/Index.vue` shows "Let in" / "Dismiss" per knocker.
