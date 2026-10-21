@@ -1,6 +1,6 @@
 ---
 name: naming
-description: Apply when naming any identifier. Esposter's naming conventions for every name we author — the prefix a boolean or a function takes, no abbreviations, a map as <key><value>Map, SCREAMING_SNAKE_CASE for a fixed scalar — and the boundary every rule stops at, a name a dependency owns. Framework-specific naming lives in the vue, pinia and trpc skills.
+description: Apply when naming any identifier. Esposter's naming conventions for every name we author, and the boundary where a name a dependency owns stops them. Framework-specific naming lives in the vue, pinia and trpc skills.
 ---
 
 # Naming Conventions
