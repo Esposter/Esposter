@@ -303,11 +303,14 @@ export const moderationRouter = router({
     const displayNameMap = await getRoomDisplayNameMap(
       ctx.db,
       roomId,
-      page.items.flatMap(({ actorUserId, targetUserId }) => [actorUserId, targetUserId]),
+      page.items.flatMap((item) => [item.actorUserId, item.targetUserId]),
     );
     return {
+      // oxlint-disable-next-line typescript/no-misused-spread -- the page is plain data, so the entity's class prototype is meant to go
       ...page,
+      // oxlint-disable-next-line oxc/no-map-spread -- each item is a new object, never a read row mutated in place
       items: page.items.map((item) => ({
+        // oxlint-disable-next-line typescript/no-misused-spread -- the item is plain data, so the entity's class prototype is meant to go
         ...item,
         actorDisplayName: displayNameMap.get(item.actorUserId) ?? "",
         targetDisplayName: displayNameMap.get(item.targetUserId) ?? "",
@@ -341,7 +344,9 @@ export const moderationRouter = router({
         page.items.map(({ actorUserId }) => actorUserId),
       );
       return {
+        // oxlint-disable-next-line typescript/no-misused-spread -- the page is plain data, so the entity's class prototype is meant to go
         ...page,
+        // oxlint-disable-next-line oxc/no-map-spread, typescript/no-misused-spread -- each note is a new plain object, never a read row mutated in place
         items: page.items.map((note) => ({ ...note, actorDisplayName: displayNameMap.get(note.actorUserId) ?? "" })),
       };
     },

@@ -12,8 +12,8 @@ import { existsSync, rmSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 // Removes a linked worktree, and its branch once that has landed, or a folder under the worktrees folder that git no
-// longer lists. Git still refuses a dirty linked worktree; on Windows the junctions and the loaded binaries are dealt
-// with first, so no deletion walks out of the worktree or stops part way on a long path
+// Longer lists. Git still refuses a dirty linked worktree; on Windows the junctions and the loaded binaries are dealt
+// With first, so no deletion walks out of the worktree or stops part way on a long path
 export const removeWorktree = (path: string): void => {
   checkWorktreePath(path);
   const worktreePath = resolve(path);

@@ -7,10 +7,10 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 // A skill is read on every machine that clones the repository, so it names only what the repository holds. A home
-// directory, a user's global configuration, a drive letter, a session's scratch directory or a Linux subsystem names
-// one machine's layout, and a reader anywhere else follows it to nothing. The `.agents` tree and its `.claude` alias,
-// and the platforms the repository runs on, are project facts and are not matched here. A home path is `~/` before a
-// dot-directory or a capitalised folder; `~/` before a lowercase name is the application's own import alias.
+// Directory, a user's global configuration, a drive letter, a session's scratch directory or a Linux subsystem names
+// One machine's layout, and a reader anywhere else follows it to nothing. The `.agents` tree and its `.claude` alias,
+// And the platforms the repository runs on, are project facts and are not matched here. A home path is `~/` before a
+// Dot-directory or a capitalised folder; `~/` before a lowercase name is the application's own import alias.
 describe("skillPortability", () => {
   test("no skill names a path, setting or session outside the repository", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();

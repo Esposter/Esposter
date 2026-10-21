@@ -80,8 +80,8 @@ export interface TRPCProcedureInputs {
 }
 
 // A resource's save input is its own content schema under the shared save schema, so each save path reads through here
-type ResourceContentSaveInput<TContentSchema extends z.ZodType> = {
+interface ResourceContentSaveInput<TContentSchema extends z.ZodType> {
   content: z.input<TContentSchema>;
   contentVersion: ResourceInResource["contentVersion"];
   id: ResourceInResource["id"];
-};
+}

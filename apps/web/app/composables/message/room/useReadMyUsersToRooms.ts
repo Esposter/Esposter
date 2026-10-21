@@ -10,8 +10,6 @@ export const useReadMyUsersToRooms = () => {
     if (roomIds.length === 0) return;
 
     const myUsersToRooms = await $trpc.userToRoom.readMyUsersToRooms.query({ roomIds });
-    for (const userToRoom of myUsersToRooms) {
-      setMyUserToRoom(userToRoom.roomId, userToRoom);
-    }
+    for (const userToRoom of myUsersToRooms) setMyUserToRoom(userToRoom.roomId, userToRoom);
   };
 };

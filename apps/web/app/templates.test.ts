@@ -55,7 +55,7 @@ const getMatchingLines = (checkIsMatch: (line: string) => boolean, checkIsKept: 
 // An attributify attribute that matches no rule is silent: nothing is generated, nothing warns, and the page
 // Renders without the style it was meant to carry. The generator itself answers whether a token is a utility —
 // The token has to be looked for in `matched` rather than counted there, because the set's size says nothing about this token: the generator emits nothing for a
-// non-utility and the token's own rule for a utility. Only a native element is asked, because on a
+// Non-utility and the token's own rule for a utility. Only a native element is asked, because on a
 // Component an attribute is as likely to be a prop as a utility, and only a valueless one, because a valued
 // Attribute on a native element is HTML's own
 describe("attributify", () => {

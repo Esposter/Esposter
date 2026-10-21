@@ -6,7 +6,7 @@ describe(checkIsOrphanPath, () => {
     expect.hasAssertions();
 
     expect(checkIsOrphanPath("/main/.agents/worktrees/orphan")).toBe(true);
-    expect(checkIsOrphanPath("C:\\main\\.agents\\worktrees\\orphan")).toBe(true);
+    expect(checkIsOrphanPath(String.raw`C:\main\.agents\worktrees\orphan`)).toBe(true);
     expect(checkIsOrphanPath("/main")).toBe(false);
   });
 });

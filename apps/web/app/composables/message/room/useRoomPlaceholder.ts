@@ -5,7 +5,6 @@ import { useUserStore } from "@/store/message/user";
 export const useRoomPlaceholder = (room: MaybeRefOrGetter<RoomInMessage | undefined>) => {
   const userStore = useUserStore();
   const { getRoomMemberName } = userStore;
-  const { userMap } = storeToRefs(userStore);
   return computed(() => {
     const roomValue = toValue(room);
     if (!roomValue) return "";
