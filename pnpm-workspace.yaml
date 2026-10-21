@@ -109,8 +109,7 @@ catalog:
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.1
   "@types/js-beautify": ^1.14.3
-  # Held at 5.0.0: 5.4.0 depends on `@types/mjml-core@~5.4`, which the registry does not publish (its newest is 5.1.0), so
-  # no install resolves it (renovate.json holds the same version)
+  # Held inside 5.0.x by the `@types/mjml` rule in renovate.json, which carries the reason
   "@types/mjml": ~5.0.0
   "@types/node": ^26.6.5
   "@types/sax": ^1.2.7
@@ -289,7 +288,7 @@ overrides:
   # grapesjs-mjml's `^4.7.4` range reaches `@types/mjml` 4.18.0, which needs `@types/mjml-core@~4.18`; the registry no longer
   # publishes that, so a fresh resolve (`pnpm refresh:lockfile`) fails. This forces the catalog's 5.0.0 for every dependent
   # @TODO: no upstream issue — grapesjs-mjml's `@types/mjml` range reaches 4.18.0, whose `@types/mjml-core@~4.18` is unpublished (DefinitelyTyped)
-  "@types/mjml": ~5.0.0
+  "@types/mjml": "catalog:"
   # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
   # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
   # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
