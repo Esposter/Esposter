@@ -11,7 +11,7 @@ Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field. 
 
 ## The execution switch
 
-The only switch over `SlashCommandType` is in `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new enum value fails typecheck until handled. It is **not** in `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts`.
+The only switch over `SlashCommandType` is in `apps/web/app/composables/message/slashCommand/useExecuteSlashCommand.ts`, closed by `exhaustiveGuard(command)` — so a new enum value fails typecheck until handled.
 
 Its argument is a discriminated union pairing each type with its own parameter shape, so `command.parameterValues` is narrowed per case:
 

@@ -4,15 +4,7 @@ Read when changing how a command's parameters are entered, validated, focused or
 
 There is **no `UiForm` and no `UiRules`** anywhere in this feature. Parameters render as inline chips built from raw `<input>` elements, and validation is manual.
 
-Components (`apps/web/app/components/Message/Model/Message/Input/`):
-
-| File                                       | Role                                                                           |
-| ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `SlashCommandParameters/Index.vue`         | Chip row + focus orchestration (delegates submit to `useSubmitSlashCommand`)   |
-| `SlashCommandParameters/CommandInput.vue`  | Editable `/command` name at the head of the row                                |
-| `SlashCommandParameters/Chip.vue`          | One parameter: bold name label + bare `<input>`                                |
-| `SlashCommandParameters/TrailingInput.vue` | Free-text tail; adds hidden parameters                                         |
-| `Header/SlashCommandParameters.vue`        | Hidden-parameter list (REQUIRED OPTIONS / OPTIONAL) + focused-param hint/error |
+The components live under `apps/web/app/components/Message/Model/Message/Input/`. Only the roles their names do not give are stated here: the row's focus orchestration sits in `SlashCommandParameters/Index.vue`, which hands submit to `useSubmitSlashCommand`; the free-text tail that adds hidden parameters is `SlashCommandParameters/TrailingInput.vue`; the hidden-parameter list and the focused parameter's hint or error sit in `Header/SlashCommandParameters.vue`.
 
 ## Validation — `safeParse` + `setErrors`, not `:rules`
 
