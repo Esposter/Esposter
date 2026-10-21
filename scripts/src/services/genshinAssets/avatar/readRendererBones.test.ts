@@ -1,5 +1,4 @@
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
-import type { DumpedSkinnedMeshRenderer } from "#src/models/genshinAssets/shared/DumpedSkinnedMeshRenderer";
 import type { SkinnedRenderer } from "#src/services/genshinAssets/avatar/readRendererBones";
 
 import { readRendererBones } from "#src/services/genshinAssets/avatar/readRendererBones";
@@ -12,7 +11,24 @@ const skinnedRenderer = (bones: SkinnedRenderer["bones"][number][], boneCount: n
   materials: [],
   renderer: {
     m_Bones: Array.from({ length: boneCount }, (_value, index) => ({ m_FileID: 0, m_PathID: `${index}` })),
-  } as unknown as DumpedSkinnedMeshRenderer,
+    m_GameObject: { m_PathID: "" },
+    m_Materials: [],
+    m_Mesh: { m_FileID: 0, m_PathID: "" },
+    m_RootBone: { m_FileID: 0, m_PathID: "" },
+  },
+});
+
+// A mesh with the given bind poses and no geometry, as far as the renderer's bones are concerned
+const createMesh = (m_BindPose: DumpedMesh["m_BindPose"]): DumpedMesh => ({
+  m_BindPose,
+  m_Colors: [],
+  m_Indices: [],
+  m_Normals: [],
+  m_Skin: [],
+  m_SubMeshes: [],
+  m_UV0: [],
+  m_VertexCount: 0,
+  m_Vertices: [],
 });
 
 describe(readRendererBones, () => {
@@ -22,7 +38,7 @@ describe(readRendererBones, () => {
     const skinned = skinnedRenderer([{ block: "00/a.blk", file: "cab-a", pathId: "1" }], 1);
 
     expect(() =>
-      readRendererBones(skinned, "Body", { m_BindPose: [{}, {}] } as unknown as DumpedMesh, new Map()),
+      readRendererBones(skinned, "Body", createMesh([{}, {}]), new Map()),
     ).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: Body, has 2 bind poses for a renderer of 1 bones]`,
     );
@@ -33,9 +49,7 @@ describe(readRendererBones, () => {
 
     const skinned = skinnedRenderer([undefined], 1);
 
-    expect(() =>
-      readRendererBones(skinned, "Body", { m_BindPose: [{}] } as unknown as DumpedMesh, new Map()),
-    ).toThrowErrorMatchingInlineSnapshot(
+    expect(() => readRendererBones(skinned, "Body", createMesh([{}]), new Map())).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: Body, has a bone the layout does not place in the rig]`,
     );
   });
