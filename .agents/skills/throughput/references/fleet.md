@@ -1,6 +1,6 @@
 # The Fleet — Any Number of Machines, One Queue
 
-Read when more than one machine works the backlog: when a machine joins, when one goes idle, when work is claimed, synced or pushed, when game data has to reach a machine, and when the fleet's load is read.
+Read when more than one machine works the backlog: when a machine joins, when one goes idle, when work is claimed, synced or pushed, and when the fleet's load is read.
 
 The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all follow the same rules. So no rule may cost the coordinator anything per machine: no assignment by message, no report read per machine, no machine named in a rule. The architecture page, with the diagram and the fleet's current machines, is `openspec/specs/architecture/fleet/design.md`.
 
@@ -60,12 +60,3 @@ The fleet has no fixed size. One PC, a lent MacBook, or hundreds of machines all
 - **A checkout syncs on the events that move `ai/queue`, never on a timer**, the `review-queue` skill's push rule (`.agents/skills/review-queue/SKILL.md`). Each machine's heartbeat carries the last commit its git identity landed on the queue, read off git, so the `pushed` column of `pnpm ai:fleet:status` is how a machine sees another's progress, with no message needed.
 - **A rebase merges text, not meaning.** A change to a shared signature is typechecked once more after the rebase onto origin, right before its push, so callers another machine added meanwhile are migrated too. When a shared signature gains a parameter, another machine can land callers of the old form in the same window; both rebases can be clean while the tests break.
 - **The `git` skill's rules (`.agents/skills/git/SKILL.md`) hold on every machine**, the queue's own included (`.agents/skills/review-queue/SKILL.md`).
-
-## Game data stays on the machines that hold it
-
-- **Exports and recordings never travel through git, GitHub, a cloud drive or a Claude channel.**
-- **A machine gets the game itself.** It downloads the game from HoYoverse's official CDN (an open-source Sophon downloader where no launcher runs) and runs the `genshin:assets` extraction locally. That route needs no other machine, works on or off the LAN, and spreads the extraction, the heaviest CPU load, across the fleet. The `shaders` step disassembles on any machine, through `d3dcompiler_47` on Windows, which reads no DXIL program, and `vkd3d-compiler` elsewhere, which reads both; its HLSL is decompiled only where 3Dmigoto's Windows decompiler runs.
-- **`pnpm ai:fleet:data` is the faster copy between LAN machines whose owner allows SSH.** A peer's public key goes in the receiver's `authorized_keys`, which is the owner's call per machine, never assumed. It copies only what the local manifest lacks, as one tar stream over SSH.
-- **Each machine's `GENSHIN_PARITY_DIRECTORY` is its own copy of the parity folder.** `frames` and `tmp` are rebuilt where they are used, never copied.
-- **`asset-index`, the community's asset path index, is copied with the rest** (`DATA_FOLDERS`, `openspec/specs/genshin/game-data-formats/design.md`); a machine that lacks the current asset-index file fetches it from its source instead, so no copy is needed to extract.
-- **A machine holds `game-install` and `game-exports` only once it has them**, and takes only the entries its capabilities meet until then.
