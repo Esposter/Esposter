@@ -27,7 +27,7 @@ flowchart TD
   Creator --> Webhook{"message.type is Webhook?"}
   Webhook -->|"yes"| AppUser["appUserMap — app user name, no room display name"]
   Webhook -->|"no"| User["userMap.get(message.userId)"]
-  User --> Display["getRoomMemberName(message.partitionKey, user.id, user.name)"]
+  User --> Display["getRoomMemberName(message.partitionKey, user.id)"]
   Display --> HasDisplayName{"the room's member row has a displayName?"}
   HasDisplayName -->|"yes"| RoomDisplayName["the room display name"]
   HasDisplayName -->|"no"| Global["user.name"]
