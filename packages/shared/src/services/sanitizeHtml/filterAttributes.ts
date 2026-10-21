@@ -12,7 +12,7 @@ const getTagPolicy = <T>(tagPolicies: Record<string, T>, tagName: string): T | u
   Object.hasOwn(tagPolicies, tagName) ? tagPolicies[tagName] : undefined;
 
 // A meta refresh navigates to the URL its content names, so that content is never kept: without it the refresh does nothing
-const isMetaRefresh = (tagName: string, attributes: Record<string, string>): boolean =>
+const checkIsMetaRefresh = (tagName: string, attributes: Record<string, string>): boolean =>
   tagName === "meta" && attributes["http-equiv"]?.trim().toLowerCase() === "refresh";
 
 // Keeps the attributes a tag's policy names, each in the form the policy allows. A transform runs first, so what it
@@ -31,7 +31,7 @@ export const filterAttributes = (
   const kept: Record<string, string> = {};
   for (const [name, value] of Object.entries(attributes)) {
     if (name === "class" ? !isClassAllowed : !allowedAttributes.includes(name)) continue;
-    if (name === "content" && isMetaRefresh(tagName, attributes)) continue;
+    if (name === "content" && checkIsMetaRefresh(tagName, attributes)) continue;
 
     const filteredValue = filterValue(tagName, name, value, policy);
     if (filteredValue !== undefined) kept[name] = filteredValue;
