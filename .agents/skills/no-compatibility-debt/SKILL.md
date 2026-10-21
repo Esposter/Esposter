@@ -9,7 +9,8 @@ Nothing in this repository keeps an older version of itself working. The argumen
 
 ## Settled — do not re-propose
 
-- **A migration staged behind a compatibility path** — an adapter that runs the old shape beside the new until a later phase deletes it. It is the same second code path that design refuses, only scheduled; the plan's own "phase 3 deletes it" is the step that slips.- **"Both shapes for now" because the move is large.** Size is a reason to script the move, never to keep two shapes.
+- **A migration staged behind a compatibility path** — an adapter that runs the old shape beside the new until a later phase deletes it. It is the same second code path that design refuses, only scheduled; the plan's own "phase 3 deletes it" is the step that slips.
+- **"Both shapes for now" because the move is large.** Size is a reason to script the move, never to keep two shapes.
 
 ## Rules
 
