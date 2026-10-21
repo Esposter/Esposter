@@ -24,6 +24,6 @@ The decidable half is **enforced** by `pass-through-helper/no-forwarding-wrapper
 
 ## What "something behaves differently without it" means for a flag
 
-The mirror of the rule above: collapsing near-twins wins because two things become one, so splitting one mechanism into two that each need a decision at every call site loses. Single responsibility is a unit having one job, never one boolean per case.
+The mirror of the caller-burden test on this page, applied to a flag: collapsing near-twins wins because two things become one, so splitting one mechanism into two that each need a decision at every call site loses. Single responsibility is a unit having one job, never one boolean per case.
 
 Prefer an over-approximation that costs nothing to a precise distinction that adds surface — one flag covering two causes is free when the consequence is identical — and architect so the case never has to be accounted for rather than adding the switch that accounts for it. **A distinction with no behavioural consequence is not debt**; recording it as such invites the next reviewer to build the switch.
