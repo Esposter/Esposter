@@ -36,7 +36,7 @@ flowchart LR
   - the item that names it on its area's roadmap or proposal page;
   - the follow-ups;
   - a fleet miss;
-  - the interrupted agent's transcript, read only for its first prompt and its last assistant texts, never whole: `~/.claude/projects/<project>/<session>/subagents/agent-*.jsonl`.
+  - the interrupted agent's transcript, read only for its first prompt and its last assistant texts, never whole.
 
   A path whose next step is written down and within reach is finished, reviewed and committed like any change. Otherwise its record is completed with what is done and what is next, and it is left for the unit that owns it.
 
