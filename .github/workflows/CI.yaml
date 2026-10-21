@@ -174,7 +174,7 @@ jobs:
         uses: ./.github/actions/setup-packages
 
       - name: 🔍 Duplicate code
-        run: pnpm -C scripts exec vitest run src/workspace/duplicateCode.test.ts
+        run: pnpm -C scripts test src/workspace/duplicateCode.test.ts --run
 
   # Each entry's `name` is the check context the branch ruleset requires
   # (`apps/infra/src/github/rulesets/queueStatusChecks.ts`)
