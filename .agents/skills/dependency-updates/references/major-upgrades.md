@@ -45,11 +45,11 @@ A breaking-change audit that ends at "nothing breaks" has read half the release.
 Beyond `references/bump-follow-through.md` — which is the same list for a patch — a major reaches further than the one package that names it:
 
 - A dependency of `packages/configuration` (tsdown, a Vite plugin) is in **every** package's build, so its major is verified by building, not by typechecking.
-- A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so CI's typecheck over `apps/web` is the one check that catches a removed export the grep in step 2 missed — which makes that grep the local half of the audit, run in full.
+- A Nuxt-module major (`@vueuse/nuxt`) changes the auto-import manifest, so CI's typecheck over `apps/web` is the one check that catches a removed export the grep in §2 missed — which makes that grep the local half of the audit, run in full.
 - A major that moves bytes into a `dist/` moves the bundle snapshots, and the config snapshot (`apps/web/uno.config.test.ts`) is read before they are regenerated — `references/bump-follow-through.md` owns both.
 
 ## 5. One commit per pass
 
-A hand pass is one commit: every version it moved, the lockfile `pnpm refresh:lockfile` installed and verified, and the migrations step 3 produced. The body carries one section per major, each holding that major's audit — the grep per breaking bullet and the migrate-or-reject per feature — so a reader separates them by heading, not by commit.
+A hand pass is one commit: every version it moved, the lockfile `pnpm refresh:lockfile` installed and verified, and the migrations §3 produced. The body carries one section per major, each holding that major's audit — the grep per breaking bullet and the migrate-or-reject per feature — so a reader separates them by heading, not by commit.
 
 Splitting the pass into one commit per major is **rejected** (`SKILL.md`, Settled). It bought a per-package revert nobody performs here — a bad major is fixed forward, and Renovate reopens it regardless — and it cost a catalog walk-back with `pnpm install --lockfile-only` per commit, whose resolution does not reproduce the refreshed lockfile byte for byte (the peer-suffix keys pnpm writes differ between the two paths), so every split ended in a hand-reconciled lockfile. The only lockfile a commit carries is the one the refresh installed.

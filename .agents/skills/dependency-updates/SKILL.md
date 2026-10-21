@@ -11,7 +11,7 @@ Dependency versions live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Settled — do not re-propose
 
-- **Holding a pnpm bump for a person.** A pnpm bump is always taken by the hand pass, its features audit in the commit body, never left as a PR that waits for a read; the rule that held it was reversed on 2026-10-18.
+- **Holding a pnpm bump for a person.** A pnpm bump is always taken by the hand pass, its features audit in the commit body, never left as a PR that waits for a read.
 - **Switching off what a major turns on by default** to keep the bump behaviour-preserving. New defaults are adopted; only a breakage the audit found earns an opt-out (`references/major-upgrades.md` §3).
 - **A confirmation gate before `pnpm refresh:lockfile`** (step 3 of `references/bumping-by-hand.md`). Its process kill is the precondition the delete needs on Windows, everything it ends is a restartable process of this repo's own, and a pass runs unattended — a gate turns it into one that stops to ask a question whose answer is yes. The trade is written at that step, and a review finding asking for the gate is answered with this line.
 - **Raising `minimumReleaseAge` above `0`, in pnpm or Renovate.** Being on the freshest version is the point, and a quarantine turns one clean pass into a partial one (`references/renovate.md`).
