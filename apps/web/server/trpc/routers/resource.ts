@@ -433,7 +433,8 @@ export const resourceRouter = router({
     const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
     // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
     // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
-    // Above released is refused there rather than saved naming it.
+    // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,
+    // Which reads as a broken image rather than a failed restore.
     // The one content-write path, so a restore is a content write like any other: the version bump and the blob
     // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
     // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
