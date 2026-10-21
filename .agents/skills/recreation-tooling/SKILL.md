@@ -1,6 +1,6 @@
 ---
 name: recreation-tooling
-description: Apply when recreating anything against a reference it must match (a game's screen or scene, another product's interface, a published design), when starting a kind of recreation no earlier one covered, and whenever such a loop has gone two rounds without converging or a result depends on guidance. Esposter's protocol for turning a recreation from a search into a solve — passes in dependency order, each gated by its own measure and frozen, every unknown listed and made separable, each answered by the most exact query the toolbox holds, and a missing query built as a tool before any further round.
+description: Apply when recreating anything against a reference it must match (a game's screen or scene, another product's interface, a published design), when starting a kind of recreation no earlier one covered, and whenever such a loop has gone two rounds without converging or a result depends on guidance. Esposter's protocol for turning a recreation from a search into a solve.
 ---
 
 # Recreation Tooling
@@ -32,7 +32,7 @@ A recreation converges in a round or two when every unknown in it can be answere
 - **A claim carries no more certainty than its evidence.** A shipped value says whether it was read, solved or is provisional. A search that finds nothing names what it covered, never an absence. A fact found about the source is written once on the domain's data-formats page and cited after. An output names the commit that produced it. A tool's test takes its oracle from the source, never from the tool (`references/evidence.md`).
 - **Two rounds without converging is a missing tool.** Stop, audit the toolbox against the unknowns (`references/toolbox-audit.md`), build the query that answers the stalled one, with its test, and only then run the next round.
 - **Every tool prints a number with its residual**, and writes an image only to check that number: a solve's reprojection error, a fit's error in pixels at the reference's pose, a regression's residual.
-- **A tool is kept while it moves the benchmark** and deleted when superseded, in the same change that supersedes it (the `genshin-parity` skill's "A tool earns its place by the benchmark").
+- **A tool is kept while it moves the benchmark** and deleted when superseded, in the same change that supersedes it (the `genshin-parity` skill's `references/tools-and-estimates.md`, "A tool earns its place by the benchmark").
 - **A domain's toolbox page maps each unknown to its tool**, and a tool that ships updates its row in the same commit, so the next session reads the map instead of rediscovering it.
 - **The generic tools live in `scripts/src/services/recreation/`, behind the `recreation` CLI (`pnpm recreation <command>`)**, and a domain's toolbox page maps each of its unknowns to the one that answers it, so a second domain reaches the tool a first one built rather than building its own.
 

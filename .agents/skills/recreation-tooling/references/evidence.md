@@ -16,11 +16,11 @@ A report never presents a solved value as read, or a provisional one as either. 
 
 ## A negative names its boundary
 
-A search that finds nothing reports what it covered, never an absence: "not in the community path index for 2.6", "no mesh named in this extraction". The item it leaves open records that boundary, so the tool that widens the coverage reopens it. Absence is concluded only over a complete inventory of the source. Genshin's capitals once dropped their landmarks as naming no mesh. A day later the game's LOD table and each mesh's dependants named those buildings, after a dozen commits had been spent on the drop.
+A search that finds nothing reports what it covered, never an absence: "not in the community path index for 2.6", "no mesh named in this extraction". The item it leaves open records that boundary, so the tool that widens the coverage reopens it. Absence is concluded only over a complete inventory of the source.
 
 ## A fact is found once
 
-A fact a session establishes about the source is written down in the chunk that found it, on the domain's data-formats page (Genshin's is `openspec/specs/genshin/game-data-formats/design.md`), with the command that shows it. That covers a format's field, an offset, which table holds a value, or the key that joins two tables. A later session cites the row rather than re-deriving the fact. A fact found by a probe is the probe's reason to be promoted to a tool (the rule in `SKILL.md`).
+A fact a session establishes about the source is written down in the chunk that found it, on the domain's data-formats page (Genshin's is `openspec/specs/genshin/game-data-formats/design.md`), with the command that shows it. That covers a format's field, an offset, which table holds a value, or the key that joins two tables. A later session cites the row rather than re-deriving the fact. A fact found by a probe is the probe's reason to be promoted to a tool (the probe-promotion rule in `.agents/skills/recreation-tooling/SKILL.md`).
 
 ## An output names the code that wrote it
 
