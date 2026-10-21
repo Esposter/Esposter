@@ -75,8 +75,8 @@ get it wrong look nothing alike in the code:
   a binding, fires everything downstream on every render for a value nobody moved. Compare by value in the shared
   consumer, and hoist the literal to a `computed` at the producer.
 
-Both are worth hunting because the price is not paid where it is incurred: a scroll handler's real cost was a
-slide indicator re-measuring layout on the next tick, in a different component.
+Both are worth hunting because the price is not paid where it is incurred: a handler's cost can land on the next
+tick, in a different component.
 
 ## Traps
 

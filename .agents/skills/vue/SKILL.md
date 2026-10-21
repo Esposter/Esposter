@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter's Vue 3 SFC conventions — how a <script setup> and its template are ordered and bound; single-use handlers inlined, v-model over split bindings, never normalizeString in Vue, defineProps on a local Props interface, useTemplateRef, a computed earned by reuse, work or identity, the watch decision tree, browser globals behind checkIsServer, and every rendered date a NuxtTime.
+description: Apply when writing or reviewing .vue files, or rendering a date or time. Esposter's Vue 3 single-file-component conventions.
 ---
 
 # Vue Conventions
