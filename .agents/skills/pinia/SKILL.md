@@ -16,8 +16,8 @@ Everywhere a store is consumed, tests included (`references/consuming-a-store.md
 
 - **One binding per store, named after it**, then `storeToRefs(fooStore)` and `const { method } = fooStore`, each store's lines grouped before the next (`pinia-store/require-store-binding`).
 - **Never dot-access a store in a component** (`no-restricted-syntax`); inside a store, declare nested stores at the setup root, read their refs by dot, destructure their methods at the root, and never `storeToRefs`.
-- **A store's id is its path under `app/store/`** (`app/store/index.test.ts`).
-- **Stores reach each other one way only — no module cycle, auto-imports included** (`import/no-cycle`, `app/moduleCycles.test.ts`).
+- **A store's id is its path under `app/store/`** (`apps/web/app/store/index.test.ts`).
+- **Stores reach each other one way only — no module cycle, auto-imports included** (`import/no-cycle`, `apps/web/app/moduleCycles.test.ts`).
 
 ## Dialog UI State Lives in Per-Service Dialog Stores
 

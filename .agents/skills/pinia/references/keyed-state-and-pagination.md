@@ -30,7 +30,7 @@ Generic usage — the explicit generic goes on the unions and empty containers, 
 
 ```ts
 // CORRECT — generic for union / complex types
-const { data: pendingFoo } = useDataMap<null | Foo>(() => fooStore.currentFooId, null);
+const { data: pendingFoo } = useDataMap<Foo | undefined>(() => fooStore.currentFooId, undefined);
 const { data: fooValues } = useDataMap<Record<string, string>>(() => fooStore.currentFooId, {});
 const { data: errors } = useDataMap<FooError[]>(() => fooStore.currentFooId, []);
 
