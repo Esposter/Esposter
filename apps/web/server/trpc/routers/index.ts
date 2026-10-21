@@ -35,10 +35,9 @@ import { userRouter } from "#server/trpc/routers/user";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { webpageRouter } from "#server/trpc/routers/webpage";
-import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
-// A base router without achievements, which the achievement router would otherwise import circularly
-const baseTrpcRouter = router({
+export const trpcRouter = router({
+  achievement: achievementRouter,
   app: appRouter,
   block: blockRouter,
   blueprint: blueprintRouter,
@@ -75,9 +74,5 @@ const baseTrpcRouter = router({
   webhook: webhookRouter,
   webpage: webpageRouter,
 });
-
-export type BaseTRPCRouter = typeof baseTrpcRouter;
-
-export const trpcRouter = mergeRouters(baseTrpcRouter, router({ achievement: achievementRouter }));
 
 export type TRPCRouter = typeof trpcRouter;
