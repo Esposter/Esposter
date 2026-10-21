@@ -25,7 +25,7 @@ const errorMessage = ref("");
 const save = async () => {
   errorMessage.value = "";
   // oxlint-disable-next-line no-restricted-properties -- blueprintResourceSchema validates the manifest and coerces its own dates
-  const parsedManifest = getResult(() => JSON.parse(manifestJson.value) as unknown)
+  const parsedManifest: unknown = getResult(() => JSON.parse(manifestJson.value))
     .orTee((error) => {
       errorMessage.value = error.message;
     })

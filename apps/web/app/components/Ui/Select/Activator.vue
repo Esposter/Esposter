@@ -13,7 +13,7 @@ interface Props {
 
 const { items, label } = defineProps<Props>();
 // Inside the select's root, where its context can be read: the primitive walks the options by arrow, Home and End, and
-// by the first letters typed
+// By the first letters typed
 const { close, isOpen, modelValue, popover } = useSelectContext("v0:select");
 // The trigger is no invoker of the list, so a press on it while the list is open counts as outside it: the browser's
 // Light dismiss closes the list on the release, and on touch it does so before the click lands, which the primitive

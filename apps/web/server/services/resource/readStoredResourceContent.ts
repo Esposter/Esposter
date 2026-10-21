@@ -7,5 +7,6 @@ import { readSerializedResourceContent } from "#server/services/resource/readSer
 export const readStoredResourceContent = async (id: ResourceInResource["id"]): Promise<unknown> => {
   const serializedContent = await readSerializedResourceContent(id);
   // oxlint-disable-next-line no-restricted-properties -- the stored JSON as written, its ISO strings left for a schema to read
-  return serializedContent ? (JSON.parse(serializedContent) as unknown) : null;
+  const storedContent: unknown = serializedContent ? JSON.parse(serializedContent) : null;
+  return storedContent;
 };
