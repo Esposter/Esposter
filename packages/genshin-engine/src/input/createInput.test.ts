@@ -1,3 +1,5 @@
+import type { InputGamepad } from "#src/models/input/InputGamepad";
+
 import {
   GAMEPAD_BUTTONS,
   GAMEPAD_STICK_DEADZONE,
@@ -12,9 +14,16 @@ import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputAction } from "#src/models/input/InputAction";
 import { describe, expect, test } from "vitest";
 
+// An element standing in for the one holding the pointer lock
+const LOCKED_ELEMENT: object = {};
+
 // An event target standing in for the window, with the gamepads it reports, the element holding its pointer lock and
 // The element holding its focus
-const createTarget = (gamepads: unknown[] = [], pointerLockElement: unknown = null, activeElement: unknown = null) =>
+const createTarget = (
+  gamepads: (InputGamepad | null)[] = [],
+  pointerLockElement: null | object = null,
+  activeElement: null | { matches: (selectors: string) => boolean } = null,
+) =>
   Object.assign(new EventTarget(), {
     document: { activeElement, pointerLockElement },
     navigator: { getGamepads: () => gamepads },
@@ -28,7 +37,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget();
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_BACKWARD }));
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_RIGHT }));
@@ -43,7 +52,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget();
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
     target.dispatchEvent(new Event("blur"));
 
@@ -54,7 +63,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget();
-    const { dispose, readInput } = createInput(target as unknown as Window);
+    const { dispose, readInput } = createInput(target);
     dispose();
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: KEY_CODE_FORWARD }));
 
@@ -64,8 +73,8 @@ describe(createInput, () => {
   test("turns the look by the pointer's movement while it is locked, once a read", () => {
     expect.hasAssertions();
 
-    const target = createTarget([], true);
-    const { readInput } = createInput(target as unknown as Window);
+    const target = createTarget([], LOCKED_ELEMENT);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE, movementY: 0 }));
     const { lookYaw } = readInput(0);
 
@@ -78,8 +87,8 @@ describe(createInput, () => {
   test("drops the first pointer move after the pointer locks, the browser's spurious jump", () => {
     expect.hasAssertions();
 
-    const target = createTarget([], true);
-    const { readInput } = createInput(target as unknown as Window);
+    const target = createTarget([], LOCKED_ELEMENT);
+    const { readInput } = createInput(target);
     target.dispatchEvent(new Event("pointerlockchange"));
     target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE * 100, movementY: 0 }));
     target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: POINTER_MOVE, movementY: 0 }));
@@ -91,8 +100,8 @@ describe(createInput, () => {
   test("drops a single pointer move no hand could make in one event", () => {
     expect.hasAssertions();
 
-    const target = createTarget([], true);
-    const { readInput } = createInput(target as unknown as Window);
+    const target = createTarget([], LOCKED_ELEMENT);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("mousemove"), { movementX: 0, movementY: 0 }));
     target.dispatchEvent(
       Object.assign(new Event("mousemove"), { movementX: MOUSE_LOOK_MAX_PIXELS_PER_EVENT + 1, movementY: 0 }),
@@ -104,7 +113,7 @@ describe(createInput, () => {
   test("moves by the touch controls: the key a button holds and the on-screen stick", () => {
     expect.hasAssertions();
 
-    const input = createInput(createTarget() as unknown as Window);
+    const input = createInput(createTarget());
     input.press(KEY_CODE_FORWARD);
     input.setTouchStick(STICK_AXIS, 0);
     const { moveForward, moveRight } = input.readInput(0);
@@ -116,7 +125,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget();
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("keydown"), { code: "KeyM" }));
     const pressedActions = new Set(readInput(0).pressedActions);
     const { heldActions, pressedActions: nextPressedActions } = readInput(0);
@@ -140,7 +149,7 @@ describe(createInput, () => {
         },
       },
     ]);
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     readInput(0);
     pressedButtons.push(GamepadButton.FaceRight);
 
@@ -151,7 +160,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget();
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     target.dispatchEvent(Object.assign(new Event("wheel"), { deltaY: POINTER_MOVE }));
     target.dispatchEvent(Object.assign(new Event("wheel"), { deltaY: POINTER_MOVE }));
     const { zoomSteps } = readInput(0);
@@ -163,7 +172,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget([], null, { matches: () => true });
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     const event = Object.assign(new Event("keydown", { cancelable: true }), { code: "KeyM" });
     target.dispatchEvent(event);
 
@@ -177,7 +186,7 @@ describe(createInput, () => {
     expect.hasAssertions();
 
     const target = createTarget([{ axes: [STICK_AXIS, -GAMEPAD_STICK_DEADZONE / 2], buttons: [] }]);
-    const { readInput } = createInput(target as unknown as Window);
+    const { readInput } = createInput(target);
     const { moveForward, moveRight } = readInput(0);
 
     expect({ moveForward, moveRight }).toStrictEqual({ moveForward: 0, moveRight: STICK_AXIS });

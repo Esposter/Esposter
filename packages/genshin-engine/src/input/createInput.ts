@@ -1,6 +1,8 @@
 import type { Input } from "#src/models/input/Input";
 import type { InputAction } from "#src/models/input/InputAction";
+import type { InputGamepad } from "#src/models/input/InputGamepad";
 import type { InputState } from "#src/models/input/InputState";
+import type { InputTarget } from "#src/models/input/InputTarget";
 
 import {
   FIELD_SELECTOR,
@@ -34,7 +36,7 @@ const toDeadzoned = (stickAxis: number): number => (Math.abs(stickAxis) < GAMEPA
 // Moves with, and a key typed into a field is the field's. A window that loses focus hears no key's release, so a blur
 // Lets go of every key. The touch controls drawn over the world press a code through its on-screen button, push an
 // On-screen stick read with the gamepad's, and turn the look as a drag across the screen does
-export const createInput = (target: Window): Input => {
+export const createInput = (target: InputTarget): Input => {
   const controller = new AbortController();
   const { signal } = controller;
   const heldCodes = new Set<string>();
@@ -145,7 +147,7 @@ export const createInput = (target: Window): Input => {
     },
     press,
     readInput: (frameSeconds) => {
-      const gamepad = target.navigator.getGamepads().find((candidate): candidate is Gamepad => candidate !== null);
+      const gamepad = target.navigator.getGamepads().find((candidate): candidate is InputGamepad => candidate !== null);
       const [stickX = 0, stickY = 0, lookStickX = 0, lookStickY = 0] = gamepad?.axes ?? [];
       for (const [index, button] of GAMEPAD_BUTTONS.entries())
         if (gamepad?.buttons[index]?.pressed) press(button);
