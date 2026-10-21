@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review: one permanent branch ai/queue that every session and Renovate push to, every change committed on `ai/queue` itself in the main checkout (no branch of its own), and a worktree opened only for changes that run concurrently, landed by git pull --rebase then git push, a rebase conflict settled by the agent that made the commit, and main moved only by the review.
+description: Apply when about to git commit or git push, when deciding what branch a commit lands on, when a pull stops on a rebase conflict, when a review run is red, or when a CI run on ai/queue or main is red. Esposter's review queue — the agent's side of the review, the one permanent `ai/queue` branch that sessions and Renovate push to, and what lands on `main`.
 ---
 
 # Review Queue
@@ -67,7 +67,7 @@ Whoever pushed a red typecheck or lint fixes it after the verify request (`AGENT
 
 The review opens an issue labelled `review` for each finding it owes, and the review's settle job closes it once every finding is fixed, refuted or recorded (`openspec/specs/infra/review/design.md`). A session never takes a `review` issue, and triage never applies or removes its label: it is the review's own. A session's commit that settles one of its findings does not close the issue, so no commit carries a `Closes #<number>` for it.
 
-A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`openspec/specs/architecture/engineering-loops/design.md`, "What runs next", item 2).
+A review run that goes red is a session's to read. Its step summary names the window, the issue or the settler that failed, and the next commit fixes it (`openspec/specs/architecture/engineering-loops/design.md`, "What runs next when nothing is asked", item 2).
 
 ## Deep Dives
 
