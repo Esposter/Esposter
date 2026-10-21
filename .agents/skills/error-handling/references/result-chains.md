@@ -6,8 +6,8 @@ Read when picking the shape of a single chain — a fallback value, an alert, a 
 
 ```ts
 return getResult(() => new RegExp(pattern).exec(value)).match(
-  (match) => match?.[groupIndex] ?? null,
-  () => null,
+  (match) => match?.[groupIndex],
+  () => undefined,
 );
 ```
 
