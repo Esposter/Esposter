@@ -13,7 +13,7 @@ CORRECT — {{ getRoomMemberName(roomId, member.id, member.name) }}  (room displ
 
 The one name a template may render directly is `creator.name` from `useCreator`, because that composable has already resolved it — see below.
 
-Room display names are stored as `usersToRooms.displayName`, a `text().notNull().default("")` column, where empty means "no room-specific name". The server never returns an empty name: every query that reads one goes through `getDisplayNameExpression`, which is `coalesce(nullif(displayName, ''), name)`. So the client takes the value it is given with `??`, and the one fallback to the account name lives in `getRoomMemberName`, which takes the account name a caller already holds, or reads it from the account map.
+Room display names are stored as `usersToRooms.displayName`, a `text().notNull().default("")` column, where empty means "no room-specific name". Every query that returns a member's name for display goes through `getDisplayNameExpression`, which is `coalesce(nullif(displayName, ''), name)`, so the server never hands back an empty display name in those. So the client takes the value it is given with `??`, and the one fallback to the account name lives in `getRoomMemberName`, which takes the account name a caller already holds, or reads it from the account map. Two reads return the raw column on purpose: `readMyUsersToRooms` returns the current user's own nickname, where empty is the "no nickname" state the My Profile field edits; and the typing broadcast reads its own row's raw value and applies `||` to the account name at the call site.
 
 Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/ListItem`), the push notification title (queried server-side before the EventGrid publish), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
 
@@ -37,7 +37,7 @@ flowchart TD
 
 One column: `usersToRooms.displayName` — `text`, NOT NULL DEFAULT `""`, max 32 chars.
 
-## Client state — `useUserToRoomStore`
+## Client state — `useUserToRoomStore` and `useUserStore`
 
 Two internal maps, both keyed by `roomId`, deliberately split for privacy:
 
@@ -64,6 +64,7 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 | File                                                                | Role                                                   |
 | :------------------------------------------------------------------ | :----------------------------------------------------- |
+| `apps/web/app/store/message/room/userToRoom.ts`                     | `useUserToRoomStore`, the current user's own row       |
 | `apps/web/app/store/message/user/index.ts`                          | `useUserStore`, `getRoomMemberName`                    |
 | `apps/web/app/composables/message/room/useCreator.ts`               | message author, display name already applied           |
 | `apps/web/app/composables/message/useMessageHtml.ts`                | mention label resolution                               |
