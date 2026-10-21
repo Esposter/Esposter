@@ -14,7 +14,7 @@ coverage. The denylist also catches only the **bare** word, so every compound sp
 
 `sourceDirectory`, `packageDirectory`, `stateDirectory`, in a compound as much as bare. A lowercase library word
 keeps its own spelling (`mkdir`, `tmpdir`, `readdir`, `gitdir`, overlayfs's `upperdir`), and so does a string
-value — `SourceType.Directory` is still `"dir"` on the wire.
+value that crosses the wire, which is never renamed to match its member.
 
 ## A stored count is `<singular noun>Count`
 

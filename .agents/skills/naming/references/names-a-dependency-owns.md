@@ -29,11 +29,11 @@ our own key sitting beside a foreign one is named the way any other identifier i
 - **A field mirroring an option.** A model field whose value is passed to a dependency's option of the same
   name, or a type declared field-for-field against one of theirs, keeps that library's spelling — `is*` prefix
   included, or omitted.
-- **A key the dependency looks up.** `apps/web/shared/types/nuxt.d.ts` mirrors nuxt's own module
-  augmentation, so its keys are an upstream contract: renaming `noScripts` to a spelling of ours typechecks and
-  silently stops Nitro applying the rule, because the key it looks up no longer exists. The tell is a file whose
-  comment says to keep it in sync with the dependency's source — a declaration file restating a dependency's
-  interface, or any object literal a dependency reads, is out of scope for a naming pass entirely.
+- **A key the dependency looks up.** A declaration file augmenting a dependency's interface —
+  `apps/web/shared/types/nuxt.d.ts` adds `env` to Nitro's `ImportMeta` — declares keys on the dependency's own
+  type, so they are its names, not ours. The tell is a file whose comment says to keep it in sync with the
+  dependency's source — a declaration file restating a dependency's interface, or any object literal a dependency
+  reads, is out of scope for a naming pass entirely.
 - **A method their interface declares.** azure-mock's `byPage` on `PagedAsyncIterableIterator` is the Azure
   SDK's paging contract rather than a lookup we named, so the `<key><value>Map` rule does not reach it.
 - **A destructure their documentation spells.** `ctx` is the name for a tRPC context value, in source and tests

@@ -16,7 +16,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
 - **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
-- **A generic value in a shared namespace** (`host://`, `"SESSION_SECRET"`, `%LOCALAPPDATA%\Host`) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
+- **A generic value in a shared namespace** (`host://`, `"SESSION_SECRET"`, a folder named `Host` in the user's app data) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
 - **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
 
 | Read when                                                                                 | Page                                    |
@@ -43,7 +43,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 ## Booleans
 
 - `is*` prefix for **boolean variables and properties only**: `isMuted`, `isRoomOwner`. Never for callable functions
-- `check*` prefix for **all boolean-returning functions** (top-level, exported, or callback param): `checkIsManageable`, `checkIsStale`. Makes callability unambiguous — `checkIsManageable(...)` is always a call, `isManageable` is always a stored value. An `is*`/`has*` declarator holding a function with a `: boolean` or type-predicate return, or a parameter typed as one, is a `no-restricted-syntax` error
+- `check*` prefix for **all boolean-returning functions** (top-level, exported, or callback param): `checkIsManageable`, `checkIsStale`. Makes callability unambiguous — `checkIsManageable(...)` is always a call, `isManageable` is always a stored value. `no-restricted-syntax` enforces that an `is*`/`has*` name never holds a boolean-returning function
 - `has*` only when `is*` reads unnaturally — possession/membership checks: `hasMore`, `hasThumbnail`. Never `can*` or `should*` — enforced by `no-restricted-syntax` on the declarator name, which leaves a dependency's own key alone (LiveKit's `canPublish` grant, `URL.canParse`). A permission is `hasManageRoles`, a capability `isScreenShareSupported`
 - `show*` is **banned** on a value — rename to `is*Visible`: `showFoo` → `isFooVisible` (`no-restricted-syntax`, for a declarator and a `boolean` interface member)
 - `isPending` for a request in flight, `isLoading` for a wait that is not one request
