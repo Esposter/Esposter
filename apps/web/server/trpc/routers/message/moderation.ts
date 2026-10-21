@@ -51,6 +51,7 @@ import {
   AzureTable,
   bansInMessage,
   DatabaseEntityType,
+  getDisplayNameExpression,
   getPublicUserColumns,
   getReverseTickedTimestamp,
   ModerationLogEntity,
@@ -246,35 +247,33 @@ export const moderationRouter = router({
     if (filter?.name) wheres.push(ilike(usersInAuth.name, `%${escapeLike(filter.name)}%`));
 
     const bannedByUsers = alias(usersInAuth, "bannedByUsers");
+    const bannedByMemberships = alias(usersToRoomsInMessage, "bannedByMemberships");
+    const userMemberships = alias(usersToRoomsInMessage, "userMemberships");
+    const bannerColumns = {
+      ...getPublicUserColumns(bannedByUsers),
+      displayName: getDisplayNameExpression(bannedByMemberships, bannedByUsers),
+    };
     const bans = await ctx.db
       .select({
         ...getColumns(bansInMessage),
-        bannedByUser: getPublicUserColumns(bannedByUsers),
-        user: getPublicUserColumns(usersInAuth),
+        bannedByUser: bannerColumns,
+        user: {
+          ...getPublicUserColumns(usersInAuth),
+          displayName: getDisplayNameExpression(userMemberships, usersInAuth),
+        },
       })
       .from(bansInMessage)
       .innerJoin(usersInAuth, eq(bansInMessage.userId, usersInAuth.id))
+      .leftJoin(userMemberships, and(eq(userMemberships.userId, usersInAuth.id), eq(userMemberships.roomId, roomId)))
       .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
+      .leftJoin(
+        bannedByMemberships,
+        and(eq(bannedByMemberships.userId, bannedByUsers.id), eq(bannedByMemberships.roomId, roomId)),
+      )
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bansInMessage, sortBy))
       .limit(limit + 1);
-    const page = getCursorPaginationData(bans, limit, sortBy);
-    const displayNameMap = await getRoomDisplayNameMap(
-      ctx.db,
-      roomId,
-      page.items.flatMap(({ bannedByUser, user }) => (bannedByUser ? [bannedByUser.id, user.id] : [user.id])),
-    );
-    return {
-      ...page,
-      items: page.items.map((ban) => ({
-        ...ban,
-        bannedByUser: ban.bannedByUser && {
-          ...ban.bannedByUser,
-          displayName: displayNameMap.get(ban.bannedByUser.id) ?? "",
-        },
-        user: { ...ban.user, displayName: displayNameMap.get(ban.user.id) ?? "" },
-      })),
-    };
+    return getCursorPaginationData(bans, limit, sortBy);
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
     CursorPaginationData<ModerationLogInRoom>
