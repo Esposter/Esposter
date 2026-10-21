@@ -56,7 +56,7 @@ The convention a pass carries is evidence rather than authority: a unit that wil
 
 ## Shrinking beats re-running
 
-**A sweep shrinks by handing what is decidable to an enforcer**, and the second time a pass writes the same finding it writes the enforcer instead; which part earns one is the `oxlint` skill's decision tree (`references/handing-to-an-enforcer.md`).
+**A sweep shrinks by handing what is decidable to an enforcer**, and the second time a pass writes the same finding it writes the enforcer instead; which part earns one is the decision tree in the `oxlint` skill (`references/custom-js-plugins.md`), and the handover is `references/handing-to-an-enforcer.md`.
 
 ## Reference pages
 
