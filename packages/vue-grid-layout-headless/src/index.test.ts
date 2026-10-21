@@ -11,13 +11,13 @@ describe("vue-grid-layout-headless", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 9.41 KB (9638 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 9.31 KB (9538 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.90 KB (1949 bytes)"`);
+    expect(getFileSizeReport(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.54 KB (1582 bytes)"`);
   });
 
   test("placement bundle size", () => {
@@ -29,6 +29,6 @@ describe("vue-grid-layout-headless", () => {
   test("placement types size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distPlacementDtsFile)).toMatchInlineSnapshot(`"placement.d.ts: 2.56 KB (2619 bytes)"`);
+    expect(getFileSizeReport(distPlacementDtsFile)).toMatchInlineSnapshot(`"placement.d.ts: 1.80 KB (1843 bytes)"`);
   });
 });
