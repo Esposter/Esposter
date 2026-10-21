@@ -9,7 +9,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 ## Settled — do not re-propose
 
-- **Reading the skills in the main session, one at a time.** Reading is what a pass costs, and a haiku reader does it at a fraction of an opus read. The readers fan out in parallel, one per batch of skills; each applies the fixes its rule settles, names every edit, and reports each call it could not settle. The main session judges every reported call and every diff before its commit. Rejected: the main session reading every skill itself, since opus pays for each file read and carries every file's content (the `llm-delegation` skill, `references/reading-passes.md`).
+- **Reading the skills with haiku readers, one per batch, in parallel.** Each reader applies the fixes its rule settles and reports every call it could not settle; the main session judges each reported call and diff before its commit. Rejected: the main session reading every skill itself (the `llm-delegation` skill, `references/reading-passes.md`).
 - **Reading by grep or by skimming.** The findings that matter — a claim the code no longer bears out, a copy between pages — live in prose a grep does not reach; every `SKILL.md` and every `references/` page is read whole.
 - **An installed third-party skill in the run.** A skill `skills-lock.json` installs is upstream's, outside the `docs/skills` ledger, and edited by nobody here. A skill one of our own plugins ships (`packages/*/skills`) is ours and is read with the package that ships it.
 - **Fixing the same kind of finding by hand twice.** The second one is an enforcer (the `sweeps` skill, `references/handing-to-an-enforcer.md`).
