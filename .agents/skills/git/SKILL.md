@@ -27,7 +27,7 @@ A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell
 
 ## Pushing
 
-An agent lands its commits on **`ai/queue`** in the main checkout by the `review-queue` skill's loop, a `git pull --rebase` and then a push retried only on a rejected push; a worktree is opened only for a concurrent change. The `review-queue` skill owns the loop, the worktree and the rebase's conflicts.
+Landing commits on **`ai/queue`** is the `review-queue` skill's loop (its pull, push and worktree).
 
 ## Branch Hygiene
 
@@ -39,7 +39,7 @@ Resolve `pnpm-workspace.yaml` first, keeping the higher version on every conflic
 
 ## Verify Once Per Sitting
 
-The touched tests run **once, after all the edits going out together** (the `package-scripts` skill, `references/check-suite.md`), in the background — once per sitting, however many commits and queue pushes carry it — and the rest are CI's on each push (the `running-checks` skill). Commits stay per coherent chunk regardless, and a fix either one calls for is its own commit behind the unit — never folded into it, because the review cuts its windows at commit boundaries and every cut should be green on its own. A per-chunk run is re-invalidated by the next chunk going out with it; a push to `ai/queue` waits for nothing, since the review run it starts gates nothing.
+The touched tests run once per sitting, in the background (the `running-checks` skill, and the `package-scripts` skill's `references/check-suite.md`). Commits stay per coherent chunk, and a fix is its own commit behind the unit.
 
 ## Reference pages
 
