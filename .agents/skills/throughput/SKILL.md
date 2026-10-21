@@ -1,11 +1,11 @@
 ---
 name: throughput
-description: Apply when a solve, a fit, a build, a CI run or a subagent will take a minute or more, when deciding what to do while one runs, when a turn is about to end, and when choosing the next unit of work. Esposter session throughput — every resource kept busy at once: the main session on the next unit while long runs go in the background, haiku agents on resolved work, the user's ear and eye asked in one batch, and a ready list that never runs dry while the backlog is open.
+description: Apply when a solve, a fit, a build, a CI run or a subagent will take a minute or more, when deciding what to do while one runs, when a turn is about to end, and when choosing the next unit of work. Esposter session throughput — every resource kept busy at once.
 ---
 
 # Throughput — Nothing Idles While Work Is Ready
 
-Time and effort are the limit, so every resource the session holds works at once: the main session, `haiku` subagents, background commands, and the user's ear and eye. A solve that runs half an hour is half an hour of the session's own work done beside it, never half an hour waited. Who runs which kind of work is the `llm-delegation` skill; how a check runs and is waited on is the `running-checks` skill.
+Time and effort are the limit, so every resource the session holds works at once: the main session, `haiku` subagents, background commands, and the user's ear and eye. A solve that runs half an hour is half an hour of the session's own work done beside it, never half an hour waited. Who runs which kind of work is the `llm-delegation` skill (`.agents/skills/llm-delegation/SKILL.md`); how a check runs and is waited on is the `running-checks` skill (`.agents/skills/running-checks/SKILL.md`).
 
 ## Settled — do not re-propose
 
@@ -18,7 +18,7 @@ Time and effort are the limit, so every resource the session holds works at once
 - **A run of a minute or more starts in the background**, and the same turn picks up the next unit that does not depend on it. A step whose input is that run's result waits for its notification and is never run ahead on a guess.
 - **Keep a ready list.** Before starting a long run, name the next units that do not depend on it: the next open question of another pass, a proposal in another area, a written spec a `haiku` agent can take, the docs and tests a landed change still owes. The backlog is read off the open handoff's next steps, the area's roadmap and `pnpm ai:proposals:report`.
 - **Fan resolved work out at once.** Every unit whose judgement calls are settled goes to a `haiku` agent in its own worktree as soon as it is recognised, so the main session's turns stay on the work only it can do (the `llm-delegation` skill, `references/running-agents.md`).
-- **Mind what a running job reads.** An edit that reloads a server, rebuilds a package or rewrites a data file a run is reading kills or corrupts that run; while it runs, the session works outside what it reads, or the run gets a server or worktree of its own. Each domain names its own locks (the `genshin-parity` skill names the parity page's).
+- **Mind what a running job reads.** An edit that reloads a server, rebuilds a package or rewrites a data file a run is reading kills or corrupts that run; while it runs, the session works outside what it reads, or the run gets a server or worktree of its own. Each domain names its own locks (the `genshin-parity` skill's `references/compute-queue.md` names the benches').
 - **The machine works too, not only the agents.** While a batch is open the GPU runs the compute queue's page lane and the cores its CPU lane, each lane's runner looping by itself; the main session starts a lane's runner the moment its first item lands, and every run reads the free memory first, waiting under an eighth of the machine's RAM rather than swapping (the threshold is in this skill's `references/machine-efficiency.md`, "Read the memory gate first").
 - **Every run once, on the cheapest resource.** An agent typechecks the packages it edited once, before its commit, a search reads only what git tracks, and a long run goes to whichever of the cores, the GPU or its video engine does it cheapest (`references/machine-efficiency.md`).
 - **A report frees its slot, and the session takes the next entry first.** When an agent reports, the session runs `pnpm ai:fleet:next` and launches a `haiku` agent on what it claims before anything else, so a finished agent's slot is refilled at once (`references/fleet.md`).
@@ -33,7 +33,7 @@ The plan's usage is spent by the session and its agents, while a compute-queue r
 A window's end past its maintenance line is spent, not saved: the five-hour window's unused end is lost at its reset, and the weekly one's is the margin that lets the work in flight land before the wind-down. `haiku` stretches either furthest, because limits weigh a token by its family. From a window's maintenance tier, entered at its line or by spending ahead of an even pace, until it resets, the session:
 
 1. Starts no new feature, design or proposal.
-2. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (the `sweeps` skill); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
+2. Spends the rest of the window on `haiku` agents for cleanup: fixes the findings of a code review of the window's own recent commits; drains an open sweep ledger (`.agents/skills/sweeps/SKILL.md`); brings the docs and skills in line with the code changed this window (the Key-files sweep in `AGENTS.md`'s finishing steps); fixes CI's typecheck and lint reds; and lands the refactors, simplifications and optimisations the compute queue's runs surfaced.
 3. Writes a finding that needs judgement down as a follow-up (the `follow-ups` plugin's capture skill), not decided on `haiku`.
 4. Keeps the compute queue's runners going.
 
@@ -43,7 +43,7 @@ From a window's wind-down line until it resets, the session:
 
 1. Starts nothing new that thinks or builds: no implementation agent, no workflow, no proposal.
 2. Sends each running implementation agent its wrap-up: commit what builds, then end on a handoff spec that a `haiku` agent can build cold.
-3. Writes every open item down where the `resuming` skill's `pnpm ai:resume` and its handoff order find it, with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
+3. Writes every open item down where `pnpm ai:resume` and its handoff order find it (`.agents/skills/resuming/SKILL.md`), with what it takes to resume it cold: the paths, what is done, the calls already made, the next step. Genshin work goes on its roadmap, a handoff spec into its proposal page, never only the scratchpad. Anything else goes in as a follow-up through the `follow-ups` plugin's capture skill.
 4. Commits the edit in hand and the records just written by pathspec, and pushes the queue.
 5. Cleans up the page servers, shells, monitors and worktrees nothing still uses.
 6. Keeps the compute queue's runners going, one per lane, until the window resets and the reserve lifts by itself.
