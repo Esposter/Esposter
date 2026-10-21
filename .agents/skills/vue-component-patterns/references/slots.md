@@ -23,7 +23,7 @@ When a wrapper forwards an optional slot into a component that draws fallback co
 <template v-if="$slots.mark" #mark><slot name="mark" /></template>
 ```
 
-Canonical: `Ui/List/Row.vue`. An unconditional `<slot />` directly inside such a component has the same always-registered problem — only safe when the wrapped component has no fallback for that slot.
+Canonical: `apps/web/app/components/Ui/List/Row.vue`. An unconditional `<slot />` directly inside such a component has the same always-registered problem — only safe when the wrapped component has no fallback for that slot.
 
 ## Fallback content is replaced whole — pass the state it read as a slot prop
 
@@ -35,7 +35,7 @@ Declare that state as a scoped slot prop whenever the fallback branches on it, s
 defineSlots<{ default?: (props: { isLoading: boolean }) => VNode }>();
 ```
 
-Where the component deliberately keeps the state private, say so at the declaration and in the skill that owns the component — an always-visible placeholder is a reasonable contract, but only if it is a documented one rather than a surprise (`Styled/Waypoint.vue`, and the `pagination` skill, `references/cursor-pagination.md`).
+Where the component deliberately keeps the state private, say so at the declaration and in the skill that owns the component — an always-visible placeholder is a reasonable contract, but only if it is a documented one rather than a surprise (`apps/web/app/components/Styled/Waypoint.vue`, and `.agents/skills/pagination/references/cursor-pagination.md`).
 
 ## Slot extraction (complex components)
 
