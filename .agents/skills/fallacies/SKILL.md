@@ -1,6 +1,6 @@
 ---
 name: fallacies
-description: Apply when a session is about to propose, widen, add or "fix" something nobody asked for, when a finding argues a design is not the simplest, when a CI, cache or trigger change is being weighed, and when a review's quality lane asks whether a concern is real before asking whether the fix is. Esposter catalogue of the arguments that talk a session into work the repository does not need — the reasoning-level sibling of over-engineering — owning two rules (a gap in a check nothing decides on is not a defect; a cost or risk asserted without its measurement is a guess) and indexing the recurring fallacies each at the skill or page that holds its rule.
+description: Apply when a session is about to propose, widen, add or "fix" something nobody asked for, when a finding argues a design is not the simplest, when a CI, cache or trigger change is being weighed, and when a review's quality lane asks whether a concern is real before asking whether the fix is. Esposter catalogue of the arguments that talk a session into work the repository does not need — the reasoning-level sibling of over-engineering.
 ---
 
 # Fallacies
