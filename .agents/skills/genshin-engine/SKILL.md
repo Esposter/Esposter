@@ -49,7 +49,7 @@ The design, from each module's job to the order a frame runs in, is `openspec/sp
 - **Game data is published, never imported.** A table, a word, a fitted scene or an authored world file is read by its key from the hosted game data, awaited at a boundary and handed down to the functions over it (the `genshin-data` skill).
 - **The world package is published and builds through the Vue tsdown configuration** — `references/world-package.md`.
 - **A system that holds player state adds its slice to the save schema in the same change.** The save is `genshinSaveSchema` in `genshin-world`: one key per system, each slice's Zod schema beside its model, storing only what the player did as ids and counters, with the rules deriving everything else on load. Nothing in a slice is a derived value, and a change to a slice's shape is a backfill (`openspec/specs/genshin/save-data/design.md`).
-- **One function per file, `#src/*` imports, explicit return types** — the package is published with isolated declarations, so every exported function states its type.
+- **One function per file, `#src/*` imports, explicit return types** — the package is published with isolated declarations (`packages/configuration/tsconfig.library.json`), so every exported function states its type.
 
 ## Reference pages
 
