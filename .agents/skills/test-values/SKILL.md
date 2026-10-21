@@ -1,6 +1,6 @@
 ---
 name: test-values
-description: Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file. Esposter's test values — every literal the least value that still distinguishes what the test reads, one canonical literal per kind, every date computed from the epoch and never typed, and shared data declared once with what production owns imported.
+description: Apply when writing or reviewing any literal, fixture, id, date, path or helper argument in a .test.ts, .test-d.ts or .bench.ts file. Esposter's test values — the literals, ids, dates, paths and fixtures a test writes, and the shared data they are drawn from.
 ---
 
 # Test Values
