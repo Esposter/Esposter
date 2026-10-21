@@ -9,7 +9,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 - **A hand-kept registry, or a test that a registry is complete** — `pnpm registry:gen` writes both from the folders, so a declaration is registered by existing and there is nothing left to check (`references/schema-registration.md`).
 - **A table or an enum in `public`** — every one lives in the schema of the product area that owns it (`references/schemas-and-names.md`).
-- **A table writing its own copy of a column group the others share** — rejected: the user decided parallel tables share their columns ("modularize parallel things... especially if it's similar business logic"). A builder carries the first table's identity, so the answer is a factory, not a copy: `setName` names a builder from its key and a built column keeps its builder's config (`references/table-definition.md`).
+- **A table writing its own copy of a column group the others share** — rejected: parallel tables share their columns through a factory, because a builder reused across tables shares one config (`references/table-definition.md`).
 - **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; here `db:gen` is the only generator and the app applies migrations at startup, so where the two disagree this skill wins (`references/migrations.md`).
 - **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a library's name (livekit's `Room`, the `UserStatus` enum); the `In<Schema>` suffix is derived, never chosen, and `schema.test.ts` holds it.
 
@@ -68,13 +68,9 @@ One `INSERT` over an array, never a loop of them (`references/queries.md`).
 
 `requireMutation` on the first row, the full entity returned, and `[0]` rather than `takeOne` wherever a guard reads the absence (`references/returning.md`).
 
-## Empty-Sentinel Columns — the DB Schema Is the Source of Truth
+## Empty-Sentinel Columns
 
-An optional text column is `.notNull().default("")` and a numeric one `.default(0)` where `0` means nothing; `null` stays only for a timestamp or a semantically distinct absence (the `absent-values` skill, `references/sentinel-columns.md`).
-
-## Optional Insert Values
-
-Never `?? null` on an insert unless `null` means something the schema distinguishes (the `absent-values` skill, `references/sentinel-columns.md`).
+A column's empty value and its insert side are the `absent-values` skill's (`references/sentinel-columns.md`); the schema carries the sentinel, so Drizzle's inferred types propagate it.
 
 ## Time Duration Columns
 

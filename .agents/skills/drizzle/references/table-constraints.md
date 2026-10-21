@@ -35,7 +35,7 @@ extraConfig: ({ isRead, userId }) => [
 **Spell the predicate exactly as the query spells it** (`= false` against an `eq(column, false)` filter, not
 `NOT column`): matching a differently-phrased predicate costs the planner an implication proof it may decline,
 and a partial index the planner will not use is a write cost with no read benefit. The predicate's column joins
-the index name, per the rule above.
+the index name, per the naming rule under "Naming".
 
 This is not speculative tuning — it is the read pattern being known and fixed. A count whose subset is unbounded
 (no filter, or a filter matching most rows) gets no partial index; it is already the composite index's job.
