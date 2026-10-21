@@ -7,7 +7,7 @@ import { useRequestEvent } from "nuxt/app";
 
 // During server rendering, a fetch through the request's own event: the app answers a path in-process, the incoming
 // Request's headers forwarded, and returns a real `Response`, headers included. An event no app built has no app to
-// Answer it, so the same request goes through the Nitro app's own in-process fetch, which the server plugin provides.
+// Answer it, so the same request goes through the Nitro app's own in-process fetch, which useTrpcServerFetch loads.
 // In the browser, the global `fetch` against an absolute url, which is what a network interceptor sees. Read when the
 // Link is built, inside the app's context, since a link sends later — a batch after a tick — when that context is gone
 export const getLinkFetch = (): TRPCFetch => {
