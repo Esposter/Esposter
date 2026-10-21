@@ -23,7 +23,7 @@ verdict per page rather than per area.
 
 ## What a diagram may hold
 
-The mandate above says when a page owes one, which leaves the opposite failure uncaught: a page that has a
+The mandate in `SKILL.md`, "Diagram mandate", says when a page owes one, which leaves the opposite failure uncaught: a page that has a
 diagram and is worse for it. A reader gives a picture one look, so what it costs them is not its size but how
 much of that look is spent on something the shape was never going to answer.
 

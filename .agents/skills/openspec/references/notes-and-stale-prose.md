@@ -2,11 +2,11 @@
 
 Read when writing a `## Notes` bullet on a page, or when removing a passage that describes something the repo no
 longer has. The rule itself is in `SKILL.md` — no deprecated or stale content, and a note earns its place by
-saying what no section above does; this page is how to tell a note from a defect and a tombstone from a rule.
+saying what no other section of its page does; this page is how to tell a note from a defect and a tombstone from a rule.
 
 ## A trailing summary is not a note
 
-A `## Notes` bullet earns its place by stating something no section above does — a consequence, an exception, a
+A `## Notes` bullet earns its place by stating something no other section of its page does — a consequence, an exception, a
 pointer to a decision recorded elsewhere. A bullet that restates the page's own rule in shorter words is the page
 disagreeing with itself the moment either copy is edited, so it is deleted rather than kept in sync.
 

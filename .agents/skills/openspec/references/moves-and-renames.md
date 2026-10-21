@@ -1,6 +1,6 @@
 # Moves and Renames
 
-Read after moving a file, renaming a name that a spec or skill cites, or adding a page. The rule itself is in `SKILL.md` — specs move with the code that changes them; this page is the mechanical follow-through a move, a rename or a new page owes, and which quoting keeps the citation tests honest.
+Read when moving a file, renaming a name that a spec or skill cites, or adding a page. The rule itself is in `SKILL.md` — specs move with the code that changes them; this page is the mechanical follow-through a move, a rename or a new page owes, and which quoting keeps the citation tests honest.
 
 ## A moved file
 

@@ -1,6 +1,6 @@
 ---
 name: openspec
-description: Apply when creating, updating or referencing any spec, design, proposal, roadmap, or deferred or rejected idea under openspec/, when creating, validating or archiving an OpenSpec change, or when a scenario fails its check. Esposter's spec of record — where a folder lives says whether it is built, one capability or idea per folder, specs moving with the code, a Mermaid diagram for any flow, plain GFM .md, magnitudes in place of anything the repo can count. The team's /opsx commands and stage map are the team kit's openspec skill, linked here rather than copied.
+description: Apply when creating, updating or referencing any spec, design, proposal, roadmap, or deferred or rejected idea under openspec/, when creating, validating or archiving an OpenSpec change, or when a scenario fails its check. Esposter's spec of record — the folders under openspec/, the specs and designs in them, and the changes that move them. The team's /opsx commands and stage map are the team kit's openspec skill, linked here rather than copied.
 ---
 
 # OpenSpec in Esposter
@@ -60,7 +60,7 @@ Write for a new engineer reading on GitHub, not for an agent grepping a repo:
 - **A decision taken from outside the repo cites where it came from** in the design's `## Sources`, read before cited (`references/links-and-sources.md`).
 - **Never write down what the repo can count**, and **never restate a version a manifest declares, or a value a constant owns — name where it lives** (`references/repo-owned-facts.md`).
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
-- **A `## Notes` bullet says what no section above does** — a consequence, an exception, a trade it names the cost of; never a restatement, and never an unfixed defect, which is fixed or becomes a roadmap item (`references/notes-and-stale-prose.md`).
+- **A `## Notes` bullet says what no other section of its page does** — a consequence, an exception, a trade it names the cost of; never a restatement, and never an unfixed defect, which is fixed or becomes a roadmap item (`references/notes-and-stale-prose.md`).
 - Keep the **Key files** table in every design — path and one-line role. It is the bridge from the spec to the code, and how a change is sized.
 - **No deprecated or stale content, ever.** When something is superseded, delete it and fix every reference in the same change — no deprecation stubs, no "moved to X" notices. Why-not rationale lives only in `deferred/` and `rejected/`.
 - **Invert a tombstone, don't just delete it.** A stale passage is usually a live rule stated as the history of what it replaced; keep the reasoning, drop the past tense and the dead identifier (`references/notes-and-stale-prose.md`).
@@ -79,10 +79,10 @@ A repo-wide answer to a class of problem is a standard under `specs/architecture
 - `references/change-metadata.md` — when writing a change's `.openspec.yaml`: the model that wrote it and the fleet's fields.
 - `references/area-passes.md` — when ideating, triaging, or sweeping a whole product area's specs, and when deciding how that sweep is committed.
 - `references/diagrams.md` — when adding a diagram, judging whether a page owes one, or sweeping an area's diagrams.
-- `references/moves-and-renames.md` — after moving a file, renaming a cited name, or adding a page: the sync command, the citation tests, and when a name is quoted rather than backticked.
+- `references/moves-and-renames.md` — when moving a file, renaming a cited name, or adding a page: the sync command, the citation tests, and when a name is quoted rather than backticked.
 - `references/notes-and-stale-prose.md` — when writing a `## Notes` bullet, or removing a passage describing what the repo no longer has.
 - `references/markdown-format.md` — when writing a page's markdown: plain GFM, no frontmatter, and fence languages.
-- `references/revisions.md` — after changing a decision in the middle of a page.
+- `references/revisions.md` — when changing a decision in the middle of a page.
 - `references/spec-tests.md` — when a spec test fails, or before adding a link, a path or a diagram.
 - `references/repo-owned-facts.md` — when a page states a number, a count, a directory's contents, a version or a constant's value.
 - `references/links-and-sources.md` — when linking another page, or citing where an outside decision came from.

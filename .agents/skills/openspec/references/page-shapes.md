@@ -98,7 +98,7 @@ The Genshin roadmap's `## Manual verification` list is one line an item (the que
 
 **A change shipped in part leaves two pages sharing no sentence.** The change's lead points at the capability's design rather than summarizing it, and a source both cite is worded for what each page reads off it, since `scripts/src/workspace/duplicateProse.test.ts` fails on ten words the two share. A split that copies the sources list or the summary across is the one shape that test catches by the dozen.
 
-**A one-time change** — a rename, a migration, a mechanical sweep — has no as-built feature to describe, so when it is done it is archived, its roadmap item removed and every reference swept, and no capability is written for it; the shipped-log line in the area `README.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a capability listed above it on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
+**A one-time change** — a rename, a migration, a mechanical sweep — has no as-built feature to describe, so when it is done it is archived, its roadmap item removed and every reference swept, and no capability is written for it; the shipped-log line in the area `README.md` is the only trace. That log is **one line per program of work, not per change** — a paragraph restating a capability already listed on the same index is the index restating its own contents, and what belongs at that level is the standing fact no single page holds (what the whole program cost, what it did not add).
 
 ## Standards vs feature pages
 
