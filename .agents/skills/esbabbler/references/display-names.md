@@ -6,6 +6,6 @@ Read when a messaging procedure or screen needs to show a room member's name.
 
 Do not maintain a frontend room-name overlay or wrappers that derive a room member's display name. A procedure whose screen needs that value returns it. Account-only screens use the account `name`.
 
-A row that carries only a bare user id and no membership of its own (an audit actor, a moderation note's author, a reactor) is given its name by the procedure that returns it: the membership row for that user in that room, falling back to the account name when the user has no membership there (`getRoomDisplayNameMap`). A ban's banner is named by the join in `readBans` that reads the banner's membership row.
+A row that carries only a bare user id and no membership of its own (an audit actor, a moderation note's author) is given its name by the procedure that returns it: the membership row for that user in that room, falling back to the account name when the user has no membership there (`getRoomDisplayNameMap`). A ban's banner is named by the join in `readBans` that reads the banner's membership row.
 
 A screen that names a room member by id reads the member rows its room's reads returned. `useUserStore` keeps them per room, as returned, and the screen renders their `displayName`; nothing builds a name from several sources. `room.readMembersByIds` returns members only, so a user who has left the room is named by the account where a row needs a name. A nickname change arrives on `onUpdateUserToRoom`, which re-reads that member's row.
