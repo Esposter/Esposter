@@ -1,6 +1,6 @@
 ---
 name: build
-description: Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin. Esposter's package build — how a workspace package is bundled by tsdown from a shared configuration factory, what its manifest makes external, how it reaches its own and its siblings' source, and what gates a build; mergeConfig never a spread, the manifest rather than the config deciding what is bundled, #src/* never @/, and a moved dist size snapshot never taken with -u.
+description: Apply when adding packages, editing tsdown or tsconfig configs, changing a manifest's dependency placement, or wrapping a library whose types are augmented by a plugin. Esposter's package build — how a workspace package is bundled by tsdown from a shared configuration factory, what its manifest makes external, how it reaches its own and its siblings' source, and what gates a build.
 ---
 
 # Build Conventions (tsdown)
@@ -9,7 +9,7 @@ The mechanism — what runs, in what order, and why — is `openspec/specs/archi
 
 ## Settled — do not re-propose
 
-Every line here is a direction a reader reaches for on meeting the rules below. Each was tried or considered; the argument is where the line points.
+Every line here is a direction a reader reaches for on meeting the Rules section on this page. Each was tried or considered; the argument is where the line points.
 
 - **Finishing the source split** — giving the app's Vite and Nitro builds, or its Vitest project, the `source` condition. The package whose stores rely on its own build's auto-import injection breaks outright; reach for a rebuild of the package (`references/source-exports.md`).
 - **`devExports: true`** in place of the condition name. It points every condition at source, and Node's own loader reads no TypeScript (`references/source-exports.md`).
@@ -38,7 +38,7 @@ Every line here is a direction a reader reaches for on meeting the rules below. 
 - **A moved `dist` size snapshot is something newly bundled, never a `-u` to take** — and an export added to a bundled package moves `apps/functions`' and `apps/infra`'s snapshots too (`references/dist-size.md`).
 - **A package that is a Nuxt module builds its runtime unbundled beside a `src/module.ts` entry, and the app registers it by the path to that source**, never its package name, which `nuxt prepare` cannot load before the packages build (`references/nuxt-module-packages.md`).
 - **Presets live in `@esposter/configuration`, extended by path, and the base carries no framework assumption** (`references/tsconfig-presets.md`).
-- **A data set a browser reads is published, never imported**, so no build bundles it and no declaration program reads it: `genshin-world` imports only its lock and one save bound, and the build tsconfig maps no generated path (the `genshin-data` skill, `openspec/specs/architecture/build-pipeline/design.md`).
+- **A data set a browser reads is published, never imported**, so no build bundles it and no declaration program reads it: `genshin-world` imports only its lock and one save bound, and the build tsconfig maps no generated path (`.agents/skills/genshin-data/SKILL.md`, `openspec/specs/architecture/build-pipeline/design.md`).
 - **A package is built through its vp task: `vp run build:<directory>`, or `vp run build:packages` for every package.** The root `vite.config.ts` generates one task per package from its manifest's `build` script. It runs in the package's directory, after the tasks of the workspace packages it depends on, and vp's task cache replays its `dist` when its inputs are unchanged. The task keeps its own rewritten files (the barrels, `dist`, the `_tmp_*` manifest write) out of its inputs, which is what lets it cache at all. The cache lives in `node_modules/.vite/task-cache` of each checkout, so a fresh worktree builds cold once.
 - **Installs and the workspace graph are `AGENTS.md` and `openspec/specs/architecture/monorepo-tooling/design.md`** — where `pnpm i` needs the network, ask for plain `pnpm i` rather than changing pnpm store settings.
 
