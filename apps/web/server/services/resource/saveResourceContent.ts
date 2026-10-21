@@ -9,9 +9,13 @@ import { getDevice } from "#server/services/auth/getDevice";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
 import { ResourceTypeGetLinkTargetsMap } from "#server/services/resource/link/ResourceTypeGetLinkTargetsMap";
+import { pruneWorkingAssets } from "#server/services/resource/pruneWorkingAssets";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
+import { reserveWorkingAssets } from "#server/services/resource/reserveWorkingAssets";
 import { ResourceAfterSaveContentMap } from "#server/services/resource/ResourceAfterSaveContentMap";
 import { runAfterSaveResourceContent } from "#server/services/resource/runAfterSaveResourceContent";
+import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
+import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "#server/services/storage/chargeAndEmitStorageLedgerEntry";
@@ -145,14 +149,21 @@ export const saveResourceContent = async (
   //   Which for an unbind is fail-open, so the clear is reapplied outside the transaction
   // - it commits: the new links are written after, once the content they describe is durable
   //
+  // The assets the content embeds, named by the working copy's reference rows before the upload and settled to them
+  // After it. Scanned from the parsed content, the same value the blob is serialized from
+  const assetHashes = getSnapshotAssetHashes(id, parsedContent);
+  await reserveWorkingAssets(ctx.db, id, assetHashes);
   // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
   // Must never advance the version every client caches against. A first write has no version to protect, and
   // Wrapping it would hold a pooled connection across a storage round trip
   let savedResource: ResourceInResource;
+  // The rows dropped once the blob has landed, released after the write so a dropped asset is collected like any other
+  let removedAssetHashes: string[] = [];
   if (contentVersion === undefined) {
     if (hasResourceLinksChanged) await clearResourceLinks(ctx.db);
     await writeContentBlob();
     await ctx.db.update(resourcesInResource).set({ contentHash, contentSize }).where(eq(resourcesInResource.id, id));
+    removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
     savedResource = { ...resource, contentHash, contentSize };
   } else
     savedResource = await getResultAsync(() =>
@@ -171,6 +182,7 @@ export const saveResourceContent = async (
           throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
         if (hasResourceLinksChanged) await clearResourceLinks(tx);
         await writeContentBlob();
+        removedAssetHashes = await pruneWorkingAssets(tx, id, assetHashes);
         return updatedResource;
       }),
     ).match(
@@ -201,6 +213,8 @@ export const saveResourceContent = async (
       throw error;
     });
 
+  // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
+  await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
   resourceEventEmitter.emit("saveResourceContent", [
     { contentVersion: savedResource.contentVersion, id },
     getDevice(ctx.getSessionPayload),

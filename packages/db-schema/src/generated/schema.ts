@@ -43,6 +43,7 @@ import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource, resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
 import { resourceVersionAssetsInResource } from "#src/schema/resource/resourceVersionAssetsInResource";
 import { resourceVersionsInResource, snapshotChannelEnum, snapshotReasonEnum } from "#src/schema/resource/resourceVersionsInResource";
+import { resourceWorkingAssetsInResource } from "#src/schema/resource/resourceWorkingAssetsInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
@@ -90,6 +91,7 @@ export const schema = {
   resourceTypeEnum,
   resourceVersionAssetsInResource,
   resourceVersionsInResource,
+  resourceWorkingAssetsInResource,
   roomCategoriesInMessage,
   roomEmojisInMessage,
   roomFiltersInMessage,

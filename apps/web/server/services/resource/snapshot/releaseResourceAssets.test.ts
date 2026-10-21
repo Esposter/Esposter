@@ -17,6 +17,7 @@ import {
   ResourceType,
   resourceVersionAssetsInResource,
   resourceVersionsInResource,
+  resourceWorkingAssetsInResource,
   SnapshotChannel,
   SnapshotReason,
   storageLedgerInStorage,
@@ -128,6 +129,19 @@ describe(releaseResourceAssets, () => {
     vi.setSystemTime(ASSET_GRACE_MS);
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
+
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  test("an asset the working copy names is kept", async () => {
+    expect.hasAssertions();
+
+    collectionState.isEnabled = true;
+    await uploadAsset(assetHash);
+    await mockContext.db.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
+    vi.setSystemTime(ASSET_GRACE_MS);
+
+    await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
   });

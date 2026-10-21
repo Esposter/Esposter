@@ -66,7 +66,7 @@ describe(writeSnapshotVersion, () => {
         serializedContent,
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: Resource, cannot store a version naming a missing asset]`,
+      `[InvalidOperationError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
     );
     await expect(
       mockContext.db.query.resourceVersionsInResource.findFirst({ where: { resourceId: { eq: resource.id } } }),

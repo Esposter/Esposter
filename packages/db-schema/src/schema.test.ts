@@ -63,6 +63,7 @@ describe("schema", () => {
       resourceVersionAssets_assetHash_check: "resource"."resourceVersionAssets"."assetHash" ~ '^[0-9a-f]{64}$'
       resourceVersions_plaintextBytes_check: "resource"."resourceVersions"."plaintextBytes" >= 0
       resourceVersions_storedBytes_check: "resource"."resourceVersions"."storedBytes" >= 0
+      resourceWorkingAssets_assetHash_check: "resource"."resourceWorkingAssets"."assetHash" ~ '^[0-9a-f]{64}$'
       roomCategories_name_length_check: LENGTH(TRIM("message"."roomCategories"."name")) BETWEEN 1 AND 100
       roomCategories_position_check: "message"."roomCategories"."position" >= 0
       roomEmojis_name_length_check: LENGTH(TRIM("message"."roomEmojis"."name")) BETWEEN 1 AND 32

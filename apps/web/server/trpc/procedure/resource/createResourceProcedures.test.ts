@@ -744,7 +744,7 @@ describe(createResourceProcedures, () => {
     MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
 
     await expect(webpageCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Create, name: Resource, cannot store a version naming a missing asset]`,
+      `[TRPCError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
     );
   });
 

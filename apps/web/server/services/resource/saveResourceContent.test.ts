@@ -3,6 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
@@ -14,7 +15,10 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
+import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { ASSET_GRACE_MS, SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
@@ -26,12 +30,13 @@ import {
   ResourceLinkType,
   resourcesInResource,
   ResourceType,
+  resourceWorkingAssetsInResource,
   SnapshotChannel,
   SnapshotReason,
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
-import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { jsonDateParse, noop, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -60,6 +65,11 @@ const readActivityTypes = () =>
     MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [],
     ({ activityType }) => activityType as ResourceActivityType,
   );
+// Each page names an image by the url of its own blob, so the content and the blobs are built from one resource id
+const createWebpageContent = (resourceId: ResourceInResource["id"], hashes: string[]) =>
+  new WebpageEditor({
+    pages: hashes.map((hash) => ({ image: getResourceAssetUrl(getResourceFileBlobName(resourceId, hash)) })),
+  });
 
 describe(saveResourceContent, () => {
   let mockContext: Context;
@@ -126,6 +136,31 @@ describe(saveResourceContent, () => {
     body: { dueAt, itemId: item.id, resourceId },
     scheduledEnqueueTimeUtc: dueAt,
   });
+  const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
+  const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
+  const assetBytes = new Uint8Array(1);
+  const createWebpage = async () =>
+    takeOne(
+      await mockContext.db
+        .insert(resourcesInResource)
+        .values({ name, type: ResourceType.Webpage, userId: ctx.getSessionPayload.user.id })
+        .returning(),
+    );
+  const uploadAssetBlob = async (resourceId: ResourceInResource["id"], hash: string) => {
+    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    await containerClient
+      .getBlockBlobClient(getResourceFileBlobName(resourceId, hash))
+      .upload(assetBytes, assetBytes.byteLength);
+  };
+  const readWorkingAssetHashes = async (resourceId: ResourceInResource["id"]) =>
+    (
+      await mockContext.db
+        .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
+        .from(resourceWorkingAssetsInResource)
+        .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId))
+    )
+      .map((workingRow) => workingRow.assetHash)
+      .toSorted();
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -457,5 +492,64 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     expect(readActivityTypes()).toStrictEqual([]);
+  });
+
+  test("references the assets the content embeds and drops the ones a later save no longer embeds", async () => {
+    expect.hasAssertions();
+
+    const webpage = await createWebpage();
+    await uploadAssetBlob(webpage.id, assetHash);
+    await uploadAssetBlob(webpage.id, otherAssetHash);
+    const infoSpy = vi.spyOn(console, "info").mockImplementation(noop);
+    await saveResourceContent(ctx, {
+      content: createWebpageContent(webpage.id, [assetHash, otherAssetHash]),
+      resource: webpage,
+    });
+
+    await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
+
+    // Past the grace window the upload restarted, so the dropped asset is counted rather than kept
+    vi.setSystemTime(ASSET_GRACE_MS);
+    await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
+
+    await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
+    expect(infoSpy).toHaveBeenCalledWith("unreferenced assets counted", { count: 1, resourceId: webpage.id });
+    infoSpy.mockRestore();
+  });
+
+  test("stores content naming an asset that is not stored, and references it", async () => {
+    expect.hasAssertions();
+
+    const webpage = await createWebpage();
+
+    const savedWebpage = await saveResourceContent(ctx, {
+      content: createWebpageContent(webpage.id, [assetHash]),
+      contentVersion: webpage.contentVersion,
+      resource: webpage,
+    });
+
+    expect(savedWebpage.contentVersion).toBe(webpage.contentVersion + 1);
+    await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
+  });
+
+  // The upload is rejected after it resolves, so the blob may already hold the new content while the rows still have
+  // To name its assets. They keep the old content's too, rather than dropping to the new content's alone
+  test("keeps the previous content's assets referenced when the upload fails", async () => {
+    expect.hasAssertions();
+
+    const webpage = await createWebpage();
+    await uploadAssetBlob(webpage.id, assetHash);
+    await uploadAssetBlob(webpage.id, otherAssetHash);
+    await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
+    uploadMock.mockImplementationOnce(async (...parameters: Parameters<typeof uploadMock>) => {
+      await uploadMock.getMockImplementation()?.(...parameters);
+      throw new Error(" ");
+    });
+
+    await expect(
+      saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [otherAssetHash]), resource: webpage }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
   });
 });

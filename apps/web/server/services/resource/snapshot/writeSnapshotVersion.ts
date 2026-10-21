@@ -10,9 +10,14 @@ import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapsh
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotAnchor } from "#server/services/resource/snapshot/readSnapshotAnchor";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
-import { requireSnapshotAssetsExist } from "#server/services/resource/snapshot/requireSnapshotAssetsExist";
-import { resourceVersionAssetsInResource, resourceVersionsInResource } from "@esposter/db-schema";
-import { getResultAsync, jsonDateParse, noop } from "@esposter/shared";
+import { touchSnapshotAssets } from "#server/services/resource/snapshot/touchSnapshotAssets";
+import {
+  DatabaseEntityType,
+  resourceVersionAssetsInResource,
+  resourceVersionsInResource,
+  SnapshotChannel,
+} from "@esposter/db-schema";
+import { getResultAsync, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 // The one way a version is taken, whichever channel it lands in: the content goes into the store against the
@@ -42,8 +47,16 @@ export const writeSnapshotVersion = async (
   const assetHashes = getSnapshotAssetHashes(id, jsonDateParse(serializedContent));
   const { previousVersion, releasedAssetHashes, writtenVersion } = await db.transaction(async (tx) => {
     await lockSnapshotObjects(tx, id);
-    // Checked before the object is written, so a refused version leaves no object behind either
-    await requireSnapshotAssetsExist(id, assetHashes);
+    // Touched before the object is written, so a refused version leaves no object behind either. A published version is
+    // What a reader is served, so it is refused while it names a gone file; any other channel keeps what the user wrote,
+    // Since a revision or a restore of content naming one is data rather than a broken page
+    const missingAssetHashes = await touchSnapshotAssets(id, assetHashes);
+    if (channel === SnapshotChannel.Published && missingAssetHashes.size > 0)
+      throw new InvalidOperationError(
+        Operation.Create,
+        DatabaseEntityType.Resource,
+        "cannot store content naming a missing asset",
+      );
     const anchor = await readSnapshotAnchor(tx, id, channel);
     const storeWrite = await keyframeStore.write(Buffer.from(serializedContent), anchor).match(
       (value) => value,
@@ -53,7 +66,7 @@ export const writeSnapshotVersion = async (
     );
     const { baseHash, hash, plaintextBytes, storedBytes } = storeWrite;
     // A write at a version that already has a row replaces it: the row moves to the new object, and the one it named is
-    // collected below once the move has committed
+    // Collected below once the move has committed
     const replacedVersion = await tx.query.resourceVersionsInResource.findFirst({
       columns: { baseHash: true, hash: true },
       where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },

@@ -898,7 +898,7 @@ describe("resourceRouter", () => {
 
   // An eviction can release a version's assets after the version is read, so the working copy is refused rather than
   // Saved naming an image that is gone. The release is simulated by the asset's deletion
-  test("restoring a version whose assets were released fails with the missing-asset error", async () => {
+  test("restoring a version whose assets were released keeps its content as data", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
@@ -911,9 +911,7 @@ describe("resourceRouter", () => {
 
     await expect(
       caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Create, name: Resource, cannot store a version naming a missing asset]`,
-    );
+    ).resolves.toMatchObject({ resource: { id: webpageResource.id } });
   });
 
   test("records the draft version a publish was taken from", async () => {

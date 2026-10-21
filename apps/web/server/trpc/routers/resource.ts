@@ -39,11 +39,8 @@ import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiv
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
-import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
-import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
-import { requireSnapshotAssetsExist } from "#server/services/resource/snapshot/requireSnapshotAssetsExist";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
@@ -434,14 +431,9 @@ export const resourceRouter = router({
     // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
     // The version preview reconstitute through
     const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
-    // The version's assets were stored when it was taken, but an eviction above may have released some since, and the
-    // Working copy must not be saved naming one that is gone. Checked and touched under the object lock, as a version write is
-    await ctx.db.transaction(async (tx) => {
-      await lockSnapshotObjects(tx, ctx.resource.id);
-      await requireSnapshotAssetsExist(ctx.resource.id, getSnapshotAssetHashes(ctx.resource.id, reappliedContent));
-    });
-    // Nothing is copied: the restored version's rows keep the objects its content names alive, and they are this
-    // Resource's own objects, so a restore holds no second copy of any asset.
+    // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
+    // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
+    // Above released is refused there rather than saved naming it.
     // The one content-write path, so a restore is a content write like any other: the version bump and the blob
     // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
     // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:

@@ -33,6 +33,7 @@ import { resourcePublicationsInResourceRelation } from "#src/relations/resource/
 import { resourcesInResourceRelation } from "#src/relations/resource/resourcesInResourceRelation";
 import { resourceVersionAssetsInResourceRelation } from "#src/relations/resource/resourceVersionAssetsInResourceRelation";
 import { resourceVersionsInResourceRelation } from "#src/relations/resource/resourceVersionsInResourceRelation";
+import { resourceWorkingAssetsInResourceRelation } from "#src/relations/resource/resourceWorkingAssetsInResourceRelation";
 import { blocksInSocialRelation } from "#src/relations/social/blocksInSocialRelation";
 import { friendRequestsInSocialRelation } from "#src/relations/social/friendRequestsInSocialRelation";
 import { friendsInSocialRelation } from "#src/relations/social/friendsInSocialRelation";
@@ -60,6 +61,7 @@ export const relations = {
   ...resourcesInResourceRelation,
   ...resourceVersionAssetsInResourceRelation,
   ...resourceVersionsInResourceRelation,
+  ...resourceWorkingAssetsInResourceRelation,
   ...roomCategoriesInMessageRelation,
   ...roomEmojisInMessageRelation,
   ...roomFiltersInMessageRelation,

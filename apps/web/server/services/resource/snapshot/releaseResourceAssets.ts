@@ -5,8 +5,6 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
-import { readStoredResourceContent } from "#server/services/resource/readStoredResourceContent";
-import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import {
   ASSET_DECISION_CLOCK_MARGIN_MS,
@@ -15,7 +13,12 @@ import {
 } from "#shared/services/resource/constants";
 import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { checkIsNotFound } from "@esposter/db";
-import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES, resourceVersionAssetsInResource } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  MAX_CONCURRENT_BLOB_COPIES,
+  resourceVersionAssetsInResource,
+  resourceWorkingAssetsInResource,
+} from "@esposter/db-schema";
 import { getResultAsync, noop, settleAll } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
@@ -31,10 +34,10 @@ const checkIsWithinGrace = async (containerClient: ContainerClient, blobName: st
   );
   return lastModified !== undefined && Date.now() - lastModified.getTime() < ASSET_GRACE_MS;
 };
-// The one release every path takes: an eviction, an unpublish and a file delete each name the asset hashes they may
-// Have just left unreferenced. A candidate is deleted only when no reference row of the resource names it, the working
-// Copy does not embed it, and it is outside the grace window. Under the resource's object lock, so a version written
-// Concurrently is either stored before the rows are read or not started until the release has finished
+// The one release every path takes: an eviction, an unpublish, a file delete and a content write each name the asset
+// Hashes they may have just left unreferenced. A candidate is deleted only when no version row and no working-copy row
+// Of the resource names it, and it is outside the grace window. Under the resource's object lock, so a write reserving
+// An asset is either committed before the rows are read or not started until the release has finished
 export const releaseResourceAssets = async (
   db: Context["db"] | Transaction,
   resourceId: ResourceInResource["id"],
@@ -50,10 +53,13 @@ export const releaseResourceAssets = async (
       .select({ assetHash: resourceVersionAssetsInResource.assetHash })
       .from(resourceVersionAssetsInResource)
       .where(eq(resourceVersionAssetsInResource.resourceId, resourceId));
-    const workingContent = await readStoredResourceContent(resourceId);
+    const workingRows = await tx
+      .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
+      .from(resourceWorkingAssetsInResource)
+      .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId));
     const survivors = new Set([
       ...retainedRows.map(({ assetHash }) => assetHash),
-      ...getSnapshotAssetHashes(resourceId, workingContent),
+      ...workingRows.map(({ assetHash }) => assetHash),
     ]);
     const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
 
