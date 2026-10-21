@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run by the main session, which judges every candidate, with `haiku` subagents reading a wide window in batches and no workflow script, in two lanes (quality and correctness), every correctness finding carrying its trigger, the written record as tiebreaker, and one findings table as the report.
+description: Apply when handed any review or cleanup request, when choosing the scope to review, when deciding whether to run another round, and when applying fixes from one. The single entry point for every code review — a working diff, a branch, a PR number, or a subsystem audited against the docs governing it — run by the main session, with no workflow script.
 ---
 
 # Code Review — One Entry Point, One Thread
@@ -25,7 +25,7 @@ Never use the built-in `/review` command, the built-in `/simplify`, or a plugin 
 
 **Every file in the window is in scope, whatever its extension** — prose included. A spec, a skill, a ledger, a README, a config file and a migration are each reviewed against the rules that own them, in both lanes: a paragraph restating a rule its owner already states is a quality finding, and a page whose claim the code contradicts is a correctness one. Nothing is skipped for being "not code" except generated output, lockfiles and binaries, which are named as skipped rather than silently dropped.
 
-**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (the `skill-authoring` skill, `references/enforced-rules.md`), What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
+**Never write a finding in either lane for something an enforcer already owns.** Typecheck, lint and the suites decide everything mechanically decidable and fail the build on it (`.agents/skills/skill-authoring/references/enforced-rules.md`), What is left to this skill is the quality cleanups nothing mechanical can see and the correctness defects this repo's shape makes likely — which is why every one of the latter carries its trigger.
 
 ## Load only the rules the window needs
 
@@ -36,7 +36,7 @@ The conventions a finding cites live in the domain skills; **read the window's f
 1. **Scope.** Pick the window — `references/diff-window.md` for a change, `references/area-window.md` for a subsystem with no change. Do this before reading anything: a window chosen afterwards is the window that flatters what you already read.
 2. **Read.** The diff, plus every file it touches, plus one hop out of anything load-bearing (the caller, the callee, the primitive it wraps). Generated files, lockfiles and binaries are skipped — **say so**, because "no finding against the snapshot" must never read as "the snapshot is clean".
 3. **Find, per lane.** Quality candidates and correctness candidates, kept apart. For a wide window, one `haiku` subagent per batch returns candidates from its batch (the Settled entry above); the main session reads each candidate's cited code before it counts.
-4. **Refute, then report.** Every correctness candidate goes through "The trigger rule" and "Refute first". Quality candidates skip this — they are settled by the code they name.
+4. **Refute, then report.** Every correctness candidate goes through "The trigger rule" and "Refute first" on this page. Quality candidates skip this — they are settled by the code they name.
 5. **Report** the table (`references/reporting.md`), then fix (`references/fixing-findings.md`), then check and commit.
 
 ### The trigger rule
@@ -65,7 +65,7 @@ This is the whole of verification, and skipping it fails one way: the finding is
 
 ## After the table — `references/fixing-findings.md`
 
-**Deciding whether another round is owed, and applying the fixes**, is that page: the stop rule that makes an all-`minor` round converged, the verify-fix-check-commit sequence, the order of work (root cause → converge the call sites → docs and skills → then one check pass), and the regression checklist that is the block to paste into a delegated fix round.
+**Deciding whether another round is owed, and applying the fixes**, is `references/fixing-findings.md`: the stop rule that makes an all-`minor` round converged, the verify-fix-check-commit sequence, the order of work (root cause → converge the call sites → docs and skills → then one check pass), and the regression checklist that is the block to paste into a delegated fix round.
 
 ## The skill improves itself
 
@@ -77,8 +77,8 @@ After the findings table, one question — **what did this round's own evidence 
 
 - `references/diff-window.md` — when picking the window for a review of a change, before reading any code.
 - `references/area-window.md` — when picking the window for a review of existing code with no change: a subsystem and the docs governing it.
-- `references/rule-routing.md` — once the window is chosen: which skills its files make you load.
+- `references/rule-routing.md` — when the window is chosen: which skills its files make you load.
 - `references/written-record.md` — when a candidate finding argues with a choice the code makes deliberately.
 - `references/reporting.md` — when writing up a round's report.
 - `references/fixing-findings.md` — when a round has reported: whether another is owed, and applying the fixes.
-- `references/meta-pass.md` — once per round, after the findings table.
+- `references/meta-pass.md` — when a round's findings table is written, once per round.

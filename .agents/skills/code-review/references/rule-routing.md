@@ -1,6 +1,6 @@
 # Rule Routing
 
-Read once the window is chosen, before reading it: which skills its files make you load.
+Read when the window is chosen, before reading it: which skills its files make you load.
 
 The conventions a finding cites live in the domain skills, not here — restating them would give this page a second copy to drift. What this page owns is the routing: **read the window's file list first, load only the rows it hits.**
 
@@ -19,7 +19,7 @@ The conventions a finding cites live in the domain skills, not here — restatin
 | a manifest, `tsdown.config.ts`, tsconfig                                                                                        | `build`, `dependency-updates`, `dependency-absorption`                                                                            |
 | a replaced dependency's adapter, or an upstream issue audit                                                                     | `dependency-absorption`                                                                                                           |
 | `.github/**`                                                                                                                    | `github-actions`                                                                                                                  |
-| a hooks module, `packages/genshin-mods/**`, "packages/genshin-persona/mod/**"                                                   | `claude-mods`                                                                                                                     |
+| a hooks module, `packages/genshin-mods/**`, `packages/genshin-persona/mod/**`                                                   | `claude-mods`                                                                                                                     |
 | `packages/genshin-engine/**`, `packages/genshin-world/**`, the app's `components/Genshin/**`                                    | `genshin-engine`                                                                                                                  |
 | a Genshin screen, scene or piece of music, `packages/genshin-interface/**`, the parity and asset tooling under `scripts`        | `genshin-parity`, `recreation-tooling`                                                                                            |
 | a word the game says, `packages/genshin-text/**`                                                                                | `genshin-text`                                                                                                                    |
