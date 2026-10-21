@@ -1,6 +1,6 @@
 ---
 name: running-checks
-description: Apply when about to run pnpm typecheck, lint, lint:fix, test, format, build, coverage or bench in any package, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the checks a session runs and the checks CI runs on the push.
+description: Apply when about to run pnpm typecheck, lint, lint:fix, test, build, coverage or bench in any package, or format from the root, when deciding which checks a change owes before its push, and whenever you find yourself waiting on a check's output. Esposter's split between the checks a session runs and the checks CI runs on the push.
 ---
 
 # Running Checks
@@ -32,7 +32,7 @@ the spec sweep, the ledger row. The harness delivers a completion notification; 
 a one-file, "quick" suite too** — the habit that survives is the one applied without weighing it.
 
 Which paths, and from which directory, are the `package-scripts` skill's `references/check-suite.md`: the suites
-of the files touched, a bundle's size snapshot after a fresh `pnpm build`, and the workspace tests for a spec edit.
+of the files touched and the workspace tests for a spec edit; a change that moved bytes into a bundle adds that package's own suite (`AGENTS.md`, "Finishing a change", step 4).
 
 ## Never poll a backgrounded check
 
@@ -56,7 +56,7 @@ review's quality lane, since cleanup edits code (`AGENTS.md`, "Finishing a chang
 Watching waits for the user to ask for verification; it does not start on its own after a push. Then
 `pnpm ai:ci:watch`, in the background. It finds the run by the tip's commit — never by
 `--branch` with `--workflow`, whose per-workflow filter answers `ai/queue` with weeks-old runs — follows a run that
-was skipped while it waited to the newer run that carries the commit too (`concurrency` in `CI.yaml` keeps only the
+was cancelled while it waited to the newer run that carries the commit too (`concurrency` in `CI.yaml` keeps only the
 newest waiting run), waits for it, and exits non-zero on a red with each failed job's error lines, which is what wakes
 the session to fix it. A wave of agents landing one after another is watched once, after the last landing.
 
