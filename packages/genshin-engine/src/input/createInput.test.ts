@@ -14,9 +14,6 @@ import { GamepadButton } from "#src/models/input/GamepadButton";
 import { InputAction } from "#src/models/input/InputAction";
 import { describe, expect, test } from "vitest";
 
-// An element standing in for the one holding the pointer lock
-const LOCKED_ELEMENT: object = {};
-
 // An event target standing in for the window, with the gamepads it reports, the element holding its pointer lock and
 // The element holding its focus
 const createTarget = (
@@ -32,6 +29,8 @@ const createTarget = (
 describe(createInput, () => {
   const POINTER_MOVE = 10;
   const STICK_AXIS = 0.5;
+  // An element standing in for the one holding the pointer lock
+  const LOCKED_ELEMENT: object = {};
 
   test("moves by the keys held, a pair held against each other cancelling", () => {
     expect.hasAssertions();
