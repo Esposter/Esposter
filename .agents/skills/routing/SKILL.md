@@ -1,6 +1,6 @@
 ---
 name: routing
-description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter's routing — declarative links over a raw <a>, navigateTo awaited or returned, a page's own typed useRoute() and useRouter().currentRoute everywhere else, navigation state kept in the URL, the history entry or localStorage by what it is, and optional segments keyed and validated in definePageMeta.
+description: Apply when adding links, navigating in code, reading route params/query, syncing tabs to the URL, or writing pages with dynamic or optional route segments. Esposter's routing — how links, navigation, route reads, navigation state and dynamic segments are written in apps/web.
 ---
 
 # Routing
@@ -15,7 +15,7 @@ A link is `NuxtLink`, `NuxtInvisibleLink` or a library component's `:to`, never 
 
 ## Route Reads — a Page's Own `useRoute()`, `useRouter().currentRoute` Everywhere Else
 
-**A page reads its own segments through `useRoute()`** — the one place the call is allowed, and a page's only route read: the `apps/web/app/pages/**/*.vue` override of `no-restricted-globals` lifts the `useRoute` ban and bans `useRouter` there instead — and its explicit import from `vue-router` or `#imports` through `no-restricted-imports` — since a page navigates with `navigateTo`. The typed router narrows a page's no-argument `useRoute()` to that page's params, so `route.params.id` is a `string` with no helper and no cast:
+**A page reads its own segments through `useRoute()`** — the one place the call is allowed, and a page's only route read, since a page navigates with `navigateTo`; the page override in `oxlint.config.ts` enforces it. The typed router narrows a page's no-argument `useRoute()` to that page's params, so `route.params.id` is a `string` with no helper and no cast:
 
 ```ts
 const route = useRoute();
