@@ -1,0 +1,130 @@
+name: 🏁 Finish release
+
+# Finishes one version tag whose versions are already tagged: publishes the versions npm lacks, drafts the GitHub release,
+# attaches the Windows host to that draft, and makes the release public last. The nightly `Release.yaml` calls it after its
+# `pnpm release`, and `RecoverRelease.yaml` calls it for a tag pushed by hand or one a previous run did not finish. Every
+# step is idempotent, so a re-run picks up where the last one stopped.
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: "The version tag to finish"
+        required: true
+        type: string
+
+permissions: read-all
+
+jobs:
+  packages:
+    name: Publish the tag's packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the workspace
+        uses: ./.github/actions/install-projects
+
+      # Publishes only the versions npm lacks, through npm trusted publishing (`id-token: write`, no token)
+      - name: 📢 Publish the versions npm lacks
+        run: pnpm exec lerna publish from-package --yes
+
+  # The repo has immutable releases on, so a published release takes no further assets: the release is created as a draft
+  # once the tag's versions are on npm, the host is attached to the draft, and `publish` makes it public last, once every
+  # asset is on it. A failed publish creates no draft at all, so the tag may exist without a release until a finish reaches it
+  draft:
+    name: Release draft
+    needs: packages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      is-published: ${{ steps.release.outputs.is-published }}
+    steps:
+      - name: 🚀 Release draft
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to the host and the
+        # Publish, and an already-published release skips both, since it can take no asset. Only a genuine "not
+        # Found" is evidence the release is absent — a 401, a secondary rate limit or a network blip exits non-zero
+        # Too, and reading that as absence sends the retry into `create` against a tag that is already released.
+        # So the error text decides, and anything else fails here where the cause is still readable
+        run: |
+          if isDraft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2> "$RUNNER_TEMP/releaseError")"; then
+            if [ "$isDraft" = false ]; then
+              echo "Release $TAG is already published, nothing to create or attach."
+              echo "is-published=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "Draft release $TAG already exists."
+            fi
+            exit 0
+          elif ! grep -qi 'release not found' "$RUNNER_TEMP/releaseError"; then
+            printf 'Could not determine whether release %s exists: %s\n' "$TAG" "$(cat "$RUNNER_TEMP/releaseError")" >&2
+            exit 1
+          fi
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --verify-tag --title "$TAG" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
+
+  # The agent console's Windows host: one executable carrying its runtime and the Claude Code binary it runs, attached
+  # To the draft release, which the page links as its download once published. One file rather than a zip, since
+  # Windows runs an exe from inside a zip without the files beside it. Unsigned, since signing costs a yearly fee
+  # (openspec/deferred/infra/signed-host-installers/design.md)
+  host-installer:
+    name: Windows host
+    needs: draft
+    if: needs.draft.outputs.is-published != 'true'
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install the host
+        uses: ./.github/actions/install-projects
+        with:
+          filter: agent-console-server...
+      # The executable bundles the host's workspace dependencies from their builds
+      - name: 🏗️ Build the host's workspace dependencies
+        run: pnpm --filter "agent-console-server^..." build
+
+      - name: 🏗️ Build the Windows host
+        run: pnpm -C packages/agent-console-server build:sea
+      # --clobber so a re-run replaces the asset rather than failing on the one the first run attached
+      - name: 📤 Attach the Windows host
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: gh release upload "$env:TAG" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber
+
+  publish:
+    name: Publish the release
+    needs: [draft, host-installer]
+    if: needs.draft.outputs.is-published != 'true'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📢 Publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false

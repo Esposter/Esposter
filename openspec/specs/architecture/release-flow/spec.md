@@ -1,44 +1,45 @@
 ## Purpose
 
-The nightly release workflow, job by job — the one release job that versions, tags and publishes, the draft GitHub release, the host attachment and the gate that makes the release public.
+The release workflows: the nightly that ships `main`, the tag-triggered recovery that finishes a tag as soon as it is pushed, and the reusable finish both call: the packages publish, the draft GitHub release, the host attachment and the gate that makes the release public.
 
 ## Requirements
 
-### Requirement: Only the nightly release workflow publishes a release
+### Requirement: Only the release workflows publish a release
 
-Only the release workflow SHALL tag a release, publish packages to the registry and create a GitHub release.
+Only the release workflows SHALL tag a release, publish packages to the registry and create a GitHub release, and the nightly and the tag-triggered recovery SHALL share the one finish that does so.
 
 #### Scenario: A release is made
 
 - **GIVEN** a release is made
 - **WHEN** it is tagged, published and drafted
-- **THEN** the release workflow performs every one of those steps
+- **THEN** the nightly release workflow or the tag-triggered recovery performs every one of those steps through the shared finish
 
 ### Requirement: A quiet night skips the release
 
-The nightly release SHALL skip every later job when no commit has landed on main since the latest tag.
+The nightly release SHALL skip every later job when no commit has landed on main since the latest tag and that tag's release is already finished.
 
 #### Scenario: The nightly run finds no new commit
 
 - **GIVEN** no commit has landed on main since the latest tag
+- **AND** that tag's release is public
 - **WHEN** the nightly run starts
 - **THEN** the check finds nothing to release
 - **AND** every later job is skipped
 
-### Requirement: The version, tag, publish and draft happen in one job in that order
+### Requirement: The version, tag, publish and draft happen in one order
 
-The version, the tag, the registry publish and the draft release SHALL happen in one release job, in that order, so a version reaches the registry only from the run that tagged it.
+The version, the tag, the registry publish and the draft release SHALL happen in that order, so a version reaches the registry only from the run that tagged it.
 
 #### Scenario: The release job fails after pushing the version
 
-- **GIVEN** the release job has pushed the version commit
+- **GIVEN** the nightly release job has pushed the version commit
 - **WHEN** a later step of the job fails
 - **THEN** the review run still merges main back into the queue
-- **AND** the tag may exist without a release
+- **AND** the tag may exist without a release until a later run finishes it
 
 #### Scenario: The release job fails before pushing
 
-- **GIVEN** the release job fails before the version push
+- **GIVEN** the nightly release job fails before the version push
 - **WHEN** the job ends
 - **THEN** no review run starts
 - **AND** no draft release is created
@@ -49,7 +50,7 @@ A GitHub release SHALL become public only after its packages have reached the re
 
 #### Scenario: Every package publishes and the host attaches
 
-- **GIVEN** the release job succeeded and the host build succeeded
+- **GIVEN** the packages published and the host build succeeded
 - **WHEN** the publish job runs
 - **THEN** the draft release becomes public
 
@@ -61,28 +62,40 @@ A GitHub release SHALL become public only after its packages have reached the re
 
 ### Requirement: A re-run does not publish a version twice
 
-A re-run of the release SHALL NOT publish a version the registry already has, and SHALL NOT attach a second host asset to a release that is already public.
+A re-run of the finish SHALL NOT publish a version the registry already has, and SHALL NOT attach a second host asset to a release that is already public.
 
 #### Scenario: The release is already public
 
 - **GIVEN** the release is already public
-- **WHEN** the workflow is run again
+- **WHEN** the finish is run again
 - **THEN** no further host asset is attached
 - **AND** no version is published a second time
 
-### Requirement: A failed release is recovered from its existing tag
+### Requirement: A tag whose release is unfinished is finished before anything new ships
 
-A failed release SHALL be recovered by dispatching the workflow with the existing tag, which publishes only the versions the registry lacks and does not bump any version again.
+The nightly SHALL finish the latest tag first when that tag's GitHub release is missing or still a draft, and SHALL NOT release a new version that night.
 
-#### Scenario: A dispatch names an existing tag
+#### Scenario: The night after a failed release
 
 - **GIVEN** a release failed after its tag was created
-- **WHEN** the workflow is dispatched with that tag
-- **THEN** only the package versions missing from the registry are published
-- **AND** no version is bumped and no gate is rerun
-
-#### Scenario: A quiet night follows a failed release
-
-- **GIVEN** a release failed and no new commit has landed on main
 - **WHEN** the nightly run starts
-- **THEN** the failed release is not retried by that run
+- **THEN** the run finishes that tag, publishing only the versions the registry lacks
+- **AND** no version is bumped and no gate is rerun
+- **AND** no new version is released that night
+
+### Requirement: A pushed version tag is finished as soon as it is pushed
+
+A version tag SHALL be finished by the tag-triggered recovery when it is pushed, and a dispatch SHALL finish a named tag the same way.
+
+#### Scenario: A tag is pushed
+
+- **GIVEN** a `v*.*.*` tag is pushed
+- **WHEN** the tag-triggered recovery starts
+- **THEN** it finishes that tag through the shared finish
+- **AND** it waits behind any nightly run holding the release group
+
+#### Scenario: A dispatch names a tag
+
+- **GIVEN** a version tag whose release is unfinished
+- **WHEN** the recovery is dispatched with that tag
+- **THEN** it finishes that tag through the shared finish

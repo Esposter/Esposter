@@ -1,24 +1,20 @@
 name: 🚀 Release
 
-# The nightly release, of main: only what a review has passed ships. One job runs `pnpm release`, which gates the tree, versions
-# and tags main's new commits, pushes the version commit and its tags to main, and publishes the new versions through npm trusted
-# publishing. Then the job drafts the GitHub release, `host-installer` attaches the Windows host to that draft, and `publish` makes
-# it public last. The push that `pnpm release` makes to main starts the review run that merges main into ai/queue
-# (`MergeMain.yaml`), so nothing here dispatches it.
+# The nightly release, of main: only what a review has passed ships. `check` first recovers the latest tag when its release
+# is missing or a draft. Otherwise `release` runs `pnpm release`, which gates the tree, versions and tags main's new commits,
+# pushes the version commit and its tags to main, and publishes the new versions through npm trusted publishing. Then
+# `finish` runs FinishRelease.yaml on the tag: the draft, the Windows host, and the public release last. The push that
+# `pnpm release` makes to main starts the review run that merges main into ai/queue (`MergeMain.yaml`), so nothing here
+# dispatches it.
 on:
   schedule:
     # Nightly, at 15:16 UTC
     - cron: "16 15 * * *"
   workflow_dispatch:
-    inputs:
-      recover-tag:
-        description: "Publish an existing version tag that a previous release run did not finish"
-        required: false
-        type: string
 
 permissions: read-all
 
-# A run waits behind an earlier one rather than racing it onto the same tag
+# A run waits behind an earlier one rather than racing it onto the same tag. RecoverRelease.yaml shares this group
 concurrency:
   group: release
   cancel-in-progress: false
@@ -32,31 +28,36 @@ jobs:
     outputs:
       skip: ${{ steps.check.outputs.skip }}
       tag: ${{ steps.check.outputs.tag }}
+      recover-tag: ${{ steps.check.outputs.recover-tag }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.recover-tag || 'main' }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: 🔎 Check for unreleased commits
         id: check
         env:
-          RECOVER_TAG: ${{ inputs.recover-tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -n "$RECOVER_TAG" ]; then
-            if ! git show-ref --verify --quiet "refs/tags/$RECOVER_TAG"; then
-              echo "Tag $RECOVER_TAG does not exist." >&2
-              exit 1
-            fi
-            echo "Recovering existing release $RECOVER_TAG."
-            echo "tag=$RECOVER_TAG" >> "$GITHUB_OUTPUT"
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
           tag="$(git describe --tags --abbrev=0)"
-          if [ "$(git rev-list --count "$tag..HEAD")" = 0 ]; then
+          # A latest tag whose release is missing or still a draft is one a previous run did not finish, so it is finished
+          # before anything new ships: the night after a failed run finishes it with no one dispatching the workflow
+          recover=""
+          if isDraft="$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2> "$RUNNER_TEMP/releaseError")"; then
+            if [ "$isDraft" = true ]; then recover="$tag"; fi
+          elif grep -qi 'release not found' "$RUNNER_TEMP/releaseError"; then
+            recover="$tag"
+          else
+            printf 'Could not read release %s: %s\n' "$tag" "$(cat "$RUNNER_TEMP/releaseError")" >&2
+            exit 1
+          fi
+          if [ -n "$recover" ]; then
+            echo "Finishing $recover, whose release a previous run did not finish."
+            echo "recover-tag=$recover" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          elif [ "$(git rev-list --count "$tag..HEAD")" = 0 ]; then
             echo "No commit since $tag, nothing to release."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
@@ -70,19 +71,17 @@ jobs:
   release:
     name: Release
     needs: check
-    if: needs.check.outputs.skip == 'false'
+    if: needs.check.outputs.skip == 'false' && needs.check.outputs.recover-tag == ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
-      is-published: ${{ steps.release.outputs.is-published }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.recover-tag || 'main' }}
           fetch-depth: 0
           token: ${{ secrets.REVIEW_COLLECTOR_TOKEN }}
           persist-credentials: true
@@ -100,95 +99,21 @@ jobs:
 
       # `scripts` too: the root's oxlint config loads its plugins, so the gates need the `scripts` project's dependencies
       - name: 📢 Release
-        env:
-          RECOVER_TAG: ${{ inputs.recover-tag }}
-        run: |
-          if [ -n "$RECOVER_TAG" ]; then
-            pnpm exec lerna publish from-package --yes
-          else
-            pnpm release
-          fi
+        run: pnpm release
 
       - name: 🏷️ Read the tag
         id: tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
 
-      # The repo has immutable releases on, so a published release takes no further assets: the release is created as a
-      # Draft once `pnpm release` has published the tag's versions, the host is attached to the draft, and `publish` makes
-      # it public last, once every asset is on it. A failed `pnpm release` creates no draft at all, so the tag may exist
-      # without a release: the recovery is in openspec/specs/architecture/release-flow/design.md
-      - name: 🚀 Release draft
-        id: release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ steps.tag.outputs.tag }}
-        # A re-run must pick up where the last run stopped, not fail: an existing draft goes on to the host and the
-        # Publish, and an already-published release skips both, since it can take no asset. Only a genuine "not
-        # Found" is evidence the release is absent — a 401, a secondary rate limit or a network blip exits non-zero
-        # Too, and reading that as absence sends the retry into `create` against a tag that is already released.
-        # So the error text decides, and anything else fails here where the cause is still readable
-        run: |
-          if isDraft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft 2> "$RUNNER_TEMP/releaseError")"; then
-            if [ "$isDraft" = false ]; then
-              echo "Release $TAG is already published, nothing to create or attach."
-              echo "is-published=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "Draft release $TAG already exists."
-            fi
-            exit 0
-          elif ! grep -qi 'release not found' "$RUNNER_TEMP/releaseError"; then
-            printf 'Could not determine whether release %s exists: %s\n' "$TAG" "$(cat "$RUNNER_TEMP/releaseError")" >&2
-            exit 1
-          fi
-          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --verify-tag --title "$TAG" --notes "For releases, please refer to [CHANGELOG.md](https://github.com/esposter/esposter/blob/main/CHANGELOG.md) for details."
-
-  # The agent console's Windows host: one executable carrying its runtime and the Claude Code binary it runs, attached
-  # To the draft release, which the page links as its download once published. One file rather than a zip, since
-  # Windows runs an exe from inside a zip without the files beside it. Unsigned, since signing costs a yearly fee
-  # (openspec/deferred/infra/signed-host-installers/design.md)
-  host-installer:
+  # The tag this night released, or the one `check` found unfinished. Skipped on a quiet night, and a failed `pnpm release`
+  # ends the run before it, so no release is drafted for a tag that npm never received
+  finish:
+    name: Finish
     needs: [check, release]
-    if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'
+    if: always() && needs.check.outputs.skip == 'false' && (needs.release.result == 'success' || needs.check.outputs.recover-tag != '')
+    uses: ./.github/workflows/FinishRelease.yaml
+    with:
+      tag: ${{ needs.check.outputs.recover-tag || needs.release.outputs.tag }}
     permissions:
       contents: write
-    runs-on: windows-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ needs.release.outputs.tag }}
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Install the host
-        uses: ./.github/actions/install-projects
-        with:
-          filter: agent-console-server...
-      # The executable bundles the host's workspace dependencies from their builds
-      - name: 🏗️ Build the host's workspace dependencies
-        run: pnpm --filter "agent-console-server^..." build
-
-      - name: 🏗️ Build the Windows host
-        run: pnpm -C packages/agent-console-server build:sea
-      # --clobber so a re-run replaces the asset rather than failing on the one the first run attached
-      - name: 📤 Attach the Windows host
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.release.outputs.tag }}
-        run: gh release upload "$env:TAG" packages/agent-console-server/dist-sea/agent-console-host.exe --repo "$env:GITHUB_REPOSITORY" --clobber
-
-  publish:
-    needs: [check, release, host-installer]
-    if: needs.check.outputs.skip == 'false' && needs.release.outputs.is-published != 'true'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📢 Publish
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.release.outputs.tag }}
-        run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
+      id-token: write

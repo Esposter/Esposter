@@ -1,51 +1,54 @@
 # Release flow
 
-`.github/workflows/Release.yaml` is the only path that tags a release, publishes packages to npm and creates a GitHub release. It runs nightly and normally ships `main`, so only what a review has passed reaches npm. A manual dispatch can recover an existing version tag after a partial release. The versioning mechanics and the `pnpm release` gates are owned by [monorepo tooling](../monorepo-tooling/design.md); this page is the job graph.
+Three workflows tag, publish and release a version, and they share one finishing job list. `Release.yaml` is the nightly that ships `main`, so only what a review has passed reaches npm. `RecoverRelease.yaml` finishes a tag as soon as it is pushed, whether a manual `pnpm release` pushed it or a previous run did not finish it. `FinishRelease.yaml` is the reusable job list both call. The versioning mechanics and the `pnpm release` gates are owned by [monorepo tooling](../monorepo-tooling/design.md); this page is the job graph.
 
-The version, the tag, the npm publish and the draft release all happen in one `release` job, in that order, so a version reaches npm only from the same run that tagged it. Two jobs follow it: the Windows host is attached to the draft, and the release is made public last.
+Every finish is idempotent, so a version reaches npm only from a run that tagged it, and a release is made public only after its versions are on npm. The Windows host is attached to the draft before the release goes public.
 
 ```mermaid
 flowchart TD
-  Trigger[Nightly at 15:16 UTC, or manual dispatch] --> Check{check: release commits or recovery tag?}
-  Check -- no --> Skip[Skipped: every later job]
-  Check -- yes --> Release[release: pnpm release on main, or publish existing tag versions through trusted publishing]
-  Release -- normal release --> Main[Push to main]
-  Main --> Merge[MergeMain: a review run on ai/queue merges main back]
-  Release -- success --> Draft[Draft GitHub release on the tag]
-  Release -- failure --> Held[Failed before the push: no review run, no draft. Failed after the push: MergeMain still runs; the tag may exist without a release]
-  Draft --> Host[host-installer: build the Windows host, attach it to the draft]
-  Host --> Publish[publish: draft becomes public]
+  Night[Nightly at 15:16 UTC] --> Check{check: an unfinished latest tag, or release commits?}
+  Check -- unfinished tag --> Finish
+  Check -- no commits --> Skip[Skipped: every later job]
+  Check -- release commits --> Release[release: pnpm release on main, gates, version, tag, push, npm publish]
+  Release -- failure --> Held[No finish: the tag may exist without a release, and the next night's check finishes it]
+  Release -- success --> Main[Push to main, MergeMain merges it back into ai/queue]
+  Release --> Finish
+  Push[Tag pushed, or dispatched by name] --> Recover[RecoverRelease: the tag]
+  Recover --> Finish
+  Finish[FinishRelease: publish the versions npm lacks, draft, host, public last]
 ```
 
-## Jobs
+## Workflows
 
-- **`check`** reads the latest tag and counts the commits on `main` since it. A count of zero skips the nightly run. A manual dispatch can instead provide `recover-tag`, which must name an existing tag and continues directly to publish that tag's package versions.
-- **`release`** normally checks out `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it, and runs `pnpm release`. That runs the gates, then `lerna version`, which commits and tags the version and pushes it, then `lerna publish from-package`, which publishes through npm trusted publishing (`id-token: write`, no token). A recovery dispatch checks out its tag and runs `lerna publish from-package --yes` without versioning or pushing. In both cases the job creates a draft release on the tag with `gh release create --draft --verify-tag`. A re-run accepts an existing draft or an already-published release. [Monorepo tooling](../monorepo-tooling/design.md) owns the reasons.
-- **`host-installer`** runs on a Windows runner. It checks out the tag, builds the agent console host as a single executable, and attaches it to the draft with `--clobber`, so a re-run replaces the asset. It is skipped once the release is already public.
-- **`publish`** makes the draft public with `gh release edit --draft=false`. It needs `release` and `host-installer` to have succeeded, so a public release always names a version that reached npm.
+- **`Release.yaml`** runs nightly, or by dispatch with no input. Its `check` reads the latest tag: a tag whose release is missing or still a draft is finished first, and no new version ships that night. Otherwise it counts the commits on `main` since the tag, and a count of zero skips every later job. `release` runs `pnpm release` on `main` as `REVIEW_COLLECTOR_TOKEN`, the identity `main`'s ruleset lets update it: the gates, `lerna version`, which commits, tags and pushes, then `lerna publish from-package` through npm trusted publishing. `finish` then calls `FinishRelease.yaml` on the tag, and runs even when `release` was skipped for a recovery.
+- **`RecoverRelease.yaml`** runs on a `v*.*.*` tag push, or by dispatch with a `tag` input. It calls `FinishRelease.yaml` for that tag and does nothing else. A tag pushed by the nightly starts it too, and it queues behind the nightly on the shared `release` group, then finds the release already published.
+- **`FinishRelease.yaml`** is the reusable job list. `packages` checks out the tag and runs `lerna publish from-package --yes`, which publishes only the versions npm lacks. `draft` creates the draft release on the tag with `gh release create --draft --verify-tag`, or accepts an existing draft or an already-published release. `host-installer` runs on a Windows runner, builds the agent console host as a single executable and attaches it with `--clobber`, so a re-run replaces the asset. It is skipped once the release is public. `publish` makes the draft public with `gh release edit --draft=false`, after the host is attached.
 
 ## Gates
 
-| Gate                              | Where                  | Effect                                                                               |
-| --------------------------------- | ---------------------- | ------------------------------------------------------------------------------------ |
-| Commits since the latest tag      | `check`                | A quiet night skips every job                                                        |
-| One release at a time             | workflow `concurrency` | A run waits behind an earlier one on the same tag, never racing it                   |
-| Gates before the version          | `pnpm release`         | A failed gate bumps, tags and publishes nothing                                      |
-| npm success before the public tag | `release`, `publish`   | The draft exists only after the publish, and the release goes public only after both |
-| Already-public release            | `release`, `publish`   | A re-run takes no further asset and does not publish twice                           |
+| Gate                              | Where                                   | Effect                                                                                  |
+| --------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------- |
+| Unfinished latest tag             | `Release.yaml` `check`                  | The night after a failed or manual release finishes that tag before anything new        |
+| Commits since the latest tag      | `Release.yaml` `check`                  | A quiet night skips every job                                                           |
+| One release at a time             | workflow `concurrency` (`release`)      | Nightly and tag-triggered runs share one group, so they never race onto the same tag    |
+| Gates before the version          | `pnpm release`                          | A failed gate bumps, tags and publishes nothing                                         |
+| npm success before the public tag | `FinishRelease.yaml` `draft`, `publish` | The draft exists only after `packages`, and the release goes public only after the host |
+| Already-public release            | `FinishRelease.yaml` `draft`            | A re-run takes no further asset and does not publish twice                              |
 
 ## Notes
 
-- The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](../monorepo-tooling/design.md) gives the command.
-
-- A failed `pnpm release` is not retried by a quiet night, because `check` skips the commits the tag covers. Dispatch this workflow with `recover-tag` set to that existing tag. It publishes only package versions npm lacks, creates or resumes the draft, attaches the host, and makes the release public after the asset arrives. It does not run `pnpm release` or bump versions again: `forcePublish` versions every member.
+- The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](../monorepo-tooling/design.md) gives the command. A package that exists but has no trusted publisher configured on npm fails `packages` with a 404 for the whole tag, so the finish stops before the draft.
+- A finish does not run `pnpm release` or bump versions again: `forcePublish` versions every member, so a finish publishes only what npm lacks.
+- The nightly's own tag push also starts `RecoverRelease.yaml`. That run queues behind the nightly and mostly does nothing: its `packages` finds every version on npm and its `draft` finds the release already published. It costs a few runner minutes a night, and it is the price of one run that finishes every tag however it was pushed.
 
 ## Key files
 
-| File                               | Role                                                                          |
-| ---------------------------------- | ----------------------------------------------------------------------------- |
-| `.github/workflows/Release.yaml`   | the release jobs, their gates and their order                                 |
-| `.github/workflows/MergeMain.yaml` | the push to `main` that starts the review run merging it back into `ai/queue` |
-| `.github/actions/install-projects` | the install step every publish and check job shares                           |
-| `lerna.json`                       | the workspace globs lerna versions and publishes                              |
-| `package.json`                     | `release`, the script the release job runs, gates included                    |
+| File                                    | Role                                                                          |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| `.github/workflows/Release.yaml`        | the nightly: `check`, `release`, and `finish` on the tag                      |
+| `.github/workflows/RecoverRelease.yaml` | the tag-triggered and dispatched finish                                       |
+| `.github/workflows/FinishRelease.yaml`  | the reusable finish: publish missing versions, draft, host, public last       |
+| `.github/workflows/MergeMain.yaml`      | the push to `main` that starts the review run merging it back into `ai/queue` |
+| `.github/actions/install-projects`      | the install step every publish and check job shares                           |
+| `lerna.json`                            | the workspace globs lerna versions and publishes                              |
+| `package.json`                          | `release`, the script the nightly's `release` job runs, gates included        |

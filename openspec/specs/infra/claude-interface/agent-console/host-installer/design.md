@@ -49,7 +49,7 @@ flowchart TD
 | `packages/agent-console-server/src/services/server/sendToRunningHost.ts`                   | Whether the host is what holds a taken port, and the code handed to it       |
 | `packages/agent-console-server/src/services/installer/getClaudeCodeExecutablePath.ts`      | The installed Claude Code binary, inside the executable                      |
 | `packages/agent-console-server/src/services/drivers/claudeAgentSdk/createSessionOpener.ts` | Passes that binary to the SDK                                                |
-| `.github/workflows/Release.yaml`                                                           | Builds the Windows host and attaches it to the release                       |
+| `.github/workflows/FinishRelease.yaml`                                                     | Builds the Windows host and attaches it to the release                       |
 | `apps/web/app/components/AgentConsole/Panel/Pairing.vue`                                   | The steps with the download, and Connect as the last                         |
 
 ## Sources

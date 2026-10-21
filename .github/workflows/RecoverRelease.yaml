@@ -1,0 +1,32 @@
+name: 🩹 Recover release
+
+# A version tag finished as soon as it is pushed: a tag a manual `pnpm release` pushed, or one dispatched by name. The
+# nightly `Release.yaml` finishes its own tags through FinishRelease.yaml, and its tag push starts this run too, which
+# queues behind the nightly on the shared `release` group and then finds the release already published and does nothing.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The version tag to finish"
+        required: true
+        type: string
+
+permissions: read-all
+
+# Shares the `release` group with Release.yaml, so it never races a nightly run onto the same tag
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  finish:
+    name: Finish
+    uses: ./.github/workflows/FinishRelease.yaml
+    with:
+      tag: ${{ github.event_name == 'push' && github.ref_name || inputs.tag }}
+    permissions:
+      contents: write
+      id-token: write
