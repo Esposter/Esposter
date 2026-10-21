@@ -32,7 +32,7 @@ The counter lives in Postgres and is never derived from the listing: the listing
 
 ### Both channels hold their files by reference
 
-Neither channel copies its files. A version's reference rows, keyed by channel, name the files its content embeds, so a published version and a revision keep the working copy's files alive the same way: an owner who deletes a file keeps it for every version that still names it, and a file is released only when none does. A publish and a revision are therefore the same content write, with the publication's visibility on top.
+Neither channel copies its files. A version's reference rows, keyed by channel, name the files its content embeds, so a published version and a revision keep the working copy's files alive the same way: an owner who deletes a file keeps it for every version that still names it, and a file is released only when no version and no working-copy row names it. A publish and a revision are therefore the same content write, with the publication's visibility on top.
 
 The published channel is frozen: a publish writes a new version, and the working copy never rewrites one. Anonymous reads of a file honour only the published channel's rows ([content-addressed assets](../content-addressed-assets/design.md)), so a file a revision names alone is never public.
 
@@ -73,7 +73,7 @@ sequenceDiagram
   R->>R: take a BeforeRestore revision of the working copy
   R->>R: re-apply live state over the snapshot
   Note over R: the boundary — survey collection settings, and anything else a type declares live
-  Note over R: no asset is copied — the restored version's reference rows keep its files
+  Note over R: no asset is copied — the save reserves the restored content's assets in the working copy's rows
   R->>WORK: saveResourceContent — contentVersion++, after-save hooks, activity trail
 ```
 

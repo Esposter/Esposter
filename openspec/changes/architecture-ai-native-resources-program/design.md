@@ -44,6 +44,8 @@ flowchart TD
   DOOR --> TABS["the owner's open editors adopt it"]
 ```
 
+Every content write goes through `saveResourceContent`, which reserves the assets its content embeds and releases the ones it drops, so no generic tool handles assets itself.
+
 ## The audit
 
 What each type's content schema gives the generic tools, and what reaches beyond its content. Each schema was converted with Zod's `z.toJSONSchema` in input mode, the side a writer fills: a schema holding a Date throws under the default, since Zod has no JSON Schema for a Date, and converts once a Date is written as the `date-time` string the stored JSON already holds.
