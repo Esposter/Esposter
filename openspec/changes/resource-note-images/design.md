@@ -4,14 +4,14 @@ A Note can hold text, lists and links, and nothing else ([note resource](../../s
 
 ## What it adds
 
-- **Note declares `fileAssets: true`**, which brings the upload SAS and file delete procedures to its router. A published Note then clones its images like any other type's, because `cloneContentAssets` walks every string in the content and already recognises the asset urls a Note would carry.
+- **Note declares `fileAssets: true`**, which brings the upload SAS and file delete procedures to its router. A published Note then references its images like any other type's, by their content address, because a version's reference scan walks every string in the content and already recognises the asset urls a Note would carry.
 - **The Image node** (`@tiptap/extension-image`) joins `getNoteExtensions`, so the editor, the `generateHTML` render and the Note validator share it. The node holds `src`, `alt` and `title`.
 - **Three ways in**, all through `useUploadResourceFile`: an **Image** button in the menu bar that opens the file picker, a paste, and a drop. The paste and the drop run through `@tiptap/extension-file-handler`, which the message composer already uses. The uploaded file becomes an image node whose `src` is the stable `/api/resource-assets/…` url, never a data url.
 - **Alt text** is set from a popover on a selected image, shaped like the link popover, following Notion's `•••` → **Alt text**.
 - **The published view allows `img` only for a resource asset url.** `sanitizeTextHtml` is shared with the message composer, so the Note's render passes it a Note-only allowance: an `img` whose `src` starts with the resource assets prefix, keeping `alt` and `title`. An image from any other origin is dropped, which keeps tracking pixels and hotlinks out of a published page.
 - **The rich-text typography** caps an image at the column width.
 
-Unpublishing already sweeps a publication's asset clones, and the storage quota already charges an uploaded file, so neither needs changing.
+Unpublishing already releases the files a publication's versions name, and the storage quota already charges an uploaded file, so neither needs changing.
 
 ## What is deliberately not in it
 

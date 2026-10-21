@@ -10,14 +10,14 @@ Webflow keeps the same pair in each page's settings, a meta description and an O
 flowchart LR
   S["Settings blade<br/>description · share image"] -->|"autosave"| C["WebpageEditor<br/>description · imageUrl"]
   E["GrapesJS save"] -->|"carries both across"| C
-  C -->|"publish clones the image"| P["published snapshot"]
+  C -->|"publish references the image by hash"| P["published snapshot"]
   P --> V["Webpage View.vue<br/>description · og:description · og:image"]
 ```
 
 - **Settings blade.** `ResourceBladeDefinitionMap[Webpage]` declares it after the built-in Editor. Its description field is plain text capped at `WEBPAGE_DESCRIPTION_MAX_LENGTH` (160 characters, the length a search result shows in full). Its share image uploads through `useUploadResourceFile` as one of the webpage's own file assets ([resource file assets](../resource-file-assets/design.md)), and the field shows the image with a Remove beside it. Both edits autosave.
 - **Stored on the content.** `description` and `imageUrl` sit on `WebpageEditor` beside the captured `css` and `html`, so every save and every snapshot carries them. The image is an empty string or a resource asset url. An editor save carries both across the GrapesJS storage tick, so a save from the Editor never drops what the Settings blade wrote.
-- **Cloned on publish.** The publish transform clones every asset url the content holds, `imageUrl` included, so the published image survives the owner replacing the working copy's file.
-- **Read on the published view.** `View.vue` sets the meta description and the Open Graph description from the snapshot, and the Open Graph image as the absolute url of the cloned asset. An empty field leaves the site's own description and logo standing. The title stays the resource's name, which the published read already sets.
+- **Shared on publish.** The published version references every file the content holds, `imageUrl` included, by content address, so the published image survives the owner replacing the working copy's file ([content-addressed assets](../content-addressed-assets/design.md)).
+- **Read on the published view.** `View.vue` sets the meta description and the Open Graph description from the snapshot, and the Open Graph image as the absolute url of the asset. An empty field leaves the site's own description and logo standing. The title stays the resource's name, which the published read already sets.
 
 A change to the Settings blade reaches a shared link only once the page is published again, since a link unfurls from the published snapshot.
 

@@ -63,9 +63,9 @@ A file in a published resource SHALL remain viewable by anyone for as long as th
 - **WHEN** the owner unpublishes the page
 - **THEN** the image's published address no longer shows the image
 
-### Requirement: Published pages keep their own copies of their files
+### Requirement: Published pages share the working copy's files by content address
 
-A published page SHALL keep its own copies of the files it uses, so replacing or deleting a working file does not break the published page.
+A published page SHALL reference the files it uses by their content address, so publishing copies none of them and replacing or deleting a working file does not break the published page. The rules for keeping a shared file are the [content-addressed assets](../content-addressed-assets/spec.md) capability's.
 
 #### Scenario: Owner deletes a working file after publishing
 

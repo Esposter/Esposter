@@ -9,55 +9,46 @@ A rollback reaches either channel, on any type, from a panel over the thing bein
 ```text
 {id}/content.json                        working copy
 {id}/objects/{hash}                      every retained version's content, either channel — see the version store
-{id}/published/{publishId}/files/…       the immutable channel's asset clones
-{id}/files/…                             binary assets, FileAssets types only
+{id}/files/{sha256}                      binary assets, content-addressed, FileAssets types only
 ```
 
-A version is a `resourceVersions` row keyed by resource, channel and version number, pointing at a content-addressed object; how a version is encoded, charged and collected is the [resource version store](../resource-version-store/design.md). The revision channel is reference kind and owner-only; the published channel is immutable kind and publicly served.
+A version is a `resourceVersions` row keyed by resource, channel and version number, pointing at a content-addressed object; how a version is encoded, charged and collected is the [resource version store](../resource-version-store/design.md). The revision channel is owner-only; the published channel is publicly served.
 
 `SnapshotChannelDefinitionMap` is the one place a channel says what it is: its kind, its retention, and the title its rows wear.
 
-**A channel is an address space, not a workflow.** The two differ on six axes — kind, counter, retention, visibility, whether an unpublish sweep takes them, and whether taking one is an outward act with a public url, a view count, a notification and an activity entry. A `createSnapshot(id, channel)` driving all of that from a map would be a branch with indirection between it and its reader, which is the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids one level up. So the split is drawn where the operations are genuinely the same one:
+**A channel is an address space, not a workflow.** The two differ on five axes — counter, retention, visibility, whether an unpublish takes them, and whether taking one is an outward act with a public url, a view count, a notification and an activity entry. A `createSnapshot(id, channel)` driving all of that from a map would be a branch with indirection between it and its reader, which is the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids one level up. So the split is drawn where the operations are genuinely the same one:
 
-| Shared by both channels                                    | Owned by each caller                                            |
-| ---------------------------------------------------------- | --------------------------------------------------------------- |
-| the version row, and the object it names                   | **taking** a snapshot                                           |
-| the counter in Postgres, and the history listing beside it | publish's transform, version claim, succession check and repair |
-| **reconstitution** — read, re-apply live state, hand back  | the revision's age and count eviction                           |
-| restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting        |
-| the ledger charge on write and release on evict            |                                                                 |
+| Shared by both channels                                    | Owned by each caller                                     |
+| ---------------------------------------------------------- | -------------------------------------------------------- |
+| the version row, and the object it names                   | **taking** a snapshot                                    |
+| the counter in Postgres, and the history listing beside it | publish's transform and version claim                    |
+| **reconstitution** — read, re-apply live state, hand back  | the revision's age and count eviction                    |
+| restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting |
+| the ledger charge on write and release on evict            |                                                          |
 
 Reconstitution is the row that matters, because sharing it fixed a defect rather than saving lines — see the boundary below.
 
 The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because a number is claimed before its write and a write that fails leaves the number with no row. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
 
-### Two snapshot kinds
+### Both channels hold their files by reference
 
-The clone is the expensive half of a snapshot, and making it a property of the channel is what makes a second channel affordable:
+Neither channel copies its files. A version's reference rows, keyed by channel, name the files its content embeds, so a published version and a revision keep the working copy's files alive the same way: an owner who deletes a file keeps it for every version that still names it, and a file is released only when none does. A publish and a revision are therefore the same content write, with the publication's visibility on top.
 
-| Kind          | What is written                                                           | Cost                                           | Survives                                             | Used by     |
-| ------------- | ------------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------------- | ----------- |
-| **Immutable** | content + a clone of every referenced asset, urls rewritten to the clones | one version, plus one round trip **per asset** | the working copy deleting or replacing an asset      | `published` |
-| **Reference** | content only, urls untouched, resolving to live `{id}/files/…`            | one version, usually a delta                   | nothing — an asset the owner deletes is gone from it | `revisions` |
-
-Revisions take the reference kind: `{id}/files/` is only emptied by purge, which destroys the revisions in the same sweep, so the window in which one can rot is exactly "the owner deleted an asset and then rolled back past the deletion". A rolled-back revision with one broken image beats no rollback, and a per-asset clone on every revision would mean no revisions at all.
-
-It follows that **the revision channel holds no assets**, only JSON — so `parseResourceAssetPath` needs no new segment, and the rule that `{id}/published/…` assets serve anonymously while a publication row exists cannot accidentally extend to revisions.
+The published channel is frozen: a publish writes a new version, and the working copy never rewrites one. Anonymous reads of a file honour only the published channel's rows ([content-addressed assets](../content-addressed-assets/design.md)), so a file a revision names alone is never public.
 
 ```mermaid
 flowchart LR
   WORK[("{id}/content.json<br/>working copy")]
-  FILES[("{id}/files/…<br/>binary assets")]
+  FILES[("{id}/files/{sha256}<br/>binary assets")]
 
   WORK --> TAKEREV["revision take<br/>serialize, bump counter and clock,<br/>evict past 30 days or past 100"]
-  WORK --> TAKEPUB["publish take<br/>transform, claim in txn, succession repair"]
+  WORK --> TAKEPUB["publish take<br/>transform, claim in txn"]
 
   TAKEREV --> REV[("revision n")]
-  TAKEPUB --> CLONE["cloneContentAssets<br/>published/{publishId}/files/…"]
-  CLONE --> PUB[("published version n")]
+  TAKEPUB --> PUB[("published version n")]
 
-  REV -.->|"urls resolve to the live assets"| FILES
-  PUB -.->|"urls rewritten to its own clones"| CLONE
+  REV -.->|"reference rows name the files"| FILES
+  PUB -.->|"reference rows name the files"| FILES
   REV -->|restore| WORK
   PUB -->|restore| WORK
 ```
@@ -82,17 +73,13 @@ sequenceDiagram
   R->>R: take a BeforeRestore revision of the working copy
   R->>R: re-apply live state over the snapshot
   Note over R: the boundary — survey collection settings, and anything else a type declares live
-  alt immutable channel
-    R->>WORK: clone the snapshot's assets back into {id}/files
-  else reference channel
-    Note over R: the snapshot already points at the working copy's own assets
-  end
+  Note over R: no asset is copied — the restored version's reference rows keep its files
   R->>WORK: saveResourceContent — contentVersion++, after-save hooks, activity trail
 ```
 
 The revision taken before the write is what makes the mechanism **append-only**: a rollback is not a rewind but an append whose content happens to equal an earlier state, so undoing one is simply the next append. It is taken once the snapshot is known to exist — a restore that was never going to land does not spend a ring-buffer slot on its way to failing — and it is allowed to throw, because a restore whose undo silently did not happen is the defect this exists to close.
 
-Two things sit outside the invariant: **retention** ends a revision at its age or its count, so append-only holds over recent history rather than all of it, and the **unpublish sweep** deletes `{id}/published/` outright. The revision channel survives an unpublish untouched, so nothing _recoverable_ goes with it.
+Two things sit outside the invariant: **retention** ends a revision at its age or its count, so append-only holds over recent history rather than all of it, and the **unpublish** deletes the published channel's version rows, releasing the files they named. The revision channel survives an unpublish untouched, so nothing _recoverable_ goes with it.
 
 ## When a snapshot is taken
 
@@ -194,7 +181,7 @@ The channel rides with the version on every command, because a version alone nam
 | `apps/web/server/services/resource/ResourceLiveContentMap.ts`              | the boundary — what a type declares live                       |
 | `apps/web/server/services/resource/reapplyLiveResourceContent.ts`          | the reconstitution every snapshot read goes through            |
 | `apps/web/server/trpc/routers/resource.ts`                                 | history, restore and save-version procedures                   |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the publish take, its version claim and its succession repair  |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the publish take and its version claim                         |
 | `apps/web/app/components/Resource/VersionHistory/`                         | the panel, its rows, the preview banner and the restore dialog |
 | `apps/web/app/store/resource/versionHistory.ts`                            | the timeline, the restore and its Undo                         |
 | `packages/db-schema/src/schema/resource/resourcesInResource.ts`            | `revisionVersion`, `revisionTakenAt`                           |
@@ -203,7 +190,7 @@ The channel rides with the version on every command, because a version alone nam
 
 ## Notes
 
-- After an unpublish the publish numbering restarts at 1, because unpublish deletes the publication row and the published channel's version rows with it, and sweeps the asset clones best-effort. The live version is read from the publication row rather than inferred from which versions exist: the listing answers what can be returned to, the row answers what is being served.
+- After an unpublish the publish numbering restarts at 1, because unpublish deletes the publication row and the published channel's version rows with it, and releases the files those rows named. The live version is read from the publication row rather than inferred from which versions exist: the listing answers what can be returned to, the row answers what is being served.
 - Purge and soft delete need no step of their own: purge takes `{id}/` wholesale, which is already every channel.
 - [Named checkpoints](../../../rejected/resource/sheet/named-checkpoints/design.md) was rejected for the Sheet editor because undo/redo already traverses prior states, and the resource-level version of the same idea is rejected in [owner-named versions](../../../rejected/resource/owner-named-versions/design.md) — a row is chosen by its time, its reason and what it holds, none of which the owner has to supply.
 - Whether a resource's edits are durable is [save state](../resource-save-state/design.md), not this page: version history is where an owner goes to undo, and the title row is where they see that there was nothing to undo in the first place.

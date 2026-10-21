@@ -41,6 +41,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Activity log](activity-log/design.md) — the per-resource audit trail blade, in Azure Table Storage
 - [Resource snapshots](resource-snapshots/design.md) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Resource version store](resource-version-store/design.md) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version
+- [Content-addressed assets](content-addressed-assets/design.md) — uploaded files addressed by the hash of their bytes, so a publish, a revision and the working copy share one file and nothing is copied when a page is published
 - [Resource save state](resource-save-state/design.md) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
 - [Delta content saves](delta-content-saves/design.md) — a large document's save as a zstd delta against the bytes the server stores, falling back to a full save on any mismatch
 - [Shell cohesion](shell-cohesion/design.md) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
@@ -100,3 +101,4 @@ Azure service at any point.
 - **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
 - **[Webpage social preview](webpage-social-preview/design.md)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
 - **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
+- **Content-addressed assets** — uploaded files addressed by the hash of their bytes, reference rows written from a scan of each version, one release for every path that can unreference a file, and collection held behind a counting-only period.

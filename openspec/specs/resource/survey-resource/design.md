@@ -12,7 +12,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 ## Capabilities
 
 - **FileAssets** — asset uploads under `{id}/files/…` through the shared capability procedures ([resource file assets](../resource-file-assets/design.md)).
-- **Publishable** — publish goes through the generic `publishResource` plus the factory hook `transformPublishedContent`, which clones referenced asset blobs into the attempt's own publish directory and rewrites URLs ([resource file assets](../resource-file-assets/design.md)); and the live `settings` are merged back over every snapshot read through `ResourceLiveContentMap` ([resource snapshots](../resource-snapshots/design.md)), so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](../published-view-analytics/design.md)).
+- **Publishable** — publish goes through the generic `publishResource`, which references its image files by content address without copying them ([resource file assets](../resource-file-assets/design.md)); and the live `settings` are merged back over every snapshot read through `ResourceLiveContentMap` ([resource snapshots](../resource-snapshots/design.md)), so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](../published-view-analytics/design.md)).
 - **DatasetProvider** — `readSurveyResponsesDataset` serves responses through `dataset.readDataset`, auth keyed to resource ownership.
 
 ## Procedures

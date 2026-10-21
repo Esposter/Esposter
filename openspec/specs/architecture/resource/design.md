@@ -58,8 +58,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 ```text
 {id}/content.json                      working copy (JSON as a zstd frame, validated by the type's content schema)
 {id}/objects/{hash}                    every retained version's content, in either channel (the version store)
-{id}/published/{publishId}/files/…     a published version's asset clones (Publishable only)
-{id}/files/…                           binary assets (FileAssets types only)
+{id}/files/{sha256}                    binary assets, content-addressed (FileAssets types only)
 ```
 
 Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](../../resource/recycle-bin/design.md)).

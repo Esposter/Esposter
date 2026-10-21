@@ -76,3 +76,45 @@ An asset that no stored version references SHALL remain stored while collection 
 - **WHEN** the last version referencing an image is collected
 - **THEN** the image remains stored
 - **AND** the image is counted as unreferenced
+
+### Requirement: Deletion waits out the grace window
+
+An asset SHALL NOT be deleted within a grace window after it was last written or re-uploaded, so a save that references an identical upload cannot lose the object to a collection running between the two.
+
+#### Scenario: A re-uploaded asset is kept through the grace window
+
+- **GIVEN** an asset no stored version references, last written within the grace window
+- **WHEN** a collection runs
+- **THEN** the asset is kept
+
+### Requirement: A stored version never names a missing asset
+
+Storing a version whose content references an asset that no longer exists SHALL fail, rather than store a version with a broken asset.
+
+#### Scenario: A publish racing a file delete fails cleanly
+
+- **GIVEN** a publish reads content that embeds an image
+- **WHEN** the owner deletes the image before the version is stored
+- **THEN** the publish fails with a retryable error
+- **AND** no published version is stored that names the image
+
+### Requirement: Published files are readable only while the current publication names them
+
+An anonymous request for an asset SHALL be served only while the resource is published and its current published version references the asset.
+
+#### Scenario: A working-only image is not public
+
+- **GIVEN** a published page does not reference an image the working copy uses
+- **WHEN** an anonymous request opens the image's address
+- **THEN** the request is refused as unauthenticated
+
+### Requirement: Counting-only period deletes nothing
+
+While collection is in its counting-only period, release SHALL compute the unreferenced set and log its count, and SHALL delete nothing.
+
+#### Scenario: Counting-only logs the unreferenced count
+
+- **GIVEN** the counting-only period is in effect
+- **WHEN** a version holding two assets is collected
+- **THEN** no asset is deleted
+- **AND** the count of unreferenced assets is logged
