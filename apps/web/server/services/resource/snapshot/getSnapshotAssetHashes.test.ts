@@ -70,6 +70,6 @@ describe(getSnapshotAssetHashes, () => {
   test("answers an empty set for content that embeds no asset", () => {
     expect.hasAssertions();
 
-    expect(getSnapshotAssetHashes(resourceId, { title: "", items: [] })).toStrictEqual(new Set());
+    expect(getSnapshotAssetHashes(resourceId, { items: [], title: "" })).toStrictEqual(new Set());
   });
 });

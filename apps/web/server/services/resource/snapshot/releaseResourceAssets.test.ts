@@ -33,7 +33,7 @@ const { collectionState } = vi.hoisted(() => ({ collectionState: { isEnabled: fa
 
 vi.mock(import("#shared/services/resource/constants"), async (importOriginal) => ({
   ...(await importOriginal()),
-  isAssetCollectionEnabled: () => collectionState.isEnabled,
+  checkIsAssetCollectionEnabled: () => collectionState.isEnabled,
 }));
 
 describe(releaseResourceAssets, () => {

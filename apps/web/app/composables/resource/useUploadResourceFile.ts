@@ -24,13 +24,13 @@ export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRef
       uploadFileToSas<ResourceFileSasEntity>({
         checkIsUploadSkipped: ({ isHeld }) => isHeld,
         files: [file],
-        isCreateOnly: true,
         // UploadFileToSas describes the batch by its name, type and size, so the hash is carried in alongside them
         generateUploadFileSasEntities: (files) =>
           generateUploadFileSasEntities.query({
             files: files.map((fileEntity) => ({ ...fileEntity, hash })),
             id: idValue,
           }),
+        isCreateOnly: true,
       }),
     ).match(
       () => assetUrl,

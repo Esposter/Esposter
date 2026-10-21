@@ -1,6 +1,6 @@
-import { MEGABYTE } from "#shared/services/app/constants";
 import type { BlockUploadOptions } from "@/models/azure/container/BlockUploadOptions";
 
+import { MEGABYTE } from "#shared/services/app/constants";
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";

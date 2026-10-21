@@ -1,8 +1,7 @@
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
-import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
-
 import { REMOVE_WORKTREE_SCRIPT } from "#src/services/resume/constants";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 
 const WORKTREE_PREFIX = "worktree ";
 const HEAD_PREFIX = "HEAD ";

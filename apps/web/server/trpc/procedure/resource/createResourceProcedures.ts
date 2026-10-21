@@ -36,8 +36,8 @@ import { chargeSnapshotVersion } from "#server/services/resource/snapshot/charge
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
 import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
-import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
+import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { generateReservedWriteSasUrl } from "#server/services/storage/generateReservedWriteSasUrl";

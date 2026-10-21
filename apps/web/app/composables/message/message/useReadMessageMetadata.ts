@@ -22,6 +22,17 @@ export const useReadMessageMetadata = () => {
       if (message.type === MessageType.Webhook) webhookMessages.push(message);
       else standardMessages.push(message);
 
+    // A reactor is named by its member row, so the reactors of the emojis read are read as members too
+    const readReactorMembers = async () => {
+      const emojis = await readEmojis(
+        roomId,
+        messages.map(({ rowKey }) => rowKey),
+      );
+      await readMembersByIds(
+        roomId,
+        emojis.flatMap(({ userIds }) => userIds),
+      );
+    };
     await Promise.all([
       readMembersByIds(roomId, [...new Set(standardMessages.map(({ userId }) => userId))]),
       readAppUsers(roomId, [...new Set(webhookMessages.map(({ appUser }) => appUser.id))]),
@@ -32,16 +43,7 @@ export const useReadMessageMetadata = () => {
         roomId,
         standardMessages.flatMap(({ files }) => files),
       ),
-      // A reactor is named by its member row, so the reactors of the emojis read are read as members too
-      readEmojis(
-        roomId,
-        messages.map(({ rowKey }) => rowKey),
-      ).then((emojis) =>
-        readMembersByIds(
-          roomId,
-          emojis.flatMap(({ userIds }) => userIds),
-        ),
-      ),
+      readReactorMembers(),
     ]);
   };
 };

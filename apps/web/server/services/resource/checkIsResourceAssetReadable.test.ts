@@ -33,8 +33,8 @@ describe(checkIsResourceAssetReadable, () => {
       db: {
         query: {
           resourcePublicationsInResource: { findFirst: findFirstPublication },
-          resourceVersionAssetsInResource: { findFirst: findFirstPublishedAsset },
           resourcesInResource: { findFirst: findFirstResource },
+          resourceVersionAssetsInResource: { findFirst: findFirstPublishedAsset },
         },
       } as unknown as Database,
       findFirstPublication,

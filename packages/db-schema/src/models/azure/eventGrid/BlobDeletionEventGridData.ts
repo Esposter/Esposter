@@ -18,11 +18,11 @@ export type BlobDeletionEventGridData = (
 export const blobDeletionEventGridDataSchema = z.union([
   z.object({
     blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
+    containerName: azureContainerSchema,
     // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a replay can
     // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
     // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
     decidedAt: z.coerce.date().optional(),
-    containerName: azureContainerSchema,
   }),
   z.object({
     containerName: azureContainerSchema,

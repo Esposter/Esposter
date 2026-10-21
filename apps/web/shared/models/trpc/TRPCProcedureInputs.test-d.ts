@@ -1,5 +1,5 @@
-import type { TRPCProcedureInputs, TRPCPath } from "#shared/models/trpc/TRPCProcedureInputs";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { TRPCPath, TRPCProcedureInputs } from "#shared/models/trpc/TRPCProcedureInputs";
 import type { inferRouterInputs } from "@trpc/server";
 import type { Get } from "type-fest";
 

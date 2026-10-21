@@ -1,6 +1,6 @@
-import { MimeType } from "#shared/models/file/MimeType";
 import type { BlockUploadOptions } from "@/models/azure/container/BlockUploadOptions";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
 import { dedent } from "@esposter/shared";

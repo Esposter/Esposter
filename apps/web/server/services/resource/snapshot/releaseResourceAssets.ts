@@ -9,7 +9,7 @@ import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnap
 import {
   ASSET_DECISION_CLOCK_MARGIN_MS,
   ASSET_GRACE_MS,
-  isAssetCollectionEnabled,
+  checkIsAssetCollectionEnabled,
 } from "#shared/services/resource/constants";
 import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
 import { checkIsNotFound } from "@esposter/db";
@@ -76,7 +76,7 @@ export const releaseResourceAssets = async (
 
   // Counting-only computes the same set and deletes none of it, so a period of counting shows what collection would
   // Have taken before it is allowed to take anything
-  if (!isAssetCollectionEnabled()) {
+  if (!checkIsAssetCollectionEnabled()) {
     console.info("unreferenced assets counted", { count: unreferencedHashes.length, resourceId });
     return;
   }

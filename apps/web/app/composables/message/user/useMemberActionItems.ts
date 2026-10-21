@@ -1,6 +1,6 @@
 // @unocss-include
-import type { Item } from "@/models/shared/Item";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { Item } from "@/models/shared/Item";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
