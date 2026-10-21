@@ -1,6 +1,6 @@
 # Probing for an Enforcer Before Writing a Rule
 
-Read before writing a convention into a skill, to find out whether a lint rule already decides it or a selector could.
+Read when about to write a convention into a skill, to find out whether a lint rule already decides it or a selector could.
 
 Before a convention is written into a skill, find out whether something already decides it — oxlint ships hundreds of
 rules and the repo enables a broad plugin set with every category at `error`, so a surprising share of what reads like a

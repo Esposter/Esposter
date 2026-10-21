@@ -1,6 +1,6 @@
 ---
 name: invariants
-description: Apply when a fix is an `if` check other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold — construction, then one primitive, then lint, then a test, and a remembered guard last.
+description: Apply when a fix is an `if` check other call sites will also need, when a bug turns out to be a missing check, when a session writes a throwaway check on its own work, when reviewing a "remember to…" convention, or when deciding whether something belongs in a lint rule. How a rule that must hold in many places is made to hold.
 ---
 
 # Invariants
