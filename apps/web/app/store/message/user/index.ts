@@ -12,8 +12,8 @@ export const useUserStore = defineStore("message/user", () => {
     () => roomStore.currentRoomId,
     () => new Map<string, MemberInRoom>(),
   );
-  // The one rule for a name shown in a room: the room's display name, else the account name. A caller that holds the
-  // account name passes it, so the map is only read for a user it has no row for
+  // The one rule for a name shown in a room: the room's display name, else the account name.
+  // A caller that already has the account name passes it; a caller that omits it reads the name from the user map
   const getRoomMemberName = (roomId: string, userId: string, accountName = userMap.value.get(userId)?.name ?? "") =>
     getRoomMemberMap(roomId)?.get(userId)?.displayName ?? accountName;
   const storeUser = (user: PublicUser) => {
