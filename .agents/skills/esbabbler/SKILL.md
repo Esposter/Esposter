@@ -1,6 +1,6 @@
 ---
 name: esbabbler
-description: Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Esposter messaging feature (esbabbler) conventions — Discord parity as the default design rule, room display names returned by the server on the screen-specific procedure, MessageTypeOperationPermissionMap as the one source of what may be done to a message, and a subscription written on another member's behalf recording that member's own decision on the row. Calls/voice internals live in the esbabbler-call skill.
+description: Apply when working on the messaging module (apps/web/app/…/message/, server/trpc/routers/message/, userToRoom, roles, members, rooms). Esposter messaging feature (esbabbler) conventions. Calls/voice internals live in the esbabbler-call skill.
 ---
 
 # Esbabbler (Messaging) Feature Conventions

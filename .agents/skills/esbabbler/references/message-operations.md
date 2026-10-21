@@ -1,6 +1,6 @@
 # Message operations — capability and permission are separate questions
 
-Read when adding a message operation or a `MessageType`, or gating a message menu item on who may use it. `MessageTypeOperationPermissionMap` (`shared/services/message/`) is the single source of truth for what may be done to a message; it answers two questions that must not be collapsed:
+Read when adding a message operation or a `MessageType`, or gating a message menu item on who may use it. `MessageTypeOperationPermissionMap` (`apps/web/shared/services/message/`) is the single source of truth for what may be done to a message; it answers two questions that must not be collapsed:
 
 - **Capability** — does this operation exist for this `MessageType` at all? True regardless of who asks. A Poll has no editable body, so `Update` is simply absent for it.
 - **Permission** — for an operation that exists, may _this_ caller perform it? `MessageOperationPermission` is `AnyMember | Author | ManageMessages`.
