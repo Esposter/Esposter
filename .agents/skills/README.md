@@ -1,6 +1,6 @@
 # Esposter Skills — Authoring Conventions
 
-How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file holds only what no single skill's frontmatter can say: the boundaries between skills, and how the repo tree relates to the user's global rules.
+How the skills in this directory are organised and maintained. **How to write one is itself a skill — see `skill-authoring`** (frontmatter that drives selection, one owner per topic, don't restate enforcers, generic placeholders). This file holds only what no single skill's frontmatter can say: the boundaries between skills, and why this directory is the only source of the repository's conventions.
 
 **Each skill owns exactly one concern, and a given rule lives in exactly one skill.** Everything about how one is written (the most-specific-owner tiebreak, pointers instead of copies, the two-tier layout and its budget, tight-not-fluffy) is `skill-authoring`'s, stated there in full and deliberately not repeated here.
 
