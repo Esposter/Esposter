@@ -14,12 +14,12 @@ Nothing in this repository keeps an older version of itself working. The argumen
 
 ## Rules
 
-- **Read a plan for a second shape before building it.** A proposal, a refactor plan or a brief that keeps an old form working for any stretch — an adapter, a shim, a dual read path, a flag between two implementations, a deprecation window — is revised first (the `building-proposals` skill, `references/building.md`).
+- **Read a plan for a second shape before building it.** A proposal, a refactor plan or a brief that keeps an old form working for any stretch — an adapter, a shim, a dual read path, a flag between two implementations, a deprecation window — is revised first (`openspec/specs/architecture/no-compatibility-debt/design.md`, "What this rules out").
 - **A migration is a series of whole-tree commits.** Each one moves every caller, scripted where the move is mechanical, and deletes what it replaces in the same commit; a behaviour guard written before the first one (a replay digest, a snapshot) proves each commit preserved behaviour, and goes in the last.
 - **Only per-unit work no tree-wide commit can do gets a ledger** (the `sweeps` skill) — judgement a unit's own evidence settles, never the old shape waiting to be removed.
 - **The owners of the narrower cases:**
-  - a name — corrected in place, never aliased (the `naming` skill);
-  - a persisted client shape or Azure Table entity — the latest shape only (the `zod` skill, "Persisted Data — Latest Shape Only");
-  - stored data a schema change leaves behind — backfilled, never held for the deployed code (the `backfills` skill);
-  - a deployed identity — renamed through a preview (the `pulumi-infra` skill, `references/migrations.md`);
-  - a published package's export — a `refactor`, never a major (the `package-scripts` skill).
+  - when a name is wrong — corrected in place, never aliased (the `naming` skill);
+  - when a persisted client shape or Azure Table entity changes — the latest shape only (the `zod` skill, "Persisted Data — Latest Shape Only");
+  - when a schema change leaves stored data behind — backfilled, never held for the deployed code (the `backfills` skill);
+  - when a deployed identity is wrong — renamed through a preview (the `pulumi-infra` skill, `references/migrations.md`);
+  - when a published package's export is renamed or removed — a `refactor`, never a major (the `package-scripts` skill).
