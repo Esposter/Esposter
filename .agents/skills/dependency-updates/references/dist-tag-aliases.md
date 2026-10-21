@@ -12,5 +12,5 @@ Read when a release the repo needs ships only under another package's name — a
 
 - The mismatch table skips it, since a tag names no version for the resolution to drift from.
 - The registry is asked for the alias's target at that tag and compared with the locked version, and the row is labelled with the tag. `pnpm outdated` cannot do this: it reports an alias under its target's name against `latest`, which a nightly line is already ahead of, so its row for the target is dropped.
-- An alias the lockfile resolved nothing for is left out — the catalog's `nitro` is one, resolved under `overrides:`, where `pnpm outdated` reads `nitro-nightly` against `latest`, the tag it follows.
+- An alias the lockfile resolved nothing for is left out.
 - A `renovate.json` `followTag` rule over an alias does not change the tag it is read at: the specifier's tag is what installs.
