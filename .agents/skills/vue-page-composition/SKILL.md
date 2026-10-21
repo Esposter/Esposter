@@ -1,6 +1,6 @@
 ---
 name: vue-page-composition
-description: Apply when decomposing a page, building a list/table of repeated items, wiring row or menu actions, or mounting a dialog for list items. Esposter's page and list composition — how a page and a list are assembled from components; pages as layout-only orchestrators, one action per component, v-for over hardcoded repeated items, one affordance per action, permission-gated settings tabs hidden at the tab level, and one singleton dialog driven by a store target rather than a dialog per list item.
+description: Apply when decomposing a page, building a list/table of repeated items, wiring row or menu actions, or mounting a dialog for list items. Esposter's page and list composition — how a page and a list are assembled from components, and which component owns each action, item and overlay.
 ---
 
 # Vue Page & List Composition (Esposter)
