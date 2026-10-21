@@ -8,13 +8,13 @@ The message input's suggestion extensions — emoji, mention and slash command �
 
 Paths differ per feature — there is no single `{feature}` folder convention:
 
-| Feature       | Extension composable                                               | Suggestion config                                              |
-| ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
-| Emoji         | `app/composables/message/editor/useEmojiExtension.ts`              | `app/services/message/emoji/EmojiSuggestion.ts`                |
-| Mention       | `app/services/message/MentionExtension.ts`                         | `app/services/message/MentionSuggestion.ts` (no subfolder)     |
-| Slash command | `app/composables/message/slashCommand/useSlashCommandExtension.ts` | `app/services/message/slashCommands/SlashCommandSuggestion.ts` |
+| Feature       | Extension composable                                                        | Suggestion config                                                       |
+| ------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Emoji         | `apps/web/app/composables/message/editor/useEmojiExtension.ts`              | `apps/web/app/services/message/emoji/EmojiSuggestion.ts`                |
+| Mention       | `apps/web/app/services/message/MentionExtension.ts`                         | `apps/web/app/services/message/MentionSuggestion.ts` (no subfolder)     |
+| Slash command | `apps/web/app/composables/message/slashCommand/useSlashCommandExtension.ts` | `apps/web/app/services/message/slashCommands/SlashCommandSuggestion.ts` |
 
-List components are uniform: `app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
+List components are uniform: `apps/web/app/components/Message/Model/Message/Suggestion/{Feature}List.vue`.
 
 ## Unique PluginKey — required for every suggestion
 
@@ -23,7 +23,7 @@ ProseMirror throws `"Adding different instances of a keyed plugin (suggestion$)"
 ```ts
 import { PluginKey } from "@tiptap/pm/state";
 
-export const EmojiSuggestion: Except<SuggestionOptions<EmojiItem, EmojiItem>, "editor"> = {
+export const EmojiSuggestion: Except<SuggestionOptions<PickableEmoji, PickableEmoji>, "editor"> = {
   pluginKey: new PluginKey("emojiSuggestion"),
   char: SuggestionTrigger.Emoji,
   // ...
@@ -32,7 +32,7 @@ export const EmojiSuggestion: Except<SuggestionOptions<EmojiItem, EmojiItem>, "e
 
 ## Custom extension boilerplate — `createSuggestionExtension`
 
-Every suggestion extension that is only a plugin is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config. Mention is the exception: it is a node rather than a bare plugin, so `MentionExtension` extends Tiptap's `Mention` to keep its `type` attribute and configures the suggestion on that — replacing it with the shell would drop every mention's type.
+Every suggestion extension that is only a plugin is the same shell — an options slot the `configure` call fills and one `Suggestion` plugin built from it — so it is built by `createSuggestionExtension` (`apps/web/app/services/message/editor/createSuggestionExtension.ts`), never written out again. What differs lives in the suggestion config. Mention is the exception: it is a node rather than a bare plugin, so `MentionExtension` extends Tiptap's `Mention` to keep its `type` attribute and configures the suggestion on that — replacing it with the shell would drop every mention's type.
 
 ```ts
 const EmojiExtension = createSuggestionExtension("emoji");
@@ -44,12 +44,12 @@ ProseMirror is reached through tiptap's re-export, `@tiptap/pm/<module>`, never 
 
 ## Never inline extensions in components
 
-`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `app/composables/message/` (the per-feature folder is "Files per suggestion feature", on this page), never in a `.vue` `<script setup>`. An extension that reads no store, session or ref needs no composable and is a module constant under `app/services/message/`, as Mention's is. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable under `apps/web/app/composables/message/` (the per-feature folder is "Files per suggestion feature", on this page), never in a `.vue` `<script setup>`. An extension that reads no store, session or ref needs no composable and is a module constant under `apps/web/app/services/message/`, as Mention's is. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
 
-An extension that wires nothing but its own component's callbacks stays inline in that component, as `Editor.vue`'s Enter and Esc do: a composable would only hand the callbacks back in.
+An extension that wires nothing but its own component's callbacks stays inline in that component, as `apps/web/app/components/Message/Model/Message/Editor.vue`'s Enter and Esc do: a composable would only hand the callbacks back in.
 
 ## SuggestionTrigger enum
 
-Trigger characters live in `app/services/message/SuggestionTrigger.ts`. Never hardcode a trigger character as a string literal in a suggestion config or a component template.
+Trigger characters live in `apps/web/app/services/message/SuggestionTrigger.ts`. Never hardcode a trigger character as a string literal in a suggestion config or a component template.
 
 Use in suggestion config (`char: SuggestionTrigger.Emoji`) and in templates (`{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}`).
