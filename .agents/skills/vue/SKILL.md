@@ -34,7 +34,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 
 ## Template Conventions
 
-- **Truthiness** — `v-if="value"`, not `v-if="value !== null"`. Explicit null/undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful, `null` vs `undefined` matters).
+- **Truthiness** — `v-if="value"`, not `v-if="value !== null"`. Explicit undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful).
 - **No bare function references in `@event` bindings** (`vue/no-restricted-syntax`) — a bare ref forwards the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function naming the payload when it is wanted: `@select="(id) => selectRole(id)"`.
 - **`v-for` destructures what it reads**, keeping the whole item only when it is passed on (`references/template-bindings.md`).
 - **`v-bind` shorthand** is autofixed by `vue/v-bind-style`.
