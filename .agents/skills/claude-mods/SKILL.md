@@ -1,6 +1,6 @@
 ---
 name: claude-mods
-description: Apply when writing or reviewing a Claude Code mod — a plugin's hooks module (`hooks/hooks.json` naming `modules`), its state contract, or anything under packages/genshin-mods or packages/genshin-persona/mod. Esposter's conventions for function hooks — the rules the engine enforces at load (relative imports, one unmatched hook per event, `$` and atoms kept in the file that uses them, an inline state contract), the file shape they force, the lint seams with the engine's slots, and the authoring loop.
+description: Apply when writing or reviewing a Claude Code mod — a plugin's hooks module (`hooks/hooks.json` naming `modules`), its state contract, or anything under packages/genshin-mods or packages/genshin-persona/mod. Esposter's conventions for function hooks the engine checks at load.
 ---
 
 # Claude Code mods
@@ -18,7 +18,7 @@ Every rule below is explained, with the refusal it prevents and the shape it for
 
 ## Rules
 
-- **Relative imports only, to the plugin's own files, plus `claude-code`**; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
+- **Relative imports only, to the plugin's own files, plus `claude-code`**: the mod override in `oxlint.config.ts` bans the aliases, and the engine refuses the rest at load; a dependency-free file of another of the plugin's trees (the persona's verb enum) is reachable the same way.
 - **A matcherless event takes one hook per plugin**, in one `registerLifecycle` file shared by every mod; a mod's own file keeps only its matched hooks.
 - **A function that receives `on` returns nothing** — every `register<Name>(on)` is `void`.
 - **Every function that takes `$` sits in the file of the hook that calls it**; code free of `$` goes in a pure module with its test, and a button's action closes over `$`. `claude plugin validate` is the check that catches a `$` passed across an import, and it runs before a mod commit.
