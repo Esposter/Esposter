@@ -29,13 +29,13 @@ The Pulumi logical name **is** the Azure resource name here (the constructor's f
 - **The `name` property changed** — the URN changed with it, and an alias only remaps the URN, so it cannot prevent the replacement; under the new name it is genuinely a different Azure resource.
 - **Only the export/file name changed** — the URN never moved, so there is nothing for an alias to remap.
 
-The fix for a wrong name is a correct name, applied through the sequences above, not a compatibility shim carried forever.
+The fix for a wrong name is a correct name, applied through the sequences under "Re-parenting already-deployed resources" and "Renames" on this page, not a compatibility shim carried forever.
 
 **Close the suggestion on evidence, not on the diff.** Reviewers raise it repeatedly (reasoning from the rename diff, re-flagging on every PR that carries the renamed file, often as a critical "protected resource replacement" outside-diff comment). Run `pnpm infra:preview` and read the plan: an applied rename shows as `unchanged` / `0 to replace`, and that line is what to paste. A preview showing a pending replacement means the migration is unfinished — finish the cutover, still without an alias. Claiming a replacement will or won't happen without a preview to back it is itself a false positive.
 
 ## Import output is throwaway
 
-`pulumi import --generate-code` output, discovery scripts and `import.json` are throwaway: write them to the session scratchpad, never the repo. Import output may contain live callback URLs, signatures and webhook secrets. Refactor the relevant resources into `src/<provider>/` by hand, then discard the generated file.
+`pulumi import --generate-code` output, discovery scripts and `import.json` are throwaway: write them to a scratch location outside the repository, never the repo. Import output may contain live callback URLs, signatures and webhook secrets. Refactor the relevant resources into `src/<provider>/` by hand, then discard the generated file.
 
 ## A deployed identity is renamed like any other identifier
 
