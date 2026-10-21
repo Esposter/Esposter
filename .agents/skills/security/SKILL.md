@@ -1,6 +1,6 @@
 ---
 name: security
-description: Apply when a change crosses a trust boundary — a procedure or server route, rendered HTML, an upload, a url or id taken from input, a secret, a new dependency or workflow — when reviewing one for security, or when running the security sweep. Esposter's security review — the OWASP Top 10 read against the repo, each risk pointing at the skill or page that already owns its defence, an accepted risk left to its owning page, and the sources to read where no owner exists yet.
+description: Apply when a change crosses a trust boundary — a procedure or server route, rendered HTML, an upload, a url or id taken from input, a secret, a new dependency or workflow — when reviewing one for security, or when running the security sweep. Esposter's security review — the OWASP Top 10 read against the repo, each risk pointing at the skill or page that already owns its defence.
 ---
 
 # Security
