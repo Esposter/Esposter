@@ -1,6 +1,6 @@
 # Escapes Through Tools
 
-Read before writing any file content that holds a backslash — a string escape, a regex, a Windows path — and after a check reports something that makes no sense for the code you meant to write.
+Read when writing any file content that holds a backslash — a string escape, a regex, a Windows path — and after a check reports something that makes no sense for the code you meant to write.
 
 A tool parameter is decoded before it reaches the file, and a shell or an interpreter in between decodes it again. Each hop can eat a backslash or turn an escape into the character it names, and the result is silent: a wrong write looks like a right one in an editor, a diff and `grep` output. The session then chases a failure the file never meant to contain, which is the re-do this skill exists to stop.
 
