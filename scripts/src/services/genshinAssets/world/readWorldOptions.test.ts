@@ -1,5 +1,4 @@
 import type { readProducerStaleness as baseReadProducerStaleness } from "#src/services/producerStamp/readProducerStaleness";
-import type { existsSync as baseExistsSync } from "node:fs";
 import type { readFile as baseReadFile } from "node:fs/promises";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
@@ -10,10 +9,8 @@ const { readProducerStaleness } = vi.hoisted(() => ({
   readProducerStaleness: vi.fn<typeof baseReadProducerStaleness>(),
 }));
 
-vi.mock(import("#src/services/producerStamp/readProducerStaleness"), () => ({
-  readProducerStaleness: readProducerStaleness as typeof baseReadProducerStaleness,
-}));
-vi.mock(import("node:fs"), () => ({ existsSync: (() => true) as typeof baseExistsSync }));
+vi.mock(import("#src/services/producerStamp/readProducerStaleness"), () => ({ readProducerStaleness }));
+vi.mock(import("node:fs"), () => ({ existsSync: () => true }));
 vi.mock(import("node:fs/promises"), () => ({
   readFile: (() => Promise.resolve("{}")) as unknown as typeof baseReadFile,
 }));

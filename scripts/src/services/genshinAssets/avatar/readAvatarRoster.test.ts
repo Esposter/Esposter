@@ -1,4 +1,3 @@
-import type { DumpedSkinnedMeshRenderer } from "#src/models/genshinAssets/shared/DumpedSkinnedMeshRenderer";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 
@@ -39,11 +38,13 @@ const renderer = (
     name,
     object,
     renderer: {
+      m_Bones: [],
       m_Enabled,
       m_GameObject: { m_PathID: "" },
       m_Materials: materialPathIds.map((m_PathID) => ({ m_FileID: 0, m_PathID })),
-      m_Mesh: {},
-    } as unknown as DumpedSkinnedMeshRenderer,
+      m_Mesh: { m_FileID: 0, m_PathID: "" },
+      m_RootBone: { m_FileID: 0, m_PathID: "" },
+    },
   };
 };
 

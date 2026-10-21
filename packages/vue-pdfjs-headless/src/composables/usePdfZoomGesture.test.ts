@@ -10,7 +10,7 @@ const dispatchPointer = (target: HTMLElement, type: string, pointerId: number, c
   target.dispatchEvent(Object.assign(new Event(type), { clientX, clientY, pointerId }));
 };
 // The viewer keeps only the scale the gestures read and write, so a plain object stands in for it
-const createViewer = (currentScale: number) => ({ currentScale }) as unknown as PdfJsViewer;
+const createViewer = (currentScale: number) => ({ currentScale }) as PdfJsViewer;
 const mountGesture = (viewer: PdfJsViewer) => {
   const container = window.document.createElement("div");
   const scope = effectScope();

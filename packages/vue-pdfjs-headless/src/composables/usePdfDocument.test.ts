@@ -29,7 +29,7 @@ describe(usePdfDocument, () => {
       getDocument,
       GlobalWorkerOptions: { workerSrc: "" },
       PasswordResponses: { INCORRECT_PASSWORD, NEED_PASSWORD },
-    } as unknown as PdfApi,
+    } as PdfApi,
     cMapUrl: "",
     standardFontDataUrl: "",
     wasmUrl: "",

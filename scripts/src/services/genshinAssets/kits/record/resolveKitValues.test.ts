@@ -23,13 +23,13 @@ const call = (delay: number): NamedHitCall => ({
 });
 
 describe(resolveKitValues, () => {
-  const TABLES = { element: Element.Geo, talentGroupIdMap: {} } as unknown as KitTables;
+  const TABLES = { element: Element.Geo, talentGroupIdMap: {} } as KitTables;
   const OVERLAY: KitOverlay = { "burst.hits.0.element": { cause: KitProvisionalCause.NoGcsimUnit, value: "Rock" } };
 
   const tables = {
     talentGroupIdMap: { [CombatTalent.ElementalBurst]: 2139, [CombatTalent.ElementalSkill]: 2138 },
     talentMultiplierMap: {},
-  } as unknown as KitTables;
+  } as KitTables;
 
   const sourceCandidateMap = new Map<string, KitCandidate[]>([
     ["burst.hits.length", [{ provenance: { file: "burst.go", line: 60, source: KitSource.Gcsim }, value: 3 }]],
@@ -105,10 +105,10 @@ describe(resolveKitValues, () => {
   test("keeps a DiffersFromSource reference that reads the same numbers as a source's reference to another group", () => {
     expect.hasAssertions();
 
-    const sameRowTables = {
+    const sameRowTables: KitTables = {
       ...tables,
       talentMultiplierMap: { "2138": [{ level: 1, paramList: [2.456] }], "2139": [{ level: 1, paramList: [2.456] }] },
-    } as unknown as KitTables;
+    };
     const { valueMap } = resolveKitValues(
       sourceCandidateMap,
       {

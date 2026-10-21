@@ -10,7 +10,7 @@ import { KitPlunge } from "genshin-world";
 import { assert, describe, expect, test } from "vitest";
 
 describe(compareKitRecord, () => {
-  const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as unknown as KitTables;
+  const tables = { talentGroupIdMap: {}, talentMultiplierMap: {} } as KitTables;
   const PLUNGE_HITMARK_PATH = "plunges.low.hits.0.hitmarkFrames";
   const WIKI_HITMARK_FRAMES = 10;
 

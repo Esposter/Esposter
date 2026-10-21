@@ -21,7 +21,7 @@ const setupContainerClient = () => {
         return Promise.resolve({ etag: "etag" });
       },
     }),
-  } as unknown as ContainerClient;
+  } as ContainerClient;
   return { blobs, containerClient };
 };
 

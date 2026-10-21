@@ -20,7 +20,19 @@ const createRenderTask = (promise: Promise<unknown>) =>
   ({ cancel: vi.fn<RenderTask["cancel"]>(), promise }) as unknown as RenderTask;
 // The renderer's viewport converts a point of the page, in PDF coordinates, at the scale it was made for
 const createViewport = (scale: number) =>
-  ({ convertToViewportPoint: (x: number, y: number) => [x * scale, y * scale] }) as unknown as PageViewport;
+  ({ convertToViewportPoint: (x: number, y: number) => [x * scale, y * scale] }) as PageViewport;
+const createOutlineNode = (dest: string, title: string): PdfOutline[number] => ({
+  bold: false,
+  color: new Uint8ClampedArray(),
+  count: undefined,
+  dest,
+  italic: false,
+  items: [],
+  newWindow: undefined,
+  title,
+  unsafeUrl: undefined,
+  url: null,
+});
 const setFullscreenElement = (element: Element | null) => {
   Object.defineProperty(window.document, "fullscreenElement", { configurable: true, value: element });
 };
@@ -192,7 +204,7 @@ describe(usePdfViewer, () => {
     ({
       getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
       render,
-    }) as unknown as PDFPageProxy;
+    }) as PDFPageProxy;
   // A document with no outline resolves to null, which the viewer reads as no bookmarks
   const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
     ({
@@ -450,7 +462,7 @@ describe(usePdfViewer, () => {
   test("#44 following a bookmark", async () => {
     expect.hasAssertions();
 
-    const chapter = { dest: "chapter", items: [], title: "Chapter" } as unknown as PdfOutline[number];
+    const chapter = createOutlineNode("chapter", "Chapter");
     const { scope, state } = mountViewer(createDocument(3, createPage(), [chapter]));
     await flushPromises();
     const [item] = state.outline.value;
@@ -475,8 +487,8 @@ describe(usePdfViewer, () => {
   test("an outline that loads after a newer document is dropped", async () => {
     expect.hasAssertions();
 
-    const chapter = { dest: "chapter", items: [], title: "Chapter" } as unknown as PdfOutline[number];
-    const staleChapter = { dest: "stale", items: [], title: "Stale" } as unknown as PdfOutline[number];
+    const chapter = createOutlineNode("chapter", "Chapter");
+    const staleChapter = createOutlineNode("stale", "Stale");
     const staleOutline = Promise.withResolvers<null | PdfOutline>();
     const staleDocument = Object.assign(createDocument(3), { getOutline: () => staleOutline.promise });
     const pdfDocument = shallowRef<PDFDocumentProxy | undefined>(staleDocument);

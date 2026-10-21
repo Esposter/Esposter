@@ -16,7 +16,7 @@ describe(usePdfThumbnails, () => {
   let reportVisibility: (element: Element, isIntersecting: boolean) => void = noop;
   const IntersectionObserverStub = function (callback: (entries: IntersectionObserverEntry[]) => void) {
     reportVisibility = (element, isIntersecting) => {
-      callback([{ isIntersecting, target: element } as unknown as IntersectionObserverEntry]);
+      callback([{ isIntersecting, target: element } as IntersectionObserverEntry]);
     };
 
     return { disconnect: () => {}, observe: () => {}, unobserve: () => {} };
@@ -26,7 +26,7 @@ describe(usePdfThumbnails, () => {
     return {
       disconnect: () => {},
       observe: () => {
-        callback([{ contentRect: { width: ROW_WIDTH } } as unknown as ResizeObserverEntry]);
+        callback([{ contentRect: { width: ROW_WIDTH } } as ResizeObserverEntry]);
       },
     };
   };
@@ -42,7 +42,7 @@ describe(usePdfThumbnails, () => {
   // Mounts a sidebar of one row per page, each row's canvas attached, and returns the render the rows share
   const mountSidebar = async () => {
     const render = vi.fn<PDFPageProxy["render"]>(
-      () => ({ cancel: () => {}, promise: Promise.resolve() }) as unknown as RenderTask,
+      () => ({ cancel: () => {}, promise: Promise.resolve() }) as RenderTask,
     );
     const page = {
       getViewport: ({ scale }: { scale: number }) => ({ height: scale, width: scale }),

@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
 const createRenderTask = (promise: Promise<unknown>, cancel: RenderTask["cancel"] = vi.fn<RenderTask["cancel"]>()) =>
-  ({ cancel, promise }) as unknown as RenderTask;
+  ({ cancel, promise }) as RenderTask;
 const createDocument = (page: PDFPageProxy): PDFDocumentProxy =>
   ({
     getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
@@ -48,7 +48,7 @@ describe(usePdfPage, () => {
     ({
       getViewport: ({ scale }: { scale: number }) => ({ height: PAGE_HEIGHT * scale, width: PAGE_WIDTH * scale }),
       render,
-    }) as unknown as PDFPageProxy;
+    }) as PDFPageProxy;
 
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);

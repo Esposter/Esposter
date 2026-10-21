@@ -17,7 +17,7 @@ describe(useEmailEditorStore, () => {
   const html = "";
   const projectData: ProjectData = { pages: [{ component: "" }] };
   // Only the MJML compile command is reached
-  const editor = { runCommand: () => ({ html }) } as unknown as Editor;
+  const editor = { runCommand: (_id: string) => ({ html }) } as Editor;
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
   let content: EmailEditor;
@@ -75,10 +75,10 @@ describe(useEmailEditorStore, () => {
     const lastHtml = " ";
     content = new EmailEditor({ ...projectData, html: lastHtml });
     const failingEditor = {
-      runCommand: () => {
+      runCommand: (_id: string): unknown => {
         throw new Error(" ");
       },
-    } as unknown as Editor;
+    } as Editor;
     const savedHtmls: (string | undefined)[] = [];
     trpcMsw.email.saveResourceContent.mutation(({ input }) => {
       savedHtmls.push(input.content.html);

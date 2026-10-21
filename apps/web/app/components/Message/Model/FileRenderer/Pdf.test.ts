@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { FileEntity } from "@esposter/db-schema";
-import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
+import type { PDFDocumentLoadingTask, PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 import type { PdfApi, PdfRenderer } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
@@ -75,7 +75,7 @@ describe("messageModelFileRendererPdf", () => {
     expect.hasAssertions();
 
     // The first page never arrives, so the thumbnail draws nothing from the document it is handed
-    const pdfDocument = { getPage: () => new Promise(() => {}) } as unknown as PDFDocumentProxy;
+    const pdfDocument = { getPage: (_pageNumber: number) => new Promise<PDFPageProxy>(() => {}) } as PDFDocumentProxy;
     const task = {
       destroy: vi.fn<PDFDocumentLoadingTask["destroy"]>(() => Promise.resolve()),
       promise: Promise.resolve(pdfDocument),
