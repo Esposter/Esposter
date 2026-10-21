@@ -1,4 +1,4 @@
-import type { serverFetch } from "nitro/app";
+import type { TrpcServerFetch } from "#src/models/TrpcServerFetch";
 import type { useRequestEvent as baseUseRequestEvent } from "nuxt/app";
 
 import { httpLink } from "#src/runtime/client/httpLink";
@@ -10,7 +10,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const { useRequestEvent, useTrpcServerFetch } = vi.hoisted(() => ({
   useRequestEvent: vi.fn<typeof baseUseRequestEvent>(),
-  useTrpcServerFetch: vi.fn<() => typeof serverFetch>(),
+  useTrpcServerFetch: vi.fn<() => TrpcServerFetch>(),
 }));
 vi.mock(import("nuxt/app"), () => ({ useRequestEvent }));
 vi.mock(import("#src/runtime/client/services/useTrpcServerFetch"), () => ({ useTrpcServerFetch }));
@@ -54,7 +54,7 @@ describe(httpLink, () => {
   test("sends through the Nitro app in-process, cookies included, when the request event has no app", async () => {
     expect.hasAssertions();
 
-    const trpcServerFetch = vi.fn<typeof serverFetch>().mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
+    const trpcServerFetch = vi.fn<TrpcServerFetch>().mockResolvedValueOnce(Response.json({ result: { data: 0 } }));
     useTrpcServerFetch.mockReturnValueOnce(trpcServerFetch);
     useRequestEvent.mockReturnValueOnce(
       new H3Event(new Request("http://localhost/", { headers: { cookie: "session=1" } })),
@@ -63,7 +63,7 @@ describe(httpLink, () => {
 
     await expect(client.read.query()).resolves.toBe(0);
     const [resource, init] = trpcServerFetch.mock.calls[0] ?? [];
-    expect(String(resource)).toBe("http://localhost/read");
+    expect(resource).toStrictEqual(new URL("http://localhost/read"));
     expect(new Headers(init?.headers).get("cookie")).toBe("session=1");
   });
 });

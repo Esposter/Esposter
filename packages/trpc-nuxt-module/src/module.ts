@@ -10,11 +10,9 @@ import { getWebSocketHandlerTemplate } from "#src/services/getWebSocketHandlerTe
 import { getWebSocketHooksTypeTemplate } from "#src/services/getWebSocketHooksTypeTemplate";
 import {
   addImports,
-  addPlugin,
   addServerHandler,
   addServerTemplate,
   addTypeTemplate,
-  createResolver,
   defineNuxtModule,
   resolvePath,
 } from "@nuxt/kit";
@@ -35,11 +33,6 @@ const trpcNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions
   defaults: { endpoint: DEFAULT_ENDPOINT },
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "trpc", name: MODULE_NAME },
   async setup({ createContext, endpoint, router, webSocket }, nuxt) {
-    // Server rendering only, where Nitro's in-process fetch exists, so the client bundle never loads the Nitro app
-    addPlugin({
-      mode: "server",
-      src: createResolver(import.meta.url).resolve("./runtime/server/plugins/trpcServerFetch"),
-    });
     // Resolved here, through the app's aliases, since the generated handlers are bundled by Nitro, which knows none
     const resolvedRouter = { ...router, from: await resolvePath(router.from) };
     const resolvedCreateContext = createContext && { ...createContext, from: await resolvePath(createContext.from) };

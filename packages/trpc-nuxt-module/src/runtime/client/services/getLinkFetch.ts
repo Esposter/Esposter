@@ -18,7 +18,7 @@ export const getLinkFetch = (): TRPCFetch => {
       const serverFetchInProcess = useTrpcServerFetch();
       return (url, options) => {
         const headers = new Headers(getProxyRequestHeaders(event, { host: true }));
-        new Headers(options?.headers).forEach((value, name) => headers.set(name, value));
+        for (const [name, value] of new Headers(options?.headers)) headers.set(name, value);
         return serverFetchInProcess(new URL(url, event.url), { ...options, headers }, event.context);
       };
     }
