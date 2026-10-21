@@ -1,6 +1,6 @@
 ---
 name: run-app
-description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives over the app, and no app screenshot suite (rejected: a production build per run, no findings); the Genshin parity loop is the one exception. The offline CSS for a styling question, a component test when one is cheap, and the user's own eyes. Also covers launching the dev server for the user.
+description: Apply when tempted to screenshot a page, drive the running app, or decide what proves a layout or dialog change works. Esposter — how a UI change is verified: never a browser the agent drives over the app, and no app screenshot suite (rejected: a production build per run, no findings); the Genshin parity loop is the one exception.
 ---
 
 # Verifying a UI Change

@@ -7,13 +7,13 @@ The commands are for the Windows machine the repo is developed on: the launch ru
 **Port 3000 belongs to the user. An agent-started server always takes `--port 3001`**, so the two never race for a port and killing one never takes the other's session down:
 
 ```bash
-# $SCRATCHPAD is the session scratchpad directory named in the system prompt — substitute it before running
-cd apps/web && nohup pnpm dev --port 3001 > "$SCRATCHPAD/dev.log" 2>&1   # run_in_background
+# <scratch> is a directory outside the tree, for logs — substitute it before running
+cd apps/web && nohup pnpm dev --port 3001 > "<scratch>/dev.log" 2>&1   # run_in_background
 ```
 
 What bites, all of it cheaply:
 
-- **One dev server per directory.** Nuxt takes a lock on `apps/web` and a second `pnpm dev` there refuses to start — `Another Nuxt dev server is already running (PID …)` — whatever port it was given. If the user already has one up, use theirs; do not start a second and do not reach for `NUXT_IGNORE_LOCK=1`, which lets two servers fight over one `.nuxt` cache and corrupts the build for both.
+- **One dev server per directory.** Nuxt takes a lock on `apps/web` and a second `pnpm dev` there refuses to start — `Another Nuxt dev server is already running:` followed by its `PID` line — whatever port it was given. If the user already has one up, use theirs; do not start a second and do not reach for `NUXT_IGNORE_LOCK=1`, which lets two servers fight over one `.nuxt` cache and corrupts the build for both.
 - **It binds `::1`, not `127.0.0.1`.** `curl http://localhost:PORT` fails with connection-refused while the server is perfectly healthy. Use `http://[::1]:PORT`, or PowerShell's `Invoke-WebRequest` (which resolves both).
 - **The first request builds the client bundle** and can sit for minutes; a 90s timeout looks like a hang. Give it 300s+ before concluding anything.
 - **Killing the wrapper leaves the server.** Stopping the background shell kills `pnpm`, not the `nuxt.mjs` child — it keeps the port and the lock. Kill by PID tree (`taskkill /PID <pid> /T /F`), and check `Get-NetTCPConnection -State Listen -LocalPort 3000,3001` afterwards.
