@@ -1,6 +1,6 @@
 ---
 name: package-scripts
-description: Apply when running or recommending any pnpm script. Esposter's pnpm scripts — which script runs a check, a build, a bench or the release and from where; nuxt typecheck and the root lint as the only checks matching CI, a root check aggregating named leaves with dependsOn, the touched tests as the one local check, scoped to the paths touched, and the pnpm traps (a --filter matching nothing exits 0, `pnpm <script> -- <args>` dropping the args, a workflow running the binary instead of the script) — plus the ai:* catalogue an agent runs.
+description: Apply when running or recommending any pnpm script. Esposter's pnpm scripts — which script runs each check, build, bench and the release, and from where, and how a pnpm invocation fails without saying so — plus the ai:* catalogue an agent runs.
 ---
 
 # Package Scripts
