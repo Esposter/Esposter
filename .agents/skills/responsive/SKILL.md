@@ -1,6 +1,6 @@
 ---
 name: responsive
-description: Apply when adding or editing any toolbar, action row, button group or surface that must work on mobile, or when tempted to write a device-specific component or folder. Esposter responsive UI — one component for every device and the promotion ladder before a device-specific one, the hidden class over the hidden attribute, occasional commands in one overflow menu on every width, what stays out of it, and when a row may wrap.
+description: Apply when adding or editing any toolbar, action row, button group or surface that must work on mobile, or when tempted to write a device-specific component or folder. Esposter responsive UI — one component for every device, never a device-specific variant.
 ---
 
 # Responsive / Mobile UI
@@ -24,10 +24,25 @@ A surface shows its toggles, its one lead action and its close mark, and keeps e
 const items = computed<Item[]>(() => [
   { meaning: UiIconMeaning.Download, onClick: () => emit("export"), title: "Export CSV" },
   { meaning: UiIconMeaning.Refresh, onClick: () => emit("refresh"), title: "Refresh" },
+  {
+    isGroupStart: true,
+    meaning: UiIconMeaning.Delete,
+    onClick: async () => {
+      await navigateTo(RoutePath.ResourceExplorerRecycleBin);
+    },
+    title: "Recycle bin",
+  },
 ]);
 </script>
 
 <template>
+  <UiIconButton
+    :aria-pressed="isSummaryView"
+    label="Summary view"
+    :meaning="UiIconMeaning.Summary"
+    :variant="UiButtonVariant.Quiet"
+    @click="isSummaryView = !isSummaryView"
+  />
   <UiIconButton
     :aria-pressed="isGroupedByType"
     label="Group by type"
@@ -44,7 +59,7 @@ const items = computed<Item[]>(() => [
 ### What stays out of the menu
 
 - **Close / dismiss (`✕`)** — the escape hatch must never be buried inside a menu.
-- **A control that is already its own dropdown** (the column chooser above). It is already one tap to a list; nesting a menu inside a menu is worse than leaving it out. Leave it beside the `…`.
+- **A control that is already its own dropdown** (the column chooser in the toolbar example under "Occasional commands wait in the overflow menu" on this page). It is already one tap to a list; nesting a menu inside a menu is worse than leaving it out. Leave it beside the `…`.
 - **The primary action of the screen**, when the screen has exactly one.
 - **A toggle**, which says whether it is on — a state a menu row hides until it is opened.
 
