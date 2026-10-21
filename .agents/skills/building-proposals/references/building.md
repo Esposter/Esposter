@@ -26,7 +26,7 @@ A direct ask is its own spec, and writing a proposal first would be ceremony. Wh
 
 ## What the build leaves out
 
-A build takes the lean core of what it was asked, the same as a pass does (the `product-review` skill, "Taking the reference product whole"). Every larger part it knowingly leaves out is written as a deferred or rejected page in the same change, so the next pass reads it as decided instead of finding it as a gap.
+A build takes the lean core of what it was asked, the same as a pass does (the `product-review` skill's `SKILL.md`, the rule "Taking the reference product whole"). Every larger part it knowingly leaves out is written as a deferred or rejected page in the same change, so the next pass reads it as decided instead of finding it as a gap.
 
 ## Commits
 
