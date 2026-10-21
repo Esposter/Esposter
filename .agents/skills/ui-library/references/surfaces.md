@@ -1,6 +1,6 @@
 # Surfaces
 
-Read when choosing between a card and a row, drawing a list row, dressing a surface, or recolouring one for a state. The one-line rules are in `SKILL.md`; this page is their full statement.
+Read when choosing between a card and a row, drawing a list row, dressing a surface, or recolouring one for a state. The one-line rules sit in `SKILL.md`; the reasons for them are here.
 
 - **A card is not a row.** What a reader chooses whole from among its siblings — a post, a type to create, an achievement — is a `ui-card`, a frame that takes the style's hover; `ui-item` and `ui-row` are for a list or a menu. Minimal never means turning cards into rows: a menu's look on a page's content blends what is picked into what is chosen from.
 
