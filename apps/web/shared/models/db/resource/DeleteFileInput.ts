@@ -1,11 +1,11 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { BLOB_SEGMENT_MAX_LENGTH, BLOB_SEGMENT_REGEX } from "@esposter/db-schema";
+import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { z } from "zod";
 
 export const deleteFileInputSchema = z.object({
-  // The client recovers this from the stable asset url, so it is always the single `{id}|{filename}` segment
-  // `getBlobName` emits — a separator or a `..` could only ever be an attempt to climb out of {id}/files/
+  // The client recovers this from the stable asset url, and the release takes it as the address the file is stored under,
+  // So only the lowercase hex hash of the file's bytes is accepted
   ...resourceIdInputSchema.shape,
-  blobPath: z.string().min(1).max(BLOB_SEGMENT_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
+  blobPath: z.string().regex(ASSET_HASH_REGEX),
 });
 export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;

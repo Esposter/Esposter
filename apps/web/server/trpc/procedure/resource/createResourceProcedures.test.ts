@@ -1,7 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { Clause } from "@esposter/azure";
-import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks } from "#server/auth.test";
@@ -19,14 +18,16 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
+import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import {
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
+import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getBlobName, getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
+import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
   AzureContainer,
   AzureFunction,
@@ -35,11 +36,12 @@ import {
   resourcesInResource,
   ResourceType,
   ResourceViewEntity,
-  SnapshotChannel,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import {
+  getBlobUrl,
+  getMockSasUrl,
   MockBlobClient,
   MockContainerDatabase,
   MockEventGridDatabase,
@@ -62,6 +64,7 @@ describe(createResourceProcedures, () => {
   const name = "name";
   const updatedName = "updatedName";
   const filename = "filename";
+  const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
   const size = 1;
   // Uploads a staged save the way the client does — through the write target its SAS query reserves — and hands
@@ -89,6 +92,7 @@ describe(createResourceProcedures, () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
+    MockEventGridDatabase.clear();
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
     await mockContext.db.delete(resourcesInResource);
@@ -281,10 +285,10 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(dashboard)));
+    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(dashboard)));
     const updatedResource = await dashboardCaller.saveStagedResourceContent({
       contentVersion: newResource.contentVersion,
-      hash,
+      hash: stagedHash,
       id: newResource.id,
     });
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
@@ -303,11 +307,11 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
     await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] }))));
 
     await expect(
-      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
     );
@@ -319,7 +323,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const compressedContent = gzipSync(JSON.stringify(new Dashboard()));
-    const hash = await stageContent(newResource.id, compressedContent);
+    const stagedHash = await stageContent(newResource.id, compressedContent);
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
     const { etag } = await containerClient
       .getBlockBlobClient(getStagingContentBlobName(newResource.id))
@@ -329,7 +333,7 @@ describe(createResourceProcedures, () => {
       .mockRejectedValueOnce(new MockRestError("", 412));
 
     await expect(
-      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
     );
@@ -344,14 +348,14 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
     vi.spyOn(MockBlobClient.prototype, "getProperties").mockResolvedValueOnce({
       _response: { headers: {}, request: {}, status: 200 },
       contentLength: MAX_RESOURCE_CONTENT_SIZE + 1,
     } as Awaited<ReturnType<MockBlobClient["getProperties"]>>);
 
     await expect(
-      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Resource, staged content is larger than 100000000 bytes]`,
     );
@@ -362,10 +366,10 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const hash = await stageContent(newResource.id, gzipSync(Buffer.alloc(MAX_RESOURCE_CONTENT_SIZE + 1)));
+    const stagedHash = await stageContent(newResource.id, gzipSync(Buffer.alloc(MAX_RESOURCE_CONTENT_SIZE + 1)));
 
     await expect(
-      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Resource, staged content is not a gzip of at most 100000000 bytes]`,
     );
@@ -377,10 +381,10 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    const hash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
 
     await expect(
-      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash, id: newResource.id }),
+      dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${STALE_CONTENT_VERSION_ERROR_MESSAGE}]`);
   });
 
@@ -502,17 +506,29 @@ describe(createResourceProcedures, () => {
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
     );
     await expect(resourceCaller.readSnapshotHistory({ id: newResource.id })).resolves.toHaveLength(1);
-    // The one deletion an unpublish always publishes is the asset clones' prefix, never the object
+    // The revision still names the object, so the unpublish publishes no deletion for it
     const blobDeletionEvents = (MockEventGridDatabase.get("")?.slice(publishedEventCount) ?? []).filter(
       ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
     );
 
-    expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      containerName: AzureContainer.ResourceAssets,
-      createdBefore: new Date(0),
-      prefix: `${newResource.id}/${SnapshotChannel.Published}`,
-    });
+    expect(blobDeletionEvents).toStrictEqual([]);
+  });
+
+  test("unpublishing removes the publication and its version rows in one transaction", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await dashboardCaller.publishResource({ id: newResource.id });
+
+    await dashboardCaller.unpublishResource({ id: newResource.id });
+
+    await expect(
+      mockContext.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: newResource.id } } }),
+    ).resolves.toBeUndefined();
+    await expect(
+      mockContext.db.query.resourceVersionsInResource.findMany({ where: { resourceId: { eq: newResource.id } } }),
+    ).resolves.toStrictEqual([]);
   });
 
   // A sweep is bounded at the instant it is decided, so one published for a resource that has nothing published
@@ -671,11 +687,15 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const sasEntities = await webpageCaller.generateUploadFileSasEntities({
-      files: [{ filename, mimetype, size }],
+      files: [{ hash, mimetype, size }],
       id: newResource.id,
     });
 
-    expect(sasEntities).toHaveLength(1);
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+
+    expect(sasEntities).toStrictEqual([
+      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+    ]);
   });
 
   test("fails generate upload file sas entities with wrong user", async () => {
@@ -685,30 +705,71 @@ describe(createResourceProcedures, () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      webpageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype, size }], id: newResource.id }),
+      webpageCaller.generateUploadFileSasEntities({ files: [{ hash, mimetype, size }], id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("publishes file deletion", async () => {
+  // The file's blob is named by its hash and the delete hands that hash to the release path. Nothing is published for
+  // Deletion here, so the image is still in the container for the release to decide on
+  test("removing an image from the working copy keeps it on the published page", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    // The input path is relative to the files directory — the server anchors it under {id}/files/
-    const blobPath = getBlobName(crypto.randomUUID(), filename);
-    const blobName = `${getFilesDirectoryName(newResource.id)}/${blobPath}`;
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
-    await webpageCaller.deleteFile({ blobPath, id: newResource.id });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
-    assert.exists(blobDeletionEvents);
+    await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
+    const blobDeletionEvents = (MockEventGridDatabase.get("") ?? []).filter(
+      ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
+    );
 
-    // The delete rides the one durable deletion publish, so the blob outlives the mutation and the handler
-    // Removes it (openspec/specs/architecture/blob-lifecycle/design.md)
-    expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [blobName],
-      containerName: AzureContainer.ResourceAssets,
-    });
+    expect(blobDeletionEvents).toStrictEqual([]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(true);
+  });
+
+  // A version naming an asset the container no longer holds is refused, so a publish that races a file's delete cannot
+  // Store a page whose image is gone
+  test("publishing a version whose asset was just deleted fails", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      contentVersion: 0,
+      id: newResource.id,
+    });
+    // Deleted after the working copy named it, as the file delete does before the release decides on it
+    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
+
+    await expect(webpageCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Create, name: Resource, cannot store a version naming a missing asset]`,
+    );
+  });
+
+  test("publishing a version touches the assets it names", async () => {
+    expect.hasAssertions();
+
+    const newResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await webpageCaller.saveResourceContent({
+      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      contentVersion: 0,
+      id: newResource.id,
+    });
+    // A pass-through spy: the real mock write runs, and the spy records which blobs the publish touched
+    const touchedBlobNames: string[] = [];
+    const setMetadata = MockBlobClient.prototype.setMetadata;
+    vi.spyOn(MockBlobClient.prototype, "setMetadata").mockImplementation(function (this: MockBlobClient, metadata) {
+      touchedBlobNames.push(this.name);
+      return setMetadata.call(this, metadata);
+    });
+
+    await webpageCaller.publishResource({ id: newResource.id });
+
+    expect(touchedBlobNames).toStrictEqual([blobName]);
   });
 
   test("rejects a file path that climbs out of the files directory", async () => {
@@ -723,11 +784,11 @@ describe(createResourceProcedures, () => {
           "origin": "string",
           "code": "invalid_format",
           "format": "regex",
-          "pattern": "/^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u",
+          "pattern": "/^[0-9a-f]{64}$/u",
           "path": [
             "blobPath"
           ],
-          "message": "Invalid string: must match pattern /^(?!\\\\.{1,2}$)[^/\\\\\\\\]+$/u"
+          "message": "Invalid string: must match pattern /^[0-9a-f]{64}$/u"
         }
       ]]
     `);

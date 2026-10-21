@@ -3,7 +3,6 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
-import { transformPublishedBlobUrls } from "#server/services/resource/transformPublishedBlobUrls";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { openSurveyResponseWrite } from "#server/services/survey/openSurveyResponseWrite";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
@@ -34,7 +33,7 @@ const standardRespondentProcedure = standardRateLimitedProcedure.meta({ humanOnl
 export const surveyRouter = router({
   // Survey uploads come from the shared fileAssets capability rather than a bespoke set here —
   // See ResourceDefinitionMap
-  ...createResourceProcedures(ResourceType.Survey, { transformPublishedContent: transformPublishedBlobUrls }),
+  ...createResourceProcedures(ResourceType.Survey),
   createSurveyResponse: slowRespondentProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {

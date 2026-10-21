@@ -41,6 +41,7 @@ import { resourceLinksInResource, resourceLinkTypeEnum } from "#src/schema/resou
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource, resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
+import { resourceVersionAssetsInResource } from "#src/schema/resource/resourceVersionAssetsInResource";
 import { resourceVersionsInResource, snapshotChannelEnum, snapshotReasonEnum } from "#src/schema/resource/resourceVersionsInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
@@ -87,6 +88,7 @@ export const schema = {
   resourceSchema,
   resourcesInResource,
   resourceTypeEnum,
+  resourceVersionAssetsInResource,
   resourceVersionsInResource,
   roomCategoriesInMessage,
   roomEmojisInMessage,

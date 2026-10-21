@@ -2,11 +2,14 @@ import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
+import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { createHash } from "node:crypto";
+import { MockBlockBlobClient, MockContainerDatabase, MockRestError } from "azure-mock";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -15,6 +18,8 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
+
+vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 // The meter lives in the app process, so publishing is the only thing this handler can do about it — which
 // Makes the group it publishes to the assertable half: it has to be the owner whose counter moved
@@ -32,6 +37,13 @@ vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
       },
     }) as never,
 }));
+
+const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
+const readResourceAssetNames = () => {
+  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  assert.exists(container);
+  return [...container.keys()];
+};
 
 describe(reconcileStorageLedgerEntryHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
@@ -52,9 +64,23 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   });
 
   afterEach(async () => {
+    MockContainerDatabase.clear();
+    vi.restoreAllMocks();
     await mockDb.delete(storageLedgerInStorage);
     await mockDb.update(usersInAuth).set({ storageBytesUsed: 0 });
   });
+
+  const resourceId = crypto.randomUUID();
+  const resourceAssetContent = " ";
+  const matchingResourceAssetName = `${resourceId}/files/${hashOf(resourceAssetContent)}`;
+  // The hash of the other canonical value, so the name describes bytes the blob does not hold
+  const mismatchedResourceAssetName = `${resourceId}/files/${hashOf("")}`;
+  const createResourceAssetEvent = (name: string) =>
+    createBlobCreatedEvent(`${getBlobSubjectPrefix(AzureContainer.ResourceAssets)}${name}`);
+  const seedResourceAsset = async (name: string) => {
+    const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+    await containerClient.getBlockBlobClient(name).upload(resourceAssetContent, resourceAssetContent.length);
+  };
 
   const createStorageLedgerEntry = () =>
     mockDb
@@ -124,5 +150,55 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
+  });
+
+  test("a resource asset whose bytes match its name is kept", async () => {
+    expect.hasAssertions();
+
+    await seedResourceAsset(matchingResourceAssetName);
+    const downloadSpy = vi.spyOn(MockBlockBlobClient.prototype, "download");
+    const errorSpy = vi.spyOn(context, "error");
+    await reconcileStorageLedgerEntryHandler(createResourceAssetEvent(matchingResourceAssetName), context);
+
+    expect(downloadSpy).toHaveBeenCalledExactlyOnceWith();
+    expect(readResourceAssetNames()).toStrictEqual([matchingResourceAssetName]);
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  test("a resource asset whose bytes do not match its name is deleted", async () => {
+    expect.hasAssertions();
+
+    await seedResourceAsset(mismatchedResourceAssetName);
+    const errorSpy = vi.spyOn(context, "error");
+    await reconcileStorageLedgerEntryHandler(createResourceAssetEvent(mismatchedResourceAssetName), context);
+
+    expect(readResourceAssetNames()).toStrictEqual([]);
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
+  });
+
+  test("a redelivered event for a deleted resource asset is a no-op", async () => {
+    expect.hasAssertions();
+
+    await seedResourceAsset(mismatchedResourceAssetName);
+    const errorSpy = vi.spyOn(context, "error");
+    const event = createResourceAssetEvent(mismatchedResourceAssetName);
+    await reconcileStorageLedgerEntryHandler(event, context);
+    await expect(reconcileStorageLedgerEntryHandler(event, context)).resolves.toBeUndefined();
+
+    expect(readResourceAssetNames()).toStrictEqual([]);
+    expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
+  });
+
+  // A failed read proves nothing about the bytes, so the blob is left for the redelivery rather than deleted on a guess
+  test("a failed download of a resource asset is retried rather than deleted", async () => {
+    expect.hasAssertions();
+
+    await seedResourceAsset(mismatchedResourceAssetName);
+    vi.spyOn(MockBlockBlobClient.prototype, "download").mockRejectedValueOnce(new MockRestError("", 503));
+
+    await expect(
+      reconcileStorageLedgerEntryHandler(createResourceAssetEvent(mismatchedResourceAssetName), context),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[MockRestError]`);
+    expect(readResourceAssetNames()).toStrictEqual([mismatchedResourceAssetName]);
   });
 });

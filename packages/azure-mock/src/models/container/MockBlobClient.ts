@@ -23,6 +23,7 @@ import type {
   BlobSetTierResponse,
   BlobUndeleteResponse,
   BlockBlobClient,
+  Metadata,
   PageBlobClient,
   PollerLikeWithCancellation,
   PollOperationState,
@@ -35,11 +36,13 @@ import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";
+import { getMockBlobKey } from "#src/services/container/getMockBlobKey";
 import { getMockContainer } from "#src/services/container/getMockContainer";
 import { readMockBlobDates } from "#src/services/container/readMockBlobDates";
 import { storeMockBlobWrite } from "#src/services/container/storeMockBlobWrite";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";
+import { MockContainerBlobMetadataDatabase } from "#src/store/MockContainerBlobMetadataDatabase";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { AnonymousCredential } from "@azure/storage-blob";
 import { noop } from "@esposter/shared";
@@ -208,8 +211,15 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     throw new NotImplementedError(this.setLegalHold.name);
   }
 
-  setMetadata(): Promise<BlobSetMetadataResponse> {
-    throw new NotImplementedError(this.setMetadata.name);
+  // A metadata write replaces the metadata wholesale and moves the blob's last-modified time and etag, as the service does
+  setMetadata(metadata?: Metadata): Promise<BlobSetMetadataResponse> {
+    if (!this.container.has(this.name)) throw new MockRestError(BLOB_NOT_FOUND_MESSAGE, 404);
+    MockContainerBlobMetadataDatabase.set(getMockBlobKey(this.containerName, this.name), metadata ?? {});
+    storeMockBlobWrite(this.containerName, this.name, true);
+    return Promise.resolve({
+      _response: createMockResponse(200),
+      ...readMockBlobDates(this.containerName, this.name),
+    } as BlobSetMetadataResponse);
   }
 
   setTags(): Promise<BlobSetTagsResponse> {

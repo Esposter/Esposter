@@ -25,11 +25,25 @@ export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
 // The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
 // `SnapshotChannel` value rather than a constant restating it
 export const FILES_DIRECTORY_SEGMENT = "files";
+// The address of an uploaded file: the lowercase hex SHA-256 of its bytes, the last segment of its blob name
+export const ASSET_HASH_REGEX = /^[0-9a-f]{64}$/u;
 // How long after the last revision the next save is worth keeping one of. Autosave fires on every coalesced
 // Keystroke batch, so without a throttle a working session would take a revision per batch — burning the
 // Owner's storage quota while they type and growing a listing nothing bounds. One per interval is the ceiling,
 // And against the ring buffer's cap it is also what decides how far back a session can reach
 export const SNAPSHOT_INTERVAL_MS = Temporal.Duration.from({ minutes: 15 }).total("milliseconds");
+// How long an asset stays after it was last written or re-uploaded before a collection may delete it. An upload that
+// Dedupes onto an existing object touches it, and the save naming that object lands a moment later, so a collection
+// Running between the two must not take the object from under the save
+export const ASSET_GRACE_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+// How far the release moves its decision time back before a replayed deletion is judged against it. The decision is
+// stamped by this server and the blob's last-written time by storage, so a skewed clock could otherwise let a re-upload
+// that landed just after the decision read as older than it. Moving the stamp back keeps such a blob, and a later release
+// collects it once it is unreferenced
+export const ASSET_DECISION_CLOCK_MARGIN_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
+// Counting-only: while this is off, release computes the unreferenced assets, logs their count and deletes nothing.
+// Read through a function so the rollout flips one return value, and so a suite can hold it either way
+export const isAssetCollectionEnabled = (): boolean => false;
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
 export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;
 // Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction —

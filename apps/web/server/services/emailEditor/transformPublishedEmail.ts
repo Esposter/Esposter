@@ -2,7 +2,6 @@ import type { PublishableResourceProcedureOptions } from "#server/models/resourc
 import type { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import type { ToData } from "@esposter/shared";
 
-import { transformPublishedBlobUrls } from "#server/services/resource/transformPublishedBlobUrls";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
@@ -12,12 +11,12 @@ import { Operation } from "@esposter/shared";
 // Anonymous public read can never leak it
 export const transformPublishedEmail: NonNullable<
   PublishableResourceProcedureOptions<ToData<EmailEditor>>["transformPublishedContent"]
-> = (ctx, resource, content) => {
+> = (_ctx, _resource, content) => {
   if (!content.html)
     throw getInvalidOperationError(
       Operation.Update,
       DatabaseEntityType.Resource,
       "cannot publish email without compiled html",
     );
-  return transformPublishedBlobUrls(ctx, resource, { ...content, datasetReference: undefined });
+  return { ...content, datasetReference: undefined };
 };

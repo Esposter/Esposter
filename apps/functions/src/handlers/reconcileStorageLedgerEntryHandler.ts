@@ -3,6 +3,7 @@ import type { EventGridHandler } from "@azure/functions";
 import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
+import { verifyResourceAssetBlob } from "#src/services/storage/verifyResourceAssetBlob";
 import { reconcileStorageLedgerEntry } from "@esposter/db";
 import { AzureContainer, AzureFunction, blobCreatedEventGridDataSchema, parseBlobSubject } from "@esposter/db-schema";
 import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
@@ -36,15 +37,16 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
       if (chargedUserId) await broadcastStorageUsage(context, [chargedUserId]);
       return isMatched;
     };
-    if (await reconcile(blobName)) return;
+    const isMatched = await reconcile(blobName);
     // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
     // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
     // Which form a given event used, the decoded form is tried only once the raw one has found no row.
     // A filename holding a lone `%` decodes to nothing valid, and falling back to the raw name keeps that a
     // No-op — throwing would turn an unreserved blob, which is not an error, into a poison event
     const decodedBlobName = getDecodedUriComponent(blobName, blobName);
-    if (decodedBlobName === blobName) return;
-
-    await reconcile(decodedBlobName);
+    if (!isMatched && decodedBlobName !== blobName) await reconcile(decodedBlobName);
+    // Verified after the ledger step so a mismatched blob is charged before its deletion raises BlobDeleted, which
+    // Releases the charge. A resource asset's name holds no characters storage encodes, so the raw name is the stored one
+    await verifyResourceAssetBlob(context, blobName);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

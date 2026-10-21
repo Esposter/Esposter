@@ -4,6 +4,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { readSerializedResourceContent } from "#server/services/resource/readSerializedResourceContent";
 import { chargeSnapshotVersion } from "#server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
+import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
+import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { getSnapshotRetainedSince } from "#shared/services/resource/getSnapshotRetainedSince";
@@ -69,9 +71,10 @@ export const takeResourceRevision = async (
   // Collection publishes exactly the objects nothing else references — so eviction never names a blob that is not
   // There, and a burned number is not a concept that exists (openspec/specs/resource/resource-snapshots/design.md)
   const { maxRetained } = SnapshotChannelDefinitionMap[SnapshotChannel.Revisions];
-  const evictedVersions = await ctx.db
-    .delete(resourceVersionsInResource)
-    .where(
+  const { assetHashes, deletedVersions: evictedVersions } = await ctx.db.transaction((tx) =>
+    deleteSnapshotVersions(
+      tx,
+      id,
       and(
         eq(resourceVersionsInResource.resourceId, id),
         eq(resourceVersionsInResource.channel, SnapshotChannel.Revisions),
@@ -80,9 +83,10 @@ export const takeResourceRevision = async (
           lte(resourceVersionsInResource.createdAt, getSnapshotRetainedSince(SnapshotChannel.Revisions)),
         ),
       ),
-    )
-    .returning({ baseHash: resourceVersionsInResource.baseHash, hash: resourceVersionsInResource.hash });
+    ),
+  );
   if (evictedVersions.length > 0)
     await getResultAsync(() => collectSnapshotObjects(ctx.db, id, evictedVersions)).match(noop, console.error);
+  await getResultAsync(() => releaseResourceAssets(ctx.db, id, assetHashes)).match(noop, console.error);
   return revisionVersion;
 };

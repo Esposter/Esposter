@@ -1,4 +1,5 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { BlobStorageStatusError } from "@/models/azure/container/BlobStorageStatusError";
+import { Operation } from "@esposter/shared";
 
 // Blob Storage refuses a request with an error status rather than a failed request, so every call the browser
 // Makes to it reads the status: unread, an expired SAS or a refused block reports an upload as landed and a read
@@ -6,10 +7,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const requestBlobStorage = async (url: string, init: RequestInit): Promise<Response> => {
   const response = await fetch(url, init);
   if (!response.ok)
-    throw new InvalidOperationError(
+    throw new BlobStorageStatusError(
       init.method === "GET" ? Operation.Read : Operation.Create,
       requestBlobStorage.name,
-      `Blob Storage answered ${response.status}`,
+      response.status,
     );
   return response;
 };

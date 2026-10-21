@@ -92,7 +92,7 @@ describe(uploadBlocks, () => {
     await expect(
       uploadBlocks(new Blob([new Uint8Array(8 * MEGABYTE + 1)]), sasUrl, progressNotifier),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
     );
     expect(progressNotifier.mock.calls).toStrictEqual([[1 / 3], [2 / 3]]);
   });
@@ -119,7 +119,29 @@ describe(uploadBlocks, () => {
     );
 
     await expect(uploadBlocks(new Blob([" "]), sasUrl)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
     );
+  });
+
+  // The create-only header belongs to the commit alone: a block put carrying it would be refused on every block
+  test("sends If-None-Match on the commit alone when the upload is create-only", async () => {
+    expect.hasAssertions();
+
+    const fetchMock = stubFetch();
+    const contentType = MimeType.PlainText;
+    await uploadBlocks(new Blob([" "], { type: contentType }), sasUrl, undefined, { isCreateOnly: true });
+    const [, blockInit] = takeOne(fetchMock.mock.calls);
+    const [, commitInit] = getCommitCall(fetchMock);
+
+    expect(blockInit.headers).toStrictEqual({
+      "Content-Type": contentType,
+      "x-ms-blob-content-type": contentType,
+      "x-ms-blob-type": "BlockBlob",
+    });
+    expect(commitInit.headers).toStrictEqual({
+      "Content-Type": MimeType.Xml,
+      "If-None-Match": "*",
+      "x-ms-blob-content-type": contentType,
+    });
   });
 });

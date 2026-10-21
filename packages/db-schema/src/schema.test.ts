@@ -60,6 +60,7 @@ describe("schema", () => {
       posts_title_length_check: LENGTH("post"."posts"."title") <= 300
       posts_description_length_check: LENGTH("post"."posts"."description") <= 1000
       resources_name_length_check: LENGTH(TRIM("resource"."resources"."name")) BETWEEN 1 AND 100
+      resourceVersionAssets_assetHash_check: "resource"."resourceVersionAssets"."assetHash" ~ '^[0-9a-f]{64}$'
       resourceVersions_plaintextBytes_check: "resource"."resourceVersions"."plaintextBytes" >= 0
       resourceVersions_storedBytes_check: "resource"."resourceVersions"."storedBytes" >= 0
       roomCategories_name_length_check: LENGTH(TRIM("message"."roomCategories"."name")) BETWEEN 1 AND 100

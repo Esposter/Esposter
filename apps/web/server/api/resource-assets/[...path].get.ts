@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
   const encodedPath = event.url.pathname.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length);
   const resourceAssetPath = encodedPath ? parseResourceAssetPath(encodedPath) : undefined;
   if (!resourceAssetPath) throw createError({ status: 400 });
-  const { blobName, isPublished } = resourceAssetPath;
+  const { blobName } = resourceAssetPath;
 
   const getSessionPayload = await readSession(event.req.headers);
   if (IS_PRODUCTION) {
@@ -42,19 +42,15 @@ export default defineEventHandler(async (event) => {
       });
     else console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
   }
-  // Working-copy assets are only ever rendered inside the owner's editor (same-origin, cookies present), so an
-  // Anonymous request for one is a missing credential rather than a missing asset. A published url has no such
-  // Distinction — it is anonymous-capable while a publication row exists, and a 401 would leak that the row is
-  // Gone — so everything else the predicate refuses is a 404.
+  // A stranger is refused as unauthenticated whatever the asset is, so a working-only image and a missing one look the
+  // Same to them. A signed-in caller who may not read it gets a 404.
   //
-  // Published views render in a sandboxed srcdoc iframe whose opaque origin sends no cookies with asset
-  // Requests, which is why the owner fallback inside the predicate cannot rescue a render inside that iframe,
-  // Only a direct request for the asset url (opening the image in its own tab). Inside the iframe, no row means
-  // The images are broken for the owner too; that is what unpublish revoking anonymous access costs, and it is
-  // The point of the control
-  if (!isPublished && !getSessionPayload) throw createError({ status: 401 });
-  if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, getSessionPayload?.user.id)))
-    throw createError({ status: 404 });
+  // Published views render in a sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests, so an
+  // Owner's own render inside that iframe is refused the same way; only a direct request for the asset url reaches the
+  // Owner fallback. That is what unpublish revoking anonymous access costs, and the point of the control
+  const userId = getSessionPayload?.user.id;
+  if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, userId)))
+    throw createError({ status: userId ? 404 : 401 });
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
   const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {

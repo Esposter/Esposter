@@ -39,8 +39,11 @@ import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiv
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
+import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
+import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
+import { requireSnapshotAssetsExist } from "#server/services/resource/snapshot/requireSnapshotAssetsExist";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
@@ -65,11 +68,9 @@ import { restoreResourcesInputSchema } from "#shared/models/db/resource/RestoreR
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
 import { updateResourceContentInputSchema } from "#shared/models/db/resource/UpdateResourceContentInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
-import { SnapshotKind } from "#shared/models/resource/SnapshotKind";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { purgeResource } from "@esposter/db";
 import {
@@ -124,13 +125,9 @@ export const resourceRouter = router({
         },
         ResourceActivityType.Duplicated,
       );
-      // A copy starts as Draft, so only the draft content is copied — never the publication. The clone gives
-      // The copy its own blobs for every referenced asset — working-copy and published — under {newId}/ with
-      // The source-relative path preserved, and rewrites the embedded urls, so the copy is fully self-contained:
-      // Its editor can delete its files, and deleting or unpublishing the original never strands it. Content
-      // Taken from somewhere else is never written without that clone — a copy that kept the source's urls is
-      // Broken by anything the source does later, and only surfaces once a reader opens a page whose images 404
-      // Never leave a content-less orphan copy behind when the content clone fails
+      // A copy starts as Draft, so only the draft content is copied — never the publication. The copy holds its own
+      // Object for every asset it references, under its own files directory, so deleting or unpublishing the original
+      // Never strands it. Never leave a content-less orphan copy behind when the content clone fails
       await withResourceRollback(ctx, [newResource.id], async () => {
         const content = await readResourceContent(ResourceDefinitionMap[type].contentSchema, ctx.resource.id);
         // The blob is written on first save, so missing content just means there is nothing to copy yet
@@ -437,23 +434,14 @@ export const resourceRouter = router({
     // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
     // The version preview reconstitute through
     const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
-    // Cloned before the transaction opens, exactly as `publishResource` does it: the clone is one storage
-    // Round trip per referenced asset, and running it inside would hold a pooled connection — not just the
-    // `resources` row lock — for that whole time, so a handful of concurrent restores of asset-heavy
-    // Resources would starve the pool for requests that have nothing to do with them.
-    // Blobs a partial clone already wrote stay under this resource's own `{id}/files`, unreferenced by any
-    // Content until the next restore overwrites them or `purgeResource` takes the directory wholesale — the
-    // Deliberate trade, unlike `duplicateResource`, whose compensating `deleteDirectory` is only safe because
-    // The resource it clears was created moments earlier; the target here is a live working copy whose
-    // Existing files a directory-wide cleanup would destroy.
-    // Only the immutable kind, which is the one whose urls point into its own frozen clone directory. A
-    // Reference snapshot's urls already name the live `{id}/files/…` the working copy is pointing at, so
-    // Cloning them would mint a second copy of every asset the resource already holds and charge the owner
-    // For it, on every restore
-    const restoredContent =
-      SnapshotChannelDefinitionMap[channel].kind === SnapshotKind.Immutable
-        ? await cloneContentAssets(ctx.db, ctx.getSessionPayload.user.id, reappliedContent, id)
-        : reappliedContent;
+    // The version's assets were stored when it was taken, but an eviction above may have released some since, and the
+    // Working copy must not be saved naming one that is gone. Checked and touched under the object lock, as a version write is
+    await ctx.db.transaction(async (tx) => {
+      await lockSnapshotObjects(tx, ctx.resource.id);
+      await requireSnapshotAssetsExist(ctx.resource.id, getSnapshotAssetHashes(ctx.resource.id, reappliedContent));
+    });
+    // Nothing is copied: the restored version's rows keep the objects its content names alive, and they are this
+    // Resource's own objects, so a restore holds no second copy of any asset.
     // The one content-write path, so a restore is a content write like any other: the version bump and the blob
     // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
     // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
@@ -462,7 +450,7 @@ export const resourceRouter = router({
     // Autosave is rejected as stale until it reloads
     const restoredResource = await saveResourceContent(ctx, {
       activityType: ResourceActivityType.Restored,
-      content: restoredContent,
+      content: reappliedContent,
       // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
       // A restore that did not land must never advance the version every client caches against
       contentVersion: ctx.resource.contentVersion,

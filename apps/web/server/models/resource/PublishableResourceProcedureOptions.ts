@@ -12,5 +12,5 @@ export interface PublishableResourceProcedureOptions<TContent> {
     ctx: AuthedContext,
     resource: ResourceInResource,
     content: TContent,
-  ) => Promise<TContent>;
+  ) => Promise<TContent> | TContent;
 }

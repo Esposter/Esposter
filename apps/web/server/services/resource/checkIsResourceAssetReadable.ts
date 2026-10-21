@@ -1,30 +1,39 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 import type { Database } from "@esposter/db-schema";
 
-// Whether a caller may read one asset path — the single definition of the question, asked by the serving endpoint
-// Before it signs a SAS and by the clone before it copies a blob. The clone copies whatever url the caller's
-// Content names, so a check living only on the read path would let anyone holding a url they cannot open paste it
-// Into their own resource, publish, and have the clone re-serve the owner's private blob from a directory that
-// Answers to the whole internet. A url the caller may not read is data rather than an error: the clone carries it
-// Verbatim, so a shared blueprint keeps rendering for whoever can already see its assets
+import { SnapshotChannel } from "@esposter/db-schema";
+
+// Whether a caller may read one asset — the single definition of the question, asked by the serving endpoint before
+// It signs a SAS and by the duplicate clone before it copies a blob. The clone copies whatever url the caller's content
+// Names, so a check living only on the read path would let anyone holding a url they cannot open paste it into their
+// Own resource and have the clone re-serve the owner's private blob. A url the caller may not read is data rather than
+// An error: the clone carries it verbatim, so a shared blueprint keeps rendering for whoever can already see its assets
 export const checkIsResourceAssetReadable = async (
   db: Database,
-  { isPublished, resourceId }: Pick<ResourceAssetPath, "isPublished" | "resourceId">,
+  { hash, resourceId }: Pick<ResourceAssetPath, "hash" | "resourceId">,
   userId?: string,
 ): Promise<boolean> => {
-  // Published assets stay anonymous-capable for as long as a publication row exists — unpublish is what revokes
-  // Them, so the row is read per request and never cached
-  if (isPublished) {
-    const publication = await db.query.resourcePublicationsInResource.findFirst({
-      where: { resourceId: { eq: resourceId } },
+  if (userId) {
+    const resource = await db.query.resourcesInResource.findFirst({
+      where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },
     });
-    if (publication) return true;
+    if (resource) return true;
   }
 
-  if (!userId) return false;
-
-  const resource = await db.query.resourcesInResource.findFirst({
-    where: { deletedAt: { isNull: true }, id: { eq: resourceId }, userId: { eq: userId } },
+  // Read per request and never cached: unpublish revokes anonymous access by deleting the publication row, and the
+  // Asset is public only while the current publication's version names its hash
+  const publication = await db.query.resourcePublicationsInResource.findFirst({
+    where: { resourceId: { eq: resourceId } },
   });
-  return Boolean(resource);
+  if (!publication) return false;
+
+  const publishedAsset = await db.query.resourceVersionAssetsInResource.findFirst({
+    where: {
+      assetHash: { eq: hash },
+      channel: { eq: SnapshotChannel.Published },
+      resourceId: { eq: resourceId },
+      version: { eq: publication.publishVersion },
+    },
+  });
+  return Boolean(publishedAsset);
 };

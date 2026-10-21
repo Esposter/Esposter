@@ -1,8 +1,7 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 
-import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
+import { ASSET_HASH_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
-import { BLOB_SEGMENT_REGEX } from "@esposter/db-schema";
 import { getDecodedUriComponent } from "@esposter/shared";
 
 // Only a FileAssets type has files to delete, so the capability is the parameter type — a type without it is
@@ -16,11 +15,11 @@ export const useDeleteResourceFile = (type: FileAssetsResourceType, id: MaybeRef
     // Anything outside this resource's files directory is not ours to delete, so it is ignored rather than sent
     const filesDirectoryPrefix = `${RESOURCE_ASSETS_URL_PREFIX}/${getFilesDirectoryName(idValue)}/`;
     if (!url.startsWith(filesDirectoryPrefix)) return;
-    // What counts as a segment this resource owns is the server's definition, imported rather than restated —
+    // A file is named by its content hash, which is the server's definition, imported rather than restated —
     // A local copy that accepts one more form than the server does turns a suppressed affordance into a request
     // The server rejects, and drifts the moment either side is tightened
     const blobPath = getDecodedUriComponent(url.slice(filesDirectoryPrefix.length), "");
-    if (!BLOB_SEGMENT_REGEX.test(blobPath)) return;
+    if (!ASSET_HASH_REGEX.test(blobPath)) return;
     await executeMutation(() => getResourceRouter(type).deleteFile.mutate({ blobPath, id: idValue }), {
       key: blobPath,
     });

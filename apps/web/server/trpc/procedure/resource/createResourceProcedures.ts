@@ -7,20 +7,14 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
+import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
-import type {
-  FileSasEntity,
-  ResourceInResource,
-  ResourcePublicationInResource,
-  ResourceType,
-} from "@esposter/db-schema";
+import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
 import type { WrittenVersion } from "keyframe-store";
 import type { z } from "zod";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
-import { publishBlobPrefixDeletion } from "#server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "#server/services/events/on";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
@@ -29,6 +23,7 @@ import { RESOURCE_ASSET_SAS_DURATION_MS } from "#server/services/resource/consta
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
+import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -39,11 +34,12 @@ import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiv
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { chargeSnapshotVersion } from "#server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
+import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
+import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
-import { generateReservedUploadFileSasEntities } from "#server/services/storage/generateReservedUploadFileSasEntities";
 import { generateReservedWriteSasUrl } from "#server/services/storage/generateReservedWriteSasUrl";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -66,7 +62,6 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
-import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { generateReadSasUrl, getContentBlobName } from "@esposter/db";
 import {
@@ -80,7 +75,6 @@ import {
   SnapshotChannel,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 
 export const createResourceProcedures = <TType extends ResourceType>(
@@ -277,30 +271,20 @@ export const createResourceProcedures = <TType extends ResourceType>(
       },
     ),
   };
-  // Binary assets live under {id}/files/… — the owner uploads through short-lived SAS urls and reads resolve
-  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). Teardown comes
-  // At purge, not at delete: a delete only stamps deletedAt, so every asset survives the Recycle bin window and a
-  // Restore hands back a whole resource, and purgeResource is what takes the {id}/ directory wholesale
+  // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived SAS urls and reads resolve
+  // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). An asset is never
+  // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
   const fileAssetsProcedures = {
     deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
-      async ({ input: { blobPath, id } }) => {
-        // The path is a single separator-free segment (BLOB_SEGMENT_REGEX) anchored under {id}/files/, so this can
-        // Only ever delete uploaded assets, never the content blob or the version objects beside the files directory
-        await publishBlobDeletion(id, AzureContainer.ResourceAssets, [
-          `${getFilesDirectoryName(id)}/${blobPath}`,
-        ]).match(noop, console.error);
+      async ({ ctx, input: { blobPath, id } }) => {
+        // The path is the file's hash (ASSET_HASH_REGEX), so the release sees exactly the address that was removed
+        await releaseResourceAssets(ctx.db, id, [blobPath]);
       },
     ),
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
-      FileSasEntity[]
+      ResourceFileSasEntity[]
     >(({ ctx, input: { files, id } }) =>
-      generateReservedUploadFileSasEntities(
-        ctx.db,
-        ctx.getSessionPayload.user.id,
-        AzureContainer.ResourceAssets,
-        files,
-        getFilesDirectoryName(id),
-      ),
+      generateReservedResourceAssetSasEntities(ctx.db, ctx.getSessionPayload.user.id, id, files),
     ),
   };
   const publishProcedures = {
@@ -313,21 +297,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
             DatabaseEntityType.Resource,
             "cannot publish resource without content",
           );
-        // Read before the assets are cloned, so the claim below can be compared against it. A sweep of this
-        // Resource's published prefix only ever follows a publication row delete, and that delete resets the
-        // Version sequence — so a claim that is not the successor of what this attempt read is proof one landed
-        const previousPublication = await ctx.db.query.resourcePublicationsInResource.findFirst({
-          where: { resourceId: { eq: id } },
-        });
         // Transformed before the transaction opens: a hook may read through `ctx.db` (Dashboard resolves every
-        // Bound dataset), and issuing that read while this connection holds a transaction deadlocks. Nothing it
-        // Writes is keyed by the version claimed below — see createSnapshotAssetsDirectoryName
+        // Bound dataset), and issuing that read while this connection holds a transaction deadlocks
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
-        // What the store wrote, recorded rather than returned: the repair below rewrites the same version, and
-        // The charge after the transaction must carry whichever write was last. No reason on the row: a
-        // Published version's reason is that it was published, which its channel already says
+        // What the store wrote, recorded rather than returned, for the charge after the transaction. No reason on the
+        // Row: a published version's reason is that it was published, which its channel already says
         let writtenVersion: undefined | WrittenVersion;
         const writePublishedVersion = async (
           db: Context["db"] | Transaction,
@@ -372,47 +348,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           await writePublishedVersion(tx, newPublication.publishVersion, publishedContent);
           return newPublication;
         });
-        // An unpublish that landed between the clone and this claim swept the assets it had just written, while
-        // The version — written inside the transaction, after that sweep's bound — survived: the resource
-        // Would report itself published and render every image broken, with no operation left that rebuilds
-        // Them. Re-cloning now writes past the bound, and the version is already claimed, so the repair is the
-        // Transform and the upload again rather than another publish. A concurrent publish trips this too and
-        // Pays one redundant clone; a swept snapshot cannot slip through, because a delete restarts the
-        // Sequence at 1 and any successor this attempt could expect is at least 2. An attempt that read no row
-        // Expects to claim 1, so the successor is computed from the read rather than off the row alone, which
-        // Would exempt every first publish (and every publish after an unpublish) from the check entirely.
-        //
-        // Outside the transaction on purpose, and it cannot move in — the transform deadlocks against one this
-        // Same connection holds, as above. So the publication has already landed by the time the repair runs, and
-        // The transaction's guarantee is unaffected: the version it claimed does point at content that was
-        // Stored. What a failed repair leaves behind is that version still naming the swept assets, i.e. a live
-        // Publication whose images 404 — so the rejection is reported rather than swallowed, because a silent
-        // Success would leave the page broken with nothing to signal it. See openspec/specs/architecture/publishing/design.md
-        if (publication.publishVersion !== (previousPublication?.publishVersion ?? 0) + 1)
-          await getResultAsync(async () =>
-            writePublishedVersion(
-              ctx.db,
-              publication.publishVersion,
-              transformPublishedContent ? await transformPublishedContent(ctx, ctx.resource, content) : content,
-            ),
-          ).match(noop, (error) => {
-            console.error(error);
-            // Which of them tripped the check is not knowable from here, so the cause is carried rather than
-            // Asserted: a sweep by a concurrent unpublish, the redundant re-clone a concurrent publish pays, and
-            // A transform that rejects outright (a dataset deleted since the first pass) all arrive identically.
-            // Naming one of them tells an owner their assets were swept when nothing was. A TRPCError already
-            // States what happened in the code the client branches on, so it is rethrown as it is
-            if (error instanceof TRPCError) throw error;
-
-            throw getInvalidOperationError(
-              Operation.Update,
-              DatabaseEntityType.ResourcePublication,
-              `published at version ${publication.publishVersion}, but its assets could not be re-cloned (${error.message}) — publish again to rebuild them`,
-              "INTERNAL_SERVER_ERROR",
-            );
-          });
-        // A version is stored bytes the owner keeps, charged for what its object cost — its cloned assets charge
-        // Themselves as each copy lands. After the transaction, never inside: the charge locks the ledger row
+        // A version is stored bytes the owner keeps, charged for what its object cost. After the transaction, never
+        // Inside: the charge locks the ledger row
         // And then the user's, and a transaction held open across that waits on locks it is itself holding.
         // See openspec/specs/resource/storage-quotas/design.md
         if (writtenVersion) await chargeSnapshotVersion(ctx.db, ctx.resource, writtenVersion);
@@ -470,39 +407,32 @@ export const createResourceProcedures = <TType extends ResourceType>(
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx }) => {
         const { id } = ctx.resource;
-        const [deletedPublication] = await ctx.db
-          .delete(resourcePublicationsInResource)
-          .where(eq(resourcePublicationsInResource.resourceId, id))
-          .returning();
-        // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything,
-        // So every effect below it is a phantom. Sweeping regardless lets a stale tab wipe the assets a concurrent
-        // FIRST publish has just cloned — the sweep's bound is stamped after those clones, and a delete that
-        // Removed no row leaves the version sequence untouched, so the publish's own successor check cannot see it
-        // Either — and an activity entry or a push to the owner's other devices would report a state change that
-        // Never happened
-        if (!deletedPublication) return ctx.resource;
-        // The published channel's versions go with the publication, and the objects nothing else names go to the
-        // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
-        const unpublishedVersions = await ctx.db
-          .delete(resourceVersionsInResource)
-          .where(
+        // The publication row and the published channel's versions are removed in one transaction, so a publish that
+        // Lands between them cannot have its new version deleted by this unpublish while its publication row survives
+        const unpublication = await ctx.db.transaction(async (tx) => {
+          const [deletedPublication] = await tx
+            .delete(resourcePublicationsInResource)
+            .where(eq(resourcePublicationsInResource.resourceId, id))
+            .returning();
+          // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything, so every
+          // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
+          // Change that never happened
+          if (!deletedPublication) return undefined;
+          // The published channel's versions go with the publication, and the objects nothing else names go to the
+          // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
+          return deleteSnapshotVersions(
+            tx,
+            id,
             and(
               eq(resourceVersionsInResource.resourceId, id),
               eq(resourceVersionsInResource.channel, SnapshotChannel.Published),
             ),
-          )
-          .returning({ baseHash: resourceVersionsInResource.baseHash, hash: resourceVersionsInResource.hash });
+          );
+        });
+        if (!unpublication) return ctx.resource;
+        const { assetHashes, deletedVersions: unpublishedVersions } = unpublication;
         await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
-        // Best-effort after the publications delete, but durable: a lingering blob stays downloadable to anyone
-        // Still holding a cached short-lived SAS, and unpublished asset clones must not linger regardless. The
-        // Directory grows with every retained publication, so the handler enumerates it — walking it here would
-        // Put an unbounded listing on the unpublish request itself.
-        await publishBlobPrefixDeletion(
-          id,
-          AzureContainer.ResourceAssets,
-          `${id}/${SnapshotChannel.Published}`,
-          new Date(),
-        ).match(noop, console.error);
+        await getResultAsync(() => releaseResourceAssets(ctx.db, id, assetHashes)).match(noop, console.error);
         // Best-effort: a failed write loses one trail entry, never the unpublish.
         getSynchronizedFunction(writeResourceActivity)(ctx, {
           activityType: ResourceActivityType.Unpublished,

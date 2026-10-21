@@ -2,62 +2,38 @@ import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { SnapshotChannel } from "@esposter/db-schema";
-import { ID_SEPARATOR } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseResourceAssetPath, () => {
   const resourceId = crypto.randomUUID();
-  // What createSnapshotAssetsDirectoryName actually mints — a per-attempt uuid, never the publishVersion
-  const publishId = crypto.randomUUID();
+  const hash = "a".repeat(64);
 
-  test("should parse a files path", () => {
+  test("should parse a files path by its hash", () => {
     expect.hasAssertions();
 
-    expect(parseResourceAssetPath(`${getFilesDirectoryName(resourceId)}/a%7Ca`)).toStrictEqual({
-      blobName: `${getFilesDirectoryName(resourceId)}/a${ID_SEPARATOR}a`,
-      isPublished: false,
-      resourceId,
-    });
-  });
-
-  test("should parse a published path", () => {
-    expect.hasAssertions();
-
-    expect(
-      parseResourceAssetPath(
-        `${resourceId}/${SnapshotChannel.Published}/${publishId}/${FILES_DIRECTORY_SEGMENT}/a%7Ca`,
-      ),
-    ).toStrictEqual({
-      blobName: `${resourceId}/${SnapshotChannel.Published}/${publishId}/${FILES_DIRECTORY_SEGMENT}/a${ID_SEPARATOR}a`,
-      isPublished: true,
+    expect(parseResourceAssetPath(`${getFilesDirectoryName(resourceId)}/${hash}`)).toStrictEqual({
+      blobName: `${getFilesDirectoryName(resourceId)}/${hash}`,
+      hash,
       resourceId,
     });
   });
 
   test.each([
-    ["dot-dot segment", `${resourceId}/../${FILES_DIRECTORY_SEGMENT}/a`],
-    ["encoded dot-dot segment", `${resourceId}/%2E%2E/${FILES_DIRECTORY_SEGMENT}/a`],
-    ["encoded slash inside a segment", `${resourceId}/${FILES_DIRECTORY_SEGMENT}%2Fa`],
-    ["encoded backslash inside a segment", `${getFilesDirectoryName(resourceId)}/a%5C`],
-    ["invalid percent escape", `${getFilesDirectoryName(resourceId)}/a%GG`],
-    ["empty segment", `${getFilesDirectoryName(resourceId)}//a`],
-    ["non-uuid resource id", `a/${FILES_DIRECTORY_SEGMENT}/a`],
+    ["dot-dot segment", `${resourceId}/../${FILES_DIRECTORY_SEGMENT}/${hash}`],
+    ["encoded dot-dot segment", `${resourceId}/%2E%2E/${FILES_DIRECTORY_SEGMENT}/${hash}`],
+    ["encoded slash inside a segment", `${resourceId}/${FILES_DIRECTORY_SEGMENT}%2F${hash}`],
+    ["encoded backslash inside a segment", `${getFilesDirectoryName(resourceId)}/${hash}%5C`],
+    ["invalid percent escape", `${getFilesDirectoryName(resourceId)}/%GG`],
+    ["empty segment", `${getFilesDirectoryName(resourceId)}//${hash}`],
+    ["non-uuid resource id", `a/${FILES_DIRECTORY_SEGMENT}/${hash}`],
     ["too few segments", getFilesDirectoryName(resourceId)],
-    ["too many files segments", `${getFilesDirectoryName(resourceId)}/a/a`],
-    ["published without a publish id", `${resourceId}/${SnapshotChannel.Published}/${FILES_DIRECTORY_SEGMENT}/a`],
-    [
-      "published with a version instead of a publish id",
-      `${resourceId}/${SnapshotChannel.Published}/1/${FILES_DIRECTORY_SEGMENT}/a`,
-    ],
-    [
-      "published with a non-uuid publish id",
-      `${resourceId}/${SnapshotChannel.Published}/a/${FILES_DIRECTORY_SEGMENT}/a`,
-    ],
-    [
-      "published with trailing extra segment",
-      `${resourceId}/${SnapshotChannel.Published}/${publishId}/${FILES_DIRECTORY_SEGMENT}/a/a`,
-    ],
-    ["unknown directory", `${resourceId}/a/a`],
+    ["too many segments", `${getFilesDirectoryName(resourceId)}/${hash}/${hash}`],
+    ["unknown directory", `${resourceId}/a/${hash}`],
+    ["published path", `${resourceId}/${SnapshotChannel.Published}/${FILES_DIRECTORY_SEGMENT}/${hash}`],
+    ["filename-addressed segment", `${getFilesDirectoryName(resourceId)}/a%7Ca`],
+    ["uppercase hash", `${getFilesDirectoryName(resourceId)}/${"A".repeat(64)}`],
+    ["hash one character short", `${getFilesDirectoryName(resourceId)}/${"a".repeat(63)}`],
+    ["non-hex hash", `${getFilesDirectoryName(resourceId)}/${"g".repeat(64)}`],
   ])("should reject %s", (_description, encodedPath) => {
     expect.hasAssertions();
 

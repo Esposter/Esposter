@@ -15,6 +15,8 @@ export const publishBlobDeletion = (
   subject: string,
   containerName: AzureContainer,
   blobNames: (() => Promise<string[]>) | string[],
+  // The instant the names were judged unreferenced, forwarded so the handler keeps any blob written after it
+  decidedAt?: Date,
 ) =>
   getResultAsync(async () => {
     const blobNamesValue = typeof blobNames === "function" ? await blobNames() : blobNames;
@@ -26,7 +28,12 @@ export const publishBlobDeletion = (
     // Ever have cost one no-op `deleteIfExists`, but it fails the parse before any delete runs — turning a
     // Harmless duplicate into a chunk of blobs that no delivery, retry or replay can ever reclaim.
     for (const blobNamesChunk of chunkBlobNamesByEventSize([...new Set(blobNamesValue)])) {
-      const data: BlobDeletionEventGridData = { blobNames: blobNamesChunk, containerName };
+      // Spread rather than assigned, so a deletion without a decision publishes no key at all instead of an undefined one
+      const data: BlobDeletionEventGridData = {
+        blobNames: blobNamesChunk,
+        containerName,
+        ...(decidedAt && { decidedAt }),
+      };
       // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed chunk stops the ones behind it, and every chunk before it stays durable for a redelivery
       await eventGridPublisherClient.send([createEventGridEvent(AzureFunction.ProcessBlobDeletion, subject, data)]);
     }

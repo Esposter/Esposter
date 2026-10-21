@@ -105,6 +105,49 @@ describe(processBlobDeletionHandler, () => {
     expect(readContainer()).toStrictEqual([]);
   });
 
+  test("a named deletion without decidedAt deletes as before", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await processBlobDeletionHandler(createEvent([blobName]), context);
+
+    expect(readContainer()).toStrictEqual([]);
+  });
+
+  // A blob re-uploaded after the release decided it unreferenced is one the decision never saw, so the delete keeps it
+  test("a named deletion keeps a blob re-uploaded after its decision", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await processBlobDeletionHandler(
+      createBlobDeletionEvent({
+        blobNames: [blobName],
+        containerName: AzureContainer.MessageAssets,
+        decidedAt: new Date(0),
+      }),
+      context,
+    );
+
+    expect(readContainer()).toStrictEqual([blobName]);
+  });
+
+  // A replayed deletion whose blob was written before its decision is the blob the decision judged, so it still goes
+  test("a replayed named deletion for a blob last written before its decision still deletes it", async () => {
+    expect.hasAssertions();
+
+    await seedBlob(blobName);
+    await processBlobDeletionHandler(
+      createBlobDeletionEvent({
+        blobNames: [blobName],
+        containerName: AzureContainer.MessageAssets,
+        decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
+      }),
+      context,
+    );
+
+    expect(readContainer()).toStrictEqual([]);
+  });
+
   test("tells the owner's meter what the deletion gave back", async () => {
     expect.hasAssertions();
 

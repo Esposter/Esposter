@@ -1,10 +1,17 @@
 import { MEGABYTE } from "#shared/services/app/constants";
+import type { BlockUploadOptions } from "@/models/azure/container/BlockUploadOptions";
+
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
 import { getResultAsync } from "@esposter/shared";
 
-export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?: (progress: number) => void) => {
+export const uploadBlocks = async (
+  file: Blob,
+  sasUrl: string,
+  progressNotifier?: (progress: number) => void,
+  blockUploadOptions: BlockUploadOptions = {},
+) => {
   const blockSize = 4 * MEGABYTE;
   const totalBlocks = Math.ceil(file.size / blockSize);
   const blockUploads: Promise<void>[] = [];
@@ -40,5 +47,5 @@ export const uploadBlocks = async (file: Blob, sasUrl: string, progressNotifier?
   // An empty file has no block to count, so its completion is the one progress it reports
   if (!totalBlocks) progressNotifier?.(1);
   // The blob keeps the file's own type, not the commit request's — see commitBlockList
-  await commitBlockList(sasUrl, blockIds, file.type);
+  await commitBlockList(sasUrl, blockIds, file.type, blockUploadOptions);
 };

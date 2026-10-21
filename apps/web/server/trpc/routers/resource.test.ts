@@ -7,7 +7,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
-import { createSnapshotAssetsDirectoryName } from "#server/services/resource/snapshot/createSnapshotAssetsDirectoryName";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
@@ -20,11 +19,7 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
-import {
-  FILES_DIRECTORY_SEGMENT,
-  MAX_RESOURCE_CONTENT_SIZE,
-  STALE_CONTENT_VERSION_ERROR_MESSAGE,
-} from "#shared/services/resource/constants";
+import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
@@ -40,7 +35,6 @@ import {
   SnapshotReason,
 } from "@esposter/db-schema";
 import {
-  ID_SEPARATOR,
   InvalidOperationError,
   jsonDateParse,
   JsonPatchOperationType,
@@ -49,18 +43,17 @@ import {
   waitForSynchronizedFunctions,
 } from "@esposter/shared";
 import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { createHash } from "node:crypto";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// A clone mints a fresh asset id rather than carrying the source's over, so its blob is found by where it
-// Landed, never by rebuilding its name
+// Every asset the resource's files directory holds
 const readFilesBlobNames = (id: string): string[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
   assert.exists(container);
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getFilesDirectoryName(id)}/`));
 };
 
-// Everything a publish writes: the version's object beside a directory of cloned assets under the published
-// Prefix
+// Everything a publish writes: the version's object, and nothing under the files directory
 const readPublishedBlobSizes = (id: string): number[] => {
   const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
   assert.exists(container);
@@ -81,6 +74,11 @@ const storeAsset = (blobName: string) => {
 const createImageHtml = (blobName: string) => `<img src="${getResourceAssetUrl(blobName)}">`;
 const createImageEditor = (blobName: string) => new WebpageEditor({ css: "a", html: createImageHtml(blobName) });
 
+// An asset lives under the resource's files directory, named by the hash of its bytes
+const createFilesBlobName = (id: ResourceInResource["id"]) =>
+  `${getFilesDirectoryName(id)}/${createHash("sha256").update(crypto.randomUUID()).digest("hex")}`;
+const getAssetHash = (blobName: string) => blobName.slice(blobName.lastIndexOf("/") + 1);
+
 describe("resourceRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
@@ -91,7 +89,6 @@ describe("resourceRouter", () => {
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const updatedName = "updatedName";
-  const filename = "filename";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
   const updatedWebpageEditor = new WebpageEditor({ css: "b", html: "b" });
   const tags = { a: "" };
@@ -106,9 +103,6 @@ describe("resourceRouter", () => {
       })
     )?.storageBytesUsed;
 
-  // An asset lives under the resource's files directory, named by a fresh id in front of its filename
-  const createFilesBlobName = (id: ResourceInResource["id"]) =>
-    `${getFilesDirectoryName(id)}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
   // The version rides the row, so only a test writing a second time has to say which version it is claiming
   const saveWebpageContent = (webpageResource: ResourceInResource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({
@@ -132,6 +126,7 @@ describe("resourceRouter", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockServiceBusDatabase.clear();
@@ -447,9 +442,10 @@ describe("resourceRouter", () => {
     });
   });
 
-  // A snapshot and its cloned assets are stored bytes the owner keeps, and nothing else charges them: a
-  // Server-side write raises a BlobCreated for a blob no reserve ever ledgered, so the counter would never move
-  test("charges the owner for the snapshot and the assets a publish clones", async () => {
+  // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises a BlobCreated for
+  // A blob no reserve ever ledgered, so the counter would never move. The assets it names are the working copy's own
+  // Objects, already charged when they were uploaded, so a publish adds only the snapshot
+  test("charges the owner for the snapshot a publish takes, not for the assets it names", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
@@ -461,8 +457,7 @@ describe("resourceRouter", () => {
     const publishedBlobSizes = readPublishedBlobSizes(webpageResource.id);
     assert.exists(storageBytesUsedBeforePublish);
 
-    // The snapshot and the one asset it references
-    expect(publishedBlobSizes).toHaveLength(2);
+    expect(publishedBlobSizes).toHaveLength(1);
     await expect(readStorageBytesUsed(webpageResource.userId)).resolves.toBe(
       storageBytesUsedBeforePublish + publishedBlobSizes.reduce((total, bytes) => total + bytes, 0),
     );
@@ -481,11 +476,11 @@ describe("resourceRouter", () => {
     assert.exists(content);
 
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
-    // The copy owns its assets: the file is cloned into the copy's files directory and the url rewritten to it
+    // The copy owns its assets: the file is copied under the same hash in the copy's files directory and the url rewritten to it
     const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
-    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+    expect(duplicatedBlobName).toBe(`${getFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`);
     expect(duplicatedResource.name).toBe(`${name}${DUPLICATE_NAME_SUFFIX}`);
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
@@ -495,26 +490,6 @@ describe("resourceRouter", () => {
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
-  });
-
-  test("duplicates a resource with a published asset reference by cloning it under the copy", async () => {
-    expect.hasAssertions();
-
-    const webpageResource = await webpageCaller.createResource({ name });
-    const publishedBlobName = `${createSnapshotAssetsDirectoryName(webpageResource.id, SnapshotChannel.Published)}/${FILES_DIRECTORY_SEGMENT}/${crypto.randomUUID()}${ID_SEPARATOR}${filename}`;
-    storeAsset(publishedBlobName);
-    await saveWebpageContent(webpageResource, createImageEditor(publishedBlobName));
-    const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
-    const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
-    assert.exists(content);
-
-    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
-
-    // The copy is fully self-contained: the published snapshot asset is cloned into the copy's own files
-    // Directory — never under its published prefix, which unpublishing wipes — so unpublishing or deleting
-    // Either resource never strands the copy
-    expect(content.html).toBe(createImageHtml(duplicatedBlobName));
-    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
   });
 
   test("duplicates a resource with a dangling asset reference by carrying the url verbatim", async () => {
@@ -537,10 +512,12 @@ describe("resourceRouter", () => {
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
     expect(content.html).toBe(`${createImageHtml(duplicatedBlobName)}${createImageHtml(missingBlobName)}`);
-    expect(duplicatedBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+    expect(duplicatedBlobName).toBe(`${getFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`);
   });
 
-  test("restores a published version by cloning its assets back into the working copy", async () => {
+  // A restore copies nothing: the restored version names the same objects the working copy already holds, so the
+  // Content comes back as it was and the files directory is unchanged
+  test("restores a published version without copying its assets", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
@@ -552,15 +529,8 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
-    const filesBlobNames = readFilesBlobNames(webpageResource.id);
-    const restoredBlobName = takeOne(filesBlobNames.filter((filesBlobName) => filesBlobName !== blobName));
-
-    // The restored draft references its own files directory, never the published snapshot it came from — and
-    // Never the name it started under: `deleteFile` may already have published that exact name for deletion,
-    // And a named-blob deletion event carries no time bound to disqualify a replay of it
-    expect(content.html).toBe(createImageHtml(restoredBlobName));
-    expect(filesBlobNames).toContain(blobName);
-    expect(restoredBlobName.endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+    expect(content.html).toBe(createImageHtml(blobName));
+    expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
   test("cleans up the copy when duplicating its content fails", async () => {
@@ -924,6 +894,26 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(updatedWebpageEditor)));
+  });
+
+  // An eviction can release a version's assets after the version is read, so the working copy is refused rather than
+  // Saved naming an image that is gone. The release is simulated by the asset's deletion
+  test("restoring a version whose assets were released fails with the missing-asset error", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = createFilesBlobName(webpageResource.id);
+    storeAsset(blobName);
+    await saveWebpageContent(webpageResource, createImageEditor(blobName));
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    await saveWebpageContent(webpageResource, webpageEditor, 1);
+    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
+
+    await expect(
+      caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Create, name: Resource, cannot store a version naming a missing asset]`,
+    );
   });
 
   test("records the draft version a publish was taken from", async () => {

@@ -1,4 +1,6 @@
 import { MimeType } from "#shared/models/file/MimeType";
+import type { BlockUploadOptions } from "@/models/azure/container/BlockUploadOptions";
+
 import { BLOB_CONTENT_TYPE_HEADER } from "@/services/azure/container/constants";
 import { requestBlobStorage } from "@/services/azure/container/requestBlobStorage";
 import { dedent } from "@esposter/shared";
@@ -9,13 +11,23 @@ import { dedent } from "@esposter/shared";
 // `x-ms-blob-content-type` describes the bytes the blocks just committed. Sending the body's type as the
 // Blob's would store every upload as XML, so an omitted `contentType` sends no blob header at all rather
 // Than falling back to one that is certainly wrong.
-export const commitBlockList = (sasUrl: string, blockIds: string[], contentType?: string) =>
+// A create-only commit carries If-None-Match: *, so Blob Storage answers 412 rather than replace an existing blob
+export const commitBlockList = (
+  sasUrl: string,
+  blockIds: string[],
+  contentType?: string,
+  { isCreateOnly }: BlockUploadOptions = {},
+) =>
   requestBlobStorage(`${sasUrl}&comp=blocklist`, {
     body: dedent`
     <BlockList>
       ${blockIds.map((blockId) => `<Latest>${blockId}</Latest>`).join("\n")}
     </BlockList>
   `,
-    headers: { "Content-Type": MimeType.Xml, ...(contentType && { [BLOB_CONTENT_TYPE_HEADER]: contentType }) },
+    headers: {
+      "Content-Type": MimeType.Xml,
+      ...(contentType && { [BLOB_CONTENT_TYPE_HEADER]: contentType }),
+      ...(isCreateOnly && { "If-None-Match": "*" }),
+    },
     method: "PUT",
   });

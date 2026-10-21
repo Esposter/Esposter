@@ -1,12 +1,7 @@
-import {
-  FILES_DIRECTORY_SEGMENT,
-  RESOURCE_ASSET_URL_REGEX,
-  RESOURCE_ASSETS_URL_PREFIX,
-} from "#shared/services/resource/constants";
+import { RESOURCE_ASSET_URL_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
-import { SnapshotChannel } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -51,12 +46,13 @@ describe(getResourceAssetUrl, () => {
   test("should round-trip through the parser", () => {
     expect.hasAssertions();
 
-    const blobName = `${resourceId}/${SnapshotChannel.Published}/${crypto.randomUUID()}/${FILES_DIRECTORY_SEGMENT}/a${ID_SEPARATOR}a (1)`;
+    const hash = "a".repeat(64);
+    const blobName = `${getFilesDirectoryName(resourceId)}/${hash}`;
     const url = getResourceAssetUrl(blobName);
 
     expect(parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length))).toStrictEqual({
       blobName,
-      isPublished: true,
+      hash,
       resourceId,
     });
   });
