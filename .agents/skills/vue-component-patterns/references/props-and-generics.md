@@ -58,4 +58,4 @@ A **derived/computed** value still fits the literal type as long as it can only 
 <Bar :is-interactive="isDense ? false : undefined" />
 ```
 
-**Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
+**A genuinely two-way boolean is typed `boolean`.** The prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
