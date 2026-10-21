@@ -1,6 +1,6 @@
 ---
 name: oxlint
-description: Apply when fixing lint errors, editing oxlint.config.ts, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint conventions — oxlint as one repo-wide pass with per-package scripts ESLint only, never hand-fixing lint errors, a rule change verified check-only, the disable directive spelled the reporting linter's way, no type-aware rule of our own, and a new ban rolled out from one violation list.
+description: Apply when fixing lint errors, editing oxlint.config.ts, configuring vitest lint rules, investigating slow ESLint rules, writing a custom lint rule, adding an accessibility attribute to a template, or adding regexes, interface declarations or JSON parsing. Esposter oxlint + ESLint lint conventions — which linter runs a rule, how it is changed and rolled out, and how a disable directive is written.
 ---
 
 # Oxlint + ESLint Conventions
@@ -46,4 +46,4 @@ Pick the directive by **which linter reports the rule**, and spell the rule the 
 
 ## No type-aware rule of our own runs in either linter
 
-Oxlint's built-in type-aware rules do run (`typeAware: true` in `oxlint.config.ts` — `restrict-template-expressions` is one, and it is what makes `String(x)` inside a template literal legitimate for an `unknown` or `symbol`). What cannot run is a type-aware rule we author: that linting goes through Rust/tsgolint, which can't run JS rules, and ESLint could only host such a rule by turning on `parserOptions.projectService`, which multiplies lint time (`neverthrow/must-use-result` was dropped for exactly that reason rather than moved). **A convention that needs types is enforced by review, not by a rule** — do not re-add a type-aware plugin to buy one back.
+Oxlint's built-in type-aware rules do run (`typeAware: true` in `oxlint.config.ts` — `restrict-template-expressions` is one, and it is what makes `String(x)` inside a template literal legitimate for an `unknown` or `symbol`). What cannot run is a type-aware rule we author: that linting goes through Rust/tsgolint, which can't run JS rules, and ESLint could only host such a rule by turning on `parserOptions.projectService`, which multiplies lint time. **A convention that needs types is enforced by review, not by a rule** — do not re-add a type-aware plugin to buy one back.

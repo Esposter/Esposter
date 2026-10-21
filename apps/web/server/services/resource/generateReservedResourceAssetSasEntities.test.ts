@@ -1,6 +1,6 @@
-import type { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
-import type { Context } from "#server/trpc/context";
 import type { ContainerClient } from "@azure/storage-blob";
+import type { Context } from "#server/trpc/context";
+import type { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
@@ -30,17 +30,20 @@ describe(generateReservedResourceAssetSasEntities, () => {
   const blobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
   const file = { hash, mimetype: "image/png", size: 1 };
   const db = {} as Context["db"];
-  // The blobs Azure already holds. A PUT that lands is what adds to it, so a case marks one held the way an upload would.
-  // A touch of a blob not held answers not found
+  // The blobs Azure already holds. A PUT that lands is what adds to it, so a case marks one held the way an upload would
   let heldBlobNames: Set<string>;
+  // The blobs a touch finds already deleted, so the touch answers not found
+  let goneBlobNames: Set<string>;
 
   beforeEach(() => {
     heldBlobNames = new Set();
+    goneBlobNames = new Set();
     containerClientMock.current = {
       getBlobClient: (name: string) => ({
+        exists: () => Promise.resolve(heldBlobNames.has(name)),
         setMetadata: (metadata: Record<string, string>) => {
           setMetadataMock(name, metadata);
-          return heldBlobNames.has(name) ? Promise.resolve({}) : Promise.reject(new MockRestError("", 404));
+          return goneBlobNames.has(name) ? Promise.reject(new MockRestError("", 404)) : Promise.resolve({});
         },
       }),
       getBlockBlobClient: (name: string) => ({ generateSasUrl: () => Promise.resolve(`https://sas.example/${name}`) }),
@@ -80,5 +83,18 @@ describe(generateReservedResourceAssetSasEntities, () => {
     expect(entity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
     expect(setMetadataMock).toHaveBeenCalledExactlyOnceWith(blobName, { touchedAt: new Date(0).toISOString() });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, AzureContainer.ResourceAssets, []);
+  });
+
+  test("a held asset whose blob disappears before the touch is uploaded again", async () => {
+    expect.hasAssertions();
+
+    heldBlobNames.add(blobName);
+    goneBlobNames.add(blobName);
+    const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+
+    expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
+    expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, AzureContainer.ResourceAssets, [
+      { blobName, declaredBytes: file.size },
+    ]);
   });
 });

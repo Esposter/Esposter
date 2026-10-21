@@ -25,7 +25,9 @@ export const generateReservedResourceAssetSasEntities = async (
   const fileEntries = await Promise.all(
     files.map(async (file) => {
       const blobName = getResourceFileBlobName(resourceId, file.hash);
-      const isHeld = await touchResourceAssetBlob(containerClient, blobName);
+      const isHeld =
+        (await containerClient.getBlobClient(blobName).exists()) &&
+        (await touchResourceAssetBlob(containerClient, blobName));
       return { ...file, blobName, isHeld };
     }),
   );

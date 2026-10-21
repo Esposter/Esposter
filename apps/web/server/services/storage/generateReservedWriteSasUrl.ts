@@ -6,8 +6,8 @@ import { reserveStorageBytes } from "#server/services/storage/reserveStorageByte
 import { generateWriteSasUrl } from "@esposter/db";
 
 // The upload chokepoint for a write target whose name the server fixes rather than mints per upload — a
-// Resource's staging blob. Signed and reserved in one call, so a write target nothing accounts for cannot be handed out.
-// See openspec/specs/resource/storage-quotas/design.md
+// Resource's staging blob. Signed and reserved in one call for the reason `generateReservedUploadFileSasEntities`
+// Is: a write target nothing accounts for cannot be handed out. See openspec/specs/resource/storage-quotas/design.md
 export const generateReservedWriteSasUrl = async (
   db: Context["db"],
   userId: UserInAuth["id"],
