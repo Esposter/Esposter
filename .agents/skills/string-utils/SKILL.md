@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Apply when trimming, normalizing or sanitizing a string, pluralizing a count, or matching a token inside authored content. Esposter's string handling — normalizeString as the default trim in app code and base Zod schemas (never in Vue), pluralize over a hand-rolled count ternary, rich-text HTML sanitized once at the Zod boundary, and a token in authored content matched on its opening delimiter over the parsed value's string leaves.
+description: Apply when trimming, normalizing or sanitizing a string, pluralizing a count, or matching a token inside authored content. Esposter's string handling for app code, Zod boundaries and authored rich text.
 ---
 
 # String Normalization

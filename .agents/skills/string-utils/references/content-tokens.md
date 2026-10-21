@@ -1,6 +1,6 @@
 # Tokens in Authored Content
 
-Read before writing or widening a regex that finds something inside content a user authored — a blob url, a `{{variable}}`, an alias.
+Read when writing or widening a regex that finds something inside content a user authored — a blob url, a `{{variable}}`, an alias.
 
 Before writing or widening any regex that finds something inside content a user authored (a blob url, a `{{variable}}`, a blueprint alias), read `openspec/specs/architecture/content-token-rewriting/design.md` — it is canonical. The four rules that are broken:
 
