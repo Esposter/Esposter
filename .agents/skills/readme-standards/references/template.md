@@ -10,7 +10,7 @@ hyphen-prefixed slug GitHub derives from the emoji (`SKILL.md`, Settled). Copy t
 ```markdown
 # <npm-name>
 
-[badges — see below]
+[badges — see "Badges" on this page]
 
 One-sentence description (from package.json `description`, expanded for clarity).
 
