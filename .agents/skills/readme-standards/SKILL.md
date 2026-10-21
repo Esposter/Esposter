@@ -1,6 +1,6 @@
 ---
 name: readme-standards
-description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter's README conventions — one anchor+emoji template, badges and Getting Started decided by whether a package is published or run, documentation links to the package's specs, GitHub blob/tree URLs, and the two package inventories edited together.
+description: Apply when creating or updating any README.md in this monorepo, including the root one. Esposter's README conventions for packages and the root.
 ---
 
 # README Standards — Esposter
