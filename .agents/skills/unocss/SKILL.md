@@ -1,6 +1,6 @@
 ---
 name: unocss
-description: Apply when editing uno.config.ts, adding a colour, utility or shortcut, choosing between two spellings of one utility, or when a utility generates nothing or loses to another rule. Esposter's UnoCSS configuration — colours only from the library's tokens or the preset's palette, nothing safelisted, every template scanned at startup, BLOCKED_SPELLINGS as the one list of canonical spellings, and the resolved-config snapshot read before it is regenerated.
+description: Apply when editing uno.config.ts, adding a colour, utility or shortcut, choosing between two spellings of one utility, or when a utility generates nothing or loses to another rule. Esposter's UnoCSS configuration in apps/web, its colours, its extraction and its canonical spellings.
 ---
 
 # UnoCSS Configuration
@@ -18,7 +18,7 @@ A utility is generated only from what the extractor reads, and a `:class` litera
 
 ## CSS layer name mapping
 
-Every layer but `properties` is `uno-<layer>`, and `app/assets/css/layers.css` orders them chrome first, utilities last (`references/css-layers.md`).
+Every layer but `properties` is `uno-<layer>`, and `apps/web/app/assets/css/layers.css` orders them chrome first, utilities last (`references/css-layers.md`).
 
 ## Every template scanned at startup
 
