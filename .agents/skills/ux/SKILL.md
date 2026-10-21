@@ -1,6 +1,6 @@
 ---
 name: ux
-description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from: a create action at the point of need with management in settings, one dialog per created thing, no second entry point to what the chrome already opens, a management surface only where its actions can succeed, every delete confirming, every surface written for the least technical reader, and the reference product's wording and layout followed where the domain matches.
+description: Apply when adding any user-facing feature, laying out a page or panel, deciding where an action lives or whether it confirms, or reviewing a surface for reachability. Esposter's UX conventions — where a person can do a thing from, and whether a write confirms before it acts.
 ---
 
 # UX Conventions
