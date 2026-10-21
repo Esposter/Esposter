@@ -1,6 +1,6 @@
 # `capitalized-comments` and the rewrapped comment
 
-Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapping any comment block — the grep that finds an identifier pushed to a line front, and the re-read a rewrap owes. The rule that a comment is never reworded to satisfy the linter is in `SKILL.md`.
+Read when oxlint's `capitalized-comments` fires on a `//` line, or after rewrapping any comment block — the grep that finds an identifier pushed to a line front, and the re-read a rewrap owes. The rule not to fight the linter is in `SKILL.md`.
 
 **Don't fight `eslint(capitalized-comments)`** — oxlint enforces an uppercase first letter on every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine, and lowercasing one to read better is a lint error rather than a style choice. What it cannot see is the difference between a prose word and a code identifier, so a wrapped line starting with `node_modules`, `pnpm` or `oxlint` gets capitalized into a name that does not exist — and `--fix` writes it. Rewrap so a line starts with prose; a line opening on a backtick or a bracket is exempt, which is why `` `pnpm build` `` may start one.
 

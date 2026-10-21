@@ -1,6 +1,6 @@
 ---
 name: formatting
-description: Apply when writing or editing any file's whitespace or comments. Esposter's spacing and comment conventions — where blank lines go, and what a comment says and where it sits: its own line above its code with no blank line around it, only exceptional behaviour, the present never the history, and a rewrap re-read against capitalized-comments.
+description: Apply when writing or editing any file's whitespace or comments. Esposter's spacing and comment conventions — where blank lines go, and what a comment says and where it sits.
 ---
 
 # Formatting
@@ -22,7 +22,7 @@ An object literal that fits the width is on one line — `oxfmt`'s `objectWrap: 
 
 ## Comments
 
-- **A `//` comment goes on its own line _above_ the code it describes, never trailing on the same line** (`comments/no-trailing-comment`). Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. The rule passes the two shapes that share a line by design: a same-line disable directive, and the comment the formatter itself hangs after a ternary's `?` or `:`.
+- **`comments/no-trailing-comment` enforces that a `//` comment sits on its own line _above_ the code it describes.** Own-line comments read consistently, survive the capitalization hook, and don't push lines past the width limit. The rule passes the two shapes that share a line by design: a same-line disable directive, and the comment the formatter itself hangs after a ternary's `?` or `:`.
 - **No blank line before or after a `//` comment** — it attaches to its code and is the separator, at module scope too; consecutive `//` lines are one block, and deleting a leading comment puts its blank line back. Test files keep theirs (`references/comment-placement.md`).
 - **Comment only _exceptional_ behaviour** — never restate a convention a skill or doc already holds (`references/comment-content.md`).
 - **Comments describe the present, never the history**; git is the changelog (`references/comment-content.md`).
