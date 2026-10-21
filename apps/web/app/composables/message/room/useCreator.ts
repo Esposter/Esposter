@@ -23,7 +23,7 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
     const user = userMap.value.get(messageValue.userId);
     // The creator is named on every message it wrote, so it takes the room display name its member row carries,
     // Exactly like the member sidebar and the settings Members panel — otherwise a renamed member is two people in one room
-    if (user) return { ...user, name: getRoomMemberName(messageValue.partitionKey, user.id, user.name) };
+    if (user) return { ...user, name: getRoomMemberName(messageValue.partitionKey, user.id) };
     else return undefined;
   });
 };
