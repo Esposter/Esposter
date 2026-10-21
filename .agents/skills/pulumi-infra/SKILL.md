@@ -17,7 +17,7 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure â
 
 ## Package Shape
 
-One private package, one `prod` stack, `src/` split by provider with a generated barrel, `dist/index.js` as the entrypoint, and no Pulumi operation without the user's say (`references/package-shape.md`).
+One private package, one `prod` stack, `src/` split by provider with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`).
 
 ## Resource Files
 

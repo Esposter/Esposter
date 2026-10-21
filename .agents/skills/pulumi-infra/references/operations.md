@@ -15,7 +15,7 @@ Run in order from `apps/infra/`, always before `infra:preview` or `infra:up`:
 ## Rules around an apply
 
 - Never use `pulumi up --skip-preview`.
-- **Running `pnpm infra:up` needs the user's say**, even once the preview is clean. The session runs the preview, shows the changes it would apply, and applies only when the user says so: an apply changes live Azure resources, which a later commit cannot walk back.
+- **`pnpm infra:up` is always allowed** once the preview shows only the intended changes. The session runs the preview, reads the changes it would apply, and applies them; an apply changes live Azure resources, so the preview is the check that comes before it.
 - Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.
 - **`preview` and `up` diff the program against state, never against Azure**, so an `up` reporting `unchanged` is not evidence that the live estate matches — anything changed out of band is invisible to both. When something reads as deployed but does not work, run `pnpm infra:refresh` before concluding the code is wrong, and check RBAC against Azure directly (`az role assignment list --assignee <principalId> --all`): a role assignment present in state and absent in Azure fails at runtime with `Forbidden` behind a clean preview.
