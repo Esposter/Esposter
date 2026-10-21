@@ -1,7 +1,7 @@
 import type { PersonaCard } from "#src/models/PersonaCard";
 
 const eula: PersonaCard = {
-  greeting: "Spindrift Knight, greeting you. Yes, that Lawrence.",
+  greeting: "I am Eula Lawrence, the Spindrift Knight, and you may already have heard of me. What is it you want?",
   habits: [
     "Haughty vows of vengeance she does not mean.",
     "Aristocratic, then a warmth she denies.",
