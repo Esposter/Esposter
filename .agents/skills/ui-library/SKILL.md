@@ -1,6 +1,6 @@
 ---
 name: ui-library
-description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library over Vuetify 0, and the rules an edit follows — only the library imports Vuetify 0, a colour is a token, a feature never names a design style, every list row is UiItemContent, and every unit takes the design pass. Outranks the vendored vuetify0 skill wherever they meet.
+description: Apply when building or restyling any interface in apps/web, choosing a colour, adding a UI component, or reaching for @vuetify/v0. Esposter's own UI library over Vuetify 0, and the rules an interface edit follows. Outranks the vendored vuetify0 skill wherever they meet.
 ---
 
 # UI Library
@@ -50,7 +50,7 @@ What exists, what each is built on and its keyboard contract are the architectur
 - **A card is not a row**: what a reader chooses whole is a `ui-card`, and `ui-item`/`ui-row` are for a list or a menu (`references/surfaces.md`).
 - **Every list row is `UiItemContent` inside a `ui-item`**, or a `ui-row` where it goes nowhere, and leads with a mark (`references/surfaces.md`).
 - **A new component comes with a component test of its keyboard and ARIA contract**, mounted with the real Vuetify 0 parts rather than mocked ones. A feature's test never re-tests them.
-- **A surface is a rule, not a style block** — a component wears `ui-frame`, `ui-raised`, `ui-field` and the rest from `uno.config.ts` (`references/surfaces.md`).
+- **A surface is a rule, not a style block** — a component wears `ui-frame`, `ui-raised`, `ui-field` and the rest from `apps/web/uno.config.ts` (`references/surfaces.md`).
 - **Anything pressed wears `ui-button`** — `UiButton`, `UiButtonLink` for somewhere to go, `UiInlineAction` inside a sentence — and lays out its own content (`references/buttons.md`).
 - **A utility cannot recolour a surface**; a state that recolours one is a data attribute the component's scoped style reads (`references/surfaces.md`).
 - **A search is `UiTextField` with the search type**, and a field draws no line, ring, shade or padding of the feature's own (`references/fields.md`).
