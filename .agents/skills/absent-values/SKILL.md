@@ -1,6 +1,6 @@
 ---
 name: absent-values
-description: Apply when a value can be empty or missing — an optional field, prop, column or procedure input, a `?:`, `undefined`, `null`, `.optional()`, `.nullable()`, `.default(...)`, `|| undefined`, `?? null`, or a filter dropping empties before a call. Esposter's one absent form per value — `""` for an app-owned string and `0` for a count with no domain meaning, carried unchanged from ref to input to row to read, `undefined` only where absence differs from every real value, and `null` only inside an external boundary's own shape.
+description: Apply when a value can be empty or missing — an optional field, prop, column or procedure input, a `?:`, `undefined`, `null`, `.optional()`, `.nullable()`, `.default(...)`, `|| undefined`, `?? null`, or a filter dropping empties before a call. Esposter's one absent form per value.
 ---
 
 # Absent Values

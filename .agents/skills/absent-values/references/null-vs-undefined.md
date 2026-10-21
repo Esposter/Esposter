@@ -32,7 +32,9 @@ answering `undefined`:
 
 ```vue
 <!-- WordFilter/Index.vue — renders once the read has answered, row or no row -->
-<MessageModelRoomSettingsTypeWordFilterForm v-if="!isPending" :room-id="room.id" :filter />
+<template v-if="isPending"><!-- skeleton --></template>
+<UiErrorState v-else-if="error" :error @retry="refresh()" />
+<MessageModelRoomSettingsTypeWordFilterForm v-else :key="room.id" :room-id="room.id" :filter />
 ```
 
 When checking `null` at a boundary, use `=== null` (strict equality).
