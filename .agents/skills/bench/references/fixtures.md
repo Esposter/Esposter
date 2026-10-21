@@ -1,6 +1,6 @@
 # Bench Fixtures
 
-Read when a bench needs a fixture — shared by the file, rebuilt per iteration for a mutating op, or read-only. `SKILL.md` keeps the rule; here are its reasons, and the two ways a copied fixture is not fresh.
+Read when a bench needs a fixture — shared by the file, rebuilt per iteration for a mutating op, or read-only. `.agents/skills/bench/SKILL.md` keeps the rule; here are its reasons, and the two ways a copied fixture is not fresh.
 
 - **A fixture the whole file shares goes at module scope; anything else is ordinary test code.** Suite hooks resolve before a bench runs, so `beforeAll` works — and a fixture built inside the test is built once per group, which is usually what a group wants anyway.
 

@@ -1,6 +1,6 @@
 # The bench is the only speed gate
 
-Read when about to time something with `time` or a `performance.now()` loop, or to assert how fast something runs inside a test. The rules themselves are in `SKILL.md`; this page is why each alternative loses.
+Read when about to time something with `time` or a `performance.now()` loop, or to assert how fast something runs inside a test. The rules themselves are in `.agents/skills/bench/SKILL.md`; this page is why each alternative loses.
 
 ## A stopwatch is a probe, never an answer
 

@@ -1,12 +1,12 @@
 # What to Bench
 
-Read when choosing what a bench measures — the unit against its wrapper, the scaling axis, the shape of the input, a seconds-long workload, a native baseline. The one-line rules are in `SKILL.md`; this page is their full statement.
+Read when choosing what a bench measures — the unit against its wrapper, the scaling axis, the shape of the input, a seconds-long workload, a native baseline. The one-line rules are in `.agents/skills/bench/SKILL.md`; this page is their full statement.
 
 - **Bench the unit, not its `use*` composable wrapper.** Bench the pure function or command class directly. A composable drags in the nuxt environment and pinia, whose fixed setup overhead drowns the unit's signal, and it adds none of its own — its cost is the already-benched parts plus a store push. Its correctness is covered by its `*.test.ts`. The same holds for any wrapper whose cost **is** an already-benched unit: measure where the time goes before writing one, and where the answer is the unit underneath, the bench already exists and a second would report the same number under another name.
 
 - **Pick a meaningful scaling axis** where one exists (100 / 1000 / 10000 rows) so a regression in per-unit cost is visible rather than drowned by fixed overhead.
 
-- **Every direction the input grows in is an axis of its own.** A parser grows in length and in nesting depth, and a tree grows in breadth and in depth. Work that repeats per level stays flat on the length axis and doubles on the depth one, so a bench that walks only the first reports a clean run over an exponential case. A parser that re-parses nested groups is the case a length-only bench cannot see, so its bench needs a depth group beside the length ones. `packages/math-expression-compiler/src/services/parser/parseMathExpression.bench.ts` walks both axes: its nesting groups time plain groups beside groups behind a division and groups behind a percent sign, the two rules that once parsed on trial.
+- **Every direction the input grows in is an axis of its own.** A parser grows in length and in nesting depth, and a tree grows in breadth and in depth. Work that repeats per level stays flat on the length axis and doubles on the depth one, so a bench that walks only the first reports a clean run over an exponential case. A parser that re-parses nested groups is the case a length-only bench cannot see, so its bench needs a depth group beside the length ones. `packages/math-expression-compiler/src/services/parser/parseMathExpression.bench.ts` walks both axes: its nesting groups time plain groups beside groups behind a division and groups behind a percent sign.
 
 - **Vary input _shape_, not just size.** Bench measures speed, not correctness — drive worst, best and typical shapes that stress the algorithm differently. Correctness edge cases stay in `*.test.ts`.
 
