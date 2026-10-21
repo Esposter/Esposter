@@ -24,7 +24,7 @@ const updatedFoo = requireMutation(
 
 ## Asserting a rejection with no nullable result to guard
 
-The guards above cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
+The guards on this page cover a DB result that may be missing. When the router decides the rejection itself, reach for the constructors the guards are built on rather than assembling a `TRPCError` around an error message:
 
 ```ts
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";

@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers. Esposter's error handling — neverthrow through getResult/getResultAsync with try and .then banned, every Result terminated with .match, a failure logged or shown and never swallowed, InvalidOperationError over new Error, and the tRPC guards (requireEntity, requireMutation) over a hand-rolled null check.
+description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers. Esposter's error handling — neverthrow Results, how each is chained and terminated, where a failure is logged or shown, and how errors are thrown and guarded on the server.
 ---
 
 # Error Handling Conventions

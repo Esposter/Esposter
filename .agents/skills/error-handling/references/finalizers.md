@@ -41,7 +41,7 @@ getSynchronizedFunction((argument) =>
 No `async`/`await` is added to reach that shape — `withFinalizerAsync` already returns the promise
 `getResultAsync` takes, so writing `async () => await withFinalizerAsync(…)` only trips `require-await`.
 
-**And the shape above is usually not the one you want**, because a terminated chain resolves: the statements
+**And the `getResultAsync(() => withFinalizerAsync(…))` shape is usually not the one you want**, because a terminated chain resolves: the statements
 after the `await` run on every path, which is what the finalizer existed to guarantee. So when the finalizer only
 resets local state — a flag, an emit, a ref — terminate first and put those lines after the await, and the
 finalizer disappears rather than being nested.

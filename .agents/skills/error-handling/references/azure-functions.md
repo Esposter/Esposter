@@ -4,7 +4,7 @@ Read when writing or changing an Azure Functions handler, its dead-letter replay
 
 Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`. When a service needs to log, `context` is its **first** parameter (`sendNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
 
-Which steps may fail the caller is the repo-wide **persist then notify** standard (`openspec/specs/architecture/persist-then-notify/design.md`) — guards and the primary write are fatal, everything after the notify is best-effort. In `apps/web/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this section covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
+Which steps may fail the caller is the repo-wide **persist then notify** standard (`openspec/specs/architecture/persist-then-notify/design.md`) — guards and the primary write are fatal, everything after the notify is best-effort. In `apps/web/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this page covers only what the linter can't: a handler adds one mechanic on top — EventGrid delivery is at-least-once, so here a throw is a _retry request_, and the two phases get different loggers.
 
 ## Fatal path — rethrow to trigger retry
 
