@@ -7,13 +7,12 @@ description: Apply when trimming, normalizing or sanitizing a string, pluralizin
 
 ## `normalizeString`
 
-Trims whitespace and returns empty string for absent/null/undefined inputs. Lives in `@esposter/shared`.
+Trims whitespace and returns empty string for an absent (`undefined`) input. Lives in `@esposter/shared`.
 
 ```ts
 import { normalizeString } from "@esposter/shared";
 
 normalizeString("  hello  "); // → "hello"
-normalizeString(null); // → ""
 normalizeString(undefined); // → ""
 ```
 
