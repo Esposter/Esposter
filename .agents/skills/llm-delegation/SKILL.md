@@ -1,6 +1,6 @@
 ---
 name: llm-delegation
-description: Apply when deciding whether work runs in the main session or a subagent, which model family a subagent runs on, when writing a delegation prompt or running a parallel batch, and when a step in a script, a workflow or a CI job needs a judgement rather than a computation. Esposter delegation — who answers or runs each piece of work at the cheapest tier that can: the main session on opus thinks and does the judged work, a haiku subagent does everything whose judgement calls are resolved, and in automation deterministic code, a Jev typed decision or a headless session answers.
+description: Apply when deciding whether work runs in the main session or a subagent, which model family a subagent runs on, when writing a delegation prompt or running a parallel batch, and when a step in a script, a workflow or a CI job needs a judgement rather than a computation. Esposter delegation — who answers or runs each piece of work at the cheapest tier that can.
 ---
 
 # LLM Delegation — The Cheapest Thing That Can Answer
@@ -32,12 +32,12 @@ There are two tiers and no middle one: `opus` thinks in the main session, and `h
 - **The main session reads one hop deep.** One read of a file it can already name, or one grep whose output mode is the answer, stays in place. A lookup that needs a second hop — find the file, then read it, then follow what it names — is a chain, and the chain goes to a `haiku` agent as one question with a bounded answer before its second call. The tell is two lookups in a row with no decision between them. A log, a dump, a shader or a long run's output is a haiku read whatever its hop count, since only its conclusion reaches a decision.
 - **The report is the only thing the main context pays for.** The prompt fixes its shape and its bound — paths with line numbers, the numbers measured, an error verbatim — and never asks for file contents back. The session verifies a writing agent by its diff and its done-definition, never by re-reading the files it changed.
 - **A `fork` ignores `model`** and runs on the main session's family with the whole conversation, so it is refused with the rest.
-- **A workflow's `agent()` passes `model: "haiku"` just as an `Agent` call does.** No hook reads a workflow's script, so this line is its only rule. One left to inherit runs on the session's `opus`. Past a usage line the `genshin-mods` reserve refuses the launch outright (the throughput skill's "The usage reserve").
-- **An agent's price is its turns times its context.** Every turn re-reads the whole cached context, so cached reads, not output, are most of the bill. A unit is scoped to finish in a short context, its prompt names the pages to read rather than whole skills to load, and a unit that would run long is split into agents that each start clean. The main session pays the same price, and `.agents/settings.json` sets the context it compacts at with `autoCompactWindow`, a trade between re-reading a long context every turn and losing what a compaction drops; a resume carries what it dropped (the `resuming` skill). (`pnpm ai:usage` tallies it by bucket and family)
+- **A workflow's `agent()` passes `model: "haiku"` just as an `Agent` call does.** No hook reads a workflow's script, so this line is its only rule. One left to inherit runs on the session's `opus`. Past a usage line the `genshin-mods` reserve refuses the launch outright (`.agents/skills/throughput/SKILL.md`, "The usage reserve").
+- **An agent's price is its turns times its context.** Every turn re-reads the whole cached context, so cached reads, not output, are most of the bill. A unit is scoped to finish in a short context, its prompt names the pages to read rather than whole skills to load, and a unit that would run long is split into agents that each start clean. The main session pays the same price, and `.agents/settings.json` sets the context it compacts at with `autoCompactWindow`, a trade between re-reading a long context every turn and losing what a compaction drops; a resume carries what it dropped (`.agents/skills/resuming/SKILL.md`). (`pnpm ai:usage` tallies it by bucket and family)
 
 ## A reading pass is delegated by who decides the edit
 
-A pass over a whole tree goes to haiku when a find recipe or a pattern decides every edit, and stays in the main session when reading decides it (`references/reading-passes.md`).
+A pass over a whole tree goes to haiku readers, one per batch of units and in parallel, whether a find recipe or a reading decides its edits; the readers report every call they could not settle, and the main session judges each diff before it lands (`references/reading-passes.md`).
 
 ## Writing the delegation prompt
 
@@ -45,7 +45,7 @@ The prompt is the agent's whole world: the spec with its judgement calls resolve
 
 ## While agents run
 
-A batch's agents each work in their own worktree on `ai/queue` and land their commits with the `review-queue` skill's loop (`.agents/skills/llm-delegation/references/running-agents.md` says the same): each agent commits its own paths, shared files are edited by whoever needs them, an agent checks only the packages it touched and never the app, and one agent runs and fixes the batch's remaining checks once every agent has reported.
+A batch's agents work as `references/running-agents.md` sets out.
 
 ## In automation — the tiers
 
@@ -75,9 +75,9 @@ Two conditions. The verifier has to be cheap against the tier above it. And a fa
 
 `choice`, `noul` and `score`, every question about one state in one call, confidence gating the escalation rather than the answer, and every call through `scripts/src/services/jev/readAnswers.ts` (`references/jev.md`).
 
-## A headless session's model is one constant, and every spawn owes a gate
+## A headless session's model comes from one map, and every spawn owes a gate
 
-Every headless session runs on the one review model constant, and no session launches without a deterministic check, a typed decision or a recorded marker able to decline it (`references/sessions.md`).
+Every headless session runs on the model its role maps to, and no session launches without a deterministic check, a typed decision or a recorded marker able to decline it (`references/sessions.md`).
 
 ## Design for agents
 
