@@ -41,16 +41,16 @@ Every cron is a quoted UTC string firing on minute 16, its comment giving the ca
 
 ## Don't swallow an exit code to make a step idempotent
 
-`|| true` on a command that is _already_ idempotent is dead syntax that can only ever hide a real failure — a revoked role, a resource mid-delete — which then resurfaces one step later as something that reads like a different bug. Check whether the tool is idempotent before reaching for it (`az storage container create` is: an existing container is `created: false`, exit 0).
+Don't append `|| true` to a command the tool already makes idempotent (`references/exit-codes.md`).
 
 ## A comment keeps what the owning page does not say
 
-The argument for a job's shape lives in the page that owns it ("Owned elsewhere" on this page); a workflow comment that carries it a second time drifts the moment the page moves. The file header names the page, and each step's comment keeps only what a reader could not get from there or from the step itself — an ordering constraint (`GITHUB_ENV` reaches only the steps after it), a platform quirk (the `concurrency.queue` key the upstream linter does not know), a gate's failure mode (a `path` list that drifted still reports a hit).
+A workflow comment keeps only what the owning page and the step itself leave unsaid (`references/step-comments.md`).
 
 ## Owned elsewhere — pointers, not copies
 
 - **Whether a workflow parses at all** — `vp run lint:workflows`, actionlint as a leaf of the root `vp run lint` (`openspec/specs/architecture/monorepo-tooling/design.md`, "Workflow lint").
-- **Which pnpm script a job runs, and how it is invoked** (the root script over the binary, bare `pnpm <script>` over `pnpm run <script>`, never the `-- <args>` separator) — `package-scripts` ("Key Rules").
+- **Which pnpm script a job runs and how it is invoked** — `package-scripts` ("Key Rules").
 - **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates` (`references/github-actions.md`).
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `openspec/specs/architecture/monorepo-tooling/design.md`.
 - **Adding a third-party action** — its `owner/repo@*` goes into `patternsAlloweds` in `apps/infra/src/github/actionsPermissions.ts` in the same change, or GitHub refuses the whole workflow at startup (`openspec/specs/architecture/monorepo-tooling/design.md`, "Allowed actions").
@@ -62,3 +62,5 @@ The argument for a job's shape lives in the page that owns it ("Owned elsewhere"
 - `references/reusable-workflows.md` — when calling a reusable workflow that reads secrets.
 - `references/gates-and-cleanup.md` — when writing an aggregate gate or a cleanup step that runs on failure.
 - `references/schedules.md` — when adding or changing a `schedule`.
+- `references/exit-codes.md` — when a step's command can fail and a `|| true` is about to be written.
+- `references/step-comments.md` — when writing or reviewing a comment in a workflow or composite action.
