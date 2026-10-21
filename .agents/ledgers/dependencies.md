@@ -174,6 +174,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `ohash`                                 | —                     | Keep — free       | the framework installs it                                                                              |
 | `onnxruntime-common`                    | —                     | Keep — engine     | the inference interface pitch transcription takes as its peer, which Transformers.js already installs  |
 | `onnxruntime-node`                      | —                     | Keep — engine     | the Node runtime that runs pitch transcription's model and the Genshin music fit                       |
+| `oxc-parser`                            | —                     | Keep — tooling    | Nuxt's optional peers resolve to one forced copy until Nuxt pins the parser itself                     |
 | `oxfmt`                                 | —                     | Keep — tooling    | the formatter                                                                                          |
 | `oxlint`                                | —                     | Keep — tooling    | the linter                                                                                             |
 | `oxlint-tsgolint`                       | —                     | Keep — tooling    | oxlint's type-aware rules                                                                              |
