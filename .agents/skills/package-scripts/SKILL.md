@@ -15,7 +15,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## `apps/web`
 
-**`nuxt typecheck` is the only typecheck, and root `vp run lint` the only lint** — the binaries under them check strictly less than CI; a root check aggregates named leaves through its `vite.config.ts` task's `dependsOn`, which runs every leaf after one fails, never `&&` (the two fix passes, `lint:fix` and `lint:fix:packages`, are the `&&` chains, their fixers writing the same files); and `oxfmt` formats markdown tables too (`references/app-scripts.md`).
+**`nuxt typecheck` is the only typecheck, and root `vp run lint` the only lint** — why a root check aggregates its leaves and what the binaries under them miss is `references/app-scripts.md`.
 
 ## Root Scripts — `references/root-scripts.md`
 
