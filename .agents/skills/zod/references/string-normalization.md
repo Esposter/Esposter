@@ -20,4 +20,4 @@ z.string()
   .pipe(z.string().min(1).max(MAX));
 ```
 
-**Consolidate all string constraints (`min`, `max`, `regex`, …) on the single final `.pipe()` output** — never nest pipes when JSON schema output matters. `z.toJSONSchema` / `zodToJsonSchema` run with `io = "output"`: for any `ZodPipe(A, B)` they use `B` and **silently drop constraints on `A`**, so `createNormalizedStringSchema(maxLength, base).pipe(z.string().min(1))` emits `{ minLength: 1 }` with the `maxLength` missing. A helper that nests pipe layers silently drops the constraints declared on the inner ones.
+**Consolidate all string constraints (`min`, `max`, `regex`, …) on the single final `.pipe()` output** — never nest pipes when JSON schema output matters. `z.toJSONSchema` / `zodToJsonSchema` run with `io = "output"`: for any `ZodPipe(A, B)` they use `B` and **silently drop constraints on `A`**, so `createNormalizedStringSchema(maxLength, schema).pipe(z.string().min(1))` emits `{ minLength: 1 }` with the `maxLength` missing. A helper that nests pipe layers silently drops the constraints declared on the inner ones.
