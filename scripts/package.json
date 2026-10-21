@@ -63,6 +63,7 @@
     "ai:triage:label": "tsx src/triage/index.ts",
     "ai:usage": "tsx src/usage/index.ts",
     "ai:voice-match": "node src/voiceMatch/index.ts",
+    "ai:worktree:remove": "tsx src/worktree/remove/index.ts",
     "bench": "vitest bench --run",
     "bench:types": "tsx src/benchTypes/index.ts",
     "crossOS": "node src/crossOS/index.ts",

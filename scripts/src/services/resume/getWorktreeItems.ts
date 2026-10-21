@@ -1,6 +1,8 @@
 import type { ResumeItem } from "#src/models/resume/ResumeItem";
 
-import { REMOVE_WORKTREE_SCRIPT, WORKTREES_DIRECTORY } from "#src/services/resume/constants";
+import { AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
+
+import { REMOVE_WORKTREE_SCRIPT } from "#src/services/resume/constants";
 
 const WORKTREE_PREFIX = "worktree ";
 const HEAD_PREFIX = "HEAD ";
@@ -25,7 +27,7 @@ export const getWorktreeItems = (porcelain: string, readFolderNames: (directory:
   if (!mainWorktree) return [];
 
   const linkedPaths = new Set(linkedWorktrees.map(({ path }) => path));
-  const worktreesDirectory = `${mainWorktree.path}/${WORKTREES_DIRECTORY}`;
+  const worktreesDirectory = `${mainWorktree.path}/${AGENT_WORKTREES_DIRECTORY}`;
   const orphanPaths = readFolderNames(worktreesDirectory)
     .map((name) => `${worktreesDirectory}/${name}`)
     .filter((path) => !linkedPaths.has(path));

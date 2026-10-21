@@ -68,6 +68,7 @@
     "ai:usage": "pnpm -C scripts ai:usage",
     "ai:unocss:generate": "pnpm -C apps/web ai:unocss:generate",
     "ai:voice-match": "pnpm -C scripts ai:voice-match",
+    "ai:worktree:remove": "pnpm -C scripts ai:worktree:remove",
     "bench": "pnpm -r --workspace-concurrency=1 --if-present bench",
     "bench:ci": "vitest bench --run",
     "bench:types": "pnpm -C scripts bench:types",

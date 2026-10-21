@@ -10,13 +10,11 @@ describe(getWorktreeItems, () => {
 
     expect(getWorktreeItems(porcelain, () => ["linked", "orphan"])).toStrictEqual([
       {
-        action:
-          "bash .agents/skills/throughput/scripts/remove-worktree.sh /main/.agents/worktrees/linked once nothing uses it",
+        action: "pnpm ai:worktree:remove /main/.agents/worktrees/linked once nothing uses it",
         text: "/main/.agents/worktrees/linked bbbbbbbbbb",
       },
       {
-        action:
-          "bash .agents/skills/throughput/scripts/remove-worktree.sh /main/.agents/worktrees/orphan once nothing in it is wanted",
+        action: "pnpm ai:worktree:remove /main/.agents/worktrees/orphan once nothing in it is wanted",
         text: "/main/.agents/worktrees/orphan no worktree registers it",
       },
     ]);
