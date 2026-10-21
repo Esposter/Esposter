@@ -14,4 +14,4 @@ The schema carries the empty-sentinel convention itself so types and defaults pr
 
 ## Optional insert values
 
-Do not coerce `undefined` to `null` with `?? null` unless null has distinct domain meaning. Omit the key or pass the existing optional value directly. Use explicit `null` only when the schema distinguishes null from absence (nullable FKs, audit fields).
+Never `?? null` (`references/null-vs-undefined.md`). Omit the key or pass the existing optional value directly — an omitted key on a nullable column already stores `NULL`. Write an explicit `null` only where the column's own absence is `null` (timestamps, nullable FKs, audit fields, the URL and CHECK-forced cases above), never as a coercion of `undefined`.
