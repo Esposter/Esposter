@@ -1,6 +1,6 @@
 # What Earns a Composable
 
-Read when a composable is about to be written, or reviewed for whether it should exist and what it returns. The one-line rules are in `SKILL.md`; this page is their full statement.
+Read when a composable is about to be written, or reviewed for whether it should exist and what it returns. `SKILL.md` has the one-line rules; this page gives the reasoning.
 
 - **A composable that only re-exposes something is not a composable — delete it.** `useFoo()` whose body is `storeToRefs(useFooStore())`, a single `computed` over one store ref, or a rename of one import buys nothing and costs a layer: the consumer can no longer see where the state lives, the store's own methods are invisible from the call site, and every new field has to be threaded through the wrapper. Use the store directly (the ordering rules in `.agents/skills/pinia/references/consuming-a-store.md` apply). A composable earns its file only when it **composes**: it owns local reactive state, sequences async work, wires a lifecycle hook, or joins two or more sources into something neither provides.
 

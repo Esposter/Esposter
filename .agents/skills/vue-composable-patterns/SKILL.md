@@ -28,7 +28,7 @@ that spans an `await`, a tick or a mount, find the row.**
 | load, re-read on restore and save a resource's content | `createContentData` — the base of every content store, read once per open resource | `readResource` + `readContent` hand-rolled in a store, or a blade's own `isLoading` and skeleton |
 | write a resource's content after an await              | `createContentData`'s `getContentWriter()`, taken where the operation is issued    | `content.value = …` in the callback that lands, filed under whichever resource is open by then   |
 
-**A counter is the tell.** Every entry above was written by hand somewhere first, and each time the shape was the
+**A counter is the tell.** Every row of the table under "Reach for the primitive — never hand-rolled" was written by hand somewhere first, and each time the shape was the
 same: the problem looked complex enough that bookkeeping felt earned. It is the opposite signal. A count of
 in-flight or armed _anything_ is the moment to stop and name the primitive that owns it — and where a flag really
 is the answer, ask what one write actually cleans before reaching for a number. Counting two of something a
@@ -77,7 +77,7 @@ A mutation block repeated across siblings becomes one composable, and a discrimi
 ## Resource Management
 
 Anything that outlives a tick — an interval, a listener, an observer — is torn down at unmount and never on a
-flag flipping, and the primitives above own the common cases. The rules and the reasoning:
+flag flipping, and the primitives under "Reach for the primitive — never hand-rolled" own the common cases. The rules and the reasoning:
 `references/resource-cleanup.md`.
 
 ## Observing the browser — `references/browser-observation.md`
