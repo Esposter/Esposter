@@ -87,6 +87,8 @@ Every feature is designed agentic-first: resource creation (and eventually most 
 
 - `references/reading-passes.md` — when a task reads a whole tree to change part of it.
 - `references/delegation-prompt.md` — when writing a subagent's prompt.
-- `references/running-agents.md` — while an agent runs, before a parallel batch, or when cleaning up after one.
+- `references/running-agents.md` — while an agent runs, or before a parallel batch.
+- `references/cleaning-up.md` — when a batch is done and its worktrees or branches are left to remove.
+- `references/rebuilding-the-review.md` — when a batch commits a change to the review's own workflow or code.
 - `references/jev.md` — when a judgement goes to Jev.
 - `references/sessions.md` — when automation launches a headless session.
