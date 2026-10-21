@@ -1,0 +1,11 @@
+# The post pipeline
+
+Read when a post pass, the outline, a mask for the post chain, or the view's compile before it shows is in question.
+
+- **The frame is drawn by the engine's post pipeline.** `usePostPipeline` replaces TresJS's render with `createPostPipeline`: outlines, screen-space occlusion where a scene passes its radius, god rays, height fog, the elemental sight and bloom in that order, then TRAA ahead of the tone mapping and the grade, or SMAA after them (`openspec/specs/genshin/rendering-style/design.md`). A scene whose colours are measured off references through the tone mapping alone, as the login's are, passes no grade table, no god rays' light and `isBloomed: false`, so each measured colour inverts exactly. A quality tier removes cost, never the ramp, the rim or the outline (`QualityTierSettingsMap`).
+
+- **A mask the post chain reads is drawn from stand-ins, never from the world's materials.** A scene that needs a per-thing mask (the sight's lit things) gives the post pipeline its own scene of stand-ins: `createSightProxy` shares an instanced mesh's instance matrices in one basic material whose instance colours carry what is lit, and one `pass` draws that scene beside the scene, compared with the scene's depth so a thing behind a wall is not lit. No material the world draws changes for it, and no material is made per thing (`openspec/specs/genshin/elemental-sight/design.md`).
+
+- **One outline material serves every toon material, and the view compiles before it shows.** `SharedToonOutlinePassNode` returns one outline material (a material with its own edge gets one per distinct edge, and a game model's per-pixel edge colour, which samples its own textures, one of its own that goes with it), and the world reports ready only once the next frame has drawn its view and the GPU has finished it (`PostPipeline.compileAsync`); neither three's own compile, which builds for the wrong render nesting, nor a draw of the whole scene, which builds programs nothing draws, stands in for it (`openspec/specs/genshin/rendering-style/design.md`).
+
+- **Ground is not outlined.** A terrain material passes `isOutlined: false`, since the outline pass picks materials by three's toon flag alone and a ridge would otherwise draw ink against the sky.
