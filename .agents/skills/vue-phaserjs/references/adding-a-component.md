@@ -8,7 +8,7 @@ A configuration interface `Pick`s what the Phaser game object already declares r
 
 ```ts
 export interface ArcConfiguration
-  extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
+  extends Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle">, ShapeConfiguration {}
 ```
 
 ## `SetterMap` setters return `void`
@@ -18,5 +18,3 @@ export interface ArcConfiguration
 ```ts
 x: (gameObject) => (value) => { gameObject.setX(value); }, // wrap in braces; never the void operator
 ```
-
-Multi-line setters already use braces naturally — no change needed.

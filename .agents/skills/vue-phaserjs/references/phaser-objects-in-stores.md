@@ -2,7 +2,7 @@
 
 Read when a store in the consuming app holds a Phaser object — a sprite, a tilemap, a key, a Rex plugin instance.
 
-**Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store** — the rule and its rationale live in the `pinia` skill (`references/class-instances-in-state.md`).
+The rule and its rationale live in the `pinia` skill (`references/class-instances-in-state.md`).
 
 The package holds no Phaser object in reactive state itself, so the rule bites in the consuming app (`apps/web/app/`: `store/`, `components/Dungeons/`, `composables/dungeons/`). Look there for real examples.
 

@@ -1,6 +1,6 @@
 ---
 name: vue-phaserjs
-description: Apply when writing Phaser game objects, stores that hold them, or vue-phaserjs components. Esposter's vue-phaserjs integration — the component files, configurations that update, and Phaser objects under Vue reactivity.
+description: Apply when writing Phaser game objects, stores that hold them, or vue-phaserjs components. Esposter's vue-phaserjs integration of Phaser game objects into Vue components and stores.
 ---
 
 # vue-phaserjs Conventions
