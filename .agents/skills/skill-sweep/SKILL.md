@@ -1,6 +1,6 @@
 ---
 name: skill-sweep
-description: Apply when asked to re-sweep, re-read or clean up every repo skill, the `/skill-sweep` command, or when `pnpm ai:sweep:ledger-coverage` shows open `docs/skills` rows. The whole-tree convergence run over .agents/skills — the setup, the mechanical checks, one skill at a time read whole and fixed in its own commit, the finish, and the report — repeated until a full pass finds nothing; each step names the skill that owns its rule and restates none of them.
+description: Apply when asked to re-sweep, re-read or clean up every repo skill, the `/skill-sweep` command, or when `pnpm ai:sweep:ledger-coverage` shows open `docs/skills` rows. The whole-tree convergence run over .agents/skills, repeated until a full pass finds nothing.
 ---
 
 # Skill Sweep — Every Skill, Until A Pass Finds Nothing
@@ -9,7 +9,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 ## Settled — do not re-propose
 
-- **Fanning the skills out to subagents.** A reading pass is priced by files read, and a finding one skill teaches applies to the next; the run stays in the main session, one skill at a time and reading decides every edit, which keeps it off a cheaper reader (the `llm-delegation` skill, `references/reading-passes.md`).
+- **Reading the skills in the main session, one at a time.** Reading is what a pass costs, and a haiku reader does it at a fraction of an opus read. The readers fan out in parallel, one per batch of skills; each applies the fixes its rule settles, names every edit, and reports each call it could not settle. The main session judges every reported call and every diff before its commit. Rejected: the main session reading every skill itself, since opus pays for each file read and carries every file's content (the `llm-delegation` skill, `references/reading-passes.md`).
 - **Reading by grep or by skimming.** The findings that matter — a claim the code no longer bears out, a copy between pages — live in prose a grep does not reach; every `SKILL.md` and every `references/` page is read whole.
 - **An installed third-party skill in the run.** A skill `skills-lock.json` installs is upstream's, outside the `docs/skills` ledger, and edited by nobody here. A skill one of our own plugins ships (`packages/*/skills`) is ours and is read with the package that ships it.
 - **Fixing the same kind of finding by hand twice.** The second one is an enforcer (the `sweeps` skill, `references/handing-to-an-enforcer.md`).
@@ -18,11 +18,12 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 1. **Setup.** `pnpm ai:sweep:ledger-coverage` to date the rows from the trailers (the `sweeps` skill, `references/ledger-files.md`).
 2. **Mechanical checks first**, and fix what they report before reading prose: `pnpm ai:sweep:skill-docs`, `pnpm ai:sweep:duplicate-prose`, and from `scripts/` `pnpm test src/workspace --run` — citations, ledger units, package scripts. A timeout on a cold cache reruns the one file alone before it is read as a failure.
-3. **Per skill, in the main session**, each through the `skill-authoring` skill's pass (`references/skill-pass.md`):
+3. **Per skill, through the `skill-authoring` skill's pass** (`references/skill-pass.md`), a haiku reader per batch of skills running in parallel; concurrent writes are allowed, since readers edit disjoint skill folders and a clash is settled when the run converges:
    - read `SKILL.md` and every `references/` page whole;
    - check it against the audit below;
    - verify every code claim against the tree — identifiers, paths, signatures and example code as they exist now, written in the newest APIs and the `error-handling` skill's result chains;
-   - fix what the audit finds, code included when the claim is right and the code is wrong, in one commit per skill carrying `Ledger: docs/skills | `<skill>``; a clean skill's trailer rides the next commit, never an empty one.
+   - apply the fixes the audit settles, code included when the claim is right and the code is wrong, and report every call it did not settle.
+   - The main session then reads each skill's diff and report, decides every reported call, and commits the skill's fixes in one commit carrying `Ledger: docs/skills | `<skill>``; a clean skill's trailer rides the next commit, never an empty one. A round that leaves findings runs again until a full pass finds nothing.
 4. **Finish.** `pnpm ai:sweep:ledger-coverage` again and commit the ledger dates; run the `finishing` skill; then the touched tests in the background per the `running-checks` skill; commit by pathspec and push the queue (the `review-queue` skill).
 5. **Report** a table of every skill — clean or fixed, with one line on what changed — and whether the run reached zero findings. A run that did not ends with the prompt for the next: this skill, rerun.
 
