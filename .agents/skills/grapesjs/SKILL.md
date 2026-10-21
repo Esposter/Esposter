@@ -1,6 +1,6 @@
 ---
 name: grapesjs
-description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature. Esposter's GrapesJS editors — components the resource routes mount, never pages; every instance through useGrapesJsEditor with the upload adapter passed, the resource read from useResourceStore, a published view's HTML captured at save time, and reactive blocks re-synced wholesale through setBlocks.
+description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature. Esposter's GrapesJS editors — components the resource routes mount, never pages.
 ---
 
 # GrapesJS Conventions
