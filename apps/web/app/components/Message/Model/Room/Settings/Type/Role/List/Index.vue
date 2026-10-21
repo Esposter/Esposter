@@ -37,7 +37,7 @@ const memberItems = computed(() =>
   memberIds.value.map<UiListItem<string>>((userId) => ({
     hasMarkSlot: true,
     isCurrent: userId === selectedMemberId.value,
-    title: getRoomMemberName(roomId, userId) ?? "",
+    title: getRoomMemberName(roomId, userId),
     value: userId,
   })),
 );

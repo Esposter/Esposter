@@ -11,10 +11,7 @@ interface Props {
 const { emoji } = defineProps<Props>();
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
-const { userMap } = storeToRefs(userStore);
-// A reactor with no membership in the room is named by the account
-const getReactorName = (userId: string) =>
-  getRoomMemberName(emoji.partitionKey, userId) ?? userMap.value.get(userId)?.name ?? "";
+const getReactorName = (userId: string) => getRoomMemberName(emoji.partitionKey, userId);
 const { description } = useEmojiTag(() => emoji.emojiTag);
 </script>
 

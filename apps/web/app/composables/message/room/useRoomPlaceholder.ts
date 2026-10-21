@@ -10,7 +10,7 @@ export const useRoomPlaceholder = (room: MaybeRefOrGetter<RoomInMessage | undefi
     const roomValue = toValue(room);
     if (!roomValue) return "";
     // A room nobody has opened this session has no member rows yet, so the creator's account name stands in
-    const creatorName = getRoomMemberName(roomValue.id, roomValue.userId) ?? userMap.value.get(roomValue.userId)?.name;
+    const creatorName = getRoomMemberName(roomValue.id, roomValue.userId);
     return creatorName ? `${creatorName}'s Room` : "";
   });
 };

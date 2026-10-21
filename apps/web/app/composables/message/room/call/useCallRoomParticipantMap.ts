@@ -20,7 +20,7 @@ export const useCallRoomParticipantMap = () => {
       new Map<string, CallParticipant>(
         Array.from(callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? [], ([id, participant]) => [
           id,
-          { ...participant, name: getRoomMemberName(currentRoomId.value, participant.userId) ?? participant.name },
+          { ...participant, name: getRoomMemberName(currentRoomId.value, participant.userId, participant.name) },
         ]),
       ),
   );

@@ -13,9 +13,8 @@ const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
 const { userMap } = storeToRefs(userStore);
 const user = computed(() => userMap.value.get(userId));
-// The room display name — a displayName where one is set, which is what the rest of the room shows this person as.
-// A reactor with no membership in the room is named by the account
-const memberName = computed(() => getRoomMemberName(roomId, userId) ?? user.value?.name ?? "");
+// The room display name, which is what the rest of the room shows this person as
+const memberName = computed(() => getRoomMemberName(roomId, userId));
 </script>
 
 <template>

@@ -24,7 +24,7 @@ const {
 } = roleStore;
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
-const memberName = computed(() => getRoomMemberName(roomId, userId) ?? "");
+const memberName = computed(() => getRoomMemberName(roomId, userId));
 // Administrator is answered from the roles alone, so an override cannot hold it and no row offers it
 const categories = RoomPermissionCategoryItems.map(({ category, permissions }) => ({
   category,

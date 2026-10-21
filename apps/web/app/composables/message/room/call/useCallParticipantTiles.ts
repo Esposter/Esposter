@@ -32,7 +32,7 @@ export const useCallParticipantTiles = () => {
         Array.from(callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? [], ([id, participant]) => [
           id,
           callRoomId.value
-            ? { ...participant, name: getRoomMemberName(callRoomId.value, participant.userId) ?? participant.name }
+            ? { ...participant, name: getRoomMemberName(callRoomId.value, participant.userId, participant.name) }
             : participant,
         ]),
       ),
