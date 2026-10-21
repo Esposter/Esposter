@@ -53,7 +53,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Functions
 
-- **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function.
+- **Always arrow functions** — `const fn = () => { ... }`. The `function` keyword is only for cases where `this` binding is required: class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be an arrow function — except a helper that takes a mod's `$` and is imported from a sibling file, which is a `function` declaration (the `claude-mods` skill).
 - **A bare function reference handed to an array method is wrapped** — `no-restricted-syntax` in `packages/configuration/eslint/restrictedSyntaxes.js` enforces it; the why, the hooks and listeners, and the `Number`/`String`/`Boolean` exception are `references/callbacks.md`.
 - **Prefer inferred return types** — annotate only a narrower contract or a public API boundary (`references/function-signatures.md`).
 - **Syntax is never extracted into a helper** — the `over-engineering` skill (`references/syntax-extraction.md`).
