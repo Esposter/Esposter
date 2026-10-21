@@ -9,11 +9,11 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 
 ## Settled — do not re-propose
 
-- **Bundling or committing a dataset the browser reads**, however small, or importing one for a synchronous read. Every read crosses an async boundary instead; the two left in the bundle, the lock and the save schema's achievement bound, are the page's "What stays in the package" and why.
+- **Bundling or committing a dataset the browser reads**, however small, or importing one for a synchronous read. Every read crosses an async boundary instead; the two left in the bundle, the lock and the save schema's achievement bound, are `openspec/specs/genshin/hosted-game-data/design.md`'s "What stays in the package" and why.
 - **Serving the data through the app**, a CDN in front of the account, or a Nitro mirror in development (`openspec/rejected/genshin/static-data-in-public-assets/design.md`, `openspec/rejected/infra/cdn-in-front-of-blob-storage/design.md`).
-- **Per-version folders, per-dataset manifests, git-style trees or a mutable pointer blob** in place of the lock (the page's Notes).
+- **Per-version folders, per-dataset manifests, git-style trees or a mutable pointer blob** in place of the lock (`openspec/specs/genshin/hosted-game-data/design.md`, "Notes").
 - **A test fixture holding a copy of a record.** A suite reads the real record through the mirror; a stub stands in only where a test asserts a rule over a value no record holds.
-- **Deleting an authored file once it is published.** Its edits stay plain file edits with history; the page's Decisions.
+- **Deleting an authored file once it is published.** Its edits stay plain file edits with history; `openspec/specs/genshin/hosted-game-data/design.md`, "Decisions".
 - **A client-side hash check, or a prune at the end of each publish.**
 
 ## Rules
