@@ -47,7 +47,7 @@ for attempt in 1 2 3 4; do git pull --rebase origin ai/queue || break; git push 
 
 A rebase conflict stops the loop on the commit it stopped on, and the agent that made the commit settles it (`references/pull-conflicts.md`). Only a rejected push retries.
 
-4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `.agents/skills/throughput/scripts/remove-worktree.sh`, which deletes its branch with it; a local branch is deleted with `git branch -d`.
+4. **Removes the branch, or the worktree, once its commits have landed.** A worktree goes through `pnpm ai:worktree:remove <full path>`, which deletes its branch with it; a local branch is deleted with `git branch -d`.
 
 **Worktrees live under `.agents/worktrees/`, which is gitignored. Windows needs long paths enabled once (see `openspec/specs/architecture/monorepo-tooling/design.md`, Windows long paths).**
 
