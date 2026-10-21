@@ -213,6 +213,7 @@ catalog:
   ohash: ^2.0.12
   onnxruntime-common: ^1.30.0
   onnxruntime-node: ^1.30.0
+  oxc-parser: ^0.155.0
   oxfmt: ^0.74.0
   oxlint: ^1.89.0
   oxlint-tsgolint: ^7.0.2004
@@ -283,6 +284,10 @@ overrides:
   # Services under `vite`: every build since reads them there, so Nuxt's renderer is dropped and every page answers 404
   nitro: npm:nitro-nightly@3.0.1-20261018-005730-bb9894fe
   typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+  # Nuxt's and its tools' optional `oxc-parser` peers resolve per subtree, so the stable and nightly stacks each took their
+  # own 0.140, 0.153, 0.154 or 0.155 copy, and `nuxt-nightly` split into peer variants that each declare a separate `NuxtApp`.
+  # One forced copy keeps a single `nuxt-nightly`; remove once Nuxt pins `oxc-parser` so its peers stop resolving loose
+  oxc-parser: "catalog:"
   vite: ^8.3.4
   # TODO: Remove once phaser4-rex-plugins updates to a fixed backend version (GHSA-xvq9-wjp8-hwqf).
   phaser4-rex-plugins>i18next-http-backend: ^4.0.4
