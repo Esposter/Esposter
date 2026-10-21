@@ -1,6 +1,6 @@
 # Upstream Audit
 
-Read when reading a package's tracker, or giving an issue its verdict. The four verdicts and the order they are decided in are `openspec/specs/architecture/dependency-admission/design.md` ("Triage"); this page is how the audit is run and what evidence each verdict needs.
+Read when reading a package's tracker, or giving an issue its verdict. The verdicts and the order they are decided in are `openspec/specs/architecture/dependency-admission/design.md` ("Triage"); this page is how the audit is run and what evidence each verdict needs.
 
 ## Reading the tracker
 
@@ -11,7 +11,7 @@ gh api "repos/<owner>/<repo>/issues?state=all&per_page=100" --paginate --jq '.[]
 gh api "repos/<owner>/<repo>/issues/comments?per_page=100" --paginate --jq '.[] | "#\(.issue_url | split("/") | last) @\(.user.login): \(.body)"'
 ```
 
-A verdict table that groups issues is generated rather than typed: a map of issue numbers to verdict and proof, checked to name every issue and pull request exactly once before the table is written.
+A verdict table that groups issues is typed by hand: a map of issue numbers to verdict and proof, naming every issue and pull request exactly once before the table is written.
 
 Read the package's source alongside — the installed copy under `node_modules/.pnpm`, or its `src` when it ships one — since "does the behaviour live in the adapter's code" is answered by the code, not by the thread.
 
