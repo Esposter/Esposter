@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written and how a migration is produced; the v2 relations API (defineRelationsPart, object-based where and orderBy) never v1, every table in its product area's Postgres schema and exported as <table>In<Schema>, registries generated rather than kept, requireMutation on .returning(), and db:gen as the only migration generator.
+description: Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers. Esposter's Drizzle ORM conventions — how a table, a relation and a query are written, how its names are derived, and how a migration is produced.
 ---
 
 # Drizzle ORM Conventions
