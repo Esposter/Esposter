@@ -70,6 +70,11 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - **The restoring button's arrow is the lowering's turned over,** provisionally, since no recording shows the restoring button.
 - **The card's values stand right-aligned beside the info disc,** as the current client draws them. The menu's reference still is the 1.3 build's, its values redacted, so the move costs its score a little.
 
+## Still open
+
+- **Adventure EXP from the sources not built yet.** A source's page adds its EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along. Until a source's page calls it, its EXP is not gained.
+- **The Paimon menu's rank gates for systems not built yet.** An entry whose system is not built stays disabled. A system the wiki gates by rank takes its rank in `ScreenKindOpenRankMap` as its page is built.
+
 ## Key files
 
 | File                                                                                 | Its role                                                                                     |

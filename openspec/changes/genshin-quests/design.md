@@ -23,7 +23,7 @@ The [quests](../../specs/genshin/quests/design.md) page holds the quest model, i
 
 3. **The clues.** The quests' objectives' places are what [Elemental Sight](../genshin-elemental-sight/design.md) draws its quest trails to, and what [companionship](../genshin-companionship/design.md)'s story waits name, once item 1 places them.
 
-The commissions are dealt by [commissions](../../specs/genshin/commissions/design.md), and their wiring is that proposal's. The finished quests the world level reads are [Adventure Rank](../genshin-adventure-rank/design.md)'s.
+The commissions are dealt by [commissions](../../specs/genshin/commissions/design.md), and their wiring is that proposal's. The finished quests the world level reads are [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md)'s.
 
 ## Measures owed
 

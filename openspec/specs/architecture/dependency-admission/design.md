@@ -110,11 +110,13 @@ Every catalog entry's verdict is a row in `.agents/ledgers/dependencies.md`, wit
 
 ## Gap analysis
 
-The ledger is the gap analysis, one verdict per entry. What it cannot hold is a finding about a cluster, and two clusters are recorded here.
+The ledger is the gap analysis, one verdict per entry. What it cannot hold is a finding about a cluster, and three clusters are recorded here.
 
 A `@types/x` entry is read against the package it types rather than against a call site of its own: one whose runtime package now ships its own declarations is residue, and one whose major trails the package it types is describing an API we no longer install.
 
 The page-builder plugin belt is the one thinning left open: around a dozen single-purpose plugins, several unmaintained and two imported through `@ts-expect-error`. The large ones — the webpage preset, the image editor, the exporter, the MJML and PostCSS integrations — are engines; the small ones register a block and a trait, and are replaced by the page builder's node types ([page builder proposal](../../../changes/resource-page-builder-program/design.md)). The component wrappers are the other cluster: each mounts one engine's view and does nothing else, and each is replaced by a component of the app's own over the same engine, as the standard below sets out.
+
+The about page's decorative gem is the third, and it is decided rather than open. The gem's three packages, which the ledger holds as kept, cost more than the 3D engine the globe already ships, and the gem earns them: it is the page's one visual, not a wrapper over an engine the app could write itself. The packages stay for as long as the gem does, and a removal of the gem is what reopens them.
 
 ## Executing an absorption
 

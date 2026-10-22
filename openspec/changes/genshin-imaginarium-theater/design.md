@@ -1,6 +1,6 @@
 # Imaginarium Theater
 
-The Imaginarium Theater is the game's roguelike combat challenge, held in the Mondstadt Library's Theater Lobby. Each season names three elements and a few characters; a player brings a cast of their own of those elements and plays through acts, each character able to perform twice, choosing events between battles that add characters or blessings. It is fought with the [character kits](../genshin-character-kits/design.md) and opens at [Adventure Rank](../genshin-adventure-rank/design.md) 35 with its quest, so this page waits on both.
+The Imaginarium Theater is the game's roguelike combat challenge, held in the Mondstadt Library's Theater Lobby. Each season names three elements and a few characters; a player brings a cast of their own of those elements and plays through acts, each character able to perform twice, choosing events between battles that add characters or blessings. It is fought with the [character kits](../genshin-character-kits/design.md) and opens at [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md) 35 with its quest, so this page waits on both.
 
 The [as-built page](../../specs/genshin/imaginarium-theater/design.md) holds the season schedule, the difficulties and their level floors, Vigor, Blessing Level, the opening character's bonus and the Stella rewards. What stays here is the cast's makeup, the stage, the acts and events, and the screen.
 

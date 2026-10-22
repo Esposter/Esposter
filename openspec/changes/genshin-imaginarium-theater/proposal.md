@@ -24,7 +24,7 @@ Build the Imaginarium Theater's play on the season's rules: the cast, the stages
 ## Waiting on
 
 - The character kits, which the stages are fought with: `openspec/changes/genshin-character-kits/`.
-- Adventure Rank, which opens the Theater with its quest: `openspec/changes/genshin-adventure-rank/`.
+- Adventure Rank, which opens the Theater with its quest: `openspec/changes/archive/2026-10-22-genshin-adventure-rank/`.
 - The Mondstadt Library's interior, which the Theater Lobby stands in.
 - The cast sizes and act counts wait on their difficulty table's fields being named.
 

@@ -1,6 +1,6 @@
 # Expeditions
 
-The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game, and the talents are applied; the other nations' places are not built, and the bonus is its chance only.
+The game sends characters out to gather while the player is away. Here the rules are pure services in `genshin-world`: a send, its return read from the moment it left, a claim that takes the rolled items into the bag and Mora into the wallet, and a recall that forfeits the reward. Mondstadt's places and the limit by rank come from the game's expedition tables, each fetched by its key from the hosted game data. This page is what is built of [expeditions](../../../changes/archive/2026-10-22-genshin-expeditions/design.md). Katheryne's talk opens the screen, so a player can send a character from the game, and the talents are applied; the other nations' places are not built, and the bonus is its chance only.
 
 ## How it works
 
@@ -23,19 +23,22 @@ stateDiagram-v2
 - **A recall forfeits the reward.** `recallExpedition` takes the character off the list and gives nothing, which is also what a claim does to the list.
 - **Real time, held for the session.** An expedition is held as its character, place, hours and the moment it left, like the wallet's Original Resin moment. The [save](../save-data/design.md) does not hold the list, so it lasts for the session and a reload empties it.
 - **Settled calls from the data.** The table's `rankLevel` is zero for the expedition materials, the game's unstarred items, so an item's rarity may be zero. The quest a place names, 39604 for Stormterror's Lair, has no finished record to read, so a place that names one stays closed until quests keep one. The expedition's materials are game text keys in all fifteen languages, so their names read through `GameTextKey` as every other item's do.
+- **Katheryne's talk opens the screen.** The game's menus hold no expedition entry, so the screen opens from her talk: `checkIsExpeditionTalk` matches a talk to her NPC id once she is a resident of the region data. She is placed at the Adventurers' building point by the lowest of her NPC rows, a provisional choice.
+- **The expedition screen is an NPC screen kind.** It opens from a talk rather than the Paimon menu, so `ScreenKind.Expedition` joins `NPC_SCREEN_KINDS`, the screens that have no menu entry, no menu slot and no placeholder title, as the crafting and forge screens have none.
+- **A character's expedition talent adds to a send or a reward.** A talent is a proud skill whose English description names an expedition, published as `expeditions/passives`. Its percent and hours come from the description text, since `paramList` is zero on these rows, and it applies once its passive is unlocked at the character's ascension. A time talent shortens expeditions in its region by its percent, and a reward talent adds its percent to the rewards of expeditions in its region for its hours; the talents of the character sent are summed per effect. A region the text names that the model does not hold is an error, so a talent cannot silently never apply.
+- **The bonus chance follows the sent character's level.** The table gives 20 percent from level 1, 40 from 21, 50 from 41, 60 from 51, 70 from 61, 80 from 71 and 90 from 81. `computeExpeditionBonusChance` takes the chance of the highest level the character has reached. The table is read as the chance for a sent character who holds the bonus, which the dump does not state outright. The wiki's Exploration Talents page says such a bonus either shortens an expedition or adds materials to it. Neither source names those materials or their counts, so the chance is built and no item is paid until a source names one.
 
 ## Data
 
-- **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; and `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`. The three expedition tables and the reward preview table are fetched from the community's dump into the game's text directory and not committed.
-- **Published by** `pnpm -C scripts genshin:assets expeditions`, which publishes Mondstadt's places as the record `expeditions/mondstadt` and the limit's ranks as `expeditions/limits` to the hosted game data. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
-- **Not read by this page:** "ExpeditionPathExcelConfigData" names the Adventurers' Guild's expedition missions, each with its team's elements, and "ExpeditionBonusExcelConfigData" gives a chance of a bonus by the sent character's level. Neither is a place to send a character, and neither's effect is in the tables read.
+- **Read from the game's tables:** `ExpeditionDataExcelConfigData` for each place's nation, its rank and statue and quest conditions, and its durations and reward previews; `RewardPreviewExcelConfigData` for the items and their counts; `PlayerLevelExcelConfigData` for each rank's `expeditionLimitAdd`; `ExpeditionBonusExcelConfigData` for the bonus's chance by level; and `ProudSkillExcelConfigData`, whose English descriptions name the expedition talents. The expedition tables, the reward preview table and the proud skill table are fetched from the community's dump into the game's text directory and not committed.
+- **Published by** `pnpm -C scripts genshin:assets expeditions`, which publishes Mondstadt's places as the record `expeditions/mondstadt`, the limit's ranks as `expeditions/limits`, the bonus's chance as `expeditions/bonuses` and the talents as `expeditions/passives`, to the hosted game data. `pnpm -C scripts genshin:assets items` writes the expedition materials into the items data beside the drops'.
+- **Not read by this page:** "ExpeditionPathExcelConfigData" names the Adventurers' Guild's expedition missions, each with its team's elements. A mission is not a place to send a character, so it is not read by this page.
 
 ## Not built yet
 
-- **Katheryne and the screen.** Her talk opens the expedition screen, and the screen's loader reads Mondstadt's places and the limit's steps from the hosted data as it opens. The screen's layout is still a parity matter.
 - **The other nations' places.** Only Mondstadt's places are published. A nation's places join when its statues are in the region data with their scene points.
 - **Statues beyond Windrise's.** The places that name points 7 and 29 stay closed until those statues are in the region data.
-- **The bonus and the talents.** The bonus's payload is not in the tables read, so the bonus is its chance and its kind only. A talent is a proud skill whose description names an expedition, read from the dump's text (`expeditions/passives`); it applies when its character holds it unlocked at its ascension, and its percent and hours come from that text, since the rows' `paramList` is zero.
+- **The bonus's payload.** Its items and counts are in no table read, so no claim pays them. Its chance is read and computed by level, but no claim rolls it yet.
 
 ## Key files
 
@@ -52,6 +55,12 @@ stateDiagram-v2
 | `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's places, fetched by key and checked on arrival             |
 | `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                        |
 | `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                 |
+| `packages/genshin-world/src/services/expedition/checkIsExpeditionTalk.ts`         | Whether a talk is Katheryne's, which opens the expedition screen      |
+| `packages/genshin-world/src/services/expedition/computeExpeditionBonusChance.ts`  | The bonus chance at a character's level                               |
+| `packages/genshin-world/src/services/expedition/readExpeditionBonuses.ts`         | The bonus table, fetched by its key from the hosted game data         |
+| `packages/genshin-world/src/models/expedition/ExpeditionBonus.ts`                 | A bonus row: the level it names and its chance                        |
+| `packages/genshin-world/src/components/Expedition/Screen/Index.vue`               | The expedition screen's world wrapper over Mondstadt's slice          |
+| `packages/genshin-interface/src/components/ExpeditionScreen/Index.vue`            | The expedition screen's layout, drawn from the public clip            |
 
 ## Notes
 
@@ -61,4 +70,5 @@ stateDiagram-v2
 ## Sources
 
 - [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: the unlock at rank 14 through Katheryne, any character but the Traveler for 4, 8, 12 or 20 hours, still usable while away, places opened by their statues, the timer running offline, recall forfeiting the reward, and two at once rising with rank.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition tables, the reward previews and the player level table's expedition limit.
+- [Exploration Talents](https://genshin-impact.fandom.com/wiki/Exploration_Talents), Genshin Impact Wiki: the expedition bonus's kind, in its Expedition Bonuses section.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the expedition tables, the bonus table, the proud skills that carry the talents, the reward previews and the player level table's expedition limit.
