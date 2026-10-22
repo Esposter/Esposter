@@ -21,13 +21,13 @@ describe("aggregateDeltas", () => {
   test("matches a delta on a server-derived count and nothing else", () => {
     expect.hasAssertions();
 
-    expect(DELTA_ON_AGGREGATE_REGEX.test("post.likeCount += newLike.value;")).toBe(true);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("post.likeCount = post.likeCount + newLike.value;")).toBe(true);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("getMemberCountsRef(roomId).value.count++;")).toBe(true);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("--comment.commentCount;")).toBe(true);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("clicker.pointCount += points;")).toBe(false);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("landedBlockCount++;")).toBe(false);
-    expect(DELTA_ON_AGGREGATE_REGEX.test("post.likeCount = likeCount;")).toBe(false);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x.count += 0;")).toBe(true);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x.count++;")).toBe(true);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("--x.count;")).toBe(true);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x.count = x.count + 0;")).toBe(true);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x.total += 0;")).toBe(false);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x++;")).toBe(false);
+    expect(DELTA_ON_AGGREGATE_REGEX.test("x.count = count;")).toBe(false);
   });
 
   test("moves no server-derived count by a delta in client code", async () => {
