@@ -4,6 +4,7 @@ import type { PublicUser } from "@esposter/db-schema";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { MemberCounts } from "@/models/message/user/MemberCounts";
 import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
+import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -42,25 +43,23 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const memberCount = computed(() => memberCounts.value.count);
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The totals are never adjusted by a delta: a delta applied on top of a read that already counted the change counts
-  // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change re-reads
-  // Them instead. Reads are ordered per room, latest started wins — a read started earlier can finish after a later one
-  // That saw a newer commit, and would otherwise overwrite it
-  const countsReadIds = new Map<string, number>();
-  const refreshMemberCounts = async (roomId: string) => {
-    const countsReadId = (countsReadIds.get(roomId) ?? 0) + 1;
-    countsReadIds.set(roomId, countsReadId);
-    const [count, countsByTopRole] = await Promise.all([
-      $trpc.room.readMembersCount.query({ roomId }),
-      $trpc.room.readMemberCountsByTopRole.query({ roomId }),
-    ]);
-    if (countsReadIds.get(roomId) !== countsReadId) return;
-
-    const roomMemberCounts = getMemberCountsRef(roomId).value;
-    roomMemberCounts.count = count;
-    roomMemberCounts.countsByTopRole = countsByTopRole;
-  };
+  // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change marks its
+  // Room, and the batched refresh re-reads the marked rooms one run at a time, so no two reads of a room overlap
+  const refreshMemberCounts = createBatchedRefresh(async (roomIds: string[]) => {
+    await Promise.all(
+      roomIds.map(async (roomId) => {
+        const [count, countsByTopRole] = await Promise.all([
+          $trpc.room.readMembersCount.query({ roomId }),
+          $trpc.room.readMemberCountsByTopRole.query({ roomId }),
+        ]);
+        const roomMemberCounts = getMemberCountsRef(roomId).value;
+        roomMemberCounts.count = count;
+        roomMemberCounts.countsByTopRole = countsByTopRole;
+      }),
+    );
+  });
   const refreshMemberCountsInBackground = (roomId: string) =>
-    getResultAsync(() => refreshMemberCounts(roomId)).match(noop, console.error);
+    getResultAsync(() => refreshMemberCounts([roomId])).match(noop, console.error);
   // Every role-membership write re-reads its room's totals, so a leave, a role change, and a committed optimistic write
   // all reach the totals through the same path. The room is the one the write happened in, not necessarily the one on
   // Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals

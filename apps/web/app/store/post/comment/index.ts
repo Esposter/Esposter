@@ -4,6 +4,7 @@ import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInp
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -20,9 +21,16 @@ export const useCommentStore = defineStore("post/comment", () => {
     for (const key of keys.value) comments.push(...getSlice(key).items.value);
     return comments;
   });
-  const updateCommentCounts = (ancestorIds: string[], delta: number) => {
-    const ancestorIdSet = new Set(ancestorIds);
-    for (const comment of allComments.value) if (ancestorIdSet.has(comment.id)) comment.commentCount += delta;
+  // A reply or a removal changes its ancestors' counts on the server, by however many rows the server removed, so the
+  // Counts are read back rather than adjusted. Only the posts a copy is held for are asked after
+  const refreshCommentCounts = createBatchedRefresh(async (postIds: string[]) => {
+    const postCounts = await $trpc.post.readPostCounts.query(postIds);
+    for (const { commentCount, id } of postCounts)
+      for (const comment of allComments.value) if (comment.id === id) comment.commentCount = commentCount;
+  });
+  const refreshHeldCommentCounts = async (ancestorIds: string[]) => {
+    const heldIds = ancestorIds.filter((id) => allComments.value.some((comment) => comment.id === id));
+    if (heldIds.length > 0) await refreshCommentCounts(heldIds);
   };
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
@@ -51,9 +59,9 @@ export const useCommentStore = defineStore("post/comment", () => {
     const { createComment: storeCreateComment } = getCommentOperationData(input.parentId);
     const outcome = await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
       key: Symbol("createComment"),
-      onSuccess: ({ ancestorIds, comment }) => {
+      onSuccess: async ({ ancestorIds, comment }) => {
         storeCreateComment(comment);
-        updateCommentCounts(ancestorIds, 1);
+        await refreshHeldCommentCounts(ancestorIds);
       },
     });
     return outcome.status === MutationStatus.Succeeded;
@@ -97,8 +105,8 @@ export const useCommentStore = defineStore("post/comment", () => {
         };
       },
       key: input,
-      onSuccess: ({ ancestorIds, removedCommentCount }) => {
-        updateCommentCounts(ancestorIds, -removedCommentCount);
+      onSuccess: async ({ ancestorIds }) => {
+        await refreshHeldCommentCounts(ancestorIds);
       },
     });
   };

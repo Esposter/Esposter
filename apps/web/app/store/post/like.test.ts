@@ -27,6 +27,7 @@ describe(useLikeStore, () => {
     expect.hasAssertions();
 
     trpcMsw.like.createLike.mutation(() => like);
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: like.value }]);
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     const commentStore = useCommentStore();

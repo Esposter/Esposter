@@ -44,7 +44,7 @@ export const useReadMembers = () => {
   // Everybody, and counting a filtered room would describe one nobody is in
   const readMemberCounts = () => {
     const roomId = requirePartitionKey(scopedRoomId.value, readMemberCounts.name);
-    return refreshMemberCounts(roomId);
+    return refreshMemberCounts([roomId]);
   };
   const searchMembers = (name: string, signal?: AbortSignal) => {
     const roomId = requirePartitionKey(scopedRoomId.value, searchMembers.name);

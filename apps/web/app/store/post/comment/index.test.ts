@@ -46,6 +46,7 @@ describe(useCommentStore, () => {
 
       return { ancestorIds: [postId], removedCommentCount: 1 };
     });
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
@@ -66,6 +67,7 @@ describe(useCommentStore, () => {
 
     const reply = createPost({ depth: 2, parentId: comment.id });
     trpcMsw.post.deleteComment.mutation(() => ({ ancestorIds: [postId], removedCommentCount: 2 }));
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount: 0 }]);
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
@@ -116,6 +118,10 @@ describe(useCommentStore, () => {
     const repliedToComment = createPost({ commentCount: 0, depth: 1, parentId: postId });
     const reply = createPost({ depth: 2, parentId: repliedToComment.id });
     trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId, repliedToComment.id], comment: reply }));
+    trpcMsw.post.readPostCounts.query(() => [
+      { commentCount: 2, id: postId, likeCount: 0 },
+      { commentCount: 1, id: repliedToComment.id, likeCount: 0 },
+    ]);
     const parentPost = createPost({ commentCount: 1, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);

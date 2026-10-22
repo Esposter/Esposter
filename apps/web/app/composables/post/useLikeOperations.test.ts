@@ -20,9 +20,14 @@ describe(useLikeOperations, () => {
     value,
   });
 
+  // The count the server holds once the votes settle, as a read of it returns it
+  const serveLikeCount = (likeCount: number) => {
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 0, id: postId, likeCount }]);
+  };
+
   // Two quick votes on one post queue under the same key, so the second's rollback has to undo its own vote. The
-  // Vote it read when the user clicked is the one the first call already replaced, and both the count delta and
-  // The restored vote would be computed against it
+  // Vote it read when the user clicked is the one the first call already replaced, and the restored vote would be
+  // Computed against it
   test("rolls a failed vote back to the vote ahead of it", async () => {
     expect.hasAssertions();
 
@@ -31,6 +36,7 @@ describe(useLikeOperations, () => {
 
       return createLike(input.value);
     });
+    serveLikeCount(-1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { updateLike } = useLikeOperations([post]);
     await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
@@ -39,12 +45,13 @@ describe(useLikeOperations, () => {
     expect(post.likeCount).toBe(-1);
   });
 
-  // A second withdrawal queues behind the first and finds the vote already gone, so it has nothing to take off
-  // The count — the vote it read when the user clicked would be subtracted a second time
-  test("withdraws one vote from the count when two deletes queue", async () => {
+  // A second withdrawal queues behind the first and finds the vote already gone, so it withdraws nothing, and the
+  // count shown is the one the server holds after the first, not a value the two withdrawals moved by twice
+  test("shows the count the server holds after two deletes queue", async () => {
     expect.hasAssertions();
 
     trpcMsw.like.deleteLike.mutation(() => createLike(1));
+    serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
     const { deleteLike } = useLikeOperations([post]);
     await Promise.all([deleteLike(postId), deleteLike(postId)]);

@@ -147,6 +147,20 @@ describe("postRouter", () => {
     expect(comment).toStrictEqual(newComment);
   });
 
+  test("reads the counts of several posts in one call", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const otherPost = await postCaller.createPost({ title });
+    await postCaller.createComment({ description, parentId: newPost.id });
+    const postCounts = await postCaller.readPostCounts([newPost.id, otherPost.id]);
+
+    expect(Object.fromEntries(postCounts.map(({ commentCount, id }) => [id, commentCount]))).toStrictEqual({
+      [newPost.id]: 1,
+      [otherPost.id]: 0,
+    });
+  });
+
   test("updates comment", async () => {
     expect.hasAssertions();
 

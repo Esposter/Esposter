@@ -24,6 +24,7 @@ import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentIn
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
 import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
 import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
+import { readPostCountsInputSchema } from "#shared/models/db/post/ReadPostCountsInput";
 import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
@@ -163,6 +164,16 @@ export const postRouter = router({
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
     .query<PostInPostWithRelations>(({ ctx, input }) =>
       readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
+    ),
+  // The counts the server keeps on each post, read in one statement for the posts a client has marked as changed. The
+  // Server adjusts a count in the same transaction as the write that changes it, so only this read says what it is now
+  readPostCounts: standardRateLimitedProcedure
+    .input(readPostCountsInputSchema)
+    .query<Pick<PostInPost, "commentCount" | "id" | "likeCount">[]>(({ ctx, input }) =>
+      ctx.db
+        .select({ commentCount: postsInPost.commentCount, id: postsInPost.id, likeCount: postsInPost.likeCount })
+        .from(postsInPost)
+        .where(inArray(postsInPost.id, input)),
     ),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
