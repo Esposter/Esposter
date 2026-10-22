@@ -4,16 +4,20 @@ import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKe
 import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { useTextDelayMs } from "@/composables/dungeons/text/useTextDelayMs";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
+import { Scenes } from "phaser";
 import { onNextTick } from "vue-phaserjs";
 
 // A text change reaches Vue's watchers on the next render, and they hand it to Phaser on the scene's next tick,
-// So the text is on screen once both have run
+// So the text is on screen once both have run. A shutdown drops the scene's next-tick listeners unrun, so it settles too
 const waitForTextShown = async (scene: SceneWithPlugins) => {
   await nextTick();
   await new Promise<void>((resolve) => {
-    onNextTick(() => {
+    const settle = () => {
+      scene.events.off(Scenes.Events.SHUTDOWN, settle);
       resolve();
-    }, scene.scene.key);
+    };
+    scene.events.once(Scenes.Events.SHUTDOWN, settle);
+    onNextTick(settle, scene.scene.key);
   });
 };
 
@@ -27,6 +31,13 @@ const typeText = (scene: SceneWithPlugins, targetText: Ref<string>, textSections
   play();
 
   return new Promise<void>((resolve) => {
+    // A shutdown clears the scene's clock, so the typing ends there and the blip stops rather than playing on
+    const finish = () => {
+      scene.events.off(Scenes.Events.SHUTDOWN, finish);
+      stop();
+      resolve();
+    };
+    scene.events.once(Scenes.Events.SHUTDOWN, finish);
     scene.time.addEvent({
       callback: () => {
         targetText.value += textSections[sectionIndex];
@@ -34,8 +45,7 @@ const typeText = (scene: SceneWithPlugins, targetText: Ref<string>, textSections
 
         if (sectionIndex < textSections.length) return;
 
-        stop();
-        resolve();
+        finish();
       },
       delay: textDelayMs.value,
       repeat: textSections.length - 1,
