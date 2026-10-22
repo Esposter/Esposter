@@ -176,6 +176,24 @@ A review SHALL NOT wait for CI, and a red main SHALL be fixed on the queue first
 - **WHEN** the review runs
 - **THEN** the review does not wait for CI
 
+### Requirement: Batches are bounded in characters, and unreadable files are not reviewed
+
+A batch SHALL close before its diffs pass the character cap, a file over either cap SHALL get a batch of its own, and a changed file with a line no reviewer can read as text SHALL NOT be reviewed. The diff in a prompt SHALL be cut at a character limit as well as a line limit.
+
+#### Scenario: Generated file with one very long line
+
+- **GIVEN** a changed file has a line longer than the readable limit
+- **WHEN** windows are planned
+- **THEN** the file is not reviewed
+- **AND** the other files of its commit are still reviewed
+
+#### Scenario: Diff past the character limit
+
+- **GIVEN** a batch's diff holds more characters than the limit
+- **WHEN** its prompt is built
+- **THEN** the diff is cut at the limit
+- **AND** the prompt says it was cut
+
 ### Requirement: Review reads commits and opens no pull requests
 
 The review SHALL read commits rather than pull requests and SHALL open no pull requests.

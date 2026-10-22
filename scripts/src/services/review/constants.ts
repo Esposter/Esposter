@@ -21,6 +21,9 @@ export const REVIEW_BATCH_FILE_CAP = 20;
 export const REVIEW_BATCH_LINE_CAP = 1200;
 // The characters one batch's diffs hold. Lines do not bound a prompt: a generated file can be a megabyte on one line.
 export const REVIEW_BATCH_CHARACTER_CAP = 120000;
+// The longest line a reviewer can read as text. A file with a longer changed line is minified or embedded data, which is
+// Excluded from review rather than cut, since a cut of it is still megabytes of noise.
+export const REVIEW_LINE_CHARACTER_LIMIT = 2000;
 // Where one oversized file's diff is cut in the prompt, with a note to read the file for the rest
 export const REVIEW_DIFF_LINE_LIMIT = 3000;
 // The most characters of a batch's diff the prompt holds, the character bound on the same cut as the line one
