@@ -1,7 +1,7 @@
 import type { FluidResources } from "@/models/visual/FluidResources";
 import type { RenderTarget } from "three/webgpu";
 
-import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
+import waterNormalsUrl from "@/assets/visual/textures/waternormals.jpg?url";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";
@@ -62,7 +62,7 @@ export const useFluidSimulator = (container: MaybeRefOrGetter<HTMLElement | unde
     const sun = new Vector3();
     const waterGeometry = new PlaneGeometry(10000, 10000);
     const textureLoader = new TextureLoader();
-    const waterNormals = textureLoader.load(WATERS_NORMALS_TEXTURE_PATH);
+    const waterNormals = textureLoader.load(waterNormalsUrl);
     waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
     const water = new WaterMesh(waterGeometry, {
       distortionScale: 3.7,

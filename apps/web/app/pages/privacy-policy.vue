@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
+import privacyPolicyHtml from "@/assets/about/privacyPolicy.html?raw";
 </script>
 
 <template>

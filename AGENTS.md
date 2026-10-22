@@ -107,6 +107,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 | Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
 | Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |
 | Reviewing anything — lanes, scope, findings, the stop rule                   | `code-review` skill                                         |
+| Static files — bundled under `app/assets`, or fixed under `public`           | `openspec/specs/architecture/static-assets/design.md`       |
 | Enforcing a rule — construction, primitive, lint, test, then prose           | `openspec/specs/architecture/enforcement-ladder/design.md`  |
 
 Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.

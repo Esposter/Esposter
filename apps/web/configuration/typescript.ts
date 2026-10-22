@@ -6,4 +6,7 @@ import type { NuxtConfig } from "nuxt/schema";
 // Is what forces every private package to emit declarations nothing else reads. The condition is spelled rather
 // Than imported as `SOURCE_CONDITION`: `nuxt prepare` loads this from `postinstall`, before
 // `@esposter/configuration` is built, so `typescript.test.ts` holds the spelling to it instead.
-export const typescript: NuxtConfig["typescript"] = { tsConfig: { compilerOptions: { customConditions: ["source"] } } };
+// The Tiled tilesets are XML under `app/assets/`, where Nuxt's `app/**` include would compile them as TSX
+export const typescript: NuxtConfig["typescript"] = {
+  tsConfig: { compilerOptions: { customConditions: ["source"] }, exclude: ["../app/assets/**/*.tsx"] },
+};

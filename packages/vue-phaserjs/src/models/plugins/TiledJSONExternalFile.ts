@@ -11,8 +11,6 @@ import { Loader, Tilemaps, Utils } from "phaser";
 const GetFastValue = Utils.Objects.GetFastValue;
 const JSONFile = Loader.FileTypes.JSONFile;
 const MultiFile = Loader.MultiFile;
-// Tilesets are exposed from nuxt's public folder, so a tileset source is resolved from the path past that folder
-const PUBLIC_FOLDER = "public";
 
 export class TiledJSONExternalFile extends MultiFile {
   declare files: [TilemapFile, ...TilesetFile[]];
@@ -26,6 +24,7 @@ export class TiledJSONExternalFile extends MultiFile {
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
+    let tilesetURLs: Record<string, string> | undefined;
     // The config-object form of the loader call, as Phaser's own tilemap file reads it
     if (typeof key !== "string") {
       const configuration = key;
@@ -35,6 +34,7 @@ export class TiledJSONExternalFile extends MultiFile {
       path = GetFastValue(configuration, "path");
       baseURL = GetFastValue(configuration, "baseURL");
       tilesetXhrSettings = GetFastValue(configuration, "tilesetXhrSettings");
+      tilesetURLs = GetFastValue(configuration, "tilesetURLs");
     }
 
     const tilemapFile = new JSONFile(loader, key, tilemapURL, tilemapXhrSettings);
@@ -43,6 +43,7 @@ export class TiledJSONExternalFile extends MultiFile {
     this.config.path = path;
     this.config.baseURL = baseURL;
     this.config.tilesetXhrSettings = tilesetXhrSettings;
+    this.config.tilesetURLs = tilesetURLs;
   }
 
   addToCache() {
@@ -109,16 +110,22 @@ export class TiledJSONExternalFile extends MultiFile {
     loader.setPath(path);
     loader.setPrefix(prefix);
 
+    const tilesetURLs = GetFastValue(config, "tilesetURLs") as Record<string, string> | undefined;
     for (const [tilesetIndex, tileset] of tilesets.entries()) {
-      const pathIndex = tileset.source.indexOf(PUBLIC_FOLDER);
-      if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
+      // A tileset is named by its file, and the app supplies each one's url by import, so a tileset may live anywhere
+      const tilesetName =
+        tileset.source
+          .split("/")
+          .pop()
+          ?.replace(/\.tsx$/u, "") ?? "";
+      const tilesetURL = tilesetURLs?.[tilesetName];
+      if (!tilesetURL) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
-      const relativePath = tileset.source.slice(pathIndex + PUBLIC_FOLDER.length);
       const tilesetFile = new TilesetFile(
         tilesetIndex,
         loader,
-        `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${relativePath}`,
-        relativePath,
+        `${file.key}${ID_SEPARATOR}Tileset${ID_SEPARATOR}${tilesetName}`,
+        tilesetURL,
         tilesetXhrSettings,
       );
       this.addToMultiFile(tilesetFile);

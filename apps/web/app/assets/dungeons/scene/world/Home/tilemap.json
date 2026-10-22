@@ -977,43 +977,43 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/BasicPlains.tsx"
+         "source":"..\/..\/..\/tilesets\/axulart\/BasicPlains.tsx"
         }, 
         {
          "firstgid":65,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/BeachAndCaves.tsx"
+         "source":"..\/..\/..\/tilesets\/axulart\/BeachAndCaves.tsx"
         }, 
         {
          "firstgid":185,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Grass.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Grass.tsx"
         }, 
         {
          "firstgid":189,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Collision.tsx"
         }, 
         {
          "firstgid":190,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Bushes.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Bushes.tsx"
         }, 
         {
          "firstgid":194,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Encounter.tsx"
         }, 
         {
          "firstgid":195,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/House.tsx"
+         "source":"..\/..\/..\/tilesets\/axulart\/House.tsx"
         }, 
         {
          "firstgid":207,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
+         "source":"..\/..\/..\/tilesets\/axulart\/HouseInterior.tsx"
         }, 
         {
          "firstgid":327,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Entrance.tsx"
         }, 
         {
          "firstgid":330,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
+         "source":"..\/..\/..\/tilesets\/firstParty\/Teleport.tsx"
         }],
  "tilewidth":64,
  "type":"map",

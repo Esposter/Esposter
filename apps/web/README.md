@@ -103,6 +103,7 @@ apps/web/
 │   ├── store/            # Pinia stores
 │   ├── types/            # Client-side type declarations
 │   └── util/             # Client-side utilities
+├── public/               # Files served at a fixed URL, see the static-assets standard
 ├── server/
 │   ├── api/              # Nuxt server API routes
 │   ├── composables/      # Server-side composables (Azure clients, session)

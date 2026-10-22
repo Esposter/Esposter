@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { BufferGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three/webgpu";
 
-import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import gemGltfUrl from "@/assets/visual/textures/gem.gltf?url";
+import roughnessUrl from "@/assets/visual/textures/roughness.jpeg?url";
 import { Vector3 } from "three/webgpu";
 
-const { state: gltf } = useGLTF(GEM_GLTF_PATH);
-const { state: roughnessMap } = useTexture(ROUGHNESS_TEXTURE_PATH);
+const { state: gltf } = useGLTF(gemGltfUrl);
+const { state: roughnessMap } = useTexture(roughnessUrl);
 const gem = computed(
   () => gltf.value?.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined,
 );

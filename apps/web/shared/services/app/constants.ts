@@ -16,13 +16,7 @@ export const GIBIBYTE = MEGABYTE * KIBIBYTE;
 export const MAX_REQUEST_SIZE = 2_000_000;
 export const MAX_FILE_REQUEST_SIZE = 10 * MEGABYTE;
 
+// The PWA's icons and splash screens are named by the manifest and the document head, so they stay in `public/`
 export const PWA_PUBLIC_FOLDER_PATH = "/pwa";
-
-const IMAGES_PUBLIC_FOLDER_PATH = "/images";
-export const VUEJS_LOGO_UWU_PATH = `${IMAGES_PUBLIC_FOLDER_PATH}/vuejsLogoUWU.png`;
-
-const TILESETS_PUBLIC_FOLDER_PATH = "/tilesets";
-export const FIRST_PARTY_FOLDER_PATH = `${TILESETS_PUBLIC_FOLDER_PATH}/firstParty`;
-export const AXULART_FOLDER_PATH = `${TILESETS_PUBLIC_FOLDER_PATH}/axulart`;
 // Between the parts of a document title, broadest first, so its last part names the page itself
 export const PAGE_TITLE_SEPARATOR = " | ";

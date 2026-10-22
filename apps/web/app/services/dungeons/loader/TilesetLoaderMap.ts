@@ -1,36 +1,32 @@
 import type { AssetLoader } from "@/models/dungeons/loader/AssetLoader";
 
-import { AXULART_FOLDER_PATH, FIRST_PARTY_FOLDER_PATH } from "#shared/services/app/constants";
+import basicPlainsUrl from "@/assets/dungeons/tilesets/axulart/BasicPlains.png?url";
+import beachAndCavesUrl from "@/assets/dungeons/tilesets/axulart/BeachAndCaves.png?url";
+import houseUrl from "@/assets/dungeons/tilesets/axulart/House.png?url";
+import houseInteriorUrl from "@/assets/dungeons/tilesets/axulart/HouseInterior.png?url";
+import bushesUrl from "@/assets/dungeons/tilesets/firstParty/Bushes.png?url";
+import collisionUrl from "@/assets/dungeons/tilesets/firstParty/Collision.png?url";
+import dungeonUrl from "@/assets/dungeons/tilesets/firstParty/Dungeon.png?url";
+import encounterUrl from "@/assets/dungeons/tilesets/firstParty/Encounter.png?url";
+import entranceUrl from "@/assets/dungeons/tilesets/firstParty/Entrance.png?url";
+import grassUrl from "@/assets/dungeons/tilesets/firstParty/Grass.png?url";
+import teleportUrl from "@/assets/dungeons/tilesets/firstParty/Teleport.png?url";
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 
 export const TilesetLoaderMap = {
-  [TilesetKey.BasicPlains]: (scene) =>
-    scene.load.image(TilesetKey.BasicPlains, `${AXULART_FOLDER_PATH}/${TilesetKey.BasicPlains}.png`),
-  [TilesetKey.BeachAndCaves]: (scene) =>
-    scene.load.image(TilesetKey.BeachAndCaves, `${AXULART_FOLDER_PATH}/${TilesetKey.BeachAndCaves}.png`),
-  [TilesetKey.Bushes]: (scene) =>
-    scene.load.image(TilesetKey.Bushes, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Bushes}.png`),
-  [TilesetKey.Collision]: (scene) =>
-    scene.load.image(TilesetKey.Collision, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Collision}.png`),
+  [TilesetKey.BasicPlains]: (scene) => scene.load.image(TilesetKey.BasicPlains, basicPlainsUrl),
+  [TilesetKey.BeachAndCaves]: (scene) => scene.load.image(TilesetKey.BeachAndCaves, beachAndCavesUrl),
+  [TilesetKey.Bushes]: (scene) => scene.load.image(TilesetKey.Bushes, bushesUrl),
+  [TilesetKey.Collision]: (scene) => scene.load.image(TilesetKey.Collision, collisionUrl),
   [TilesetKey.Dungeon]: (scene) =>
-    scene.load.spritesheet(TilesetKey.Dungeon, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Dungeon}.png`, {
-      frameHeight: 16,
-      frameWidth: 16,
-    }),
-  [TilesetKey.Encounter]: (scene) =>
-    scene.load.image(TilesetKey.Encounter, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Encounter}.png`),
-  [TilesetKey.Entrance]: (scene) =>
-    scene.load.image(TilesetKey.Entrance, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Entrance}.png`),
-  [TilesetKey.Grass]: (scene) =>
-    scene.load.image(TilesetKey.Grass, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Grass}.png`),
-  [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, `${AXULART_FOLDER_PATH}/${TilesetKey.House}.png`),
+    scene.load.spritesheet(TilesetKey.Dungeon, dungeonUrl, { frameHeight: 16, frameWidth: 16 }),
+  [TilesetKey.Encounter]: (scene) => scene.load.image(TilesetKey.Encounter, encounterUrl),
+  [TilesetKey.Entrance]: (scene) => scene.load.image(TilesetKey.Entrance, entranceUrl),
+  [TilesetKey.Grass]: (scene) => scene.load.image(TilesetKey.Grass, grassUrl),
+  [TilesetKey.House]: (scene) => scene.load.image(TilesetKey.House, houseUrl),
   [TilesetKey.HouseInterior]: (scene) =>
-    scene.load.spritesheet(TilesetKey.HouseInterior, `${AXULART_FOLDER_PATH}/${TilesetKey.HouseInterior}.png`, {
-      frameHeight: 64,
-      frameWidth: 64,
-    }),
-  [TilesetKey.Teleport]: (scene) =>
-    scene.load.image(TilesetKey.Teleport, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Teleport}.png`),
+    scene.load.spritesheet(TilesetKey.HouseInterior, houseInteriorUrl, { frameHeight: 64, frameWidth: 64 }),
+  [TilesetKey.Teleport]: (scene) => scene.load.image(TilesetKey.Teleport, teleportUrl),
 } as const satisfies Record<TilesetKey, AssetLoader>;
 
 export const TilesetLoaders = Object.values(TilesetLoaderMap);

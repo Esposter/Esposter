@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
+import vuejsLogoUwuUrl from "@/assets/about/vuejsLogoUWU.png?url";
 </script>
 
 <template>
@@ -12,6 +12,6 @@ import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
       <span text-text>JavaScript Application</span>
     </h1>
     <p text-muted max-w-prose>An approachable, performant and versatile javascript application powered by</p>
-    <NuxtImg max-w-180 w-full :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
+    <NuxtImg max-w-180 w-full :src="vuejsLogoUwuUrl" alt="uwu" />
   </header>
 </template>

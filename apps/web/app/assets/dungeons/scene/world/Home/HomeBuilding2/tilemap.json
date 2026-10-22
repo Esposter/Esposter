@@ -168,23 +168,23 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
+         "source":"..\/..\/..\/..\/tilesets\/firstParty\/Collision.tsx"
         }, 
         {
          "firstgid":2,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
+         "source":"..\/..\/..\/..\/tilesets\/axulart\/HouseInterior.tsx"
         }, 
         {
          "firstgid":122,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
+         "source":"..\/..\/..\/..\/tilesets\/firstParty\/Encounter.tsx"
         }, 
         {
          "firstgid":123,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
+         "source":"..\/..\/..\/..\/tilesets\/firstParty\/Entrance.tsx"
         }, 
         {
          "firstgid":126,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
+         "source":"..\/..\/..\/..\/tilesets\/firstParty\/Teleport.tsx"
         }],
  "tilewidth":64,
  "type":"map",
