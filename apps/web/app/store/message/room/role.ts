@@ -85,6 +85,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setMemberRoleMap,
   } = useDataMap(() => roomStore.scopedRoomId, new Map<string, RoomRoleInMessage[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
+  // The members whose roles the server has read, per room. A role event writes a member's roles too, but only the one
+  // Change it carries, so an entry alone does not say the roles are the whole of them. Only the read marks a member
+  const { getData: getMemberRolesReadUserIds, setData: setMemberRolesReadUserIds } = useDataMap(
+    () => roomStore.scopedRoomId,
+    new Set<string>(),
+  );
+  const hasMemberRoles = (roomId: string, userId: string) => Boolean(getMemberRolesReadUserIds(roomId)?.has(userId));
   const setMemberRoles = (roomId: string, userId: string, memberRoles: RoomRoleInMessage[]) => {
     const roomMemberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
     roomMemberRoleMap.set(userId, memberRoles);
@@ -158,6 +165,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
         userId,
         (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
       );
+    setMemberRolesReadUserIds(
+      input.roomId,
+      new Set([...(getMemberRolesReadUserIds(input.roomId) ?? []), ...input.userIds]),
+    );
   };
   const { executeMutation: executeCreateRoleMutation, isPending: isCreateRolePending } = useMutation();
   const { executeMutation: executeUpdateRoleMutation } = useMutation();
@@ -287,6 +298,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getMemberRoles,
     getMyPermissions,
     getRoles,
+    hasMemberRoles,
     isCreateRolePending,
     memberPermissionOverrideMap,
     memberRoleMap,

@@ -36,7 +36,7 @@ export const useRoomSubscribables = () => {
         }),
         $trpc.room.onLeaveRoom.subscribe(roomIds, {
           onData: ({ roomId, userId }) => {
-            storeDeleteMember(roomId, userId);
+            getResultAsync(() => storeDeleteMember(roomId, userId)).match(noop, console.error);
           },
         }),
       );

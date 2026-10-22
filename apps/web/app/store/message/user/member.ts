@@ -11,9 +11,10 @@ import { useUserStore } from "@/store/message/user";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
 export const useMemberStore = defineStore("message/user/member", () => {
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const roleStore = useRoleStore();
-  const { mutateMemberRoles } = roleStore;
+  const { hasMemberRoles, mutateMemberRoles } = roleStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
@@ -73,14 +74,21 @@ export const useMemberStore = defineStore("message/user/member", () => {
     getRoomOperationData(roomId).createMember(member);
     getMemberCountsRef(roomId).value.count++;
   };
-  const storeDeleteMember = (roomId: string, id: PublicUser["id"]) => {
+  const storeDeleteMember = async (roomId: string, id: PublicUser["id"]) => {
     // A member who leaves is a member whose top role became "none", so the departure goes through the one
     // Funnel that owns the per-role totals rather than decrementing them a second time here — otherwise the
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
     // (in a room where every member holds a role it goes negative).
+    const hasLoadedRoles = hasMemberRoles(roomId, id);
     mutateMemberRoles(roomId, id, []);
     getRoomOperationData(roomId).deleteMember({ id });
     getMemberCountsRef(roomId).value.count--;
+    // A leaver whose roles were never loaded sits in a group this store cannot see, so the room's group counts are
+    // Read again. The server has applied the departure before the event was sent, so the read is the room without them
+    if (hasLoadedRoles) return;
+
+    const memberCountsRef = getMemberCountsRef(roomId);
+    memberCountsRef.value.countsByTopRole = await $trpc.room.readMemberCountsByTopRole.query({ roomId });
   };
   return {
     getBoundMemberCounts,
