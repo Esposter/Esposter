@@ -3,7 +3,7 @@ import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
+import { usePostCountStore } from "@/store/post/count";
 
 // Every copy's change is undone by its own rollback, in one call
 const getRollback = (rollbacks: (() => void)[]) => () => {
@@ -17,17 +17,11 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
   const { executeMutation: executeCreateLikeMutation } = useMutation();
   const { executeMutation: executeUpdateLikeMutation } = useMutation();
   const { executeMutation: executeDeleteLikeMutation } = useMutation();
+  const { refreshPostCounts } = usePostCountStore();
   // A list may hold the same object twice, and a copy changed twice would be rolled back against the wrong vote
   const getPosts = (postId: PostInPostWithRelations["id"]) => [
     ...new Set(toValue(allPosts).filter(({ id }) => id === postId)),
   ];
-  // The count is never moved here: the server adjusts it in the write that changes the vote, and another viewer's vote
-  // Changes it too. Once a vote settles the count is read back, so the copies show what the server holds. Only the
-  // Viewer's own vote is set at once, since the client holds that exactly
-  const refreshLikeCounts = createBatchedRefresh(async (postIds: string[]) => {
-    const postCounts = await $trpc.post.readPostCounts.query(postIds);
-    for (const { id, likeCount } of postCounts) for (const post of getPosts(id)) post.likeCount = likeCount;
-  });
   // `createLike` is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
   // Round trip and a rapid second vote would fire another CreateLike, hitting the likes primary-key constraint.
   // Keying the single-flight guard by postId drops the duplicate create while the first is still in flight.
@@ -39,7 +33,8 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
         for (const post of getPosts(newLike.postId)) post.viewerLike = newLike;
       },
     });
-    await refreshLikeCounts([input.postId]);
+    // The counts are never moved here: the server adjusts them in the write that changes the vote, so they are read back
+    await refreshPostCounts([input.postId]);
   };
   const updateLike = async (input: UpdateLikeInput) => {
     const posts = getPosts(input.postId);
@@ -68,7 +63,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
         for (const post of posts) post.viewerLike = updatedLike;
       },
     });
-    await refreshLikeCounts([input.postId]);
+    await refreshPostCounts([input.postId]);
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
     const posts = getPosts(postId);
@@ -93,7 +88,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
         ),
       key: postId,
     });
-    await refreshLikeCounts([postId]);
+    await refreshPostCounts([postId]);
   };
 
   return { createLike, deleteLike, updateLike };

@@ -4,6 +4,7 @@ import type { LikeInPost } from "@esposter/db-schema";
 import { useLikeOperations } from "@/composables/post/useLikeOperations";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { usePostStore } from "@/store/post";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
@@ -38,7 +39,9 @@ describe(useLikeOperations, () => {
     });
     serveLikeCount(-1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const { updateLike } = useLikeOperations([post]);
+    const { items } = storeToRefs(usePostStore());
+    items.value = [post];
+    const { updateLike } = useLikeOperations(items);
     await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
 
     expect(post.viewerLike).toStrictEqual(createLike(-1));
@@ -46,14 +49,16 @@ describe(useLikeOperations, () => {
   });
 
   // A second withdrawal queues behind the first and finds the vote already gone, so it withdraws nothing, and the
-  // count shown is the one the server holds after the first, not a value the two withdrawals moved by twice
+  // Count shown is the one the server holds after the first, not a value the two withdrawals moved by twice
   test("shows the count the server holds after two deletes queue", async () => {
     expect.hasAssertions();
 
     trpcMsw.like.deleteLike.mutation(() => createLike(1));
     serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const { deleteLike } = useLikeOperations([post]);
+    const { items } = storeToRefs(usePostStore());
+    items.value = [post];
+    const { deleteLike } = useLikeOperations(items);
     await Promise.all([deleteLike(postId), deleteLike(postId)]);
 
     expect(post.viewerLike).toBeUndefined();

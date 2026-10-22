@@ -5,6 +5,7 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { postCountHooks } from "@/services/post/postCountHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -71,6 +72,17 @@ export const usePostStore = defineStore("post", () => {
       key: input,
     });
   };
+
+  // The feed's own copies take the counts the server returns, so a vote or a reply on a post's page reaches its card here
+  postCountHooks.register((postCounts) => {
+    for (const { commentCount, id, likeCount } of postCounts)
+      for (const post of items.value) {
+        if (post.id !== id) continue;
+
+        post.commentCount = commentCount;
+        post.likeCount = likeCount;
+      }
+  });
 
   return {
     createPost,

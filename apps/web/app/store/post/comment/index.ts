@@ -4,13 +4,15 @@ import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInp
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
+import { postCountHooks } from "@/services/post/postCountHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { usePostCountStore } from "@/store/post/count";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
+  const { refreshPostCounts } = usePostCountStore();
   const currentPost = ref<PostInPostWithRelations>();
   // Keyed by the post whose replies the partition holds, the route's own post included
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
@@ -21,17 +23,16 @@ export const useCommentStore = defineStore("post/comment", () => {
     for (const key of keys.value) comments.push(...getSlice(key).items.value);
     return comments;
   });
-  // A reply or a removal changes its ancestors' counts on the server, by however many rows the server removed, so the
-  // Counts are read back rather than adjusted. Only the posts a copy is held for are asked after
-  const refreshCommentCounts = createBatchedRefresh(async (postIds: string[]) => {
-    const postCounts = await $trpc.post.readPostCounts.query(postIds);
-    for (const { commentCount, id } of postCounts)
-      for (const comment of allComments.value) if (comment.id === id) comment.commentCount = commentCount;
+  // The thread's copies take the counts the server returns, so a reply here reaches the post and the replies it sits under
+  postCountHooks.register((postCounts) => {
+    for (const { commentCount, id, likeCount } of postCounts)
+      for (const comment of allComments.value) {
+        if (comment.id !== id) continue;
+
+        comment.commentCount = commentCount;
+        comment.likeCount = likeCount;
+      }
   });
-  const refreshHeldCommentCounts = async (ancestorIds: string[]) => {
-    const heldIds = ancestorIds.filter((id) => allComments.value.some((comment) => comment.id === id));
-    if (heldIds.length > 0) await refreshCommentCounts(heldIds);
-  };
   // Only branches that already exist are descended into: asking the map for one that does not creates it, so a
   // Walk over the rows themselves would leave an empty partition behind for every reply it passed
   const deleteBranch = (parentId: string) => {
@@ -61,7 +62,7 @@ export const useCommentStore = defineStore("post/comment", () => {
       key: Symbol("createComment"),
       onSuccess: async ({ ancestorIds, comment }) => {
         storeCreateComment(comment);
-        await refreshHeldCommentCounts(ancestorIds);
+        await refreshPostCounts(ancestorIds);
       },
     });
     return outcome.status === MutationStatus.Succeeded;
@@ -106,7 +107,7 @@ export const useCommentStore = defineStore("post/comment", () => {
       },
       key: input,
       onSuccess: async ({ ancestorIds }) => {
-        await refreshHeldCommentCounts(ancestorIds);
+        await refreshPostCounts(ancestorIds);
       },
     });
   };

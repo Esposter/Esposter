@@ -2,6 +2,7 @@
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -134,5 +135,21 @@ describe(useCommentStore, () => {
     expect(getSlice(repliedToComment.id).items.value).toStrictEqual([reply]);
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
     expect(parentPost.commentCount).toBe(2);
+  });
+
+  // The feed holds its own copy of a post the thread also shows, so a reply has to reach that copy as well
+  test("counts a reply on the feed's copy of its parent post", async () => {
+    expect.hasAssertions();
+
+    const reply = createPost({ depth: 1, parentId: postId });
+    trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId], comment: reply }));
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
+    const feedPost = createPost({ commentCount: 0, id: postId });
+    const { items } = storeToRefs(usePostStore());
+    items.value = [feedPost];
+
+    await useCommentStore().createComment({ description: "a", parentId: postId });
+
+    expect(feedPost.commentCount).toBe(1);
   });
 });
