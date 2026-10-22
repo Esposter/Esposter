@@ -190,7 +190,7 @@ catalog:
   link-preview-js: ^5.0.1
   linkifyjs: ^4.3.3
   livekit-client: ^2.23.0
-  livekit-server-sdk: ^2.19.1
+  livekit-server-sdk: ^2.19.2
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
   marked: ^18.1.1
