@@ -181,7 +181,7 @@ catalog:
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.53.0
-  h3: ^2.0.7
+  h3: ^2.0.8
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
