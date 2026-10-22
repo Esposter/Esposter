@@ -37,4 +37,4 @@ Paths relative to `apps/web/app`.
 | `components/User/Profile/`      | public profile sections           |
 | `components/Login/`             | provider buttons                  |
 
-Open work: [roadmap](../../changes/user-roadmap/tasks.md). Decided ideas: [deferred](../../deferred/user/), [rejected](../../rejected/user/).
+Decided ideas: [deferred](../../deferred/user/), [rejected](../../rejected/user/).
