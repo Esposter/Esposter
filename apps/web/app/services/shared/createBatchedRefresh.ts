@@ -1,8 +1,7 @@
+import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { createSingleFlight } from "@/services/shared/createSingleFlight";
-import { createExponentialBackoff, getResultAsync, noop } from "@esposter/shared";
+import { createExponentialBackoff, getResultAsync } from "@esposter/shared";
 
-const RETRY_BASE_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-const RETRY_MAX_DELAY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 // A server that stays down is not asked forever: past this many retries in a row the keys stay dirty until the next mark
 const MAX_RETRIES = 5;
 
@@ -12,7 +11,7 @@ const MAX_RETRIES = 5;
 // Run, paced by the backoff, so a failed read recovers without the next mark having to come
 export const createBatchedRefresh = <TKey>(refresh: (keys: TKey[]) => Promise<void>) => {
   const dirtyKeys = new Set<TKey>();
-  const executeWithBackoff = createExponentialBackoff(RETRY_BASE_DELAY_MS, RETRY_MAX_DELAY_MS);
+  const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
   let retryCount = 0;
   const flush = createSingleFlight(async () => {
     const keys = [...dirtyKeys];
@@ -33,7 +32,7 @@ export const createBatchedRefresh = <TKey>(refresh: (keys: TKey[]) => Promise<vo
         // The backoff sleeps before the run it starts, so the retry is scheduled at once and paced by it
         setTimeout(async () => {
           await flush();
-        });
+        }, 0);
       },
     );
   });
