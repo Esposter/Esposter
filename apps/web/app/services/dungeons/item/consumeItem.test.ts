@@ -16,9 +16,9 @@ vi.mock("@/store/dungeons/player", async () => {
   return { usePlayerStore: () => ({ player }) };
 });
 
-let item: Item;
-
 describe(consumeItem, () => {
+  let item: Item;
+
   beforeEach(() => {
     item = {
       description: "description",

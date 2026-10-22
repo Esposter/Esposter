@@ -41,9 +41,6 @@ vi.mock("grid-engine", () => ({
   },
 }));
 
-// The scene is only read for special inputs, which these tests never send
-const scene = {} as SceneWithPlugins;
-
 const getRowPosition = (settingsOption: SettingsOption) => {
   const position = SettingsOptionGrid.getPosition(settingsOption);
   if (!position) throw new NotFoundError(getRowPosition.name, settingsOption);
@@ -52,6 +49,9 @@ const getRowPosition = (settingsOption: SettingsOption) => {
 };
 
 describe(useSettingsSceneStore, () => {
+  // The scene is only read for special inputs, which these tests never send
+  const scene = {} as SceneWithPlugins;
+
   beforeEach(() => {
     const settingsStore = useSettingsStore();
     settingsStore.settings = getInitialSettings();

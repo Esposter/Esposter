@@ -30,9 +30,9 @@ vi.mock("@/services/dungeons/scene/battle/battleStateMachine", () => ({ battleSt
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser
 vi.mock("@/services/phaser/phaserEventEmitter", () => ({ phaserEventEmitter: {} }));
 
-let item: Item;
-
 describe(CaptureItemResolver, () => {
+  let item: Item;
+
   beforeEach(() => {
     item = {
       description: "description",
