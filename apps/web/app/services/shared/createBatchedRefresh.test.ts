@@ -78,6 +78,9 @@ describe(createBatchedRefresh, () => {
 
     refresh.mockResolvedValueOnce(undefined);
     const markedAgain = markChanged([" "]);
+    // The wait does not reset at the cap, so the mark's read is held for the whole maximum
+    await vi.advanceTimersByTimeAsync(Temporal.Duration.from({ seconds: 30 }).total("milliseconds") - 1);
+    expect(refresh).toHaveBeenCalledTimes(6);
     await vi.runAllTimersAsync();
     await markedAgain;
 
