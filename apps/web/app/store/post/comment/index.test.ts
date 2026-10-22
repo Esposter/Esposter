@@ -12,8 +12,8 @@ describe(useCommentStore, () => {
   const postId = crypto.randomUUID();
   const comment = createPost({ depth: 1, parentId: postId });
   const otherComment = createPost({ depth: 1, parentId: postId });
-  const newDescription = "newDescription";
-  const failingDescription = "failingDescription";
+  const newDescription = "a";
+  const failingDescription = " ";
 
   // Two edits of one comment queue under the same key, so the second's rollback has to undo its own edit rather
   // Than restore the branch as it read at submit time — which predates the edit ahead of it
@@ -129,7 +129,7 @@ describe(useCommentStore, () => {
     currentPost.value = parentPost;
     getSlice(postId).items.value = [repliedToComment];
 
-    await createComment({ description: newDescription, parentId: repliedToComment.id });
+    await createComment({ description: "a", parentId: repliedToComment.id });
 
     expect(getSlice(repliedToComment.id).items.value).toStrictEqual([reply]);
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);

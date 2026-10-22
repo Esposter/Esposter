@@ -219,10 +219,10 @@ describe(useMemberStore, () => {
     const { storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
     const countsWritten = waitForCounts(roomId);
-    storeCreateMember(roomId, { ...member, displayName: "Ally" });
+    storeCreateMember(roomId, { ...member, displayName: "displayName" });
     await countsWritten;
 
-    expect(members.value).toStrictEqual([{ ...member, displayName: "Ally" }]);
+    expect(members.value).toStrictEqual([{ ...member, displayName: "displayName" }]);
   });
 
   test("deletes a roleless member without touching the role groups", async () => {

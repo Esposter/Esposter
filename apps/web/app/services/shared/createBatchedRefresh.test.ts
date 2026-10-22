@@ -15,14 +15,14 @@ describe(createBatchedRefresh, () => {
         await releaseFirstRun;
       }
     });
-    const firstChange = markChanged(["a"]);
+    const firstChange = markChanged([""]);
     await firstRunStarted;
-    const secondChange = markChanged(["b"]);
+    const secondChange = markChanged([" "]);
     releaseFirst();
     await firstChange;
     await secondChange;
 
-    expect(refreshedKeys).toStrictEqual([["a"], ["b"]]);
+    expect(refreshedKeys).toStrictEqual([[""], [" "]]);
   });
 
   test("a key marked again while the run that reads it is in flight is read once more", async () => {
@@ -38,14 +38,14 @@ describe(createBatchedRefresh, () => {
         await releaseFirstRun;
       }
     });
-    const firstChange = markChanged(["a"]);
+    const firstChange = markChanged([""]);
     await firstRunStarted;
-    const secondChange = markChanged(["a"]);
+    const secondChange = markChanged([""]);
     releaseFirst();
     await firstChange;
     await secondChange;
 
-    expect(refreshedKeys).toStrictEqual([["a"], ["a"]]);
+    expect(refreshedKeys).toStrictEqual([[""], [""]]);
   });
 
   test("a failed run puts its keys back for the next mark to read", async () => {
@@ -55,12 +55,12 @@ describe(createBatchedRefresh, () => {
     const refreshedKeys: string[][] = [];
     const markChanged = createBatchedRefresh(async (keys: string[]) => {
       refreshedKeys.push(keys);
-      if (refreshedKeys.length === 1) throw new Error("the read failed");
+      if (refreshedKeys.length === 1) throw new Error(" ");
     });
-    await markChanged(["a"]);
-    await markChanged(["b"]);
+    await markChanged([""]);
+    await markChanged([" "]);
 
-    expect(refreshedKeys).toStrictEqual([["a"], ["a", "b"]]);
+    expect(refreshedKeys).toStrictEqual([[""], ["", " "]]);
     expect(consoleError).toHaveBeenCalledOnce();
   });
 });
