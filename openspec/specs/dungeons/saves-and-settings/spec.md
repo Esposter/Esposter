@@ -65,6 +65,76 @@ The settings scene SHALL let the player change text speed, battle style, animati
 - **WHEN** the player starts a new game
 - **THEN** the changed settings still apply
 
+### Requirement: Animations off changes timing, never outcome
+
+With animations off, every presentation SHALL reach the same end state it reaches animated, and only the time it takes SHALL change.
+
+#### Scenario: A presentation with animations off ends where the animated one does
+
+- **GIVEN** the player has turned Animations off
+- **WHEN** a monster appears, a ball is thrown, the camera mask closes, or a battle attack plays
+- **THEN** the presentation shows its end state without playing the animation
+
+#### Scenario: Dialog text appears in full with animations off
+
+- **GIVEN** the player has turned Animations off
+- **WHEN** a dialog message is shown
+- **THEN** its full text is on screen before the input prompt appears
+
+### Requirement: The settings cursor saves only the value it lands on
+
+The settings cursor SHALL move between options with direction input and SHALL save a setting only when it lands on one of that option's value cells. An option with no value cell — Volume, Theme Mode, and Close — SHALL take no value from the cursor: its own controls change its value, and Close changes nothing.
+
+#### Scenario: Moving between options saves nothing
+
+- **GIVEN** the cursor is on Sound
+- **WHEN** the player presses down
+- **THEN** the cursor moves to Animations
+- **AND** no setting is saved
+
+#### Scenario: The cursor rests on the current value
+
+- **WHEN** the cursor moves onto an option with value cells
+- **THEN** it rests on the cell holding that option's current setting
+
+#### Scenario: Left and right step through an option's values and save each one
+
+- **GIVEN** the cursor rests on Mid for Text Speed
+- **WHEN** the player presses right
+- **THEN** the cursor moves to Fast
+- **AND** the text speed setting is saved as Fast
+
+#### Scenario: Stepping past either end of an option's values does nothing
+
+- **GIVEN** the cursor rests on Fast for Text Speed
+- **WHEN** the player presses right
+- **THEN** the cursor stays on Fast
+- **AND** no setting is saved
+
+#### Scenario: Clicking a value saves it
+
+- **WHEN** the player clicks a value cell
+- **THEN** the cursor moves there
+- **AND** that value is saved
+
+#### Scenario: Clicking an option's name saves nothing
+
+- **WHEN** the player clicks an option's name
+- **THEN** the cursor moves to that option's row, resting on its current value
+- **AND** no setting is saved
+
+#### Scenario: Selecting the Volume row saves nothing
+
+- **WHEN** the player selects the Volume row, by a click or by moving onto it
+- **THEN** no setting is saved
+- **AND** the volume keeps its value
+
+#### Scenario: Confirming Close leaves the settings
+
+- **GIVEN** the cursor is on Close
+- **WHEN** the player confirms
+- **THEN** the game returns to the title
+
 ### Requirement: Stored data in an unreadable or older shape starts a fresh run
 
 The game SHALL accept only the current save shape, and stored data that cannot be read or is in an older shape SHALL start a fresh run.

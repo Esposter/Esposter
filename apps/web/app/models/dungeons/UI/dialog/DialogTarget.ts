@@ -12,8 +12,4 @@ export class DialogTarget {
   reset() {
     this.message.value = new DialogMessage();
   }
-
-  setMessage(message: DialogMessage) {
-    this.message.value = message;
-  }
 }

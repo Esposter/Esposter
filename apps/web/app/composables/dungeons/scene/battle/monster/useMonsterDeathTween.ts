@@ -1,43 +1,43 @@
+import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterDeathTween = (isEnemy: boolean) => {
   const battleMonsterStore = useBattleMonsterStore(isEnemy);
   const { monsterInfoContainerPosition, monsterInfoContainerTween, monsterPosition, monsterTween } =
     storeToRefs(battleMonsterStore);
-  const settingsStore = useSettingsStore();
-  const { isSkipAnimations } = storeToRefs(settingsStore);
   const monsterPositionYEnd = isEnemy ? monsterPosition.value.y - 400 : monsterPosition.value.y + 400;
   const monsterInfoContainerPositionXEnd = isEnemy
     ? monsterInfoContainerPosition.value.x - 600
     : monsterInfoContainerPosition.value.x + 600;
 
-  if (isSkipAnimations.value) {
-    monsterPosition.value.y = monsterPositionYEnd;
-    monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
-    return undefined;
-  }
+  return useSkippableAnimation(
+    () => {
+      const duration = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
+      useTween(monsterInfoContainerTween, {
+        delay: 0,
+        duration,
+        onComplete: () => {
+          monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
+        },
+        x: getTweenRange(monsterInfoContainerPosition.value.x, monsterInfoContainerPositionXEnd),
+      });
 
-  const duration = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
-  useTween(monsterInfoContainerTween, {
-    delay: 0,
-    duration,
-    onComplete: () => {
+      return new Promise<void>((resolve) => {
+        useTween(monsterTween, {
+          delay: 0,
+          duration,
+          onComplete: () => {
+            monsterPosition.value.y = monsterPositionYEnd;
+            resolve();
+          },
+          y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
+        });
+      });
+    },
+    () => {
+      monsterPosition.value.y = monsterPositionYEnd;
       monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
     },
-    x: getTweenRange(monsterInfoContainerPosition.value.x, monsterInfoContainerPositionXEnd),
-  });
-
-  return new Promise<void>((resolve) => {
-    useTween(monsterTween, {
-      delay: 0,
-      duration,
-      onComplete: () => {
-        monsterPosition.value.y = monsterPositionYEnd;
-        resolve();
-      },
-      y: getTweenRange(monsterPosition.value.y, monsterPositionYEnd),
-    });
-  });
+  );
 };

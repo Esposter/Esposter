@@ -37,6 +37,27 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 
 A save is sent under its ETag, the rule the [conditional writes](../../architecture/conditional-writes/design.md) page sets out. A refused save reloads the page, which takes the server's copy, as the Clicker's does.
 
+## The settings cursor
+
+The settings menu is one `SettingsOptionGrid`: a row per option, its name in column 0 and its value cells after it. The cursor is that grid's position, and four actions move it. Each decides for itself whether to save:
+
+- **Up and down** (`moveSettingsRow`) move to the next row and rest there.
+- **Left and right** (`moveSettingsColumn`) step to the adjacent value cell and save it. In a row with no value cells they do nothing, because the Volume and Theme Mode controls take those inputs first.
+- **A click** (`selectSettingsPosition`) on a value cell moves there and saves it. On a name it only moves to that row.
+- **Opening the scene** (`restSettingsCursor`) rests the cursor on the saved values, since they may have loaded after the cursor last moved.
+
+A row with value cells rests on the cell holding its current setting. A row without them (Volume, Theme Mode, Close) rests on its name, so the cursor's column always agrees with the highlighted value.
+
+The save is a consequence of an action, never of where the cursor happens to be. A watch on the cursor was the first design, and it fired on every move, including the ones that land on a row with no value, so it saved an empty value there. Every action goes through one save path, `saveSelectedValue`, and that path runs only from a value cell. A click on the cell the cursor is already on is a second press: on Close it confirms, and anywhere else it does nothing.
+
+## Animations off
+
+Animations off is one setting, read in one place. Every presentation that has an animated form passes its end state to `useSkippableAnimation` (`app/composables/dungeons/animation/useSkippableAnimation.ts`): with the setting on, the animation runs; with it off, the end state is applied and the call resolves at once. No call site checks `isSkipAnimations` itself, so adding an animation means passing its end state, not adding a branch.
+
+Dialog text reveals through the same helper. Both forms wait for the same thing before resolving: Vue's next render, then the scene's next tick, since Vue's watchers hand a text change to Phaser on that tick. That wait replaces the millisecond delay the skip path used to take as a stand-in.
+
+Two things stay outside the helper on purpose. The experience bar's fast-forward is a player input for one bar, not the setting, so it keeps its own flag. The bar components read the setting only to snap a bar to its value without tweening it, a visual concern that doesn't change any outcome.
+
 ## Key files
 
 Paths relative to `apps/web`.
@@ -48,6 +69,10 @@ Paths relative to `apps/web`.
 | `app/store/dungeons/index.ts`                                                 | `useSave` wiring, `saveData`  |
 | `app/composables/dungeons/useReadDungeons.ts`                                 | load on page setup            |
 | `app/store/dungeons/settings/`                                                | settings scene stores         |
+| `app/store/dungeons/settings/scene.ts`                                        | the cursor's four actions     |
+| `app/services/dungeons/scene/settings/SettingsOptionGrid.ts`                  | the option grid and its cells |
+| `app/composables/dungeons/scene/settings/useSettingsOnGridClick.ts`           | a click on a row or cell      |
+| `app/composables/dungeons/animation/useSkippableAnimation.ts`                 | the one Animations-off branch |
 | `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                  |
 
 ## Notes

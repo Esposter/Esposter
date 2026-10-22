@@ -1,24 +1,23 @@
+import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
-import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
 export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
-  const settingsStore = useSettingsStore();
-  const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return undefined;
-
   const battleMonsterStore = useBattleMonsterStore(isEnemy);
   const { monsterTween } = storeToRefs(battleMonsterStore);
-  return new Promise<void>((resolve) => {
-    useTween(monsterTween, {
-      alpha: getTweenRange(1, 0),
-      delay: 0,
-      duration: 150,
-      onComplete: (_tween, [monsterImageGameObject]) => {
-        monsterImageGameObject.setAlpha(1);
-        resolve();
-      },
-      repeat: 10,
-    });
-  });
+  return useSkippableAnimation(
+    () =>
+      new Promise<void>((resolve) => {
+        useTween(monsterTween, {
+          alpha: getTweenRange(1, 0),
+          delay: 0,
+          duration: 150,
+          onComplete: (_tween, [monsterImageGameObject]) => {
+            monsterImageGameObject.setAlpha(1);
+            resolve();
+          },
+          repeat: 10,
+        });
+      }),
+  );
 };

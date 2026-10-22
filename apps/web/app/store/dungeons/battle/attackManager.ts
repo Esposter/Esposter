@@ -2,13 +2,12 @@ import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import type { Attack } from "@/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
-import { useSettingsStore } from "@/store/dungeons/settings";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { sleepScene } from "vue-phaserjs";
 
 export const useAttackManagerStore = defineStore("dungeons/battle/attackManager", () => {
-  const settingsStore = useSettingsStore();
   const attackId = ref<AttackId>();
   const isToEnemy = ref<boolean>();
   const isActive = ref(false);
@@ -18,26 +17,26 @@ export const useAttackManagerStore = defineStore("dungeons/battle/attackManager"
   // Puts the clearing and the calling at whichever component happens to emit.
   let onComplete: (() => void) | undefined;
 
-  const playAttack = async (scene: SceneWithPlugins, attack: Attack, isAttackToEnemy: boolean) => {
-    if (settingsStore.isSkipAnimations) return;
-
-    await new Promise<void>(
-      getSynchronizedFunction(async (resolve) => {
-        onComplete = resolve;
-        attackId.value = attack.id;
-        isToEnemy.value = isAttackToEnemy;
-        isActive.value = true;
-        // The gate the battle turn waits on, so a failed animation resolves it rather than stalling the turn
-        await getResultAsync(async () => {
-          await sleepScene(scene, 200);
-          getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
-        }).match(noop, (error) => {
-          console.error(error);
-          resolve();
-        });
-      }),
+  const playAttack = (scene: SceneWithPlugins, attack: Attack, isAttackToEnemy: boolean) =>
+    useSkippableAnimation(
+      () =>
+        new Promise<void>(
+          getSynchronizedFunction(async (resolve) => {
+            onComplete = resolve;
+            attackId.value = attack.id;
+            isToEnemy.value = isAttackToEnemy;
+            isActive.value = true;
+            // The gate the battle turn waits on, so a failed animation resolves it rather than stalling the turn
+            await getResultAsync(async () => {
+              await sleepScene(scene, 200);
+              getDungeonsSoundEffect(scene, attack.soundEffectKey).play();
+            }).match(noop, (error) => {
+              console.error(error);
+              resolve();
+            });
+          }),
+        ),
     );
-  };
   // `isActive` is the animation component's own `v-model`, so it clears itself
   const completeAttack = () => {
     attackId.value = undefined;
