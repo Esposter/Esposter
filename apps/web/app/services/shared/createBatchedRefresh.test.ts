@@ -1,7 +1,17 @@
 import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createBatchedRefresh, () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
   test("a key marked while a run is in flight is read by the run owed after it", async () => {
     expect.hasAssertions();
 
@@ -51,16 +61,49 @@ describe(createBatchedRefresh, () => {
   test("a failed run puts its keys back for the next mark to read", async () => {
     expect.hasAssertions();
 
-    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
     const refreshedKeys: string[][] = [];
     const markChanged = createBatchedRefresh(async (keys: string[]) => {
       refreshedKeys.push(keys);
       if (refreshedKeys.length === 1) throw new Error(" ");
     });
     await markChanged([""]);
-    await markChanged([" "]);
+    const secondChange = markChanged([" "]);
+    await vi.runAllTimersAsync();
+    await secondChange;
 
     expect(refreshedKeys).toStrictEqual([[""], ["", " "]]);
-    expect(consoleError).toHaveBeenCalledOnce();
+    expect(console.error).toHaveBeenCalledOnce();
+  });
+
+  test("a failed run is read again without a mark, after the backoff", async () => {
+    expect.hasAssertions();
+
+    const refreshedKeys: string[][] = [];
+    const markChanged = createBatchedRefresh(async (keys: string[]) => {
+      refreshedKeys.push(keys);
+      if (refreshedKeys.length === 1) throw new Error(" ");
+    });
+    await markChanged([""]);
+    await vi.runAllTimersAsync();
+
+    expect(refreshedKeys).toStrictEqual([[""], [""]]);
+  });
+
+  test("a run that keeps failing stops retrying at the cap, and the next mark reads again", async () => {
+    expect.hasAssertions();
+
+    const refresh = vi.fn<(keys: string[]) => Promise<void>>(() => Promise.reject(new Error(" ")));
+    const markChanged = createBatchedRefresh(refresh);
+    await markChanged([""]);
+    await vi.runAllTimersAsync();
+
+    expect(refresh).toHaveBeenCalledTimes(6);
+
+    refresh.mockResolvedValueOnce(undefined);
+    const markedAgain = markChanged([" "]);
+    await vi.runAllTimersAsync();
+    await markedAgain;
+
+    expect(refresh).toHaveBeenLastCalledWith(["", " "]);
   });
 });
