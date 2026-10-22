@@ -7,10 +7,13 @@ import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { postCountHooks } from "@/services/post/postCountHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { usePostCountStore } from "@/store/post/count";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
+  const { refreshPostCounts } = usePostCountStore();
   const sortType = ref(PostSortType.Hot);
   const { items, ...restData } = useCursorPaginationData<PostInPostWithRelations>();
   const {
@@ -51,8 +54,10 @@ export const usePostStore = defineStore("post", () => {
         };
       },
       key: input.id,
-      onSuccess: (updatedPost) => {
+      onSuccess: async (updatedPost) => {
         storeUpdatePost(updatedPost);
+        // The response's counts are as old as the response, so the owner reads them back over the copy it just wrote
+        await refreshPostCounts([updatedPost.id]);
       },
     });
     // Same contract as the create: the page leaves for the post only once the edit is on the server. A rejected
@@ -70,6 +75,12 @@ export const usePostStore = defineStore("post", () => {
         };
       },
       key: input,
+      onError: async (error) => {
+        createErrorAlert(error);
+        // The rollback put this post back with the counts it held when the delete was sent, and a count that moved since
+        // reached no copy, because the post was not on the feed then
+        await refreshPostCounts([input]);
+      },
     });
   };
 

@@ -47,7 +47,12 @@ describe(useCommentStore, () => {
 
       return { ancestorIds: [postId], removedCommentCount: 1 };
     });
-    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
+    // The rollback restores the comment with the count it held when the delete was sent, so the count the server holds
+    // is read back over it: a count that moved while the comment was out of the thread reached no copy
+    trpcMsw.post.readPostCounts.query(() => [
+      { commentCount: 1, id: postId, likeCount: 0 },
+      { commentCount: 0, id: comment.id, likeCount: 3 },
+    ]);
     const parentPost = createPost({ commentCount: 2, id: postId });
     const commentStore = useCommentStore();
     const { currentPost } = storeToRefs(commentStore);
@@ -57,6 +62,7 @@ describe(useCommentStore, () => {
     await Promise.all([deleteComment(comment.id, postId), deleteComment(otherComment.id, postId)]);
 
     expect(getSlice(postId).items.value).toStrictEqual([comment]);
+    expect(takeOne(getSlice(postId).items.value).likeCount).toBe(3);
     expect(parentPost.commentCount).toBe(1);
   });
 
@@ -151,5 +157,24 @@ describe(useCommentStore, () => {
     await useCommentStore().createComment({ description: "a", parentId: postId });
 
     expect(feedPost.commentCount).toBe(1);
+  });
+
+  // An edit's response carries the count as it was when the server answered it, which can be older than a read that
+  // already landed, so the count the edit's copy keeps is the one the owner reads back
+  test("keeps the count the owner reads back over an edit's older response", async () => {
+    expect.hasAssertions();
+
+    const editedComment = createPost({ commentCount: 1, depth: 1, parentId: postId });
+    trpcMsw.post.updateComment.mutation(({ input }) =>
+      createPost({ ...input, commentCount: 0, depth: 1, parentId: postId }),
+    );
+    trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: editedComment.id, likeCount: 0 }]);
+    const commentStore = useCommentStore();
+    const { getSlice, updateComment } = commentStore;
+    getSlice(postId).items.value = [editedComment];
+
+    await updateComment({ description: "a", id: editedComment.id }, postId);
+
+    expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
   });
 });

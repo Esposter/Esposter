@@ -6,6 +6,7 @@ import type { PostInPostWithRelations } from "@esposter/db-schema";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { postCountHooks } from "@/services/post/postCountHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { usePostCountStore } from "@/store/post/count";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
@@ -82,8 +83,10 @@ export const useCommentStore = defineStore("post/comment", () => {
         };
       },
       key: input.id,
-      onSuccess: (updatedComment) => {
+      onSuccess: async (updatedComment) => {
         storeUpdateComment(updatedComment);
+        // The response's counts are as old as the response, so the owner reads them back over the copy it just wrote
+        await refreshPostCounts([updatedComment.id]);
       },
     });
   };
@@ -106,6 +109,12 @@ export const useCommentStore = defineStore("post/comment", () => {
         };
       },
       key: input,
+      onError: async (error) => {
+        createErrorAlert(error);
+        // The rollback put this comment back with the counts it held when the delete was sent, and a count that moved
+        // since reached no copy, because the comment was not in the thread then
+        await refreshPostCounts([input]);
+      },
       onSuccess: async ({ ancestorIds }) => {
         await refreshPostCounts(ancestorIds);
       },

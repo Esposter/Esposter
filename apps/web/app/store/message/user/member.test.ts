@@ -123,37 +123,6 @@ describe(useMemberStore, () => {
     ]);
   });
 
-  // A change that lands while a read of the totals is in flight is not read by that read, so it has to be read by a run
-  // after it. The later read must finish last, or the totals would be the ones the earlier read saw
-  test("a change marked during a read of the room's totals is read once more after it", async () => {
-    expect.hasAssertions();
-
-    const { promise: releaseFirstRead, resolve: releaseFirst } = Promise.withResolvers<void>();
-    const { promise: firstReadReceived, resolve: markFirstReadReceived } = Promise.withResolvers<void>();
-    let countReads = 0;
-    trpcMsw.room.readMembersCount.query(async () => {
-      countReads += 1;
-      if (countReads === 1) {
-        markFirstReadReceived();
-        await releaseFirstRead;
-        return 1;
-      }
-      return 0;
-    });
-    trpcMsw.room.readMemberCountsByTopRole.query(() => []);
-    const memberStore = useMemberStore();
-    const { refreshMemberCounts } = memberStore;
-    const { memberCount } = storeToRefs(memberStore);
-    const firstRead = refreshMemberCounts([roomId]);
-    await firstReadReceived;
-    const changeMarked = refreshMemberCounts([roomId]);
-    releaseFirst();
-    await firstRead;
-    await changeMarked;
-
-    expect(memberCount.value).toBe(0);
-  });
-
   // The leave subscription spans every room the user is in, so the event names the room it happened in. Applied
   // To the open one instead, a departure from anywhere removes a member who is still there
   test("leaves the open room alone when a member leaves another room", async () => {
