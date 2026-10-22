@@ -11,7 +11,7 @@ export const useReadMembers = () => {
   const roomStore = useRoomStore();
   const { scopedRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { getBoundMemberCounts, readItems, readMoreItems } = memberStore;
+  const { readItems, readMoreItems, refreshMemberCounts } = memberStore;
   const userStore = useUserStore();
   const { storeRoomMembers, storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
@@ -42,17 +42,9 @@ export const useReadMembers = () => {
   };
   // The room's own totals, which a search must never re-read: the roleless group is derived from a count of
   // Everybody, and counting a filtered room would describe one nobody is in
-  const readMemberCounts = async () => {
+  const readMemberCounts = () => {
     const roomId = requirePartitionKey(scopedRoomId.value, readMemberCounts.name);
-    // Bound before the first await for the same reason readItems binds the member list itself: a room switch made
-    // While these are in flight must not file this room's totals under the one being entered
-    const boundMemberCounts = getBoundMemberCounts();
-    const [newCount, newCountsByTopRole] = await Promise.all([
-      $trpc.room.readMembersCount.query({ roomId }),
-      $trpc.room.readMemberCountsByTopRole.query({ roomId }),
-    ]);
-    boundMemberCounts.value.count = newCount;
-    boundMemberCounts.value.countsByTopRole = newCountsByTopRole;
+    return refreshMemberCounts(roomId);
   };
   const searchMembers = (name: string, signal?: AbortSignal) => {
     const roomId = requirePartitionKey(scopedRoomId.value, searchMembers.name);

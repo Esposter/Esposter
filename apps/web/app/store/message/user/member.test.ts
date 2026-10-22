@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
@@ -18,7 +19,13 @@ describe(useMemberStore, () => {
   const member: MemberInRoom = { ...user, displayName: user.name };
   const role = createRoomRole({ roomId });
 
-  // Reads the member's roles the way the member list does, so the store knows they are the whole set
+  // The server's totals for a room, as the next read of them returns them
+  const serveCounts = (count: number, countsByTopRole: MemberCountByTopRole[]) => {
+    trpcMsw.room.readMembersCount.query(() => count);
+    trpcMsw.room.readMemberCountsByTopRole.query(() => countsByTopRole);
+  };
+
+  // Reads the member's roles the way the member list does, so the store knows what they hold
   const loadMemberRoles = async (readRoomId: string, memberRoles: RoomRoleInMessage[]) => {
     trpcMsw.role.readMemberRoles.query(() =>
       memberRoles.map((memberRole) => ({
@@ -31,20 +38,24 @@ describe(useMemberStore, () => {
     await useRoleStore().readMemberRoles({ roomId: readRoomId, userIds: [member.id] });
   };
 
-  // Resolves on the room's next totals write, the store's own signal that a read has landed
-  const waitForCountsByTopRole = () => {
+  // Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
+  const waitForCounts = (readRoomId: string) => {
     const memberStore = useMemberStore();
-    const { memberCountsByTopRole } = storeToRefs(memberStore);
+    const { getMemberCountsRef } = memberStore;
     return new Promise<void>((resolve) => {
-      const stopWatching = watch(memberCountsByTopRole, () => {
-        stopWatching();
-        resolve();
-      });
+      const stopWatching = watch(
+        () => getMemberCountsRef(readRoomId).value.countsByTopRole,
+        () => {
+          stopWatching();
+          resolve();
+        },
+      );
     });
   };
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
+    serveCounts(0, []);
   });
 
   test("deletes a roled member out of their role group", async () => {
@@ -58,77 +69,91 @@ describe(useMemberStore, () => {
     await loadMemberRoles(roomId, [role]);
     getMemberCountsRef(roomId).value.count = 1;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(0, [{ count: 0, roleId: role.id }]);
+    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
+    await countsWritten;
 
     expect(memberCount.value).toBe(0);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
   });
 
   // A member outside the loaded pages has no roles read into this store, so their group is unknown here. The room's
-  // Group counts are re-read from the server, which has already applied the departure
+  // Totals are re-read from the server, which has already applied the departure
   test("a leave from an unloaded page keeps every group count equal to its members", async () => {
     expect.hasAssertions();
 
-    trpcMsw.room.readMemberCountsByTopRole.query(() => [{ count: 1, roleId: role.id }]);
     const memberStore = useMemberStore();
     const { getMemberCountsRef, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     getMemberCountsRef(roomId).value.count = 2;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
-    const countsByTopRoleWritten = waitForCountsByTopRole();
+    serveCounts(1, [{ count: 1, roleId: role.id }]);
+    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
-    await countsByTopRoleWritten;
+    await countsWritten;
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
   });
 
-  // A role event for a member whose roles were never read cannot say what they held before it, so the group counts
-  // Are re-read rather than moved by a delta the store cannot prove
-  test("a leave after a role event for a member never read re-reads the group counts", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.room.readMemberCountsByTopRole.query(() => [{ count: 0, roleId: role.id }]);
-    const roleStore = useRoleStore();
-    const { mutateMemberRoles } = roleStore;
-    const memberStore = useMemberStore();
-    const { getMemberCountsRef, storeDeleteMember } = memberStore;
-    const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
-    getMemberCountsRef(roomId).value.count = 1;
-    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
-    mutateMemberRoles(roomId, member.id, [role]);
-    const countsByTopRoleWritten = waitForCountsByTopRole();
-    storeDeleteMember(roomId, member.id);
-    await countsByTopRoleWritten;
-
-    expect(memberCount.value).toBe(0);
-    expect(memberCountsByTopRole.value).toStrictEqual([{ count: 0, roleId: role.id }]);
-  });
-
-  // The member moves from the role group they held to a role the store has never counted for them. Their prior role
-  // Is unknown here, so a delta would add to the new group and leave the old one overcounted
+  // The member moves from the role group they held to a role the store has never counted for them. A delta would
+  // Need their prior role, which is unknown here, so the totals are re-read instead
   test("a role change to a member outside the loaded pages keeps every group count equal to its members", async () => {
     expect.hasAssertions();
 
     const otherRole = createRoomRole({ roomId });
-    trpcMsw.room.readMemberCountsByTopRole.query(() => [
-      { count: 0, roleId: role.id },
-      { count: 1, roleId: otherRole.id },
-    ]);
-    const roleStore = useRoleStore();
-    const { mutateMemberRoles } = roleStore;
     const memberStore = useMemberStore();
     const { getMemberCountsRef } = memberStore;
     const { memberCountsByTopRole } = storeToRefs(memberStore);
+    const roleStore = useRoleStore();
+    const { mutateMemberRoles } = roleStore;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
-    const countsByTopRoleWritten = waitForCountsByTopRole();
+    serveCounts(1, [
+      { count: 0, roleId: role.id },
+      { count: 1, roleId: otherRole.id },
+    ]);
+    const countsWritten = waitForCounts(roomId);
     mutateMemberRoles(roomId, member.id, [otherRole]);
-    await countsByTopRoleWritten;
+    await countsWritten;
 
     expect(memberCountsByTopRole.value).toStrictEqual([
       { count: 0, roleId: role.id },
       { count: 1, roleId: otherRole.id },
     ]);
+  });
+
+  // The server's totals are the answer, so a read that started earlier but finishes later must not overwrite one that
+  // Started after it and saw a newer commit
+  test("the latest read of a room's totals wins over an older one that finishes after it", async () => {
+    expect.hasAssertions();
+
+    const { promise: releaseOlderRead, resolve: releaseOlder } = Promise.withResolvers<void>();
+    const { promise: olderReadReceived, resolve: markOlderReadReceived } = Promise.withResolvers<void>();
+    let countReads = 0;
+    trpcMsw.room.readMembersCount.query(async () => {
+      countReads += 1;
+      if (countReads === 1) {
+        markOlderReadReceived();
+        await releaseOlderRead;
+        return 1;
+      }
+      return 0;
+    });
+    trpcMsw.room.readMemberCountsByTopRole.query(() => []);
+    const memberStore = useMemberStore();
+    const { refreshMemberCounts } = memberStore;
+    const { memberCount } = storeToRefs(memberStore);
+    const olderRead = refreshMemberCounts(roomId);
+    // The newer read goes out only once the older one has reached the server, so the two are not batched into one
+    // Response, which would hold the newer behind the older's gate
+    await olderReadReceived;
+    const newerRead = refreshMemberCounts(roomId);
+    await newerRead;
+    releaseOlder();
+    await olderRead;
+
+    expect(memberCount.value).toBe(0);
   });
 
   // The leave subscription spans every room the user is in, so the event names the room it happened in. Applied
@@ -141,22 +166,30 @@ describe(useMemberStore, () => {
     const { memberCount, memberCountsByTopRole, members } = storeToRefs(memberStore);
     await loadMemberRoles(roomId, [role]);
     await loadMemberRoles(otherRoomId, []);
-    storeCreateMember(roomId, member);
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(1, [{ count: 1, roleId: role.id }]);
+    const joinCountsWritten = waitForCounts(roomId);
+    storeCreateMember(roomId, member);
+    await joinCountsWritten;
+    const otherRoomCountsWritten = waitForCounts(otherRoomId);
     storeDeleteMember(otherRoomId, member.id);
+    await otherRoomCountsWritten;
 
     expect(members.value).toStrictEqual([member]);
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
   });
 
-  test("leaves the open room alone when a member joins another room", () => {
+  test("leaves the open room alone when a member joins another room", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
     const { storeCreateMember } = memberStore;
     const { memberCount, members } = storeToRefs(memberStore);
+    serveCounts(1, []);
+    const otherRoomCountsWritten = waitForCounts(otherRoomId);
     storeCreateMember(otherRoomId, member);
+    await otherRoomCountsWritten;
 
     expect(members.value).toStrictEqual([]);
     expect(memberCount.value).toBe(0);
@@ -164,13 +197,15 @@ describe(useMemberStore, () => {
 
   // The offline cache decides whether to hydrate or persist by asking whether the loaded rows are the current
   // Room's. A list shared across rooms cannot answer that, and every guard built on top of one is a guess
-  test("scopes the member list to the current room", () => {
+  test("scopes the member list to the current room", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
     const { storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
+    const countsWritten = waitForCounts(roomId);
     storeCreateMember(roomId, member);
+    await countsWritten;
 
     expect(members.value).toStrictEqual([member]);
 
@@ -179,13 +214,15 @@ describe(useMemberStore, () => {
     expect(members.value).toStrictEqual([]);
   });
 
-  test("keeps the server-resolved display name on the member row", () => {
+  test("keeps the server-resolved display name on the member row", async () => {
     expect.hasAssertions();
 
     const memberStore = useMemberStore();
     const { storeCreateMember } = memberStore;
     const { members } = storeToRefs(memberStore);
+    const countsWritten = waitForCounts(roomId);
     storeCreateMember(roomId, { ...member, displayName: "Ally" });
+    await countsWritten;
 
     expect(members.value).toStrictEqual([{ ...member, displayName: "Ally" }]);
   });
@@ -199,7 +236,10 @@ describe(useMemberStore, () => {
     await loadMemberRoles(roomId, []);
     getMemberCountsRef(roomId).value.count = 2;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
+    serveCounts(1, [{ count: 1, roleId: role.id }]);
+    const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
+    await countsWritten;
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);

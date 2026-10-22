@@ -3,7 +3,7 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { MemberCounts } from "@/models/message/user/MemberCounts";
-import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
+import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -34,79 +34,61 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by
   // Room for the same reason the list is: they describe one room, only the network can produce them, and a
   // Switch made offline would otherwise leave the room being entered wearing the totals of the one just left
-  // The read that fetches them binds this slice before its first await, the way it already binds the member
-  // List — `memberCounts` itself tracks whichever room is current, which is what the rendered headers want and
-  // Exactly what a response arriving after a room switch must not use
-  const {
-    data: memberCounts,
-    getBoundData: getBoundMemberCounts,
-    getDataRef: getMemberCountsRef,
-  } = useDataMap(
+  const { data: memberCounts, getDataRef: getMemberCountsRef } = useDataMap(
     () => roomStore.scopedRoomId,
     () => new MemberCounts(),
   );
-  // Reading views, like `members` above: every write names its room — the read binds one up front, the join and
-  // Leave handlers take the event's room, and an offline hydrate takes the partition it was read for
+  // Reading views, like `members` above: every write names its room — the refresh takes the room it was read for
   const memberCount = computed(() => memberCounts.value.count);
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
-  // The latest read of a room's group totals wins. A read started earlier can finish after a later one, and its
-  // Totals would then overwrite the ones that already include the later change
+  // The totals are never adjusted by a delta: a delta applied on top of a read that already counted the change counts
+  // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change re-reads
+  // Them instead. Reads are ordered per room, latest started wins — a read started earlier can finish after a later one
+  // That saw a newer commit, and would otherwise overwrite it
   const countsReadIds = new Map<string, number>();
-  const readCountsByTopRole = async (roomId: string) => {
+  const refreshMemberCounts = async (roomId: string) => {
     const countsReadId = (countsReadIds.get(roomId) ?? 0) + 1;
     countsReadIds.set(roomId, countsReadId);
-    const countsByTopRole = await $trpc.room.readMemberCountsByTopRole.query({ roomId });
-    if (countsReadIds.get(roomId) === countsReadId) getMemberCountsRef(roomId).value.countsByTopRole = countsByTopRole;
-  };
-  // The room the change happened in, which is not necessarily the room on screen: a role assigned from a profile
-  // Card in one room while another is open belongs to that room's totals. The roleless group derives from the
-  // Total, so a change with no room is written to a slice nothing reads and is thereby a no-op
-  topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
-    // An unread prior role cannot be turned into a delta, since the group it left is unknown here. The server's
-    // Totals are the exact answer, so they are read instead
-    if (previousTopRoleId === undefined) {
-      getResultAsync(() => readCountsByTopRole(roomId)).match(noop, console.error);
-      return;
-    }
+    const [count, countsByTopRole] = await Promise.all([
+      $trpc.room.readMembersCount.query({ roomId }),
+      $trpc.room.readMemberCountsByTopRole.query({ roomId }),
+    ]);
+    if (countsReadIds.get(roomId) !== countsReadId) return;
 
-    const roomCountsByTopRole = getMemberCountsRef(roomId).value.countsByTopRole;
-    for (const [roleId, delta] of [
-      [previousTopRoleId, -1],
-      [newTopRoleId, 1],
-    ] as const) {
-      if (!roleId) continue;
-      const countByTopRole = roomCountsByTopRole.find((existingCount) => existingCount.roleId === roleId);
-      if (countByTopRole) countByTopRole.count += delta;
-      else if (delta > 0) roomCountsByTopRole.push({ count: delta, roleId });
-    }
-  });
-  // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the
-  // Event happened in — and that is the room its list and its running total are written to, whichever room is on
-  // Screen. `members` and `memberCount` above are the reading views and neither can be written through: `members` is
-  // Sorted, so a write through it would land on the copy `toSorted` produced rather than the room's own rows
+    const roomMemberCounts = getMemberCountsRef(roomId).value;
+    roomMemberCounts.count = count;
+    roomMemberCounts.countsByTopRole = countsByTopRole;
+  };
+  const refreshMemberCountsInBackground = (roomId: string) =>
+    getResultAsync(() => refreshMemberCounts(roomId)).match(noop, console.error);
+  // Every role-membership write re-reads its room's totals, so a leave, a role change, and a committed optimistic write
+  // all reach the totals through the same path. The room is the one the write happened in, not necessarily the one on
+  // Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals
+  memberRoleChangeHooks.register(refreshMemberCountsInBackground);
+  // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the event
+  // Happened in — and that is the room its list is written to, whichever room is on screen. `members` and `memberCount`
+  // Above are the reading views and neither can be written through: `members` is sorted, so a write through it would
+  // Land on the copy `toSorted` produced rather than the room's own rows
   const getRoomOperationData = (roomId: string) =>
     createOperationData(getSlice(roomId).items, ["id"], DerivedDatabaseEntityType.Member);
   const storeCreateMember = (roomId: string, member: MemberInRoom) => {
     storeUser(member);
     getRoomOperationData(roomId).createMember(member);
-    getMemberCountsRef(roomId).value.count++;
+    refreshMemberCountsInBackground(roomId);
   };
   const storeDeleteMember = (roomId: string, id: PublicUser["id"]) => {
-    // A member who leaves is a member whose top role became "none", so the departure goes through the one
-    // Funnel that owns the per-role totals rather than decrementing them a second time here — otherwise the
-    // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
-    // (in a room where every member holds a role it goes negative).
+    // A member who leaves is a member whose top role became "none", so the departure goes through the one funnel that
+    // Owns the role groups, which re-reads the room's totals. The row is removed here as the list's own write
     mutateMemberRoles(roomId, id, []);
     getRoomOperationData(roomId).deleteMember({ id });
-    getMemberCountsRef(roomId).value.count--;
   };
   return {
-    getBoundMemberCounts,
     getMemberCountsRef,
     getSlice,
     memberCount,
     memberCountsByTopRole,
     members,
+    refreshMemberCounts,
     ...restData,
     storeCreateMember,
     storeDeleteMember,

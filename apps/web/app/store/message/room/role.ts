@@ -13,8 +13,7 @@ import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role
 import type { RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { getTopRole } from "@/services/message/member/getTopRole";
-import { topRoleChangeHooks } from "@/services/message/member/topRoleChangeHooks";
+import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
@@ -85,30 +84,18 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setMemberRoleMap,
   } = useDataMap(() => roomStore.scopedRoomId, new Map<string, RoomRoleInMessage[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
-  // The members whose roles the server has read, per room. A role event writes a member's roles too, but only the one
-  // Change it carries, so an entry alone does not say the roles are the whole of them. Only the read marks a member
-  const { getData: getMemberRolesReadUserIds, setData: setMemberRolesReadUserIds } = useDataMap(
-    () => roomStore.scopedRoomId,
-    new Set<string>(),
-  );
-  const hasMemberRoles = (roomId: string, userId: string) => Boolean(getMemberRolesReadUserIds(roomId)?.has(userId));
   const setMemberRoles = (roomId: string, userId: string, memberRoles: RoomRoleInMessage[]) => {
     const roomMemberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
     roomMemberRoleMap.set(userId, memberRoles);
     setMemberRoleMap(roomId, roomMemberRoleMap);
   };
   // Every role-membership MUTATION funnels through here (reads use setMemberRoles directly — the server
-  // Counts already include them) so top-role-derived state stays current via the registered hooks
+  // Counts already include them) so the room's derived counts are re-read via the registered hooks. Each hook is told
+  // Of every write, not only of a top-role change: a write that leaves the top role alone can still be the server's
+  // Commit of an optimistic one, and only the server's totals say what that commit did
   const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
-    // A member whose roles were never read has an unknown prior top role, not a roleless one, and undefined says so
-    const previousTopRoleId = hasMemberRoles(roomId, userId)
-      ? (getTopRole(getMemberRoles(roomId, userId))?.id ?? "")
-      : undefined;
-    const newTopRoleId = getTopRole(newRoles)?.id ?? "";
     setMemberRoles(roomId, userId, newRoles);
-    if (previousTopRoleId === newTopRoleId) return;
-    for (const topRoleChangeHook of topRoleChangeHooks.hooks)
-      topRoleChangeHook(roomId, previousTopRoleId, newTopRoleId);
+    for (const memberRoleChangeHook of memberRoleChangeHooks.hooks) memberRoleChangeHook(roomId);
   };
   // Both sides of one membership, written against whatever the member's list holds right now rather than a
   // Copy read before the write went out — so an overlapping assign/revoke on another role survives this one
@@ -168,10 +155,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
         userId,
         (userIdMemberRolesMap[userId] ?? []).map(({ role }) => role),
       );
-    setMemberRolesReadUserIds(
-      input.roomId,
-      new Set([...(getMemberRolesReadUserIds(input.roomId) ?? []), ...input.userIds]),
-    );
   };
   const { executeMutation: executeCreateRoleMutation, isPending: isCreateRolePending } = useMutation();
   const { executeMutation: executeUpdateRoleMutation } = useMutation();
@@ -301,7 +284,6 @@ export const useRoleStore = defineStore("message/room/role", () => {
     getMemberRoles,
     getMyPermissions,
     getRoles,
-    hasMemberRoles,
     isCreateRolePending,
     memberPermissionOverrideMap,
     memberRoleMap,
