@@ -203,6 +203,7 @@
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
+    "azurite": "catalog:",
     "chokidar": "catalog:",
     "citty": "catalog:",
     "fake-indexeddb": "catalog:",

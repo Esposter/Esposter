@@ -42,6 +42,9 @@ vitest.config.*.timestamp*
 *.db
 *.db-journal
 
+# Azurite's local blob, queue and table data, which `pnpm dev` keeps beside apps/web
+.azurite
+
 # Logs
 logs
 *.log
