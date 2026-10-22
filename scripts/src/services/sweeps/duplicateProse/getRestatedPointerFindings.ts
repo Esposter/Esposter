@@ -33,9 +33,11 @@ const checkIsPointedAt = (line: string, path: string): boolean =>
 // Past the direction is the one clause it may carry. So a run shared with the page the line points at is the
 // Direction, and a run shared with any other page is the argument stated twice (`skill-authoring`,
 // `references/settled-lists.md`).
-export const getRestatedPointerFindings = (pages: CitingPage[]): RestatedPointerFinding[] => {
+export const getRestatedPointerFindings = (
+  pages: CitingPage[],
+  pathShingles: Set<string> = readRepositoryPathShingles(),
+): RestatedPointerFinding[] => {
   const pathPointerLinesMap = new Map(pages.map(({ path, text }) => [path, getPointerLines(text)]));
-  const pathShingles = readRepositoryPathShingles();
   return getDuplicateProse(pages).flatMap(({ paths: [firstPath, secondPath], words }) => {
     if (checkIsPathRun(words, pathShingles)) return [];
 
