@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
-import { Scenes } from "phaser";
+import { settleOnShutdown } from "#src/services/shared/settleOnShutdown";
 
 // Waits on the scene's own clock rather than the wall clock, so a paused or time-scaled scene pauses and scales
 // The wait with it. Named apart from `@esposter/shared`'s `sleep` for exactly that reason: the two are
@@ -11,17 +11,6 @@ import { Scenes } from "phaser";
 // Battle turn that never ends, an input flag that never clears. The timer needs no matching removal: the clock
 // Discarding it is the very reason this listener exists
 export const sleepScene = (scene: SceneWithPlugins, durationMs: number) =>
-  new Promise<void>((resolve) => {
-    // A scene that has shut down has no clock left to wait on, so there is nothing to sleep through
-    if (scene.sys.settings.status >= Scenes.SHUTDOWN) {
-      resolve();
-      return;
-    }
-
-    const settle = () => {
-      scene.events.off(Scenes.Events.SHUTDOWN, settle);
-      resolve();
-    };
+  settleOnShutdown(scene, (settle) => {
     scene.time.delayedCall(durationMs, settle);
-    scene.events.once(Scenes.Events.SHUTDOWN, settle);
   });
