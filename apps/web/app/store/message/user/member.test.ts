@@ -67,7 +67,7 @@ describe(useMemberStore, () => {
     // The member list headers derive the roleless group as memberCount - sum(role groups), so a departure that
     // Drops only the total leaves the leaver in their role group and takes the remainder negative
     await loadMemberRoles(roomId, [role]);
-    getMemberCountsRef(roomId).value.count = 1;
+    getMemberCountsRef(roomId).value.memberCount = 1;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     serveCounts(0, [{ count: 0, roleId: role.id }]);
     const countsWritten = waitForCounts(roomId);
@@ -86,7 +86,7 @@ describe(useMemberStore, () => {
     const memberStore = useMemberStore();
     const { getMemberCountsRef, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
-    getMemberCountsRef(roomId).value.count = 2;
+    getMemberCountsRef(roomId).value.memberCount = 2;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     const countsWritten = waitForCounts(roomId);
@@ -232,7 +232,7 @@ describe(useMemberStore, () => {
     const { getMemberCountsRef, storeDeleteMember } = memberStore;
     const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
     await loadMemberRoles(roomId, []);
-    getMemberCountsRef(roomId).value.count = 2;
+    getMemberCountsRef(roomId).value.memberCount = 2;
     getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 1, roleId: role.id }];
     serveCounts(1, [{ count: 1, roleId: role.id }]);
     const countsWritten = waitForCounts(roomId);

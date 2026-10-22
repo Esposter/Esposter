@@ -17,7 +17,7 @@ export const useMemberCache = () => {
     // The whole of what this room can show, so it is also the only honest total. The per-role breakdown is left
     // Alone: it is keyed by room in the store, so entering a room offline already finds it empty
     onHydrate: (cachedMembers, partitionKey) => {
-      getMemberCountsRef(partitionKey).value.count = cachedMembers.length;
+      getMemberCountsRef(partitionKey).value.memberCount = cachedMembers.length;
       storeUsers(cachedMembers);
       storeRoomMembers(partitionKey, cachedMembers);
     },

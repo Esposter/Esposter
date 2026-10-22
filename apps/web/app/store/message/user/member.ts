@@ -40,7 +40,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
     () => new MemberCounts(),
   );
   // Reading views, like `members` above: every write names its room — the refresh takes the room it was read for
-  const memberCount = computed(() => memberCounts.value.count);
+  const memberCount = computed(() => memberCounts.value.memberCount);
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
   // The totals are never adjusted by a delta: a delta applied on top of a read that already counted the change counts
   // It twice, and a delta applied to a group the store never saw the member in is wrong for good. Every change marks its
@@ -53,7 +53,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
           $trpc.room.readMemberCountsByTopRole.query({ roomId }),
         ]);
         const roomMemberCounts = getMemberCountsRef(roomId).value;
-        roomMemberCounts.count = count;
+        roomMemberCounts.memberCount = count;
         roomMemberCounts.countsByTopRole = countsByTopRole;
       }),
     );

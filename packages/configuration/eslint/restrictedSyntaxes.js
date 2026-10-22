@@ -32,6 +32,24 @@ export default [
     selector: "CallExpression[callee.property.name=/^(catch|finally|then)$/]",
   },
   {
+    // A server-derived count is re-read, never moved by the client: a step (`count++`) or a compound assignment
+    // (`count += n`). Reading a count arithmetically, such as a roleless group derived from the total, is not matched.
+    // A delta computed into a variable first (`const next = count + 1; count = next`) is not matched by any selector
+    message:
+      "A server-owned count is re-read, never adjusted by a delta — read it back with its batched refresh (see the client-data skill).",
+    selector:
+      "UpdateExpression[argument.property.name=/^(commentCount|likeCount|memberCount)$/], AssignmentExpression[operator=/^[+-]=$/][left.property.name=/^(commentCount|likeCount|memberCount)$/]",
+  },
+  {
+    // The reassignment form of the same delta: a count set to a sum or difference is moved by the client, even when the
+    // sum reads the count it replaces (`count = count + 1`). A count set from a read is an identifier or a call, which
+    // Is not matched
+    message:
+      "A server-owned count is set from the server's read, not from a sum or difference — read it back with its batched refresh (see the client-data skill).",
+    selector:
+      "AssignmentExpression[operator='='][left.property.name=/^(commentCount|likeCount|memberCount)$/][right.type='BinaryExpression'][right.operator=/^[+-]$/]",
+  },
+  {
     // A template literal already runs `ToString` on every substitution, so a `.toString()` inside one spells the
     // Coercion the syntax performs. A radix call (`toString(16)`) is a different value and is not matched, and
     // `String(x)` is left alone on purpose: it is how a type the type-aware `restrict-template-expressions`
