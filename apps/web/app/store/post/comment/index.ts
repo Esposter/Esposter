@@ -78,7 +78,6 @@ export const useCommentStore = defineStore("post/comment", () => {
       key: input.id,
       onSuccess: async (updatedComment) => {
         storeUpdateComment(updatedComment);
-        // The response's counts are as old as the response, so the owner reads them back over the copy it just wrote
         await refreshPostCounts([updatedComment.id]);
       },
     });

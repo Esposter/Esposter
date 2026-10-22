@@ -57,7 +57,6 @@ export const usePostStore = defineStore("post", () => {
       key: input.id,
       onSuccess: async (updatedPost) => {
         storeUpdatePost(updatedPost);
-        // The response's counts are as old as the response, so the owner reads them back over the copy it just wrote
         await refreshPostCounts([updatedPost.id]);
       },
     });
