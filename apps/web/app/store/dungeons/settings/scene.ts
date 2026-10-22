@@ -53,8 +53,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     () => SettingsOptionGrid.position.value.x,
     async () => {
       if (isAutoUpdateGridX) isAutoUpdateGridX = false;
-      // Close is the exit row rather than a setting, so it has no value to write back
-      else if (selectedSettingsOption.value !== SettingsOption.Close)
+      // Only a value cell holds a setting. Close is the exit row, and Volume's value is set by the slider and the volume
+      // Keys, so a cursor on either has no value to write back
+      else if (unref(SettingsOptionGrid.validate(SettingsOptionGrid.position.value)))
         await setSettings(
           selectedSettingsOption.value,
           SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
