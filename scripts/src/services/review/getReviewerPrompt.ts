@@ -1,4 +1,4 @@
-import { REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
+import { REVIEW_DIFF_CHARACTER_LIMIT, REVIEW_DIFF_LINE_LIMIT } from "#src/services/review/constants";
 
 export interface ReviewerPromptInput {
   base: string;
@@ -13,7 +13,7 @@ export interface ReviewerPromptInput {
 // The fragment as the whole.
 export const getReviewerPrompt = ({ base, diff, end, files, isDiffCut }: ReviewerPromptInput): string => {
   const cutNote = isDiffCut
-    ? `\nThe diff above is cut at ${REVIEW_DIFF_LINE_LIMIT} lines. Read the files in your batch at ${end} for the rest before you report anything about them.\n`
+    ? `\nThe diff above is cut at ${REVIEW_DIFF_LINE_LIMIT} lines or ${REVIEW_DIFF_CHARACTER_LIMIT} characters. Read the files in your batch at ${end} for the rest before you report anything about them.\n`
     : "";
   return `You are an automated code reviewer for this repository, reviewing one batch of the commit range ${base}..${end}. Your tools are read-only and the checkout is at ${end}. Nothing you write reaches a person: your findings go to a fixer session as JSON.
 

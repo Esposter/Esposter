@@ -19,8 +19,12 @@ export const REVIEW_WINDOW_FILE_CAP = 300;
 export const REVIEW_BATCH_FILE_CAP = 20;
 // Kept small so haiku reads every line it is handed
 export const REVIEW_BATCH_LINE_CAP = 1200;
+// The characters one batch's diffs hold. Lines do not bound a prompt: a generated file can be a megabyte on one line.
+export const REVIEW_BATCH_CHARACTER_CAP = 120000;
 // Where one oversized file's diff is cut in the prompt, with a note to read the file for the rest
 export const REVIEW_DIFF_LINE_LIMIT = 3000;
+// The most characters of a batch's diff the prompt holds, the character bound on the same cut as the line one
+export const REVIEW_DIFF_CHARACTER_LIMIT = 40000;
 // The `claude` sessions one runner holds at once, across every batch of every window in a run. It is how many sessions
 // A runner's memory holds, not a spend limit: `ubuntu-latest` for this public repository has 16 GB and four cores, and a
 // Session's node process is a few hundred megabytes. A starting value, to be measured against a real run.

@@ -3,7 +3,12 @@ import type { ReviewFile } from "#src/models/review/ReviewFile";
 import type { ReviewRange } from "#src/models/review/ReviewRange";
 import type { ReviewWindow } from "#src/models/review/ReviewWindow";
 
-import { REVIEW_BATCH_FILE_CAP, REVIEW_BATCH_LINE_CAP, REVIEW_WINDOW_FILE_CAP } from "#src/services/review/constants";
+import {
+  REVIEW_BATCH_CHARACTER_CAP,
+  REVIEW_BATCH_FILE_CAP,
+  REVIEW_BATCH_LINE_CAP,
+  REVIEW_WINDOW_FILE_CAP,
+} from "#src/services/review/constants";
 import { packBatches } from "#src/services/review/packBatches";
 import { readCommitFiles } from "#src/services/review/readCommitFiles";
 import { readOwedShas } from "#src/services/review/readOwedShas";
@@ -26,7 +31,7 @@ const toWindow = (windowCommits: ReviewCommit[]): ReviewWindow => {
 
   return {
     base,
-    batches: packBatches(files, REVIEW_BATCH_FILE_CAP, REVIEW_BATCH_LINE_CAP),
+    batches: packBatches(files, REVIEW_BATCH_FILE_CAP, REVIEW_BATCH_LINE_CAP, REVIEW_BATCH_CHARACTER_CAP),
     commitShas: windowCommits.map(({ sha }) => sha),
     end,
   };

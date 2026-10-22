@@ -193,7 +193,7 @@ Every limit in the review SHALL be bounded by an amount read or held, and the ru
 
 #### Scenario: Limit reached on a run
 
-- **GIVEN** a limit on files, lines, issues or sessions is reached
+- **GIVEN** a limit on files, lines, characters, issues or sessions is reached
 - **WHEN** the run plans or holds work
 - **THEN** it stops at that amount rather than at a time
 
