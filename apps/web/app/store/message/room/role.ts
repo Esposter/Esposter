@@ -100,7 +100,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
   // Every role-membership MUTATION funnels through here (reads use setMemberRoles directly — the server
   // Counts already include them) so top-role-derived state stays current via the registered hooks
   const mutateMemberRoles = (roomId: string, userId: string, newRoles: RoomRoleInMessage[]) => {
-    const previousTopRoleId = getTopRole(getMemberRoles(roomId, userId))?.id ?? "";
+    // A member whose roles were never read has an unknown prior top role, not a roleless one, and undefined says so
+    const previousTopRoleId = hasMemberRoles(roomId, userId)
+      ? (getTopRole(getMemberRoles(roomId, userId))?.id ?? "")
+      : undefined;
     const newTopRoleId = getTopRole(newRoles)?.id ?? "";
     setMemberRoles(roomId, userId, newRoles);
     if (previousTopRoleId === newTopRoleId) return;

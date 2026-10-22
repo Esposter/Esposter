@@ -9,12 +9,13 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const roleStore = useRoleStore();
-  const { hasMemberRoles, mutateMemberRoles } = roleStore;
+  const { mutateMemberRoles } = roleStore;
   const userStore = useUserStore();
   const { storeUser } = userStore;
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
@@ -48,10 +49,26 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Leave handlers take the event's room, and an offline hydrate takes the partition it was read for
   const memberCount = computed(() => memberCounts.value.count);
   const memberCountsByTopRole = computed(() => memberCounts.value.countsByTopRole);
+  // The latest read of a room's group totals wins. A read started earlier can finish after a later one, and its
+  // Totals would then overwrite the ones that already include the later change
+  const countsReadIds = new Map<string, number>();
+  const readCountsByTopRole = async (roomId: string) => {
+    const countsReadId = (countsReadIds.get(roomId) ?? 0) + 1;
+    countsReadIds.set(roomId, countsReadId);
+    const countsByTopRole = await $trpc.room.readMemberCountsByTopRole.query({ roomId });
+    if (countsReadIds.get(roomId) === countsReadId) getMemberCountsRef(roomId).value.countsByTopRole = countsByTopRole;
+  };
   // The room the change happened in, which is not necessarily the room on screen: a role assigned from a profile
   // Card in one room while another is open belongs to that room's totals. The roleless group derives from the
   // Total, so a change with no room is written to a slice nothing reads and is thereby a no-op
   topRoleChangeHooks.register((roomId, previousTopRoleId, newTopRoleId) => {
+    // An unread prior role cannot be turned into a delta, since the group it left is unknown here. The server's
+    // Totals are the exact answer, so they are read instead
+    if (previousTopRoleId === undefined) {
+      getResultAsync(() => readCountsByTopRole(roomId)).match(noop, console.error);
+      return;
+    }
+
     const roomCountsByTopRole = getMemberCountsRef(roomId).value.countsByTopRole;
     for (const [roleId, delta] of [
       [previousTopRoleId, -1],
@@ -74,21 +91,14 @@ export const useMemberStore = defineStore("message/user/member", () => {
     getRoomOperationData(roomId).createMember(member);
     getMemberCountsRef(roomId).value.count++;
   };
-  const storeDeleteMember = async (roomId: string, id: PublicUser["id"]) => {
+  const storeDeleteMember = (roomId: string, id: PublicUser["id"]) => {
     // A member who leaves is a member whose top role became "none", so the departure goes through the one
     // Funnel that owns the per-role totals rather than decrementing them a second time here — otherwise the
     // Total drops while the role group keeps the leaver, and the roleless remainder absorbs the whole error
     // (in a room where every member holds a role it goes negative).
-    const hasLoadedRoles = hasMemberRoles(roomId, id);
     mutateMemberRoles(roomId, id, []);
     getRoomOperationData(roomId).deleteMember({ id });
     getMemberCountsRef(roomId).value.count--;
-    // A leaver whose roles were never loaded sits in a group this store cannot see, so the room's group counts are
-    // Read again. The server has applied the departure before the event was sent, so the read is the room without them
-    if (hasLoadedRoles) return;
-
-    const memberCountsRef = getMemberCountsRef(roomId);
-    memberCountsRef.value.countsByTopRole = await $trpc.room.readMemberCountsByTopRole.query({ roomId });
   };
   return {
     getBoundMemberCounts,

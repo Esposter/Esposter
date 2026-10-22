@@ -37,16 +37,23 @@ Each member group's count SHALL show the group's total members in the room, not 
 - **WHEN** that member leaves the room
 - **THEN** that group's count goes down by one
 
-### Requirement: A departure keeps every role group count exact
+### Requirement: A departure or a role change keeps every role group count exact
 
-A member's departure SHALL leave each role group's count equal to the members holding that role and the roleless count non-negative, whether or not the member's roles were loaded.
+A member's departure or role change SHALL leave each role group's count equal to the members holding that role and the roleless count non-negative, whether or not the member's roles were loaded.
 
 #### Scenario: a leave from an unloaded page keeps every group count equal to its members
 
-- **GIVEN** a room of 300 members who all hold the Admin role, with only the first 50 members' roles loaded
-- **WHEN** a member outside the loaded pages leaves
-- **THEN** the Admin group count is 299
+- **GIVEN** a room of 2 members who both hold the Admin role, with neither member's roles loaded
+- **WHEN** one of them leaves
+- **THEN** the Admin group count is 1
 - **AND** the roleless count is 0
+
+#### Scenario: a role change for a member outside the loaded pages keeps every group count equal to its members
+
+- **GIVEN** a room of 1 member who holds the Admin role, with the member's roles not loaded
+- **WHEN** the member's role changes to Moderator
+- **THEN** the Admin group count is 0
+- **AND** the Moderator group count is 1
 
 ### Requirement: A member's name takes the colour of their highest role
 
