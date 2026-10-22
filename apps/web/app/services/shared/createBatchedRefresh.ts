@@ -1,4 +1,4 @@
-import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
+import { BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS } from "@/services/shared/constants";
 import { createSingleFlight } from "@/services/shared/createSingleFlight";
 import { createExponentialBackoff, getResultAsync } from "@esposter/shared";
 
@@ -11,7 +11,7 @@ const MAX_RETRIES = 5;
 // Run, paced by the backoff, so a failed read recovers without the next mark having to come
 export const createBatchedRefresh = <TKey>(refresh: (keys: TKey[]) => Promise<void>) => {
   const dirtyKeys = new Set<TKey>();
-  const executeWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
+  const executeWithBackoff = createExponentialBackoff(BATCHED_REFRESH_BASE_DELAY_MS, BATCHED_REFRESH_MAX_DELAY_MS);
   let retryCount = 0;
   const flush = createSingleFlight(async () => {
     const keys = [...dirtyKeys];
