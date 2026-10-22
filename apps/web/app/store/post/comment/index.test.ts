@@ -48,7 +48,8 @@ describe(useCommentStore, () => {
       return { ancestorIds: [postId], removedCommentCount: 1 };
     });
     // The rollback restores the comment with the count it held when the delete was sent.
-    // The count the server holds is read back over it: a count that moved while the comment was out of the thread reached no copy
+    // The count the server holds is read back over it: a count that moved while the comment was out of the thread
+    // Reached no copy
     trpcMsw.post.readPostCounts.query(() => [
       { commentCount: 1, id: postId, likeCount: 0 },
       { commentCount: 0, id: comment.id, likeCount: 3 },
