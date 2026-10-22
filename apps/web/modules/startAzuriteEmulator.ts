@@ -1,8 +1,9 @@
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { defineNuxtModule } from "nuxt/kit";
+
 // Imported by source rather than by package name: `nuxt prepare` loads every module from the app's `postinstall`, before
-// any workspace package is built, and the package name resolves to a `dist` a fresh clone does not have yet
+// Any workspace package is built, and the package name resolves to a `dist` a fresh clone does not have yet
 import { spawn } from "../../../packages/shared-node/src/childProcess.ts";
 
 // The local Azure Storage emulator, started under `nuxt dev` alone and only when the storage connection string is the
