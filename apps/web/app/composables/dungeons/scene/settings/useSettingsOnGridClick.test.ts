@@ -1,0 +1,89 @@
+// @vitest-environment nuxt
+import type { Controls } from "@/models/dungeons/input/Controls";
+
+import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
+import { TextSpeedSetting } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
+import { useSettingsOnGridClick } from "@/composables/dungeons/scene/settings/useSettingsOnGridClick";
+import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { useControlsStore } from "@/store/dungeons/controls";
+import { useSettingsStore } from "@/store/dungeons/settings";
+import { NotFoundError } from "@esposter/shared";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
+
+// The dungeons store imports Phaser, which cannot initialise under the test environment. Only its state and its save
+// Are read here, so the fake keeps the real save shape and records each save
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("@/store/dungeons", async () => {
+  const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
+  const { reactive } = await import("vue");
+  const dungeons = reactive(new Dungeons());
+  return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
+});
+
+// Grid-engine loads Phaser when it is imported, which cannot initialise under the test environment. Only its direction
+// Values are read here, and they are the same strings the library defines
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- The typed module loads Phaser, so only its direction values are stated
+vi.mock("grid-engine", () => ({
+  Direction: {
+    DOWN: "down",
+    DOWN_LEFT: "down-left",
+    DOWN_RIGHT: "down-right",
+    LEFT: "left",
+    NONE: "none",
+    RIGHT: "right",
+    UP: "up",
+    UP_LEFT: "up-left",
+    UP_RIGHT: "up-right",
+  },
+}));
+
+const getRowPosition = (settingsOption: SettingsOption) => {
+  const position = SettingsOptionGrid.getPosition(settingsOption);
+  if (!position) throw new NotFoundError(getRowPosition.name, settingsOption);
+
+  return position;
+};
+
+describe(useSettingsOnGridClick, () => {
+  let controls: Controls;
+
+  beforeEach(() => {
+    controls = { setInput: vi.fn<(input: PlayerSpecialInput) => void>() } as unknown as Controls;
+    const controlsStore = useControlsStore();
+    controlsStore.controls = controls;
+    const settingsStore = useSettingsStore();
+    settingsStore.settings = getInitialSettings();
+  });
+
+  // A press on the cell the cursor already holds is the second press. A value cell saves on the press that lands on it,
+  // So the cell being held means the save already happened
+  test("a second press on a value cell saves nothing and confirms nothing", () => {
+    expect.hasAssertions();
+
+    const textSpeedRow = getRowPosition(SettingsOption["Text Speed"]);
+    const fastCell = {
+      x: SettingsOptionGrid.getPositionX(TextSpeedSetting.Fast, textSpeedRow.y) ?? 0,
+      y: textSpeedRow.y,
+    };
+    SettingsOptionGrid.position.value = fastCell;
+    useSettingsOnGridClick(fastCell)();
+
+    expect(saveDungeons).not.toHaveBeenCalled();
+    expect(controls.setInput).not.toHaveBeenCalled();
+  });
+
+  test("a second press on Close confirms and saves nothing", () => {
+    expect.hasAssertions();
+
+    const closeRow = getRowPosition(SettingsOption.Close);
+    SettingsOptionGrid.position.value = closeRow;
+    useSettingsOnGridClick(closeRow)();
+
+    expect(controls.setInput).toHaveBeenCalledExactlyOnceWith(PlayerSpecialInput.Confirm);
+    expect(saveDungeons).not.toHaveBeenCalled();
+  });
+});

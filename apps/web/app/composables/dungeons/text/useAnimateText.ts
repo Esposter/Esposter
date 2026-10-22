@@ -5,20 +5,13 @@ import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkipp
 import { useTextDelayMs } from "@/composables/dungeons/text/useTextDelayMs";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { Scenes } from "phaser";
-import { onNextTick } from "vue-phaserjs";
+import { waitForNextTick } from "vue-phaserjs";
 
 // A text change reaches Vue's watchers on the next render, and they hand it to Phaser on the scene's next tick,
-// So the text is on screen once both have run. A shutdown drops the scene's next-tick listeners unrun, so it settles too
+// So the text is on screen once both have run
 const waitForTextShown = async (scene: SceneWithPlugins) => {
   await nextTick();
-  await new Promise<void>((resolve) => {
-    const settle = () => {
-      scene.events.off(Scenes.Events.SHUTDOWN, settle);
-      resolve();
-    };
-    scene.events.once(Scenes.Events.SHUTDOWN, settle);
-    onNextTick(settle, scene.scene.key);
-  });
+  await waitForNextTick(scene);
 };
 
 const typeText = (scene: SceneWithPlugins, targetText: Ref<string>, textSections: string[]) => {
