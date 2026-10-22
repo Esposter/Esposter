@@ -20,7 +20,7 @@ const onCreate = (scene: SceneWithPlugins) => {
 <template>
   <DungeonsScene
     :scene-key="SceneKey.Settings"
-    @create="(scene) => onCreate(scene)"
+    @create="onCreate"
     @update="(scene, _time, delta) => onPlayerInput(scene, controls.getInput(true), controls.getInput(), delta)"
   >
     <DungeonsSettingsContainer />
