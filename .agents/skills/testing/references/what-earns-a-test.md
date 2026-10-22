@@ -29,6 +29,7 @@ A guard clause decided in this file is the one exception to step 2: it earns its
 ## Case law
 
 - **Test composables, not the service functions under them.** Composable tests cover the full call chain. A service is tested directly only when it has no composable wrapper.
+- **Cover every guard clause directly, even when a caller reaches it.** A wrapper's guard branch (the "skips non-directories" case, the no-op-when-absent case) is reached through its caller's test, but the caller does not decide what the wrapper does on it. A shared primitive is tested directly; its wrappers cover only their unique value-add (`references/wrapper-suites.md`).
 - **One test per operation.** All of its field assertions go in one test; "updates name" and "updates bio" are one test.
 - **A hand-written type over a third-party data file earns exactly one shape test.** Nothing typechecks a `declare module` against the bytes, so a dependency bump that renames a key passes every other gate silently. Assert one known record `toStrictEqual` its whole shape, plus any invariant the type encodes. This is the fixed-outside-the-repo exception, not a restated constant.
 - **A UI change earns a component test only when it is cheap under the default setup.** Mount it and assert the rendered structure when that works out of the box. When it would first need a store graph, the tRPC client or a third-party component's internals mocked, write no test: the mocks become the subject, and the layout is for a person to check (the `run-app` skill).
