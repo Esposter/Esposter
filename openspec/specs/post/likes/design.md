@@ -14,7 +14,7 @@ flowchart TD
   updateLike --> txn
   deleteLike --> txn["one transaction — the likes row, likeCount, and the recomputed ranking"]
   txn --> row[("posts row")]
-  txn --> patch["useLikeStore patches viewerLike and likeCount<br/>on every copy of the post"]
+  txn --> patch["useLikeStore patches viewerLike on every copy of the post,<br/>then reads likeCount back from readPostCounts"]
   row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["every read carries viewerLike"]
   viewer --> arrows
 ```
@@ -23,13 +23,15 @@ flowchart TD
 
 **Mutations** — three procedures, each a transaction that writes the like row, adjusts `likeCount`, and recomputes the stored [ranking](../feed-and-ranking/design.md) from the new count:
 
+The server is the only writer of `likeCount`. The client reads it back with `post.readPostCounts` (a batch read over the ids it changed) and never adds a vote to it, per [client data](../../architecture/client-data/design.md).
+
 - `createLike` — first vote (`likeCount += value`).
 - `updateLike` — flip an existing vote (`likeCount += 2 × value`, rejecting no-op flips).
 - `deleteLike` — retract (`likeCount −= value`).
 
 **Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostInPostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `likeCount`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and neither arrow is pressed. A hot feed page's payload is O(posts) instead of O(total likes).
 
-**Client** — the vote pill (`PostLikeSection`) holds two toggles, each pressed while it is the viewer's vote; `PostVoteButton` reads that from `viewerLike` and maps a press to the right mutation (up while unliked = flip, up while liked = retract, …). One like store, `useLikeStore`, is the only write path: `useLikeOperations` applies the result optimistically to **every copy of the post the client holds** — the feed's row and a post page's own read of it are separate objects, as are the thread's comments — patching each copy's `viewerLike` and `likeCount` in place, and rolling each back against what it held, so a vote cast on a post's page is already on its feed card and no component says which list a post came from.
+**Client** — the vote pill (`PostLikeSection`) holds two toggles, each pressed while it is the viewer's vote; `PostVoteButton` reads that from `viewerLike` and maps a press to the right mutation (up while unliked = flip, up while liked = retract, …). One like store, `useLikeStore`, is the only write path: `useLikeOperations` applies the viewer's own vote optimistically to **every copy of the post the client holds** — the feed's row and a post page's own read of it are separate objects, as are the thread's comments — patching each copy's `viewerLike` in place and rolling it back against what it held, so a vote cast on a post's page is already on its feed card and no component says which list a post came from. The count is never moved by the client: once a vote settles, `likeCount` is read back from `post.readPostCounts` for every copy, through a batched refresh, because another viewer's vote changes it too and the server's adjustment is the only exact value. A count shown while a vote is in flight is therefore the one before it, not a prediction.
 
 ## Procedures
 
@@ -43,16 +45,16 @@ flowchart TD
 
 Paths are `apps/web`-relative; a `packages/` path is repo-relative.
 
-| File                                                           | Role                                     |
-| -------------------------------------------------------------- | ---------------------------------------- |
-| `packages/db-schema/src/schema/post/likesInPost.ts`            | table + ±1 check                         |
-| `packages/db-schema/src/relations/post/postsInPostRelation.ts` | `PostInPostWithRelations` + `viewerLike` |
-| `server/trpc/routers/like.ts`                                  | transactional mutations                  |
-| `server/services/post/getViewerPostRelations.ts`               | viewer-filtered likes fetch strategy     |
-| `server/services/post/getPostWithViewerLike.ts`                | maps the fetched row to `viewerLike`     |
-| `app/components/Post/VoteButton.vue`                           | one arrow: its toggle and its write      |
-| `app/composables/post/useLikeOperations.ts`                    | optimistic store patching                |
-| `app/store/post/like.ts`                                       | the one like store, over every list      |
+| File                                                           | Role                                            |
+| -------------------------------------------------------------- | ----------------------------------------------- |
+| `packages/db-schema/src/schema/post/likesInPost.ts`            | table + ±1 check                                |
+| `packages/db-schema/src/relations/post/postsInPostRelation.ts` | `PostInPostWithRelations` + `viewerLike`        |
+| `server/trpc/routers/like.ts`                                  | transactional mutations                         |
+| `server/services/post/getViewerPostRelations.ts`               | viewer-filtered likes fetch strategy            |
+| `server/services/post/getPostWithViewerLike.ts`                | maps the fetched row to `viewerLike`            |
+| `app/components/Post/VoteButton.vue`                           | one arrow: its toggle and its write             |
+| `app/composables/post/useLikeOperations.ts`                    | optimistic vote patching, batched count re-read |
+| `app/store/post/like.ts`                                       | the one like store, over every list             |
 
 ## Notes
 

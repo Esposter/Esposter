@@ -158,7 +158,36 @@ The rule is therefore:
 
 Derived in the client, not re-read: values the client computes from data it already holds exactly (the roleless group is `total - sum(role groups)` of two server-read numbers, not a third number to maintain).
 
+**Why the membership and role rows carry no version.** A version or sequence column on `usersToRooms` and `usersToRoomRoles` would let a client order a change against a read, and that is the only thing a delta needs. Under this rule no client computes a delta, so ordering is never needed, and the column would add a write to every membership change for a question nothing asks. Revisit it only if a reader is added that must apply changes incrementally, such as a sync log for offline clients; the schema change for it belongs with that reader, not here.
+
 The rule is the same shape as the server-side effects rule above (re-read what only the server can construct), applied to aggregates. The consequence the member list shows is the test of it: a role change to a member outside the loaded pages re-reads the room's group totals, and a leave of any member does too.
+
+## The batched refresh primitive
+
+`services/shared/createBatchedRefresh.ts` is the one owner of a re-read. Its owner passes a function that re-reads a list of keys, and gets back a function that marks keys as changed and runs the re-read:
+
+- **One run in flight per owner.** It is built on `createSingleFlight`, so a mark that lands during a run is taken by the run owed after it, and no two reads of the same keys overlap. The one to finish last is always the newest, which is why it needs no sequence numbers.
+- **Batched.** Every key marked before a run starts is read by that one run. A room's totals, or a list of post ids, is one request, not one per key.
+- **Failure is kept.** A run that fails puts its keys back, so the next mark retries them; the error is logged, not swallowed.
+
+The primitive is what the store and composable owners call. Each owner calls it per instance, so two owners of the same post each order their own reads; a post's copies held by one owner are the only ones that owner writes.
+
+## Anti-patterns, and what enforces each
+
+Each entry is a shape the repo used and then left behind, with the shape that replaced it and the check that now stops it coming back.
+
+- **A count moved by a delta.** `count++` on a join, `likeCount += delta` on a vote, `commentCount += 1` on a reply. Replaced by a re-read of the aggregate. **Enforced** by `apps/web/app/aggregateDeltas.test.ts`, which fails on a `++`, `--`, `+=` or `-=` on a server-derived count field anywhere under `app/`, and on a reassignment that adds or subtracts the field's own value (`likeCount = likeCount + n`).
+- **A delta from an event payload.** A subscription echo read as a number to add to the count. An echo says the inputs changed; the count is read again. **Enforced** by the same test, since the payload's count is never written by an operator.
+- **Guessing an unknown prior state.** Treating a member with no read roles as roleless (`?? ""`), or a read-tracking set that says whether the roles were read. An unknown prior state is not a value. The owner re-reads the aggregate instead of computing a change it cannot prove. **Not yet mechanically enforced**; the review lane owns it, and the entries above are its reference.
+- **Ordering reads with a counter.** A `countsReadIds` map that lets the newest read win while two reads overlap, so an older one can finish last and be discarded after the fact. Replaced by `createBatchedRefresh`, which runs one read at a time per owner: reads never overlap, the newest is always last, and a change marked during a read is read by the run after it. **Enforced** by its own suite (`services/shared/createBatchedRefresh.test.ts`) and by every store that uses it.
+- **One read per element.** A loop of `readPost` over the ancestors of a reply. Replaced by a batch read keyed by the ids, one statement per set (`post.readPostCounts`, bounded to `MAX_POST_COUNTS_PER_READ`). **Enforced** by the runtime-efficiency rule and the server test that reads several posts in one call.
+- **An optimistic count.** Moving a displayed count before the server answers. The viewer's own vote is optimistic, since the client holds it exactly; the count is not, and it is read back when the write settles. **Not yet mechanically enforced**; enforced by review.
+- **A refresh fired from inside `onSuccess` and not awaited.** The mutation settles before the count does, so a caller that reads the count next sees the old value. `onSuccess` is awaited by `useMutation`; the re-read is awaited inside it. **Enforced** by the store tests, which read the count straight after the write resolves.
+- **A read with no index on its filter.** A room-wide count or a feed by author on a table whose only index leads with another column. Every re-read of it becomes a scan, and the cost grows with the table, not the answer. The index follows the read, per the drizzle skill's constraint reference (`references/table-constraints.md`). **Enforced** by review against that reference, and by the migration reviewed in the change that adds the read.
+- **Adjusting a counter with no bound.** A `>= 0` check on a column whose sign is the domain (`likeCount`, a signed vote sum) refuses a correct write. A count the server adjusts gets the check; a signed sum does not. **Enforced** by the same reference.
+- **Testing a re-read by waiting on a timer.** A `setTimeout`, a retry loop, or `vi.waitFor`. Tests wait on the store's own write, a watcher on the aggregate, so the wait ends on the change and not on a clock. **Enforced** by the repository's no-polling rule.
+- **Two reads sent in one tick, one held open.** tRPC batches requests in one tick into one response, so a test that holds one read open while another waits behind it deadlocks. The second read goes out only once the first has reached the server. **Not yet mechanically enforced**; the test that hit it is the reference.
+- **A mock that leaves a read unanswered.** A write that re-reads a count, with no handler for that read, makes the MSW layer answer "no procedure" and fail the test far from its cause. Every read a write triggers is mocked in the test that writes. **Enforced** by the test harness failing on unhandled requests.
 
 ## When not to use them
 
