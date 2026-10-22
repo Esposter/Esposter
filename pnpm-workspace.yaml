@@ -32,14 +32,14 @@ lockfile:
   includeResolutionSettings: true
 
 catalog:
-  "@anthropic-ai/claude-agent-sdk": ^0.3.306
+  "@anthropic-ai/claude-agent-sdk": ^0.3.309
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.1
   "@azure/core-http-compat": ^2.5.0
   "@azure/core-rest-pipeline": ^1.25.0
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.16.5
+  "@azure/functions": ^4.17.0
   "@azure/identity": ^4.14.0
   "@azure/search-documents": ^13.0.0
   "@azure/service-bus": ^7.10.0
@@ -55,7 +55,7 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.10
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.10
+  "@electric-sql/pglite": ^0.5.11
   "@fission-ai/openspec": ^1.14.3
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
@@ -73,7 +73,7 @@ catalog:
   "@livekit/track-processors": ^0.8.2
   "@modelcontextprotocol/sdk": ^1.32.1
   "@nuxt/eslint": ^1.17.0
-  "@nuxt/fonts": ^1.0.1
+  "@nuxt/fonts": ^1.1.0
   "@nuxt/image": ^2.2.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
@@ -88,7 +88,7 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/azure-native": ^3.29.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.270.0
+  "@pulumi/pulumi": ^3.272.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.17.1
   "@tiptap/core": ^3.32.0
@@ -103,8 +103,8 @@ catalog:
   "@tiptap/starter-kit": ^3.32.0
   "@tiptap/suggestion": ^3.32.0
   "@tiptap/vue-3": ^3.32.0
-  "@tresjs/cientos": ^5.9.3
-  "@tresjs/core": ^5.9.3
+  "@tresjs/cientos": ^5.10.0
+  "@tresjs/core": ^5.10.0
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.1
@@ -181,7 +181,7 @@ catalog:
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.53.0
-  h3: ^2.0.7
+  h3: ^2.0.8
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   js-beautify: ^2.0.3
@@ -190,7 +190,7 @@ catalog:
   link-preview-js: ^5.0.1
   linkifyjs: ^4.3.3
   livekit-client: ^2.23.0
-  livekit-server-sdk: ^2.19.1
+  livekit-server-sdk: ^2.19.2
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
   marked: ^18.1.1
