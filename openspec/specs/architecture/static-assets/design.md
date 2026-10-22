@@ -36,7 +36,7 @@ scene.load.image(TilesetKey.BasicPlains, basicPlainsUrl);
 
 A URL-valued import carries `?url`, the form the repo already uses for the PDF worker and the zstd module, so the import is one shape everywhere and a file the bundler does not know as an asset is still served as a URL. A document the code reads as text carries `?raw` instead, so the privacy policy's HTML is a string in its route's chunk and needs no request. The file is never named by a string path in the source, so a missing file is a build error rather than a 404 found at runtime.
 
-A Tiled tileset is named in a map by a relative `source` path, the form the Tiled editor writes, so each map's `index.tmx` and the `tilemap.json` beside it keep that path. The runtime does not follow the path. The external tileset loader in `packages/vue-phaserjs` takes each tileset's Tiled definition by url from `TilesetUrlMap`, keyed by the tileset's name and imported with `?url`, so a tileset's folder can change without the loader knowing. A move still edits those relative paths, because the editor needs them. The `.tsx` files are XML, so the app's TypeScript config excludes `app/assets/**/*.tsx`, where Nuxt's `app/**` include would otherwise compile them as TSX.
+A Tiled tileset is named in a map by a relative `source` path, the form the Tiled editor writes, so each map's `index.tmx` and the `tilemap.json` beside it keep that path. The runtime does not follow the path. The external tileset loader in `packages/vue-phaserjs` takes each tileset's Tiled definition from a url, keyed by the tileset's name. `TilesetUrlMap` imports every definition as text with `?raw` and hands the loader a `blob:` url holding that text, so a tileset's folder can change without the loader knowing. The loader never requests a `.tsx` url. The dev server transforms a requested `.tsx` as JavaScript, and that loads Nuxt's JSX plugin, which is the warning a tileset URL caused. A move still edits the relative paths in each map, because the editor needs them. The tilesets stay in `app/assets/dungeons/tilesets/`, and `app/` holds no `.tsx` that a URL requests.
 
 ## Shared code stays out of asset imports
 
@@ -49,27 +49,28 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 - **Saving a bundled URL as user data.** Each edit to a file's bytes would change the URL, so a saved value would silently stop matching. A file under the inline limit would also be inlined into the saved value as a data URL. The fix is the identifier above, not keeping the file in `public/`.
 - **Textures kept in `public/` because Phaser needs a path.** Phaser and three.js read any URL, bundled ones included, so the constraint never came from the loader.
 - **Tilesets kept in `public/` because the external loader fetched them by a path under a `public` segment.** That derived each tileset's url from the folder name in its `source`, so a tileset anywhere else threw. The loader now takes the url of each tileset from the app's import, which is the same rule every other file follows.
+- **Tilesets as `data:` urls.** Phaser decodes every data url as base64, and then `XHRLoader` returns `undefined` and overwrites the file's `xhrLoader` with it, so the tileset's text never reaches the loader. A `blob:` url is passed through unchanged and loaded with a real XHR.
 
 ## Key files
 
-| File                                                                          | Role                                                                                       |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `apps/web/app/assets/`                                                        | Every file the app's code reads, imported where it is read                                 |
-| `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, read by the maps and the tileset loader  |
-| `apps/web/app/assets/visual/textures/`                                        | The gem model and the textures the visual scenes and the fluid simulator load              |
-| `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, bundled and resolved from their preset ids                     |
-| `apps/web/app/services/dungeons/loader/TilesetLoaderMap.ts`                   | Each tileset's bundled image URL, handed to Phaser by import                               |
-| `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                      | Each tileset's bundled Tiled definition, keyed by name, for the external tileset loader    |
-| `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`           | Reads a map's external tilesets from the URL map, never from a folder name                 |
-| `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | The preset ids a user's setting saves, one member per background                           |
-| `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | The preset list, built from the enum, each URL read from `CallVirtualBackgroundUrlMap`     |
-| `apps/web/app/store/message/user/settings/callBackground.ts`                  | Resolves a saved preset id back to its URL                                                 |
-| `apps/web/public/`                                                            | The files whose URL is fixed, listed under Which place                                     |
-| `apps/web/configuration/app.ts`                                               | The head links and the polyfill script, named by their public paths                        |
-| `apps/web/configuration/pwa.ts`                                               | The manifest's icons and the service worker's `importScripts`, named by their public paths |
-| `apps/web/configuration/nitro.ts`                                             | The `publicAssets` mounts that serve package files from their installs                     |
-| `apps/web/configuration/typescript.ts`                                        | Excludes the Tiled `.tsx` sources from the app's TypeScript include                        |
-| `apps/web/shared/services/app/constants.ts`                                   | `PWA_PUBLIC_FOLDER_PATH`, the one public path the config reads                             |
+| File                                                                          | Role                                                                                          |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `apps/web/app/assets/`                                                        | Every file the app's code reads, imported where it is read                                    |
+| `apps/web/app/assets/dungeons/tilesets/`                                      | The Tiled tilesets, each `.tsx` beside its image, read by the maps and imported by the loader |
+| `apps/web/app/assets/visual/textures/`                                        | The gem model and the textures the visual scenes and the fluid simulator load                 |
+| `apps/web/app/assets/message/room/call/backgrounds/`                          | The call background images, bundled and resolved from their preset ids                        |
+| `apps/web/app/services/dungeons/loader/TilesetLoaderMap.ts`                   | Each tileset's bundled image URL, handed to Phaser by import                                  |
+| `apps/web/app/services/dungeons/loader/TilesetUrlMap.ts`                      | Each tileset's bundled Tiled definition, keyed by name, for the external tileset loader       |
+| `packages/vue-phaserjs/src/models/plugins/TiledJSONExternalFile.ts`           | Reads a map's external tilesets from the URL map, never from a folder name                    |
+| `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | The preset ids a user's setting saves, one member per background                              |
+| `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | The preset list, built from the enum, each URL read from `CallVirtualBackgroundUrlMap`        |
+| `apps/web/app/store/message/user/settings/callBackground.ts`                  | Resolves a saved preset id back to its URL                                                    |
+| `apps/web/public/`                                                            | The files whose URL is fixed, listed under Which place                                        |
+| `apps/web/configuration/app.ts`                                               | The head links and the polyfill script, named by their public paths                           |
+| `apps/web/configuration/pwa.ts`                                               | The manifest's icons and the service worker's `importScripts`, named by their public paths    |
+| `apps/web/configuration/nitro.ts`                                             | The `publicAssets` mounts that serve package files from their installs                        |
+| `apps/web/configuration/typescript.ts`                                        | Excludes the Tiled `.tsx` sources from the app's TypeScript include                           |
+| `apps/web/shared/services/app/constants.ts`                                   | `PWA_PUBLIC_FOLDER_PATH`, the one public path the config reads                                |
 
 ## Notes
 
