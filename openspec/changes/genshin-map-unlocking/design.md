@@ -1,6 +1,6 @@
 # Map unlocking
 
-The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. What is left is the rest of the game's places. The waypoints are in from [exploring](../../specs/genshin/exploring/design.md), which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point. The rest wait on the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
+The [map unlocking](../../specs/genshin/map-unlocking/design.md) page holds the statues' unlocking, the filled areas and the jumps. What is left is a quest step that unlocks a waypoint outright. The waypoints are in from [exploring](../../specs/genshin/exploring/design.md), which makes Teleport Waypoints a landmark kind and lands a jump at the game's own arrival point. The unlock is made through the [interaction](../../specs/genshin/interaction/design.md) prompts a waypoint and a domain are unlocked through.
 
 ## Decisions
 
@@ -25,19 +25,7 @@ flowchart TD
 
 ## Scope and order
 
-**This adds, in order:**
-
-```text
-packages/genshin-world/src/
-├── components/Hud/Navigation/Index.vue
-└── services/map/
-    ├── findPointedLandmark.test.ts
-    └── findPointedLandmark.ts
-```
-
-1. **The pointer to a near locked jump landmark.** Add `findPointedLandmark.ts`: given the locked jump landmarks, the character's ground point and the id pointed to last, it keeps that landmark while it is still locked and within `NAVIGATION_POINTER_HIDE_DISTANCE` (40 metres), and otherwise takes the nearest locked one within `NAVIGATION_POINTER_SHOW_DISTANCE` (30 metres), both added to `services/map/constants.ts`, undefined where none is. `components/World/Session/Index.vue` runs it from the composable's `lockedJumpLandmarks`, the jump landmarks less the unlocked ones, whenever the map camera moves, and hands the landmark to the HUD, which draws it in `Index.vue`: the mark at the landmark's projected screen point, held at the screen's edge with its arrow turned toward it when it is out of view. Its look comes from the public clip `ay49p0gLFT8` ("How to unlock Glutov Underground teleport waypoint", 23 seconds): `pnpm -C scripts recreation clip --directory ~/Esposter/genshin-parity/captures https://www.youtube.com/watch?v=ay49p0gLFT8 --from 0 --to 23 --name waypoint-pointer`, then `genshin:parity frames` over it, the builder reading the frames for one with the pointer in view and taking it into `references/waypoint-pointer/` with `genshin:parity frame <capture> --name waypoint-pointer --at <second>`. The mark's size and colour are provisional constants, and its comparison is queued for the user's eyes. Test: `findPointedLandmark.test.ts`, asserting that a locked landmark 29 metres away is pointed to and one 31 metres away is not, and that a pointed one stays at 39 metres and goes at 41; and `useWorldMap.test.ts`, asserting that an unlocked one is never pointed to, as the composable is where the unlocked ones are split off the jump landmarks.
-2. **Teleport Waypoints and domains unlocked**, once exploring places waypoints in region data and the prompt list offers them.
-3. **Their first-unlock rewards**, once each waypoint is matched to its row by its point id. The open world's rows are written and the statues' first unlock pays its Primogems; a statue's Adventure EXP is paid by the [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md)'s first step, and the waypoints' wait on step 2.
+**Still to build:** a quest step that unlocks a waypoint outright (task 2.1). It is blocked: the one `QUEST_EXEC_UNLOCK_POINT` in the quest data names point 7, a statue's point rather than a waypoint's, so the step waits on the data naming a waypoint. The pointer, the hidden waypoints, the offers and the first-unlock rewards are built, and their tasks are checked.
 
 **Not here:** the achievements `TRIGGER_UNLOCK_TRANS_POINT` and `TRIGGER_UNLOCK_AREA` rows count unlocks, and the achievements proposal wires them as their pages land. The wiki says "Brush of a Thousand Winds" is every Teleport Waypoint in Mondstadt except those of Dragonspine, Windrest Peak and the Temple of Space, so a watcher needs each waypoint's region as well as its point. An area trigger names the game's own area ids, which no catalogue area holds yet.
 

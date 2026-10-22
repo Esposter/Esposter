@@ -2,7 +2,7 @@
 
 ## Why
 
-The statues' unlocking, the filled areas and the jumps are built. The rest of the game's places are not: Teleport Waypoints and domain entrances do not unlock, pay their first-unlock rewards, or point the player toward a locked waypoint nearby. Without them the map offers the statues' jumps and nothing else.
+The statues' unlocking, the filled areas and the jumps are built. The rest of the game's places are built but one: Teleport Waypoints and domain entrances unlock by interaction, pay their first-unlock rewards, and point the player toward a locked waypoint nearby. A quest step that unlocks a waypoint outright is the part not yet built.
 
 ## What Changes
 
@@ -21,8 +21,6 @@ Teleport Waypoints and domain entrances unlock by reaching them, pay their first
 
 ## Waiting on
 
-- Exploring places Teleport Waypoints in region data, makes them a landmark kind and lands jumps at the game's arrival point: `openspec/specs/genshin/exploring/`. The prompt list offers waypoints and domains once it does.
-- Adventure Rank pays a statue's Adventure EXP as its first step: `openspec/changes/archive/2026-10-22-genshin-adventure-rank/`.
 - The unlock's animation, and the length of its hold on the player, are measured off a published clip, and that clip is not yet held.
 
 ## Impact
