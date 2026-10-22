@@ -34,20 +34,21 @@ export default [
   {
     // A server-derived count is re-read, never moved by the client: a step (`count++`) or a compound assignment
     // (`count += n`). Reading a count arithmetically, such as a roleless group derived from the total, is not matched.
-    // A delta computed into a variable first (`const next = count + 1; count = next`) is not matched by any selector
+    // A delta computed into a variable first (`const next = count + 1; count = next`) is not matched by any selector.
+    // A role's `count` is matched only as an item of `countsByTopRole`, since a bare `count` is a counter elsewhere
     message:
-      "A server-owned count is re-read, never adjusted by a delta — read it back with its batched refresh (see the client-data skill).",
+      "A server-owned count is re-read, never adjusted by a delta — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
     selector:
-      "UpdateExpression[argument.property.name=/^(commentCount|likeCount|memberCount)$/], AssignmentExpression[operator=/^[+-]=$/][left.property.name=/^(commentCount|likeCount|memberCount)$/]",
+      "UpdateExpression[argument.property.name=/^(commentCount|likeCount|memberCount)$/], AssignmentExpression[operator=/^[+-]=$/][left.property.name=/^(commentCount|likeCount|memberCount)$/], UpdateExpression[argument.property.name='count'][argument.object.object.property.name='countsByTopRole'], AssignmentExpression[operator=/^[+-]=$/][left.property.name='count'][left.object.object.property.name='countsByTopRole']",
   },
   {
     // The reassignment form of the same delta: a count set to a sum or difference is moved by the client, even when the
-    // sum reads the count it replaces (`count = count + 1`). A count set from a read is an identifier or a call, which
+    // Sum reads the count it replaces (`count = count + 1`). A count set from a read is an identifier or a call, which
     // Is not matched
     message:
-      "A server-owned count is set from the server's read, not from a sum or difference — read it back with its batched refresh (see the client-data skill).",
+      "A server-owned count is set from the server's read, not from a sum or difference — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
     selector:
-      "AssignmentExpression[operator='='][left.property.name=/^(commentCount|likeCount|memberCount)$/][right.type='BinaryExpression'][right.operator=/^[+-]$/]",
+      "AssignmentExpression[operator='='][left.property.name=/^(commentCount|likeCount|memberCount)$/][right.type='BinaryExpression'][right.operator=/^[+-]$/], AssignmentExpression[operator='='][left.property.name='count'][left.object.object.property.name='countsByTopRole'][right.type='BinaryExpression'][right.operator=/^[+-]$/]",
   },
   {
     // A template literal already runs `ToString` on every substitution, so a `.toString()` inside one spells the
