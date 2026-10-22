@@ -88,7 +88,7 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/azure-native": ^3.29.0
   "@pulumi/github": ^6.15.0
-  "@pulumi/pulumi": ^3.270.0
+  "@pulumi/pulumi": ^3.271.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.17.1
   "@tiptap/core": ^3.32.0
