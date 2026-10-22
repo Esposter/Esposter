@@ -164,6 +164,8 @@ The rule is the same shape as the server-side effects rule above (re-read what o
 
 ## The batched refresh primitive
 
+The primitive's contract, its retry, and its owners are specified in [batched refresh](../batched-refresh/design.md).
+
 `services/shared/createBatchedRefresh.ts` is the one owner of a re-read. Its owner passes a function that re-reads a list of keys, and gets back a function that marks keys as changed and runs the re-read:
 
 - **One run in flight per owner.** It is built on `createSingleFlight`, so a mark that lands during a run is taken by the run owed after it, and no two reads of the same keys overlap. The one to finish last is always the newest, which is why it needs no sequence numbers.
