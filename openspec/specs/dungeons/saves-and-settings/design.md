@@ -52,7 +52,7 @@ The save is a consequence of an action, never of where the cursor happens to be.
 
 ## Animations off
 
-Animations off is one setting, read in one place. Every presentation that has an animated form passes its end state to `useSkippableAnimation` (`app/composables/dungeons/animation/useSkippableAnimation.ts`): with the setting on, the animation runs; with it off, the end state is applied and the call resolves at once. No call site checks `isSkipAnimations` itself, so adding an animation means passing its end state, not adding a branch.
+Animations off is one setting, read in one place. Every presentation that has an animated form passes its end state to `useSkippableAnimation` (`app/composables/dungeons/animation/useSkippableAnimation.ts`): with the setting on, the animation runs; with it off, the end state is applied and the call resolves at once. No call site outside the experience bar checks `isSkipAnimations` itself, so adding an animation means passing its end state, not adding a branch.
 
 Dialog text reveals through the same helper. Both forms wait for the same thing before resolving: Vue's next render, then the scene's next tick, since Vue's watchers hand a text change to Phaser on that tick. That wait replaces the millisecond delay the skip path used to take as a stand-in.
 
