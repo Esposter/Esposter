@@ -158,8 +158,8 @@ catalog:
   diff: ^9.0.0
   # @TODO: no upstream issue — drizzle's 1.0.0 is a release candidate, and rc.5 broke most of the types here, so the pair
   # stays pinned to rc.4 until 1.0.0 reaches `latest`, the renovate.json rule that moves them as one
-  drizzle-kit: 1.0.0-rc.4
-  drizzle-orm: 1.0.0-rc.4
+  drizzle-kit: 1.0.0-rc.5
+  drizzle-orm: 1.0.0-rc.5
   emojilib: ^4.0.3
   eslint: ^10.13.0
   eslint-plugin-depend: ^1.5.0
