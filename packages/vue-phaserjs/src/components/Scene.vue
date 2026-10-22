@@ -72,14 +72,11 @@ onMounted(async () => {
   const scene = getResult(() => game.scene.add(sceneKey, NewScene)).match(
     (addedScene) => addedScene,
     (error) => {
-      console.error(error);
+      console.error(`Failed to add scene: ${sceneKey}`, error);
       return null;
     },
   );
-  if (!scene) {
-    console.error(`Failed to add scene: ${sceneKey}`);
-    return;
-  }
+  if (!scene) return;
   isSceneAdded = true;
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
