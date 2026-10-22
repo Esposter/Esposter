@@ -36,7 +36,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 - **Constants go in `constants.ts` under `services/`**, never at the top of an SFC or composable — `no-restricted-syntax` (`packages/configuration/eslint/restrictedConstantSyntaxes.js`) reads the casing; tests use `constants.test.ts` (`references/constants.md`).
 - **No duplicate constants — one source of truth per value per runtime realm**, tests included; a single-use literal stays inline (`references/constants.md`).
 - A literal or helper a JSON or `postinstall`-evaluated config must repeat, a function's name (`functionName.name`, never a `*_NAME` constant) and a `DEFAULT_*` option object frozen at every depth — `references/constants.md`; editing a config literal that repeats one is `references/config-literals.md`.
-- **A static file is imported where it is read, never named by a path constant** — `apps/web/app/assets/`, with the URL import carrying `?url`. Only a URL that is saved as data or named by config stays under `apps/web/public/`, and which files those are is `openspec/specs/architecture/static-assets/design.md`.
+- **A static file is imported where it is read, never named by a path constant** — `apps/web/app/assets/`, with the URL import carrying `?url`. A bundled URL is never saved as data — the identifier is saved and resolved at read time. Only the files the browser requests by a fixed name (favicon, apple-touch-icon, the `icon-*.png` set) and the URLs config names stay under `apps/web/public/`, and which files those are is `openspec/specs/architecture/static-assets/design.md`.
 
 ## Never Duplicate Similar Logic — Source AND Tests
 
