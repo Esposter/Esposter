@@ -12,7 +12,9 @@ on:
         required: true
         type: string
 
-permissions: read-all
+# Each job declares its own permissions. A reusable workflow's top level is checked against its caller's grant, so
+# `read-all` here would request every read scope the callers never pass, and the run would fail as invalid
+permissions: {}
 
 jobs:
   packages:
