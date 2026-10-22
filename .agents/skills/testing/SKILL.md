@@ -98,8 +98,8 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 
 ## What to Test
 
-**Every test earns its line or it is deleted** — the default is delete, and the keep test in `references/what-earns-a-test.md` runs in order: name the regression a caller depends on, check the owner, check the enforcer, then keep and fold. Removing a test a change made redundant is part of the change.
+**Every test earns its line or it is deleted** — the keep test in `references/what-earns-a-test.md` decides it.
 
 - **A regression test is proven to fail before it is kept** — the one end-of-work run (the `running-checks` skill) is made with the fix it guards reverted, the test is watched failing for the reason it names, and the fix is restored only after that run's exit line is in its log, never while it is still in flight, since a test file imported after the restore runs the fixed code; the commit follows the restore. No second run follows the restore. A test that has only passed against fixed code has shown that it passes; the un-awaited form in `references/awaiting-a-double.md` is the same step for an ordering contract.
 
-- The kill-list of what never earns a line — wiring, restated constants, smoke checks, unread snapshots, type checks `tsc` already proves, production API added for a test — and the recurring subjects already decided (a shared primitive versus its wrappers, a composable versus the service under it, Zod constraints, a `declare module` over third-party data, a UI change's mounted test) are `references/what-earns-a-test.md`.
+- What never earns a line, and the subjects already decided: `references/what-earns-a-test.md`.
