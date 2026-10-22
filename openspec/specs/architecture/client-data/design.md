@@ -170,7 +170,7 @@ The primitive's contract, its retry, and its owners are specified in [batched re
 
 - **One run in flight per owner.** It is built on `createSingleFlight`, so a mark that lands during a run is taken by the run owed after it, and no two reads of the same keys overlap. The one to finish last is always the newest, which is why it needs no sequence numbers.
 - **Batched.** Every key marked before a run starts is read by that one run. A room's totals, or a list of post ids, is one request, not one per key.
-- **Failure is kept.** A run that fails puts its keys back, so the next mark retries them; the error is logged, not swallowed.
+- **Failure is kept.** A run that fails puts its keys back and schedules one more run, paced by the backoff, so a failed read recovers without a new mark. After five retries in a row the keys wait for the next mark, so a server that stays down is not asked forever. The error is logged, not swallowed.
 
 Post counts have one owner, `usePostCountStore`: a write that changes a count asks it to re-read, and the one read is applied to every copy by the stores that hold copies, through `postCountHooks`. Copies in different stores therefore never order their own reads against each other. Every other owner calls the primitive per instance, and writes only the copies it holds.
 
