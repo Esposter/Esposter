@@ -78,3 +78,7 @@ The three daily task tables are fetched rather than read from the dump, as the [
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `DailyTaskExcelConfigData`, `DailyTaskRewardExcelConfigData` and `DailyTaskLevelExcelConfigData`, the tasks, their reward tiers and the Adventure Rank bands, with `RewardPreviewExcelConfigData` for each reward's items.
 - [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. Its figures are the dump's.
+
+## Reference
+
+- `commission-bonus.mkv` — found on YouTube at https://www.youtube.com/watch?v=x_vRlUlTm8A, 0–29.9 s (`captures/yt-x_vRlUlTm8A-commissions.mp4`), cut to `commission-bonus.mkv`: the English PC client at 1080p and 60 frames a second. It shows the fourth commission bonus.

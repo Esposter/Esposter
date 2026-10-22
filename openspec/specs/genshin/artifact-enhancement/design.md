@@ -27,7 +27,7 @@ flowchart TD
 - **Levels follow the table's costs, and EXP past the top is lost.** A level's cost is the table's EXP for it, the artifact levels as far as its total EXP reaches, and EXP beyond its highest level is wasted.
 - **Every fourth level adds or raises a minor affix.** At each affix level it passes, an artifact holding fewer than four minor affixes gains one from the rarity's pool, by weight from those it lacks. One holding four raises one of them, chosen evenly, by a tier of its value.
 - **A locked artifact is never fodder.** A fodder's lock is refused by `getFodderEnhancement`, and an artifact worn by a character is not a bag entry, so the bag's fodder list never holds one.
-- **A character wears one piece of each slot.** Equipping a piece returns the piece it replaces, and unequipping a slot with no piece in it is refused. Both are services over the character alone, so the bag is the caller's to write ([artifact screen](../../../changes/genshin-artifact-screen/design.md)).
+- **A character wears one piece of each slot.** Equipping a piece returns the piece it replaces, and unequipping a slot with no piece in it is refused. Both are services over the character alone, so the bag is the caller's to write. The artifact screen is built rather than deleted, so these services stay in use; its panel and the bag's entry are in [the artifact screen](../../../changes/genshin-artifact-screen/design.md).
 
 ## Decisions
 

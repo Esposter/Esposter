@@ -18,4 +18,4 @@
 
 ## Reference
 
-- `world-thunderstorm.mkv` — a thunderstorm with several strikes, the camera still. On the wiki and YouTube, none found (searched 2026-10-11).
+- `world-thunderstorm.mkv` — found on YouTube at https://www.youtube.com/watch?v=uqSKcf-vgV4, 21–72 s (`captures/world-thunderstorm.mkv`): Yashiori Island's perpetual storm on a fixed close shot with no HUD or music, 1080 high at 59.94 frames a second, bolts at about 3.9, 37.6 and 47.8 s.

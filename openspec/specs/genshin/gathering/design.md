@@ -99,3 +99,7 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 - [Farming Ores with Zhongli](https://www.youtube.com/watch?v=EWYe-MYjmqU), YouTube, 77–82 s at 60 frames a second: one Planet Befall breaks a Crystal Chunk and a Magical Crystal Chunk.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `GatherExcelConfigData` and `MaterialExcelConfigData`, the tables the items and their ground rows are read from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map's labels and points that the places are fitted from.
+
+## Reference
+
+- `ore-strike.mkv` — a montage cut between strikes, so which of them count is settled here. Its source and recording are on [world compute](../compute/world/design.md).
