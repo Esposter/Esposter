@@ -35,6 +35,9 @@ export const usersToRoomsInMessage = pgTable(
       primaryKey({ columns: [userId, roomId] }),
       check("usersToRooms_displayName_length_check", createMaxLengthCheckSql(displayName, DISPLAY_NAME_MAX_LENGTH)),
       check("usersToRooms_mentionCount_check", createMinimumCheckSql(mentionCount, 0)),
+      // The primary key leads with userId, so a room-wide question (its members, its member count) has no index of its
+      // Own without this one
+      index("usersToRooms_roomId_index").on(roomId),
       index("usersToRooms_timeoutUntil_index")
         .on(timeoutUntil)
         .where(sql`${timeoutUntil} IS NOT NULL`),

@@ -21,7 +21,9 @@ export const usersToRoomRolesInMessage = pgTable(
         foreignColumns: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
       }).onDelete("cascade"),
       index("usersToRoomRoles_roleId_index").on(roleId),
-      index("usersToRoomRoles_roomId_index").on(roomId),
+      // Serves a room's role rows in the order the top-role query walks them (DISTINCT ON userId), and a room filter on
+      // Its own, so the single-column room index it replaces is a prefix of this one
+      index("usersToRoomRoles_roomId_userId_index").on(roomId, userId),
     ],
     schema: messageSchema,
   },
