@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.3](https://github.com/Esposter/Esposter/compare/v4.3.2...v4.3.3) (2026-10-22)
+
+### Bug Fixes
+
+* **genshin-mods:** the ward's declaration helpers disable func-style on their own line, the reason on the directive, so no lowercase comment lines are left ([979918c](https://github.com/Esposter/Esposter/commit/979918c9ea54afe8481d9fde7c83140d54afcf83))
+* **genshin-mods:** the ward's helpers that take the engine's $ are function declarations, the one form the hooks module loader follows ([2f1c2ac](https://github.com/Esposter/Esposter/commit/2f1c2ac3a368901a8c94da63b7a0a6eb49b67204))
+
 ## [4.3.2](https://github.com/Esposter/Esposter/compare/v4.3.1...v4.3.2) (2026-10-21)
 
 **Note:** Version bump only for package genshin-mods
