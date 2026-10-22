@@ -1,0 +1,4 @@
+## 1. Decisions
+
+- [ ] 1.1 Decide what a failed count re-read does: keep the pre-leave counts, retry the read, or reset the room's totals from a fresh read. Verify: the choice and the rejected options are written into the room-ui design's group-counts section, and a test named after the scenario 'a failed count re-read keeps every group count equal to its members' is seen failing first.
+- [ ] 1.2 Decide the snapshot race: either close it by numbering the server's member events so a delta and a snapshot can be ordered, or weaken the room-ui spec's exact-counts SHALL to what the design already accepts. Verify: the decision is written into the room-ui design with the rejected option and its reason, and the room-ui spec's requirement 'A departure or a role change keeps every role group count exact' matches it.
