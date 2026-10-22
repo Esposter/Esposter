@@ -9,7 +9,7 @@ describe("vue-phaserjs", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 59.87 KB (61305 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 59.90 KB (61337 bytes)"`);
   });
 
   test("types size", () => {

@@ -114,6 +114,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   },
   ignorePatterns: [
     "public",
+    "**/assets/dungeons/tilesets/**/*.tsx",
     ".agents/worktrees",
     ".claude",
     "**/auto-imports.d.ts",
