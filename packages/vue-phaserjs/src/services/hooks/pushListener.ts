@@ -1,4 +1,5 @@
 import type { Lifecycle } from "#src/models/lifecycle/Lifecycle";
+import type { ListenersMap } from "#src/models/lifecycle/ListenersMap";
 import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
@@ -8,7 +9,7 @@ import { getOrCreate } from "@esposter/shared";
 // Returns the function that removes the listener, for an owner that goes away before its scene does
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {
   const sceneKey = key ?? useInjectSceneKey();
-  const listenersMap = getOrCreate(ExternalSceneStore.lifecycleListenersMap, lifecycle, () => new Map());
+  const listenersMap: ListenersMap = getOrCreate(ExternalSceneStore.lifecycleListenersMap, lifecycle, () => new Map());
   getOrCreate(listenersMap, sceneKey, () => []).push(listener);
 
   return () => {
