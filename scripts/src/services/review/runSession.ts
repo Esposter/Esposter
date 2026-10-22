@@ -11,6 +11,7 @@ import {
   SECRET_VARIABLE_REGEX,
   USAGE_LIMIT_REGEX,
 } from "#src/services/review/constants";
+import { getSessionFailure } from "#src/services/review/getSessionFailure";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { spawn, spawnSync } from "@esposter/shared-node/child-process";
@@ -98,7 +99,11 @@ export const runSession = async ({ cwd, prompt, role, timeoutMs }: ReviewSession
     throw new InvalidOperationError(Operation.Create, "review session", `it passed its ${timeoutMs}ms deadline`);
   if (exitCode !== 0) {
     if (USAGE_LIMIT_REGEX.test(`${stdout}\n${stderr}`)) throw new ReviewSessionLimitedError();
-    throw new InvalidOperationError(Operation.Create, "review session", `it exited with ${exitCode}: ${stderr.trim()}`);
+    throw new InvalidOperationError(
+      Operation.Create,
+      "review session",
+      `it exited with ${exitCode}: ${getSessionFailure(stdout, stderr)}`,
+    );
   }
   // A launch `pnpm` refused writes to stderr alone, so an empty stdout is a session that never ran
   if (stdout.trim() === "")
