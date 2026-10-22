@@ -10,7 +10,7 @@ Sharing the glob is a design call, not a mechanical edit. oxlint reads a TypeScr
 
 Decide where the tileset glob is defined, once, and have both entry configs read it from there. Options:
 
-- Export the glob from `packages/configuration/eslint/ignores.js` and import it in `oxlint.config.ts`, which already imports the workspace configuration package.
+- Export the glob from `packages/configuration/eslint/ignores.js` and import it in `oxlint.config.ts`, which imports nothing from the workspace today, so this option adds its first workspace import.
 - Move the glob into a plain data module that both configs import, so neither config owns it.
 
 Until the decision is made, nothing changes.
